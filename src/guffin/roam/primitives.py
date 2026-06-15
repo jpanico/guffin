@@ -72,18 +72,20 @@ class LinkObject(BaseModel):
     """A :entity/attrs link entry, representing a typed attribute assertion.
 
     Each entry in a ``:entity/attrs`` value is a ``LinkObject`` carrying a
-    source UidPair (the attribute identity) and a value UidPair (the asserted
-    value).
+    source UidPair (the attribute identity) and a value that is either a
+    UidPair (a reference to another page/block) or a plain string (a literal
+    value, e.g. ``' n'``, ``' y'``, ``' 0'``, or free text).
 
     Attributes:
         source: ``('uid', <attr-uid>)`` — the attribute being asserted.
-        value: ``('uid', <value-uid>)`` — the value of the assertion.
+        value: The asserted value — a ``('uid', <uid>)`` reference pair or a
+            literal string.
     """
 
     model_config = ConfigDict(frozen=True)
 
-    source: UidPair = Field(..., description="Attribute identity as a ('uid', uid) pair")
-    value: UidPair = Field(..., description="Asserted value as a ('uid', uid) pair")
+    source: UidPair = Field(..., description="Attribute identity as a UidPair")
+    value: UidPair | str = Field(..., description="Asserted value: a UidPair reference or a literal string")
 
 
 type RawChildren = list[IdObject]
