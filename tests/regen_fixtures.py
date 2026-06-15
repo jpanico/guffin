@@ -16,9 +16,10 @@ Writes to tests/fixtures/yaml/ and tests/fixtures/markdown/:
   Optional (--pdf), to tests/fixtures/pdf/:
     <shell-safe-title>.pdf      — byte-reproducible baseline PDF (requires Typst on PATH)
 
-Run from the project root with the venv active:
-  python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1
-  python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
+Run from the project root with the venv active, one invocation per TestArticle
+member (qualifier → --prefix):
+
+  python tests/regen_fixtures.py "<article.qualifier>" --prefix <article.prefix>
 
 Credentials are read from CLI flags first, then env vars, then hard-coded defaults:
   --port   $GUFFIN_ROAM_LOCAL_API_PORT  (default 3333)
@@ -27,6 +28,7 @@ Credentials are read from CLI flags first, then env vars, then hard-coded defaul
 """
 
 import argparse
+import enum
 import os
 import pathlib
 import sys
@@ -51,6 +53,24 @@ from guffin.roam.tree import NodeTree
 from conftest import PDF_CREATION_TIMESTAMP
 
 configure_logging()
+
+
+class TestArticle(enum.Enum):
+    """Identity of a live-Roam test article: Roam page title and fixture filename prefix."""
+
+    qualifier: str
+    prefix: str
+
+    ARTICLE_0 = ("[[Test Article]] 0", "test_article_0")
+    ARTICLE_1 = ("[[Test Article]] 1", "test_article_1")
+    ARTICLE_2 = ("[[Test Article]] 2", "test_article_2")
+    ARTICLE_3 = ("[[Test Article]] 3", "test_article_3")
+
+    def __init__(self, qualifier: str, prefix: str) -> None:
+        """Set qualifier and prefix from the tuple member value."""
+        self.qualifier = qualifier
+        self.prefix = prefix
+
 
 FIXTURES_YAML: Final[pathlib.Path] = pathlib.Path("tests/fixtures/yaml")
 FIXTURES_MD: Final[pathlib.Path] = pathlib.Path("tests/fixtures/markdown")
@@ -123,10 +143,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Regenerate all six test fixture files for a Roam page or node.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=(
-            "Examples:\n"
-            '  python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1\n'
-            '  python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2\n'
+        epilog="Examples:\n"
+        + "".join(
+            f'  python tests/regen_fixtures.py "{a.qualifier}" --prefix {a.prefix}\n'
+            for a in TestArticle
         ),
     )
     parser.add_argument("qualifier", help="Roam page title or 9-char node UID.")
