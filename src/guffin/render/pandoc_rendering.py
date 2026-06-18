@@ -46,6 +46,9 @@ Public symbols:
   panflute inline element lists via a single Pandoc call.
 - :func:`parse_block_md` — parse a single Pandoc Markdown string into panflute
   block elements, preserving block constructs such as fenced code blocks.
+- :func:`build_inline_map` — collect all text strings from a
+  :class:`~guffin.vertex_tree.VertexTree` and return the parsed inline element
+  map via :func:`parse_inline_md`.
 - :func:`build_child_blocks` — convert an ordered list of vertex UIDs to Pandoc
   block elements.
 - :func:`vertex_tree_to_pandoc` — convert a
@@ -105,6 +108,10 @@ _CONTAINS_CODE_BLOCK_RE: Final[re.Pattern[str]] = re.compile(r"(?m)^```")
 @validate_call
 def parse_inline_md(texts: list[str]) -> dict[str, list[pf.Inline]]:
     """Batch-parse Pandoc Markdown inline text strings into panflute inline element lists.
+
+    Each parse requires a Pandoc subprocess, so parsing text fields one at a
+    time would spawn one subprocess per block.  Batching every unique string
+    into a single call amortizes that cost across the whole document.
 
     Joins all unique, non-empty strings with a random sentinel paragraph as
     separator, converts the combined document to Pandoc JSON in a single
@@ -624,6 +631,44 @@ def _vertex_to_blocks(
             return _table_vertex_to_blocks(vertex, inline_map)
 
 
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def build_inline_map(vertex_tree: VertexTree) -> dict[str, list[pf.Inline]]:
+    """Collect all text strings from *vertex_tree* and return their parsed inline elements.
+
+    Gathers every text string that requires inline Pandoc Markdown parsing —
+    page titles, heading text, block text, image alt text, callout titles, and
+    table cell text — then delegates to :func:`parse_inline_md` for a single
+    batch Pandoc subprocess call.
+
+    Args:
+        vertex_tree: The vertex tree whose text strings are to be parsed.
+
+    Returns:
+        Mapping from each unique text string to its parsed panflute inline
+        elements.  Strings absent from the mapping (e.g. bare ``---``) should
+        fall back to ``[pf.Str(text)]``.
+    """
+    texts: Final[list[str]] = []
+    for vertex in vertex_tree.vertices:
+        match vertex:
+            case PageVertex(title=t):
+                texts.append(t)
+            case HeadingVertex(text=t):
+                texts.append(t)
+            case TextVertex(text=t):
+                texts.append(t)
+            case ImageVertex(alt_text=t) if t is not None:
+                texts.append(t)
+            case CalloutVertex(title=t) if t:
+                texts.append(t)
+            case TableVertex():
+                for row in vertex.table.rows:
+                    texts.extend(row)
+            case _:
+                pass
+    return parse_inline_md(texts)
+
+
 @validate_call
 def vertex_tree_to_pandoc(
     vertex_tree: VertexTree,
@@ -664,27 +709,7 @@ def vertex_tree_to_pandoc(
     """
     uid_map: Final[dict[Uid, Vertex]] = {v.uid: v for v in vertex_tree.vertices}
     root: Final[Vertex] = root_vertex(vertex_tree)
-
-    # Collect all text strings for batch inline parsing.
-    texts: Final[list[str]] = []
-    for vertex in vertex_tree.vertices:
-        match vertex:
-            case PageVertex(title=t):
-                texts.append(t)
-            case HeadingVertex(text=t):
-                texts.append(t)
-            case TextVertex(text=t):
-                texts.append(t)
-            case ImageVertex(alt_text=t) if t is not None:
-                texts.append(t)
-            case CalloutVertex(title=t) if t:
-                texts.append(t)
-            case TableVertex():
-                for row in vertex.table.rows:
-                    texts.extend(row)
-            case _:
-                pass
-    inline_map: Final[dict[str, list[pf.Inline]]] = parse_inline_md(texts)
+    inline_map: Final[dict[str, list[pf.Inline]]] = build_inline_map(vertex_tree)
 
     metadata: dict[str, pf.MetaValue] = {}
     blocks: list[pf.Block] = []
