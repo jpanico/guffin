@@ -58,6 +58,30 @@ class TestQueryAnchorKind:
         """Test that a string longer than nine characters resolves to PAGE_TITLE."""
         assert QueryAnchorKind.of("a" * 10) is QueryAnchorKind.PAGE_TITLE
 
+    def test_of_returns_node_uid_for_block_reference_syntax(self) -> None:
+        """Test that a UID wrapped in (( )) resolves to NODE_UID."""
+        assert QueryAnchorKind.of(f"(({_VALID_UID}))") is QueryAnchorKind.NODE_UID
+
+    def test_of_trims_whitespace_before_classifying_bare_uid(self) -> None:
+        """Test that leading/trailing whitespace is stripped before matching a bare UID."""
+        assert QueryAnchorKind.of(f"  {_VALID_UID}  ") is QueryAnchorKind.NODE_UID
+
+    def test_of_trims_whitespace_before_classifying_block_reference(self) -> None:
+        """Test that leading/trailing whitespace is stripped before matching a (( )) block reference."""
+        assert QueryAnchorKind.of(f"  (({_VALID_UID}))  ") is QueryAnchorKind.NODE_UID
+
+    def test_of_returns_page_title_for_unclosed_block_reference(self) -> None:
+        """Test that a string starting with (( but not ending with )) resolves to PAGE_TITLE."""
+        assert QueryAnchorKind.of(f"(({_VALID_UID}") is QueryAnchorKind.PAGE_TITLE
+
+    def test_of_returns_page_title_for_unopened_block_reference(self) -> None:
+        """Test that a string ending with )) but not starting with (( resolves to PAGE_TITLE."""
+        assert QueryAnchorKind.of(f"{_VALID_UID}))") is QueryAnchorKind.PAGE_TITLE
+
+    def test_of_returns_page_title_for_wiki_link_syntax(self) -> None:
+        """Test that a [[ ]] wiki-link string resolves to PAGE_TITLE, not NODE_UID."""
+        assert QueryAnchorKind.of("[[My Page]]") is QueryAnchorKind.PAGE_TITLE
+
 
 # ---------------------------------------------------------------------------
 # NodeFetchAnchor

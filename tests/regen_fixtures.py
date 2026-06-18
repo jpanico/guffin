@@ -144,10 +144,7 @@ def main() -> None:
         description="Regenerate all six test fixture files for a Roam page or node.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="Examples:\n"
-        + "".join(
-            f'  python tests/regen_fixtures.py "{a.qualifier}" --prefix {a.prefix}\n'
-            for a in TestArticle
-        ),
+        + "".join(f'  python tests/regen_fixtures.py "{a.qualifier}" --prefix {a.prefix}\n' for a in TestArticle),
     )
     parser.add_argument("qualifier", help="Roam page title or 9-char node UID.")
     parser.add_argument(

@@ -44,32 +44,73 @@ class QueryAnchorKind(enum.Enum):
         """Return the :class:`QueryAnchorKind` for *target*.
 
         Args:
-            target: A Roam page title or nine-character node UID.
+            target: A Roam page title, nine-character node UID, or Roam block-reference
+                syntax ``((uid))``.
 
         Returns:
-            :attr:`NODE_UID` when *target* matches
-            :data:`~guffin.roam.primitives.UID_RE`; :attr:`PAGE_TITLE` otherwise.
+            :attr:`NODE_UID` when the trimmed *target* is wrapped in ``(( … ))`` (Roam
+            block-reference syntax) or matches :data:`~guffin.roam.primitives.UID_RE`
+            directly; :attr:`PAGE_TITLE` otherwise.
         """
-        return QueryAnchorKind.NODE_UID if UID_RE.match(target) else QueryAnchorKind.PAGE_TITLE
+        trimmed: Final[str] = target.strip()
+        if (trimmed.startswith("((") and trimmed.endswith("))")) or UID_RE.match(trimmed):
+            return QueryAnchorKind.NODE_UID
+        return QueryAnchorKind.PAGE_TITLE
 
 
 class NodeFetchAnchor(BaseModel):
     """Immutable model pairing a raw anchor string with its derived :class:`QueryAnchorKind`.
 
     Attributes:
-        qualifier: The raw anchor string — either a Roam page title or a nine-character node UID.
+        qualifier: The raw anchor string — a Roam page title (optionally wrapped in ``[[ ]]``),
+            a nine-character node UID, or a Roam block-reference (``(( uid ))``).
         kind: Derived from *qualifier* via :meth:`QueryAnchorKind.of`.
+        node_identifier: Normalized identifier extracted from :attr:`qualifier` — the bare page
+            title (``[[ ]]`` stripped if present) for :attr:`~QueryAnchorKind.PAGE_TITLE` anchors,
+            or the bare nine-character UID (``(( ))`` stripped if present) for
+            :attr:`~QueryAnchorKind.NODE_UID` anchors.
     """
 
     model_config = ConfigDict(frozen=True)
 
-    qualifier: str = Field(description="A Roam page title or nine-character node UID.")
+    qualifier: str = Field(
+        description=(
+            "A Roam page title (optionally wrapped in [[ ]]), a nine-character node UID, "
+            "or a Roam block-reference wrapped in (( ))."
+        )
+    )
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def kind(self) -> QueryAnchorKind:
         """Derive the :class:`QueryAnchorKind` from :attr:`qualifier`."""
         return QueryAnchorKind.of(self.qualifier)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def node_identifier(self) -> str:
+        """Derive the normalized identifier from :attr:`qualifier`.
+
+        Strips ``[[ ]]`` wrappers for :attr:`~QueryAnchorKind.PAGE_TITLE` anchors and
+        ``(( ))`` wrappers for :attr:`~QueryAnchorKind.NODE_UID` anchors, then returns
+        the bare page title or UID.
+        """
+        trimmed: Final[str] = self.qualifier.strip()
+        if self.kind is QueryAnchorKind.PAGE_TITLE:
+            if trimmed.startswith("[[") and trimmed.endswith("]]"):
+                return trimmed[2:-2]
+            return trimmed
+        if trimmed.startswith("((") and trimmed.endswith("))"):
+            return trimmed[2:-2]
+        return trimmed
+
+    def __str__(self) -> str:
+        """Return the raw :attr:`qualifier` string."""
+        return self.qualifier
+
+    def __repr__(self) -> str:
+        """Return a concise representation showing the raw :attr:`qualifier`."""
+        return f"NodeFetchAnchor({self.qualifier!r})"
 
 
 class NodeFetchSpec(BaseModel):
@@ -253,7 +294,7 @@ def anchor_node(network: NodeNetwork, anchor: NodeFetchAnchor) -> RoamNode:
 
     Args:
         network: The node network to search.
-        anchor: The fetch anchor whose :attr:`~NodeFetchAnchor.qualifier` string identifies
+        anchor: The fetch anchor whose :attr:`~NodeFetchAnchor.node_identifier` string identifies
             the anchor node — matched against :attr:`~guffin.roam.node.RoamNode.uid`
             for :attr:`~QueryAnchorKind.NODE_UID` anchors, or against
             :attr:`~guffin.roam.node.RoamNode.title` for :attr:`~QueryAnchorKind.PAGE_TITLE`
@@ -266,11 +307,11 @@ def anchor_node(network: NodeNetwork, anchor: NodeFetchAnchor) -> RoamNode:
         ValueError: If no node in *network* matches *anchor*.
     """
     if anchor.kind is QueryAnchorKind.NODE_UID:
-        found: RoamNode | None = next((n for n in network if n.uid == anchor.qualifier), None)
+        found: RoamNode | None = next((n for n in network if n.uid == anchor.node_identifier), None)
     else:
-        found = next((n for n in network if n.title == anchor.qualifier), None)
+        found = next((n for n in network if n.title == anchor.node_identifier), None)
     if found is None:
-        raise ValueError(f"no node found in network matching anchor {anchor.qualifier!r} (kind={anchor.kind!r})")
+        raise ValueError(f"no node found in network matching anchor {anchor!r} (kind={anchor.kind!r})")
     return found
 
 

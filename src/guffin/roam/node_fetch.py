@@ -439,7 +439,7 @@ class FetchRoamNodes:
         logger.debug(
             "api_endpoint: %s, anchor: %r, include_refs: %r",
             api_endpoint,
-            fetch_spec.anchor.qualifier,
+            fetch_spec.anchor.node_identifier,
             fetch_spec.include_refs,
         )
         if fetch_spec.anchor.kind is not QueryAnchorKind.PAGE_TITLE:
@@ -448,7 +448,7 @@ class FetchRoamNodes:
             )
         return FetchRoamNodes._fetch(
             FetchRoamNodes.Request.payload_by_page_title(
-                fetch_spec.anchor.qualifier, include_refs=fetch_spec.include_refs
+                fetch_spec.anchor.node_identifier, include_refs=fetch_spec.include_refs
             ),
             api_endpoint,
             fetch_spec,
@@ -491,7 +491,7 @@ class FetchRoamNodes:
         logger.debug(
             "api_endpoint: %s, anchor: %r, include_refs: %r",
             api_endpoint,
-            fetch_spec.anchor.qualifier,
+            fetch_spec.anchor.node_identifier,
             fetch_spec.include_refs,
         )
         if fetch_spec.anchor.kind is not QueryAnchorKind.NODE_UID:
@@ -500,7 +500,7 @@ class FetchRoamNodes:
             )
         return FetchRoamNodes._fetch(
             FetchRoamNodes.Request.payload_by_node_uid(
-                fetch_spec.anchor.qualifier, include_refs=fetch_spec.include_refs
+                fetch_spec.anchor.node_identifier, include_refs=fetch_spec.include_refs
             ),
             api_endpoint,
             fetch_spec,

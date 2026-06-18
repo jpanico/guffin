@@ -254,6 +254,12 @@ export-roam-tree "Test Article"                      # Markdown bundle (default)
 export-roam-tree "Test Article" --format pdf         # PDF
 ```
 
+To change the log level (default: `INFO`), set `LOG_LEVEL`:
+
+```bash
+LOG_LEVEL=DEBUG export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token --output-dir ~/docs
+```
+
 ### `dump-roam-tree` — Inspect a Roam page or node subtree as a Rich tree
 
 Fetches a Roam `Page` or `Node` subtree via the Local API, and renders it as a colorized tree in the terminal. Useful for inspecting the `RoamNode` structure or the normalized `Vertex`/`VertexTree` structures. The positional argument follows the same page-title-vs-node-UID inference as `export-roam-tree`.
