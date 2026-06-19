@@ -1,6 +1,7 @@
 """Unit tests for guffin.roam_md_to_pandoc_md."""
 
 from guffin.roam_md_to_pandoc_md import (
+    convert_bg_color_line,
     convert_code_blocks,
     convert_color_bold,
     convert_color_box,
@@ -296,6 +297,36 @@ class TestConvertColorBox:
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
         assert convert_color_box("") == ""
+
+
+class TestConvertBgColorLine:
+    """Tests for convert_bg_color_line — text #.bg-COLOR → [text]{bg-color="color"}."""
+
+    def test_basic(self) -> None:
+        """Test that a trailing #.bg-COLOR suffix is stripped and content is wrapped."""
+        assert convert_bg_color_line("Some text #.bg-ORANGE") == '[Some text]{bg-color="orange"}'
+
+    def test_color_name_lowercased(self) -> None:
+        """Test that the color name is lowercased in the output attribute."""
+        assert convert_bg_color_line("Some text #.bg-FUCHSIA") == '[Some text]{bg-color="fuchsia"}'
+
+    def test_no_suffix_unchanged(self) -> None:
+        """Test that a string without a #.bg-COLOR suffix is returned unchanged."""
+        assert convert_bg_color_line("Some text") == "Some text"
+
+    def test_inline_color_span_preserved(self) -> None:
+        """Test that inline color spans in the content survive the outer wrap."""
+        assert convert_bg_color_line('[**bold**]{color="orange"} text #.bg-FUCHSIA') == (
+            '[[**bold**]{color="orange"} text]{bg-color="fuchsia"}'
+        )
+
+    def test_empty_string(self) -> None:
+        """Test that an empty string is returned unchanged."""
+        assert convert_bg_color_line("") == ""
+
+    def test_suffix_not_in_middle_unchanged(self) -> None:
+        """Test that #.bg-COLOR in the middle of a string (not a suffix) is left unchanged."""
+        assert convert_bg_color_line("text #.bg-ORANGE more text") == "text #.bg-ORANGE more text"
 
 
 class TestConvertCodeBlocks:

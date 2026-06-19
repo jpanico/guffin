@@ -59,12 +59,32 @@
   - id: 11657
   - id: 11662
   - id: 11666
+  - id: 11669
   refs:
   - id: 4223
   page: null
   parents: null
   props: null
   title: '[[Test Article]] 4'
+  attrs: null
+- uid: UlMMEdU3W
+  id: 11672
+  time: 0
+  user:
+    id: 0
+  string: 'This entire line is an orange background box #.bg-FUCHSIA'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 11673
+  page:
+    id: 11643
+  parents:
+  - id: 11643
+  - id: 11669
+  props: null
+  title: null
   attrs: null
 - uid: GUiM9K-kR
   id: 11668
@@ -82,6 +102,25 @@
   parents:
   - id: 11643
   - id: 11666
+  props: null
+  title: null
+  attrs: null
+- uid: VastJ7V3A
+  id: 11670
+  time: 0
+  user:
+    id: 0
+  string: 'This entire line is an orange background box #.bg-ORANGE'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11671
+  page:
+    id: 11643
+  parents:
+  - id: 11643
+  - id: 11669
   props: null
   title: null
   attrs: null
@@ -236,6 +275,25 @@
   parents:
   - id: 11643
   - id: 11657
+  props: null
+  title: null
+  attrs: null
+- uid: TH55X8Rc_
+  id: 11669
+  time: 0
+  user:
+    id: 0
+  string: box background color
+  order: 5
+  heading: null
+  children:
+  - id: 11670
+  - id: 11672
+  refs: null
+  page:
+    id: 11643
+  parents:
+  - id: 11643
   props: null
   title: null
   attrs: null

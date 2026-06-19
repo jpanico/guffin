@@ -100,6 +100,29 @@ logger = logging.getLogger(__name__)
 _CONTAINS_CODE_BLOCK_RE: Final[re.Pattern[str]] = re.compile(r"(?m)^```")
 
 
+def _extract_bg_color(inlines: list[pf.Inline]) -> tuple[str, list[pf.Inline]] | None:
+    """Return ``(color, inner_inlines)`` when *inlines* is a single bg-color Span.
+
+    A whole-line background color block is signalled by a single
+    :class:`~panflute.Span` with a ``bg-color`` attribute, produced by
+    :func:`~guffin.roam_md_to_pandoc_md.convert_bg_color_line`.  When that
+    pattern is detected the span is unwrapped so the caller can promote the
+    enclosing block to a :class:`~panflute.Div`.
+
+    Args:
+        inlines: Parsed panflute inline elements for a single text field.
+
+    Returns:
+        A ``(color, inner_inlines)`` tuple if *inlines* is exactly one
+        ``Span`` carrying a ``bg-color`` attribute, otherwise ``None``.
+    """
+    if len(inlines) == 1 and isinstance(inlines[0], pf.Span):
+        color: str | None = inlines[0].attributes.get("bg-color")
+        if color:
+            return color, list(inlines[0].content)
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Inline Pandoc Markdown parsing
 # ---------------------------------------------------------------------------
@@ -223,7 +246,12 @@ def _build_list_item(
         content = parse_block_md(vertex.text)
     else:
         inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
-        content = [pf.Plain(*inlines)]
+        bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(inlines)
+        if bg is not None:
+            bg_color, inner = bg
+            content = [pf.Div(pf.Plain(*inner), attributes={"bg-color": bg_color})]
+        else:
+            content = [pf.Plain(*inlines)]
     if vertex.children:
         content.extend(build_child_blocks(vertex.children, uid_map, image_files, inline_map, depth + 1))
     return pf.ListItem(*content)
@@ -370,7 +398,12 @@ def _text_content_vertex_to_blocks(
             para_blocks = parse_block_md(vertex.text)
         else:
             text_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
-            para_blocks = [pf.Para(*text_inlines)]
+            bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(text_inlines)
+            if bg is not None:
+                bg_color, inner = bg
+                para_blocks = [pf.Div(pf.Para(*inner), attributes={"bg-color": bg_color})]
+            else:
+                para_blocks = [pf.Para(*text_inlines)]
         if vertex.children:
             para_blocks.extend(build_child_blocks(vertex.children, uid_map, image_files, inline_map, depth + 1))
         return para_blocks

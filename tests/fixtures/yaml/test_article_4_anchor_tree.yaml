@@ -13,6 +13,7 @@ root_node:
   - id: 11657
   - id: 11662
   - id: 11666
+  - id: 11669
   refs:
   - id: 4223
   page: null
@@ -85,6 +86,7 @@ tree_network:
   - id: 11657
   - id: 11662
   - id: 11666
+  - id: 11669
   refs:
   - id: 4223
   page: null
@@ -93,6 +95,29 @@ tree_network:
   props: null
   title: '[[Test Article]] 4'
   sidebar: 23
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: UlMMEdU3W
+  id: 11672
+  time: 1781831581331
+  user:
+    id: 3
+  string: 'This entire line is an orange background box #.bg-FUCHSIA'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 11673
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11669
+  props: null
+  title: null
+  sidebar: null
   attrs: null
   lookup: null
   seen_by: null
@@ -113,6 +138,29 @@ tree_network:
   parents:
   - id: 11643
   - id: 11666
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: VastJ7V3A
+  id: 11670
+  time: 1781831636425
+  user:
+    id: 3
+  string: 'This entire line is an orange background box #.bg-ORANGE'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11671
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11669
   props: null
   title: null
   sidebar: null
@@ -305,6 +353,29 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: TH55X8Rc_
+  id: 11669
+  time: 1781831563993
+  user:
+    id: 3
+  string: box background color
+  order: 5
+  heading: null
+  children:
+  - id: 11670
+  - id: 11672
+  refs: null
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: AE3uVp_QL
   id: 11655
   time: 1781829065570
@@ -393,6 +464,26 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11671':
+    uid: 1GLhru-f7
+    id: 11671
+    time: 1781831469406
+    user:
+      id: 3
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    parents: null
+    props: null
+    title: .bg-ORANGE
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '5450':
     uid: OexZiLR_O
     id: 5450
@@ -429,6 +520,26 @@ refs_by_id:
     parents: null
     props: null
     title: '!INFO'
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11673':
+    uid: LnMn9Dq7S
+    id: 11673
+    time: 1781831581335
+    user:
+      id: 3
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    parents: null
+    props: null
+    title: .bg-FUCHSIA
     sidebar: null
     attrs: null
     lookup: null

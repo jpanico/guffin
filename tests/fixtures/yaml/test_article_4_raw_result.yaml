@@ -54,6 +54,18 @@
     title: Test Article
     edit-nonce: 0iIGJ1buX
     edit-time: 1780843750454
+- - prevent-clean: 1781831581335
+    user:
+      id: 3
+    id: 11671
+    uid: 1GLhru-f7
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1781831469406
+    title: .bg-ORANGE
+    edit-nonce: 83t5KkAzd
+    edit-time: 1781831469405
 - - prevent-clean: 1781820678622
     children:
     - id: 11647
@@ -61,20 +73,36 @@
     - id: 11657
     - id: 11662
     - id: 11666
+    - id: 11669
     user:
       id: 3
     sidebar: 23
     id: 11643
     uid: mkHZLUn8Q
-    word-count: 142
+    word-count: 165
     edit-user:
       id: 3
     time: 1781820678622
     title: '[[Test Article]] 4'
-    edit-nonce: rn-FEhPFG
-    edit-time: 1781831145386
+    edit-nonce: oAtZokLPo
+    edit-time: 1781831636425
     refs:
     - id: 4223
+- - string: 'This entire line is an orange background box #.bg-FUCHSIA'
+    user:
+      id: 3
+    id: 11672
+    uid: UlMMEdU3W
+    parents:
+    - id: 11643
+    - id: 11669
+    time: 1781831581331
+    order: 1
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11673
 - - string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
     user:
       id: 3
@@ -90,6 +118,21 @@
       id: 11643
     refs:
     - id: 5844
+- - string: 'This entire line is an orange background box #.bg-ORANGE'
+    user:
+      id: 3
+    id: 11670
+    uid: VastJ7V3A
+    parents:
+    - id: 11643
+    - id: 11669
+    time: 1781831636425
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11671
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
       \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
     user:
@@ -224,6 +267,21 @@
       id: 11643
     refs:
     - id: 11454
+- - string: box background color
+    children:
+    - id: 11670
+    - id: 11672
+    user:
+      id: 3
+    id: 11669
+    uid: TH55X8Rc_
+    parents:
+    - id: 11643
+    time: 1781831563993
+    order: 5
+    open: true
+    page:
+      id: 11643
 - - string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
     user:
       id: 3
@@ -266,6 +324,18 @@
     open: true
     page:
       id: 11643
+- - prevent-clean: 1781831581334
+    user:
+      id: 3
+    id: 11673
+    uid: LnMn9Dq7S
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1781831581335
+    title: .bg-FUCHSIA
+    edit-nonce: HyWnfks0O
+    edit-time: 1781831581334
 - - prevent-clean: 1781829523630
     user:
       id: 3

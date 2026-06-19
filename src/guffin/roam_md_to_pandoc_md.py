@@ -28,6 +28,8 @@ Public symbols:
   spans → ``[text]{underline-color="color"}`` bracketed spans.
 - :func:`convert_color_box` — convert Color Highlighter ``#c:COLOR ~~text~~``
   spans → ``[text]{box-color="color"}`` bracketed spans.
+- :func:`convert_bg_color_line` — convert Color Highlighter ``text #.bg-COLOR``
+  whole-line background spans → ``[text]{bg-color="color"}`` bracketed spans.
 - :func:`convert_code_blocks` — reposition Roam fenced code blocks so the
   opening and closing ```` ``` ```` fences each sit on their own line.
 - :func:`convert_italics` — convert ``__italic__`` → ``*italic*``.
@@ -91,6 +93,13 @@ _COLOR_UNDERLINE_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) __(.+?)__")
 # sees the string.
 _COLOR_BOX_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) ~~(.+?)~~")
 
+# Color Highlighter extension: whole-line background box via a trailing
+# #.bg-COLOR suffix.  Group 1 captures all preceding content; group 2 the
+# color name.  re.DOTALL lets group 1 span newlines so multi-line blocks are
+# handled correctly.  Must run last so that any inline color spans inside the
+# block are already converted before the outer wrapper is applied.
+_BG_COLOR_LINE_RE: re.Pattern[str] = re.compile(r"^(.*) #\.bg-([A-Za-z]+)$", re.DOTALL)
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -125,6 +134,7 @@ def to_pandoc_md(roam_string: str) -> str:
     result = strip_double_brackets(result)
     result = convert_italics(result)
     result = convert_highlights(result)
+    result = convert_bg_color_line(result)
     return result
 
 
@@ -203,6 +213,34 @@ def convert_color_box(roam_string: str) -> str:
     """
     return _COLOR_BOX_RE.sub(
         lambda match: f'[{match.group(2)}]{{box-color="{match.group(1).lower()}"}}',
+        roam_string,
+    )
+
+
+@validate_call
+def convert_bg_color_line(roam_string: str) -> str:
+    """Convert a Color Highlighter whole-line background span to a Pandoc bracketed span.
+
+    The Color Highlighter Roam extension appends ``#.bg-COLOR`` to a block
+    string to apply a background color to the entire line.  This function
+    strips the suffix and wraps the entire remaining content in a Pandoc
+    bracketed span with a ``bg-color`` attribute:
+    ``[text]{bg-color="orange"}``.  The color name is lowercased for CSS
+    compatibility.  Must run last in the pipeline so that any inline color
+    spans within the block text are already converted before the outer wrapper
+    is applied.
+
+    Args:
+        roam_string: A Roam block string, possibly ending with
+            ``#.bg-COLOR``.
+
+    Returns:
+        The string with the ``#.bg-COLOR`` suffix stripped and the content
+        wrapped in ``[...]{bg-color="color"}``, or *roam_string* unchanged
+        if the suffix is absent.
+    """
+    return _BG_COLOR_LINE_RE.sub(
+        lambda match: f'[{match.group(1)}]{{bg-color="{match.group(2).lower()}"}}',
         roam_string,
     )
 

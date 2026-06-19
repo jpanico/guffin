@@ -1,12 +1,15 @@
--- Rewrite color Span elements to raw Typst for PDF output.
--- Inner inlines are passed through so nested formatting (e.g. bold) is preserved.
+-- Rewrite color Span and Div elements to raw Typst for PDF output.
+-- Inner content is passed through so nested formatting (e.g. bold) is preserved.
 --
--- Handled cases:
+-- Handled Span cases:
 --   Span with "color" attribute            → #text(fill: COLOR)[...]
 --   Span with class "mark" and
 --     "highlight-color" attribute          → #highlight(fill: COLOR)[...]
 --   Span with "underline-color" attribute  → #underline[#text(fill: COLOR)[...]]
 --   Span with "box-color" attribute        → #box(stroke: COLOR)[...]
+--
+-- Handled Div cases:
+--   Div with "bg-color" attribute          → #block(fill: COLOR, width: 100%)[...]
 
 function Span(el)
   local color = el.attributes["color"]
@@ -38,6 +41,16 @@ function Span(el)
     local result = pandoc.List({pandoc.RawInline('typst', '#box(stroke: ' .. box_color .. ')[')})
     result:extend(el.content)
     result:extend({pandoc.RawInline('typst', ']')})
+    return result
+  end
+end
+
+function Div(el)
+  local bg_color = el.attributes["bg-color"]
+  if bg_color then
+    local result = pandoc.List({pandoc.RawBlock('typst', '#block(fill: ' .. bg_color .. ', width: 100%)[')})
+    result:extend(el.content)
+    result:extend({pandoc.RawBlock('typst', ']')})
     return result
   end
 end

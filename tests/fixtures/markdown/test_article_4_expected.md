@@ -26,3 +26,9 @@ box color
 
 - <span style="border: 1px solid orange; padding: 2px 4px">This span has box color orange.</span> This span does not.
 - <span style="border: 1px solid fuchsia; padding: 2px 4px">This span has box color fuchsia.</span> This span does not.
+
+box background color
+
+- <span style="background-color: orange">This entire line is an orange background box</span>
+
+- <span style="background-color: fuchsia">This entire line is an orange background box</span>

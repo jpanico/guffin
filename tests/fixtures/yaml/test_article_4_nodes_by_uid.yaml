@@ -87,6 +87,26 @@ LBFKibPIj:
   attrs: null
   lookup: null
   seen_by: null
+1GLhru-f7:
+  uid: 1GLhru-f7
+  id: 11671
+  time: 1781831469406
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: .bg-ORANGE
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 mkHZLUn8Q:
   uid: mkHZLUn8Q
   id: 11643
@@ -102,6 +122,7 @@ mkHZLUn8Q:
   - id: 11657
   - id: 11662
   - id: 11666
+  - id: 11669
   refs:
   - id: 4223
   page: null
@@ -110,6 +131,30 @@ mkHZLUn8Q:
   props: null
   title: '[[Test Article]] 4'
   sidebar: 23
+  attrs: null
+  lookup: null
+  seen_by: null
+UlMMEdU3W:
+  uid: UlMMEdU3W
+  id: 11672
+  time: 1781831581331
+  user:
+    id: 3
+  string: 'This entire line is an orange background box #.bg-FUCHSIA'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 11673
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11669
+  props: null
+  title: null
+  sidebar: null
   attrs: null
   lookup: null
   seen_by: null
@@ -131,6 +176,30 @@ GUiM9K-kR:
   parents:
   - id: 11643
   - id: 11666
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+VastJ7V3A:
+  uid: VastJ7V3A
+  id: 11670
+  time: 1781831636425
+  user:
+    id: 3
+  string: 'This entire line is an orange background box #.bg-ORANGE'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11671
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11669
   props: null
   title: null
   sidebar: null
@@ -351,6 +420,30 @@ rArYyVVBS:
   attrs: null
   lookup: null
   seen_by: null
+TH55X8Rc_:
+  uid: TH55X8Rc_
+  id: 11669
+  time: 1781831563993
+  user:
+    id: 3
+  string: box background color
+  order: 5
+  heading: null
+  children:
+  - id: 11670
+  - id: 11672
+  refs: null
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 AE3uVp_QL:
   uid: AE3uVp_QL
   id: 11655
@@ -415,6 +508,26 @@ S2yCBxWED:
   - id: 11643
   props: null
   title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+LnMn9Dq7S:
+  uid: LnMn9Dq7S
+  id: 11673
+  time: 1781831581335
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: .bg-FUCHSIA
   sidebar: null
   attrs: null
   lookup: null

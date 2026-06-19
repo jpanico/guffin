@@ -10,6 +10,7 @@
   - Jt4-6SLWM
   - ShnYeNIu5
   - S2yCBxWED
+  - TH55X8Rc_
   title: Test Article 4
 - vertex_type: guffin/callout
   uid: yd7MFbFou
@@ -71,3 +72,15 @@
 - vertex_type: guffin/text
   uid: GUiM9K-kR
   text: '[This span has box color fuchsia.]{box-color="fuchsia"} This span does not.'
+- vertex_type: guffin/text
+  uid: TH55X8Rc_
+  children:
+  - VastJ7V3A
+  - UlMMEdU3W
+  text: box background color
+- vertex_type: guffin/text
+  uid: VastJ7V3A
+  text: '[This entire line is an orange background box]{bg-color="orange"}'
+- vertex_type: guffin/text
+  uid: UlMMEdU3W
+  text: '[This entire line is an orange background box]{bg-color="fuchsia"}'
