@@ -4,6 +4,7 @@ from guffin.roam_md_to_pandoc_md import (
     convert_code_blocks,
     convert_color_bold,
     convert_color_highlight,
+    convert_color_underline,
     convert_highlights,
     convert_italics,
     convert_page_link_aliases,
@@ -228,6 +229,40 @@ class TestConvertColorHighlight:
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
         assert convert_color_highlight("") == ""
+
+
+class TestConvertColorUnderline:
+    """Tests for convert_color_underline — #c:COLOR __text__ → [text]{underline-color="color"}."""
+
+    def test_basic(self) -> None:
+        """Test that #c:COLOR __text__ is converted to a Pandoc bracketed span."""
+        assert convert_color_underline("#c:ORANGE __underlined text__") == (
+            '[underlined text]{underline-color="orange"}'
+        )
+
+    def test_trailing_text_preserved(self) -> None:
+        """Test that text following the underline span is left unchanged."""
+        assert convert_color_underline("#c:ORANGE __This span is underlined. __This span is not.") == (
+            '[This span is underlined. ]{underline-color="orange"}This span is not.'
+        )
+
+    def test_color_name_lowercased(self) -> None:
+        """Test that the color name is lowercased in the output attribute."""
+        assert convert_color_underline("#c:FUCHSIA __text__") == '[text]{underline-color="fuchsia"}'
+
+    def test_multiple_spans(self) -> None:
+        """Test that multiple color-underline spans in one string are all converted."""
+        assert convert_color_underline("#c:RED __foo__ and #c:GREEN __bar__") == (
+            '[foo]{underline-color="red"} and [bar]{underline-color="green"}'
+        )
+
+    def test_plain_italic_unchanged(self) -> None:
+        """Test that __italic__ without a #c: prefix is left unchanged."""
+        assert convert_color_underline("__italic__") == "__italic__"
+
+    def test_empty_string(self) -> None:
+        """Test that an empty string is returned unchanged."""
+        assert convert_color_underline("") == ""
 
 
 class TestConvertCodeBlocks:

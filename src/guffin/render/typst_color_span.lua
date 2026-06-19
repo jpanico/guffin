@@ -2,9 +2,10 @@
 -- Inner inlines are passed through so nested formatting (e.g. bold) is preserved.
 --
 -- Handled cases:
---   Span with "color" attribute       → #text(fill: COLOR)[...]
+--   Span with "color" attribute            → #text(fill: COLOR)[...]
 --   Span with class "mark" and
---     "highlight-color" attribute     → #highlight(fill: COLOR)[...]
+--     "highlight-color" attribute          → #highlight(fill: COLOR)[...]
+--   Span with "underline-color" attribute  → #underline[#text(fill: COLOR)[...]]
 
 function Span(el)
   local color = el.attributes["color"]
@@ -20,6 +21,14 @@ function Span(el)
     local result = pandoc.List({pandoc.RawInline('typst', '#highlight(fill: ' .. highlight_color .. ')[')})
     result:extend(el.content)
     result:extend({pandoc.RawInline('typst', ']')})
+    return result
+  end
+
+  local underline_color = el.attributes["underline-color"]
+  if underline_color then
+    local result = pandoc.List({pandoc.RawInline('typst', '#underline[#text(fill: ' .. underline_color .. ')[')})
+    result:extend(el.content)
+    result:extend({pandoc.RawInline('typst', ']]')})
     return result
   end
 end

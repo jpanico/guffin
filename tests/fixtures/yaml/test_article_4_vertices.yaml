@@ -45,4 +45,16 @@
     span is not.'
 - vertex_type: guffin/text
   uid: ShnYeNIu5
-  text: ''
+  children:
+  - _EtYSMJNn
+  - ju0ABeH0Y
+  text: underline color (Markdown does not have a standard underline markup, because
+    of the conflict with hyperlink rendering)
+- vertex_type: guffin/text
+  uid: _EtYSMJNn
+  text: '[This span is underlined orange. ]{underline-color="orange"}This span is
+    not.'
+- vertex_type: guffin/text
+  uid: ju0ABeH0Y
+  text: '[This span is underlined fuchsia. ]{underline-color="fuchsia"}This span is
+    not.'

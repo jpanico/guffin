@@ -13,7 +13,22 @@
     open: true
     page:
       id: 11643
-- - prevent-clean: 1781829493859
+- - string: '#c:FUCHSIA __This span is underlined fuchsia. __This span is not.'
+    user:
+      id: 3
+    id: 11665
+    uid: ju0ABeH0Y
+    parents:
+    - id: 11643
+    - id: 11662
+    time: 1781830427625
+    order: 1
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 5844
+- - prevent-clean: 1781830419585
     user:
       id: 3
     id: 11454
@@ -50,13 +65,13 @@
     sidebar: 23
     id: 11643
     uid: mkHZLUn8Q
-    word-count: 77
+    word-count: 116
     edit-user:
       id: 3
     time: 1781820678622
     title: '[[Test Article]] 4'
-    edit-nonce: HFkoV4JYd
-    edit-time: 1781829998880
+    edit-nonce: EvIbicAhI
+    edit-time: 1781830476418
     refs:
     - id: 4223
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
@@ -87,14 +102,33 @@
     title: '>'
     edit-nonce: 2POM1zS7j
     edit-time: 1773784559631
-- - string: ''
+- - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+    user:
+      id: 3
+    id: 11664
+    uid: _EtYSMJNn
+    parents:
+    - id: 11643
+    - id: 11662
+    time: 1781830370390
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
+- - string: underline color (Markdown does not have a standard underline markup, because
+      of the conflict with hyperlink rendering)
+    children:
+    - id: 11664
+    - id: 11665
     user:
       id: 3
     id: 11662
     uid: ShnYeNIu5
     parents:
     - id: 11643
-    time: 1781829463803
+    time: 1781830476418
     order: 3
     open: true
     page:

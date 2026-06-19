@@ -24,6 +24,8 @@ Public symbols:
   spans → ``[**text**]{color="color"}`` bracketed spans.
 - :func:`convert_color_highlight` — convert Color Highlighter ``#c:COLOR ^^text^^``
   spans → ``[text]{.mark highlight-color="color"}`` bracketed spans.
+- :func:`convert_color_underline` — convert Color Highlighter ``#c:COLOR __text__``
+  spans → ``[text]{underline-color="color"}`` bracketed spans.
 - :func:`convert_code_blocks` — reposition Roam fenced code blocks so the
   opening and closing ```` ``` ```` fences each sit on their own line.
 - :func:`convert_italics` — convert ``__italic__`` → ``*italic*``.
@@ -76,6 +78,11 @@ _COLOR_BOLD_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) \*\*(.+?)\*\*")
 # color name (e.g. ORANGE); group 2 is the highlight content between ^^ delimiters.
 _COLOR_HIGHLIGHT_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) \^\^(.+?)\^\^")
 
+# Color Highlighter extension: #c:COLOR __underlined text__.  Group 1 is the
+# color name (e.g. ORANGE); group 2 is the underline content between __ delimiters.
+# Note: Roam also uses __ for italics, so this must run before convert_italics.
+_COLOR_UNDERLINE_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) __(.+?)__")
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -103,6 +110,7 @@ def to_pandoc_md(roam_string: str) -> str:
     result: str = roam_string
     result = convert_color_bold(result)
     result = convert_color_highlight(result)
+    result = convert_color_underline(result)
     result = convert_code_blocks(result)
     result = convert_page_link_aliases(result)
     result = strip_double_brackets(result)
@@ -134,6 +142,33 @@ def convert_color_highlight(roam_string: str) -> str:
     """
     return _COLOR_HIGHLIGHT_RE.sub(
         lambda match: f'[{match.group(2)}]{{.mark highlight-color="{match.group(1).lower()}"}}',
+        roam_string,
+    )
+
+
+@validate_call
+def convert_color_underline(roam_string: str) -> str:
+    """Convert Color Highlighter colorized underline spans to Pandoc bracketed spans.
+
+    The Color Highlighter Roam extension uses ``#c:COLOR __text__`` to render
+    text with a colored underline.  Each such span is converted to a Pandoc
+    bracketed span with an ``underline-color`` attribute:
+    ``[text]{underline-color="orange"}``.  The color name is lowercased for
+    CSS compatibility.  No ``underline`` class is added, to prevent Pandoc from
+    treating the span as a native ``Underline`` element and silently dropping
+    the color attribute.  Must run before :func:`convert_italics` because Roam
+    also uses ``__text__`` for italics.
+
+    Args:
+        roam_string: A Roam block string, possibly containing
+            ``#c:COLOR __text__`` spans.
+
+    Returns:
+        The string with all ``#c:COLOR __text__`` spans replaced by
+        ``[text]{underline-color="color"}`` bracketed spans.
+    """
+    return _COLOR_UNDERLINE_RE.sub(
+        lambda match: f'[{match.group(2)}]{{underline-color="{match.group(1).lower()}"}}',
         roam_string,
     )
 

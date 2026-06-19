@@ -47,6 +47,29 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: ju0ABeH0Y
+  id: 11665
+  time: 1781830427625
+  user:
+    id: 3
+  string: '#c:FUCHSIA __This span is underlined fuchsia. __This span is not.'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11662
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: mkHZLUn8Q
   id: 11643
   time: 1781820678622
@@ -95,15 +118,41 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
-- uid: ShnYeNIu5
-  id: 11662
-  time: 1781829463803
+- uid: _EtYSMJNn
+  id: 11664
+  time: 1781830370390
   user:
     id: 3
-  string: ''
-  order: 3
+  string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+  order: 0
   heading: null
   children: null
+  refs:
+  - id: 11454
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11662
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: ShnYeNIu5
+  id: 11662
+  time: 1781830476418
+  user:
+    id: 3
+  string: underline color (Markdown does not have a standard underline markup, because
+    of the conflict with hyperlink rendering)
+  order: 3
+  heading: null
+  children:
+  - id: 11664
+  - id: 11665
   refs: null
   page:
     id: 11643
