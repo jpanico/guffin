@@ -6,8 +6,10 @@ Public symbols are organized into four groups:
   :data:`PageTitle`, :data:`Url`.
 - **Composite type aliases**: :data:`UidPair`, :data:`RawChildren`, :data:`RawRefs`.
 - **Stub models**: :class:`IdObject`, :class:`LinkObject`.
-- **Pattern constants**: :data:`UID_PATTERN` — raw regex string for a Roam node UID;
-  :data:`UID_RE` — compiled form.
+- **Pattern constants**: :data:`UID_PATTERN` / :data:`UID_RE` — canonical
+  unanchored regex for a Roam node UID and its compiled form;
+  :data:`ANCHORED_UID_PATTERN` / :data:`ANCHORED_UID_RE` — the whole-string
+  anchored form and its compiled form.
 """
 
 import re
@@ -15,13 +17,23 @@ from typing import Annotated, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
-UID_PATTERN: Final[str] = r"^[A-Za-z0-9_-]{9}$"
-"""Raw regex pattern string for a Roam node UID: exactly 9 alphanumeric/dash/underscore characters."""
+UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
+"""Canonical (unanchored) regex for a Roam node UID: nine alphanumeric/dash/underscore characters.
+
+Left unanchored so it can be embedded within a larger pattern.  To test whether
+a string is *wholly* a UID, use :data:`ANCHORED_UID_PATTERN` / :data:`ANCHORED_UID_RE`.
+"""
 
 UID_RE: Final[re.Pattern[str]] = re.compile(UID_PATTERN)
-"""Compiled regex for matching a Roam node UID."""
+"""Compiled (unanchored) :data:`UID_PATTERN`; use to find a UID embedded in a larger string."""
 
-type Uid = Annotated[str, Field(pattern=UID_PATTERN)]
+ANCHORED_UID_PATTERN: Final[str] = rf"^{UID_PATTERN}$"
+""":data:`UID_PATTERN` anchored at both ends, matching a string that is exactly a UID."""
+
+ANCHORED_UID_RE: Final[re.Pattern[str]] = re.compile(ANCHORED_UID_PATTERN)
+"""Compiled :data:`ANCHORED_UID_PATTERN` for matching a string that is exactly a Roam node UID."""
+
+type Uid = Annotated[str, Field(pattern=ANCHORED_UID_PATTERN)]
 """Nine-character alphanumeric stable block/page identifier (:block/uid)."""
 
 type Id = int

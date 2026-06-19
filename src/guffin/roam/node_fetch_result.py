@@ -23,7 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validat
 
 from guffin.roam.network import NodeNetwork
 from guffin.roam.node import NodesByUid, RoamNode
-from guffin.roam.primitives import UID_RE
+from guffin.roam.primitives import ANCHORED_UID_RE
 from guffin.roam.tree import NodeTree
 
 
@@ -49,11 +49,11 @@ class QueryAnchorKind(enum.Enum):
 
         Returns:
             :attr:`NODE_UID` when the trimmed *target* is wrapped in ``(( … ))`` (Roam
-            block-reference syntax) or matches :data:`~guffin.roam.primitives.UID_RE`
+            block-reference syntax) or matches :data:`~guffin.roam.primitives.ANCHORED_UID_RE`
             directly; :attr:`PAGE_TITLE` otherwise.
         """
         trimmed: Final[str] = target.strip()
-        if (trimmed.startswith("((") and trimmed.endswith("))")) or UID_RE.match(trimmed):
+        if (trimmed.startswith("((") and trimmed.endswith("))")) or ANCHORED_UID_RE.match(trimmed):
             return QueryAnchorKind.NODE_UID
         return QueryAnchorKind.PAGE_TITLE
 

@@ -323,10 +323,10 @@ def node_type(node: RoamNode) -> NodeType:
     when ``title`` is the literal ``"embed"``, :attr:`NodeType.ROAM_PAGE` when ``title``
     is any other non-``None`` string.  For title-less nodes (blocks), returns
     :attr:`NodeType.ROAM_IMAGE_BLOCK` when ``string`` consists solely of a single Markdown image
-    link (as matched by :data:`~guffin.roam.primitives.IMAGE_LINK_RE`),
+    link (as matched by :data:`~guffin.roam.markdown.IMAGE_LINK_RE`),
     :attr:`NodeType.ROAM_HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
     :attr:`NodeType.ROAM_CALLOUT_BLOCK` when ``string`` matches the full callout marker pattern
-    (as matched by :data:`~guffin.roam.primitives.CALLOUT_RE`),
+    (as matched by :data:`~guffin.roam.markdown.CALLOUT_RE`),
     :attr:`NodeType.ROAM_BLOCK_QUOTE` when :func:`~guffin.roam.primitives.is_roam_block_quote`
     returns ``True`` for ``string`` — i.e. a Roam ``[[>]]``-prefixed blockquote or a standard
     Markdown ``>``-prefixed blockquote,

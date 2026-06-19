@@ -18,7 +18,7 @@ hierarchy:
   as returned by the Roam Local API, before any transcription.
 
 ``TARGET`` is interpreted as a **node UID** if it matches
-:data:`~guffin.roam.primitives.UID_PATTERN` (exactly 9 alphanumeric/dash/underscore
+:data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN` (exactly 9 alphanumeric/dash/underscore
 characters, the fixed format used by Roam for all block and page UIDs); otherwise it is
 treated as a **page title**.  A page whose title happens to be exactly 9
 characters from that alphabet would be misidentified — this edge case is
@@ -69,7 +69,7 @@ from guffin.cli.load_roam_tree import fetch_roam_trees
 from guffin.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint
 from guffin.cli.logging_config import configure_logging
-from guffin.roam.primitives import UID_PATTERN
+from guffin.roam.primitives import ANCHORED_UID_PATTERN
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -217,7 +217,7 @@ def main(
         typer.Argument(
             help=(
                 "Roam page title or node UID to dump. "
-                f"Treated as a node UID if it matches {UID_PATTERN}; "
+                f"Treated as a node UID if it matches {ANCHORED_UID_PATTERN}; "
                 "otherwise treated as a page title."
             ),
         ),
@@ -313,7 +313,7 @@ def main(
     """Dump a Roam Research page or node subtree as a Rich tree to the console.
 
     TARGET is interpreted as a node UID (fetches the subtree rooted there) if
-    it matches :data:`~guffin.roam.primitives.UID_PATTERN`, otherwise as a
+    it matches :data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN`, otherwise as a
     page title (fetches all blocks on that page).  Use ``--vertex-tree`` / ``-v/-V``
     and ``--node-tree`` / ``-n/-N`` to control which trees are printed (vertex tree
     is shown by default).  Use ``--raw-results`` / ``-r/-R`` to also print the raw

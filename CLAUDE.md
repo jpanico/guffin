@@ -50,6 +50,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `roam_md_to_pandoc_md.py` — converts Roam-flavored Markdown strings to Pandoc Markdown; `to_pandoc_md()` is the main entry point
     - `vertex.py` — `Vertex` union and all five concrete vertex types (`PageVertex`, `HeadingVertex`, `TextContentVertex`, `ImageVertex`, `CalloutVertex`); `VertexType`, `VertexChildren`, `VertexRefs`, `vertex_adapter`
     - `vertex_tree.py` — `VertexTree`, `VertexTreeDFSIterator`, `root_vertex()`; filter helpers `page_vertices()`, `heading_vertices()`, `text_content_vertices()`, `image_vertices()`, `image_urls()`
+    - `link.py` — custom `x-guffin` URL scheme for inter-vertex links; `VertexLinkKind`, `VertexLink`, `vertex_link_url()`, `parse_vertex_link()`, `is_vertex_link()`
   - **`render/` sub-package** (`src/guffin/render/`) — rendering pipeline modules
     - `image_fetch.py` — Pandoc-free image-asset fetching shared by all renderers; `ImageRef` (UID + on-disk path + `ImageSize`) and `fetch_images()` (fetches a `VertexTree`'s Cloud Firestore image assets to a local dir, returning `{uid: ImageRef}`)
     - `pandoc_rendering.py` — shared Pandoc/Panflute rendering utilities; `vertex_tree_to_pandoc()` builds a Panflute `Doc` from a `VertexTree` (batch-parsing inline Pandoc Markdown via a single Pandoc call)
@@ -66,7 +67,8 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
   - **Templates**
     - `templates/` — Bergfink Typst/Pandoc PDF template (package data; see `src/guffin/templates/README.md`); `user_cfg.typ` is the intended customization point
   - **`roam/` sub-package** (`src/guffin/roam/`) — all Roam Research data model, API, and processing modules
-    - `primitives.py` — foundational type aliases, stub models, `UID_PATTERN`, `UID_RE`, `IMAGE_LINK_RE` (dependency root)
+    - `primitives.py` — foundational type aliases, stub models, `UID_PATTERN`/`UID_RE`, `ANCHORED_UID_PATTERN`/`ANCHORED_UID_RE` (dependency root)
+    - `markdown.py` — Roam Markdown constructs: `CALLOUT_RE`, `CalloutType`, `RoamCallout`, `parse_callout`, `IMAGE_LINK_RE`, block-quote helpers (`is_roam_block_quote`, `strip_block_quote_marker`), `ROAM_NATIVE_TABLE_MARKER`
     - `schema.py` — Datomic schema model types (`RoamNamespace`, etc.)
     - `node.py` — `RoamNode`, `NodeType`, `node_type`, `NodesByUid`
     - `network.py` — `NodeNetwork` type alias; network validators (`all_children_present`, `all_parents_present`, `has_unique_ids`, `is_acyclic`) and utilities (`all_descendants`, `refs_ids`)

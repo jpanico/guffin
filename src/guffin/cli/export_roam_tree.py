@@ -26,7 +26,7 @@ result in one of two output formats controlled by ``--format``:
   Typst to be installed.
 
 ``TARGET`` is interpreted as a **node UID** if it matches
-:data:`~guffin.roam.primitives.UID_PATTERN` (exactly 9 alphanumeric/dash/underscore
+:data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN` (exactly 9 alphanumeric/dash/underscore
 characters, the fixed format used by Roam for all block and page UIDs); otherwise it is
 treated as a **page title**.  A page whose title happens to be exactly 9
 characters from that alphabet would be misidentified — this edge case is
@@ -66,7 +66,7 @@ from guffin.render.pdf_rendering import render as render_pdf
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
-from guffin.roam.primitives import UID_PATTERN
+from guffin.roam.primitives import ANCHORED_UID_PATTERN
 from guffin.cli.load_roam_tree import fetch_roam_trees
 
 configure_logging()
@@ -95,7 +95,7 @@ def main(
         typer.Argument(
             help=(
                 "Roam page title or node UID to export. "
-                f"Treated as a node UID if it matches {UID_PATTERN}; "
+                f"Treated as a node UID if it matches {ANCHORED_UID_PATTERN}; "
                 "otherwise treated as a page title."
             ),
         ),
