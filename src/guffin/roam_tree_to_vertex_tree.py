@@ -234,7 +234,7 @@ def to_page_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> PageVertex:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'title'")
     return PageVertex(
         uid=node.uid,
-        title=to_pandoc_md(node.title),
+        title=to_pandoc_md(node.title, id_map),
         children=_resolve_children(node, id_map),
         refs=_resolve_refs(node, id_map),
     )
@@ -314,7 +314,7 @@ def to_heading_vertex(node: RoamNode, id_map: dict[Id, RoamNode], heading_offset
         raise ValueError(f"RoamNode uid={node.uid!r} has no effective heading level")
     return HeadingVertex(
         uid=node.uid,
-        text=to_pandoc_md(node.string),
+        text=to_pandoc_md(node.string, id_map),
         heading_level=heading + heading_offset,
         children=_resolve_children(node, id_map),
         refs=_resolve_refs(node, id_map),
@@ -342,7 +342,7 @@ def to_text_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> TextVertex:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     return TextVertex(
         uid=node.uid,
-        text=to_pandoc_md(node.string),
+        text=to_pandoc_md(node.string, id_map),
         children=_resolve_children(node, id_map),
         refs=_resolve_refs(node, id_map),
     )
@@ -374,8 +374,8 @@ def to_callout_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> CalloutVert
     if parsed is None:
         raise ValueError(f"RoamNode uid={node.uid!r} string does not match callout marker: {node.string!r}")
     callout_type: Final[CalloutVertex.CalloutType] = CalloutVertex.CalloutType(parsed.callout_type.lower())
-    title: Final[str] = to_pandoc_md(parsed.title.strip())
-    body: Final[str] = to_pandoc_md(parsed.body.strip()) if parsed.body else ""
+    title: Final[str] = to_pandoc_md(parsed.title.strip(), id_map)
+    body: Final[str] = to_pandoc_md(parsed.body.strip(), id_map) if parsed.body else ""
     return CalloutVertex(
         uid=node.uid,
         callout_type=callout_type,
@@ -449,7 +449,7 @@ def to_block_quote_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> BlockQu
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     return BlockQuoteVertex(
         uid=node.uid,
-        text=to_pandoc_md(strip_block_quote_marker(node.string)),
+        text=to_pandoc_md(strip_block_quote_marker(node.string), id_map),
         children=_resolve_children(node, id_map),
         refs=_resolve_refs(node, id_map),
     )
@@ -482,7 +482,7 @@ def to_table(table_tree: NodeTree) -> Table:
         ValueError: If the root node has no children (empty table).
     """
     logger.debug("table_tree root uid=%r", table_tree.root_node.uid)
-    id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in table_tree.tree_network}
+    id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in table_tree.tree_network} | table_tree.refs_by_id
     root: Final[RoamNode] = table_tree.root_node
     if not root.children:
         raise ValueError(f"RoamNode uid={root.uid!r} has no children (empty table)")
@@ -495,7 +495,7 @@ def to_table(table_tree: NodeTree) -> Table:
         row: list[str] = []
         cell: RoamNode | None = col1_cell
         while cell is not None:
-            row.append(to_pandoc_md(cell.string) if cell.string is not None else "")
+            row.append(to_pandoc_md(cell.string, id_map) if cell.string is not None else "")
             next_cells: list[RoamNode] = sorted(
                 [id_map[c.id] for c in (cell.children or []) if c.id in id_map],
                 key=lambda n: n.order if n.order is not None else 0,
@@ -622,7 +622,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     Raises:
         ValueError: If any node has neither a ``title`` nor a ``string`` field set.
     """
-    id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in node_tree.tree_network}
+    id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in node_tree.tree_network} | node_tree.refs_by_id
     min_level: Final[HeadingLevel | None] = (
         min_effective_heading_level(node_tree.tree_network) if SHOULD_NORMALIZE_HEADING_LEVELS else None
     )

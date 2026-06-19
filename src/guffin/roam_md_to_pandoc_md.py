@@ -36,12 +36,20 @@ Public symbols:
 - :func:`convert_highlights` — convert ``^^text^^`` → ``[text]{.mark}``.
 - :func:`convert_page_link_aliases` — convert ``[display]([[Page Name]])``
   → ``[display](Page Name)``.
-- :func:`convert_page_link` — remove ``[[`` and ``]]`` delimiters, leaving
-  the inner text (e.g. ``[[Page Name]]`` → ``Page Name``).
+- :func:`convert_page_link` — convert Roam page references ``[[Page Name]]`` to
+  Pandoc Markdown vertex links ``[Page Name](x-guffin:vertex/<uid>)``, falling
+  back to delimiter-stripped text when the page is not resolvable.
 """
+
+from typing import Final
 
 import regex
 from pydantic import validate_call
+
+from guffin.link import VertexLinkKind, vertex_link_url
+from guffin.roam.markdown import PAGE_REF_RE
+from guffin.roam.node import RoamNode
+from guffin.roam.primitives import Id, Uid
 
 # ---------------------------------------------------------------------------
 # Module-level compiled patterns
@@ -105,7 +113,7 @@ _BG_COLOR_LINE_RE: regex.Pattern[str] = regex.compile(r"^(.*) #\.bg-([A-Za-z]+)$
 
 
 @validate_call
-def to_pandoc_md(roam_string: str) -> str:
+def to_pandoc_md(roam_string: str, id_map: dict[Id, RoamNode]) -> str:
     """Convert a Roam block string to Pandoc Markdown by applying all transformations.
 
     Transformations are applied in a fixed order designed to avoid
@@ -119,6 +127,11 @@ def to_pandoc_md(roam_string: str) -> str:
     Args:
         roam_string: A single Roam block string (the raw ``string`` field from a
             :class:`~guffin.roam.node.RoamNode`).
+        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
+            used by :func:`convert_page_link` to resolve a referenced page's title
+            to its UID.  Pass the referenced page nodes (e.g. a tree's
+            ``refs_by_id``) for page references to resolve; an empty mapping
+            leaves every reference as plain text.
 
     Returns:
         The Pandoc Markdown string.
@@ -130,7 +143,7 @@ def to_pandoc_md(roam_string: str) -> str:
     result = convert_color_box(result)
     result = convert_code_blocks(result)
     result = convert_page_link_aliases(result)
-    result = convert_page_link(result)
+    result = convert_page_link(result, id_map)
     result = convert_italics(result)
     result = convert_highlights(result)
     result = convert_bg_color_line(result)
@@ -364,29 +377,41 @@ def convert_page_link_aliases(roam_string: str) -> str:
 
 
 @validate_call
-def convert_page_link(roam_string: str) -> str:
-    """Remove ``[[`` and ``]]`` delimiters from *roam_string*, leaving inner text.
+def convert_page_link(roam_string: str, id_map: dict[Id, RoamNode]) -> str:
+    """Convert Roam page references to Pandoc Markdown links to the referenced vertex.
 
-    Handles Roam page links (``[[Page Name]]``), hashtag page links
-    (``#[[multi-word tag]]``), and arbitrarily nested page links
-    (``[[nested [[pages]]]]``) by independently removing all ``[[`` and ``]]``
-    occurrences.  Single square brackets ``[`` and ``]`` are intentionally
-    preserved, as they carry meaning in Pandoc Markdown (link labels, bracketed
-    spans, etc.).
+    Each balanced Roam page reference ``[[Page Name]]`` (as matched by
+    :data:`~guffin.roam.markdown.PAGE_REF_RE`, including nested references) is
+    converted to a Pandoc Markdown inline link whose destination is an
+    ``x-guffin`` vertex-reference URL (see
+    :func:`~guffin.link.vertex_link_url`): ``[Page Name](x-guffin:vertex/<uid>)``.
+    The destination UID is resolved by looking up the page title among the
+    titled nodes of *id_map*.
 
-    Examples::
-
-        convert_page_link("[[Page Name]]")         # → "Page Name"
-        convert_page_link("[[nested [[pages]]]]")  # → "nested pages"
-        convert_page_link("#[[multi-word tag]]")   # → "#multi-word tag"
-        convert_page_link("[text]")                # → "[text]"
+    When the title is not found in *id_map* (e.g. the referenced page was not
+    fetched), the reference falls back to its plain inner text with the ``[[``
+    and ``]]`` delimiters stripped — so ``[[Page Name]]`` becomes ``Page Name``
+    and ``[[nested [[pages]]]]`` becomes ``nested pages``.  The link text is
+    likewise the delimiter-stripped page name.
 
     Args:
-        roam_string: A Roam block string, possibly containing ``[[…]]`` constructs.
+        roam_string: A Roam block string, possibly containing ``[[…]]`` references.
+        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`;
+            titled nodes supply the title-to-UID resolution.
 
     Returns:
-        The string with all ``[[`` and ``]]`` occurrences removed.
+        The string with every resolvable page reference replaced by a Pandoc
+        Markdown vertex link, and every unresolvable reference replaced by its
+        delimiter-stripped text.
     """
-    result: str = _DOUBLE_OPEN_RE.sub("", roam_string)
-    result = _DOUBLE_CLOSE_RE.sub("", result)
-    return result
+    title_to_uid: Final[dict[str, Uid]] = {node.title: node.uid for node in id_map.values() if node.title is not None}
+
+    def _replace(match: regex.Match[str]) -> str:
+        page_name: Final[str] = match.group("page_name")
+        display: Final[str] = _DOUBLE_CLOSE_RE.sub("", _DOUBLE_OPEN_RE.sub("", page_name))
+        uid: Final[Uid | None] = title_to_uid.get(page_name)
+        if uid is None:
+            return display
+        return f"[{display}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+    return PAGE_REF_RE.sub(_replace, roam_string)
