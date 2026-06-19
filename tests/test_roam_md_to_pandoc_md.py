@@ -3,6 +3,7 @@
 from guffin.roam_md_to_pandoc_md import (
     convert_code_blocks,
     convert_color_bold,
+    convert_color_box,
     convert_color_highlight,
     convert_color_underline,
     convert_highlights,
@@ -263,6 +264,38 @@ class TestConvertColorUnderline:
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
         assert convert_color_underline("") == ""
+
+
+class TestConvertColorBox:
+    """Tests for convert_color_box — #c:COLOR ~~text~~ → [text]{box-color="color"}."""
+
+    def test_basic(self) -> None:
+        """Test that #c:COLOR ~~text~~ is converted to a Pandoc bracketed span."""
+        assert convert_color_box("#c:ORANGE ~~boxed text~~") == '[boxed text]{box-color="orange"}'
+
+    def test_trailing_text_preserved(self) -> None:
+        """Test that text following the box span is left unchanged."""
+        assert convert_color_box("#c:ORANGE ~~This span has a box.~~ This span does not.") == (
+            '[This span has a box.]{box-color="orange"} This span does not.'
+        )
+
+    def test_color_name_lowercased(self) -> None:
+        """Test that the color name is lowercased in the output attribute."""
+        assert convert_color_box("#c:FUCHSIA ~~text~~") == '[text]{box-color="fuchsia"}'
+
+    def test_multiple_spans(self) -> None:
+        """Test that multiple color-box spans in one string are all converted."""
+        assert convert_color_box("#c:RED ~~foo~~ and #c:GREEN ~~bar~~") == (
+            '[foo]{box-color="red"} and [bar]{box-color="green"}'
+        )
+
+    def test_plain_strikethrough_unchanged(self) -> None:
+        """Test that ~~strikethrough~~ without a #c: prefix is left unchanged."""
+        assert convert_color_box("~~strikethrough~~") == "~~strikethrough~~"
+
+    def test_empty_string(self) -> None:
+        """Test that an empty string is returned unchanged."""
+        assert convert_color_box("") == ""
 
 
 class TestConvertCodeBlocks:

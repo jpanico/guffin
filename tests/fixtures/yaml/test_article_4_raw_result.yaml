@@ -28,7 +28,7 @@
       id: 11643
     refs:
     - id: 5844
-- - prevent-clean: 1781830419585
+- - prevent-clean: 1781831145391
     user:
       id: 3
     id: 11454
@@ -60,20 +60,36 @@
     - id: 11654
     - id: 11657
     - id: 11662
+    - id: 11666
     user:
       id: 3
     sidebar: 23
     id: 11643
     uid: mkHZLUn8Q
-    word-count: 116
+    word-count: 142
     edit-user:
       id: 3
     time: 1781820678622
     title: '[[Test Article]] 4'
-    edit-nonce: EvIbicAhI
-    edit-time: 1781830476418
+    edit-nonce: rn-FEhPFG
+    edit-time: 1781831145386
     refs:
     - id: 4223
+- - string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
+    user:
+      id: 3
+    id: 11668
+    uid: GUiM9K-kR
+    parents:
+    - id: 11643
+    - id: 11666
+    time: 1781831145386
+    order: 1
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 5844
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
       \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
     user:
@@ -102,6 +118,21 @@
     title: '>'
     edit-nonce: 2POM1zS7j
     edit-time: 1773784559631
+- - string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+    user:
+      id: 3
+    id: 11667
+    uid: T6cykqu88
+    parents:
+    - id: 11643
+    - id: 11666
+    time: 1781831119492
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
 - - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     user:
       id: 3
@@ -220,6 +251,21 @@
     title: '!INFO'
     edit-nonce: z3caCCN5O
     edit-time: 1773788725520
+- - string: box color
+    children:
+    - id: 11667
+    - id: 11668
+    user:
+      id: 3
+    id: 11666
+    uid: S2yCBxWED
+    parents:
+    - id: 11643
+    time: 1781831068892
+    order: 4
+    open: true
+    page:
+      id: 11643
 - - prevent-clean: 1781829523630
     user:
       id: 3

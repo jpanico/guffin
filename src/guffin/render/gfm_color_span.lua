@@ -5,7 +5,8 @@
 --   Span with "color" attribute            → <span style="color: COLOR">...</span>
 --   Span with class "mark" and
 --     "highlight-color" attribute          → <mark style="background-color: COLOR">...</mark>
---   Span with "underline-color" attribute  → <u style="color: COLOR">...</u>
+--   Span with "underline-color" attribute  → <span style="text-decoration: underline; color: COLOR">...</span>
+--   Span with "box-color" attribute        → <span style="border: 1px solid COLOR; padding: 2px 4px">...</span>
 
 function Span(el)
   local color = el.attributes["color"]
@@ -27,6 +28,14 @@ function Span(el)
   local underline_color = el.attributes["underline-color"]
   if underline_color then
     local result = pandoc.List({pandoc.RawInline('html', '<span style="text-decoration: underline; color: ' .. underline_color .. '">')})
+    result:extend(el.content)
+    result:extend({pandoc.RawInline('html', '</span>')})
+    return result
+  end
+
+  local box_color = el.attributes["box-color"]
+  if box_color then
+    local result = pandoc.List({pandoc.RawInline('html', '<span style="border: 1px solid ' .. box_color .. '; padding: 2px 4px">')})
     result:extend(el.content)
     result:extend({pandoc.RawInline('html', '</span>')})
     return result

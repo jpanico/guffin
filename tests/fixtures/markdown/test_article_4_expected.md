@@ -21,3 +21,8 @@ underline color (Markdown does not have a standard underline markup, because of 
 
 - <span style="text-decoration: underline; color: orange">This span is underlined orange.</span>This span is not.
 - <span style="text-decoration: underline; color: fuchsia">This span is underlined fuchsia.</span>This span is not.
+
+box color
+
+- <span style="border: 1px solid orange; padding: 2px 4px">This span has box color orange.</span> This span does not.
+- <span style="border: 1px solid fuchsia; padding: 2px 4px">This span has box color fuchsia.</span> This span does not.

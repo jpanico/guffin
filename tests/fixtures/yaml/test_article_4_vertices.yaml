@@ -9,6 +9,7 @@
   - c9kTivLOo
   - Jt4-6SLWM
   - ShnYeNIu5
+  - S2yCBxWED
   title: Test Article 4
 - vertex_type: guffin/callout
   uid: yd7MFbFou
@@ -58,3 +59,15 @@
   uid: ju0ABeH0Y
   text: '[This span is underlined fuchsia. ]{underline-color="fuchsia"}This span is
     not.'
+- vertex_type: guffin/text
+  uid: S2yCBxWED
+  children:
+  - T6cykqu88
+  - GUiM9K-kR
+  text: box color
+- vertex_type: guffin/text
+  uid: T6cykqu88
+  text: '[This span has box color orange.]{box-color="orange"} This span does not.'
+- vertex_type: guffin/text
+  uid: GUiM9K-kR
+  text: '[This span has box color fuchsia.]{box-color="fuchsia"} This span does not.'

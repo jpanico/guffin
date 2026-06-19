@@ -12,6 +12,7 @@ root_node:
   - id: 11654
   - id: 11657
   - id: 11662
+  - id: 11666
   refs:
   - id: 4223
   page: null
@@ -83,6 +84,7 @@ tree_network:
   - id: 11654
   - id: 11657
   - id: 11662
+  - id: 11666
   refs:
   - id: 4223
   page: null
@@ -91,6 +93,29 @@ tree_network:
   props: null
   title: '[[Test Article]] 4'
   sidebar: 23
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: GUiM9K-kR
+  id: 11668
+  time: 1781831145386
+  user:
+    id: 3
+  string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11666
+  props: null
+  title: null
+  sidebar: null
   attrs: null
   lookup: null
   seen_by: null
@@ -112,6 +137,29 @@ tree_network:
   open: true
   parents:
   - id: 11643
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: T6cykqu88
+  id: 11667
+  time: 1781831119492
+  user:
+    id: 3
+  string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11666
   props: null
   title: null
   sidebar: null
@@ -274,6 +322,29 @@ tree_network:
   parents:
   - id: 11643
   - id: 11654
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: S2yCBxWED
+  id: 11666
+  time: 1781831068892
+  user:
+    id: 3
+  string: box color
+  order: 4
+  heading: null
+  children:
+  - id: 11667
+  - id: 11668
+  refs: null
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
   props: null
   title: null
   sidebar: null

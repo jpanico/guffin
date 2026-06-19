@@ -6,6 +6,7 @@
 --   Span with class "mark" and
 --     "highlight-color" attribute          → #highlight(fill: COLOR)[...]
 --   Span with "underline-color" attribute  → #underline[#text(fill: COLOR)[...]]
+--   Span with "box-color" attribute        → #box(stroke: COLOR)[...]
 
 function Span(el)
   local color = el.attributes["color"]
@@ -29,6 +30,14 @@ function Span(el)
     local result = pandoc.List({pandoc.RawInline('typst', '#underline[#text(fill: ' .. underline_color .. ')[')})
     result:extend(el.content)
     result:extend({pandoc.RawInline('typst', ']]')})
+    return result
+  end
+
+  local box_color = el.attributes["box-color"]
+  if box_color then
+    local result = pandoc.List({pandoc.RawInline('typst', '#box(stroke: ' .. box_color .. ')[')})
+    result:extend(el.content)
+    result:extend({pandoc.RawInline('typst', ']')})
     return result
   end
 end
