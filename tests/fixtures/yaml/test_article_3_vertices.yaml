@@ -3,21 +3,85 @@
 # Serialised with model_dump(mode='json', exclude_none=True) and yaml.dump(
 #   default_flow_style=False, allow_unicode=True, sort_keys=False).
 - vertex_type: guffin/page
-  uid: dPZqAiKrK
+  uid: SYZfEd44O
   children:
-  - 2-2g3rmpU
-  - AKAMsYfSW
-  - Up9F5BMq9
+  - I1QOMCtdJ
+  - LfaVt18Iw
+  - d3T1YpYig
+  - LfXmNr-tV
   title: Test Article 3
 - vertex_type: guffin/callout
-  uid: 2-2g3rmpU
+  uid: I1QOMCtdJ
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
-  body: "Features:\n\n - **attributes**"
+  body: 'Features:
+
+    - This page is primarily a demonstration of different kinds of refs:
+
+    -- internal block ref (to block on this page)
+
+    -- external block ref (to block on a *different page*)
+
+    -- internal embed (of block from this page)
+
+    -- external embed (of block from *different page*)
+
+    - no`headers`
+
+    - this INFO `Callout box`, which contains Roam `page references`'
 - vertex_type: guffin/text
-  uid: AKAMsYfSW
-  text: hello world!
+  uid: LfaVt18Iw
+  children:
+  - qj0DTMyzl
+  - gxcUrCGPT
+  - dYYKZExzI
+  text: Section 1
 - vertex_type: guffin/text
-  uid: Up9F5BMq9
-  text: 'tags:: #Guffin'
+  uid: qj0DTMyzl
+  text: 'inline page ref: Test Article 2'
+- vertex_type: guffin/text
+  uid: gxcUrCGPT
+  refs:
+  - LfXmNr-tV
+  text: 'internal block ref: ((LfXmNr-tV))'
+- vertex_type: guffin/text
+  uid: dYYKZExzI
+  children:
+  - XkSI5xwe5
+  text: internal block embed (from *this Page*)
+- vertex_type: guffin/text
+  uid: XkSI5xwe5
+  refs:
+  - vH2I8xRLZ
+  text: '{{embed: ((vH2I8xRLZ))}}'
+- vertex_type: guffin/text
+  uid: d3T1YpYig
+  children:
+  - aaz60uaRX
+  - 8jkmASa1c
+  text: Section 2
+- vertex_type: guffin/text
+  uid: aaz60uaRX
+  text: 'external block ref: '
+- vertex_type: guffin/text
+  uid: 8jkmASa1c
+  children:
+  - aVVGVVPLE
+  text: external block embed (from Test Article 1)
+- vertex_type: guffin/text
+  uid: aVVGVVPLE
+  text: '{{embed: ((drtANJYTg))}}'
+- vertex_type: guffin/text
+  uid: LfXmNr-tV
+  children:
+  - l7f2Qf90W
+  text: Section 3
+- vertex_type: guffin/text
+  uid: l7f2Qf90W
+  children:
+  - vH2I8xRLZ
+  text: section 3.1
+- vertex_type: guffin/text
+  uid: vH2I8xRLZ
+  text: section 3.1.1

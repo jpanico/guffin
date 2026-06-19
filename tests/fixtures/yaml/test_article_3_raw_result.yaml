@@ -1,3 +1,23 @@
+- - prevent-clean: 1773091073222
+    children:
+    - id: 4226
+    - id: 4227
+    - id: 4228
+    - id: 11133
+    user:
+      id: 3
+    sidebar: 22
+    id: 4225
+    uid: SYZfEd44O
+    word-count: 108
+    edit-user:
+      id: 3
+    time: 1781833356251
+    title: '[[Test Article]] 3'
+    edit-nonce: p0vx2zxYJ
+    edit-time: 1781870982030
+    refs:
+    - id: 4223
 - - prevent-clean: 1773090962400
     children:
     - id: 4224
@@ -12,50 +32,69 @@
     title: Test Article
     edit-nonce: 0iIGJ1buX
     edit-time: 1780843750454
-- - attrs:
-    - - source:
-        - uid
-        - dPZqAiKrK
-        value:
-        - uid
-        - dPZqAiKrK
-      - source:
-        - uid
-        - Up9F5BMq9
-        value:
-        - uid
-        - RXwAqq0_T
-      - source:
-        - uid
-        - Up9F5BMq9
-        value:
-        - uid
-        - HGasV4ras
-    prevent-clean: 1781541470279
-    children:
-    - id: 11502
-    - id: 11503
-    - id: 11504
+- - string: '{{embed: ((drtANJYTg))}}'
     user:
       id: 3
-    sidebar: 22
-    id: 11494
-    lookup:
-    - id: 261
-    - id: 11243
-    - id: 11494
-    - id: 11504
-    uid: dPZqAiKrK
-    word-count: 17
-    edit-user:
-      id: 3
-    time: 1781541477683
-    title: '[[Test Article]] 3'
-    edit-nonce: npgwMDdZD
-    edit-time: 1781542343140
+    id: 4234
+    uid: aVVGVVPLE
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 4233
+    time: 1781870982030
+    order: 0
     open: true
+    page:
+      id: 4225
     refs:
-    - id: 4223
+    - id: 3332
+- - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+      – DO NOT REMOVE
+
+      Features:
+
+      - This page is primarily a demonstration of different kinds of refs:
+
+      -- internal block ref (to block on this page)
+
+      -- external block ref (to block on a __different page__)
+
+      -- internal embed (of block from this page)
+
+      -- external embed (of block from __different page__)
+
+      - no`headers`
+
+      - this INFO `Callout box`, which contains Roam `page references` '
+    user:
+      id: 3
+    id: 11133
+    uid: I1QOMCtdJ
+    parents:
+    - id: 4225
+    time: 1780935491562
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5450
+    - id: 5462
+- - string: internal block embed (from __this Page__)
+    children:
+    - id: 4232
+    user:
+      id: 3
+    id: 4229
+    uid: dYYKZExzI
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1780882643644
+    order: 2
+    open: true
+    page:
+      id: 4225
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -68,18 +107,130 @@
     title: '>'
     edit-nonce: 2POM1zS7j
     edit-time: 1773784559631
-- - prevent-clean: 1781439715084
+- - string: section 3.1
+    children:
+    - id: 4231
     user:
       id: 3
-    id: 11243
-    uid: HGasV4ras
-    word-count: 0
+    id: 4230
+    uid: l7f2Qf90W
+    parents:
+    - id: 4225
+    - id: 4228
+    time: 1773091226849
+    order: 0
+    open: true
+    page:
+      id: 4225
+- - string: Section 3
+    children:
+    - id: 4230
+    user:
+      id: 3
+    id: 4228
+    uid: LfXmNr-tV
+    parents:
+    - id: 4225
+    time: 1773091129652
+    order: 3
+    open: true
+    page:
+      id: 4225
+- - string: '{{embed: ((vH2I8xRLZ))}}'
+    user:
+      id: 3
+    id: 4232
+    uid: XkSI5xwe5
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 4229
+    time: 1781870967600
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4231
+- - string: Section 1
+    children:
+    - id: 4229
+    - id: 11135
+    - id: 11692
+    user:
+      id: 3
+    id: 4226
+    uid: LfaVt18Iw
+    parents:
+    - id: 4225
+    time: 1773091124068
+    order: 1
+    open: true
+    page:
+      id: 4225
+- - string: section 3.1.1
+    user:
+      id: 3
+    id: 4231
+    uid: vH2I8xRLZ
+    parents:
+    - id: 4225
+    - id: 4228
+    - id: 4230
+    time: 1773091241939
+    order: 0
+    open: true
+    page:
+      id: 4225
+- - prevent-clean: 1781833447041
+    children:
+    - id: 11675
+    - id: 11677
+    - id: 11682
+    user:
+      id: 3
+    sidebar: 21
+    id: 11674
+    uid: lDYWYqYSL
+    word-count: 52
     edit-user:
       id: 3
-    time: 1781439715084
-    title: Guffin
-    edit-nonce: WJjuYNepn
-    edit-time: 1781439715083
+    time: 1781833447041
+    title: '[[Test Article]] 2'
+    edit-nonce: s-7WQTbbC
+    view-type: document
+    edit-time: 1781834579902
+    refs:
+    - id: 4223
+- - string: 'external block ref: '
+    user:
+      id: 3
+    id: 11136
+    uid: aaz60uaRX
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1780882716701
+    order: 0
+    open: true
+    page:
+      id: 4225
+- - string: 'inline page ref: [[[[Test Article]] 2]]'
+    user:
+      id: 3
+    id: 11692
+    uid: qj0DTMyzl
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1781870840589
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4223
+    - id: 11674
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -92,59 +243,91 @@
     title: '!INFO'
     edit-nonce: z3caCCN5O
     edit-time: 1773788725520
-- - prevent-clean: 1774214987764
+- - heading: 2
+    string: Section 2.1
+    children:
+    - id: 4025
+    - id: 11163
     user:
       id: 3
-    id: 261
-    uid: RXwAqq0_T
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1663513397402
-    title: tags
-    edit-nonce: 2NuWcfGas
-    edit-time: 1663513397401
-- - string: hello world!
-    user:
-      id: 3
-    id: 11503
-    uid: AKAMsYfSW
+    id: 3332
+    uid: drtANJYTg
     parents:
-    - id: 11494
-    time: 1781541630598
-    order: 1
-    open: true
-    page:
-      id: 11494
-- - string: 'tags:: #Guffin'
-    user:
-      id: 3
-    id: 11504
-    uid: Up9F5BMq9
-    parents:
-    - id: 11494
-    time: 1781541639037
-    order: 2
-    open: true
-    page:
-      id: 11494
-    refs:
-    - id: 261
-    - id: 11243
-- - attrs: []
-    string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **attributes**"
-    user:
-      id: 3
-    id: 11502
-    uid: 2-2g3rmpU
-    parents:
-    - id: 11494
-    time: 1781541621457
+    - id: 3327
+    - id: 3329
+    time: 1770568965850
     order: 0
     open: true
     page:
-      id: 11494
+      id: 3327
+- - prevent-clean: 1773356473975
+    children:
+    - id: 3328
+    - id: 3329
+    - id: 3330
+    - id: 11113
+    user:
+      id: 3
+    sidebar: 20
+    id: 3327
+    uid: 6olpFWiw1
+    word-count: 176
+    edit-user:
+      id: 3
+    time: 1780882773773
+    title: '[[Test Article]] 1'
+    seen-by:
+    - id: 3
+    edit-nonce: tsZNP3aVL
+    view-type: bullet
+    edit-time: 1781136935270
     refs:
-    - id: 5450
-    - id: 5462
+    - id: 4223
+- - string: external block embed (from [[[[Test Article]] 1]])
+    children:
+    - id: 4234
+    user:
+      id: 3
+    id: 4233
+    uid: 8jkmASa1c
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1780882773773
+    order: 1
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 3327
+    - id: 4223
+- - string: 'internal block ref: ((LfXmNr-tV))'
+    user:
+      id: 3
+    id: 11135
+    uid: gxcUrCGPT
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1780882599748
+    order: 1
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4228
+- - string: Section 2
+    children:
+    - id: 4233
+    - id: 11136
+    user:
+      id: 3
+    id: 4227
+    uid: d3T1YpYig
+    parents:
+    - id: 4225
+    time: 1773091127227
+    order: 2
+    open: true
+    page:
+      id: 4225

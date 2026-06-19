@@ -36,7 +36,7 @@ Public symbols:
 - :func:`convert_highlights` — convert ``^^text^^`` → ``[text]{.mark}``.
 - :func:`convert_page_link_aliases` — convert ``[display]([[Page Name]])``
   → ``[display](Page Name)``.
-- :func:`strip_double_brackets` — remove ``[[`` and ``]]`` delimiters, leaving
+- :func:`convert_page_link` — remove ``[[`` and ``]]`` delimiters, leaving
   the inner text (e.g. ``[[Page Name]]`` → ``Page Name``).
 """
 
@@ -64,7 +64,7 @@ _HIGHLIGHT_RE: re.Pattern[str] = re.compile(r"\^\^(.+?)\^\^", re.DOTALL)
 
 # Roam alias to a page link: [display text]([[Page Name]]).  Capture group 1 is
 # the display text (no square brackets); group 2 is the page name (no square
-# brackets).  Must be applied before strip_double_brackets so the [[...]] target
+# brackets).  Must be applied before convert_page_link so the [[...]] target
 # can be identified and converted to a plain Pandoc Markdown link destination.
 _PAGE_LINK_ALIAS_RE: re.Pattern[str] = re.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")
 
@@ -131,7 +131,7 @@ def to_pandoc_md(roam_string: str) -> str:
     result = convert_color_box(result)
     result = convert_code_blocks(result)
     result = convert_page_link_aliases(result)
-    result = strip_double_brackets(result)
+    result = convert_page_link(result)
     result = convert_italics(result)
     result = convert_highlights(result)
     result = convert_bg_color_line(result)
@@ -351,7 +351,7 @@ def convert_page_link_aliases(roam_string: str) -> str:
     Markdown inline link ``[display text](Page Name)``, removing the
     ``[[``/``]]`` delimiters and using the page name as the link destination.
 
-    Must be applied before :func:`strip_double_brackets` so that the ``[[…]]``
+    Must be applied before :func:`convert_page_link` so that the ``[[…]]``
     target is identified and converted rather than blindly stripped.
 
     Args:
@@ -365,7 +365,7 @@ def convert_page_link_aliases(roam_string: str) -> str:
 
 
 @validate_call
-def strip_double_brackets(roam_string: str) -> str:
+def convert_page_link(roam_string: str) -> str:
     """Remove ``[[`` and ``]]`` delimiters from *roam_string*, leaving inner text.
 
     Handles Roam page links (``[[Page Name]]``), hashtag page links
@@ -377,10 +377,10 @@ def strip_double_brackets(roam_string: str) -> str:
 
     Examples::
 
-        strip_double_brackets("[[Page Name]]")         # → "Page Name"
-        strip_double_brackets("[[nested [[pages]]]]")  # → "nested pages"
-        strip_double_brackets("#[[multi-word tag]]")   # → "#multi-word tag"
-        strip_double_brackets("[text]")                # → "[text]"
+        convert_page_link("[[Page Name]]")         # → "Page Name"
+        convert_page_link("[[nested [[pages]]]]")  # → "nested pages"
+        convert_page_link("#[[multi-word tag]]")   # → "#multi-word tag"
+        convert_page_link("[text]")                # → "[text]"
 
     Args:
         roam_string: A Roam block string, possibly containing ``[[…]]`` constructs.

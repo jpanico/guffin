@@ -10,7 +10,7 @@ from guffin.roam_md_to_pandoc_md import (
     convert_highlights,
     convert_italics,
     convert_page_link_aliases,
-    strip_double_brackets,
+    convert_page_link,
     to_pandoc_md,
 )
 
@@ -127,44 +127,44 @@ class TestConvertPageLinkAliases:
         assert convert_page_link_aliases("") == ""
 
 
-class TestStripDoubleBrackets:
-    """Tests for strip_double_brackets — removing [[ and ]] delimiters only."""
+class TestConvertPageLink:
+    """Tests for convert_page_link — stripping [[ and ]] delimiters from Roam page links."""
 
     def test_page_link(self) -> None:
         """Test that [[Page Name]] has its double brackets stripped."""
-        assert strip_double_brackets("[[Page Name]]") == "Page Name"
+        assert convert_page_link("[[Page Name]]") == "Page Name"
 
     def test_nested_page_link(self) -> None:
         """Test that nested [[nested [[pages]]]] has all double brackets removed."""
-        assert strip_double_brackets("[[nested [[pages]]]]") == "nested pages"
+        assert convert_page_link("[[nested [[pages]]]]") == "nested pages"
 
     def test_hash_tag(self) -> None:
         """Test that #[[multi-word tag]] loses its double brackets but keeps the hash."""
-        assert strip_double_brackets("#[[multi-word tag]]") == "#multi-word tag"
+        assert convert_page_link("#[[multi-word tag]]") == "#multi-word tag"
 
     def test_single_brackets_preserved(self) -> None:
         """Test that single-bracket [text] is left unchanged (valid Pandoc Markdown syntax)."""
-        assert strip_double_brackets("[text]") == "[text]"
+        assert convert_page_link("[text]") == "[text]"
 
     def test_block_reference_unaffected(self) -> None:
         """Test that ((block-uid)) passes through unchanged since it has no double brackets."""
-        assert strip_double_brackets("((block-uid))") == "((block-uid))"
+        assert convert_page_link("((block-uid))") == "((block-uid))"
 
     def test_no_brackets(self) -> None:
         """Test that plain text without brackets is returned unchanged."""
-        assert strip_double_brackets("plain text") == "plain text"
+        assert convert_page_link("plain text") == "plain text"
 
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
-        assert strip_double_brackets("") == ""
+        assert convert_page_link("") == ""
 
     def test_mixed_content(self) -> None:
         """Test that a page link embedded in surrounding text is handled correctly."""
-        assert strip_double_brackets("See [[Page Name]] for details.") == "See Page Name for details."
+        assert convert_page_link("See [[Page Name]] for details.") == "See Page Name for details."
 
     def test_pandoc_link_after_alias_conversion(self) -> None:
         """Test that [display](Page Name) produced by alias conversion is left unchanged."""
-        assert strip_double_brackets("[display](Page Name)") == "[display](Page Name)"
+        assert convert_page_link("[display](Page Name)") == "[display](Page Name)"
 
 
 class TestConvertColorBold:
@@ -406,7 +406,7 @@ class TestToPandocMd:
 
     def test_alias_and_highlight_combined(self) -> None:
         """Test that alias and highlight conversions compose: highlight inside display text becomes a span."""
-        # strip_double_brackets runs before convert_highlights, so the [[ produced by
+        # convert_page_link runs before convert_highlights, so the [[ produced by
         # [bright]{.mark} inside the link display text is never treated as a page-link delimiter.
         assert to_pandoc_md("[^^bright^^]([[Page]])") == "[[bright]{.mark}](Page)"
 

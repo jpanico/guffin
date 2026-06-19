@@ -1,146 +1,100 @@
 root_node:
-  uid: dPZqAiKrK
-  id: 11494
-  time: 1781541477683
+  uid: SYZfEd44O
+  id: 4225
+  time: 1781833356251
   user:
     id: 3
   string: null
   order: null
   heading: null
   children:
-  - id: 11502
-  - id: 11503
-  - id: 11504
+  - id: 4226
+  - id: 4227
+  - id: 4228
+  - id: 11133
   refs:
   - id: 4223
   page: null
-  open: true
+  open: null
   parents: null
   props: null
   title: '[[Test Article]] 3'
   sidebar: 22
-  attrs:
-  - - source:
-      - uid
-      - dPZqAiKrK
-      value:
-      - uid
-      - dPZqAiKrK
-    - source:
-      - uid
-      - Up9F5BMq9
-      value:
-      - uid
-      - RXwAqq0_T
-    - source:
-      - uid
-      - Up9F5BMq9
-      value:
-      - uid
-      - HGasV4ras
-  lookup:
-  - id: 261
-  - id: 11243
-  - id: 11494
-  - id: 11504
+  attrs: null
+  lookup: null
   seen_by: null
 tree_network:
-- uid: dPZqAiKrK
-  id: 11494
-  time: 1781541477683
+- uid: SYZfEd44O
+  id: 4225
+  time: 1781833356251
   user:
     id: 3
   string: null
   order: null
   heading: null
   children:
-  - id: 11502
-  - id: 11503
-  - id: 11504
+  - id: 4226
+  - id: 4227
+  - id: 4228
+  - id: 11133
   refs:
   - id: 4223
   page: null
-  open: true
+  open: null
   parents: null
   props: null
   title: '[[Test Article]] 3'
   sidebar: 22
-  attrs:
-  - - source:
-      - uid
-      - dPZqAiKrK
-      value:
-      - uid
-      - dPZqAiKrK
-    - source:
-      - uid
-      - Up9F5BMq9
-      value:
-      - uid
-      - RXwAqq0_T
-    - source:
-      - uid
-      - Up9F5BMq9
-      value:
-      - uid
-      - HGasV4ras
-  lookup:
-  - id: 261
-  - id: 11243
-  - id: 11494
-  - id: 11504
-  seen_by: null
-- uid: AKAMsYfSW
-  id: 11503
-  time: 1781541630598
-  user:
-    id: 3
-  string: hello world!
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11494
-  open: true
-  parents:
-  - id: 11494
-  props: null
-  title: null
-  sidebar: null
   attrs: null
   lookup: null
   seen_by: null
-- uid: Up9F5BMq9
-  id: 11504
-  time: 1781541639037
+- uid: aVVGVVPLE
+  id: 4234
+  time: 1781870982030
   user:
     id: 3
-  string: 'tags:: #Guffin'
-  order: 2
+  string: '{{embed: ((drtANJYTg))}}'
+  order: 0
   heading: null
   children: null
   refs:
-  - id: 261
-  - id: 11243
+  - id: 3332
   page:
-    id: 11494
+    id: 4225
   open: true
   parents:
-  - id: 11494
+  - id: 4225
+  - id: 4227
+  - id: 4233
   props: null
   title: null
   sidebar: null
   attrs: null
   lookup: null
   seen_by: null
-- uid: 2-2g3rmpU
-  id: 11502
-  time: 1781541621457
+- uid: I1QOMCtdJ
+  id: 11133
+  time: 1780935491562
   user:
     id: 3
-  string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-    \ – DO NOT REMOVE\nFeatures:\n\n - **attributes**"
+  string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+    – DO NOT REMOVE
+
+    Features:
+
+    - This page is primarily a demonstration of different kinds of refs:
+
+    -- internal block ref (to block on this page)
+
+    -- external block ref (to block on a __different page__)
+
+    -- internal embed (of block from this page)
+
+    -- external embed (of block from __different page__)
+
+    - no`headers`
+
+    - this INFO `Callout box`, which contains Roam `page references` '
   order: 0
   heading: null
   children: null
@@ -148,14 +102,270 @@ tree_network:
   - id: 5450
   - id: 5462
   page:
-    id: 11494
+    id: 4225
   open: true
   parents:
-  - id: 11494
+  - id: 4225
   props: null
   title: null
   sidebar: null
-  attrs: []
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: dYYKZExzI
+  id: 4229
+  time: 1780882643644
+  user:
+    id: 3
+  string: internal block embed (from __this Page__)
+  order: 2
+  heading: null
+  children:
+  - id: 4232
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: l7f2Qf90W
+  id: 4230
+  time: 1773091226849
+  user:
+    id: 3
+  string: section 3.1
+  order: 0
+  heading: null
+  children:
+  - id: 4231
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: LfXmNr-tV
+  id: 4228
+  time: 1773091129652
+  user:
+    id: 3
+  string: Section 3
+  order: 3
+  heading: null
+  children:
+  - id: 4230
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: XkSI5xwe5
+  id: 4232
+  time: 1781870967600
+  user:
+    id: 3
+  string: '{{embed: ((vH2I8xRLZ))}}'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 4231
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 4229
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: LfaVt18Iw
+  id: 4226
+  time: 1773091124068
+  user:
+    id: 3
+  string: Section 1
+  order: 1
+  heading: null
+  children:
+  - id: 4229
+  - id: 11135
+  - id: 11692
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: vH2I8xRLZ
+  id: 4231
+  time: 1773091241939
+  user:
+    id: 3
+  string: section 3.1.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
+  - id: 4230
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: aaz60uaRX
+  id: 11136
+  time: 1780882716701
+  user:
+    id: 3
+  string: 'external block ref: '
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: qj0DTMyzl
+  id: 11692
+  time: 1781870840589
+  user:
+    id: 3
+  string: 'inline page ref: [[[[Test Article]] 2]]'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 4223
+  - id: 11674
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: 8jkmASa1c
+  id: 4233
+  time: 1780882773773
+  user:
+    id: 3
+  string: external block embed (from [[[[Test Article]] 1]])
+  order: 1
+  heading: null
+  children:
+  - id: 4234
+  refs:
+  - id: 3327
+  - id: 4223
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: gxcUrCGPT
+  id: 11135
+  time: 1780882599748
+  user:
+    id: 3
+  string: 'internal block ref: ((LfXmNr-tV))'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 4228
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: d3T1YpYig
+  id: 4227
+  time: 1773091127227
+  user:
+    id: 3
+  string: Section 2
+  order: 2
+  heading: null
+  children:
+  - id: 4233
+  - id: 11136
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
   lookup: null
   seen_by: null
 refs_by_id:
@@ -200,23 +410,74 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
-  '11243':
-    uid: HGasV4ras
-    id: 11243
-    time: 1781439715084
+  '4228':
+    uid: LfXmNr-tV
+    id: 4228
+    time: 1773091129652
+    user:
+      id: 3
+    string: Section 3
+    order: 3
+    heading: null
+    children:
+    - id: 4230
+    refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '4231':
+    uid: vH2I8xRLZ
+    id: 4231
+    time: 1773091241939
+    user:
+      id: 3
+    string: section 3.1.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4228
+    - id: 4230
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11674':
+    uid: lDYWYqYSL
+    id: 11674
+    time: 1781833447041
     user:
       id: 3
     string: null
     order: null
     heading: null
-    children: null
-    refs: null
+    children:
+    - id: 11675
+    - id: 11677
+    - id: 11682
+    refs:
+    - id: 4223
     page: null
     open: null
     parents: null
     props: null
-    title: Guffin
-    sidebar: null
+    title: '[[Test Article]] 2'
+    sidebar: 21
     attrs: null
     lookup: null
     seen_by: null
@@ -240,22 +501,76 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
-  '261':
-    uid: RXwAqq0_T
-    id: 261
-    time: 1663513397402
+  '3332':
+    uid: drtANJYTg
+    id: 3332
+    time: 1770568965850
+    user:
+      id: 3
+    string: Section 2.1
+    order: 0
+    heading: 2
+    children:
+    - id: 4025
+    - id: 11163
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    - id: 3329
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '3327':
+    uid: 6olpFWiw1
+    id: 3327
+    time: 1780882773773
     user:
       id: 3
     string: null
     order: null
     heading: null
-    children: null
-    refs: null
+    children:
+    - id: 3328
+    - id: 3329
+    - id: 3330
+    - id: 11113
+    refs:
+    - id: 4223
     page: null
     open: null
     parents: null
     props: null
-    title: tags
+    title: '[[Test Article]] 1'
+    sidebar: 20
+    attrs: null
+    lookup: null
+    seen_by: null
+  '4230':
+    uid: l7f2Qf90W
+    id: 4230
+    time: 1773091226849
+    user:
+      id: 3
+    string: section 3.1
+    order: 0
+    heading: null
+    children:
+    - id: 4231
+    refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4228
+    props: null
+    title: null
     sidebar: null
     attrs: null
     lookup: null
