@@ -3,81 +3,71 @@
 # Serialised with model_dump(mode='json', exclude_none=True) and yaml.dump(
 #   default_flow_style=False, allow_unicode=True, sort_keys=False).
 - vertex_type: guffin/page
-  uid: SYZfEd44O
+  uid: lDYWYqYSL
   children:
-  - I1QOMCtdJ
-  - LfaVt18Iw
-  - d3T1YpYig
-  - LfXmNr-tV
-  title: Test Article 2
+  - MmvJZhQNJ
+  - sD1C9ifkG
+  - DsogfVzX9
+  refs:
+  - LBFKibPIj
+  title: '[Test Article](x-guffin:vertex/LBFKibPIj) 2'
 - vertex_type: guffin/callout
-  uid: I1QOMCtdJ
+  uid: MmvJZhQNJ
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
-  body: 'Features:
-
-    - This page is primarily a demonstration of different kinds of refs:
-
-    -- internal block ref (to block on this page)
-
-    -- external block ref (to block on a *different page*)
-
-    -- internal embed (of block from this page)
-
-    -- external embed (of block from *different page*)
-
-    - no`headers`
-
-    - this INFO `Callout box`, which contains Roam `page references`'
+  body: "Features:\n\n - **View as** block styling"
 - vertex_type: guffin/text
-  uid: LfaVt18Iw
+  uid: sD1C9ifkG
   children:
-  - gxcUrCGPT
-  - dYYKZExzI
-  text: Section 1
+  - VH0mXM0rw
+  - YyeRpjbFD
+  - gmLJbWZYp
+  text: Bullet block 1
 - vertex_type: guffin/text
-  uid: gxcUrCGPT
-  refs:
-  - LfXmNr-tV
-  text: 'internal block ref: ((LfXmNr-tV))'
+  uid: VH0mXM0rw
+  text: Bullet block 1.1
 - vertex_type: guffin/text
-  uid: dYYKZExzI
+  uid: YyeRpjbFD
   children:
-  - XkSI5xwe5
-  text: internal block embed (from *this Page*)
+  - KUi_6ooZj
+  text: Bullet block 1.2
 - vertex_type: guffin/text
-  uid: XkSI5xwe5
-  refs:
-  - vH2I8xRLZ
-  text: '{{embed: ((vH2I8xRLZ))}}'
+  uid: KUi_6ooZj
+  text: Bullet block 1.2.1
 - vertex_type: guffin/text
-  uid: d3T1YpYig
+  uid: gmLJbWZYp
+  text: Bullet block 1.3
+- vertex_type: guffin/text
+  uid: DsogfVzX9
   children:
-  - aaz60uaRX
-  - 8jkmASa1c
-  text: Section 2
+  - 99rZhIPZW
+  - d_3REDRrO
+  - Bb49MOLyE
+  text: Document block 1
 - vertex_type: guffin/text
-  uid: aaz60uaRX
-  text: 'external block ref: '
+  uid: 99rZhIPZW
+  text: Document block 1.1
 - vertex_type: guffin/text
-  uid: 8jkmASa1c
+  uid: d_3REDRrO
   children:
-  - aVVGVVPLE
-  text: external block embed (from Test Article 1)
+  - 5SczmqJaW
+  text: Document block 1.2
 - vertex_type: guffin/text
-  uid: aVVGVVPLE
-  text: '{{embed: ((drtANJYTg))}}'
-- vertex_type: guffin/text
-  uid: LfXmNr-tV
+  uid: 5SczmqJaW
   children:
-  - l7f2Qf90W
-  text: Section 3
+  - -noi1eQMD
+  - XgPKipOsW
+  text: Bullet block 1.2.1
 - vertex_type: guffin/text
-  uid: l7f2Qf90W
-  children:
-  - vH2I8xRLZ
-  text: section 3.1
+  uid: -noi1eQMD
+  text: Bullet block 1.2.1.1
 - vertex_type: guffin/text
-  uid: vH2I8xRLZ
-  text: section 3.1.1
+  uid: XgPKipOsW
+  text: Bullet block 1.2.1.2
+- vertex_type: guffin/text
+  uid: Bb49MOLyE
+  text: Document block 1.3

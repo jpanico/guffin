@@ -77,11 +77,21 @@ def live_cache_dir() -> pathlib.Path:
 
 
 def article1_node_tree() -> NodeTree:
-    """Load and return the ``[[Test Article]] 1`` :class:`~guffin.roam.tree.NodeTree` from its YAML fixture."""
-    raw: Final[list[dict[str, object]]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_1_nodes.yaml").read_text())
-    network: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw]
-    root_node: Final[RoamNode] = next(n for n in network if node_type(n) == NodeType.ROAM_PAGE)
-    return NodeTree.build(super_network=network, root_node=root_node)
+    """Load and return the ``[[Test Article]] 1`` :class:`~guffin.roam.tree.NodeTree` from its YAML fixture.
+
+    Loads all nodes from ``test_article_1_nodes_by_uid.yaml`` (anchor subtree plus
+    referenced pages) so that :attr:`~guffin.roam.tree.NodeTree.refs_by_id` is
+    populated and page references resolve to ``x-guffin`` vertex links during
+    transcription.
+    """
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
+        (FIXTURES_YAML_DIR / "test_article_1_nodes_by_uid.yaml").read_text()
+    )
+    all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
+    root_node: Final[RoamNode] = next(
+        n for n in all_nodes if node_type(n) == NodeType.ROAM_PAGE and n.title == "[[Test Article]] 1"
+    )
+    return NodeTree.build(super_network=all_nodes, root_node=root_node)
 
 
 def article1_vertex_tree() -> VertexTree:

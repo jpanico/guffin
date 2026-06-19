@@ -33,10 +33,12 @@ class TestExportRoamTreeNoBundle:
         written .md file matches test_article_1_expected.md.
         """
         fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
-            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=False
+            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
         )
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
         mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(
-            article1_node_tree().tree_network, fetch_spec, raw_result=[[{}]]
+            all_nodes, fetch_spec, raw_result=[[{}]]
         )
         runner: CliRunner = CliRunner()
 

@@ -1,4 +1,4 @@
-# Test Article 3
+# [Test Article](x-guffin:vertex/LBFKibPIj) 3
 
 > [!NOTE]
 > **THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin) – DO NOT REMOVE**
@@ -20,7 +20,7 @@
 
 Section 1
 
-- inline page ref: Test Article 2
+- inline page ref: [Test Article 2](x-guffin:vertex/lDYWYqYSL)
 - internal block ref: ((LfXmNr-tV))
 - internal block embed (from *this Page*)
   - {{embed: ((vH2I8xRLZ))}}
@@ -28,7 +28,7 @@ Section 1
 Section 2
 
 - external block ref:
-- external block embed (from Test Article 1)
+- external block embed (from [Test Article 1](x-guffin:vertex/6olpFWiw1))
   - {{embed: ((drtANJYTg))}}
 
 Section 3

@@ -19,7 +19,7 @@ root_node:
   parents: null
   props: null
   title: '[[Test Article]] 0'
-  sidebar: 18
+  sidebar: 19
   attrs: null
   lookup: null
   seen_by: null
@@ -778,7 +778,7 @@ tree_network:
   parents: null
   props: null
   title: '[[Test Article]] 0'
-  sidebar: 18
+  sidebar: 19
   attrs: null
   lookup: null
   seen_by: null

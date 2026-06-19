@@ -9,9 +9,14 @@
   - MRKYttxrM
   - Odbqghm-D
   - jVQvHi40O
-  title: Test Article 0
+  refs:
+  - LBFKibPIj
+  title: '[Test Article](x-guffin:vertex/LBFKibPIj) 0'
 - vertex_type: guffin/callout
   uid: qnCiceZgk
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
@@ -111,9 +116,13 @@
     - this is the 3rd line'
 - vertex_type: guffin/block-quote
   uid: gq_29_H-7
+  refs:
+  - OexZiLR_O
   text: This is a Roam standard single line Block Quote
 - vertex_type: guffin/block-quote
   uid: r09kXvUg-
+  refs:
+  - OexZiLR_O
   text: 'This is a Roam standard multi-line Block Quote
 
     this is the 2nd line

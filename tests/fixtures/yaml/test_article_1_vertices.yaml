@@ -9,9 +9,14 @@
   - 0EgPyHSZi
   - wdMgyBiP9
   - 40bvW14UU
-  title: Test Article 1
+  refs:
+  - LBFKibPIj
+  title: '[Test Article](x-guffin:vertex/LBFKibPIj) 1'
 - vertex_type: guffin/callout
   uid: cNW8lmXIM
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE

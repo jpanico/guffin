@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
-"""Regenerate all six test fixture files for a given Roam page title or node UID.
+"""Regenerate all fixture files for a given Roam page title or node UID.
+
+All fixtures are produced from a single ``include_refs=True`` fetch so that
+referenced-page nodes are available in ``refs_by_id`` and page references in
+vertex text fields resolve to ``x-guffin`` vertex links.
 
 Writes to tests/fixtures/yaml/ and tests/fixtures/markdown/:
 
-  No-refs path (include_refs=False):
-    <prefix>_nodes.yaml      — serialised NodeNetwork
-    <prefix>_vertices.yaml   — serialised VertexTree
-    <prefix>_expected.md     — rendered GFM
-
-  With-refs path (include_refs=True):
-    <prefix>_raw_result.yaml    — raw Datalog result before RoamNode parsing
-    <prefix>_anchor_tree.yaml   — serialised NodeTree (anchor subtree)
-    <prefix>_nodes_by_uid.yaml  — serialised NodesByUid mapping
+    <prefix>_nodes.yaml         — anchor-subtree RoamNodes (serialised)
+    <prefix>_vertices.yaml      — VertexTree (serialised)
+    <prefix>_expected.md        — rendered GFM
+    <prefix>_raw_result.yaml    — raw Datalog wire response
+    <prefix>_anchor_tree.yaml   — serialised NodeTree (anchor subtree + refs)
+    <prefix>_nodes_by_uid.yaml  — all fetched nodes keyed by UID
 
   Optional (--pdf), to tests/fixtures/pdf/:
     <shell-safe-title>.pdf      — byte-reproducible baseline PDF (requires Typst on PATH)
+
+  Optional (--mdbundle), to tests/fixtures/mdbundle/:
+    <shell-safe-title>.mdbundle/  — baseline mdbundle directory
 
 Run from the project root with the venv active, one invocation per TestArticle
 member (qualifier → --prefix):
@@ -46,7 +50,7 @@ from guffin.render.pdf_rendering import render as render_pdf
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
-from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, anchor_node
+from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult
 from guffin.roam_tree_to_vertex_tree import transcribe
 from guffin.roam.tree import NodeTree
 
@@ -191,15 +195,17 @@ def main() -> None:
     )
     anchor: Final[NodeFetchAnchor] = NodeFetchAnchor(qualifier=qualifier)
 
-    # -------------------------------------------------------------------------
-    # Path A: include_refs=False  →  nodes, vertices, expected markdown
-    # -------------------------------------------------------------------------
-    print(f"Fetching '{qualifier}' (include_refs=False) …")
-    result_no_refs: Final[NodeFetchResult] = FetchRoamNodes.fetch_roam_nodes(
-        anchor=anchor, api_endpoint=endpoint, include_refs=False
+    # Single fetch with include_refs=True — used for all fixtures
+    print(f"Fetching '{qualifier}' (include_refs=True) …")
+    result: Final[NodeFetchResult] = FetchRoamNodes.fetch_roam_nodes(
+        anchor=anchor, api_endpoint=endpoint, include_refs=True
     )
-    nodes: Final[list[RoamNode]] = list(result_no_refs.network)
-    print(f"  fetched {len(nodes)} node(s)")
+    assert result.anchor_tree is not None
+    anchor_tree: Final[NodeTree] = result.anchor_tree
+    nodes: Final[list[RoamNode]] = list(anchor_tree.tree_network)
+    vertex_tree: Final[VertexTree] = transcribe(anchor_tree)
+    print(f"  fetched {len(result.network)} node(s) total, {len(nodes)} anchor node(s)")
+    print(f"  transcribed {len(vertex_tree.vertices)} vertex/vertices")
 
     # Fixture 1: nodes YAML
     nodes_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_nodes.yaml"
@@ -220,12 +226,6 @@ def main() -> None:
         encoding="utf-8",
     )
     print(f"  wrote {nodes_path}")
-
-    # Intermediate: build NodeTree and transcribe to VertexTree
-    root_node: Final[RoamNode] = anchor_node(nodes, anchor)
-    node_tree: Final[NodeTree] = NodeTree.build(super_network=nodes, root_node=root_node)
-    vertex_tree: Final[VertexTree] = transcribe(node_tree)
-    print(f"  transcribed {len(vertex_tree.vertices)} vertex/vertices")
 
     # Fixture 2: vertices YAML
     vertices_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_vertices.yaml"
@@ -277,31 +277,19 @@ def main() -> None:
         else:
             _update_readme_article_features(qualifier, features_text)
 
-    # -------------------------------------------------------------------------
-    # Path B: include_refs=True  →  raw_result, anchor_tree, nodes_by_uid
-    # -------------------------------------------------------------------------
-    print(f"Fetching '{qualifier}' (include_refs=True) …")
-    result_with_refs: Final[NodeFetchResult] = FetchRoamNodes.fetch_roam_nodes(
-        anchor=anchor, api_endpoint=endpoint, include_refs=True
-    )
-    print(f"  fetched {len(result_with_refs.network)} node(s) (with refs)")
-    assert result_with_refs.anchor_tree is not None
-    vertex_tree_with_refs: Final[VertexTree] = transcribe(result_with_refs.anchor_tree)
-
     # Fixture 4: raw_result YAML
     raw_result_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_raw_result.yaml"
     raw_result_path.write_text(
-        yaml.dump(result_with_refs.raw_result, default_flow_style=False, allow_unicode=True, sort_keys=False),
+        yaml.dump(result.raw_result, default_flow_style=False, allow_unicode=True, sort_keys=False),
         encoding="utf-8",
     )
     print(f"  wrote {raw_result_path}")
 
     # Fixture 5: anchor_tree YAML
     anchor_tree_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_anchor_tree.yaml"
-    assert result_with_refs.anchor_tree is not None
     anchor_tree_path.write_text(
         yaml.dump(
-            result_with_refs.anchor_tree.model_dump(mode="json"),
+            anchor_tree.model_dump(mode="json"),
             default_flow_style=False,
             allow_unicode=True,
             sort_keys=False,
@@ -312,10 +300,10 @@ def main() -> None:
 
     # Fixture 6: nodes_by_uid YAML
     nodes_by_uid_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_nodes_by_uid.yaml"
-    assert result_with_refs.nodes_by_uid is not None
+    assert result.nodes_by_uid is not None
     nodes_by_uid_path.write_text(
         yaml.dump(
-            {uid: node.model_dump(mode="json") for uid, node in result_with_refs.nodes_by_uid.items()},
+            {uid: node.model_dump(mode="json") for uid, node in result.nodes_by_uid.items()},
             default_flow_style=False,
             allow_unicode=True,
             sort_keys=False,
@@ -324,22 +312,19 @@ def main() -> None:
     )
     print(f"  wrote {nodes_by_uid_path}")
 
-    # Fixture 7 (optional, --pdf): byte-reproducible baseline PDF under tests/fixtures/pdf/.
-    # Uses the with-refs vertex tree to match the CLI's include_refs=True fetch behaviour,
-    # ensuring page references resolve to x-guffin vertex links in the fixture.
+    # Fixture 7 (optional, --pdf): byte-reproducible baseline PDF under tests/fixtures/pdf/
     if args.pdf:
         FIXTURES_PDF.mkdir(parents=True, exist_ok=True)
         os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
-        render_pdf(vertex_tree_with_refs, filename_stem=qualifier, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
+        render_pdf(vertex_tree, filename_stem=qualifier, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
         pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{shell_safe_filename(qualifier)}.pdf"
         print(f"  wrote {pdf_path}")
 
-    # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/.
-    # Uses the with-refs vertex tree for the same reason as --pdf above.
+    # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/
     if args.mdbundle:
         FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
         render(
-            vertex_tree_with_refs,
+            vertex_tree,
             filename_stem=qualifier,
             output_dir=FIXTURES_MDBUNDLE,
             api_endpoint=endpoint,

@@ -9,9 +9,14 @@
   - LfaVt18Iw
   - d3T1YpYig
   - LfXmNr-tV
-  title: Test Article 3
+  refs:
+  - LBFKibPIj
+  title: '[Test Article](x-guffin:vertex/LBFKibPIj) 3'
 - vertex_type: guffin/callout
   uid: I1QOMCtdJ
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
@@ -39,7 +44,10 @@
   text: Section 1
 - vertex_type: guffin/text
   uid: qj0DTMyzl
-  text: 'inline page ref: Test Article 2'
+  refs:
+  - LBFKibPIj
+  - lDYWYqYSL
+  text: 'inline page ref: [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
 - vertex_type: guffin/text
   uid: gxcUrCGPT
   refs:
@@ -68,9 +76,14 @@
   uid: 8jkmASa1c
   children:
   - aVVGVVPLE
-  text: external block embed (from Test Article 1)
+  refs:
+  - 6olpFWiw1
+  - LBFKibPIj
+  text: external block embed (from [Test Article 1](x-guffin:vertex/6olpFWiw1))
 - vertex_type: guffin/text
   uid: aVVGVVPLE
+  refs:
+  - drtANJYTg
   text: '{{embed: ((drtANJYTg))}}'
 - vertex_type: guffin/text
   uid: LfXmNr-tV

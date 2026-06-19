@@ -1,4 +1,4 @@
-# Test Article 0
+# [Test Article](x-guffin:vertex/LBFKibPIj) 0
 
 > [!NOTE]
 > **THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin) – DO NOT REMOVE**

@@ -1,36 +1,24 @@
-# Test Article 2
+# [Test Article](x-guffin:vertex/LBFKibPIj) 2
 
 > [!NOTE]
 > **THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin) – DO NOT REMOVE**
 >
 > Features:
 >
-> - This page is primarily a demonstration of different kinds of refs:
->
-> – internal block ref (to block on this page)
->
-> – external block ref (to block on a *different page*)
->
-> – internal embed (of block from this page)
->
-> – external embed (of block from *different page*)
->
-> - no`headers`
-> - this INFO `Callout box`, which contains Roam `page references`
+> - **View as** block styling
 
-Section 1
+Bullet block 1
 
-- internal block ref: ((LfXmNr-tV))
-- internal block embed (from *this Page*)
-  - {{embed: ((vH2I8xRLZ))}}
+- Bullet block 1.1
+- Bullet block 1.2
+  - Bullet block 1.2.1
+- Bullet block 1.3
 
-Section 2
+Document block 1
 
-- external block ref:
-- external block embed (from Test Article 1)
-  - {{embed: ((drtANJYTg))}}
-
-Section 3
-
-- section 3.1
-  - section 3.1.1
+- Document block 1.1
+- Document block 1.2
+  - Bullet block 1.2.1
+    - Bullet block 1.2.1.1
+    - Bullet block 1.2.1.2
+- Document block 1.3

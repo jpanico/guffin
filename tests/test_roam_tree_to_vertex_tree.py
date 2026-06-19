@@ -849,7 +849,7 @@ class TestTranscribeArticleFixture:
         """Test that transcribing test_article_1_nodes.yaml produces the vertices in test_article_1_vertices.yaml."""
         node_tree = article1_node_tree()
         nodes = list(node_tree.tree_network)
-        id_map: dict[Id, RoamNode] = {n.id: n for n in nodes}
+        id_map: dict[Id, RoamNode] = {n.id: n for n in nodes} | node_tree.refs_by_id
         min_level = min_effective_heading_level(node_tree.tree_network)
         heading_offset: int = (1 - min_level) if min_level is not None else 0
 
