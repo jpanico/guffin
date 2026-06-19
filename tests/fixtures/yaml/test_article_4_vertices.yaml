@@ -37,10 +37,12 @@
   text: '[highlight]{.mark} color'
 - vertex_type: guffin/text
   uid: 9a_6taJAn
-  text: '#c:ORANGE [This span is highlighted orange.]{.mark} This span is not.'
+  text: '[This span is highlighted orange.]{.mark highlight-color="orange"} This span
+    is not.'
 - vertex_type: guffin/text
   uid: rArYyVVBS
-  text: '#c:FUCHSIA [This span is highlighted orange.]{.mark} This span is not.'
+  text: '[This span is highlighted fuchsia.]{.mark highlight-color="fuchsia"} This
+    span is not.'
 - vertex_type: guffin/text
   uid: ShnYeNIu5
   text: ''

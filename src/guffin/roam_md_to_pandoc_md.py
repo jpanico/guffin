@@ -22,6 +22,8 @@ Public symbols:
   return the Pandoc Markdown result.
 - :func:`convert_color_bold` — convert Color Highlighter ``#c:COLOR **text**``
   spans → ``[**text**]{color="color"}`` bracketed spans.
+- :func:`convert_color_highlight` — convert Color Highlighter ``#c:COLOR ^^text^^``
+  spans → ``[text]{.mark highlight-color="color"}`` bracketed spans.
 - :func:`convert_code_blocks` — reposition Roam fenced code blocks so the
   opening and closing ```` ``` ```` fences each sit on their own line.
 - :func:`convert_italics` — convert ``__italic__`` → ``*italic*``.
@@ -70,6 +72,10 @@ _DOUBLE_CLOSE_RE: re.Pattern[str] = re.compile(r"\]\]")
 # name (e.g. ORANGE); group 2 is the bold content between the ** delimiters.
 _COLOR_BOLD_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) \*\*(.+?)\*\*")
 
+# Color Highlighter extension: #c:COLOR ^^highlighted text^^.  Group 1 is the
+# color name (e.g. ORANGE); group 2 is the highlight content between ^^ delimiters.
+_COLOR_HIGHLIGHT_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) \^\^(.+?)\^\^")
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -96,12 +102,40 @@ def to_pandoc_md(roam_string: str) -> str:
     """
     result: str = roam_string
     result = convert_color_bold(result)
+    result = convert_color_highlight(result)
     result = convert_code_blocks(result)
     result = convert_page_link_aliases(result)
     result = strip_double_brackets(result)
     result = convert_italics(result)
     result = convert_highlights(result)
     return result
+
+
+@validate_call
+def convert_color_highlight(roam_string: str) -> str:
+    """Convert Color Highlighter colorized highlight spans to Pandoc bracketed spans.
+
+    The Color Highlighter Roam extension uses ``#c:COLOR ^^text^^`` to render
+    text with a named background-color highlight.  Each such span is converted
+    to a Pandoc bracketed span with class ``mark`` and a ``highlight-color``
+    attribute: ``[text]{.mark highlight-color="orange"}``.  The color name is
+    lowercased for CSS compatibility.  The ``mark`` class preserves compatibility
+    with the default highlight pipeline; ``highlight-color`` signals that a
+    specific color was requested.  Must run before :func:`convert_highlights` so
+    that the ``^^...^^`` delimiters are still present.
+
+    Args:
+        roam_string: A Roam block string, possibly containing
+            ``#c:COLOR ^^text^^`` spans.
+
+    Returns:
+        The string with all ``#c:COLOR ^^text^^`` spans replaced by
+        ``[text]{.mark highlight-color="color"}`` bracketed spans.
+    """
+    return _COLOR_HIGHLIGHT_RE.sub(
+        lambda match: f'[{match.group(2)}]{{.mark highlight-color="{match.group(1).lower()}"}}',
+        roam_string,
+    )
 
 
 @validate_call

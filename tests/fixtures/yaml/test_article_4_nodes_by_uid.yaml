@@ -206,10 +206,10 @@ Rjt1IvrVq:
 rArYyVVBS:
   uid: rArYyVVBS
   id: 11658
-  time: 1781829545274
+  time: 1781829998880
   user:
     id: 3
-  string: '#c:FUCHSIA ^^This span is highlighted orange.^^ This span is not.'
+  string: '#c:FUCHSIA ^^This span is highlighted fuchsia.^^ This span is not.'
   order: 1
   heading: null
   children: null

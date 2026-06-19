@@ -3,6 +3,7 @@
 from guffin.roam_md_to_pandoc_md import (
     convert_code_blocks,
     convert_color_bold,
+    convert_color_highlight,
     convert_highlights,
     convert_italics,
     convert_page_link_aliases,
@@ -193,6 +194,40 @@ class TestConvertColorBold:
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
         assert convert_color_bold("") == ""
+
+
+class TestConvertColorHighlight:
+    """Tests for convert_color_highlight — #c:COLOR ^^text^^ → [text]{.mark highlight-color="color"}."""
+
+    def test_basic(self) -> None:
+        """Test that #c:COLOR ^^text^^ is converted to a Pandoc bracketed span with mark class."""
+        assert convert_color_highlight("#c:ORANGE ^^highlighted text^^") == (
+            '[highlighted text]{.mark highlight-color="orange"}'
+        )
+
+    def test_trailing_text_preserved(self) -> None:
+        """Test that text following the highlight span is left unchanged."""
+        assert convert_color_highlight("#c:ORANGE ^^This span is highlighted.^^ This span is not.") == (
+            '[This span is highlighted.]{.mark highlight-color="orange"} This span is not.'
+        )
+
+    def test_color_name_lowercased(self) -> None:
+        """Test that the color name is lowercased in the output attribute."""
+        assert convert_color_highlight("#c:FUCHSIA ^^text^^") == '[text]{.mark highlight-color="fuchsia"}'
+
+    def test_multiple_spans(self) -> None:
+        """Test that multiple color-highlight spans in one string are all converted."""
+        assert convert_color_highlight("#c:RED ^^foo^^ and #c:GREEN ^^bar^^") == (
+            '[foo]{.mark highlight-color="red"} and [bar]{.mark highlight-color="green"}'
+        )
+
+    def test_no_color_span(self) -> None:
+        """Test that plain highlight text without a #c: prefix is returned unchanged."""
+        assert convert_color_highlight("^^highlight^^") == "^^highlight^^"
+
+    def test_empty_string(self) -> None:
+        """Test that an empty string is returned unchanged."""
+        assert convert_color_highlight("") == ""
 
 
 class TestConvertCodeBlocks:

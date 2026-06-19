@@ -126,7 +126,7 @@
   time: 0
   user:
     id: 0
-  string: '#c:FUCHSIA ^^This span is highlighted orange.^^ This span is not.'
+  string: '#c:FUCHSIA ^^This span is highlighted fuchsia.^^ This span is not.'
   order: 1
   heading: null
   children: null

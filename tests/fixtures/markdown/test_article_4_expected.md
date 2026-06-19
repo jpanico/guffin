@@ -14,5 +14,5 @@
 
 <mark>highlight</mark> color
 
-- \#c:ORANGE <mark>This span is highlighted orange.</mark> This span is not.
-- \#c:FUCHSIA <mark>This span is highlighted orange.</mark> This span is not.
+- <mark style="background-color: orange">This span is highlighted orange.</mark> This span is not.
+- <mark style="background-color: fuchsia">This span is highlighted fuchsia.</mark> This span is not.

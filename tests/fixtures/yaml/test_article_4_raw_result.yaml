@@ -55,8 +55,8 @@
       id: 3
     time: 1781820678622
     title: '[[Test Article]] 4'
-    edit-nonce: -d8VEDOmd
-    edit-time: 1781829545274
+    edit-nonce: HFkoV4JYd
+    edit-time: 1781829998880
     refs:
     - id: 4223
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
@@ -129,7 +129,7 @@
       id: 11643
     refs:
     - id: 11454
-- - string: '#c:FUCHSIA ^^This span is highlighted orange.^^ This span is not.'
+- - string: '#c:FUCHSIA ^^This span is highlighted fuchsia.^^ This span is not.'
     user:
       id: 3
     id: 11658
@@ -137,7 +137,7 @@
     parents:
     - id: 11643
     - id: 11657
-    time: 1781829545274
+    time: 1781829998880
     order: 1
     open: true
     page:
