@@ -100,6 +100,30 @@ logger = logging.getLogger(__name__)
 _CONTAINS_CODE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(r"(?m)^```")
 
 
+def _strip_links(inlines: list[pf.Inline]) -> list[pf.Inline]:
+    """Return *inlines* with every Link replaced by its display-text content.
+
+    Used to sanitize metadata fields (e.g. the document title) where
+    Pandoc's Typst writer would embed a ``#link("url")[text]`` call inside
+    a double-quoted Typst string, producing nested quotes that break the
+    Typst parser.  Stripping links preserves the display text while removing
+    the hyperlink target.
+
+    Args:
+        inlines: Panflute inline elements to filter.
+
+    Returns:
+        A new list with Link elements unwrapped to their content inlines.
+    """
+    result: list[pf.Inline] = []
+    for inline in inlines:
+        if isinstance(inline, pf.Link):
+            result.extend(list(inline.content))
+        else:
+            result.append(inline)
+    return result
+
+
 def _extract_bg_color(inlines: list[pf.Inline]) -> tuple[str, list[pf.Inline]] | None:
     """Return ``(color, inner_inlines)`` when *inlines* is a single bg-color Span.
 
@@ -752,7 +776,7 @@ def vertex_tree_to_pandoc(
         if title_in_header:
             blocks.append(pf.Header(*title_inlines, level=1))
         else:
-            metadata["title"] = pf.MetaInlines(*title_inlines)
+            metadata["title"] = pf.MetaInlines(*_strip_links(list(title_inlines)))
         blocks.extend(build_child_blocks(root.children or [], uid_map, image_files, inline_map, depth=1))
     else:
         blocks.extend(_vertex_to_blocks(root, uid_map, image_files, inline_map, depth=0))

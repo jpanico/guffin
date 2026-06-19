@@ -263,21 +263,6 @@ def main() -> None:
     md_path.write_text(rendered, encoding="utf-8")
     print(f"  wrote {md_path}")
 
-    # Fixture 7 (optional, --pdf): byte-reproducible baseline PDF under tests/fixtures/pdf/
-    if args.pdf:
-        FIXTURES_PDF.mkdir(parents=True, exist_ok=True)
-        os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
-        render_pdf(vertex_tree, filename_stem=qualifier, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
-        pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{shell_safe_filename(qualifier)}.pdf"
-        print(f"  wrote {pdf_path}")
-
-    # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/
-    if args.mdbundle:
-        FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
-        render(vertex_tree, filename_stem=qualifier, output_dir=FIXTURES_MDBUNDLE, api_endpoint=endpoint, bundle=True)
-        mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{shell_safe_filename(qualifier)}.mdbundle"
-        print(f"  wrote {mdbundle_path}")
-
     # Update README Article Features section from callout node
     callout_node: Final[RoamNode | None] = next(
         (n for n in nodes if n.string is not None and n.string.startswith(_CALLOUT_MARKER)),
@@ -300,6 +285,8 @@ def main() -> None:
         anchor=anchor, api_endpoint=endpoint, include_refs=True
     )
     print(f"  fetched {len(result_with_refs.network)} node(s) (with refs)")
+    assert result_with_refs.anchor_tree is not None
+    vertex_tree_with_refs: Final[VertexTree] = transcribe(result_with_refs.anchor_tree)
 
     # Fixture 4: raw_result YAML
     raw_result_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_raw_result.yaml"
@@ -336,6 +323,30 @@ def main() -> None:
         encoding="utf-8",
     )
     print(f"  wrote {nodes_by_uid_path}")
+
+    # Fixture 7 (optional, --pdf): byte-reproducible baseline PDF under tests/fixtures/pdf/.
+    # Uses the with-refs vertex tree to match the CLI's include_refs=True fetch behaviour,
+    # ensuring page references resolve to x-guffin vertex links in the fixture.
+    if args.pdf:
+        FIXTURES_PDF.mkdir(parents=True, exist_ok=True)
+        os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
+        render_pdf(vertex_tree_with_refs, filename_stem=qualifier, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
+        pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{shell_safe_filename(qualifier)}.pdf"
+        print(f"  wrote {pdf_path}")
+
+    # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/.
+    # Uses the with-refs vertex tree for the same reason as --pdf above.
+    if args.mdbundle:
+        FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
+        render(
+            vertex_tree_with_refs,
+            filename_stem=qualifier,
+            output_dir=FIXTURES_MDBUNDLE,
+            api_endpoint=endpoint,
+            bundle=True,
+        )
+        mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{shell_safe_filename(qualifier)}.mdbundle"
+        print(f"  wrote {mdbundle_path}")
 
     print("Done.")
 
