@@ -503,7 +503,10 @@ _RAW_RESULTS_EXCLUDED_ATTRS: Final[frozenset[str]] = frozenset(
         "sidebar",
         "time",
         "user",
-        "view-type",
+        "edit-nonce",
+        "edit-time",
+        "edit-user",
+        "word-count",
     }
 )
 """Pull-block attribute keys suppressed from the raw-results Rich table."""
