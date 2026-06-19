@@ -28,8 +28,9 @@ This directory contains test data used by the guffin test suite.
 
 ## Test Articles
 
-Four live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
-`[[Test Article]] 1`, `[[Test Article]] 2`, and `[[Test Article]] 3`.
+Five live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
+`[[Test Article]] 1`, `[[Test Article]] 2`, `[[Test Article]] 3`, and
+`[[Test Article]] 4`.
 
 ### Article Features
 
@@ -74,6 +75,10 @@ Four live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 #### `[[Test Article]] 3`
 
 - **attributes**
+
+#### `[[Test Article]] 4`
+
+- **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter
 
 ### Fixtures
 
@@ -121,4 +126,5 @@ python tests/regen_fixtures.py "[[Test Article]] 0" --prefix test_article_0
 python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1
 python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
 python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
+python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
 ```

@@ -52,6 +52,7 @@ _TEMPLATE_PACKAGE: Final[str] = "guffin.templates"
 _TEMPLATE_ENTRY: Final[str] = "bergfink.typst"
 _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 _TYPST_CALLOUT_FILTER: Final[Path] = Path(__file__).parent / "typst_callout.lua"
+_TYPST_COLOR_SPAN_FILTER: Final[Path] = Path(__file__).parent / "typst_color_span.lua"
 
 
 def _bundled_templates_dir() -> Path:
@@ -90,7 +91,10 @@ def _dump_typst_sources(
     if not os.environ.get("GUFFIN_DUMP_TYPST"):
         return
     typst_body: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
-        json_str, "typst", format="json", extra_args=[f"--lua-filter={_TYPST_CALLOUT_FILTER}"]
+        json_str,
+        "typst",
+        format="json",
+        extra_args=[f"--lua-filter={_TYPST_CALLOUT_FILTER}", f"--lua-filter={_TYPST_COLOR_SPAN_FILTER}"],
     )
     typst_body_path: Final[Path] = output_dir / f"{stem}.body.typ"
     typst_body_path.write_text(typst_body, encoding="utf-8")
@@ -99,6 +103,7 @@ def _dump_typst_sources(
         f"--template={template_path}",
         f"--resource-path={bundled_dir}",
         f"--lua-filter={_TYPST_CALLOUT_FILTER}",
+        f"--lua-filter={_TYPST_COLOR_SPAN_FILTER}",
         "-V",
         "listings=true",
     ]
@@ -178,6 +183,7 @@ def render(
         f"--template={template_path}",
         f"--resource-path={bundled_dir}",
         f"--lua-filter={_TYPST_CALLOUT_FILTER}",
+        f"--lua-filter={_TYPST_COLOR_SPAN_FILTER}",
         "-V",
         "listings=true",
     ]

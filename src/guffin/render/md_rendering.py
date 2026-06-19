@@ -24,6 +24,7 @@ from typing import Final
 
 _RENDER_DIR: Final[Path] = Path(__file__).parent
 _GFM_CALLOUT_FILTER: Final[Path] = _RENDER_DIR / "gfm_callout.lua"
+_GFM_COLOR_SPAN_FILTER: Final[Path] = _RENDER_DIR / "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[Path] = _RENDER_DIR / "gfm_image.lua"
 _GFM_MARK_FILTER: Final[Path] = _RENDER_DIR / "gfm_mark.lua"
 
@@ -116,6 +117,7 @@ def render(
             extra_args=[
                 "--wrap=none",
                 f"--lua-filter={_GFM_CALLOUT_FILTER}",
+                f"--lua-filter={_GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={_GFM_IMAGE_FILTER}",
                 f"--lua-filter={_GFM_MARK_FILTER}",
             ],
@@ -132,7 +134,12 @@ def render(
             json_str,
             "gfm",
             format="json",
-            extra_args=["--wrap=none", f"--lua-filter={_GFM_CALLOUT_FILTER}", f"--lua-filter={_GFM_MARK_FILTER}"],
+            extra_args=[
+                "--wrap=none",
+                f"--lua-filter={_GFM_CALLOUT_FILTER}",
+                f"--lua-filter={_GFM_COLOR_SPAN_FILTER}",
+                f"--lua-filter={_GFM_MARK_FILTER}",
+            ],
         )
         output_path: Final[Path] = output_dir / f"{stem}.md"
         output_path.write_text(no_bundle_md, encoding="utf-8")

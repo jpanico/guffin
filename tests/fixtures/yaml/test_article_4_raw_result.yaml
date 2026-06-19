@@ -1,0 +1,200 @@
+- - string: ^^highlight^^ color
+    children:
+    - id: 11653
+    - id: 11658
+    user:
+      id: 3
+    id: 11657
+    uid: Jt4-6SLWM
+    parents:
+    - id: 11643
+    time: 1781829128224
+    order: 2
+    open: true
+    page:
+      id: 11643
+- - prevent-clean: 1781829493859
+    user:
+      id: 3
+    id: 11454
+    uid: iF2Ey_unj
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1781525379738
+    title: c:ORANGE
+    edit-nonce: sRoBTAin0
+    edit-time: 1781525379737
+- - prevent-clean: 1773090962400
+    children:
+    - id: 4224
+    user:
+      id: 3
+    id: 4223
+    uid: LBFKibPIj
+    word-count: 9
+    edit-user:
+      id: 3
+    time: 1773090962400
+    title: Test Article
+    edit-nonce: 0iIGJ1buX
+    edit-time: 1780843750454
+- - prevent-clean: 1781820678622
+    children:
+    - id: 11647
+    - id: 11654
+    - id: 11657
+    - id: 11662
+    user:
+      id: 3
+    sidebar: 23
+    id: 11643
+    uid: mkHZLUn8Q
+    word-count: 77
+    edit-user:
+      id: 3
+    time: 1781820678622
+    title: '[[Test Article]] 4'
+    edit-nonce: -d8VEDOmd
+    edit-time: 1781829545274
+    refs:
+    - id: 4223
+- - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
+      \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
+    user:
+      id: 3
+    id: 11647
+    uid: yd7MFbFou
+    parents:
+    - id: 11643
+    time: 1781820920803
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 5450
+    - id: 5462
+- - prevent-clean: 1781542258419
+    user:
+      id: 3
+    id: 5450
+    uid: OexZiLR_O
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773784559632
+    title: '>'
+    edit-nonce: 2POM1zS7j
+    edit-time: 1773784559631
+- - string: ''
+    user:
+      id: 3
+    id: 11662
+    uid: ShnYeNIu5
+    parents:
+    - id: 11643
+    time: 1781829463803
+    order: 3
+    open: true
+    page:
+      id: 11643
+- - string: '**BOLD** text color'
+    children:
+    - id: 11648
+    - id: 11655
+    user:
+      id: 3
+    id: 11654
+    uid: c9kTivLOo
+    parents:
+    - id: 11643
+    time: 1781829099712
+    order: 1
+    open: true
+    page:
+      id: 11643
+- - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+    user:
+      id: 3
+    id: 11648
+    uid: Rjt1IvrVq
+    parents:
+    - id: 11643
+    - id: 11654
+    time: 1781828921582
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
+- - string: '#c:FUCHSIA ^^This span is highlighted orange.^^ This span is not.'
+    user:
+      id: 3
+    id: 11658
+    uid: rArYyVVBS
+    parents:
+    - id: 11643
+    - id: 11657
+    time: 1781829545274
+    order: 1
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 5844
+- - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+    user:
+      id: 3
+    id: 11653
+    uid: 9a_6taJAn
+    parents:
+    - id: 11643
+    - id: 11657
+    time: 1781828879037
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
+- - string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
+    user:
+      id: 3
+    id: 11655
+    uid: AE3uVp_QL
+    parents:
+    - id: 11643
+    - id: 11654
+    time: 1781829065570
+    order: 1
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 5844
+- - prevent-clean: 1781542258419
+    user:
+      id: 3
+    id: 5462
+    uid: ZgUWBRb7j
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788725523
+    title: '!INFO'
+    edit-nonce: z3caCCN5O
+    edit-time: 1773788725520
+- - prevent-clean: 1781829523630
+    user:
+      id: 3
+    id: 5844
+    uid: lF-qY0Xrs
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773955788224
+    title: c:FUCHSIA
+    edit-nonce: WMGpHVOcr
+    edit-time: 1773955788222

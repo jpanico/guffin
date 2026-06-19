@@ -2,6 +2,7 @@
 
 from guffin.roam_md_to_pandoc_md import (
     convert_code_blocks,
+    convert_color_bold,
     convert_highlights,
     convert_italics,
     convert_page_link_aliases,
@@ -160,6 +161,38 @@ class TestStripDoubleBrackets:
     def test_pandoc_link_after_alias_conversion(self) -> None:
         """Test that [display](Page Name) produced by alias conversion is left unchanged."""
         assert strip_double_brackets("[display](Page Name)") == "[display](Page Name)"
+
+
+class TestConvertColorBold:
+    """Tests for convert_color_bold — Color Highlighter #c:COLOR **text** → [**text**]{color="color"}."""
+
+    def test_basic(self) -> None:
+        """Test that #c:COLOR **text** is converted to a Pandoc bracketed span."""
+        assert convert_color_bold("#c:ORANGE **bold text**") == '[**bold text**]{color="orange"}'
+
+    def test_trailing_text_preserved(self) -> None:
+        """Test that text following the bold span is left unchanged."""
+        assert convert_color_bold("#c:ORANGE **This span is orange**. This span is not.") == (
+            '[**This span is orange**]{color="orange"}. This span is not.'
+        )
+
+    def test_color_name_lowercased(self) -> None:
+        """Test that the color name is lowercased in the output attribute."""
+        assert convert_color_bold("#c:BLUE **text**") == '[**text**]{color="blue"}'
+
+    def test_multiple_spans(self) -> None:
+        """Test that multiple color-bold spans in one string are all converted."""
+        assert convert_color_bold("#c:RED **foo** and #c:GREEN **bar**") == (
+            '[**foo**]{color="red"} and [**bar**]{color="green"}'
+        )
+
+    def test_no_color_span(self) -> None:
+        """Test that plain bold text without a #c: prefix is returned unchanged."""
+        assert convert_color_bold("**bold**") == "**bold**"
+
+    def test_empty_string(self) -> None:
+        """Test that an empty string is returned unchanged."""
+        assert convert_color_bold("") == ""
 
 
 class TestConvertCodeBlocks:

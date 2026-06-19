@@ -1,0 +1,317 @@
+Jt4-6SLWM:
+  uid: Jt4-6SLWM
+  id: 11657
+  time: 1781829128224
+  user:
+    id: 3
+  string: ^^highlight^^ color
+  order: 2
+  heading: null
+  children:
+  - id: 11653
+  - id: 11658
+  refs: null
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+iF2Ey_unj:
+  uid: iF2Ey_unj
+  id: 11454
+  time: 1781525379738
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: c:ORANGE
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+LBFKibPIj:
+  uid: LBFKibPIj
+  id: 4223
+  time: 1773090962400
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 4224
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: Test Article
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+mkHZLUn8Q:
+  uid: mkHZLUn8Q
+  id: 11643
+  time: 1781820678622
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 11647
+  - id: 11654
+  - id: 11657
+  - id: 11662
+  refs:
+  - id: 4223
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: '[[Test Article]] 4'
+  sidebar: 23
+  attrs: null
+  lookup: null
+  seen_by: null
+yd7MFbFou:
+  uid: yd7MFbFou
+  id: 11647
+  time: 1781820920803
+  user:
+    id: 3
+  string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
+    \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+OexZiLR_O:
+  uid: OexZiLR_O
+  id: 5450
+  time: 1773784559632
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: '>'
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+ShnYeNIu5:
+  uid: ShnYeNIu5
+  id: 11662
+  time: 1781829463803
+  user:
+    id: 3
+  string: ''
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+c9kTivLOo:
+  uid: c9kTivLOo
+  id: 11654
+  time: 1781829099712
+  user:
+    id: 3
+  string: '**BOLD** text color'
+  order: 1
+  heading: null
+  children:
+  - id: 11648
+  - id: 11655
+  refs: null
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+Rjt1IvrVq:
+  uid: Rjt1IvrVq
+  id: 11648
+  time: 1781828921582
+  user:
+    id: 3
+  string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11654
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+rArYyVVBS:
+  uid: rArYyVVBS
+  id: 11658
+  time: 1781829545274
+  user:
+    id: 3
+  string: '#c:FUCHSIA ^^This span is highlighted orange.^^ This span is not.'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11657
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+9a_6taJAn:
+  uid: 9a_6taJAn
+  id: 11653
+  time: 1781828879037
+  user:
+    id: 3
+  string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11657
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+AE3uVp_QL:
+  uid: AE3uVp_QL
+  id: 11655
+  time: 1781829065570
+  user:
+    id: 3
+  string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  page:
+    id: 11643
+  open: true
+  parents:
+  - id: 11643
+  - id: 11654
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+ZgUWBRb7j:
+  uid: ZgUWBRb7j
+  id: 5462
+  time: 1773788725523
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: '!INFO'
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+lF-qY0Xrs:
+  uid: lF-qY0Xrs
+  id: 5844
+  time: 1773955788224
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: c:FUCHSIA
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
