@@ -40,8 +40,7 @@ Public symbols:
   the inner text (e.g. ``[[Page Name]]`` → ``Page Name``).
 """
 
-import re
-
+import regex
 from pydantic import validate_call
 
 # ---------------------------------------------------------------------------
@@ -52,53 +51,53 @@ from pydantic import validate_call
 # optional language tag) and the closing fence may share a line with adjacent
 # content.  Group 1 captures the language/info string on the opening line;
 # group 2 captures the code body up to the closing fence.
-_CODE_BLOCK_RE: re.Pattern[str] = re.compile(r"```([^\n]*)\n(.*?)```", re.DOTALL)
+_CODE_BLOCK_RE: regex.Pattern[str] = regex.compile(r"```([^\n]*)\n(.*?)```", regex.DOTALL)
 
 # Roam italic: __text__ (double underscores).  Must not match bold (**text**).
 # Negative look-behind/ahead prevents matching inside bold markers.
-_ITALIC_RE: re.Pattern[str] = re.compile(r"(?<!\w)__(?!\s)(.+?)(?<!\s)__(?!\w)", re.DOTALL)
+_ITALIC_RE: regex.Pattern[str] = regex.compile(r"(?<!\w)__(?!\s)(.+?)(?<!\s)__(?!\w)", regex.DOTALL)
 
 # Roam highlight: ^^text^^.  Converted to a Pandoc bracketed span with class
 # "mark" via the bracketed_spans extension (enabled by default in Pandoc Markdown).
-_HIGHLIGHT_RE: re.Pattern[str] = re.compile(r"\^\^(.+?)\^\^", re.DOTALL)
+_HIGHLIGHT_RE: regex.Pattern[str] = regex.compile(r"\^\^(.+?)\^\^", regex.DOTALL)
 
 # Roam alias to a page link: [display text]([[Page Name]]).  Capture group 1 is
 # the display text (no square brackets); group 2 is the page name (no square
 # brackets).  Must be applied before convert_page_link so the [[...]] target
 # can be identified and converted to a plain Pandoc Markdown link destination.
-_PAGE_LINK_ALIAS_RE: re.Pattern[str] = re.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")
+_PAGE_LINK_ALIAS_RE: regex.Pattern[str] = regex.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")
 
 # Double-bracket delimiters used by Roam for page links ([[Page Name]]) and
 # hashtag page links (#[[multi-word tag]]).  Matched and removed independently
 # to handle arbitrarily nested page links (e.g. [[nested [[pages]]]]).
-_DOUBLE_OPEN_RE: re.Pattern[str] = re.compile(r"\[\[")
-_DOUBLE_CLOSE_RE: re.Pattern[str] = re.compile(r"\]\]")
+_DOUBLE_OPEN_RE: regex.Pattern[str] = regex.compile(r"\[\[")
+_DOUBLE_CLOSE_RE: regex.Pattern[str] = regex.compile(r"\]\]")
 
 # Color Highlighter extension: #c:COLOR **bold text**.  Group 1 is the color
 # name (e.g. ORANGE); group 2 is the bold content between the ** delimiters.
-_COLOR_BOLD_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) \*\*(.+?)\*\*")
+_COLOR_BOLD_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) \*\*(.+?)\*\*")
 
 # Color Highlighter extension: #c:COLOR ^^highlighted text^^.  Group 1 is the
 # color name (e.g. ORANGE); group 2 is the highlight content between ^^ delimiters.
-_COLOR_HIGHLIGHT_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) \^\^(.+?)\^\^")
+_COLOR_HIGHLIGHT_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) \^\^(.+?)\^\^")
 
 # Color Highlighter extension: #c:COLOR __underlined text__.  Group 1 is the
 # color name (e.g. ORANGE); group 2 is the underline content between __ delimiters.
 # Note: Roam also uses __ for italics, so this must run before convert_italics.
-_COLOR_UNDERLINE_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) __(.+?)__")
+_COLOR_UNDERLINE_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) __(.+?)__")
 
 # Color Highlighter extension: #c:COLOR ~~boxed text~~.  Group 1 is the
 # color name (e.g. ORANGE); group 2 is the box content between ~~ delimiters.
 # Note: Pandoc also uses ~~ for strikethrough, so this must run before Pandoc
 # sees the string.
-_COLOR_BOX_RE: re.Pattern[str] = re.compile(r"#c:([A-Za-z]+) ~~(.+?)~~")
+_COLOR_BOX_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) ~~(.+?)~~")
 
 # Color Highlighter extension: whole-line background box via a trailing
 # #.bg-COLOR suffix.  Group 1 captures all preceding content; group 2 the
-# color name.  re.DOTALL lets group 1 span newlines so multi-line blocks are
+# color name.  regex.DOTALL lets group 1 span newlines so multi-line blocks are
 # handled correctly.  Must run last so that any inline color spans inside the
 # block are already converted before the outer wrapper is applied.
-_BG_COLOR_LINE_RE: re.Pattern[str] = re.compile(r"^(.*) #\.bg-([A-Za-z]+)$", re.DOTALL)
+_BG_COLOR_LINE_RE: regex.Pattern[str] = regex.compile(r"^(.*) #\.bg-([A-Za-z]+)$", regex.DOTALL)
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -272,7 +271,7 @@ def convert_code_blocks(roam_string: str) -> str:
         fence lines.
     """
 
-    def _reposition(match: re.Match[str]) -> str:
+    def _reposition(match: regex.Match[str]) -> str:
         language: str = match.group(1)
         body: str = match.group(2).rstrip("\n")
         prefix: str = "" if match.start() == 0 or match.string[match.start() - 1] == "\n" else "\n"

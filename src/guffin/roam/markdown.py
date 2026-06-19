@@ -5,7 +5,8 @@ Public symbols:
 - **Pattern constants**: :data:`ROAM_BLOCK_QUOTE_PREFIX` — string prefix for a Roam block
   quote (and callout); :data:`CALLOUT_RE` — compiled regex that matches and decomposes a full
   callout block string; :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
-  link whose URL is a Cloud Firestore storage URL.
+  link whose URL is a Cloud Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
+  a Roam page reference ``[[<page_name>]]``.
 - **Enumerations**: :class:`CalloutType` — the twelve Roam callout type keywords.
 - **Callout model**: :class:`RoamCallout` — parsed decomposition of a callout block string.
 - **Callout parser**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`.
@@ -18,9 +19,9 @@ Public symbols:
 """
 
 import enum
-import re
 from typing import Final
 
+import regex
 from pydantic import BaseModel, ConfigDict, Field, validate_call
 
 from guffin.common.markdown import MD_BLOCK_QUOTE_PREFIX
@@ -59,11 +60,11 @@ a fast pre-filter before applying :data:`CALLOUT_RE` and by
 :func:`is_roam_block_quote`.
 """
 
-CALLOUT_RE: Final[re.Pattern[str]] = re.compile(
-    rf"(?P<prefix>{re.escape(ROAM_BLOCK_QUOTE_PREFIX)})"
+CALLOUT_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"(?P<prefix>{regex.escape(ROAM_BLOCK_QUOTE_PREFIX)})"
     rf" \[\[!(?P<callout_type>{'|'.join(ct.value for ct in CalloutType)})\]\]"
     r"\s*(?P<title>[^\n]*)(?:\n(?P<body>.*))?",
-    re.DOTALL,
+    regex.DOTALL,
 )
 """Compiled regex matching and decomposing a full Roam callout block string.
 
@@ -76,7 +77,7 @@ Named groups:
 - ``title`` — the remainder of the first line after the marker and any intervening
   whitespace; may be an empty string when no title text is present.
 - ``body`` — everything after the first newline; ``None`` when the string contains no
-  newline.  ``re.DOTALL`` is set so ``.`` matches embedded newlines within the body.
+  newline.  ``regex.DOTALL`` is set so ``.`` matches embedded newlines within the body.
 """
 
 
@@ -121,7 +122,7 @@ def parse_callout(block_string: str) -> RoamCallout | None:
     """
     if not block_string.startswith(ROAM_BLOCK_QUOTE_PREFIX):
         return None
-    m: Final[re.Match[str] | None] = CALLOUT_RE.match(block_string)
+    m: Final[regex.Match[str] | None] = CALLOUT_RE.match(block_string)
     if m is None:
         raise ValueError(
             f"block string starts with {ROAM_BLOCK_QUOTE_PREFIX!r} "
@@ -191,7 +192,7 @@ whitespace) equals this marker is a Roam native table container; its child block
 form the rows, and each child's children are the cells.
 """
 
-IMAGE_LINK_RE: Final[re.Pattern[str]] = re.compile(
+IMAGE_LINK_RE: Final[regex.Pattern[str]] = regex.compile(
     r"!\[(?P<alt>(?:[^\]]|\n)*?)\]\((?P<url>https://firebasestorage\.googleapis\.com/[^\)]+)\)"
 )
 """Compiled regex matching a Roam markdown image link whose URL is a Cloud Firestore storage URL.
@@ -206,4 +207,30 @@ Example match on ``![my photo](https://firebasestorage.googleapis.com/v0/b/...)`
 - ``match.group(0)`` — the full ``![...](..)`` string.
 - ``match.group("url")`` — just the URL.
 - ``match.group("alt")`` — just the alt text.
+"""
+
+PAGE_REF_RE: Final[regex.Pattern[str]] = regex.compile(r"\[\[(?P<page_name>(?:[^\[\]\n]++|(?R))+)\]\]")
+"""Compiled regex matching a Roam page reference ``[[<page_name>]]``.
+
+A page name may itself contain nested page references, so the pattern is
+recursive: it matches a balanced ``[[`` … ``]]`` pair using the third-party
+:mod:`regex` module's ``(?R)`` whole-pattern recursion (stdlib :mod:`re` cannot
+match balanced nesting).
+
+Named group:
+
+- ``page_name`` — the content between the *outermost* balanced ``[[`` and ``]]``
+  delimiters; non-empty, and itself possibly containing further ``[[…]]``
+  references.  It may span spaces and punctuation but not a newline, since a Roam
+  page title is single-line.
+
+Adjacent references are matched separately; use :meth:`regex.Pattern.finditer`
+to enumerate every top-level reference.
+
+Example matches:
+
+- ``[[Test Article]]`` → ``page_name`` is ``Test Article``.
+- ``[[0.2 Introduction [[v01]]]]`` → ``page_name`` is ``0.2 Introduction [[v01]]``.
+- ``[[[[[[Illustration]] Brief]] -- Draft]]`` → ``page_name`` is
+  ``[[[[Illustration]] Brief]] -- Draft``.
 """

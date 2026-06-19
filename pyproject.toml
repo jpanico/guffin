@@ -13,6 +13,7 @@ dependencies = [
     "panflute>=2.3",
     "pydantic>=2.0",
     "pypandoc>=1.17",
+    "regex>=2024.11.6",
     "requests>=2.31.0",
     "rich>=13.0",
     "typer>=0.9.0",
@@ -27,6 +28,7 @@ dev = [
     "ruff>=0.4",
     "hatch>=1.0",
     "pyyaml>=6.0",
+    "types-regex>=2024.11.6",
 ]
 
 [project.scripts]

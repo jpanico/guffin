@@ -8,8 +8,9 @@ Public symbols:
 
 import logging
 import os
-import re
 from typing import Final, TextIO
+
+import regex
 
 _LEVEL_COLORS: dict[str, str] = {
     "DEBUG": "\033[36m",
@@ -21,8 +22,8 @@ _LEVEL_COLORS: dict[str, str] = {
 _LOCATION_COLOR: str = "\033[35m"  # magenta — distinct from all level colors
 _COLOR_RESET: str = "\033[0m"
 
-_MESSAGE_HIGHLIGHTS: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"\s*id=\d+,"), "\033[1;97m"),  # bold bright white
+_MESSAGE_HIGHLIGHTS: list[tuple[regex.Pattern[str], str]] = [
+    (regex.compile(r"\s*id=\d+,"), "\033[1;97m"),  # bold bright white
 ]
 
 

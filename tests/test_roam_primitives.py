@@ -1,11 +1,12 @@
 """Tests for the guffin.roam.primitives module."""
 
-import re
-import pytest
 from typing import Final
+
+import pytest
+import regex
 from pydantic import TypeAdapter, ValidationError
 
-from guffin.roam.markdown import CALLOUT_RE, CalloutType, RoamCallout, parse_callout
+from guffin.roam.markdown import CALLOUT_RE, PAGE_REF_RE, CalloutType, RoamCallout, parse_callout
 from guffin.roam.primitives import ANCHORED_UID_PATTERN, ANCHORED_UID_RE, UID_PATTERN, UID_RE, Uid
 
 _VALID_UID: Final[str] = "abc123xyz"
@@ -227,6 +228,84 @@ class TestCallout:
 
 
 # ---------------------------------------------------------------------------
+# TestPageRefRE
+# ---------------------------------------------------------------------------
+
+
+class TestPageRefRE:
+    """Tests for PAGE_REF_RE — the recursive Roam page reference [[<page_name>]] regex."""
+
+    @pytest.mark.parametrize(
+        "text, page_name",
+        [
+            ("[[Test Article]]", "Test Article"),
+            ("[[[[Test Article]] 0]]", "[[Test Article]] 0"),
+            ("[[0.2 Introduction [[v01]]]]", "0.2 Introduction [[v01]]"),
+            (
+                "[[1.2.2 Chapter 7: [[What You See is What it Means]] [[v01]]]]",
+                "1.2.2 Chapter 7: [[What You See is What it Means]] [[v01]]",
+            ),
+            ("[[[[[[Illustration]] Brief]] -- Draft]]", "[[[[Illustration]] Brief]] -- Draft"),
+        ],
+    )
+    def test_balanced_page_name(self, text: str, page_name: str) -> None:
+        """Test that page_name captures the content between the outermost balanced brackets."""
+        m = PAGE_REF_RE.search(text)
+        assert m is not None
+        assert m.group(0) == text
+        assert m.group("page_name") == page_name
+
+    def test_inline_reference(self) -> None:
+        """Test that a reference embedded in surrounding text is captured."""
+        m = PAGE_REF_RE.search("see [[My Page]] here")
+        assert m is not None
+        assert m.group(0) == "[[My Page]]"
+        assert m.group("page_name") == "My Page"
+
+    def test_multiple_top_level_refs(self) -> None:
+        """Test that adjacent top-level references are matched separately."""
+        names = [m.group("page_name") for m in PAGE_REF_RE.finditer("[[a]] and [[b]]")]
+        assert names == ["a", "b"]
+
+    def test_multiple_refs_with_nesting(self) -> None:
+        """Test that finditer enumerates top-level refs while preserving nested page names."""
+        names = [m.group("page_name") for m in PAGE_REF_RE.finditer("[[a [[b]] c]] and [[d]]")]
+        assert names == ["a [[b]] c", "d"]
+
+    def test_hashtag_reference(self) -> None:
+        """Test that the [[...]] portion of a #[[tag]] hashtag reference matches."""
+        m = PAGE_REF_RE.search("#[[tag]]")
+        assert m is not None
+        assert m.group("page_name") == "tag"
+
+    def test_page_name_with_punctuation(self) -> None:
+        """Test that a page name containing spaces and punctuation is captured whole."""
+        m = PAGE_REF_RE.search("[[A/B & C!]]")
+        assert m is not None
+        assert m.group("page_name") == "A/B & C!"
+
+    def test_no_match_plain_text(self) -> None:
+        """Test that text without a reference does not match."""
+        assert PAGE_REF_RE.search("no refs here") is None
+
+    def test_no_match_single_brackets(self) -> None:
+        """Test that single-bracket [text] is not a page reference."""
+        assert PAGE_REF_RE.search("[not a ref]") is None
+
+    def test_no_match_empty_reference(self) -> None:
+        """Test that an empty [[]] reference does not match."""
+        assert PAGE_REF_RE.search("[[]]") is None
+
+    def test_no_match_unclosed(self) -> None:
+        """Test that an unclosed [[ reference does not match."""
+        assert PAGE_REF_RE.search("[[unclosed") is None
+
+    def test_no_match_across_newline(self) -> None:
+        """Test that a reference whose name spans a newline does not match."""
+        assert PAGE_REF_RE.search("[[foo\nbar]]") is None
+
+
+# ---------------------------------------------------------------------------
 # TestUidPatterns
 # ---------------------------------------------------------------------------
 
@@ -241,11 +320,11 @@ class TestUidPatterns:
 
     def test_unanchored_pattern_is_embeddable(self) -> None:
         """Test that UID_PATTERN can match a UID embedded in surrounding text."""
-        assert re.search(UID_PATTERN, "see ((abc123xyz)) here") is not None
+        assert regex.search(UID_PATTERN, "see ((abc123xyz)) here") is not None
 
     def test_unanchored_pattern_fullmatches_bare_uid(self) -> None:
         """Test that UID_PATTERN fully matches a bare nine-character UID."""
-        assert re.fullmatch(UID_PATTERN, _VALID_UID) is not None
+        assert regex.fullmatch(UID_PATTERN, _VALID_UID) is not None
 
     def test_uid_re_finds_embedded_uid(self) -> None:
         """Test that the unanchored UID_RE finds a UID embedded in surrounding text."""

@@ -6,10 +6,10 @@ Public symbols:
   filenames without shell escaping.
 """
 
-import re
 import unicodedata
 from typing import Final
 
+import regex
 from pydantic import validate_call
 
 
@@ -33,7 +33,7 @@ def shell_safe_filename(text: str) -> str:
     """
     result: Final[str] = unicodedata.normalize("NFKD", text)
     ascii_result: Final[str] = result.encode("ascii", "ignore").decode("ascii")
-    no_spaces: Final[str] = re.sub(r" +", "_", ascii_result)
-    safe_chars: Final[str] = re.sub(r"[^a-zA-Z0-9._-]", "", no_spaces)
-    collapsed: Final[str] = re.sub(r"_+", "_", safe_chars)
+    no_spaces: Final[str] = regex.sub(r" +", "_", ascii_result)
+    safe_chars: Final[str] = regex.sub(r"[^a-zA-Z0-9._-]", "", no_spaces)
+    collapsed: Final[str] = regex.sub(r"_+", "_", safe_chars)
     return collapsed.strip("_")

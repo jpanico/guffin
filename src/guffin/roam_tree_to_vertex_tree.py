@@ -31,10 +31,10 @@ Public symbols:
 """
 
 import logging
-import re
 from typing import Final, assert_never
 from urllib.parse import unquote, urlparse
 
+import regex
 from pydantic import TypeAdapter, validate_call
 
 from guffin.vertex import (
@@ -128,7 +128,7 @@ def _extract_firestore_url(string: str) -> str | None:
     Returns:
         The URL string captured from the first Firestore image link, or ``None``.
     """
-    m: Final[re.Match[str] | None] = IMAGE_LINK_RE.search(string)
+    m: Final[regex.Match[str] | None] = IMAGE_LINK_RE.search(string)
     return m.group("url") if m else None
 
 
@@ -145,7 +145,7 @@ def _extract_alt_text(string: str) -> str | None:
     Returns:
         The stripped alt text string, or ``None``.
     """
-    m: Final[re.Match[str] | None] = IMAGE_LINK_RE.search(string)
+    m: Final[regex.Match[str] | None] = IMAGE_LINK_RE.search(string)
     if m is None:
         return None
     alt: Final[str] = m.group("alt").strip()

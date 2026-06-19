@@ -12,9 +12,9 @@ Public symbols are organized into four groups:
   anchored form and its compiled form.
 """
 
-import re
 from typing import Annotated, Final, Literal
 
+import regex
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
 UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
@@ -24,13 +24,13 @@ Left unanchored so it can be embedded within a larger pattern.  To test whether
 a string is *wholly* a UID, use :data:`ANCHORED_UID_PATTERN` / :data:`ANCHORED_UID_RE`.
 """
 
-UID_RE: Final[re.Pattern[str]] = re.compile(UID_PATTERN)
+UID_RE: Final[regex.Pattern[str]] = regex.compile(UID_PATTERN)
 """Compiled (unanchored) :data:`UID_PATTERN`; use to find a UID embedded in a larger string."""
 
 ANCHORED_UID_PATTERN: Final[str] = rf"^{UID_PATTERN}$"
 """:data:`UID_PATTERN` anchored at both ends, matching a string that is exactly a UID."""
 
-ANCHORED_UID_RE: Final[re.Pattern[str]] = re.compile(ANCHORED_UID_PATTERN)
+ANCHORED_UID_RE: Final[regex.Pattern[str]] = regex.compile(ANCHORED_UID_PATTERN)
 """Compiled :data:`ANCHORED_UID_PATTERN` for matching a string that is exactly a Roam node UID."""
 
 type Uid = Annotated[str, Field(pattern=ANCHORED_UID_PATTERN)]

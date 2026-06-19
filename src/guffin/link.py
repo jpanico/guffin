@@ -25,9 +25,9 @@ Public symbols:
 """
 
 import enum
-import re
 from typing import Final, NamedTuple
 
+import regex
 from pydantic import validate_call
 
 from guffin.roam.primitives import UID_PATTERN, Uid
@@ -86,7 +86,7 @@ class VertexLink(NamedTuple):
 # against VertexLinkKind.by_path_stem by the caller), a slash, and a UID.  Group
 # 1 is the path stem; group 2 is the UID.  Used with fullmatch, so no anchors are
 # needed.
-_VERTEX_LINK_RE: Final[re.Pattern[str]] = re.compile(rf"{re.escape(GUFFIN_SCHEME)}:([^/]+)/({UID_PATTERN})")
+_VERTEX_LINK_RE: Final[regex.Pattern[str]] = regex.compile(rf"{regex.escape(GUFFIN_SCHEME)}:([^/]+)/({UID_PATTERN})")
 
 
 @validate_call
@@ -116,7 +116,7 @@ def parse_vertex_link(url: str) -> VertexLink | None:
         link — the ``x-guffin`` scheme, a recognised path stem, and a valid
         nine-character UID — and ``None`` otherwise.
     """
-    match: Final[re.Match[str] | None] = _VERTEX_LINK_RE.fullmatch(url)
+    match: Final[regex.Match[str] | None] = _VERTEX_LINK_RE.fullmatch(url)
     if match is None:
         return None
     kind: Final[VertexLinkKind | None] = VertexLinkKind.by_path_stem(match.group(1))

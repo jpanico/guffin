@@ -122,6 +122,12 @@ pyright
 
 All production code under `src/guffin/` must be fully annotated with no `Any` types. Test modules (`tests/`) are excluded from pyright via `pyproject.toml` and are not type-checked.
 
+### Regular Expressions
+
+This project uses the third-party [`regex`](https://pypi.org/project/regex/) package **exclusively** — the Python stdlib `re` module is not used anywhere. `regex` is a drop-in superset of `re` (it defaults to `re`-compatible behaviour) and additionally supports recursive patterns, which are required for matching balanced, nestable Roam page references (`[[ … [[ … ]] … ]]`).
+
+Always `import regex` (never `import re`) and use `regex.compile`, `regex.Pattern[str]`, `regex.Match[str]`, and the `regex.*` flags. The `types-regex` stub package (a dev dependency) provides type information for Pyright's strict mode.
+
 ## Project Structure
 
 ```

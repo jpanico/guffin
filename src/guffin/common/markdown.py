@@ -8,9 +8,9 @@ Public symbols:
 - :func:`parse_fenced_code_block` — extract the info string and code content from a fenced code block.
 """
 
-import re
 from typing import Final, NamedTuple
 
+import regex
 from pydantic import validate_call
 
 MD_BLOCK_QUOTE_PREFIX: Final[str] = ">"
@@ -23,7 +23,7 @@ block quote marker.
 # Opening code fence: up to three spaces of indentation, then a run of at least
 # three backticks or three tildes, then an optional info string (the remainder
 # of the line).  Group 1 captures the fence run; group 2 captures the info string.
-_OPENING_FENCE_RE: Final[re.Pattern[str]] = re.compile(r" {0,3}(`{3,}|~{3,})(.*)")
+_OPENING_FENCE_RE: Final[regex.Pattern[str]] = regex.compile(r" {0,3}(`{3,}|~{3,})(.*)")
 
 
 @validate_call
@@ -52,14 +52,16 @@ def is_fenced_code_block(text: str) -> bool:
         otherwise.
     """
     lines: Final[list[str]] = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-    opening: Final[re.Match[str] | None] = _OPENING_FENCE_RE.fullmatch(lines[0])
+    opening: Final[regex.Match[str] | None] = _OPENING_FENCE_RE.fullmatch(lines[0])
     if opening is None:
         return False
     fence: Final[str] = opening.group(1)
     info: Final[str] = opening.group(2)
     if fence[0] == "`" and "`" in info:
         return False
-    closing_fence_re: Final[re.Pattern[str]] = re.compile(rf" {{0,3}}{re.escape(fence[0])}{{{len(fence)},}}[ \t]*")
+    closing_fence_re: Final[regex.Pattern[str]] = regex.compile(
+        rf" {{0,3}}{regex.escape(fence[0])}{{{len(fence)},}}[ \t]*"
+    )
     closing_index: Final[int | None] = next(
         (i for i in range(1, len(lines)) if closing_fence_re.fullmatch(lines[i])),
         None,
@@ -102,14 +104,16 @@ def parse_fenced_code_block(text: str) -> FencedCodeBlock:
         ValueError: If *text* does not open with a code fence.
     """
     lines: Final[list[str]] = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-    opening: Final[re.Match[str] | None] = _OPENING_FENCE_RE.fullmatch(lines[0])
+    opening: Final[regex.Match[str] | None] = _OPENING_FENCE_RE.fullmatch(lines[0])
     if opening is None:
         raise ValueError(f"not a fenced code block: {text!r}")
     fence: Final[str] = opening.group(1)
     info: Final[str] = opening.group(2).strip()
     body_lines: Final[list[str]] = lines[1:]
 
-    closing_fence_re: Final[re.Pattern[str]] = re.compile(rf" {{0,3}}{re.escape(fence[0])}{{{len(fence)},}}[ \t]*")
+    closing_fence_re: Final[regex.Pattern[str]] = regex.compile(
+        rf" {{0,3}}{regex.escape(fence[0])}{{{len(fence)},}}[ \t]*"
+    )
     closing_index: Final[int | None] = next(
         (i for i, line in enumerate(body_lines) if closing_fence_re.fullmatch(line)),
         None,
@@ -120,7 +124,9 @@ def parse_fenced_code_block(text: str) -> FencedCodeBlock:
     # No standalone closing fence: strip a fence attached to the final content
     # line (the form Roam stores), else treat the block as unterminated.
     if body_lines:
-        attached_fence_re: Final[re.Pattern[str]] = re.compile(rf"{re.escape(fence[0])}{{{len(fence)},}}[ \t]*$")
+        attached_fence_re: Final[regex.Pattern[str]] = regex.compile(
+            rf"{regex.escape(fence[0])}{{{len(fence)},}}[ \t]*$"
+        )
         stripped_last: Final[str] = attached_fence_re.sub("", body_lines[-1])
         if stripped_last != body_lines[-1]:
             tail: Final[list[str]] = [stripped_last] if stripped_last else []

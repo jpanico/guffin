@@ -19,9 +19,9 @@ Public symbols:
 """
 
 import logging
-import re
 from typing import Final, TypeGuard, assert_never
 
+import regex
 from pydantic import validate_call
 
 from rich.console import Group
@@ -572,7 +572,7 @@ _RAW_RESULTS_COL_TRUNCATE: Final[dict[str, int]] = {
 Cell values longer than the limit are silently truncated to that many characters.
 """
 
-_URL_RE: Final[re.Pattern[str]] = re.compile(r"https?://[^\s\"']+")
+_URL_RE: Final[regex.Pattern[str]] = regex.compile(r"https?://[^\s\"']+")
 """Regex that matches ``http://`` or ``https://`` URLs, stopping before whitespace or quotes."""
 
 
@@ -583,7 +583,7 @@ def _truncate_urls_in_cell(cell: str) -> str:
     are left unchanged.
     """
 
-    def _shorten(match: re.Match[str]) -> str:
+    def _shorten(match: regex.Match[str]) -> str:
         url: Final[str] = match.group()
         return url[:15] + "…" if len(url) > 15 else url
 

@@ -64,12 +64,12 @@ Public symbols:
 
 from io import StringIO
 import logging
-import re
 import uuid
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Final
 
+import regex
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 
@@ -97,7 +97,7 @@ logger = logging.getLogger(__name__)
 # A fenced code block, after Roam→Pandoc normalization, opens with a ``` fence
 # at the start of a line.  Its presence in a text field signals that the field
 # must be parsed as block-level Markdown rather than inline.
-_CONTAINS_CODE_BLOCK_RE: Final[re.Pattern[str]] = re.compile(r"(?m)^```")
+_CONTAINS_CODE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(r"(?m)^```")
 
 
 def _extract_bg_color(inlines: list[pf.Inline]) -> tuple[str, list[pf.Inline]] | None:
