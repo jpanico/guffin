@@ -212,10 +212,6 @@ class TestNodeType:
         """Test that NodeType.ROAM_PLAIN_BLOCK has string value 'roam/plain-block'."""
         assert NodeType.ROAM_PLAIN_BLOCK == "roam/plain-block"
 
-    def test_embed_value(self) -> None:
-        """Test that NodeType.ROAM_EMBED_BLOCK has string value 'roam/embed-block'."""
-        assert NodeType.ROAM_EMBED_BLOCK == "roam/embed-block"
-
     def test_image_value(self) -> None:
         """Test that NodeType.ROAM_IMAGE_BLOCK has string value 'roam/image-block'."""
         assert NodeType.ROAM_IMAGE_BLOCK == "roam/image-block"
@@ -236,12 +232,11 @@ class TestNodeType:
         """Test that NodeType.ROAM_BLOCK_QUOTE has string value 'roam/block-quote'."""
         assert NodeType.ROAM_BLOCK_QUOTE == "roam/quote-block"
 
-    def test_exactly_nine_members(self) -> None:
-        """Test that NodeType has exactly nine members."""
+    def test_exactly_eight_members(self) -> None:
+        """Test that NodeType has exactly eight members."""
         assert set(NodeType) == {
             NodeType.ROAM_PAGE,
             NodeType.ROAM_PLAIN_BLOCK,
-            NodeType.ROAM_EMBED_BLOCK,
             NodeType.ROAM_IMAGE_BLOCK,
             NodeType.ROAM_HEADING_BLOCK,
             NodeType.ROAM_CALLOUT_BLOCK,
@@ -293,16 +288,6 @@ class TestNodeTypeFunction:
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
         )
-        assert node_type(node) is not NodeType.ROAM_PAGE
-
-    def test_embed_node_returns_embed(self) -> None:
-        """Test that a node with title 'embed' returns NodeType.ROAM_EMBED_BLOCK."""
-        node = RoamNode(uid="embed0001", id=3, time=STUB_TIME, user=STUB_USER, title="embed")
-        assert node_type(node) is NodeType.ROAM_EMBED_BLOCK
-
-    def test_embed_node_is_not_page(self) -> None:
-        """Test that an embed node does not return NodeType.ROAM_PAGE."""
-        node = RoamNode(uid="embed0001", id=3, time=STUB_TIME, user=STUB_USER, title="embed")
         assert node_type(node) is not NodeType.ROAM_PAGE
 
     def test_image_node_returns_image(self) -> None:

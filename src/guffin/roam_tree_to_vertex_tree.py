@@ -188,7 +188,6 @@ def vertex_type(node: RoamNode) -> VertexType:
         The :class:`~guffin.vertex.VertexType` for *node*.
 
     Raises:
-        NotImplementedError: If *node* is a :attr:`~guffin.roam.node.NodeType.ROAM_EMBED_BLOCK`.
         ValidationError: If *node* is ``None`` or invalid.
     """
     logger.debug("node=%r", node)
@@ -207,8 +206,6 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.GUFFIN_CALLOUT
         case NodeType.ROAM_BLOCK_QUOTE:
             return VertexType.GUFFIN_BLOCK_QUOTE
-        case NodeType.ROAM_EMBED_BLOCK:
-            raise NotImplementedError(f"RoamNode uid={node.uid!r}: ROAM_EMBED_BLOCK transcription is not supported")
         case NodeType.ROAM_NATIVE_TABLE:
             return VertexType.GUFFIN_TABLE
 

@@ -3,7 +3,7 @@
 Public symbols:
 
 - :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``ROAM_PAGE``, ``ROAM_PLAIN_BLOCK``,
-  ``ROAM_EMBED_BLOCK``, ``ROAM_IMAGE_BLOCK``, ``ROAM_HEADING_BLOCK``, ``ROAM_CALLOUT_BLOCK``,
+  ``ROAM_IMAGE_BLOCK``, ``ROAM_HEADING_BLOCK``, ``ROAM_CALLOUT_BLOCK``,
   ``ROAM_CODE_BLOCK``, ``ROAM_BLOCK_QUOTE``, ``ROAM_NATIVE_TABLE``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
@@ -66,7 +66,6 @@ class NodeType(enum.StrEnum):
       block content is the heading text.
     - **ROAM_IMAGE_BLOCK**: ``string`` consists solely of a single Markdown image link to a Cloud Firestore URL.
       Produced by drag-and-drop into the Roam UI; supports image-resize properties via ``props``.
-    - **ROAM_EMBED_BLOCK**: ``title`` is the literal ``"embed"``, ``string`` is ``None``, ``children`` is ``None``.
     - **ROAM_CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the twelve
       recognised callout type keywords (``INFO``, ``QUOTE``, ``EXAMPLE``, ``NOTE``, ``WARNING``, ``DANGER``,
       ``TIP``, ``SUMMARY``, ``SUCCESS``, ``QUESTION``, ``FAILURE``, ``BUG``).
@@ -83,7 +82,6 @@ class NodeType(enum.StrEnum):
     ROAM_PLAIN_BLOCK = "roam/plain-block"
     ROAM_HEADING_BLOCK = "roam/heading-block"
     ROAM_IMAGE_BLOCK = "roam/image-block"
-    ROAM_EMBED_BLOCK = "roam/embed-block"
     ROAM_CALLOUT_BLOCK = "roam/callout-block"
     ROAM_CODE_BLOCK = "roam/code-block"
     ROAM_BLOCK_QUOTE = "roam/quote-block"
@@ -319,9 +317,8 @@ type NodesByUid = dict[Uid, RoamNode]
 def node_type(node: RoamNode) -> NodeType:
     """Return the :class:`NodeType` of *node*.
 
-    Discriminates first on :attr:`~RoamNode.title`: returns :attr:`NodeType.ROAM_EMBED_BLOCK`
-    when ``title`` is the literal ``"embed"``, :attr:`NodeType.ROAM_PAGE` when ``title``
-    is any other non-``None`` string.  For title-less nodes (blocks), returns
+    Discriminates first on :attr:`~RoamNode.title`: returns :attr:`NodeType.ROAM_PAGE` when
+    ``title`` is a non-``None`` string.  For title-less nodes (blocks), returns
     :attr:`NodeType.ROAM_IMAGE_BLOCK` when ``string`` consists solely of a single Markdown image
     link (as matched by :data:`~guffin.roam.markdown.IMAGE_LINK_RE`),
     :attr:`NodeType.ROAM_HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
@@ -340,8 +337,7 @@ def node_type(node: RoamNode) -> NodeType:
         node: The node whose entity type to determine.
 
     Returns:
-        :attr:`NodeType.ROAM_EMBED_BLOCK` if ``title == "embed"``;
-        :attr:`NodeType.ROAM_PAGE` if ``title`` is set (and not ``"embed"``);
+        :attr:`NodeType.ROAM_PAGE` if ``title`` is set;
         :attr:`NodeType.ROAM_IMAGE_BLOCK` if ``string`` is solely a single Markdown image link;
         :attr:`NodeType.ROAM_HEADING_BLOCK` if ``heading`` or ``props['ah-level']`` is set;
         :attr:`NodeType.ROAM_CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
@@ -351,8 +347,6 @@ def node_type(node: RoamNode) -> NodeType:
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`;
         :attr:`NodeType.ROAM_PLAIN_BLOCK` otherwise.
     """
-    if node.title == "embed":
-        return NodeType.ROAM_EMBED_BLOCK
     if node.title is not None:
         return NodeType.ROAM_PAGE
     if node.string is not None and IMAGE_LINK_RE.fullmatch(node.string.strip()):

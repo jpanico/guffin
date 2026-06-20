@@ -173,9 +173,6 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
         case NodeType.ROAM_PAGE:
             assert node.title is not None
             title_text = node.title
-        case NodeType.ROAM_EMBED_BLOCK:
-            assert node.string is not None
-            title_text = node.string
         case NodeType.ROAM_CALLOUT_BLOCK:
             assert node.string is not None
             callout: Final[RoamCallout | None] = parse_callout(node.string)

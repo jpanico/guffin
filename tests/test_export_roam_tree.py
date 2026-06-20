@@ -37,9 +37,7 @@ class TestExportRoamTreeNoBundle:
         )
         node_tree = article1_node_tree()
         all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
-        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(
-            all_nodes, fetch_spec, raw_result=[[{}]]
-        )
+        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
         runner: CliRunner = CliRunner()
 
         with patch(

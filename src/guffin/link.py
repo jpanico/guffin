@@ -83,10 +83,11 @@ class VertexLink(NamedTuple):
 
 
 # An x-guffin URL: the scheme literal, a path stem (any non-slash run, validated
-# against VertexLinkKind.by_path_stem by the caller), a slash, and a UID.  Group
-# 1 is the path stem; group 2 is the UID.  Used with fullmatch, so no anchors are
-# needed.
-_VERTEX_LINK_RE: Final[regex.Pattern[str]] = regex.compile(rf"{regex.escape(GUFFIN_SCHEME)}:([^/]+)/({UID_PATTERN})")
+# against VertexLinkKind.by_path_stem by the caller), a slash, and a UID.  Named
+# groups: 'stem' and 'uid'.  Used with fullmatch, so no anchors are needed.
+_VERTEX_LINK_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"{regex.escape(GUFFIN_SCHEME)}:(?P<stem>[^/]+)/(?P<uid>{UID_PATTERN})"
+)
 
 
 @validate_call
@@ -119,10 +120,10 @@ def parse_vertex_link(url: str) -> VertexLink | None:
     match: Final[regex.Match[str] | None] = _VERTEX_LINK_RE.fullmatch(url)
     if match is None:
         return None
-    kind: Final[VertexLinkKind | None] = VertexLinkKind.by_path_stem(match.group(1))
+    kind: Final[VertexLinkKind | None] = VertexLinkKind.by_path_stem(match.group("stem"))
     if kind is None:
         return None
-    return VertexLink(kind=kind, uid=match.group(2))
+    return VertexLink(kind=kind, uid=match.group("uid"))
 
 
 @validate_call
