@@ -211,49 +211,51 @@ def vertex_type(node: RoamNode) -> VertexType:
 
 
 @validate_call
-def to_page_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> PageVertex:
+def to_page_vertex(node: RoamNode, tree: NodeTree) -> PageVertex:
     """Build a :class:`~guffin.vertex.PageVertex` from *node*.
 
     Args:
         node: A page node with ``node.title`` set.
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
 
     Returns:
         A :class:`~guffin.vertex.PageVertex`.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.title`` is ``None``.
     """
-    logger.debug("node=%r, id_map keys=%r", node, list(id_map.keys()))
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.title is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'title'")
     return PageVertex(
         uid=node.uid,
-        title=to_pandoc_md(node.title, id_map),
-        children=_resolve_children(node, id_map),
-        refs=_resolve_refs(node, id_map),
+        title=to_pandoc_md(node.title, tree),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
     )
 
 
 @validate_call
-def to_image_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> ImageVertex:
+def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     """Build an :class:`~guffin.vertex.ImageVertex` from *node*.
 
     Args:
         node: A block node whose ``node.string`` embeds a Firestore image URL.
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
 
     Returns:
         An :class:`~guffin.vertex.ImageVertex`.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.string`` is ``None`` or contains no Firestore URL.
     """
-    logger.debug("node=%r, id_map keys=%r", node, list(id_map.keys()))
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     firestore_url: Final[str | None] = _extract_firestore_url(node.string)
@@ -278,20 +280,21 @@ def to_image_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> ImageVertex:
         file_name=file_name,
         media_type=media_type,
         scaled_image_size=size,
-        children=_resolve_children(node, id_map),
-        refs=_resolve_refs(node, id_map),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
     )
 
 
 @validate_call
-def to_heading_vertex(node: RoamNode, id_map: dict[Id, RoamNode], heading_offset: int = 0) -> HeadingVertex:
+def to_heading_vertex(node: RoamNode, tree: NodeTree, heading_offset: int = 0) -> HeadingVertex:
     """Build a :class:`~guffin.vertex.HeadingVertex` from *node*.
 
     Args:
         node: A block node with an effective heading level (native ``node.heading``
             or ``node.props['ah-level']``).
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
         heading_offset: Integer offset added to the effective heading level before
             building the vertex.  Use ``1 − min_level`` to normalize the shallowest
             heading to level 1; defaults to ``0`` (no adjustment).
@@ -300,10 +303,10 @@ def to_heading_vertex(node: RoamNode, id_map: dict[Id, RoamNode], heading_offset
         A :class:`~guffin.vertex.HeadingVertex`.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.string`` is ``None`` or no effective heading level is found.
     """
-    logger.debug("node=%r, id_map keys=%r, heading_offset=%d", node, list(id_map.keys()), heading_offset)
+    logger.debug("node=%r, id_map keys=%r, heading_offset=%d", node, list(tree.id_map.keys()), heading_offset)
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     heading: Final[HeadingLevel | None] = effective_heading_level(node)
@@ -311,42 +314,43 @@ def to_heading_vertex(node: RoamNode, id_map: dict[Id, RoamNode], heading_offset
         raise ValueError(f"RoamNode uid={node.uid!r} has no effective heading level")
     return HeadingVertex(
         uid=node.uid,
-        text=to_pandoc_md(node.string, id_map),
+        text=to_pandoc_md(node.string, tree),
         heading_level=heading + heading_offset,
-        children=_resolve_children(node, id_map),
-        refs=_resolve_refs(node, id_map),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
     )
 
 
 @validate_call
-def to_text_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> TextVertex:
+def to_text_vertex(node: RoamNode, tree: NodeTree) -> TextVertex:
     """Build a :class:`~guffin.vertex.TextVertex` from *node*.
 
     Args:
         node: A plain text block node with ``node.string`` set.
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
 
     Returns:
         A :class:`~guffin.vertex.TextVertex`.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.string`` is ``None``.
     """
-    logger.debug("node=%r, id_map keys=%r", node, list(id_map.keys()))
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     return TextVertex(
         uid=node.uid,
-        text=to_pandoc_md(node.string, id_map),
-        children=_resolve_children(node, id_map),
-        refs=_resolve_refs(node, id_map),
+        text=to_pandoc_md(node.string, tree),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
     )
 
 
 @validate_call
-def to_callout_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> CalloutVertex:
+def to_callout_vertex(node: RoamNode, tree: NodeTree) -> CalloutVertex:
     """Build a :class:`~guffin.vertex.CalloutVertex` from a callout block *node*.
 
     Parses the ``[[>]] [[!<TYPE>]]`` marker from ``node.string`` to extract the
@@ -354,37 +358,38 @@ def to_callout_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> CalloutVert
 
     Args:
         node: A callout block node whose ``string`` starts with a valid callout marker.
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
 
     Returns:
         A :class:`~guffin.vertex.CalloutVertex`.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.string`` is ``None`` or does not match the callout marker.
     """
-    logger.debug("node=%r, id_map keys=%r", node, list(id_map.keys()))
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     parsed: Final[RoamCallout | None] = parse_callout(node.string)
     if parsed is None:
         raise ValueError(f"RoamNode uid={node.uid!r} string does not match callout marker: {node.string!r}")
     callout_type: Final[CalloutVertex.CalloutType] = CalloutVertex.CalloutType(parsed.callout_type.lower())
-    title: Final[str] = to_pandoc_md(parsed.title.strip(), id_map)
-    body: Final[str] = to_pandoc_md(parsed.body.strip(), id_map) if parsed.body else ""
+    title: Final[str] = to_pandoc_md(parsed.title.strip(), tree)
+    body: Final[str] = to_pandoc_md(parsed.body.strip(), tree) if parsed.body else ""
     return CalloutVertex(
         uid=node.uid,
         callout_type=callout_type,
         title=title,
         body=body,
-        children=_resolve_children(node, id_map),
-        refs=_resolve_refs(node, id_map),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
     )
 
 
 @validate_call
-def to_code_block_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> CodeBlockVertex:
+def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
     """Build a :class:`~guffin.vertex.CodeBlockVertex` from a fenced code block *node*.
 
     Splits ``node.string`` into its info string and code content via
@@ -395,19 +400,20 @@ def to_code_block_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> CodeBloc
 
     Args:
         node: A code block node whose ``string`` is a fenced code block.
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
 
     Returns:
         A :class:`~guffin.vertex.CodeBlockVertex`.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.string`` is ``None``, is not a fenced code block, or
             carries an info string that is not a recognised
             :class:`~guffin.common.code_language.CodeLanguage`.
     """
-    logger.debug("node=%r, id_map keys=%r", node, list(id_map.keys()))
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     parsed: Final[FencedCodeBlock] = parse_fenced_code_block(node.string.strip())
@@ -415,13 +421,13 @@ def to_code_block_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> CodeBloc
         uid=node.uid,
         code=parsed.code,
         language=CodeLanguage(parsed.info),
-        children=_resolve_children(node, id_map),
-        refs=_resolve_refs(node, id_map),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
     )
 
 
 @validate_call
-def to_block_quote_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> BlockQuoteVertex:
+def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
     """Build a :class:`~guffin.vertex.BlockQuoteVertex` from a block-quote *node*.
 
     Strips the leading block-quote marker (``>`` or ``[[>]]``) from ``node.string``
@@ -431,24 +437,25 @@ def to_block_quote_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> BlockQu
     Args:
         node: A block-quote node whose ``string`` starts with a recognised block-quote
             marker (standard Markdown ``>`` or Roam-specific ``[[>]]``).
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
 
     Returns:
         A :class:`~guffin.vertex.BlockQuoteVertex`.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.string`` is ``None`` or is not a recognised block quote.
     """
-    logger.debug("node=%r, id_map keys=%r", node, list(id_map.keys()))
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     return BlockQuoteVertex(
         uid=node.uid,
-        text=to_pandoc_md(strip_block_quote_marker(node.string), id_map),
-        children=_resolve_children(node, id_map),
-        refs=_resolve_refs(node, id_map),
+        text=to_pandoc_md(strip_block_quote_marker(node.string), tree),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
     )
 
 
@@ -479,12 +486,11 @@ def to_table(table_tree: NodeTree) -> Table:
         ValueError: If the root node has no children (empty table).
     """
     logger.debug("table_tree root uid=%r", table_tree.root_node.uid)
-    id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in table_tree.tree_network} | table_tree.refs_by_id
     root: Final[RoamNode] = table_tree.root_node
     if not root.children:
         raise ValueError(f"RoamNode uid={root.uid!r} has no children (empty table)")
     col1_cells: Final[list[RoamNode]] = sorted(
-        [id_map[c.id] for c in root.children if c.id in id_map],
+        [table_tree.id_map[c.id] for c in root.children if c.id in table_tree.id_map],
         key=lambda n: n.order if n.order is not None else 0,
     )
     rows: Final[list[tuple[str, ...]]] = []
@@ -492,9 +498,9 @@ def to_table(table_tree: NodeTree) -> Table:
         row: list[str] = []
         cell: RoamNode | None = col1_cell
         while cell is not None:
-            row.append(to_pandoc_md(cell.string, id_map) if cell.string is not None else "")
+            row.append(to_pandoc_md(cell.string, table_tree) if cell.string is not None else "")
             next_cells: list[RoamNode] = sorted(
-                [id_map[c.id] for c in (cell.children or []) if c.id in id_map],
+                [table_tree.id_map[c.id] for c in (cell.children or []) if c.id in table_tree.id_map],
                 key=lambda n: n.order if n.order is not None else 0,
             )
             cell = next_cells[0] if next_cells else None
@@ -503,7 +509,7 @@ def to_table(table_tree: NodeTree) -> Table:
 
 
 @validate_call
-def to_table_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> tuple[TableVertex, frozenset[Id]]:
+def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozenset[Id]]:
     """Build a :class:`~guffin.vertex.TableVertex` from a native table *node*.
 
     Delegates :class:`~guffin.common.table.Table` construction to :func:`to_table`.
@@ -517,8 +523,9 @@ def to_table_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> tuple[TableVe
     Args:
         node: A native-table node whose :attr:`~guffin.roam.node.RoamNode.string`
             equals :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`.
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve row and cell stubs to their full node records.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve row and
+            cell stubs to their full node records.
 
     Returns:
         A ``(TableVertex, frozenset[Id])`` pair: the built vertex with an all-default
@@ -526,19 +533,19 @@ def to_table_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> tuple[TableVe
         consumed by this vertex (row and cell node IDs).
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If *node* has no children (empty table).
     """
-    logger.debug("node=%r, id_map keys=%r", node, list(id_map.keys()))
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if not node.children:
         raise ValueError(f"RoamNode uid={node.uid!r} has no children (empty table)")
-    table_tree: Final[NodeTree] = NodeTree.build(node, list(id_map.values()))
+    table_tree: Final[NodeTree] = NodeTree.build(node, list(tree.id_map.values()))
     consumed_ids: Final[frozenset[Id]] = frozenset(n.id for n in table_tree.tree_network)
     return (
         TableVertex(
             uid=node.uid,
             children=None,
-            refs=_resolve_refs(node, id_map),
+            refs=_resolve_refs(node, tree.id_map),
             table=to_table(table_tree),
             table_style=TableStyle(),
         ),
@@ -547,20 +554,20 @@ def to_table_vertex(node: RoamNode, id_map: dict[Id, RoamNode]) -> tuple[TableVe
 
 
 @validate_call
-def transcribe_standalone_node(node: RoamNode, id_map: dict[Id, RoamNode], heading_offset: int = 0) -> Vertex:
+def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: int = 0) -> Vertex:
     r"""Transcribe *node* into a normalized :class:`~guffin.vertex.Vertex`.
 
     Determines the :class:`~guffin.vertex.VertexType` via :func:`vertex_type`,
     resolves raw :class:`~guffin.roam.primitives.IdObject` stubs in children and refs to
-    stable UIDs via *id_map*, and handles both native Roam headings (levels 1–3 via
-    ``node.heading``) and Augmented Headings extension levels (4–6 via
-    ``node.props['ah-level']``).
+    stable UIDs via :attr:`~guffin.roam.tree.NodeTree.id_map`, and handles both native Roam
+    headings (levels 1–3 via ``node.heading``) and Augmented Headings extension levels
+    (4–6 via ``node.props['ah-level']``).
 
     Args:
         node: The raw Roam node to transcribe.
-        id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`,
-            used to resolve child and ref stubs to UIDs.  Stubs whose id is absent
-            from *id_map* are silently dropped.
+        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to.
+            :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve child and ref
+            stubs to UIDs; stubs whose id is absent from the map are silently dropped.
         heading_offset: Integer offset forwarded to :func:`to_heading_vertex` when *node*
             is a heading block.  Defaults to ``0`` (no adjustment).
 
@@ -568,25 +575,25 @@ def transcribe_standalone_node(node: RoamNode, id_map: dict[Id, RoamNode], headi
         A :class:`~guffin.vertex.Vertex` representing the normalized node.
 
     Raises:
-        ValidationError: If *node* or *id_map* is ``None`` or invalid.
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If *node* has neither a ``title`` nor a ``string`` field set.
     """
-    logger.debug("node=%r, id_map keys=%r, heading_offset=%d", node, list(id_map.keys()), heading_offset)
+    logger.debug("node=%r, tree root uid=%r, heading_offset=%d", node, tree.root_node.uid, heading_offset)
     match vertex_type(node):
         case VertexType.GUFFIN_PAGE:
-            return to_page_vertex(node, id_map)
+            return to_page_vertex(node, tree)
         case VertexType.GUFFIN_IMAGE:
-            return to_image_vertex(node, id_map)
+            return to_image_vertex(node, tree)
         case VertexType.GUFFIN_HEADING:
-            return to_heading_vertex(node, id_map, heading_offset)
+            return to_heading_vertex(node, tree, heading_offset)
         case VertexType.GUFFIN_TEXT:
-            return to_text_vertex(node, id_map)
+            return to_text_vertex(node, tree)
         case VertexType.GUFFIN_CALLOUT:
-            return to_callout_vertex(node, id_map)
+            return to_callout_vertex(node, tree)
         case VertexType.GUFFIN_CODE_BLOCK:
-            return to_code_block_vertex(node, id_map)
+            return to_code_block_vertex(node, tree)
         case VertexType.GUFFIN_BLOCK_QUOTE:
-            return to_block_quote_vertex(node, id_map)
+            return to_block_quote_vertex(node, tree)
         case VertexType.GUFFIN_TABLE:
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: GUFFIN_TABLE is not a standalone NodeType")
         case _ as unreachable:
@@ -619,7 +626,6 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     Raises:
         ValueError: If any node has neither a ``title`` nor a ``string`` field set.
     """
-    id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in node_tree.tree_network} | node_tree.refs_by_id
     min_level: Final[HeadingLevel | None] = (
         min_effective_heading_level(node_tree.tree_network) if SHOULD_NORMALIZE_HEADING_LEVELS else None
     )
@@ -631,9 +637,9 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         if node.id in consumed:
             continue
         if node_type(node) == NodeType.ROAM_NATIVE_TABLE:
-            table_vertex, nodes_consumed = to_table_vertex(node, id_map)
+            table_vertex, nodes_consumed = to_table_vertex(node, node_tree)
             consumed.update(nodes_consumed)
             vertices.append(table_vertex)
         else:
-            vertices.append(transcribe_standalone_node(node, id_map, heading_offset))
+            vertices.append(transcribe_standalone_node(node, node_tree, heading_offset))
     return VertexTree(vertices=vertices)

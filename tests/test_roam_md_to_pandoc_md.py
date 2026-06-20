@@ -14,15 +14,30 @@ from guffin.roam_md_to_pandoc_md import (
     to_pandoc_md,
 )
 from guffin.roam.node import RoamNode
-from guffin.roam.primitives import Id
+from guffin.roam.primitives import IdObject
+from guffin.roam.tree import NodeTree
 
 from conftest import STUB_TIME, STUB_USER
 
 
-def _page_id_map(title: str, uid: str) -> dict[Id, RoamNode]:
-    """Return an id_map containing a single page node with *title* and *uid*."""
+def _empty_tree() -> NodeTree:
+    """Return a NodeTree with no ROAM_PAGE nodes (page_name_map is empty)."""
+    node = RoamNode(
+        uid="stub00001",
+        id=1,
+        time=STUB_TIME,
+        user=STUB_USER,
+        string="stub",
+        parents=[IdObject(id=0)],
+        page=IdObject(id=0),
+    )
+    return NodeTree.build(root_node=node, super_network=[node])
+
+
+def _page_tree(title: str, uid: str) -> NodeTree:
+    """Return a NodeTree containing a single page node with *title* and *uid*."""
     node = RoamNode(uid=uid, id=1, time=STUB_TIME, user=STUB_USER, title=title, children=[])
-    return {node.id: node}
+    return NodeTree.build(root_node=node, super_network=[node])
 
 
 class TestConvertItalics:
@@ -142,55 +157,55 @@ class TestConvertPageLink:
 
     def test_page_link(self) -> None:
         """Test that an unresolved [[Page Name]] falls back to delimiter-stripped text."""
-        assert convert_page_link("[[Page Name]]", {}) == "Page Name"
+        assert convert_page_link("[[Page Name]]", _empty_tree()) == "Page Name"
 
     def test_nested_page_link(self) -> None:
         """Test that an unresolved nested [[nested [[pages]]]] has all double brackets removed."""
-        assert convert_page_link("[[nested [[pages]]]]", {}) == "nested pages"
+        assert convert_page_link("[[nested [[pages]]]]", _empty_tree()) == "nested pages"
 
     def test_hash_tag(self) -> None:
         """Test that an unresolved #[[multi-word tag]] loses its double brackets but keeps the hash."""
-        assert convert_page_link("#[[multi-word tag]]", {}) == "#multi-word tag"
+        assert convert_page_link("#[[multi-word tag]]", _empty_tree()) == "#multi-word tag"
 
     def test_single_brackets_preserved(self) -> None:
         """Test that single-bracket [text] is left unchanged (valid Pandoc Markdown syntax)."""
-        assert convert_page_link("[text]", {}) == "[text]"
+        assert convert_page_link("[text]", _empty_tree()) == "[text]"
 
     def test_block_reference_unaffected(self) -> None:
         """Test that ((block-uid)) passes through unchanged since it has no page reference."""
-        assert convert_page_link("((block-uid))", {}) == "((block-uid))"
+        assert convert_page_link("((block-uid))", _empty_tree()) == "((block-uid))"
 
     def test_no_brackets(self) -> None:
         """Test that plain text without references is returned unchanged."""
-        assert convert_page_link("plain text", {}) == "plain text"
+        assert convert_page_link("plain text", _empty_tree()) == "plain text"
 
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
-        assert convert_page_link("", {}) == ""
+        assert convert_page_link("", _empty_tree()) == ""
 
     def test_mixed_content(self) -> None:
         """Test that an unresolved reference embedded in surrounding text falls back to text."""
-        assert convert_page_link("See [[Page Name]] for details.", {}) == "See Page Name for details."
+        assert convert_page_link("See [[Page Name]] for details.", _empty_tree()) == "See Page Name for details."
 
     def test_pandoc_link_after_alias_conversion(self) -> None:
         """Test that [display](Page Name) produced by alias conversion is left unchanged."""
-        assert convert_page_link("[display](Page Name)", {}) == "[display](Page Name)"
+        assert convert_page_link("[display](Page Name)", _empty_tree()) == "[display](Page Name)"
 
     def test_resolves_to_vertex_link(self) -> None:
-        """Test that a [[Page Name]] whose title is in id_map becomes an x-guffin vertex link."""
-        assert convert_page_link("[[My Page]]", _page_id_map("My Page", "pageuid01")) == (
+        """Test that a [[Page Name]] whose title is in the tree resolves to an x-guffin vertex link."""
+        assert convert_page_link("[[My Page]]", _page_tree("My Page", "pageuid01")) == (
             "[My Page](x-guffin:vertex/pageuid01)"
         )
 
     def test_inline_reference_resolved(self) -> None:
         """Test that a resolvable reference embedded in text becomes an inline vertex link."""
-        assert convert_page_link("See [[My Page]] here", _page_id_map("My Page", "pageuid01")) == (
+        assert convert_page_link("See [[My Page]] here", _page_tree("My Page", "pageuid01")) == (
             "See [My Page](x-guffin:vertex/pageuid01) here"
         )
 
     def test_unknown_title_falls_back(self) -> None:
-        """Test that a reference whose title is absent from id_map falls back to plain text."""
-        assert convert_page_link("[[Other]]", _page_id_map("My Page", "pageuid01")) == "Other"
+        """Test that a reference whose title is absent from the tree falls back to plain text."""
+        assert convert_page_link("[[Other]]", _page_tree("My Page", "pageuid01")) == "Other"
 
 
 class TestConvertColorBold:
@@ -396,52 +411,52 @@ class TestToPandocMd:
 
     def test_italics_and_page_link(self) -> None:
         """Test that both italic conversion and page-link fallback are applied."""
-        assert to_pandoc_md("__italic__ [[page]]", {}) == "*italic* page"
+        assert to_pandoc_md("__italic__ [[page]]", _empty_tree()) == "*italic* page"
 
     def test_italics_applied_after_brackets(self) -> None:
         """Test that an unresolved [[__italic__]] becomes *italic* (brackets stripped, then italicized)."""
-        assert to_pandoc_md("[[__italic__]]", {}) == "*italic*"
+        assert to_pandoc_md("[[__italic__]]", _empty_tree()) == "*italic*"
 
     def test_plain_text_passthrough(self) -> None:
         """Test that plain text with no Roam syntax is returned unchanged."""
-        assert to_pandoc_md("plain text", {}) == "plain text"
+        assert to_pandoc_md("plain text", _empty_tree()) == "plain text"
 
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
-        assert to_pandoc_md("", {}) == ""
+        assert to_pandoc_md("", _empty_tree()) == ""
 
     def test_bold_and_page_link(self) -> None:
         """Test that bold is preserved while an unresolved page link falls back to text."""
-        assert to_pandoc_md("**bold** [[page]]", {}) == "**bold** page"
+        assert to_pandoc_md("**bold** [[page]]", _empty_tree()) == "**bold** page"
 
     def test_alias_converted_to_link(self) -> None:
         """Test that a page-link alias becomes a Pandoc Markdown inline link."""
-        assert to_pandoc_md("[display]([[Page Name]])", {}) == "[display](Page Name)"
+        assert to_pandoc_md("[display]([[Page Name]])", _empty_tree()) == "[display](Page Name)"
 
     def test_highlight_converted_to_span(self) -> None:
         """Test that a Roam highlight becomes a Pandoc bracketed span."""
-        assert to_pandoc_md("^^highlighted^^", {}) == "[highlighted]{.mark}"
+        assert to_pandoc_md("^^highlighted^^", _empty_tree()) == "[highlighted]{.mark}"
 
     def test_block_ref_left_verbatim(self) -> None:
         """Test that a Roam block reference is left unchanged."""
-        assert to_pandoc_md("((block-uid))", {}) == "((block-uid))"
+        assert to_pandoc_md("((block-uid))", _empty_tree()) == "((block-uid))"
 
     def test_block_embed_left_verbatim(self) -> None:
         """Test that a Roam block embed is left unchanged."""
-        assert to_pandoc_md("{{embed: ((block-uid))}}", {}) == "{{embed: ((block-uid))}}"
+        assert to_pandoc_md("{{embed: ((block-uid))}}", _empty_tree()) == "{{embed: ((block-uid))}}"
 
     def test_alias_and_highlight_combined(self) -> None:
         """Test that alias and highlight conversions compose: highlight inside display text becomes a span."""
         # convert_page_link runs before convert_highlights, so the [[ produced by
         # [bright]{.mark} inside the link display text is never treated as a page-link delimiter.
-        assert to_pandoc_md("[^^bright^^]([[Page]])", {}) == "[[bright]{.mark}](Page)"
+        assert to_pandoc_md("[^^bright^^]([[Page]])", _empty_tree()) == "[[bright]{.mark}](Page)"
 
     def test_code_block_normalized(self) -> None:
         """Test that a Roam fenced code block has its closing fence isolated."""
-        assert to_pandoc_md("```python\nx = 1```", {}) == "```python\nx = 1\n```"
+        assert to_pandoc_md("```python\nx = 1```", _empty_tree()) == "```python\nx = 1\n```"
 
     def test_page_ref_resolved_to_vertex_link(self) -> None:
-        """Test that a page reference resolves to an x-guffin vertex link when its page is in id_map."""
-        assert to_pandoc_md("[[My Page]]", _page_id_map("My Page", "pageuid01")) == (
+        """Test that a page reference resolves to an x-guffin vertex link when its page is in the tree."""
+        assert to_pandoc_md("[[My Page]]", _page_tree("My Page", "pageuid01")) == (
             "[My Page](x-guffin:vertex/pageuid01)"
         )

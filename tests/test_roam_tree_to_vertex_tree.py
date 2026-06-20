@@ -38,7 +38,7 @@ from guffin.roam_tree_to_vertex_tree import (
 )
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
 from guffin.roam.tree import NodeTree
-from guffin.roam.primitives import Id, IdObject
+from guffin.roam.primitives import IdObject
 
 # A real Firestore URL whose path yields a predictable file_name and media_type:
 #   file_name  = "photo.jpeg"
@@ -182,9 +182,9 @@ def _make_block_quote(
     )
 
 
-def _id_map(*nodes: RoamNode) -> dict[Id, RoamNode]:
-    """Build an id_map from a sequence of nodes."""
-    return {n.id: n for n in nodes}
+def _node_tree(*nodes: RoamNode) -> NodeTree:
+    """Build a NodeTree rooted at the first node, with all *nodes* as the super_network."""
+    return NodeTree.build(super_network=list(nodes), root_node=nodes[0])
 
 
 # ---------------------------------------------------------------------------
@@ -249,22 +249,22 @@ class TestToPageVertex:
     def test_returns_roam_page_vertex_type(self) -> None:
         """Test that to_page_vertex produces a vertex with type GUFFIN_PAGE."""
         node = _make_page()
-        assert to_page_vertex(node, _id_map(node)).vertex_type is VertexType.GUFFIN_PAGE
+        assert to_page_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_PAGE
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_page(uid="pageuid01")
-        assert to_page_vertex(node, _id_map(node)).uid == "pageuid01"
+        assert to_page_vertex(node, _node_tree(node)).uid == "pageuid01"
 
     def test_title_equals_node_title(self) -> None:
         """Test that the vertex title equals the source node's title."""
         node = _make_page(title="Section 1")
-        assert to_page_vertex(node, _id_map(node)).title == "Section 1"
+        assert to_page_vertex(node, _node_tree(node)).title == "Section 1"
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""
         node = _make_page()
-        assert to_page_vertex(node, _id_map(node)).children is None
+        assert to_page_vertex(node, _node_tree(node)).children is None
 
     def test_children_resolved_and_ordered_by_order_field(self) -> None:
         """Test that children are resolved from id_map and sorted ascending by their order field."""
@@ -296,25 +296,13 @@ class TestToPageVertex:
             title="My Page",
             children=[IdObject(id=201), IdObject(id=202)],
         )
-        v = to_page_vertex(page, _id_map(page, child1, child2))
+        v = to_page_vertex(page, _node_tree(page, child1, child2))
         assert v.children == ["child0002", "child0001"]
-
-    def test_child_absent_from_id_map_is_silently_dropped(self) -> None:
-        """Test that child stubs whose id is absent from id_map are dropped and children returns None."""
-        page = RoamNode(
-            uid="pageuid01",
-            id=100,
-            time=STUB_TIME,
-            user=STUB_USER,
-            title="My Page",
-            children=[IdObject(id=999)],
-        )
-        assert to_page_vertex(page, _id_map(page)).children is None
 
     def test_refs_none_when_no_refs(self) -> None:
         """Test that refs is None when the node has no refs."""
         node = _make_page()
-        assert to_page_vertex(node, _id_map(node)).refs is None
+        assert to_page_vertex(node, _node_tree(node)).refs is None
 
     def test_refs_resolved_to_uids(self) -> None:
         """Test that ref stubs are resolved to UIDs via id_map."""
@@ -328,19 +316,19 @@ class TestToPageVertex:
             children=[],
             refs=[IdObject(id=301)],
         )
-        v = to_page_vertex(page, _id_map(page, ref_node))
+        v = to_page_vertex(page, _node_tree(page, ref_node))
         assert v.refs == ["refnode01"]
 
     def test_missing_title_raises_value_error(self) -> None:
         """Test that a node without a title raises ValueError."""
         node = _make_text()
         with pytest.raises(ValueError, match="no 'title'"):
-            to_page_vertex(node, _id_map(node))
+            to_page_vertex(node, _node_tree(node))
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            to_page_vertex(None, _id_map())  # type: ignore[arg-type]
+            to_page_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -354,51 +342,51 @@ class TestToImageVertex:
     def test_returns_roam_image_vertex_type(self) -> None:
         """Test that to_image_vertex produces a vertex with type GUFFIN_IMAGE."""
         node = _make_image()
-        assert to_image_vertex(node, _id_map(node)).vertex_type is VertexType.GUFFIN_IMAGE
+        assert to_image_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_IMAGE
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_image(uid="imageuid1")
-        assert to_image_vertex(node, _id_map(node)).uid == "imageuid1"
+        assert to_image_vertex(node, _node_tree(node)).uid == "imageuid1"
 
     def test_source_host_is_firestore(self) -> None:
         """Test that the vertex source URL points to the Firestore host."""
-        v = to_image_vertex(_make_image(), _id_map(_make_image()))
+        v = to_image_vertex(_make_image(), _node_tree(_make_image()))
         assert v.source.host == "firebasestorage.googleapis.com"
 
     def test_alt_text_extracted_from_string(self) -> None:
         """Test that alt text is extracted and stripped from the Markdown image link."""
         node = _make_image(string=f"![My Photo]({_FIRESTORE_URL})")
-        assert to_image_vertex(node, _id_map(node)).alt_text == "My Photo"
+        assert to_image_vertex(node, _node_tree(node)).alt_text == "My Photo"
 
     def test_alt_text_stripped_of_whitespace(self) -> None:
         """Test that leading/trailing whitespace (including newlines) is stripped from alt text."""
         node = _make_image(string=f"![A flower\n        ]({_FIRESTORE_URL})")
-        assert to_image_vertex(node, _id_map(node)).alt_text == "A flower"
+        assert to_image_vertex(node, _node_tree(node)).alt_text == "A flower"
 
     def test_alt_text_none_when_empty(self) -> None:
         """Test that empty alt text produces None rather than an empty string."""
         node = _make_image(string=f"![]({_FIRESTORE_URL})")
-        assert to_image_vertex(node, _id_map(node)).alt_text is None
+        assert to_image_vertex(node, _node_tree(node)).alt_text is None
 
     def test_file_name_extracted_from_url(self) -> None:
         """Test that the filename is percent-decoded from the Firestore URL path."""
-        assert to_image_vertex(_make_image(), _id_map(_make_image())).file_name == "photo.jpeg"
+        assert to_image_vertex(_make_image(), _node_tree(_make_image())).file_name == "photo.jpeg"
 
     def test_media_type_inferred_from_file_name(self) -> None:
         """Test that the IANA media type is inferred from the extracted filename extension."""
-        assert to_image_vertex(_make_image(), _id_map(_make_image())).media_type == "image/jpeg"
+        assert to_image_vertex(_make_image(), _node_tree(_make_image())).media_type == "image/jpeg"
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the image node has no children."""
         node = _make_image()
-        assert to_image_vertex(node, _id_map(node)).children is None
+        assert to_image_vertex(node, _node_tree(node)).children is None
 
     def test_missing_string_raises_value_error(self) -> None:
         """Test that a node without a string raises ValueError."""
         node = _make_page()
         with pytest.raises(ValueError, match="no 'string'"):
-            to_image_vertex(node, _id_map(node))
+            to_image_vertex(node, _node_tree(node))
 
     def test_non_firestore_url_raises_value_error(self) -> None:
         """Test that a string with a non-Firestore https URL raises ValueError."""
@@ -412,12 +400,12 @@ class TestToImageVertex:
             page=IdObject(id=99),
         )
         with pytest.raises(ValueError, match="contains no Firestore URL"):
-            to_image_vertex(node, _id_map(node))
+            to_image_vertex(node, _node_tree(node))
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            to_image_vertex(None, _id_map())  # type: ignore[arg-type]
+            to_image_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -431,51 +419,51 @@ class TestToHeadingVertex:
     def test_returns_roam_heading_vertex_type(self) -> None:
         """Test that to_heading_vertex produces a vertex with type GUFFIN_HEADING."""
         node = _make_heading()
-        assert to_heading_vertex(node, _id_map(node)).vertex_type is VertexType.GUFFIN_HEADING
+        assert to_heading_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_HEADING
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_heading(uid="headuid01")
-        assert to_heading_vertex(node, _id_map(node)).uid == "headuid01"
+        assert to_heading_vertex(node, _node_tree(node)).uid == "headuid01"
 
     def test_text_equals_string(self) -> None:
         """Test that the vertex text equals the node's block string."""
         node = _make_heading(string="Introduction")
-        assert to_heading_vertex(node, _id_map(node)).text == "Introduction"
+        assert to_heading_vertex(node, _node_tree(node)).text == "Introduction"
 
     def test_native_heading_levels_preserved(self) -> None:
         """Test that native heading levels 1–3 are preserved in the vertex."""
         for level in (1, 2, 3):
             node = _make_heading(heading=level)
-            assert to_heading_vertex(node, _id_map(node)).heading_level == level
+            assert to_heading_vertex(node, _node_tree(node)).heading_level == level
 
     def test_ah_level_heading_levels_resolved(self) -> None:
         """Test that Augmented Headings levels h4–h6 are resolved to integers 4–6."""
         for level_str, expected in (("h4", 4), ("h5", 5), ("h6", 6)):
             node = _make_ah_heading(level=level_str)
-            assert to_heading_vertex(node, _id_map(node)).heading_level == expected
+            assert to_heading_vertex(node, _node_tree(node)).heading_level == expected
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the heading node has no children."""
         node = _make_heading()
-        assert to_heading_vertex(node, _id_map(node)).children is None
+        assert to_heading_vertex(node, _node_tree(node)).children is None
 
     def test_missing_string_raises_value_error(self) -> None:
         """Test that a node without a string raises ValueError."""
         node = _make_page()
         with pytest.raises(ValueError, match="no 'string'"):
-            to_heading_vertex(node, _id_map(node))
+            to_heading_vertex(node, _node_tree(node))
 
     def test_no_heading_raises_value_error(self) -> None:
         """Test that a node with no effective heading level raises ValueError."""
         node = _make_text()
         with pytest.raises(ValueError, match="no effective heading level"):
-            to_heading_vertex(node, _id_map(node))
+            to_heading_vertex(node, _node_tree(node))
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            to_heading_vertex(None, _id_map())  # type: ignore[arg-type]
+            to_heading_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -489,38 +477,38 @@ class TestToTextVertex:
     def test_returns_roam_text_content_vertex_type(self) -> None:
         """Test that to_text_vertex produces a vertex with type GUFFIN_TEXT."""
         node = _make_text()
-        assert to_text_vertex(node, _id_map(node)).vertex_type is VertexType.GUFFIN_TEXT
+        assert to_text_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_TEXT
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_text(uid="textuid01")
-        assert to_text_vertex(node, _id_map(node)).uid == "textuid01"
+        assert to_text_vertex(node, _node_tree(node)).uid == "textuid01"
 
     def test_text_equals_string(self) -> None:
         """Test that the vertex text equals the node's block string."""
         node = _make_text(string="Hello, world!")
-        assert to_text_vertex(node, _id_map(node)).text == "Hello, world!"
+        assert to_text_vertex(node, _node_tree(node)).text == "Hello, world!"
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""
         node = _make_text()
-        assert to_text_vertex(node, _id_map(node)).children is None
+        assert to_text_vertex(node, _node_tree(node)).children is None
 
     def test_refs_none_when_no_refs(self) -> None:
         """Test that refs is None when the node has no refs."""
         node = _make_text()
-        assert to_text_vertex(node, _id_map(node)).refs is None
+        assert to_text_vertex(node, _node_tree(node)).refs is None
 
     def test_missing_string_raises_value_error(self) -> None:
         """Test that a node without a string raises ValueError."""
         node = _make_page()
         with pytest.raises(ValueError, match="no 'string'"):
-            to_text_vertex(node, _id_map(node))
+            to_text_vertex(node, _node_tree(node))
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            to_text_vertex(None, _id_map())  # type: ignore[arg-type]
+            to_text_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -534,67 +522,67 @@ class TestToCalloutVertex:
     def test_returns_guffin_callout_vertex_type(self) -> None:
         """Test that to_callout_vertex produces a vertex with type GUFFIN_CALLOUT."""
         node = _make_callout()
-        assert to_callout_vertex(node, _id_map(node)).vertex_type is VertexType.GUFFIN_CALLOUT
+        assert to_callout_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_CALLOUT
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_callout(uid="caluid002")
-        assert to_callout_vertex(node, _id_map(node)).uid == "caluid002"
+        assert to_callout_vertex(node, _node_tree(node)).uid == "caluid002"
 
     def test_callout_type_parsed(self) -> None:
         """Test that the callout type is extracted from the marker keyword."""
         node = _make_callout(string="[[>]] [[!WARNING]] Watch out")
-        assert to_callout_vertex(node, _id_map(node)).callout_type is CalloutVertex.CalloutType.WARNING
+        assert to_callout_vertex(node, _node_tree(node)).callout_type is CalloutVertex.CalloutType.WARNING
 
     def test_title_extracted(self) -> None:
         """Test that the title is the text following the callout marker."""
         node = _make_callout()
-        assert to_callout_vertex(node, _id_map(node)).title == "This is a note"
+        assert to_callout_vertex(node, _node_tree(node)).title == "This is a note"
 
     def test_title_stripped_of_surrounding_whitespace(self) -> None:
         """Test that leading and trailing whitespace is stripped from the title."""
         node = _make_callout(string="[[>]] [[!NOTE]] Hello World  ")
-        assert to_callout_vertex(node, _id_map(node)).title == "Hello World"
+        assert to_callout_vertex(node, _node_tree(node)).title == "Hello World"
 
     def test_body_is_empty_string(self) -> None:
         """Test that body is always an empty string (populated later, not by this function)."""
         node = _make_callout()
-        assert to_callout_vertex(node, _id_map(node)).body == ""
+        assert to_callout_vertex(node, _node_tree(node)).body == ""
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""
         node = _make_callout()
-        assert to_callout_vertex(node, _id_map(node)).children is None
+        assert to_callout_vertex(node, _node_tree(node)).children is None
 
     def test_refs_none_when_no_refs(self) -> None:
         """Test that refs is None when the node has no refs."""
         node = _make_callout()
-        assert to_callout_vertex(node, _id_map(node)).refs is None
+        assert to_callout_vertex(node, _node_tree(node)).refs is None
 
     def test_missing_string_raises_value_error(self) -> None:
         """Test that a node without a string raises ValueError."""
         node = _make_page()
         with pytest.raises(ValueError, match="no 'string'"):
-            to_callout_vertex(node, _id_map(node))
+            to_callout_vertex(node, _node_tree(node))
 
     def test_non_callout_string_raises_value_error(self) -> None:
         """Test that a string not matching the callout marker raises ValueError."""
         node = _make_callout(string="Just a plain block")
         with pytest.raises(ValueError, match="does not match callout marker"):
-            to_callout_vertex(node, _id_map(node))
+            to_callout_vertex(node, _node_tree(node))
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            to_callout_vertex(None, _id_map())  # type: ignore[arg-type]
+            to_callout_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
     def test_article_0_fixture_callout_type(self) -> None:
         """Test that the Article 0 callout node (qnCiceZgk) yields CalloutType.INFO."""
         raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "qnCiceZgk")
-        id_map: dict[Id, RoamNode] = {n.id: n for n in nodes}
-        assert to_callout_vertex(fixture_node, id_map).callout_type is CalloutVertex.CalloutType.INFO
+        tree: NodeTree = NodeTree.build(fixture_node, nodes)
+        assert to_callout_vertex(fixture_node, tree).callout_type is CalloutVertex.CalloutType.INFO
 
     def test_article_0_fixture_title(self) -> None:
         """Test that the Article 0 callout node (qnCiceZgk) yields the expected title.
@@ -604,9 +592,9 @@ class TestToCalloutVertex:
         raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "qnCiceZgk")
-        id_map: dict[Id, RoamNode] = {n.id: n for n in nodes}
+        tree: NodeTree = NodeTree.build(fixture_node, nodes)
         expected: str = "THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin) – DO NOT REMOVE"
-        assert to_callout_vertex(fixture_node, id_map).title == expected
+        assert to_callout_vertex(fixture_node, tree).title == expected
 
     def test_article_0_fixture_body(self) -> None:
         """Test that the Article 0 callout node (qnCiceZgk) yields the expected body.
@@ -616,7 +604,7 @@ class TestToCalloutVertex:
         raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "qnCiceZgk")
-        id_map: dict[Id, RoamNode] = {n.id: n for n in nodes}
+        tree: NodeTree = NodeTree.build(fixture_node, nodes)
         expected: str = (
             "A baseline Roam document, with almost no features\n"
             "Features:\n"
@@ -636,7 +624,7 @@ class TestToCalloutVertex:
             "- Roam-native table (3x3)\n"
             "- this INFO `Callout box`, which contains Roam `page references`"
         )
-        assert to_callout_vertex(fixture_node, id_map).body == expected
+        assert to_callout_vertex(fixture_node, tree).body == expected
 
 
 # ---------------------------------------------------------------------------
@@ -650,31 +638,31 @@ class TestToCodeBlockVertex:
     def test_returns_code_block_vertex(self) -> None:
         """Test that a fenced code block node builds a CodeBlockVertex."""
         node = _make_code()
-        assert isinstance(to_code_block_vertex(node, _id_map(node)), CodeBlockVertex)
+        assert isinstance(to_code_block_vertex(node, _node_tree(node)), CodeBlockVertex)
 
     def test_language_from_info_string(self) -> None:
         """Test that the opening fence's info string maps to a CodeLanguage."""
         node = _make_code()
-        assert to_code_block_vertex(node, _id_map(node)).language is CodeLanguage.PYTHON
+        assert to_code_block_vertex(node, _node_tree(node)).language is CodeLanguage.PYTHON
 
     def test_code_excludes_fences(self) -> None:
         """Test that the code content excludes the opening and closing fences."""
         node = _make_code()
-        assert to_code_block_vertex(node, _id_map(node)).code == "def f():\n    pass"
+        assert to_code_block_vertex(node, _node_tree(node)).code == "def f():\n    pass"
 
     def test_unrecognised_language_raises(self) -> None:
         """Test that an info string outside CodeLanguage raises ValueError."""
         node = _make_code(string="```fortran\nprint *, 1\n```")
         with pytest.raises(ValueError):
-            to_code_block_vertex(node, _id_map(node))
+            to_code_block_vertex(node, _node_tree(node))
 
     def test_article_0_fixture_code_block(self) -> None:
         """Test that the Article 0 isolated code block (C6xVTMnsh) yields PYTHON CodeBlockVertex."""
         raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "C6xVTMnsh")
-        id_map: dict[Id, RoamNode] = {n.id: n for n in nodes}
-        vertex: CodeBlockVertex = to_code_block_vertex(fixture_node, id_map)
+        tree: NodeTree = NodeTree.build(fixture_node, nodes)
+        vertex: CodeBlockVertex = to_code_block_vertex(fixture_node, tree)
         assert vertex.language is CodeLanguage.PYTHON
         assert vertex.code.startswith("def fizz_buzz(limit: int = 100):")
 
@@ -690,54 +678,54 @@ class TestToBlockQuoteVertex:
     def test_returns_block_quote_vertex(self) -> None:
         """Test that a block-quote node builds a BlockQuoteVertex."""
         node = _make_block_quote()
-        assert isinstance(to_block_quote_vertex(node, _id_map(node)), BlockQuoteVertex)
+        assert isinstance(to_block_quote_vertex(node, _node_tree(node)), BlockQuoteVertex)
 
     def test_vertex_type_is_guffin_block_quote(self) -> None:
         """Test that the vertex_type is GUFFIN_BLOCK_QUOTE."""
         node = _make_block_quote()
-        assert to_block_quote_vertex(node, _id_map(node)).vertex_type is VertexType.GUFFIN_BLOCK_QUOTE
+        assert to_block_quote_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_BLOCK_QUOTE
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_block_quote(uid="bquid0002")
-        assert to_block_quote_vertex(node, _id_map(node)).uid == "bquid0002"
+        assert to_block_quote_vertex(node, _node_tree(node)).uid == "bquid0002"
 
     def test_md_marker_stripped_from_text(self) -> None:
         """Test that the standard Markdown > marker is stripped, leaving only the content."""
         node = _make_block_quote(string="> Hello, world!")
-        assert to_block_quote_vertex(node, _id_map(node)).text == "Hello, world!"
+        assert to_block_quote_vertex(node, _node_tree(node)).text == "Hello, world!"
 
     def test_roam_marker_stripped_from_text(self) -> None:
         """Test that the Roam [[>]] marker is stripped, leaving only the content."""
         node = _make_block_quote(string="[[>]] Hello, world!")
-        assert to_block_quote_vertex(node, _id_map(node)).text == "Hello, world!"
+        assert to_block_quote_vertex(node, _node_tree(node)).text == "Hello, world!"
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""
         node = _make_block_quote()
-        assert to_block_quote_vertex(node, _id_map(node)).children is None
+        assert to_block_quote_vertex(node, _node_tree(node)).children is None
 
     def test_refs_none_when_no_refs(self) -> None:
         """Test that refs is None when the node has no refs."""
         node = _make_block_quote()
-        assert to_block_quote_vertex(node, _id_map(node)).refs is None
+        assert to_block_quote_vertex(node, _node_tree(node)).refs is None
 
     def test_missing_string_raises_value_error(self) -> None:
         """Test that a node without a string raises ValueError."""
         node = _make_page()
         with pytest.raises(ValueError, match="no 'string'"):
-            to_block_quote_vertex(node, _id_map(node))
+            to_block_quote_vertex(node, _node_tree(node))
 
     def test_non_quote_string_raises_value_error(self) -> None:
         """Test that a plain string that is not a block quote raises ValueError."""
         node = _make_block_quote(string="Just plain text")
         with pytest.raises(ValueError):
-            to_block_quote_vertex(node, _id_map(node))
+            to_block_quote_vertex(node, _node_tree(node))
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            to_block_quote_vertex(None, _id_map())  # type: ignore[arg-type]
+            to_block_quote_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -751,7 +739,7 @@ class TestTranscribeNode:
     def test_transcribes_page_node(self) -> None:
         """Test that a page node is transcribed to a GUFFIN_PAGE vertex with correct fields."""
         node = _make_page(title="My Page")
-        v = transcribe_standalone_node(node, _id_map(node))
+        v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, PageVertex)
         assert v.vertex_type is VertexType.GUFFIN_PAGE
         assert v.title == "My Page"
@@ -759,7 +747,7 @@ class TestTranscribeNode:
     def test_transcribes_image_node(self) -> None:
         """Test that an image block node is transcribed to a GUFFIN_IMAGE vertex with correct fields."""
         node = _make_image()
-        v = transcribe_standalone_node(node, _id_map(node))
+        v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, ImageVertex)
         assert v.vertex_type is VertexType.GUFFIN_IMAGE
         assert v.file_name == "photo.jpeg"
@@ -768,7 +756,7 @@ class TestTranscribeNode:
     def test_transcribes_heading_node(self) -> None:
         """Test that a heading block node is transcribed to a GUFFIN_HEADING vertex with correct fields."""
         node = _make_heading(string="Intro", heading=1)
-        v = transcribe_standalone_node(node, _id_map(node))
+        v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, HeadingVertex)
         assert v.vertex_type is VertexType.GUFFIN_HEADING
         assert v.text == "Intro"
@@ -777,7 +765,7 @@ class TestTranscribeNode:
     def test_transcribes_text_content_node(self) -> None:
         """Test that a plain text block node is transcribed to a GUFFIN_TEXT vertex."""
         node = _make_text(string="Body text")
-        v = transcribe_standalone_node(node, _id_map(node))
+        v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, TextVertex)
         assert v.vertex_type is VertexType.GUFFIN_TEXT
         assert v.text == "Body text"
@@ -785,7 +773,7 @@ class TestTranscribeNode:
     def test_transcribes_block_quote_node(self) -> None:
         """Test that a block-quote node is transcribed to a GUFFIN_BLOCK_QUOTE vertex."""
         node = _make_block_quote(string="> Quoted content")
-        v = transcribe_standalone_node(node, _id_map(node))
+        v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, BlockQuoteVertex)
         assert v.vertex_type is VertexType.GUFFIN_BLOCK_QUOTE
         assert v.text == "Quoted content"
@@ -810,7 +798,7 @@ class TestTranscribeNode:
             title="Page",
             children=[IdObject(id=201)],
         )
-        v = transcribe_standalone_node(page, _id_map(page, child))
+        v = transcribe_standalone_node(page, _node_tree(page, child))
         assert isinstance(v, PageVertex)
         assert v.children == ["child0001"]
 
@@ -822,13 +810,13 @@ class TestTranscribeNode:
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            transcribe_standalone_node(None, _id_map())  # type: ignore[arg-type]
+            transcribe_standalone_node(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
     def test_transcribes_image_node_from_fixture(self) -> None:
         """Test transcription of a real-world image node loaded from the JSON fixture."""
         raw = json.loads((FIXTURES_JSON_DIR / "image_node.json").read_text())[0]
         node = RoamNode.model_validate(raw)
-        v = transcribe_standalone_node(node, _id_map(node))
+        v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, ImageVertex)
         assert v.vertex_type is VertexType.GUFFIN_IMAGE
         assert v.uid == "mPCzedeKx"
@@ -849,11 +837,10 @@ class TestTranscribeArticleFixture:
         """Test that transcribing test_article_1_nodes.yaml produces the vertices in test_article_1_vertices.yaml."""
         node_tree = article1_node_tree()
         nodes = list(node_tree.tree_network)
-        id_map: dict[Id, RoamNode] = {n.id: n for n in nodes} | node_tree.refs_by_id
         min_level = min_effective_heading_level(node_tree.tree_network)
         heading_offset: int = (1 - min_level) if min_level is not None else 0
 
-        actual_vertices: list[Vertex] = [transcribe_standalone_node(n, id_map, heading_offset) for n in nodes]
+        actual_vertices: list[Vertex] = [transcribe_standalone_node(n, node_tree, heading_offset) for n in nodes]
 
         raw_vertices: list[dict[str, object]] = yaml.safe_load(
             (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
@@ -1014,14 +1001,14 @@ class TestToTable:
 class TestToTableVertex:
     """Tests for to_table_vertex."""
 
-    def _make_2x2_inputs(self) -> tuple[RoamNode, dict[Id, RoamNode]]:
-        """Return (root, id_map) for a 2×2 table: row 1 = (A, B), row 2 = (C, D)."""
+    def _make_2x2_inputs(self) -> tuple[RoamNode, NodeTree]:
+        """Return (root, tree) for a 2×2 table: row 1 = (A, B), row 2 = (C, D)."""
         root = _make_table_root("tabluid01", 10, [11, 12])
         col1_row1 = _make_cell_node("cel11uid1", 11, 10, "A", order=0, child_id=13)
         col1_row2 = _make_cell_node("cel12uid1", 12, 10, "C", order=1, child_id=14)
         col2_row1 = _make_cell_node("cel21uid1", 13, 11, "B", order=0)
         col2_row2 = _make_cell_node("cel22uid1", 14, 12, "D", order=0)
-        return root, _id_map(root, col1_row1, col1_row2, col2_row1, col2_row2)
+        return root, _node_tree(root, col1_row1, col1_row2, col2_row1, col2_row2)
 
     def test_returns_table_vertex(self) -> None:
         """to_table_vertex returns a TableVertex as the first element of the pair."""
@@ -1072,4 +1059,4 @@ class TestToTableVertex:
             page=IdObject(id=1),
         )
         with pytest.raises(ValueError, match="no children"):
-            to_table_vertex(root, _id_map(root))
+            to_table_vertex(root, _node_tree(root))

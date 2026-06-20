@@ -32,7 +32,7 @@ from guffin.roam.network import (
     is_acyclic,
     refs_ids,
 )
-from guffin.roam.node import RoamNode
+from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.primitives import Id
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 
@@ -55,6 +55,12 @@ class NodeTree(BaseModel):
             the source *super_network* that is either directly referenced via ``:block/refs``
             by a member of :attr:`tree_network`, or is a transitive descendant of such a
             node available in *super_network*; may be empty.
+        id_map: Map of :attr:`~guffin.roam.node.RoamNode.id` → :class:`~guffin.roam.node.RoamNode`
+            for every node in :attr:`tree_network` or :attr:`refs_by_id`; excluded from
+            serialization.
+        page_name_map: Map of :attr:`~guffin.roam.node.RoamNode.title` →
+            :class:`~guffin.roam.node.RoamNode` for every :attr:`~guffin.roam.node.NodeType.ROAM_PAGE`
+            node in :attr:`tree_network` or :attr:`refs_by_id`; excluded from serialization.
 
     Methods:
         build: Factory method — the only supported way to create a :class:`NodeTree`.
@@ -81,6 +87,16 @@ class NodeTree(BaseModel):
             "available in super_network; may be empty."
         ),
     )
+    id_map: dict[Id, RoamNode] = Field(
+        ...,
+        exclude=True,
+        description="Map of id → RoamNode for every node in tree_network or refs_by_id.",
+    )
+    page_name_map: dict[str, RoamNode] = Field(
+        ...,
+        exclude=True,
+        description="Map of title → RoamNode for every ROAM_PAGE node in tree_network or refs_by_id.",
+    )
 
     @classmethod
     def build(cls, root_node: RoamNode, super_network: NodeNetwork) -> NodeTree:
@@ -89,8 +105,9 @@ class NodeTree(BaseModel):
         Uses :func:`~guffin.roam.network.all_descendants` to extract the subtree rooted
         at *root_node* from *super_network*, builds :attr:`refs_by_id` from the direct ref
         targets of :attr:`tree_network` plus all their transitive descendants available in
-        *super_network*, then delegates to the Pydantic constructor (which runs all
-        validators including :meth:`_validate_is_tree`).
+        *super_network*, derives :attr:`id_map` and :attr:`page_name_map` from the combined
+        node pool, then delegates to the Pydantic constructor (which runs all validators
+        including :meth:`_validate_is_tree`).
 
         Args:
             root_node: The single root node of the tree.
@@ -117,9 +134,19 @@ class NodeTree(BaseModel):
         tree_ids: Final[set[Id]] = {root_node.id} | {n.id for n in all_descendants(root_node, super_network)}
         tree_network: Final[NodeNetwork] = [n for n in super_network if n.id in tree_ids]
         refs_by_id: Final[dict[Id, RoamNode]] = cls._build_refs_by_id(tree_network, super_network)
+        id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in tree_network} | refs_by_id
+        page_name_map: Final[dict[str, RoamNode]] = {
+            n.title: n for n in id_map.values() if node_type(n) == NodeType.ROAM_PAGE and n.title is not None
+        }
         cls._creating = True
         try:
-            return cls(root_node=root_node, tree_network=tree_network, refs_by_id=refs_by_id)
+            return cls(
+                root_node=root_node,
+                tree_network=tree_network,
+                refs_by_id=refs_by_id,
+                id_map=id_map,
+                page_name_map=page_name_map,
+            )
         finally:
             cls._creating = False
 
@@ -257,13 +284,13 @@ class NodeTreeDFSIterator(Iterator[RoamNode]):
     def __init__(self, tree: NodeTree) -> None:
         """Initialize the iterator from *tree*.
 
-        Builds an id-map over *tree.tree_network* and seeds the stack with the
-        single root node.
+        Stores a reference to *tree*'s pre-built :attr:`~NodeTree.id_map` and
+        seeds the stack with the single root node.
 
         Args:
             tree: The :class:`NodeTree` to traverse.
         """
-        self._id_map: dict[Id, RoamNode] = {n.id: n for n in tree.tree_network}
+        self._id_map: dict[Id, RoamNode] = tree.id_map
         self._stack: list[RoamNode] = [tree.root_node]
 
     def __iter__(self) -> Iterator[RoamNode]:

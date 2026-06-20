@@ -8,7 +8,7 @@ from guffin.roam.network import (
     has_unique_ids,
     is_acyclic,
 )
-from guffin.roam.node import RoamNode
+from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.primitives import Id, IdObject
 from guffin.roam.tree import NodeTree, NodeTreeDFSIterator, is_tree
 from guffin.common.validation import ValidationError
@@ -429,6 +429,173 @@ class TestNodeTreeExternalRefsIds:
 
 
 # ---------------------------------------------------------------------------
+# TestNodeTreeIdMap
+# ---------------------------------------------------------------------------
+
+
+class TestNodeTreeIdMap:
+    """Tests for NodeTree.id_map — merged id → RoamNode index over tree_network and refs_by_id."""
+
+    def test_single_root_maps_root_by_id(self) -> None:
+        """Test that a one-node tree produces id_map = {root.id: root}."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        tree = NodeTree.build(super_network=[root], root_node=root)
+        assert tree.id_map == {1: root}
+
+    def test_covers_all_tree_network_nodes(self) -> None:
+        """Test that every node in tree_network appears in id_map."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            time=STUB_TIME,
+            user=STUB_USER,
+            string="text",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        tree = NodeTree.build(super_network=[root, block], root_node=root)
+        assert all(n.id in tree.id_map for n in tree.tree_network)
+
+    def test_covers_all_refs_by_id_nodes(self) -> None:
+        """Test that every node in refs_by_id appears in id_map."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            time=STUB_TIME,
+            user=STUB_USER,
+            string="[[Ref]]",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=99)],
+        )
+        ref_page = RoamNode(uid="refpage01", id=99, time=STUB_TIME, user=STUB_USER, title="Ref", children=[])
+        tree = NodeTree.build(super_network=[root, block, ref_page], root_node=root)
+        assert 99 in tree.id_map
+        assert tree.id_map[99] is ref_page
+
+    def test_keys_equal_union_of_tree_and_refs_ids(self) -> None:
+        """Test that id_map.keys() equals the union of tree_network ids and refs_by_id ids."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            time=STUB_TIME,
+            user=STUB_USER,
+            string="[[Ref]]",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=99)],
+        )
+        ref_page = RoamNode(uid="refpage01", id=99, time=STUB_TIME, user=STUB_USER, title="Ref", children=[])
+        tree = NodeTree.build(super_network=[root, block, ref_page], root_node=root)
+        expected: set[Id] = {n.id for n in tree.tree_network} | set(tree.refs_by_id.keys())
+        assert set(tree.id_map.keys()) == expected
+
+    def test_article_fixture_id_map_covers_tree_and_refs(self) -> None:
+        """Test that the article fixture's id_map keys equal tree_network ids ∪ refs_by_id keys."""
+        tree = article1_node_tree()
+        expected: set[Id] = {n.id for n in tree.tree_network} | set(tree.refs_by_id.keys())
+        assert set(tree.id_map.keys()) == expected
+
+    def test_excluded_from_model_dump(self) -> None:
+        """Test that id_map does not appear in model_dump() output."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        tree = NodeTree.build(super_network=[root], root_node=root)
+        assert "id_map" not in tree.model_dump()
+
+
+# ---------------------------------------------------------------------------
+# TestNodeTreePageNameMap
+# ---------------------------------------------------------------------------
+
+
+class TestNodeTreePageNameMap:
+    """Tests for NodeTree.page_name_map — title → RoamNode index for all ROAM_PAGE nodes."""
+
+    def test_single_root_page_maps_by_title(self) -> None:
+        """Test that a one-node tree produces page_name_map = {root.title: root}."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="My Page", children=[])
+        tree = NodeTree.build(super_network=[root], root_node=root)
+        assert tree.page_name_map == {"My Page": root}
+
+    def test_excludes_block_nodes(self) -> None:
+        """Test that block (non-ROAM_PAGE) nodes are absent from page_name_map."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            time=STUB_TIME,
+            user=STUB_USER,
+            string="plain text",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        tree = NodeTree.build(super_network=[root, block], root_node=root)
+        assert all(node_type(n) == NodeType.ROAM_PAGE for n in tree.page_name_map.values())
+
+    def test_includes_ref_page_nodes(self) -> None:
+        """Test that ROAM_PAGE nodes from refs_by_id appear in page_name_map."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            time=STUB_TIME,
+            user=STUB_USER,
+            string="[[Ref Page]]",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=99)],
+        )
+        ref_page = RoamNode(uid="refpage01", id=99, time=STUB_TIME, user=STUB_USER, title="Ref Page", children=[])
+        tree = NodeTree.build(super_network=[root, block, ref_page], root_node=root)
+        assert "Ref Page" in tree.page_name_map
+        assert tree.page_name_map["Ref Page"] is ref_page
+
+    def test_maps_by_title(self) -> None:
+        """Test that page_name_map[n.title] == n for every ROAM_PAGE node in id_map."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            time=STUB_TIME,
+            user=STUB_USER,
+            string="[[Other]]",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=99)],
+        )
+        ref_page = RoamNode(uid="refpage01", id=99, time=STUB_TIME, user=STUB_USER, title="Other", children=[])
+        tree = NodeTree.build(super_network=[root, block, ref_page], root_node=root)
+        for title, node in tree.page_name_map.items():
+            assert node.title == title
+
+    def test_article_fixture_contains_root_page(self) -> None:
+        """Test that the article fixture's root page is in page_name_map."""
+        tree = article1_node_tree()
+        assert tree.root_node.title is not None
+        assert tree.root_node.title in tree.page_name_map
+
+    def test_article_fixture_all_values_are_pages(self) -> None:
+        """Test that every value in the article fixture's page_name_map is a ROAM_PAGE node."""
+        tree = article1_node_tree()
+        assert all(node_type(n) == NodeType.ROAM_PAGE for n in tree.page_name_map.values())
+
+    def test_excluded_from_model_dump(self) -> None:
+        """Test that page_name_map does not appear in model_dump() output."""
+        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        tree = NodeTree.build(super_network=[root], root_node=root)
+        assert "page_name_map" not in tree.model_dump()
+
+
+# ---------------------------------------------------------------------------
 # TestNodeTreeDFSIterator
 # ---------------------------------------------------------------------------
 
@@ -590,13 +757,12 @@ class TestNodeTreeDFSIterator:
     def test_article_fixture_parent_always_precedes_children(self) -> None:
         """Test that every parent node appears before all of its children in the traversal."""
         tree = article1_node_tree()
-        id_map: dict[Id, RoamNode] = {n.id: n for n in tree.tree_network}
         yielded: list[RoamNode] = list(NodeTreeDFSIterator(tree))
         position: dict[str, int] = {n.uid: i for i, n in enumerate(yielded)}
         for node in tree.tree_network:
             if node.children:
                 for child_stub in node.children:
-                    child: RoamNode = id_map[child_stub.id]
+                    child: RoamNode = tree.id_map[child_stub.id]
                     assert position[node.uid] < position[child.uid]
 
     def test_article_fixture_dfs_id_order(self) -> None:
