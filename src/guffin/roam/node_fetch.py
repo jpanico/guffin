@@ -22,7 +22,7 @@ from guffin.roam.local_api import (
     Response as LocalApiResponse,
     invoke_action,
 )
-from guffin.roam.network import NodeNetwork
+from guffin.roam.node_network import NodeNetwork
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch_result import (
     NodeFetchAnchor,

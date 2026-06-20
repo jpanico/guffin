@@ -29,7 +29,8 @@ from typing import Final
 from pydantic import validate_call
 
 from guffin.roam.node import RoamNode, effective_heading_level
-from guffin.roam.primitives import HeadingLevel, Id, Uid
+from guffin.common.markdown import HeadingLevel
+from guffin.roam.primitives import Id, Uid
 from guffin.common.validation import ValidationError
 
 type NodeNetwork = list[RoamNode]
@@ -277,7 +278,7 @@ def direct_refs_nodes(network: NodeNetwork) -> NodeNetwork:
     Finds all ids across *network* via :func:`refs_ids`, then returns the subset of nodes
     in *network* whose :attr:`~guffin.roam.node.RoamNode.id` appears in that set.  Ref
     targets that resolve to nodes outside *network* are not included; use
-    :attr:`~guffin.roam.tree.NodeTree.refs_by_id` when the full ref-node pool may be
+    :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` when the full ref-node pool may be
     broader than *network* itself.
 
     Args:
@@ -340,7 +341,7 @@ def min_effective_heading_level(network: NodeNetwork) -> HeadingLevel | None:
         network: The collection of nodes to examine.
 
     Returns:
-        The minimum :data:`~guffin.roam.primitives.HeadingLevel` found across
+        The minimum :data:`~guffin.common.markdown.HeadingLevel` found across
         all nodes in *network*, or ``None`` if no node is a heading.
     """
     levels: Final[set[HeadingLevel]] = {lvl for node in network if (lvl := effective_heading_level(node)) is not None}

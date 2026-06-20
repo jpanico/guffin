@@ -3,7 +3,7 @@
 Public symbols:
 
 - :class:`VertexTree` — normalized (transcribed) form of a
-  :class:`~guffin.roam.tree.NodeTree`; a portable tree of :data:`~guffin.vertex.Vertex` instances.
+  :class:`~guffin.roam.node_tree.NodeTree`; a portable tree of :data:`~guffin.vertex.Vertex` instances.
 - :meth:`VertexTree.dfs` — return a :class:`VertexTreeDFSIterator` for pre-order
   depth-first traversal.
 - :class:`VertexTreeDFSIterator` — pre-order depth-first iterator over a
@@ -24,12 +24,12 @@ import logging
 from collections.abc import Callable, Iterator
 from typing import Annotated, Final
 
-from pydantic import BaseModel, ConfigDict, Field, validate_call
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator, validate_call
 
 from guffin.common.geometry import ImageSize
 
 logger = logging.getLogger(__name__)
-from guffin.roam.primitives import Uid, Url
+from guffin.roam.primitives import Uid
 from guffin.vertex import (
     HeadingVertex,
     ImageVertex,
@@ -40,11 +40,11 @@ from guffin.vertex import (
 
 
 class VertexTree(BaseModel):
-    """Normalized (transcribed) form of a :class:`~guffin.roam.tree.NodeTree`.
+    """Normalized (transcribed) form of a :class:`~guffin.roam.node_tree.NodeTree`.
 
     Produced by :func:`~guffin.roam_tree_to_vertex_tree.transcribe`, which applies
     :func:`~guffin.roam_tree_to_vertex_tree.transcribe_standalone_node` to every node in the source
-    :class:`~guffin.roam.tree.NodeTree` and collects the results here in the
+    :class:`~guffin.roam.node_tree.NodeTree` and collects the results here in the
     same insertion order.  The resulting collection is guaranteed to have exactly
     one :data:`~guffin.vertex.Vertex` per source :class:`~guffin.roam.node.RoamNode` and
     inherits the acyclic-tree structure of its origin.
@@ -52,6 +52,9 @@ class VertexTree(BaseModel):
     Attributes:
         vertices: Transcribed vertices, one per source
             :class:`~guffin.roam.node.RoamNode`, in insertion order.
+        uid_map: Map of :attr:`~guffin.vertex._BaseVertex.uid` →
+            :data:`~guffin.vertex.Vertex` for every vertex in :attr:`vertices`;
+            excluded from serialization.
     """
 
     model_config = ConfigDict(frozen=True, populate_by_name=True)
@@ -59,6 +62,16 @@ class VertexTree(BaseModel):
     vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
         ..., description="Transcribed vertices, one per source RoamNode."
     )
+    uid_map: dict[Uid, Vertex] = Field(
+        default_factory=dict,
+        exclude=True,
+        description="Map of uid → Vertex for every vertex in this tree; excluded from serialization.",
+    )
+
+    @model_validator(mode="after")
+    def _build_uid_map(self) -> VertexTree:
+        object.__setattr__(self, "uid_map", {v.uid: v for v in self.vertices})
+        return self
 
     def dfs(self) -> VertexTreeDFSIterator:
         """Return a pre-order depth-first iterator over this tree.
@@ -86,7 +99,8 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
 
     Attributes:
         _uid_map: Mapping from :attr:`~guffin.vertex._BaseVertex.uid` to
-            :data:`~guffin.vertex.Vertex`, built once at construction time.
+            :data:`~guffin.vertex.Vertex`; references the pre-built
+            :attr:`~VertexTree.uid_map` from the source tree.
         _stack: LIFO stack of vertices yet to be visited; initialized with the
             root vertex.
     """
@@ -94,14 +108,15 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
     def __init__(self, tree: VertexTree) -> None:
         """Initialize the iterator from *tree*.
 
-        Builds a uid-map over *tree.vertices* and seeds the stack with the
-        single root vertex — the one whose uid does not appear in any other
-        vertex's :attr:`~guffin.vertex._BaseVertex.children` list.
+        Stores a reference to *tree*'s pre-built :attr:`~VertexTree.uid_map`
+        and seeds the stack with the single root vertex — the one whose uid
+        does not appear in any other vertex's
+        :attr:`~guffin.vertex._BaseVertex.children` list.
 
         Args:
             tree: The :class:`VertexTree` to traverse.
         """
-        self._uid_map: dict[Uid, Vertex] = {v.uid: v for v in tree.vertices}
+        self._uid_map: dict[Uid, Vertex] = tree.uid_map
         self._stack: list[Vertex] = [root_vertex(tree)]
 
     def __iter__(self) -> Iterator[Vertex]:
@@ -148,7 +163,7 @@ def image_vertices(tree: VertexTree) -> list[ImageVertex]:
 
 
 @validate_call
-def image_urls(tree: VertexTree) -> list[Url]:
+def image_urls(tree: VertexTree) -> list[HttpUrl]:
     """Return the Cloud Firestore URL of every :class:`~guffin.vertex.ImageVertex` in *tree*, in insertion order."""
     return [v.source for v in image_vertices(tree)]
 
@@ -185,7 +200,7 @@ def map_vertices(tree: VertexTree, func: Callable[[Vertex], Vertex]) -> VertexTr
     Returns:
         A new :class:`VertexTree` whose vertices are ``[func(v) for v in tree.vertices]``.
     """
-    return tree.model_copy(update={"vertices": [func(vtx) for vtx in tree.vertices]})
+    return VertexTree(vertices=[func(vtx) for vtx in tree.vertices])
 
 
 @validate_call

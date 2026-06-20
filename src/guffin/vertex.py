@@ -15,7 +15,7 @@ Normalization (transcription) means:
 - The result is self-contained and portable — no Datomic dependencies remain.
 
 Normalization is performed by :func:`~guffin.roam_tree_to_vertex_tree.transcribe` (for a full
-:class:`~guffin.roam.tree.NodeTree`) or
+:class:`~guffin.roam.node_tree.NodeTree`) or
 :func:`~guffin.roam_tree_to_vertex_tree.transcribe_standalone_node` (for a single
 :class:`~guffin.roam.node.RoamNode`).
 
@@ -46,13 +46,14 @@ Public symbols:
 from enum import StrEnum
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, TypeAdapter, field_validator
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
-from guffin.roam.primitives import HeadingLevel, Uid, Url
+from guffin.common.markdown import HeadingLevel
+from guffin.roam.primitives import Uid
 
 type VertexChildren = list[Uid]
 """Normalized form of :attr:`~guffin.roam.node.RoamNode.children`.
@@ -236,7 +237,7 @@ class ImageVertex(_BaseVertex[Literal[VertexType.GUFFIN_IMAGE]]):
         serialization_alias="vertex-type",
         description="Always VertexType.GUFFIN_IMAGE (serialized as 'vertex-type').",
     )
-    source: Url = Field(..., description="Cloud Firestore storage URL for the image file.")
+    source: HttpUrl = Field(..., description="Cloud Firestore storage URL for the image file.")
     alt_text: str | None = Field(
         default=None,
         serialization_alias="alt-text",

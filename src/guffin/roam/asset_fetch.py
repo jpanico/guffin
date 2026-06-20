@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Final, Literal, Self, final
 
-from pydantic import Base64Bytes, BaseModel, ConfigDict, Field, validate_call
+from pydantic import Base64Bytes, BaseModel, ConfigDict, Field, HttpUrl, validate_call
 
 from guffin.roam.asset import RoamAsset
 from guffin.roam.local_api import (
@@ -25,7 +25,6 @@ from guffin.roam.local_api import (
     invoke_action,
 )
 from guffin.common.media_type import MediaType
-from guffin.roam.primitives import Url
 
 logger = logging.getLogger(__name__)
 
@@ -72,11 +71,11 @@ class FetchRoamAsset:
 
                 model_config = ConfigDict(frozen=True)
 
-                url: Url
+                url: HttpUrl
                 format: Literal["base64"] = Field(default="base64")
 
             @classmethod
-            def with_url(cls, url: Url) -> Self:
+            def with_url(cls, url: HttpUrl) -> Self:
                 """Construct a ``file.get`` payload for the given Cloud Firestore URL.
 
                 Args:
@@ -110,7 +109,7 @@ class FetchRoamAsset:
 
     @staticmethod
     @validate_call
-    def fetch(firebase_url: Url, api_endpoint: ApiEndpoint) -> RoamAsset:
+    def fetch(firebase_url: HttpUrl, api_endpoint: ApiEndpoint) -> RoamAsset:
         """Fetch an asset from Cloud Firestore via the Roam Research Local API.
 
         Builds a ``file.get`` request payload and delegates the HTTP call to
@@ -154,7 +153,7 @@ class FetchRoamAsset:
 
 @validate_call
 def fetch_and_cache_asset(
-    firebase_url: Url,
+    firebase_url: HttpUrl,
     api_endpoint: ApiEndpoint,
     cache_dir: Path | None = None,
 ) -> RoamAsset:

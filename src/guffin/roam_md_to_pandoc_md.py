@@ -48,7 +48,7 @@ from pydantic import validate_call
 
 from guffin.link import VertexLinkKind, vertex_link_url
 from guffin.roam.markdown import PAGE_REF_RE
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 
 # ---------------------------------------------------------------------------
 # Module-level compiled patterns
@@ -126,8 +126,8 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
     Args:
         roam_string: A single Roam block string (the raw ``string`` field from a
             :class:`~guffin.roam.node.RoamNode`).
-        tree: The :class:`~guffin.roam.tree.NodeTree` whose
-            :attr:`~guffin.roam.tree.NodeTree.page_name_map` is used by
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` whose
+            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` is used by
             :func:`convert_page_link` to resolve page-reference titles to UIDs.
             References to pages absent from the map fall back to plain text.
 
@@ -384,10 +384,10 @@ def convert_page_link(roam_string: str, tree: NodeTree) -> str:
     ``x-guffin`` vertex-reference URL (see
     :func:`~guffin.link.vertex_link_url`): ``[Page Name](x-guffin:vertex/<uid>)``.
     The destination UID is resolved by looking up the page title in *tree*'s
-    :attr:`~guffin.roam.tree.NodeTree.page_name_map`.
+    :attr:`~guffin.roam.node_tree.NodeTree.page_name_map`.
 
     When the title is not found in
-    :attr:`~guffin.roam.tree.NodeTree.page_name_map` (e.g. the referenced page
+    :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` (e.g. the referenced page
     was not fetched), the reference falls back to its plain inner text with the
     ``[[`` and ``]]`` delimiters stripped — so ``[[Page Name]]`` becomes
     ``Page Name`` and ``[[nested [[pages]]]]`` becomes ``nested pages``.  The
@@ -395,8 +395,8 @@ def convert_page_link(roam_string: str, tree: NodeTree) -> str:
 
     Args:
         roam_string: A Roam block string, possibly containing ``[[…]]`` references.
-        tree: The :class:`~guffin.roam.tree.NodeTree` whose
-            :attr:`~guffin.roam.tree.NodeTree.page_name_map` supplies the
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` whose
+            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` supplies the
             title-to-UID resolution.
 
     Returns:

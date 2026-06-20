@@ -21,12 +21,12 @@ Public symbols:
 - :func:`to_block_quote_vertex` — build a :class:`~guffin.vertex.BlockQuoteVertex` from a
   block-quote node.
 - :func:`to_table` — build a :class:`~guffin.common.table.Table` from a
-  :class:`~guffin.roam.tree.NodeTree` rooted at a native table node.
+  :class:`~guffin.roam.node_tree.NodeTree` rooted at a native table node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node,
   returning it together with the IDs of all consumed descendant nodes.
 - :func:`transcribe_standalone_node` — transcribe a :class:`~guffin.roam.node.RoamNode` into
   the appropriate :data:`~guffin.vertex.Vertex` subtype.
-- :func:`transcribe` — transcribe all nodes in a :class:`~guffin.roam.tree.NodeTree`
+- :func:`transcribe` — transcribe all nodes in a :class:`~guffin.roam.node_tree.NodeTree`
   into a :class:`~guffin.vertex_tree.VertexTree`.
 """
 
@@ -35,7 +35,7 @@ from typing import Final, assert_never
 from urllib.parse import unquote, urlparse
 
 import regex
-from pydantic import TypeAdapter, validate_call
+from pydantic import HttpUrl, TypeAdapter, validate_call
 
 from guffin.vertex import (
     BlockQuoteVertex,
@@ -53,27 +53,25 @@ from guffin.vertex import (
 )
 from guffin.vertex_tree import VertexTree
 from guffin.roam_md_to_pandoc_md import to_pandoc_md
-from guffin.roam.network import min_effective_heading_level
+from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import NodeType, RoamNode, effective_heading_level, image_size, node_type
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import FencedCodeBlock, parse_fenced_code_block
 from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
 from guffin.roam.markdown import IMAGE_LINK_RE, RoamCallout, parse_callout, strip_block_quote_marker
-from guffin.roam.primitives import HeadingLevel, Id, Url
+from guffin.common.markdown import HeadingLevel
+from guffin.roam.primitives import Id
 
 logger = logging.getLogger(__name__)
 
 SHOULD_NORMALIZE_HEADING_LEVELS: Final[bool] = True
 """Whether heading levels should be normalized during transcription."""
 
-_url_adapter: TypeAdapter[Url] = TypeAdapter(Url)
-"""Pydantic :class:`~pydantic.TypeAdapter` for validating and coercing URL strings to.
-
-:data:`~guffin.roam.primitives.Url`.
-"""
+_url_adapter: TypeAdapter[HttpUrl] = TypeAdapter(HttpUrl)
+"""Pydantic :class:`~pydantic.TypeAdapter` for validating and coercing URL strings to :class:`~pydantic.HttpUrl`."""
 
 
 def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChildren | None:
@@ -216,8 +214,8 @@ def to_page_vertex(node: RoamNode, tree: NodeTree) -> PageVertex:
 
     Args:
         node: A page node with ``node.title`` set.
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
 
     Returns:
@@ -244,8 +242,8 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
 
     Args:
         node: A block node whose ``node.string`` embeds a Firestore image URL.
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
 
     Returns:
@@ -292,8 +290,8 @@ def to_heading_vertex(node: RoamNode, tree: NodeTree, heading_offset: int = 0) -
     Args:
         node: A block node with an effective heading level (native ``node.heading``
             or ``node.props['ah-level']``).
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
         heading_offset: Integer offset added to the effective heading level before
             building the vertex.  Use ``1 − min_level`` to normalize the shallowest
@@ -327,8 +325,8 @@ def to_text_vertex(node: RoamNode, tree: NodeTree) -> TextVertex:
 
     Args:
         node: A plain text block node with ``node.string`` set.
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
 
     Returns:
@@ -358,8 +356,8 @@ def to_callout_vertex(node: RoamNode, tree: NodeTree) -> CalloutVertex:
 
     Args:
         node: A callout block node whose ``string`` starts with a valid callout marker.
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
 
     Returns:
@@ -400,8 +398,8 @@ def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
 
     Args:
         node: A code block node whose ``string`` is a fenced code block.
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
 
     Returns:
@@ -437,8 +435,8 @@ def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
     Args:
         node: A block-quote node whose ``string`` starts with a recognised block-quote
             marker (standard Markdown ``>`` or Roam-specific ``[[>]]``).
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
 
     Returns:
@@ -461,7 +459,9 @@ def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
 
 @validate_call
 def to_table(table_tree: NodeTree) -> Table:
-    """Build a :class:`~guffin.common.table.Table` from a :class:`~guffin.roam.tree.NodeTree` rooted at a native table.
+    """Build a :class:`~guffin.common.table.Table` from a :class:`~guffin.roam.node_tree.NodeTree` rooted at a native.
+
+    table.
 
     node.
 
@@ -475,7 +475,7 @@ def to_table(table_tree: NodeTree) -> Table:
     being stored.
 
     Args:
-        table_tree: A :class:`~guffin.roam.tree.NodeTree` whose root is a
+        table_tree: A :class:`~guffin.roam.node_tree.NodeTree` whose root is a
             :attr:`~guffin.roam.node.NodeType.ROAM_NATIVE_TABLE` node.
 
     Returns:
@@ -523,8 +523,8 @@ def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozen
     Args:
         node: A native-table node whose :attr:`~guffin.roam.node.RoamNode.string`
             equals :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`.
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to;
-            its :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve row and
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve row and
             cell stubs to their full node records.
 
     Returns:
@@ -559,14 +559,14 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
 
     Determines the :class:`~guffin.vertex.VertexType` via :func:`vertex_type`,
     resolves raw :class:`~guffin.roam.primitives.IdObject` stubs in children and refs to
-    stable UIDs via :attr:`~guffin.roam.tree.NodeTree.id_map`, and handles both native Roam
+    stable UIDs via :attr:`~guffin.roam.node_tree.NodeTree.id_map`, and handles both native Roam
     headings (levels 1–3 via ``node.heading``) and Augmented Headings extension levels
     (4–6 via ``node.props['ah-level']``).
 
     Args:
         node: The raw Roam node to transcribe.
-        tree: The :class:`~guffin.roam.tree.NodeTree` the node belongs to.
-            :attr:`~guffin.roam.tree.NodeTree.id_map` is used to resolve child and ref
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to.
+            :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve child and ref
             stubs to UIDs; stubs whose id is absent from the map are silently dropped.
         heading_offset: Integer offset forwarded to :func:`to_heading_vertex` when *node*
             is a heading block.  Defaults to ``0`` (no adjustment).

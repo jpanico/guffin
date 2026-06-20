@@ -11,8 +11,8 @@ Public symbols:
 - :data:`NodeFetchResult_Placeholder` — flat list of :class:`~guffin.roam.node.RoamNode` records
   returned by all :class:`~guffin.roam.node_fetch.FetchRoamNodes` fetch methods.
 - :func:`anchor_node` — return the :class:`~guffin.roam.node.RoamNode` in a
-  :data:`~guffin.roam.network.NodeNetwork` that matches a :class:`NodeFetchAnchor`.
-- :func:`anchor_tree` — return the subtree of a :data:`~guffin.roam.network.NodeNetwork`
+  :data:`~guffin.roam.node_network.NodeNetwork` that matches a :class:`NodeFetchAnchor`.
+- :func:`anchor_tree` — return the subtree of a :data:`~guffin.roam.node_network.NodeNetwork`
   rooted at the node that matches a :class:`NodeFetchAnchor`.
 """
 
@@ -21,10 +21,10 @@ from typing import Final
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator, validate_call
 
-from guffin.roam.network import NodeNetwork
+from guffin.roam.node_network import NodeNetwork
 from guffin.roam.node import NodesByUid, RoamNode
 from guffin.roam.primitives import ANCHORED_UID_RE
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 
 
 @enum.unique
@@ -151,7 +151,7 @@ class NodeFetchResult(BaseModel):
 
     Attributes:
         fetch_spec: The fetch specification used to perform the fetch.
-        anchor_tree: The :class:`~guffin.roam.tree.NodeTree` rooted at the fetch anchor.
+        anchor_tree: The :class:`~guffin.roam.node_tree.NodeTree` rooted at the fetch anchor.
             ``None`` when :attr:`~NodeFetchSpec.include_node_tree` is ``False``.
         nodes_by_uid: Index mapping each fetched node's UID to its
             :class:`~guffin.roam.node.RoamNode`.
@@ -161,7 +161,7 @@ class NodeFetchResult(BaseModel):
             single-element row (Datalog ``[:find (pull ...)]`` always wraps each tuple in a
             list); the inner dict is the raw pull-block attribute map as returned by Roam.
         network: All :class:`~guffin.roam.node.RoamNode` instances fetched by this result,
-            as a flat :data:`~guffin.roam.network.NodeNetwork` list.  Empty when
+            as a flat :data:`~guffin.roam.node_network.NodeNetwork` list.  Empty when
             :attr:`~NodeFetchSpec.include_node_tree` is ``False``.
     """
 
@@ -199,7 +199,7 @@ class NodeFetchResult(BaseModel):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def network(self) -> NodeNetwork:
-        """Return all fetched nodes as a flat :data:`~guffin.roam.network.NodeNetwork` list.
+        """Return all fetched nodes as a flat :data:`~guffin.roam.node_network.NodeNetwork` list.
 
         Returns every node in :attr:`nodes_by_uid`, which includes both the structural nodes
         of :attr:`anchor_tree` and any additional nodes fetched via ``:block/refs`` when
@@ -208,7 +208,7 @@ class NodeFetchResult(BaseModel):
         is ``None``).
 
         Returns:
-            A :data:`~guffin.roam.network.NodeNetwork` containing every
+            A :data:`~guffin.roam.node_network.NodeNetwork` containing every
             :class:`~guffin.roam.node.RoamNode` in :attr:`nodes_by_uid`, or ``[]``
             when :attr:`nodes_by_uid` is ``None``.
         """
@@ -251,7 +251,7 @@ class NodeFetchResult(BaseModel):
 
         This is the sole public constructor for :class:`NodeFetchResult`.  It locates the
         anchor node within *network* via :func:`anchor_node`, wraps the full network in a
-        :class:`~guffin.roam.tree.NodeTree` rooted there, and builds a
+        :class:`~guffin.roam.node_tree.NodeTree` rooted there, and builds a
         :data:`~guffin.roam.node.NodesByUid` index over all nodes in *network*.
 
         Uses :meth:`~pydantic.BaseModel.model_construct` to bypass the
@@ -274,7 +274,7 @@ class NodeFetchResult(BaseModel):
         Raises:
             ValueError: If no node in *network* matches :attr:`fetch_spec.anchor
                 <NodeFetchSpec.anchor>`, or if *network* fails any
-                :class:`~guffin.roam.tree.NodeTree` invariant.
+                :class:`~guffin.roam.node_tree.NodeTree` invariant.
         """
         root: Final[RoamNode] = anchor_node(network, fetch_spec.anchor)
         anchor_tree: Final[NodeTree] = NodeTree.build(super_network=network, root_node=root)
@@ -330,7 +330,7 @@ def anchor_tree(network: NodeNetwork, anchor: NodeFetchAnchor) -> NodeNetwork:
         anchor: The fetch anchor identifying the root of the subtree.
 
     Returns:
-        A :data:`~guffin.roam.network.NodeNetwork` containing the anchor node and
+        A :data:`~guffin.roam.node_network.NodeNetwork` containing the anchor node and
         every node transitively reachable through ``:block/children``, in DFS pre-order.
 
     Raises:

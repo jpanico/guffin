@@ -11,7 +11,7 @@ from guffin.vertex import vertex_adapter
 from guffin.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.node import NodeType, RoamNode, node_type
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 from guffin.roam.primitives import IdObject
 
 FIXTURES_YAML_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures" / "yaml"
@@ -77,10 +77,10 @@ def live_cache_dir() -> pathlib.Path:
 
 
 def article1_node_tree() -> NodeTree:
-    """Load and return the ``[[Test Article]] 1`` :class:`~guffin.roam.tree.NodeTree` from its YAML fixture.
+    """Load and return the ``[[Test Article]] 1`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
     Loads all nodes from ``test_article_1_nodes_by_uid.yaml`` (anchor subtree plus
-    referenced pages) so that :attr:`~guffin.roam.tree.NodeTree.refs_by_id` is
+    referenced pages) so that :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` is
     populated and page references resolve to ``x-guffin`` vertex links during
     transcription.
     """

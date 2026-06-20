@@ -2,8 +2,7 @@
 
 Public symbols are organized into four groups:
 
-- **Primitive type aliases**: :data:`Uid`, :data:`Id`, :data:`Order`, :data:`HeadingLevel`,
-  :data:`PageTitle`, :data:`Url`.
+- **Primitive type aliases**: :data:`Uid`, :data:`Id`, :data:`Order`, :data:`PageTitle`.
 - **Composite type aliases**: :data:`UidPair`, :data:`RawChildren`, :data:`RawRefs`.
 - **Stub models**: :class:`IdObject`, :class:`LinkObject`.
 - **Pattern constants**: :data:`UID_PATTERN` / :data:`UID_RE` — canonical
@@ -15,7 +14,7 @@ Public symbols are organized into four groups:
 from typing import Annotated, Final, Literal
 
 import regex
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+from pydantic import BaseModel, ConfigDict, Field
 
 UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
 """Canonical (unanchored) regex for a Roam node UID: nine alphanumeric/dash/underscore characters.
@@ -45,21 +44,11 @@ Ephemeral — not stable across exports.
 type Order = Annotated[int, Field(ge=0)]
 """Zero-based position of a child block among its siblings (:block/order)."""
 
-type HeadingLevel = Annotated[int, Field(ge=1, le=6)]
-"""Markdown heading level 1–6 (:block/heading).
-
-Absent (None) on non-heading blocks.
-"""
-
 type PageTitle = Annotated[str, Field(min_length=1)]
 """Page title string (:node/title).
 
 Only present on page entities.
 """
-
-type Url = HttpUrl
-"""A validated HTTP/HTTPS URL (e.g. a Cloud Firestore storage URL for a Roam-managed file)."""
-
 
 type UidPair = tuple[Literal["uid"], Uid]
 """A two-element tuple ``('uid', <uid-value>)`` used as a Datomic :entity/attrs source or value."""

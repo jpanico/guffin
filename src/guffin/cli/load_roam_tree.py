@@ -16,7 +16,7 @@ from guffin.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 from guffin.roam_tree_to_vertex_tree import transcribe
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ def fetch_roam_trees(
     """Fetch Roam nodes for *fetch_spec* and build a validated node tree and vertex tree.
 
     Fetches :class:`~guffin.roam.node.RoamNode` records for *fetch_spec* via
-    *api_endpoint*, constructs a :class:`~guffin.roam.tree.NodeTree`, and optionally
+    *api_endpoint*, constructs a :class:`~guffin.roam.node_tree.NodeTree`, and optionally
     transcribes it to a :class:`~guffin.vertex_tree.VertexTree`.
 
     Propagates any exception raised during fetching or transcription; callers are

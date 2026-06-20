@@ -2,7 +2,7 @@
 
 import pytest
 
-from guffin.roam.network import (
+from guffin.roam.node_network import (
     all_children_present,
     all_descendants,
     all_parents_present,

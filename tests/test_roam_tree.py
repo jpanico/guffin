@@ -2,7 +2,7 @@
 
 import pytest
 
-from guffin.roam.network import (
+from guffin.roam.node_network import (
     all_children_present,
     all_parents_present,
     has_unique_ids,
@@ -10,7 +10,7 @@ from guffin.roam.network import (
 )
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.primitives import Id, IdObject
-from guffin.roam.tree import NodeTree, NodeTreeDFSIterator, is_tree
+from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator, is_tree
 from guffin.common.validation import ValidationError
 
 from conftest import STUB_TIME, STUB_USER, article1_node_tree

@@ -2,7 +2,7 @@
 
 Public symbols:
 
-- :class:`NodeTree` — a Pydantic-typed wrapper holding a :data:`~guffin.roam.network.NodeNetwork`;
+- :class:`NodeTree` — a Pydantic-typed wrapper holding a :data:`~guffin.roam.node_network.NodeNetwork`;
   validates all tree invariants at construction time via :func:`is_tree`; must be created via
   :meth:`NodeTree.build`.
 - :meth:`NodeTree.dfs` — return a :class:`NodeTreeDFSIterator` for pre-order depth-first traversal.
@@ -13,7 +13,7 @@ Public symbols:
   :meth:`NodeTree.node_ids`.
 - :class:`NodeTreeDFSIterator` — pre-order depth-first iterator over a :class:`NodeTree`.
 - :func:`is_tree` — validate all tree invariants for a :class:`~guffin.roam.node.RoamNode` root
-  and its :data:`~guffin.roam.network.NodeNetwork`; returns a
+  and its :data:`~guffin.roam.node_network.NodeNetwork`; returns a
   :class:`~guffin.common.validation.ValidationResult`.
 """
 
@@ -23,7 +23,7 @@ from typing import ClassVar, Final
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_call
 
-from guffin.roam.network import (
+from guffin.roam.node_network import (
     NodeNetwork,
     all_children_present,
     all_descendants,
@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 class NodeTree(BaseModel):
-    """A Pydantic-typed wrapper holding a :data:`~guffin.roam.network.NodeNetwork`.
+    """A Pydantic-typed wrapper holding a :data:`~guffin.roam.node_network.NodeNetwork`.
 
     All tree invariants are validated at construction time via :func:`is_tree`; a
     :exc:`pydantic.ValidationError` is raised if *network* does not satisfy them.
@@ -102,7 +102,7 @@ class NodeTree(BaseModel):
     def build(cls, root_node: RoamNode, super_network: NodeNetwork) -> NodeTree:
         """Create a validated :class:`NodeTree` — the only supported construction path.
 
-        Uses :func:`~guffin.roam.network.all_descendants` to extract the subtree rooted
+        Uses :func:`~guffin.roam.node_network.all_descendants` to extract the subtree rooted
         at *root_node* from *super_network*, builds :attr:`refs_by_id` from the direct ref
         targets of :attr:`tree_network` plus all their transitive descendants available in
         *super_network*, derives :attr:`id_map` and :attr:`page_name_map` from the combined
@@ -240,7 +240,7 @@ class NodeTree(BaseModel):
     def node_refs_ids(self) -> set[Id]:
         """Return the set of all :attr:`~guffin.roam.node.RoamNode.refs` ids across this tree's network.
 
-        Delegates to :func:`~guffin.roam.network.refs_ids` over :attr:`tree_network`.
+        Delegates to :func:`~guffin.roam.node_network.refs_ids` over :attr:`tree_network`.
 
         Returns:
             A ``set[Id]`` containing every id found in any node's ``refs`` list; empty if no node
@@ -319,10 +319,10 @@ class NodeTreeDFSIterator(Iterator[RoamNode]):
 def is_tree(root_node: RoamNode, network: NodeNetwork) -> ValidationResult:
     """Return a :class:`~guffin.common.validation.ValidationResult` for all tree invariants on *network*.
 
-    Runs every tree-invariant validator — :func:`~guffin.roam.network.has_unique_ids`,
-    :func:`~guffin.roam.network.all_children_present`,
-    :func:`~guffin.roam.network.all_parents_present`, and
-    :func:`~guffin.roam.network.is_acyclic` — via
+    Runs every tree-invariant validator — :func:`~guffin.roam.node_network.has_unique_ids`,
+    :func:`~guffin.roam.node_network.all_children_present`,
+    :func:`~guffin.roam.node_network.all_parents_present`, and
+    :func:`~guffin.roam.node_network.is_acyclic` — via
     :func:`~guffin.common.validation.validate_all`.  All validators run regardless of prior failures;
     the result accumulates every error found.
 

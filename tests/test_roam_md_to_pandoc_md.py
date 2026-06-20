@@ -15,7 +15,7 @@ from guffin.roam_md_to_pandoc_md import (
 )
 from guffin.roam.node import RoamNode
 from guffin.roam.primitives import IdObject
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 
 from conftest import STUB_TIME, STUB_USER
 

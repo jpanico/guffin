@@ -1,17 +1,21 @@
-"""Markdown structural predicates.
+"""Markdown types and structural predicates.
 
 Public symbols:
 
+- :data:`HeadingLevel` — integer type alias for a Markdown heading depth, constrained to 1–6.
 - :data:`MD_BLOCK_QUOTE_PREFIX` — string prefix for a standard CommonMark blockquote line.
 - :func:`is_fenced_code_block` — whether a string is a single CommonMark fenced code block.
 - :class:`FencedCodeBlock` — the info string and code content extracted from a fenced code block.
 - :func:`parse_fenced_code_block` — extract the info string and code content from a fenced code block.
 """
 
-from typing import Final, NamedTuple
+from typing import Annotated, Final, NamedTuple
 
 import regex
-from pydantic import validate_call
+from pydantic import Field, validate_call
+
+type HeadingLevel = Annotated[int, Field(ge=1, le=6)]
+"""Markdown heading level, constrained to the inclusive range 1–6."""
 
 MD_BLOCK_QUOTE_PREFIX: Final[str] = ">"
 """String prefix that identifies a standard CommonMark blockquote line.

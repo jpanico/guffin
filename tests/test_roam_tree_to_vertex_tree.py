@@ -20,7 +20,7 @@ from guffin.vertex import (
     vertex_adapter,
 )
 from guffin.common.code_language import CodeLanguage
-from guffin.roam.network import min_effective_heading_level
+from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import RoamNode
 from guffin.roam_tree_to_vertex_tree import (
     to_block_quote_vertex,
@@ -37,7 +37,7 @@ from guffin.roam_tree_to_vertex_tree import (
     vertex_type,
 )
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 from guffin.roam.primitives import IdObject
 
 # A real Firestore URL whose path yields a predictable file_name and media_type:

@@ -52,7 +52,7 @@ from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult
 from guffin.roam_tree_to_vertex_tree import transcribe
-from guffin.roam.tree import NodeTree
+from guffin.roam.node_tree import NodeTree
 
 from conftest import PDF_CREATION_TIMESTAMP
 

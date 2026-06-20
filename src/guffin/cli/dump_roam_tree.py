@@ -9,7 +9,7 @@ hierarchy:
   :class:`~guffin.vertex_tree.VertexTree` produced by
   :func:`~guffin.roam_tree_to_vertex_tree.transcribe`; image vertices are
   enriched with their native pixel size (fetched via the Local API) before display.
-- **Node tree** (``--node-tree`` / ``-n/-N``) — raw :class:`~guffin.roam.tree.NodeTree`
+- **Node tree** (``--node-tree`` / ``-n/-N``) — raw :class:`~guffin.roam.node_tree.NodeTree`
   as returned by the Roam Local API; each panel body lists selected
   :class:`~guffin.roam.node.RoamNode` fields, configurable via
   ``--node-props`` (defaults to
@@ -102,7 +102,7 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.anchor_tree` is ``None``.
     After the tree, prints a ``refs`` box containing one
     :func:`~guffin.render.rich_rendering.build_node_panel` panel per node in
-    :attr:`~guffin.roam.tree.NodeTree.refs_by_id` (omitted when empty).
+    :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` (omitted when empty).
 
     Args:
         fetch_result: Fetch result whose :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.anchor_tree`
