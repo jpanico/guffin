@@ -621,10 +621,12 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         node_tree: A validated tree of raw Roam nodes.
 
     Returns:
-        A :class:`~guffin.vertex_tree.VertexTree` in document (DFS) order.
+        A :class:`~guffin.vertex_tree.VertexTree` in document (DFS) order, with
+        :attr:`~guffin.vertex_tree.VertexTree.ref_vertices` populated from
+        :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`.
 
     Raises:
-        ValueError: If any node has neither a ``title`` nor a ``string`` field set.
+        ValueError: If any anchor node has neither a ``title`` nor a ``string`` field set.
     """
     min_level: Final[HeadingLevel | None] = (
         min_effective_heading_level(node_tree.tree_network) if SHOULD_NORMALIZE_HEADING_LEVELS else None
@@ -642,4 +644,10 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
             vertices.append(table_vertex)
         else:
             vertices.append(transcribe_standalone_node(node, node_tree, heading_offset))
-    return VertexTree(vertices=vertices)
+    ref_vertices: Final[list[Vertex]] = []
+    for ref_node in node_tree.refs_by_id.values():
+        try:
+            ref_vertices.append(transcribe_standalone_node(ref_node, node_tree))
+        except (NotImplementedError, ValueError) as exc:
+            logger.debug("skipping ref node uid=%r: %s", ref_node.uid, exc)
+    return VertexTree(vertices=vertices, ref_vertices=ref_vertices)

@@ -13,6 +13,8 @@ from guffin.cli.export_roam_tree import app
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 
+from guffin.roam_tree_to_vertex_tree import transcribe
+
 from conftest import (
     FIXTURES_MD_DIR,
     FIXTURES_MDBUNDLE_DIR,
@@ -74,6 +76,55 @@ class TestExportRoamTreeNoBundle:
         assert output_file.exists()
         expected: str = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert output_file.read_text() == expected
+
+
+class TestExportRoamTreeBundle:
+    """Smoke tests for export_roam_tree in --bundle mode."""
+
+    def test_bundle_exits_cleanly(self, tmp_path: pathlib.Path) -> None:
+        """Bundle mode exits with code 0 and writes the expected .mdbundle directory and .md file."""
+        fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
+            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
+        )
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        vertex_tree = transcribe(article1_node_tree())
+        runner: CliRunner = CliRunner()
+
+        with patch(
+            "guffin.cli.load_roam_tree.FetchRoamNodes.fetch_roam_nodes",
+            return_value=mock_result,
+        ):
+            with patch(
+                "guffin.render.md_rendering.fetch_and_enrich_images",
+                return_value=(vertex_tree, {}),
+            ):
+                saved_handlers = logging.root.handlers[:]
+                logging.root.handlers.clear()
+                try:
+                    result = runner.invoke(
+                        app,
+                        [
+                            "[[Test Article]] 1",
+                            "--port",
+                            "3333",
+                            "--graph",
+                            "SCFH",
+                            "--token",
+                            "tok",
+                            "--output-dir",
+                            str(tmp_path),
+                            "--bundle",
+                        ],
+                    )
+                finally:
+                    logging.root.handlers = saved_handlers
+
+        assert result.exit_code == 0, result.output
+        bundle_dir: pathlib.Path = tmp_path / "Test_Article_1.mdbundle"
+        assert bundle_dir.is_dir()
+        assert (bundle_dir / "Test_Article_1.md").exists()
 
 
 class TestExportRoamTreeNotFound:

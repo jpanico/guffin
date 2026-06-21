@@ -53,6 +53,10 @@ Public symbols:
   block elements.
 - :func:`vertex_tree_to_pandoc` — convert a
   :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
+- :data:`VertexLinkResolver` — type alias for the resolver callable accepted by
+  :func:`resolve_vertex_links`.
+- :func:`resolve_vertex_links` — walk a :class:`~panflute.Doc` in place and replace
+  ``x-guffin`` :class:`~panflute.Link` elements using a caller-supplied resolver.
 - :func:`pandoc_to_json` — serialize a Panflute :class:`~panflute.Doc` to a
   Pandoc JSON string, optionally writing it to a file for debugging.
 """
@@ -62,6 +66,7 @@ Public symbols:
 # The four suppressed rules are triggered entirely by that Unknown propagation — disabling them
 # here avoids dozens of cascading false-positive errors without relaxing any other strict checks.
 
+from collections.abc import Callable
 from io import StringIO
 import logging
 import uuid
@@ -90,9 +95,13 @@ from guffin.vertex import (
     VertexChildren,
 )
 from guffin.vertex_tree import VertexTree, root_vertex
+from guffin.link import VertexLink, parse_vertex_link
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
+
+type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
+"""Resolver: (parsed link, destination vertex, original display inlines) → replacement inlines."""
 
 # A fenced code block, after Roam→Pandoc normalization, opens with a ``` fence
 # at the start of a line.  Its presence in a text field signals that the field
@@ -784,6 +793,48 @@ def vertex_tree_to_pandoc(
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def resolve_vertex_links(
+    doc: pf.Doc,
+    vertex_tree: VertexTree,
+    resolver: VertexLinkResolver,
+) -> None:
+    """Walk *doc* in place and replace every ``x-guffin`` Link with resolver-produced inlines.
+
+    For each :class:`~panflute.Link` whose URL is a well-formed ``x-guffin``
+    vertex link (see :mod:`~guffin.link`), looks up the destination vertex in
+    *vertex_tree* and calls *resolver* with the parsed :class:`~guffin.link.VertexLink`,
+    the destination :class:`~guffin.vertex.Vertex`, and the original link's
+    display-text inlines.  The inlines returned by *resolver* replace the Link
+    in the document tree.
+
+    Raises :exc:`KeyError` if a destination UID is absent from *vertex_tree*.
+
+    Mutates *doc* in place via :meth:`~panflute.Element.walk`; does not return
+    a new document.
+
+    Args:
+        doc: The Panflute document to walk and modify.
+        vertex_tree: Provides the UID-to-vertex lookup for resolving link destinations.
+        resolver: Invoked for each x-guffin Link whose destination vertex is present
+            in *vertex_tree*; receives the parsed link, the destination vertex, and
+            the original display-text inlines; returns replacement inline elements.
+    """
+
+    def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Inline] | None:
+        if not isinstance(elem, pf.Link):
+            return None
+        vertex_link: Final[VertexLink | None] = parse_vertex_link(elem.url)
+        if vertex_link is None:
+            return None
+        display: Final[list[pf.Inline]] = list(elem.content)
+        if vertex_link.uid not in vertex_tree.uid_map:
+            raise KeyError(f"x-guffin link uid={vertex_link.uid!r} not found in vertex_tree")
+        dest: Final[Vertex] = vertex_tree.uid_map[vertex_link.uid]
+        return resolver(vertex_link, dest, display)
+
+    doc.walk(_action)
+
+
 def pandoc_to_json(
     doc: pf.Doc,
     dump_pandoc_ast: bool = False,

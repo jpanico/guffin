@@ -9,13 +9,13 @@
     sidebar: 22
     id: 4225
     uid: SYZfEd44O
-    word-count: 108
+    word-count: 109
     edit-user:
       id: 3
     time: 1781833356251
     title: '[[Test Article]] 3'
-    edit-nonce: p0vx2zxYJ
-    edit-time: 1781870982030
+    edit-nonce: KchstR1lp
+    edit-time: 1781959284786
     refs:
     - id: 4223
 - - prevent-clean: 1773090962400
@@ -55,6 +55,8 @@
 
       - This page is primarily a demonstration of different kinds of refs:
 
+      -- inline page ref
+
       -- internal block ref (to block on this page)
 
       -- external block ref (to block on a __different page__)
@@ -63,8 +65,6 @@
 
       -- external embed (of block from __different page__)
 
-      - no`headers`
-
       - this INFO `Callout box`, which contains Roam `page references` '
     user:
       id: 3
@@ -72,7 +72,7 @@
     uid: I1QOMCtdJ
     parents:
     - id: 4225
-    time: 1780935491562
+    time: 1781959284786
     order: 0
     open: true
     page:

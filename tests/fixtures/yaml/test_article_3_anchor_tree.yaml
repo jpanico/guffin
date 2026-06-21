@@ -74,7 +74,7 @@ tree_network:
   seen_by: null
 - uid: I1QOMCtdJ
   id: 11133
-  time: 1780935491562
+  time: 1781959284786
   user:
     id: 3
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -84,6 +84,8 @@ tree_network:
 
     - This page is primarily a demonstration of different kinds of refs:
 
+    -- inline page ref
+
     -- internal block ref (to block on this page)
 
     -- external block ref (to block on a __different page__)
@@ -91,8 +93,6 @@ tree_network:
     -- internal embed (of block from this page)
 
     -- external embed (of block from __different page__)
-
-    - no`headers`
 
     - this INFO `Callout box`, which contains Roam `page references` '
   order: 0

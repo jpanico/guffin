@@ -15,7 +15,8 @@ Public symbols:
 - :func:`image_vertices` — return all :class:`~guffin.vertex.ImageVertex` instances in a :class:`VertexTree`.
 - :func:`image_urls` — return all Cloud Firestore image URLs from a :class:`VertexTree`.
 - :func:`root_vertex` — return the single root :data:`~guffin.vertex.Vertex` of a :class:`VertexTree`.
-- :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex.
+- :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
+  :attr:`VertexTree.vertices` and :attr:`VertexTree.ref_vertices`.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
   :attr:`~guffin.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
 """
@@ -39,6 +40,10 @@ from guffin.vertex import (
 )
 
 
+def _default_ref_vertices() -> list[Annotated[Vertex, Field(discriminator="vertex_type")]]:
+    return []
+
+
 class VertexTree(BaseModel):
     """Normalized (transcribed) form of a :class:`~guffin.roam.node_tree.NodeTree`.
 
@@ -52,9 +57,14 @@ class VertexTree(BaseModel):
     Attributes:
         vertices: Transcribed vertices, one per source
             :class:`~guffin.roam.node.RoamNode`, in insertion order.
+        ref_vertices: Stub vertices transcribed from
+            :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` — nodes referenced
+            from the anchor tree but not part of it.  Used only for UID lookup
+            (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
+            not traversed by :class:`VertexTreeDFSIterator` or the filter helpers.
         uid_map: Map of :attr:`~guffin.vertex._BaseVertex.uid` →
-            :data:`~guffin.vertex.Vertex` for every vertex in :attr:`vertices`;
-            excluded from serialization.
+            :data:`~guffin.vertex.Vertex` for every vertex in :attr:`vertices` and
+            :attr:`ref_vertices`; excluded from serialization.
     """
 
     model_config = ConfigDict(frozen=True, populate_by_name=True)
@@ -62,15 +72,21 @@ class VertexTree(BaseModel):
     vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
         ..., description="Transcribed vertices, one per source RoamNode."
     )
+    ref_vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
+        default_factory=_default_ref_vertices,
+        description="Stub vertices for referenced nodes not in the anchor tree; for UID lookup only.",
+    )
     uid_map: dict[Uid, Vertex] = Field(
         default_factory=dict,
         exclude=True,
-        description="Map of uid → Vertex for every vertex in this tree; excluded from serialization.",
+        description="Map of uid → Vertex for every vertex in vertices and ref_vertices; excluded from serialization.",
     )
 
     @model_validator(mode="after")
     def _build_uid_map(self) -> VertexTree:
-        object.__setattr__(self, "uid_map", {v.uid: v for v in self.vertices})
+        combined: dict[Uid, Vertex] = {v.uid: v for v in self.vertices}
+        combined.update({v.uid: v for v in self.ref_vertices})
+        object.__setattr__(self, "uid_map", combined)
         return self
 
     def dfs(self) -> VertexTreeDFSIterator:
@@ -198,9 +214,14 @@ def map_vertices(tree: VertexTree, func: Callable[[Vertex], Vertex]) -> VertexTr
             (possibly new) :data:`~guffin.vertex.Vertex`.
 
     Returns:
-        A new :class:`VertexTree` whose vertices are ``[func(v) for v in tree.vertices]``.
+        A new :class:`VertexTree` whose :attr:`~VertexTree.vertices` are
+        ``[func(v) for v in tree.vertices]`` and whose
+        :attr:`~VertexTree.ref_vertices` are ``[func(v) for v in tree.ref_vertices]``.
     """
-    return VertexTree(vertices=[func(vtx) for vtx in tree.vertices])
+    return VertexTree(
+        vertices=[func(vtx) for vtx in tree.vertices],
+        ref_vertices=[func(vtx) for vtx in tree.ref_vertices],
+    )
 
 
 @validate_call

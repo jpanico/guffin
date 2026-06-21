@@ -69,11 +69,11 @@ Five live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 #### `[[Test Article]] 3`
 
 - This page is primarily a demonstration of different kinds of refs:
+  - inline page ref
   - internal block ref (to block on this page)
   - external block ref (to block on a __different page__)
   - internal embed (of block from this page)
   - external embed (of block from __different page__)
-- no`headers`
 - this INFO `Callout box`, which contains Roam `page references`
 
 #### `[[Test Article]] 4`

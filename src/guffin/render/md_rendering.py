@@ -33,13 +33,19 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
+from guffin.link import VertexLink
+from guffin.vertex import Vertex
 from guffin.vertex_tree import VertexTree
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
-from guffin.render.pandoc_rendering import pandoc_to_json, vertex_tree_to_pandoc
+from guffin.render.pandoc_rendering import pandoc_to_json, resolve_vertex_links, vertex_tree_to_pandoc
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_vertex_link(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
+    return display
 
 
 @validate_call
@@ -109,6 +115,7 @@ def render(
         image_files: Final[dict[Uid, Path]] = {uid: Path(ref.path.name) for uid, ref in image_refs.items()}
 
         doc: Final[pf.Doc] = vertex_tree_to_pandoc(enriched_tree, image_files, title_in_header=True)
+        resolve_vertex_links(doc, enriched_tree, _resolve_vertex_link)
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, stem)
         md_text: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             bundle_json_str,
@@ -129,6 +136,7 @@ def render(
     else:
         output_dir.mkdir(parents=True, exist_ok=True)
         no_bundle_doc: Final[pf.Doc] = vertex_tree_to_pandoc(vertex_tree, {}, title_in_header=True)
+        resolve_vertex_links(no_bundle_doc, vertex_tree, _resolve_vertex_link)
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, stem)
         no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str,
