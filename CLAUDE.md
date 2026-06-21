@@ -44,7 +44,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `dump_roam_tree.py` — dumps a Roam page or node subtree as a Rich tree to the terminal; supports `--vertex-tree`/`--node-tree`/`--raw-results` flags (`dump-roam-tree`)
     - `export_roam_tree.py` — exports a Roam page or node subtree; `--format markdown` (default) writes a `.mdbundle` or plain `.md`; `--format pdf` writes a PDF via Panflute + Pandoc + Typst; target is a page title or node UID (`export-roam-tree`)
     - `logging_config.py` — colorized logging (`configure_logging()`); reads `LOG_LEVEL` env var
-    - `load_roam_tree.py` — tree-loading pipeline for CLI commands; `fetch_roam_trees` resolves a target, fetches nodes, and returns a `(NodeFetchResult, VertexTree | None)` pair
+    - `fetch_roam_tree.py` — tree-loading pipeline for CLI commands; `fetch_roam_trees` resolves a target, fetches nodes, and returns a `(NodeFetchResult, VertexTree | None)` pair
   - **Core pipeline**
     - `roam_tree_to_vertex_tree.py` — transcribes `NodeTree` → `VertexTree`; applies `to_pandoc_md()` to all text fields
     - `roam_md_to_pandoc_md.py` — converts Roam-flavored Markdown strings to Pandoc Markdown; `to_pandoc_md()` is the main entry point
