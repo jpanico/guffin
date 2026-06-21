@@ -138,9 +138,9 @@ guffin/
 │       │                                #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
 │       │                                #   CodeBlockVertex, BlockQuoteVertex, TableVertex);
 │       │                                #   VertexType, VertexChildren, VertexRefs, vertex_adapter
-│       ├── vertex_tree.py               # VertexTree (with uid_map), VertexTreeDFSIterator,
-│       │                                #   root_vertex(); filter helpers (page_vertices,
-│       │                                #   image_vertices, image_urls, …)
+│       ├── vertex_tree.py               # VertexTree (tree_vertices, ref_vertices, uid_map),
+│       │                                #   VertexTreeDFSIterator, root_vertex(), map_vertices();
+│       │                                #   filter helpers (page_vertices, image_vertices, …)
 │       ├── link.py                      # x-guffin inter-vertex link scheme; VertexLinkKind,
 │       │                                #   VertexLink, vertex_link_url(), parse_vertex_link(),
 │       │                                #   is_vertex_link()
@@ -150,7 +150,7 @@ guffin/
 │       ├── cli/                         # CLI entry points and supporting infrastructure
 │       │   ├── dump_roam_tree.py          # dump-roam-tree: render Roam subtree as a Rich tree
 │       │   ├── export_roam_tree.py        # export-roam-tree: export to Markdown or PDF
-│       │   ├── load_roam_tree.py          # Shared tree-loading pipeline (fetch_roam_trees)
+│       │   ├── fetch_roam_tree.py         # Shared tree-loading pipeline (fetch_roam_trees)
 │       │   └── logging_config.py          # Colorized logging; reads LOG_LEVEL env var
 │       │
 │       ├── common/                      # Cross-cutting helpers (no guffin dependencies)
@@ -166,9 +166,11 @@ guffin/
 │       │
 │       ├── render/                      # Rendering pipeline modules
 │       │   ├── image_fetch.py             # Pandoc-free image asset fetching; ImageRef (UID + path +
-│       │   │                              #   ImageSize) and fetch_images() → {uid: ImageRef}
+│       │   │                              #   ImageSize); fetch_images() → {uid: ImageRef};
+│       │   │                              #   fetch_and_enrich_images() → (VertexTree, {uid: ImageRef})
 │       │   ├── pandoc_rendering.py        # Shared Pandoc/Panflute utilities; vertex_tree_to_pandoc()
-│       │   │                              #   builds a Panflute Doc from a VertexTree
+│       │   │                              #   builds a Panflute Doc; VertexLinkResolver type alias and
+│       │   │                              #   resolve_vertex_links() replace x-guffin links in-place
 │       │   ├── md_rendering.py            # VertexTree → GFM Markdown; writes .mdbundle or plain .md
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
 │       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree
