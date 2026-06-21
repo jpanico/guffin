@@ -388,7 +388,7 @@ def _heading_vertex_to_blocks(
     return blocks
 
 
-def _text_content_vertex_to_blocks(
+def _text_vertex_to_blocks(
     vertex: TextVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
@@ -675,7 +675,7 @@ def _vertex_to_blocks(
         case HeadingVertex():
             return _heading_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
         case TextVertex():
-            return _text_content_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
+            return _text_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
         case ImageVertex():
             return _image_vertex_to_blocks(vertex, image_files, inline_map)
         case CalloutVertex():
