@@ -650,4 +650,4 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
             ref_vertices.append(transcribe_standalone_node(ref_node, node_tree))
         except (NotImplementedError, ValueError) as exc:
             logger.debug("skipping ref node uid=%r: %s", ref_node.uid, exc)
-    return VertexTree(vertices=vertices, ref_vertices=ref_vertices)
+    return VertexTree(tree_vertices=vertices, ref_vertices=ref_vertices)

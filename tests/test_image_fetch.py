@@ -59,7 +59,7 @@ class TestFetchImages:
 
         monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(vertices=[_image_vertex("img00001a")])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
         result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
 
         assert list(result) == ["img00001a"]
@@ -83,7 +83,7 @@ class TestFetchImages:
 
         monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(vertices=[_image_vertex("img00001a")])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
         result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
 
         assert result["img00001a"].size == ImageSize()
@@ -98,7 +98,7 @@ class TestFetchImages:
 
         monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _raising)
 
-        tree: Final[VertexTree] = VertexTree(vertices=[_image_vertex("img00001a")])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
         with caplog.at_level(logging.WARNING, logger="guffin.render.image_fetch"):
             result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
 
@@ -121,7 +121,7 @@ class TestFetchImages:
 
         page: Final[PageVertex] = PageVertex(uid="page00001", title="P", children=["img00001a"])
         text: Final[TextVertex] = TextVertex(uid="txt00001a", text="hello")
-        tree: Final[VertexTree] = VertexTree(vertices=[page, text, _image_vertex("img00001a")])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page, text, _image_vertex("img00001a")])
         result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
 
         assert list(result) == ["img00001a"]
@@ -145,14 +145,14 @@ class TestFetchAndEnrichImages:
 
         monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(vertices=[_image_vertex("img00001a")])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
         fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(tree, _ENDPOINT, tmp_path)
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
 
         assert list(image_refs) == ["img00001a"]
         assert image_refs["img00001a"].size == ImageSize(width=800, height=600)
-        enriched_image: Final[ImageVertex] = next(v for v in enriched_tree.vertices if isinstance(v, ImageVertex))
+        enriched_image: Final[ImageVertex] = next(v for v in enriched_tree.tree_vertices if isinstance(v, ImageVertex))
         assert enriched_image.original_image_size == ImageSize(width=800, height=600)
 
     def test_input_tree_left_unmodified(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -170,7 +170,7 @@ class TestFetchAndEnrichImages:
         monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
         original_image: Final[ImageVertex] = _image_vertex("img00001a")
-        tree: Final[VertexTree] = VertexTree(vertices=[original_image])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[original_image])
         fetch_and_enrich_images(tree, _ENDPOINT, tmp_path)
 
         assert original_image.original_image_size is None
@@ -186,7 +186,7 @@ class TestFetchAndEnrichImages:
             tree, live_api_endpoint, tmp_path, live_cache_dir
         )
         enriched_tree: Final[VertexTree] = fetched[0]
-        images: Final[list[ImageVertex]] = [v for v in enriched_tree.vertices if isinstance(v, ImageVertex)]
+        images: Final[list[ImageVertex]] = [v for v in enriched_tree.tree_vertices if isinstance(v, ImageVertex)]
         assert images
         for image in images:
             assert image.original_image_size == ImageSize(width=500, height=477)

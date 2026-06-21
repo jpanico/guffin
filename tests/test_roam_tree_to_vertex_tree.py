@@ -871,7 +871,7 @@ class TestTranscribeArticleFixture:
         def _serialise(vtx: Vertex) -> dict[str, object]:
             return vtx.model_dump(mode="json", exclude_none=True)
 
-        assert [_serialise(vtx) for vtx in vertex_tree.vertices] == [_serialise(vtx) for vtx in expected]
+        assert [_serialise(vtx) for vtx in vertex_tree.tree_vertices] == [_serialise(vtx) for vtx in expected]
 
 
 # ---------------------------------------------------------------------------

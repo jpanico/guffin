@@ -715,7 +715,7 @@ def build_inline_map(vertex_tree: VertexTree) -> dict[str, list[pf.Inline]]:
         fall back to ``[pf.Str(text)]``.
     """
     texts: Final[list[str]] = []
-    for vertex in vertex_tree.vertices:
+    for vertex in vertex_tree.tree_vertices:
         match vertex:
             case PageVertex(title=t):
                 texts.append(t)

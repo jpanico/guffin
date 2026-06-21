@@ -99,4 +99,4 @@ def article1_vertex_tree() -> VertexTree:
     raw: Final[list[dict[str, object]]] = yaml.safe_load(
         (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
     )
-    return VertexTree(vertices=[vertex_adapter.validate_python(r) for r in raw])
+    return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])

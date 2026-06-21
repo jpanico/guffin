@@ -205,7 +205,7 @@ def main() -> None:
     nodes: Final[list[RoamNode]] = list(anchor_tree.tree_network)
     vertex_tree: Final[VertexTree] = transcribe(anchor_tree)
     print(f"  fetched {len(result.network)} node(s) total, {len(nodes)} anchor node(s)")
-    print(f"  transcribed {len(vertex_tree.vertices)} vertex/vertices")
+    print(f"  transcribed {len(vertex_tree.tree_vertices)} vertex/vertices")
 
     # Fixture 1: nodes YAML
     nodes_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_nodes.yaml"
@@ -238,7 +238,7 @@ def main() -> None:
     vertices_path.write_text(
         vertices_header
         + yaml.dump(
-            [vertex_adapter.dump_python(v, mode="json", exclude_none=True) for v in vertex_tree.vertices],
+            [vertex_adapter.dump_python(v, mode="json", exclude_none=True) for v in vertex_tree.tree_vertices],
             default_flow_style=False,
             allow_unicode=True,
             sort_keys=False,

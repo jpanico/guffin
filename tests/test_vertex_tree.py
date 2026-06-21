@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def _make_text_tree(uid_text_pairs: list[tuple[str, str]]) -> VertexTree:
-    return VertexTree(vertices=[TextVertex(uid=uid, text=text) for uid, text in uid_text_pairs])
+    return VertexTree(tree_vertices=[TextVertex(uid=uid, text=text) for uid, text in uid_text_pairs])
 
 
 _IMAGE_SOURCE: Final[HttpUrl] = HttpUrl("https://example.com/img.jpg")
@@ -61,7 +61,7 @@ class TestMapVertices:
             return vtx
 
         result: Final[VertexTree] = map_vertices(tree, _upcase)
-        texts: Final[list[str]] = [vtx.text for vtx in result.vertices if isinstance(vtx, TextVertex)]
+        texts: Final[list[str]] = [vtx.text for vtx in result.tree_vertices if isinstance(vtx, TextVertex)]
         assert texts == ["HELLO", "WORLD"]
 
     def test_unmatched_vertices_pass_through_unchanged(self) -> None:
@@ -74,7 +74,7 @@ class TestMapVertices:
             return vtx
 
         result: Final[VertexTree] = map_vertices(tree, _transform_first_only)
-        texts: Final[list[str]] = [vtx.text for vtx in result.vertices if isinstance(vtx, TextVertex)]
+        texts: Final[list[str]] = [vtx.text for vtx in result.tree_vertices if isinstance(vtx, TextVertex)]
         assert texts == ["changed", "world"]
 
 
@@ -84,19 +84,19 @@ class TestEnrichImageOriginalSizes:
     def test_matched_uid_sets_original_image_size(self) -> None:
         """ImageVertex whose UID is in sizes receives original_image_size."""
         vertex: Final[ImageVertex] = _make_image_vertex("img000001")
-        tree: Final[VertexTree] = VertexTree(vertices=[vertex])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
         size: Final[ImageSize] = ImageSize(width=320, height=240)
         result: Final[VertexTree] = enrich_image_original_sizes(tree, {"img000001": size})
-        enriched: Final[ImageVertex] = next(v for v in result.vertices if isinstance(v, ImageVertex))
+        enriched: Final[ImageVertex] = next(v for v in result.tree_vertices if isinstance(v, ImageVertex))
         assert enriched.original_image_size == size
 
     def test_unmatched_image_vertex_logs_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """ImageVertex absent from sizes map logs a WARNING and keeps original_image_size as None."""
         vertex: Final[ImageVertex] = _make_image_vertex("img000002")
-        tree: Final[VertexTree] = VertexTree(vertices=[vertex])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
         with caplog.at_level(logging.WARNING, logger="guffin.vertex_tree"):
             result: Final[VertexTree] = enrich_image_original_sizes(tree, {})
-        unmatched: Final[ImageVertex] = next(v for v in result.vertices if isinstance(v, ImageVertex))
+        unmatched: Final[ImageVertex] = next(v for v in result.tree_vertices if isinstance(v, ImageVertex))
         assert unmatched.original_image_size is None
         assert any("absent from sizes map" in r.message for r in caplog.records)
 
@@ -104,7 +104,7 @@ class TestEnrichImageOriginalSizes:
         """TextVertex is returned unchanged regardless of the sizes map."""
         tree: Final[VertexTree] = _make_text_tree([("aaaaaaaaa", "hello")])
         result: Final[VertexTree] = enrich_image_original_sizes(tree, {})
-        texts: Final[list[str]] = [v.text for v in result.vertices if isinstance(v, TextVertex)]
+        texts: Final[list[str]] = [v.text for v in result.tree_vertices if isinstance(v, TextVertex)]
         assert texts == ["hello"]
 
     def test_mixed_tree_partial_match(self) -> None:
@@ -112,10 +112,10 @@ class TestEnrichImageOriginalSizes:
         img_matched: Final[ImageVertex] = _make_image_vertex("img000003")
         img_unmatched: Final[ImageVertex] = _make_image_vertex("img000004")
         text: Final[TextVertex] = TextVertex(uid="aaaaaaaaa", text="hello")
-        tree: Final[VertexTree] = VertexTree(vertices=[img_matched, img_unmatched, text])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[img_matched, img_unmatched, text])
         size: Final[ImageSize] = ImageSize(width=800, height=600)
         result: Final[VertexTree] = enrich_image_original_sizes(tree, {"img000003": size})
-        result_by_uid: Final[dict[str, Vertex]] = {v.uid: v for v in result.vertices}
+        result_by_uid: Final[dict[str, Vertex]] = {v.uid: v for v in result.tree_vertices}
         matched_result: Final[Vertex] = result_by_uid["img000003"]
         unmatched_result: Final[Vertex] = result_by_uid["img000004"]
         assert isinstance(matched_result, ImageVertex)

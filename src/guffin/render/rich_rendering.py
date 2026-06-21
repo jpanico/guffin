@@ -463,7 +463,7 @@ def build_rich_vertex_tree(vertex_tree: VertexTree, props: list[str] = DEFAULT_V
     """
     logger.debug("vertex_tree=%r", vertex_tree)
     child_to_parent: Final[dict[Uid, Uid]] = {
-        child_uid: v.uid for v in vertex_tree.vertices if v.children for child_uid in v.children
+        child_uid: v.uid for v in vertex_tree.tree_vertices if v.children for child_uid in v.children
     }
     rich_map: Final[dict[Uid, RichTree]] = {}
     dfs_iter: Final[VertexTreeDFSIterator] = vertex_tree.dfs()

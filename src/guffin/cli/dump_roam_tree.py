@@ -165,7 +165,7 @@ def _dump_vertex_tree(
     console.rule("[bold]Vertex Tree[/bold]")
     console.print()
     console.print(vertex_rich_tree)
-    console.print(f"{len(enriched_tree.vertices)} vertices in vertex tree")
+    console.print(f"{len(enriched_tree.tree_vertices)} vertices in vertex tree")
 
 
 def dump_trees(

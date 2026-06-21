@@ -24,7 +24,7 @@ class TestVertexTreeDFSIterator:
     def test_single_vertex_tree_yields_root(self) -> None:
         """Test that a one-vertex tree yields only the root vertex."""
         root = PageVertex(uid="root00001", title="My Page")
-        tree = VertexTree(vertices=[root])
+        tree = VertexTree(tree_vertices=[root])
         assert [v.uid for v in VertexTreeDFSIterator(tree)] == ["root00001"]
 
     # ------------------------------------------------------------------
@@ -35,7 +35,7 @@ class TestVertexTreeDFSIterator:
         """Test that a root→child tree yields root first, then child."""
         root = PageVertex(uid="root00001", title="My Page", children=["chld00001"])
         child = TextVertex(uid="chld00001", text="Hello")
-        tree = VertexTree(vertices=[root, child])
+        tree = VertexTree(tree_vertices=[root, child])
         assert [v.uid for v in VertexTreeDFSIterator(tree)] == ["root00001", "chld00001"]
 
     # ------------------------------------------------------------------
@@ -46,12 +46,12 @@ class TestVertexTreeDFSIterator:
         """Test that children are visited in the order they appear in the children list.
 
         The first uid in children is visited before the second, regardless of
-        the order the vertices appear in VertexTree.vertices.
+        the order the vertices appear in VertexTree.tree_vertices.
         """
         root = PageVertex(uid="root00001", title="Root", children=["chld00002", "chld00001"])
         child_first = TextVertex(uid="chld00002", text="first")
         child_second = TextVertex(uid="chld00001", text="second")
-        tree = VertexTree(vertices=[root, child_first, child_second])
+        tree = VertexTree(tree_vertices=[root, child_first, child_second])
         assert [v.uid for v in VertexTreeDFSIterator(tree)] == ["root00001", "chld00002", "chld00001"]
 
     # ------------------------------------------------------------------
@@ -64,7 +64,7 @@ class TestVertexTreeDFSIterator:
         node_a = HeadingVertex(uid="nodeA0001", text="A", heading_level=2, children=["nodeA1001"])
         node_a1 = TextVertex(uid="nodeA1001", text="A1")
         node_b = TextVertex(uid="nodeB0001", text="B")
-        tree = VertexTree(vertices=[root, node_a, node_a1, node_b])
+        tree = VertexTree(tree_vertices=[root, node_a, node_a1, node_b])
         assert [v.uid for v in VertexTreeDFSIterator(tree)] == [
             "root00001",
             "nodeA0001",
@@ -81,7 +81,7 @@ class TestVertexTreeDFSIterator:
         root = PageVertex(uid="root00001", title="Root", children=["chld00001", "chld00002"])
         child_a = TextVertex(uid="chld00001", text="a")
         child_b = TextVertex(uid="chld00002", text="b")
-        tree = VertexTree(vertices=[root, child_a, child_b])
+        tree = VertexTree(tree_vertices=[root, child_a, child_b])
         yielded: list[Vertex] = list(VertexTreeDFSIterator(tree))
         assert len(yielded) == 3
         assert len({v.uid for v in yielded}) == 3
@@ -89,7 +89,7 @@ class TestVertexTreeDFSIterator:
     def test_iterator_exhausted_raises_stop_iteration(self) -> None:
         """Test that __next__ raises StopIteration once all vertices have been yielded."""
         root = PageVertex(uid="root00001", title="Root")
-        tree = VertexTree(vertices=[root])
+        tree = VertexTree(tree_vertices=[root])
         it: VertexTreeDFSIterator = VertexTreeDFSIterator(tree)
         assert next(it).uid == "root00001"
         with pytest.raises(StopIteration):
@@ -98,7 +98,7 @@ class TestVertexTreeDFSIterator:
     def test_dfs_method_returns_iterator(self) -> None:
         """Test that VertexTree.dfs() returns a VertexTreeDFSIterator seeded at the root."""
         root = PageVertex(uid="root00001", title="Root")
-        tree = VertexTree(vertices=[root])
+        tree = VertexTree(tree_vertices=[root])
         it = tree.dfs()
         assert isinstance(it, VertexTreeDFSIterator)
         assert next(it).uid == "root00001"
@@ -111,22 +111,22 @@ class TestVertexTreeDFSIterator:
         """Test that the root vertex (not a child of anything) is yielded first."""
         tree = article1_vertex_tree()
         first: Vertex = next(iter(VertexTreeDFSIterator(tree)))
-        child_uids: set[Uid] = {uid for v in tree.vertices if v.children for uid in v.children}
+        child_uids: set[Uid] = {uid for v in tree.tree_vertices if v.children for uid in v.children}
         assert first.uid not in child_uids
 
     def test_article_fixture_yields_all_vertices(self) -> None:
         """Test that the iterator yields every vertex in the article fixture exactly once."""
         tree = article1_vertex_tree()
         yielded: list[Vertex] = list(VertexTreeDFSIterator(tree))
-        assert len(yielded) == len(tree.vertices)
-        assert {v.uid for v in yielded} == {v.uid for v in tree.vertices}
+        assert len(yielded) == len(tree.tree_vertices)
+        assert {v.uid for v in yielded} == {v.uid for v in tree.tree_vertices}
 
     def test_article_fixture_parent_always_precedes_children(self) -> None:
         """Test that every parent vertex appears before all of its children in the traversal."""
         tree = article1_vertex_tree()
         yielded: list[Vertex] = list(VertexTreeDFSIterator(tree))
         position: dict[Uid, int] = {v.uid: i for i, v in enumerate(yielded)}
-        for vertex in tree.vertices:
+        for vertex in tree.tree_vertices:
             if vertex.children:
                 for child_uid in vertex.children:
                     assert position[vertex.uid] < position[child_uid]

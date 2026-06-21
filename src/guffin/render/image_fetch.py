@@ -82,7 +82,7 @@ def fetch_images(
         from the mapping.
     """
     image_refs: dict[Uid, ImageRef] = {}
-    for vertex in vertex_tree.vertices:
+    for vertex in vertex_tree.tree_vertices:
         if not isinstance(vertex, ImageVertex):
             continue
         try:

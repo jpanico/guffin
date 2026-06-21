@@ -16,7 +16,7 @@ Public symbols:
 - :func:`image_urls` — return all Cloud Firestore image URLs from a :class:`VertexTree`.
 - :func:`root_vertex` — return the single root :data:`~guffin.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
-  :attr:`VertexTree.vertices` and :attr:`VertexTree.ref_vertices`.
+  :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
   :attr:`~guffin.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
 """
@@ -55,7 +55,7 @@ class VertexTree(BaseModel):
     inherits the acyclic-tree structure of its origin.
 
     Attributes:
-        vertices: Transcribed vertices, one per source
+        tree_vertices: Transcribed vertices, one per source
             :class:`~guffin.roam.node.RoamNode`, in insertion order.
         ref_vertices: Stub vertices transcribed from
             :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` — nodes referenced
@@ -63,13 +63,13 @@ class VertexTree(BaseModel):
             (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
             not traversed by :class:`VertexTreeDFSIterator` or the filter helpers.
         uid_map: Map of :attr:`~guffin.vertex._BaseVertex.uid` →
-            :data:`~guffin.vertex.Vertex` for every vertex in :attr:`vertices` and
+            :data:`~guffin.vertex.Vertex` for every vertex in :attr:`tree_vertices` and
             :attr:`ref_vertices`; excluded from serialization.
     """
 
     model_config = ConfigDict(frozen=True, populate_by_name=True)
 
-    vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
+    tree_vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
         ..., description="Transcribed vertices, one per source RoamNode."
     )
     ref_vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
@@ -79,12 +79,12 @@ class VertexTree(BaseModel):
     uid_map: dict[Uid, Vertex] = Field(
         default_factory=dict,
         exclude=True,
-        description="Map of uid → Vertex for every vertex in vertices and ref_vertices; excluded from serialization.",
+        description="uid → Vertex map covering tree_vertices and ref_vertices; excluded from serialization.",
     )
 
     @model_validator(mode="after")
     def _build_uid_map(self) -> VertexTree:
-        combined: dict[Uid, Vertex] = {v.uid: v for v in self.vertices}
+        combined: dict[Uid, Vertex] = {v.uid: v for v in self.tree_vertices}
         combined.update({v.uid: v for v in self.ref_vertices})
         object.__setattr__(self, "uid_map", combined)
         return self
@@ -157,25 +157,25 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
 @validate_call
 def page_vertices(tree: VertexTree) -> list[PageVertex]:
     """Return all :class:`~guffin.vertex.PageVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.vertices if isinstance(v, PageVertex)]
+    return [v for v in tree.tree_vertices if isinstance(v, PageVertex)]
 
 
 @validate_call
 def heading_vertices(tree: VertexTree) -> list[HeadingVertex]:
     """Return all :class:`~guffin.vertex.HeadingVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.vertices if isinstance(v, HeadingVertex)]
+    return [v for v in tree.tree_vertices if isinstance(v, HeadingVertex)]
 
 
 @validate_call
 def text_vertices(tree: VertexTree) -> list[TextVertex]:
     """Return all :class:`~guffin.vertex.TextVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.vertices if isinstance(v, TextVertex)]
+    return [v for v in tree.tree_vertices if isinstance(v, TextVertex)]
 
 
 @validate_call
 def image_vertices(tree: VertexTree) -> list[ImageVertex]:
     """Return all :class:`~guffin.vertex.ImageVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.vertices if isinstance(v, ImageVertex)]
+    return [v for v in tree.tree_vertices if isinstance(v, ImageVertex)]
 
 
 @validate_call
@@ -197,8 +197,8 @@ def root_vertex(tree: VertexTree) -> Vertex:
     Returns:
         The root :data:`~guffin.vertex.Vertex`.
     """
-    child_uids: Final[set[Uid]] = {uid for v in tree.vertices if v.children for uid in v.children}
-    return next(v for v in tree.vertices if v.uid not in child_uids)
+    child_uids: Final[set[Uid]] = {uid for v in tree.tree_vertices if v.children for uid in v.children}
+    return next(v for v in tree.tree_vertices if v.uid not in child_uids)
 
 
 @validate_call
@@ -214,12 +214,12 @@ def map_vertices(tree: VertexTree, func: Callable[[Vertex], Vertex]) -> VertexTr
             (possibly new) :data:`~guffin.vertex.Vertex`.
 
     Returns:
-        A new :class:`VertexTree` whose :attr:`~VertexTree.vertices` are
-        ``[func(v) for v in tree.vertices]`` and whose
+        A new :class:`VertexTree` whose :attr:`~VertexTree.tree_vertices` are
+        ``[func(v) for v in tree.tree_vertices]`` and whose
         :attr:`~VertexTree.ref_vertices` are ``[func(v) for v in tree.ref_vertices]``.
     """
     return VertexTree(
-        vertices=[func(vtx) for vtx in tree.vertices],
+        tree_vertices=[func(vtx) for vtx in tree.tree_vertices],
         ref_vertices=[func(vtx) for vtx in tree.ref_vertices],
     )
 
