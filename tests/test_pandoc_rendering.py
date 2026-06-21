@@ -363,8 +363,7 @@ class TestBuildBlocksCoalescing:
         """Two consecutive TextVertex siblings at depth 2 produce a single BulletList."""
         t1 = TextVertex(uid="txt000001", text="Item 1")
         t2 = TextVertex(uid="txt000002", text="Item 2")
-        uid_map = {"txt000001": t1, "txt000002": t2}
-        blocks = build_child_blocks(["txt000001", "txt000002"], uid_map, {}, {}, depth=2)
+        blocks = build_child_blocks(["txt000001", "txt000002"], VertexTree(vertices=[t1, t2]), {}, {}, depth=2)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.BulletList)
         assert len(list(blocks[0].content)) == 2
@@ -374,8 +373,9 @@ class TestBuildBlocksCoalescing:
         t1 = TextVertex(uid="txt000001", text="Before")
         h = HeadingVertex(uid="head00001", text="Break", heading_level=3)
         t2 = TextVertex(uid="txt000002", text="After")
-        uid_map = {"txt000001": t1, "head00001": h, "txt000002": t2}
-        blocks = build_child_blocks(["txt000001", "head00001", "txt000002"], uid_map, {}, {}, depth=2)
+        blocks = build_child_blocks(
+            ["txt000001", "head00001", "txt000002"], VertexTree(vertices=[t1, h, t2]), {}, {}, depth=2
+        )
         assert len(blocks) == 3
         assert isinstance(blocks[0], pf.BulletList)
         assert isinstance(blocks[1], pf.Header)
@@ -385,16 +385,14 @@ class TestBuildBlocksCoalescing:
         """TextContentVertices at depth 1 render as Paras, not BulletList items."""
         t1 = TextVertex(uid="txt000001", text="Para 1")
         t2 = TextVertex(uid="txt000002", text="Para 2")
-        uid_map = {"txt000001": t1, "txt000002": t2}
-        blocks = build_child_blocks(["txt000001", "txt000002"], uid_map, {}, {}, depth=1)
+        blocks = build_child_blocks(["txt000001", "txt000002"], VertexTree(vertices=[t1, t2]), {}, {}, depth=1)
         assert len(blocks) == 2
         assert all(isinstance(b, pf.Para) for b in blocks)
 
     def test_unknown_uid_is_skipped(self) -> None:
-        """A UID not in uid_map is silently skipped."""
+        """A UID absent from vertex_tree is silently skipped."""
         t1 = TextVertex(uid="txt000001", text="Present")
-        uid_map = {"txt000001": t1}
-        blocks = build_child_blocks(["missingXY", "txt000001"], uid_map, {}, {}, depth=1)
+        blocks = build_child_blocks(["missingXY", "txt000001"], VertexTree(vertices=[t1]), {}, {}, depth=1)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Para)
 
