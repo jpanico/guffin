@@ -3,7 +3,7 @@
 Python 3.14 toolkit for exporting Roam Research graph sub-trees to self-contained documents. Supports two output formats:
 
 - **Markdown** — renders to Github Flavored Markdown (GFM) and optionally bundles Roam-hosted (Cloud Firestore) images into a self-contained `.mdbundle` directory.
-- **PDF** — builds a Pandoc object model directly from the normalized graph sub-tree via [Panflute](https://github.com/sergiocorreia/panflute), fetches and embeds Roam-hosted (Cloud Firestore) images, and produces a PDF via [Pandoc](https://pandoc.org) + [Typst](https://typst.app).
+- **PDF** — builds a Pandoc object model directly from a graph sub-tree via [Panflute](https://github.com/sergiocorreia/panflute), fetches and embeds Roam-hosted (Cloud Firestore) images, and produces a PDF via [Pandoc](https://pandoc.org) + [Typst](https://typst.app).
 
 ## Development Setup
 
@@ -134,11 +134,16 @@ Always `import regex` (never `import re`) and use `regex.compile`, `regex.Patter
 guffin/
 ├── src/
 │   └── guffin/                        # Main package
-│       ├── vertex.py                    # Vertex union + all five concrete types (PageVertex,
-│       │                                #   HeadingVertex, TextContentVertex, ImageVertex,
-│       │                                #   CalloutVertex); VertexType, VertexChildren, VertexRefs
-│       ├── vertex_tree.py               # VertexTree, VertexTreeDFSIterator, root_vertex();
-│       │                                #   filter helpers (page_vertices, image_urls, …)
+│       ├── vertex.py                    # Vertex union + eight concrete types (PageVertex,
+│       │                                #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
+│       │                                #   CodeBlockVertex, BlockQuoteVertex, TableVertex);
+│       │                                #   VertexType, VertexChildren, VertexRefs, vertex_adapter
+│       ├── vertex_tree.py               # VertexTree (with uid_map), VertexTreeDFSIterator,
+│       │                                #   root_vertex(); filter helpers (page_vertices,
+│       │                                #   image_vertices, image_urls, …)
+│       ├── link.py                      # x-guffin inter-vertex link scheme; VertexLinkKind,
+│       │                                #   VertexLink, vertex_link_url(), parse_vertex_link(),
+│       │                                #   is_vertex_link()
 │       ├── roam_tree_to_vertex_tree.py  # Transcribe NodeTree → VertexTree; applies to_pandoc_md()
 │       ├── roam_md_to_pandoc_md.py      # Convert Roam-flavored Markdown strings to Pandoc Markdown
 │       │
@@ -149,9 +154,14 @@ guffin/
 │       │   └── logging_config.py          # Colorized logging; reads LOG_LEVEL env var
 │       │
 │       ├── common/                      # Cross-cutting helpers (no guffin dependencies)
+│       │   ├── code_language.py           # CodeLanguage StrEnum of programming-language identifiers
 │       │   ├── filenames.py               # POSIX filename normalization (shell_safe_filename)
 │       │   ├── geometry.py                # Generic 2D geometry types (ImageSize)
+│       │   ├── markdown.py                # HeadingLevel; CommonMark fenced code block utilities
+│       │   │                              #   (is_fenced_code_block, FencedCodeBlock,
+│       │   │                              #   parse_fenced_code_block); MD_BLOCK_QUOTE_PREFIX
 │       │   ├── media_type.py              # MediaType enum; MIME type detection from filenames
+│       │   ├── table.py                   # Table, TableStyle, HAlign — 2-D cell grid model
 │       │   └── validation.py              # Generic accumulator-pipeline validation framework
 │       │
 │       ├── render/                      # Rendering pipeline modules
@@ -163,14 +173,26 @@ guffin/
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
 │       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree
 │       │   ├── gfm_callout.lua            # Lua filter: callout Div → GFM alert blockquote
-│       │   └── typst_callout.lua          # Lua filter: callout Div → gentle-clues callout box
+│       │   ├── gfm_color_span.lua         # Lua filter: bg-color Span/Div → GFM HTML span
+│       │   ├── gfm_image.lua              # Lua filter: image sizing attributes → HTML <img>
+│       │   ├── gfm_mark.lua               # Lua filter: Underline inline → GFM <mark> highlight
+│       │   ├── typst_callout.lua          # Lua filter: callout Div → gentle-clues callout box
+│       │   └── typst_color_span.lua       # Lua filter: bg-color Span/Div → Typst highlight
 │       │
 │       ├── roam/                        # Roam Research data model, API, and processing
-│       │   ├── primitives.py              # Foundational types, UID_PATTERN, IMAGE_LINK_RE (dep root)
+│       │   ├── primitives.py              # Foundational type aliases (Uid, Id, Order, PageTitle),
+│       │   │                              #   stub models (IdObject, LinkObject), and UID regex
+│       │   │                              #   constants (UID_PATTERN/RE, ANCHORED_UID_PATTERN/RE)
+│       │   ├── markdown.py                # Roam Markdown constructs: CALLOUT_RE, CalloutType,
+│       │   │                              #   RoamCallout, parse_callout, IMAGE_LINK_RE,
+│       │   │                              #   block-quote helpers, ROAM_NATIVE_TABLE_MARKER
 │       │   ├── schema.py                  # Datomic schema model types (RoamNamespace, …)
 │       │   ├── node.py                    # RoamNode, NodeType, node_type, NodesByUid
-│       │   ├── network.py                 # NodeNetwork; validators (all_children_present, is_acyclic, …)
-│       │   ├── tree.py                    # NodeTree (build() factory), NodeTreeDFSIterator, is_tree
+│       │   ├── node_network.py            # NodeNetwork; validators (all_children_present,
+│       │   │                              #   is_acyclic, …) and utilities (all_descendants,
+│       │   │                              #   refs_ids, min_effective_heading_level)
+│       │   ├── node_tree.py               # NodeTree (build() factory, id_map, page_name_map),
+│       │   │                              #   NodeTreeDFSIterator, is_tree
 │       │   ├── asset.py                   # Cloud Firestore asset model
 │       │   ├── local_api.py               # ApiEndpoint model for the Roam Local API
 │       │   ├── node_fetch_result.py       # NodeFetchAnchor, NodeFetchSpec, NodeFetchResult
@@ -183,12 +205,15 @@ guffin/
 │           ├── base_cfg.typ               # Default cfg dictionary (all supported keys)
 │           ├── user_cfg.typ               # User overrides (checked into repo as a working example)
 │           ├── default_styles.typ         # Show/set rules derived from cfg
-│           └── …                          # Supporting partials (titlepage, toc, abstract, …)
+│           ├── titlepage.typ              # Title page layout partial
+│           ├── toc.typ                    # Table of contents partial
+│           ├── abstract.typ               # Abstract page partial
+│           └── yamltable.typ              # YAML-driven table rendering partial
 │
 ├── tests/                               # pytest test suite
 │   ├── conftest.py                        # Shared fixtures and helpers
 │   ├── regen_fixtures.py                  # Developer script: regenerate fixture files from live Roam
-│   └── fixtures/                          # markdown/, yaml/, images/, json/ — see fixtures/README.md
+│   └── fixtures/                          # markdown/, yaml/, images/, json/, mdbundle/, pdf/
 │
 ├── scripts/
 │   ├── dump-roam-tree.sh                  # Shell wrapper for dump-roam-tree
@@ -201,7 +226,8 @@ guffin/
 │   ├── roam-local-api.md                  # Roam Local API (JSON over HTTP) reference
 │   ├── roam-md.md                         # Roam-flavored Markdown vs. CommonMark differences
 │   ├── roam-querying.md                   # Datalog query language and all queries used in this project
-│   └── roam-schema.md                     # Full Roam attribute schema
+│   ├── roam-schema.md                     # Full Roam attribute schema
+│   └── MDBUNDLE_SETUP.md                  # macOS .mdbundle integration guide
 │
 └── pyproject.toml                         # Project configuration
 ```
