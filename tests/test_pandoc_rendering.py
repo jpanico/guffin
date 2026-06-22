@@ -194,26 +194,26 @@ class TestVertexTreeToPandocPageVertex:
     def test_page_title_set_in_metadata(self) -> None:
         """Page title appears as the Pandoc metadata title (default title_in_header=False)."""
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="My Page")])
-        doc = vertex_tree_to_pandoc(tree, {})
+        doc, _ = vertex_tree_to_pandoc(tree, {})
         assert "title" in doc.metadata
         assert _collect_text(doc.metadata["title"]) == "My Page"
 
     def test_page_with_no_children_produces_no_blocks(self) -> None:
         """A bare PageVertex with no children produces an empty document body."""
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Empty")])
-        doc = vertex_tree_to_pandoc(tree, {})
+        doc, _ = vertex_tree_to_pandoc(tree, {})
         assert list(doc.content) == []
 
     def test_non_page_root_produces_no_metadata_title(self) -> None:
         """When the root is not a PageVertex, no metadata title is set."""
         tree = VertexTree(tree_vertices=[HeadingVertex(uid="head00001", text="Intro", heading_level=1)])
-        doc = vertex_tree_to_pandoc(tree, {})
+        doc, _ = vertex_tree_to_pandoc(tree, {})
         assert "title" not in doc.metadata
 
     def test_title_in_header_renders_h1_not_metadata(self) -> None:
         """title_in_header=True renders page title as H1 body block, not metadata."""
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="My Page")])
-        doc = vertex_tree_to_pandoc(tree, {}, title_in_header=True)
+        doc, _ = vertex_tree_to_pandoc(tree, {}, title_in_header=True)
         assert "title" not in doc.metadata
         blocks = list(doc.content)
         assert len(blocks) == 1
@@ -226,7 +226,7 @@ class TestVertexTreeToPandocPageVertex:
         page = PageVertex(uid="page00001", title="Doc", children=["head0001a"])
         heading = HeadingVertex(uid="head0001a", text="Section", heading_level=2)
         tree = VertexTree(tree_vertices=[page, heading])
-        doc = vertex_tree_to_pandoc(tree, {}, title_in_header=True)
+        doc, _ = vertex_tree_to_pandoc(tree, {}, title_in_header=True)
         blocks = list(doc.content)
         assert len(blocks) == 2
         assert isinstance(blocks[0], pf.Header)
@@ -248,7 +248,8 @@ class TestVertexTreeToPandocHeadingVertex:
         page = PageVertex(uid="page00001", title="P", children=["head0001a"])
         heading = HeadingVertex(uid="head0001a", text="Section 1", heading_level=2)
         tree = VertexTree(tree_vertices=[page, heading])
-        blocks = list(vertex_tree_to_pandoc(tree, {}).content)
+        _doc, _ = vertex_tree_to_pandoc(tree, {})
+        blocks = list(_doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Header)
         assert blocks[0].level == 2
@@ -259,7 +260,8 @@ class TestVertexTreeToPandocHeadingVertex:
         page = PageVertex(uid="page00001", title="P", children=["head0001a"])
         heading = HeadingVertex(uid="head0001a", text="Subsection", heading_level=3)
         tree = VertexTree(tree_vertices=[page, heading])
-        blocks = list(vertex_tree_to_pandoc(tree, {}).content)
+        _doc, _ = vertex_tree_to_pandoc(tree, {})
+        blocks = list(_doc.content)
         assert isinstance(blocks[0], pf.Header)
         assert blocks[0].level == 3
 
@@ -270,7 +272,8 @@ class TestVertexTreeToPandocHeadingVertex:
         h5 = HeadingVertex(uid="head0005a", text="H5", heading_level=5)
         h6 = HeadingVertex(uid="head0006a", text="H6", heading_level=6)
         tree = VertexTree(tree_vertices=[page, h4, h5, h6])
-        blocks = list(vertex_tree_to_pandoc(tree, {}).content)
+        _doc, _ = vertex_tree_to_pandoc(tree, {})
+        blocks = list(_doc.content)
         assert [b.level for b in blocks] == [4, 5, 6]
 
     def test_nested_headings_flattened_into_document(self) -> None:
@@ -279,7 +282,8 @@ class TestVertexTreeToPandocHeadingVertex:
         h2 = HeadingVertex(uid="head0001a", text="Chapter", heading_level=2, children=["head0001b"])
         h3 = HeadingVertex(uid="head0001b", text="Section", heading_level=3)
         tree = VertexTree(tree_vertices=[page, h2, h3])
-        blocks = list(vertex_tree_to_pandoc(tree, {}).content)
+        _doc, _ = vertex_tree_to_pandoc(tree, {})
+        blocks = list(_doc.content)
         assert len(blocks) == 2
         assert isinstance(blocks[0], pf.Header)
         assert blocks[0].level == 2
@@ -302,7 +306,8 @@ class TestVertexTreeToPandocText:
         page = PageVertex(uid="page00001", title="P", children=["txt00001a"])
         block = TextVertex(uid="txt00001a", text="Hello world")
         tree = VertexTree(tree_vertices=[page, block])
-        blocks = list(vertex_tree_to_pandoc(tree, {}).content)
+        _doc, _ = vertex_tree_to_pandoc(tree, {})
+        blocks = list(_doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Para)
         assert _collect_text(blocks[0]) == "Hello world"
@@ -313,7 +318,8 @@ class TestVertexTreeToPandocText:
         heading = HeadingVertex(uid="head0001a", text="Section", heading_level=2, children=["txt00001a"])
         block = TextVertex(uid="txt00001a", text="Body text")
         tree = VertexTree(tree_vertices=[page, heading, block])
-        blocks = list(vertex_tree_to_pandoc(tree, {}).content)
+        _doc, _ = vertex_tree_to_pandoc(tree, {})
+        blocks = list(_doc.content)
         assert len(blocks) == 2
         assert isinstance(blocks[1], pf.BulletList)
         items = list(blocks[1].content)
@@ -330,7 +336,8 @@ class TestVertexTreeToPandocText:
         parent = TextVertex(uid="txt00001a", text="Parent", children=["txt00001b"])
         child = TextVertex(uid="txt00001b", text="Child")
         tree = VertexTree(tree_vertices=[page, heading, parent, child])
-        blocks = list(vertex_tree_to_pandoc(tree, {}).content)
+        _doc, _ = vertex_tree_to_pandoc(tree, {})
+        blocks = list(_doc.content)
         bullet_list = blocks[1]
         assert isinstance(bullet_list, pf.BulletList)
         parent_item = list(bullet_list.content)[0]
@@ -363,7 +370,7 @@ class TestVertexTreeToPandocImageVertex:
             scaled_image_size=ImageSize(),
         )
         tree = VertexTree(tree_vertices=[page, image])
-        doc = vertex_tree_to_pandoc(tree, {"img00001a": fake_img})
+        doc, _ = vertex_tree_to_pandoc(tree, {"img00001a": fake_img})
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Para)
@@ -382,7 +389,7 @@ class TestVertexTreeToPandocImageVertex:
             scaled_image_size=ImageSize(),
         )
         tree = VertexTree(tree_vertices=[page, image])
-        doc = vertex_tree_to_pandoc(tree, {})
+        doc, _ = vertex_tree_to_pandoc(tree, {})
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Para)
@@ -401,7 +408,7 @@ class TestVertexTreeToPandocImageVertex:
             scaled_image_size=ImageSize(),
         )
         tree = VertexTree(tree_vertices=[page, image])
-        doc = vertex_tree_to_pandoc(tree, {})
+        doc, _ = vertex_tree_to_pandoc(tree, {})
         inline = list(list(doc.content)[0].content)[0]
         assert isinstance(inline, pf.Link)
         assert _collect_text(inline) == "A flower"
@@ -417,7 +424,7 @@ class TestVertexTreeToPandocImageVertex:
             scaled_image_size=ImageSize(),
         )
         tree = VertexTree(tree_vertices=[page, image])
-        doc = vertex_tree_to_pandoc(tree, {})
+        doc, _ = vertex_tree_to_pandoc(tree, {})
         inline = list(list(doc.content)[0].content)[0]
         assert isinstance(inline, pf.Link)
         assert _collect_text(inline) == "photo.jpg"
@@ -479,18 +486,18 @@ class TestVertexTreeToPandocArticleFixture:
 
     def test_metadata_title_is_test_article_1(self) -> None:
         """Doc metadata title matches the page title from the fixture."""
-        doc = vertex_tree_to_pandoc(article1_vertex_tree(), {})
+        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {})
         assert _collect_text(doc.metadata["title"]) == "Test Article 1"
 
     def test_block_count(self) -> None:
         """The fixture produces the expected number of top-level blocks."""
-        doc = vertex_tree_to_pandoc(article1_vertex_tree(), {})
+        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {})
         # 1 Div(callout) + 3 H1s + 4 H2s + 3 H3s + 1 H4 + 2 Para(Link) + 3 BulletList = 17
         assert len(list(doc.content)) == 17
 
     def test_first_block_is_section_1_header(self) -> None:
         """The second block is an H1 Header for 'Section 1' (first block is the callout Para)."""
-        doc = vertex_tree_to_pandoc(article1_vertex_tree(), {})
+        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {})
         second = list(doc.content)[1]
         assert isinstance(second, pf.Header)
         assert second.level == 1
@@ -498,7 +505,7 @@ class TestVertexTreeToPandocArticleFixture:
 
     def test_image_renders_as_fallback_link_when_no_image_files(self) -> None:
         """The ImageVertex in the fixture renders as a pf.Link when image_files is empty."""
-        doc = vertex_tree_to_pandoc(article1_vertex_tree(), {})
+        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {})
         blocks = list(doc.content)
         image_para = next(
             (b for b in blocks if isinstance(b, pf.Para) and isinstance(list(b.content)[0], pf.Link)), None
@@ -507,7 +514,7 @@ class TestVertexTreeToPandocArticleFixture:
 
     def test_text_content_vertex_renders_as_bullet_list(self) -> None:
         """Each TextVertex renders as a top-level BulletList."""
-        doc = vertex_tree_to_pandoc(article1_vertex_tree(), {})
+        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {})
         blocks = list(doc.content)
         bullet_lists = [b for b in blocks if isinstance(b, pf.BulletList)]
         assert len(bullet_lists) == 3

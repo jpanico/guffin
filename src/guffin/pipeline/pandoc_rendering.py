@@ -42,6 +42,8 @@ Rendering rules:
 
 Public symbols:
 
+- :func:`strip_links` — unwrap every Link in a run of inlines to its display-text
+  content, reducing the run to plain (link-free) inlines.
 - :func:`parse_inline_md` — batch-parse Pandoc Markdown inline text strings into
   panflute inline element lists via a single Pandoc call.
 - :func:`parse_block_md` — parse a single Pandoc Markdown string into panflute
@@ -53,6 +55,9 @@ Public symbols:
   block elements.
 - :func:`vertex_tree_to_pandoc` — convert a
   :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
+- :data:`InlineMap` — type alias for the ``str → list[pf.Inline]`` mapping produced by
+  :func:`build_inline_map` and returned alongside the :class:`~panflute.Doc` by
+  :func:`vertex_tree_to_pandoc`.
 - :data:`VertexLinkResolver` — type alias for the resolver callable accepted by
   :func:`resolve_vertex_links`.
 - :func:`resolve_vertex_links` — walk a :class:`~panflute.Doc` in place and replace
@@ -100,6 +105,9 @@ from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
 
+type InlineMap = dict[str, list[pf.Inline]]
+"""Mapping from Pandoc Markdown text string to its parsed panflute inline elements."""
+
 type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
 """Resolver: (parsed link, destination vertex, original display inlines) → replacement inlines."""
 
@@ -109,14 +117,15 @@ type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[p
 _CONTAINS_CODE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(r"(?m)^```")
 
 
-def _strip_links(inlines: list[pf.Inline]) -> list[pf.Inline]:
+def strip_links(inlines: list[pf.Inline]) -> list[pf.Inline]:
     """Return *inlines* with every Link replaced by its display-text content.
 
-    Used to sanitize metadata fields (e.g. the document title) where
-    Pandoc's Typst writer would embed a ``#link("url")[text]`` call inside
-    a double-quoted Typst string, producing nested quotes that break the
-    Typst parser.  Stripping links preserves the display text while removing
-    the hyperlink target.
+    Unwraps each :class:`~panflute.Link` to its inner content inlines, preserving
+    the display text while discarding the hyperlink target.  Useful wherever a
+    run of inlines must be reduced to plain text — e.g. sanitizing metadata
+    fields (such as the document title) where Pandoc's Typst writer would embed a
+    ``#link("url")[text]`` call inside a double-quoted Typst string and break the
+    parser, or flattening a page title that itself contains a nested reference.
 
     Args:
         inlines: Panflute inline elements to filter.
@@ -162,7 +171,7 @@ def _extract_bg_color(inlines: list[pf.Inline]) -> tuple[str, list[pf.Inline]] |
 
 
 @validate_call
-def parse_inline_md(texts: list[str]) -> dict[str, list[pf.Inline]]:
+def parse_inline_md(texts: list[str]) -> InlineMap:
     """Batch-parse Pandoc Markdown inline text strings into panflute inline element lists.
 
     Each parse requires a Pandoc subprocess, so parsing text fields one at a
@@ -198,7 +207,7 @@ def parse_inline_md(texts: list[str]) -> dict[str, list[pf.Inline]]:
     json_str: Final[str] = pypandoc.convert_text(combined, "json", format="markdown")
     doc: Final[pf.Doc] = pf.load(StringIO(json_str))
 
-    result: Final[dict[str, list[pf.Inline]]] = {}
+    result: Final[InlineMap] = {}
     text_idx: int = 0
 
     for block in doc.content:  # `block: pf.Block`
@@ -251,7 +260,7 @@ def _build_list_item(
     vertex: TextVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
     depth: int,
 ) -> pf.ListItem:
     """Build a Pandoc :class:`~panflute.ListItem` from a :class:`~guffin.vertex.TextVertex`.
@@ -295,7 +304,7 @@ def build_child_blocks(
     child_uids: VertexChildren,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
     depth: int,
 ) -> list[pf.Block]:
     """Build a list of Pandoc block elements from an ordered list of child UIDs.
@@ -347,7 +356,7 @@ def _page_vertex_to_blocks(
     vertex: PageVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.PageVertex` to Pandoc block elements.
 
@@ -371,7 +380,7 @@ def _heading_vertex_to_blocks(
     vertex: HeadingVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.HeadingVertex` to Pandoc block elements.
@@ -401,7 +410,7 @@ def _text_vertex_to_blocks(
     vertex: TextVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.TextVertex` to Pandoc block elements.
@@ -447,7 +456,7 @@ def _text_vertex_to_blocks(
 def _image_vertex_to_blocks(
     vertex: ImageVertex,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
 ) -> list[pf.Block]:
     """Render an :class:`~guffin.vertex.ImageVertex` to Pandoc block elements.
 
@@ -490,7 +499,7 @@ def _callout_vertex_to_blocks(
     vertex: CalloutVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.CalloutVertex` to Pandoc block elements.
@@ -569,7 +578,7 @@ def _block_quote_vertex_to_blocks(
     vertex: BlockQuoteVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.BlockQuoteVertex` to a Pandoc :class:`~panflute.BlockQuote`.
@@ -609,7 +618,7 @@ def _halign_to_pandoc_str(align: HAlign) -> str:
 
 def _table_vertex_to_blocks(
     vertex: TableVertex,
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
 ) -> list[pf.Block]:
     """Render *vertex* as a Panflute :class:`~panflute.Table`.
 
@@ -661,7 +670,7 @@ def _vertex_to_blocks(
     vertex: Vertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
-    inline_map: dict[str, list[pf.Inline]],
+    inline_map: InlineMap,
     depth: int,
 ) -> list[pf.Block]:
     """Dispatch a single :data:`~guffin.vertex.Vertex` to its type-specific rendering function.
@@ -698,13 +707,17 @@ def _vertex_to_blocks(
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
-def build_inline_map(vertex_tree: VertexTree) -> dict[str, list[pf.Inline]]:
+def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
     """Collect all text strings from *vertex_tree* and return their parsed inline elements.
 
     Gathers every text string that requires inline Pandoc Markdown parsing —
     page titles, heading text, block text, image alt text, callout titles, and
-    table cell text — then delegates to :func:`parse_inline_md` for a single
-    batch Pandoc subprocess call.
+    table cell text — across both :attr:`~guffin.vertex_tree.VertexTree.tree_vertices`
+    and :attr:`~guffin.vertex_tree.VertexTree.ref_vertices`, then delegates to
+    :func:`parse_inline_md` for a single batch Pandoc subprocess call.  Including
+    the referenced (stub) vertices ensures the title or text used as a link's
+    display label is available pre-parsed when an ``x-guffin`` link resolves to a
+    referenced vertex.
 
     Args:
         vertex_tree: The vertex tree whose text strings are to be parsed.
@@ -715,7 +728,7 @@ def build_inline_map(vertex_tree: VertexTree) -> dict[str, list[pf.Inline]]:
         fall back to ``[pf.Str(text)]``.
     """
     texts: Final[list[str]] = []
-    for vertex in vertex_tree.tree_vertices:
+    for vertex in (*vertex_tree.tree_vertices, *vertex_tree.ref_vertices):
         match vertex:
             case PageVertex(title=t):
                 texts.append(t)
@@ -741,7 +754,7 @@ def vertex_tree_to_pandoc(
     image_files: dict[Uid, Path],
     *,
     title_in_header: bool = False,
-) -> pf.Doc:
+) -> tuple[pf.Doc, InlineMap]:
     """Convert a :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
 
     Collects all text strings from the tree, parses their inline Pandoc Markdown
@@ -770,11 +783,13 @@ def vertex_tree_to_pandoc(
             of storing it in document metadata.  Defaults to ``False``.
 
     Returns:
-        A :class:`~panflute.Doc` ready for serialization via
-        :func:`panflute.dump` and subsequent Pandoc conversion.
+        A two-tuple of the :class:`~panflute.Doc` ready for serialization via
+        :func:`panflute.dump` and the :func:`build_inline_map` mapping used
+        during construction (passed to vertex-link resolvers so they can look
+        up pre-parsed inlines by text string).
     """
     root: Final[Vertex] = root_vertex(vertex_tree)
-    inline_map: Final[dict[str, list[pf.Inline]]] = build_inline_map(vertex_tree)
+    inline_map: Final[InlineMap] = build_inline_map(vertex_tree)
 
     metadata: dict[str, pf.MetaValue] = {}
     blocks: list[pf.Block] = []
@@ -784,12 +799,12 @@ def vertex_tree_to_pandoc(
         if title_in_header:
             blocks.append(pf.Header(*title_inlines, level=1))
         else:
-            metadata["title"] = pf.MetaInlines(*_strip_links(list(title_inlines)))
+            metadata["title"] = pf.MetaInlines(*strip_links(list(title_inlines)))
         blocks.extend(build_child_blocks(root.children or [], vertex_tree, image_files, inline_map, depth=1))
     else:
         blocks.extend(_vertex_to_blocks(root, vertex_tree, image_files, inline_map, depth=0))
 
-    return pf.Doc(*blocks, metadata=metadata)
+    return pf.Doc(*blocks, metadata=metadata), inline_map
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))

@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 
 def _resolve_vertex_link(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
-    return display
+    return display  # TODO: implement per-vertex-type resolution for PDF rendering
 
 
 _TEMPLATE_PACKAGE: Final[str] = "guffin.templates"
@@ -216,7 +216,7 @@ def render(
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
         image_files: Final[dict[Uid, Path]] = {uid: ref.path for uid, ref in image_refs.items()}
-        doc: Final[pf.Doc] = vertex_tree_to_pandoc(enriched_tree, image_files)
+        doc: Final[pf.Doc] = vertex_tree_to_pandoc(enriched_tree, image_files)[0]
         resolve_vertex_links(doc, enriched_tree, _resolve_vertex_link)
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)

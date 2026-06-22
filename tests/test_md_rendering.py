@@ -1,45 +1,35 @@
 """Unit tests for guffin.pipeline.md_rendering."""
 
-# pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false
-# Rationale: panflute has no type stubs, so all its symbols are typed as Unknown by pyright.
-# The four suppressed rules are triggered entirely by that Unknown propagation — disabling them
-# here avoids dozens of cascading false-positive errors without relaxing any other strict checks.
-
-from io import StringIO
+from pathlib import Path
 from typing import Final
 
-import panflute as pf  # type: ignore[import-untyped]
-import pypandoc  # type: ignore[import-untyped]
-
-from guffin.model.link import VertexLink
-from guffin.pipeline.md_rendering import _GFM_CALLOUT_FILTER
-from guffin.pipeline.pandoc_rendering import resolve_vertex_links, vertex_tree_to_pandoc
+from guffin.common.filenames import shell_safe_filename
+from guffin.pipeline.md_rendering import render
 from guffin.pipeline.roam_tree_to_vertex_tree import transcribe
-from guffin.model.vertex import Vertex
 from guffin.model.vertex_tree import VertexTree
+from guffin.roam.local_api import ApiEndpoint
 
 from conftest import FIXTURES_MD_DIR, article1_node_tree
-
-
-def _strip_link(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
-    return display
 
 
 class TestRenderArticleFixture:
     """Integration tests for the md_rendering Pandoc output path."""
 
-    def test_article_fixture_renders_to_expected_markdown(self) -> None:
-        """Rendering article1 via Pandoc with the GFM callout filter matches the expected fixture."""
+    def test_article_fixture_renders_to_expected_markdown(self, tmp_path: Path) -> None:
+        """Rendering article1 to a plain ``.md`` file matches the expected fixture.
+
+        Exercises the full :func:`~guffin.pipeline.md_rendering.render` path with
+        ``bundle=False`` — the same path used by ``tests/regen_fixtures.py`` to
+        produce the expected fixture — so the production resolver and every GFM
+        Lua filter are covered.  ``bundle=False`` never fetches images, so the
+        supplied :class:`~guffin.roam.local_api.ApiEndpoint` is unused.
+        """
+        qualifier: Final[str] = "[[Test Article]] 1"
         vertex_tree: Final[VertexTree] = transcribe(article1_node_tree())
-        doc = vertex_tree_to_pandoc(vertex_tree, {}, title_in_header=True)
-        resolve_vertex_links(doc, vertex_tree, _strip_link)
-        buf = StringIO()
-        pf.dump(doc, output_stream=buf)  # type: ignore[no-untyped-call]
-        result = pypandoc.convert_text(  # type: ignore[no-untyped-call]
-            buf.getvalue(),
-            "gfm",
-            format="json",
-            extra_args=["--wrap=none", f"--lua-filter={_GFM_CALLOUT_FILTER}"],
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
         )
-        expected = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
+        render(vertex_tree, filename_stem=qualifier, output_dir=tmp_path, api_endpoint=endpoint, bundle=False)
+        result: Final[str] = (tmp_path / f"{shell_safe_filename(qualifier)}.md").read_text(encoding="utf-8")
+        expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert result == expected
