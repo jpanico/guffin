@@ -134,19 +134,6 @@ Always `import regex` (never `import re`) and use `regex.compile`, `regex.Patter
 guffin/
 ├── src/
 │   └── guffin/                        # Main package
-│       ├── vertex.py                    # Vertex union + eight concrete types (PageVertex,
-│       │                                #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
-│       │                                #   CodeBlockVertex, BlockQuoteVertex, TableVertex);
-│       │                                #   VertexType, VertexChildren, VertexRefs, vertex_adapter
-│       ├── vertex_tree.py               # VertexTree (tree_vertices, ref_vertices, uid_map),
-│       │                                #   VertexTreeDFSIterator, root_vertex(), map_vertices();
-│       │                                #   filter helpers (page_vertices, image_vertices, …)
-│       ├── link.py                      # x-guffin inter-vertex link scheme; VertexLinkKind,
-│       │                                #   VertexLink, vertex_link_url(), parse_vertex_link(),
-│       │                                #   is_vertex_link()
-│       ├── roam_tree_to_vertex_tree.py  # Transcribe NodeTree → VertexTree; applies to_pandoc_md()
-│       ├── roam_md_to_pandoc_md.py      # Convert Roam-flavored Markdown strings to Pandoc Markdown
-│       │
 │       ├── cli/                         # CLI entry points and supporting infrastructure
 │       │   ├── dump_roam_tree.py          # dump-roam-tree: render Roam subtree as a Rich tree
 │       │   ├── export_roam_tree.py        # export-roam-tree: export to Markdown or PDF
@@ -164,7 +151,22 @@ guffin/
 │       │   ├── table.py                   # Table, TableStyle, HAlign — 2-D cell grid model
 │       │   └── validation.py              # Generic accumulator-pipeline validation framework
 │       │
-│       ├── render/                      # Rendering pipeline modules
+│       ├── model/                       # Core normalized-graph model (depends only on common/)
+│       │   ├── primitives.py              # UID_PATTERN/RE, ANCHORED_UID_PATTERN/RE, Uid type alias
+│       │   ├── vertex.py                  # Vertex union + eight concrete types (PageVertex,
+│       │   │                              #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
+│       │   │                              #   CodeBlockVertex, BlockQuoteVertex, TableVertex);
+│       │   │                              #   VertexType, VertexChildren, VertexRefs, vertex_adapter
+│       │   ├── vertex_tree.py             # VertexTree (tree_vertices, ref_vertices, uid_map),
+│       │   │                              #   VertexTreeDFSIterator, root_vertex(), map_vertices();
+│       │   │                              #   filter helpers (page_vertices, image_vertices, …)
+│       │   └── link.py                    # x-guffin inter-vertex link scheme; VertexLinkKind,
+│       │                                  #   VertexLink, vertex_link_url(), parse_vertex_link(),
+│       │                                  #   is_vertex_link()
+│       │
+│       ├── pipeline/                    # Production pipeline: transcription, normalization, rendering
+│       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
+│       │   ├── roam_tree_to_vertex_tree.py# Transcribe NodeTree → VertexTree; applies to_pandoc_md()
 │       │   ├── image_fetch.py             # Pandoc-free image asset fetching; ImageRef (UID + path +
 │       │   │                              #   ImageSize); fetch_images() → {uid: ImageRef};
 │       │   │                              #   fetch_and_enrich_images() → (VertexTree, {uid: ImageRef})
