@@ -6,6 +6,7 @@
   uid: SYZfEd44O
   children:
   - I1QOMCtdJ
+  - 7XdTiY_ZF
   - LfaVt18Iw
   - d3T1YpYig
   - LfXmNr-tV
@@ -35,51 +36,241 @@
     -- external embed (of block from *different page*)
 
     - this INFO `Callout box`, which contains Roam `page references`'
+- vertex_type: guffin/heading
+  uid: 7XdTiY_ZF
+  children:
+  - riLVzfX-6
+  - msKBuys0a
+  - iiSioG0Ut
+  - JRU5IhUB-
+  - Q-nJAf9KK
+  - BuP4ifx3v
+  - yECzsUNPC
+  text: This is a HEADER
+  heading_level: 1
+- vertex_type: guffin/text
+  uid: riLVzfX-6
+  text: This para features plain text
+- vertex_type: guffin/text
+  uid: msKBuys0a
+  text: This para features *italics*
+- vertex_type: guffin/text
+  uid: iiSioG0Ut
+  text: This para features **bold**
+- vertex_type: guffin/text
+  uid: JRU5IhUB-
+  text: This para features ~~strikethrough~~
+- vertex_type: guffin/text
+  uid: Q-nJAf9KK
+  text: This para features [highlight]{.mark}
+- vertex_type: guffin/text
+  uid: BuP4ifx3v
+  text: This para features `inline-code`
+- vertex_type: guffin/code-block
+  uid: yECzsUNPC
+  code: "def fizz_buzz(limit: int = 100):\nfor i in range(1, limit + 1):\n    if i\
+    \ % 15 == 0:\n        print(\"FizzBuzz\")\n    elif i % 3 == 0:\n        print(\"\
+    Fizz\")\n    elif i % 5 == 0:\n        print(\"Buzz\")\n    else:\n        print(i)"
+  language: python
 - vertex_type: guffin/text
   uid: LfaVt18Iw
   children:
   - qj0DTMyzl
   - gxcUrCGPT
+  - 78w6MjSqo
+  - MbQObdYBx
+  - cKCA_EwGZ
+  - HbJZh5mTY
+  - FWULkh5nm
+  - hWsG-ExLV
+  - SsmyWLZij
+  - b8ob6GcbI
+  - ZT_EVUtHq
+  - HftouGiTA
   - dYYKZExzI
-  text: Section 1
+  - Y0xFlk7y6
+  - fZr8Ve9SS
+  text: 'Internal (in-page) links:'
 - vertex_type: guffin/text
   uid: qj0DTMyzl
   refs:
   - LBFKibPIj
+  - SYZfEd44O
   - lF-qY0Xrs
-  - lDYWYqYSL
-  text: '[**inline page ref**]{color="fuchsia"}: [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+  text: '[**inline PAGE ref ➔**]{color="fuchsia"} [Test Article 3](x-guffin:vertex/SYZfEd44O)'
 - vertex_type: guffin/text
   uid: gxcUrCGPT
   refs:
-  - LfXmNr-tV
   - lF-qY0Xrs
-  text: '[**internal block ref**]{color="fuchsia"}: [Section 3](x-guffin:vertex/LfXmNr-tV)'
+  - riLVzfX-6
+  text: '[**inline PLAIN TEXT ref ➔**]{color="fuchsia"} [This para features plain
+    text](x-guffin:vertex/riLVzfX-6)'
+- vertex_type: guffin/text
+  uid: 78w6MjSqo
+  refs:
+  - lF-qY0Xrs
+  - msKBuys0a
+  text: '[**inline ITALICS ref ➔**]{color="fuchsia"} [This para features *italics*](x-guffin:vertex/msKBuys0a)'
+- vertex_type: guffin/text
+  uid: MbQObdYBx
+  refs:
+  - lF-qY0Xrs
+  - iiSioG0Ut
+  text: '[**inline BOLD ref ➔**]{color="fuchsia"} [This para features **bold**](x-guffin:vertex/iiSioG0Ut)'
+- vertex_type: guffin/text
+  uid: cKCA_EwGZ
+  refs:
+  - lF-qY0Xrs
+  - JRU5IhUB-
+  text: '[**inline STRIKETHROUGH ref ➔**]{color="fuchsia"} [This para features ~~strikethrough~~](x-guffin:vertex/JRU5IhUB-)'
+- vertex_type: guffin/text
+  uid: HbJZh5mTY
+  refs:
+  - lF-qY0Xrs
+  - Q-nJAf9KK
+  text: '[**inline HIGHLIGHT ref ➔**]{color="fuchsia"} [This para features [highlight]{.mark}](x-guffin:vertex/Q-nJAf9KK)'
+- vertex_type: guffin/text
+  uid: FWULkh5nm
+  refs:
+  - lF-qY0Xrs
+  - BuP4ifx3v
+  text: '[**inline INLINE-CODE ref ➔**]{color="fuchsia"} [This para features `inline-code`](x-guffin:vertex/BuP4ifx3v)'
+- vertex_type: guffin/text
+  uid: hWsG-ExLV
+  refs:
+  - LfaVt18Iw
+  - lF-qY0Xrs
+  text: '[**inline PARENT BLOCK ref ➔**]{color="fuchsia"}  [Internal (in-page) links:](x-guffin:vertex/LfaVt18Iw)'
+- vertex_type: guffin/text
+  uid: SsmyWLZij
+  refs:
+  - lF-qY0Xrs
+  - 7XdTiY_ZF
+  text: '[**inline HEADER ref ➔**]{color="fuchsia"}  [This is a HEADER](x-guffin:vertex/7XdTiY_ZF)'
+- vertex_type: guffin/text
+  uid: b8ob6GcbI
+  children:
+  - xc_eQjqyE
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone page ref ⬇**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: xc_eQjqyE
+  refs:
+  - LBFKibPIj
+  - SYZfEd44O
+  text: '[Test Article 3](x-guffin:vertex/SYZfEd44O)'
+- vertex_type: guffin/text
+  uid: ZT_EVUtHq
+  children:
+  - 2Zo0HNy5o
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone block ref ⬇**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: 2Zo0HNy5o
+  refs:
+  - LfXmNr-tV
+  text: '[Section 3](x-guffin:vertex/LfXmNr-tV)'
+- vertex_type: guffin/text
+  uid: HftouGiTA
+  children:
+  - JpKqqwnAJ
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone parent block ref ⬇**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: JpKqqwnAJ
+  refs:
+  - LfaVt18Iw
+  text: '[Internal (in-page) links:](x-guffin:vertex/LfaVt18Iw)'
 - vertex_type: guffin/text
   uid: dYYKZExzI
   children:
   - XkSI5xwe5
   refs:
   - lF-qY0Xrs
-  text: '[**internal block embed (from *this Page*):**]{color="fuchsia"}'
+  text: '[**standalone block embed ⬇**]{color="fuchsia"}'
 - vertex_type: guffin/text
   uid: XkSI5xwe5
   refs:
   - vH2I8xRLZ
   text: '{{embed: [section 3.1.1](x-guffin:vertex/vH2I8xRLZ)}}'
 - vertex_type: guffin/text
+  uid: Y0xFlk7y6
+  children:
+  - tyOSwiz6l
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone HEADER ref ⬇**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: tyOSwiz6l
+  refs:
+  - 7XdTiY_ZF
+  text: '[This is a HEADER](x-guffin:vertex/7XdTiY_ZF)'
+- vertex_type: guffin/text
+  uid: fZr8Ve9SS
+  children:
+  - cCYHqUNs8
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone FENCED-CODE ref ⬇**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: cCYHqUNs8
+  refs:
+  - yECzsUNPC
+  text: "[```python\ndef fizz_buzz(limit: int = 100):\nfor i in range(1, limit + 1):\n\
+    \    if i % 15 == 0:\n        print(\"FizzBuzz\")\n    elif i % 3 == 0:\n    \
+    \    print(\"Fizz\")\n    elif i % 5 == 0:\n        print(\"Buzz\")\n    else:\n\
+    \        print(i)```](x-guffin:vertex/yECzsUNPC)"
+- vertex_type: guffin/text
   uid: d3T1YpYig
   children:
-  - aaz60uaRX
+  - ot5dpySxp
+  - n528kYv5_
+  - Dt8evi7AW
+  - vLxyRJcr2
   - 8jkmASa1c
-  text: Section 2
+  text: 'external (out-of-page) links:'
 - vertex_type: guffin/text
-  uid: aaz60uaRX
+  uid: ot5dpySxp
+  refs:
+  - LBFKibPIj
+  - lF-qY0Xrs
+  - lDYWYqYSL
+  text: '[**inline page ref ➔**]{color="fuchsia"} [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+- vertex_type: guffin/text
+  uid: n528kYv5_
   refs:
   - lF-qY0Xrs
   - tWkumkdUE
-  text: '[**external block ref:**]{color="fuchsia"}  [this image **has been resized**
+  text: '[**inline block ref ➔**]{color="fuchsia"} [this image **has been resized**
     through the Roam UI (width:257, height:None)](x-guffin:vertex/tWkumkdUE)'
+- vertex_type: guffin/text
+  uid: Dt8evi7AW
+  children:
+  - acAIiueY_
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone page ref ⬇**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: acAIiueY_
+  refs:
+  - LBFKibPIj
+  - lDYWYqYSL
+  text: '[Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+- vertex_type: guffin/text
+  uid: vLxyRJcr2
+  children:
+  - nmFudOFkf
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone block ref ⬇**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: nmFudOFkf
+  refs:
+  - tWkumkdUE
+  text: '[this image **has been resized** through the Roam UI (width:257, height:None)](x-guffin:vertex/tWkumkdUE)'
 - vertex_type: guffin/text
   uid: 8jkmASa1c
   children:
@@ -97,43 +288,13 @@
 - vertex_type: guffin/text
   uid: LfXmNr-tV
   children:
-  - R5OEu6Mod
   - l7f2Qf90W
   text: Section 3
 - vertex_type: guffin/text
-  uid: R5OEu6Mod
-  children:
-  - dIwidaUUg
-  refs:
-  - lF-qY0Xrs
-  text: '[**child block is a standalone page ref:**]{color="fuchsia"}'
-- vertex_type: guffin/text
-  uid: dIwidaUUg
-  refs:
-  - 6olpFWiw1
-  - LBFKibPIj
-  text: '[Test Article 1](x-guffin:vertex/6olpFWiw1)'
-- vertex_type: guffin/text
   uid: l7f2Qf90W
   children:
-  - A1icDYZy8
   - vH2I8xRLZ
   text: section 3.1
-- vertex_type: guffin/text
-  uid: A1icDYZy8
-  children:
-  - nkE0hwYsS
-  refs:
-  - lF-qY0Xrs
-  text: '[**the child block is a standalone block ref:**]{color="fuchsia"}'
-- vertex_type: guffin/text
-  uid: nkE0hwYsS
-  refs:
-  - C6xVTMnsh
-  text: "[```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
-    \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
-    \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
-    \     print(\"Buzz\")\n        else:\n            print(i)```](x-guffin:vertex/C6xVTMnsh)"
 - vertex_type: guffin/text
   uid: vH2I8xRLZ
   text: section 3.1.1

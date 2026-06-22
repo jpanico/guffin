@@ -1,24 +1,46 @@
-- - prevent-clean: 1773091073222
+- - prevent-clean: 1782152583717
     children:
     - id: 4226
     - id: 4227
     - id: 4228
     - id: 11133
+    - id: 11716
     user:
       id: 3
     sidebar: 22
     id: 4225
     uid: SYZfEd44O
-    word-count: 188
+    word-count: 376
     edit-user:
       id: 3
     time: 1781833356251
     title: '[[Test Article]] 3'
-    edit-nonce: Kf_ij6kT9
-    edit-time: 1782128940703
+    edit-nonce: E4Gx7g6fP
+    edit-time: 1782160459583
     refs:
     - id: 4223
-- - prevent-clean: 1773090962400
+- - heading: 1
+    string: This is a HEADER
+    children:
+    - id: 11717
+    - id: 11718
+    - id: 11719
+    - id: 11720
+    - id: 11721
+    - id: 11722
+    - id: 11725
+    user:
+      id: 3
+    id: 11716
+    uid: 7XdTiY_ZF
+    parents:
+    - id: 4225
+    time: 1782159960199
+    order: 1
+    open: true
+    page:
+      id: 4225
+- - prevent-clean: 1782152316083
     children:
     - id: 4224
     user:
@@ -32,6 +54,83 @@
     title: Test Article
     edit-nonce: 0iIGJ1buX
     edit-time: 1780843750454
+- - string: '#c:FUCHSIA **inline STRIKETHROUGH ref ➔** ((JRU5IhUB-))'
+    user:
+      id: 3
+    id: 11729
+    uid: cKCA_EwGZ
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782153316125
+    order: 4
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11720
+- - string: '#c:FUCHSIA **inline ITALICS ref ➔** ((msKBuys0a))'
+    user:
+      id: 3
+    id: 11726
+    uid: 78w6MjSqo
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782153192506
+    order: 2
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11718
+- - string: This para features `inline-code`
+    user:
+      id: 3
+    id: 11722
+    uid: BuP4ifx3v
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782152899017
+    order: 5
+    open: true
+    page:
+      id: 4225
+- - string: "```python\ndef fizz_buzz(limit: int = 100):\nfor i in range(1, limit\
+      \ + 1):\n    if i % 15 == 0:\n        print(\"FizzBuzz\")\n    elif i % 3 ==\
+      \ 0:\n        print(\"Fizz\")\n    elif i % 5 == 0:\n        print(\"Buzz\"\
+      )\n    else:\n        print(i)```"
+    user:
+      id: 3
+    id: 11725
+    uid: yECzsUNPC
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782160320905
+    order: 6
+    open: true
+    page:
+      id: 4225
+- - string: ((tWkumkdUE))
+    user:
+      id: 3
+    id: 11713
+    uid: nmFudOFkf
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 11712
+    time: 1782152593894
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11167
 - - string: '{{embed: ((drtANJYTg))}}'
     user:
       id: 3
@@ -48,24 +147,38 @@
       id: 4225
     refs:
     - id: 3332
-- - string: '#c:FUCHSIA **the child block is a standalone block ref:**'
-    children:
-    - id: 11699
+- - string: '#c:FUCHSIA **inline INLINE-CODE ref ➔** ((BuP4ifx3v))'
     user:
       id: 3
-    id: 11698
-    uid: A1icDYZy8
+    id: 11731
+    uid: FWULkh5nm
     parents:
     - id: 4225
-    - id: 4228
-    - id: 4230
-    time: 1782128772194
-    order: 0
+    - id: 4226
+    time: 1782153445290
+    order: 6
     open: true
     page:
       id: 4225
     refs:
     - id: 5844
+    - id: 11722
+- - string: ((LfXmNr-tV))
+    user:
+      id: 3
+    id: 11705
+    uid: 2Zo0HNy5o
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 11704
+    time: 1782152316078
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4228
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
@@ -98,7 +211,7 @@
     refs:
     - id: 5450
     - id: 5462
-- - string: '#c:FUCHSIA **internal block embed (from __this Page__):**'
+- - string: '#c:FUCHSIA **standalone block embed ⬇**'
     children:
     - id: 4232
     user:
@@ -108,8 +221,8 @@
     parents:
     - id: 4225
     - id: 4226
-    time: 1782128705299
-    order: 2
+    time: 1782152110293
+    order: 12
     open: true
     page:
       id: 4225
@@ -130,7 +243,6 @@
 - - string: section 3.1
     children:
     - id: 4231
-    - id: 11698
     user:
       id: 3
     id: 4230
@@ -139,14 +251,14 @@
     - id: 4225
     - id: 4228
     time: 1773091226849
-    order: 1
+    order: 0
     open: true
     page:
       id: 4225
 - - string: Section 3
+    prevent-clean: 1782153070419
     children:
     - id: 4230
-    - id: 11695
     user:
       id: 3
     id: 4228
@@ -154,27 +266,40 @@
     parents:
     - id: 4225
     time: 1773091129652
-    order: 3
+    order: 4
     open: true
     page:
       id: 4225
-- - string: '#c:FUCHSIA **child block is a standalone page ref:**'
-    children:
-    - id: 11696
+- - string: This para features ^^highlight^^
+    prevent-clean: 1782153445295
     user:
       id: 3
-    id: 11695
-    uid: R5OEu6Mod
+    id: 11721
+    uid: Q-nJAf9KK
     parents:
     - id: 4225
-    - id: 4228
-    time: 1782128762590
-    order: 0
+    - id: 11716
+    time: 1782152893058
+    order: 4
+    open: true
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **inline BOLD ref ➔** ((iiSioG0Ut))'
+    user:
+      id: 3
+    id: 11727
+    uid: MbQObdYBx
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782153273805
+    order: 3
     open: true
     page:
       id: 4225
     refs:
     - id: 5844
+    - id: 11719
 - - string: '{{embed: ((vH2I8xRLZ))}}'
     user:
       id: 3
@@ -191,19 +316,145 @@
       id: 4225
     refs:
     - id: 4231
-- - string: Section 1
+- - string: '#c:FUCHSIA **inline page ref ➔** [[[[Test Article]] 2]]'
+    user:
+      id: 3
+    id: 11709
+    uid: ot5dpySxp
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782152494530
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4223
+    - id: 5844
+    - id: 11674
+- - string: '#c:FUCHSIA **standalone parent block ref ⬇** '
+    children:
+    - id: 11708
+    user:
+      id: 3
+    id: 11707
+    uid: HftouGiTA
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782152349486
+    order: 11
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: This para features ~~strikethrough~~
+    prevent-clean: 1782153392416
+    user:
+      id: 3
+    id: 11720
+    uid: JRU5IhUB-
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782152887494
+    order: 3
+    open: true
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **standalone page ref ⬇** '
+    children:
+    - id: 11702
+    user:
+      id: 3
+    id: 11701
+    uid: b8ob6GcbI
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782152239778
+    order: 9
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: This para features **bold**
+    prevent-clean: 1782153316130
+    user:
+      id: 3
+    id: 11719
+    uid: iiSioG0Ut
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782152881934
+    order: 2
+    open: true
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **standalone block ref ⬇** '
+    children:
+    - id: 11713
+    user:
+      id: 3
+    id: 11712
+    uid: vLxyRJcr2
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782152574947
+    order: 3
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: '#c:FUCHSIA **standalone block ref ⬇** '
+    children:
+    - id: 11705
+    user:
+      id: 3
+    id: 11704
+    uid: ZT_EVUtHq
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782152305649
+    order: 10
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: 'Internal (in-page) links:'
+    prevent-clean: 1782160076597
     children:
     - id: 4229
     - id: 11135
     - id: 11692
+    - id: 11700
+    - id: 11701
+    - id: 11704
+    - id: 11707
+    - id: 11726
+    - id: 11727
+    - id: 11729
+    - id: 11730
+    - id: 11731
+    - id: 11732
+    - id: 11733
+    - id: 11735
     user:
       id: 3
     id: 4226
     uid: LfaVt18Iw
     parents:
     - id: 4225
-    time: 1773091124068
-    order: 1
+    time: 1782151653635
+    order: 2
     open: true
     page:
       id: 4225
@@ -217,11 +468,11 @@
     - id: 4228
     - id: 4230
     time: 1773091241939
-    order: 1
+    order: 0
     open: true
     page:
       id: 4225
-- - prevent-clean: 1782128885100
+- - prevent-clean: 1782151663188
     children:
     - id: 11675
     - id: 11677
@@ -241,23 +492,23 @@
     edit-time: 1781834579902
     refs:
     - id: 4223
-- - string: '#c:FUCHSIA **external block ref:**  ((tWkumkdUE))'
+- - string: ((yECzsUNPC))
     user:
       id: 3
-    id: 11136
-    uid: aaz60uaRX
+    id: 11736
+    uid: cCYHqUNs8
     parents:
     - id: 4225
-    - id: 4227
-    time: 1782128717158
+    - id: 4226
+    - id: 11735
+    time: 1782160332953
     order: 0
     open: true
     page:
       id: 4225
     refs:
-    - id: 5844
-    - id: 11167
-- - string: '#c:FUCHSIA **inline page ref**: [[[[Test Article]] 2]]'
+    - id: 11725
+- - string: '#c:FUCHSIA **inline PAGE ref ➔** [[[[Test Article]] 3]]'
     user:
       id: 3
     id: 11692
@@ -265,15 +516,15 @@
     parents:
     - id: 4225
     - id: 4226
-    time: 1782128678038
+    time: 1782153172765
     order: 0
     open: true
     page:
       id: 4225
     refs:
     - id: 4223
+    - id: 4225
     - id: 5844
-    - id: 11674
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -286,6 +537,22 @@
     title: '!INFO'
     edit-nonce: z3caCCN5O
     edit-time: 1773788725520
+- - string: '#c:FUCHSIA **inline PARENT BLOCK ref ➔**  ((LfaVt18Iw))'
+    user:
+      id: 3
+    id: 11700
+    uid: hWsG-ExLV
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782153206075
+    order: 7
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4226
+    - id: 5844
 - - heading: 2
     string: Section 2.1
     children:
@@ -315,6 +582,22 @@
     title: c:FUCHSIA
     edit-nonce: WMGpHVOcr
     edit-time: 1773955788222
+- - string: '#c:FUCHSIA **inline HIGHLIGHT ref ➔** ((Q-nJAf9KK))'
+    user:
+      id: 3
+    id: 11730
+    uid: HbJZh5mTY
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782153392410
+    order: 5
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11721
 - - prevent-clean: 1773356473975
     children:
     - id: 3328
@@ -338,57 +621,71 @@
     edit-time: 1781136935270
     refs:
     - id: 4223
-- - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
-      \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
-      \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n     \
-      \       print(\"Buzz\")\n        else:\n            print(i)```"
+- - string: '#c:FUCHSIA **standalone HEADER ref ⬇**'
+    children:
+    - id: 11734
     user:
       id: 3
-    id: 11175
-    uid: C6xVTMnsh
-    parents:
-    - id: 11137
-    - id: 11149
-    - id: 11174
-    time: 1781222045009
-    order: 0
-    open: true
-    page:
-      id: 11137
-- - string: ((C6xVTMnsh))
-    user:
-      id: 3
-    id: 11699
-    uid: nkE0hwYsS
+    id: 11733
+    uid: Y0xFlk7y6
     parents:
     - id: 4225
-    - id: 4228
-    - id: 4230
-    - id: 11698
-    time: 1782128940703
+    - id: 4226
+    time: 1782160168265
+    order: 13
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: '#c:FUCHSIA **inline block ref ➔** ((tWkumkdUE))'
+    user:
+      id: 3
+    id: 11710
+    uid: n528kYv5_
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782152522280
+    order: 1
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11167
+- - string: '#c:FUCHSIA **inline HEADER ref ➔**  ((7XdTiY_ZF))'
+    user:
+      id: 3
+    id: 11732
+    uid: SsmyWLZij
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782160076592
+    order: 8
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11716
+- - string: ((7XdTiY_ZF))
+    user:
+      id: 3
+    id: 11734
+    uid: tyOSwiz6l
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 11733
+    time: 1782160188427
     order: 0
     open: true
     page:
       id: 4225
     refs:
-    - id: 11175
-- - string: '[[[[Test Article]] 1]]'
-    user:
-      id: 3
-    id: 11696
-    uid: dIwidaUUg
-    parents:
-    - id: 4225
-    - id: 4228
-    - id: 11695
-    time: 1782128885094
-    order: 0
-    open: true
-    page:
-      id: 4225
-    refs:
-    - id: 3327
-    - id: 4223
+    - id: 11716
 - - string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
     children:
     - id: 4234
@@ -400,7 +697,7 @@
     - id: 4225
     - id: 4227
     time: 1782128731421
-    order: 1
+    order: 4
     open: true
     page:
       id: 4225
@@ -408,7 +705,52 @@
     - id: 3327
     - id: 4223
     - id: 5844
-- - string: '#c:FUCHSIA **internal block ref**: ((LfXmNr-tV))'
+- - string: '[[[[Test Article]] 3]]'
+    user:
+      id: 3
+    id: 11702
+    uid: xc_eQjqyE
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 11701
+    time: 1782152253425
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4223
+    - id: 4225
+- - string: This para features plain text
+    prevent-clean: 1782153109979
+    user:
+      id: 3
+    id: 11717
+    uid: riLVzfX-6
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782152872287
+    order: 0
+    open: true
+    page:
+      id: 4225
+- - string: This para features __italics__
+    prevent-clean: 1782153273812
+    user:
+      id: 3
+    id: 11718
+    uid: msKBuys0a
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782152877496
+    order: 1
+    open: true
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **inline PLAIN TEXT ref ➔** ((riLVzfX-6))'
     user:
       id: 3
     id: 11135
@@ -416,29 +758,82 @@
     parents:
     - id: 4225
     - id: 4226
-    time: 1782128693233
+    time: 1782153183244
     order: 1
     open: true
     page:
       id: 4225
     refs:
-    - id: 4228
     - id: 5844
-- - string: Section 2
+    - id: 11717
+- - string: ((LfaVt18Iw))
+    user:
+      id: 3
+    id: 11708
+    uid: JpKqqwnAJ
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 11707
+    time: 1782152360551
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4226
+- - string: 'external (out-of-page) links:'
     children:
     - id: 4233
-    - id: 11136
+    - id: 11709
+    - id: 11710
+    - id: 11712
+    - id: 11714
     user:
       id: 3
     id: 4227
     uid: d3T1YpYig
     parents:
     - id: 4225
-    time: 1773091127227
-    order: 2
-    open: false
+    time: 1782151754381
+    order: 3
+    open: true
     page:
       id: 4225
+- - string: '[[[[Test Article]] 2]]'
+    user:
+      id: 3
+    id: 11715
+    uid: acAIiueY_
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 11714
+    time: 1782152583716
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 4223
+    - id: 11674
+- - string: '#c:FUCHSIA **standalone FENCED-CODE ref ⬇**'
+    children:
+    - id: 11736
+    user:
+      id: 3
+    id: 11735
+    uid: fZr8Ve9SS
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782160272500
+    order: 14
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: this image **has been resized** through the Roam UI (width:257, height:None)
     user:
       id: 3
@@ -454,3 +849,20 @@
     open: true
     page:
       id: 3327
+- - string: '#c:FUCHSIA **standalone page ref ⬇** '
+    children:
+    - id: 11715
+    user:
+      id: 3
+    id: 11714
+    uid: Dt8evi7AW
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782152574947
+    order: 2
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
