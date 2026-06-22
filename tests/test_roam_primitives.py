@@ -6,7 +6,7 @@ import pytest
 import regex
 from pydantic import TypeAdapter, ValidationError
 
-from guffin.roam.markdown import CALLOUT_RE, PAGE_REF_RE, CalloutType, RoamCallout, parse_callout
+from guffin.roam.markdown import BLOCK_REF_RE, CALLOUT_RE, PAGE_REF_RE, CalloutType, RoamCallout, parse_callout
 from guffin.roam.primitives import ANCHORED_UID_PATTERN, ANCHORED_UID_RE, UID_PATTERN, UID_RE, Uid
 
 _VALID_UID: Final[str] = "abc123xyz"
@@ -303,6 +303,96 @@ class TestPageRefRE:
     def test_no_match_across_newline(self) -> None:
         """Test that a reference whose name spans a newline does not match."""
         assert PAGE_REF_RE.search("[[foo\nbar]]") is None
+
+
+# ---------------------------------------------------------------------------
+# TestBlockRefRE
+# ---------------------------------------------------------------------------
+
+
+class TestBlockRefRE:
+    """Tests for BLOCK_REF_RE — the Roam block reference ((<uid>)) regex."""
+
+    # --- match cases ---
+
+    def test_basic_match_full_string(self) -> None:
+        """Full string is consumed by a single match."""
+        m = BLOCK_REF_RE.search("((wdMgyBiP9))")
+        assert m is not None
+        assert m.group(0) == "((wdMgyBiP9))"
+
+    def test_uid_group(self) -> None:
+        """Named group 'uid' captures just the nine-character UID."""
+        m = BLOCK_REF_RE.search("((wdMgyBiP9))")
+        assert m is not None
+        assert m.group("uid") == "wdMgyBiP9"
+
+    @pytest.mark.parametrize(
+        "uid",
+        [
+            "abc123xyz",  # all lowercase alphanumeric
+            "ABCDEFGHI",  # all uppercase
+            "123456789",  # all digits
+            "abc_23xyz",  # underscore allowed
+            "abc-23xyz",  # dash allowed
+            "A1b2C3d4E",  # mixed case + digits
+        ],
+    )
+    def test_valid_uid_characters(self, uid: str) -> None:
+        """All characters permitted by UID_PATTERN are accepted."""
+        m = BLOCK_REF_RE.search(f"(({uid}))")
+        assert m is not None
+        assert m.group("uid") == uid
+
+    def test_inline_reference(self) -> None:
+        """A reference embedded in surrounding prose is captured."""
+        m = BLOCK_REF_RE.search("see ((wdMgyBiP9)) here")
+        assert m is not None
+        assert m.group(0) == "((wdMgyBiP9))"
+        assert m.group("uid") == "wdMgyBiP9"
+
+    def test_multiple_refs_via_finditer(self) -> None:
+        """Adjacent block references are matched separately."""
+        uids = [m.group("uid") for m in BLOCK_REF_RE.finditer("((abc123xyz)) and ((wdMgyBiP9))")]
+        assert uids == ["abc123xyz", "wdMgyBiP9"]
+
+    # --- no-match cases ---
+
+    def test_no_match_plain_text(self) -> None:
+        """Plain text without double-parens does not match."""
+        assert BLOCK_REF_RE.search("no refs here") is None
+
+    def test_no_match_single_parens(self) -> None:
+        """Single-paren wrapping (uid) is not a block reference."""
+        assert BLOCK_REF_RE.search("(wdMgyBiP9)") is None
+
+    def test_no_match_empty_parens(self) -> None:
+        """Empty (()) does not match — a UID is required."""
+        assert BLOCK_REF_RE.search("(())") is None
+
+    def test_no_match_uid_too_short(self) -> None:
+        """A UID shorter than nine characters does not match."""
+        assert BLOCK_REF_RE.search("((abc1234))") is None
+
+    def test_no_match_uid_too_long(self) -> None:
+        """A UID longer than nine characters does not match."""
+        assert BLOCK_REF_RE.search("((abc123xyz0))") is None
+
+    def test_no_match_space_in_uid(self) -> None:
+        """A space inside the UID position is rejected."""
+        assert BLOCK_REF_RE.search("((abc 3xyz))") is None
+
+    def test_no_match_bang_in_uid(self) -> None:
+        """A punctuation character (!) inside the UID position is rejected."""
+        assert BLOCK_REF_RE.search("((abc!23xyz))") is None
+
+    def test_no_match_unclosed(self) -> None:
+        """An unclosed ((uid) reference does not match."""
+        assert BLOCK_REF_RE.search("((wdMgyBiP9)") is None
+
+    def test_no_match_page_ref_syntax(self) -> None:
+        """Square-bracket [[uid]] page-ref syntax is not a block reference."""
+        assert BLOCK_REF_RE.search("[[wdMgyBiP9]]") is None
 
 
 # ---------------------------------------------------------------------------

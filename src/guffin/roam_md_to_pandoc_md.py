@@ -12,7 +12,6 @@ stable order.
 
 Constructs intentionally left verbatim for future expansion:
 
-- Block references — ``((block-uid))``
 - Block embeds — ``{{embed: ((block-uid))}}``
 - Other Roam components — ``{{TODO}}``, ``{{DONE}}``, ``{{query: ...}}``, etc.
 
@@ -39,6 +38,9 @@ Public symbols:
 - :func:`convert_page_link` — convert Roam page references ``[[Page Name]]`` to
   Pandoc Markdown vertex links ``[Page Name](x-guffin:vertex/<uid>)``, falling
   back to delimiter-stripped text when the page is not resolvable.
+- :func:`convert_block_link` — convert Roam block references ``((uid))`` to
+  Pandoc Markdown vertex links ``[display](x-guffin:vertex/<uid>)``, falling
+  back to the verbatim ``((uid))`` when the block is not resolvable.
 """
 
 from typing import Final
@@ -47,7 +49,8 @@ import regex
 from pydantic import validate_call
 
 from guffin.link import VertexLinkKind, vertex_link_url
-from guffin.roam.markdown import PAGE_REF_RE
+from guffin.roam.markdown import BLOCK_REF_RE, PAGE_REF_RE
+from guffin.roam.node import RoamNode
 from guffin.roam.node_tree import NodeTree
 
 # ---------------------------------------------------------------------------
@@ -73,12 +76,6 @@ _HIGHLIGHT_RE: regex.Pattern[str] = regex.compile(r"\^\^(.+?)\^\^", regex.DOTALL
 # brackets).  Must be applied before convert_page_link so the [[...]] target
 # can be identified and converted to a plain Pandoc Markdown link destination.
 _PAGE_LINK_ALIAS_RE: regex.Pattern[str] = regex.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")
-
-# Double-bracket delimiters used by Roam for page links ([[Page Name]]) and
-# hashtag page links (#[[multi-word tag]]).  Matched and removed independently
-# to handle arbitrarily nested page links (e.g. [[nested [[pages]]]]).
-_DOUBLE_OPEN_RE: regex.Pattern[str] = regex.compile(r"\[\[")
-_DOUBLE_CLOSE_RE: regex.Pattern[str] = regex.compile(r"\]\]")
 
 # Color Highlighter extension: #c:COLOR **bold text**.  Group 1 is the color
 # name (e.g. ORANGE); group 2 is the bold content between the ** delimiters.
@@ -120,8 +117,7 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
     available as a standalone function for testing or selective use.
 
     The following Roam constructs are intentionally left verbatim for future
-    expansion: block references ``((uid))``, block embeds
-    ``{{embed: ((uid))}}``, and other ``{{…}}`` components.
+    expansion: block embeds ``{{embed: ((uid))}}`` and other ``{{…}}`` components.
 
     Args:
         roam_string: A single Roam block string (the raw ``string`` field from a
@@ -142,6 +138,7 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
     result = convert_code_blocks(result)
     result = convert_page_link_aliases(result)
     result = convert_page_link(result, tree)
+    result = convert_block_link(result, tree)
     result = convert_italics(result)
     result = convert_highlights(result)
     result = convert_bg_color_line(result)
@@ -407,9 +404,48 @@ def convert_page_link(roam_string: str, tree: NodeTree) -> str:
 
     def _replace(match: regex.Match[str]) -> str:
         page_name: Final[str] = match.group("page_name")
-        display: Final[str] = _DOUBLE_CLOSE_RE.sub("", _DOUBLE_OPEN_RE.sub("", page_name))
+        display: Final[str] = page_name.replace("[[", "").replace("]]", "")
         if page_name not in tree.page_name_map:
             return display
         return f"[{display}]({vertex_link_url(tree.page_name_map[page_name].uid, VertexLinkKind.REFERENCE)})"
 
     return PAGE_REF_RE.sub(_replace, roam_string)
+
+
+@validate_call
+def convert_block_link(roam_string: str, tree: NodeTree) -> str:
+    """Convert Roam block references to Pandoc Markdown links to the referenced vertex.
+
+    Each Roam block reference ``((uid))`` (as matched by
+    :data:`~guffin.roam.markdown.BLOCK_REF_RE`) is converted to a Pandoc Markdown
+    inline link whose destination is an ``x-guffin`` vertex-reference URL (see
+    :func:`~guffin.link.vertex_link_url`): ``[display](x-guffin:vertex/<uid>)``.
+    The display text is the referenced node's ``string`` content (for block nodes)
+    or its ``title`` (for page nodes), falling back to the bare UID if both are
+    absent.
+
+    When the UID is absent from *tree* (e.g. the referenced block was not
+    fetched), the reference is left verbatim as ``((uid))``.
+
+    Args:
+        roam_string: A Roam block string, possibly containing ``((uid))`` block references.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve block UIDs
+            to :class:`~guffin.roam.node.RoamNode` instances.  Both
+            :attr:`~guffin.roam.node_tree.NodeTree.tree_network` nodes and
+            :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` nodes are searched.
+
+    Returns:
+        The string with every resolvable block reference replaced by a Pandoc
+        Markdown vertex link, and every unresolvable reference left verbatim as
+        ``((uid))``.
+    """
+
+    def _replace(match: regex.Match[str]) -> str:
+        uid: Final[str] = match.group("uid")
+        if uid not in tree.uid_map:
+            return match.group(0)
+        node: Final[RoamNode] = tree.uid_map[uid]
+        display: Final[str] = node.string or node.title or uid
+        return f"[{display}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+    return BLOCK_REF_RE.sub(_replace, roam_string)

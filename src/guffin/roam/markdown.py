@@ -6,7 +6,8 @@ Public symbols:
   quote (and callout); :data:`CALLOUT_RE` — compiled regex that matches and decomposes a full
   callout block string; :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
   link whose URL is a Cloud Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
-  a Roam page reference ``[[<page_name>]]``.
+  a Roam page reference ``[[<page_name>]]``; :data:`BLOCK_REF_RE` — compiled regex matching a
+  Roam block reference ``((<uid>))``.
 - **Enumerations**: :class:`CalloutType` — the twelve Roam callout type keywords.
 - **Callout model**: :class:`RoamCallout` — parsed decomposition of a callout block string.
 - **Callout parser**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`.
@@ -25,6 +26,7 @@ import regex
 from pydantic import BaseModel, ConfigDict, Field, validate_call
 
 from guffin.common.markdown import MD_BLOCK_QUOTE_PREFIX
+from guffin.roam.primitives import UID_PATTERN
 
 
 class CalloutType(enum.StrEnum):
@@ -233,4 +235,25 @@ Example matches:
 - ``[[0.2 Introduction [[v01]]]]`` → ``page_name`` is ``0.2 Introduction [[v01]]``.
 - ``[[[[[[Illustration]] Brief]] -- Draft]]`` → ``page_name`` is
   ``[[[[Illustration]] Brief]] -- Draft``.
+"""
+
+BLOCK_REF_RE: Final[regex.Pattern[str]] = regex.compile(rf"\(\((?P<uid>{UID_PATTERN})\)\)")
+"""Compiled regex matching a Roam block reference ``((<uid>))``.
+
+Block references embed a 9-character Roam UID between ``((`` and ``))``.  Unlike
+page references, block refs cannot nest other references, so no recursive
+matching is required.
+
+Named group:
+
+- ``uid`` — the 9-character UID (matching :data:`~guffin.roam.primitives.UID_PATTERN`)
+  between the outer ``((`` and ``))`` delimiters.
+
+Adjacent references are matched separately; use :meth:`regex.Pattern.finditer`
+to enumerate every reference in a string.
+
+Example match on ``((wdMgyBiP9))``:
+
+- ``match.group(0)`` — the full ``((wdMgyBiP9))`` string.
+- ``match.group("uid")`` — just ``wdMgyBiP9``.
 """

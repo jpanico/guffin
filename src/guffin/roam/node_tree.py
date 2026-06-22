@@ -33,7 +33,7 @@ from guffin.roam.node_network import (
     refs_ids,
 )
 from guffin.roam.node import NodeType, RoamNode, node_type
-from guffin.roam.primitives import Id
+from guffin.roam.primitives import Id, Uid
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 
 logger = logging.getLogger(__name__)
@@ -56,6 +56,9 @@ class NodeTree(BaseModel):
             by a member of :attr:`tree_network`, or is a transitive descendant of such a
             node available in *super_network*; may be empty.
         id_map: Map of :attr:`~guffin.roam.node.RoamNode.id` → :class:`~guffin.roam.node.RoamNode`
+            for every node in :attr:`tree_network` or :attr:`refs_by_id`; excluded from
+            serialization.
+        uid_map: Map of :attr:`~guffin.roam.node.RoamNode.uid` → :class:`~guffin.roam.node.RoamNode`
             for every node in :attr:`tree_network` or :attr:`refs_by_id`; excluded from
             serialization.
         page_name_map: Map of :attr:`~guffin.roam.node.RoamNode.title` →
@@ -92,6 +95,11 @@ class NodeTree(BaseModel):
         exclude=True,
         description="Map of id → RoamNode for every node in tree_network or refs_by_id.",
     )
+    uid_map: dict[Uid, RoamNode] = Field(
+        ...,
+        exclude=True,
+        description="Map of uid → RoamNode for every node in tree_network or refs_by_id.",
+    )
     page_name_map: dict[str, RoamNode] = Field(
         ...,
         exclude=True,
@@ -105,9 +113,9 @@ class NodeTree(BaseModel):
         Uses :func:`~guffin.roam.node_network.all_descendants` to extract the subtree rooted
         at *root_node* from *super_network*, builds :attr:`refs_by_id` from the direct ref
         targets of :attr:`tree_network` plus all their transitive descendants available in
-        *super_network*, derives :attr:`id_map` and :attr:`page_name_map` from the combined
-        node pool, then delegates to the Pydantic constructor (which runs all validators
-        including :meth:`_validate_is_tree`).
+        *super_network*, derives :attr:`id_map`, :attr:`uid_map`, and :attr:`page_name_map`
+        from the combined node pool, then delegates to the Pydantic constructor (which runs
+        all validators including :meth:`_validate_is_tree`).
 
         Args:
             root_node: The single root node of the tree.
@@ -135,6 +143,7 @@ class NodeTree(BaseModel):
         tree_network: Final[NodeNetwork] = [n for n in super_network if n.id in tree_ids]
         refs_by_id: Final[dict[Id, RoamNode]] = cls._build_refs_by_id(tree_network, super_network)
         id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in tree_network} | refs_by_id
+        uid_map: Final[dict[Uid, RoamNode]] = {n.uid: n for n in id_map.values()}
         page_name_map: Final[dict[str, RoamNode]] = {
             n.title: n for n in id_map.values() if node_type(n) == NodeType.ROAM_PAGE and n.title is not None
         }
@@ -145,6 +154,7 @@ class NodeTree(BaseModel):
                 tree_network=tree_network,
                 refs_by_id=refs_by_id,
                 id_map=id_map,
+                uid_map=uid_map,
                 page_name_map=page_name_map,
             )
         finally:
