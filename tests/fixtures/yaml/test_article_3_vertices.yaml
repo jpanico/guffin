@@ -68,9 +68,10 @@
   text: This para features `inline-code`
 - vertex_type: guffin/code-block
   uid: yECzsUNPC
-  code: "def fizz_buzz(limit: int = 100):\nfor i in range(1, limit + 1):\n    if i\
-    \ % 15 == 0:\n        print(\"FizzBuzz\")\n    elif i % 3 == 0:\n        print(\"\
-    Fizz\")\n    elif i % 5 == 0:\n        print(\"Buzz\")\n    else:\n        print(i)"
+  code: "def fizz_buzz(limit: int = 100):\n    for i in range(1, limit + 1):\n   \
+    \     if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif i % 3 ==\
+    \ 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n            print(\"\
+    Buzz\")\n        else:\n            print(i)"
   language: python
 - vertex_type: guffin/text
   uid: LfaVt18Iw
@@ -219,10 +220,10 @@
   uid: cCYHqUNs8
   refs:
   - yECzsUNPC
-  text: "[```python\ndef fizz_buzz(limit: int = 100):\nfor i in range(1, limit + 1):\n\
-    \    if i % 15 == 0:\n        print(\"FizzBuzz\")\n    elif i % 3 == 0:\n    \
-    \    print(\"Fizz\")\n    elif i % 5 == 0:\n        print(\"Buzz\")\n    else:\n\
-    \        print(i)```](x-guffin:vertex/yECzsUNPC)"
+  text: "[```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
+    \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
+    \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
+    \     print(\"Buzz\")\n        else:\n            print(i)```](x-guffin:vertex/yECzsUNPC)"
 - vertex_type: guffin/text
   uid: d3T1YpYig
   children:

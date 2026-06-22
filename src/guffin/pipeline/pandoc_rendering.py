@@ -256,6 +256,40 @@ def parse_block_md(text: str) -> list[pf.Block]:
 # ---------------------------------------------------------------------------
 
 
+def _code_block_ref_target(
+    vertex: TextVertex,
+    vertex_tree: VertexTree,
+    inline_map: InlineMap,
+) -> CodeBlockVertex | None:
+    """Return the destination code block when *vertex* is solely a reference to one.
+
+    A code block is inherently block-level and cannot be represented as the inline
+    content of a list item or paragraph.  When a text vertex's entire parsed content
+    is a single ``x-guffin`` link whose destination is a
+    :class:`~guffin.vertex.CodeBlockVertex`, that destination is returned so the
+    reference can be rendered as a fenced :class:`~panflute.CodeBlock` identical to the
+    referenced block.
+
+    Args:
+        vertex: The text-content vertex to inspect.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+
+    Returns:
+        The referenced :class:`~guffin.vertex.CodeBlockVertex`, or ``None`` in every
+        other case — including a reference mixed with surrounding text, which has no
+        block-level representation and is resolved inline instead.
+    """
+    inlines: Final[list[pf.Inline] | None] = inline_map.get(vertex.text)
+    if inlines is None or len(inlines) != 1 or not isinstance(inlines[0], pf.Link):
+        return None
+    vertex_link: Final[VertexLink | None] = parse_vertex_link(inlines[0].url)
+    if vertex_link is None:
+        return None
+    dest: Final[Vertex | None] = vertex_tree.uid_map.get(vertex_link.uid)
+    return dest if isinstance(dest, CodeBlockVertex) else None
+
+
 def _build_list_item(
     vertex: TextVertex,
     vertex_tree: VertexTree,
@@ -284,7 +318,10 @@ def _build_list_item(
         nested children.
     """
     content: list[pf.Block]
-    if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
+    code_ref: Final[CodeBlockVertex | None] = _code_block_ref_target(vertex, vertex_tree, inline_map)
+    if code_ref is not None:
+        content = _code_block_vertex_to_blocks(code_ref)
+    elif _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
         content = parse_block_md(vertex.text)
     else:
         inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
@@ -436,7 +473,10 @@ def _text_vertex_to_blocks(
     """
     if depth <= 1:
         para_blocks: list[pf.Block]
-        if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
+        code_ref: Final[CodeBlockVertex | None] = _code_block_ref_target(vertex, vertex_tree, inline_map)
+        if code_ref is not None:
+            para_blocks = _code_block_vertex_to_blocks(code_ref)
+        elif _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
             para_blocks = parse_block_md(vertex.text)
         else:
             text_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
