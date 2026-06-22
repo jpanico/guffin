@@ -6,19 +6,19 @@ transcribes them into a :class:`~guffin.vertex_tree.VertexTree`, and writes the
 result in one of two output formats controlled by ``--format``:
 
 - **Markdown** (default, ``--format markdown``) — renders the tree to
-  GFM via :func:`~guffin.render.md_rendering.vertex_tree_to_md`, then writes in one
+  GFM via :func:`~guffin.pipeline.md_rendering.vertex_tree_to_md`, then writes in one
   of two bundle modes:
 
   - **Bundle mode** (default, ``--bundle``) — fetches Cloud Firestore images
     and writes a self-contained ``<output_dir>/<target>.mdbundle/`` directory
-    via :func:`~guffin.render.md_rendering.bundle_md_document`.  Pass
+    via :func:`~guffin.pipeline.md_rendering.bundle_md_document`.  Pass
     ``--cache-dir`` to avoid re-downloading unchanged assets across runs.
   - **Plain mode** (``--no-bundle``) — writes the GFM text directly
     to ``<output_dir>/<target>.md``.
 
 - **PDF** (``--format pdf``) — builds a Pandoc object model directly from
   the :class:`~guffin.vertex_tree.VertexTree` via
-  :func:`~guffin.render.pdf_rendering.render_pdf` and writes
+  :func:`~guffin.pipeline.pdf_rendering.render_pdf` and writes
   ``<output_dir>/<target>.pdf``.  The ``--bundle/--no-bundle`` and
   ``--cache-dir`` options do not apply and are ignored.  Pass
   ``--template-dir`` to supply a directory containing a ``user_cfg.typ``
@@ -61,8 +61,8 @@ import typer
 
 from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
-from guffin.render.md_rendering import render as render_md
-from guffin.render.pdf_rendering import render as render_pdf
+from guffin.pipeline.md_rendering import render as render_md
+from guffin.pipeline.pdf_rendering import render as render_pdf
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind

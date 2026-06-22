@@ -14,9 +14,9 @@ Normalization (transcription) means:
 - Each node is classified into a :class:`VertexType`.
 - The result is self-contained and portable — no Datomic dependencies remain.
 
-Normalization is performed by :func:`~guffin.roam_tree_to_vertex_tree.transcribe` (for a full
+Normalization is performed by :func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe` (for a full
 :class:`~guffin.roam.node_tree.NodeTree`) or
-:func:`~guffin.roam_tree_to_vertex_tree.transcribe_standalone_node` (for a single
+:func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe_standalone_node` (for a single
 :class:`~guffin.roam.node.RoamNode`).
 
 Public symbols:
@@ -53,7 +53,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
 from guffin.common.markdown import HeadingLevel
-from guffin.roam.primitives import Uid
+from guffin.model.primitives import Uid
 
 type VertexChildren = list[Uid]
 """Normalized form of :attr:`~guffin.roam.node.RoamNode.children`.

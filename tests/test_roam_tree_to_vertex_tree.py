@@ -22,7 +22,7 @@ from guffin.model.vertex import (
 from guffin.common.code_language import CodeLanguage
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import RoamNode
-from guffin.roam_tree_to_vertex_tree import (
+from guffin.pipeline.roam_tree_to_vertex_tree import (
     to_block_quote_vertex,
     to_callout_vertex,
     to_code_block_vertex,

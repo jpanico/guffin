@@ -1,4 +1,4 @@
-"""Unit tests for guffin.render.md_rendering."""
+"""Unit tests for guffin.pipeline.md_rendering."""
 
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false
 # Rationale: panflute has no type stubs, so all its symbols are typed as Unknown by pyright.
@@ -12,9 +12,9 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 
 from guffin.model.link import VertexLink
-from guffin.render.md_rendering import _GFM_CALLOUT_FILTER
-from guffin.render.pandoc_rendering import resolve_vertex_links, vertex_tree_to_pandoc
-from guffin.roam_tree_to_vertex_tree import transcribe
+from guffin.pipeline.md_rendering import _GFM_CALLOUT_FILTER
+from guffin.pipeline.pandoc_rendering import resolve_vertex_links, vertex_tree_to_pandoc
+from guffin.pipeline.roam_tree_to_vertex_tree import transcribe
 from guffin.model.vertex import Vertex
 from guffin.model.vertex_tree import VertexTree
 

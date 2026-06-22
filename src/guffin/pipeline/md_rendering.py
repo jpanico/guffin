@@ -1,7 +1,7 @@
 """Render a :class:`~guffin.vertex_tree.VertexTree` to GFM and write Markdown exports to disk.
 
 Converts the normalized vertex tree produced by
-:func:`~guffin.roam_tree_to_vertex_tree.transcribe` to a GFM document via the
+:func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe` to a GFM document via the
 Pandoc object model (see :mod:`~guffin.pandoc_rendering`), and writes the
 result to disk as either a plain ``.md`` file or a self-contained
 ``.mdbundle`` directory that embeds downloaded Cloud Firestore images.
@@ -10,7 +10,7 @@ Public symbols:
 
 - :func:`render` — end-to-end: render a :class:`~guffin.vertex_tree.VertexTree` to
   a ``.mdbundle`` directory or plain ``.md`` file (parallel entry point to
-  :func:`~guffin.render.pdf_rendering.render`).
+  :func:`~guffin.pipeline.pdf_rendering.render`).
 """
 
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false
@@ -36,8 +36,8 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.model.link import VertexLink
 from guffin.model.vertex import Vertex
 from guffin.model.vertex_tree import VertexTree
-from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
-from guffin.render.pandoc_rendering import pandoc_to_json, resolve_vertex_links, vertex_tree_to_pandoc
+from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
+from guffin.pipeline.pandoc_rendering import pandoc_to_json, resolve_vertex_links, vertex_tree_to_pandoc
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
@@ -61,14 +61,14 @@ def render(
     """Render *vertex_tree* to a Markdown file or bundle inside *output_dir*.
 
     Converts *vertex_tree* to a Panflute :class:`~panflute.Doc` via
-    :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc` (with the page
+    :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc` (with the page
     title rendered as an H1 header), then invokes Pandoc to produce
     GFM output.  Writes the result in one of two modes controlled by
     *bundle*:
 
     - ``bundle=True`` (default) — fetches Cloud Firestore image assets and
       enriches the vertex tree with each image's native pixel size via
-      :func:`~guffin.render.image_fetch.fetch_and_enrich_images`, places the images
+      :func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, places the images
       in the bundle directory, and writes a self-contained
       ``<normalized_filename_stem>.mdbundle/`` directory containing the
       Markdown file and all images.  Image links in the Markdown reference

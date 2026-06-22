@@ -13,7 +13,7 @@ from guffin.cli.export_roam_tree import app
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 
-from guffin.roam_tree_to_vertex_tree import transcribe
+from guffin.pipeline.roam_tree_to_vertex_tree import transcribe
 
 from conftest import (
     FIXTURES_MD_DIR,
@@ -97,7 +97,7 @@ class TestExportRoamTreeBundle:
             return_value=mock_result,
         ):
             with patch(
-                "guffin.render.md_rendering.fetch_and_enrich_images",
+                "guffin.pipeline.md_rendering.fetch_and_enrich_images",
                 return_value=(vertex_tree, {}),
             ):
                 saved_handlers = logging.root.handlers[:]

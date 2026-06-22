@@ -1,7 +1,7 @@
 """Shared Pandoc/panflute rendering utilities for :class:`~guffin.vertex_tree.VertexTree` → :class:`~panflute.Doc`.
 
 Converts the normalized vertex tree produced by
-:func:`~guffin.roam_tree_to_vertex_tree.transcribe` into a Panflute
+:func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe` into a Panflute
 :class:`~panflute.Doc` (the Pandoc object model), with inline Pandoc Markdown
 properly parsed into structured panflute inline elements.
 
@@ -138,7 +138,7 @@ def _extract_bg_color(inlines: list[pf.Inline]) -> tuple[str, list[pf.Inline]] |
 
     A whole-line background color block is signalled by a single
     :class:`~panflute.Span` with a ``bg-color`` attribute, produced by
-    :func:`~guffin.roam_md_to_pandoc_md.convert_bg_color_line`.  When that
+    :func:`~guffin.pipeline.roam_md_to_pandoc_md.convert_bg_color_line`.  When that
     pattern is detected the span is unwrapped so the caller can promote the
     enclosing block to a :class:`~panflute.Div`.
 

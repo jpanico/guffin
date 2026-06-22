@@ -30,7 +30,7 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator, val
 from guffin.common.geometry import ImageSize
 
 logger = logging.getLogger(__name__)
-from guffin.roam.primitives import Uid
+from guffin.model.primitives import Uid
 from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
@@ -47,8 +47,8 @@ def _default_ref_vertices() -> list[Annotated[Vertex, Field(discriminator="verte
 class VertexTree(BaseModel):
     """Normalized (transcribed) form of a :class:`~guffin.roam.node_tree.NodeTree`.
 
-    Produced by :func:`~guffin.roam_tree_to_vertex_tree.transcribe`, which applies
-    :func:`~guffin.roam_tree_to_vertex_tree.transcribe_standalone_node` to every node in the source
+    Produced by :func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe`, which applies
+    :func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe_standalone_node` to every node in the source
     :class:`~guffin.roam.node_tree.NodeTree` and collects the results here in the
     same insertion order.  The resulting collection is guaranteed to have exactly
     one :data:`~guffin.model.vertex.Vertex` per source :class:`~guffin.roam.node.RoamNode` and
@@ -60,7 +60,7 @@ class VertexTree(BaseModel):
         ref_vertices: Stub vertices transcribed from
             :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` — nodes referenced
             from the anchor tree but not part of it.  Used only for UID lookup
-            (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
+            (e.g. by :func:`~guffin.pipeline.pandoc_rendering.resolve_vertex_links`);
             not traversed by :class:`VertexTreeDFSIterator` or the filter helpers.
         uid_map: Map of :attr:`~guffin.model.vertex._BaseVertex.uid` →
             :data:`~guffin.model.vertex.Vertex` for every vertex in :attr:`tree_vertices` and

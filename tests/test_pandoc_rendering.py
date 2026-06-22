@@ -1,4 +1,4 @@
-"""Unit tests for guffin.render.pandoc_rendering."""
+"""Unit tests for guffin.pipeline.pandoc_rendering."""
 
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false, reportArgumentType=false
 # Rationale: panflute has no type stubs; all six rules are triggered entirely by
@@ -19,7 +19,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.link import VertexLinkKind, vertex_link_url
-from guffin.render.pandoc_rendering import (
+from guffin.pipeline.pandoc_rendering import (
     parse_inline_md,
     build_child_blocks,
     vertex_tree_to_pandoc,

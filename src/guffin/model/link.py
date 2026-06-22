@@ -30,7 +30,7 @@ from typing import Final, NamedTuple
 import regex
 from pydantic import validate_call
 
-from guffin.roam.primitives import UID_PATTERN, Uid
+from guffin.model.primitives import UID_PATTERN, Uid
 
 GUFFIN_SCHEME: Final[str] = "x-guffin"
 """The custom URL scheme identifying a link to a guffin vertex."""
