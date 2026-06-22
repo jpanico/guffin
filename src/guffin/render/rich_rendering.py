@@ -33,7 +33,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import Table as GuffinTable, TableStyle
-from guffin.vertex import (
+from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
     ImageVertex,
@@ -43,7 +43,7 @@ from guffin.vertex import (
     Vertex,
     VertexType,
 )
-from guffin.vertex_tree import VertexTree, VertexTreeDFSIterator
+from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 from guffin.roam.node import NodeType, RoamNode, effective_heading_level, node_type
 from guffin.roam.node_fetch_result import NodeFetchResult
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator

@@ -11,8 +11,8 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.vertex import ImageVertex, PageVertex, TextVertex
-from guffin.vertex_tree import VertexTree
+from guffin.model.vertex import ImageVertex, PageVertex, TextVertex
+from guffin.model.vertex_tree import VertexTree
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images, fetch_images
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL

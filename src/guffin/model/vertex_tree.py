@@ -3,22 +3,22 @@
 Public symbols:
 
 - :class:`VertexTree` — normalized (transcribed) form of a
-  :class:`~guffin.roam.node_tree.NodeTree`; a portable tree of :data:`~guffin.vertex.Vertex` instances.
+  :class:`~guffin.roam.node_tree.NodeTree`; a portable tree of :data:`~guffin.model.vertex.Vertex` instances.
 - :meth:`VertexTree.dfs` — return a :class:`VertexTreeDFSIterator` for pre-order
   depth-first traversal.
 - :class:`VertexTreeDFSIterator` — pre-order depth-first iterator over a
   :class:`VertexTree`.
-- :func:`page_vertices` — return all :class:`~guffin.vertex.PageVertex` instances in a :class:`VertexTree`.
-- :func:`heading_vertices` — return all :class:`~guffin.vertex.HeadingVertex` instances in a :class:`VertexTree`.
-- :func:`text_vertices` — return all :class:`~guffin.vertex.TextVertex` instances in a
+- :func:`page_vertices` — return all :class:`~guffin.model.vertex.PageVertex` instances in a :class:`VertexTree`.
+- :func:`heading_vertices` — return all :class:`~guffin.model.vertex.HeadingVertex` instances in a :class:`VertexTree`.
+- :func:`text_vertices` — return all :class:`~guffin.model.vertex.TextVertex` instances in a
   :class:`VertexTree`.
-- :func:`image_vertices` — return all :class:`~guffin.vertex.ImageVertex` instances in a :class:`VertexTree`.
+- :func:`image_vertices` — return all :class:`~guffin.model.vertex.ImageVertex` instances in a :class:`VertexTree`.
 - :func:`image_urls` — return all Cloud Firestore image URLs from a :class:`VertexTree`.
-- :func:`root_vertex` — return the single root :data:`~guffin.vertex.Vertex` of a :class:`VertexTree`.
+- :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
-  :attr:`~guffin.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
+  :attr:`~guffin.model.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
 """
 
 import logging
@@ -31,7 +31,7 @@ from guffin.common.geometry import ImageSize
 
 logger = logging.getLogger(__name__)
 from guffin.roam.primitives import Uid
-from guffin.vertex import (
+from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
@@ -51,7 +51,7 @@ class VertexTree(BaseModel):
     :func:`~guffin.roam_tree_to_vertex_tree.transcribe_standalone_node` to every node in the source
     :class:`~guffin.roam.node_tree.NodeTree` and collects the results here in the
     same insertion order.  The resulting collection is guaranteed to have exactly
-    one :data:`~guffin.vertex.Vertex` per source :class:`~guffin.roam.node.RoamNode` and
+    one :data:`~guffin.model.vertex.Vertex` per source :class:`~guffin.roam.node.RoamNode` and
     inherits the acyclic-tree structure of its origin.
 
     Attributes:
@@ -62,8 +62,8 @@ class VertexTree(BaseModel):
             from the anchor tree but not part of it.  Used only for UID lookup
             (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
             not traversed by :class:`VertexTreeDFSIterator` or the filter helpers.
-        uid_map: Map of :attr:`~guffin.vertex._BaseVertex.uid` →
-            :data:`~guffin.vertex.Vertex` for every vertex in :attr:`tree_vertices` and
+        uid_map: Map of :attr:`~guffin.model.vertex._BaseVertex.uid` →
+            :data:`~guffin.model.vertex.Vertex` for every vertex in :attr:`tree_vertices` and
             :attr:`ref_vertices`; excluded from serialization.
     """
 
@@ -103,7 +103,7 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
 
     Yields vertices starting from the single root, then recursively yields each
     child subtree in the order recorded in each vertex's
-    :attr:`~guffin.vertex._BaseVertex.children` list (which preserves the original
+    :attr:`~guffin.model.vertex._BaseVertex.children` list (which preserves the original
     :attr:`~guffin.roam.node.RoamNode.order` sort applied during transcription).
     The traversal is non-recursive internally (stack-based), so deep trees do not
     risk hitting Python's recursion limit.
@@ -114,8 +114,8 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
             ...
 
     Attributes:
-        _uid_map: Mapping from :attr:`~guffin.vertex._BaseVertex.uid` to
-            :data:`~guffin.vertex.Vertex`; references the pre-built
+        _uid_map: Mapping from :attr:`~guffin.model.vertex._BaseVertex.uid` to
+            :data:`~guffin.model.vertex.Vertex`; references the pre-built
             :attr:`~VertexTree.uid_map` from the source tree.
         _stack: LIFO stack of vertices yet to be visited; initialized with the
             root vertex.
@@ -127,7 +127,7 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
         Stores a reference to *tree*'s pre-built :attr:`~VertexTree.uid_map`
         and seeds the stack with the single root vertex — the one whose uid
         does not appear in any other vertex's
-        :attr:`~guffin.vertex._BaseVertex.children` list.
+        :attr:`~guffin.model.vertex._BaseVertex.children` list.
 
         Args:
             tree: The :class:`VertexTree` to traverse.
@@ -156,46 +156,49 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
 
 @validate_call
 def page_vertices(tree: VertexTree) -> list[PageVertex]:
-    """Return all :class:`~guffin.vertex.PageVertex` instances in *tree*, in insertion order."""
+    """Return all :class:`~guffin.model.vertex.PageVertex` instances in *tree*, in insertion order."""
     return [v for v in tree.tree_vertices if isinstance(v, PageVertex)]
 
 
 @validate_call
 def heading_vertices(tree: VertexTree) -> list[HeadingVertex]:
-    """Return all :class:`~guffin.vertex.HeadingVertex` instances in *tree*, in insertion order."""
+    """Return all :class:`~guffin.model.vertex.HeadingVertex` instances in *tree*, in insertion order."""
     return [v for v in tree.tree_vertices if isinstance(v, HeadingVertex)]
 
 
 @validate_call
 def text_vertices(tree: VertexTree) -> list[TextVertex]:
-    """Return all :class:`~guffin.vertex.TextVertex` instances in *tree*, in insertion order."""
+    """Return all :class:`~guffin.model.vertex.TextVertex` instances in *tree*, in insertion order."""
     return [v for v in tree.tree_vertices if isinstance(v, TextVertex)]
 
 
 @validate_call
 def image_vertices(tree: VertexTree) -> list[ImageVertex]:
-    """Return all :class:`~guffin.vertex.ImageVertex` instances in *tree*, in insertion order."""
+    """Return all :class:`~guffin.model.vertex.ImageVertex` instances in *tree*, in insertion order."""
     return [v for v in tree.tree_vertices if isinstance(v, ImageVertex)]
 
 
 @validate_call
 def image_urls(tree: VertexTree) -> list[HttpUrl]:
-    """Return the Cloud Firestore URL of every :class:`~guffin.vertex.ImageVertex` in *tree*, in insertion order."""
+    """Return the Cloud Firestore URL of every :class:`~guffin.model.vertex.ImageVertex` in *tree*, in insertion.
+
+    order.
+    """
     return [v.source for v in image_vertices(tree)]
 
 
 @validate_call
 def root_vertex(tree: VertexTree) -> Vertex:
-    """Return the single root :data:`~guffin.vertex.Vertex` of *tree*.
+    """Return the single root :data:`~guffin.model.vertex.Vertex` of *tree*.
 
-    The root is the unique vertex whose :attr:`~guffin.vertex._BaseVertex.uid` does not
-    appear in any other vertex's :attr:`~guffin.vertex._BaseVertex.children` list.
+    The root is the unique vertex whose :attr:`~guffin.model.vertex._BaseVertex.uid` does not
+    appear in any other vertex's :attr:`~guffin.model.vertex._BaseVertex.children` list.
 
     Args:
         tree: The :class:`VertexTree` to inspect.
 
     Returns:
-        The root :data:`~guffin.vertex.Vertex`.
+        The root :data:`~guffin.model.vertex.Vertex`.
     """
     child_uids: Final[set[Uid]] = {uid for v in tree.tree_vertices if v.children for uid in v.children}
     return next(v for v in tree.tree_vertices if v.uid not in child_uids)
@@ -210,8 +213,8 @@ def map_vertices(tree: VertexTree, func: Callable[[Vertex], Vertex]) -> VertexTr
 
     Args:
         tree: The source :class:`VertexTree`.
-        func: A callable that maps each :data:`~guffin.vertex.Vertex` to a
-            (possibly new) :data:`~guffin.vertex.Vertex`.
+        func: A callable that maps each :data:`~guffin.model.vertex.Vertex` to a
+            (possibly new) :data:`~guffin.model.vertex.Vertex`.
 
     Returns:
         A new :class:`VertexTree` whose :attr:`~VertexTree.tree_vertices` are
@@ -226,19 +229,19 @@ def map_vertices(tree: VertexTree, func: Callable[[Vertex], Vertex]) -> VertexTr
 
 @validate_call
 def enrich_image_original_sizes(tree: VertexTree, sizes: dict[Uid, ImageSize]) -> VertexTree:
-    """Return a new :class:`VertexTree` with :attr:`~guffin.vertex.ImageVertex.original_image_size` populated.
+    """Return a new :class:`VertexTree` with :attr:`~guffin.model.vertex.ImageVertex.original_image_size` populated.
 
-    Each :class:`~guffin.vertex.ImageVertex` whose UID appears in *sizes* receives a
-    copy with :attr:`~guffin.vertex.ImageVertex.original_image_size` set to the
+    Each :class:`~guffin.model.vertex.ImageVertex` whose UID appears in *sizes* receives a
+    copy with :attr:`~guffin.model.vertex.ImageVertex.original_image_size` set to the
     corresponding :class:`~guffin.common.geometry.ImageSize`.  All other vertices pass
     through unchanged.
 
     Args:
         tree: The source :class:`VertexTree`.
-        sizes: Mapping from :class:`~guffin.vertex.ImageVertex` UID to its native pixel dimensions.
+        sizes: Mapping from :class:`~guffin.model.vertex.ImageVertex` UID to its native pixel dimensions.
 
     Returns:
-        A new :class:`VertexTree` with :attr:`~guffin.vertex.ImageVertex.original_image_size`
+        A new :class:`VertexTree` with :attr:`~guffin.model.vertex.ImageVertex.original_image_size`
         populated for all UIDs present in *sizes*.
     """
 

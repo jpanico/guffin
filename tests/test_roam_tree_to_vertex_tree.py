@@ -6,7 +6,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from guffin.vertex import (
+from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,

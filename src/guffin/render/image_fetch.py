@@ -25,8 +25,8 @@ from typing import Final, NamedTuple
 from pydantic import validate_call
 
 from guffin.common.geometry import ImageSize
-from guffin.vertex import ImageVertex
-from guffin.vertex_tree import VertexTree, enrich_image_original_sizes
+from guffin.model.vertex import ImageVertex
+from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
 from guffin.roam.local_api import ApiEndpoint

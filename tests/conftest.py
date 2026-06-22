@@ -7,8 +7,8 @@ from typing import Final
 import pytest
 import yaml
 
-from guffin.vertex import vertex_adapter
-from guffin.vertex_tree import VertexTree
+from guffin.model.vertex import vertex_adapter
+from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_tree import NodeTree

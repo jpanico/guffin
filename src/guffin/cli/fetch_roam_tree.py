@@ -12,7 +12,7 @@ from typing import Final
 
 from pydantic import validate_call
 
-from guffin.vertex_tree import VertexTree
+from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec

@@ -37,7 +37,7 @@ from urllib.parse import unquote, urlparse
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
 
-from guffin.vertex import (
+from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -51,7 +51,7 @@ from guffin.vertex import (
     VertexRefs,
     VertexType,
 )
-from guffin.vertex_tree import VertexTree
+from guffin.model.vertex_tree import VertexTree
 from guffin.roam_md_to_pandoc_md import to_pandoc_md
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import NodeType, RoamNode, effective_heading_level, image_size, node_type

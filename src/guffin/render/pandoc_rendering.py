@@ -82,7 +82,7 @@ from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import HAlign
-from guffin.vertex import (
+from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -94,8 +94,8 @@ from guffin.vertex import (
     Vertex,
     VertexChildren,
 )
-from guffin.vertex_tree import VertexTree, root_vertex
-from guffin.link import VertexLink, parse_vertex_link
+from guffin.model.vertex_tree import VertexTree, root_vertex
+from guffin.model.link import VertexLink, parse_vertex_link
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)

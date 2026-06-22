@@ -11,14 +11,14 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.vertex import (
+from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
     TextVertex,
 )
-from guffin.vertex_tree import VertexTree
-from guffin.link import VertexLinkKind, vertex_link_url
+from guffin.model.vertex_tree import VertexTree
+from guffin.model.link import VertexLinkKind, vertex_link_url
 from guffin.render.pandoc_rendering import (
     parse_inline_md,
     build_child_blocks,

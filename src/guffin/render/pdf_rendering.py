@@ -40,9 +40,9 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
-from guffin.link import VertexLink
-from guffin.vertex import Vertex
-from guffin.vertex_tree import VertexTree
+from guffin.model.link import VertexLink
+from guffin.model.vertex import Vertex
+from guffin.model.vertex_tree import VertexTree
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.render.pandoc_rendering import pandoc_to_json, resolve_vertex_links, vertex_tree_to_pandoc
 from guffin.roam.local_api import ApiEndpoint

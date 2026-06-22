@@ -11,12 +11,12 @@ from typing import Final
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 
-from guffin.link import VertexLink
+from guffin.model.link import VertexLink
 from guffin.render.md_rendering import _GFM_CALLOUT_FILTER
 from guffin.render.pandoc_rendering import resolve_vertex_links, vertex_tree_to_pandoc
 from guffin.roam_tree_to_vertex_tree import transcribe
-from guffin.vertex import Vertex
-from guffin.vertex_tree import VertexTree
+from guffin.model.vertex import Vertex
+from guffin.model.vertex_tree import VertexTree
 
 from conftest import FIXTURES_MD_DIR, article1_node_tree
 

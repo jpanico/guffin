@@ -42,8 +42,8 @@ from typing import Final
 import yaml
 
 from guffin.common.filenames import shell_safe_filename
-from guffin.vertex import vertex_adapter
-from guffin.vertex_tree import VertexTree
+from guffin.model.vertex import vertex_adapter
+from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
 from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf

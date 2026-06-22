@@ -45,12 +45,13 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `export_roam_tree.py` — exports a Roam page or node subtree; `--format markdown` (default) writes a `.mdbundle` or plain `.md`; `--format pdf` writes a PDF via Panflute + Pandoc + Typst; target is a page title or node UID (`export-roam-tree`)
     - `logging_config.py` — colorized logging (`configure_logging()`); reads `LOG_LEVEL` env var
     - `fetch_roam_tree.py` — tree-loading pipeline for CLI commands; `fetch_roam_trees` resolves a target, fetches nodes, and returns a `(NodeFetchResult, VertexTree | None)` pair
+  - **`model/` sub-package** (`src/guffin/model/`) — core normalized-graph model: vertex types, tree, and inter-vertex links
+    - `vertex.py` — `Vertex` union and all eight concrete vertex types (`PageVertex`, `HeadingVertex`, `TextVertex`, `ImageVertex`, `CalloutVertex`, `CodeBlockVertex`, `BlockQuoteVertex`, `TableVertex`); `VertexType`, `VertexChildren`, `VertexRefs`, `vertex_adapter`
+    - `vertex_tree.py` — `VertexTree`, `VertexTreeDFSIterator`, `root_vertex()`; filter helpers `page_vertices()`, `heading_vertices()`, `text_vertices()`, `image_vertices()`, `image_urls()`; transformers `map_vertices()`, `enrich_image_original_sizes()`
+    - `link.py` — custom `x-guffin` URL scheme for inter-vertex links; `VertexLinkKind`, `VertexLink`, `vertex_link_url()`, `parse_vertex_link()`, `is_vertex_link()`
   - **Core pipeline**
     - `roam_tree_to_vertex_tree.py` — transcribes `NodeTree` → `VertexTree`; applies `to_pandoc_md()` to all text fields
     - `roam_md_to_pandoc_md.py` — converts Roam-flavored Markdown strings to Pandoc Markdown; `to_pandoc_md()` is the main entry point
-    - `vertex.py` — `Vertex` union and all five concrete vertex types (`PageVertex`, `HeadingVertex`, `TextContentVertex`, `ImageVertex`, `CalloutVertex`); `VertexType`, `VertexChildren`, `VertexRefs`, `vertex_adapter`
-    - `vertex_tree.py` — `VertexTree`, `VertexTreeDFSIterator`, `root_vertex()`; filter helpers `page_vertices()`, `heading_vertices()`, `text_content_vertices()`, `image_vertices()`, `image_urls()`
-    - `link.py` — custom `x-guffin` URL scheme for inter-vertex links; `VertexLinkKind`, `VertexLink`, `vertex_link_url()`, `parse_vertex_link()`, `is_vertex_link()`
   - **`render/` sub-package** (`src/guffin/render/`) — rendering pipeline modules
     - `image_fetch.py` — Pandoc-free image-asset fetching shared by all renderers; `ImageRef` (UID + on-disk path + `ImageSize`) and `fetch_images()` (fetches a `VertexTree`'s Cloud Firestore image assets to a local dir, returning `{uid: ImageRef}`)
     - `pandoc_rendering.py` — shared Pandoc/Panflute rendering utilities; `vertex_tree_to_pandoc()` builds a Panflute `Doc` from a `VertexTree` (batch-parsing inline Pandoc Markdown via a single Pandoc call)
@@ -150,10 +151,11 @@ Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `test
 | Package | May depend on | May NOT depend on |
 |---|---|---|
 | `common/` | stdlib, third-party only | any `guffin` package |
-| `roam/` | `common/` | `guffin` root modules, `render/`, `cli/` |
-| `guffin` (root modules) | `roam/`, `common/` | `render/`, `cli/` |
-| `render/` | `common/`, `roam/`, `guffin` root modules | `cli/` |
-| `cli/` | `common/`, `roam/`, `guffin` root modules, `render/` | — |
+| `roam/` | `common/` | `guffin` root modules, `model/`, `render/`, `cli/` |
+| `model/` | `common/`, `roam/` (primitives only) | `guffin` root modules, `render/`, `cli/` |
+| `guffin` (root modules) | `roam/`, `common/`, `model/` | `render/`, `cli/` |
+| `render/` | `common/`, `roam/`, `model/`, `guffin` root modules | `cli/` |
+| `cli/` | `common/`, `roam/`, `model/`, `guffin` root modules, `render/` | — |
 
 No package may take a dependency on `cli/`.
 

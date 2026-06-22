@@ -406,7 +406,7 @@ type Vertex = (
 """Union of all eight concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
-subtype.  Use :class:`~guffin.vertex_tree.VertexTree` to hold a validated collection of vertices.
+subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
 """
 
 vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discriminator="vertex_type")])

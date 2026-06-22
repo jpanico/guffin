@@ -2,8 +2,8 @@
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.vertex import ImageVertex, PageVertex, TextVertex
-from guffin.vertex_tree import VertexTree, image_urls, image_vertices, root_vertex
+from guffin.model.vertex import ImageVertex, PageVertex, TextVertex
+from guffin.model.vertex_tree import VertexTree, image_urls, image_vertices, root_vertex
 
 from conftest import article1_vertex_tree
 

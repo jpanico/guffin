@@ -59,7 +59,7 @@ from typing import Annotated, Final
 
 import typer
 
-from guffin.vertex_tree import VertexTree
+from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
 from guffin.render.md_rendering import render as render_md
 from guffin.render.pdf_rendering import render as render_pdf

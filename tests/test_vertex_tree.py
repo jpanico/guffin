@@ -8,8 +8,8 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.vertex import ImageVertex, TextVertex, Vertex
-from guffin.vertex_tree import VertexTree, enrich_image_original_sizes, map_vertices
+from guffin.model.vertex import ImageVertex, TextVertex, Vertex
+from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes, map_vertices
 
 logger = logging.getLogger(__name__)
 
