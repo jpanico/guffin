@@ -7,6 +7,24 @@
 # from live-test comparisons and are set to stub values here (time: 0,
 # user: {id: 0}); the nullable ones (open, sidebar, lookup, seen_by) are
 # omitted entirely so they default to None on model_validate.
+- uid: oVvEsh7dx
+  id: 11737
+  time: 0
+  user:
+    id: 0
+  string: section 3.2
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4228
+  props: null
+  title: null
+  attrs: null
 - uid: SYZfEd44O
   id: 4225
   time: 0
@@ -44,11 +62,36 @@
   - id: 11721
   - id: 11722
   - id: 11725
+  - id: 11739
+  - id: 11741
+  - id: 11743
+  - id: 11745
+  - id: 11757
   refs: null
   page:
     id: 4225
   parents:
   - id: 4225
+  props: null
+  title: null
+  attrs: null
+- uid: S81O4tG9t
+  id: 11761
+  time: 0
+  user:
+    id: 0
+  string: ((J_Vt5_C6p))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11758
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 11759
   props: null
   title: null
   attrs: null
@@ -64,6 +107,26 @@
   refs:
   - id: 5844
   - id: 11720
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: JCyO1oiVt
+  id: 11742
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((zmb1Uac0S))'
+  order: 10
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11741
   page:
     id: 4225
   parents:
@@ -89,6 +152,26 @@
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: LKHCU5I3z
+  id: 11755
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((_EtYSMJNn))'
+  order: 10
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11664
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -151,6 +234,45 @@
   props: null
   title: null
   attrs: null
+- uid: vk7Up544K
+  id: 11739
+  time: 0
+  user:
+    id: 0
+  string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+  order: 7
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  attrs: null
+- uid: chSSa7hfQ
+  id: 11753
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((Rjt1IvrVq))'
+  order: 8
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11648
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
 - uid: aVVGVVPLE
   id: 4234
   time: 0
@@ -188,6 +310,26 @@
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: SYAWArc3S
+  id: 11756
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((T6cykqu88))'
+  order: 11
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11667
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -253,7 +395,7 @@
   user:
     id: 0
   string: '#c:FUCHSIA **standalone block embed ⬇**'
-  order: 12
+  order: 17
   heading: null
   children:
   - id: 4232
@@ -296,11 +438,33 @@
   heading: null
   children:
   - id: 4230
+  - id: 11737
+  - id: 11738
   refs: null
   page:
     id: 4225
   parents:
   - id: 4225
+  props: null
+  title: null
+  attrs: null
+- uid: 7AR6910sJ
+  id: 11744
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((GK_iI79mV))'
+  order: 11
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11743
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4226
   props: null
   title: null
   attrs: null
@@ -319,6 +483,26 @@
   parents:
   - id: 4225
   - id: 11716
+  props: null
+  title: null
+  attrs: null
+- uid: t62Kwufzm
+  id: 11749
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline STRIKETHROUGH ref ➔** ((7dBusjzDA))'
+  order: 4
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11170
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -389,7 +573,7 @@
   user:
     id: 0
   string: '#c:FUCHSIA **standalone parent block ref ⬇** '
-  order: 11
+  order: 15
   heading: null
   children:
   - id: 11708
@@ -427,7 +611,7 @@
   user:
     id: 0
   string: '#c:FUCHSIA **standalone page ref ⬇** '
-  order: 9
+  order: 13
   heading: null
   children:
   - id: 11702
@@ -438,6 +622,64 @@
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: DZsnC1-jM
+  id: 11748
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline BOLD ref ➔** ((QB8DChDBs))'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11158
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+- uid: zAIxMFBIB
+  id: 11745
+  time: 0
+  user:
+    id: 0
+  string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+  order: 10
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  attrs: null
+- uid: zmb1Uac0S
+  id: 11741
+  time: 0
+  user:
+    id: 0
+  string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+  order: 8
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 11716
   props: null
   title: null
   attrs: null
@@ -459,18 +701,115 @@
   props: null
   title: null
   attrs: null
+- uid: SCzzQaVai
+  id: 11752
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline HEADER ref ➔**  ((0EgPyHSZi))'
+  order: 7
+  heading: null
+  children: null
+  refs:
+  - id: 3328
+  - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+- uid: H3vh9eS_F
+  id: 11738
+  time: 0
+  user:
+    id: 0
+  string: section 3.3
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4228
+  props: null
+  title: null
+  attrs: null
 - uid: vLxyRJcr2
   id: 11712
   time: 0
   user:
     id: 0
   string: '#c:FUCHSIA **standalone block ref ⬇** '
-  order: 3
+  order: 13
   heading: null
   children:
   - id: 11713
   refs:
   - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+- uid: 88ny0VOH4
+  id: 11750
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline HIGHLIGHT ref ➔** ((VvbwbLchA))'
+  order: 5
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11171
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+- uid: GK_iI79mV
+  id: 11743
+  time: 0
+  user:
+    id: 0
+  string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  attrs: null
+- uid: 8n19o7ito
+  id: 11751
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline INLINE-CODE ref ➔** ((ETesnk4Zi))'
+  order: 6
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11172
   page:
     id: 4225
   parents:
@@ -485,7 +824,7 @@
   user:
     id: 0
   string: '#c:FUCHSIA **standalone block ref ⬇** '
-  order: 10
+  order: 14
   heading: null
   children:
   - id: 11705
@@ -523,6 +862,11 @@
   - id: 11732
   - id: 11733
   - id: 11735
+  - id: 11740
+  - id: 11742
+  - id: 11744
+  - id: 11746
+  - id: 11759
   refs: null
   page:
     id: 4225
@@ -591,6 +935,65 @@
   props: null
   title: null
   attrs: null
+- uid: _6Z-gzw6R
+  id: 11757
+  time: 0
+  user:
+    id: 0
+  string: the child block contains a standalone image
+  order: 11
+  heading: null
+  children:
+  - id: 11758
+  refs: null
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  attrs: null
+- uid: HB9MEj5W8
+  id: 11754
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((9a_6taJAn))'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11653
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+- uid: AaB6F4c0F
+  id: 11747
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline ITALICS ref ➔** ((2yQYaKIEV))'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11157
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
 - uid: hWsG-ExLV
   id: 11700
   time: 0
@@ -603,6 +1006,26 @@
   refs:
   - id: 4226
   - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: 48ZQ-2b7U
+  id: 11740
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((vk7Up544K))'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11739
   page:
     id: 4225
   parents:
@@ -637,7 +1060,7 @@
   user:
     id: 0
   string: '#c:FUCHSIA **standalone HEADER ref ⬇**'
-  order: 13
+  order: 18
   heading: null
   children:
   - id: 11734
@@ -711,13 +1134,52 @@
   props: null
   title: null
   attrs: null
+- uid: 2IaJFXDZT
+  id: 11746
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((zAIxMFBIB))'
+  order: 12
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11745
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: J_Vt5_C6p
+  id: 11758
+  time: 0
+  user:
+    id: 0
+  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 11716
+  - id: 11757
+  props: null
+  title: null
+  attrs: null
 - uid: 8jkmASa1c
   id: 4233
   time: 0
   user:
     id: 0
   string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
-  order: 4
+  order: 14
   heading: null
   children:
   - id: 4234
@@ -844,6 +1306,16 @@
   - id: 11710
   - id: 11712
   - id: 11714
+  - id: 11747
+  - id: 11748
+  - id: 11749
+  - id: 11750
+  - id: 11751
+  - id: 11752
+  - id: 11753
+  - id: 11754
+  - id: 11755
+  - id: 11756
   refs: null
   page:
     id: 4225
@@ -879,10 +1351,30 @@
   user:
     id: 0
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ⬇**'
-  order: 14
+  order: 19
   heading: null
   children:
   - id: 11736
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: AQqf7TbPh
+  id: 11759
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **standalone image block ref ⬇** '
+  order: 16
+  heading: null
+  children:
+  - id: 11761
   refs:
   - id: 5844
   page:
@@ -899,7 +1391,7 @@
   user:
     id: 0
   string: '#c:FUCHSIA **standalone page ref ⬇** '
-  order: 2
+  order: 12
   heading: null
   children:
   - id: 11715

@@ -256,19 +256,33 @@ def parse_block_md(text: str) -> list[pf.Block]:
 # ---------------------------------------------------------------------------
 
 
-def _code_block_ref_target(
+# Vertex types whose natural rendering is one or more Pandoc Blocks that cannot be
+# faithfully represented as inline content.  A reference whose entire content targets
+# one of these must be rendered as the referenced block(s), not via the inline link
+# resolver.  The remaining ref-able types (PageVertex, HeadingVertex, TextVertex) are
+# inline-representable and stay on the inline resolution path.
+_BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
+    ImageVertex,
+    CodeBlockVertex,
+    CalloutVertex,
+    BlockQuoteVertex,
+    TableVertex,
+)
+
+
+def _block_ref_target(
     vertex: TextVertex,
     vertex_tree: VertexTree,
     inline_map: InlineMap,
-) -> CodeBlockVertex | None:
-    """Return the destination code block when *vertex* is solely a reference to one.
+) -> Vertex | None:
+    """Return the destination vertex when *vertex* is solely a reference to a block-level one.
 
-    A code block is inherently block-level and cannot be represented as the inline
-    content of a list item or paragraph.  When a text vertex's entire parsed content
-    is a single ``x-guffin`` link whose destination is a
-    :class:`~guffin.vertex.CodeBlockVertex`, that destination is returned so the
-    reference can be rendered as a fenced :class:`~panflute.CodeBlock` identical to the
-    referenced block.
+    Block-level vertices (see :data:`_BLOCK_LEVEL_VERTEX_TYPES` — e.g. code blocks,
+    images, tables) render as Pandoc Blocks and cannot be represented as the inline
+    content of a list item or paragraph.  When a text vertex's entire parsed content is
+    a single ``x-guffin`` link whose destination is such a vertex, that destination is
+    returned so the reference can be rendered identically to the referenced block rather
+    than degraded to an inline link.
 
     Args:
         vertex: The text-content vertex to inspect.
@@ -276,9 +290,9 @@ def _code_block_ref_target(
         inline_map: Mapping from text string to parsed panflute inline elements.
 
     Returns:
-        The referenced :class:`~guffin.vertex.CodeBlockVertex`, or ``None`` in every
-        other case — including a reference mixed with surrounding text, which has no
-        block-level representation and is resolved inline instead.
+        The referenced block-level :data:`~guffin.vertex.Vertex`, or ``None`` in every
+        other case — including a reference to an inline-representable vertex, or one
+        mixed with surrounding text, both of which are resolved inline instead.
     """
     inlines: Final[list[pf.Inline] | None] = inline_map.get(vertex.text)
     if inlines is None or len(inlines) != 1 or not isinstance(inlines[0], pf.Link):
@@ -287,7 +301,7 @@ def _code_block_ref_target(
     if vertex_link is None:
         return None
     dest: Final[Vertex | None] = vertex_tree.uid_map.get(vertex_link.uid)
-    return dest if isinstance(dest, CodeBlockVertex) else None
+    return dest if isinstance(dest, _BLOCK_LEVEL_VERTEX_TYPES) else None
 
 
 def _build_list_item(
@@ -318,10 +332,7 @@ def _build_list_item(
         nested children.
     """
     content: list[pf.Block]
-    code_ref: Final[CodeBlockVertex | None] = _code_block_ref_target(vertex, vertex_tree, inline_map)
-    if code_ref is not None:
-        content = _code_block_vertex_to_blocks(code_ref)
-    elif _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
+    if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
         content = parse_block_md(vertex.text)
     else:
         inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
@@ -351,6 +362,11 @@ def build_child_blocks(
     Any non-text vertex (or text vertex at depth 1) flushes the pending list
     and is rendered via :func:`_vertex_to_blocks`.
 
+    A text vertex that is solely a reference to a block-level vertex (see
+    :func:`_block_ref_target`) is likewise flushed and rendered as the referenced
+    block — never wrapped in a bulleted list item — so it appears identically to the
+    block it references.
+
     Unknown UIDs (absent from *vertex_tree*) are skipped with a warning.
 
     Args:
@@ -374,7 +390,19 @@ def build_child_blocks(
             logger.warning("child uid=%r not found in vertex_tree; skipping", uid)
             continue
         vertex: Vertex = vertex_tree.uid_map[uid]
-        if isinstance(vertex, TextVertex) and depth > 1:
+        ref_target: Vertex | None = (
+            _block_ref_target(vertex, vertex_tree, inline_map) if isinstance(vertex, TextVertex) else None
+        )
+        if ref_target is not None:
+            # A block whose entire content references a block-level vertex renders as that
+            # referenced block — never wrapped in a bulleted list item.
+            if pending_items:
+                result.append(pf.BulletList(*pending_items))
+                pending_items.clear()
+            result.extend(_vertex_to_blocks(ref_target, vertex_tree, image_files, inline_map, depth))
+            if isinstance(vertex, TextVertex) and vertex.children:
+                result.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
+        elif isinstance(vertex, TextVertex) and depth > 1:
             pending_items.append(_build_list_item(vertex, vertex_tree, image_files, inline_map, depth))
         else:
             if pending_items:
@@ -473,10 +501,7 @@ def _text_vertex_to_blocks(
     """
     if depth <= 1:
         para_blocks: list[pf.Block]
-        code_ref: Final[CodeBlockVertex | None] = _code_block_ref_target(vertex, vertex_tree, inline_map)
-        if code_ref is not None:
-            para_blocks = _code_block_vertex_to_blocks(code_ref)
-        elif _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
+        if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
             para_blocks = parse_block_md(vertex.text)
         else:
             text_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])

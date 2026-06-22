@@ -25,6 +25,28 @@ root_node:
   lookup: null
   seen_by: null
 tree_network:
+- uid: oVvEsh7dx
+  id: 11737
+  time: 1782161888571
+  user:
+    id: 3
+  string: section 3.2
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: SYZfEd44O
   id: 4225
   time: 1781833356251
@@ -66,12 +88,41 @@ tree_network:
   - id: 11721
   - id: 11722
   - id: 11725
+  - id: 11739
+  - id: 11741
+  - id: 11743
+  - id: 11745
+  - id: 11757
   refs: null
   page:
     id: 4225
   open: true
   parents:
   - id: 4225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: S81O4tG9t
+  id: 11761
+  time: 1782164504762
+  user:
+    id: 3
+  string: ((J_Vt5_C6p))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11758
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 11759
   props: null
   title: null
   sidebar: null
@@ -102,6 +153,30 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: JCyO1oiVt
+  id: 11742
+  time: 1782162599340
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((zmb1Uac0S))'
+  order: 10
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11741
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: 78w6MjSqo
   id: 11726
   time: 1782153192506
@@ -120,6 +195,30 @@ tree_network:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: LKHCU5I3z
+  id: 11755
+  time: 1782163329453
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((_EtYSMJNn))'
+  order: 10
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11664
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   sidebar: null
@@ -197,6 +296,53 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: vk7Up544K
+  id: 11739
+  time: 1782162417879
+  user:
+    id: 3
+  string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+  order: 7
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: chSSa7hfQ
+  id: 11753
+  time: 1782163177853
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((Rjt1IvrVq))'
+  order: 8
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11648
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: aVVGVVPLE
   id: 4234
   time: 1781870982030
@@ -239,6 +385,30 @@ tree_network:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: SYAWArc3S
+  id: 11756
+  time: 1782163354257
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((T6cykqu88))'
+  order: 11
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11667
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   sidebar: null
@@ -300,7 +470,7 @@ tree_network:
   - id: 5462
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   props: null
@@ -315,7 +485,7 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **standalone block embed ⬇**'
-  order: 12
+  order: 17
   heading: null
   children:
   - id: 4232
@@ -366,12 +536,38 @@ tree_network:
   heading: null
   children:
   - id: 4230
+  - id: 11737
+  - id: 11738
   refs: null
+  page:
+    id: 4225
+  open: false
+  parents:
+  - id: 4225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: 7AR6910sJ
+  id: 11744
+  time: 1782162660422
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((GK_iI79mV))'
+  order: 11
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11743
   page:
     id: 4225
   open: true
   parents:
   - id: 4225
+  - id: 4226
   props: null
   title: null
   sidebar: null
@@ -394,6 +590,30 @@ tree_network:
   parents:
   - id: 4225
   - id: 11716
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: t62Kwufzm
+  id: 11749
+  time: 1782162922629
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline STRIKETHROUGH ref ➔** ((7dBusjzDA))'
+  order: 4
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11170
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   sidebar: null
@@ -479,7 +699,7 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **standalone parent block ref ⬇** '
-  order: 11
+  order: 15
   heading: null
   children:
   - id: 11708
@@ -525,7 +745,7 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **standalone page ref ⬇** '
-  order: 9
+  order: 13
   heading: null
   children:
   - id: 11702
@@ -537,6 +757,76 @@ tree_network:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: DZsnC1-jM
+  id: 11748
+  time: 1782162900981
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline BOLD ref ➔** ((QB8DChDBs))'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11158
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: zAIxMFBIB
+  id: 11745
+  time: 1782162708852
+  user:
+    id: 3
+  string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+  order: 10
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: zmb1Uac0S
+  id: 11741
+  time: 1782162535182
+  user:
+    id: 3
+  string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+  order: 8
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 11716
   props: null
   title: null
   sidebar: null
@@ -565,18 +855,135 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: SCzzQaVai
+  id: 11752
+  time: 1782163114792
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline HEADER ref ➔**  ((0EgPyHSZi))'
+  order: 7
+  heading: null
+  children: null
+  refs:
+  - id: 3328
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: H3vh9eS_F
+  id: 11738
+  time: 1782161894317
+  user:
+    id: 3
+  string: section 3.3
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: vLxyRJcr2
   id: 11712
   time: 1782152574947
   user:
     id: 3
   string: '#c:FUCHSIA **standalone block ref ⬇** '
-  order: 3
+  order: 13
   heading: null
   children:
   - id: 11713
   refs:
   - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: 88ny0VOH4
+  id: 11750
+  time: 1782162943985
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline HIGHLIGHT ref ➔** ((VvbwbLchA))'
+  order: 5
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11171
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: GK_iI79mV
+  id: 11743
+  time: 1782162631657
+  user:
+    id: 3
+  string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 11454
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: 8n19o7ito
+  id: 11751
+  time: 1782162963155
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline INLINE-CODE ref ➔** ((ETesnk4Zi))'
+  order: 6
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11172
   page:
     id: 4225
   open: true
@@ -595,7 +1002,7 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **standalone block ref ⬇** '
-  order: 10
+  order: 14
   heading: null
   children:
   - id: 11705
@@ -637,6 +1044,11 @@ tree_network:
   - id: 11732
   - id: 11733
   - id: 11735
+  - id: 11740
+  - id: 11742
+  - id: 11744
+  - id: 11746
+  - id: 11759
   refs: null
   page:
     id: 4225
@@ -721,6 +1133,77 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: _6Z-gzw6R
+  id: 11757
+  time: 1782163456030
+  user:
+    id: 3
+  string: the child block contains a standalone image
+  order: 11
+  heading: null
+  children:
+  - id: 11758
+  refs: null
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: HB9MEj5W8
+  id: 11754
+  time: 1782163275388
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((9a_6taJAn))'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11653
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: AaB6F4c0F
+  id: 11747
+  time: 1782162842231
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline ITALICS ref ➔** ((2yQYaKIEV))'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11157
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: hWsG-ExLV
   id: 11700
   time: 1782153206075
@@ -733,6 +1216,30 @@ tree_network:
   refs:
   - id: 4226
   - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: 48ZQ-2b7U
+  id: 11740
+  time: 1782162464776
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((vk7Up544K))'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11739
   page:
     id: 4225
   open: true
@@ -775,7 +1282,7 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **standalone HEADER ref ⬇**'
-  order: 13
+  order: 18
   heading: null
   children:
   - id: 11734
@@ -865,13 +1372,60 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: 2IaJFXDZT
+  id: 11746
+  time: 1782162739120
+  user:
+    id: 3
+  string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((zAIxMFBIB))'
+  order: 12
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11745
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: J_Vt5_C6p
+  id: 11758
+  time: 1782163487317
+  user:
+    id: 3
+  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4225
+  open: null
+  parents:
+  - id: 4225
+  - id: 11716
+  - id: 11757
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: 8jkmASa1c
   id: 4233
   time: 1782128731421
   user:
     id: 3
   string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
-  order: 4
+  order: 14
   heading: null
   children:
   - id: 4234
@@ -1022,6 +1576,16 @@ tree_network:
   - id: 11710
   - id: 11712
   - id: 11714
+  - id: 11747
+  - id: 11748
+  - id: 11749
+  - id: 11750
+  - id: 11751
+  - id: 11752
+  - id: 11753
+  - id: 11754
+  - id: 11755
+  - id: 11756
   refs: null
   page:
     id: 4225
@@ -1065,10 +1629,34 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ⬇**'
-  order: 14
+  order: 19
   heading: null
   children:
   - id: 11736
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: AQqf7TbPh
+  id: 11759
+  time: 1782163522381
+  user:
+    id: 3
+  string: '#c:FUCHSIA **standalone image block ref ⬇** '
+  order: 16
+  heading: null
+  children:
+  - id: 11761
   refs:
   - id: 5844
   page:
@@ -1089,7 +1677,7 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **standalone page ref ⬇** '
-  order: 2
+  order: 12
   heading: null
   children:
   - id: 11715
@@ -1151,6 +1739,11 @@ refs_by_id:
     - id: 11721
     - id: 11722
     - id: 11725
+    - id: 11739
+    - id: 11741
+    - id: 11743
+    - id: 11745
+    - id: 11757
     refs: null
     page:
       id: 4225
@@ -1159,6 +1752,26 @@ refs_by_id:
     - id: 4225
     props: null
     title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11454':
+    uid: iF2Ey_unj
+    id: 11454
+    time: 1781525379738
+    user:
+      id: 3
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    parents: null
+    props: null
+    title: c:ORANGE
     sidebar: null
     attrs: null
     lookup: null
@@ -1233,6 +1846,53 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11739':
+    uid: vk7Up544K
+    id: 11739
+    time: 1782162417879
+    user:
+      id: 3
+    string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+    order: 7
+    heading: null
+    children: null
+    refs:
+    - id: 11454
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11157':
+    uid: 2yQYaKIEV
+    id: 11157
+    time: 1780944909127
+    user:
+      id: 3
+    string: This para features __italics__
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11149
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '5450':
     uid: OexZiLR_O
     id: 5450
@@ -1253,6 +1913,78 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '3328':
+    uid: 0EgPyHSZi
+    id: 3328
+    time: 1770568919008
+    user:
+      id: 3
+    string: Section 1
+    order: 1
+    heading: 1
+    children:
+    - id: 3331
+    - id: 4758
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11667':
+    uid: T6cykqu88
+    id: 11667
+    time: 1781831119492
+    user:
+      id: 3
+    string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11454
+    page:
+      id: 11643
+    open: true
+    parents:
+    - id: 11643
+    - id: 11666
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11664':
+    uid: _EtYSMJNn
+    id: 11664
+    time: 1781830370390
+    user:
+      id: 3
+    string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11454
+    page:
+      id: 11643
+    open: true
+    parents:
+    - id: 11643
+    - id: 11662
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '4228':
     uid: LfXmNr-tV
     id: 4228
@@ -1264,10 +1996,12 @@ refs_by_id:
     heading: null
     children:
     - id: 4230
+    - id: 11737
+    - id: 11738
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     props: null
@@ -1299,6 +2033,53 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11172':
+    uid: ETesnk4Zi
+    id: 11172
+    time: 1781221588685
+    user:
+      id: 3
+    string: This para features `inline-code`
+    order: 4
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11149
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11648':
+    uid: Rjt1IvrVq
+    id: 11648
+    time: 1781828921582
+    user:
+      id: 3
+    string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11454
+    page:
+      id: 11643
+    open: true
+    parents:
+    - id: 11643
+    - id: 11654
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11720':
     uid: JRU5IhUB-
     id: 11720
@@ -1322,6 +2103,78 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11653':
+    uid: 9a_6taJAn
+    id: 11653
+    time: 1781828879037
+    user:
+      id: 3
+    string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11454
+    page:
+      id: 11643
+    open: true
+    parents:
+    - id: 11643
+    - id: 11657
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11745':
+    uid: zAIxMFBIB
+    id: 11745
+    time: 1782162708852
+    user:
+      id: 3
+    string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+    order: 10
+    heading: null
+    children: null
+    refs:
+    - id: 11454
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11741':
+    uid: zmb1Uac0S
+    id: 11741
+    time: 1782162535182
+    user:
+      id: 3
+    string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+    order: 8
+    heading: null
+    children: null
+    refs:
+    - id: 11454
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11719':
     uid: iiSioG0Ut
     id: 11719
@@ -1333,6 +2186,30 @@ refs_by_id:
     heading: null
     children: null
     refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11743':
+    uid: GK_iI79mV
+    id: 11743
+    time: 1782162631657
+    user:
+      id: 3
+    string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+    order: 9
+    heading: null
+    children: null
+    refs:
+    - id: 11454
     page:
       id: 4225
     open: true
@@ -1370,6 +2247,11 @@ refs_by_id:
     - id: 11732
     - id: 11733
     - id: 11735
+    - id: 11740
+    - id: 11742
+    - id: 11744
+    - id: 11746
+    - id: 11759
     refs: null
     page:
       id: 4225
@@ -1430,6 +2312,29 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11171':
+    uid: VvbwbLchA
+    id: 11171
+    time: 1781221355217
+    user:
+      id: 3
+    string: This para features ^^highlight^^
+    order: 3
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11149
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
@@ -1446,6 +2351,29 @@ refs_by_id:
     parents: null
     props: null
     title: '!INFO'
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11158':
+    uid: QB8DChDBs
+    id: 11158
+    time: 1780944927251
+    user:
+      id: 3
+    string: This para features **bold**
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11149
+    props: null
+    title: null
     sidebar: null
     attrs: null
     lookup: null
@@ -1520,6 +2448,30 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11758':
+    uid: J_Vt5_C6p
+    id: 11758
+    time: 1782163487317
+    user:
+      id: 3
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4225
+    open: null
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 11757
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11717':
     uid: riLVzfX-6
     id: 11717
@@ -1566,6 +2518,29 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11170':
+    uid: 7dBusjzDA
+    id: 11170
+    time: 1781218309397
+    user:
+      id: 3
+    string: This para features ~~strikethrough~~
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11149
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11167':
     uid: tWkumkdUE
     id: 11167
@@ -1598,7 +2573,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone block embed ⬇**'
-    order: 12
+    order: 17
     heading: null
     children:
     - id: 4232
@@ -1699,7 +2674,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone page ref ⬇** '
-    order: 9
+    order: 13
     heading: null
     children:
     - id: 11702
@@ -1724,7 +2699,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone block ref ⬇** '
-    order: 10
+    order: 14
     heading: null
     children:
     - id: 11705
@@ -1749,7 +2724,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone parent block ref ⬇** '
-    order: 11
+    order: 15
     heading: null
     children:
     - id: 11708
@@ -1924,7 +2899,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone HEADER ref ⬇**'
-    order: 13
+    order: 18
     heading: null
     children:
     - id: 11734
@@ -1949,7 +2924,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone FENCED-CODE ref ⬇**'
-    order: 14
+    order: 19
     heading: null
     children:
     - id: 11736
@@ -1961,6 +2936,156 @@ refs_by_id:
     parents:
     - id: 4225
     - id: 4226
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11740':
+    uid: 48ZQ-2b7U
+    id: 11740
+    time: 1782162464776
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((vk7Up544K))'
+    order: 9
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11739
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11742':
+    uid: JCyO1oiVt
+    id: 11742
+    time: 1782162599340
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((zmb1Uac0S))'
+    order: 10
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11741
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11744':
+    uid: 7AR6910sJ
+    id: 11744
+    time: 1782162660422
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((GK_iI79mV))'
+    order: 11
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11743
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11746':
+    uid: 2IaJFXDZT
+    id: 11746
+    time: 1782162739120
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((zAIxMFBIB))'
+    order: 12
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11745
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11759':
+    uid: AQqf7TbPh
+    id: 11759
+    time: 1782163522381
+    user:
+      id: 3
+    string: '#c:FUCHSIA **standalone image block ref ⬇** '
+    order: 16
+    heading: null
+    children:
+    - id: 11761
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11761':
+    uid: S81O4tG9t
+    id: 11761
+    time: 1782164504762
+    user:
+      id: 3
+    string: ((J_Vt5_C6p))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11758
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 11759
     props: null
     title: null
     sidebar: null
@@ -2142,6 +3267,76 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11737':
+    uid: oVvEsh7dx
+    id: 11737
+    time: 1782161888571
+    user:
+      id: 3
+    string: section 3.2
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4228
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11738':
+    uid: H3vh9eS_F
+    id: 11738
+    time: 1782161894317
+    user:
+      id: 3
+    string: section 3.3
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4228
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11757':
+    uid: _6Z-gzw6R
+    id: 11757
+    time: 1782163456030
+    user:
+      id: 3
+    string: the child block contains a standalone image
+    order: 11
+    heading: null
+    children:
+    - id: 11758
+    refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '4227':
     uid: d3T1YpYig
     id: 4227
@@ -2157,6 +3352,16 @@ refs_by_id:
     - id: 11710
     - id: 11712
     - id: 11714
+    - id: 11747
+    - id: 11748
+    - id: 11749
+    - id: 11750
+    - id: 11751
+    - id: 11752
+    - id: 11753
+    - id: 11754
+    - id: 11755
+    - id: 11756
     refs: null
     page:
       id: 4225
@@ -2201,7 +3406,7 @@ refs_by_id:
     - id: 5462
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     props: null
@@ -2217,7 +3422,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
-    order: 4
+    order: 14
     heading: null
     children:
     - id: 4234
@@ -2295,7 +3500,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone block ref ⬇** '
-    order: 3
+    order: 13
     heading: null
     children:
     - id: 11713
@@ -2320,12 +3525,262 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **standalone page ref ⬇** '
-    order: 2
+    order: 12
     heading: null
     children:
     - id: 11715
     refs:
     - id: 5844
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11747':
+    uid: AaB6F4c0F
+    id: 11747
+    time: 1782162842231
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline ITALICS ref ➔** ((2yQYaKIEV))'
+    order: 2
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11157
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11748':
+    uid: DZsnC1-jM
+    id: 11748
+    time: 1782162900981
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline BOLD ref ➔** ((QB8DChDBs))'
+    order: 3
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11158
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11749':
+    uid: t62Kwufzm
+    id: 11749
+    time: 1782162922629
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline STRIKETHROUGH ref ➔** ((7dBusjzDA))'
+    order: 4
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11170
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11750':
+    uid: 88ny0VOH4
+    id: 11750
+    time: 1782162943985
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline HIGHLIGHT ref ➔** ((VvbwbLchA))'
+    order: 5
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11171
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11751':
+    uid: 8n19o7ito
+    id: 11751
+    time: 1782162963155
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline INLINE-CODE ref ➔** ((ETesnk4Zi))'
+    order: 6
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11172
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11752':
+    uid: SCzzQaVai
+    id: 11752
+    time: 1782163114792
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline HEADER ref ➔**  ((0EgPyHSZi))'
+    order: 7
+    heading: null
+    children: null
+    refs:
+    - id: 3328
+    - id: 5844
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11753':
+    uid: chSSa7hfQ
+    id: 11753
+    time: 1782163177853
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((Rjt1IvrVq))'
+    order: 8
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11648
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11754':
+    uid: HB9MEj5W8
+    id: 11754
+    time: 1782163275388
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((9a_6taJAn))'
+    order: 9
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11653
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11755':
+    uid: LKHCU5I3z
+    id: 11755
+    time: 1782163329453
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((_EtYSMJNn))'
+    order: 10
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11664
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11756':
+    uid: SYAWArc3S
+    id: 11756
+    time: 1782163354257
+    user:
+      id: 3
+    string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((T6cykqu88))'
+    order: 11
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 11667
     page:
       id: 4225
     open: true

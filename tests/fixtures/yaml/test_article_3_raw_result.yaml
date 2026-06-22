@@ -1,3 +1,16 @@
+- - string: section 3.2
+    user:
+      id: 3
+    id: 11737
+    uid: oVvEsh7dx
+    parents:
+    - id: 4225
+    - id: 4228
+    time: 1782161888571
+    order: 1
+    open: true
+    page:
+      id: 4225
 - - prevent-clean: 1782152583717
     children:
     - id: 4226
@@ -10,17 +23,20 @@
     sidebar: 22
     id: 4225
     uid: SYZfEd44O
-    word-count: 376
+    word-count: 661
     edit-user:
       id: 3
     time: 1781833356251
     title: '[[Test Article]] 3'
-    edit-nonce: u9D-hQsN4
-    edit-time: 1782160870214
+    seen-by:
+    - id: 3
+    edit-nonce: jVAP0xqZr
+    edit-time: 1782164551800
     refs:
     - id: 4223
 - - heading: 1
     string: This is a HEADER
+    prevent-clean: 1782163114794
     children:
     - id: 11717
     - id: 11718
@@ -29,6 +45,11 @@
     - id: 11721
     - id: 11722
     - id: 11725
+    - id: 11739
+    - id: 11741
+    - id: 11743
+    - id: 11745
+    - id: 11757
     user:
       id: 3
     id: 11716
@@ -37,9 +58,23 @@
     - id: 4225
     time: 1782159960199
     order: 1
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 4225
+- - prevent-clean: 1781831145391
+    user:
+      id: 3
+    id: 11454
+    uid: iF2Ey_unj
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1781525379738
+    title: c:ORANGE
+    edit-nonce: sRoBTAin0
+    edit-time: 1781525379737
 - - prevent-clean: 1782152316083
     children:
     - id: 4224
@@ -54,6 +89,22 @@
     title: Test Article
     edit-nonce: 0iIGJ1buX
     edit-time: 1780843750454
+- - string: ((J_Vt5_C6p))
+    user:
+      id: 3
+    id: 11761
+    uid: S81O4tG9t
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 11759
+    time: 1782164504762
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11758
 - - string: '#c:FUCHSIA **inline STRIKETHROUGH ref ➔** ((JRU5IhUB-))'
     user:
       id: 3
@@ -70,6 +121,22 @@
     refs:
     - id: 5844
     - id: 11720
+- - string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((zmb1Uac0S))'
+    user:
+      id: 3
+    id: 11742
+    uid: JCyO1oiVt
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782162599340
+    order: 10
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11741
 - - string: '#c:FUCHSIA **inline ITALICS ref ➔** ((msKBuys0a))'
     user:
       id: 3
@@ -86,7 +153,24 @@
     refs:
     - id: 5844
     - id: 11718
+- - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((_EtYSMJNn))'
+    user:
+      id: 3
+    id: 11755
+    uid: LKHCU5I3z
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782163329453
+    order: 10
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11664
 - - string: This para features `inline-code`
+    prevent-clean: 1782162963158
     user:
       id: 3
     id: 11722
@@ -131,6 +215,51 @@
       id: 4225
     refs:
     - id: 11167
+- - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+    prevent-clean: 1782163177855
+    user:
+      id: 3
+    id: 11739
+    uid: vk7Up544K
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782162417879
+    order: 7
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11454
+- - string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((Rjt1IvrVq))'
+    user:
+      id: 3
+    id: 11753
+    uid: chSSa7hfQ
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782163177853
+    order: 8
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11648
+- - string: This para features __italics__
+    user:
+      id: 3
+    id: 11157
+    uid: 2yQYaKIEV
+    parents:
+    - id: 11137
+    - id: 11149
+    time: 1780944909127
+    order: 0
+    open: true
+    page:
+      id: 11137
 - - string: '{{embed: ((drtANJYTg))}}'
     user:
       id: 3
@@ -163,6 +292,22 @@
     refs:
     - id: 5844
     - id: 11722
+- - string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((T6cykqu88))'
+    user:
+      id: 3
+    id: 11756
+    uid: SYAWArc3S
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782163354257
+    order: 11
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11667
 - - string: ((LfXmNr-tV))
     user:
       id: 3
@@ -205,7 +350,7 @@
     - id: 4225
     time: 1781959284786
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -222,7 +367,7 @@
     - id: 4225
     - id: 4226
     time: 1782152110293
-    order: 12
+    order: 17
     open: true
     page:
       id: 4225
@@ -240,6 +385,39 @@
     title: '>'
     edit-nonce: 2POM1zS7j
     edit-time: 1773784559631
+- - heading: 1
+    string: Section 1
+    children:
+    - id: 3331
+    - id: 4758
+    user:
+      id: 3
+    id: 3328
+    uid: 0EgPyHSZi
+    parents:
+    - id: 3327
+    time: 1770568919008
+    order: 1
+    seen-by:
+    - id: 3
+    open: true
+    page:
+      id: 3327
+- - string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+    user:
+      id: 3
+    id: 11667
+    uid: T6cykqu88
+    parents:
+    - id: 11643
+    - id: 11666
+    time: 1781831119492
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
 - - string: section 3.1
     children:
     - id: 4231
@@ -255,10 +433,27 @@
     open: true
     page:
       id: 4225
+- - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+    user:
+      id: 3
+    id: 11664
+    uid: _EtYSMJNn
+    parents:
+    - id: 11643
+    - id: 11662
+    time: 1781830370390
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
 - - string: Section 3
     prevent-clean: 1782153070419
     children:
     - id: 4230
+    - id: 11737
+    - id: 11738
     user:
       id: 3
     id: 4228
@@ -267,11 +462,27 @@
     - id: 4225
     time: 1773091129652
     order: 4
+    open: false
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ➔**  ((GK_iI79mV))'
+    user:
+      id: 3
+    id: 11744
+    uid: 7AR6910sJ
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782162660422
+    order: 11
     open: true
     page:
       id: 4225
+    refs:
+    - id: 5844
+    - id: 11743
 - - string: This para features ^^highlight^^
-    prevent-clean: 1782153445295
+    prevent-clean: 1782162943989
     user:
       id: 3
     id: 11721
@@ -284,6 +495,50 @@
     open: true
     page:
       id: 4225
+- - string: '#c:FUCHSIA **inline STRIKETHROUGH ref ➔** ((7dBusjzDA))'
+    user:
+      id: 3
+    id: 11749
+    uid: t62Kwufzm
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782162922629
+    order: 4
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11170
+- - string: This para features `inline-code`
+    user:
+      id: 3
+    id: 11172
+    uid: ETesnk4Zi
+    parents:
+    - id: 11137
+    - id: 11149
+    time: 1781221588685
+    order: 4
+    open: true
+    page:
+      id: 11137
+- - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
+    user:
+      id: 3
+    id: 11648
+    uid: Rjt1IvrVq
+    parents:
+    - id: 11643
+    - id: 11654
+    time: 1781828921582
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
 - - string: '#c:FUCHSIA **inline BOLD ref ➔** ((iiSioG0Ut))'
     user:
       id: 3
@@ -344,14 +599,14 @@
     - id: 4225
     - id: 4226
     time: 1782152349486
-    order: 11
+    order: 15
     open: true
     page:
       id: 4225
     refs:
     - id: 5844
 - - string: This para features ~~strikethrough~~
-    prevent-clean: 1782153392416
+    prevent-clean: 1782162922633
     user:
       id: 3
     id: 11720
@@ -375,14 +630,77 @@
     - id: 4225
     - id: 4226
     time: 1782152239778
-    order: 9
+    order: 13
     open: true
     page:
       id: 4225
     refs:
     - id: 5844
+- - string: '#c:FUCHSIA **inline BOLD ref ➔** ((QB8DChDBs))'
+    user:
+      id: 3
+    id: 11748
+    uid: DZsnC1-jM
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782162900981
+    order: 3
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11158
+- - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+    user:
+      id: 3
+    id: 11653
+    uid: 9a_6taJAn
+    parents:
+    - id: 11643
+    - id: 11657
+    time: 1781828879037
+    order: 0
+    open: true
+    page:
+      id: 11643
+    refs:
+    - id: 11454
+- - string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
+    prevent-clean: 1782163354262
+    user:
+      id: 3
+    id: 11745
+    uid: zAIxMFBIB
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782162708852
+    order: 10
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11454
+- - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
+    prevent-clean: 1782163275394
+    user:
+      id: 3
+    id: 11741
+    uid: zmb1Uac0S
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782162535182
+    order: 8
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11454
 - - string: This para features **bold**
-    prevent-clean: 1782153316130
+    prevent-clean: 1782162900986
     user:
       id: 3
     id: 11719
@@ -391,6 +709,35 @@
     - id: 4225
     - id: 11716
     time: 1782152881934
+    order: 2
+    open: true
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **inline HEADER ref ➔**  ((0EgPyHSZi))'
+    user:
+      id: 3
+    id: 11752
+    uid: SCzzQaVai
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782163114792
+    order: 7
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 3328
+    - id: 5844
+- - string: section 3.3
+    user:
+      id: 3
+    id: 11738
+    uid: H3vh9eS_F
+    parents:
+    - id: 4225
+    - id: 4228
+    time: 1782161894317
     order: 2
     open: true
     page:
@@ -406,12 +753,60 @@
     - id: 4225
     - id: 4227
     time: 1782152574947
-    order: 3
+    order: 13
     open: true
     page:
       id: 4225
     refs:
     - id: 5844
+- - string: '#c:FUCHSIA **inline HIGHLIGHT ref ➔** ((VvbwbLchA))'
+    user:
+      id: 3
+    id: 11750
+    uid: 88ny0VOH4
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782162943985
+    order: 5
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11171
+- - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
+    prevent-clean: 1782163329458
+    user:
+      id: 3
+    id: 11743
+    uid: GK_iI79mV
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782162631657
+    order: 9
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11454
+- - string: '#c:FUCHSIA **inline INLINE-CODE ref ➔** ((ETesnk4Zi))'
+    user:
+      id: 3
+    id: 11751
+    uid: 8n19o7ito
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782162963155
+    order: 6
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11172
 - - string: '#c:FUCHSIA **standalone block ref ⬇** '
     children:
     - id: 11705
@@ -423,7 +818,7 @@
     - id: 4225
     - id: 4226
     time: 1782152305649
-    order: 10
+    order: 14
     open: true
     page:
       id: 4225
@@ -447,6 +842,11 @@
     - id: 11732
     - id: 11733
     - id: 11735
+    - id: 11740
+    - id: 11742
+    - id: 11744
+    - id: 11746
+    - id: 11759
     user:
       id: 3
     id: 4226
@@ -525,6 +925,52 @@
     - id: 4223
     - id: 4225
     - id: 5844
+- - string: the child block contains a standalone image
+    children:
+    - id: 11758
+    user:
+      id: 3
+    id: 11757
+    uid: _6Z-gzw6R
+    parents:
+    - id: 4225
+    - id: 11716
+    time: 1782163456030
+    order: 11
+    seen-by:
+    - id: 3
+    open: true
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ➔**  ((9a_6taJAn))'
+    user:
+      id: 3
+    id: 11754
+    uid: HB9MEj5W8
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782163275388
+    order: 9
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11653
+- - string: This para features ^^highlight^^
+    user:
+      id: 3
+    id: 11171
+    uid: VvbwbLchA
+    parents:
+    - id: 11137
+    - id: 11149
+    time: 1781221355217
+    order: 3
+    open: true
+    page:
+      id: 11137
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -537,6 +983,35 @@
     title: '!INFO'
     edit-nonce: z3caCCN5O
     edit-time: 1773788725520
+- - string: '#c:FUCHSIA **inline ITALICS ref ➔** ((2yQYaKIEV))'
+    user:
+      id: 3
+    id: 11747
+    uid: AaB6F4c0F
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782162842231
+    order: 2
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11157
+- - string: This para features **bold**
+    user:
+      id: 3
+    id: 11158
+    uid: QB8DChDBs
+    parents:
+    - id: 11137
+    - id: 11149
+    time: 1780944927251
+    order: 1
+    open: true
+    page:
+      id: 11137
 - - string: '#c:FUCHSIA **inline PARENT BLOCK ref ➔**  ((LfaVt18Iw))'
     user:
       id: 3
@@ -582,6 +1057,22 @@
     title: c:FUCHSIA
     edit-nonce: WMGpHVOcr
     edit-time: 1773955788222
+- - string: '#c:FUCHSIA **inline BOLD ORANGE ref ➔**  ((vk7Up544K))'
+    user:
+      id: 3
+    id: 11740
+    uid: 48ZQ-2b7U
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782162464776
+    order: 9
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11739
 - - string: '#c:FUCHSIA **inline HIGHLIGHT ref ➔** ((Q-nJAf9KK))'
     user:
       id: 3
@@ -632,7 +1123,7 @@
     - id: 4225
     - id: 4226
     time: 1782160168265
-    order: 13
+    order: 18
     open: true
     page:
       id: 4225
@@ -686,6 +1177,37 @@
       id: 4225
     refs:
     - id: 11716
+- - string: '#c:FUCHSIA **inline BOXED ORANGE ref ➔**  ((zAIxMFBIB))'
+    user:
+      id: 3
+    id: 11746
+    uid: 2IaJFXDZT
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782162739120
+    order: 12
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11745
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
+    user:
+      id: 3
+    id: 11758
+    uid: J_Vt5_C6p
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 11757
+    time: 1782163487317
+    order: 0
+    seen-by:
+    - id: 3
+    page:
+      id: 4225
 - - string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
     children:
     - id: 4234
@@ -697,7 +1219,7 @@
     - id: 4225
     - id: 4227
     time: 1782128731421
-    order: 4
+    order: 14
     open: true
     page:
       id: 4225
@@ -737,7 +1259,7 @@
     page:
       id: 4225
 - - string: This para features __italics__
-    prevent-clean: 1782153273812
+    prevent-clean: 1782162842236
     user:
       id: 3
     id: 11718
@@ -789,6 +1311,16 @@
     - id: 11710
     - id: 11712
     - id: 11714
+    - id: 11747
+    - id: 11748
+    - id: 11749
+    - id: 11750
+    - id: 11751
+    - id: 11752
+    - id: 11753
+    - id: 11754
+    - id: 11755
+    - id: 11756
     user:
       id: 3
     id: 4227
@@ -800,6 +1332,19 @@
     open: true
     page:
       id: 4225
+- - string: This para features ~~strikethrough~~
+    user:
+      id: 3
+    id: 11170
+    uid: 7dBusjzDA
+    parents:
+    - id: 11137
+    - id: 11149
+    time: 1781218309397
+    order: 2
+    open: true
+    page:
+      id: 11137
 - - string: '[[[[Test Article]] 2]]'
     user:
       id: 3
@@ -828,7 +1373,7 @@
     - id: 4225
     - id: 4226
     time: 1782160272500
-    order: 14
+    order: 19
     open: true
     page:
       id: 4225
@@ -849,6 +1394,23 @@
     open: true
     page:
       id: 3327
+- - string: '#c:FUCHSIA **standalone image block ref ⬇** '
+    children:
+    - id: 11761
+    user:
+      id: 3
+    id: 11759
+    uid: AQqf7TbPh
+    parents:
+    - id: 4225
+    - id: 4226
+    time: 1782163522381
+    order: 16
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '#c:FUCHSIA **standalone page ref ⬇** '
     children:
     - id: 11715
@@ -860,7 +1422,7 @@
     - id: 4225
     - id: 4227
     time: 1782152574947
-    order: 2
+    order: 12
     open: true
     page:
       id: 4225

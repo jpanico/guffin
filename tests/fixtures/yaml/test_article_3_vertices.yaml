@@ -46,6 +46,11 @@
   - Q-nJAf9KK
   - BuP4ifx3v
   - yECzsUNPC
+  - vk7Up544K
+  - zmb1Uac0S
+  - GK_iI79mV
+  - zAIxMFBIB
+  - _6Z-gzw6R
   text: This is a HEADER
   heading_level: 1
 - vertex_type: guffin/text
@@ -74,6 +79,39 @@
     Buzz\")\n        else:\n            print(i)"
   language: python
 - vertex_type: guffin/text
+  uid: vk7Up544K
+  refs:
+  - iF2Ey_unj
+  text: '[**This span is BOLD orange text color**]{color="orange"}. This span is not.'
+- vertex_type: guffin/text
+  uid: zmb1Uac0S
+  refs:
+  - iF2Ey_unj
+  text: '[This span is highlighted orange.]{.mark highlight-color="orange"} This span
+    is not.'
+- vertex_type: guffin/text
+  uid: GK_iI79mV
+  refs:
+  - iF2Ey_unj
+  text: '[This span is underlined orange. ]{underline-color="orange"}This span is
+    not.'
+- vertex_type: guffin/text
+  uid: zAIxMFBIB
+  refs:
+  - iF2Ey_unj
+  text: '[This span has box color orange.]{box-color="orange"} This span does not.'
+- vertex_type: guffin/text
+  uid: _6Z-gzw6R
+  children:
+  - J_Vt5_C6p
+  text: the child block contains a standalone image
+- vertex_type: guffin/image
+  uid: J_Vt5_C6p
+  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89
+  file_name: 7rthRV4UHu.jpeg.enc
+  media_type: image/jpeg
+  scaled_image_size: {}
+- vertex_type: guffin/text
   uid: LfaVt18Iw
   children:
   - qj0DTMyzl
@@ -85,9 +123,14 @@
   - FWULkh5nm
   - hWsG-ExLV
   - SsmyWLZij
+  - 48ZQ-2b7U
+  - JCyO1oiVt
+  - 7AR6910sJ
+  - 2IaJFXDZT
   - b8ob6GcbI
   - ZT_EVUtHq
   - HftouGiTA
+  - AQqf7TbPh
   - dYYKZExzI
   - Y0xFlk7y6
   - fZr8Ve9SS
@@ -149,6 +192,34 @@
   - 7XdTiY_ZF
   text: '[**inline HEADER ref ➔**]{color="fuchsia"}  [This is a HEADER](x-guffin:vertex/7XdTiY_ZF)'
 - vertex_type: guffin/text
+  uid: 48ZQ-2b7U
+  refs:
+  - lF-qY0Xrs
+  - vk7Up544K
+  text: '[**inline BOLD ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE **This span is
+    BOLD orange text color**. This span is not.](x-guffin:vertex/vk7Up544K)'
+- vertex_type: guffin/text
+  uid: JCyO1oiVt
+  refs:
+  - lF-qY0Xrs
+  - zmb1Uac0S
+  text: '[**inline HIGHLIGHTED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE [This
+    span is highlighted orange.]{.mark} This span is not.](x-guffin:vertex/zmb1Uac0S)'
+- vertex_type: guffin/text
+  uid: 7AR6910sJ
+  refs:
+  - lF-qY0Xrs
+  - GK_iI79mV
+  text: '[**inline UNDERLINED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE __This
+    span is underlined orange. __This span is not.](x-guffin:vertex/GK_iI79mV)'
+- vertex_type: guffin/text
+  uid: 2IaJFXDZT
+  refs:
+  - lF-qY0Xrs
+  - zAIxMFBIB
+  text: '[**inline BOXED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE ~~This span
+    has box color orange.~~ This span does not.](x-guffin:vertex/zAIxMFBIB)'
+- vertex_type: guffin/text
   uid: b8ob6GcbI
   children:
   - xc_eQjqyE
@@ -185,6 +256,18 @@
   refs:
   - LfaVt18Iw
   text: '[Internal (in-page) links:](x-guffin:vertex/LfaVt18Iw)'
+- vertex_type: guffin/text
+  uid: AQqf7TbPh
+  children:
+  - S81O4tG9t
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone image block ref ⬇**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: S81O4tG9t
+  refs:
+  - J_Vt5_C6p
+  text: '[![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)](x-guffin:vertex/J_Vt5_C6p)'
 - vertex_type: guffin/text
   uid: dYYKZExzI
   children:
@@ -229,6 +312,16 @@
   children:
   - ot5dpySxp
   - n528kYv5_
+  - AaB6F4c0F
+  - DZsnC1-jM
+  - t62Kwufzm
+  - 88ny0VOH4
+  - 8n19o7ito
+  - SCzzQaVai
+  - chSSa7hfQ
+  - HB9MEj5W8
+  - LKHCU5I3z
+  - SYAWArc3S
   - Dt8evi7AW
   - vLxyRJcr2
   - 8jkmASa1c
@@ -247,6 +340,70 @@
   - tWkumkdUE
   text: '[**inline block ref ➔**]{color="fuchsia"} [this image **has been resized**
     through the Roam UI (width:257, height:None)](x-guffin:vertex/tWkumkdUE)'
+- vertex_type: guffin/text
+  uid: AaB6F4c0F
+  refs:
+  - lF-qY0Xrs
+  - 2yQYaKIEV
+  text: '[**inline ITALICS ref ➔**]{color="fuchsia"} [This para features *italics*](x-guffin:vertex/2yQYaKIEV)'
+- vertex_type: guffin/text
+  uid: DZsnC1-jM
+  refs:
+  - lF-qY0Xrs
+  - QB8DChDBs
+  text: '[**inline BOLD ref ➔**]{color="fuchsia"} [This para features **bold**](x-guffin:vertex/QB8DChDBs)'
+- vertex_type: guffin/text
+  uid: t62Kwufzm
+  refs:
+  - lF-qY0Xrs
+  - 7dBusjzDA
+  text: '[**inline STRIKETHROUGH ref ➔**]{color="fuchsia"} [This para features ~~strikethrough~~](x-guffin:vertex/7dBusjzDA)'
+- vertex_type: guffin/text
+  uid: 88ny0VOH4
+  refs:
+  - lF-qY0Xrs
+  - VvbwbLchA
+  text: '[**inline HIGHLIGHT ref ➔**]{color="fuchsia"} [This para features [highlight]{.mark}](x-guffin:vertex/VvbwbLchA)'
+- vertex_type: guffin/text
+  uid: 8n19o7ito
+  refs:
+  - lF-qY0Xrs
+  - ETesnk4Zi
+  text: '[**inline INLINE-CODE ref ➔**]{color="fuchsia"} [This para features `inline-code`](x-guffin:vertex/ETesnk4Zi)'
+- vertex_type: guffin/text
+  uid: SCzzQaVai
+  refs:
+  - 0EgPyHSZi
+  - lF-qY0Xrs
+  text: '[**inline HEADER ref ➔**]{color="fuchsia"}  [Section 1](x-guffin:vertex/0EgPyHSZi)'
+- vertex_type: guffin/text
+  uid: chSSa7hfQ
+  refs:
+  - lF-qY0Xrs
+  - Rjt1IvrVq
+  text: '[**inline BOLD ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE **This span is
+    BOLD orange text color**. This span is not.](x-guffin:vertex/Rjt1IvrVq)'
+- vertex_type: guffin/text
+  uid: HB9MEj5W8
+  refs:
+  - lF-qY0Xrs
+  - 9a_6taJAn
+  text: '[**inline HIGHLIGHTED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE [This
+    span is highlighted orange.]{.mark} This span is not.](x-guffin:vertex/9a_6taJAn)'
+- vertex_type: guffin/text
+  uid: LKHCU5I3z
+  refs:
+  - lF-qY0Xrs
+  - _EtYSMJNn
+  text: '[**inline UNDERLINED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE __This
+    span is underlined orange. __This span is not.](x-guffin:vertex/_EtYSMJNn)'
+- vertex_type: guffin/text
+  uid: SYAWArc3S
+  refs:
+  - lF-qY0Xrs
+  - T6cykqu88
+  text: '[**inline BOXED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE ~~This span
+    has box color orange.~~ This span does not.](x-guffin:vertex/T6cykqu88)'
 - vertex_type: guffin/text
   uid: Dt8evi7AW
   children:
@@ -290,6 +447,8 @@
   uid: LfXmNr-tV
   children:
   - l7f2Qf90W
+  - oVvEsh7dx
+  - H3vh9eS_F
   text: Section 3
 - vertex_type: guffin/text
   uid: l7f2Qf90W
@@ -299,3 +458,9 @@
 - vertex_type: guffin/text
   uid: vH2I8xRLZ
   text: section 3.1.1
+- vertex_type: guffin/text
+  uid: oVvEsh7dx
+  text: section 3.2
+- vertex_type: guffin/text
+  uid: H3vh9eS_F
+  text: section 3.3
