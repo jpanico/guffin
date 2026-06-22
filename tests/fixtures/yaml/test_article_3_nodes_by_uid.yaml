@@ -69,6 +69,32 @@ aVVGVVPLE:
   attrs: null
   lookup: null
   seen_by: null
+A1icDYZy8:
+  uid: A1icDYZy8
+  id: 11698
+  time: 1782128772194
+  user:
+    id: 3
+  string: '#c:FUCHSIA **the child block is a standalone block ref:**'
+  order: 0
+  heading: null
+  children:
+  - id: 11699
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
+  - id: 4230
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 I1QOMCtdJ:
   uid: I1QOMCtdJ
   id: 11133
@@ -113,15 +139,16 @@ I1QOMCtdJ:
 dYYKZExzI:
   uid: dYYKZExzI
   id: 4229
-  time: 1780882643644
+  time: 1782128705299
   user:
     id: 3
-  string: internal block embed (from __this Page__)
+  string: '#c:FUCHSIA **internal block embed (from __this Page__):**'
   order: 2
   heading: null
   children:
   - id: 4232
-  refs: null
+  refs:
+  - id: 5844
   page:
     id: 4225
   open: true
@@ -161,10 +188,11 @@ l7f2Qf90W:
   user:
     id: 3
   string: section 3.1
-  order: 0
+  order: 1
   heading: null
   children:
   - id: 4231
+  - id: 11698
   refs: null
   page:
     id: 4225
@@ -189,12 +217,38 @@ LfXmNr-tV:
   heading: null
   children:
   - id: 4230
+  - id: 11695
   refs: null
   page:
     id: 4225
   open: true
   parents:
   - id: 4225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+R5OEu6Mod:
+  uid: R5OEu6Mod
+  id: 11695
+  time: 1782128762590
+  user:
+    id: 3
+  string: '#c:FUCHSIA **child block is a standalone page ref:**'
+  order: 0
+  heading: null
+  children:
+  - id: 11696
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
   props: null
   title: null
   sidebar: null
@@ -258,7 +312,7 @@ vH2I8xRLZ:
   user:
     id: 3
   string: section 3.1.1
-  order: 0
+  order: 1
   heading: null
   children: null
   refs: null
@@ -302,14 +356,16 @@ lDYWYqYSL:
 aaz60uaRX:
   uid: aaz60uaRX
   id: 11136
-  time: 1780882716701
+  time: 1782128717158
   user:
     id: 3
-  string: 'external block ref: '
+  string: '#c:FUCHSIA **external block ref:**  ((tWkumkdUE))'
   order: 0
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 5844
+  - id: 11167
   page:
     id: 4225
   open: true
@@ -325,15 +381,16 @@ aaz60uaRX:
 qj0DTMyzl:
   uid: qj0DTMyzl
   id: 11692
-  time: 1781870840589
+  time: 1782128678038
   user:
     id: 3
-  string: 'inline page ref: [[[[Test Article]] 2]]'
+  string: '#c:FUCHSIA **inline page ref**: [[[[Test Article]] 2]]'
   order: 0
   heading: null
   children: null
   refs:
   - id: 4223
+  - id: 5844
   - id: 11674
   page:
     id: 4225
@@ -392,6 +449,26 @@ drtANJYTg:
   attrs: null
   lookup: null
   seen_by: null
+lF-qY0Xrs:
+  uid: lF-qY0Xrs
+  id: 5844
+  time: 1773955788224
+  user:
+    id: 3
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: c:FUCHSIA
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 6olpFWiw1:
   uid: 6olpFWiw1
   id: 3327
@@ -417,13 +494,92 @@ drtANJYTg:
   attrs: null
   lookup: null
   seen_by: null
+C6xVTMnsh:
+  uid: C6xVTMnsh
+  id: 11175
+  time: 1781222045009
+  user:
+    id: 3
+  string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
+    \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
+    \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
+    \     print(\"Buzz\")\n        else:\n            print(i)```"
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 11174
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+nkE0hwYsS:
+  uid: nkE0hwYsS
+  id: 11699
+  time: 1782128940703
+  user:
+    id: 3
+  string: ((C6xVTMnsh))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11175
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
+  - id: 4230
+  - id: 11698
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+dIwidaUUg:
+  uid: dIwidaUUg
+  id: 11696
+  time: 1782128885094
+  user:
+    id: 3
+  string: '[[[[Test Article]] 1]]'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 3327
+  - id: 4223
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4228
+  - id: 11695
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 8jkmASa1c:
   uid: 8jkmASa1c
   id: 4233
-  time: 1780882773773
+  time: 1782128731421
   user:
     id: 3
-  string: external block embed (from [[[[Test Article]] 1]])
+  string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
   order: 1
   heading: null
   children:
@@ -431,6 +587,7 @@ drtANJYTg:
   refs:
   - id: 3327
   - id: 4223
+  - id: 5844
   page:
     id: 4225
   open: true
@@ -446,15 +603,16 @@ drtANJYTg:
 gxcUrCGPT:
   uid: gxcUrCGPT
   id: 11135
-  time: 1780882599748
+  time: 1782128693233
   user:
     id: 3
-  string: 'internal block ref: ((LfXmNr-tV))'
+  string: '#c:FUCHSIA **internal block ref**: ((LfXmNr-tV))'
   order: 1
   heading: null
   children: null
   refs:
   - id: 4228
+  - id: 5844
   page:
     id: 4225
   open: true
@@ -482,9 +640,34 @@ d3T1YpYig:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+tWkumkdUE:
+  uid: tWkumkdUE
+  id: 11167
+  time: 1781089401093
+  user:
+    id: 3
+  string: this image **has been resized** through the Roam UI (width:257, height:None)
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  - id: 11163
   props: null
   title: null
   sidebar: null

@@ -46,23 +46,27 @@
   uid: qj0DTMyzl
   refs:
   - LBFKibPIj
+  - lF-qY0Xrs
   - lDYWYqYSL
-  text: 'inline page ref: [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+  text: '[**inline page ref**]{color="fuchsia"}: [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
 - vertex_type: guffin/text
   uid: gxcUrCGPT
   refs:
   - LfXmNr-tV
-  text: 'internal block ref: ((LfXmNr-tV))'
+  - lF-qY0Xrs
+  text: '[**internal block ref**]{color="fuchsia"}: [Section 3](x-guffin:vertex/LfXmNr-tV)'
 - vertex_type: guffin/text
   uid: dYYKZExzI
   children:
   - XkSI5xwe5
-  text: internal block embed (from *this Page*)
+  refs:
+  - lF-qY0Xrs
+  text: '[**internal block embed (from *this Page*):**]{color="fuchsia"}'
 - vertex_type: guffin/text
   uid: XkSI5xwe5
   refs:
   - vH2I8xRLZ
-  text: '{{embed: ((vH2I8xRLZ))}}'
+  text: '{{embed: [section 3.1.1](x-guffin:vertex/vH2I8xRLZ)}}'
 - vertex_type: guffin/text
   uid: d3T1YpYig
   children:
@@ -71,7 +75,11 @@
   text: Section 2
 - vertex_type: guffin/text
   uid: aaz60uaRX
-  text: 'external block ref: '
+  refs:
+  - lF-qY0Xrs
+  - tWkumkdUE
+  text: '[**external block ref:**]{color="fuchsia"}  [this image **has been resized**
+    through the Roam UI (width:257, height:None)](x-guffin:vertex/tWkumkdUE)'
 - vertex_type: guffin/text
   uid: 8jkmASa1c
   children:
@@ -79,22 +87,53 @@
   refs:
   - 6olpFWiw1
   - LBFKibPIj
-  text: external block embed (from [Test Article 1](x-guffin:vertex/6olpFWiw1))
+  - lF-qY0Xrs
+  text: '[**external block embed (from [Test Article 1](x-guffin:vertex/6olpFWiw1))**]{color="fuchsia"}:'
 - vertex_type: guffin/text
   uid: aVVGVVPLE
   refs:
   - drtANJYTg
-  text: '{{embed: ((drtANJYTg))}}'
+  text: '{{embed: [Section 2.1](x-guffin:vertex/drtANJYTg)}}'
 - vertex_type: guffin/text
   uid: LfXmNr-tV
   children:
+  - R5OEu6Mod
   - l7f2Qf90W
   text: Section 3
 - vertex_type: guffin/text
+  uid: R5OEu6Mod
+  children:
+  - dIwidaUUg
+  refs:
+  - lF-qY0Xrs
+  text: '[**child block is a standalone page ref:**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: dIwidaUUg
+  refs:
+  - 6olpFWiw1
+  - LBFKibPIj
+  text: '[Test Article 1](x-guffin:vertex/6olpFWiw1)'
+- vertex_type: guffin/text
   uid: l7f2Qf90W
   children:
+  - A1icDYZy8
   - vH2I8xRLZ
   text: section 3.1
+- vertex_type: guffin/text
+  uid: A1icDYZy8
+  children:
+  - nkE0hwYsS
+  refs:
+  - lF-qY0Xrs
+  text: '[**the child block is a standalone block ref:**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: nkE0hwYsS
+  refs:
+  - C6xVTMnsh
+  text: "[```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
+    \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
+    \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
+    \     print(\"Buzz\")\n        else:\n            print(i)```](x-guffin:vertex/C6xVTMnsh)"
 - vertex_type: guffin/text
   uid: vH2I8xRLZ
   text: section 3.1.1

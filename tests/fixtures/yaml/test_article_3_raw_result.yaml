@@ -9,13 +9,13 @@
     sidebar: 22
     id: 4225
     uid: SYZfEd44O
-    word-count: 109
+    word-count: 188
     edit-user:
       id: 3
     time: 1781833356251
     title: '[[Test Article]] 3'
-    edit-nonce: KchstR1lp
-    edit-time: 1781959284786
+    edit-nonce: Kf_ij6kT9
+    edit-time: 1782128940703
     refs:
     - id: 4223
 - - prevent-clean: 1773090962400
@@ -48,6 +48,24 @@
       id: 4225
     refs:
     - id: 3332
+- - string: '#c:FUCHSIA **the child block is a standalone block ref:**'
+    children:
+    - id: 11699
+    user:
+      id: 3
+    id: 11698
+    uid: A1icDYZy8
+    parents:
+    - id: 4225
+    - id: 4228
+    - id: 4230
+    time: 1782128772194
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
@@ -80,7 +98,7 @@
     refs:
     - id: 5450
     - id: 5462
-- - string: internal block embed (from __this Page__)
+- - string: '#c:FUCHSIA **internal block embed (from __this Page__):**'
     children:
     - id: 4232
     user:
@@ -90,11 +108,13 @@
     parents:
     - id: 4225
     - id: 4226
-    time: 1780882643644
+    time: 1782128705299
     order: 2
     open: true
     page:
       id: 4225
+    refs:
+    - id: 5844
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -110,6 +130,7 @@
 - - string: section 3.1
     children:
     - id: 4231
+    - id: 11698
     user:
       id: 3
     id: 4230
@@ -118,13 +139,14 @@
     - id: 4225
     - id: 4228
     time: 1773091226849
-    order: 0
+    order: 1
     open: true
     page:
       id: 4225
 - - string: Section 3
     children:
     - id: 4230
+    - id: 11695
     user:
       id: 3
     id: 4228
@@ -136,6 +158,23 @@
     open: true
     page:
       id: 4225
+- - string: '#c:FUCHSIA **child block is a standalone page ref:**'
+    children:
+    - id: 11696
+    user:
+      id: 3
+    id: 11695
+    uid: R5OEu6Mod
+    parents:
+    - id: 4225
+    - id: 4228
+    time: 1782128762590
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '{{embed: ((vH2I8xRLZ))}}'
     user:
       id: 3
@@ -178,11 +217,11 @@
     - id: 4228
     - id: 4230
     time: 1773091241939
-    order: 0
+    order: 1
     open: true
     page:
       id: 4225
-- - prevent-clean: 1781833447041
+- - prevent-clean: 1782128885100
     children:
     - id: 11675
     - id: 11677
@@ -202,7 +241,7 @@
     edit-time: 1781834579902
     refs:
     - id: 4223
-- - string: 'external block ref: '
+- - string: '#c:FUCHSIA **external block ref:**  ((tWkumkdUE))'
     user:
       id: 3
     id: 11136
@@ -210,12 +249,15 @@
     parents:
     - id: 4225
     - id: 4227
-    time: 1780882716701
+    time: 1782128717158
     order: 0
     open: true
     page:
       id: 4225
-- - string: 'inline page ref: [[[[Test Article]] 2]]'
+    refs:
+    - id: 5844
+    - id: 11167
+- - string: '#c:FUCHSIA **inline page ref**: [[[[Test Article]] 2]]'
     user:
       id: 3
     id: 11692
@@ -223,13 +265,14 @@
     parents:
     - id: 4225
     - id: 4226
-    time: 1781870840589
+    time: 1782128678038
     order: 0
     open: true
     page:
       id: 4225
     refs:
     - id: 4223
+    - id: 5844
     - id: 11674
 - - prevent-clean: 1781542258419
     user:
@@ -260,6 +303,18 @@
     open: true
     page:
       id: 3327
+- - prevent-clean: 1781829523630
+    user:
+      id: 3
+    id: 5844
+    uid: lF-qY0Xrs
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773955788224
+    title: c:FUCHSIA
+    edit-nonce: WMGpHVOcr
+    edit-time: 1773955788222
 - - prevent-clean: 1773356473975
     children:
     - id: 3328
@@ -283,7 +338,58 @@
     edit-time: 1781136935270
     refs:
     - id: 4223
-- - string: external block embed (from [[[[Test Article]] 1]])
+- - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
+      \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
+      \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n     \
+      \       print(\"Buzz\")\n        else:\n            print(i)```"
+    user:
+      id: 3
+    id: 11175
+    uid: C6xVTMnsh
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 11174
+    time: 1781222045009
+    order: 0
+    open: true
+    page:
+      id: 11137
+- - string: ((C6xVTMnsh))
+    user:
+      id: 3
+    id: 11699
+    uid: nkE0hwYsS
+    parents:
+    - id: 4225
+    - id: 4228
+    - id: 4230
+    - id: 11698
+    time: 1782128940703
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11175
+- - string: '[[[[Test Article]] 1]]'
+    user:
+      id: 3
+    id: 11696
+    uid: dIwidaUUg
+    parents:
+    - id: 4225
+    - id: 4228
+    - id: 11695
+    time: 1782128885094
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 3327
+    - id: 4223
+- - string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
     children:
     - id: 4234
     user:
@@ -293,7 +399,7 @@
     parents:
     - id: 4225
     - id: 4227
-    time: 1780882773773
+    time: 1782128731421
     order: 1
     open: true
     page:
@@ -301,7 +407,8 @@
     refs:
     - id: 3327
     - id: 4223
-- - string: 'internal block ref: ((LfXmNr-tV))'
+    - id: 5844
+- - string: '#c:FUCHSIA **internal block ref**: ((LfXmNr-tV))'
     user:
       id: 3
     id: 11135
@@ -309,13 +416,14 @@
     parents:
     - id: 4225
     - id: 4226
-    time: 1780882599748
+    time: 1782128693233
     order: 1
     open: true
     page:
       id: 4225
     refs:
     - id: 4228
+    - id: 5844
 - - string: Section 2
     children:
     - id: 4233
@@ -328,6 +436,21 @@
     - id: 4225
     time: 1773091127227
     order: 2
-    open: true
+    open: false
     page:
       id: 4225
+- - string: this image **has been resized** through the Roam UI (width:257, height:None)
+    user:
+      id: 3
+    id: 11167
+    uid: tWkumkdUE
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 11163
+    time: 1781089401093
+    order: 0
+    open: true
+    page:
+      id: 3327

@@ -47,6 +47,27 @@
   props: null
   title: null
   attrs: null
+- uid: A1icDYZy8
+  id: 11698
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **the child block is a standalone block ref:**'
+  order: 0
+  heading: null
+  children:
+  - id: 11699
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4228
+  - id: 4230
+  props: null
+  title: null
+  attrs: null
 - uid: I1QOMCtdJ
   id: 11133
   time: 0
@@ -88,12 +109,13 @@
   time: 0
   user:
     id: 0
-  string: internal block embed (from __this Page__)
+  string: '#c:FUCHSIA **internal block embed (from __this Page__):**'
   order: 2
   heading: null
   children:
   - id: 4232
-  refs: null
+  refs:
+  - id: 5844
   page:
     id: 4225
   parents:
@@ -108,10 +130,11 @@
   user:
     id: 0
   string: section 3.1
-  order: 0
+  order: 1
   heading: null
   children:
   - id: 4231
+  - id: 11698
   refs: null
   page:
     id: 4225
@@ -131,11 +154,32 @@
   heading: null
   children:
   - id: 4230
+  - id: 11695
   refs: null
   page:
     id: 4225
   parents:
   - id: 4225
+  props: null
+  title: null
+  attrs: null
+- uid: R5OEu6Mod
+  id: 11695
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **child block is a standalone page ref:**'
+  order: 0
+  heading: null
+  children:
+  - id: 11696
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4228
   props: null
   title: null
   attrs: null
@@ -185,7 +229,7 @@
   user:
     id: 0
   string: section 3.1.1
-  order: 0
+  order: 1
   heading: null
   children: null
   refs: null
@@ -203,11 +247,13 @@
   time: 0
   user:
     id: 0
-  string: 'external block ref: '
+  string: '#c:FUCHSIA **external block ref:**  ((tWkumkdUE))'
   order: 0
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 5844
+  - id: 11167
   page:
     id: 4225
   parents:
@@ -221,12 +267,13 @@
   time: 0
   user:
     id: 0
-  string: 'inline page ref: [[[[Test Article]] 2]]'
+  string: '#c:FUCHSIA **inline page ref**: [[[[Test Article]] 2]]'
   order: 0
   heading: null
   children: null
   refs:
   - id: 4223
+  - id: 5844
   - id: 11674
   page:
     id: 4225
@@ -236,12 +283,54 @@
   props: null
   title: null
   attrs: null
+- uid: nkE0hwYsS
+  id: 11699
+  time: 0
+  user:
+    id: 0
+  string: ((C6xVTMnsh))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11175
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4228
+  - id: 4230
+  - id: 11698
+  props: null
+  title: null
+  attrs: null
+- uid: dIwidaUUg
+  id: 11696
+  time: 0
+  user:
+    id: 0
+  string: '[[[[Test Article]] 1]]'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 3327
+  - id: 4223
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4228
+  - id: 11695
+  props: null
+  title: null
+  attrs: null
 - uid: 8jkmASa1c
   id: 4233
   time: 0
   user:
     id: 0
-  string: external block embed (from [[[[Test Article]] 1]])
+  string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
   order: 1
   heading: null
   children:
@@ -249,6 +338,7 @@
   refs:
   - id: 3327
   - id: 4223
+  - id: 5844
   page:
     id: 4225
   parents:
@@ -262,12 +352,13 @@
   time: 0
   user:
     id: 0
-  string: 'internal block ref: ((LfXmNr-tV))'
+  string: '#c:FUCHSIA **internal block ref**: ((LfXmNr-tV))'
   order: 1
   heading: null
   children: null
   refs:
   - id: 4228
+  - id: 5844
   page:
     id: 4225
   parents:

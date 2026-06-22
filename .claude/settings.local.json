@@ -6,6 +6,7 @@
       "WebSearch",
       "WebFetch",
       "Bash(git *)",
+      "Bash(git commit *)",
       "Bash(.venv/bin/*)",
       "Bash(/opt/local/bin/gh auth *)",
       "Bash(echo *)",
