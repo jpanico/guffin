@@ -7,7 +7,12 @@ Public symbols:
   callout block string; :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
   link whose URL is a Cloud Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
   a Roam page reference ``[[<page_name>]]``; :data:`BLOCK_REF_RE` — compiled regex matching a
-  Roam block reference ``((<uid>))``.
+  Roam block reference ``((<uid>))``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
+  Roam aliased page link ``[display]([[Page Name]])``; :data:`ITALIC_RE` — compiled regex
+  matching Roam italic syntax ``__text__``; :data:`HIGHLIGHT_RE` — compiled regex matching Roam
+  highlight syntax ``^^text^^``; :data:`COLOR_BOLD_RE`, :data:`COLOR_HIGHLIGHT_RE`,
+  :data:`COLOR_UNDERLINE_RE`, :data:`COLOR_BOX_RE`, :data:`BG_COLOR_LINE_RE` — compiled regexes
+  for the five Color Highlighter inline and block-level color constructs.
 - **Enumerations**: :class:`CalloutType` — the twelve Roam callout type keywords.
 - **Callout model**: :class:`RoamCallout` — parsed decomposition of a callout block string.
 - **Callout parser**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`.
@@ -256,4 +261,86 @@ Example match on ``((wdMgyBiP9))``:
 
 - ``match.group(0)`` — the full ``((wdMgyBiP9))`` string.
 - ``match.group("uid")`` — just ``wdMgyBiP9``.
+"""
+
+PAGE_LINK_ALIAS_RE: Final[regex.Pattern[str]] = regex.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")
+"""Compiled regex matching a Roam aliased page link ``[display text]([[Page Name]])``.
+
+Numbered groups (no named groups):
+
+- Group 1 — the display text between the outer ``[`` and ``]``; non-empty,
+  no square brackets.
+- Group 2 — the page name between the inner ``[[`` and ``]]``; may be empty.
+"""
+
+ITALIC_RE: Final[regex.Pattern[str]] = regex.compile(r"(?<!\w)__(?!\s)(.+?)(?<!\s)__(?!\w)", regex.DOTALL)
+"""Compiled regex matching Roam italic syntax ``__text__``.
+
+Roam uses double underscores for italics.  Negative look-behind and look-ahead
+prevent matching adjacent to word characters, and look-ahead/behind on the
+inner boundary prevent matching when the delimited content begins or ends with
+whitespace.
+
+Numbered group (no named groups):
+
+- Group 1 — the italic content between the ``__`` delimiters; may span newlines
+  (:data:`regex.DOTALL` is set).
+"""
+
+HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(r"\^\^(.+?)\^\^", regex.DOTALL)
+"""Compiled regex matching Roam highlight syntax ``^^text^^``.
+
+Numbered group (no named groups):
+
+- Group 1 — the highlighted content between the ``^^`` delimiters; may span
+  newlines (:data:`regex.DOTALL` is set).
+"""
+
+COLOR_BOLD_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) \*\*(.+?)\*\*")
+"""Compiled regex matching a Color Highlighter bold span ``#c:COLOR **text**``.
+
+Numbered groups (no named groups):
+
+- Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
+- Group 2 — the bold content between the ``**`` delimiters.
+"""
+
+COLOR_HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) \^\^(.+?)\^\^")
+"""Compiled regex matching a Color Highlighter highlight span ``#c:COLOR ^^text^^``.
+
+Numbered groups (no named groups):
+
+- Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
+- Group 2 — the highlighted content between the ``^^`` delimiters.
+"""
+
+COLOR_UNDERLINE_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) __(.+?)__")
+"""Compiled regex matching a Color Highlighter underline span ``#c:COLOR __text__``.
+
+Numbered groups (no named groups):
+
+- Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
+- Group 2 — the underlined content between the ``__`` delimiters.
+"""
+
+COLOR_BOX_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ~~(.+?)~~")
+"""Compiled regex matching a Color Highlighter box span ``#c:COLOR ~~text~~``.
+
+Numbered groups (no named groups):
+
+- Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
+- Group 2 — the boxed content between the ``~~`` delimiters.
+"""
+
+BG_COLOR_LINE_RE: Final[regex.Pattern[str]] = regex.compile(r"^(.*) #\.bg-([A-Za-z]+)$", regex.DOTALL)
+"""Compiled regex matching a Color Highlighter whole-line background span ``text #.bg-COLOR``.
+
+The ``#.bg-COLOR`` suffix appears at the end of a block string to apply a
+background color to the entire line.  :data:`regex.DOTALL` is set so that
+group 1 can span newlines in multi-line blocks.
+
+Numbered groups (no named groups):
+
+- Group 1 — all content preceding the ``#.bg-COLOR`` suffix.
+- Group 2 — the color name (e.g. ``ORANGE``); ASCII letters only.
 """

@@ -2,6 +2,7 @@
 
 from guffin.roam_md_to_pandoc_md import (
     convert_bg_color_line,
+    convert_block_link,
     convert_code_blocks,
     convert_color_bold,
     convert_color_box,
@@ -37,6 +38,14 @@ def _empty_tree() -> NodeTree:
 def _page_tree(title: str, uid: str) -> NodeTree:
     """Return a NodeTree containing a single page node with *title* and *uid*."""
     node = RoamNode(uid=uid, id=1, time=STUB_TIME, user=STUB_USER, title=title, children=[])
+    return NodeTree.build(root_node=node, super_network=[node])
+
+
+def _block_tree(string: str, uid: str) -> NodeTree:
+    """Return a NodeTree containing a single block node with *string* and *uid*."""
+    node = RoamNode(
+        uid=uid, id=1, time=STUB_TIME, user=STUB_USER, string=string, parents=[IdObject(id=0)], page=IdObject(id=0)
+    )
     return NodeTree.build(root_node=node, super_network=[node])
 
 
@@ -206,6 +215,49 @@ class TestConvertPageLink:
     def test_unknown_title_falls_back(self) -> None:
         """Test that a reference whose title is absent from the tree falls back to plain text."""
         assert convert_page_link("[[Other]]", _page_tree("My Page", "pageuid01")) == "Other"
+
+
+class TestConvertBlockLink:
+    """Tests for convert_block_link — Roam block references to vertex links, with verbatim fallback."""
+
+    def test_unresolvable_uid_left_verbatim(self) -> None:
+        """Test that a ((uid)) absent from the tree is left verbatim."""
+        assert convert_block_link("((wdMgyBiP9))", _empty_tree()) == "((wdMgyBiP9))"
+
+    def test_resolves_block_node_string(self) -> None:
+        """Test that a resolvable block uid produces a vertex link using the node's string as display."""
+        assert convert_block_link("((blckuid01))", _block_tree("some text", "blckuid01")) == (
+            "[some text](x-guffin:vertex/blckuid01)"
+        )
+
+    def test_resolves_page_node_title(self) -> None:
+        """Test that a resolvable page uid produces a vertex link using the node's title as display."""
+        assert convert_block_link("((pageuid01))", _page_tree("My Page", "pageuid01")) == (
+            "[My Page](x-guffin:vertex/pageuid01)"
+        )
+
+    def test_inline_reference_resolved(self) -> None:
+        """Test that a resolvable block ref embedded in surrounding text becomes an inline vertex link."""
+        assert convert_block_link("See ((blckuid01)) for details.", _block_tree("Topic", "blckuid01")) == (
+            "See [Topic](x-guffin:vertex/blckuid01) for details."
+        )
+
+    def test_multiple_refs(self) -> None:
+        """Test that a string with two unresolvable block refs leaves both verbatim."""
+        result = convert_block_link("((wdMgyBiP9)) and ((abc123xyz))", _empty_tree())
+        assert result == "((wdMgyBiP9)) and ((abc123xyz))"
+
+    def test_page_reference_unaffected(self) -> None:
+        """Test that [[Page Name]] syntax is left unchanged."""
+        assert convert_block_link("[[Page Name]]", _empty_tree()) == "[[Page Name]]"
+
+    def test_plain_text_unchanged(self) -> None:
+        """Test that plain text with no block references is returned unchanged."""
+        assert convert_block_link("plain text", _empty_tree()) == "plain text"
+
+    def test_empty_string(self) -> None:
+        """Test that an empty string is returned unchanged."""
+        assert convert_block_link("", _empty_tree()) == ""
 
 
 class TestConvertColorBold:

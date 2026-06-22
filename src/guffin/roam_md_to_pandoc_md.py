@@ -48,60 +48,22 @@ from typing import Final
 import regex
 from pydantic import validate_call
 
+from guffin.common.markdown import CODE_BLOCK_RE
 from guffin.link import VertexLinkKind, vertex_link_url
-from guffin.roam.markdown import BLOCK_REF_RE, PAGE_REF_RE
+from guffin.roam.markdown import (
+    BG_COLOR_LINE_RE,
+    BLOCK_REF_RE,
+    COLOR_BOLD_RE,
+    COLOR_BOX_RE,
+    COLOR_HIGHLIGHT_RE,
+    COLOR_UNDERLINE_RE,
+    HIGHLIGHT_RE,
+    ITALIC_RE,
+    PAGE_LINK_ALIAS_RE,
+    PAGE_REF_RE,
+)
 from guffin.roam.node import RoamNode
 from guffin.roam.node_tree import NodeTree
-
-# ---------------------------------------------------------------------------
-# Module-level compiled patterns
-# ---------------------------------------------------------------------------
-
-# Roam fenced code block: ```lang\ncode``` where the opening fence (with its
-# optional language tag) and the closing fence may share a line with adjacent
-# content.  Group 1 captures the language/info string on the opening line;
-# group 2 captures the code body up to the closing fence.
-_CODE_BLOCK_RE: regex.Pattern[str] = regex.compile(r"```([^\n]*)\n(.*?)```", regex.DOTALL)
-
-# Roam italic: __text__ (double underscores).  Must not match bold (**text**).
-# Negative look-behind/ahead prevents matching inside bold markers.
-_ITALIC_RE: regex.Pattern[str] = regex.compile(r"(?<!\w)__(?!\s)(.+?)(?<!\s)__(?!\w)", regex.DOTALL)
-
-# Roam highlight: ^^text^^.  Converted to a Pandoc bracketed span with class
-# "mark" via the bracketed_spans extension (enabled by default in Pandoc Markdown).
-_HIGHLIGHT_RE: regex.Pattern[str] = regex.compile(r"\^\^(.+?)\^\^", regex.DOTALL)
-
-# Roam alias to a page link: [display text]([[Page Name]]).  Capture group 1 is
-# the display text (no square brackets); group 2 is the page name (no square
-# brackets).  Must be applied before convert_page_link so the [[...]] target
-# can be identified and converted to a plain Pandoc Markdown link destination.
-_PAGE_LINK_ALIAS_RE: regex.Pattern[str] = regex.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")
-
-# Color Highlighter extension: #c:COLOR **bold text**.  Group 1 is the color
-# name (e.g. ORANGE); group 2 is the bold content between the ** delimiters.
-_COLOR_BOLD_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) \*\*(.+?)\*\*")
-
-# Color Highlighter extension: #c:COLOR ^^highlighted text^^.  Group 1 is the
-# color name (e.g. ORANGE); group 2 is the highlight content between ^^ delimiters.
-_COLOR_HIGHLIGHT_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) \^\^(.+?)\^\^")
-
-# Color Highlighter extension: #c:COLOR __underlined text__.  Group 1 is the
-# color name (e.g. ORANGE); group 2 is the underline content between __ delimiters.
-# Note: Roam also uses __ for italics, so this must run before convert_italics.
-_COLOR_UNDERLINE_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) __(.+?)__")
-
-# Color Highlighter extension: #c:COLOR ~~boxed text~~.  Group 1 is the
-# color name (e.g. ORANGE); group 2 is the box content between ~~ delimiters.
-# Note: Pandoc also uses ~~ for strikethrough, so this must run before Pandoc
-# sees the string.
-_COLOR_BOX_RE: regex.Pattern[str] = regex.compile(r"#c:([A-Za-z]+) ~~(.+?)~~")
-
-# Color Highlighter extension: whole-line background box via a trailing
-# #.bg-COLOR suffix.  Group 1 captures all preceding content; group 2 the
-# color name.  regex.DOTALL lets group 1 span newlines so multi-line blocks are
-# handled correctly.  Must run last so that any inline color spans inside the
-# block are already converted before the outer wrapper is applied.
-_BG_COLOR_LINE_RE: regex.Pattern[str] = regex.compile(r"^(.*) #\.bg-([A-Za-z]+)$", regex.DOTALL)
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -166,7 +128,7 @@ def convert_color_highlight(roam_string: str) -> str:
         The string with all ``#c:COLOR ^^text^^`` spans replaced by
         ``[text]{.mark highlight-color="color"}`` bracketed spans.
     """
-    return _COLOR_HIGHLIGHT_RE.sub(
+    return COLOR_HIGHLIGHT_RE.sub(
         lambda match: f'[{match.group(2)}]{{.mark highlight-color="{match.group(1).lower()}"}}',
         roam_string,
     )
@@ -193,7 +155,7 @@ def convert_color_underline(roam_string: str) -> str:
         The string with all ``#c:COLOR __text__`` spans replaced by
         ``[text]{underline-color="color"}`` bracketed spans.
     """
-    return _COLOR_UNDERLINE_RE.sub(
+    return COLOR_UNDERLINE_RE.sub(
         lambda match: f'[{match.group(2)}]{{underline-color="{match.group(1).lower()}"}}',
         roam_string,
     )
@@ -218,7 +180,7 @@ def convert_color_box(roam_string: str) -> str:
         The string with all ``#c:COLOR ~~text~~`` spans replaced by
         ``[text]{box-color="color"}`` bracketed spans.
     """
-    return _COLOR_BOX_RE.sub(
+    return COLOR_BOX_RE.sub(
         lambda match: f'[{match.group(2)}]{{box-color="{match.group(1).lower()}"}}',
         roam_string,
     )
@@ -246,7 +208,7 @@ def convert_bg_color_line(roam_string: str) -> str:
         wrapped in ``[...]{bg-color="color"}``, or *roam_string* unchanged
         if the suffix is absent.
     """
-    return _BG_COLOR_LINE_RE.sub(
+    return BG_COLOR_LINE_RE.sub(
         lambda match: f'[{match.group(1)}]{{bg-color="{match.group(2).lower()}"}}',
         roam_string,
     )
@@ -286,7 +248,7 @@ def convert_code_blocks(roam_string: str) -> str:
         suffix: str = "" if match.end() == len(match.string) or match.string[match.end()] == "\n" else "\n"
         return f"{prefix}```{language}\n{body}\n```{suffix}"
 
-    return _CODE_BLOCK_RE.sub(_reposition, roam_string)
+    return CODE_BLOCK_RE.sub(_reposition, roam_string)
 
 
 @validate_call
@@ -303,7 +265,7 @@ def convert_italics(roam_string: str) -> str:
     Returns:
         The string with all ``__italic__`` spans replaced by ``*italic*``.
     """
-    return _ITALIC_RE.sub(r"*\1*", roam_string)
+    return ITALIC_RE.sub(r"*\1*", roam_string)
 
 
 @validate_call
@@ -321,7 +283,7 @@ def convert_highlights(roam_string: str) -> str:
     Returns:
         The string with all ``^^text^^`` spans replaced by ``[text]{.mark}``.
     """
-    return _HIGHLIGHT_RE.sub(r"[\1]{.mark}", roam_string)
+    return HIGHLIGHT_RE.sub(r"[\1]{.mark}", roam_string)
 
 
 @validate_call
@@ -343,7 +305,7 @@ def convert_color_bold(roam_string: str) -> str:
         The string with all ``#c:COLOR **text**`` spans replaced by
         ``[**text**]{color="color"}`` bracketed spans.
     """
-    return _COLOR_BOLD_RE.sub(
+    return COLOR_BOLD_RE.sub(
         lambda match: f'[**{match.group(2)}**]{{color="{match.group(1).lower()}"}}',
         roam_string,
     )
@@ -368,7 +330,7 @@ def convert_page_link_aliases(roam_string: str) -> str:
         The string with all ``[display]([[Page Name]])`` patterns replaced by
         ``[display](Page Name)``.
     """
-    return _PAGE_LINK_ALIAS_RE.sub(r"[\1](\2)", roam_string)
+    return PAGE_LINK_ALIAS_RE.sub(r"[\1](\2)", roam_string)
 
 
 @validate_call

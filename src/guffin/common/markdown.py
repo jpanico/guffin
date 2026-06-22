@@ -4,6 +4,8 @@ Public symbols:
 
 - :data:`HeadingLevel` — integer type alias for a Markdown heading depth, constrained to 1–6.
 - :data:`MD_BLOCK_QUOTE_PREFIX` — string prefix for a standard CommonMark blockquote line.
+- :data:`CODE_BLOCK_RE` — compiled regex matching a backtick-fenced code block where fences
+  may share a line with adjacent content.
 - :func:`is_fenced_code_block` — whether a string is a single CommonMark fenced code block.
 - :class:`FencedCodeBlock` — the info string and code content extracted from a fenced code block.
 - :func:`parse_fenced_code_block` — extract the info string and code content from a fenced code block.
@@ -22,6 +24,19 @@ MD_BLOCK_QUOTE_PREFIX: Final[str] = ">"
 
 A line beginning with ``>`` (optionally followed by a space) is a CommonMark
 block quote marker.
+"""
+
+CODE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(r"```([^\n]*)\n(.*?)```", regex.DOTALL)
+"""Compiled regex matching a backtick-fenced code block where fences may share a line with adjacent content.
+
+Unlike the strict CommonMark form (where each fence must occupy its own line), both the
+opening ` ``` ` and the closing ` ``` ` may appear on a line that also contains other content.
+
+Numbered groups (no named groups):
+
+- Group 1 — the info string following the opening ` ``` ` (e.g. ``python``); may be empty.
+- Group 2 — the code body between the opening and closing fences; spans newlines
+  (:data:`regex.DOTALL` is set).
 """
 
 # Opening code fence: up to three spaces of indentation, then a run of at least
