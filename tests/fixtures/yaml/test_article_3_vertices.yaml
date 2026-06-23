@@ -51,7 +51,9 @@
   - GK_iI79mV
   - zAIxMFBIB
   - _6Z-gzw6R
-  text: This is a HEADER
+  - I7pBlEhyE
+  - 4kdWXzDjz
+  text: Feature Content
   heading_level: 1
 - vertex_type: guffin/text
   uid: riLVzfX-6
@@ -112,6 +114,44 @@
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text
+  uid: I7pBlEhyE
+  children:
+  - zpSBqgxe4
+  text: the child block contains a Roam native callout
+- vertex_type: guffin/callout
+  uid: zpSBqgxe4
+  refs:
+  - OexZiLR_O
+  - lS4kg-3mw
+  callout_type: example
+  title: This is the callout title
+  body: 'This is line 1 of the callout body
+
+    This is line 2 of the callout body'
+- vertex_type: guffin/text
+  uid: 4kdWXzDjz
+  children:
+  - yvlvNZwPC
+  text: the child block contains a Roam native table
+- vertex_type: guffin/table
+  uid: yvlvNZwPC
+  table:
+    rows:
+    - - Header 1
+      - Header 2
+      - Header 3
+    - - r1.c1
+      - r1.c2
+      - r1.c3
+    - - r2.c1
+      - r2.c2
+      - r2.c3
+    has_row_header: true
+    has_col_header: false
+  table_style:
+    cell_styles: {}
+    column_widths: []
+- vertex_type: guffin/heading
   uid: LfaVt18Iw
   children:
   - qj0DTMyzl
@@ -134,7 +174,10 @@
   - dYYKZExzI
   - Y0xFlk7y6
   - fZr8Ve9SS
+  - _kTRqm3O-
+  - SivJQaD8x
   text: 'Internal (in-page) links:'
+  heading_level: 1
 - vertex_type: guffin/text
   uid: qj0DTMyzl
   refs:
@@ -190,7 +233,7 @@
   refs:
   - lF-qY0Xrs
   - 7XdTiY_ZF
-  text: '[**inline HEADER ref ⟶**]{color="fuchsia"}  [This is a HEADER](x-guffin:vertex/7XdTiY_ZF)'
+  text: '[**inline HEADER ref ⟶**]{color="fuchsia"}  [Feature Content](x-guffin:vertex/7XdTiY_ZF)'
 - vertex_type: guffin/text
   uid: 48ZQ-2b7U
   refs:
@@ -225,7 +268,7 @@
   - xc_eQjqyE
   refs:
   - lF-qY0Xrs
-  text: '[**standalone page ref ↓**]{color="fuchsia"} '
+  text: '[**standalone PAGE ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: xc_eQjqyE
   refs:
@@ -238,7 +281,7 @@
   - 2Zo0HNy5o
   refs:
   - lF-qY0Xrs
-  text: '[**standalone block ref ↓**]{color="fuchsia"} '
+  text: '[**standalone BLOCK ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: 2Zo0HNy5o
   refs:
@@ -250,7 +293,7 @@
   - JpKqqwnAJ
   refs:
   - lF-qY0Xrs
-  text: '[**standalone parent block ref ↓**]{color="fuchsia"} '
+  text: '[**standalone PARENT BLOCK ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: JpKqqwnAJ
   refs:
@@ -262,7 +305,7 @@
   - S81O4tG9t
   refs:
   - lF-qY0Xrs
-  text: '[**standalone image block ref ↓**]{color="fuchsia"} '
+  text: '[**standalone IMAGE BLOCK ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: S81O4tG9t
   refs:
@@ -274,7 +317,7 @@
   - XkSI5xwe5
   refs:
   - lF-qY0Xrs
-  text: '[**standalone block embed ↓**]{color="fuchsia"}'
+  text: '[**standalone BLOCK EMBED ↓**]{color="fuchsia"}'
 - vertex_type: guffin/text
   uid: XkSI5xwe5
   refs:
@@ -291,7 +334,7 @@
   uid: tyOSwiz6l
   refs:
   - 7XdTiY_ZF
-  text: '[This is a HEADER](x-guffin:vertex/7XdTiY_ZF)'
+  text: '[Feature Content](x-guffin:vertex/7XdTiY_ZF)'
 - vertex_type: guffin/text
   uid: fZr8Ve9SS
   children:
@@ -308,6 +351,36 @@
     \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
     \     print(\"Buzz\")\n        else:\n            print(i)```](x-guffin:vertex/yECzsUNPC)"
 - vertex_type: guffin/text
+  uid: _kTRqm3O-
+  children:
+  - 3PA_Y7Osp
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone CALLOUT ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: 3PA_Y7Osp
+  refs:
+  - zpSBqgxe4
+  text: '[[[>]] [[!EXAMPLE]] This is the callout title
+
+    This is line 1 of the callout body
+
+    This is line 2 of the callout body
+
+    ](x-guffin:vertex/zpSBqgxe4)'
+- vertex_type: guffin/text
+  uid: SivJQaD8x
+  children:
+  - Frzso359j
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone ROAM NATIVE TABLE ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: Frzso359j
+  refs:
+  - yvlvNZwPC
+  text: '[{{table}}](x-guffin:vertex/yvlvNZwPC)'
+- vertex_type: guffin/heading
   uid: d3T1YpYig
   children:
   - ot5dpySxp
@@ -326,20 +399,24 @@
   - vLxyRJcr2
   - GQSLJp92S
   - 8jkmASa1c
-  text: 'external (out-of-page) links:'
+  - wta7y8AlI
+  - ipvsMyx77
+  - QnqMI7-2J
+  text: 'External (out-of-page) links:'
+  heading_level: 1
 - vertex_type: guffin/text
   uid: ot5dpySxp
   refs:
   - LBFKibPIj
   - lF-qY0Xrs
   - lDYWYqYSL
-  text: '[**inline page ref ⟶**]{color="fuchsia"} [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+  text: '[**inline PAGE ref ⟶**]{color="fuchsia"} [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
 - vertex_type: guffin/text
   uid: n528kYv5_
   refs:
   - lF-qY0Xrs
   - tWkumkdUE
-  text: '[**inline block ref ⟶**]{color="fuchsia"} [this image **has been resized**
+  text: '[**inline BLOCK ref ⟶**]{color="fuchsia"} [this image **has been resized**
     through the Roam UI (width:257, height:None)](x-guffin:vertex/tWkumkdUE)'
 - vertex_type: guffin/text
   uid: AaB6F4c0F
@@ -411,7 +488,7 @@
   - acAIiueY_
   refs:
   - lF-qY0Xrs
-  text: '[**standalone page ref ↓**]{color="fuchsia"} '
+  text: '[**standalone PAGE ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: acAIiueY_
   refs:
@@ -424,7 +501,7 @@
   - nmFudOFkf
   refs:
   - lF-qY0Xrs
-  text: '[**standalone block ref ↓**]{color="fuchsia"} '
+  text: '[**standalone BLOCK ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: nmFudOFkf
   refs:
@@ -436,7 +513,7 @@
   - eUpKQiTiM
   refs:
   - lF-qY0Xrs
-  text: '[**standalone image block ref ↓**]{color="fuchsia"} '
+  text: '[**standalone IMAGE BLOCK ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: eUpKQiTiM
   refs:
@@ -450,12 +527,57 @@
   - 6olpFWiw1
   - LBFKibPIj
   - lF-qY0Xrs
-  text: '[**external block embed (from [Test Article 1](x-guffin:vertex/6olpFWiw1))**]{color="fuchsia"}:'
+  text: '[**standalone BLOCK EMBED (from [Test Article 1](x-guffin:vertex/6olpFWiw1))  ↓**]{color="fuchsia"}'
 - vertex_type: guffin/text
   uid: aVVGVVPLE
   refs:
   - drtANJYTg
   text: '{{embed: [Section 2.1](x-guffin:vertex/drtANJYTg)}}'
+- vertex_type: guffin/text
+  uid: wta7y8AlI
+  children:
+  - CCrsgAEQ-
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone HEADER ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: CCrsgAEQ-
+  refs:
+  - 0EgPyHSZi
+  text: '[Section 1](x-guffin:vertex/0EgPyHSZi)'
+- vertex_type: guffin/text
+  uid: ipvsMyx77
+  children:
+  - T5pku1yrU
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone FENCED-CODE ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: T5pku1yrU
+  refs:
+  - C6xVTMnsh
+  text: "[```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
+    \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
+    \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
+    \     print(\"Buzz\")\n        else:\n            print(i)```](x-guffin:vertex/C6xVTMnsh)"
+- vertex_type: guffin/text
+  uid: QnqMI7-2J
+  children:
+  - Wq2dXafRn
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone CALLOUT ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: Wq2dXafRn
+  refs:
+  - 4SIo9hSEY
+  text: '[[[>]] [[!EXAMPLE]] This is the callout title
+
+    This is line 1 of the callout body
+
+    This is line 2 of the callout body
+
+    ](x-guffin:vertex/4SIo9hSEY)'
 - vertex_type: guffin/text
   uid: LfXmNr-tV
   children:
