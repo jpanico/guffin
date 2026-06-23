@@ -19,7 +19,6 @@ Public symbols:
 # here avoids dozens of cascading false-positive errors without relaxing any other strict checks.
 
 import logging
-from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 
@@ -34,61 +33,19 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
-from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import (
-    BlockQuoteVertex,
-    CalloutVertex,
-    CodeBlockVertex,
-    HeadingVertex,
-    ImageVertex,
-    PageVertex,
-    TableVertex,
-    TextVertex,
-    Vertex,
-)
 from guffin.model.vertex_tree import VertexTree
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.pipeline.pandoc_rendering import (
     InlineMap,
+    make_resolver,
     pandoc_to_json,
     resolve_vertex_links,
-    strip_links,
     vertex_tree_to_pandoc,
 )
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
-
-
-def _make_resolver(
-    inline_map: InlineMap,
-) -> Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]:
-    def _resolve(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
-        match vertex:
-            case PageVertex():
-                # The title is raw Pandoc Markdown that may itself contain a nested
-                # reference (an x-guffin link); parse it and flatten any such link to
-                # plain display text so the page reference renders as its bare title.
-                return strip_links(inline_map.get(vertex.title, [pf.Str(vertex.title)]))
-            case HeadingVertex():
-                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
-            case TextVertex():
-                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
-            case ImageVertex() if vertex_link.kind == VertexLinkKind.EMBED:
-                return [pf.Image(*display, url=str(vertex.source), title="")]
-            case ImageVertex():
-                return [pf.Link(*display, url=str(vertex.source))]
-            case CodeBlockVertex():
-                return [pf.Code(vertex.code, classes=[vertex.language.value])]
-            case CalloutVertex():
-                return display
-            case BlockQuoteVertex():
-                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
-            case TableVertex():
-                return display
-
-    return _resolve
 
 
 @validate_call
@@ -162,7 +119,7 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        resolve_vertex_links(doc, enriched_tree, _make_resolver(inline_map))
+        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map))
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, stem)
         md_text: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             bundle_json_str,
@@ -185,7 +142,7 @@ def render(
         no_bundle_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(vertex_tree, {}, title_in_header=True)
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
-        resolve_vertex_links(no_bundle_doc, vertex_tree, _make_resolver(no_bundle_inline_map))
+        resolve_vertex_links(no_bundle_doc, vertex_tree, make_resolver(no_bundle_inline_map))
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, stem)
         no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str,

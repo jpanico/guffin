@@ -60,6 +60,8 @@ Public symbols:
   :func:`vertex_tree_to_pandoc`.
 - :data:`VertexLinkResolver` — type alias for the resolver callable accepted by
   :func:`resolve_vertex_links`.
+- :func:`make_resolver` — build a :data:`VertexLinkResolver` that renders each
+  ``x-guffin`` link as its destination vertex's own converted content.
 - :func:`resolve_vertex_links` — walk a :class:`~panflute.Doc` in place and replace
   ``x-guffin`` :class:`~panflute.Link` elements using a caller-supplied resolver.
 - :func:`pandoc_to_json` — serialize a Panflute :class:`~panflute.Doc` to a
@@ -100,7 +102,7 @@ from guffin.model.vertex import (
     VertexChildren,
 )
 from guffin.model.vertex_tree import VertexTree, root_vertex
-from guffin.model.link import VertexLink, parse_vertex_link
+from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
@@ -870,6 +872,63 @@ def vertex_tree_to_pandoc(
         blocks.extend(_vertex_to_blocks(root, vertex_tree, image_files, inline_map, depth=0))
 
     return pf.Doc(*blocks, metadata=metadata), inline_map
+
+
+def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
+    """Build a :data:`VertexLinkResolver` that renders each link as its destination's content.
+
+    The returned resolver maps an ``x-guffin`` link's destination vertex to replacement
+    inlines, ignoring the link's own display text in favour of the destination's already
+    converted content (looked up in *inline_map*).  This is what makes a block reference
+    render identically to the block it points at — including Color Highlighter spans and
+    other inline markup — rather than echoing the raw reference text.
+
+    Per destination type:
+
+    - :class:`~guffin.vertex.PageVertex` — the page title, with any nested reference
+      flattened to plain text via :func:`strip_links`.
+    - :class:`~guffin.vertex.HeadingVertex`, :class:`~guffin.vertex.TextVertex`,
+      :class:`~guffin.vertex.BlockQuoteVertex` — the destination's converted text inlines.
+    - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
+      embed, otherwise a :class:`~panflute.Link` to the image source.
+    - :class:`~guffin.vertex.CodeBlockVertex` — inline :class:`~panflute.Code` (a
+      block-level code reference is handled earlier, in :func:`build_child_blocks`).
+    - :class:`~guffin.vertex.CalloutVertex`, :class:`~guffin.vertex.TableVertex` — the
+      original display inlines (no inline-representable substitute).
+
+    Args:
+        inline_map: Mapping from text string to parsed panflute inline elements, used to
+            look up a destination vertex's converted content.
+
+    Returns:
+        A resolver callable suitable for :func:`resolve_vertex_links`.
+    """
+
+    def _resolve(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
+        match vertex:
+            case PageVertex():
+                # The title is raw Pandoc Markdown that may itself contain a nested
+                # reference (an x-guffin link); parse it and flatten any such link to
+                # plain display text so the page reference renders as its bare title.
+                return strip_links(inline_map.get(vertex.title, [pf.Str(vertex.title)]))
+            case HeadingVertex():
+                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
+            case TextVertex():
+                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
+            case ImageVertex() if vertex_link.kind == VertexLinkKind.EMBED:
+                return [pf.Image(*display, url=str(vertex.source), title="")]
+            case ImageVertex():
+                return [pf.Link(*display, url=str(vertex.source))]
+            case CodeBlockVertex():
+                return [pf.Code(vertex.code, classes=[vertex.language.value])]
+            case CalloutVertex():
+                return display
+            case BlockQuoteVertex():
+                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
+            case TableVertex():
+                return display
+
+    return _resolve
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))

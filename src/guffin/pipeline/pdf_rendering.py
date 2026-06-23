@@ -40,19 +40,19 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
-from guffin.model.link import VertexLink
-from guffin.model.vertex import Vertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
-from guffin.pipeline.pandoc_rendering import pandoc_to_json, resolve_vertex_links, vertex_tree_to_pandoc
+from guffin.pipeline.pandoc_rendering import (
+    InlineMap,
+    make_resolver,
+    pandoc_to_json,
+    resolve_vertex_links,
+    vertex_tree_to_pandoc,
+)
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
-
-
-def _resolve_vertex_link(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
-    return display  # TODO: implement per-vertex-type resolution for PDF rendering
 
 
 _TEMPLATE_PACKAGE: Final[str] = "guffin.templates"
@@ -223,8 +223,10 @@ def render(
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
         image_files: Final[dict[Uid, Path]] = {uid: ref.path for uid, ref in image_refs.items()}
-        doc: Final[pf.Doc] = vertex_tree_to_pandoc(enriched_tree, image_files)[0]
-        resolve_vertex_links(doc, enriched_tree, _resolve_vertex_link)
+        pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(enriched_tree, image_files)
+        doc: Final[pf.Doc] = pandoc_result[0]
+        inline_map: Final[InlineMap] = pandoc_result[1]
+        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map))
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 
