@@ -208,6 +208,9 @@
 
 #show figure.where(kind: table): set figure.caption(position: top)
 #show figure.where(kind: table): set figure(supplement: cfg.table-prefix)
+// Left-align tables with the rest of the page; Pandoc emits tables inside a centered
+// figure (align(center)[#table(...)]), which this overrides.
+#show figure.where(kind: table): set align(left)
 
 #show figure.where(kind: image): set figure.caption(position: bottom)
 #show figure.where(kind: image): set figure(supplement: cfg.figure-prefix)
