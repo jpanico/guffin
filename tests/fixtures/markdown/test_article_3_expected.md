@@ -72,7 +72,7 @@ Internal (in-page) links:
 - <span style="color: fuchsia">**standalone image block ref ↓**</span>
   [7rthRV4UHu.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)
 - <span style="color: fuchsia">**standalone block embed ↓**</span>
-  - {{embed: section 3.1.1}}
+  - {{embed: Section 3}}
 - <span style="color: fuchsia">**standalone HEADER ref ↓**</span>
   - This is a HEADER
 - <span style="color: fuchsia">**standalone FENCED-CODE ref ↓**</span>
@@ -107,6 +107,8 @@ external (out-of-page) links:
   - Test Article 2
 - <span style="color: fuchsia">**standalone block ref ↓**</span>
   - this image **has been resized** through the Roam UI (width:257, height:None)
+- <span style="color: fuchsia">**standalone image block ref ↓**</span>
+  [A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)
 - <span style="color: fuchsia">**external block embed (from Test Article 1)**</span>:
   - {{embed: Section 2.1}}
 

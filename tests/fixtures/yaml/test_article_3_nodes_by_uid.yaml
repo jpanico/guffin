@@ -691,7 +691,7 @@ LfXmNr-tV:
   refs: null
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   props: null
@@ -848,15 +848,15 @@ MbQObdYBx:
 XkSI5xwe5:
   uid: XkSI5xwe5
   id: 4232
-  time: 1781870967600
+  time: 1782211863234
   user:
     id: 3
-  string: '{{embed: ((vH2I8xRLZ))}}'
+  string: '{{embed: ((LfXmNr-tV))}}'
   order: 0
   heading: null
   children: null
   refs:
-  - id: 4231
+  - id: 4228
   page:
     id: 4225
   open: true
@@ -1230,6 +1230,31 @@ GK_iI79mV:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+uj8YolCoE:
+  uid: uj8YolCoE
+  id: 11124
+  time: 1780844520106
+  user:
+    id: 3
+  string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 3331
+  - id: 3334
   props: null
   title: null
   sidebar: null
@@ -1687,6 +1712,31 @@ HbJZh5mTY:
   attrs: null
   lookup: null
   seen_by: null
+GQSLJp92S:
+  uid: GQSLJp92S
+  id: 11764
+  time: 1782212395925
+  user:
+    id: 3
+  string: '#c:FUCHSIA **standalone image block ref ↓** '
+  order: 14
+  heading: null
+  children:
+  - id: 11765
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 Y0xFlk7y6:
   uid: Y0xFlk7y6
   id: 11733
@@ -1843,7 +1893,7 @@ J_Vt5_C6p:
   user:
     id: 3
   string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
-  order: 14
+  order: 15
   heading: null
   children:
   - id: 4234
@@ -1935,6 +1985,31 @@ msKBuys0a:
   attrs: null
   lookup: null
   seen_by: null
+eUpKQiTiM:
+  uid: eUpKQiTiM
+  id: 11765
+  time: 1782212434637
+  user:
+    id: 3
+  string: ((uj8YolCoE))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11124
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 11764
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 gxcUrCGPT:
   uid: gxcUrCGPT
   id: 11135
@@ -2010,6 +2085,7 @@ d3T1YpYig:
   - id: 11754
   - id: 11755
   - id: 11756
+  - id: 11764
   refs: null
   page:
     id: 4225

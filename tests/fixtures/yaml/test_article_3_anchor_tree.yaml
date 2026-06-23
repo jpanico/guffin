@@ -541,7 +541,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   props: null
@@ -646,15 +646,15 @@ tree_network:
   seen_by: null
 - uid: XkSI5xwe5
   id: 4232
-  time: 1781870967600
+  time: 1782211863234
   user:
     id: 3
-  string: '{{embed: ((vH2I8xRLZ))}}'
+  string: '{{embed: ((LfXmNr-tV))}}'
   order: 0
   heading: null
   children: null
   refs:
-  - id: 4231
+  - id: 4228
   page:
     id: 4225
   open: true
@@ -1276,6 +1276,30 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: GQSLJp92S
+  id: 11764
+  time: 1782212395925
+  user:
+    id: 3
+  string: '#c:FUCHSIA **standalone image block ref ↓** '
+  order: 14
+  heading: null
+  children:
+  - id: 11765
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: Y0xFlk7y6
   id: 11733
   time: 1782173520044
@@ -1425,7 +1449,7 @@ tree_network:
   user:
     id: 3
   string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
-  order: 14
+  order: 15
   heading: null
   children:
   - id: 4234
@@ -1514,6 +1538,30 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: eUpKQiTiM
+  id: 11765
+  time: 1782212434637
+  user:
+    id: 3
+  string: ((uj8YolCoE))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11124
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 11764
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: gxcUrCGPT
   id: 11135
   time: 1782173300799
@@ -1586,6 +1634,7 @@ tree_network:
   - id: 11754
   - id: 11755
   - id: 11756
+  - id: 11764
   refs: null
   page:
     id: 4225
@@ -2001,7 +2050,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: false
+    open: true
     parents:
     - id: 4225
     props: null
@@ -2222,6 +2271,31 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11124':
+    uid: uj8YolCoE
+    id: 11124
+    time: 1780844520106
+    user:
+      id: 3
+    string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    - id: 3334
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '4226':
     uid: LfaVt18Iw
     id: 4226
@@ -2258,30 +2332,6 @@ refs_by_id:
     open: true
     parents:
     - id: 4225
-    props: null
-    title: null
-    sidebar: null
-    attrs: null
-    lookup: null
-    seen_by: null
-  '4231':
-    uid: vH2I8xRLZ
-    id: 4231
-    time: 1773091241939
-    user:
-      id: 3
-    string: section 3.1.1
-    order: 0
-    heading: null
-    children: null
-    refs: null
-    page:
-      id: 4225
-    open: true
-    parents:
-    - id: 4225
-    - id: 4228
-    - id: 4230
     props: null
     title: null
     sidebar: null
@@ -3221,15 +3271,15 @@ refs_by_id:
   '4232':
     uid: XkSI5xwe5
     id: 4232
-    time: 1781870967600
+    time: 1782211863234
     user:
       id: 3
-    string: '{{embed: ((vH2I8xRLZ))}}'
+    string: '{{embed: ((LfXmNr-tV))}}'
     order: 0
     heading: null
     children: null
     refs:
-    - id: 4231
+    - id: 4228
     page:
       id: 4225
     open: true
@@ -3313,6 +3363,30 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '4231':
+    uid: vH2I8xRLZ
+    id: 4231
+    time: 1773091241939
+    user:
+      id: 3
+    string: section 3.1.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4228
+    - id: 4230
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11757':
     uid: _6Z-gzw6R
     id: 11757
@@ -3362,6 +3436,7 @@ refs_by_id:
     - id: 11754
     - id: 11755
     - id: 11756
+    - id: 11764
     refs: null
     page:
       id: 4225
@@ -3422,7 +3497,7 @@ refs_by_id:
     user:
       id: 3
     string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
-    order: 14
+    order: 15
     heading: null
     children:
     - id: 4234
@@ -3787,6 +3862,56 @@ refs_by_id:
     parents:
     - id: 4225
     - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11764':
+    uid: GQSLJp92S
+    id: 11764
+    time: 1782212395925
+    user:
+      id: 3
+    string: '#c:FUCHSIA **standalone image block ref ↓** '
+    order: 14
+    heading: null
+    children:
+    - id: 11765
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11765':
+    uid: eUpKQiTiM
+    id: 11765
+    time: 1782212434637
+    user:
+      id: 3
+    string: ((uj8YolCoE))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11124
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 11764
     props: null
     title: null
     sidebar: null

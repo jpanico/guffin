@@ -68,6 +68,13 @@ def fetch_images(
     ``<sha256>.<ext>`` filename.  Vertices that fail to fetch are skipped
     with a warning and will fall back to a hyperlink in the rendered output.
 
+    Every vertex in :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` is scanned
+    (covering both :attr:`~guffin.model.vertex_tree.VertexTree.tree_vertices` and
+    :attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`, deduplicated by UID),
+    so an image referenced from another page (a block reference whose destination is
+    an image outside the anchor tree) is fetched and bundled like an in-tree image,
+    rather than left as a remote hyperlink.
+
     Args:
         vertex_tree: The vertex tree whose image assets to fetch.
         api_endpoint: Roam Local API endpoint (URL + bearer token).
@@ -82,7 +89,7 @@ def fetch_images(
         from the mapping.
     """
     image_refs: dict[Uid, ImageRef] = {}
-    for vertex in vertex_tree.tree_vertices:
+    for vertex in vertex_tree.uid_map.values():
         if not isinstance(vertex, ImageVertex):
             continue
         try:

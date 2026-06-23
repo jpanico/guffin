@@ -531,12 +531,12 @@
   time: 0
   user:
     id: 0
-  string: '{{embed: ((vH2I8xRLZ))}}'
+  string: '{{embed: ((LfXmNr-tV))}}'
   order: 0
   heading: null
   children: null
   refs:
-  - id: 4231
+  - id: 4228
   page:
     id: 4225
   parents:
@@ -1054,6 +1054,26 @@
   props: null
   title: null
   attrs: null
+- uid: GQSLJp92S
+  id: 11764
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **standalone image block ref ↓** '
+  order: 14
+  heading: null
+  children:
+  - id: 11765
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
 - uid: Y0xFlk7y6
   id: 11733
   time: 0
@@ -1179,7 +1199,7 @@
   user:
     id: 0
   string: '#c:FUCHSIA **external block embed (from [[[[Test Article]] 1]])**:'
-  order: 14
+  order: 15
   heading: null
   children:
   - id: 4234
@@ -1252,6 +1272,26 @@
   props: null
   title: null
   attrs: null
+- uid: eUpKQiTiM
+  id: 11765
+  time: 0
+  user:
+    id: 0
+  string: ((uj8YolCoE))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11124
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 11764
+  props: null
+  title: null
+  attrs: null
 - uid: gxcUrCGPT
   id: 11135
   time: 0
@@ -1316,6 +1356,7 @@
   - id: 11754
   - id: 11755
   - id: 11756
+  - id: 11764
   refs: null
   page:
     id: 4225

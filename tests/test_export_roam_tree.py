@@ -3,13 +3,16 @@
 import logging
 import os
 import pathlib
+import shutil
 from typing import Final
 from unittest.mock import patch
 
 import pytest
+import yaml
 from typer.testing import CliRunner
 
 from guffin.cli.export_roam_tree import app
+from guffin.roam.local_api import Response as LocalApiResponse
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 
@@ -19,6 +22,7 @@ from conftest import (
     FIXTURES_MD_DIR,
     FIXTURES_MDBUNDLE_DIR,
     FIXTURES_PDF_DIR,
+    FIXTURES_YAML_DIR,
     PDF_CREATION_TIMESTAMP,
     article1_node_tree,
 )
@@ -125,6 +129,76 @@ class TestExportRoamTreeBundle:
         bundle_dir: pathlib.Path = tmp_path / "Test_Article_1.mdbundle"
         assert bundle_dir.is_dir()
         assert (bundle_dir / "Test_Article_1.md").exists()
+
+
+class TestExportRoamTreeMdbundleFromRaw:
+    """End-to-end test of export_roam_tree --bundle for [[Test Article]] 3, from the raw fetch result."""
+
+    def test_mdbundle_from_raw_result_matches_fixture(self, tmp_path: pathlib.Path) -> None:
+        """Exporting the bundle from the recorded raw Datalog response matches the baseline mdbundle.
+
+        Drives the full pipeline offline: the only external boundaries are stubbed.
+        ``invoke_action`` (the Local API node fetch) returns the recorded
+        ``test_article_3_raw_result.yaml`` wire response, so the real RoamNode parsing,
+        tree build, transcription, and bundle rendering all run.  The Cloud Firestore
+        asset fetch is avoided by pre-seeding the cache directory with the baseline
+        bundle's images — their filenames are the ``<sha256(url)>.<ext>`` cache keys, so
+        ``fetch_and_cache_asset`` resolves them as cache hits without any network call.
+        """
+        raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_raw_result.yaml").read_text())
+        api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
+
+        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.mdbundle"
+        cache_dir: Final[pathlib.Path] = tmp_path / "cache"
+        cache_dir.mkdir()
+        for asset in baseline.iterdir():
+            if asset.suffix != ".md":
+                shutil.copy(asset, cache_dir / asset.name)
+
+        output_dir: Final[pathlib.Path] = tmp_path / "out"
+        runner: CliRunner = CliRunner()
+        with patch("guffin.roam.node_fetch.invoke_action", return_value=api_response):
+            # configure_logging() installs a root StreamHandler at import time; CliRunner
+            # closes its captured stream after invoke, leaving a dangling handler that
+            # raises on the next write.  Clear root handlers for the duration of invoke.
+            saved_handlers = logging.root.handlers[:]
+            logging.root.handlers.clear()
+            try:
+                result = runner.invoke(
+                    app,
+                    [
+                        "[[Test Article]] 3",
+                        "--port",
+                        "3333",
+                        "--graph",
+                        "SCFH",
+                        "--token",
+                        "tok",
+                        "--output-dir",
+                        str(output_dir),
+                        "--format",
+                        "markdown",
+                        "--bundle",
+                        "--cache-dir",
+                        str(cache_dir),
+                    ],
+                )
+            finally:
+                logging.root.handlers = saved_handlers
+
+        assert result.exit_code == 0, result.output
+        actual: Final[pathlib.Path] = output_dir / "Test_Article_3.mdbundle"
+        assert actual.is_dir()
+        expected_names: Final[list[str]] = sorted(f.name for f in baseline.iterdir())
+        actual_names: Final[list[str]] = sorted(f.name for f in actual.iterdir())
+        assert actual_names == expected_names
+        for name in expected_names:
+            if name.endswith(".md"):
+                assert (actual / name).read_text(encoding="utf-8") == (baseline / name).read_text(
+                    encoding="utf-8"
+                ), f"content mismatch: {name}"
+            else:
+                assert (actual / name).read_bytes() == (baseline / name).read_bytes(), f"content mismatch: {name}"
 
 
 class TestExportRoamTreeNotFound:

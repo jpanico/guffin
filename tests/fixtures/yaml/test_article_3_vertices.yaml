@@ -278,8 +278,8 @@
 - vertex_type: guffin/text
   uid: XkSI5xwe5
   refs:
-  - vH2I8xRLZ
-  text: '{{embed: [section 3.1.1](x-guffin:vertex/vH2I8xRLZ)}}'
+  - LfXmNr-tV
+  text: '{{embed: [Section 3](x-guffin:vertex/LfXmNr-tV)}}'
 - vertex_type: guffin/text
   uid: Y0xFlk7y6
   children:
@@ -324,6 +324,7 @@
   - SYAWArc3S
   - Dt8evi7AW
   - vLxyRJcr2
+  - GQSLJp92S
   - 8jkmASa1c
   text: 'external (out-of-page) links:'
 - vertex_type: guffin/text
@@ -429,6 +430,18 @@
   refs:
   - tWkumkdUE
   text: '[this image **has been resized** through the Roam UI (width:257, height:None)](x-guffin:vertex/tWkumkdUE)'
+- vertex_type: guffin/text
+  uid: GQSLJp92S
+  children:
+  - eUpKQiTiM
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone image block ref ↓**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: eUpKQiTiM
+  refs:
+  - uj8YolCoE
+  text: '[![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)](x-guffin:vertex/uj8YolCoE)'
 - vertex_type: guffin/text
   uid: 8jkmASa1c
   children:
