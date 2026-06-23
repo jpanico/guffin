@@ -141,83 +141,83 @@
   - LBFKibPIj
   - SYZfEd44O
   - lF-qY0Xrs
-  text: '[**inline PAGE ref ➔**]{color="fuchsia"} [Test Article 3](x-guffin:vertex/SYZfEd44O)'
+  text: '[**inline PAGE ref ⟶**]{color="fuchsia"} [Test Article 3](x-guffin:vertex/SYZfEd44O)'
 - vertex_type: guffin/text
   uid: gxcUrCGPT
   refs:
   - lF-qY0Xrs
   - riLVzfX-6
-  text: '[**inline PLAIN TEXT ref ➔**]{color="fuchsia"} [This para features plain
+  text: '[**inline PLAIN TEXT ref ⟶**]{color="fuchsia"} [This para features plain
     text](x-guffin:vertex/riLVzfX-6)'
 - vertex_type: guffin/text
   uid: 78w6MjSqo
   refs:
   - lF-qY0Xrs
   - msKBuys0a
-  text: '[**inline ITALICS ref ➔**]{color="fuchsia"} [This para features *italics*](x-guffin:vertex/msKBuys0a)'
+  text: '[**inline ITALICS ref ⟶**]{color="fuchsia"} [This para features *italics*](x-guffin:vertex/msKBuys0a)'
 - vertex_type: guffin/text
   uid: MbQObdYBx
   refs:
   - lF-qY0Xrs
   - iiSioG0Ut
-  text: '[**inline BOLD ref ➔**]{color="fuchsia"} [This para features **bold**](x-guffin:vertex/iiSioG0Ut)'
+  text: '[**inline BOLD ref ⟶**]{color="fuchsia"} [This para features **bold**](x-guffin:vertex/iiSioG0Ut)'
 - vertex_type: guffin/text
   uid: cKCA_EwGZ
   refs:
   - lF-qY0Xrs
   - JRU5IhUB-
-  text: '[**inline STRIKETHROUGH ref ➔**]{color="fuchsia"} [This para features ~~strikethrough~~](x-guffin:vertex/JRU5IhUB-)'
+  text: '[**inline STRIKETHROUGH ref ⟶**]{color="fuchsia"} [This para features ~~strikethrough~~](x-guffin:vertex/JRU5IhUB-)'
 - vertex_type: guffin/text
   uid: HbJZh5mTY
   refs:
   - lF-qY0Xrs
   - Q-nJAf9KK
-  text: '[**inline HIGHLIGHT ref ➔**]{color="fuchsia"} [This para features [highlight]{.mark}](x-guffin:vertex/Q-nJAf9KK)'
+  text: '[**inline HIGHLIGHT ref ⟶**]{color="fuchsia"} [This para features [highlight]{.mark}](x-guffin:vertex/Q-nJAf9KK)'
 - vertex_type: guffin/text
   uid: FWULkh5nm
   refs:
   - lF-qY0Xrs
   - BuP4ifx3v
-  text: '[**inline INLINE-CODE ref ➔**]{color="fuchsia"} [This para features `inline-code`](x-guffin:vertex/BuP4ifx3v)'
+  text: '[**inline INLINE-CODE ref ⟶**]{color="fuchsia"} [This para features `inline-code`](x-guffin:vertex/BuP4ifx3v)'
 - vertex_type: guffin/text
   uid: hWsG-ExLV
   refs:
   - LfaVt18Iw
   - lF-qY0Xrs
-  text: '[**inline PARENT BLOCK ref ➔**]{color="fuchsia"}  [Internal (in-page) links:](x-guffin:vertex/LfaVt18Iw)'
+  text: '[**inline PARENT BLOCK ref ⟶**]{color="fuchsia"}  [Internal (in-page) links:](x-guffin:vertex/LfaVt18Iw)'
 - vertex_type: guffin/text
   uid: SsmyWLZij
   refs:
   - lF-qY0Xrs
   - 7XdTiY_ZF
-  text: '[**inline HEADER ref ➔**]{color="fuchsia"}  [This is a HEADER](x-guffin:vertex/7XdTiY_ZF)'
+  text: '[**inline HEADER ref ⟶**]{color="fuchsia"}  [This is a HEADER](x-guffin:vertex/7XdTiY_ZF)'
 - vertex_type: guffin/text
   uid: 48ZQ-2b7U
   refs:
   - lF-qY0Xrs
   - vk7Up544K
-  text: '[**inline BOLD ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE **This span is
+  text: '[**inline BOLD ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE **This span is
     BOLD orange text color**. This span is not.](x-guffin:vertex/vk7Up544K)'
 - vertex_type: guffin/text
   uid: JCyO1oiVt
   refs:
   - lF-qY0Xrs
   - zmb1Uac0S
-  text: '[**inline HIGHLIGHTED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE [This
+  text: '[**inline HIGHLIGHTED ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE [This
     span is highlighted orange.]{.mark} This span is not.](x-guffin:vertex/zmb1Uac0S)'
 - vertex_type: guffin/text
   uid: 7AR6910sJ
   refs:
   - lF-qY0Xrs
   - GK_iI79mV
-  text: '[**inline UNDERLINED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE __This
+  text: '[**inline UNDERLINED ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE __This
     span is underlined orange. __This span is not.](x-guffin:vertex/GK_iI79mV)'
 - vertex_type: guffin/text
   uid: 2IaJFXDZT
   refs:
   - lF-qY0Xrs
   - zAIxMFBIB
-  text: '[**inline BOXED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE ~~This span
+  text: '[**inline BOXED ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE ~~This span
     has box color orange.~~ This span does not.](x-guffin:vertex/zAIxMFBIB)'
 - vertex_type: guffin/text
   uid: b8ob6GcbI
@@ -225,7 +225,7 @@
   - xc_eQjqyE
   refs:
   - lF-qY0Xrs
-  text: '[**standalone page ref ⬇**]{color="fuchsia"} '
+  text: '[**standalone page ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: xc_eQjqyE
   refs:
@@ -238,7 +238,7 @@
   - 2Zo0HNy5o
   refs:
   - lF-qY0Xrs
-  text: '[**standalone block ref ⬇**]{color="fuchsia"} '
+  text: '[**standalone block ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: 2Zo0HNy5o
   refs:
@@ -250,7 +250,7 @@
   - JpKqqwnAJ
   refs:
   - lF-qY0Xrs
-  text: '[**standalone parent block ref ⬇**]{color="fuchsia"} '
+  text: '[**standalone parent block ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: JpKqqwnAJ
   refs:
@@ -262,7 +262,7 @@
   - S81O4tG9t
   refs:
   - lF-qY0Xrs
-  text: '[**standalone image block ref ⬇**]{color="fuchsia"} '
+  text: '[**standalone image block ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: S81O4tG9t
   refs:
@@ -274,7 +274,7 @@
   - XkSI5xwe5
   refs:
   - lF-qY0Xrs
-  text: '[**standalone block embed ⬇**]{color="fuchsia"}'
+  text: '[**standalone block embed ↓**]{color="fuchsia"}'
 - vertex_type: guffin/text
   uid: XkSI5xwe5
   refs:
@@ -286,7 +286,7 @@
   - tyOSwiz6l
   refs:
   - lF-qY0Xrs
-  text: '[**standalone HEADER ref ⬇**]{color="fuchsia"}'
+  text: '[**standalone HEADER ref ↓**]{color="fuchsia"}'
 - vertex_type: guffin/text
   uid: tyOSwiz6l
   refs:
@@ -298,7 +298,7 @@
   - cCYHqUNs8
   refs:
   - lF-qY0Xrs
-  text: '[**standalone FENCED-CODE ref ⬇**]{color="fuchsia"}'
+  text: '[**standalone FENCED-CODE ref ↓**]{color="fuchsia"}'
 - vertex_type: guffin/text
   uid: cCYHqUNs8
   refs:
@@ -332,77 +332,77 @@
   - LBFKibPIj
   - lF-qY0Xrs
   - lDYWYqYSL
-  text: '[**inline page ref ➔**]{color="fuchsia"} [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+  text: '[**inline page ref ⟶**]{color="fuchsia"} [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
 - vertex_type: guffin/text
   uid: n528kYv5_
   refs:
   - lF-qY0Xrs
   - tWkumkdUE
-  text: '[**inline block ref ➔**]{color="fuchsia"} [this image **has been resized**
+  text: '[**inline block ref ⟶**]{color="fuchsia"} [this image **has been resized**
     through the Roam UI (width:257, height:None)](x-guffin:vertex/tWkumkdUE)'
 - vertex_type: guffin/text
   uid: AaB6F4c0F
   refs:
   - lF-qY0Xrs
   - 2yQYaKIEV
-  text: '[**inline ITALICS ref ➔**]{color="fuchsia"} [This para features *italics*](x-guffin:vertex/2yQYaKIEV)'
+  text: '[**inline ITALICS ref ⟶**]{color="fuchsia"} [This para features *italics*](x-guffin:vertex/2yQYaKIEV)'
 - vertex_type: guffin/text
   uid: DZsnC1-jM
   refs:
   - lF-qY0Xrs
   - QB8DChDBs
-  text: '[**inline BOLD ref ➔**]{color="fuchsia"} [This para features **bold**](x-guffin:vertex/QB8DChDBs)'
+  text: '[**inline BOLD ref ⟶**]{color="fuchsia"} [This para features **bold**](x-guffin:vertex/QB8DChDBs)'
 - vertex_type: guffin/text
   uid: t62Kwufzm
   refs:
   - lF-qY0Xrs
   - 7dBusjzDA
-  text: '[**inline STRIKETHROUGH ref ➔**]{color="fuchsia"} [This para features ~~strikethrough~~](x-guffin:vertex/7dBusjzDA)'
+  text: '[**inline STRIKETHROUGH ref ⟶**]{color="fuchsia"} [This para features ~~strikethrough~~](x-guffin:vertex/7dBusjzDA)'
 - vertex_type: guffin/text
   uid: 88ny0VOH4
   refs:
   - lF-qY0Xrs
   - VvbwbLchA
-  text: '[**inline HIGHLIGHT ref ➔**]{color="fuchsia"} [This para features [highlight]{.mark}](x-guffin:vertex/VvbwbLchA)'
+  text: '[**inline HIGHLIGHT ref ⟶**]{color="fuchsia"} [This para features [highlight]{.mark}](x-guffin:vertex/VvbwbLchA)'
 - vertex_type: guffin/text
   uid: 8n19o7ito
   refs:
   - lF-qY0Xrs
   - ETesnk4Zi
-  text: '[**inline INLINE-CODE ref ➔**]{color="fuchsia"} [This para features `inline-code`](x-guffin:vertex/ETesnk4Zi)'
+  text: '[**inline INLINE-CODE ref ⟶**]{color="fuchsia"} [This para features `inline-code`](x-guffin:vertex/ETesnk4Zi)'
 - vertex_type: guffin/text
   uid: SCzzQaVai
   refs:
   - 0EgPyHSZi
   - lF-qY0Xrs
-  text: '[**inline HEADER ref ➔**]{color="fuchsia"}  [Section 1](x-guffin:vertex/0EgPyHSZi)'
+  text: '[**inline HEADER ref ⟶**]{color="fuchsia"}  [Section 1](x-guffin:vertex/0EgPyHSZi)'
 - vertex_type: guffin/text
   uid: chSSa7hfQ
   refs:
   - lF-qY0Xrs
   - Rjt1IvrVq
-  text: '[**inline BOLD ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE **This span is
+  text: '[**inline BOLD ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE **This span is
     BOLD orange text color**. This span is not.](x-guffin:vertex/Rjt1IvrVq)'
 - vertex_type: guffin/text
   uid: HB9MEj5W8
   refs:
   - lF-qY0Xrs
   - 9a_6taJAn
-  text: '[**inline HIGHLIGHTED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE [This
+  text: '[**inline HIGHLIGHTED ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE [This
     span is highlighted orange.]{.mark} This span is not.](x-guffin:vertex/9a_6taJAn)'
 - vertex_type: guffin/text
   uid: LKHCU5I3z
   refs:
   - lF-qY0Xrs
   - _EtYSMJNn
-  text: '[**inline UNDERLINED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE __This
+  text: '[**inline UNDERLINED ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE __This
     span is underlined orange. __This span is not.](x-guffin:vertex/_EtYSMJNn)'
 - vertex_type: guffin/text
   uid: SYAWArc3S
   refs:
   - lF-qY0Xrs
   - T6cykqu88
-  text: '[**inline BOXED ORANGE ref ➔**]{color="fuchsia"}  [#c:ORANGE ~~This span
+  text: '[**inline BOXED ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE ~~This span
     has box color orange.~~ This span does not.](x-guffin:vertex/T6cykqu88)'
 - vertex_type: guffin/text
   uid: Dt8evi7AW
@@ -410,7 +410,7 @@
   - acAIiueY_
   refs:
   - lF-qY0Xrs
-  text: '[**standalone page ref ⬇**]{color="fuchsia"} '
+  text: '[**standalone page ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: acAIiueY_
   refs:
@@ -423,7 +423,7 @@
   - nmFudOFkf
   refs:
   - lF-qY0Xrs
-  text: '[**standalone block ref ⬇**]{color="fuchsia"} '
+  text: '[**standalone block ref ↓**]{color="fuchsia"} '
 - vertex_type: guffin/text
   uid: nmFudOFkf
   refs:
