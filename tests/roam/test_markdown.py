@@ -1,16 +1,19 @@
-"""Tests for the guffin.roam.primitives module."""
+"""Tests for the guffin.roam.markdown regex constants and callout parser."""
 
 from typing import Final
 
 import pytest
-import regex
-from pydantic import TypeAdapter, ValidationError
+from pydantic import ValidationError
 
-from guffin.roam.markdown import BLOCK_REF_RE, CALLOUT_RE, PAGE_REF_RE, CalloutType, RoamCallout, parse_callout
-from guffin.roam.primitives import ANCHORED_UID_PATTERN, ANCHORED_UID_RE, UID_PATTERN, UID_RE, Uid
-
-_VALID_UID: Final[str] = "abc123xyz"
-_UID_ADAPTER: Final[TypeAdapter[str]] = TypeAdapter(Uid)
+from guffin.roam.markdown import (
+    BLOCK_EMBED_RE,
+    BLOCK_REF_RE,
+    CALLOUT_RE,
+    PAGE_REF_RE,
+    CalloutType,
+    RoamCallout,
+    parse_callout,
+)
 
 _FIRESTORE_URL: Final[str] = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
@@ -396,74 +399,48 @@ class TestBlockRefRE:
 
 
 # ---------------------------------------------------------------------------
-# TestUidPatterns
+# TestBlockEmbedRE
 # ---------------------------------------------------------------------------
 
 
-class TestUidPatterns:
-    """Tests for the UID_PATTERN / UID_RE / ANCHORED_UID_PATTERN / ANCHORED_UID_RE constants."""
+class TestBlockEmbedRE:
+    """Tests for BLOCK_EMBED_RE — the Roam block embed {{embed: ((<uid>))}} regex."""
 
-    def test_unanchored_pattern_has_no_anchors(self) -> None:
-        """Test that the canonical UID_PATTERN carries no ^ or $ anchors."""
-        assert "^" not in UID_PATTERN
-        assert "$" not in UID_PATTERN
+    # --- match cases ---
 
-    def test_unanchored_pattern_is_embeddable(self) -> None:
-        """Test that UID_PATTERN can match a UID embedded in surrounding text."""
-        assert regex.search(UID_PATTERN, "see ((abc123xyz)) here") is not None
+    def test_basic_match_full_string(self) -> None:
+        """Full embed string is consumed by a single match."""
+        m = BLOCK_EMBED_RE.search("{{embed: ((wdMgyBiP9))}}")
+        assert m is not None
+        assert m.group(0) == "{{embed: ((wdMgyBiP9))}}"
 
-    def test_unanchored_pattern_fullmatches_bare_uid(self) -> None:
-        """Test that UID_PATTERN fully matches a bare nine-character UID."""
-        assert regex.fullmatch(UID_PATTERN, _VALID_UID) is not None
+    def test_uid_group(self) -> None:
+        """Named group 'uid' captures the embedded block's UID (carried through from BLOCK_REF_RE)."""
+        m = BLOCK_EMBED_RE.search("{{embed: ((LfXmNr-tV))}}")
+        assert m is not None
+        assert m.group("uid") == "LfXmNr-tV"
 
-    def test_uid_re_finds_embedded_uid(self) -> None:
-        """Test that the unanchored UID_RE finds a UID embedded in surrounding text."""
-        assert UID_RE.search("see ((abc123xyz)) here") is not None
+    def test_inline_embed(self) -> None:
+        """An embed surrounded by other text is captured."""
+        m = BLOCK_EMBED_RE.search("see {{embed: ((wdMgyBiP9))}} here")
+        assert m is not None
+        assert m.group(0) == "{{embed: ((wdMgyBiP9))}}"
+        assert m.group("uid") == "wdMgyBiP9"
 
-    def test_uid_re_matches_prefix_of_longer_string(self) -> None:
-        """Test that the unanchored UID_RE matches the leading UID of a longer string."""
-        assert UID_RE.match("abc123xyz0") is not None
+    # --- no-match cases ---
 
-    def test_anchored_pattern_wraps_unanchored(self) -> None:
-        """Test that ANCHORED_UID_PATTERN is UID_PATTERN bracketed by ^ and $."""
-        assert ANCHORED_UID_PATTERN == f"^{UID_PATTERN}$"
+    def test_no_match_bare_block_ref(self) -> None:
+        """A bare block reference without the {{embed: }} wrapper does not match."""
+        assert BLOCK_EMBED_RE.search("((wdMgyBiP9))") is None
 
-    def test_anchored_uid_re_matches_exact_uid(self) -> None:
-        """Test that ANCHORED_UID_RE matches a string that is exactly a UID."""
-        assert ANCHORED_UID_RE.match(_VALID_UID) is not None
+    def test_no_match_missing_space(self) -> None:
+        """The literal single space after 'embed:' is required."""
+        assert BLOCK_EMBED_RE.search("{{embed:((wdMgyBiP9))}}") is None
 
-    def test_anchored_uid_re_rejects_too_long(self) -> None:
-        """Test that ANCHORED_UID_RE rejects a string longer than nine characters."""
-        assert ANCHORED_UID_RE.match("abc123xyz0") is None
+    def test_no_match_uid_not_a_block_ref(self) -> None:
+        """An embed whose target is a bare UID rather than a ((...)) reference does not match."""
+        assert BLOCK_EMBED_RE.search("{{embed: wdMgyBiP9}}") is None
 
-    def test_anchored_uid_re_rejects_embedded_uid(self) -> None:
-        """Test that ANCHORED_UID_RE does not match a UID surrounded by other characters."""
-        assert ANCHORED_UID_RE.match("xxabc123xyz") is None
-
-
-# ---------------------------------------------------------------------------
-# TestUidType
-# ---------------------------------------------------------------------------
-
-
-class TestUidType:
-    """Tests for the Uid annotated type's pattern validation."""
-
-    def test_accepts_valid_uid(self) -> None:
-        """Test that a well-formed nine-character UID validates."""
-        assert _UID_ADAPTER.validate_python(_VALID_UID) == _VALID_UID
-
-    def test_rejects_too_short(self) -> None:
-        """Test that an under-length UID is rejected."""
-        with pytest.raises(ValidationError):
-            _UID_ADAPTER.validate_python("abc12")
-
-    def test_rejects_too_long(self) -> None:
-        """Test that an over-length UID is rejected."""
-        with pytest.raises(ValidationError):
-            _UID_ADAPTER.validate_python("abc123xyz0")
-
-    def test_rejects_embedded_uid(self) -> None:
-        """Test that a string merely containing a UID is rejected (anchoring is load-bearing)."""
-        with pytest.raises(ValidationError):
-            _UID_ADAPTER.validate_python("xxabc123xyzyy")
+    def test_no_match_uid_too_short(self) -> None:
+        """A UID shorter than nine characters does not match."""
+        assert BLOCK_EMBED_RE.search("{{embed: ((abc1234))}}") is None

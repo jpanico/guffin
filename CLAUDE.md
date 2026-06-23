@@ -132,7 +132,14 @@ Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `test
 - Line length: 120 chars (Black + Ruff)
 - Docstrings: PEP 257 format (pydocstringformatter), Google style convention (Ruff)
 - **Dependent-agnostic documentation**: a module, class, or function must document what it offers on its own terms — never how its dependents (importers/callers) consume it. Don't name downstream modules or describe their usage in upstream docstrings or comments (e.g. avoid "X and Y delegate their logic here" or "shared by Z"); describe behaviour through the API's own parameters and contract, so the documentation reads identically regardless of who depends on it.
-- Tests: pytest, files named `test_*.py`
+- **Tests**: pytest, files named `test_*.py`. The `tests/` tree mirrors `src/guffin/`:
+  each test module lives in the subpackage of the module it covers
+  (`tests/<package>/test_<module>.py`, e.g. `tests/roam/test_markdown.py` for
+  `guffin/roam/markdown.py`, `tests/common/test_markdown.py` for `guffin/common/markdown.py`).
+  pytest runs in `importlib` import mode (`addopts = "--import-mode=importlib"`), so test
+  files need no `__init__.py` and basenames may repeat across packages. `tests/conftest.py`
+  and `tests/regen_fixtures.py` stay at the `tests/` root; shared non-fixture helpers are
+  imported via `from conftest import ...` (`tests/` is on `pythonpath`).
 - **Strong typing**: all Python code must use type annotations throughout; no `Any` types; enforced by pyright in strict mode
 - **Regular expressions**: use the third-party `regex` package **exclusively** — never the stdlib `re` module. Import as `import regex` and use `regex.compile`, `regex.Pattern[str]`, `regex.Match[str]`, `regex.DOTALL`, etc. `regex` is a drop-in superset of `re` (it defaults to `re`-compatible behaviour) and additionally supports recursive patterns (e.g. `(?R)` for matching balanced, nestable Roam page references). `types-regex` (a dev dependency) provides the stubs required by pyright strict mode.
 - **Bash tool calls**: never chain multiple commands with `&&` in a single Bash tool call; use separate Bash tool calls instead. Never use heredoc embeds (`$(cat <<'EOF'...EOF)`) or ANSI-C quoting (`$'...'`) in Bash tool calls; both embed literal newlines in the command string, which prevents permission-pattern matching. For `git commit` messages that need multiple paragraphs, use repeated `-m` flags instead: `git commit -m "subject" -m "body" -m "Co-Authored-By: ..."` — each `-m` becomes a blank-line-separated paragraph.

@@ -1,4 +1,4 @@
-"""Tests for graph module utility functions."""
+"""Tests for guffin.model.vertex_tree filter helpers: image_vertices, image_urls, root_vertex."""
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType

@@ -7,7 +7,8 @@ Public symbols:
   callout block string; :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
   link whose URL is a Cloud Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
   a Roam page reference ``[[<page_name>]]``; :data:`BLOCK_REF_RE` — compiled regex matching a
-  Roam block reference ``((<uid>))``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
+  Roam block reference ``((<uid>))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
+  block embed ``{{embed: ((<uid>))}}``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
   Roam aliased page link ``[display]([[Page Name]])``; :data:`ITALIC_RE` — compiled regex
   matching Roam italic syntax ``__text__``; :data:`HIGHLIGHT_RE` — compiled regex matching Roam
   highlight syntax ``^^text^^``; :data:`COLOR_BOLD_RE`, :data:`COLOR_HIGHLIGHT_RE`,
@@ -261,6 +262,23 @@ Example match on ``((wdMgyBiP9))``:
 
 - ``match.group(0)`` — the full ``((wdMgyBiP9))`` string.
 - ``match.group("uid")`` — just ``wdMgyBiP9``.
+"""
+
+BLOCK_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(rf"\{{\{{embed: {BLOCK_REF_RE.pattern}\}}\}}")
+"""Compiled regex matching a Roam block embed ``{{embed: ((<uid>))}}``.
+
+Wraps a :data:`BLOCK_REF_RE` block reference in the literal ``{{embed: `` and ``}}``
+delimiters (note the single space after ``embed:``).  The embedded reference's ``uid``
+named group is carried through, so the referenced node UID is available on a match.
+
+Named group:
+
+- ``uid`` — the 9-character UID of the embedded block.
+
+Example match on ``{{embed: ((LfXmNr-tV))}}``:
+
+- ``match.group(0)`` — the full ``{{embed: ((LfXmNr-tV))}}`` string.
+- ``match.group("uid")`` — just ``LfXmNr-tV``.
 """
 
 PAGE_LINK_ALIAS_RE: Final[regex.Pattern[str]] = regex.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")

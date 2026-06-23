@@ -93,6 +93,10 @@ pythonVersion = "3.14"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["tests"]
+# importlib import mode lets the test tree mirror src/guffin/ in package subdirectories:
+# test modules are imported by path, so duplicate basenames across packages (e.g.
+# common/test_markdown.py and roam/test_markdown.py) coexist without __init__.py files.
+addopts = "--import-mode=importlib"
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

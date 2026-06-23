@@ -1,4 +1,4 @@
-"""Tests for the graph module."""
+"""Tests for guffin.model.vertex_tree.VertexTreeDFSIterator."""
 
 import pytest
 

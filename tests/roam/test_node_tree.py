@@ -1,4 +1,4 @@
-"""Tests for the roam_tree module."""
+"""Tests for the guffin.roam.node_tree module."""
 
 import pytest
 
