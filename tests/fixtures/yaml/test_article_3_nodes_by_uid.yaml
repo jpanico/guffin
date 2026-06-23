@@ -21,6 +21,32 @@ oVvEsh7dx:
   attrs: null
   lookup: null
   seen_by: null
+wjN-kVF3B:
+  uid: wjN-kVF3B
+  id: 11225
+  time: 1781362773659
+  user:
+    id: 3
+  string: '{{table}}'
+  order: 1
+  heading: null
+  children:
+  - id: 11226
+  - id: 11229
+  - id: 11232
+  refs: null
+  page:
+    id: 11137
+  open: false
+  parents:
+  - id: 11137
+  - id: 11150
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 zpSBqgxe4:
   uid: zpSBqgxe4
   id: 11767
@@ -142,6 +168,31 @@ SYZfEd44O:
   attrs: null
   lookup: null
   seen_by: null
+7MoH-wIQh:
+  uid: 7MoH-wIQh
+  id: 4224
+  time: 1780843750454
+  user:
+    id: 3
+  string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST\
+    \ DATA – DO NOT REMOVE\n "
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 4223
+  open: true
+  parents:
+  - id: 4223
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 QnqMI7-2J:
   uid: QnqMI7-2J
   id: 11771
@@ -233,6 +284,31 @@ LBFKibPIj:
   attrs: null
   lookup: null
   seen_by: null
+yFUau9Cpg:
+  uid: yFUau9Cpg
+  id: 4025
+  time: 1771515468425
+  user:
+    id: 3
+  string: Section 2.1.1
+  order: 1
+  heading: 3
+  children:
+  - id: 4028
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 S81O4tG9t:
   uid: S81O4tG9t
   id: 11761
@@ -252,6 +328,30 @@ S81O4tG9t:
   - id: 4225
   - id: 4226
   - id: 11759
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+d_3REDRrO:
+  uid: d_3REDRrO
+  id: 11684
+  time: 1781833759215
+  user:
+    id: 3
+  string: Document block 1.2
+  order: 1
+  heading: null
+  children:
+  - id: 11685
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11682
   props: null
   title: null
   sidebar: null
@@ -483,6 +583,60 @@ nmFudOFkf:
   attrs: null
   lookup: null
   seen_by: null
+sD1C9ifkG:
+  uid: sD1C9ifkG
+  id: 11677
+  time: 1781833723814
+  user:
+    id: 3
+  string: Bullet block 1
+  order: 1
+  heading: null
+  children:
+  - id: 11678
+  - id: 11679
+  - id: 11681
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+zZG-BfWvs:
+  uid: zZG-BfWvs
+  id: 11164
+  time: 1781043221592
+  user:
+    id: 3
+  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  - id: 11163
+  props:
+    image-size:
+      ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
+      : width: 257
+        height: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 vk7Up544K:
   uid: vk7Up544K
   id: 11739
@@ -532,6 +686,31 @@ chSSa7hfQ:
   attrs: null
   lookup: null
   seen_by: null
+xkmJLzW3G:
+  uid: xkmJLzW3G
+  id: 11804
+  time: 1782240793572
+  user:
+    id: 3
+  string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
+  order: 19
+  heading: null
+  children:
+  - id: 11805
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 2yQYaKIEV:
   uid: 2yQYaKIEV
   id: 11157
@@ -549,6 +728,31 @@ chSSa7hfQ:
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+6NS-Qw4Mm:
+  uid: 6NS-Qw4Mm
+  id: 11226
+  time: 1781362855750
+  user:
+    id: 3
+  string: Header 1
+  order: 0
+  heading: null
+  children:
+  - id: 11227
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
   props: null
   title: null
   sidebar: null
@@ -822,6 +1026,32 @@ dYYKZExzI:
   attrs: null
   lookup: null
   seen_by: null
+4BL7hTjHS:
+  uid: 4BL7hTjHS
+  id: 11227
+  time: 1781362858883
+  user:
+    id: 3
+  string: Header 2
+  order: 0
+  heading: null
+  children:
+  - id: 11228
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  - id: 11226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -884,6 +1114,29 @@ T6cykqu88:
   parents:
   - id: 11643
   - id: 11666
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+40bvW14UU:
+  uid: 40bvW14UU
+  id: 3330
+  time: 1770568926764
+  user:
+    id: 3
+  string: Section 3
+  order: 3
+  heading: 1
+  children:
+  - id: 3333
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
   props: null
   title: null
   sidebar: null
@@ -1036,6 +1289,32 @@ t62Kwufzm:
   attrs: null
   lookup: null
   seen_by: null
+TaN67WqnA:
+  uid: TaN67WqnA
+  id: 3334
+  time: 1771512875819
+  user:
+    id: 3
+  string: illustration 1.1
+  order: 0
+  heading: 3
+  children:
+  - id: 11124
+  - id: 11165
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 3331
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 SivJQaD8x:
   uid: SivJQaD8x
   id: 11802
@@ -1108,6 +1387,31 @@ Rjt1IvrVq:
   attrs: null
   lookup: null
   seen_by: null
+0hoWxyjNR:
+  uid: 0hoWxyjNR
+  id: 11232
+  time: 1781362878627
+  user:
+    id: 3
+  string: r2.c1
+  order: 2
+  heading: null
+  children:
+  - id: 11233
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 MbQObdYBx:
   uid: MbQObdYBx
   id: 11727
@@ -1127,6 +1431,56 @@ MbQObdYBx:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+9XUHIOSY0:
+  uid: 9XUHIOSY0
+  id: 11231
+  time: 1781362875854
+  user:
+    id: 3
+  string: r1.c3
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  - id: 11229
+  - id: 11230
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+YyeRpjbFD:
+  uid: YyeRpjbFD
+  id: 11679
+  time: 1781833732925
+  user:
+    id: 3
+  string: Bullet block 1.2
+  order: 1
+  heading: null
+  children:
+  - id: 11680
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11677
   props: null
   title: null
   sidebar: null
@@ -1178,6 +1532,58 @@ XkSI5xwe5:
   - id: 4225
   - id: 4226
   - id: 4229
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+hD2qvZqjh:
+  uid: hD2qvZqjh
+  id: 11234
+  time: 1781362883933
+  user:
+    id: 3
+  string: r2.c3
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  - id: 11232
+  - id: 11233
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+5JwQ2Fea-:
+  uid: 5JwQ2Fea-
+  id: 11230
+  time: 1781362872567
+  user:
+    id: 3
+  string: r1.c2
+  order: 0
+  heading: null
+  children:
+  - id: 11231
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  - id: 11229
   props: null
   title: null
   sidebar: null
@@ -1505,6 +1911,29 @@ SCzzQaVai:
   attrs: null
   lookup: null
   seen_by: null
+Ma5KGUH9O:
+  uid: Ma5KGUH9O
+  id: 4758
+  time: 1773355356452
+  user:
+    id: 3
+  string: 'AI assistant (Claude Opus 4.6): '
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
+  - id: 3328
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 H3vh9eS_F:
   uid: H3vh9eS_F
   id: 11738
@@ -1522,6 +1951,30 @@ H3vh9eS_F:
   parents:
   - id: 4225
   - id: 4228
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+wdMgyBiP9:
+  uid: wdMgyBiP9
+  id: 3329
+  time: 1770568922821
+  user:
+    id: 3
+  string: Section 2
+  order: 2
+  heading: 1
+  children:
+  - id: 3332
+  - id: 4026
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
   props: null
   title: null
   sidebar: null
@@ -1547,6 +2000,31 @@ vLxyRJcr2:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+DsogfVzX9:
+  uid: DsogfVzX9
+  id: 11682
+  time: 1781833746080
+  user:
+    id: 3
+  string: Document block 1
+  order: 2
+  heading: null
+  children:
+  - id: 11683
+  - id: 11684
+  - id: 11686
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
   props: null
   title: null
   sidebar: null
@@ -1702,6 +2180,31 @@ ZT_EVUtHq:
   attrs: null
   lookup: null
   seen_by: null
+4_GrZ9su6:
+  uid: 4_GrZ9su6
+  id: 11165
+  time: 1781088515943
+  user:
+    id: 3
+  string: this image **has not been resized** through the Roam UI.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 3331
+  - id: 3334
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 LfaVt18Iw:
   uid: LfaVt18Iw
   id: 4226
@@ -1796,6 +2299,32 @@ Ep6xoSIzu:
   attrs: null
   lookup: null
   seen_by: null
+OaTXPl93p:
+  uid: OaTXPl93p
+  id: 11163
+  time: 1781043166449
+  user:
+    id: 3
+  string: illustration 2.1
+  order: 0
+  heading: 3
+  children:
+  - id: 11164
+  - id: 11167
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 Z2d9G4m4V:
   uid: Z2d9G4m4V
   id: 11800
@@ -1842,6 +2371,31 @@ T5pku1yrU:
   - id: 4225
   - id: 4227
   - id: 11776
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+MmvJZhQNJ:
+  uid: MmvJZhQNJ
+  id: 11675
+  time: 1781833570842
+  user:
+    id: 3
+  string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
+    \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
   props: null
   title: null
   sidebar: null
@@ -1897,6 +2451,54 @@ cCYHqUNs8:
   attrs: null
   lookup: null
   seen_by: null
+-noi1eQMD:
+  uid: -noi1eQMD
+  id: 11690
+  time: 1781834571497
+  user:
+    id: 3
+  string: Bullet block 1.2.1.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11682
+  - id: 11684
+  - id: 11685
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+Bb49MOLyE:
+  uid: Bb49MOLyE
+  id: 11686
+  time: 1781833786729
+  user:
+    id: 3
+  string: Document block 1.3
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11682
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 qj0DTMyzl:
   uid: qj0DTMyzl
   id: 11692
@@ -1917,6 +2519,30 @@ qj0DTMyzl:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+3BX-iWc-p:
+  uid: 3BX-iWc-p
+  id: 3331
+  time: 1770568958676
+  user:
+    id: 3
+  string: Section 1.1
+  order: 0
+  heading: 2
+  children:
+  - id: 3334
+  refs: null
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
+  - id: 3328
   props: null
   title: null
   sidebar: null
@@ -1945,6 +2571,80 @@ kWNhvv437:
   - id: 11799
   - id: 11800
   props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+gmLJbWZYp:
+  uid: gmLJbWZYp
+  id: 11681
+  time: 1781833741666
+  user:
+    id: 3
+  string: Bullet block 1.3
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11677
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+XgPKipOsW:
+  uid: XgPKipOsW
+  id: 11691
+  time: 1781834579902
+  user:
+    id: 3
+  string: Bullet block 1.2.1.2
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11682
+  - id: 11684
+  - id: 11685
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+bxkcECGwN:
+  uid: bxkcECGwN
+  id: 4028
+  time: 1780774148272
+  user:
+    id: 3
+  string: Section 2.1.1.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: false
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  - id: 4025
+  props:
+    ah-level: h4
   title: null
   sidebar: null
   attrs: null
@@ -2090,6 +2790,31 @@ QB8DChDBs:
   attrs: null
   lookup: null
   seen_by: null
+dDNfZQ62b:
+  uid: dDNfZQ62b
+  id: 11805
+  time: 1782240807093
+  user:
+    id: 3
+  string: ((wjN-kVF3B))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11225
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 11804
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 hWsG-ExLV:
   uid: hWsG-ExLV
   id: 11700
@@ -2134,6 +2859,52 @@ drtANJYTg:
   parents:
   - id: 3327
   - id: 3329
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+cNW8lmXIM:
+  uid: cNW8lmXIM
+  id: 11113
+  time: 1781043136363
+  user:
+    id: 3
+  string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+    – DO NOT REMOVE
+
+    Features:
+
+    - Page is completely self-contained – there are `no Roam embeds` of any kind
+
+    - 3 top-level `headers`, all H1
+
+    - nested `headers` down to H4, via __Augmented Headings__ extension
+
+    - a node, (Ma5KGUH9O) "AI assistant (Claude Opus 4.6):" that has property: BLOCK_HEADING
+    = 0, which is not a valid Markdown level. It seems that this can happen when first
+    a valid level value (1-6) is assigned, and then the heading level is removed altogether
+    through the Roam UI.
+
+    - a single JPEG `image` that **has not** been resized through the Roam UI (illustration
+    1.1)
+
+    - a single JPEG `image` that **has** been resized through the Roam UI (illustration
+    2.1)
+
+    - this INFO `Callout box`, which contains Roam `page references` '
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 3327
+  open: true
+  parents:
+  - id: 3327
   props: null
   title: null
   sidebar: null
@@ -2185,6 +2956,29 @@ lF-qY0Xrs:
   attrs: null
   lookup: null
   seen_by: null
+5f1ahOFdp:
+  uid: 5f1ahOFdp
+  id: 4026
+  time: 1772563665137
+  user:
+    id: 3
+  string: Section 2.2
+  order: 1
+  heading: 2
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: false
+  parents:
+  - id: 3327
+  - id: 3329
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 amzmDdIn3:
   uid: amzmDdIn3
   id: 11796
@@ -2205,6 +2999,30 @@ amzmDdIn3:
   - id: 11716
   - id: 11790
   - id: 11792
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+KUi_6ooZj:
+  uid: KUi_6ooZj
+  id: 11680
+  time: 1781833737088
+  user:
+    id: 3
+  string: Bullet block 1.2.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11677
+  - id: 11679
   props: null
   title: null
   sidebar: null
@@ -2307,6 +3125,32 @@ GQSLJp92S:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+iAxwSSBmi:
+  uid: iAxwSSBmi
+  id: 11228
+  time: 1781362862876
+  user:
+    id: 3
+  string: Header 3
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  - id: 11226
+  - id: 11227
   props: null
   title: null
   sidebar: null
@@ -2438,6 +3282,32 @@ tyOSwiz6l:
   attrs: null
   lookup: null
   seen_by: null
+5SczmqJaW:
+  uid: 5SczmqJaW
+  id: 11685
+  time: 1781834552642
+  user:
+    id: 3
+  string: Bullet block 1.2.1
+  order: 0
+  heading: null
+  children:
+  - id: 11690
+  - id: 11691
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11682
+  - id: 11684
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 Wq2dXafRn:
   uid: Wq2dXafRn
   id: 11772
@@ -2514,6 +3384,29 @@ J_Vt5_C6p:
   attrs: null
   lookup: null
   seen_by: null
+JW5PswS6v:
+  uid: JW5PswS6v
+  id: 3333
+  time: 1770568971504
+  user:
+    id: 3
+  string: Section 3.1
+  order: 0
+  heading: 2
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: false
+  parents:
+  - id: 3327
+  - id: 3330
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 8jkmASa1c:
   uid: 8jkmASa1c
   id: 4233
@@ -2535,6 +3428,29 @@ J_Vt5_C6p:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+99rZhIPZW:
+  uid: 99rZhIPZW
+  id: 11683
+  time: 1781833751385
+  user:
+    id: 3
+  string: Document block 1.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11682
   props: null
   title: null
   sidebar: null
@@ -2640,6 +3556,31 @@ msKBuys0a:
   attrs: null
   lookup: null
   seen_by: null
+bwUBoF2ee:
+  uid: bwUBoF2ee
+  id: 11229
+  time: 1781362870121
+  user:
+    id: 3
+  string: r1.c1
+  order: 1
+  heading: null
+  children:
+  - id: 11230
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 eUpKQiTiM:
   uid: eUpKQiTiM
   id: 11765
@@ -2690,6 +3631,32 @@ gxcUrCGPT:
   attrs: null
   lookup: null
   seen_by: null
+jrIkVSHfA:
+  uid: jrIkVSHfA
+  id: 11233
+  time: 1781362881234
+  user:
+    id: 3
+  string: r2.c2
+  order: 0
+  heading: null
+  children:
+  - id: 11234
+  refs: null
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 11225
+  - id: 11232
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 JpKqqwnAJ:
   uid: JpKqqwnAJ
   id: 11708
@@ -2709,6 +3676,29 @@ JpKqqwnAJ:
   - id: 4225
   - id: 4226
   - id: 11707
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+VH0mXM0rw:
+  uid: VH0mXM0rw
+  id: 11678
+  time: 1781833728425
+  user:
+    id: 3
+  string: Bullet block 1.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  parents:
+  - id: 11674
+  - id: 11677
   props: null
   title: null
   sidebar: null
@@ -2744,6 +3734,7 @@ d3T1YpYig:
   - id: 11771
   - id: 11774
   - id: 11776
+  - id: 11804
   refs: null
   page:
     id: 4225

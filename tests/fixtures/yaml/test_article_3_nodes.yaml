@@ -405,6 +405,26 @@
   props: null
   title: null
   attrs: null
+- uid: xkmJLzW3G
+  id: 11804
+  time: 0
+  user:
+    id: 0
+  string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
+  order: 19
+  heading: null
+  children:
+  - id: 11805
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
 - uid: aVVGVVPLE
   id: 4234
   time: 0
@@ -1375,6 +1395,26 @@
   props: null
   title: null
   attrs: null
+- uid: dDNfZQ62b
+  id: 11805
+  time: 0
+  user:
+    id: 0
+  string: ((wjN-kVF3B))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11225
+  page:
+    id: 4225
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 11804
+  props: null
+  title: null
+  attrs: null
 - uid: hWsG-ExLV
   id: 11700
   time: 0
@@ -1826,6 +1866,7 @@
   - id: 11771
   - id: 11774
   - id: 11776
+  - id: 11804
   refs: null
   page:
     id: 4225

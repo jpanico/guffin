@@ -946,7 +946,10 @@ def resolve_vertex_links(
     display-text inlines.  The inlines returned by *resolver* replace the Link
     in the document tree.
 
-    Raises :exc:`KeyError` if a destination UID is absent from *vertex_tree*.
+    When a destination UID is absent from *vertex_tree* — e.g. a reference to a block
+    whose own vertex could not be transcribed and was dropped, such as an external
+    ``{{table}}`` whose cells were not fetched — the Link is left as its display-text
+    inlines and a warning is logged, rather than failing the whole export.
 
     Mutates *doc* in place via :meth:`~panflute.Element.walk`; does not return
     a new document.
@@ -967,7 +970,8 @@ def resolve_vertex_links(
             return None
         display: Final[list[pf.Inline]] = list(elem.content)
         if vertex_link.uid not in vertex_tree.uid_map:
-            raise KeyError(f"x-guffin link uid={vertex_link.uid!r} not found in vertex_tree")
+            logger.warning("x-guffin link uid=%r not found in vertex_tree; leaving display text", vertex_link.uid)
+            return display
         dest: Final[Vertex] = vertex_tree.uid_map[vertex_link.uid]
         return resolver(vertex_link, dest, display)
 

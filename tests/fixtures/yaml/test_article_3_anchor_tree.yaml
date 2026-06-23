@@ -499,6 +499,30 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: xkmJLzW3G
+  id: 11804
+  time: 1782240793572
+  user:
+    id: 3
+  string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
+  order: 19
+  heading: null
+  children:
+  - id: 11805
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: aVVGVVPLE
   id: 4234
   time: 1781870982030
@@ -1657,6 +1681,30 @@ tree_network:
   attrs: null
   lookup: null
   seen_by: null
+- uid: dDNfZQ62b
+  id: 11805
+  time: 1782240807093
+  user:
+    id: 3
+  string: ((wjN-kVF3B))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11225
+  page:
+    id: 4225
+  open: true
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 11804
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
 - uid: hWsG-ExLV
   id: 11700
   time: 1782173300803
@@ -2192,6 +2240,7 @@ tree_network:
   - id: 11771
   - id: 11774
   - id: 11776
+  - id: 11804
   refs: null
   page:
     id: 4225
@@ -2326,6 +2375,32 @@ tree_network:
   lookup: null
   seen_by: null
 refs_by_id:
+  '11225':
+    uid: wjN-kVF3B
+    id: 11225
+    time: 1781362773659
+    user:
+      id: 3
+    string: '{{table}}'
+    order: 1
+    heading: null
+    children:
+    - id: 11226
+    - id: 11229
+    - id: 11232
+    refs: null
+    page:
+      id: 11137
+    open: false
+    parents:
+    - id: 11137
+    - id: 11150
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11767':
     uid: zpSBqgxe4
     id: 11767
@@ -3339,6 +3414,566 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '3329':
+    uid: wdMgyBiP9
+    id: 3329
+    time: 1770568922821
+    user:
+      id: 3
+    string: Section 2
+    order: 2
+    heading: 1
+    children:
+    - id: 3332
+    - id: 4026
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '3330':
+    uid: 40bvW14UU
+    id: 3330
+    time: 1770568926764
+    user:
+      id: 3
+    string: Section 3
+    order: 3
+    heading: 1
+    children:
+    - id: 3333
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11113':
+    uid: cNW8lmXIM
+    id: 11113
+    time: 1781043136363
+    user:
+      id: 3
+    string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+      – DO NOT REMOVE
+
+      Features:
+
+      - Page is completely self-contained – there are `no Roam embeds` of any kind
+
+      - 3 top-level `headers`, all H1
+
+      - nested `headers` down to H4, via __Augmented Headings__ extension
+
+      - a node, (Ma5KGUH9O) "AI assistant (Claude Opus 4.6):" that has property: BLOCK_HEADING
+      = 0, which is not a valid Markdown level. It seems that this can happen when
+      first a valid level value (1-6) is assigned, and then the heading level is removed
+      altogether through the Roam UI.
+
+      - a single JPEG `image` that **has not** been resized through the Roam UI (illustration
+      1.1)
+
+      - a single JPEG `image` that **has** been resized through the Roam UI (illustration
+      2.1)
+
+      - this INFO `Callout box`, which contains Roam `page references` '
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 5462
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '3333':
+    uid: JW5PswS6v
+    id: 3333
+    time: 1770568971504
+    user:
+      id: 3
+    string: Section 3.1
+    order: 0
+    heading: 2
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: false
+    parents:
+    - id: 3327
+    - id: 3330
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '4026':
+    uid: 5f1ahOFdp
+    id: 4026
+    time: 1772563665137
+    user:
+      id: 3
+    string: Section 2.2
+    order: 1
+    heading: 2
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: false
+    parents:
+    - id: 3327
+    - id: 3329
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '4025':
+    uid: yFUau9Cpg
+    id: 4025
+    time: 1771515468425
+    user:
+      id: 3
+    string: Section 2.1.1
+    order: 1
+    heading: 3
+    children:
+    - id: 4028
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11163':
+    uid: OaTXPl93p
+    id: 11163
+    time: 1781043166449
+    user:
+      id: 3
+    string: illustration 2.1
+    order: 0
+    heading: 3
+    children:
+    - id: 11164
+    - id: 11167
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11164':
+    uid: zZG-BfWvs
+    id: 11164
+    time: 1781043221592
+    user:
+      id: 3
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: null
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 11163
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
+        : width: 257
+          height: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '4028':
+    uid: bxkcECGwN
+    id: 4028
+    time: 1780774148272
+    user:
+      id: 3
+    string: Section 2.1.1.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: false
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 4025
+    props:
+      ah-level: h4
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11675':
+    uid: MmvJZhQNJ
+    id: 11675
+    time: 1781833570842
+    user:
+      id: 3
+    string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
+      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 5462
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11677':
+    uid: sD1C9ifkG
+    id: 11677
+    time: 1781833723814
+    user:
+      id: 3
+    string: Bullet block 1
+    order: 1
+    heading: null
+    children:
+    - id: 11678
+    - id: 11679
+    - id: 11681
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11682':
+    uid: DsogfVzX9
+    id: 11682
+    time: 1781833746080
+    user:
+      id: 3
+    string: Document block 1
+    order: 2
+    heading: null
+    children:
+    - id: 11683
+    - id: 11684
+    - id: 11686
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11683':
+    uid: 99rZhIPZW
+    id: 11683
+    time: 1781833751385
+    user:
+      id: 3
+    string: Document block 1.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11682
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11684':
+    uid: d_3REDRrO
+    id: 11684
+    time: 1781833759215
+    user:
+      id: 3
+    string: Document block 1.2
+    order: 1
+    heading: null
+    children:
+    - id: 11685
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11682
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11686':
+    uid: Bb49MOLyE
+    id: 11686
+    time: 1781833786729
+    user:
+      id: 3
+    string: Document block 1.3
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11682
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11685':
+    uid: 5SczmqJaW
+    id: 11685
+    time: 1781834552642
+    user:
+      id: 3
+    string: Bullet block 1.2.1
+    order: 0
+    heading: null
+    children:
+    - id: 11690
+    - id: 11691
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11690':
+    uid: -noi1eQMD
+    id: 11690
+    time: 1781834571497
+    user:
+      id: 3
+    string: Bullet block 1.2.1.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    - id: 11685
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11691':
+    uid: XgPKipOsW
+    id: 11691
+    time: 1781834579902
+    user:
+      id: 3
+    string: Bullet block 1.2.1.2
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    - id: 11685
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11678':
+    uid: VH0mXM0rw
+    id: 11678
+    time: 1781833728425
+    user:
+      id: 3
+    string: Bullet block 1.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11677
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11679':
+    uid: YyeRpjbFD
+    id: 11679
+    time: 1781833732925
+    user:
+      id: 3
+    string: Bullet block 1.2
+    order: 1
+    heading: null
+    children:
+    - id: 11680
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11677
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11681':
+    uid: gmLJbWZYp
+    id: 11681
+    time: 1781833741666
+    user:
+      id: 3
+    string: Bullet block 1.3
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11677
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11680':
+    uid: KUi_6ooZj
+    id: 11680
+    time: 1781833737088
+    user:
+      id: 3
+    string: Bullet block 1.2.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    open: true
+    parents:
+    - id: 11674
+    - id: 11677
+    - id: 11679
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '4229':
     uid: dYYKZExzI
     id: 4229
@@ -4210,6 +4845,129 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '3331':
+    uid: 3BX-iWc-p
+    id: 3331
+    time: 1770568958676
+    user:
+      id: 3
+    string: Section 1.1
+    order: 0
+    heading: 2
+    children:
+    - id: 3334
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    - id: 3328
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '4758':
+    uid: Ma5KGUH9O
+    id: 4758
+    time: 1773355356452
+    user:
+      id: 3
+    string: 'AI assistant (Claude Opus 4.6): '
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    - id: 3328
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '3334':
+    uid: TaN67WqnA
+    id: 3334
+    time: 1771512875819
+    user:
+      id: 3
+    string: illustration 1.1
+    order: 0
+    heading: 3
+    children:
+    - id: 11124
+    - id: 11165
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11165':
+    uid: 4_GrZ9su6
+    id: 11165
+    time: 1781088515943
+    user:
+      id: 3
+    string: this image **has not been resized** through the Roam UI.
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: true
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    - id: 3334
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '4224':
+    uid: 7MoH-wIQh
+    id: 4224
+    time: 1780843750454
+    user:
+      id: 3
+    string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
+      \ TEST DATA – DO NOT REMOVE\n "
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 5462
+    page:
+      id: 4223
+    open: true
+    parents:
+    - id: 4223
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11757':
     uid: _6Z-gzw6R
     id: 11757
@@ -4311,6 +5069,7 @@ refs_by_id:
     - id: 11771
     - id: 11774
     - id: 11776
+    - id: 11804
     refs: null
     page:
       id: 4225
@@ -4842,6 +5601,56 @@ refs_by_id:
     attrs: null
     lookup: null
     seen_by: null
+  '11804':
+    uid: xkmJLzW3G
+    id: 11804
+    time: 1782240793572
+    user:
+      id: 3
+    string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
+    order: 19
+    heading: null
+    children:
+    - id: 11805
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11805':
+    uid: dDNfZQ62b
+    id: 11805
+    time: 1782240807093
+    user:
+      id: 3
+    string: ((wjN-kVF3B))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11225
+    page:
+      id: 4225
+    open: true
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 11804
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
   '11777':
     uid: T5pku1yrU
     id: 11777
@@ -5252,6 +6061,237 @@ refs_by_id:
     - id: 11792
     - id: 11793
     - id: 11794
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11226':
+    uid: 6NS-Qw4Mm
+    id: 11226
+    time: 1781362855750
+    user:
+      id: 3
+    string: Header 1
+    order: 0
+    heading: null
+    children:
+    - id: 11227
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11229':
+    uid: bwUBoF2ee
+    id: 11229
+    time: 1781362870121
+    user:
+      id: 3
+    string: r1.c1
+    order: 1
+    heading: null
+    children:
+    - id: 11230
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11232':
+    uid: 0hoWxyjNR
+    id: 11232
+    time: 1781362878627
+    user:
+      id: 3
+    string: r2.c1
+    order: 2
+    heading: null
+    children:
+    - id: 11233
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11233':
+    uid: jrIkVSHfA
+    id: 11233
+    time: 1781362881234
+    user:
+      id: 3
+    string: r2.c2
+    order: 0
+    heading: null
+    children:
+    - id: 11234
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11232
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11234':
+    uid: hD2qvZqjh
+    id: 11234
+    time: 1781362883933
+    user:
+      id: 3
+    string: r2.c3
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11232
+    - id: 11233
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11230':
+    uid: 5JwQ2Fea-
+    id: 11230
+    time: 1781362872567
+    user:
+      id: 3
+    string: r1.c2
+    order: 0
+    heading: null
+    children:
+    - id: 11231
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11229
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11231':
+    uid: 9XUHIOSY0
+    id: 11231
+    time: 1781362875854
+    user:
+      id: 3
+    string: r1.c3
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11229
+    - id: 11230
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11227':
+    uid: 4BL7hTjHS
+    id: 11227
+    time: 1781362858883
+    user:
+      id: 3
+    string: Header 2
+    order: 0
+    heading: null
+    children:
+    - id: 11228
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11226
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11228':
+    uid: iAxwSSBmi
+    id: 11228
+    time: 1781362862876
+    user:
+      id: 3
+    string: Header 3
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11137
+    open: true
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11226
+    - id: 11227
     props: null
     title: null
     sidebar: null

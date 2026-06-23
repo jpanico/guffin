@@ -11,6 +11,23 @@
     open: true
     page:
       id: 4225
+- - string: '{{table}}'
+    children:
+    - id: 11226
+    - id: 11229
+    - id: 11232
+    user:
+      id: 3
+    id: 11225
+    uid: wjN-kVF3B
+    parents:
+    - id: 11137
+    - id: 11150
+    time: 1781362773659
+    order: 1
+    open: false
+    page:
+      id: 11137
 - - string: '[[>]] [[!EXAMPLE]] This is the callout title
 
       This is line 1 of the callout body
@@ -64,15 +81,15 @@
     sidebar: 22
     id: 4225
     uid: SYZfEd44O
-    word-count: 854
+    word-count: 862
     edit-user:
       id: 3
     time: 1781833356251
     title: '[[Test Article]] 3'
     seen-by:
     - id: 3
-    edit-nonce: yTtVVN0ZR
-    edit-time: 1782239755128
+    edit-nonce: 0RPbgfJ1_
+    edit-time: 1782240807093
     refs:
     - id: 4223
 - - heading: 2
@@ -106,6 +123,22 @@
     open: true
     page:
       id: 4225
+- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
+      \ TEST DATA – DO NOT REMOVE\n "
+    user:
+      id: 3
+    id: 4224
+    uid: 7MoH-wIQh
+    parents:
+    - id: 4223
+    time: 1780843750454
+    order: 0
+    open: true
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462
 - - string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
     children:
     - id: 11772
@@ -165,6 +198,23 @@
     title: Test Article
     edit-nonce: 0iIGJ1buX
     edit-time: 1780843750454
+- - heading: 3
+    string: Section 2.1.1
+    children:
+    - id: 4028
+    user:
+      id: 3
+    id: 4025
+    uid: yFUau9Cpg
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    time: 1771515468425
+    order: 1
+    open: true
+    page:
+      id: 3327
 - - string: ((J_Vt5_C6p))
     user:
       id: 3
@@ -181,6 +231,21 @@
       id: 4225
     refs:
     - id: 11758
+- - string: Document block 1.2
+    children:
+    - id: 11685
+    user:
+      id: 3
+    id: 11684
+    uid: d_3REDRrO
+    parents:
+    - id: 11674
+    - id: 11682
+    time: 1781833759215
+    order: 1
+    open: true
+    page:
+      id: 11674
 - - string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((JRU5IhUB-))'
     user:
       id: 3
@@ -324,6 +389,41 @@
       id: 4225
     refs:
     - id: 11167
+- - string: Bullet block 1
+    children:
+    - id: 11678
+    - id: 11679
+    - id: 11681
+    user:
+      id: 3
+    id: 11677
+    uid: sD1C9ifkG
+    parents:
+    - id: 11674
+    time: 1781833723814
+    order: 1
+    open: true
+    page:
+      id: 11674
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
+    user:
+      id: 3
+    id: 11164
+    uid: zZG-BfWvs
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 11163
+    time: 1781043221592
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
+        : width: 257
+          height: null
+    order: 1
+    page:
+      id: 3327
 - - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
     prevent-clean: 1782163177855
     user:
@@ -356,6 +456,23 @@
     refs:
     - id: 5844
     - id: 11648
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
+    children:
+    - id: 11805
+    user:
+      id: 3
+    id: 11804
+    uid: xkmJLzW3G
+    parents:
+    - id: 4225
+    - id: 4227
+    time: 1782240793572
+    order: 19
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: This para features __italics__
     user:
       id: 3
@@ -367,6 +484,22 @@
     time: 1780944909127
     order: 0
     open: false
+    page:
+      id: 11137
+- - string: Header 1
+    children:
+    - id: 11227
+    user:
+      id: 3
+    id: 11226
+    uid: 6NS-Qw4Mm
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    time: 1781362855750
+    order: 0
+    open: true
     page:
       id: 11137
 - - string: '{{embed: ((drtANJYTg))}}'
@@ -546,6 +679,23 @@
       id: 4225
     refs:
     - id: 5844
+- - string: Header 2
+    children:
+    - id: 11228
+    user:
+      id: 3
+    id: 11227
+    uid: 4BL7hTjHS
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11226
+    time: 1781362858883
+    order: 0
+    open: true
+    page:
+      id: 11137
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -591,6 +741,21 @@
       id: 11643
     refs:
     - id: 11454
+- - heading: 1
+    string: Section 3
+    children:
+    - id: 3333
+    user:
+      id: 3
+    id: 3330
+    uid: 40bvW14UU
+    parents:
+    - id: 3327
+    time: 1770568926764
+    order: 3
+    open: true
+    page:
+      id: 3327
 - - string: section 3.1
     children:
     - id: 4231
@@ -684,6 +849,26 @@
     refs:
     - id: 5844
     - id: 11170
+- - heading: 3
+    string: illustration 1.1
+    children:
+    - id: 11124
+    - id: 11165
+    user:
+      id: 3
+    id: 3334
+    uid: TaN67WqnA
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    time: 1771512875819
+    order: 0
+    seen-by:
+    - id: 3
+    open: true
+    page:
+      id: 3327
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
     children:
     - id: 11803
@@ -729,6 +914,22 @@
       id: 11643
     refs:
     - id: 11454
+- - string: r2.c1
+    children:
+    - id: 11233
+    user:
+      id: 3
+    id: 11232
+    uid: 0hoWxyjNR
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    time: 1781362878627
+    order: 2
+    open: true
+    page:
+      id: 11137
 - - string: '#c:FUCHSIA **inline BOLD ref ⟶** ((iiSioG0Ut))'
     user:
       id: 3
@@ -745,6 +946,37 @@
     refs:
     - id: 5844
     - id: 11719
+- - string: r1.c3
+    user:
+      id: 3
+    id: 11231
+    uid: 9XUHIOSY0
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11229
+    - id: 11230
+    time: 1781362875854
+    order: 0
+    open: true
+    page:
+      id: 11137
+- - string: Bullet block 1.2
+    children:
+    - id: 11680
+    user:
+      id: 3
+    id: 11679
+    uid: YyeRpjbFD
+    parents:
+    - id: 11674
+    - id: 11677
+    time: 1781833732925
+    order: 1
+    open: true
+    page:
+      id: 11674
 - - string: Header 1
     children:
     - id: 11794
@@ -778,6 +1010,39 @@
       id: 4225
     refs:
     - id: 4228
+- - string: r2.c3
+    user:
+      id: 3
+    id: 11234
+    uid: hD2qvZqjh
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11232
+    - id: 11233
+    time: 1781362883933
+    order: 0
+    open: true
+    page:
+      id: 11137
+- - string: r1.c2
+    children:
+    - id: 11231
+    user:
+      id: 3
+    id: 11230
+    uid: 5JwQ2Fea-
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11229
+    time: 1781362872567
+    order: 0
+    open: true
+    page:
+      id: 11137
 - - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
     user:
       id: 3
@@ -988,6 +1253,22 @@
     refs:
     - id: 5450
     - id: 5458
+- - heading: 0
+    string: 'AI assistant (Claude Opus 4.6): '
+    prevent-clean: 1780850098668
+    user:
+      id: 3
+    id: 4758
+    uid: Ma5KGUH9O
+    parents:
+    - id: 3327
+    - id: 3328
+    time: 1773355356452
+    order: 1
+    view-type: bullet
+    open: true
+    page:
+      id: 3327
 - - string: section 3.3
     user:
       id: 3
@@ -1001,6 +1282,22 @@
     open: true
     page:
       id: 4225
+- - heading: 1
+    string: Section 2
+    children:
+    - id: 3332
+    - id: 4026
+    user:
+      id: 3
+    id: 3329
+    uid: wdMgyBiP9
+    parents:
+    - id: 3327
+    time: 1770568922821
+    order: 2
+    open: true
+    page:
+      id: 3327
 - - string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
     children:
     - id: 11713
@@ -1018,6 +1315,23 @@
       id: 4225
     refs:
     - id: 5844
+- - string: Document block 1
+    children:
+    - id: 11683
+    - id: 11684
+    - id: 11686
+    user:
+      id: 3
+    id: 11682
+    uid: DsogfVzX9
+    parents:
+    - id: 11674
+    time: 1781833746080
+    order: 2
+    view-type: document
+    open: true
+    page:
+      id: 11674
 - - string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
     children:
     - id: 11777
@@ -1116,6 +1430,22 @@
       id: 4225
     refs:
     - id: 5844
+- - string: this image **has not been resized** through the Roam UI.
+    prevent-clean: 1782128940704
+    user:
+      id: 3
+    id: 11165
+    uid: 4_GrZ9su6
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    - id: 3334
+    time: 1781088515943
+    order: 0
+    open: true
+    page:
+      id: 3327
 - - heading: 2
     string: 'Internal (in-page) links:'
     prevent-clean: 1782160076597
@@ -1185,6 +1515,24 @@
     open: true
     page:
       id: 4225
+- - heading: 3
+    string: illustration 2.1
+    children:
+    - id: 11164
+    - id: 11167
+    user:
+      id: 3
+    id: 11163
+    uid: OaTXPl93p
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    time: 1781043166449
+    order: 0
+    open: true
+    page:
+      id: 3327
 - - string: r2.c2
     children:
     - id: 11801
@@ -1219,6 +1567,22 @@
       id: 4225
     refs:
     - id: 11175
+- - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
+      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
+    user:
+      id: 3
+    id: 11675
+    uid: MmvJZhQNJ
+    parents:
+    - id: 11674
+    time: 1781833570842
+    order: 0
+    open: true
+    page:
+      id: 11674
+    refs:
+    - id: 5450
+    - id: 5462
 - - prevent-clean: 1782151663188
     children:
     - id: 11675
@@ -1255,6 +1619,34 @@
       id: 4225
     refs:
     - id: 11725
+- - string: Bullet block 1.2.1.1
+    user:
+      id: 3
+    id: 11690
+    uid: -noi1eQMD
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    - id: 11685
+    time: 1781834571497
+    order: 0
+    open: true
+    page:
+      id: 11674
+- - string: Document block 1.3
+    user:
+      id: 3
+    id: 11686
+    uid: Bb49MOLyE
+    parents:
+    - id: 11674
+    - id: 11682
+    time: 1781833786729
+    order: 2
+    open: true
+    page:
+      id: 11674
 - - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
     user:
       id: 3
@@ -1272,6 +1664,24 @@
     - id: 4223
     - id: 4225
     - id: 5844
+- - heading: 2
+    string: Section 1.1
+    children:
+    - id: 3334
+    user:
+      id: 3
+    id: 3331
+    uid: 3BX-iWc-p
+    parents:
+    - id: 3327
+    - id: 3328
+    time: 1770568958676
+    order: 0
+    seen-by:
+    - id: 3
+    open: true
+    page:
+      id: 3327
 - - string: r2.c3
     user:
       id: 3
@@ -1289,6 +1699,51 @@
     open: true
     page:
       id: 4225
+- - string: Bullet block 1.3
+    user:
+      id: 3
+    id: 11681
+    uid: gmLJbWZYp
+    parents:
+    - id: 11674
+    - id: 11677
+    time: 1781833741666
+    order: 2
+    open: true
+    page:
+      id: 11674
+- - string: Bullet block 1.2.1.2
+    user:
+      id: 3
+    id: 11691
+    uid: XgPKipOsW
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    - id: 11685
+    time: 1781834579902
+    order: 1
+    open: true
+    page:
+      id: 11674
+- - string: Section 2.1.1.1
+    user:
+      id: 3
+    id: 4028
+    uid: bxkcECGwN
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 4025
+    time: 1780774148272
+    props:
+      ah-level: h4
+    order: 0
+    open: false
+    page:
+      id: 3327
 - - string: the child block contains a standalone image
     children:
     - id: 11758
@@ -1376,6 +1831,22 @@
     open: false
     page:
       id: 11137
+- - string: ((wjN-kVF3B))
+    user:
+      id: 3
+    id: 11805
+    uid: dDNfZQ62b
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 11804
+    time: 1782240807093
+    order: 0
+    open: true
+    page:
+      id: 4225
+    refs:
+    - id: 11225
 - - string: '#c:FUCHSIA **inline PARENT BLOCK ref ⟶**  ((LfaVt18Iw))'
     user:
       id: 3
@@ -1409,6 +1880,43 @@
     open: true
     page:
       id: 3327
+- - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+      – DO NOT REMOVE
+
+      Features:
+
+      - Page is completely self-contained – there are `no Roam embeds` of any kind
+
+      - 3 top-level `headers`, all H1
+
+      - nested `headers` down to H4, via __Augmented Headings__ extension
+
+      - a node, (Ma5KGUH9O) "AI assistant (Claude Opus 4.6):" that has property: BLOCK_HEADING
+      = 0, which is not a valid Markdown level. It seems that this can happen when
+      first a valid level value (1-6) is assigned, and then the heading level is removed
+      altogether through the Roam UI.
+
+      - a single JPEG `image` that **has not** been resized through the Roam UI (illustration
+      1.1)
+
+      - a single JPEG `image` that **has** been resized through the Roam UI (illustration
+      2.1)
+
+      - this INFO `Callout box`, which contains Roam `page references` '
+    user:
+      id: 3
+    id: 11113
+    uid: cNW8lmXIM
+    parents:
+    - id: 3327
+    time: 1781043136363
+    order: 0
+    open: true
+    page:
+      id: 3327
+    refs:
+    - id: 5450
+    - id: 5462
 - - prevent-clean: 1781829523630
     user:
       id: 3
@@ -1437,6 +1945,20 @@
     refs:
     - id: 5844
     - id: 11739
+- - heading: 2
+    string: Section 2.2
+    user:
+      id: 3
+    id: 4026
+    uid: 5f1ahOFdp
+    parents:
+    - id: 3327
+    - id: 3329
+    time: 1772563665137
+    order: 1
+    open: false
+    page:
+      id: 3327
 - - string: r1.c1
     children:
     - id: 11797
@@ -1454,6 +1976,20 @@
     open: true
     page:
       id: 4225
+- - string: Bullet block 1.2.1
+    user:
+      id: 3
+    id: 11680
+    uid: KUi_6ooZj
+    parents:
+    - id: 11674
+    - id: 11677
+    - id: 11679
+    time: 1781833737088
+    order: 0
+    open: true
+    page:
+      id: 11674
 - - string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((Q-nJAf9KK))'
     user:
       id: 3
@@ -1527,6 +2063,22 @@
       id: 4225
     refs:
     - id: 5844
+- - string: Header 3
+    user:
+      id: 3
+    id: 11228
+    uid: iAxwSSBmi
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11226
+    - id: 11227
+    time: 1781362862876
+    order: 0
+    open: true
+    page:
+      id: 11137
 - - string: '#c:FUCHSIA **standalone HEADER ref ↓**'
     children:
     - id: 11734
@@ -1608,6 +2160,24 @@
     refs:
     - id: 5844
     - id: 11745
+- - string: Bullet block 1.2.1
+    children:
+    - id: 11690
+    - id: 11691
+    user:
+      id: 3
+    id: 11685
+    uid: 5SczmqJaW
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    time: 1781834552642
+    order: 0
+    view-type: bullet
+    open: true
+    page:
+      id: 11674
 - - string: ((4SIo9hSEY))
     user:
       id: 3
@@ -1657,6 +2227,20 @@
     open: false
     page:
       id: 4225
+- - heading: 2
+    string: Section 3.1
+    user:
+      id: 3
+    id: 3333
+    uid: JW5PswS6v
+    parents:
+    - id: 3327
+    - id: 3330
+    time: 1770568971504
+    order: 0
+    open: false
+    page:
+      id: 3327
 - - string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
     children:
     - id: 4234
@@ -1676,6 +2260,19 @@
     - id: 3327
     - id: 4223
     - id: 5844
+- - string: Document block 1.1
+    user:
+      id: 3
+    id: 11683
+    uid: 99rZhIPZW
+    parents:
+    - id: 11674
+    - id: 11682
+    time: 1781833751385
+    order: 0
+    open: true
+    page:
+      id: 11674
 - - string: Header 2
     children:
     - id: 11795
@@ -1739,6 +2336,22 @@
     open: false
     page:
       id: 4225
+- - string: r1.c1
+    children:
+    - id: 11230
+    user:
+      id: 3
+    id: 11229
+    uid: bwUBoF2ee
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    time: 1781362870121
+    order: 1
+    open: true
+    page:
+      id: 11137
 - - string: ((uj8YolCoE))
     user:
       id: 3
@@ -1771,6 +2384,23 @@
     refs:
     - id: 5844
     - id: 11717
+- - string: r2.c2
+    children:
+    - id: 11234
+    user:
+      id: 3
+    id: 11233
+    uid: jrIkVSHfA
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 11225
+    - id: 11232
+    time: 1781362881234
+    order: 0
+    open: true
+    page:
+      id: 11137
 - - string: ((LfaVt18Iw))
     user:
       id: 3
@@ -1787,6 +2417,19 @@
       id: 4225
     refs:
     - id: 4226
+- - string: Bullet block 1.1
+    user:
+      id: 3
+    id: 11678
+    uid: VH0mXM0rw
+    parents:
+    - id: 11674
+    - id: 11677
+    time: 1781833728425
+    order: 0
+    open: true
+    page:
+      id: 11674
 - - heading: 2
     string: 'External (out-of-page) links:'
     children:
@@ -1809,6 +2452,7 @@
     - id: 11771
     - id: 11774
     - id: 11776
+    - id: 11804
     user:
       id: 3
     id: 4227

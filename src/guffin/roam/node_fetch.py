@@ -142,8 +142,6 @@ class FetchRoamNodes:
             textwrap.dedent("""\
                 (and [?anchor :node/title ?title]
                      (descendant ?anchor ?block)
-                     [?block :block/string ?block-str]
-                     [(clojure.string/includes? ?block-str "{{[[embed]]:")]
                      [?block :block/refs ?ref]
                      (descendant ?ref ?node))"""),
             "   ",
@@ -189,10 +187,9 @@ class FetchRoamNodes:
         3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
            its descendants (via the ``page-ref`` rule).
         4. Every block reachable through ``:block/children`` from any ``:block/refs`` target
-           of a descendant block of the anchor whose ``:block/string`` contains the embed
-           prefix ``{{[[embed]]:``.  This restricts descendant expansion to embedded
-           references only; non-embed refs are fetched as single nodes by branch 3 but their
-           subtrees are not included.
+           of a descendant block of the anchor.  Combined with branch 3 (which fetches the
+           ref targets themselves), this pulls every referenced block together with its full
+           subtree, so referenced multi-block constructs (e.g. a ``{{table}}``) arrive complete.
         """
 
         _BY_NODE_UID_QUERY_BASE: Final[str] = textwrap.dedent("""\
@@ -215,8 +212,6 @@ class FetchRoamNodes:
             textwrap.dedent("""\
                 (and [?anchor :block/uid ?uid]
                      (descendant ?anchor ?block)
-                     [?block :block/string ?block-str]
-                     [(clojure.string/includes? ?block-str "{{[[embed]]:")]
                      [?block :block/refs ?ref]
                      (descendant ?ref ?node))"""),
             "   ",
@@ -262,10 +257,9 @@ class FetchRoamNodes:
         3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
            its descendants (via the ``page-ref`` rule).
         4. Every block reachable through ``:block/children`` from any ``:block/refs`` target
-           of a descendant block of the anchor whose ``:block/string`` contains the embed
-           prefix ``{{[[embed]]:``.  This restricts descendant expansion to embedded
-           references only; non-embed refs are fetched as single nodes by branch 3 but their
-           subtrees are not included.
+           of a descendant block of the anchor.  Combined with branch 3 (which fetches the
+           ref targets themselves), this pulls every referenced block together with its full
+           subtree, so referenced multi-block constructs (e.g. a ``{{table}}``) arrive complete.
         """
 
         @staticmethod

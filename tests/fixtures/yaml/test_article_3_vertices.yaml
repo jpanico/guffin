@@ -402,6 +402,7 @@
   - wta7y8AlI
   - ipvsMyx77
   - QnqMI7-2J
+  - xkmJLzW3G
   text: 'External (out-of-page) links:'
   heading_level: 1
 - vertex_type: guffin/text
@@ -578,6 +579,18 @@
     This is line 2 of the callout body
 
     ](x-guffin:vertex/4SIo9hSEY)'
+- vertex_type: guffin/text
+  uid: xkmJLzW3G
+  children:
+  - dDNfZQ62b
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone ROAM NATIVE TABLE ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: dDNfZQ62b
+  refs:
+  - wjN-kVF3B
+  text: '[{{table}}](x-guffin:vertex/wjN-kVF3B)'
 - vertex_type: guffin/text
   uid: LfXmNr-tV
   children:

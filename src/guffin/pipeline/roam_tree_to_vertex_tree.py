@@ -623,7 +623,10 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     Returns:
         A :class:`~guffin.vertex_tree.VertexTree` in document (DFS) order, with
         :attr:`~guffin.vertex_tree.VertexTree.ref_vertices` populated from
-        :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`.
+        :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`.  Referenced native-table
+        nodes are consumed into a single :class:`~guffin.vertex.TableVertex` (with their
+        row/cell descendants) just as in-tree tables are, so a cross-page table reference
+        resolves to a complete table.
 
     Raises:
         ValueError: If any anchor node has neither a ``title`` nor a ``string`` field set.
@@ -645,7 +648,24 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         else:
             vertices.append(transcribe_standalone_node(node, node_tree, heading_offset))
     ref_vertices: Final[list[Vertex]] = []
+    ref_consumed: Final[set[Id]] = set()
+    # Native tables are multi-node constructs: consume each referenced table together with its
+    # row/cell descendants first, so those descendants are not also transcribed as standalone
+    # ref vertices.  refs_by_id is not in DFS order, so a single-pass consumed-set guard could
+    # encounter a cell before its table; a dedicated table pass avoids that.
     for ref_node in node_tree.refs_by_id.values():
+        if node_type(ref_node) != NodeType.ROAM_NATIVE_TABLE:
+            continue
+        try:
+            ref_table_vertex, ref_nodes_consumed = to_table_vertex(ref_node, node_tree)
+        except (NotImplementedError, ValueError) as exc:
+            logger.debug("skipping ref table node uid=%r: %s", ref_node.uid, exc)
+            continue
+        ref_consumed.update(ref_nodes_consumed)
+        ref_vertices.append(ref_table_vertex)
+    for ref_node in node_tree.refs_by_id.values():
+        if ref_node.id in ref_consumed or node_type(ref_node) == NodeType.ROAM_NATIVE_TABLE:
+            continue
         try:
             ref_vertices.append(transcribe_standalone_node(ref_node, node_tree))
         except (NotImplementedError, ValueError) as exc:
