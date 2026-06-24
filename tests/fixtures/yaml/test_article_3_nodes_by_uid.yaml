@@ -68,7 +68,7 @@ zpSBqgxe4:
   - id: 5458
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -159,7 +159,7 @@ SYZfEd44O:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   props: null
@@ -208,7 +208,7 @@ QnqMI7-2J:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -323,7 +323,7 @@ S81O4tG9t:
   - id: 11758
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -373,7 +373,7 @@ cKCA_EwGZ:
   - id: 11720
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -398,7 +398,7 @@ JCyO1oiVt:
   - id: 11741
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -423,7 +423,7 @@ JCyO1oiVt:
   - id: 11718
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -519,7 +519,7 @@ _9zoxTAJt:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -797,7 +797,7 @@ uTV8PLeSZ:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -826,7 +826,7 @@ FWULkh5nm:
   - id: 11722
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -875,7 +875,7 @@ SYAWArc3S:
   - id: 4228
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -941,7 +941,7 @@ I1QOMCtdJ:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -965,7 +965,7 @@ I1QOMCtdJ:
   - id: 11767
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -990,7 +990,7 @@ Frzso359j:
   - id: 11792
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1016,7 +1016,7 @@ dYYKZExzI:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1231,7 +1231,7 @@ LfXmNr-tV:
   - id: 11743
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1330,7 +1330,7 @@ SivJQaD8x:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1427,7 +1427,7 @@ MbQObdYBx:
   - id: 11719
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1501,7 +1501,7 @@ aM4rXqHLf:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -1527,7 +1527,7 @@ XkSI5xwe5:
   - id: 4228
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1699,7 +1699,7 @@ wta7y8AlI:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -1996,7 +1996,7 @@ vLxyRJcr2:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -2046,7 +2046,7 @@ ipvsMyx77:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -2189,7 +2189,8 @@ ZT_EVUtHq:
   string: this image **has not been resized** through the Roam UI.
   order: 0
   heading: null
-  children: null
+  children:
+  - id: 11806
   refs: null
   page:
     id: 3327
@@ -2240,7 +2241,7 @@ LfaVt18Iw:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   props: null
@@ -2287,7 +2288,7 @@ Ep6xoSIzu:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -2339,7 +2340,7 @@ Z2d9G4m4V:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -2440,7 +2441,7 @@ cCYHqUNs8:
   - id: 11725
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -2515,7 +2516,7 @@ qj0DTMyzl:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -2562,7 +2563,7 @@ kWNhvv437:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -2668,6 +2669,32 @@ _6Z-gzw6R:
   parents:
   - id: 4225
   - id: 11716
+  props: null
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+pfkKREU_Y:
+  uid: pfkKREU_Y
+  id: 11806
+  time: 1782304880511
+  user:
+    id: 3
+  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 3331
+  - id: 3334
+  - id: 11165
   props: null
   title: null
   sidebar: null
@@ -2830,7 +2857,7 @@ hWsG-ExLV:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -2946,7 +2973,7 @@ lF-qY0Xrs:
   - id: 11739
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -2993,7 +3020,7 @@ amzmDdIn3:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -3044,7 +3071,7 @@ HbJZh5mTY:
   - id: 11721
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -3121,7 +3148,7 @@ GQSLJp92S:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -3222,7 +3249,7 @@ SsmyWLZij:
   - id: 11716
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -3246,7 +3273,7 @@ tyOSwiz6l:
   - id: 11716
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -3272,7 +3299,7 @@ tyOSwiz6l:
   - id: 11745
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -3346,7 +3373,7 @@ SnpYMTuWc:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -3471,7 +3498,7 @@ JW5PswS6v:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -3499,7 +3526,7 @@ xc_eQjqyE:
   - id: 4225
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -3621,7 +3648,7 @@ gxcUrCGPT:
   - id: 11717
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -3671,7 +3698,7 @@ JpKqqwnAJ:
   - id: 4226
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -3911,7 +3938,7 @@ Dt8evi7AW:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227

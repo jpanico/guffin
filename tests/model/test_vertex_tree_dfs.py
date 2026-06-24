@@ -145,6 +145,7 @@ class TestVertexTreeDFSIterator:
           3BX-iWc-p  — Section 1.1          (children[0] of Section 1)
           TaN67WqnA  — illustration 1.1     (children[0] of Section 1.1)
           4_GrZ9su6  — text block           (children[0] of illustration 1.1)
+          pfkKREU_Y  — image block          (children[0] of 4_GrZ9su6)
           uj8YolCoE  — image block          (children[1] of illustration 1.1)
           Ma5KGUH9O  — AI assistant         (children[1] of Section 1)
           wdMgyBiP9  — Section 2            (children[2] of root)
@@ -166,6 +167,7 @@ class TestVertexTreeDFSIterator:
             "3BX-iWc-p",
             "TaN67WqnA",
             "4_GrZ9su6",
+            "pfkKREU_Y",
             "uj8YolCoE",
             "Ma5KGUH9O",
             "wdMgyBiP9",

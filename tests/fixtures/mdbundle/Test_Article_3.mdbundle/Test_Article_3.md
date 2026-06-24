@@ -46,7 +46,7 @@ def fizz_buzz(limit: int = 100):
 - <span style="text-decoration: underline; color: orange">This span is underlined orange.</span>This span is not.
 - <span style="border: 1px solid orange; padding: 2px 4px">This span has box color orange.</span> This span does not.
 - the child block contains a standalone image
-  <img src="1f5047588dc26ea57a9d3e2364822fae77f3c2e82f9db652d5ddf7d0d8046c4c.jpg">
+  <img src="1f5047588dc26ea57a9d3e2364822fae77f3c2e82f9db652d5ddf7d0d8046c4c.jpg" style="margin: 0;">
 - the child block contains a Roam native callout
   > [!NOTE]
   > **This is the callout title**
@@ -82,7 +82,7 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone PARENT BLOCK ref ↓**</span>
   - Internal (in-page) links:
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
-  <img src="1f5047588dc26ea57a9d3e2364822fae77f3c2e82f9db652d5ddf7d0d8046c4c.jpg">
+  <img src="1f5047588dc26ea57a9d3e2364822fae77f3c2e82f9db652d5ddf7d0d8046c4c.jpg" style="margin: 0;">
 - <span style="color: fuchsia">**standalone BLOCK EMBED ↓**</span>
   - Section 3
     - section 3.1
@@ -136,7 +136,7 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone BLOCK ref ↓**</span>
   - this image **has been resized** through the Roam UI (width:257, height:None)
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
-  <img src="4bb41fdc554dc75e557e9fcd463402db6d32abb30d93289a8ad644c6d89cf26f.jpg" alt="A flower">
+  <img src="4bb41fdc554dc75e557e9fcd463402db6d32abb30d93289a8ad644c6d89cf26f.jpg" alt="A flower" style="margin: 0;">
 - <span style="color: fuchsia">**standalone BLOCK EMBED (from Test Article 1) ↓**</span>
   ## Section 2.1
 
@@ -144,7 +144,7 @@ def fizz_buzz(limit: int = 100):
 
   - this image **has been resized** through the Roam UI (width:257, height:None)
 
-  <img src="033a49ffff95aca42ad1b875cece7de2b757d71ee6ddd1152eaede4809727017.jpg" width="257">
+  <img src="033a49ffff95aca42ad1b875cece7de2b757d71ee6ddd1152eaede4809727017.jpg" width="257" style="margin: 0;">
 
   ### Section 2.1.1
 

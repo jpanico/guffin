@@ -12,9 +12,13 @@ _URL_B = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2F
 
 _ARTICLE_IMAGE_URL_0 = (
     "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com"
-    "/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0"
+    "/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4"
 )
 _ARTICLE_IMAGE_URL_1 = (
+    "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com"
+    "/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0"
+)
+_ARTICLE_IMAGE_URL_2 = (
     "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com"
     "/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a"
 )
@@ -58,10 +62,10 @@ class TestImageVertices:
         result = image_vertices(tree)
         assert [v.uid for v in result] == ["imguid001", "imguid002"]
 
-    def test_article_fixture_has_one_image_vertex(self) -> None:
-        """Test Article 1 fixture contains exactly two image vertices."""
+    def test_article_fixture_image_vertex_count(self) -> None:
+        """Test Article 1 fixture contains exactly three image vertices."""
         result = image_vertices(article1_vertex_tree())
-        assert len(result) == 2
+        assert len(result) == 3
         assert all(isinstance(v, ImageVertex) for v in result)
 
 
@@ -87,9 +91,10 @@ class TestImageUrls:
     def test_article_fixture_image_url(self) -> None:
         """Test Article 1 fixture image URLs match the known fixture values."""
         urls = image_urls(article1_vertex_tree())
-        assert len(urls) == 2
+        assert len(urls) == 3
         assert str(urls[0]) == _ARTICLE_IMAGE_URL_0
         assert str(urls[1]) == _ARTICLE_IMAGE_URL_1
+        assert str(urls[2]) == _ARTICLE_IMAGE_URL_2
 
 
 # ---------------------------------------------------------------------------

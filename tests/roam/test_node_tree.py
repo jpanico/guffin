@@ -775,6 +775,7 @@ class TestNodeTreeDFSIterator:
           3331  — Section 1.1          (order=0, child of 3328)
           3334  — illustration 1.1     (order=0, child of 3331)
           11165 — text block           (order=0, child of 3334)
+          11806 — image block          (order=0, child of 11165)
           11124 — image block          (order=1, child of 3334)
           4758  — AI assistant text    (order=1, child of 3328)
           3329  — Section 2            (order=2, child of root)
@@ -796,6 +797,7 @@ class TestNodeTreeDFSIterator:
             3331,
             3334,
             11165,
+            11806,
             11124,
             4758,
             3329,

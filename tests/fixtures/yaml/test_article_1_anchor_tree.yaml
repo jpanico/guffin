@@ -223,7 +223,8 @@ tree_network:
   string: this image **has not been resized** through the Roam UI.
   order: 0
   heading: null
-  children: null
+  children:
+  - id: 11806
   refs: null
   page:
     id: 3327
@@ -307,6 +308,31 @@ tree_network:
   - id: 4025
   props:
     ah-level: h4
+  title: null
+  sidebar: null
+  attrs: null
+  lookup: null
+  seen_by: null
+- uid: pfkKREU_Y
+  id: 11806
+  time: 1782304880511
+  user:
+    id: 3
+  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 3331
+  - id: 3334
+  - id: 11165
+  props: null
   title: null
   sidebar: null
   attrs: null

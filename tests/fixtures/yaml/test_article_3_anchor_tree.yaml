@@ -67,7 +67,7 @@ tree_network:
   - id: 5458
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -155,7 +155,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   props: null
@@ -178,7 +178,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -225,7 +225,7 @@ tree_network:
   - id: 11758
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -250,7 +250,7 @@ tree_network:
   - id: 11720
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -274,7 +274,7 @@ tree_network:
   - id: 11741
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -298,7 +298,7 @@ tree_network:
   - id: 11718
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -390,7 +390,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -559,7 +559,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -587,7 +587,7 @@ tree_network:
   - id: 11722
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -634,7 +634,7 @@ tree_network:
   - id: 4228
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -698,7 +698,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -721,7 +721,7 @@ tree_network:
   - id: 11767
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -745,7 +745,7 @@ tree_network:
   - id: 11792
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -770,7 +770,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -841,7 +841,7 @@ tree_network:
   - id: 11743
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -911,7 +911,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -935,7 +935,7 @@ tree_network:
   - id: 11719
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -958,7 +958,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -983,7 +983,7 @@ tree_network:
   - id: 4228
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1079,7 +1079,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -1265,7 +1265,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -1289,7 +1289,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -1428,7 +1428,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   props: null
@@ -1473,7 +1473,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -1498,7 +1498,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -1548,7 +1548,7 @@ tree_network:
   - id: 11725
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1574,7 +1574,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1596,7 +1596,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -1719,7 +1719,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1743,7 +1743,7 @@ tree_network:
   - id: 11739
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1766,7 +1766,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -1792,7 +1792,7 @@ tree_network:
   - id: 11721
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1816,7 +1816,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -1888,7 +1888,7 @@ tree_network:
   - id: 11716
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1911,7 +1911,7 @@ tree_network:
   - id: 11716
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1936,7 +1936,7 @@ tree_network:
   - id: 11745
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -1982,7 +1982,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -2058,7 +2058,7 @@ tree_network:
   refs: null
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 11716
@@ -2085,7 +2085,7 @@ tree_network:
   - id: 4225
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -2178,7 +2178,7 @@ tree_network:
   - id: 11717
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -2201,7 +2201,7 @@ tree_network:
   - id: 4226
   page:
     id: 4225
-  open: true
+  open: false
   parents:
   - id: 4225
   - id: 4226
@@ -2364,7 +2364,7 @@ tree_network:
   - id: 5844
   page:
     id: 4225
-  open: false
+  open: true
   parents:
   - id: 4225
   - id: 4227
@@ -2422,7 +2422,7 @@ refs_by_id:
     - id: 5458
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -2513,7 +2513,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     props: null
@@ -3100,7 +3100,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     props: null
@@ -3989,7 +3989,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4014,7 +4014,7 @@ refs_by_id:
     - id: 11717
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4040,7 +4040,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4065,7 +4065,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4165,7 +4165,7 @@ refs_by_id:
     - id: 11718
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4190,7 +4190,7 @@ refs_by_id:
     - id: 11719
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4215,7 +4215,7 @@ refs_by_id:
     - id: 11720
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4240,7 +4240,7 @@ refs_by_id:
     - id: 11721
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4265,7 +4265,7 @@ refs_by_id:
     - id: 11722
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4290,7 +4290,7 @@ refs_by_id:
     - id: 11716
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4365,7 +4365,7 @@ refs_by_id:
     - id: 11739
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4390,7 +4390,7 @@ refs_by_id:
     - id: 11741
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4415,7 +4415,7 @@ refs_by_id:
     - id: 11743
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4440,7 +4440,7 @@ refs_by_id:
     - id: 11745
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4515,7 +4515,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4539,7 +4539,7 @@ refs_by_id:
     - id: 11792
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4564,7 +4564,7 @@ refs_by_id:
     - id: 11767
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4589,7 +4589,7 @@ refs_by_id:
     - id: 11758
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4614,7 +4614,7 @@ refs_by_id:
     - id: 11725
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4639,7 +4639,7 @@ refs_by_id:
     - id: 11716
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4664,7 +4664,7 @@ refs_by_id:
     - id: 4226
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4689,7 +4689,7 @@ refs_by_id:
     - id: 4228
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4715,7 +4715,7 @@ refs_by_id:
     - id: 4225
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4740,7 +4740,7 @@ refs_by_id:
     - id: 4228
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 4226
@@ -4927,7 +4927,8 @@ refs_by_id:
     string: this image **has not been resized** through the Roam UI.
     order: 0
     heading: null
-    children: null
+    children:
+    - id: 11806
     refs: null
     page:
       id: 3327
@@ -4937,6 +4938,32 @@ refs_by_id:
     - id: 3328
     - id: 3331
     - id: 3334
+    props: null
+    title: null
+    sidebar: null
+    attrs: null
+    lookup: null
+    seen_by: null
+  '11806':
+    uid: pfkKREU_Y
+    id: 11806
+    time: 1782304880511
+    user:
+      id: 3
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    open: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    - id: 3334
+    - id: 11165
     props: null
     title: null
     sidebar: null
@@ -5030,7 +5057,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -5216,7 +5243,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: false
+    open: true
     parents:
     - id: 4225
     - id: 4227
@@ -5241,7 +5268,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: false
+    open: true
     parents:
     - id: 4225
     - id: 4227
@@ -5516,7 +5543,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: false
+    open: true
     parents:
     - id: 4225
     - id: 4227
@@ -5541,7 +5568,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: false
+    open: true
     parents:
     - id: 4225
     - id: 4227
@@ -5566,7 +5593,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: false
+    open: true
     parents:
     - id: 4225
     - id: 4227
@@ -5591,7 +5618,7 @@ refs_by_id:
     - id: 5844
     page:
       id: 4225
-    open: false
+    open: true
     parents:
     - id: 4225
     - id: 4227
@@ -5841,7 +5868,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -5867,7 +5894,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -5893,7 +5920,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -5919,7 +5946,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -5945,7 +5972,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -5973,7 +6000,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -5999,7 +6026,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -6027,7 +6054,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716
@@ -6053,7 +6080,7 @@ refs_by_id:
     refs: null
     page:
       id: 4225
-    open: true
+    open: false
     parents:
     - id: 4225
     - id: 11716

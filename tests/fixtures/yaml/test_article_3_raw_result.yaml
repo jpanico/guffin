@@ -45,7 +45,7 @@
     - id: 11766
     time: 1782227421136
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -120,7 +120,7 @@
     order: 1
     seen-by:
     - id: 3
-    open: true
+    open: false
     page:
       id: 4225
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
@@ -151,7 +151,7 @@
     - id: 4227
     time: 1782227332836
     order: 18
-    open: false
+    open: true
     page:
       id: 4225
     refs:
@@ -226,7 +226,7 @@
     - id: 11759
     time: 1782164504762
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -256,7 +256,7 @@
     - id: 4226
     time: 1782173300822
     order: 4
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -272,7 +272,7 @@
     - id: 4226
     time: 1782173300833
     order: 10
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -288,7 +288,7 @@
     - id: 4226
     time: 1782173300818
     order: 2
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -354,7 +354,7 @@
     - id: 11796
     time: 1782239692595
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
 - - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
@@ -422,6 +422,8 @@
         : width: 257
           height: null
     order: 1
+    seen-by:
+    - id: 3
     page:
       id: 3327
 - - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
@@ -532,7 +534,7 @@
     - id: 11794
     time: 1782239692595
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
 - - string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((BuP4ifx3v))'
@@ -545,7 +547,7 @@
     - id: 4226
     time: 1782173300826
     order: 6
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -578,7 +580,7 @@
     - id: 11704
     time: 1782152316078
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -627,7 +629,7 @@
     - id: 11716
     time: 1782239673136
     order: 13
-    open: true
+    open: false
     page:
       id: 4225
 - - string: ((zpSBqgxe4))
@@ -641,7 +643,7 @@
     - id: 11769
     time: 1782227421136
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -657,7 +659,7 @@
     - id: 11802
     time: 1782239755128
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -674,7 +676,7 @@
     - id: 4226
     time: 1782227165593
     order: 17
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -813,7 +815,7 @@
     - id: 4226
     time: 1782173300835
     order: 11
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -881,7 +883,7 @@
     - id: 4226
     time: 1782239736049
     order: 21
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -940,7 +942,7 @@
     - id: 4226
     time: 1782173300821
     order: 3
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -991,7 +993,7 @@
     - id: 11792
     time: 1782239692595
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
 - - string: '{{embed: ((LfXmNr-tV))}}'
@@ -1005,7 +1007,7 @@
     - id: 4229
     time: 1782228279589
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -1115,7 +1117,7 @@
     - id: 4227
     time: 1782227726662
     order: 16
-    open: false
+    open: true
     page:
       id: 4225
     refs:
@@ -1295,6 +1297,8 @@
     - id: 3327
     time: 1770568922821
     order: 2
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -1310,7 +1314,7 @@
     - id: 4227
     time: 1782227199273
     order: 13
-    open: false
+    open: true
     page:
       id: 4225
     refs:
@@ -1344,7 +1348,7 @@
     - id: 4227
     time: 1782227870473
     order: 17
-    open: false
+    open: true
     page:
       id: 4225
     refs:
@@ -1432,6 +1436,8 @@
     - id: 5844
 - - string: this image **has not been resized** through the Roam UI.
     prevent-clean: 1782128940704
+    children:
+    - id: 11806
     user:
       id: 3
     id: 11165
@@ -1480,7 +1486,7 @@
     - id: 4225
     time: 1782151653635
     order: 2
-    open: true
+    open: false
     page:
       id: 4225
 - - string: section 3.1.1
@@ -1512,7 +1518,7 @@
     - id: 11792
     time: 1782239692595
     order: 2
-    open: true
+    open: false
     page:
       id: 4225
 - - heading: 3
@@ -1530,6 +1536,8 @@
     - id: 3332
     time: 1781043166449
     order: 0
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -1548,7 +1556,7 @@
     - id: 11799
     time: 1782239692595
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
 - - string: ((C6xVTMnsh))
@@ -1614,7 +1622,7 @@
     - id: 11735
     time: 1782160870214
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -1657,7 +1665,7 @@
     - id: 4226
     time: 1782173004373
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -1696,7 +1704,7 @@
     - id: 11800
     time: 1782239692595
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
 - - string: Bullet block 1.3
@@ -1761,6 +1769,21 @@
     open: false
     page:
       id: 4225
+- - id: 11806
+    order: 0
+    page:
+      id: 3327
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    - id: 3334
+    - id: 11165
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
+    uid: pfkKREU_Y
+    time: 1782304880511
+    user:
+      id: 3
 - - string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((9a_6taJAn))'
     user:
       id: 3
@@ -1857,7 +1880,7 @@
     - id: 4226
     time: 1782173300803
     order: 7
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -1877,6 +1900,8 @@
     - id: 3329
     time: 1770568965850
     order: 0
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -1939,7 +1964,7 @@
     - id: 4226
     time: 1782173300832
     order: 9
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -1973,7 +1998,7 @@
     - id: 11792
     time: 1782239692595
     order: 1
-    open: true
+    open: false
     page:
       id: 4225
 - - string: Bullet block 1.2.1
@@ -2000,7 +2025,7 @@
     - id: 4226
     time: 1782173300824
     order: 5
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -2024,9 +2049,9 @@
     title: '[[Test Article]] 1'
     seen-by:
     - id: 3
-    edit-nonce: tsZNP3aVL
+    edit-nonce: Hux3epr5G
     view-type: bullet
-    edit-time: 1781136935270
+    edit-time: 1782304880511
     refs:
     - id: 4223
 - - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
@@ -2058,7 +2083,7 @@
     - id: 4227
     time: 1782227207347
     order: 14
-    open: false
+    open: true
     page:
       id: 4225
     refs:
@@ -2122,7 +2147,7 @@
     - id: 4226
     time: 1782226456160
     order: 8
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -2139,7 +2164,7 @@
     - id: 11733
     time: 1782226456160
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -2154,7 +2179,7 @@
     - id: 4226
     time: 1782173300837
     order: 12
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -2208,7 +2233,7 @@
     - id: 11797
     time: 1782239692595
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
@@ -2288,7 +2313,7 @@
     - id: 11793
     time: 1782239692595
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
 - - string: '[[[[Test Article]] 3]]'
@@ -2302,7 +2327,7 @@
     - id: 11701
     time: 1782152253425
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -2378,7 +2403,7 @@
     - id: 4226
     time: 1782173300799
     order: 1
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -2412,7 +2437,7 @@
     - id: 11707
     time: 1782152360551
     order: 0
-    open: true
+    open: false
     page:
       id: 4225
     refs:
@@ -2572,7 +2597,7 @@
     - id: 4227
     time: 1782227195345
     order: 12
-    open: false
+    open: true
     page:
       id: 4225
     refs:

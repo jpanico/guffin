@@ -20,8 +20,9 @@
 ### illustration 1.1
 
 - this image **has not been resized** through the Roam UI.
+  <img src="413128b66b2037f4176762f32108a00d6328a454b138ba0438a9038cdb7b00da.jpg" style="margin: 0;">
 
-<img src="4bb41fdc554dc75e557e9fcd463402db6d32abb30d93289a8ad644c6d89cf26f.jpg" alt="A flower">
+<img src="4bb41fdc554dc75e557e9fcd463402db6d32abb30d93289a8ad644c6d89cf26f.jpg" alt="A flower" style="margin: 0;">
 
 - AI assistant (Claude Opus 4.6):
 
@@ -33,7 +34,7 @@
 
 - this image **has been resized** through the Roam UI (width:257, height:None)
 
-<img src="033a49ffff95aca42ad1b875cece7de2b757d71ee6ddd1152eaede4809727017.jpg" width="257">
+<img src="033a49ffff95aca42ad1b875cece7de2b757d71ee6ddd1152eaede4809727017.jpg" width="257" style="margin: 0;">
 
 ### Section 2.1.1
 

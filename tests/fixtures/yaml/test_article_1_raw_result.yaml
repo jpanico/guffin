@@ -1,4 +1,4 @@
-- - prevent-clean: 1773090962400
+- - prevent-clean: 1782152316083
     children:
     - id: 4224
     user:
@@ -46,6 +46,8 @@
         : width: 257
           height: null
     order: 1
+    seen-by:
+    - id: 3
     page:
       id: 3327
 - - prevent-clean: 1781542258419
@@ -142,6 +144,8 @@
     - id: 3327
     time: 1770568922821
     order: 2
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -162,6 +166,9 @@
     page:
       id: 3327
 - - string: this image **has not been resized** through the Roam UI.
+    prevent-clean: 1782128940704
+    children:
+    - id: 11806
     user:
       id: 3
     id: 11165
@@ -191,6 +198,8 @@
     - id: 3332
     time: 1781043166449
     order: 0
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -229,7 +238,22 @@
     open: false
     page:
       id: 3327
-- - prevent-clean: 1781542258419
+- - id: 11806
+    order: 0
+    page:
+      id: 3327
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    - id: 3334
+    - id: 11165
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
+    uid: pfkKREU_Y
+    time: 1782304880511
+    user:
+      id: 3
+- - prevent-clean: 1782226716897
     user:
       id: 3
     id: 5462
@@ -255,6 +279,8 @@
     - id: 3329
     time: 1770568965850
     order: 0
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -327,9 +353,9 @@
     title: '[[Test Article]] 1'
     seen-by:
     - id: 3
-    edit-nonce: tsZNP3aVL
+    edit-nonce: Hux3epr5G
     view-type: bullet
-    edit-time: 1781136935270
+    edit-time: 1782304880511
     refs:
     - id: 4223
 - - heading: 2
