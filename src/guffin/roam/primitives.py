@@ -5,12 +5,14 @@ Public symbols are organized into four groups:
 - **Primitive type aliases**: :data:`Uid`, :data:`Id`, :data:`Order`, :data:`PageTitle`.
 - **Composite type aliases**: :data:`UidPair`, :data:`RawChildren`, :data:`RawRefs`.
 - **Stub models**: :class:`IdObject`, :class:`LinkObject`.
+- **Enums**: :class:`ChildrenViewType` — Roam block ``:children/view-type`` values.
 - **Pattern constants**: :data:`UID_PATTERN` / :data:`UID_RE` — canonical
   unanchored regex for a Roam node UID and its compiled form;
   :data:`ANCHORED_UID_PATTERN` / :data:`ANCHORED_UID_RE` — the whole-string
   anchored form and its compiled form.
 """
 
+import enum
 from typing import Annotated, Final, Literal
 
 import regex
@@ -52,6 +54,19 @@ Only present on page entities.
 
 type UidPair = tuple[Literal["uid"], Uid]
 """A two-element tuple ``('uid', <uid-value>)`` used as a Datomic :entity/attrs source or value."""
+
+
+class ChildrenViewType(enum.StrEnum):
+    """How a block's children are rendered in the Roam UI (:children/view-type).
+
+    - **BULLET**: children shown as a bulleted list (the Roam default).
+    - **DOCUMENT**: children shown as a flowing document without bullets.
+    - **NUMBERED**: children shown as a numbered list.
+    """
+
+    BULLET = "bullet"
+    DOCUMENT = "document"
+    NUMBERED = "numbered"
 
 
 class IdObject(BaseModel):

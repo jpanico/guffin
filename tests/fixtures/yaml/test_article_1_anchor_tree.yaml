@@ -13,6 +13,7 @@ root_node:
   - id: 4223
   page: null
   open: null
+  children_view_type: bullet
   parents: null
   props: null
   title: '[[Test Article]] 1'
@@ -29,6 +30,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -46,6 +48,7 @@ tree_network:
   page:
     id: 3327
   open: null
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -70,6 +73,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -86,6 +90,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -103,6 +108,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -120,6 +126,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: bullet
   parents:
   - id: 3327
   - id: 3328
@@ -138,6 +145,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -153,6 +161,7 @@ tree_network:
   page:
     id: 3327
   open: null
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -172,6 +181,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -192,6 +202,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -210,6 +221,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -226,6 +238,7 @@ tree_network:
   page:
     id: 3327
   open: false
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -245,6 +258,7 @@ tree_network:
   page:
     id: 3327
   open: null
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -266,6 +280,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -306,6 +321,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -321,6 +337,7 @@ tree_network:
   page:
     id: 3327
   open: false
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -341,6 +358,7 @@ tree_network:
   - id: 4223
   page: null
   open: null
+  children_view_type: bullet
   parents: null
   props: null
   title: '[[Test Article]] 1'
@@ -355,6 +373,7 @@ tree_network:
   page:
     id: 3327
   open: false
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3330
@@ -371,6 +390,7 @@ tree_network:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -391,6 +411,7 @@ refs_by_id:
     refs: null
     page: null
     open: null
+    children_view_type: null
     parents: null
     props: null
     title: Test Article
@@ -405,6 +426,7 @@ refs_by_id:
     refs: null
     page: null
     open: null
+    children_view_type: null
     parents: null
     props: null
     title: '>'
@@ -419,6 +441,7 @@ refs_by_id:
     refs: null
     page: null
     open: null
+    children_view_type: null
     parents: null
     props: null
     title: '!INFO'

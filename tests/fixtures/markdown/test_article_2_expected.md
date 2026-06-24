@@ -18,7 +18,10 @@ Document block 1
 
 - Document block 1.1
 - Document block 1.2
-  - Bullet block 1.2.1
-    - Bullet block 1.2.1.1
-    - Bullet block 1.2.1.2
 - Document block 1.3
+
+Numbered block 1
+
+- Numbered block 1.1
+- Numbered block 1.2
+- Numbered block 1.3

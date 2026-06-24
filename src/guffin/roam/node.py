@@ -39,6 +39,7 @@ from guffin.roam.markdown import (
     is_roam_block_quote,
 )
 from guffin.roam.primitives import (
+    ChildrenViewType,
     Id,
     IdObject,
     LinkObject,
@@ -125,6 +126,8 @@ class RoamNode(BaseModel):
         refs: Raw page/block reference stubs (BLOCK_REFS).
         page: IdObject stub for the containing page (BLOCK_PAGE). Present only on Blocks.
         open: Whether the block is expanded (BLOCK_OPEN). Present only on Blocks.
+        children_view_type: How this block's children are rendered (CHILDREN_VIEW_TYPE). Present
+            only on Blocks.
         parents: IdObject stubs for all ancestor blocks (BLOCK_PARENTS). Present only on Blocks.
         props: Block property key-value map (BLOCK_PROPS). Present only on Blocks that have block
             properties set (e.g. ``ah-level`` from the Augmented Headings extension).
@@ -158,6 +161,11 @@ class RoamNode(BaseModel):
     )
     open: bool | None = Field(
         default=None, description=f"{RoamAttribute.BLOCK_OPEN} — expanded/collapsed state; present only on Blocks"
+    )
+    children_view_type: ChildrenViewType | None = Field(
+        default=None,
+        alias="view-type",
+        description=f"{RoamAttribute.CHILDREN_VIEW_TYPE} — how this block's children are rendered",
     )
     parents: list[IdObject] | None = Field(
         default=None, description=f"{RoamAttribute.BLOCK_PARENTS} — all ancestor stubs; present only on Blocks"

@@ -16,6 +16,7 @@
   refs: null
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -31,6 +32,7 @@
   - id: 5844
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11662
@@ -52,6 +54,7 @@
   refs:
   - id: 4223
   page: null
+  children_view_type: null
   parents: null
   props: null
   title: '[[Test Article]] 4'
@@ -66,6 +69,7 @@
   - id: 11673
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11669
@@ -82,6 +86,7 @@
   - id: 5844
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11666
@@ -98,6 +103,7 @@
   - id: 11671
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11669
@@ -116,6 +122,7 @@
   - id: 5462
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -131,6 +138,7 @@
   - id: 11454
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11666
@@ -147,6 +155,7 @@
   - id: 11454
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11662
@@ -165,6 +174,7 @@
   refs: null
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -181,6 +191,7 @@
   refs: null
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -196,6 +207,7 @@
   - id: 11454
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11654
@@ -212,6 +224,7 @@
   - id: 5844
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11657
@@ -228,6 +241,7 @@
   - id: 11454
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11657
@@ -245,6 +259,7 @@
   refs: null
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -260,6 +275,7 @@
   - id: 5844
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11654
@@ -277,6 +293,7 @@
   refs: null
   page:
     id: 11643
+  children_view_type: null
   parents:
   - id: 11643
   props: null

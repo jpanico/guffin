@@ -11,6 +11,7 @@ Jt4-6SLWM:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -28,6 +29,7 @@ ju0ABeH0Y:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11662
@@ -44,6 +46,7 @@ iF2Ey_unj:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: c:ORANGE
@@ -59,6 +62,7 @@ LBFKibPIj:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: Test Article
@@ -73,6 +77,7 @@ LBFKibPIj:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: .bg-ORANGE
@@ -94,6 +99,7 @@ mkHZLUn8Q:
   - id: 4223
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: '[[Test Article]] 4'
@@ -110,6 +116,7 @@ UlMMEdU3W:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11669
@@ -128,6 +135,7 @@ GUiM9K-kR:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11666
@@ -146,6 +154,7 @@ VastJ7V3A:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11669
@@ -166,6 +175,7 @@ yd7MFbFou:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -181,6 +191,7 @@ OexZiLR_O:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: '>'
@@ -197,6 +208,7 @@ T6cykqu88:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11666
@@ -215,6 +227,7 @@ _EtYSMJNn:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11662
@@ -235,6 +248,7 @@ ShnYeNIu5:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -253,6 +267,7 @@ c9kTivLOo:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -270,6 +285,7 @@ Rjt1IvrVq:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11654
@@ -288,6 +304,7 @@ rArYyVVBS:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11657
@@ -306,6 +323,7 @@ rArYyVVBS:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11657
@@ -325,6 +343,7 @@ TH55X8Rc_:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -342,6 +361,7 @@ AE3uVp_QL:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   - id: 11654
@@ -358,6 +378,7 @@ ZgUWBRb7j:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: '!INFO'
@@ -375,6 +396,7 @@ S2yCBxWED:
   page:
     id: 11643
   open: true
+  children_view_type: null
   parents:
   - id: 11643
   props: null
@@ -390,6 +412,7 @@ LnMn9Dq7S:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: .bg-FUCHSIA
@@ -404,6 +427,7 @@ lF-qY0Xrs:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: c:FUCHSIA

@@ -8,26 +8,45 @@ root_node:
   - id: 11675
   - id: 11677
   - id: 11682
+  - id: 11807
   refs:
   - id: 4223
   page: null
   open: null
+  children_view_type: document
   parents: null
   props: null
   title: '[[Test Article]] 2'
   attrs: null
 tree_network:
+- uid: InqcJLiuz
+  id: 11810
+  string: Numbered block 1.3
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11674
+  - id: 11807
+  props: null
+  title: null
+  attrs: null
 - uid: d_3REDRrO
   id: 11684
   string: Document block 1.2
   order: 1
   heading: null
-  children:
-  - id: 11685
+  children: null
   refs: null
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11682
@@ -47,8 +66,26 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: bullet
   parents:
   - id: 11674
+  props: null
+  title: null
+  attrs: null
+- uid: fv5nh7u81
+  id: 11809
+  string: Numbered block 1.2
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11674
+  - id: 11807
   props: null
   title: null
   attrs: null
@@ -63,6 +100,7 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677
@@ -82,6 +120,26 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: document
+  parents:
+  - id: 11674
+  props: null
+  title: null
+  attrs: null
+- uid: sPZ2xmBBS
+  id: 11807
+  string: Numbered block 1
+  order: 3
+  heading: null
+  children:
+  - id: 11808
+  - id: 11809
+  - id: 11810
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: numbered
   parents:
   - id: 11674
   props: null
@@ -100,6 +158,7 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   props: null
@@ -114,31 +173,15 @@ tree_network:
   - id: 11675
   - id: 11677
   - id: 11682
+  - id: 11807
   refs:
   - id: 4223
   page: null
   open: null
+  children_view_type: document
   parents: null
   props: null
   title: '[[Test Article]] 2'
-  attrs: null
-- uid: -noi1eQMD
-  id: 11690
-  string: Bullet block 1.2.1.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  open: true
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
-  - id: 11685
-  props: null
-  title: null
   attrs: null
 - uid: Bb49MOLyE
   id: 11686
@@ -150,6 +193,7 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11682
@@ -166,27 +210,10 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677
-  props: null
-  title: null
-  attrs: null
-- uid: XgPKipOsW
-  id: 11691
-  string: Bullet block 1.2.1.2
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  open: true
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
-  - id: 11685
   props: null
   title: null
   attrs: null
@@ -200,29 +227,11 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677
   - id: 11679
-  props: null
-  title: null
-  attrs: null
-- uid: 5SczmqJaW
-  id: 11685
-  string: Bullet block 1.2.1
-  order: 0
-  heading: null
-  children:
-  - id: 11690
-  - id: 11691
-  refs: null
-  page:
-    id: 11674
-  open: true
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
   props: null
   title: null
   attrs: null
@@ -236,9 +245,27 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11682
+  props: null
+  title: null
+  attrs: null
+- uid: UQQwogj1M
+  id: 11808
+  string: Numbered block 1.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11674
+  - id: 11807
   props: null
   title: null
   attrs: null
@@ -252,6 +279,7 @@ tree_network:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677
@@ -270,6 +298,7 @@ refs_by_id:
     refs: null
     page: null
     open: null
+    children_view_type: null
     parents: null
     props: null
     title: Test Article
@@ -284,6 +313,7 @@ refs_by_id:
     refs: null
     page: null
     open: null
+    children_view_type: null
     parents: null
     props: null
     title: '>'
@@ -298,6 +328,7 @@ refs_by_id:
     refs: null
     page: null
     open: null
+    children_view_type: null
     parents: null
     props: null
     title: '!INFO'

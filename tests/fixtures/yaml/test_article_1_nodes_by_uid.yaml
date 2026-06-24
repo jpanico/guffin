@@ -9,6 +9,7 @@ LBFKibPIj:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: Test Article
@@ -25,6 +26,7 @@ yFUau9Cpg:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -43,6 +45,7 @@ zZG-BfWvs:
   page:
     id: 3327
   open: null
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -65,6 +68,7 @@ OexZiLR_O:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: '>'
@@ -82,6 +86,7 @@ OexZiLR_O:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -99,6 +104,7 @@ OexZiLR_O:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -117,6 +123,7 @@ TaN67WqnA:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -135,6 +142,7 @@ Ma5KGUH9O:
   page:
     id: 3327
   open: true
+  children_view_type: bullet
   parents:
   - id: 3327
   - id: 3328
@@ -154,6 +162,7 @@ wdMgyBiP9:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -170,6 +179,7 @@ uj8YolCoE:
   page:
     id: 3327
   open: null
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -190,6 +200,7 @@ uj8YolCoE:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -211,6 +222,7 @@ OaTXPl93p:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -230,6 +242,7 @@ OaTXPl93p:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -247,6 +260,7 @@ bxkcECGwN:
   page:
     id: 3327
   open: false
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -267,6 +281,7 @@ pfkKREU_Y:
   page:
     id: 3327
   open: null
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3328
@@ -286,6 +301,7 @@ ZgUWBRb7j:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: '!INFO'
@@ -303,6 +319,7 @@ drtANJYTg:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -344,6 +361,7 @@ cNW8lmXIM:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   props: null
@@ -360,6 +378,7 @@ cNW8lmXIM:
   page:
     id: 3327
   open: false
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329
@@ -381,6 +400,7 @@ cNW8lmXIM:
   - id: 4223
   page: null
   open: null
+  children_view_type: bullet
   parents: null
   props: null
   title: '[[Test Article]] 1'
@@ -396,6 +416,7 @@ JW5PswS6v:
   page:
     id: 3327
   open: false
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3330
@@ -413,6 +434,7 @@ tWkumkdUE:
   page:
     id: 3327
   open: true
+  children_view_type: null
   parents:
   - id: 3327
   - id: 3329

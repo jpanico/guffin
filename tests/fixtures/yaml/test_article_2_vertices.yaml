@@ -8,6 +8,7 @@
   - MmvJZhQNJ
   - sD1C9ifkG
   - DsogfVzX9
+  - sPZ2xmBBS
   refs:
   - LBFKibPIj
   title: '[Test Article](x-guffin:vertex/LBFKibPIj) 2'
@@ -53,21 +54,23 @@
   text: Document block 1.1
 - vertex_type: guffin/text
   uid: d_3REDRrO
-  children:
-  - 5SczmqJaW
   text: Document block 1.2
-- vertex_type: guffin/text
-  uid: 5SczmqJaW
-  children:
-  - -noi1eQMD
-  - XgPKipOsW
-  text: Bullet block 1.2.1
-- vertex_type: guffin/text
-  uid: -noi1eQMD
-  text: Bullet block 1.2.1.1
-- vertex_type: guffin/text
-  uid: XgPKipOsW
-  text: Bullet block 1.2.1.2
 - vertex_type: guffin/text
   uid: Bb49MOLyE
   text: Document block 1.3
+- vertex_type: guffin/text
+  uid: sPZ2xmBBS
+  children:
+  - UQQwogj1M
+  - fv5nh7u81
+  - InqcJLiuz
+  text: Numbered block 1
+- vertex_type: guffin/text
+  uid: UQQwogj1M
+  text: Numbered block 1.1
+- vertex_type: guffin/text
+  uid: fv5nh7u81
+  text: Numbered block 1.2
+- vertex_type: guffin/text
+  uid: InqcJLiuz
+  text: Numbered block 1.3

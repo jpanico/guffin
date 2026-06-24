@@ -1,3 +1,21 @@
+InqcJLiuz:
+  uid: InqcJLiuz
+  id: 11810
+  string: Numbered block 1.3
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11674
+  - id: 11807
+  props: null
+  title: null
+  attrs: null
 LBFKibPIj:
   uid: LBFKibPIj
   id: 4223
@@ -9,6 +27,7 @@ LBFKibPIj:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: Test Article
@@ -19,12 +38,12 @@ d_3REDRrO:
   string: Document block 1.2
   order: 1
   heading: null
-  children:
-  - id: 11685
+  children: null
   refs: null
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11682
@@ -45,6 +64,7 @@ sD1C9ifkG:
   page:
     id: 11674
   open: true
+  children_view_type: bullet
   parents:
   - id: 11674
   props: null
@@ -60,9 +80,28 @@ OexZiLR_O:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: '>'
+  attrs: null
+fv5nh7u81:
+  uid: fv5nh7u81
+  id: 11809
+  string: Numbered block 1.2
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11674
+  - id: 11807
+  props: null
+  title: null
   attrs: null
 YyeRpjbFD:
   uid: YyeRpjbFD
@@ -76,6 +115,7 @@ YyeRpjbFD:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677
@@ -96,6 +136,27 @@ DsogfVzX9:
   page:
     id: 11674
   open: true
+  children_view_type: document
+  parents:
+  - id: 11674
+  props: null
+  title: null
+  attrs: null
+sPZ2xmBBS:
+  uid: sPZ2xmBBS
+  id: 11807
+  string: Numbered block 1
+  order: 3
+  heading: null
+  children:
+  - id: 11808
+  - id: 11809
+  - id: 11810
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: numbered
   parents:
   - id: 11674
   props: null
@@ -115,6 +176,7 @@ MmvJZhQNJ:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   props: null
@@ -130,32 +192,15 @@ lDYWYqYSL:
   - id: 11675
   - id: 11677
   - id: 11682
+  - id: 11807
   refs:
   - id: 4223
   page: null
   open: null
+  children_view_type: document
   parents: null
   props: null
   title: '[[Test Article]] 2'
-  attrs: null
--noi1eQMD:
-  uid: -noi1eQMD
-  id: 11690
-  string: Bullet block 1.2.1.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  open: true
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
-  - id: 11685
-  props: null
-  title: null
   attrs: null
 Bb49MOLyE:
   uid: Bb49MOLyE
@@ -168,6 +213,7 @@ Bb49MOLyE:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11682
@@ -185,28 +231,10 @@ gmLJbWZYp:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677
-  props: null
-  title: null
-  attrs: null
-XgPKipOsW:
-  uid: XgPKipOsW
-  id: 11691
-  string: Bullet block 1.2.1.2
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  open: true
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
-  - id: 11685
   props: null
   title: null
   attrs: null
@@ -220,6 +248,7 @@ ZgUWBRb7j:
   refs: null
   page: null
   open: null
+  children_view_type: null
   parents: null
   props: null
   title: '!INFO'
@@ -235,30 +264,11 @@ KUi_6ooZj:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677
   - id: 11679
-  props: null
-  title: null
-  attrs: null
-5SczmqJaW:
-  uid: 5SczmqJaW
-  id: 11685
-  string: Bullet block 1.2.1
-  order: 0
-  heading: null
-  children:
-  - id: 11690
-  - id: 11691
-  refs: null
-  page:
-    id: 11674
-  open: true
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
   props: null
   title: null
   attrs: null
@@ -273,9 +283,28 @@ KUi_6ooZj:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11682
+  props: null
+  title: null
+  attrs: null
+UQQwogj1M:
+  uid: UQQwogj1M
+  id: 11808
+  string: Numbered block 1.1
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11674
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11674
+  - id: 11807
   props: null
   title: null
   attrs: null
@@ -290,6 +319,7 @@ VH0mXM0rw:
   page:
     id: 11674
   open: true
+  children_view_type: null
   parents:
   - id: 11674
   - id: 11677

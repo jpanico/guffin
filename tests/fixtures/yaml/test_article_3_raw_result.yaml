@@ -1,3 +1,16 @@
+- - string: Numbered block 1.3
+    user:
+      id: 3
+    id: 11810
+    uid: InqcJLiuz
+    parents:
+    - id: 11674
+    - id: 11807
+    time: 1782319883900
+    order: 2
+    open: true
+    page:
+      id: 11674
 - - string: section 3.2
     user:
       id: 3
@@ -232,8 +245,6 @@
     refs:
     - id: 11758
 - - string: Document block 1.2
-    children:
-    - id: 11685
     user:
       id: 3
     id: 11684
@@ -822,6 +833,19 @@
     refs:
     - id: 5844
     - id: 11743
+- - string: Numbered block 1.2
+    user:
+      id: 3
+    id: 11809
+    uid: fv5nh7u81
+    parents:
+    - id: 11674
+    - id: 11807
+    time: 1782319880857
+    order: 1
+    open: true
+    page:
+      id: 11674
 - - string: This para features ^^highlight^^
     prevent-clean: 1782162943989
     user:
@@ -1402,6 +1426,23 @@
     refs:
     - id: 5844
     - id: 11172
+- - string: Numbered block 1
+    children:
+    - id: 11808
+    - id: 11809
+    - id: 11810
+    user:
+      id: 3
+    id: 11807
+    uid: sPZ2xmBBS
+    parents:
+    - id: 11674
+    time: 1782319864881
+    order: 3
+    view-type: numbered
+    open: true
+    page:
+      id: 11674
 - - string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
     user:
       id: 3
@@ -1597,19 +1638,20 @@
     - id: 11675
     - id: 11677
     - id: 11682
+    - id: 11807
     user:
       id: 3
     sidebar: 21
     id: 11674
     uid: lDYWYqYSL
-    word-count: 52
+    word-count: 55
     edit-user:
       id: 3
     time: 1781833447041
     title: '[[Test Article]] 2'
-    edit-nonce: wlMij233t
+    edit-nonce: PwnCOeMf3
     view-type: document
-    edit-time: 1782308013773
+    edit-time: 1782319894249
     refs:
     - id: 4223
 - - string: ((yECzsUNPC))
@@ -1628,21 +1670,6 @@
       id: 4225
     refs:
     - id: 11725
-- - string: Bullet block 1.2.1.1
-    user:
-      id: 3
-    id: 11690
-    uid: -noi1eQMD
-    parents:
-    - id: 11674
-    - id: 11682
-    - id: 11684
-    - id: 11685
-    time: 1781834571497
-    order: 0
-    open: true
-    page:
-      id: 11674
 - - string: Document block 1.3
     user:
       id: 3
@@ -1718,21 +1745,6 @@
     - id: 11677
     time: 1781833741666
     order: 2
-    open: true
-    page:
-      id: 11674
-- - string: Bullet block 1.2.1.2
-    user:
-      id: 3
-    id: 11691
-    uid: XgPKipOsW
-    parents:
-    - id: 11674
-    - id: 11682
-    - id: 11684
-    - id: 11685
-    time: 1781834579902
-    order: 1
     open: true
     page:
       id: 11674
@@ -2186,24 +2198,6 @@
     refs:
     - id: 5844
     - id: 11745
-- - string: Bullet block 1.2.1
-    children:
-    - id: 11690
-    - id: 11691
-    user:
-      id: 3
-    id: 11685
-    uid: 5SczmqJaW
-    parents:
-    - id: 11674
-    - id: 11682
-    - id: 11684
-    time: 1781834552642
-    order: 0
-    view-type: bullet
-    open: true
-    page:
-      id: 11674
 - - string: ((4SIo9hSEY))
     user:
       id: 3
@@ -2362,6 +2356,19 @@
     open: false
     page:
       id: 4225
+- - string: Numbered block 1.1
+    user:
+      id: 3
+    id: 11808
+    uid: UQQwogj1M
+    parents:
+    - id: 11674
+    - id: 11807
+    time: 1782319875856
+    order: 0
+    open: true
+    page:
+      id: 11674
 - - string: r1.c1
     children:
     - id: 11230
