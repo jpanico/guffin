@@ -65,7 +65,7 @@ from guffin.pipeline.rich_rendering import (
 from guffin.pipeline.image_fetch import fetch_and_enrich_images
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
-from guffin.cli.fetch_roam_tree import fetch_roam_trees
+from guffin.cli.common import fetch_roam_trees
 from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint
 from guffin.cli.logging_config import configure_logging

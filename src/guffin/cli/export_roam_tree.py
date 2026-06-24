@@ -67,7 +67,7 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
 from guffin.roam.primitives import ANCHORED_UID_PATTERN
-from guffin.cli.fetch_roam_tree import fetch_roam_trees
+from guffin.cli.common import fetch_roam_trees
 
 configure_logging()
 logger = logging.getLogger(__name__)

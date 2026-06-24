@@ -47,7 +47,7 @@ class TestExportRoamTreeNoBundle:
         runner: CliRunner = CliRunner()
 
         with patch(
-            "guffin.cli.fetch_roam_tree.FetchRoamNodes.fetch_roam_nodes",
+            "guffin.cli.common.FetchRoamNodes.fetch_roam_nodes",
             return_value=mock_result,
         ):
             # configure_logging() runs at import time and installs a StreamHandler
@@ -97,7 +97,7 @@ class TestExportRoamTreeBundle:
         runner: CliRunner = CliRunner()
 
         with patch(
-            "guffin.cli.fetch_roam_tree.FetchRoamNodes.fetch_roam_nodes",
+            "guffin.cli.common.FetchRoamNodes.fetch_roam_nodes",
             return_value=mock_result,
         ):
             with patch(
@@ -211,7 +211,7 @@ class TestExportRoamTreeNotFound:
         )
         runner: CliRunner = CliRunner()
         with patch(
-            "guffin.cli.fetch_roam_tree.FetchRoamNodes.fetch_roam_nodes",
+            "guffin.cli.common.FetchRoamNodes.fetch_roam_nodes",
             side_effect=RoamNodeNotFoundError(not_found_spec),
         ):
             saved_handlers = logging.root.handlers[:]
