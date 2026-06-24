@@ -5,10 +5,12 @@ import pytest
 from pydantic import ValidationError
 
 from guffin.common.geometry import ImageSize
-from guffin.roam.primitives import IdObject
+from guffin.roam.primitives import ChildrenViewType, IdObject
 from guffin.roam.node import (
+    DEFAULT_CHILDREN_VIEW_TYPE,
     NodeType,
     RoamNode,
+    effective_children_view_type,
     image_size,
     node_type,
 )
@@ -567,3 +569,37 @@ class TestImageSize:
         )
         with pytest.raises(ValidationError):
             image_size(node)
+
+
+# ---------------------------------------------------------------------------
+# TestEffectiveChildrenViewType
+# ---------------------------------------------------------------------------
+
+
+class TestEffectiveChildrenViewType:
+    """Tests for the effective_children_view_type() function."""
+
+    def test_returns_default_when_unset(self) -> None:
+        """Test that DEFAULT_CHILDREN_VIEW_TYPE is returned when children_view_type is None."""
+        node = RoamNode(
+            uid="block0001",
+            id=1,
+            string="stub",
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+        )
+        assert node.children_view_type is None
+        assert effective_children_view_type(node) == DEFAULT_CHILDREN_VIEW_TYPE
+
+    @pytest.mark.parametrize("view_type", list(ChildrenViewType))
+    def test_returns_own_value_when_set(self, view_type: ChildrenViewType) -> None:
+        """Test that the node's own children_view_type is returned when it is set."""
+        node = RoamNode(
+            uid="block0001",
+            id=1,
+            string="stub",
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            children_view_type=view_type,
+        )
+        assert effective_children_view_type(node) == view_type

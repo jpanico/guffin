@@ -9,10 +9,14 @@ Public symbols:
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
 - :func:`effective_heading_level` — return the effective heading level for a
   :class:`RoamNode`, or ``None`` if it is not a heading.
+- :func:`effective_children_view_type` — return a :class:`RoamNode`'s children view type,
+  falling back to :data:`DEFAULT_CHILDREN_VIEW_TYPE` when unset.
 - :func:`image_size` — return the :class:`~guffin.common.geometry.ImageSize` recorded in
   a :attr:`NodeType.ROAM_IMAGE_BLOCK` node's ``image-size`` prop, or ``None`` if the node
   is not an image block.
 - :data:`NodesByUid` — ``dict`` mapping each :attr:`~RoamNode.uid` to its :class:`RoamNode`.
+- :data:`DEFAULT_CHILDREN_VIEW_TYPE` — fallback :class:`~guffin.roam.primitives.ChildrenViewType`
+  for a block whose ``children_view_type`` is unset.
 """
 
 import enum
@@ -52,6 +56,9 @@ from guffin.roam.primitives import (
 from guffin.roam.schema import RoamAttribute
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_CHILDREN_VIEW_TYPE: Final[ChildrenViewType] = ChildrenViewType.DOCUMENT
+"""Fallback :class:`~guffin.roam.primitives.ChildrenViewType` for an unset ``children_view_type``."""
 
 _IMAGE_SIZE_PROP_ADAPTER: Final[TypeAdapter[dict[str, dict[str, int | None]]]] = TypeAdapter(
     dict[str, dict[str, int | None]]
@@ -255,6 +262,22 @@ def effective_heading_level(node: RoamNode) -> HeadingLevel | None:
             except ValueError:
                 pass
     return None
+
+
+@validate_call
+def effective_children_view_type(node: RoamNode) -> ChildrenViewType:
+    """Return *node*'s children view type, falling back to the default when unset.
+
+    Args:
+        node: The node to inspect.
+
+    Returns:
+        :attr:`~RoamNode.children_view_type` if set, otherwise
+        :data:`DEFAULT_CHILDREN_VIEW_TYPE`.
+    """
+    if node.children_view_type is None:
+        return DEFAULT_CHILDREN_VIEW_TYPE
+    return node.children_view_type
 
 
 @validate_call
