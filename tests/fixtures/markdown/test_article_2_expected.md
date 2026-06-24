@@ -16,12 +16,14 @@ Bullet block 1
 
 Document block 1
 
-- Document block 1.1
-- Document block 1.2
-- Document block 1.3
+Document block 1.1
+
+Document block 1.2
+
+Document block 1.3
 
 Numbered block 1
 
-- Numbered block 1.1
-- Numbered block 1.2
-- Numbered block 1.3
+1.  Numbered block 1.1
+2.  Numbered block 1.2
+3.  Numbered block 1.3

@@ -84,11 +84,12 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   <img src="1f5047588dc26ea57a9d3e2364822fae77f3c2e82f9db652d5ddf7d0d8046c4c.jpg" style="margin: 0;">
 - <span style="color: fuchsia">**standalone BLOCK EMBED ↓**</span>
-  - Section 3
-    - section 3.1
-      - section 3.1.1
-    - section 3.2
-    - section 3.3
+  Section 3
+
+  - section 3.1
+    - section 3.1.1
+  - section 3.2
+  - section 3.3
 - <span style="color: fuchsia">**standalone HEADER ref ↓**</span>
   - Feature Content
 - <span style="color: fuchsia">**standalone FENCED-CODE ref ↓**</span>
@@ -177,9 +178,10 @@ def fizz_buzz(limit: int = 100):
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
 
-Section 3
+<!-- -->
 
-- section 3.1
-  - section 3.1.1
-- section 3.2
-- section 3.3
+- Section 3
+  - section 3.1
+    - section 3.1.1
+  - section 3.2
+  - section 3.3

@@ -84,11 +84,12 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   [7rthRV4UHu.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)
 - <span style="color: fuchsia">**standalone BLOCK EMBED ↓**</span>
-  - Section 3
-    - section 3.1
-      - section 3.1.1
-    - section 3.2
-    - section 3.3
+  Section 3
+
+  - section 3.1
+    - section 3.1.1
+  - section 3.2
+  - section 3.3
 - <span style="color: fuchsia">**standalone HEADER ref ↓**</span>
   - Feature Content
 - <span style="color: fuchsia">**standalone FENCED-CODE ref ↓**</span>
@@ -177,9 +178,10 @@ def fizz_buzz(limit: int = 100):
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
 
-Section 3
+<!-- -->
 
-- section 3.1
-  - section 3.1.1
-- section 3.2
-- section 3.3
+- Section 3
+  - section 3.1
+    - section 3.1.1
+  - section 3.2
+  - section 3.3

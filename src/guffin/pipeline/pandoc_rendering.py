@@ -27,12 +27,12 @@ Rendering rules:
   Children rendered at depth 1 in both cases.
 - :class:`~guffin.vertex.HeadingVertex` — rendered as a
   :class:`~panflute.Header` at the vertex's recorded heading level.
-- :class:`~guffin.vertex.TextVertex` — direct children of the page
-  (depth 1) become :class:`~panflute.Para` blocks; deeper vertices are
-  coalesced into :class:`~panflute.BulletList` items, with their own
-  children rendered as nested :class:`~panflute.BulletList` blocks.  Text
-  containing a fenced code block is parsed at block level so the fence
-  becomes a :class:`~panflute.CodeBlock` rather than inline code.
+- :class:`~guffin.vertex.TextVertex` — laid out per the parent's
+  :class:`~guffin.model.view.ChildrenLayout`: ``BULLET`` coalesces consecutive
+  text siblings into a :class:`~panflute.BulletList`, ``NUMBERED`` into a
+  :class:`~panflute.OrderedList`, and ``DOCUMENT`` renders them as flowing
+  :class:`~panflute.Para` blocks.  Text containing a fenced code block is parsed
+  at block level so the fence becomes a :class:`~panflute.CodeBlock`.
 - :class:`~guffin.vertex.ImageVertex` — embedded as a :class:`~panflute.Image`
   element pointing at the local path from *image_files*; falls back to a
   :class:`~panflute.Link` when *image_files* has no entry for the vertex.
@@ -103,6 +103,7 @@ from guffin.model.vertex import (
     VertexChildren,
 )
 from guffin.model.vertex_tree import VertexTree, root_vertex
+from guffin.model.view import ChildrenLayout, VertexView, ViewMap
 from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link
 from guffin.roam.primitives import Uid
 
@@ -110,6 +111,15 @@ logger = logging.getLogger(__name__)
 
 type InlineMap = dict[str, list[pf.Inline]]
 """Mapping from Pandoc Markdown text string to its parsed panflute inline elements."""
+
+_DEFAULT_VIEW: Final[VertexView] = VertexView()
+"""Fallback :class:`~guffin.model.view.VertexView` for a vertex absent from the view map."""
+
+
+def _children_layout(uid: Uid, view_map: ViewMap) -> ChildrenLayout:
+    """Return the :class:`~guffin.model.view.ChildrenLayout` governing *uid*'s children."""
+    return view_map.get(uid, _DEFAULT_VIEW).children_layout
+
 
 type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
 """Resolver: (parsed link, destination vertex, original display inlines) → replacement inlines."""
@@ -312,6 +322,7 @@ def _build_list_item(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
     depth: int,
 ) -> pf.ListItem:
     """Build a Pandoc :class:`~panflute.ListItem` from a :class:`~guffin.vertex.TextVertex`.
@@ -319,8 +330,8 @@ def _build_list_item(
     The item body is a :class:`~panflute.Plain` inline block, or — when the
     vertex text contains a fenced code block — the block elements produced by a
     full block-level parse via :func:`parse_block_md`.  If the vertex has
-    children they are rendered recursively via :func:`build_child_blocks` and
-    appended as nested :class:`~panflute.BulletList` blocks inside the item.
+    children they are rendered recursively via :func:`build_child_blocks` using the
+    vertex's own children layout, and appended as nested blocks inside the item.
 
     Args:
         vertex: The text-content vertex to render as a list item.
@@ -328,6 +339,7 @@ def _build_list_item(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
         depth: Tree depth of *vertex* (≥ 2 when this function is called).
 
     Returns:
@@ -346,7 +358,17 @@ def _build_list_item(
         else:
             content = [pf.Plain(*inlines)]
     if vertex.children:
-        content.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
+        content.extend(
+            build_child_blocks(
+                vertex.children,
+                vertex_tree,
+                image_files,
+                inline_map,
+                view_map,
+                _children_layout(vertex.uid, view_map),
+                depth + 1,
+            )
+        )
     return pf.ListItem(*content)
 
 
@@ -356,19 +378,29 @@ def build_child_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
+    layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
     """Build a list of Pandoc block elements from an ordered list of child UIDs.
 
-    Consecutive :class:`~guffin.vertex.TextVertex` siblings at
-    *depth* > 1 are coalesced into a single :class:`~panflute.BulletList`.
-    Any non-text vertex (or text vertex at depth 1) flushes the pending list
-    and is rendered via :func:`_vertex_to_blocks`.
+    The children's parent supplies *layout* (its
+    :class:`~guffin.model.view.ChildrenLayout`), which governs how consecutive
+    :class:`~guffin.vertex.TextVertex` siblings are wrapped:
 
-    A text vertex that is solely a reference to a block-level vertex (see
-    :func:`_block_ref_target`) is likewise flushed and rendered as the referenced
-    block — never wrapped in a bulleted list item — so it appears identically to the
-    block it references.
+    - :attr:`~guffin.model.view.ChildrenLayout.BULLET` — coalesced into a single
+      :class:`~panflute.BulletList`.
+    - :attr:`~guffin.model.view.ChildrenLayout.NUMBERED` — coalesced into a single
+      :class:`~panflute.OrderedList`.
+    - :attr:`~guffin.model.view.ChildrenLayout.DOCUMENT` — rendered as flowing blocks
+      (paragraphs) via :func:`_vertex_to_blocks`, with no list wrapper.
+
+    Any non-text vertex flushes the pending list and is rendered via
+    :func:`_vertex_to_blocks` regardless of *layout*.  A text vertex that is solely a
+    reference to a block-level vertex (see :func:`_block_ref_target`) is likewise flushed
+    and rendered as the referenced block, so it appears identically to the block it
+    references.  Each vertex's own children are rendered using *its* layout (looked up in
+    *view_map*).
 
     Unknown UIDs (absent from *vertex_tree*) are skipped with a warning.
 
@@ -378,15 +410,26 @@ def build_child_blocks(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        layout: The layout governing how *child_uids* are wrapped (their parent's layout).
         depth: Tree depth of the children (1 = direct children of the page root).
 
     Returns:
         A flat list of :class:`~panflute.Block` elements representing the
-        rendered children, with consecutive list-depth text vertices grouped
-        into :class:`~panflute.BulletList` blocks.
+        rendered children, with consecutive text vertices grouped into a
+        :class:`~panflute.BulletList` or :class:`~panflute.OrderedList` per *layout*.
     """
     result: Final[list[pf.Block]] = []
     pending_items: Final[list[pf.ListItem]] = []
+
+    def flush_pending() -> None:
+        """Wrap any pending list items in an ordered or bulleted list per *layout*."""
+        if pending_items:
+            wrapped: pf.Block = (
+                pf.OrderedList(*pending_items) if layout is ChildrenLayout.NUMBERED else pf.BulletList(*pending_items)
+            )
+            result.append(wrapped)
+            pending_items.clear()
 
     for uid in child_uids:
         if uid not in vertex_tree.uid_map:
@@ -398,25 +441,28 @@ def build_child_blocks(
         )
         if ref_target is not None:
             # A block whose entire content references a block-level vertex renders as that
-            # referenced block — never wrapped in a bulleted list item.
-            if pending_items:
-                result.append(pf.BulletList(*pending_items))
-                pending_items.clear()
-            result.extend(_vertex_to_blocks(ref_target, vertex_tree, image_files, inline_map, depth))
+            # referenced block — never wrapped in a list item.
+            flush_pending()
+            result.extend(_vertex_to_blocks(ref_target, vertex_tree, image_files, inline_map, view_map, depth))
             if isinstance(vertex, TextVertex) and vertex.children:
-                result.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
-        elif isinstance(vertex, TextVertex) and depth > 1:
-            pending_items.append(_build_list_item(vertex, vertex_tree, image_files, inline_map, depth))
+                result.extend(
+                    build_child_blocks(
+                        vertex.children,
+                        vertex_tree,
+                        image_files,
+                        inline_map,
+                        view_map,
+                        _children_layout(vertex.uid, view_map),
+                        depth + 1,
+                    )
+                )
+        elif isinstance(vertex, TextVertex) and layout is not ChildrenLayout.DOCUMENT:
+            pending_items.append(_build_list_item(vertex, vertex_tree, image_files, inline_map, view_map, depth))
         else:
-            if pending_items:
-                result.append(pf.BulletList(*pending_items))
-                pending_items.clear()
-            result.extend(_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth))
+            flush_pending()
+            result.extend(_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth))
 
-    if pending_items:
-        result.append(pf.BulletList(*pending_items))
-        pending_items.clear()
-
+    flush_pending()
     return result
 
 
@@ -425,11 +471,13 @@ def _page_vertex_to_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.PageVertex` to Pandoc block elements.
 
-    Delegates to :func:`build_child_blocks` at depth 1.  The page title is
-    handled separately by :func:`vertex_tree_to_pandoc`.
+    Delegates to :func:`build_child_blocks` at depth 1 using the page's own children
+    layout, so a page with a ``BULLET`` layout renders its top-level children as a
+    bulleted outline.  The page title is handled separately by :func:`vertex_tree_to_pandoc`.
 
     Args:
         vertex: The page vertex to render.
@@ -437,11 +485,20 @@ def _page_vertex_to_blocks(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
 
     Returns:
         Block elements for the page's children, rendered at depth 1.
     """
-    return build_child_blocks(vertex.children or [], vertex_tree, image_files, inline_map, 1)
+    return build_child_blocks(
+        vertex.children or [],
+        vertex_tree,
+        image_files,
+        inline_map,
+        view_map,
+        _children_layout(vertex.uid, view_map),
+        1,
+    )
 
 
 def _heading_vertex_to_blocks(
@@ -449,12 +506,14 @@ def _heading_vertex_to_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.HeadingVertex` to Pandoc block elements.
 
     Produces one :class:`~panflute.Header` at the vertex's heading level,
-    followed by the recursively rendered children.
+    followed by the recursively rendered children (laid out per the heading's
+    own children layout).
 
     Args:
         vertex: The heading vertex to render.
@@ -462,6 +521,7 @@ def _heading_vertex_to_blocks(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -470,7 +530,17 @@ def _heading_vertex_to_blocks(
     inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
     blocks: list[pf.Block] = [pf.Header(*inlines, level=vertex.heading_level)]
     if vertex.children:
-        blocks.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
+        blocks.extend(
+            build_child_blocks(
+                vertex.children,
+                vertex_tree,
+                image_files,
+                inline_map,
+                view_map,
+                _children_layout(vertex.uid, view_map),
+                depth + 1,
+            )
+        )
     return blocks
 
 
@@ -479,16 +549,19 @@ def _text_vertex_to_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
-    """Render a :class:`~guffin.vertex.TextVertex` to Pandoc block elements.
+    """Render a :class:`~guffin.vertex.TextVertex` to flowing (document) block elements.
 
-    At depth 1: one :class:`~panflute.Para` followed by the recursively rendered
-    children; when the vertex text contains a fenced code block, the block
-    elements from a full block-level parse via :func:`parse_block_md` (e.g. a
-    :class:`~panflute.CodeBlock`) replace the :class:`~panflute.Para`.  At
-    depth > 1: a single-item :class:`~panflute.BulletList` (sibling grouping at
-    list depth is handled by :func:`build_child_blocks`).
+    Produces one :class:`~panflute.Para` — or the block elements from a full block-level
+    parse via :func:`parse_block_md` when the text contains a fenced code block — followed
+    by the recursively rendered children laid out per the vertex's own children layout.
+
+    This always renders the bare, document-flow form; whether the vertex is *itself* wrapped
+    in a bullet/numbered list item is decided by :func:`build_child_blocks` from the parent's
+    layout, so this function is reached only for the unwrapped (document-layout or
+    transcluded) case.
 
     Args:
         vertex: The text-content vertex to render.
@@ -496,29 +569,36 @@ def _text_vertex_to_blocks(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
         depth: Tree depth of *vertex* (1 = direct page child).
 
     Returns:
-        A :class:`~panflute.Para` (or block-parsed elements) with children at
-        depth 1, or a single-item :class:`~panflute.BulletList` at depth > 1.
+        A :class:`~panflute.Para` (or block-parsed elements) followed by any child blocks.
     """
-    if depth <= 1:
-        para_blocks: list[pf.Block]
-        if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
-            para_blocks = parse_block_md(vertex.text)
-        else:
-            text_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
-            bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(text_inlines)
-            if bg is not None:
-                bg_color, inner = bg
-                para_blocks = [pf.Div(pf.Para(*inner), attributes={"bg-color": bg_color})]
-            else:
-                para_blocks = [pf.Para(*text_inlines)]
-        if vertex.children:
-            para_blocks.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
-        return para_blocks
+    para_blocks: list[pf.Block]
+    if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
+        para_blocks = parse_block_md(vertex.text)
     else:
-        return [pf.BulletList(_build_list_item(vertex, vertex_tree, image_files, inline_map, depth))]
+        text_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
+        bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(text_inlines)
+        if bg is not None:
+            bg_color, inner = bg
+            para_blocks = [pf.Div(pf.Para(*inner), attributes={"bg-color": bg_color})]
+        else:
+            para_blocks = [pf.Para(*text_inlines)]
+    if vertex.children:
+        para_blocks.extend(
+            build_child_blocks(
+                vertex.children,
+                vertex_tree,
+                image_files,
+                inline_map,
+                view_map,
+                _children_layout(vertex.uid, view_map),
+                depth + 1,
+            )
+        )
+    return para_blocks
 
 
 def _image_vertex_to_blocks(
@@ -568,6 +648,7 @@ def _callout_vertex_to_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.CalloutVertex` to Pandoc block elements.
@@ -594,6 +675,7 @@ def _callout_vertex_to_blocks(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -622,7 +704,17 @@ def _callout_vertex_to_blocks(
         body_doc: Final[pf.Doc] = pf.load(StringIO(body_json))
         callout_blocks.extend(list(body_doc.content))
     if vertex.children:
-        callout_blocks.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
+        callout_blocks.extend(
+            build_child_blocks(
+                vertex.children,
+                vertex_tree,
+                image_files,
+                inline_map,
+                view_map,
+                _children_layout(vertex.uid, view_map),
+                depth + 1,
+            )
+        )
     return [pf.Div(*callout_blocks, classes=["callout", f"callout-{callout_type}"])]
 
 
@@ -647,6 +739,7 @@ def _block_quote_vertex_to_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.BlockQuoteVertex` to a Pandoc :class:`~panflute.BlockQuote`.
@@ -662,6 +755,7 @@ def _block_quote_vertex_to_blocks(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -669,7 +763,17 @@ def _block_quote_vertex_to_blocks(
     """
     inner_blocks: list[pf.Block] = parse_block_md(vertex.text.replace("\n", "\n\n"))
     if vertex.children:
-        inner_blocks.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
+        inner_blocks.extend(
+            build_child_blocks(
+                vertex.children,
+                vertex_tree,
+                image_files,
+                inline_map,
+                view_map,
+                _children_layout(vertex.uid, view_map),
+                depth + 1,
+            )
+        )
     return [pf.BlockQuote(*inner_blocks)]
 
 
@@ -739,6 +843,7 @@ def _block_embed_vertex_to_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
     """Render a block embed by transcluding the embedded vertex's blocks in place.
@@ -754,6 +859,7 @@ def _block_embed_vertex_to_blocks(
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -767,9 +873,21 @@ def _block_embed_vertex_to_blocks(
             vertex.vertex_link.uid,
         )
         return []
-    blocks: Final[list[pf.Block]] = list(_vertex_to_blocks(target, vertex_tree, image_files, inline_map, depth))
+    blocks: Final[list[pf.Block]] = list(
+        _vertex_to_blocks(target, vertex_tree, image_files, inline_map, view_map, depth)
+    )
     if vertex.children:
-        blocks.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
+        blocks.extend(
+            build_child_blocks(
+                vertex.children,
+                vertex_tree,
+                image_files,
+                inline_map,
+                view_map,
+                _children_layout(vertex.uid, view_map),
+                depth + 1,
+            )
+        )
     return blocks
 
 
@@ -778,6 +896,7 @@ def _vertex_to_blocks(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
+    view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
     """Dispatch a single :data:`~guffin.vertex.Vertex` to its type-specific rendering function.
@@ -788,6 +907,7 @@ def _vertex_to_blocks(
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
         depth: Tree depth of *vertex* (0 = root, 1 = direct page child, …).
 
     Returns:
@@ -796,23 +916,23 @@ def _vertex_to_blocks(
     """
     match vertex:
         case PageVertex():
-            return _page_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map)
+            return _page_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map)
         case HeadingVertex():
-            return _heading_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
+            return _heading_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
         case TextVertex():
-            return _text_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
+            return _text_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
         case ImageVertex():
             return _image_vertex_to_blocks(vertex, image_files, inline_map)
         case CalloutVertex():
-            return _callout_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
+            return _callout_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
         case CodeBlockVertex():
             return _code_block_vertex_to_blocks(vertex)
         case BlockQuoteVertex():
-            return _block_quote_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
+            return _block_quote_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
         case TableVertex():
             return _table_vertex_to_blocks(vertex, inline_map)
         case BlockEmbedVertex():
-            return _block_embed_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
+            return _block_embed_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -861,6 +981,7 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
 def vertex_tree_to_pandoc(
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
+    view_map: ViewMap,
     *,
     title_in_header: bool = False,
 ) -> tuple[pf.Doc, InlineMap]:
@@ -887,6 +1008,8 @@ def vertex_tree_to_pandoc(
             ``Path(filename)``) when the output is Markdown, so that image
             references in the rendered document are relative rather than
             absolute.
+        view_map: Presentation view map keyed by vertex uid; governs how each
+            vertex's children are laid out (bulleted/numbered/document).
         title_in_header: When ``True``, render a root
             :class:`~guffin.vertex.PageVertex` title as an H1 header instead
             of storing it in document metadata.  Defaults to ``False``.
@@ -909,9 +1032,19 @@ def vertex_tree_to_pandoc(
             blocks.append(pf.Header(*title_inlines, level=1))
         else:
             metadata["title"] = pf.MetaInlines(*strip_links(list(title_inlines)))
-        blocks.extend(build_child_blocks(root.children or [], vertex_tree, image_files, inline_map, depth=1))
+        blocks.extend(
+            build_child_blocks(
+                root.children or [],
+                vertex_tree,
+                image_files,
+                inline_map,
+                view_map,
+                _children_layout(root.uid, view_map),
+                depth=1,
+            )
+        )
     else:
-        blocks.extend(_vertex_to_blocks(root, vertex_tree, image_files, inline_map, depth=0))
+        blocks.extend(_vertex_to_blocks(root, vertex_tree, image_files, inline_map, view_map, depth=0))
 
     return pf.Doc(*blocks, metadata=metadata), inline_map
 

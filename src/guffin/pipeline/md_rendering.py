@@ -32,6 +32,7 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
+from guffin.model.render_doc import RenderDoc
 from guffin.model.vertex_tree import VertexTree
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.pipeline.pandoc_rendering import (
@@ -49,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 @validate_call
 def render(
-    vertex_tree: VertexTree,
+    render_doc: RenderDoc,
     filename_stem: str,
     output_dir: Path,
     api_endpoint: ApiEndpoint,
@@ -57,9 +58,9 @@ def render(
     bundle: bool = True,
     dump_pandoc_ast: bool = False,
 ) -> None:
-    """Render *vertex_tree* to a Markdown file or bundle inside *output_dir*.
+    """Render *render_doc* to a Markdown file or bundle inside *output_dir*.
 
-    Converts *vertex_tree* to a Panflute :class:`~panflute.Doc` via
+    Converts *render_doc*'s content tree to a Panflute :class:`~panflute.Doc` via
     :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc` (with the page
     title rendered as an H1 header), then invokes Pandoc to produce
     GFM output.  Writes the result in one of two modes controlled by
@@ -80,7 +81,7 @@ def render(
     Pandoc must be installed and on ``PATH``.
 
     Args:
-        vertex_tree: The normalized vertex tree to render.
+        render_doc: The content tree (with its presentation view map) to render.
         filename_stem: Output filename stem, used verbatim to derive the output
             path; the caller is responsible for POSIX-safety.
         output_dir: Directory in which the output file or bundle is written;
@@ -104,7 +105,7 @@ def render(
 
         # the Paths in the returned ImageRefs are absolute
         fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(
-            vertex_tree, api_endpoint, bundle_dir, cache_dir
+            render_doc.content, api_endpoint, bundle_dir, cache_dir
         )
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
@@ -112,7 +113,7 @@ def render(
         image_files: Final[dict[Uid, Path]] = {uid: Path(ref.path.name) for uid, ref in image_refs.items()}
 
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
-            enriched_tree, image_files, title_in_header=True
+            enriched_tree, image_files, render_doc.view, title_in_header=True
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
@@ -136,10 +137,12 @@ def render(
 
     else:
         output_dir.mkdir(parents=True, exist_ok=True)
-        no_bundle_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(vertex_tree, {}, title_in_header=True)
+        no_bundle_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
+            render_doc.content, {}, render_doc.view, title_in_header=True
+        )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
-        resolve_vertex_links(no_bundle_doc, vertex_tree, make_resolver(no_bundle_inline_map))
+        resolve_vertex_links(no_bundle_doc, render_doc.content, make_resolver(no_bundle_inline_map))
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)
         no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str,

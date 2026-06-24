@@ -59,7 +59,7 @@ from typing import Annotated, Final
 
 import typer
 
-from guffin.model.vertex_tree import VertexTree
+from guffin.model.render_doc import RenderDoc
 from guffin.cli.logging_config import configure_logging
 from guffin.pipeline.md_rendering import render as render_md
 from guffin.pipeline.pdf_rendering import render as render_pdf
@@ -231,7 +231,7 @@ def main(
     )
 
     try:
-        trees: Final[tuple[NodeFetchResult, VertexTree | None]] = fetch_roam_trees(
+        trees: Final[tuple[NodeFetchResult, RenderDoc | None]] = fetch_roam_trees(
             NodeFetchSpec(anchor=NodeFetchAnchor(qualifier=target), include_refs=True), True, api_endpoint
         )
     except RoamNodeNotFoundError as exc:
@@ -246,22 +246,22 @@ def main(
     except Exception:
         logger.exception("Error fetching %r from graph %r", target, graph_name)
         raise typer.Exit(code=1)
-    vertex_tree: Final[VertexTree | None] = trees[1]
-    if vertex_tree is None:
-        logger.error("vertex_tree is None; cannot export without a vertex tree")
+    render_doc: Final[RenderDoc | None] = trees[1]
+    if render_doc is None:
+        logger.error("render_doc is None; cannot export without a render document")
         raise typer.Exit(code=1)
 
-    out_file_stem: Final[str] = deduce_out_file_stem(vertex_tree)
+    out_file_stem: Final[str] = deduce_out_file_stem(render_doc.content)
 
     if output_format is OutputFormat.PDF:
         try:
-            render_pdf(vertex_tree, out_file_stem, output_dir, api_endpoint, cache_dir, template_dir, dump_pandoc_ast)
+            render_pdf(render_doc, out_file_stem, output_dir, api_endpoint, cache_dir, template_dir, dump_pandoc_ast)
         except Exception as e:
             logger.error("Error rendering PDF for %r: %s", target, e)
             raise typer.Exit(code=1)
     else:
         try:
-            render_md(vertex_tree, out_file_stem, output_dir, api_endpoint, cache_dir, bundle, dump_pandoc_ast)
+            render_md(render_doc, out_file_stem, output_dir, api_endpoint, cache_dir, bundle, dump_pandoc_ast)
         except Exception as e:
             logger.error("Error rendering Markdown for %r: %s", target, e)
             raise typer.Exit(code=1)

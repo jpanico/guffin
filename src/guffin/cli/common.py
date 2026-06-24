@@ -29,12 +29,13 @@ from guffin.model.vertex import (
     TextVertex,
     Vertex,
 )
+from guffin.model.render_doc import RenderDoc
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec
 from guffin.roam.node_tree import NodeTree
-from guffin.pipeline.roam_tree_to_vertex_tree import transcribe
+from guffin.pipeline.roam_tree_to_vertex_tree import build_view_map, transcribe
 
 logger = logging.getLogger(__name__)
 
@@ -52,12 +53,14 @@ def fetch_roam_trees(
     fetch_spec: NodeFetchSpec,
     include_vertex_tree: bool,
     api_endpoint: ApiEndpoint,
-) -> tuple[NodeFetchResult, VertexTree | None]:
-    """Fetch Roam nodes for *fetch_spec* and build a validated node tree and vertex tree.
+) -> tuple[NodeFetchResult, RenderDoc | None]:
+    """Fetch Roam nodes for *fetch_spec* and build a validated node tree and render document.
 
     Fetches :class:`~guffin.roam.node.RoamNode` records for *fetch_spec* via
     *api_endpoint*, constructs a :class:`~guffin.roam.node_tree.NodeTree`, and optionally
-    transcribes it to a :class:`~guffin.vertex_tree.VertexTree`.
+    transcribes it into a :class:`~guffin.model.render_doc.RenderDoc` — its
+    :class:`~guffin.model.vertex_tree.VertexTree` content paired with the presentation
+    :data:`~guffin.model.view.ViewMap` from :func:`~guffin.pipeline.roam_tree_to_vertex_tree.build_view_map`.
 
     Propagates any exception raised during fetching or transcription; callers are
     responsible for exit behaviour.
@@ -65,14 +68,14 @@ def fetch_roam_trees(
     Args:
         fetch_spec: The fetch specification carrying the anchor, include_refs flag, and
             include_node_tree flag.
-        include_vertex_tree: When ``True``, transcribes the node tree to a
-            :class:`~guffin.vertex_tree.VertexTree` and returns it as the second element of
-            the pair.  When ``False``, skips transcription and returns ``None`` instead.
+        include_vertex_tree: When ``True``, builds the :class:`~guffin.model.render_doc.RenderDoc`
+            (content + view) and returns it as the second element of the pair.  When ``False``,
+            skips transcription and returns ``None`` instead.
         api_endpoint: Configured API endpoint used to fetch nodes.
 
     Returns:
-        A ``(fetch_result, vertex_tree)`` pair ready for rendering or further processing.
-        ``vertex_tree`` is ``None`` when *include_vertex_tree* is ``False``.
+        A ``(fetch_result, render_doc)`` pair ready for rendering or further processing.
+        ``render_doc`` is ``None`` when *include_vertex_tree* is ``False``.
     """
     result: Final[NodeFetchResult] = FetchRoamNodes.fetch_roam_nodes(
         anchor=fetch_spec.anchor,
@@ -89,9 +92,9 @@ def fetch_roam_trees(
         result.anchor_tree is not None
     ), "anchor_tree is None; fetch_spec has include_node_tree=False, which is unsupported here"
     anchor_tree: Final[NodeTree] = result.anchor_tree
-    vertex_tree: Final[VertexTree] = transcribe(anchor_tree)
-    logger.debug("node_tree=%r\n\nvertex_tree=%r", anchor_tree, vertex_tree)
-    return result, vertex_tree
+    render_doc: Final[RenderDoc] = RenderDoc(content=transcribe(anchor_tree), view=build_view_map(anchor_tree))
+    logger.debug("node_tree=%r\n\nrender_doc=%r", anchor_tree, render_doc)
+    return result, render_doc
 
 
 def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:

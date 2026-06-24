@@ -52,7 +52,7 @@ from guffin.roam.primitives import Id, IdObject, Uid
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_NODE_PANEL_PROPS: Final[list[str]] = ["heading", "order", "children", "parents", "page"]
+DEFAULT_NODE_PANEL_PROPS: Final[list[str]] = ["heading", "order", "children", "children_view_type", "parents", "page"]
 """Property names rendered in the panel body by :func:`build_node_panel` when no explicit list is given.
 
 ``string``/``title`` and ``id`` are always shown in the panel title and are not
@@ -95,6 +95,8 @@ def _format_node_prop(node: RoamNode, prop: str) -> str:
             return f"refs={val}"
         case "open":
             return f"open={node.open}"
+        case "children_view_type":
+            return f"view-type={node.children_view_type}"
         case "heading":
             return f"heading={node.heading}"
         case "attrs":

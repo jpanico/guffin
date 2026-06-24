@@ -41,7 +41,8 @@ from typing import Final
 
 import yaml
 
-from guffin.common.filenames import shell_safe_filename
+from guffin.cli.common import deduce_out_file_stem
+from guffin.model.render_doc import RenderDoc
 from guffin.model.vertex import vertex_adapter
 from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
@@ -51,7 +52,7 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult
-from guffin.pipeline.roam_tree_to_vertex_tree import transcribe
+from guffin.pipeline.roam_tree_to_vertex_tree import build_view_map, transcribe
 from guffin.roam.node_tree import NodeTree
 
 from conftest import PDF_CREATION_TIMESTAMP
@@ -202,6 +203,8 @@ def main() -> None:
     anchor_tree: Final[NodeTree] = result.anchor_tree
     nodes: Final[list[RoamNode]] = list(anchor_tree.tree_network)
     vertex_tree: Final[VertexTree] = transcribe(anchor_tree)
+    render_doc: Final[RenderDoc] = RenderDoc(content=vertex_tree, view=build_view_map(anchor_tree))
+    out_stem: Final[str] = deduce_out_file_stem(vertex_tree)
     print(f"  fetched {len(result.network)} node(s) total, {len(nodes)} anchor node(s)")
     print(f"  transcribed {len(vertex_tree.tree_vertices)} vertex/vertices")
 
@@ -247,15 +250,13 @@ def main() -> None:
     md_path: Final[pathlib.Path] = FIXTURES_MD / f"{prefix}_expected.md"
     with tempfile.TemporaryDirectory() as tmp_dir:
         render(
-            vertex_tree,
-            filename_stem=qualifier,
+            render_doc,
+            filename_stem=out_stem,
             output_dir=pathlib.Path(tmp_dir),
             api_endpoint=endpoint,
             bundle=False,
         )
-        rendered: Final[str] = (pathlib.Path(tmp_dir) / f"{shell_safe_filename(qualifier)}.md").read_text(
-            encoding="utf-8"
-        )
+        rendered: Final[str] = (pathlib.Path(tmp_dir) / f"{out_stem}.md").read_text(encoding="utf-8")
     md_path.write_text(rendered, encoding="utf-8")
     print(f"  wrote {md_path}")
 
@@ -312,21 +313,21 @@ def main() -> None:
     if args.pdf:
         FIXTURES_PDF.mkdir(parents=True, exist_ok=True)
         os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
-        render_pdf(vertex_tree, filename_stem=qualifier, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
-        pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{shell_safe_filename(qualifier)}.pdf"
+        render_pdf(render_doc, filename_stem=out_stem, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
+        pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{out_stem}.pdf"
         print(f"  wrote {pdf_path}")
 
     # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/
     if args.mdbundle:
         FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
         render(
-            vertex_tree,
-            filename_stem=qualifier,
+            render_doc,
+            filename_stem=out_stem,
             output_dir=FIXTURES_MDBUNDLE,
             api_endpoint=endpoint,
             bundle=True,
         )
-        mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{shell_safe_filename(qualifier)}.mdbundle"
+        mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{out_stem}.mdbundle"
         print(f"  wrote {mdbundle_path}")
 
     print("Done.")
