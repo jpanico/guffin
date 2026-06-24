@@ -9,9 +9,6 @@
 # omitted entirely so they default to None on model_validate.
 - uid: oVvEsh7dx
   id: 11737
-  time: 0
-  user:
-    id: 0
   string: section 3.2
   order: 1
   heading: null
@@ -27,9 +24,6 @@
   attrs: null
 - uid: zpSBqgxe4
   id: 11767
-  time: 0
-  user:
-    id: 0
   string: '[[>]] [[!EXAMPLE]] This is the callout title
 
     This is line 1 of the callout body
@@ -54,9 +48,6 @@
   attrs: null
 - uid: yvlvNZwPC
   id: 11792
-  time: 0
-  user:
-    id: 0
   string: '{{table}}'
   order: 0
   heading: null
@@ -76,9 +67,6 @@
   attrs: null
 - uid: SYZfEd44O
   id: 4225
-  time: 0
-  user:
-    id: 0
   string: null
   order: null
   heading: null
@@ -97,9 +85,6 @@
   attrs: null
 - uid: 7XdTiY_ZF
   id: 11716
-  time: 0
-  user:
-    id: 0
   string: Feature Content
   order: 1
   heading: 2
@@ -128,9 +113,6 @@
   attrs: null
 - uid: QnqMI7-2J
   id: 11771
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
   order: 18
   heading: null
@@ -148,9 +130,6 @@
   attrs: null
 - uid: CCrsgAEQ-
   id: 11775
-  time: 0
-  user:
-    id: 0
   string: ((0EgPyHSZi))
   order: 0
   heading: null
@@ -168,9 +147,6 @@
   attrs: null
 - uid: S81O4tG9t
   id: 11761
-  time: 0
-  user:
-    id: 0
   string: ((J_Vt5_C6p))
   order: 0
   heading: null
@@ -188,9 +164,6 @@
   attrs: null
 - uid: cKCA_EwGZ
   id: 11729
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((JRU5IhUB-))'
   order: 4
   heading: null
@@ -208,9 +181,6 @@
   attrs: null
 - uid: JCyO1oiVt
   id: 11742
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
   order: 10
   heading: null
@@ -228,9 +198,6 @@
   attrs: null
 - uid: 78w6MjSqo
   id: 11726
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((msKBuys0a))'
   order: 2
   heading: null
@@ -248,9 +215,6 @@
   attrs: null
 - uid: I7pBlEhyE
   id: 11766
-  time: 0
-  user:
-    id: 0
   string: the child block contains a Roam native callout
   order: 12
   heading: null
@@ -267,9 +231,6 @@
   attrs: null
 - uid: LKHCU5I3z
   id: 11755
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
   order: 10
   heading: null
@@ -287,9 +248,6 @@
   attrs: null
 - uid: BuP4ifx3v
   id: 11722
-  time: 0
-  user:
-    id: 0
   string: This para features `inline-code`
   order: 5
   heading: null
@@ -305,9 +263,6 @@
   attrs: null
 - uid: _9zoxTAJt
   id: 11797
-  time: 0
-  user:
-    id: 0
   string: r1.c2
   order: 0
   heading: null
@@ -327,9 +282,6 @@
   attrs: null
 - uid: yECzsUNPC
   id: 11725
-  time: 0
-  user:
-    id: 0
   string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
     \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
     \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
@@ -348,9 +300,6 @@
   attrs: null
 - uid: nmFudOFkf
   id: 11713
-  time: 0
-  user:
-    id: 0
   string: ((tWkumkdUE))
   order: 0
   heading: null
@@ -368,9 +317,6 @@
   attrs: null
 - uid: vk7Up544K
   id: 11739
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
   order: 7
   heading: null
@@ -387,9 +333,6 @@
   attrs: null
 - uid: chSSa7hfQ
   id: 11753
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((Rjt1IvrVq))'
   order: 8
   heading: null
@@ -407,9 +350,6 @@
   attrs: null
 - uid: xkmJLzW3G
   id: 11804
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
   order: 19
   heading: null
@@ -427,9 +367,6 @@
   attrs: null
 - uid: aVVGVVPLE
   id: 4234
-  time: 0
-  user:
-    id: 0
   string: '{{embed: ((drtANJYTg))}}'
   order: 0
   heading: null
@@ -447,9 +384,6 @@
   attrs: null
 - uid: uTV8PLeSZ
   id: 11795
-  time: 0
-  user:
-    id: 0
   string: Header 3
   order: 0
   heading: null
@@ -469,9 +403,6 @@
   attrs: null
 - uid: FWULkh5nm
   id: 11731
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((BuP4ifx3v))'
   order: 6
   heading: null
@@ -489,9 +420,6 @@
   attrs: null
 - uid: SYAWArc3S
   id: 11756
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((T6cykqu88))'
   order: 11
   heading: null
@@ -509,9 +437,6 @@
   attrs: null
 - uid: 2Zo0HNy5o
   id: 11705
-  time: 0
-  user:
-    id: 0
   string: ((LfXmNr-tV))
   order: 0
   heading: null
@@ -529,9 +454,6 @@
   attrs: null
 - uid: I1QOMCtdJ
   id: 11133
-  time: 0
-  user:
-    id: 0
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
 
@@ -565,9 +487,6 @@
   attrs: null
 - uid: 4kdWXzDjz
   id: 11790
-  time: 0
-  user:
-    id: 0
   string: the child block contains a Roam native table
   order: 13
   heading: null
@@ -584,9 +503,6 @@
   attrs: null
 - uid: 3PA_Y7Osp
   id: 11770
-  time: 0
-  user:
-    id: 0
   string: ((zpSBqgxe4))
   order: 0
   heading: null
@@ -604,9 +520,6 @@
   attrs: null
 - uid: Frzso359j
   id: 11803
-  time: 0
-  user:
-    id: 0
   string: ((yvlvNZwPC))
   order: 0
   heading: null
@@ -624,9 +537,6 @@
   attrs: null
 - uid: dYYKZExzI
   id: 4229
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
   order: 17
   heading: null
@@ -644,9 +554,6 @@
   attrs: null
 - uid: l7f2Qf90W
   id: 4230
-  time: 0
-  user:
-    id: 0
   string: section 3.1
   order: 0
   heading: null
@@ -663,9 +570,6 @@
   attrs: null
 - uid: LfXmNr-tV
   id: 4228
-  time: 0
-  user:
-    id: 0
   string: Section 3
   order: 4
   heading: null
@@ -683,9 +587,6 @@
   attrs: null
 - uid: 7AR6910sJ
   id: 11744
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
   order: 11
   heading: null
@@ -703,9 +604,6 @@
   attrs: null
 - uid: Q-nJAf9KK
   id: 11721
-  time: 0
-  user:
-    id: 0
   string: This para features ^^highlight^^
   order: 4
   heading: null
@@ -721,9 +619,6 @@
   attrs: null
 - uid: t62Kwufzm
   id: 11749
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((7dBusjzDA))'
   order: 4
   heading: null
@@ -741,9 +636,6 @@
   attrs: null
 - uid: SivJQaD8x
   id: 11802
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
   order: 21
   heading: null
@@ -761,9 +653,6 @@
   attrs: null
 - uid: MbQObdYBx
   id: 11727
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline BOLD ref ⟶** ((iiSioG0Ut))'
   order: 3
   heading: null
@@ -781,9 +670,6 @@
   attrs: null
 - uid: aM4rXqHLf
   id: 11793
-  time: 0
-  user:
-    id: 0
   string: Header 1
   order: 0
   heading: null
@@ -802,9 +688,6 @@
   attrs: null
 - uid: XkSI5xwe5
   id: 4232
-  time: 0
-  user:
-    id: 0
   string: '{{embed: ((LfXmNr-tV))}}'
   order: 0
   heading: null
@@ -822,9 +705,6 @@
   attrs: null
 - uid: ot5dpySxp
   id: 11709
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
   order: 0
   heading: null
@@ -843,9 +723,6 @@
   attrs: null
 - uid: HftouGiTA
   id: 11707
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
   order: 15
   heading: null
@@ -863,9 +740,6 @@
   attrs: null
 - uid: JRU5IhUB-
   id: 11720
-  time: 0
-  user:
-    id: 0
   string: This para features ~~strikethrough~~
   order: 3
   heading: null
@@ -881,9 +755,6 @@
   attrs: null
 - uid: wta7y8AlI
   id: 11774
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
   order: 16
   heading: null
@@ -901,9 +772,6 @@
   attrs: null
 - uid: b8ob6GcbI
   id: 11701
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
   order: 13
   heading: null
@@ -921,9 +789,6 @@
   attrs: null
 - uid: DZsnC1-jM
   id: 11748
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline BOLD ref ⟶** ((QB8DChDBs))'
   order: 3
   heading: null
@@ -941,9 +806,6 @@
   attrs: null
 - uid: zAIxMFBIB
   id: 11745
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
   order: 10
   heading: null
@@ -960,9 +822,6 @@
   attrs: null
 - uid: zmb1Uac0S
   id: 11741
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
   order: 8
   heading: null
@@ -979,9 +838,6 @@
   attrs: null
 - uid: iiSioG0Ut
   id: 11719
-  time: 0
-  user:
-    id: 0
   string: This para features **bold**
   order: 2
   heading: null
@@ -997,9 +853,6 @@
   attrs: null
 - uid: SCzzQaVai
   id: 11752
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
   order: 7
   heading: null
@@ -1017,9 +870,6 @@
   attrs: null
 - uid: H3vh9eS_F
   id: 11738
-  time: 0
-  user:
-    id: 0
   string: section 3.3
   order: 2
   heading: null
@@ -1035,9 +885,6 @@
   attrs: null
 - uid: vLxyRJcr2
   id: 11712
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
   order: 13
   heading: null
@@ -1055,9 +902,6 @@
   attrs: null
 - uid: ipvsMyx77
   id: 11776
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
   order: 17
   heading: null
@@ -1075,9 +919,6 @@
   attrs: null
 - uid: 88ny0VOH4
   id: 11750
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((VvbwbLchA))'
   order: 5
   heading: null
@@ -1095,9 +936,6 @@
   attrs: null
 - uid: GK_iI79mV
   id: 11743
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE __This span is underlined orange. __This span is not.'
   order: 9
   heading: null
@@ -1114,9 +952,6 @@
   attrs: null
 - uid: 8n19o7ito
   id: 11751
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((ETesnk4Zi))'
   order: 6
   heading: null
@@ -1134,9 +969,6 @@
   attrs: null
 - uid: ZT_EVUtHq
   id: 11704
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
   order: 14
   heading: null
@@ -1154,9 +986,6 @@
   attrs: null
 - uid: LfaVt18Iw
   id: 4226
-  time: 0
-  user:
-    id: 0
   string: 'Internal (in-page) links:'
   order: 2
   heading: 2
@@ -1193,9 +1022,6 @@
   attrs: null
 - uid: vH2I8xRLZ
   id: 4231
-  time: 0
-  user:
-    id: 0
   string: section 3.1.1
   order: 0
   heading: null
@@ -1212,9 +1038,6 @@
   attrs: null
 - uid: Ep6xoSIzu
   id: 11799
-  time: 0
-  user:
-    id: 0
   string: r2.c1
   order: 2
   heading: null
@@ -1233,9 +1056,6 @@
   attrs: null
 - uid: Z2d9G4m4V
   id: 11800
-  time: 0
-  user:
-    id: 0
   string: r2.c2
   order: 0
   heading: null
@@ -1255,9 +1075,6 @@
   attrs: null
 - uid: T5pku1yrU
   id: 11777
-  time: 0
-  user:
-    id: 0
   string: ((C6xVTMnsh))
   order: 0
   heading: null
@@ -1275,9 +1092,6 @@
   attrs: null
 - uid: cCYHqUNs8
   id: 11736
-  time: 0
-  user:
-    id: 0
   string: ((yECzsUNPC))
   order: 0
   heading: null
@@ -1295,9 +1109,6 @@
   attrs: null
 - uid: qj0DTMyzl
   id: 11692
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
   order: 0
   heading: null
@@ -1316,9 +1127,6 @@
   attrs: null
 - uid: kWNhvv437
   id: 11801
-  time: 0
-  user:
-    id: 0
   string: r2.c3
   order: 0
   heading: null
@@ -1338,9 +1146,6 @@
   attrs: null
 - uid: _6Z-gzw6R
   id: 11757
-  time: 0
-  user:
-    id: 0
   string: the child block contains a standalone image
   order: 11
   heading: null
@@ -1357,9 +1162,6 @@
   attrs: null
 - uid: HB9MEj5W8
   id: 11754
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((9a_6taJAn))'
   order: 9
   heading: null
@@ -1377,9 +1179,6 @@
   attrs: null
 - uid: AaB6F4c0F
   id: 11747
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((2yQYaKIEV))'
   order: 2
   heading: null
@@ -1397,9 +1196,6 @@
   attrs: null
 - uid: dDNfZQ62b
   id: 11805
-  time: 0
-  user:
-    id: 0
   string: ((wjN-kVF3B))
   order: 0
   heading: null
@@ -1417,9 +1213,6 @@
   attrs: null
 - uid: hWsG-ExLV
   id: 11700
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline PARENT BLOCK ref ⟶**  ((LfaVt18Iw))'
   order: 7
   heading: null
@@ -1437,9 +1230,6 @@
   attrs: null
 - uid: 48ZQ-2b7U
   id: 11740
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((vk7Up544K))'
   order: 9
   heading: null
@@ -1457,9 +1247,6 @@
   attrs: null
 - uid: amzmDdIn3
   id: 11796
-  time: 0
-  user:
-    id: 0
   string: r1.c1
   order: 1
   heading: null
@@ -1478,9 +1265,6 @@
   attrs: null
 - uid: HbJZh5mTY
   id: 11730
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((Q-nJAf9KK))'
   order: 5
   heading: null
@@ -1498,9 +1282,6 @@
   attrs: null
 - uid: GQSLJp92S
   id: 11764
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
   order: 14
   heading: null
@@ -1518,9 +1299,6 @@
   attrs: null
 - uid: Y0xFlk7y6
   id: 11733
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
   order: 18
   heading: null
@@ -1538,9 +1316,6 @@
   attrs: null
 - uid: n528kYv5_
   id: 11710
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline BLOCK ref ⟶** ((tWkumkdUE))'
   order: 1
   heading: null
@@ -1558,9 +1333,6 @@
   attrs: null
 - uid: SsmyWLZij
   id: 11732
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((7XdTiY_ZF))'
   order: 8
   heading: null
@@ -1578,9 +1350,6 @@
   attrs: null
 - uid: tyOSwiz6l
   id: 11734
-  time: 0
-  user:
-    id: 0
   string: ((7XdTiY_ZF))
   order: 0
   heading: null
@@ -1598,9 +1367,6 @@
   attrs: null
 - uid: 2IaJFXDZT
   id: 11746
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
   order: 12
   heading: null
@@ -1618,9 +1384,6 @@
   attrs: null
 - uid: Wq2dXafRn
   id: 11772
-  time: 0
-  user:
-    id: 0
   string: ((4SIo9hSEY))
   order: 0
   heading: null
@@ -1638,9 +1401,6 @@
   attrs: null
 - uid: SnpYMTuWc
   id: 11798
-  time: 0
-  user:
-    id: 0
   string: r1.c3
   order: 0
   heading: null
@@ -1660,9 +1420,6 @@
   attrs: null
 - uid: J_Vt5_C6p
   id: 11758
-  time: 0
-  user:
-    id: 0
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
   order: 0
   heading: null
@@ -1679,9 +1436,6 @@
   attrs: null
 - uid: 8jkmASa1c
   id: 4233
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
   order: 15
   heading: null
@@ -1701,9 +1455,6 @@
   attrs: null
 - uid: 7os6rKZvg
   id: 11794
-  time: 0
-  user:
-    id: 0
   string: Header 2
   order: 0
   heading: null
@@ -1723,9 +1474,6 @@
   attrs: null
 - uid: xc_eQjqyE
   id: 11702
-  time: 0
-  user:
-    id: 0
   string: '[[[[Test Article]] 3]]'
   order: 0
   heading: null
@@ -1744,9 +1492,6 @@
   attrs: null
 - uid: riLVzfX-6
   id: 11717
-  time: 0
-  user:
-    id: 0
   string: This para features plain text
   order: 0
   heading: null
@@ -1762,9 +1507,6 @@
   attrs: null
 - uid: msKBuys0a
   id: 11718
-  time: 0
-  user:
-    id: 0
   string: This para features __italics__
   order: 1
   heading: null
@@ -1780,9 +1522,6 @@
   attrs: null
 - uid: eUpKQiTiM
   id: 11765
-  time: 0
-  user:
-    id: 0
   string: ((uj8YolCoE))
   order: 0
   heading: null
@@ -1800,9 +1539,6 @@
   attrs: null
 - uid: gxcUrCGPT
   id: 11135
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **inline PLAIN TEXT ref ⟶** ((riLVzfX-6))'
   order: 1
   heading: null
@@ -1820,9 +1556,6 @@
   attrs: null
 - uid: JpKqqwnAJ
   id: 11708
-  time: 0
-  user:
-    id: 0
   string: ((LfaVt18Iw))
   order: 0
   heading: null
@@ -1840,9 +1573,6 @@
   attrs: null
 - uid: d3T1YpYig
   id: 4227
-  time: 0
-  user:
-    id: 0
   string: 'External (out-of-page) links:'
   order: 3
   heading: 2
@@ -1877,9 +1607,6 @@
   attrs: null
 - uid: acAIiueY_
   id: 11715
-  time: 0
-  user:
-    id: 0
   string: '[[[[Test Article]] 2]]'
   order: 0
   heading: null
@@ -1898,9 +1625,6 @@
   attrs: null
 - uid: _kTRqm3O-
   id: 11769
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
   order: 20
   heading: null
@@ -1918,9 +1642,6 @@
   attrs: null
 - uid: fZr8Ve9SS
   id: 11735
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
   order: 19
   heading: null
@@ -1938,9 +1659,6 @@
   attrs: null
 - uid: AQqf7TbPh
   id: 11759
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
   order: 16
   heading: null
@@ -1958,9 +1676,6 @@
   attrs: null
 - uid: Dt8evi7AW
   id: 11714
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
   order: 12
   heading: null

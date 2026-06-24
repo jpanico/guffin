@@ -16,7 +16,7 @@ from guffin.roam.node import RoamNode
 from guffin.roam.primitives import IdObject
 from guffin.common.validation import ValidationError
 
-from conftest import STUB_TIME, STUB_USER, article1_node_tree
+from conftest import article1_node_tree
 
 
 class TestAllDescendants:
@@ -28,7 +28,7 @@ class TestAllDescendants:
 
     def test_leaf_ancestor_returns_empty(self) -> None:
         """Test that an ancestor with no children returns an empty list."""
-        ancestor = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        ancestor = RoamNode(uid="page00001", id=1, title="stub", children=[])
         assert all_descendants(ancestor, [ancestor]) == []
 
     def test_ancestor_with_none_children_returns_empty(self) -> None:
@@ -36,8 +36,6 @@ class TestAllDescendants:
         ancestor = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="leaf",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -50,14 +48,10 @@ class TestAllDescendants:
 
     def test_single_child_returned(self) -> None:
         """Test that an ancestor with one child returns a list containing just that child."""
-        ancestor = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)]
-        )
+        ancestor = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="child",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -69,16 +63,12 @@ class TestAllDescendants:
         ancestor = RoamNode(
             uid="page00001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="stub",
             children=[IdObject(id=10), IdObject(id=20)],
         )
         child1 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c1",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -86,8 +76,6 @@ class TestAllDescendants:
         child2 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c2",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -101,14 +89,10 @@ class TestAllDescendants:
 
     def test_deep_chain_returns_all_descendants(self) -> None:
         """Test that a linear chain ancestor→child→grandchild returns both descendants."""
-        ancestor = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)]
-        )
+        ancestor = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="child",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -117,8 +101,6 @@ class TestAllDescendants:
         grandchild = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="grandchild",
             parents=[IdObject(id=10)],
             page=IdObject(id=1),
@@ -131,16 +113,12 @@ class TestAllDescendants:
         ancestor = RoamNode(
             uid="page00001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="stub",
             children=[IdObject(id=10), IdObject(id=20)],
         )
         child1 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c1",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -149,8 +127,6 @@ class TestAllDescendants:
         child2 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c2",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -159,8 +135,6 @@ class TestAllDescendants:
         grandchild1 = RoamNode(
             uid="block0003",
             id=30,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="gc1",
             parents=[IdObject(id=10)],
             page=IdObject(id=1),
@@ -168,8 +142,6 @@ class TestAllDescendants:
         grandchild2 = RoamNode(
             uid="block0004",
             id=40,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="gc2",
             parents=[IdObject(id=20)],
             page=IdObject(id=1),
@@ -184,14 +156,10 @@ class TestAllDescendants:
 
     def test_ancestor_not_included_in_result(self) -> None:
         """Test that the ancestor itself is never included in the returned NodeNetwork."""
-        ancestor = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)]
-        )
+        ancestor = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="child",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -205,14 +173,10 @@ class TestAllDescendants:
 
     def test_unreachable_nodes_excluded(self) -> None:
         """Test that nodes in the network that are not reachable from ancestor are excluded."""
-        ancestor = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)]
-        )
+        ancestor = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="child",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -220,8 +184,6 @@ class TestAllDescendants:
         unrelated = RoamNode(
             uid="block0099",
             id=99,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="unrelated",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -235,16 +197,14 @@ class TestAllDescendants:
 
     def test_ancestor_not_in_network_raises(self) -> None:
         """Test that passing an ancestor not present in the network raises ValueError."""
-        ancestor = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
-        other = RoamNode(uid="page00002", id=2, time=STUB_TIME, user=STUB_USER, title="other", children=[])
+        ancestor = RoamNode(uid="page00001", id=1, title="stub", children=[])
+        other = RoamNode(uid="page00002", id=2, title="other", children=[])
         with pytest.raises(ValueError, match="is not present in network"):
             all_descendants(ancestor, [other])
 
     def test_unresolvable_child_id_raises(self) -> None:
         """Test that a child id not present in the network raises ValueError."""
-        ancestor = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=99)]
-        )
+        ancestor = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=99)])
         with pytest.raises(ValueError, match="is not resolvable in network"):
             all_descendants(ancestor, [ancestor])
 
@@ -262,12 +222,10 @@ class TestAllChildrenPresent:
 
     def test_network_with_no_children_returns_none(self) -> None:
         """Test that a network of leaf nodes (all children=None) vacuously returns None."""
-        node1 = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node1 = RoamNode(uid="page00001", id=1, title="stub", children=[])
         node2 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -276,7 +234,7 @@ class TestAllChildrenPresent:
 
     def test_node_with_empty_children_list_returns_none(self) -> None:
         """Test that a node with an empty children list vacuously returns None."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node = RoamNode(uid="page00001", id=1, title="stub", children=[])
         assert all_children_present([node]) is None
 
     # ------------------------------------------------------------------
@@ -285,14 +243,10 @@ class TestAllChildrenPresent:
 
     def test_single_child_present_returns_none(self) -> None:
         """Test that a parent whose single child id is in the network returns None."""
-        parent = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)]
-        )
+        parent = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -304,16 +258,12 @@ class TestAllChildrenPresent:
         parent = RoamNode(
             uid="page00001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="stub",
             children=[IdObject(id=10), IdObject(id=20)],
         )
         child1 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c1",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -321,8 +271,6 @@ class TestAllChildrenPresent:
         child2 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c2",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -331,12 +279,10 @@ class TestAllChildrenPresent:
 
     def test_multi_level_network_all_children_present_returns_none(self) -> None:
         """Test that a multi-level network with all children present at every level returns None."""
-        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         mid = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="mid",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -345,8 +291,6 @@ class TestAllChildrenPresent:
         leaf = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="leaf",
             parents=[IdObject(id=10)],
             page=IdObject(id=1),
@@ -359,9 +303,7 @@ class TestAllChildrenPresent:
 
     def test_single_absent_child_returns_error(self) -> None:
         """Test that a node whose single child id is absent from the network returns a ValidationError."""
-        parent = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=99)]
-        )
+        parent = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=99)])
         assert all_children_present([parent]) == ValidationError(
             message="child ids absent from network: [99]; referenced by nodes: [1]",
             validator=all_children_present,
@@ -372,16 +314,12 @@ class TestAllChildrenPresent:
         parent = RoamNode(
             uid="page00001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="stub",
             children=[IdObject(id=10), IdObject(id=99)],
         )
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -393,12 +331,10 @@ class TestAllChildrenPresent:
 
     def test_absent_child_in_second_node_returns_error(self) -> None:
         """Test that a missing child in any node in the network returns a ValidationError."""
-        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         mid = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="mid",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -419,20 +355,18 @@ class TestAllParentsPresent:
 
     def test_empty_network_returns_none(self) -> None:
         """Test that an empty network vacuously satisfies the condition and returns None."""
-        stub = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        stub = RoamNode(uid="page00001", id=1, title="stub", children=[])
         assert all_parents_present([], stub) is None
 
     def test_network_with_no_parents_returns_none(self) -> None:
         """Test that a network of root nodes (all parents=None) vacuously returns None."""
-        node1 = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
-        node2 = RoamNode(uid="page00002", id=2, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node1 = RoamNode(uid="page00001", id=1, title="stub", children=[])
+        node2 = RoamNode(uid="page00002", id=2, title="stub", children=[])
         assert all_parents_present([node1, node2], node1) is None
 
     def test_node_with_empty_parents_list_returns_none(self) -> None:
         """Test that a node with an empty parents list vacuously returns None."""
-        node = RoamNode(
-            uid="block0001", id=10, time=STUB_TIME, user=STUB_USER, string="stub", parents=[], page=IdObject(id=99)
-        )
+        node = RoamNode(uid="block0001", id=10, string="stub", parents=[], page=IdObject(id=99))
         assert all_parents_present([node], node) is None
 
     # ------------------------------------------------------------------
@@ -441,12 +375,10 @@ class TestAllParentsPresent:
 
     def test_single_parent_present_returns_none(self) -> None:
         """Test that a child whose single parent id is in the network returns None."""
-        parent = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        parent = RoamNode(uid="page00001", id=1, title="stub", children=[])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -455,12 +387,10 @@ class TestAllParentsPresent:
 
     def test_multi_level_network_all_parents_present_returns_none(self) -> None:
         """Test that a multi-level network with all parents present at every level returns None."""
-        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[])
         mid = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="mid",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -468,8 +398,6 @@ class TestAllParentsPresent:
         leaf = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="leaf",
             parents=[IdObject(id=10)],
             page=IdObject(id=1),
@@ -482,12 +410,10 @@ class TestAllParentsPresent:
 
     def test_single_absent_parent_returns_error(self) -> None:
         """Test that a non-root node whose single parent id is absent from the network returns a ValidationError."""
-        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -499,12 +425,10 @@ class TestAllParentsPresent:
 
     def test_one_absent_among_several_parents_returns_error(self) -> None:
         """Test that a node with one absent parent id among several returns a ValidationError."""
-        parent = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        parent = RoamNode(uid="page00001", id=1, title="stub", children=[])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=1), IdObject(id=99)],
             page=IdObject(id=1),
@@ -516,12 +440,10 @@ class TestAllParentsPresent:
 
     def test_absent_parent_in_second_node_returns_error(self) -> None:
         """Test that a missing parent in any node in the network returns a ValidationError."""
-        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[])
         mid = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="mid",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -529,8 +451,6 @@ class TestAllParentsPresent:
         leaf = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="leaf",
             parents=[IdObject(id=99)],
             page=IdObject(id=1),
@@ -549,8 +469,6 @@ class TestAllParentsPresent:
         root = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -567,8 +485,6 @@ class TestAllParentsPresent:
         root = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -576,8 +492,6 @@ class TestAllParentsPresent:
         child = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99), IdObject(id=10)],
             page=IdObject(id=99),
@@ -586,12 +500,10 @@ class TestAllParentsPresent:
 
     def test_non_root_with_absent_parent_returns_error(self) -> None:
         """Test that only root's external parents are exempt — absent parents on non-root nodes are still caught."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=1), IdObject(id=99)],
             page=IdObject(id=1),
@@ -606,8 +518,6 @@ class TestAllParentsPresent:
         root = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="root",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -615,8 +525,6 @@ class TestAllParentsPresent:
         child = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="child",
             parents=[IdObject(id=10)],
             page=IdObject(id=99),
@@ -637,7 +545,7 @@ class TestHasUniqueIds:
 
     def test_single_node_returns_none(self) -> None:
         """Test that a one-node network trivially has unique ids and returns None."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node = RoamNode(uid="page00001", id=1, title="stub", children=[])
         assert has_unique_ids([node]) is None
 
     # ------------------------------------------------------------------
@@ -646,18 +554,16 @@ class TestHasUniqueIds:
 
     def test_two_nodes_with_distinct_ids_returns_none(self) -> None:
         """Test that a two-node network with distinct ids returns None."""
-        node1 = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
-        node2 = RoamNode(uid="page00002", id=2, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node1 = RoamNode(uid="page00001", id=1, title="stub", children=[])
+        node2 = RoamNode(uid="page00002", id=2, title="stub", children=[])
         assert has_unique_ids([node1, node2]) is None
 
     def test_three_nodes_with_distinct_ids_returns_none(self) -> None:
         """Test that a three-node network with all distinct ids returns None."""
-        node1 = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node1 = RoamNode(uid="page00001", id=1, title="stub", children=[])
         node2 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -665,8 +571,6 @@ class TestHasUniqueIds:
         node3 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -679,8 +583,8 @@ class TestHasUniqueIds:
 
     def test_two_nodes_with_same_id_returns_error(self) -> None:
         """Test that a two-node network where both nodes share the same id returns a ValidationError."""
-        node1 = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
-        node2 = RoamNode(uid="page00002", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node1 = RoamNode(uid="page00001", id=1, title="stub", children=[])
+        node2 = RoamNode(uid="page00002", id=1, title="stub", children=[])
         assert has_unique_ids([node1, node2]) == ValidationError(
             message="expected unique node ids; found duplicates: [1]",
             validator=has_unique_ids,
@@ -688,12 +592,10 @@ class TestHasUniqueIds:
 
     def test_one_duplicate_among_several_nodes_returns_error(self) -> None:
         """Test that a single duplicate id among otherwise distinct ids returns a ValidationError."""
-        node1 = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node1 = RoamNode(uid="page00001", id=1, title="stub", children=[])
         node2 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="a",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -701,8 +603,6 @@ class TestHasUniqueIds:
         node3 = RoamNode(
             uid="block0002",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="b",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -726,12 +626,12 @@ class TestIsAcyclic:
 
     def test_single_node_no_children_returns_none(self) -> None:
         """Test that a single node with no children has no cycle and returns None."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node = RoamNode(uid="page00001", id=1, title="stub", children=[])
         assert is_acyclic([node]) is None
 
     def test_single_node_empty_children_returns_none(self) -> None:
         """Test that a single node with an empty children list has no cycle and returns None."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        node = RoamNode(uid="page00001", id=1, title="stub", children=[])
         assert is_acyclic([node]) is None
 
     # ------------------------------------------------------------------
@@ -740,14 +640,10 @@ class TestIsAcyclic:
 
     def test_two_node_chain_returns_none(self) -> None:
         """Test that a two-node parent→child chain has no cycle and returns None."""
-        parent = RoamNode(
-            uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)]
-        )
+        parent = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         child = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -756,12 +652,10 @@ class TestIsAcyclic:
 
     def test_three_node_chain_returns_none(self) -> None:
         """Test that a three-node linear chain has no cycle and returns None."""
-        root = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=10)])
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         mid = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -770,8 +664,6 @@ class TestIsAcyclic:
         leaf = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=10)],
             page=IdObject(id=1),
@@ -783,16 +675,12 @@ class TestIsAcyclic:
         root = RoamNode(
             uid="page00001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="stub",
             children=[IdObject(id=10), IdObject(id=20)],
         )
         child1 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -800,8 +688,6 @@ class TestIsAcyclic:
         child2 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -810,7 +696,7 @@ class TestIsAcyclic:
 
     def test_child_outside_network_is_skipped_returns_none(self) -> None:
         """Test that a child reference outside the network is silently skipped and returns None."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=99)])
+        node = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=99)])
         assert is_acyclic([node]) is None
 
     # ------------------------------------------------------------------
@@ -819,7 +705,7 @@ class TestIsAcyclic:
 
     def test_self_loop_returns_error(self) -> None:
         """Test that a node whose children list references itself returns a ValidationError."""
-        node = RoamNode(uid="cycleA001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=1)])
+        node = RoamNode(uid="cycleA001", id=1, title="stub", children=[IdObject(id=1)])
         assert is_acyclic([node]) == ValidationError(
             message="child-edge graph contains a directed cycle involving node 'cycleA001'",
             validator=is_acyclic,
@@ -827,12 +713,8 @@ class TestIsAcyclic:
 
     def test_two_node_mutual_cycle_returns_error(self) -> None:
         """Test that a two-node cycle (A→B→A via children) returns a ValidationError."""
-        node_a = RoamNode(
-            uid="cycleA001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=2)]
-        )
-        node_b = RoamNode(
-            uid="cycleB001", id=2, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=1)]
-        )
+        node_a = RoamNode(uid="cycleA001", id=1, title="stub", children=[IdObject(id=2)])
+        node_b = RoamNode(uid="cycleB001", id=2, title="stub", children=[IdObject(id=1)])
         assert is_acyclic([node_a, node_b]) == ValidationError(
             message="child-edge graph contains a directed cycle involving node 'cycleA001'",
             validator=is_acyclic,
@@ -840,15 +722,9 @@ class TestIsAcyclic:
 
     def test_three_node_cycle_returns_error(self) -> None:
         """Test that a three-node cycle (A→B→C→A via children) returns a ValidationError."""
-        node_a = RoamNode(
-            uid="cycleA001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=2)]
-        )
-        node_b = RoamNode(
-            uid="cycleB001", id=2, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=3)]
-        )
-        node_c = RoamNode(
-            uid="cycleC001", id=3, time=STUB_TIME, user=STUB_USER, title="stub", children=[IdObject(id=1)]
-        )
+        node_a = RoamNode(uid="cycleA001", id=1, title="stub", children=[IdObject(id=2)])
+        node_b = RoamNode(uid="cycleB001", id=2, title="stub", children=[IdObject(id=3)])
+        node_c = RoamNode(uid="cycleC001", id=3, title="stub", children=[IdObject(id=1)])
         assert is_acyclic([node_a, node_b, node_c]) == ValidationError(
             message="child-edge graph contains a directed cycle involving node 'cycleA001'",
             validator=is_acyclic,
@@ -868,12 +744,10 @@ class TestRefsIds:
 
     def test_network_with_no_refs_returns_empty_set(self) -> None:
         """Test that a network where no node has a refs field returns an empty set."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="no refs here",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -889,8 +763,6 @@ class TestRefsIds:
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[Target]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -903,8 +775,6 @@ class TestRefsIds:
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[A]] [[B]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -917,8 +787,6 @@ class TestRefsIds:
         block_a = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[A]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -927,8 +795,6 @@ class TestRefsIds:
         block_b = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[B]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -941,8 +807,6 @@ class TestRefsIds:
         block_a = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[Shared]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -951,8 +815,6 @@ class TestRefsIds:
         block_b = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[Shared]] again",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -962,12 +824,10 @@ class TestRefsIds:
 
     def test_mixed_nodes_with_and_without_refs_ids(self) -> None:
         """Test that only refs from nodes that have a non-None refs field are collected."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         block_no_refs = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="plain text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -975,8 +835,6 @@ class TestRefsIds:
         block_with_refs = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[Target]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -989,8 +847,6 @@ class TestRefsIds:
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="no links",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1021,12 +877,10 @@ class TestDirectRefsNodes:
 
     def test_no_refs_in_network_returns_empty_list(self) -> None:
         """Test that a network where no node has a refs field returns an empty list."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="plain text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1039,12 +893,10 @@ class TestDirectRefsNodes:
 
     def test_ref_target_in_network_is_returned(self) -> None:
         """Test that a node whose id is referenced by another node in the network is returned."""
-        target = RoamNode(uid="page00002", id=99, time=STUB_TIME, user=STUB_USER, title="Target", children=[])
+        target = RoamNode(uid="page00002", id=99, title="Target", children=[])
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[Target]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1058,8 +910,6 @@ class TestDirectRefsNodes:
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[External]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1069,13 +919,11 @@ class TestDirectRefsNodes:
 
     def test_multiple_distinct_ref_targets_all_returned(self) -> None:
         """Test that all nodes whose ids are referenced are included in the result."""
-        target_a = RoamNode(uid="page00002", id=50, time=STUB_TIME, user=STUB_USER, title="A", children=[])
-        target_b = RoamNode(uid="page00003", id=60, time=STUB_TIME, user=STUB_USER, title="B", children=[])
+        target_a = RoamNode(uid="page00002", id=50, title="A", children=[])
+        target_b = RoamNode(uid="page00003", id=60, title="B", children=[])
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[A]] [[B]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1086,12 +934,10 @@ class TestDirectRefsNodes:
 
     def test_shared_ref_target_returned_once(self) -> None:
         """Test that a node referenced by two different nodes appears in the result only once."""
-        target = RoamNode(uid="page00002", id=99, time=STUB_TIME, user=STUB_USER, title="Shared", children=[])
+        target = RoamNode(uid="page00002", id=99, title="Shared", children=[])
         block_a = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[Shared]]",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1100,8 +946,6 @@ class TestDirectRefsNodes:
         block_b = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="[[Shared]] again",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1120,12 +964,10 @@ class TestMinEffectiveHeadingLevel:
 
     def test_no_heading_nodes_returns_none(self) -> None:
         """Test that a network with no heading nodes returns None."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         block = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="plain text",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1134,12 +976,10 @@ class TestMinEffectiveHeadingLevel:
 
     def test_single_heading_returns_its_level(self) -> None:
         """Test that a network with one heading node returns that heading's level."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         heading = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="Section",
             heading=2,
             parents=[IdObject(id=1)],
@@ -1149,12 +989,10 @@ class TestMinEffectiveHeadingLevel:
 
     def test_multiple_headings_returns_minimum(self) -> None:
         """Test that the minimum level is returned when multiple heading nodes are present."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         h2 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="H2",
             heading=2,
             parents=[IdObject(id=1)],
@@ -1163,8 +1001,6 @@ class TestMinEffectiveHeadingLevel:
         h3 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="H3",
             heading=3,
             parents=[IdObject(id=1)],
@@ -1174,12 +1010,10 @@ class TestMinEffectiveHeadingLevel:
 
     def test_non_heading_nodes_do_not_affect_result(self) -> None:
         """Test that plain-text and page nodes are ignored when computing the minimum."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         plain = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="plain",
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1187,8 +1021,6 @@ class TestMinEffectiveHeadingLevel:
         h3 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="H3",
             heading=3,
             parents=[IdObject(id=1)],
@@ -1198,12 +1030,10 @@ class TestMinEffectiveHeadingLevel:
 
     def test_augmented_heading_is_included(self) -> None:
         """Test that an Augmented Headings ah-level property is treated as an effective heading."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         ah5 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="H5 via AH",
             props={"ah-level": "h5"},
             parents=[IdObject(id=1)],
@@ -1213,12 +1043,10 @@ class TestMinEffectiveHeadingLevel:
 
     def test_native_and_augmented_headings_minimum_returned(self) -> None:
         """Test that native and augmented heading levels are compared together."""
-        page = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="stub", children=[])
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
         h3 = RoamNode(
             uid="block0001",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="H3",
             heading=3,
             parents=[IdObject(id=1)],
@@ -1227,8 +1055,6 @@ class TestMinEffectiveHeadingLevel:
         ah4 = RoamNode(
             uid="block0002",
             id=20,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="H4 via AH",
             props={"ah-level": "h4"},
             parents=[IdObject(id=1)],

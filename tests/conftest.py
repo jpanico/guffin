@@ -12,7 +12,6 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_tree import NodeTree
-from guffin.roam.primitives import IdObject
 
 FIXTURES_YAML_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures" / "yaml"
 """Absolute path to the ``tests/fixtures/yaml/`` directory."""
@@ -35,12 +34,6 @@ FIXTURES_MDBUNDLE_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures"
 PDF_CREATION_TIMESTAMP: int = 1704067200
 """Fixed UNIX timestamp (2024-01-01T00:00:00Z) pinned via ``GUFFIN_PDF_CREATION_TIMESTAMP`` so PDF
 export is byte-reproducible; shared by the live PDF fixture test and ``regen_fixtures.py --pdf``."""
-
-STUB_TIME: int = 0
-"""Stub value for ``RoamNode.time`` in tests where the timestamp is irrelevant."""
-
-STUB_USER: IdObject = IdObject(id=1)
-"""Stub value for ``RoamNode.user`` in tests where the user is irrelevant."""
 
 
 @pytest.fixture

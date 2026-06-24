@@ -110,15 +110,13 @@ class RoamNode(BaseModel):
     - **Page**: ``title`` set, so ``string`` and ``page`` are ``None``.
     - **Block**: ``title`` ``None``, so ``string`` and ``page`` are set.
 
-    All remaining fields (``parents``, ``children``, ``heading``, ``open``, ``sidebar``,
+    All remaining fields (``parents``, ``children``, ``heading``, ``open``,
     ``refs``, etc.) are optional and vary by entity type and feature usage.
 
     Attributes:
         uid: Nine-character stable block/page identifier (BLOCK_UID). Required.
         id: Datomic internal numeric entity id (:db/id). Ephemeral and not stable
             across exports. Required.
-        time: Last-edit Unix timestamp in milliseconds (EDIT_TIME). Required.
-        user: IdObject stub referencing the last-editing user entity. Required.
         string: Block text content (BLOCK_STRING). Present only on Block entities.
         title: Page title (NODE_TITLE). Present only on Page entities.
         order: Zero-based sibling order (BLOCK_ORDER). Present only on child Blocks.
@@ -127,21 +125,16 @@ class RoamNode(BaseModel):
         refs: Raw page/block reference stubs (BLOCK_REFS).
         page: IdObject stub for the containing page (BLOCK_PAGE). Present only on Blocks.
         open: Whether the block is expanded (BLOCK_OPEN). Present only on Blocks.
-        sidebar: Sidebar state. Present only on Pages.
         parents: IdObject stubs for all ancestor blocks (BLOCK_PARENTS). Present only on Blocks.
         props: Block property key-value map (BLOCK_PROPS). Present only on Blocks that have block
             properties set (e.g. ``ah-level`` from the Augmented Headings extension).
         attrs: Structured attribute assertions (ENTITY_ATTRS).
-        lookup: IdObject stubs for ATTRS_LOOKUP. Purpose unclear.
-        seen_by: IdObject stubs for EDIT_SEEN_BY. Purpose unclear.
     """
 
     model_config = ConfigDict(frozen=True, populate_by_name=True)
 
     uid: Uid = Field(..., description=f"{RoamAttribute.BLOCK_UID} — nine-character stable identifier")
     id: Id = Field(..., description=":db/id — Datomic internal entity id (ephemeral)")
-    time: int = Field(..., description=f"{RoamAttribute.EDIT_TIME} — last-edit Unix timestamp (ms)")
-    user: IdObject = Field(..., description=f"{RoamAttribute.EDIT_USER} — last-editing user stub")
 
     # Block-only fields
     string: str | None = Field(
@@ -182,19 +175,10 @@ class RoamNode(BaseModel):
         default=None,
         description=f"{RoamAttribute.NODE_TITLE} — page title; present only on Page entities",
     )
-    sidebar: int | None = Field(
-        default=None, description=f"{RoamAttribute.PAGE_SIDEBAR} — sidebar state; present only on Pages"
-    )
 
     # Sparse / metadata fields
     attrs: list[list[LinkObject]] | None = Field(
         default=None, description=f"{RoamAttribute.ENTITY_ATTRS} — structured attribute assertions"
-    )
-    lookup: list[IdObject] | None = Field(
-        default=None, description=f"{RoamAttribute.ATTRS_LOOKUP} — attribute lookup stubs (purpose unclear)"
-    )
-    seen_by: list[IdObject] | None = Field(
-        default=None, description=f"{RoamAttribute.EDIT_SEEN_BY} — users who have seen this block (purpose unclear)"
     )
 
     @field_validator("heading", mode="before")

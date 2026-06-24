@@ -1,9 +1,6 @@
 root_node:
   uid: L7iQsWlWT
   id: 11137
-  time: 1780943981609
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -19,16 +16,10 @@ root_node:
   parents: null
   props: null
   title: '[[Test Article]] 0'
-  sidebar: 19
   attrs: null
-  lookup: null
-  seen_by: null
 tree_network:
 - uid: wjN-kVF3B
   id: 11225
-  time: 1781362773659
-  user:
-    id: 3
   string: '{{table}}'
   order: 1
   heading: null
@@ -45,15 +36,9 @@ tree_network:
   - id: 11150
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: r09kXvUg-
   id: 11193
-  time: 1781283589466
-  user:
-    id: 3
   string: '[[>]] This is a Roam standard multi-line Block Quote
 
     this is the 2nd line
@@ -72,15 +57,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: jVQvHi40O
   id: 11147
-  time: 1780944791082
-  user:
-    id: 3
   string: block 3
   order: 3
   heading: null
@@ -95,15 +74,9 @@ tree_network:
   - id: 11137
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: iXrVW8EGw
   id: 11199
-  time: 1781362846319
-  user:
-    id: 3
   string: 'the next block is a basic Roam-native table: 3x3. No column/row/col resizing
     of any kind'
   order: 0
@@ -118,15 +91,9 @@ tree_network:
   - id: 11150
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: MRKYttxrM
   id: 11149
-  time: 1780944762391
-  user:
-    id: 3
   string: block 1
   order: 1
   heading: null
@@ -152,15 +119,9 @@ tree_network:
   - id: 11137
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: g9mXrLNQd
   id: 11156
-  time: 1780944807646
-  user:
-    id: 3
   string: block 3.1.1
   order: 0
   heading: null
@@ -175,15 +136,9 @@ tree_network:
   - id: 11154
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: qnCiceZgk
   id: 11148
-  time: 1781438134448
-  user:
-    id: 3
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
 
@@ -234,15 +189,9 @@ tree_network:
   - id: 11137
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 2yQYaKIEV
   id: 11157
-  time: 1780944909127
-  user:
-    id: 3
   string: This para features __italics__
   order: 0
   heading: null
@@ -256,15 +205,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: WtrddPBAt
   id: 11153
-  time: 1780944784665
-  user:
-    id: 3
   string: block 1.2
   order: 12
   heading: null
@@ -278,15 +221,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 6NS-Qw4Mm
   id: 11226
-  time: 1781362855750
-  user:
-    id: 3
   string: Header 1
   order: 0
   heading: null
@@ -302,15 +239,9 @@ tree_network:
   - id: 11225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 6bcyfVpL2
   id: 11187
-  time: 1781269290009
-  user:
-    id: 3
   string: '> This is a Markdown standard multi-line Block Quote
 
     this is the 2nd line
@@ -328,15 +259,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Odbqghm-D
   id: 11150
-  time: 1780944763258
-  user:
-    id: 3
   string: block 2
   order: 2
   heading: null
@@ -351,15 +276,9 @@ tree_network:
   - id: 11137
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Yz0pqYfBh
   id: 11186
-  time: 1781269244509
-  user:
-    id: 3
   string: '> This is a Markdown standard single line Block Quote'
   order: 7
   heading: null
@@ -373,15 +292,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 4BL7hTjHS
   id: 11227
-  time: 1781362858883
-  user:
-    id: 3
   string: Header 2
   order: 0
   heading: null
@@ -398,15 +311,9 @@ tree_network:
   - id: 11226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: ETesnk4Zi
   id: 11172
-  time: 1781221588685
-  user:
-    id: 3
   string: This para features `inline-code`
   order: 4
   heading: null
@@ -420,15 +327,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 0hoWxyjNR
   id: 11232
-  time: 1781362878627
-  user:
-    id: 3
   string: r2.c1
   order: 2
   heading: null
@@ -444,15 +345,9 @@ tree_network:
   - id: 11225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 9XUHIOSY0
   id: 11231
-  time: 1781362875854
-  user:
-    id: 3
   string: r1.c3
   order: 0
   heading: null
@@ -469,15 +364,9 @@ tree_network:
   - id: 11230
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: hD2qvZqjh
   id: 11234
-  time: 1781362883933
-  user:
-    id: 3
   string: r2.c3
   order: 0
   heading: null
@@ -494,15 +383,9 @@ tree_network:
   - id: 11233
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 5JwQ2Fea-
   id: 11230
-  time: 1781362872567
-  user:
-    id: 3
   string: r1.c2
   order: 0
   heading: null
@@ -519,15 +402,9 @@ tree_network:
   - id: 11229
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: gq_29_H-7
   id: 11188
-  time: 1781283482682
-  user:
-    id: 3
   string: '[[>]] This is a Roam standard single line Block Quote'
   order: 9
   heading: null
@@ -542,15 +419,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: mGk4VnMT3
   id: 11151
-  time: 1780944773800
-  user:
-    id: 3
   string: block 1.1
   order: 11
   heading: null
@@ -565,15 +436,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 8FeLZHNMW
   id: 11174
-  time: 1781221807118
-  user:
-    id: 3
   string: The child of this block is an isolated fenced code block
   order: 6
   heading: null
@@ -588,15 +453,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: VvbwbLchA
   id: 11171
-  time: 1781221355217
-  user:
-    id: 3
   string: This para features ^^highlight^^
   order: 3
   heading: null
@@ -610,15 +469,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: QB8DChDBs
   id: 11158
-  time: 1780944927251
-  user:
-    id: 3
   string: This para features **bold**
   order: 1
   heading: null
@@ -632,15 +485,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: E_Nsc0SmT
   id: 11173
-  time: 1781222033423
-  user:
-    id: 3
   string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
     \ int = 100):\n    for i in range(1, limit + 1):\n        if i % 15 == 0:\n  \
     \          print(\"FizzBuzz\")\n        elif i % 3 == 0:\n            print(\"\
@@ -658,15 +505,9 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: C6xVTMnsh
   id: 11175
-  time: 1781222045009
-  user:
-    id: 3
   string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
     \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
     \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
@@ -684,15 +525,9 @@ tree_network:
   - id: 11174
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: iAxwSSBmi
   id: 11228
-  time: 1781362862876
-  user:
-    id: 3
   string: Header 3
   order: 0
   heading: null
@@ -709,15 +544,9 @@ tree_network:
   - id: 11227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: d6b4AGFrG
   id: 11154
-  time: 1780944798657
-  user:
-    id: 3
   string: block 3.1
   order: 0
   heading: null
@@ -732,15 +561,9 @@ tree_network:
   - id: 11147
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 5N_QAEc3C
   id: 11155
-  time: 1780944802560
-  user:
-    id: 3
   string: block 3.2
   order: 1
   heading: null
@@ -754,15 +577,9 @@ tree_network:
   - id: 11147
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: L7iQsWlWT
   id: 11137
-  time: 1780943981609
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -778,15 +595,9 @@ tree_network:
   parents: null
   props: null
   title: '[[Test Article]] 0'
-  sidebar: 19
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: bwUBoF2ee
   id: 11229
-  time: 1781362870121
-  user:
-    id: 3
   string: r1.c1
   order: 1
   heading: null
@@ -802,15 +613,9 @@ tree_network:
   - id: 11225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: jrIkVSHfA
   id: 11233
-  time: 1781362881234
-  user:
-    id: 3
   string: r2.c2
   order: 0
   heading: null
@@ -827,15 +632,9 @@ tree_network:
   - id: 11232
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 2IDW6tZJ4
   id: 11152
-  time: 1780944780043
-  user:
-    id: 3
   string: block 1.1.1
   order: 0
   heading: null
@@ -850,15 +649,9 @@ tree_network:
   - id: 11151
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 7dBusjzDA
   id: 11170
-  time: 1781218309397
-  user:
-    id: 3
   string: This para features ~~strikethrough~~
   order: 2
   heading: null
@@ -872,17 +665,11 @@ tree_network:
   - id: 11149
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 refs_by_id:
   '4223':
     uid: LBFKibPIj
     id: 4223
-    time: 1773090962400
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -894,16 +681,10 @@ refs_by_id:
     parents: null
     props: null
     title: Test Article
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5450':
     uid: OexZiLR_O
     id: 5450
-    time: 1773784559632
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -914,16 +695,10 @@ refs_by_id:
     parents: null
     props: null
     title: '>'
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
-    time: 1773788725523
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -934,7 +709,4 @@ refs_by_id:
     parents: null
     props: null
     title: '!INFO'
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null

@@ -51,7 +51,7 @@ _CALLOUT_STRING: str = "[[>]] [[!NOTE]] This is a note"
 # Raw Roam form: closing fence attached to the final content line (no separating newline).
 _CODE_STRING: str = "```python\ndef f():\n    pass```"
 
-from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, STUB_TIME, STUB_USER, article1_node_tree
+from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, article1_node_tree
 
 # ---------------------------------------------------------------------------
 # Factory helpers
@@ -60,7 +60,7 @@ from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, STUB_TIME, STUB_USER,
 
 def _make_page(uid: str = "pageuid01", node_id: int = 100, title: str = "My Page") -> RoamNode:
     """Return a minimal page RoamNode."""
-    return RoamNode(uid=uid, id=node_id, time=STUB_TIME, user=STUB_USER, title=title, children=[])
+    return RoamNode(uid=uid, id=node_id, title=title, children=[])
 
 
 def _make_image(uid: str = "imageuid1", node_id: int = 101, string: str = _IMAGE_STRING) -> RoamNode:
@@ -68,8 +68,6 @@ def _make_image(uid: str = "imageuid1", node_id: int = 101, string: str = _IMAGE
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -86,8 +84,6 @@ def _make_heading(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         heading=heading,
         parents=[IdObject(id=99)],
@@ -105,8 +101,6 @@ def _make_ah_heading(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         props={"ah-level": level},
         parents=[IdObject(id=99)],
@@ -123,8 +117,6 @@ def _make_text(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -140,8 +132,6 @@ def _make_callout(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -157,8 +147,6 @@ def _make_code(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -174,8 +162,6 @@ def _make_block_quote(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -230,7 +216,7 @@ class TestVertexType:
     def test_node_with_neither_title_nor_string_raises_validation_error(self) -> None:
         """Test that constructing a node missing both title and string raises ValidationError."""
         with pytest.raises(ValidationError):
-            RoamNode(uid="badnode01", id=999, time=STUB_TIME, user=STUB_USER)
+            RoamNode(uid="badnode01", id=999)
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None raises a ValidationError."""
@@ -271,8 +257,6 @@ class TestToPageVertex:
         child1 = RoamNode(
             uid="child0001",
             id=201,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c1",
             order=1,
             parents=[IdObject(id=100)],
@@ -281,8 +265,6 @@ class TestToPageVertex:
         child2 = RoamNode(
             uid="child0002",
             id=202,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="c2",
             order=0,
             parents=[IdObject(id=100)],
@@ -291,8 +273,6 @@ class TestToPageVertex:
         page = RoamNode(
             uid="pageuid01",
             id=100,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="My Page",
             children=[IdObject(id=201), IdObject(id=202)],
         )
@@ -310,8 +290,6 @@ class TestToPageVertex:
         page = RoamNode(
             uid="pageuid01",
             id=100,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="My Page",
             children=[],
             refs=[IdObject(id=301)],
@@ -393,8 +371,6 @@ class TestToImageVertex:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="![alt](https://example.com/image.jpg)",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -783,8 +759,6 @@ class TestTranscribeNode:
         child = RoamNode(
             uid="child0001",
             id=201,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="child",
             order=0,
             parents=[IdObject(id=100)],
@@ -793,8 +767,6 @@ class TestTranscribeNode:
         page = RoamNode(
             uid="pageuid01",
             id=100,
-            time=STUB_TIME,
-            user=STUB_USER,
             title="Page",
             children=[IdObject(id=201)],
         )
@@ -805,7 +777,7 @@ class TestTranscribeNode:
     def test_node_with_neither_title_nor_string_raises_validation_error(self) -> None:
         """Test that constructing a node missing both title and string raises ValidationError."""
         with pytest.raises(ValidationError):
-            RoamNode(uid="badnode01", id=999, time=STUB_TIME, user=STUB_USER)
+            RoamNode(uid="badnode01", id=999)
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
@@ -888,8 +860,6 @@ def _make_table_root(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=ROAM_NATIVE_TABLE_MARKER,
         parents=[IdObject(id=1)],
         page=IdObject(id=1),
@@ -913,8 +883,6 @@ def _make_cell_node(
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         order=order,
         parents=[IdObject(id=parent_id)],
@@ -982,8 +950,6 @@ class TestToTable:
         root = RoamNode(
             uid="tabluid01",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=ROAM_NATIVE_TABLE_MARKER,
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
@@ -1052,8 +1018,6 @@ class TestToTableVertex:
         root = RoamNode(
             uid="tabluid01",
             id=10,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=ROAM_NATIVE_TABLE_MARKER,
             parents=[IdObject(id=1)],
             page=IdObject(id=1),

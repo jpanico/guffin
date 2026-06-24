@@ -17,8 +17,6 @@ from guffin.roam.node_fetch_result import (
 )
 from guffin.roam.primitives import IdObject
 
-from conftest import STUB_TIME, STUB_USER
-
 # ---------------------------------------------------------------------------
 # Minimal test-node helpers
 # ---------------------------------------------------------------------------
@@ -31,7 +29,7 @@ _VALID_UID: Final[str] = "wdMgyBiP9"
 
 def _page_node(uid: str = _PAGE_UID, title: str = _PAGE_TITLE) -> RoamNode:
     """Return a minimal Page :class:`~guffin.roam.node.RoamNode` for use in tests."""
-    return RoamNode(uid=uid, id=1, time=STUB_TIME, user=STUB_USER, title=title, children=[])
+    return RoamNode(uid=uid, id=1, title=title, children=[])
 
 
 # ---------------------------------------------------------------------------
@@ -260,8 +258,6 @@ def _page(uid: str, id_: int, title: str, child_ids: list[int]) -> RoamNode:
     return RoamNode(
         uid=uid,
         id=id_,
-        time=STUB_TIME,
-        user=STUB_USER,
         title=title,
         children=[IdObject(id=cid) for cid in child_ids],
     )
@@ -272,8 +268,6 @@ def _block(uid: str, id_: int, page_id: int, child_ids: list[int] | None = None)
     return RoamNode(
         uid=uid,
         id=id_,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=uid,
         order=0,
         page=IdObject(id=page_id),

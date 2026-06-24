@@ -9,9 +9,6 @@
 # omitted entirely so they default to None on model_validate.
 - uid: d_3REDRrO
   id: 11684
-  time: 0
-  user:
-    id: 0
   string: Document block 1.2
   order: 1
   heading: null
@@ -28,9 +25,6 @@
   attrs: null
 - uid: sD1C9ifkG
   id: 11677
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1
   order: 1
   heading: null
@@ -48,9 +42,6 @@
   attrs: null
 - uid: YyeRpjbFD
   id: 11679
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1.2
   order: 1
   heading: null
@@ -67,9 +58,6 @@
   attrs: null
 - uid: DsogfVzX9
   id: 11682
-  time: 0
-  user:
-    id: 0
   string: Document block 1
   order: 2
   heading: null
@@ -87,9 +75,6 @@
   attrs: null
 - uid: MmvJZhQNJ
   id: 11675
-  time: 0
-  user:
-    id: 0
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
     \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
   order: 0
@@ -107,9 +92,6 @@
   attrs: null
 - uid: lDYWYqYSL
   id: 11674
-  time: 0
-  user:
-    id: 0
   string: null
   order: null
   heading: null
@@ -126,9 +108,6 @@
   attrs: null
 - uid: -noi1eQMD
   id: 11690
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1.2.1.1
   order: 0
   heading: null
@@ -146,9 +125,6 @@
   attrs: null
 - uid: Bb49MOLyE
   id: 11686
-  time: 0
-  user:
-    id: 0
   string: Document block 1.3
   order: 2
   heading: null
@@ -164,9 +140,6 @@
   attrs: null
 - uid: gmLJbWZYp
   id: 11681
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1.3
   order: 2
   heading: null
@@ -182,9 +155,6 @@
   attrs: null
 - uid: XgPKipOsW
   id: 11691
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1.2.1.2
   order: 1
   heading: null
@@ -202,9 +172,6 @@
   attrs: null
 - uid: KUi_6ooZj
   id: 11680
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1.2.1
   order: 0
   heading: null
@@ -221,9 +188,6 @@
   attrs: null
 - uid: 5SczmqJaW
   id: 11685
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1.2.1
   order: 0
   heading: null
@@ -242,9 +206,6 @@
   attrs: null
 - uid: 99rZhIPZW
   id: 11683
-  time: 0
-  user:
-    id: 0
   string: Document block 1.1
   order: 0
   heading: null
@@ -260,9 +221,6 @@
   attrs: null
 - uid: VH0mXM0rw
   id: 11678
-  time: 0
-  user:
-    id: 0
   string: Bullet block 1.1
   order: 0
   heading: null

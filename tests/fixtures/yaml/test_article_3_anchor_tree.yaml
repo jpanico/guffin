@@ -1,9 +1,6 @@
 root_node:
   uid: SYZfEd44O
   id: 4225
-  time: 1781833356251
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -20,16 +17,10 @@ root_node:
   parents: null
   props: null
   title: '[[Test Article]] 3'
-  sidebar: 22
   attrs: null
-  lookup: null
-  seen_by: null
 tree_network:
 - uid: oVvEsh7dx
   id: 11737
-  time: 1782161888571
-  user:
-    id: 3
   string: section 3.2
   order: 1
   heading: null
@@ -43,15 +34,9 @@ tree_network:
   - id: 4228
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: zpSBqgxe4
   id: 11767
-  time: 1782227421136
-  user:
-    id: 3
   string: '[[>]] [[!EXAMPLE]] This is the callout title
 
     This is line 1 of the callout body
@@ -74,15 +59,9 @@ tree_network:
   - id: 11766
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: yvlvNZwPC
   id: 11792
-  time: 1782239692595
-  user:
-    id: 3
   string: '{{table}}'
   order: 0
   heading: null
@@ -100,15 +79,9 @@ tree_network:
   - id: 11790
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: SYZfEd44O
   id: 4225
-  time: 1781833356251
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -125,15 +98,9 @@ tree_network:
   parents: null
   props: null
   title: '[[Test Article]] 3'
-  sidebar: 22
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 7XdTiY_ZF
   id: 11716
-  time: 1782226456160
-  user:
-    id: 3
   string: Feature Content
   order: 1
   heading: 2
@@ -160,15 +127,9 @@ tree_network:
   - id: 4225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: QnqMI7-2J
   id: 11771
-  time: 1782227332836
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
   order: 18
   heading: null
@@ -184,15 +145,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: CCrsgAEQ-
   id: 11775
-  time: 1782227741541
-  user:
-    id: 3
   string: ((0EgPyHSZi))
   order: 0
   heading: null
@@ -208,15 +163,9 @@ tree_network:
   - id: 11774
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: S81O4tG9t
   id: 11761
-  time: 1782164504762
-  user:
-    id: 3
   string: ((J_Vt5_C6p))
   order: 0
   heading: null
@@ -232,15 +181,9 @@ tree_network:
   - id: 11759
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: cKCA_EwGZ
   id: 11729
-  time: 1782173300822
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((JRU5IhUB-))'
   order: 4
   heading: null
@@ -256,15 +199,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: JCyO1oiVt
   id: 11742
-  time: 1782173300833
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
   order: 10
   heading: null
@@ -280,15 +217,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 78w6MjSqo
   id: 11726
-  time: 1782173300818
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((msKBuys0a))'
   order: 2
   heading: null
@@ -304,15 +235,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: I7pBlEhyE
   id: 11766
-  time: 1782226648177
-  user:
-    id: 3
   string: the child block contains a Roam native callout
   order: 12
   heading: null
@@ -327,15 +252,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: LKHCU5I3z
   id: 11755
-  time: 1782173300890
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
   order: 10
   heading: null
@@ -351,15 +270,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: BuP4ifx3v
   id: 11722
-  time: 1782152899017
-  user:
-    id: 3
   string: This para features `inline-code`
   order: 5
   heading: null
@@ -373,15 +286,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: _9zoxTAJt
   id: 11797
-  time: 1782239692595
-  user:
-    id: 3
   string: r1.c2
   order: 0
   heading: null
@@ -399,15 +306,9 @@ tree_network:
   - id: 11796
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: yECzsUNPC
   id: 11725
-  time: 1782160870214
-  user:
-    id: 3
   string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
     \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
     \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
@@ -424,15 +325,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: nmFudOFkf
   id: 11713
-  time: 1782152593894
-  user:
-    id: 3
   string: ((tWkumkdUE))
   order: 0
   heading: null
@@ -448,15 +343,9 @@ tree_network:
   - id: 11712
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: vk7Up544K
   id: 11739
-  time: 1782162417879
-  user:
-    id: 3
   string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
   order: 7
   heading: null
@@ -471,15 +360,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: chSSa7hfQ
   id: 11753
-  time: 1782173300854
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((Rjt1IvrVq))'
   order: 8
   heading: null
@@ -495,15 +378,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: xkmJLzW3G
   id: 11804
-  time: 1782240793572
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
   order: 19
   heading: null
@@ -519,15 +396,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: aVVGVVPLE
   id: 4234
-  time: 1781870982030
-  user:
-    id: 3
   string: '{{embed: ((drtANJYTg))}}'
   order: 0
   heading: null
@@ -543,15 +414,9 @@ tree_network:
   - id: 4233
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: uTV8PLeSZ
   id: 11795
-  time: 1782239692595
-  user:
-    id: 3
   string: Header 3
   order: 0
   heading: null
@@ -569,15 +434,9 @@ tree_network:
   - id: 11794
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: FWULkh5nm
   id: 11731
-  time: 1782173300826
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((BuP4ifx3v))'
   order: 6
   heading: null
@@ -593,15 +452,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: SYAWArc3S
   id: 11756
-  time: 1782173300892
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((T6cykqu88))'
   order: 11
   heading: null
@@ -617,15 +470,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 2Zo0HNy5o
   id: 11705
-  time: 1782152316078
-  user:
-    id: 3
   string: ((LfXmNr-tV))
   order: 0
   heading: null
@@ -641,15 +488,9 @@ tree_network:
   - id: 11704
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: I1QOMCtdJ
   id: 11133
-  time: 1781959284786
-  user:
-    id: 3
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
 
@@ -681,15 +522,9 @@ tree_network:
   - id: 4225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 4kdWXzDjz
   id: 11790
-  time: 1782239673136
-  user:
-    id: 3
   string: the child block contains a Roam native table
   order: 13
   heading: null
@@ -704,15 +539,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 3PA_Y7Osp
   id: 11770
-  time: 1782227421136
-  user:
-    id: 3
   string: ((zpSBqgxe4))
   order: 0
   heading: null
@@ -728,15 +557,9 @@ tree_network:
   - id: 11769
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Frzso359j
   id: 11803
-  time: 1782239755128
-  user:
-    id: 3
   string: ((yvlvNZwPC))
   order: 0
   heading: null
@@ -752,15 +575,9 @@ tree_network:
   - id: 11802
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: dYYKZExzI
   id: 4229
-  time: 1782227165593
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
   order: 17
   heading: null
@@ -776,15 +593,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: l7f2Qf90W
   id: 4230
-  time: 1773091226849
-  user:
-    id: 3
   string: section 3.1
   order: 0
   heading: null
@@ -799,15 +610,9 @@ tree_network:
   - id: 4228
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: LfXmNr-tV
   id: 4228
-  time: 1773091129652
-  user:
-    id: 3
   string: Section 3
   order: 4
   heading: null
@@ -823,15 +628,9 @@ tree_network:
   - id: 4225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 7AR6910sJ
   id: 11744
-  time: 1782173300835
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
   order: 11
   heading: null
@@ -847,15 +646,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Q-nJAf9KK
   id: 11721
-  time: 1782152893058
-  user:
-    id: 3
   string: This para features ^^highlight^^
   order: 4
   heading: null
@@ -869,15 +662,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: t62Kwufzm
   id: 11749
-  time: 1782173300847
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((7dBusjzDA))'
   order: 4
   heading: null
@@ -893,15 +680,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: SivJQaD8x
   id: 11802
-  time: 1782239736049
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
   order: 21
   heading: null
@@ -917,15 +698,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: MbQObdYBx
   id: 11727
-  time: 1782173300821
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline BOLD ref ⟶** ((iiSioG0Ut))'
   order: 3
   heading: null
@@ -941,15 +716,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: aM4rXqHLf
   id: 11793
-  time: 1782239692595
-  user:
-    id: 3
   string: Header 1
   order: 0
   heading: null
@@ -966,15 +735,9 @@ tree_network:
   - id: 11792
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: XkSI5xwe5
   id: 4232
-  time: 1782228279589
-  user:
-    id: 3
   string: '{{embed: ((LfXmNr-tV))}}'
   order: 0
   heading: null
@@ -990,15 +753,9 @@ tree_network:
   - id: 4229
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: ot5dpySxp
   id: 11709
-  time: 1782227180594
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
   order: 0
   heading: null
@@ -1015,15 +772,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: HftouGiTA
   id: 11707
-  time: 1782227142272
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
   order: 15
   heading: null
@@ -1039,15 +790,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: JRU5IhUB-
   id: 11720
-  time: 1782152887494
-  user:
-    id: 3
   string: This para features ~~strikethrough~~
   order: 3
   heading: null
@@ -1061,15 +806,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: wta7y8AlI
   id: 11774
-  time: 1782227726662
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
   order: 16
   heading: null
@@ -1085,15 +824,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: b8ob6GcbI
   id: 11701
-  time: 1782227113550
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
   order: 13
   heading: null
@@ -1109,15 +842,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: DZsnC1-jM
   id: 11748
-  time: 1782173300845
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline BOLD ref ⟶** ((QB8DChDBs))'
   order: 3
   heading: null
@@ -1133,15 +860,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: zAIxMFBIB
   id: 11745
-  time: 1782162708852
-  user:
-    id: 3
   string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
   order: 10
   heading: null
@@ -1156,15 +877,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: zmb1Uac0S
   id: 11741
-  time: 1782162535182
-  user:
-    id: 3
   string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
   order: 8
   heading: null
@@ -1179,15 +894,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: iiSioG0Ut
   id: 11719
-  time: 1782152881934
-  user:
-    id: 3
   string: This para features **bold**
   order: 2
   heading: null
@@ -1201,15 +910,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: SCzzQaVai
   id: 11752
-  time: 1782173300852
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
   order: 7
   heading: null
@@ -1225,15 +928,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: H3vh9eS_F
   id: 11738
-  time: 1782161894317
-  user:
-    id: 3
   string: section 3.3
   order: 2
   heading: null
@@ -1247,15 +944,9 @@ tree_network:
   - id: 4228
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: vLxyRJcr2
   id: 11712
-  time: 1782227199273
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
   order: 13
   heading: null
@@ -1271,15 +962,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: ipvsMyx77
   id: 11776
-  time: 1782227870473
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
   order: 17
   heading: null
@@ -1295,15 +980,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 88ny0VOH4
   id: 11750
-  time: 1782173300849
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((VvbwbLchA))'
   order: 5
   heading: null
@@ -1319,15 +998,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: GK_iI79mV
   id: 11743
-  time: 1782162631657
-  user:
-    id: 3
   string: '#c:ORANGE __This span is underlined orange. __This span is not.'
   order: 9
   heading: null
@@ -1342,15 +1015,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 8n19o7ito
   id: 11751
-  time: 1782173300851
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((ETesnk4Zi))'
   order: 6
   heading: null
@@ -1366,15 +1033,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: ZT_EVUtHq
   id: 11704
-  time: 1782227123874
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
   order: 14
   heading: null
@@ -1390,15 +1051,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: LfaVt18Iw
   id: 4226
-  time: 1782151653635
-  user:
-    id: 3
   string: 'Internal (in-page) links:'
   order: 2
   heading: 2
@@ -1433,15 +1088,9 @@ tree_network:
   - id: 4225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: vH2I8xRLZ
   id: 4231
-  time: 1773091241939
-  user:
-    id: 3
   string: section 3.1.1
   order: 0
   heading: null
@@ -1456,15 +1105,9 @@ tree_network:
   - id: 4230
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Ep6xoSIzu
   id: 11799
-  time: 1782239692595
-  user:
-    id: 3
   string: r2.c1
   order: 2
   heading: null
@@ -1481,15 +1124,9 @@ tree_network:
   - id: 11792
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Z2d9G4m4V
   id: 11800
-  time: 1782239692595
-  user:
-    id: 3
   string: r2.c2
   order: 0
   heading: null
@@ -1507,15 +1144,9 @@ tree_network:
   - id: 11799
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: T5pku1yrU
   id: 11777
-  time: 1782227891107
-  user:
-    id: 3
   string: ((C6xVTMnsh))
   order: 0
   heading: null
@@ -1531,15 +1162,9 @@ tree_network:
   - id: 11776
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: cCYHqUNs8
   id: 11736
-  time: 1782160870214
-  user:
-    id: 3
   string: ((yECzsUNPC))
   order: 0
   heading: null
@@ -1555,15 +1180,9 @@ tree_network:
   - id: 11735
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: qj0DTMyzl
   id: 11692
-  time: 1782173004373
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
   order: 0
   heading: null
@@ -1580,15 +1199,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: kWNhvv437
   id: 11801
-  time: 1782239692595
-  user:
-    id: 3
   string: r2.c3
   order: 0
   heading: null
@@ -1606,15 +1219,9 @@ tree_network:
   - id: 11800
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: _6Z-gzw6R
   id: 11757
-  time: 1782163456030
-  user:
-    id: 3
   string: the child block contains a standalone image
   order: 11
   heading: null
@@ -1629,15 +1236,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: HB9MEj5W8
   id: 11754
-  time: 1782173300856
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((9a_6taJAn))'
   order: 9
   heading: null
@@ -1653,15 +1254,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: AaB6F4c0F
   id: 11747
-  time: 1782173300843
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((2yQYaKIEV))'
   order: 2
   heading: null
@@ -1677,15 +1272,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: dDNfZQ62b
   id: 11805
-  time: 1782240807093
-  user:
-    id: 3
   string: ((wjN-kVF3B))
   order: 0
   heading: null
@@ -1701,15 +1290,9 @@ tree_network:
   - id: 11804
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: hWsG-ExLV
   id: 11700
-  time: 1782173300803
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline PARENT BLOCK ref ⟶**  ((LfaVt18Iw))'
   order: 7
   heading: null
@@ -1725,15 +1308,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 48ZQ-2b7U
   id: 11740
-  time: 1782173300832
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((vk7Up544K))'
   order: 9
   heading: null
@@ -1749,15 +1326,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: amzmDdIn3
   id: 11796
-  time: 1782239692595
-  user:
-    id: 3
   string: r1.c1
   order: 1
   heading: null
@@ -1774,15 +1345,9 @@ tree_network:
   - id: 11792
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: HbJZh5mTY
   id: 11730
-  time: 1782173300824
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((Q-nJAf9KK))'
   order: 5
   heading: null
@@ -1798,15 +1363,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: GQSLJp92S
   id: 11764
-  time: 1782227207347
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
   order: 14
   heading: null
@@ -1822,15 +1381,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Y0xFlk7y6
   id: 11733
-  time: 1782173520044
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
   order: 18
   heading: null
@@ -1846,15 +1399,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: n528kYv5_
   id: 11710
-  time: 1782227185420
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline BLOCK ref ⟶** ((tWkumkdUE))'
   order: 1
   heading: null
@@ -1870,15 +1417,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: SsmyWLZij
   id: 11732
-  time: 1782226456160
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((7XdTiY_ZF))'
   order: 8
   heading: null
@@ -1894,15 +1435,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: tyOSwiz6l
   id: 11734
-  time: 1782226456160
-  user:
-    id: 3
   string: ((7XdTiY_ZF))
   order: 0
   heading: null
@@ -1918,15 +1453,9 @@ tree_network:
   - id: 11733
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 2IaJFXDZT
   id: 11746
-  time: 1782173300837
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
   order: 12
   heading: null
@@ -1942,15 +1471,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Wq2dXafRn
   id: 11772
-  time: 1782227427980
-  user:
-    id: 3
   string: ((4SIo9hSEY))
   order: 0
   heading: null
@@ -1966,15 +1489,9 @@ tree_network:
   - id: 11771
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: SnpYMTuWc
   id: 11798
-  time: 1782239692595
-  user:
-    id: 3
   string: r1.c3
   order: 0
   heading: null
@@ -1992,15 +1509,9 @@ tree_network:
   - id: 11797
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: J_Vt5_C6p
   id: 11758
-  time: 1782163487317
-  user:
-    id: 3
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
   order: 0
   heading: null
@@ -2015,15 +1526,9 @@ tree_network:
   - id: 11757
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 8jkmASa1c
   id: 4233
-  time: 1782227294738
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
   order: 15
   heading: null
@@ -2041,15 +1546,9 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 7os6rKZvg
   id: 11794
-  time: 1782239692595
-  user:
-    id: 3
   string: Header 2
   order: 0
   heading: null
@@ -2067,15 +1566,9 @@ tree_network:
   - id: 11793
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: xc_eQjqyE
   id: 11702
-  time: 1782152253425
-  user:
-    id: 3
   string: '[[[[Test Article]] 3]]'
   order: 0
   heading: null
@@ -2092,15 +1585,9 @@ tree_network:
   - id: 11701
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: riLVzfX-6
   id: 11717
-  time: 1782152872287
-  user:
-    id: 3
   string: This para features plain text
   order: 0
   heading: null
@@ -2114,15 +1601,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: msKBuys0a
   id: 11718
-  time: 1782152877496
-  user:
-    id: 3
   string: This para features __italics__
   order: 1
   heading: null
@@ -2136,15 +1617,9 @@ tree_network:
   - id: 11716
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: eUpKQiTiM
   id: 11765
-  time: 1782212434637
-  user:
-    id: 3
   string: ((uj8YolCoE))
   order: 0
   heading: null
@@ -2160,15 +1635,9 @@ tree_network:
   - id: 11764
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: gxcUrCGPT
   id: 11135
-  time: 1782173300799
-  user:
-    id: 3
   string: '#c:FUCHSIA **inline PLAIN TEXT ref ⟶** ((riLVzfX-6))'
   order: 1
   heading: null
@@ -2184,15 +1653,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: JpKqqwnAJ
   id: 11708
-  time: 1782152360551
-  user:
-    id: 3
   string: ((LfaVt18Iw))
   order: 0
   heading: null
@@ -2208,15 +1671,9 @@ tree_network:
   - id: 11707
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: d3T1YpYig
   id: 4227
-  time: 1782227594884
-  user:
-    id: 3
   string: 'External (out-of-page) links:'
   order: 3
   heading: 2
@@ -2249,15 +1706,9 @@ tree_network:
   - id: 4225
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: acAIiueY_
   id: 11715
-  time: 1782152583716
-  user:
-    id: 3
   string: '[[[[Test Article]] 2]]'
   order: 0
   heading: null
@@ -2274,15 +1725,9 @@ tree_network:
   - id: 11714
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: _kTRqm3O-
   id: 11769
-  time: 1782226921413
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
   order: 20
   heading: null
@@ -2298,15 +1743,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: fZr8Ve9SS
   id: 11735
-  time: 1782173520046
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
   order: 19
   heading: null
@@ -2322,15 +1761,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: AQqf7TbPh
   id: 11759
-  time: 1782227153233
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
   order: 16
   heading: null
@@ -2346,15 +1779,9 @@ tree_network:
   - id: 4226
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Dt8evi7AW
   id: 11714
-  time: 1782227195345
-  user:
-    id: 3
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
   order: 12
   heading: null
@@ -2370,17 +1797,11 @@ tree_network:
   - id: 4227
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 refs_by_id:
   '11225':
     uid: wjN-kVF3B
     id: 11225
-    time: 1781362773659
-    user:
-      id: 3
     string: '{{table}}'
     order: 1
     heading: null
@@ -2397,16 +1818,10 @@ refs_by_id:
     - id: 11150
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11767':
     uid: zpSBqgxe4
     id: 11767
-    time: 1782227421136
-    user:
-      id: 3
     string: '[[>]] [[!EXAMPLE]] This is the callout title
 
       This is line 1 of the callout body
@@ -2429,16 +1844,10 @@ refs_by_id:
     - id: 11766
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11792':
     uid: yvlvNZwPC
     id: 11792
-    time: 1782239692595
-    user:
-      id: 3
     string: '{{table}}'
     order: 0
     heading: null
@@ -2456,16 +1865,10 @@ refs_by_id:
     - id: 11790
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4225':
     uid: SYZfEd44O
     id: 4225
-    time: 1781833356251
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -2482,16 +1885,10 @@ refs_by_id:
     parents: null
     props: null
     title: '[[Test Article]] 3'
-    sidebar: 22
     attrs: null
-    lookup: null
-    seen_by: null
   '11716':
     uid: 7XdTiY_ZF
     id: 11716
-    time: 1782226456160
-    user:
-      id: 3
     string: Feature Content
     order: 1
     heading: 2
@@ -2518,16 +1915,10 @@ refs_by_id:
     - id: 4225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11454':
     uid: iF2Ey_unj
     id: 11454
-    time: 1781525379738
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -2538,16 +1929,10 @@ refs_by_id:
     parents: null
     props: null
     title: c:ORANGE
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4223':
     uid: LBFKibPIj
     id: 4223
-    time: 1773090962400
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -2559,16 +1944,10 @@ refs_by_id:
     parents: null
     props: null
     title: Test Article
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11722':
     uid: BuP4ifx3v
     id: 11722
-    time: 1782152899017
-    user:
-      id: 3
     string: This para features `inline-code`
     order: 5
     heading: null
@@ -2582,16 +1961,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11725':
     uid: yECzsUNPC
     id: 11725
-    time: 1782160870214
-    user:
-      id: 3
     string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
       \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
       \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n     \
@@ -2608,16 +1981,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11739':
     uid: vk7Up544K
     id: 11739
-    time: 1782162417879
-    user:
-      id: 3
     string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
     order: 7
     heading: null
@@ -2632,16 +1999,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11157':
     uid: 2yQYaKIEV
     id: 11157
-    time: 1780944909127
-    user:
-      id: 3
     string: This para features __italics__
     order: 0
     heading: null
@@ -2655,16 +2016,10 @@ refs_by_id:
     - id: 11149
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5450':
     uid: OexZiLR_O
     id: 5450
-    time: 1773784559632
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -2675,16 +2030,10 @@ refs_by_id:
     parents: null
     props: null
     title: '>'
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3328':
     uid: 0EgPyHSZi
     id: 3328
-    time: 1770568919008
-    user:
-      id: 3
     string: Section 1
     order: 1
     heading: 1
@@ -2699,16 +2048,10 @@ refs_by_id:
     - id: 3327
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11667':
     uid: T6cykqu88
     id: 11667
-    time: 1781831119492
-    user:
-      id: 3
     string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
     order: 0
     heading: null
@@ -2723,16 +2066,10 @@ refs_by_id:
     - id: 11666
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11664':
     uid: _EtYSMJNn
     id: 11664
-    time: 1781830370390
-    user:
-      id: 3
     string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     order: 0
     heading: null
@@ -2747,16 +2084,10 @@ refs_by_id:
     - id: 11662
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4228':
     uid: LfXmNr-tV
     id: 4228
-    time: 1773091129652
-    user:
-      id: 3
     string: Section 3
     order: 4
     heading: null
@@ -2772,16 +2103,10 @@ refs_by_id:
     - id: 4225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11721':
     uid: Q-nJAf9KK
     id: 11721
-    time: 1782152893058
-    user:
-      id: 3
     string: This para features ^^highlight^^
     order: 4
     heading: null
@@ -2795,16 +2120,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11172':
     uid: ETesnk4Zi
     id: 11172
-    time: 1781221588685
-    user:
-      id: 3
     string: This para features `inline-code`
     order: 4
     heading: null
@@ -2818,16 +2137,10 @@ refs_by_id:
     - id: 11149
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11648':
     uid: Rjt1IvrVq
     id: 11648
-    time: 1781828921582
-    user:
-      id: 3
     string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
     order: 0
     heading: null
@@ -2842,16 +2155,10 @@ refs_by_id:
     - id: 11654
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11720':
     uid: JRU5IhUB-
     id: 11720
-    time: 1782152887494
-    user:
-      id: 3
     string: This para features ~~strikethrough~~
     order: 3
     heading: null
@@ -2865,16 +2172,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5458':
     uid: lS4kg-3mw
     id: 5458
-    time: 1773784871352
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -2885,16 +2186,10 @@ refs_by_id:
     parents: null
     props: null
     title: '!EXAMPLE'
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11653':
     uid: 9a_6taJAn
     id: 11653
-    time: 1781828879037
-    user:
-      id: 3
     string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
     order: 0
     heading: null
@@ -2909,16 +2204,10 @@ refs_by_id:
     - id: 11657
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11745':
     uid: zAIxMFBIB
     id: 11745
-    time: 1782162708852
-    user:
-      id: 3
     string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
     order: 10
     heading: null
@@ -2933,16 +2222,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11741':
     uid: zmb1Uac0S
     id: 11741
-    time: 1782162535182
-    user:
-      id: 3
     string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
     order: 8
     heading: null
@@ -2957,16 +2240,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11719':
     uid: iiSioG0Ut
     id: 11719
-    time: 1782152881934
-    user:
-      id: 3
     string: This para features **bold**
     order: 2
     heading: null
@@ -2980,16 +2257,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11773':
     uid: 4SIo9hSEY
     id: 11773
-    time: 1782227427980
-    user:
-      id: 3
     string: '[[>]] [[!EXAMPLE]] This is the callout title
 
       This is line 1 of the callout body
@@ -3012,16 +2283,10 @@ refs_by_id:
     - id: 11155
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11743':
     uid: GK_iI79mV
     id: 11743
-    time: 1782162631657
-    user:
-      id: 3
     string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     order: 9
     heading: null
@@ -3036,16 +2301,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11124':
     uid: uj8YolCoE
     id: 11124
-    time: 1780844520106
-    user:
-      id: 3
     string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
     order: 1
     heading: null
@@ -3061,16 +2320,10 @@ refs_by_id:
     - id: 3334
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4226':
     uid: LfaVt18Iw
     id: 4226
-    time: 1782151653635
-    user:
-      id: 3
     string: 'Internal (in-page) links:'
     order: 2
     heading: 2
@@ -3105,16 +2358,10 @@ refs_by_id:
     - id: 4225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11674':
     uid: lDYWYqYSL
     id: 11674
-    time: 1781833447041
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -3129,16 +2376,10 @@ refs_by_id:
     parents: null
     props: null
     title: '[[Test Article]] 2'
-    sidebar: 21
     attrs: null
-    lookup: null
-    seen_by: null
   '11171':
     uid: VvbwbLchA
     id: 11171
-    time: 1781221355217
-    user:
-      id: 3
     string: This para features ^^highlight^^
     order: 3
     heading: null
@@ -3152,16 +2393,10 @@ refs_by_id:
     - id: 11149
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
-    time: 1773788725523
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -3172,16 +2407,10 @@ refs_by_id:
     parents: null
     props: null
     title: '!INFO'
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11158':
     uid: QB8DChDBs
     id: 11158
-    time: 1780944927251
-    user:
-      id: 3
     string: This para features **bold**
     order: 1
     heading: null
@@ -3195,16 +2424,10 @@ refs_by_id:
     - id: 11149
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3332':
     uid: drtANJYTg
     id: 3332
-    time: 1770568965850
-    user:
-      id: 3
     string: Section 2.1
     order: 0
     heading: 2
@@ -3220,16 +2443,10 @@ refs_by_id:
     - id: 3329
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5844':
     uid: lF-qY0Xrs
     id: 5844
-    time: 1773955788224
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -3240,16 +2457,10 @@ refs_by_id:
     parents: null
     props: null
     title: c:FUCHSIA
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3327':
     uid: 6olpFWiw1
     id: 3327
-    time: 1780882773773
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -3265,16 +2476,10 @@ refs_by_id:
     parents: null
     props: null
     title: '[[Test Article]] 1'
-    sidebar: 20
     attrs: null
-    lookup: null
-    seen_by: null
   '11175':
     uid: C6xVTMnsh
     id: 11175
-    time: 1781222045009
-    user:
-      id: 3
     string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
       \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
       \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n     \
@@ -3292,16 +2497,10 @@ refs_by_id:
     - id: 11174
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11758':
     uid: J_Vt5_C6p
     id: 11758
-    time: 1782163487317
-    user:
-      id: 3
     string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
     order: 0
     heading: null
@@ -3316,16 +2515,10 @@ refs_by_id:
     - id: 11757
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11717':
     uid: riLVzfX-6
     id: 11717
-    time: 1782152872287
-    user:
-      id: 3
     string: This para features plain text
     order: 0
     heading: null
@@ -3339,16 +2532,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11718':
     uid: msKBuys0a
     id: 11718
-    time: 1782152877496
-    user:
-      id: 3
     string: This para features __italics__
     order: 1
     heading: null
@@ -3362,16 +2549,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11170':
     uid: 7dBusjzDA
     id: 11170
-    time: 1781218309397
-    user:
-      id: 3
     string: This para features ~~strikethrough~~
     order: 2
     heading: null
@@ -3385,16 +2566,10 @@ refs_by_id:
     - id: 11149
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11167':
     uid: tWkumkdUE
     id: 11167
-    time: 1781089401093
-    user:
-      id: 3
     string: this image **has been resized** through the Roam UI (width:257, height:None)
     order: 0
     heading: null
@@ -3410,16 +2585,10 @@ refs_by_id:
     - id: 11163
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3329':
     uid: wdMgyBiP9
     id: 3329
-    time: 1770568922821
-    user:
-      id: 3
     string: Section 2
     order: 2
     heading: 1
@@ -3434,16 +2603,10 @@ refs_by_id:
     - id: 3327
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3330':
     uid: 40bvW14UU
     id: 3330
-    time: 1770568926764
-    user:
-      id: 3
     string: Section 3
     order: 3
     heading: 1
@@ -3457,16 +2620,10 @@ refs_by_id:
     - id: 3327
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11113':
     uid: cNW8lmXIM
     id: 11113
-    time: 1781043136363
-    user:
-      id: 3
     string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
@@ -3503,16 +2660,10 @@ refs_by_id:
     - id: 3327
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3333':
     uid: JW5PswS6v
     id: 3333
-    time: 1770568971504
-    user:
-      id: 3
     string: Section 3.1
     order: 0
     heading: 2
@@ -3526,16 +2677,10 @@ refs_by_id:
     - id: 3330
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4026':
     uid: 5f1ahOFdp
     id: 4026
-    time: 1772563665137
-    user:
-      id: 3
     string: Section 2.2
     order: 1
     heading: 2
@@ -3549,16 +2694,10 @@ refs_by_id:
     - id: 3329
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4025':
     uid: yFUau9Cpg
     id: 4025
-    time: 1771515468425
-    user:
-      id: 3
     string: Section 2.1.1
     order: 1
     heading: 3
@@ -3574,16 +2713,10 @@ refs_by_id:
     - id: 3332
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11163':
     uid: OaTXPl93p
     id: 11163
-    time: 1781043166449
-    user:
-      id: 3
     string: illustration 2.1
     order: 0
     heading: 3
@@ -3600,16 +2733,10 @@ refs_by_id:
     - id: 3332
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11164':
     uid: zZG-BfWvs
     id: 11164
-    time: 1781043221592
-    user:
-      id: 3
     string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
     order: 1
     heading: null
@@ -3629,16 +2756,10 @@ refs_by_id:
         : width: 257
           height: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4028':
     uid: bxkcECGwN
     id: 4028
-    time: 1780774148272
-    user:
-      id: 3
     string: Section 2.1.1.1
     order: 0
     heading: null
@@ -3655,16 +2776,10 @@ refs_by_id:
     props:
       ah-level: h4
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11675':
     uid: MmvJZhQNJ
     id: 11675
-    time: 1781833570842
-    user:
-      id: 3
     string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
       \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
     order: 0
@@ -3680,16 +2795,10 @@ refs_by_id:
     - id: 11674
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11677':
     uid: sD1C9ifkG
     id: 11677
-    time: 1781833723814
-    user:
-      id: 3
     string: Bullet block 1
     order: 1
     heading: null
@@ -3705,16 +2814,10 @@ refs_by_id:
     - id: 11674
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11682':
     uid: DsogfVzX9
     id: 11682
-    time: 1781833746080
-    user:
-      id: 3
     string: Document block 1
     order: 2
     heading: null
@@ -3730,16 +2833,10 @@ refs_by_id:
     - id: 11674
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11683':
     uid: 99rZhIPZW
     id: 11683
-    time: 1781833751385
-    user:
-      id: 3
     string: Document block 1.1
     order: 0
     heading: null
@@ -3753,16 +2850,10 @@ refs_by_id:
     - id: 11682
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11684':
     uid: d_3REDRrO
     id: 11684
-    time: 1781833759215
-    user:
-      id: 3
     string: Document block 1.2
     order: 1
     heading: null
@@ -3777,16 +2868,10 @@ refs_by_id:
     - id: 11682
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11686':
     uid: Bb49MOLyE
     id: 11686
-    time: 1781833786729
-    user:
-      id: 3
     string: Document block 1.3
     order: 2
     heading: null
@@ -3800,16 +2885,10 @@ refs_by_id:
     - id: 11682
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11685':
     uid: 5SczmqJaW
     id: 11685
-    time: 1781834552642
-    user:
-      id: 3
     string: Bullet block 1.2.1
     order: 0
     heading: null
@@ -3826,16 +2905,10 @@ refs_by_id:
     - id: 11684
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11690':
     uid: -noi1eQMD
     id: 11690
-    time: 1781834571497
-    user:
-      id: 3
     string: Bullet block 1.2.1.1
     order: 0
     heading: null
@@ -3851,16 +2924,10 @@ refs_by_id:
     - id: 11685
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11691':
     uid: XgPKipOsW
     id: 11691
-    time: 1781834579902
-    user:
-      id: 3
     string: Bullet block 1.2.1.2
     order: 1
     heading: null
@@ -3876,16 +2943,10 @@ refs_by_id:
     - id: 11685
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11678':
     uid: VH0mXM0rw
     id: 11678
-    time: 1781833728425
-    user:
-      id: 3
     string: Bullet block 1.1
     order: 0
     heading: null
@@ -3899,16 +2960,10 @@ refs_by_id:
     - id: 11677
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11679':
     uid: YyeRpjbFD
     id: 11679
-    time: 1781833732925
-    user:
-      id: 3
     string: Bullet block 1.2
     order: 1
     heading: null
@@ -3923,16 +2978,10 @@ refs_by_id:
     - id: 11677
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11681':
     uid: gmLJbWZYp
     id: 11681
-    time: 1781833741666
-    user:
-      id: 3
     string: Bullet block 1.3
     order: 2
     heading: null
@@ -3946,16 +2995,10 @@ refs_by_id:
     - id: 11677
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11680':
     uid: KUi_6ooZj
     id: 11680
-    time: 1781833737088
-    user:
-      id: 3
     string: Bullet block 1.2.1
     order: 0
     heading: null
@@ -3970,16 +3013,10 @@ refs_by_id:
     - id: 11679
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4229':
     uid: dYYKZExzI
     id: 4229
-    time: 1782227165593
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
     order: 17
     heading: null
@@ -3995,16 +3032,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11135':
     uid: gxcUrCGPT
     id: 11135
-    time: 1782173300799
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline PLAIN TEXT ref ⟶** ((riLVzfX-6))'
     order: 1
     heading: null
@@ -4020,16 +3051,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11692':
     uid: qj0DTMyzl
     id: 11692
-    time: 1782173004373
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
     order: 0
     heading: null
@@ -4046,16 +3071,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11700':
     uid: hWsG-ExLV
     id: 11700
-    time: 1782173300803
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline PARENT BLOCK ref ⟶**  ((LfaVt18Iw))'
     order: 7
     heading: null
@@ -4071,16 +3090,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11701':
     uid: b8ob6GcbI
     id: 11701
-    time: 1782227113550
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone PAGE ref ↓** '
     order: 13
     heading: null
@@ -4096,16 +3109,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11704':
     uid: ZT_EVUtHq
     id: 11704
-    time: 1782227123874
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
     order: 14
     heading: null
@@ -4121,16 +3128,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11707':
     uid: HftouGiTA
     id: 11707
-    time: 1782227142272
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
     order: 15
     heading: null
@@ -4146,16 +3147,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11726':
     uid: 78w6MjSqo
     id: 11726
-    time: 1782173300818
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((msKBuys0a))'
     order: 2
     heading: null
@@ -4171,16 +3166,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11727':
     uid: MbQObdYBx
     id: 11727
-    time: 1782173300821
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline BOLD ref ⟶** ((iiSioG0Ut))'
     order: 3
     heading: null
@@ -4196,16 +3185,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11729':
     uid: cKCA_EwGZ
     id: 11729
-    time: 1782173300822
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((JRU5IhUB-))'
     order: 4
     heading: null
@@ -4221,16 +3204,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11730':
     uid: HbJZh5mTY
     id: 11730
-    time: 1782173300824
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((Q-nJAf9KK))'
     order: 5
     heading: null
@@ -4246,16 +3223,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11731':
     uid: FWULkh5nm
     id: 11731
-    time: 1782173300826
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((BuP4ifx3v))'
     order: 6
     heading: null
@@ -4271,16 +3242,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11732':
     uid: SsmyWLZij
     id: 11732
-    time: 1782226456160
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((7XdTiY_ZF))'
     order: 8
     heading: null
@@ -4296,16 +3261,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11733':
     uid: Y0xFlk7y6
     id: 11733
-    time: 1782173520044
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone HEADER ref ↓**'
     order: 18
     heading: null
@@ -4321,16 +3280,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11735':
     uid: fZr8Ve9SS
     id: 11735
-    time: 1782173520046
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
     order: 19
     heading: null
@@ -4346,16 +3299,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11740':
     uid: 48ZQ-2b7U
     id: 11740
-    time: 1782173300832
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((vk7Up544K))'
     order: 9
     heading: null
@@ -4371,16 +3318,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11742':
     uid: JCyO1oiVt
     id: 11742
-    time: 1782173300833
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
     order: 10
     heading: null
@@ -4396,16 +3337,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11744':
     uid: 7AR6910sJ
     id: 11744
-    time: 1782173300835
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
     order: 11
     heading: null
@@ -4421,16 +3356,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11746':
     uid: 2IaJFXDZT
     id: 11746
-    time: 1782173300837
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
     order: 12
     heading: null
@@ -4446,16 +3375,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11759':
     uid: AQqf7TbPh
     id: 11759
-    time: 1782227153233
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
     order: 16
     heading: null
@@ -4471,16 +3394,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11769':
     uid: _kTRqm3O-
     id: 11769
-    time: 1782226921413
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
     order: 20
     heading: null
@@ -4496,16 +3413,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11802':
     uid: SivJQaD8x
     id: 11802
-    time: 1782239736049
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
     order: 21
     heading: null
@@ -4521,16 +3432,10 @@ refs_by_id:
     - id: 4226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11803':
     uid: Frzso359j
     id: 11803
-    time: 1782239755128
-    user:
-      id: 3
     string: ((yvlvNZwPC))
     order: 0
     heading: null
@@ -4546,16 +3451,10 @@ refs_by_id:
     - id: 11802
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11770':
     uid: 3PA_Y7Osp
     id: 11770
-    time: 1782227421136
-    user:
-      id: 3
     string: ((zpSBqgxe4))
     order: 0
     heading: null
@@ -4571,16 +3470,10 @@ refs_by_id:
     - id: 11769
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11761':
     uid: S81O4tG9t
     id: 11761
-    time: 1782164504762
-    user:
-      id: 3
     string: ((J_Vt5_C6p))
     order: 0
     heading: null
@@ -4596,16 +3489,10 @@ refs_by_id:
     - id: 11759
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11736':
     uid: cCYHqUNs8
     id: 11736
-    time: 1782160870214
-    user:
-      id: 3
     string: ((yECzsUNPC))
     order: 0
     heading: null
@@ -4621,16 +3508,10 @@ refs_by_id:
     - id: 11735
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11734':
     uid: tyOSwiz6l
     id: 11734
-    time: 1782226456160
-    user:
-      id: 3
     string: ((7XdTiY_ZF))
     order: 0
     heading: null
@@ -4646,16 +3527,10 @@ refs_by_id:
     - id: 11733
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11708':
     uid: JpKqqwnAJ
     id: 11708
-    time: 1782152360551
-    user:
-      id: 3
     string: ((LfaVt18Iw))
     order: 0
     heading: null
@@ -4671,16 +3546,10 @@ refs_by_id:
     - id: 11707
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11705':
     uid: 2Zo0HNy5o
     id: 11705
-    time: 1782152316078
-    user:
-      id: 3
     string: ((LfXmNr-tV))
     order: 0
     heading: null
@@ -4696,16 +3565,10 @@ refs_by_id:
     - id: 11704
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11702':
     uid: xc_eQjqyE
     id: 11702
-    time: 1782152253425
-    user:
-      id: 3
     string: '[[[[Test Article]] 3]]'
     order: 0
     heading: null
@@ -4722,16 +3585,10 @@ refs_by_id:
     - id: 11701
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4232':
     uid: XkSI5xwe5
     id: 4232
-    time: 1782228279589
-    user:
-      id: 3
     string: '{{embed: ((LfXmNr-tV))}}'
     order: 0
     heading: null
@@ -4747,16 +3604,10 @@ refs_by_id:
     - id: 4229
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4230':
     uid: l7f2Qf90W
     id: 4230
-    time: 1773091226849
-    user:
-      id: 3
     string: section 3.1
     order: 0
     heading: null
@@ -4771,16 +3622,10 @@ refs_by_id:
     - id: 4228
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11737':
     uid: oVvEsh7dx
     id: 11737
-    time: 1782161888571
-    user:
-      id: 3
     string: section 3.2
     order: 1
     heading: null
@@ -4794,16 +3639,10 @@ refs_by_id:
     - id: 4228
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11738':
     uid: H3vh9eS_F
     id: 11738
-    time: 1782161894317
-    user:
-      id: 3
     string: section 3.3
     order: 2
     heading: null
@@ -4817,16 +3656,10 @@ refs_by_id:
     - id: 4228
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4231':
     uid: vH2I8xRLZ
     id: 4231
-    time: 1773091241939
-    user:
-      id: 3
     string: section 3.1.1
     order: 0
     heading: null
@@ -4841,16 +3674,10 @@ refs_by_id:
     - id: 4230
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3331':
     uid: 3BX-iWc-p
     id: 3331
-    time: 1770568958676
-    user:
-      id: 3
     string: Section 1.1
     order: 0
     heading: 2
@@ -4865,16 +3692,10 @@ refs_by_id:
     - id: 3328
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4758':
     uid: Ma5KGUH9O
     id: 4758
-    time: 1773355356452
-    user:
-      id: 3
     string: 'AI assistant (Claude Opus 4.6): '
     order: 1
     heading: null
@@ -4888,16 +3709,10 @@ refs_by_id:
     - id: 3328
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '3334':
     uid: TaN67WqnA
     id: 3334
-    time: 1771512875819
-    user:
-      id: 3
     string: illustration 1.1
     order: 0
     heading: 3
@@ -4914,16 +3729,10 @@ refs_by_id:
     - id: 3331
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11165':
     uid: 4_GrZ9su6
     id: 11165
-    time: 1781088515943
-    user:
-      id: 3
     string: this image **has not been resized** through the Roam UI.
     order: 0
     heading: null
@@ -4940,16 +3749,10 @@ refs_by_id:
     - id: 3334
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11806':
     uid: pfkKREU_Y
     id: 11806
-    time: 1782304880511
-    user:
-      id: 3
     string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
     order: 0
     heading: null
@@ -4966,16 +3769,10 @@ refs_by_id:
     - id: 11165
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4224':
     uid: 7MoH-wIQh
     id: 4224
-    time: 1780843750454
-    user:
-      id: 3
     string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
     order: 0
@@ -4991,16 +3788,10 @@ refs_by_id:
     - id: 4223
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11757':
     uid: _6Z-gzw6R
     id: 11757
-    time: 1782163456030
-    user:
-      id: 3
     string: the child block contains a standalone image
     order: 11
     heading: null
@@ -5015,16 +3806,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11766':
     uid: I7pBlEhyE
     id: 11766
-    time: 1782226648177
-    user:
-      id: 3
     string: the child block contains a Roam native callout
     order: 12
     heading: null
@@ -5039,16 +3824,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11790':
     uid: 4kdWXzDjz
     id: 11790
-    time: 1782239673136
-    user:
-      id: 3
     string: the child block contains a Roam native table
     order: 13
     heading: null
@@ -5063,16 +3842,10 @@ refs_by_id:
     - id: 11716
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4227':
     uid: d3T1YpYig
     id: 4227
-    time: 1782227594884
-    user:
-      id: 3
     string: 'External (out-of-page) links:'
     order: 3
     heading: 2
@@ -5105,16 +3878,10 @@ refs_by_id:
     - id: 4225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11133':
     uid: I1QOMCtdJ
     id: 11133
-    time: 1781959284786
-    user:
-      id: 3
     string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
@@ -5146,16 +3913,10 @@ refs_by_id:
     - id: 4225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4233':
     uid: 8jkmASa1c
     id: 4233
-    time: 1782227294738
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
     order: 15
     heading: null
@@ -5173,16 +3934,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11709':
     uid: ot5dpySxp
     id: 11709
-    time: 1782227180594
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
     order: 0
     heading: null
@@ -5199,16 +3954,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11710':
     uid: n528kYv5_
     id: 11710
-    time: 1782227185420
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline BLOCK ref ⟶** ((tWkumkdUE))'
     order: 1
     heading: null
@@ -5224,16 +3973,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11712':
     uid: vLxyRJcr2
     id: 11712
-    time: 1782227199273
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
     order: 13
     heading: null
@@ -5249,16 +3992,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11714':
     uid: Dt8evi7AW
     id: 11714
-    time: 1782227195345
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone PAGE ref ↓** '
     order: 12
     heading: null
@@ -5274,16 +4011,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11747':
     uid: AaB6F4c0F
     id: 11747
-    time: 1782173300843
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((2yQYaKIEV))'
     order: 2
     heading: null
@@ -5299,16 +4030,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11748':
     uid: DZsnC1-jM
     id: 11748
-    time: 1782173300845
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline BOLD ref ⟶** ((QB8DChDBs))'
     order: 3
     heading: null
@@ -5324,16 +4049,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11749':
     uid: t62Kwufzm
     id: 11749
-    time: 1782173300847
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((7dBusjzDA))'
     order: 4
     heading: null
@@ -5349,16 +4068,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11750':
     uid: 88ny0VOH4
     id: 11750
-    time: 1782173300849
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((VvbwbLchA))'
     order: 5
     heading: null
@@ -5374,16 +4087,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11751':
     uid: 8n19o7ito
     id: 11751
-    time: 1782173300851
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((ETesnk4Zi))'
     order: 6
     heading: null
@@ -5399,16 +4106,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11752':
     uid: SCzzQaVai
     id: 11752
-    time: 1782173300852
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
     order: 7
     heading: null
@@ -5424,16 +4125,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11753':
     uid: chSSa7hfQ
     id: 11753
-    time: 1782173300854
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((Rjt1IvrVq))'
     order: 8
     heading: null
@@ -5449,16 +4144,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11754':
     uid: HB9MEj5W8
     id: 11754
-    time: 1782173300856
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((9a_6taJAn))'
     order: 9
     heading: null
@@ -5474,16 +4163,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11755':
     uid: LKHCU5I3z
     id: 11755
-    time: 1782173300890
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
     order: 10
     heading: null
@@ -5499,16 +4182,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11756':
     uid: SYAWArc3S
     id: 11756
-    time: 1782173300892
-    user:
-      id: 3
     string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((T6cykqu88))'
     order: 11
     heading: null
@@ -5524,16 +4201,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11764':
     uid: GQSLJp92S
     id: 11764
-    time: 1782227207347
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
     order: 14
     heading: null
@@ -5549,16 +4220,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11771':
     uid: QnqMI7-2J
     id: 11771
-    time: 1782227332836
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
     order: 18
     heading: null
@@ -5574,16 +4239,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11774':
     uid: wta7y8AlI
     id: 11774
-    time: 1782227726662
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone HEADER ref ↓**'
     order: 16
     heading: null
@@ -5599,16 +4258,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11776':
     uid: ipvsMyx77
     id: 11776
-    time: 1782227870473
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
     order: 17
     heading: null
@@ -5624,16 +4277,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11804':
     uid: xkmJLzW3G
     id: 11804
-    time: 1782240793572
-    user:
-      id: 3
     string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
     order: 19
     heading: null
@@ -5649,16 +4296,10 @@ refs_by_id:
     - id: 4227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11805':
     uid: dDNfZQ62b
     id: 11805
-    time: 1782240807093
-    user:
-      id: 3
     string: ((wjN-kVF3B))
     order: 0
     heading: null
@@ -5674,16 +4315,10 @@ refs_by_id:
     - id: 11804
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11777':
     uid: T5pku1yrU
     id: 11777
-    time: 1782227891107
-    user:
-      id: 3
     string: ((C6xVTMnsh))
     order: 0
     heading: null
@@ -5699,16 +4334,10 @@ refs_by_id:
     - id: 11776
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11775':
     uid: CCrsgAEQ-
     id: 11775
-    time: 1782227741541
-    user:
-      id: 3
     string: ((0EgPyHSZi))
     order: 0
     heading: null
@@ -5724,16 +4353,10 @@ refs_by_id:
     - id: 11774
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11772':
     uid: Wq2dXafRn
     id: 11772
-    time: 1782227427980
-    user:
-      id: 3
     string: ((4SIo9hSEY))
     order: 0
     heading: null
@@ -5749,16 +4372,10 @@ refs_by_id:
     - id: 11771
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11765':
     uid: eUpKQiTiM
     id: 11765
-    time: 1782212434637
-    user:
-      id: 3
     string: ((uj8YolCoE))
     order: 0
     heading: null
@@ -5774,16 +4391,10 @@ refs_by_id:
     - id: 11764
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11715':
     uid: acAIiueY_
     id: 11715
-    time: 1782152583716
-    user:
-      id: 3
     string: '[[[[Test Article]] 2]]'
     order: 0
     heading: null
@@ -5800,16 +4411,10 @@ refs_by_id:
     - id: 11714
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11713':
     uid: nmFudOFkf
     id: 11713
-    time: 1782152593894
-    user:
-      id: 3
     string: ((tWkumkdUE))
     order: 0
     heading: null
@@ -5825,16 +4430,10 @@ refs_by_id:
     - id: 11712
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '4234':
     uid: aVVGVVPLE
     id: 4234
-    time: 1781870982030
-    user:
-      id: 3
     string: '{{embed: ((drtANJYTg))}}'
     order: 0
     heading: null
@@ -5850,16 +4449,10 @@ refs_by_id:
     - id: 4233
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11793':
     uid: aM4rXqHLf
     id: 11793
-    time: 1782239692595
-    user:
-      id: 3
     string: Header 1
     order: 0
     heading: null
@@ -5876,16 +4469,10 @@ refs_by_id:
     - id: 11792
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11796':
     uid: amzmDdIn3
     id: 11796
-    time: 1782239692595
-    user:
-      id: 3
     string: r1.c1
     order: 1
     heading: null
@@ -5902,16 +4489,10 @@ refs_by_id:
     - id: 11792
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11799':
     uid: Ep6xoSIzu
     id: 11799
-    time: 1782239692595
-    user:
-      id: 3
     string: r2.c1
     order: 2
     heading: null
@@ -5928,16 +4509,10 @@ refs_by_id:
     - id: 11792
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11800':
     uid: Z2d9G4m4V
     id: 11800
-    time: 1782239692595
-    user:
-      id: 3
     string: r2.c2
     order: 0
     heading: null
@@ -5955,16 +4530,10 @@ refs_by_id:
     - id: 11799
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11801':
     uid: kWNhvv437
     id: 11801
-    time: 1782239692595
-    user:
-      id: 3
     string: r2.c3
     order: 0
     heading: null
@@ -5982,16 +4551,10 @@ refs_by_id:
     - id: 11800
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11797':
     uid: _9zoxTAJt
     id: 11797
-    time: 1782239692595
-    user:
-      id: 3
     string: r1.c2
     order: 0
     heading: null
@@ -6009,16 +4572,10 @@ refs_by_id:
     - id: 11796
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11798':
     uid: SnpYMTuWc
     id: 11798
-    time: 1782239692595
-    user:
-      id: 3
     string: r1.c3
     order: 0
     heading: null
@@ -6036,16 +4593,10 @@ refs_by_id:
     - id: 11797
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11794':
     uid: 7os6rKZvg
     id: 11794
-    time: 1782239692595
-    user:
-      id: 3
     string: Header 2
     order: 0
     heading: null
@@ -6063,16 +4614,10 @@ refs_by_id:
     - id: 11793
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11795':
     uid: uTV8PLeSZ
     id: 11795
-    time: 1782239692595
-    user:
-      id: 3
     string: Header 3
     order: 0
     heading: null
@@ -6090,16 +4635,10 @@ refs_by_id:
     - id: 11794
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11226':
     uid: 6NS-Qw4Mm
     id: 11226
-    time: 1781362855750
-    user:
-      id: 3
     string: Header 1
     order: 0
     heading: null
@@ -6115,16 +4654,10 @@ refs_by_id:
     - id: 11225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11229':
     uid: bwUBoF2ee
     id: 11229
-    time: 1781362870121
-    user:
-      id: 3
     string: r1.c1
     order: 1
     heading: null
@@ -6140,16 +4673,10 @@ refs_by_id:
     - id: 11225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11232':
     uid: 0hoWxyjNR
     id: 11232
-    time: 1781362878627
-    user:
-      id: 3
     string: r2.c1
     order: 2
     heading: null
@@ -6165,16 +4692,10 @@ refs_by_id:
     - id: 11225
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11233':
     uid: jrIkVSHfA
     id: 11233
-    time: 1781362881234
-    user:
-      id: 3
     string: r2.c2
     order: 0
     heading: null
@@ -6191,16 +4712,10 @@ refs_by_id:
     - id: 11232
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11234':
     uid: hD2qvZqjh
     id: 11234
-    time: 1781362883933
-    user:
-      id: 3
     string: r2.c3
     order: 0
     heading: null
@@ -6217,16 +4732,10 @@ refs_by_id:
     - id: 11233
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11230':
     uid: 5JwQ2Fea-
     id: 11230
-    time: 1781362872567
-    user:
-      id: 3
     string: r1.c2
     order: 0
     heading: null
@@ -6243,16 +4752,10 @@ refs_by_id:
     - id: 11229
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11231':
     uid: 9XUHIOSY0
     id: 11231
-    time: 1781362875854
-    user:
-      id: 3
     string: r1.c3
     order: 0
     heading: null
@@ -6269,16 +4772,10 @@ refs_by_id:
     - id: 11230
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11227':
     uid: 4BL7hTjHS
     id: 11227
-    time: 1781362858883
-    user:
-      id: 3
     string: Header 2
     order: 0
     heading: null
@@ -6295,16 +4792,10 @@ refs_by_id:
     - id: 11226
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '11228':
     uid: iAxwSSBmi
     id: 11228
-    time: 1781362862876
-    user:
-      id: 3
     string: Header 3
     order: 0
     heading: null
@@ -6321,7 +4812,4 @@ refs_by_id:
     - id: 11227
     props: null
     title: null
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null

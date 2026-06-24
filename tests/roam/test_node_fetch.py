@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 # Fields excluded from live-test comparisons because they change with normal
 # Roam activity and are not indicative of structural correctness.
-_TRANSIENT_NODE_FIELDS: set[str] = {"time", "user", "open", "sidebar", "lookup", "seen_by"}
+_TRANSIENT_NODE_FIELDS: set[str] = {"open"}
 
 
 def _stable_node_dict(node: RoamNode) -> dict[str, object]:
@@ -163,7 +163,6 @@ class TestFetchRoamNodesResponsePayload:
         node: RoamNode = payload.result[0][0]
         assert node.uid == "abc123xyz"
         assert node.title == "My Page"
-        assert node.time == 1700000000000
 
     def test_empty_result_is_valid(self) -> None:
         """Test that an empty result list (page not found) is valid."""
@@ -342,7 +341,6 @@ class TestFetchRoamNodesFetchByPageTitle:
 
         assert len(result.network) == 2
         assert result.nodes_by_uid is not None
-        assert result.nodes_by_uid["rich1234x"].time == 1700000000000
         assert result.nodes_by_uid["rich1234x"].children == [IdObject(id=42)]
 
     def test_block_props_preserved(self, api_endpoint: ApiEndpoint) -> None:
@@ -425,9 +423,9 @@ class TestFetchRoamNodesFetchByPageTitle:
     def test_fetch_testarticle1(self, live_api_endpoint: ApiEndpoint) -> None:
         """Live test: fetch all descendant blocks of a page and compare with fixture.
 
-        Transient fields (``time``, ``user``, ``open``, ``sidebar``, ``lookup``,
-        ``seen_by``) are excluded from the comparison because they change with
-        normal Roam activity and are not meaningful for structural correctness.
+        The transient ``open`` field is excluded from the comparison because it
+        changes with normal Roam activity and is not meaningful for structural
+        correctness.
         """
         page_title = "[[Test Article]] 1"
 

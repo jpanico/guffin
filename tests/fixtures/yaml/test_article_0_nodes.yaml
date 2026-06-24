@@ -9,9 +9,6 @@
 # omitted entirely so they default to None on model_validate.
 - uid: wjN-kVF3B
   id: 11225
-  time: 0
-  user:
-    id: 0
   string: '{{table}}'
   order: 1
   heading: null
@@ -30,9 +27,6 @@
   attrs: null
 - uid: r09kXvUg-
   id: 11193
-  time: 0
-  user:
-    id: 0
   string: '[[>]] This is a Roam standard multi-line Block Quote
 
     this is the 2nd line
@@ -53,9 +47,6 @@
   attrs: null
 - uid: jVQvHi40O
   id: 11147
-  time: 0
-  user:
-    id: 0
   string: block 3
   order: 3
   heading: null
@@ -72,9 +63,6 @@
   attrs: null
 - uid: iXrVW8EGw
   id: 11199
-  time: 0
-  user:
-    id: 0
   string: 'the next block is a basic Roam-native table: 3x3. No column/row/col resizing
     of any kind'
   order: 0
@@ -91,9 +79,6 @@
   attrs: null
 - uid: MRKYttxrM
   id: 11149
-  time: 0
-  user:
-    id: 0
   string: block 1
   order: 1
   heading: null
@@ -121,9 +106,6 @@
   attrs: null
 - uid: g9mXrLNQd
   id: 11156
-  time: 0
-  user:
-    id: 0
   string: block 3.1.1
   order: 0
   heading: null
@@ -140,9 +122,6 @@
   attrs: null
 - uid: qnCiceZgk
   id: 11148
-  time: 0
-  user:
-    id: 0
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
 
@@ -195,9 +174,6 @@
   attrs: null
 - uid: 2yQYaKIEV
   id: 11157
-  time: 0
-  user:
-    id: 0
   string: This para features __italics__
   order: 0
   heading: null
@@ -213,9 +189,6 @@
   attrs: null
 - uid: WtrddPBAt
   id: 11153
-  time: 0
-  user:
-    id: 0
   string: block 1.2
   order: 12
   heading: null
@@ -231,9 +204,6 @@
   attrs: null
 - uid: 6NS-Qw4Mm
   id: 11226
-  time: 0
-  user:
-    id: 0
   string: Header 1
   order: 0
   heading: null
@@ -251,9 +221,6 @@
   attrs: null
 - uid: 6bcyfVpL2
   id: 11187
-  time: 0
-  user:
-    id: 0
   string: '> This is a Markdown standard multi-line Block Quote
 
     this is the 2nd line
@@ -273,9 +240,6 @@
   attrs: null
 - uid: Odbqghm-D
   id: 11150
-  time: 0
-  user:
-    id: 0
   string: block 2
   order: 2
   heading: null
@@ -292,9 +256,6 @@
   attrs: null
 - uid: Yz0pqYfBh
   id: 11186
-  time: 0
-  user:
-    id: 0
   string: '> This is a Markdown standard single line Block Quote'
   order: 7
   heading: null
@@ -310,9 +271,6 @@
   attrs: null
 - uid: 4BL7hTjHS
   id: 11227
-  time: 0
-  user:
-    id: 0
   string: Header 2
   order: 0
   heading: null
@@ -331,9 +289,6 @@
   attrs: null
 - uid: ETesnk4Zi
   id: 11172
-  time: 0
-  user:
-    id: 0
   string: This para features `inline-code`
   order: 4
   heading: null
@@ -349,9 +304,6 @@
   attrs: null
 - uid: 0hoWxyjNR
   id: 11232
-  time: 0
-  user:
-    id: 0
   string: r2.c1
   order: 2
   heading: null
@@ -369,9 +321,6 @@
   attrs: null
 - uid: 9XUHIOSY0
   id: 11231
-  time: 0
-  user:
-    id: 0
   string: r1.c3
   order: 0
   heading: null
@@ -390,9 +339,6 @@
   attrs: null
 - uid: hD2qvZqjh
   id: 11234
-  time: 0
-  user:
-    id: 0
   string: r2.c3
   order: 0
   heading: null
@@ -411,9 +357,6 @@
   attrs: null
 - uid: 5JwQ2Fea-
   id: 11230
-  time: 0
-  user:
-    id: 0
   string: r1.c2
   order: 0
   heading: null
@@ -432,9 +375,6 @@
   attrs: null
 - uid: gq_29_H-7
   id: 11188
-  time: 0
-  user:
-    id: 0
   string: '[[>]] This is a Roam standard single line Block Quote'
   order: 9
   heading: null
@@ -451,9 +391,6 @@
   attrs: null
 - uid: mGk4VnMT3
   id: 11151
-  time: 0
-  user:
-    id: 0
   string: block 1.1
   order: 11
   heading: null
@@ -470,9 +407,6 @@
   attrs: null
 - uid: 8FeLZHNMW
   id: 11174
-  time: 0
-  user:
-    id: 0
   string: The child of this block is an isolated fenced code block
   order: 6
   heading: null
@@ -489,9 +423,6 @@
   attrs: null
 - uid: VvbwbLchA
   id: 11171
-  time: 0
-  user:
-    id: 0
   string: This para features ^^highlight^^
   order: 3
   heading: null
@@ -507,9 +438,6 @@
   attrs: null
 - uid: QB8DChDBs
   id: 11158
-  time: 0
-  user:
-    id: 0
   string: This para features **bold**
   order: 1
   heading: null
@@ -525,9 +453,6 @@
   attrs: null
 - uid: E_Nsc0SmT
   id: 11173
-  time: 0
-  user:
-    id: 0
   string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
     \ int = 100):\n    for i in range(1, limit + 1):\n        if i % 15 == 0:\n  \
     \          print(\"FizzBuzz\")\n        elif i % 3 == 0:\n            print(\"\
@@ -547,9 +472,6 @@
   attrs: null
 - uid: C6xVTMnsh
   id: 11175
-  time: 0
-  user:
-    id: 0
   string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
     \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
     \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
@@ -569,9 +491,6 @@
   attrs: null
 - uid: iAxwSSBmi
   id: 11228
-  time: 0
-  user:
-    id: 0
   string: Header 3
   order: 0
   heading: null
@@ -590,9 +509,6 @@
   attrs: null
 - uid: d6b4AGFrG
   id: 11154
-  time: 0
-  user:
-    id: 0
   string: block 3.1
   order: 0
   heading: null
@@ -609,9 +525,6 @@
   attrs: null
 - uid: 5N_QAEc3C
   id: 11155
-  time: 0
-  user:
-    id: 0
   string: block 3.2
   order: 1
   heading: null
@@ -627,9 +540,6 @@
   attrs: null
 - uid: L7iQsWlWT
   id: 11137
-  time: 0
-  user:
-    id: 0
   string: null
   order: null
   heading: null
@@ -647,9 +557,6 @@
   attrs: null
 - uid: bwUBoF2ee
   id: 11229
-  time: 0
-  user:
-    id: 0
   string: r1.c1
   order: 1
   heading: null
@@ -667,9 +574,6 @@
   attrs: null
 - uid: jrIkVSHfA
   id: 11233
-  time: 0
-  user:
-    id: 0
   string: r2.c2
   order: 0
   heading: null
@@ -688,9 +592,6 @@
   attrs: null
 - uid: 2IDW6tZJ4
   id: 11152
-  time: 0
-  user:
-    id: 0
   string: block 1.1.1
   order: 0
   heading: null
@@ -707,9 +608,6 @@
   attrs: null
 - uid: 7dBusjzDA
   id: 11170
-  time: 0
-  user:
-    id: 0
   string: This para features ~~strikethrough~~
   order: 2
   heading: null

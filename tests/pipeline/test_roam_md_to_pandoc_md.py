@@ -18,16 +18,12 @@ from guffin.roam.node import RoamNode
 from guffin.roam.primitives import IdObject
 from guffin.roam.node_tree import NodeTree
 
-from conftest import STUB_TIME, STUB_USER
-
 
 def _empty_tree() -> NodeTree:
     """Return a NodeTree with no ROAM_PAGE nodes (page_name_map is empty)."""
     node = RoamNode(
         uid="stub00001",
         id=1,
-        time=STUB_TIME,
-        user=STUB_USER,
         string="stub",
         parents=[IdObject(id=0)],
         page=IdObject(id=0),
@@ -37,15 +33,13 @@ def _empty_tree() -> NodeTree:
 
 def _page_tree(title: str, uid: str) -> NodeTree:
     """Return a NodeTree containing a single page node with *title* and *uid*."""
-    node = RoamNode(uid=uid, id=1, time=STUB_TIME, user=STUB_USER, title=title, children=[])
+    node = RoamNode(uid=uid, id=1, title=title, children=[])
     return NodeTree.build(root_node=node, super_network=[node])
 
 
 def _block_tree(string: str, uid: str) -> NodeTree:
     """Return a NodeTree containing a single block node with *string* and *uid*."""
-    node = RoamNode(
-        uid=uid, id=1, time=STUB_TIME, user=STUB_USER, string=string, parents=[IdObject(id=0)], page=IdObject(id=0)
-    )
+    node = RoamNode(uid=uid, id=1, string=string, parents=[IdObject(id=0)], page=IdObject(id=0))
     return NodeTree.build(root_node=node, super_network=[node])
 
 

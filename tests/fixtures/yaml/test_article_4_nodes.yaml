@@ -9,9 +9,6 @@
 # omitted entirely so they default to None on model_validate.
 - uid: Jt4-6SLWM
   id: 11657
-  time: 0
-  user:
-    id: 0
   string: ^^highlight^^ color
   order: 2
   heading: null
@@ -28,9 +25,6 @@
   attrs: null
 - uid: ju0ABeH0Y
   id: 11665
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA __This span is underlined fuchsia. __This span is not.'
   order: 1
   heading: null
@@ -47,9 +41,6 @@
   attrs: null
 - uid: mkHZLUn8Q
   id: 11643
-  time: 0
-  user:
-    id: 0
   string: null
   order: null
   heading: null
@@ -69,9 +60,6 @@
   attrs: null
 - uid: UlMMEdU3W
   id: 11672
-  time: 0
-  user:
-    id: 0
   string: 'This entire line is an orange background box #.bg-FUCHSIA'
   order: 1
   heading: null
@@ -88,9 +76,6 @@
   attrs: null
 - uid: GUiM9K-kR
   id: 11668
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
   order: 1
   heading: null
@@ -107,9 +92,6 @@
   attrs: null
 - uid: VastJ7V3A
   id: 11670
-  time: 0
-  user:
-    id: 0
   string: 'This entire line is an orange background box #.bg-ORANGE'
   order: 0
   heading: null
@@ -126,9 +108,6 @@
   attrs: null
 - uid: yd7MFbFou
   id: 11647
-  time: 0
-  user:
-    id: 0
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
     \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
   order: 0
@@ -146,9 +125,6 @@
   attrs: null
 - uid: T6cykqu88
   id: 11667
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
   order: 0
   heading: null
@@ -165,9 +141,6 @@
   attrs: null
 - uid: _EtYSMJNn
   id: 11664
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE __This span is underlined orange. __This span is not.'
   order: 0
   heading: null
@@ -184,9 +157,6 @@
   attrs: null
 - uid: ShnYeNIu5
   id: 11662
-  time: 0
-  user:
-    id: 0
   string: underline color (Markdown does not have a standard underline markup, because
     of the conflict with hyperlink rendering)
   order: 3
@@ -204,9 +174,6 @@
   attrs: null
 - uid: c9kTivLOo
   id: 11654
-  time: 0
-  user:
-    id: 0
   string: '**BOLD** text color'
   order: 1
   heading: null
@@ -223,9 +190,6 @@
   attrs: null
 - uid: Rjt1IvrVq
   id: 11648
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
   order: 0
   heading: null
@@ -242,9 +206,6 @@
   attrs: null
 - uid: rArYyVVBS
   id: 11658
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA ^^This span is highlighted fuchsia.^^ This span is not.'
   order: 1
   heading: null
@@ -261,9 +222,6 @@
   attrs: null
 - uid: 9a_6taJAn
   id: 11653
-  time: 0
-  user:
-    id: 0
   string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
   order: 0
   heading: null
@@ -280,9 +238,6 @@
   attrs: null
 - uid: TH55X8Rc_
   id: 11669
-  time: 0
-  user:
-    id: 0
   string: box background color
   order: 5
   heading: null
@@ -299,9 +254,6 @@
   attrs: null
 - uid: AE3uVp_QL
   id: 11655
-  time: 0
-  user:
-    id: 0
   string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
   order: 1
   heading: null
@@ -318,9 +270,6 @@
   attrs: null
 - uid: S2yCBxWED
   id: 11666
-  time: 0
-  user:
-    id: 0
   string: box color
   order: 4
   heading: null

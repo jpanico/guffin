@@ -13,7 +13,7 @@ from guffin.roam.node import (
     node_type,
 )
 
-from conftest import FIXTURES_YAML_DIR, STUB_TIME, STUB_USER
+from conftest import FIXTURES_YAML_DIR
 
 _FIRESTORE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
@@ -26,8 +26,6 @@ def _make_image(uid: str = "imageuid1", node_id: int = 101, string: str = _IMAGE
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -39,8 +37,6 @@ def _make_heading(uid: str = "headnguid", node_id: int = 102, string: str = "Sec
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         heading=level,
         parents=[IdObject(id=99)],
@@ -53,8 +49,6 @@ def _make_callout(uid: str = "callutuid", node_id: int = 105, callout_type: str 
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=f"[[>]] [[!{callout_type}]]{suffix}",
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -66,8 +60,6 @@ def _make_text(uid: str = "textuid01", node_id: int = 104, string: str = "Some p
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -79,8 +71,6 @@ def _make_block_quote(uid: str = "blkqtuid1", node_id: int = 107, text: str = "S
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=f"[[>]] {text}",
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -92,8 +82,6 @@ def _make_code(uid: str = "codeuid01", node_id: int = 106, string: str = "```pyt
     return RoamNode(
         uid=uid,
         id=node_id,
-        time=STUB_TIME,
-        user=STUB_USER,
         string=string,
         parents=[IdObject(id=99)],
         page=IdObject(id=99),
@@ -113,8 +101,6 @@ class TestRoamNodeProps:
         node = RoamNode(
             uid="block0001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -126,8 +112,6 @@ class TestRoamNodeProps:
         node = RoamNode(
             uid="block0001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -140,8 +124,6 @@ class TestRoamNodeProps:
         node = RoamNode(
             uid="block0001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -156,8 +138,6 @@ class TestRoamNodeProps:
         raw: dict[str, object] = {
             "uid": "block0001",
             "id": 1,
-            "time": STUB_TIME,
-            "user": {"id": 1},
             "string": "stub",
             "parents": [{"id": 99}],
             "page": {"id": 99},
@@ -171,8 +151,6 @@ class TestRoamNodeProps:
         raw: dict[str, object] = {
             "uid": "block0001",
             "id": 1,
-            "time": STUB_TIME,
-            "user": {"id": 1},
             "string": "stub",
             "parents": [{"id": 99}],
             "page": {"id": 99},
@@ -185,8 +163,6 @@ class TestRoamNodeProps:
         node = RoamNode(
             uid="block0001",
             id=1,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="stub",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -265,7 +241,7 @@ class TestNodeTypeFunction:
 
     def test_page_node_returns_page(self) -> None:
         """Test that a node with title set returns NodeType.ROAM_PAGE."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="My Page", children=[])
+        node = RoamNode(uid="page00001", id=1, title="My Page", children=[])
         assert node_type(node) is NodeType.ROAM_PAGE
 
     def test_block_node_returns_block(self) -> None:
@@ -273,8 +249,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="block0001",
             id=2,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="block text",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -283,7 +257,7 @@ class TestNodeTypeFunction:
 
     def test_page_node_is_not_block(self) -> None:
         """Test that a page node does not return NodeType.ROAM_PLAIN_BLOCK."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="My Page", children=[])
+        node = RoamNode(uid="page00001", id=1, title="My Page", children=[])
         assert node_type(node) is not NodeType.ROAM_PLAIN_BLOCK
 
     def test_block_node_is_not_page(self) -> None:
@@ -291,8 +265,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="block0001",
             id=2,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="block text",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -312,8 +284,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=f"  {_IMAGE_STRING}  ",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -325,8 +295,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=f"![]({_FIRESTORE_URL})",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -338,8 +306,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=f"see: {_IMAGE_STRING}",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -351,8 +317,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=f"{_IMAGE_STRING} caption",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -364,8 +328,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=_IMAGE_STRING * 2,
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -377,8 +339,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="![alt](relative/path.jpg)",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -398,8 +358,6 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="headnguid",
             id=102,
-            time=STUB_TIME,
-            user=STUB_USER,
             string="Deep Section",
             props={"ah-level": "h4"},
             parents=[IdObject(id=99)],
@@ -501,7 +459,7 @@ class TestNodeTypeFunction:
 
     def test_result_is_str_enum(self) -> None:
         """Test that the returned value is a NodeType StrEnum member."""
-        node = RoamNode(uid="page00001", id=1, time=STUB_TIME, user=STUB_USER, title="My Page", children=[])
+        node = RoamNode(uid="page00001", id=1, title="My Page", children=[])
         result = node_type(node)
         assert isinstance(result, NodeType)
         assert isinstance(result, str)
@@ -519,8 +477,6 @@ class TestRoamNodeCalloutValidation:
         return RoamNode(
             uid="callutuid",
             id=105,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=string,
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -604,8 +560,6 @@ class TestImageSize:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            time=STUB_TIME,
-            user=STUB_USER,
             string=_IMAGE_STRING,
             parents=[IdObject(id=99)],
             page=IdObject(id=99),

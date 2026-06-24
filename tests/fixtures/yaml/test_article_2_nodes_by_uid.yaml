@@ -1,9 +1,6 @@
 LBFKibPIj:
   uid: LBFKibPIj
   id: 4223
-  time: 1773090962400
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -15,16 +12,10 @@ LBFKibPIj:
   parents: null
   props: null
   title: Test Article
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 d_3REDRrO:
   uid: d_3REDRrO
   id: 11684
-  time: 1781833759215
-  user:
-    id: 3
   string: Document block 1.2
   order: 1
   heading: null
@@ -39,16 +30,10 @@ d_3REDRrO:
   - id: 11682
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 sD1C9ifkG:
   uid: sD1C9ifkG
   id: 11677
-  time: 1781833723814
-  user:
-    id: 3
   string: Bullet block 1
   order: 1
   heading: null
@@ -64,16 +49,10 @@ sD1C9ifkG:
   - id: 11674
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
-  time: 1773784559632
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -84,16 +63,10 @@ OexZiLR_O:
   parents: null
   props: null
   title: '>'
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 YyeRpjbFD:
   uid: YyeRpjbFD
   id: 11679
-  time: 1781833732925
-  user:
-    id: 3
   string: Bullet block 1.2
   order: 1
   heading: null
@@ -108,16 +81,10 @@ YyeRpjbFD:
   - id: 11677
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 DsogfVzX9:
   uid: DsogfVzX9
   id: 11682
-  time: 1781833746080
-  user:
-    id: 3
   string: Document block 1
   order: 2
   heading: null
@@ -133,16 +100,10 @@ DsogfVzX9:
   - id: 11674
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 MmvJZhQNJ:
   uid: MmvJZhQNJ
   id: 11675
-  time: 1781833570842
-  user:
-    id: 3
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
     \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
   order: 0
@@ -158,16 +119,10 @@ MmvJZhQNJ:
   - id: 11674
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 lDYWYqYSL:
   uid: lDYWYqYSL
   id: 11674
-  time: 1781833447041
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -182,16 +137,10 @@ lDYWYqYSL:
   parents: null
   props: null
   title: '[[Test Article]] 2'
-  sidebar: 21
   attrs: null
-  lookup: null
-  seen_by: null
 -noi1eQMD:
   uid: -noi1eQMD
   id: 11690
-  time: 1781834571497
-  user:
-    id: 3
   string: Bullet block 1.2.1.1
   order: 0
   heading: null
@@ -207,16 +156,10 @@ lDYWYqYSL:
   - id: 11685
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 Bb49MOLyE:
   uid: Bb49MOLyE
   id: 11686
-  time: 1781833786729
-  user:
-    id: 3
   string: Document block 1.3
   order: 2
   heading: null
@@ -230,16 +173,10 @@ Bb49MOLyE:
   - id: 11682
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 gmLJbWZYp:
   uid: gmLJbWZYp
   id: 11681
-  time: 1781833741666
-  user:
-    id: 3
   string: Bullet block 1.3
   order: 2
   heading: null
@@ -253,16 +190,10 @@ gmLJbWZYp:
   - id: 11677
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 XgPKipOsW:
   uid: XgPKipOsW
   id: 11691
-  time: 1781834579902
-  user:
-    id: 3
   string: Bullet block 1.2.1.2
   order: 1
   heading: null
@@ -278,16 +209,10 @@ XgPKipOsW:
   - id: 11685
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
   id: 5462
-  time: 1773788725523
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -298,16 +223,10 @@ ZgUWBRb7j:
   parents: null
   props: null
   title: '!INFO'
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 KUi_6ooZj:
   uid: KUi_6ooZj
   id: 11680
-  time: 1781833737088
-  user:
-    id: 3
   string: Bullet block 1.2.1
   order: 0
   heading: null
@@ -322,16 +241,10 @@ KUi_6ooZj:
   - id: 11679
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 5SczmqJaW:
   uid: 5SczmqJaW
   id: 11685
-  time: 1781834552642
-  user:
-    id: 3
   string: Bullet block 1.2.1
   order: 0
   heading: null
@@ -348,16 +261,10 @@ KUi_6ooZj:
   - id: 11684
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 99rZhIPZW:
   uid: 99rZhIPZW
   id: 11683
-  time: 1781833751385
-  user:
-    id: 3
   string: Document block 1.1
   order: 0
   heading: null
@@ -371,16 +278,10 @@ KUi_6ooZj:
   - id: 11682
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 VH0mXM0rw:
   uid: VH0mXM0rw
   id: 11678
-  time: 1781833728425
-  user:
-    id: 3
   string: Bullet block 1.1
   order: 0
   heading: null
@@ -394,7 +295,4 @@ VH0mXM0rw:
   - id: 11677
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null

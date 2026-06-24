@@ -1,9 +1,6 @@
 root_node:
   uid: 6olpFWiw1
   id: 3327
-  time: 1780882773773
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -19,16 +16,10 @@ root_node:
   parents: null
   props: null
   title: '[[Test Article]] 1'
-  sidebar: 20
   attrs: null
-  lookup: null
-  seen_by: null
 tree_network:
 - uid: yFUau9Cpg
   id: 4025
-  time: 1771515468425
-  user:
-    id: 3
   string: Section 2.1.1
   order: 1
   heading: 3
@@ -44,15 +35,9 @@ tree_network:
   - id: 3332
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: zZG-BfWvs
   id: 11164
-  time: 1781043221592
-  user:
-    id: 3
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
   order: 1
   heading: null
@@ -72,15 +57,9 @@ tree_network:
       : width: 257
         height: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 0EgPyHSZi
   id: 3328
-  time: 1770568919008
-  user:
-    id: 3
   string: Section 1
   order: 1
   heading: 1
@@ -95,15 +74,9 @@ tree_network:
   - id: 3327
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 40bvW14UU
   id: 3330
-  time: 1770568926764
-  user:
-    id: 3
   string: Section 3
   order: 3
   heading: 1
@@ -117,15 +90,9 @@ tree_network:
   - id: 3327
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: TaN67WqnA
   id: 3334
-  time: 1771512875819
-  user:
-    id: 3
   string: illustration 1.1
   order: 0
   heading: 3
@@ -142,15 +109,9 @@ tree_network:
   - id: 3331
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: Ma5KGUH9O
   id: 4758
-  time: 1773355356452
-  user:
-    id: 3
   string: 'AI assistant (Claude Opus 4.6): '
   order: 1
   heading: null
@@ -164,15 +125,9 @@ tree_network:
   - id: 3328
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: wdMgyBiP9
   id: 3329
-  time: 1770568922821
-  user:
-    id: 3
   string: Section 2
   order: 2
   heading: 1
@@ -187,15 +142,9 @@ tree_network:
   - id: 3327
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: uj8YolCoE
   id: 11124
-  time: 1780844520106
-  user:
-    id: 3
   string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
   order: 1
   heading: null
@@ -211,15 +160,9 @@ tree_network:
   - id: 3334
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 4_GrZ9su6
   id: 11165
-  time: 1781088515943
-  user:
-    id: 3
   string: this image **has not been resized** through the Roam UI.
   order: 0
   heading: null
@@ -236,15 +179,9 @@ tree_network:
   - id: 3334
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: OaTXPl93p
   id: 11163
-  time: 1781043166449
-  user:
-    id: 3
   string: illustration 2.1
   order: 0
   heading: 3
@@ -261,15 +198,9 @@ tree_network:
   - id: 3332
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 3BX-iWc-p
   id: 3331
-  time: 1770568958676
-  user:
-    id: 3
   string: Section 1.1
   order: 0
   heading: 2
@@ -284,15 +215,9 @@ tree_network:
   - id: 3328
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: bxkcECGwN
   id: 4028
-  time: 1780774148272
-  user:
-    id: 3
   string: Section 2.1.1.1
   order: 0
   heading: null
@@ -309,15 +234,9 @@ tree_network:
   props:
     ah-level: h4
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: pfkKREU_Y
   id: 11806
-  time: 1782304880511
-  user:
-    id: 3
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
   order: 0
   heading: null
@@ -334,15 +253,9 @@ tree_network:
   - id: 11165
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: drtANJYTg
   id: 3332
-  time: 1770568965850
-  user:
-    id: 3
   string: Section 2.1
   order: 0
   heading: 2
@@ -358,15 +271,9 @@ tree_network:
   - id: 3329
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: cNW8lmXIM
   id: 11113
-  time: 1781043136363
-  user:
-    id: 3
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
 
@@ -403,15 +310,9 @@ tree_network:
   - id: 3327
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 5f1ahOFdp
   id: 4026
-  time: 1772563665137
-  user:
-    id: 3
   string: Section 2.2
   order: 1
   heading: 2
@@ -425,15 +326,9 @@ tree_network:
   - id: 3329
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: 6olpFWiw1
   id: 3327
-  time: 1780882773773
-  user:
-    id: 3
   string: null
   order: null
   heading: null
@@ -449,15 +344,9 @@ tree_network:
   parents: null
   props: null
   title: '[[Test Article]] 1'
-  sidebar: 20
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: JW5PswS6v
   id: 3333
-  time: 1770568971504
-  user:
-    id: 3
   string: Section 3.1
   order: 0
   heading: 2
@@ -471,15 +360,9 @@ tree_network:
   - id: 3330
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 - uid: tWkumkdUE
   id: 11167
-  time: 1781089401093
-  user:
-    id: 3
   string: this image **has been resized** through the Roam UI (width:257, height:None)
   order: 0
   heading: null
@@ -495,17 +378,11 @@ tree_network:
   - id: 11163
   props: null
   title: null
-  sidebar: null
   attrs: null
-  lookup: null
-  seen_by: null
 refs_by_id:
   '4223':
     uid: LBFKibPIj
     id: 4223
-    time: 1773090962400
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -517,16 +394,10 @@ refs_by_id:
     parents: null
     props: null
     title: Test Article
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5450':
     uid: OexZiLR_O
     id: 5450
-    time: 1773784559632
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -537,16 +408,10 @@ refs_by_id:
     parents: null
     props: null
     title: '>'
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
-    time: 1773788725523
-    user:
-      id: 3
     string: null
     order: null
     heading: null
@@ -557,7 +422,4 @@ refs_by_id:
     parents: null
     props: null
     title: '!INFO'
-    sidebar: null
     attrs: null
-    lookup: null
-    seen_by: null

@@ -90,29 +90,17 @@ def _format_node_prop(node: RoamNode, prop: str) -> str:
         case "page":
             val = str(node.page.id) if node.page is not None else "None"
             return f"page={val}"
-        case "time":
-            return f"time={node.time}"
-        case "user":
-            return f"user={node.user.id}"
         case "refs":
             val = f"[{', '.join(str(r.id) for r in node.refs)}]" if node.refs else "None"
             return f"refs={val}"
         case "open":
             return f"open={node.open}"
-        case "sidebar":
-            return f"sidebar={node.sidebar}"
         case "heading":
             return f"heading={node.heading}"
         case "attrs":
             return f"attrs={node.attrs}"
         case "props":
             return f"props={node.props}"
-        case "lookup":
-            val = f"[{', '.join(str(lk.id) for lk in node.lookup)}]" if node.lookup else "None"
-            return f"lookup={val}"
-        case "seen_by":
-            val = f"[{', '.join(str(s.id) for s in node.seen_by)}]" if node.seen_by else "None"
-            return f"seen_by={val}"
         case "uid":
             return f"uid={node.uid}"
         case "id":
