@@ -39,7 +39,6 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
-from guffin.common.filenames import shell_safe_filename
 from guffin.model.vertex_tree import VertexTree
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.pipeline.pandoc_rendering import (
@@ -142,9 +141,7 @@ def render(
 ) -> None:
     """Render *vertex_tree* to a PDF file inside *output_dir*.
 
-    Derives the output filename from *filename_stem* via
-    :func:`~guffin.common.filenames.shell_safe_filename`, creating
-    ``<output_dir>/<normalized_filename_stem>.pdf``.  Fetches all Cloud
+    Writes ``<output_dir>/<filename_stem>.pdf``.  Fetches all Cloud
     Firestore image assets into a temporary directory and enriches the vertex
     tree with each image's native pixel size via
     :func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, builds a Panflute
@@ -158,8 +155,8 @@ def render(
 
     Args:
         vertex_tree: The normalized vertex tree to render.
-        filename_stem: String used to derive the output filename (e.g. a Roam
-            page title or node UID); POSIX-normalized before use.
+        filename_stem: Output filename stem, used verbatim to derive the output
+            path; the caller is responsible for POSIX-safety.
         output_dir: Directory in which the ``.pdf`` file is written; created
             if it does not already exist.
         api_endpoint: Roam Local API endpoint used to fetch image assets.
@@ -174,7 +171,7 @@ def render(
             the bundled package data.
         dump_pandoc_ast: When ``True``, writes the Pandoc JSON AST (the
             serialized Panflute Doc) to
-            ``<output_dir>/<normalized_filename_stem>.pandoc.json`` before
+            ``<output_dir>/<filename_stem>.pandoc.json`` before
             invoking Pandoc.  Useful for debugging the intermediate
             representation.
 
@@ -185,8 +182,7 @@ def render(
             ``user_cfg.typ``.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    stem: Final[str] = shell_safe_filename(filename_stem)
-    output_path: Final[Path] = output_dir / f"{stem}.pdf"
+    output_path: Final[Path] = output_dir / f"{filename_stem}.pdf"
 
     bundled_dir: Final[Path] = _bundled_templates_dir()
     template_path: Final[Path] = bundled_dir / _TEMPLATE_ENTRY
@@ -227,10 +223,10 @@ def render(
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map))
-        json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, stem)
+        json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 
-        _dump_typst_sources(json_str, output_dir, stem, template_path, bundled_dir, template_dir)
+        _dump_typst_sources(json_str, output_dir, filename_stem, template_path, bundled_dir, template_dir)
 
         pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str, "pdf", format="json", outputfile=str(output_path), extra_args=extra_args

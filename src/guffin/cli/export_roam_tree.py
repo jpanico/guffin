@@ -67,7 +67,7 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
 from guffin.roam.primitives import ANCHORED_UID_PATTERN
-from guffin.cli.common import fetch_roam_trees
+from guffin.cli.common import deduce_out_file_stem, fetch_roam_trees
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -251,15 +251,17 @@ def main(
         logger.error("vertex_tree is None; cannot export without a vertex tree")
         raise typer.Exit(code=1)
 
+    out_file_stem: Final[str] = deduce_out_file_stem(vertex_tree)
+
     if output_format is OutputFormat.PDF:
         try:
-            render_pdf(vertex_tree, target, output_dir, api_endpoint, cache_dir, template_dir, dump_pandoc_ast)
+            render_pdf(vertex_tree, out_file_stem, output_dir, api_endpoint, cache_dir, template_dir, dump_pandoc_ast)
         except Exception as e:
             logger.error("Error rendering PDF for %r: %s", target, e)
             raise typer.Exit(code=1)
     else:
         try:
-            render_md(vertex_tree, target, output_dir, api_endpoint, cache_dir, bundle, dump_pandoc_ast)
+            render_md(vertex_tree, out_file_stem, output_dir, api_endpoint, cache_dir, bundle, dump_pandoc_ast)
         except Exception as e:
             logger.error("Error rendering Markdown for %r: %s", target, e)
             raise typer.Exit(code=1)

@@ -24,12 +24,13 @@ class TestRenderArticleFixture:
         Lua filter are covered.  ``bundle=False`` never fetches images, so the
         supplied :class:`~guffin.roam.local_api.ApiEndpoint` is unused.
         """
-        qualifier: Final[str] = "[[Test Article]] 1"
+        # render no longer normalizes; callers pass an already-safe stem.
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 1")
         vertex_tree: Final[VertexTree] = transcribe(article1_node_tree())
         endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
             local_api_port=3333, graph_name="test", bearer_token="test"
         )
-        render(vertex_tree, filename_stem=qualifier, output_dir=tmp_path, api_endpoint=endpoint, bundle=False)
-        result: Final[str] = (tmp_path / f"{shell_safe_filename(qualifier)}.md").read_text(encoding="utf-8")
+        render(vertex_tree, filename_stem=stem, output_dir=tmp_path, api_endpoint=endpoint, bundle=False)
+        result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
         expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert result == expected

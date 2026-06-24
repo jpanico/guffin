@@ -32,7 +32,6 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
-from guffin.common.filenames import shell_safe_filename
 from guffin.model.vertex_tree import VertexTree
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.pipeline.pandoc_rendering import (
@@ -70,11 +69,11 @@ def render(
       enriches the vertex tree with each image's native pixel size via
       :func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, places the images
       in the bundle directory, and writes a self-contained
-      ``<normalized_filename_stem>.mdbundle/`` directory containing the
+      ``<filename_stem>.mdbundle/`` directory containing the
       Markdown file and all images.  Image links in the Markdown reference
       the local filenames.
     - ``bundle=False`` — writes the GFM text directly to
-      ``<output_dir>/<normalized_filename_stem>.md`` without fetching
+      ``<output_dir>/<filename_stem>.md`` without fetching
       images.  :class:`~guffin.vertex.ImageVertex` nodes fall back to
       hyperlinks pointing at the original Cloud Firestore URLs.
 
@@ -82,8 +81,8 @@ def render(
 
     Args:
         vertex_tree: The normalized vertex tree to render.
-        filename_stem: String used to derive the output filename (e.g. a Roam
-            page title or node UID); POSIX-normalized before use.
+        filename_stem: Output filename stem, used verbatim to derive the output
+            path; the caller is responsible for POSIX-safety.
         output_dir: Directory in which the output file or bundle is written;
             created if it does not already exist.
         api_endpoint: Roam Local API endpoint used to fetch image assets
@@ -94,14 +93,12 @@ def render(
             embedded images.  When ``False``, writes a plain ``.md`` file.
         dump_pandoc_ast: When ``True``, writes the Pandoc JSON AST (the
             serialized Panflute Doc) to
-            ``<output_dir>/<normalized_filename_stem>.pandoc.json`` before
+            ``<output_dir>/<filename_stem>.pandoc.json`` before
             invoking Pandoc.  Useful for debugging the intermediate
             representation.
     """
-    stem: Final[str] = shell_safe_filename(filename_stem)
-
     if bundle:
-        bundle_dir: Final[Path] = output_dir / f"{stem}.mdbundle"
+        bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"
         bundle_dir.mkdir(parents=True, exist_ok=True)
         logger.info("Created bundle directory: %s", bundle_dir)
 
@@ -120,7 +117,7 @@ def render(
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map))
-        bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, stem)
+        bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         md_text: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             bundle_json_str,
             "gfm",
@@ -133,7 +130,7 @@ def render(
                 f"--lua-filter={_GFM_MARK_FILTER}",
             ],
         )
-        output_file: Final[Path] = bundle_dir / f"{stem}.md"
+        output_file: Final[Path] = bundle_dir / f"{filename_stem}.md"
         output_file.write_text(md_text, encoding="utf-8")
         logger.info("Wrote Markdown to: %s", output_file)
 
@@ -143,7 +140,7 @@ def render(
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
         resolve_vertex_links(no_bundle_doc, vertex_tree, make_resolver(no_bundle_inline_map))
-        json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, stem)
+        json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)
         no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str,
             "gfm",
@@ -155,6 +152,6 @@ def render(
                 f"--lua-filter={_GFM_MARK_FILTER}",
             ],
         )
-        output_path: Final[Path] = output_dir / f"{stem}.md"
+        output_path: Final[Path] = output_dir / f"{filename_stem}.md"
         output_path.write_text(no_bundle_md, encoding="utf-8")
         logger.info("Wrote Markdown to %s", output_path)
