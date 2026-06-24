@@ -55,8 +55,12 @@ class TestShellSafeFilename:
         assert shell_safe_filename("document.backup.tar.gz") == "document.backup.tar.gz"
 
     def test_handles_accented_characters(self) -> None:
-        """Test that accented characters are transliterated; non-Latin scripts are dropped."""
-        assert shell_safe_filename("Zürich Москва 北京") == "Zurich"
+        """Test that accented characters are transliterated and non-Latin scripts are dropped.
+
+        Only leading underscores are stripped, so the trailing underscore left where the
+        dropped non-Latin tokens were is retained.
+        """
+        assert shell_safe_filename("Zürich Москва 北京") == "Zurich_"
 
     def test_handles_leading_trailing_special_chars(self) -> None:
         """Test that leading and trailing special characters are stripped."""

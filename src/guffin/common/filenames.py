@@ -36,4 +36,4 @@ def shell_safe_filename(text: str) -> str:
     no_spaces: Final[str] = regex.sub(r" +", "_", ascii_result)
     safe_chars: Final[str] = regex.sub(r"[^a-zA-Z0-9._-]", "", no_spaces)
     collapsed: Final[str] = regex.sub(r"_+", "_", safe_chars)
-    return collapsed.strip("_")
+    return collapsed.lstrip("_")
