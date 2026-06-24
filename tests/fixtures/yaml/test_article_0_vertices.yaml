@@ -183,4 +183,16 @@
   text: block 3.1.1
 - vertex_type: guffin/text
   uid: 5N_QAEc3C
+  children:
+  - 4SIo9hSEY
   text: block 3.2
+- vertex_type: guffin/callout
+  uid: 4SIo9hSEY
+  refs:
+  - OexZiLR_O
+  - lS4kg-3mw
+  callout_type: example
+  title: This is the callout title
+  body: 'This is line 1 of the callout body
+
+    This is line 2 of the callout body'

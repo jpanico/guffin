@@ -1,4 +1,4 @@
-- - prevent-clean: 1773090962400
+- - prevent-clean: 1782152316083
     children:
     - id: 4224
     user:
@@ -40,6 +40,7 @@
     - id: 11674
     time: 1781833723814
     order: 1
+    view-type: bullet
     open: true
     page:
       id: 11674
@@ -103,7 +104,7 @@
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1781833447041
+- - prevent-clean: 1782151663188
     children:
     - id: 11675
     - id: 11677
@@ -118,9 +119,9 @@
       id: 3
     time: 1781833447041
     title: '[[Test Article]] 2'
-    edit-nonce: s-7WQTbbC
+    edit-nonce: wlMij233t
     view-type: document
-    edit-time: 1781834579902
+    edit-time: 1782308013773
     refs:
     - id: 4223
 - - string: Bullet block 1.2.1.1
@@ -179,7 +180,7 @@
     open: true
     page:
       id: 11674
-- - prevent-clean: 1781542258419
+- - prevent-clean: 1782226716897
     user:
       id: 3
     id: 5462

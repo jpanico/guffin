@@ -83,7 +83,7 @@ FIXTURES_PDF: Final[pathlib.Path] = pathlib.Path("tests/fixtures/pdf")
 FIXTURES_MDBUNDLE: Final[pathlib.Path] = pathlib.Path("tests/fixtures/mdbundle")
 README_PATH: Final[pathlib.Path] = pathlib.Path("tests/fixtures/README.md")
 
-_TRANSIENT_FIELDS: Final[frozenset[str]] = frozenset({"open", "sidebar", "lookup", "seen_by"})
+_TRANSIENT_FIELDS: Final[frozenset[str]] = frozenset({"open"})
 
 _DEFAULT_PORT: Final[str] = "3333"
 _DEFAULT_GRAPH: Final[str] = "SCFH"
@@ -134,10 +134,8 @@ def _update_readme_article_features(qualifier: str, features: str) -> None:
 
 
 def _stub_node_dict(node: RoamNode) -> dict[str, object]:
-    """Serialise *node* with transient fields stubbed/omitted for fixture storage."""
+    """Serialise *node* with transient fields omitted for fixture storage."""
     d: Final[dict[str, object]] = node.model_dump(mode="json")
-    d["time"] = 0
-    d["user"] = {"id": 0}
     for key in _TRANSIENT_FIELDS:
         d.pop(key, None)
     return d
@@ -216,10 +214,8 @@ def main() -> None:
         "# Serialised with model_dump(mode='json') and yaml.dump(\n"
         "#   default_flow_style=False, allow_unicode=True, sort_keys=False).\n"
         "#\n"
-        "# Transient fields (time, user, open, sidebar, lookup, seen_by) are excluded\n"
-        "# from live-test comparisons and are set to stub values here (time: 0,\n"
-        "# user: {id: 0}); the nullable ones (open, sidebar, lookup, seen_by) are\n"
-        "# omitted entirely so they default to None on model_validate.\n"
+        "# The transient 'open' field is excluded from live-test comparisons and is\n"
+        "# omitted entirely here so it defaults to None on model_validate.\n"
     )
     nodes_path.write_text(
         nodes_header + yaml.dump(node_dicts, default_flow_style=False, allow_unicode=True, sort_keys=False),

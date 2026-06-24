@@ -402,6 +402,7 @@
     - id: 11674
     time: 1781833723814
     order: 1
+    view-type: bullet
     open: true
     page:
       id: 11674
@@ -1606,9 +1607,9 @@
       id: 3
     time: 1781833447041
     title: '[[Test Article]] 2'
-    edit-nonce: s-7WQTbbC
+    edit-nonce: wlMij233t
     view-type: document
-    edit-time: 1781834579902
+    edit-time: 1782308013773
     refs:
     - id: 4223
 - - string: ((yECzsUNPC))

@@ -51,7 +51,7 @@ tree_network:
   - id: 5450
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -69,7 +69,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   props: null
@@ -199,7 +199,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -215,7 +215,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -253,7 +253,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -286,7 +286,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -321,7 +321,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -413,10 +413,35 @@ tree_network:
   - id: 5450
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  attrs: null
+- uid: 4SIo9hSEY
+  id: 11773
+  string: '[[>]] [[!EXAMPLE]] This is the callout title
+
+    This is line 1 of the callout body
+
+    This is line 2 of the callout body
+
+    '
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5458
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11147
+  - id: 11155
   props: null
   title: null
   attrs: null
@@ -430,7 +455,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -463,7 +488,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -479,7 +504,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -499,7 +524,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -518,7 +543,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -555,7 +580,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11147
@@ -567,7 +592,8 @@ tree_network:
   string: block 3.2
   order: 1
   heading: null
-  children: null
+  children:
+  - id: 11773
   refs: null
   page:
     id: 11137
@@ -642,7 +668,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -659,7 +685,7 @@ tree_network:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -695,6 +721,20 @@ refs_by_id:
     parents: null
     props: null
     title: '>'
+    attrs: null
+  '5458':
+    uid: lS4kg-3mw
+    id: 5458
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    parents: null
+    props: null
+    title: '!EXAMPLE'
     attrs: null
   '5462':
     uid: ZgUWBRb7j

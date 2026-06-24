@@ -3,10 +3,8 @@
 # Serialised with model_dump(mode='json') and yaml.dump(
 #   default_flow_style=False, allow_unicode=True, sort_keys=False).
 #
-# Transient fields (time, user, open, sidebar, lookup, seen_by) are excluded
-# from live-test comparisons and are set to stub values here (time: 0,
-# user: {id: 0}); the nullable ones (open, sidebar, lookup, seen_by) are
-# omitted entirely so they default to None on model_validate.
+# The transient 'open' field is excluded from live-test comparisons and is
+# omitted entirely here so it defaults to None on model_validate.
 - uid: d_3REDRrO
   id: 11684
   string: Document block 1.2

@@ -15,7 +15,7 @@
     open: false
     page:
       id: 11137
-- - prevent-clean: 1773090962400
+- - prevent-clean: 1782152316083
     children:
     - id: 4224
     user:
@@ -43,7 +43,7 @@
     - id: 11149
     time: 1781283589466
     order: 10
-    open: true
+    open: false
     page:
       id: 11137
     refs:
@@ -60,7 +60,7 @@
     - id: 11137
     time: 1780944791082
     order: 3
-    open: true
+    open: false
     page:
       id: 11137
 - - string: 'the next block is a basic Roam-native table: 3x3. No column/row/col resizing
@@ -178,7 +178,7 @@
     - id: 11149
     time: 1780944909127
     order: 0
-    open: true
+    open: false
     page:
       id: 11137
 - - string: block 1.2
@@ -191,7 +191,7 @@
     - id: 11149
     time: 1780944784665
     order: 12
-    open: true
+    open: false
     page:
       id: 11137
 - - string: Header 1
@@ -224,7 +224,7 @@
     - id: 11149
     time: 1781269290009
     order: 8
-    open: true
+    open: false
     page:
       id: 11137
 - - string: block 2
@@ -252,7 +252,7 @@
     - id: 11149
     time: 1781269244509
     order: 7
-    open: true
+    open: false
     page:
       id: 11137
 - - string: Header 2
@@ -294,7 +294,7 @@
     - id: 11149
     time: 1781221588685
     order: 4
-    open: true
+    open: false
     page:
       id: 11137
 - - string: r2.c1
@@ -362,6 +362,18 @@
     open: true
     page:
       id: 11137
+- - prevent-clean: 1773788927048
+    user:
+      id: 3
+    id: 5458
+    uid: lS4kg-3mw
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773784871352
+    title: '!EXAMPLE'
+    edit-nonce: 2BprPZlZC
+    edit-time: 1773784871351
 - - string: '[[>]] This is a Roam standard single line Block Quote'
     user:
       id: 3
@@ -372,11 +384,34 @@
     - id: 11149
     time: 1781283482682
     order: 9
+    open: false
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+- - string: '[[>]] [[!EXAMPLE]] This is the callout title
+
+      This is line 1 of the callout body
+
+      This is line 2 of the callout body
+
+      '
+    user:
+      id: 3
+    id: 11773
+    uid: 4SIo9hSEY
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 11155
+    time: 1782227427980
+    order: 0
     open: true
     page:
       id: 11137
     refs:
     - id: 5450
+    - id: 5458
 - - string: block 1.1
     children:
     - id: 11152
@@ -389,7 +424,7 @@
     - id: 11149
     time: 1780944773800
     order: 11
-    open: true
+    open: false
     page:
       id: 11137
 - - string: The child of this block is an isolated fenced code block
@@ -417,10 +452,10 @@
     - id: 11149
     time: 1781221355217
     order: 3
-    open: true
+    open: false
     page:
       id: 11137
-- - prevent-clean: 1781542258419
+- - prevent-clean: 1782226716897
     user:
       id: 3
     id: 5462
@@ -442,7 +477,7 @@
     - id: 11149
     time: 1780944927251
     order: 1
-    open: true
+    open: false
     page:
       id: 11137
 - - string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
@@ -459,7 +494,7 @@
     - id: 11149
     time: 1781222033423
     order: 5
-    open: true
+    open: false
     page:
       id: 11137
 - - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
@@ -476,7 +511,7 @@
     - id: 11174
     time: 1781222045009
     order: 0
-    open: true
+    open: false
     page:
       id: 11137
 - - string: Header 3
@@ -507,10 +542,12 @@
     - id: 11147
     time: 1780944798657
     order: 0
-    open: true
+    open: false
     page:
       id: 11137
 - - string: block 3.2
+    children:
+    - id: 11773
     user:
       id: 3
     id: 11155
@@ -534,13 +571,13 @@
     sidebar: 19
     id: 11137
     uid: L7iQsWlWT
-    word-count: 298
+    word-count: 320
     edit-user:
       id: 3
     time: 1780943981609
     title: '[[Test Article]] 0'
-    edit-nonce: 8SFUeTH-W
-    edit-time: 1781438134448
+    edit-nonce: T_5nZ3ePv
+    edit-time: 1782227427980
     refs:
     - id: 4223
 - - string: r1.c1
@@ -587,7 +624,7 @@
     - id: 11151
     time: 1780944780043
     order: 0
-    open: true
+    open: false
     page:
       id: 11137
 - - string: This para features ~~strikethrough~~
@@ -600,6 +637,6 @@
     - id: 11149
     time: 1781218309397
     order: 2
-    open: true
+    open: false
     page:
       id: 11137

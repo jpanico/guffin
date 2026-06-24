@@ -3,10 +3,8 @@
 # Serialised with model_dump(mode='json') and yaml.dump(
 #   default_flow_style=False, allow_unicode=True, sort_keys=False).
 #
-# Transient fields (time, user, open, sidebar, lookup, seen_by) are excluded
-# from live-test comparisons and are set to stub values here (time: 0,
-# user: {id: 0}); the nullable ones (open, sidebar, lookup, seen_by) are
-# omitted entirely so they default to None on model_validate.
+# The transient 'open' field is excluded from live-test comparisons and is
+# omitted entirely here so it defaults to None on model_validate.
 - uid: wjN-kVF3B
   id: 11225
   string: '{{table}}'
@@ -389,6 +387,30 @@
   props: null
   title: null
   attrs: null
+- uid: 4SIo9hSEY
+  id: 11773
+  string: '[[>]] [[!EXAMPLE]] This is the callout title
+
+    This is line 1 of the callout body
+
+    This is line 2 of the callout body
+
+    '
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5458
+  page:
+    id: 11137
+  parents:
+  - id: 11137
+  - id: 11147
+  - id: 11155
+  props: null
+  title: null
+  attrs: null
 - uid: mGk4VnMT3
   id: 11151
   string: block 1.1
@@ -528,7 +550,8 @@
   string: block 3.2
   order: 1
   heading: null
-  children: null
+  children:
+  - id: 11773
   refs: null
   page:
     id: 11137

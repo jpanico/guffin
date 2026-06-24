@@ -98,3 +98,9 @@ block 3
 - block 3.1
   - block 3.1.1
 - block 3.2
+  > [!NOTE]
+  > **This is the callout title**
+  >
+  > This is line 1 of the callout body
+  >
+  > This is line 2 of the callout body

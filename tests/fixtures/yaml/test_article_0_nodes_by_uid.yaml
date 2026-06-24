@@ -48,7 +48,7 @@ r09kXvUg-:
   - id: 5450
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -67,7 +67,7 @@ jVQvHi40O:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   props: null
@@ -202,7 +202,7 @@ qnCiceZgk:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -219,7 +219,7 @@ WtrddPBAt:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -259,7 +259,7 @@ WtrddPBAt:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -294,7 +294,7 @@ Yz0pqYfBh:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -345,7 +345,7 @@ ETesnk4Zi:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -431,6 +431,20 @@ hD2qvZqjh:
   props: null
   title: null
   attrs: null
+lS4kg-3mw:
+  uid: lS4kg-3mw
+  id: 5458
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  parents: null
+  props: null
+  title: '!EXAMPLE'
+  attrs: null
 gq_29_H-7:
   uid: gq_29_H-7
   id: 11188
@@ -442,10 +456,36 @@ gq_29_H-7:
   - id: 5450
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  attrs: null
+4SIo9hSEY:
+  uid: 4SIo9hSEY
+  id: 11773
+  string: '[[>]] [[!EXAMPLE]] This is the callout title
+
+    This is line 1 of the callout body
+
+    This is line 2 of the callout body
+
+    '
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5458
+  page:
+    id: 11137
+  open: true
+  parents:
+  - id: 11137
+  - id: 11147
+  - id: 11155
   props: null
   title: null
   attrs: null
@@ -460,7 +500,7 @@ mGk4VnMT3:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -495,7 +535,7 @@ VvbwbLchA:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -526,7 +566,7 @@ QB8DChDBs:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -547,7 +587,7 @@ E_Nsc0SmT:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -567,7 +607,7 @@ C6xVTMnsh:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -606,7 +646,7 @@ d6b4AGFrG:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11147
@@ -619,7 +659,8 @@ d6b4AGFrG:
   string: block 3.2
   order: 1
   heading: null
-  children: null
+  children:
+  - id: 11773
   refs: null
   page:
     id: 11137
@@ -698,7 +739,7 @@ jrIkVSHfA:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149
@@ -716,7 +757,7 @@ jrIkVSHfA:
   refs: null
   page:
     id: 11137
-  open: true
+  open: false
   parents:
   - id: 11137
   - id: 11149

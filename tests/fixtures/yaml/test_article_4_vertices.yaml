@@ -11,9 +11,14 @@
   - ShnYeNIu5
   - S2yCBxWED
   - TH55X8Rc_
-  title: Test Article 4
+  refs:
+  - LBFKibPIj
+  title: '[Test Article](x-guffin:vertex/LBFKibPIj) 4'
 - vertex_type: guffin/callout
   uid: yd7MFbFou
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
@@ -26,9 +31,13 @@
   text: '**BOLD** text color'
 - vertex_type: guffin/text
   uid: Rjt1IvrVq
+  refs:
+  - iF2Ey_unj
   text: '[**This span is BOLD orange text color**]{color="orange"}. This span is not.'
 - vertex_type: guffin/text
   uid: AE3uVp_QL
+  refs:
+  - lF-qY0Xrs
   text: '[**This span is BOLD fuchsia text color**]{color="fuchsia"}. This span is
     not.'
 - vertex_type: guffin/text
@@ -39,10 +48,14 @@
   text: '[highlight]{.mark} color'
 - vertex_type: guffin/text
   uid: 9a_6taJAn
+  refs:
+  - iF2Ey_unj
   text: '[This span is highlighted orange.]{.mark highlight-color="orange"} This span
     is not.'
 - vertex_type: guffin/text
   uid: rArYyVVBS
+  refs:
+  - lF-qY0Xrs
   text: '[This span is highlighted fuchsia.]{.mark highlight-color="fuchsia"} This
     span is not.'
 - vertex_type: guffin/text
@@ -54,10 +67,14 @@
     of the conflict with hyperlink rendering)
 - vertex_type: guffin/text
   uid: _EtYSMJNn
+  refs:
+  - iF2Ey_unj
   text: '[This span is underlined orange. ]{underline-color="orange"}This span is
     not.'
 - vertex_type: guffin/text
   uid: ju0ABeH0Y
+  refs:
+  - lF-qY0Xrs
   text: '[This span is underlined fuchsia. ]{underline-color="fuchsia"}This span is
     not.'
 - vertex_type: guffin/text
@@ -68,9 +85,13 @@
   text: box color
 - vertex_type: guffin/text
   uid: T6cykqu88
+  refs:
+  - iF2Ey_unj
   text: '[This span has box color orange.]{box-color="orange"} This span does not.'
 - vertex_type: guffin/text
   uid: GUiM9K-kR
+  refs:
+  - lF-qY0Xrs
   text: '[This span has box color fuchsia.]{box-color="fuchsia"} This span does not.'
 - vertex_type: guffin/text
   uid: TH55X8Rc_
@@ -80,7 +101,11 @@
   text: box background color
 - vertex_type: guffin/text
   uid: VastJ7V3A
+  refs:
+  - 1GLhru-f7
   text: '[This entire line is an orange background box]{bg-color="orange"}'
 - vertex_type: guffin/text
   uid: UlMMEdU3W
+  refs:
+  - LnMn9Dq7S
   text: '[This entire line is an orange background box]{bg-color="fuchsia"}'
