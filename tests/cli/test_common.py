@@ -124,11 +124,16 @@ class TestDeduceOutFileStem:
         assert deduce_out_file_stem(tree) == "Embedded_Target"
 
     def test_long_basis_is_clipped(self) -> None:
-        """A basis longer than 40 characters is shortened with an ellipsis, then made shell-safe."""
+        """A basis longer than 40 characters is shortened with a ``..._`` marker, then made shell-safe.
+
+        The marker ends in ``_`` (retained by ``shell_safe_filename``, which strips only leading
+        underscores) so that with an extension appended the filename reads ``..._.pdf`` rather
+        than a run of dots ``....pdf``.
+        """
         long_title = "This is a very long page title that certainly exceeds the limit"
         result = deduce_out_file_stem(_tree(PageVertex(uid="page00001", title=long_title)))
-        assert result == shell_safe_filename(textwrap.shorten(long_title, width=40, placeholder="..."))
-        assert result.endswith("...")
+        assert result == shell_safe_filename(textwrap.shorten(long_title, width=40, placeholder="..._"))
+        assert result.endswith("..._")
 
     def test_unwraps_markdown_links(self) -> None:
         """A rendered Markdown link in the basis is unwrapped to its text, dropping the URL."""

@@ -136,5 +136,8 @@ def deduce_out_file_stem(vertex_tree: VertexTree) -> str:
     """
     basis: Final[str] = _stem_basis(root_vertex(vertex_tree), vertex_tree)
     unwrapped_basis: Final[str] = _MD_LINK_RE.sub(r"\1", basis)
+    # The clip marker deliberately ends in "_" (retained by shell_safe_filename, which strips
+    # only leading underscores) so that an appended extension reads "..._.pdf" — a distinctive,
+    # non-dot ending — rather than a run of dots "....pdf".
     clipped_basis: Final[str] = textwrap.shorten(unwrapped_basis, width=40, placeholder="..._")
     return shell_safe_filename(clipped_basis)
