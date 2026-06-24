@@ -206,6 +206,10 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.GUFFIN_BLOCK_QUOTE
         case NodeType.ROAM_NATIVE_TABLE:
             return VertexType.GUFFIN_TABLE
+        case NodeType.ROAM_EMBED_BLOCK:
+            # Block embeds are not yet expanded; transcribe as text so the {{embed: ...}}
+            # construct is preserved verbatim (same as a plain block).
+            return VertexType.GUFFIN_TEXT
 
 
 @validate_call

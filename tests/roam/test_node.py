@@ -232,8 +232,16 @@ class TestNodeType:
         """Test that NodeType.ROAM_BLOCK_QUOTE has string value 'roam/block-quote'."""
         assert NodeType.ROAM_BLOCK_QUOTE == "roam/quote-block"
 
-    def test_exactly_eight_members(self) -> None:
-        """Test that NodeType has exactly eight members."""
+    def test_native_table_value(self) -> None:
+        """Test that NodeType.ROAM_NATIVE_TABLE has string value 'roam/table'."""
+        assert NodeType.ROAM_NATIVE_TABLE == "roam/table"
+
+    def test_embed_value(self) -> None:
+        """Test that NodeType.ROAM_EMBED_BLOCK has string value 'roam/embed-block'."""
+        assert NodeType.ROAM_EMBED_BLOCK == "roam/embed-block"
+
+    def test_exactly_nine_members(self) -> None:
+        """Test that NodeType has exactly nine members."""
         assert set(NodeType) == {
             NodeType.ROAM_PAGE,
             NodeType.ROAM_PLAIN_BLOCK,
@@ -243,6 +251,7 @@ class TestNodeType:
             NodeType.ROAM_CODE_BLOCK,
             NodeType.ROAM_BLOCK_QUOTE,
             NodeType.ROAM_NATIVE_TABLE,
+            NodeType.ROAM_EMBED_BLOCK,
         }
 
 
@@ -474,6 +483,21 @@ class TestNodeTypeFunction:
         """Test that [[>]] with an unrecognised type keyword is classified as ROAM_BLOCK_QUOTE."""
         node = _make_text(string="[[>]] [[!INVALID]] text")
         assert node_type(node) is NodeType.ROAM_BLOCK_QUOTE
+
+    def test_embed_block_returns_embed(self) -> None:
+        """Test that a block whose entire string is a block embed returns ROAM_EMBED_BLOCK."""
+        node = _make_text(string="{{embed: ((wjN-kVF3B))}}")
+        assert node_type(node) is NodeType.ROAM_EMBED_BLOCK
+
+    def test_embed_block_with_surrounding_whitespace_returns_embed(self) -> None:
+        """Test that surrounding whitespace around a block embed is tolerated."""
+        node = _make_text(string="  {{embed: ((wjN-kVF3B))}}  ")
+        assert node_type(node) is NodeType.ROAM_EMBED_BLOCK
+
+    def test_embed_mixed_with_text_is_plain_block(self) -> None:
+        """Test that an embed mixed with surrounding text is not a ROAM_EMBED_BLOCK."""
+        node = _make_text(string="see {{embed: ((wjN-kVF3B))}} here")
+        assert node_type(node) is NodeType.ROAM_PLAIN_BLOCK
 
     def test_result_is_str_enum(self) -> None:
         """Test that the returned value is a NodeType StrEnum member."""

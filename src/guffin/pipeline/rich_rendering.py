@@ -190,6 +190,9 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
         case NodeType.ROAM_NATIVE_TABLE:
             assert node.string is not None
             title_text = _trunc(node.string)
+        case NodeType.ROAM_EMBED_BLOCK:
+            assert node.string is not None
+            title_text = _trunc(node.string)
         case _ as unreachable:
             assert_never(unreachable)
     title: Final[str] = f"[#00aa00]<{nt.value}> [bold reverse]{title_text}[/bold reverse] ({node.id})[/#00aa00]"

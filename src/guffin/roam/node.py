@@ -4,7 +4,7 @@ Public symbols:
 
 - :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``ROAM_PAGE``, ``ROAM_PLAIN_BLOCK``,
   ``ROAM_IMAGE_BLOCK``, ``ROAM_HEADING_BLOCK``, ``ROAM_CALLOUT_BLOCK``,
-  ``ROAM_CODE_BLOCK``, ``ROAM_BLOCK_QUOTE``, ``ROAM_NATIVE_TABLE``.
+  ``ROAM_CODE_BLOCK``, ``ROAM_BLOCK_QUOTE``, ``ROAM_NATIVE_TABLE``, ``ROAM_EMBED_BLOCK``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
 - :func:`effective_heading_level` — return the effective heading level for a
@@ -31,7 +31,13 @@ from pydantic import (
 
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel, is_fenced_code_block
-from guffin.roam.markdown import CALLOUT_RE, IMAGE_LINK_RE, ROAM_NATIVE_TABLE_MARKER, is_roam_block_quote
+from guffin.roam.markdown import (
+    BLOCK_EMBED_RE,
+    CALLOUT_RE,
+    IMAGE_LINK_RE,
+    ROAM_NATIVE_TABLE_MARKER,
+    is_roam_block_quote,
+)
 from guffin.roam.primitives import (
     Id,
     IdObject,
@@ -59,7 +65,7 @@ dict.  Used by :func:`image_size` to extract dimensions without Unknown-type pro
 class NodeType(enum.StrEnum):
     """Entity type of a Roam pull-block.
 
-    - **ROAM_PAGE**: ``title`` is a non-``"embed"`` string, ``string`` is ``None``.
+    - **ROAM_PAGE**: ``title`` is a string, ``string`` is ``None``.
     - **ROAM_PLAIN_BLOCK**: ``string`` is set, ``title`` is ``None``, no special Roam properties.
     - **ROAM_HEADING_BLOCK**: ``heading`` (levels 1–3) or ``props['ah-level']`` (levels 4–6) is set; the entire
       block content is the heading text.
@@ -75,6 +81,9 @@ class NodeType(enum.StrEnum):
     - **ROAM_NATIVE_TABLE**: ``string``, with surrounding whitespace trimmed, equals
       :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER` (``"{{table}}"``); its child blocks
       form the table rows.
+    - **ROAM_EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
+      trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` (matched by
+      :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
     """
 
     ROAM_PAGE = "roam/page"
@@ -85,6 +94,7 @@ class NodeType(enum.StrEnum):
     ROAM_CODE_BLOCK = "roam/code-block"
     ROAM_BLOCK_QUOTE = "roam/quote-block"
     ROAM_NATIVE_TABLE = "roam/table"
+    ROAM_EMBED_BLOCK = "roam/embed-block"
 
 
 class RoamNode(BaseModel):
@@ -93,18 +103,15 @@ class RoamNode(BaseModel):
     This is the *un-normalized* form — property names mirror the raw Datomic
     attribute names, and nested refs are still IdObject stubs rather than resolved UIDs.
 
-    Every pull-block is one of three mutually exclusive entity types, discriminated by
-    ``title`` value and ``string`` presence.  The following invariants are enforced at
-    construction time by :meth:`_validate_entity_type`:
+    Every pull-block is one of two mutually exclusive entity types, discriminated by
+    ``title``.  The following invariants are enforced at construction time by
+    :meth:`_validate_entity_type`:
 
-    - **Page**: ``title`` set (non-``"embed"``), ``string`` ``None``, ``parents`` ``None``,
-      ``children`` any, ``page`` ``None``.
-    - **Block**: ``string`` set, ``title`` ``None``, ``parents`` set,
-      ``page`` set, ``children`` any.
-    - **Embed**: ``title`` is the literal ``"embed"``, ``string`` ``None``, ``children`` ``None``.
+    - **Page**: ``title`` set, so ``string`` and ``page`` are ``None``.
+    - **Block**: ``title`` ``None``, so ``string`` and ``page`` are set.
 
-    All remaining fields (``heading``, ``open``, ``sidebar``, ``refs``, etc.) are
-    optional and vary by entity type and feature usage.
+    All remaining fields (``parents``, ``children``, ``heading``, ``open``, ``sidebar``,
+    ``refs``, etc.) are optional and vary by entity type and feature usage.
 
     Attributes:
         uid: Nine-character stable block/page identifier (BLOCK_UID). Required.
@@ -113,7 +120,7 @@ class RoamNode(BaseModel):
         time: Last-edit Unix timestamp in milliseconds (EDIT_TIME). Required.
         user: IdObject stub referencing the last-editing user entity. Required.
         string: Block text content (BLOCK_STRING). Present only on Block entities.
-        title: Page title (NODE_TITLE). Present only on Page and Embed entities (literal ``"embed"`` for Embeds).
+        title: Page title (NODE_TITLE). Present only on Page entities.
         order: Zero-based sibling order (BLOCK_ORDER). Present only on child Blocks.
         heading: HeadingLevel (BLOCK_HEADING). Present only on heading Blocks.
         children: Raw child block stubs (BLOCK_CHILDREN). Present on Blocks and Pages with children.
@@ -170,10 +177,10 @@ class RoamNode(BaseModel):
         ),
     )
 
-    # Page/Embed fields
+    # Page fields
     title: PageTitle | None = Field(
         default=None,
-        description=f"{RoamAttribute.NODE_TITLE} — page title; present on Pages and Embed entities (literal 'embed')",
+        description=f"{RoamAttribute.NODE_TITLE} — page title; present only on Page entities",
     )
     sidebar: int | None = Field(
         default=None, description=f"{RoamAttribute.PAGE_SIDEBAR} — sidebar state; present only on Pages"
@@ -198,50 +205,35 @@ class RoamNode(BaseModel):
 
     @model_validator(mode="after")
     def _validate_entity_type(self) -> RoamNode:
-        """Enforce Page/Block/Embed entity-type invariants.
+        """Enforce the Page/Block entity-type invariants.
+
+        A pull-block is exactly one of two entity types, discriminated by ``title``:
+
+        - **Page** — ``title`` is set, so ``string`` and ``page`` are ``None``.
+        - **Block** — ``title`` is ``None``, so ``string`` and ``page`` are set.
 
         Returns:
             The validated instance.
 
         Raises:
-            ValueError: If the instance violates the Page, Block, or Embed field invariants,
-                or if neither ``title`` nor ``string`` is set.
+            ValueError: If the instance violates the Page or Block field invariants, or if
+                neither ``title`` nor ``string`` is set.
         """
-        if self.title == "embed":
-            embed_violations: Final[list[str]] = []
-            if self.string is not None:
-                embed_violations.append(f"string must be None; got {self.string!r}")
-            if self.children is not None:
-                embed_violations.append("children must be None")
-            if embed_violations:
-                raise ValueError(
-                    f"Embed entity (uid={self.uid!r}) constraint violations: {'; '.join(embed_violations)}"
-                )
-        elif self.title is not None:
+        if self.title is not None:
             page_violations: Final[list[str]] = []
             if self.string is not None:
                 page_violations.append(f"string must be None; got {self.string!r}")
-            if self.parents is not None:
-                page_violations.append("parents must be None")
-
             if self.page is not None:
                 page_violations.append("page must be None")
             if page_violations:
                 raise ValueError(f"Page entity (uid={self.uid!r}) constraint violations: {'; '.join(page_violations)}")
         elif self.string is not None:
-            block_violations: Final[list[str]] = []
-            if self.parents is None:
-                block_violations.append("parents must be set")
             if self.page is None:
-                block_violations.append("page must be set")
-            if block_violations:
-                raise ValueError(
-                    f"Block entity (uid={self.uid!r}) constraint violations: {'; '.join(block_violations)}"
-                )
+                raise ValueError(f"Block entity (uid={self.uid!r}) constraint violations: page must be set")
         else:
             raise ValueError(
-                f"RoamNode (uid={self.uid!r}) must be a Page (title set), a Block (string set), "
-                "or an Embed (title='embed'); got title=None, string=None"
+                f"RoamNode (uid={self.uid!r}) must be a Page (title set) or a Block (string set); "
+                "got title=None, string=None"
             )
         return self
 
@@ -330,6 +322,8 @@ def node_type(node: RoamNode) -> NodeType:
     (as determined by :func:`~guffin.common.markdown.is_fenced_code_block`),
     :attr:`NodeType.ROAM_NATIVE_TABLE` when the trimmed ``string`` equals
     :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`,
+    :attr:`NodeType.ROAM_EMBED_BLOCK` when the trimmed ``string`` is wholly a Roam block embed
+    (as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`),
     and :attr:`NodeType.ROAM_PLAIN_BLOCK` otherwise.
 
     Args:
@@ -344,20 +338,26 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.ROAM_CODE_BLOCK` if the trimmed ``string`` is a CommonMark fenced code block;
         :attr:`NodeType.ROAM_NATIVE_TABLE` if the trimmed ``string`` equals
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`;
+        :attr:`NodeType.ROAM_EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
         :attr:`NodeType.ROAM_PLAIN_BLOCK` otherwise.
     """
     if node.title is not None:
         return NodeType.ROAM_PAGE
-    if node.string is not None and IMAGE_LINK_RE.fullmatch(node.string.strip()):
+    # A title-less pull-block is a Block, so its string is set (enforced by _validate_entity_type).
+    assert node.string is not None
+    string: Final[str] = node.string
+    if IMAGE_LINK_RE.fullmatch(string.strip()):
         return NodeType.ROAM_IMAGE_BLOCK
     if effective_heading_level(node) is not None:
         return NodeType.ROAM_HEADING_BLOCK
-    if node.string is not None and CALLOUT_RE.match(node.string):
+    if CALLOUT_RE.match(string):
         return NodeType.ROAM_CALLOUT_BLOCK
-    if node.string is not None and is_roam_block_quote(node.string):
+    if is_roam_block_quote(string):
         return NodeType.ROAM_BLOCK_QUOTE
-    if node.string is not None and is_fenced_code_block(node.string.strip()):
+    if is_fenced_code_block(string.strip()):
         return NodeType.ROAM_CODE_BLOCK
-    if node.string is not None and node.string.strip() == ROAM_NATIVE_TABLE_MARKER:
+    if string.strip() == ROAM_NATIVE_TABLE_MARKER:
         return NodeType.ROAM_NATIVE_TABLE
+    if BLOCK_EMBED_RE.fullmatch(string.strip()):
+        return NodeType.ROAM_EMBED_BLOCK
     return NodeType.ROAM_PLAIN_BLOCK
