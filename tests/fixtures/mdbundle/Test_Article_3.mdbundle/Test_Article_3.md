@@ -84,7 +84,11 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   <img src="1f5047588dc26ea57a9d3e2364822fae77f3c2e82f9db652d5ddf7d0d8046c4c.jpg">
 - <span style="color: fuchsia">**standalone BLOCK EMBED ↓**</span>
-  - {{embed: Section 3}}
+  - Section 3
+    - section 3.1
+      - section 3.1.1
+    - section 3.2
+    - section 3.3
 - <span style="color: fuchsia">**standalone HEADER ref ↓**</span>
   - Feature Content
 - <span style="color: fuchsia">**standalone FENCED-CODE ref ↓**</span>
@@ -134,7 +138,17 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   <img src="4bb41fdc554dc75e557e9fcd463402db6d32abb30d93289a8ad644c6d89cf26f.jpg" alt="A flower">
 - <span style="color: fuchsia">**standalone BLOCK EMBED (from Test Article 1) ↓**</span>
-  - {{embed: Section 2.1}}
+  ## Section 2.1
+
+  ### illustration 2.1
+
+  - this image **has been resized** through the Roam UI (width:257, height:None)
+
+  <img src="033a49ffff95aca42ad1b875cece7de2b757d71ee6ddd1152eaede4809727017.jpg" width="257">
+
+  ### Section 2.1.1
+
+  #### Section 2.1.1.1
 - <span style="color: fuchsia">**standalone HEADER ref ↓**</span>
   - Section 1
 - <span style="color: fuchsia">**standalone FENCED-CODE ref ↓**</span>

@@ -46,7 +46,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `logging_config.py` — colorized logging (`configure_logging()`); reads `LOG_LEVEL` env var
     - `fetch_roam_tree.py` — tree-loading pipeline for CLI commands; `fetch_roam_trees` resolves a target, fetches nodes, and returns a `(NodeFetchResult, VertexTree | None)` pair
   - **`model/` sub-package** (`src/guffin/model/`) — core normalized-graph model: vertex types, tree, and inter-vertex links
-    - `vertex.py` — `Vertex` union and all eight concrete vertex types (`PageVertex`, `HeadingVertex`, `TextVertex`, `ImageVertex`, `CalloutVertex`, `CodeBlockVertex`, `BlockQuoteVertex`, `TableVertex`); `VertexType`, `VertexChildren`, `VertexRefs`, `vertex_adapter`
+    - `vertex.py` — `Vertex` union and all nine concrete vertex types (`PageVertex`, `HeadingVertex`, `TextVertex`, `ImageVertex`, `CalloutVertex`, `CodeBlockVertex`, `BlockQuoteVertex`, `TableVertex`, `BlockEmbedVertex`); `VertexType`, `VertexChildren`, `VertexRefs`, `vertex_adapter`
     - `vertex_tree.py` — `VertexTree`, `VertexTreeDFSIterator`, `root_vertex()`; filter helpers `page_vertices()`, `heading_vertices()`, `text_vertices()`, `image_vertices()`, `image_urls()`; transformers `map_vertices()`, `enrich_image_original_sizes()`
     - `link.py` — custom `x-guffin` URL scheme for inter-vertex links; `VertexLinkKind`, `VertexLink`, `vertex_link_url()`, `parse_vertex_link()`, `is_vertex_link()`
   - **`pipeline/` sub-package** (`src/guffin/pipeline/`) — production pipeline: Roam-to-model transcription, text normalization, and output rendering

@@ -38,7 +38,8 @@ Public symbols:
   node.
 - :class:`BlockQuoteVertex` — normalized (transcribed) form of a Roam block-quote block node.
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
-- :data:`Vertex` — union of all eight concrete vertex types.
+- :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
+- :data:`Vertex` — union of all nine concrete vertex types.
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
 """
@@ -53,6 +54,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
 from guffin.common.markdown import HeadingLevel
+from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
 
 type VertexChildren = list[Uid]
@@ -97,6 +99,9 @@ class VertexType(StrEnum):
         GUFFIN_TABLE: Normalized form of a Roam native table node — a block whose
             ``:block/string`` equals ``{{table}}``, with its child blocks forming the
             rows and each child's children forming the cells.
+        GUFFIN_BLOCK_EMBED: Normalized form of a Roam *Block* node whose
+            ``:block/string`` is wholly a block embed (``{{embed: ((<uid>))}}``),
+            transcluding the referenced block.
     """
 
     GUFFIN_PAGE = "guffin/page"
@@ -107,14 +112,16 @@ class VertexType(StrEnum):
     GUFFIN_CODE_BLOCK = "guffin/code-block"
     GUFFIN_BLOCK_QUOTE = "guffin/block-quote"
     GUFFIN_TABLE = "guffin/table"
+    GUFFIN_BLOCK_EMBED = "guffin/block-embed"
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
-    """Shared fields inherited by all seven concrete vertex types.
+    """Shared fields inherited by all nine concrete vertex types.
 
     Not instantiated directly — use :class:`PageVertex`, :class:`HeadingVertex`,
     :class:`TextVertex`, :class:`ImageVertex`, :class:`CalloutVertex`,
-    :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, or :class:`TableVertex`.
+    :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`, or
+    :class:`BlockEmbedVertex`.
 
     Type Parameters:
         VT: The :class:`VertexType` literal for the concrete subtype (e.g.
@@ -393,6 +400,36 @@ class TableVertex(_BaseVertex[Literal[VertexType.GUFFIN_TABLE]]):
     table_style: TableStyle = Field(..., description="View/styling overlay for the table.")
 
 
+class BlockEmbedVertex(_BaseVertex[Literal[VertexType.GUFFIN_BLOCK_EMBED]]):
+    """Normalized (transcribed) form of a Roam block embed node.
+
+    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
+    ``:block/string`` that is wholly a block embed (``{{embed: ((<uid>))}}``),
+    transcluding the referenced block.
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.GUFFIN_BLOCK_EMBED`.
+            Serialized as ``'vertex-type'``.
+        vertex_link: Link to the embedded (transcluded) vertex; its
+            :attr:`~guffin.model.link.VertexLink.kind` is always
+            :attr:`~guffin.model.link.VertexLinkKind.EMBED`.
+    """
+
+    vertex_type: Literal[VertexType.GUFFIN_BLOCK_EMBED] = Field(
+        default=VertexType.GUFFIN_BLOCK_EMBED,
+        serialization_alias="vertex-type",
+        description="Always VertexType.GUFFIN_BLOCK_EMBED (serialized as 'vertex-type').",
+    )
+    vertex_link: VertexLink = Field(..., description="Embed link to the transcluded vertex (kind is always EMBED).")
+
+    @field_validator("vertex_link")
+    @classmethod
+    def _validate_embed_kind(cls, value: VertexLink) -> VertexLink:
+        if value.kind is not VertexLinkKind.EMBED:
+            raise ValueError(f"vertex_link.kind must be VertexLinkKind.EMBED; got {value.kind!r}")
+        return value
+
+
 type Vertex = (
     PageVertex
     | HeadingVertex
@@ -402,8 +439,9 @@ type Vertex = (
     | CodeBlockVertex
     | BlockQuoteVertex
     | TableVertex
+    | BlockEmbedVertex
 )
-"""Union of all eight concrete, normalized vertex types.
+"""Union of all nine concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
@@ -414,7 +452,7 @@ vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discri
 
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
 :class:`HeadingVertex`, :class:`TextVertex`, :class:`ImageVertex`, :class:`CalloutVertex`,
-:class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, and :class:`TableVertex`.
+:class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`, and :class:`BlockEmbedVertex`.
 
 Example::
 

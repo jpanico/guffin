@@ -318,11 +318,13 @@
   refs:
   - lF-qY0Xrs
   text: '[**standalone BLOCK EMBED ↓**]{color="fuchsia"}'
-- vertex_type: guffin/text
+- vertex_type: guffin/block-embed
   uid: XkSI5xwe5
   refs:
   - LfXmNr-tV
-  text: '{{embed: [Section 3](x-guffin:vertex/LfXmNr-tV)}}'
+  vertex_link:
+  - vertex-embed
+  - LfXmNr-tV
 - vertex_type: guffin/text
   uid: Y0xFlk7y6
   children:
@@ -529,11 +531,13 @@
   - LBFKibPIj
   - lF-qY0Xrs
   text: '[**standalone BLOCK EMBED (from [Test Article 1](x-guffin:vertex/6olpFWiw1))  ↓**]{color="fuchsia"}'
-- vertex_type: guffin/text
+- vertex_type: guffin/block-embed
   uid: aVVGVVPLE
   refs:
   - drtANJYTg
-  text: '{{embed: [Section 2.1](x-guffin:vertex/drtANJYTg)}}'
+  vertex_link:
+  - vertex-embed
+  - drtANJYTg
 - vertex_type: guffin/text
   uid: wta7y8AlI
   children:

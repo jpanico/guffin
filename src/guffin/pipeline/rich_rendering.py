@@ -433,6 +433,11 @@ def build_vertex_panel(vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_P
                 f"[bold orange1]{markup_escape('TABLE')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(f'({vertex.table.num_rows}×{vertex.table.num_cols})')}[/bold #00aa00]"
             )
+        case VertexType.GUFFIN_BLOCK_EMBED:
+            title_content = (
+                f"[bold orange1]{markup_escape('EMBED:')}[/bold orange1]"
+                f" [bold #00aa00]{markup_escape(vertex.vertex_link.uid)}[/bold #00aa00]"
+            )
         case _ as unreachable:
             assert_never(unreachable)
     title: Final[str] = f"{title_content} [dim]({vertex.uid})[/dim]"

@@ -20,6 +20,8 @@ Public symbols:
   fenced code block node.
 - :func:`to_block_quote_vertex` — build a :class:`~guffin.vertex.BlockQuoteVertex` from a
   block-quote node.
+- :func:`to_block_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
+  block embed node.
 - :func:`to_table` — build a :class:`~guffin.common.table.Table` from a
   :class:`~guffin.roam.node_tree.NodeTree` rooted at a native table node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node,
@@ -37,7 +39,9 @@ from urllib.parse import unquote, urlparse
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
 
+from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
+    BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -61,7 +65,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.markdown import FencedCodeBlock, parse_fenced_code_block
 from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
-from guffin.roam.markdown import IMAGE_LINK_RE, RoamCallout, parse_callout, strip_block_quote_marker
+from guffin.roam.markdown import BLOCK_EMBED_RE, IMAGE_LINK_RE, RoamCallout, parse_callout, strip_block_quote_marker
 from guffin.common.markdown import HeadingLevel
 from guffin.roam.primitives import Id
 
@@ -207,9 +211,7 @@ def vertex_type(node: RoamNode) -> VertexType:
         case NodeType.ROAM_NATIVE_TABLE:
             return VertexType.GUFFIN_TABLE
         case NodeType.ROAM_EMBED_BLOCK:
-            # Block embeds are not yet expanded; transcribe as text so the {{embed: ...}}
-            # construct is preserved verbatim (same as a plain block).
-            return VertexType.GUFFIN_TEXT
+            return VertexType.GUFFIN_BLOCK_EMBED
 
 
 @validate_call
@@ -462,6 +464,42 @@ def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
 
 
 @validate_call
+def to_block_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
+    """Build a :class:`~guffin.vertex.BlockEmbedVertex` from a block embed *node*.
+
+    Extracts the embedded block's UID from ``node.string`` — a Roam block embed
+    ``{{embed: ((<uid>))}}`` as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE` —
+    and records it as an :attr:`~guffin.model.link.VertexLinkKind.EMBED`-kind
+    :class:`~guffin.model.link.VertexLink` to the transcluded vertex.
+
+    Args:
+        node: A block embed node whose ``string`` is wholly ``{{embed: ((<uid>))}}``.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
+
+    Returns:
+        A :class:`~guffin.vertex.BlockEmbedVertex`.
+
+    Raises:
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
+        ValueError: If ``node.string`` is ``None`` or is not wholly a block embed.
+    """
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    embed_match: Final[regex.Match[str] | None] = BLOCK_EMBED_RE.fullmatch(node.string.strip())
+    if embed_match is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} string is not a block embed: {node.string!r}")
+    return BlockEmbedVertex(
+        uid=node.uid,
+        vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=embed_match.group("uid")),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
+    )
+
+
+@validate_call
 def to_table(table_tree: NodeTree) -> Table:
     """Build a :class:`~guffin.common.table.Table` from a :class:`~guffin.roam.node_tree.NodeTree` rooted at a native.
 
@@ -600,6 +638,8 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             return to_block_quote_vertex(node, tree)
         case VertexType.GUFFIN_TABLE:
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: GUFFIN_TABLE is not a standalone NodeType")
+        case VertexType.GUFFIN_BLOCK_EMBED:
+            return to_block_embed_vertex(node, tree)
         case _ as unreachable:
             assert_never(unreachable)
 

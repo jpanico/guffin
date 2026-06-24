@@ -90,6 +90,7 @@ from pydantic import ConfigDict, validate_call
 from guffin.common.geometry import ImageSize
 from guffin.common.table import HAlign
 from guffin.model.vertex import (
+    BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -733,6 +734,45 @@ def _table_vertex_to_blocks(
     return [pf.Table(body, head=head, foot=pf.TableFoot(), colspec=colspec)]
 
 
+def _block_embed_vertex_to_blocks(
+    vertex: BlockEmbedVertex,
+    vertex_tree: VertexTree,
+    image_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    depth: int,
+) -> list[pf.Block]:
+    """Render a block embed by transcluding the embedded vertex's blocks in place.
+
+    Looks up the embed target (:attr:`~guffin.vertex.BlockEmbedVertex.vertex_link`'s UID) in
+    *vertex_tree* and renders its full subtree via :func:`_vertex_to_blocks`, so a
+    ``{{embed: ((<uid>))}}`` block reproduces the referenced block and its descendants.  Any
+    children of the embed block itself are rendered after the transcluded content.  When the
+    target is absent from *vertex_tree*, the embed renders nothing and a warning is logged.
+
+    Args:
+        vertex: The block-embed vertex to render.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to local image file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        depth: Tree depth of *vertex*.
+
+    Returns:
+        The transcluded target's block elements, followed by the embed's own child blocks.
+    """
+    target: Final[Vertex | None] = vertex_tree.uid_map.get(vertex.vertex_link.uid)
+    if target is None:
+        logger.warning(
+            "block embed uid=%r target uid=%r not found in vertex_tree; rendering nothing",
+            vertex.uid,
+            vertex.vertex_link.uid,
+        )
+        return []
+    blocks: Final[list[pf.Block]] = list(_vertex_to_blocks(target, vertex_tree, image_files, inline_map, depth))
+    if vertex.children:
+        blocks.extend(build_child_blocks(vertex.children, vertex_tree, image_files, inline_map, depth + 1))
+    return blocks
+
+
 def _vertex_to_blocks(
     vertex: Vertex,
     vertex_tree: VertexTree,
@@ -771,6 +811,8 @@ def _vertex_to_blocks(
             return _block_quote_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
         case TableVertex():
             return _table_vertex_to_blocks(vertex, inline_map)
+        case BlockEmbedVertex():
+            return _block_embed_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, depth)
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -926,6 +968,8 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
             case BlockQuoteVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TableVertex():
+                return display
+            case BlockEmbedVertex():
                 return display
 
     return _resolve
