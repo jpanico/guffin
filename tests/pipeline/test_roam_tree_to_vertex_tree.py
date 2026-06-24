@@ -23,6 +23,7 @@ from guffin.common.code_language import CodeLanguage
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import RoamNode
 from guffin.pipeline.roam_tree_to_vertex_tree import (
+    build_view_map,
     to_block_quote_vertex,
     to_callout_vertex,
     to_code_block_vertex,
@@ -37,8 +38,9 @@ from guffin.pipeline.roam_tree_to_vertex_tree import (
     vertex_type,
 )
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
+from guffin.model.view import ChildrenLayout, VertexView
 from guffin.roam.node_tree import NodeTree
-from guffin.roam.primitives import IdObject
+from guffin.roam.primitives import ChildrenViewType, IdObject
 
 # A real Firestore URL whose path yields a predictable file_name and media_type:
 #   file_name  = "photo.jpeg"
@@ -1024,3 +1026,59 @@ class TestToTableVertex:
         )
         with pytest.raises(ValueError, match="no children"):
             to_table_vertex(root, _node_tree(root))
+
+
+# ---------------------------------------------------------------------------
+# TestBuildViewMap
+# ---------------------------------------------------------------------------
+
+
+class TestBuildViewMap:
+    """Tests for build_view_map."""
+
+    def test_records_only_non_default_layouts(self) -> None:
+        """build_view_map records non-default children-view-types and omits default (bullet) ones."""
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2), IdObject(id=3), IdObject(id=4)])
+        # BULLET equals the default, so this node is omitted from the sparse map.
+        bullet = RoamNode(
+            uid="bullet001",
+            id=2,
+            string="bullet parent",
+            children_view_type=ChildrenViewType.BULLET,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        numbered = RoamNode(
+            uid="numberd01",
+            id=3,
+            string="numbered parent",
+            children_view_type=ChildrenViewType.NUMBERED,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        document = RoamNode(
+            uid="documnt01",
+            id=4,
+            string="document parent",
+            children_view_type=ChildrenViewType.DOCUMENT,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        view_map = build_view_map(_node_tree(root, bullet, numbered, document))
+        assert view_map == {
+            "numberd01": VertexView(children_layout=ChildrenLayout.NUMBERED),
+            "documnt01": VertexView(children_layout=ChildrenLayout.DOCUMENT),
+        }
+
+    def test_empty_when_all_default(self) -> None:
+        """A tree whose nodes all carry the default (bullet) view-type yields an empty map."""
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        child = RoamNode(
+            uid="child0001",
+            id=2,
+            string="child",
+            children_view_type=ChildrenViewType.BULLET,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        assert build_view_map(_node_tree(root, child)) == {}

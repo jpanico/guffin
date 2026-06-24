@@ -56,9 +56,18 @@ from guffin.model.vertex import (
     VertexType,
 )
 from guffin.model.vertex_tree import VertexTree
+from guffin.model.view import ChildrenLayout, VertexView, ViewMap
 from guffin.pipeline.roam_md_to_pandoc_md import to_pandoc_md
 from guffin.roam.node_network import min_effective_heading_level
-from guffin.roam.node import NodeType, RoamNode, effective_heading_level, image_size, node_type
+from guffin.roam.node import (
+    DEFAULT_CHILDREN_VIEW_TYPE,
+    NodeType,
+    RoamNode,
+    effective_children_view_type,
+    effective_heading_level,
+    image_size,
+    node_type,
+)
 from guffin.roam.node_tree import NodeTree
 from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
@@ -715,3 +724,27 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         except (NotImplementedError, ValueError) as exc:
             logger.debug("skipping ref node uid=%r: %s", ref_node.uid, exc)
     return VertexTree(tree_vertices=vertices, ref_vertices=ref_vertices)
+
+
+@validate_call
+def build_view_map(node_tree: NodeTree) -> ViewMap:
+    """Derive the presentation :data:`~guffin.model.view.ViewMap` for *node_tree*.
+
+    This is the presentation counterpart to :func:`transcribe` (which derives content): it
+    records, for each node whose effective children-view-type differs from
+    :data:`~guffin.roam.node.DEFAULT_CHILDREN_VIEW_TYPE`, a
+    :class:`~guffin.model.view.VertexView` keyed by the node's uid.  The map is sparse — a uid
+    absent from it takes :data:`~guffin.model.view.DEFAULT_CHILDREN_LAYOUT`.
+
+    Args:
+        node_tree: A validated tree of raw Roam nodes.
+
+    Returns:
+        A :data:`~guffin.model.view.ViewMap` covering the tree's nodes that carry a
+        non-default children-view-type.
+    """
+    return {
+        node.uid: VertexView(children_layout=ChildrenLayout(view_type))
+        for node in node_tree.dfs()
+        if (view_type := effective_children_view_type(node)) is not DEFAULT_CHILDREN_VIEW_TYPE
+    }

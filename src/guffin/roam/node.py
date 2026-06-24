@@ -57,7 +57,7 @@ from guffin.roam.schema import RoamAttribute
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_CHILDREN_VIEW_TYPE: Final[ChildrenViewType] = ChildrenViewType.DOCUMENT
+DEFAULT_CHILDREN_VIEW_TYPE: Final[ChildrenViewType] = ChildrenViewType.BULLET
 """Fallback :class:`~guffin.roam.primitives.ChildrenViewType` for an unset ``children_view_type``."""
 
 _IMAGE_SIZE_PROP_ADAPTER: Final[TypeAdapter[dict[str, dict[str, int | None]]]] = TypeAdapter(
