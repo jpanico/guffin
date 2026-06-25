@@ -43,7 +43,6 @@ Public symbols:
 
 import logging
 from typing import Final, assert_never
-from urllib.parse import unquote, urlparse
 
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
@@ -84,7 +83,15 @@ from guffin.common.geometry import ImageSize
 from guffin.common.markdown import FencedCodeBlock, parse_fenced_code_block
 from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
-from guffin.roam.markdown import BLOCK_EMBED_RE, IMAGE_LINK_RE, RoamCallout, parse_callout, strip_block_quote_marker
+from guffin.roam.markdown import (
+    BLOCK_EMBED_RE,
+    RoamCallout,
+    firestore_url_file_name,
+    image_link_alt_text,
+    image_link_url,
+    parse_callout,
+    strip_block_quote_marker,
+)
 from guffin.common.markdown import HeadingLevel
 from guffin.roam.primitives import Id
 
@@ -138,61 +145,6 @@ def _resolve_refs(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexRefs | No
         return None
     resolved: Final[VertexRefs] = [id_map[r.id].uid for r in node.refs if r.id in id_map]
     return resolved if resolved else None
-
-
-def _extract_firestore_url(string: str) -> str | None:
-    """Return the Cloud Firestore storage URL embedded in *string*, or ``None`` if absent.
-
-    Args:
-        string: A raw block string that may contain a Roam markdown image link.
-
-    Returns:
-        The URL string captured from the first Firestore image link, or ``None``.
-    """
-    m: Final[regex.Match[str] | None] = IMAGE_LINK_RE.search(string)
-    return m.group("url") if m else None
-
-
-def _extract_alt_text(string: str) -> str | None:
-    """Return the alt text from the first Firestore image link in *string*, or ``None``.
-
-    The captured alt text is stripped of leading and trailing whitespace.  Returns
-    ``None`` when no Firestore image link is found or the alt text is empty after
-    stripping.
-
-    Args:
-        string: A raw block string that may contain a Roam markdown image link.
-
-    Returns:
-        The stripped alt text string, or ``None``.
-    """
-    m: Final[regex.Match[str] | None] = IMAGE_LINK_RE.search(string)
-    if m is None:
-        return None
-    alt: Final[str] = m.group("alt").strip()
-    return alt if alt else None
-
-
-def _extract_file_name(firestore_url: str) -> str | None:
-    """Return the original filename encoded in a Firestore URL, or ``None`` on failure.
-
-    Firestore URLs encode the object path after ``/o/`` using percent-encoding.
-    The filename is the last path segment after URL-decoding.
-
-    Args:
-        firestore_url: A ``https://firebasestorage.googleapis.com/...`` URL string.
-
-    Returns:
-        The decoded filename (e.g. ``"image.png"``), or ``None`` if extraction fails.
-    """
-    try:
-        path = urlparse(firestore_url).path
-        parts = path.split("/o/", maxsplit=1)
-        if len(parts) == 2:
-            return unquote(parts[1]).split("/")[-1]
-    except Exception:
-        pass
-    return None
 
 
 @validate_call
@@ -281,10 +233,10 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
-    firestore_url: Final[str | None] = _extract_firestore_url(node.string)
+    firestore_url: Final[str | None] = image_link_url(node.string)
     if firestore_url is None:
         raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firestore URL")
-    file_name: Final[str | None] = _extract_file_name(firestore_url)
+    file_name: Final[str | None] = firestore_url_file_name(firestore_url)
     if file_name is None:
         raise ValueError(f"RoamNode uid={node.uid!r} filename cannot be extracted from URL {firestore_url!r}")
     # Roam encrypts hosted images with a double .enc extension; strip it to resolve the base media type.
@@ -299,7 +251,7 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     return ImageVertex(
         uid=node.uid,
         source=_url_adapter.validate_python(firestore_url),
-        alt_text=_extract_alt_text(node.string),
+        alt_text=image_link_alt_text(node.string),
         file_name=file_name,
         media_type=media_type,
         scaled_image_size=size,

@@ -12,6 +12,9 @@ from guffin.roam.markdown import (
     PAGE_REF_RE,
     CalloutType,
     RoamCallout,
+    firestore_url_file_name,
+    image_link_alt_text,
+    image_link_url,
     parse_callout,
 )
 
@@ -444,3 +447,70 @@ class TestBlockEmbedRE:
     def test_no_match_uid_too_short(self) -> None:
         """A UID shorter than nine characters does not match."""
         assert BLOCK_EMBED_RE.search("{{embed: ((abc1234))}}") is None
+
+
+# ---------------------------------------------------------------------------
+# TestImageLinkUrl
+# ---------------------------------------------------------------------------
+
+
+class TestImageLinkUrl:
+    """Tests for image_link_url."""
+
+    def test_extracts_url_from_image_link(self) -> None:
+        """The Firestore URL is captured from a block string's image link."""
+        assert image_link_url(_IMAGE_STRING) == _FIRESTORE_URL
+
+    def test_extracts_url_embedded_in_surrounding_text(self) -> None:
+        """The first image link's URL is found amid surrounding text."""
+        assert image_link_url(f"see {_IMAGE_STRING} below") == _FIRESTORE_URL
+
+    def test_none_when_no_image_link(self) -> None:
+        """A string with no Firestore image link yields None."""
+        assert image_link_url("just some plain text") is None
+
+    def test_none_for_non_firestore_image(self) -> None:
+        """A markdown image whose URL is not a Firestore URL is not matched."""
+        assert image_link_url("![alt](https://example.com/photo.png)") is None
+
+
+# ---------------------------------------------------------------------------
+# TestImageLinkAltText
+# ---------------------------------------------------------------------------
+
+
+class TestImageLinkAltText:
+    """Tests for image_link_alt_text."""
+
+    def test_extracts_alt_text(self) -> None:
+        """The alt text is captured from a block string's image link."""
+        assert image_link_alt_text(_IMAGE_STRING) == "A flower"
+
+    def test_strips_surrounding_whitespace(self) -> None:
+        """Leading and trailing whitespace is stripped from the alt text."""
+        assert image_link_alt_text(f"![  spaced  ]({_FIRESTORE_URL})") == "spaced"
+
+    def test_none_when_alt_text_empty(self) -> None:
+        """An image link with empty alt text yields None."""
+        assert image_link_alt_text(f"![]({_FIRESTORE_URL})") is None
+
+    def test_none_when_no_image_link(self) -> None:
+        """A string with no Firestore image link yields None."""
+        assert image_link_alt_text("just some plain text") is None
+
+
+# ---------------------------------------------------------------------------
+# TestFirestoreUrlFileName
+# ---------------------------------------------------------------------------
+
+
+class TestFirestoreUrlFileName:
+    """Tests for firestore_url_file_name."""
+
+    def test_decodes_filename_from_url(self) -> None:
+        """The percent-encoded object path decodes to its last segment."""
+        assert firestore_url_file_name(_FIRESTORE_URL) == "photo.jpeg"
+
+    def test_none_when_no_object_path(self) -> None:
+        """A URL without an /o/ object path segment yields None."""
+        assert firestore_url_file_name("https://firebasestorage.googleapis.com/v0/b/test.appspot.com") is None

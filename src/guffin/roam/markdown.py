@@ -21,12 +21,16 @@ Public symbols:
   Roam or standard Markdown block quote.
 - **Block-quote marker stripper**: :func:`strip_block_quote_marker` — strip the leading block-quote
   marker from a block-quote string and return the remaining content.
+- **Image-link accessors**: :func:`image_link_url`, :func:`image_link_alt_text` — extract the Cloud
+  Firestore URL and the alt text from the first image link in a block string;
+  :func:`firestore_url_file_name` — decode the original filename from a Firestore storage URL.
 - **Table marker**: :data:`ROAM_NATIVE_TABLE_MARKER` — the block string that identifies a Roam
   native table block.
 """
 
 import enum
 from typing import Final
+from urllib.parse import unquote, urlparse
 
 import regex
 from pydantic import BaseModel, ConfigDict, Field, validate_call
@@ -216,6 +220,64 @@ Example match on ``![my photo](https://firebasestorage.googleapis.com/v0/b/...)`
 - ``match.group("url")`` — just the URL.
 - ``match.group("alt")`` — just the alt text.
 """
+
+
+@validate_call
+def image_link_url(string: str) -> str | None:
+    """Return the Cloud Firestore storage URL embedded in *string*, or ``None`` if absent.
+
+    Args:
+        string: A raw block string that may contain a Roam markdown image link.
+
+    Returns:
+        The URL string captured from the first Firestore image link, or ``None``.
+    """
+    m: Final[regex.Match[str] | None] = IMAGE_LINK_RE.search(string)
+    return m.group("url") if m else None
+
+
+@validate_call
+def image_link_alt_text(string: str) -> str | None:
+    """Return the alt text from the first Firestore image link in *string*, or ``None``.
+
+    The captured alt text is stripped of leading and trailing whitespace.  Returns ``None`` when no
+    Firestore image link is found or the alt text is empty after stripping.
+
+    Args:
+        string: A raw block string that may contain a Roam markdown image link.
+
+    Returns:
+        The stripped alt text string, or ``None``.
+    """
+    m: Final[regex.Match[str] | None] = IMAGE_LINK_RE.search(string)
+    if m is None:
+        return None
+    alt: Final[str] = m.group("alt").strip()
+    return alt if alt else None
+
+
+@validate_call
+def firestore_url_file_name(firestore_url: str) -> str | None:
+    """Return the original filename encoded in a Firestore URL, or ``None`` on failure.
+
+    Firestore URLs encode the object path after ``/o/`` using percent-encoding.  The filename is the
+    last path segment after URL-decoding.
+
+    Args:
+        firestore_url: A ``https://firebasestorage.googleapis.com/...`` URL string.
+
+    Returns:
+        The decoded filename (e.g. ``"image.png"``), or ``None`` if extraction fails.
+    """
+    try:
+        path: Final[str] = urlparse(firestore_url).path
+        parts: Final[list[str]] = path.split("/o/", maxsplit=1)
+        if len(parts) == 2:
+            return unquote(parts[1]).split("/")[-1]
+    except Exception:
+        pass
+    return None
+
 
 PAGE_REF_RE: Final[regex.Pattern[str]] = regex.compile(r"\[\[(?P<page_name>(?:[^\[\]\n]++|(?R))+)\]\]")
 """Compiled regex matching a Roam page reference ``[[<page_name>]]``.
