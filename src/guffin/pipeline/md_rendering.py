@@ -28,6 +28,7 @@ _GFM_COLOR_SPAN_FILTER: Final[Path] = _RENDER_DIR / "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[Path] = _RENDER_DIR / "gfm_image.lua"
 _GFM_MARK_FILTER: Final[Path] = _RENDER_DIR / "gfm_mark.lua"
 
+import regex
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
@@ -46,6 +47,19 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
+
+_LIST_SEPARATOR_COMMENT_RE: Final[regex.Pattern[str]] = regex.compile(r"\n\n[ \t]*<!-- -->[ \t]*\n\n")
+"""Matches Pandoc's empty ``<!-- -->`` list-separator comment (on its own line, blank-line padded).
+
+The GFM writer emits this between two adjacent lists to keep them from merging on re-parse.  Our
+sibling blocks are intentionally a single continuous outline, and some renderers (e.g. Typora) show
+the comment literally, so it is stripped from the output — letting the adjacent lists merge.
+"""
+
+
+def _strip_list_separator_comments(gfm: str) -> str:
+    """Remove Pandoc's empty ``<!-- -->`` list-separator comments from *gfm*."""
+    return _LIST_SEPARATOR_COMMENT_RE.sub("\n\n", gfm)
 
 
 @validate_call
@@ -132,7 +146,7 @@ def render(
             ],
         )
         output_file: Final[Path] = bundle_dir / f"{filename_stem}.md"
-        output_file.write_text(md_text, encoding="utf-8")
+        output_file.write_text(_strip_list_separator_comments(md_text), encoding="utf-8")
         logger.info("Wrote Markdown to: %s", output_file)
 
     else:
@@ -156,5 +170,5 @@ def render(
             ],
         )
         output_path: Final[Path] = output_dir / f"{filename_stem}.md"
-        output_path.write_text(no_bundle_md, encoding="utf-8")
+        output_path.write_text(_strip_list_separator_comments(no_bundle_md), encoding="utf-8")
         logger.info("Wrote Markdown to %s", output_path)
