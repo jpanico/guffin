@@ -1,7 +1,7 @@
 """Shared Pandoc/panflute rendering utilities for :class:`~guffin.vertex_tree.VertexTree` → :class:`~panflute.Doc`.
 
 Converts the normalized vertex tree produced by
-:func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe` into a Panflute
+:func:`~guffin.pipeline.roam_tree_to_guffin.transcribe` into a Panflute
 :class:`~panflute.Doc` (the Pandoc object model), with inline Pandoc Markdown
 properly parsed into structured panflute inline elements.
 

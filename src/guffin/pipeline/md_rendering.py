@@ -1,7 +1,7 @@
 """Render a :class:`~guffin.vertex_tree.VertexTree` to GFM and write Markdown exports to disk.
 
 Converts the normalized vertex tree produced by
-:func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe` to a GFM document via the
+:func:`~guffin.pipeline.roam_tree_to_guffin.transcribe` to a GFM document via the
 Pandoc object model (see :mod:`~guffin.pandoc_rendering`), and writes the
 result to disk as either a plain ``.md`` file or a self-contained
 ``.mdbundle`` directory that embeds downloaded Cloud Firestore images.

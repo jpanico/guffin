@@ -47,8 +47,8 @@ def _default_ref_vertices() -> list[Annotated[Vertex, Field(discriminator="verte
 class VertexTree(BaseModel):
     """Normalized (transcribed) form of a :class:`~guffin.roam.node_tree.NodeTree`.
 
-    Produced by :func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe`, which applies
-    :func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe_standalone_node` to every node in the source
+    Produced by :func:`~guffin.pipeline.roam_tree_to_guffin.transcribe`, which applies
+    :func:`~guffin.pipeline.roam_tree_to_guffin.transcribe_standalone_node` to every node in the source
     :class:`~guffin.roam.node_tree.NodeTree` and collects the results here in the
     same insertion order.  The resulting collection is guaranteed to have exactly
     one :data:`~guffin.model.vertex.Vertex` per source :class:`~guffin.roam.node.RoamNode` and

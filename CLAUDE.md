@@ -51,7 +51,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `link.py` — custom `x-guffin` URL scheme for inter-vertex links; `VertexLinkKind`, `VertexLink`, `vertex_link_url()`, `parse_vertex_link()`, `is_vertex_link()`
   - **`pipeline/` sub-package** (`src/guffin/pipeline/`) — production pipeline: Roam-to-model transcription, text normalization, and output rendering
     - `roam_md_to_pandoc_md.py` — converts Roam-flavored Markdown strings to Pandoc Markdown; `to_pandoc_md()` is the main entry point
-    - `roam_tree_to_vertex_tree.py` — transcribes `NodeTree` → `VertexTree`; applies `to_pandoc_md()` to all text fields
+    - `roam_tree_to_guffin.py` — transcribes a `NodeTree` into the guffin render model: `transcribe()` derives the `VertexTree` content (applying `to_pandoc_md()` to all text fields), `build_view_map()` derives the presentation `ViewMap`, and `to_render_doc()` bundles both into a `RenderDoc`
     - `image_fetch.py` — Pandoc-free image-asset fetching; `ImageRef` (UID + on-disk path + `ImageSize`) and `fetch_images()` (fetches a `VertexTree`'s Cloud Firestore image assets to a local dir, returning `{uid: ImageRef}`)
     - `pandoc_rendering.py` — shared Pandoc/Panflute rendering utilities; `vertex_tree_to_pandoc()` builds a Panflute `Doc` from a `VertexTree` (batch-parsing inline Pandoc Markdown via a single Pandoc call)
     - `md_rendering.py` — renders a `VertexTree` to Markdown: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to GFM via Pandoc, writes a plain `.md` or `.mdbundle/` directory

@@ -7,7 +7,7 @@ hierarchy:
 
 - **Vertex tree** (default, ``--vertex-tree`` / ``-v/-V``) — normalized
   :class:`~guffin.vertex_tree.VertexTree` produced by
-  :func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe`; image vertices are
+  :func:`~guffin.pipeline.roam_tree_to_guffin.transcribe`; image vertices are
   enriched with their native pixel size (fetched via the Local API) before display.
 - **Node tree** (``--node-tree`` / ``-n/-N``) — raw :class:`~guffin.roam.node_tree.NodeTree`
   as returned by the Roam Local API; each panel body lists selected
@@ -188,7 +188,7 @@ def dump_trees(
         fetch_result: The :class:`~guffin.roam.node_fetch_result.NodeFetchResult` returned
             by the fetch pipeline, carrying the raw node tree and Datalog results.
         vertex_tree: Normalized :class:`~guffin.vertex_tree.VertexTree` produced
-            by :func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe`, or ``None`` when
+            by :func:`~guffin.pipeline.roam_tree_to_guffin.transcribe`, or ``None`` when
             vertex tree computation was skipped.
         node_props: Comma-separated list of :class:`~guffin.roam.node.RoamNode`
             field names to include in each node panel body, or ``None`` to use

@@ -1,4 +1,4 @@
-"""Tests for the roam_tree_to_vertex_tree module."""
+"""Tests for the roam_tree_to_guffin module."""
 
 import json
 
@@ -22,7 +22,7 @@ from guffin.model.vertex import (
 from guffin.common.code_language import CodeLanguage
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import RoamNode
-from guffin.pipeline.roam_tree_to_vertex_tree import (
+from guffin.pipeline.roam_tree_to_guffin import (
     build_view_map,
     to_block_quote_vertex,
     to_callout_vertex,
@@ -30,6 +30,7 @@ from guffin.pipeline.roam_tree_to_vertex_tree import (
     to_heading_vertex,
     to_image_vertex,
     to_page_vertex,
+    to_render_doc,
     to_table,
     to_table_vertex,
     to_text_vertex,
@@ -38,6 +39,7 @@ from guffin.pipeline.roam_tree_to_vertex_tree import (
     vertex_type,
 )
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
+from guffin.model.render_doc import RenderDoc
 from guffin.model.view import ChildrenLayout, VertexView
 from guffin.roam.node_tree import NodeTree
 from guffin.roam.primitives import ChildrenViewType, IdObject
@@ -1082,3 +1084,29 @@ class TestBuildViewMap:
             page=IdObject(id=1),
         )
         assert build_view_map(_node_tree(root, child)) == {}
+
+
+# ---------------------------------------------------------------------------
+# TestToRenderDoc
+# ---------------------------------------------------------------------------
+
+
+class TestToRenderDoc:
+    """Tests for to_render_doc."""
+
+    def test_bundles_transcribe_and_build_view_map(self) -> None:
+        """to_render_doc pairs transcribe() content with build_view_map() presentation."""
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        child = RoamNode(
+            uid="numberd01",
+            id=2,
+            string="numbered parent",
+            children_view_type=ChildrenViewType.NUMBERED,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        tree = _node_tree(root, child)
+        render_doc = to_render_doc(tree)
+        assert isinstance(render_doc, RenderDoc)
+        assert render_doc.content == transcribe(tree)
+        assert render_doc.view == build_view_map(tree)

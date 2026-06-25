@@ -1,4 +1,9 @@
-"""Transcribe `RoamNode` to `Vertex`.
+"""Transcribe a Roam `NodeTree` into the guffin render model.
+
+The two `NodeTree`-rooted transformations here are the content and presentation facets of a
+:class:`~guffin.model.render_doc.RenderDoc`: :func:`transcribe` derives the
+:class:`~guffin.model.vertex_tree.VertexTree` content, and :func:`build_view_map` derives the
+:data:`~guffin.model.view.ViewMap` presentation overlay; :func:`to_render_doc` bundles both.
 
 Public symbols:
 
@@ -30,6 +35,10 @@ Public symbols:
   the appropriate :data:`~guffin.vertex.Vertex` subtype.
 - :func:`transcribe` — transcribe all nodes in a :class:`~guffin.roam.node_tree.NodeTree`
   into a :class:`~guffin.vertex_tree.VertexTree`.
+- :func:`build_view_map` — derive the presentation :data:`~guffin.model.view.ViewMap` for a
+  :class:`~guffin.roam.node_tree.NodeTree`.
+- :func:`to_render_doc` — bundle :func:`transcribe` and :func:`build_view_map` into a
+  :class:`~guffin.model.render_doc.RenderDoc`.
 """
 
 import logging
@@ -55,6 +64,7 @@ from guffin.model.vertex import (
     VertexRefs,
     VertexType,
 )
+from guffin.model.render_doc import RenderDoc
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
 from guffin.pipeline.roam_md_to_pandoc_md import to_pandoc_md
@@ -748,3 +758,24 @@ def build_view_map(node_tree: NodeTree) -> ViewMap:
         for node in node_tree.dfs()
         if (view_type := effective_children_view_type(node)) is not DEFAULT_CHILDREN_VIEW_TYPE
     }
+
+
+@validate_call
+def to_render_doc(node_tree: NodeTree) -> RenderDoc:
+    """Transcribe *node_tree* into a complete :class:`~guffin.model.render_doc.RenderDoc`.
+
+    Bundles the two :class:`~guffin.roam.node_tree.NodeTree`-rooted transformations: the
+    :class:`~guffin.model.vertex_tree.VertexTree` content from :func:`transcribe` and the
+    presentation :data:`~guffin.model.view.ViewMap` from :func:`build_view_map`.
+
+    Args:
+        node_tree: A validated tree of raw Roam nodes.
+
+    Returns:
+        A :class:`~guffin.model.render_doc.RenderDoc` pairing the transcribed content with its
+        presentation overlay.
+
+    Raises:
+        ValueError: If any anchor node has neither a ``title`` nor a ``string`` field set.
+    """
+    return RenderDoc(content=transcribe(node_tree), view=build_view_map(node_tree))

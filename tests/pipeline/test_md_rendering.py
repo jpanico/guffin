@@ -5,7 +5,7 @@ from typing import Final
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.pipeline.md_rendering import render
-from guffin.pipeline.roam_tree_to_vertex_tree import build_view_map, transcribe
+from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.model.render_doc import RenderDoc
 from guffin.roam.local_api import ApiEndpoint
 

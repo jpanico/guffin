@@ -35,7 +35,7 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec
 from guffin.roam.node_tree import NodeTree
-from guffin.pipeline.roam_tree_to_vertex_tree import build_view_map, transcribe
+from guffin.pipeline.roam_tree_to_guffin import to_render_doc
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +58,9 @@ def fetch_roam_trees(
 
     Fetches :class:`~guffin.roam.node.RoamNode` records for *fetch_spec* via
     *api_endpoint*, constructs a :class:`~guffin.roam.node_tree.NodeTree`, and optionally
-    transcribes it into a :class:`~guffin.model.render_doc.RenderDoc` — its
+    transcribes it into a :class:`~guffin.model.render_doc.RenderDoc` (its
     :class:`~guffin.model.vertex_tree.VertexTree` content paired with the presentation
-    :data:`~guffin.model.view.ViewMap` from :func:`~guffin.pipeline.roam_tree_to_vertex_tree.build_view_map`.
+    :data:`~guffin.model.view.ViewMap`) via :func:`~guffin.pipeline.roam_tree_to_guffin.to_render_doc`.
 
     Propagates any exception raised during fetching or transcription; callers are
     responsible for exit behaviour.
@@ -92,7 +92,7 @@ def fetch_roam_trees(
         result.anchor_tree is not None
     ), "anchor_tree is None; fetch_spec has include_node_tree=False, which is unsupported here"
     anchor_tree: Final[NodeTree] = result.anchor_tree
-    render_doc: Final[RenderDoc] = RenderDoc(content=transcribe(anchor_tree), view=build_view_map(anchor_tree))
+    render_doc: Final[RenderDoc] = to_render_doc(anchor_tree)
     logger.debug("node_tree=%r\n\nrender_doc=%r", anchor_tree, render_doc)
     return result, render_doc
 

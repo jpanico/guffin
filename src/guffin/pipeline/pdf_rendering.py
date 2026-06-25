@@ -1,7 +1,7 @@
 """Render a :class:`~guffin.vertex_tree.VertexTree` to a PDF via the Pandoc object model.
 
 Converts the normalized vertex tree produced by
-:func:`~guffin.pipeline.roam_tree_to_vertex_tree.transcribe` into a Panflute
+:func:`~guffin.pipeline.roam_tree_to_guffin.transcribe` into a Panflute
 :class:`~panflute.Doc` via :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc`,
 then exports the document to PDF by serializing the Doc to Pandoc JSON and
 invoking Pandoc via :mod:`pypandoc`.
