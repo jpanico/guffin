@@ -33,7 +33,7 @@ class QueryAnchorKind(enum.Enum):
 
     Attributes:
         PAGE_TITLE: The anchor is a Roam page title string.
-        NODE_UID: The anchor is a nine-character ``:block/uid`` string.
+        NODE_UID: The anchor is a ``:block/uid`` string (synthetic or daily-note).
     """
 
     PAGE_TITLE = enum.auto()
@@ -44,7 +44,7 @@ class QueryAnchorKind(enum.Enum):
         """Return the :class:`QueryAnchorKind` for *target*.
 
         Args:
-            target: A Roam page title, nine-character node UID, or Roam block-reference
+            target: A Roam page title, node UID, or Roam block-reference
                 syntax ``((uid))``.
 
         Returns:
@@ -63,11 +63,11 @@ class NodeFetchAnchor(BaseModel):
 
     Attributes:
         qualifier: The raw anchor string — a Roam page title (optionally wrapped in ``[[ ]]``),
-            a nine-character node UID, or a Roam block-reference (``(( uid ))``).
+            a node UID, or a Roam block-reference (``(( uid ))``).
         kind: Derived from *qualifier* via :meth:`QueryAnchorKind.of`.
         node_identifier: Normalized identifier extracted from :attr:`qualifier` — the bare page
             title (``[[ ]]`` stripped if present) for :attr:`~QueryAnchorKind.PAGE_TITLE` anchors,
-            or the bare nine-character UID (``(( ))`` stripped if present) for
+            or the bare UID (``(( ))`` stripped if present) for
             :attr:`~QueryAnchorKind.NODE_UID` anchors.
     """
 
@@ -75,7 +75,7 @@ class NodeFetchAnchor(BaseModel):
 
     qualifier: str = Field(
         description=(
-            "A Roam page title (optionally wrapped in [[ ]]), a nine-character node UID, "
+            "A Roam page title (optionally wrapped in [[ ]]), a node UID, "
             "or a Roam block-reference wrapped in (( ))."
         )
     )

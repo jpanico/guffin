@@ -115,7 +115,7 @@ def parse_vertex_link(url: str) -> VertexLink | None:
     Returns:
         A :class:`VertexLink` when *url* is a well-formed ``x-guffin`` vertex
         link — the ``x-guffin`` scheme, a recognised path stem, and a valid
-        nine-character UID — and ``None`` otherwise.
+        UID (synthetic or daily-note) — and ``None`` otherwise.
     """
     match: Final[regex.Match[str] | None] = _VERTEX_LINK_RE.fullmatch(url)
     if match is None:

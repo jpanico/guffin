@@ -18,11 +18,11 @@ hierarchy:
   as returned by the Roam Local API, before any transcription.
 
 ``TARGET`` is interpreted as a **node UID** if it matches
-:data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN` (exactly 9 alphanumeric/dash/underscore
-characters, the fixed format used by Roam for all block and page UIDs); otherwise it is
-treated as a **page title**.  A page whose title happens to be exactly 9
-characters from that alphabet would be misidentified — this edge case is
-considered negligible in practice.
+:data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN` — either a synthetic
+nine-character UID or an ``MM-DD-YYYY`` Daily Note Page UID; otherwise it is
+treated as a **page title**.  A page whose title happens to match one of those
+UID forms would be misidentified — this edge case is considered negligible in
+practice.
 
 Logging is colorized by level via :mod:`guffin.logging_config` and
 configurable via the ``LOG_LEVEL`` environment variable (default: ``INFO``).

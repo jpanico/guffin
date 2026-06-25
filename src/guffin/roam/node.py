@@ -143,7 +143,7 @@ class RoamNode(BaseModel):
 
     model_config = ConfigDict(frozen=True, populate_by_name=True)
 
-    uid: Uid = Field(..., description=f"{SchemaAttribute.BLOCK_UID} — nine-character stable identifier")
+    uid: Uid = Field(..., description=f"{SchemaAttribute.BLOCK_UID} — stable identifier (synthetic or daily-note)")
     id: Id = Field(..., description=":db/id — Datomic internal entity id (ephemeral)")
 
     # Block-only fields

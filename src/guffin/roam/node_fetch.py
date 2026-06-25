@@ -219,7 +219,7 @@ class FetchRoamNodes:
         BY_NODE_UID_QUERY: Final[str] = f"{_BY_NODE_UID_QUERY_BASE})]"
         """Datalog query fetching a node and all its descendant blocks by ``:block/uid``.
 
-        Input bindings: ``?uid`` (nine-character ``:block/uid`` string) and ``%`` (rules
+        Input bindings: ``?uid`` (``:block/uid`` string) and ``%`` (rules
         vector — :attr:`DESCENDANT_RULE`).
 
         The ``or-join`` has two branches:
@@ -244,7 +244,7 @@ class FetchRoamNodes:
         )
         """Datalog query fetching a node, all its descendants, all ``:block/refs`` targets, and their descendants.
 
-        Input bindings: ``?uid`` (nine-character ``:block/uid`` string) and ``%`` (rules
+        Input bindings: ``?uid`` (``:block/uid`` string) and ``%`` (rules
         vector — :attr:`DESCENDANT_AND_PAGE_REF_RULES`).  Must be paired with
         :attr:`DESCENDANT_AND_PAGE_REF_RULES` (not :attr:`DESCENDANT_RULE` alone) because the
         ``page-ref`` rule calls ``(descendant ...)`` internally.
@@ -296,7 +296,7 @@ class FetchRoamNodes:
             """Build the ``data.q`` request payload for the given node UID.
 
             Args:
-                node_uid: The nine-character ``:block/uid`` of the node to fetch.
+                node_uid: The ``:block/uid`` of the node to fetch.
                 include_refs: When ``True``, uses :attr:`BY_NODE_UID_WITH_REFS_QUERY`
                     paired with :attr:`DESCENDANT_AND_PAGE_REF_RULES` to also pull every node
                     referenced via ``:block/refs`` from the anchor or any of its descendants.
@@ -460,7 +460,7 @@ class FetchRoamNodes:
         Args:
             fetch_spec: The fetch specification whose
                 :attr:`~guffin.roam.node_fetch_result.NodeFetchSpec.anchor` identifies
-                the nine-character ``:block/uid`` of the root node to fetch, and whose
+                the ``:block/uid`` of the root node to fetch, and whose
                 :attr:`~guffin.roam.node_fetch_result.NodeFetchSpec.include_refs` controls
                 whether ``:block/refs`` targets are included in the result.
             api_endpoint: The API endpoint (URL + bearer token) for the target Roam graph.

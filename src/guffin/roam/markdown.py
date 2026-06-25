@@ -32,7 +32,7 @@ import regex
 from pydantic import BaseModel, ConfigDict, Field, validate_call
 
 from guffin.common.markdown import MD_BLOCK_QUOTE_PREFIX
-from guffin.roam.primitives import UID_PATTERN
+from guffin.roam.primitives import SYNTHETIC_UID_PATTERN
 
 
 class CalloutType(enum.StrEnum):
@@ -243,16 +243,16 @@ Example matches:
   ``[[[[Illustration]] Brief]] -- Draft``.
 """
 
-BLOCK_REF_RE: Final[regex.Pattern[str]] = regex.compile(rf"\(\((?P<uid>{UID_PATTERN})\)\)")
+BLOCK_REF_RE: Final[regex.Pattern[str]] = regex.compile(rf"\(\((?P<uid>{SYNTHETIC_UID_PATTERN})\)\)")
 """Compiled regex matching a Roam block reference ``((<uid>))``.
 
-Block references embed a 9-character Roam UID between ``((`` and ``))``.  Unlike
-page references, block refs cannot nest other references, so no recursive
-matching is required.
+Block references embed a synthetic 9-character Roam UID between ``((`` and ``))`` — they target
+blocks, which always have synthetic UIDs (daily-note pages are referenced by title, not ``((...))``).
+Unlike page references, block refs cannot nest other references, so no recursive matching is required.
 
 Named group:
 
-- ``uid`` — the 9-character UID (matching :data:`~guffin.roam.primitives.UID_PATTERN`)
+- ``uid`` — the synthetic UID (matching :data:`~guffin.roam.primitives.SYNTHETIC_UID_PATTERN`)
   between the outer ``((`` and ``))`` delimiters.
 
 Adjacent references are matched separately; use :meth:`regex.Pattern.finditer`
