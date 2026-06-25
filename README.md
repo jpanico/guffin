@@ -135,10 +135,13 @@ guffin/
 ├── src/
 │   └── guffin/                        # Main package
 │       ├── cli/                         # CLI entry points and supporting infrastructure
+│       │   ├── common.py                  # Shared tree-loading pipeline (fetch_roam_trees);
+│       │   │                              #   deduce_out_file_stem()
 │       │   ├── dump_roam_tree.py          # dump-roam-tree: render Roam subtree as a Rich tree
 │       │   ├── export_roam_tree.py        # export-roam-tree: export to Markdown or PDF
-│       │   ├── fetch_roam_tree.py         # Shared tree-loading pipeline (fetch_roam_trees)
-│       │   └── logging_config.py          # Colorized logging; reads LOG_LEVEL env var
+│       │   ├── logging_config.py          # Colorized logging; reads LOG_LEVEL env var
+│       │   └── params.py                  # Shared Typer Argument/Option declarations (TargetArgument,
+│       │                                  #   PortOption, GraphOption, TokenOption)
 │       │
 │       ├── common/                      # Cross-cutting helpers (no guffin dependencies)
 │       │   ├── code_language.py           # CodeLanguage StrEnum of programming-language identifiers
@@ -152,21 +155,27 @@ guffin/
 │       │   └── validation.py              # Generic accumulator-pipeline validation framework
 │       │
 │       ├── model/                       # Core normalized-graph model (depends only on common/)
-│       │   ├── primitives.py              # UID_PATTERN/RE, ANCHORED_UID_PATTERN/RE, Uid type alias
-│       │   ├── vertex.py                  # Vertex union + eight concrete types (PageVertex,
+│       │   ├── primitives.py              # Uid type alias; SYNTHETIC/DAILY_NOTE/UID_PATTERN(/RE),
+│       │   │                              #   ANCHORED_UID_PATTERN(/RE), is_daily_note_uid()
+│       │   ├── vertex.py                  # Vertex union + nine concrete types (PageVertex,
 │       │   │                              #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
-│       │   │                              #   CodeBlockVertex, BlockQuoteVertex, TableVertex);
-│       │   │                              #   VertexType, VertexChildren, VertexRefs, vertex_adapter
+│       │   │                              #   CodeBlockVertex, BlockQuoteVertex, TableVertex,
+│       │   │                              #   BlockEmbedVertex); VertexType, VertexChildren,
+│       │   │                              #   VertexRefs, vertex_adapter
 │       │   ├── vertex_tree.py             # VertexTree (tree_vertices, ref_vertices, uid_map),
 │       │   │                              #   VertexTreeDFSIterator, root_vertex(), map_vertices();
 │       │   │                              #   filter helpers (page_vertices, image_vertices, …)
+│       │   ├── view.py                    # Presentation overlay: ChildrenLayout, VertexView, ViewMap,
+│       │   │                              #   DEFAULT_CHILDREN_LAYOUT
+│       │   ├── render_bundle.py           # RenderBundle: VertexTree content + ViewMap presentation
 │       │   └── link.py                    # x-guffin inter-vertex link scheme; VertexLinkKind,
 │       │                                  #   VertexLink, vertex_link_url(), parse_vertex_link(),
 │       │                                  #   is_vertex_link()
 │       │
 │       ├── pipeline/                    # Production pipeline: transcription, normalization, rendering
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
-│       │   ├── roam_tree_to_vertex_tree.py# Transcribe NodeTree → VertexTree; applies to_pandoc_md()
+│       │   ├── roam_tree_to_guffin.py     # NodeTree → guffin render model: transcribe() (VertexTree),
+│       │   │                              #   build_view_map() (ViewMap), to_render_bundle()
 │       │   ├── image_fetch.py             # Pandoc-free image asset fetching; ImageRef (UID + path +
 │       │   │                              #   ImageSize); fetch_images() → {uid: ImageRef};
 │       │   │                              #   fetch_and_enrich_images() → (VertexTree, {uid: ImageRef})
@@ -183,12 +192,13 @@ guffin/
 │       │
 │       └── roam/                        # Roam Research data model, API, and processing
 │           ├── primitives.py              # Foundational type aliases (Uid, Id, Order, PageTitle),
-│           │                              #   stub models (IdObject, LinkObject), and UID regex
-│           │                              #   constants (UID_PATTERN/RE, ANCHORED_UID_PATTERN/RE)
+│           │                              #   stub models (IdObject, LinkObject), ChildrenViewType,
+│           │                              #   UID regex (SYNTHETIC/DAILY_NOTE/UID_PATTERN,
+│           │                              #   ANCHORED_UID_PATTERN), is_daily_note_uid()
 │           ├── markdown.py                # Roam Markdown constructs: CALLOUT_RE, CalloutType,
-│           │                              #   RoamCallout, parse_callout, IMAGE_LINK_RE,
-│           │                              #   block-quote helpers, ROAM_NATIVE_TABLE_MARKER
-│           ├── schema.py                  # Datomic schema model types (RoamNamespace, …)
+│           │                              #   RoamCallout, parse_callout, IMAGE_LINK_RE, image-link
+│           │                              #   accessors, block-quote helpers, ROAM_NATIVE_TABLE_MARKER
+│           ├── schema.py                  # Datomic schema model types (SchemaNamespace, SchemaAttribute)
 │           ├── node.py                    # RoamNode, NodeType, node_type, NodesByUid
 │           ├── node_network.py            # NodeNetwork; validators (all_children_present,
 │           │                              #   is_acyclic, …) and utilities (all_descendants,
