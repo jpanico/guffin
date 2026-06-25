@@ -1,6 +1,15 @@
-# Guffin PDF Templates
+# Guffin Typst Resources
 
-## Bergfink
+This package bundles the resources for the PDF output path (`pdf_rendering.py`), of two kinds:
+
+- the **Bergfink Typst template** — the `.typ` / `.typst` files that style the rendered document, and
+- the **Pandoc Lua filters** — the `typst_*.lua` files that rewrite the Pandoc AST into Typst
+  constructs the default Typst writer does not produce.
+
+Both are resolved from this package at render time (via `importlib.resources`) and handed to Pandoc —
+the template through `--template`, each filter through `--lua-filter`.
+
+## Bergfink Typst template
 
 The `.typ` and `.typst` files in this directory are the **Bergfink** Pandoc/Typst template, based on:
 
@@ -103,3 +112,40 @@ This key has no effect unless `number-sections` is also `true`.
 ### Updating
 
 To update to a newer upstream commit, re-copy the files from the repository above, update the commit reference in this README, and re-apply the modifications described above.
+
+## Pandoc Lua filters
+
+The `typst_*.lua` files are [Pandoc Lua filters](https://pandoc.org/lua-filters.html). They exist because `vertex_tree_to_pandoc` (in `pandoc_rendering.py`) encodes Roam-specific constructs as *generic* Pandoc `Div` / `Span` elements carrying classes and attributes; these filters translate those generic elements into the Typst markup the Bergfink template expects, which Pandoc's default Typst writer would not otherwise emit.
+
+### How they are loaded and executed
+
+`pdf_rendering.py` converts the document by calling Pandoc through pypandoc, passing each filter with a `--lua-filter` argument (paths resolved from this package):
+
+```python
+pypandoc.convert_text(json_str, "typst", format="json", extra_args=[
+    "--pdf-engine=typst",
+    f"--template={bundled_dir / 'bergfink.typst'}",
+    f"--resource-path={bundled_dir}",
+    f"--lua-filter={bundled_dir / 'typst_callout.lua'}",
+    f"--lua-filter={bundled_dir / 'typst_color_span.lua'}",
+    f"--lua-filter={bundled_dir / 'typst_list_para.lua'}",
+    # …
+])
+```
+
+The input (`json_str`) is the Pandoc JSON AST (a serialized Panflute `Doc`). Pandoc applies the filters **in the order given** to the parsed AST, *before* the Typst writer serializes it. Each filter defines element-type functions (`Div`, `Span`, `BulletList`, …) that Pandoc invokes for every matching node, returning replacement node(s). Where a filter needs to emit Typst that the writer would otherwise escape, it inserts `RawBlock` / `RawInline` nodes tagged `"typst"`, which the writer passes through verbatim.
+
+These filters apply only to the PDF/Typst path. The Markdown/GFM path uses a parallel set of `gfm_*.lua` filters in `pipeline/gfm_resources/`.
+
+### Filters
+
+| Filter | Matches | Emits |
+|---|---|---|
+| `typst_callout.lua` | a `Div` with a `callout-<type>` class (plus an optional `callout-title` sub-`Div`) | a [gentle-clues](https://typst.app/universe/package/gentle-clues) callout call (`info[…]`, `warning[…]`, `tip[…]`, …) — `bergfink.typst` imports the gentle-clues package |
+| `typst_color_span.lua` | a color `Span` / `Div` carrying a `color`, `highlight-color` (with class `mark`), `underline-color`, `box-color`, or `bg-color` attribute | `#text(fill: …)`, `#highlight(fill: …)`, `#underline[…]`, `#box(stroke: …)`, or a full-width `#block(fill: …)`, with inner content preserved |
+| `typst_list_para.lua` | a list item whose leading `Plain` block is immediately followed by a non-list block | promotes that `Plain` to a `Para`, keeping the leading text and the following block (e.g. an image) as separate Typst paragraphs |
+
+A couple of details worth noting:
+
+- **`typst_callout.lua`** maps each Guffin callout type to a gentle-clues function (e.g. `note` / `quote` → `memo`, `summary` → `conclusion`, `failure` / `bug` → `error`). It wraps the call in a Typst code scope `#{ … }` with a local `set par(first-line-indent: 0pt, justify: false)`, so the template's global paragraph rules do not leak into the callout, and passes the title as a Typst string literal.
+- **`typst_list_para.lua`** leaves nested lists untouched — a sublist already starts its own block and never merges, so only a non-list following block needs the paragraph break.

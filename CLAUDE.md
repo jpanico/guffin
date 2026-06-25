@@ -61,7 +61,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `pdf_rendering.py` — renders a `VertexTree` to PDF: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to PDF via Pandoc + Typst
     - `rich_rendering.py` — Rich panel/tree rendering for `NodeTree` and `VertexTree`
     - `typst_resources/` — bundled package data for PDF output (consumed only by `pdf_rendering.py`): the Bergfink Typst/Pandoc template (`user_cfg.typ` is the intended customization point; see `src/guffin/pipeline/typst_resources/README.md`) plus the `typst_*.lua` Pandoc filters
-    - `gfm_resources/` — bundled package data for Markdown output (consumed only by `md_rendering.py`): the `gfm_*.lua` Pandoc filters (callout, color-span, image, mark)
+    - `gfm_resources/` — bundled package data for Markdown output (consumed only by `md_rendering.py`): the `gfm_*.lua` Pandoc filters (callout, color-span, image, mark; see `src/guffin/pipeline/gfm_resources/README.md`)
   - **`common/` sub-package** (`src/guffin/common/`) — cross-cutting helpers shared across the package
     - `code_language.py` — `CodeLanguage` StrEnum of programming-language identifiers for fenced code block info strings
     - `filenames.py` — `shell_safe_filename()` normalizes strings to POSIX-safe filenames
