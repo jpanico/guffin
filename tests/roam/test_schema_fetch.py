@@ -12,7 +12,7 @@ from pydantic import ValidationError
 
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.schema_fetch import FetchRoamSchema
-from guffin.roam.schema import RoamAttribute, RoamNamespace, RoamSchema
+from guffin.roam.schema import SchemaAttribute, SchemaNamespace, RoamSchema
 
 logger = logging.getLogger(__name__)
 
@@ -143,17 +143,17 @@ class TestFetchRoamSchemaFetch:
                 FetchRoamSchema.fetch(api_endpoint)
 
     def test_successful_fetch_returns_schema(self, api_endpoint: ApiEndpoint, mock_200_response: MagicMock) -> None:
-        """Test that a 200 response is parsed and returned as a list of RoamAttribute members."""
+        """Test that a 200 response is parsed and returned as a list of SchemaAttribute members."""
         with patch("guffin.roam.local_api.requests.post", return_value=mock_200_response):
             result: RoamSchema = FetchRoamSchema.fetch(api_endpoint)
 
         assert isinstance(result, list)
         assert len(result) == 3
-        assert result[0] is RoamAttribute.BLOCK_UID
-        assert result[0].namespace is RoamNamespace.BLOCK
+        assert result[0] is SchemaAttribute.BLOCK_UID
+        assert result[0].namespace is SchemaNamespace.BLOCK
         assert result[0].attr_name == "uid"
-        assert result[2] is RoamAttribute.NODE_TITLE
-        assert result[2].namespace is RoamNamespace.NODE
+        assert result[2] is SchemaAttribute.NODE_TITLE
+        assert result[2].namespace is SchemaNamespace.NODE
         assert result[2].attr_name == "title"
 
     def test_posts_to_correct_endpoint_url(self, api_endpoint: ApiEndpoint, mock_200_response: MagicMock) -> None:
@@ -174,33 +174,33 @@ class TestFetchRoamSchemaFetch:
     @pytest.mark.live
     @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
     def test_live_schema_matches_enum(self, live_api_endpoint: ApiEndpoint) -> None:
-        """Live test: fetched schema must exactly match the RoamAttribute enum.
+        """Live test: fetched schema must exactly match the SchemaAttribute enum.
 
         Fails with a diff when either direction of drift is detected:
 
-        - live graph has attributes not yet represented in :class:`RoamAttribute`
+        - live graph has attributes not yet represented in :class:`SchemaAttribute`
           (fetch raises ``ValueError`` — enum needs new members added), or
-        - :class:`RoamAttribute` has stale members absent from the live graph
+        - :class:`SchemaAttribute` has stale members absent from the live graph
           (enum needs old members removed).
         """
         try:
             fetched: RoamSchema = FetchRoamSchema.fetch(live_api_endpoint)
         except ValueError as exc:
-            pytest.fail(f"Live schema contains attribute(s) not in RoamAttribute enum: {exc}")
+            pytest.fail(f"Live schema contains attribute(s) not in SchemaAttribute enum: {exc}")
 
-        fetched_set: set[RoamAttribute] = set(fetched)
-        expected_set: set[RoamAttribute] = set(RoamAttribute)
+        fetched_set: set[SchemaAttribute] = set(fetched)
+        expected_set: set[SchemaAttribute] = set(SchemaAttribute)
 
-        in_enum_not_fetched: set[RoamAttribute] = expected_set - fetched_set
-        in_fetched_not_enum: set[RoamAttribute] = fetched_set - expected_set
+        in_enum_not_fetched: set[SchemaAttribute] = expected_set - fetched_set
+        in_fetched_not_enum: set[SchemaAttribute] = fetched_set - expected_set
 
         diffs: list[str] = []
         if in_enum_not_fetched:
             lines = sorted(f"  {a.namespace}/{a.attr_name}" for a in in_enum_not_fetched)
-            diffs.append("In RoamAttribute enum but NOT in live schema:\n" + "\n".join(lines))
+            diffs.append("In SchemaAttribute enum but NOT in live schema:\n" + "\n".join(lines))
         if in_fetched_not_enum:
             lines = sorted(f"  {a.namespace}/{a.attr_name}" for a in in_fetched_not_enum)
-            diffs.append("In live schema but NOT in RoamAttribute enum:\n" + "\n".join(lines))
+            diffs.append("In live schema but NOT in SchemaAttribute enum:\n" + "\n".join(lines))
 
         assert not diffs, "\n".join(diffs)
 
@@ -212,7 +212,7 @@ class TestFetchRoamSchemaFetch:
 
         assert isinstance(schema, list)
         assert len(schema) > 0
-        assert all(isinstance(a, RoamAttribute) for a in schema)
+        assert all(isinstance(a, SchemaAttribute) for a in schema)
         logger.debug(f"Fetched {len(schema)} schema entries")
         for attr in schema[:5]:
             logger.debug(f"  {attr.namespace}: {attr.attr_name}")

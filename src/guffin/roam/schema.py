@@ -2,25 +2,25 @@
 
 Public symbols:
 
-- :class:`RoamNamespace` — enumeration of all Datomic attribute namespaces present
+- :class:`SchemaNamespace` — enumeration of all Datomic attribute namespaces present
   in the Roam graph schema.
-- :class:`RoamAttribute` — enumeration of all ``(namespace, attr_name)`` pairs
+- :class:`SchemaAttribute` — enumeration of all ``(namespace, attr_name)`` pairs
   in the Roam Datomic schema.
-- :data:`RoamSchema` — a list of :class:`RoamAttribute` members representing the
+- :data:`RoamSchema` — a list of :class:`SchemaAttribute` members representing the
   full schema of a live Roam graph.
 """
 
 from enum import Enum, StrEnum
 
 
-class RoamNamespace(StrEnum):
+class SchemaNamespace(StrEnum):
     """Enumeration of all Datomic attribute namespaces in the Roam graph schema.
 
     Each member's value is the namespace string as it appears in the Datomic schema
     (e.g. ``"block"``, ``"create"``, ``"user"``).  Because this is a :class:`StrEnum`,
     members compare equal to their string equivalents::
 
-        assert RoamNamespace.BLOCK == "block"
+        assert SchemaNamespace.BLOCK == "block"
     """
 
     ANNOTATION = "annotation"
@@ -43,101 +43,101 @@ class RoamNamespace(StrEnum):
     WINDOW = "window"
 
 
-class RoamAttribute(Enum):
+class SchemaAttribute(Enum):
     """Enumeration of all ``(namespace, attr_name)`` pairs in the Roam Datomic schema.
 
-    Each member's :attr:`value` is a ``tuple[RoamNamespace, str]``.  Typed accessors
+    Each member's :attr:`value` is a ``tuple[SchemaNamespace, str]``.  Typed accessors
     :attr:`namespace` and :attr:`attr_name` expose the two components without
     requiring callers to unpack :attr:`value` manually::
 
-        assert RoamAttribute.BLOCK_UID.namespace is RoamNamespace.BLOCK
-        assert RoamAttribute.BLOCK_UID.attr_name == "uid"
+        assert SchemaAttribute.BLOCK_UID.namespace is SchemaNamespace.BLOCK
+        assert SchemaAttribute.BLOCK_UID.attr_name == "uid"
     """
 
-    value: tuple[RoamNamespace, str]  # type: ignore[override]
+    value: tuple[SchemaNamespace, str]  # type: ignore[override]
 
     # annotation/
-    ANNOTATION_ORIGIN = (RoamNamespace.ANNOTATION, "origin")
+    ANNOTATION_ORIGIN = (SchemaNamespace.ANNOTATION, "origin")
 
     # attrs/
-    ATTRS_LOOKUP = (RoamNamespace.ATTRS, "lookup")
+    ATTRS_LOOKUP = (SchemaNamespace.ATTRS, "lookup")
 
     # block/
-    BLOCK_CHILDREN = (RoamNamespace.BLOCK, "children")
-    BLOCK_HEADING = (RoamNamespace.BLOCK, "heading")
-    BLOCK_OPEN = (RoamNamespace.BLOCK, "open")
-    BLOCK_ORDER = (RoamNamespace.BLOCK, "order")
-    BLOCK_PAGE = (RoamNamespace.BLOCK, "page")
-    BLOCK_PARENTS = (RoamNamespace.BLOCK, "parents")
-    BLOCK_PROPS = (RoamNamespace.BLOCK, "props")
-    BLOCK_REFS = (RoamNamespace.BLOCK, "refs")
-    BLOCK_STRING = (RoamNamespace.BLOCK, "string")
-    BLOCK_UID = (RoamNamespace.BLOCK, "uid")
+    BLOCK_CHILDREN = (SchemaNamespace.BLOCK, "children")
+    BLOCK_HEADING = (SchemaNamespace.BLOCK, "heading")
+    BLOCK_OPEN = (SchemaNamespace.BLOCK, "open")
+    BLOCK_ORDER = (SchemaNamespace.BLOCK, "order")
+    BLOCK_PAGE = (SchemaNamespace.BLOCK, "page")
+    BLOCK_PARENTS = (SchemaNamespace.BLOCK, "parents")
+    BLOCK_PROPS = (SchemaNamespace.BLOCK, "props")
+    BLOCK_REFS = (SchemaNamespace.BLOCK, "refs")
+    BLOCK_STRING = (SchemaNamespace.BLOCK, "string")
+    BLOCK_UID = (SchemaNamespace.BLOCK, "uid")
 
     # children/
-    CHILDREN_VIEW_TYPE = (RoamNamespace.CHILDREN, "view-type")
+    CHILDREN_VIEW_TYPE = (SchemaNamespace.CHILDREN, "view-type")
 
     # create/
-    CREATE_TIME = (RoamNamespace.CREATE, "time")
-    CREATE_USER = (RoamNamespace.CREATE, "user")
+    CREATE_TIME = (SchemaNamespace.CREATE, "time")
+    CREATE_USER = (SchemaNamespace.CREATE, "user")
 
     # edit/
-    EDIT_SEEN_BY = (RoamNamespace.EDIT, "seen-by")
-    EDIT_TIME = (RoamNamespace.EDIT, "time")
-    EDIT_USER = (RoamNamespace.EDIT, "user")
+    EDIT_SEEN_BY = (SchemaNamespace.EDIT, "seen-by")
+    EDIT_TIME = (SchemaNamespace.EDIT, "time")
+    EDIT_USER = (SchemaNamespace.EDIT, "user")
 
     # entity/
-    ENTITY_ATTRS = (RoamNamespace.ENTITY, "attrs")
+    ENTITY_ATTRS = (SchemaNamespace.ENTITY, "attrs")
 
     # graph/
-    GRAPH_SETTINGS = (RoamNamespace.GRAPH, "settings")
+    GRAPH_SETTINGS = (SchemaNamespace.GRAPH, "settings")
 
     # log/
-    LOG_ID = (RoamNamespace.LOG, "id")
+    LOG_ID = (SchemaNamespace.LOG, "id")
 
     # node/
-    NODE_TITLE = (RoamNamespace.NODE, "title")
+    NODE_TITLE = (SchemaNamespace.NODE, "title")
 
     # page/
-    PAGE_SIDEBAR = (RoamNamespace.PAGE, "sidebar")
-    PAGE_EDIT_USER = (RoamNamespace.PAGE, "edit-user")
-    PAGE_EDIT_NONCE = (RoamNamespace.PAGE, "edit-nonce")
-    PAGE_EDIT_TIME = (RoamNamespace.PAGE, "edit-time")
-    PAGE_WORD_COUNT = (RoamNamespace.PAGE, "word-count")
+    PAGE_SIDEBAR = (SchemaNamespace.PAGE, "sidebar")
+    PAGE_EDIT_USER = (SchemaNamespace.PAGE, "edit-user")
+    PAGE_EDIT_NONCE = (SchemaNamespace.PAGE, "edit-nonce")
+    PAGE_EDIT_TIME = (SchemaNamespace.PAGE, "edit-time")
+    PAGE_WORD_COUNT = (SchemaNamespace.PAGE, "word-count")
 
     # pdf/
-    PDF_FINGERPRINTS = (RoamNamespace.PDF, "fingerprints")
-    PDF_URL = (RoamNamespace.PDF, "url")
+    PDF_FINGERPRINTS = (SchemaNamespace.PDF, "fingerprints")
+    PDF_URL = (SchemaNamespace.PDF, "url")
 
     # restrictions/
-    RESTRICTIONS_PREVENT_CLEAN = (RoamNamespace.RESTRICTIONS, "prevent-clean")
+    RESTRICTIONS_PREVENT_CLEAN = (SchemaNamespace.RESTRICTIONS, "prevent-clean")
 
     # token/
-    TOKEN_DESCRIPTION = (RoamNamespace.TOKEN, "description")
+    TOKEN_DESCRIPTION = (SchemaNamespace.TOKEN, "description")
 
     # user/
-    USER_DISPLAY_NAME = (RoamNamespace.USER, "display-name")
-    USER_DISPLAY_PAGE = (RoamNamespace.USER, "display-page")
-    USER_PHOTO_URL = (RoamNamespace.USER, "photo-url")
-    USER_SETTINGS = (RoamNamespace.USER, "settings")
-    USER_UID = (RoamNamespace.USER, "uid")
+    USER_DISPLAY_NAME = (SchemaNamespace.USER, "display-name")
+    USER_DISPLAY_PAGE = (SchemaNamespace.USER, "display-page")
+    USER_PHOTO_URL = (SchemaNamespace.USER, "photo-url")
+    USER_SETTINGS = (SchemaNamespace.USER, "settings")
+    USER_UID = (SchemaNamespace.USER, "uid")
 
     # vc/
-    VC_BLOCKS = (RoamNamespace.VC, "blocks")
+    VC_BLOCKS = (SchemaNamespace.VC, "blocks")
 
     # version/
-    VERSION_ID = (RoamNamespace.VERSION, "id")
-    VERSION_NONCE = (RoamNamespace.VERSION, "nonce")
-    VERSION_UPGRADED_NONCE = (RoamNamespace.VERSION, "upgraded-nonce")
+    VERSION_ID = (SchemaNamespace.VERSION, "id")
+    VERSION_NONCE = (SchemaNamespace.VERSION, "nonce")
+    VERSION_UPGRADED_NONCE = (SchemaNamespace.VERSION, "upgraded-nonce")
 
     # window/
-    WINDOW_ID = (RoamNamespace.WINDOW, "id")
-    WINDOW_FILTERS = (RoamNamespace.WINDOW, "filters")
-    WINDOW_MENTIONS_STATE = (RoamNamespace.WINDOW, "mentions-state")
+    WINDOW_ID = (SchemaNamespace.WINDOW, "id")
+    WINDOW_FILTERS = (SchemaNamespace.WINDOW, "filters")
+    WINDOW_MENTIONS_STATE = (SchemaNamespace.WINDOW, "mentions-state")
 
-    def __init__(self, namespace: RoamNamespace, attr_name: str) -> None:
+    def __init__(self, namespace: SchemaNamespace, attr_name: str) -> None:
         """Bind typed accessors from the ``(namespace, attr_name)`` member value."""
-        self.namespace: RoamNamespace = namespace
+        self.namespace: SchemaNamespace = namespace
         self.attr_name: str = attr_name
 
     def __str__(self) -> str:
@@ -145,9 +145,9 @@ class RoamAttribute(Enum):
         return f":{self.namespace}/{self.attr_name}"
 
 
-type RoamSchema = list[RoamAttribute]
-"""Roam Datomic schema as a list of :class:`RoamAttribute` members.
+type RoamSchema = list[SchemaAttribute]
+"""Roam Datomic schema as a list of :class:`SchemaAttribute` members.
 
 Each member corresponds to one row from the ``[:find ?namespace ?attr ...]``
-schema query, e.g. :attr:`RoamAttribute.BLOCK_UID`.
+schema query, e.g. :attr:`SchemaAttribute.BLOCK_UID`.
 """

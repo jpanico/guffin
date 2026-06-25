@@ -53,7 +53,7 @@ from guffin.roam.primitives import (
     RawRefs,
     Uid,
 )
-from guffin.roam.schema import RoamAttribute
+from guffin.roam.schema import SchemaAttribute
 
 logger = logging.getLogger(__name__)
 
@@ -143,44 +143,44 @@ class RoamNode(BaseModel):
 
     model_config = ConfigDict(frozen=True, populate_by_name=True)
 
-    uid: Uid = Field(..., description=f"{RoamAttribute.BLOCK_UID} — nine-character stable identifier")
+    uid: Uid = Field(..., description=f"{SchemaAttribute.BLOCK_UID} — nine-character stable identifier")
     id: Id = Field(..., description=":db/id — Datomic internal entity id (ephemeral)")
 
     # Block-only fields
     string: str | None = Field(
-        default=None, description=f"{RoamAttribute.BLOCK_STRING} — block text; present only on Blocks"
+        default=None, description=f"{SchemaAttribute.BLOCK_STRING} — block text; present only on Blocks"
     )
     order: Order | None = Field(
-        default=None, description=f"{RoamAttribute.BLOCK_ORDER} — sibling order; present only on child Blocks"
+        default=None, description=f"{SchemaAttribute.BLOCK_ORDER} — sibling order; present only on child Blocks"
     )
     heading: HeadingLevel | None = Field(
-        default=None, description=f"{RoamAttribute.BLOCK_HEADING} — heading level; present only on heading Blocks"
+        default=None, description=f"{SchemaAttribute.BLOCK_HEADING} — heading level; present only on heading Blocks"
     )
     children: RawChildren | None = Field(
         default=None,
-        description=f"{RoamAttribute.BLOCK_CHILDREN} — raw child stubs; present on Blocks and Pages with children",
+        description=f"{SchemaAttribute.BLOCK_CHILDREN} — raw child stubs; present on Blocks and Pages with children",
     )
     refs: RawRefs | None = Field(
-        default=None, description=f"{RoamAttribute.BLOCK_REFS} — raw reference stubs; present only on Blocks"
+        default=None, description=f"{SchemaAttribute.BLOCK_REFS} — raw reference stubs; present only on Blocks"
     )
     page: IdObject | None = Field(
-        default=None, description=f"{RoamAttribute.BLOCK_PAGE} — containing page stub; present only on Blocks"
+        default=None, description=f"{SchemaAttribute.BLOCK_PAGE} — containing page stub; present only on Blocks"
     )
     open: bool | None = Field(
-        default=None, description=f"{RoamAttribute.BLOCK_OPEN} — expanded/collapsed state; present only on Blocks"
+        default=None, description=f"{SchemaAttribute.BLOCK_OPEN} — expanded/collapsed state; present only on Blocks"
     )
     children_view_type: ChildrenViewType | None = Field(
         default=None,
         alias="view-type",
-        description=f"{RoamAttribute.CHILDREN_VIEW_TYPE} — how this block's children are rendered",
+        description=f"{SchemaAttribute.CHILDREN_VIEW_TYPE} — how this block's children are rendered",
     )
     parents: list[IdObject] | None = Field(
-        default=None, description=f"{RoamAttribute.BLOCK_PARENTS} — all ancestor stubs; present only on Blocks"
+        default=None, description=f"{SchemaAttribute.BLOCK_PARENTS} — all ancestor stubs; present only on Blocks"
     )
     props: dict[str, object] | None = Field(
         default=None,
         description=(
-            f"{RoamAttribute.BLOCK_PROPS} — block property key-value map; "
+            f"{SchemaAttribute.BLOCK_PROPS} — block property key-value map; "
             "present only on Blocks that have block properties set (e.g. ``ah-level`` from Augmented Headings)."
         ),
     )
@@ -188,12 +188,12 @@ class RoamNode(BaseModel):
     # Page fields
     title: PageTitle | None = Field(
         default=None,
-        description=f"{RoamAttribute.NODE_TITLE} — page title; present only on Page entities",
+        description=f"{SchemaAttribute.NODE_TITLE} — page title; present only on Page entities",
     )
 
     # Sparse / metadata fields
     attrs: list[list[LinkObject]] | None = Field(
-        default=None, description=f"{RoamAttribute.ENTITY_ATTRS} — structured attribute assertions"
+        default=None, description=f"{SchemaAttribute.ENTITY_ATTRS} — structured attribute assertions"
     )
 
     @field_validator("heading", mode="before")

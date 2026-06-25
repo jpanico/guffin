@@ -6,8 +6,8 @@ Public symbols:
   schema for a Roam graph via the Local API's ``data.q`` action.
 
 The schema model types (:data:`~guffin.roam.schema.RoamSchema`,
-:class:`~guffin.roam.schema.RoamNamespace`,
-:class:`~guffin.roam.schema.RoamAttribute`) are defined in
+:class:`~guffin.roam.schema.SchemaNamespace`,
+:class:`~guffin.roam.schema.SchemaAttribute`) are defined in
 :mod:`guffin.roam.schema`.
 """
 
@@ -23,7 +23,7 @@ from guffin.roam.local_api import (
     Response as LocalApiResponse,
     invoke_action,
 )
-from guffin.roam.schema import RoamAttribute, RoamNamespace, RoamSchema
+from guffin.roam.schema import SchemaAttribute, SchemaNamespace, RoamSchema
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class FetchRoamSchema:
 
             ``result`` holds the raw ``(namespace, attr_name)`` string pairs
             exactly as returned by the Local API.  :meth:`FetchRoamSchema.fetch`
-            converts them to :data:`RoamSchema` (``list[RoamAttribute]``).
+            converts them to :data:`RoamSchema` (``list[SchemaAttribute]``).
             """
 
             model_config = ConfigDict(frozen=True)
@@ -80,19 +80,19 @@ class FetchRoamSchema:
         """Fetch the Roam Datomic schema via the Local API.
 
         Executes the ``data.q`` schema query and returns all attributes present in
-        the graph's Datomic schema as :class:`~guffin.roam.schema.RoamAttribute` members.
+        the graph's Datomic schema as :class:`~guffin.roam.schema.SchemaAttribute` members.
 
         Args:
             api_endpoint: The API endpoint (URL + bearer token) for the target Roam graph.
 
         Returns:
             A :data:`~guffin.roam.schema.RoamSchema` — a list of
-            :class:`~guffin.roam.schema.RoamAttribute` members, one per row in the
+            :class:`~guffin.roam.schema.SchemaAttribute` members, one per row in the
             schema query result.
 
         Raises:
             ValueError: If a ``(namespace, attr_name)`` pair returned by the live graph
-                has no matching :class:`~guffin.roam.schema.RoamAttribute` member
+                has no matching :class:`~guffin.roam.schema.SchemaAttribute` member
                 (schema drift detected).
             ValidationError: If ``api_endpoint`` is ``None`` or invalid.
             requests.exceptions.ConnectionError: If the Local API is unreachable.
@@ -111,4 +111,4 @@ class FetchRoamSchema:
         logger.debug("schema_response_payload: %s", schema_response_payload)
 
         raw_result: list[tuple[str, str]] = schema_response_payload.result
-        return [RoamAttribute((RoamNamespace(ns), attr_name)) for ns, attr_name in raw_result]
+        return [SchemaAttribute((SchemaNamespace(ns), attr_name)) for ns, attr_name in raw_result]

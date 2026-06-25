@@ -1,6 +1,6 @@
 # Roam Schema
 
-Kept in sync with the `RoamAttribute` enum in `src/guffin/roam_schema.py`.
+Kept in sync with the `SchemaAttribute` enum in `src/guffin/roam/schema.py`.
 Namespaces and attr_names are sorted alphabetically.
 
 | namespace      | attr_name         |
