@@ -5,7 +5,6 @@ Public symbols:
 - :data:`NodeNetwork` — a collection of :class:`~guffin.roam.node.RoamNode` instances.
 - :func:`all_children_present` — :data:`~guffin.common.validation.Validator` requiring all child ids in a
   :data:`NodeNetwork` to resolve to member nodes.
-- :func:`all_descendants` — collect all nodes reachable from an ancestor via child edges.
 - :func:`all_parents_present` — validator function requiring all non-root parent ids in a
   :data:`NodeNetwork` to resolve to member nodes; accepts a *root_node* argument whose own
   parent ids are exempt from the check.
@@ -13,6 +12,7 @@ Public symbols:
   :attr:`~guffin.roam.node.RoamNode.id` in a :data:`NodeNetwork` to be unique.
 - :func:`is_acyclic` — :data:`~guffin.common.validation.Validator` requiring the child-edge graph of a
   :data:`NodeNetwork` to be cycle-free.
+- :func:`all_descendants` — collect all nodes reachable from an ancestor via child edges.
 - :func:`refs_ids` — return the set of all :attr:`~guffin.roam.node.RoamNode.refs` ids across every
   node in a :data:`NodeNetwork`.
 - :func:`direct_refs_nodes` — return the :data:`NodeNetwork` of nodes in a :data:`NodeNetwork` whose

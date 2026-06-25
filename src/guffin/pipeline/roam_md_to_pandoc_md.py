@@ -108,6 +108,31 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
 
 
 @validate_call
+def convert_color_bold(roam_string: str) -> str:
+    """Convert Color Highlighter colorized bold spans to Pandoc bracketed spans.
+
+    The Color Highlighter Roam extension uses ``#c:COLOR **bold text**`` to
+    render bold text in a named color.  Each such span is converted to a Pandoc
+    bracketed span with a ``color`` attribute:
+    ``[**bold text**]{color="orange"}``.  The color name is lowercased for
+    CSS compatibility.  Must run before other conversions so that any Roam
+    constructs inside the bold content are still available for subsequent steps.
+
+    Args:
+        roam_string: A Roam block string, possibly containing
+            ``#c:COLOR **text**`` spans.
+
+    Returns:
+        The string with all ``#c:COLOR **text**`` spans replaced by
+        ``[**text**]{color="color"}`` bracketed spans.
+    """
+    return COLOR_BOLD_RE.sub(
+        lambda match: f'[**{match.group(2)}**]{{color="{match.group(1).lower()}"}}',
+        roam_string,
+    )
+
+
+@validate_call
 def convert_color_highlight(roam_string: str) -> str:
     """Convert Color Highlighter colorized highlight spans to Pandoc bracketed spans.
 
@@ -284,31 +309,6 @@ def convert_highlights(roam_string: str) -> str:
         The string with all ``^^text^^`` spans replaced by ``[text]{.mark}``.
     """
     return HIGHLIGHT_RE.sub(r"[\1]{.mark}", roam_string)
-
-
-@validate_call
-def convert_color_bold(roam_string: str) -> str:
-    """Convert Color Highlighter colorized bold spans to Pandoc bracketed spans.
-
-    The Color Highlighter Roam extension uses ``#c:COLOR **bold text**`` to
-    render bold text in a named color.  Each such span is converted to a Pandoc
-    bracketed span with a ``color`` attribute:
-    ``[**bold text**]{color="orange"}``.  The color name is lowercased for
-    CSS compatibility.  Must run before other conversions so that any Roam
-    constructs inside the bold content are still available for subsequent steps.
-
-    Args:
-        roam_string: A Roam block string, possibly containing
-            ``#c:COLOR **text**`` spans.
-
-    Returns:
-        The string with all ``#c:COLOR **text**`` spans replaced by
-        ``[**text**]{color="color"}`` bracketed spans.
-    """
-    return COLOR_BOLD_RE.sub(
-        lambda match: f'[**{match.group(2)}**]{{color="{match.group(1).lower()}"}}',
-        roam_string,
-    )
 
 
 @validate_call

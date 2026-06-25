@@ -135,6 +135,7 @@ Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `test
 - Line length: 120 chars (Black + Ruff)
 - Docstrings: PEP 257 format (pydocstringformatter), Google style convention (Ruff)
 - **Dependent-agnostic documentation**: a module, class, or function must document what it offers on its own terms — never how its dependents (importers/callers) consume it. Don't name downstream modules or describe their usage in upstream docstrings or comments (e.g. avoid "X and Y delegate their logic here" or "shared by Z"); describe behaviour through the API's own parameters and contract, so the documentation reads identically regardless of who depends on it.
+- **`Public symbols:` docstring is a by-kind index**: the module-docstring `Public symbols:` block is a *categorized index* of the module's public API, grouped by kind (pattern constants → type aliases → enums → models/classes → functions), with related symbols kept contiguous within a group. It is **independent of definition order** — the body's order follows define-before-use and feature cohesion (e.g. a discriminated-union alias must be defined after its members, a Typer `app` before the `main` it decorates), so the index and the body deliberately need not match. Keep the index grouping coherent; do not reorder code to track it.
 - **Tests**: pytest, files named `test_*.py`. The `tests/` tree mirrors `src/guffin/`:
   each test module lives in the subpackage of the module it covers
   (`tests/<package>/test_<module>.py`, e.g. `tests/roam/test_markdown.py` for
