@@ -42,7 +42,7 @@ from typing import Final
 import yaml
 
 from guffin.cli.common import deduce_out_file_stem
-from guffin.model.render_doc import RenderDoc
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import vertex_adapter
 from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
@@ -203,7 +203,7 @@ def main() -> None:
     anchor_tree: Final[NodeTree] = result.anchor_tree
     nodes: Final[list[RoamNode]] = list(anchor_tree.tree_network)
     vertex_tree: Final[VertexTree] = transcribe(anchor_tree)
-    render_doc: Final[RenderDoc] = RenderDoc(content=vertex_tree, view=build_view_map(anchor_tree))
+    render_bundle: Final[RenderBundle] = RenderBundle(content=vertex_tree, view=build_view_map(anchor_tree))
     out_stem: Final[str] = deduce_out_file_stem(vertex_tree)
     print(f"  fetched {len(result.network)} node(s) total, {len(nodes)} anchor node(s)")
     print(f"  transcribed {len(vertex_tree.tree_vertices)} vertex/vertices")
@@ -250,7 +250,7 @@ def main() -> None:
     md_path: Final[pathlib.Path] = FIXTURES_MD / f"{prefix}_expected.md"
     with tempfile.TemporaryDirectory() as tmp_dir:
         render(
-            render_doc,
+            render_bundle,
             filename_stem=out_stem,
             output_dir=pathlib.Path(tmp_dir),
             api_endpoint=endpoint,
@@ -313,7 +313,7 @@ def main() -> None:
     if args.pdf:
         FIXTURES_PDF.mkdir(parents=True, exist_ok=True)
         os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
-        render_pdf(render_doc, filename_stem=out_stem, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
+        render_pdf(render_bundle, filename_stem=out_stem, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
         pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{out_stem}.pdf"
         print(f"  wrote {pdf_path}")
 
@@ -321,7 +321,7 @@ def main() -> None:
     if args.mdbundle:
         FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
         render(
-            render_doc,
+            render_bundle,
             filename_stem=out_stem,
             output_dir=FIXTURES_MDBUNDLE,
             api_endpoint=endpoint,

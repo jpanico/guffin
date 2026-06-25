@@ -1,10 +1,10 @@
-"""The Guffin render document: a VertexTree paired with its presentation ViewMap.
+"""The Guffin render bundle: a VertexTree paired with its presentation ViewMap.
 
 Public symbols:
 
-- :class:`RenderDoc` — bundles a :class:`~guffin.model.vertex_tree.VertexTree` (content) with
+- :class:`RenderBundle` — bundles a :class:`~guffin.model.vertex_tree.VertexTree` (content) with
   its :data:`~guffin.model.view.ViewMap` (presentation).  The two are held as separate fields so
-  content and presentation stay decoupled while travelling together as one document.
+  content and presentation stay decoupled while travelling together as one bundle.
 """
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -13,7 +13,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ViewMap
 
 
-class RenderDoc(BaseModel):
+class RenderBundle(BaseModel):
     """A normalized content tree paired with its presentation view map.
 
     Attributes:

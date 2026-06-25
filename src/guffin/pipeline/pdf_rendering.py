@@ -39,7 +39,7 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
-from guffin.model.render_doc import RenderDoc
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.pipeline.pandoc_rendering import (
@@ -132,7 +132,7 @@ def _dump_typst_sources(
 
 @validate_call
 def render(
-    render_doc: RenderDoc,
+    render_bundle: RenderBundle,
     filename_stem: str,
     output_dir: Path,
     api_endpoint: ApiEndpoint,
@@ -140,7 +140,7 @@ def render(
     template_dir: Path | None = None,
     dump_pandoc_ast: bool = False,
 ) -> None:
-    """Render *render_doc* to a PDF file inside *output_dir*.
+    """Render *render_bundle* to a PDF file inside *output_dir*.
 
     Writes ``<output_dir>/<filename_stem>.pdf``.  Fetches all Cloud
     Firestore image assets into a temporary directory and enriches the vertex
@@ -155,7 +155,7 @@ def render(
     Pandoc and Typst must be installed and on ``PATH``.
 
     Args:
-        render_doc: The content tree (with its presentation view map) to render.
+        render_bundle: The content tree (with its presentation view map) to render.
         filename_stem: Output filename stem, used verbatim to derive the output
             path; the caller is responsible for POSIX-safety.
         output_dir: Directory in which the ``.pdf`` file is written; created
@@ -215,13 +215,13 @@ def render(
 
     with tempfile.TemporaryDirectory() as tmp:
         fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(
-            render_doc.content, api_endpoint, Path(tmp), cache_dir
+            render_bundle.content, api_endpoint, Path(tmp), cache_dir
         )
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
         image_files: Final[dict[Uid, Path]] = {uid: ref.path for uid, ref in image_refs.items()}
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
-            enriched_tree, image_files, render_doc.view
+            enriched_tree, image_files, render_bundle.view
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]

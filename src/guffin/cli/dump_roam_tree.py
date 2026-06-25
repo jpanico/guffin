@@ -66,7 +66,7 @@ from guffin.pipeline.image_fetch import fetch_and_enrich_images
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
 from guffin.cli.common import fetch_roam_trees
-from guffin.model.render_doc import RenderDoc
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint
 from guffin.cli.logging_config import configure_logging
@@ -345,7 +345,7 @@ def main(
         anchor=NodeFetchAnchor(qualifier=target), include_refs=include_refs, include_node_tree=show_node_tree
     )
     try:
-        trees: Final[tuple[NodeFetchResult, RenderDoc | None]] = fetch_roam_trees(
+        trees: Final[tuple[NodeFetchResult, RenderBundle | None]] = fetch_roam_trees(
             fetch_spec, show_vertex_tree, api_endpoint
         )
     except RoamNodeNotFoundError as exc:
@@ -361,8 +361,8 @@ def main(
         logger.exception("Error fetching %r from graph %r", target, graph_name)
         raise typer.Exit(code=1)
     fetch_result: Final[NodeFetchResult] = trees[0]
-    render_doc: Final[RenderDoc | None] = trees[1]
-    vertex_tree: Final[VertexTree | None] = render_doc.content if render_doc is not None else None
+    render_bundle: Final[RenderBundle | None] = trees[1]
+    vertex_tree: Final[VertexTree | None] = render_bundle.content if render_bundle is not None else None
     dump_trees(
         fetch_result=fetch_result,
         vertex_tree=vertex_tree,

@@ -30,7 +30,7 @@ from guffin.pipeline.roam_tree_to_guffin import (
     to_heading_vertex,
     to_image_vertex,
     to_page_vertex,
-    to_render_doc,
+    to_render_bundle,
     to_table,
     to_table_vertex,
     to_text_vertex,
@@ -39,7 +39,7 @@ from guffin.pipeline.roam_tree_to_guffin import (
     vertex_type,
 )
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
-from guffin.model.render_doc import RenderDoc
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.view import ChildrenLayout, VertexView
 from guffin.roam.node_tree import NodeTree
 from guffin.roam.primitives import ChildrenViewType, IdObject
@@ -1087,15 +1087,15 @@ class TestBuildViewMap:
 
 
 # ---------------------------------------------------------------------------
-# TestToRenderDoc
+# TestToRenderBundle
 # ---------------------------------------------------------------------------
 
 
-class TestToRenderDoc:
-    """Tests for to_render_doc."""
+class TestToRenderBundle:
+    """Tests for to_render_bundle."""
 
     def test_bundles_transcribe_and_build_view_map(self) -> None:
-        """to_render_doc pairs transcribe() content with build_view_map() presentation."""
+        """to_render_bundle pairs transcribe() content with build_view_map() presentation."""
         root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
         child = RoamNode(
             uid="numberd01",
@@ -1106,7 +1106,7 @@ class TestToRenderDoc:
             page=IdObject(id=1),
         )
         tree = _node_tree(root, child)
-        render_doc = to_render_doc(tree)
-        assert isinstance(render_doc, RenderDoc)
-        assert render_doc.content == transcribe(tree)
-        assert render_doc.view == build_view_map(tree)
+        render_bundle = to_render_bundle(tree)
+        assert isinstance(render_bundle, RenderBundle)
+        assert render_bundle.content == transcribe(tree)
+        assert render_bundle.view == build_view_map(tree)
