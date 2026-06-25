@@ -18,15 +18,17 @@ Public symbols:
 # The four suppressed rules are triggered entirely by that Unknown propagation — disabling them
 # here avoids dozens of cascading false-positive errors without relaxing any other strict checks.
 
+import importlib.resources
 import logging
 from pathlib import Path
 from typing import Final
 
-_RENDER_DIR: Final[Path] = Path(__file__).parent
-_GFM_CALLOUT_FILTER: Final[Path] = _RENDER_DIR / "gfm_callout.lua"
-_GFM_COLOR_SPAN_FILTER: Final[Path] = _RENDER_DIR / "gfm_color_span.lua"
-_GFM_IMAGE_FILTER: Final[Path] = _RENDER_DIR / "gfm_image.lua"
-_GFM_MARK_FILTER: Final[Path] = _RENDER_DIR / "gfm_mark.lua"
+_GFM_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.gfm_resources"
+# Lua-filter filenames, resolved against the bundled gfm_resources directory at render time.
+_GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
+_GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
+_GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
+_GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
 
 import regex
 import panflute as pf  # type: ignore[import-untyped]
@@ -60,6 +62,14 @@ the comment literally, so it is stripped from the output — letting the adjacen
 def _strip_list_separator_comments(gfm: str) -> str:
     """Remove Pandoc's empty ``<!-- -->`` list-separator comments from *gfm*."""
     return _LIST_SEPARATOR_COMMENT_RE.sub("\n\n", gfm)
+
+
+def _gfm_resources_dir() -> Path:
+    """Return the absolute path to the bundled ``guffin/pipeline/gfm_resources/`` directory."""
+    pkg_files = importlib.resources.files(_GFM_RESOURCES_PACKAGE)
+    # ``as_file`` gives a real filesystem path even for zipped wheels.
+    with importlib.resources.as_file(pkg_files) as resources_path:
+        return resources_path
 
 
 @validate_call
@@ -112,6 +122,7 @@ def render(
             invoking Pandoc.  Useful for debugging the intermediate
             representation.
     """
+    gfm_dir: Final[Path] = _gfm_resources_dir()
     if bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"
         bundle_dir.mkdir(parents=True, exist_ok=True)
@@ -139,10 +150,10 @@ def render(
             format="json",
             extra_args=[
                 "--wrap=none",
-                f"--lua-filter={_GFM_CALLOUT_FILTER}",
-                f"--lua-filter={_GFM_COLOR_SPAN_FILTER}",
-                f"--lua-filter={_GFM_IMAGE_FILTER}",
-                f"--lua-filter={_GFM_MARK_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
             ],
         )
         output_file: Final[Path] = bundle_dir / f"{filename_stem}.md"
@@ -164,9 +175,9 @@ def render(
             format="json",
             extra_args=[
                 "--wrap=none",
-                f"--lua-filter={_GFM_CALLOUT_FILTER}",
-                f"--lua-filter={_GFM_COLOR_SPAN_FILTER}",
-                f"--lua-filter={_GFM_MARK_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
             ],
         )
         output_path: Final[Path] = output_dir / f"{filename_stem}.md"

@@ -13,7 +13,8 @@ directory, and embedded in the PDF as local-path
 re-downloading unchanged assets across runs.
 
 The Bergfink Pandoc/Typst template (bundled as package data under
-``guffin/templates/``) is used by default.  Pass *template_dir* to point at a
+``guffin/pipeline/typst_resources/``, alongside the ``typst_*.lua`` Pandoc filters) is used by
+default.  Pass *template_dir* to point at a
 directory containing a ``user_cfg.typ`` override; Bergfink's ``$if(user-config)$``
 mechanism will load it in place of the bundled default.
 
@@ -55,20 +56,21 @@ from guffin.roam.primitives import Uid
 logger = logging.getLogger(__name__)
 
 
-_TEMPLATE_PACKAGE: Final[str] = "guffin.templates"
+_TYPST_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.typst_resources"
 _TEMPLATE_ENTRY: Final[str] = "bergfink.typst"
 _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
-_TYPST_CALLOUT_FILTER: Final[Path] = Path(__file__).parent / "typst_callout.lua"
-_TYPST_COLOR_SPAN_FILTER: Final[Path] = Path(__file__).parent / "typst_color_span.lua"
-_TYPST_LIST_PARA_FILTER: Final[Path] = Path(__file__).parent / "typst_list_para.lua"
+# Lua-filter filenames, resolved against the bundled typst_resources directory at render time.
+_TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
+_TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
+_TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 
 
-def _bundled_templates_dir() -> Path:
-    """Return the absolute path to the bundled ``guffin/templates/`` directory."""
-    pkg_files = importlib.resources.files(_TEMPLATE_PACKAGE)
+def _typst_resources_dir() -> Path:
+    """Return the absolute path to the bundled ``guffin/pipeline/typst_resources/`` directory."""
+    pkg_files = importlib.resources.files(_TYPST_RESOURCES_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
-    with importlib.resources.as_file(pkg_files) as templates_path:
-        return templates_path
+    with importlib.resources.as_file(pkg_files) as resources_path:
+        return resources_path
 
 
 def _dump_typst_sources(
@@ -103,9 +105,9 @@ def _dump_typst_sources(
         "typst",
         format="json",
         extra_args=[
-            f"--lua-filter={_TYPST_CALLOUT_FILTER}",
-            f"--lua-filter={_TYPST_COLOR_SPAN_FILTER}",
-            f"--lua-filter={_TYPST_LIST_PARA_FILTER}",
+            f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
+            f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
+            f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
         ],
     )
     typst_body_path: Final[Path] = output_dir / f"{stem}.body.typ"
@@ -114,9 +116,9 @@ def _dump_typst_sources(
     typst_full_extra: list[str] = [
         f"--template={template_path}",
         f"--resource-path={bundled_dir}",
-        f"--lua-filter={_TYPST_CALLOUT_FILTER}",
-        f"--lua-filter={_TYPST_COLOR_SPAN_FILTER}",
-        f"--lua-filter={_TYPST_LIST_PARA_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
         "-V",
         "listings=true",
     ]
@@ -185,16 +187,16 @@ def render(
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.pdf"
 
-    bundled_dir: Final[Path] = _bundled_templates_dir()
+    bundled_dir: Final[Path] = _typst_resources_dir()
     template_path: Final[Path] = bundled_dir / _TEMPLATE_ENTRY
 
     extra_args: list[str] = [
         "--pdf-engine=typst",
         f"--template={template_path}",
         f"--resource-path={bundled_dir}",
-        f"--lua-filter={_TYPST_CALLOUT_FILTER}",
-        f"--lua-filter={_TYPST_COLOR_SPAN_FILTER}",
-        f"--lua-filter={_TYPST_LIST_PARA_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
         "-V",
         "listings=true",
     ]

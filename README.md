@@ -13,7 +13,7 @@ Python 3.14 toolkit for exporting Roam Research graph sub-trees to self-containe
 - Git
 - [Pandoc](https://pandoc.org/installing.html) — required for all export formats (`brew install pandoc`)
 - [Typst](https://typst.app) — PDF engine used by Pandoc (`brew install typst`)
-- **Noto Sans** and **Noto Sans Mono** (static, not variable) _fonts_ — required for PDF rendering with the default Bergfink template; install the static variants from Google Fonts via Font Book, or override the fonts in `src/guffin/templates/user_cfg.typ`
+- **Noto Sans** and **Noto Sans Mono** (static, not variable) _fonts_ — required for PDF rendering with the default Bergfink template; install the static variants from Google Fonts via Font Book, or override the fonts in `src/guffin/pipeline/typst_resources/user_cfg.typ`
 
 ### Initial Setup
 
@@ -176,43 +176,31 @@ guffin/
 │       │   ├── md_rendering.py            # VertexTree → GFM Markdown; writes .mdbundle or plain .md
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
 │       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree
-│       │   ├── gfm_callout.lua            # Lua filter: callout Div → GFM alert blockquote
-│       │   ├── gfm_color_span.lua         # Lua filter: bg-color Span/Div → GFM HTML span
-│       │   ├── gfm_image.lua              # Lua filter: image sizing attributes → HTML <img>
-│       │   ├── gfm_mark.lua               # Lua filter: Underline inline → GFM <mark> highlight
-│       │   ├── typst_callout.lua          # Lua filter: callout Div → gentle-clues callout box
-│       │   └── typst_color_span.lua       # Lua filter: bg-color Span/Div → Typst highlight
+│       │   ├── gfm_resources/             # GFM Pandoc Lua filters (package data): gfm_callout,
+│       │   │                              #   gfm_color_span, gfm_image, gfm_mark
+│       │   └── typst_resources/           # Bergfink Typst template + typst_*.lua filters
+│       │                                  #   (package data; see typst_resources/README.md)
 │       │
-│       ├── roam/                        # Roam Research data model, API, and processing
-│       │   ├── primitives.py              # Foundational type aliases (Uid, Id, Order, PageTitle),
-│       │   │                              #   stub models (IdObject, LinkObject), and UID regex
-│       │   │                              #   constants (UID_PATTERN/RE, ANCHORED_UID_PATTERN/RE)
-│       │   ├── markdown.py                # Roam Markdown constructs: CALLOUT_RE, CalloutType,
-│       │   │                              #   RoamCallout, parse_callout, IMAGE_LINK_RE,
-│       │   │                              #   block-quote helpers, ROAM_NATIVE_TABLE_MARKER
-│       │   ├── schema.py                  # Datomic schema model types (RoamNamespace, …)
-│       │   ├── node.py                    # RoamNode, NodeType, node_type, NodesByUid
-│       │   ├── node_network.py            # NodeNetwork; validators (all_children_present,
-│       │   │                              #   is_acyclic, …) and utilities (all_descendants,
-│       │   │                              #   refs_ids, min_effective_heading_level)
-│       │   ├── node_tree.py               # NodeTree (build() factory, id_map, page_name_map),
-│       │   │                              #   NodeTreeDFSIterator, is_tree
-│       │   ├── asset.py                   # Cloud Firestore asset model
-│       │   ├── local_api.py               # ApiEndpoint model for the Roam Local API
-│       │   ├── node_fetch_result.py       # NodeFetchAnchor, NodeFetchSpec, NodeFetchResult
-│       │   ├── node_fetch.py              # Fetch RoamNode records via Local API
-│       │   ├── schema_fetch.py            # Fetch Datomic schema via Local API
-│       │   └── asset_fetch.py             # Fetch Cloud Firestore assets via Local API
-│       │
-│       └── templates/                   # Bergfink Typst/Pandoc PDF template (package data)
-│           ├── bergfink.typst             # Pandoc template entry point
-│           ├── base_cfg.typ               # Default cfg dictionary (all supported keys)
-│           ├── user_cfg.typ               # User overrides (checked into repo as a working example)
-│           ├── default_styles.typ         # Show/set rules derived from cfg
-│           ├── titlepage.typ              # Title page layout partial
-│           ├── toc.typ                    # Table of contents partial
-│           ├── abstract.typ               # Abstract page partial
-│           └── yamltable.typ              # YAML-driven table rendering partial
+│       └── roam/                        # Roam Research data model, API, and processing
+│           ├── primitives.py              # Foundational type aliases (Uid, Id, Order, PageTitle),
+│           │                              #   stub models (IdObject, LinkObject), and UID regex
+│           │                              #   constants (UID_PATTERN/RE, ANCHORED_UID_PATTERN/RE)
+│           ├── markdown.py                # Roam Markdown constructs: CALLOUT_RE, CalloutType,
+│           │                              #   RoamCallout, parse_callout, IMAGE_LINK_RE,
+│           │                              #   block-quote helpers, ROAM_NATIVE_TABLE_MARKER
+│           ├── schema.py                  # Datomic schema model types (RoamNamespace, …)
+│           ├── node.py                    # RoamNode, NodeType, node_type, NodesByUid
+│           ├── node_network.py            # NodeNetwork; validators (all_children_present,
+│           │                              #   is_acyclic, …) and utilities (all_descendants,
+│           │                              #   refs_ids, min_effective_heading_level)
+│           ├── node_tree.py               # NodeTree (build() factory, id_map, page_name_map),
+│           │                              #   NodeTreeDFSIterator, is_tree
+│           ├── asset.py                   # Cloud Firestore asset model
+│           ├── local_api.py               # ApiEndpoint model for the Roam Local API
+│           ├── node_fetch_result.py       # NodeFetchAnchor, NodeFetchSpec, NodeFetchResult
+│           ├── node_fetch.py              # Fetch RoamNode records via Local API
+│           ├── schema_fetch.py            # Fetch Datomic schema via Local API
+│           └── asset_fetch.py             # Fetch Cloud Firestore assets via Local API
 │
 ├── tests/                               # pytest test suite
 │   ├── conftest.py                        # Shared fixtures and helpers

@@ -60,6 +60,8 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `md_rendering.py` — renders a `VertexTree` to Markdown: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to GFM via Pandoc, writes a plain `.md` or `.mdbundle/` directory
     - `pdf_rendering.py` — renders a `VertexTree` to PDF: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to PDF via Pandoc + Typst
     - `rich_rendering.py` — Rich panel/tree rendering for `NodeTree` and `VertexTree`
+    - `typst_resources/` — bundled package data for PDF output (consumed only by `pdf_rendering.py`): the Bergfink Typst/Pandoc template (`user_cfg.typ` is the intended customization point; see `src/guffin/pipeline/typst_resources/README.md`) plus the `typst_*.lua` Pandoc filters
+    - `gfm_resources/` — bundled package data for Markdown output (consumed only by `md_rendering.py`): the `gfm_*.lua` Pandoc filters (callout, color-span, image, mark)
   - **`common/` sub-package** (`src/guffin/common/`) — cross-cutting helpers shared across the package
     - `code_language.py` — `CodeLanguage` StrEnum of programming-language identifiers for fenced code block info strings
     - `filenames.py` — `shell_safe_filename()` normalizes strings to POSIX-safe filenames
@@ -67,8 +69,6 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `markdown.py` — CommonMark fenced code block utilities: `is_fenced_code_block()`, `FencedCodeBlock` NamedTuple, `parse_fenced_code_block()`
     - `media_type.py` — `MediaType` enum; MIME type detection from file names
     - `validation.py` — generic accumulator-pipeline validation framework
-  - **Templates**
-    - `templates/` — Bergfink Typst/Pandoc PDF template (package data; see `src/guffin/templates/README.md`); `user_cfg.typ` is the intended customization point
   - **`roam/` sub-package** (`src/guffin/roam/`) — all Roam Research data model, API, and processing modules
     - `primitives.py` — foundational type aliases, stub models, `UID_PATTERN`/`UID_RE`, `ANCHORED_UID_PATTERN`/`ANCHORED_UID_RE` (dependency root)
     - `markdown.py` — Roam Markdown constructs: `CALLOUT_RE`, `CalloutType`, `RoamCallout`, `parse_callout`, `IMAGE_LINK_RE`, block-quote helpers (`is_roam_block_quote`, `strip_block_quote_marker`), `ROAM_NATIVE_TABLE_MARKER`
