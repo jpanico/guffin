@@ -153,7 +153,7 @@ Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `test
 - **Parameter names**: function and method parameter names must be at least 3 characters long; single- and two-character names (e.g. `s`, `fn`, `cb`) are not allowed.
 
 ## Architecture
-- **CLI isolation**: only `export_roam_tree.py` and `dump_roam_tree.py` may import or use the Typer package. All other modules must be front-end agnostic so they can be used outside a CLI context without pulling in CLI dependencies.
+- **CLI isolation**: only modules in the `cli/` sub-package may import or use the Typer package (the entry points `export_roam_tree.py` / `dump_roam_tree.py` and CLI-only support modules such as `cli/params.py`). All modules outside `cli/` must be front-end agnostic so they can be used outside a CLI context without pulling in CLI dependencies. Within `cli/`, keep Typer out of modules that have a non-CLI reason to stay framework-free (e.g. `cli/common.py`, whose helpers are unit-tested directly).
 - **Exit-point isolation**: all explicit process-exit calls (`typer.Exit`, `sys.exit`, etc.) must live exclusively in the CLI modules. Library code propagates exceptions; CLIs decide whether and how to exit. This keeps control-flow transparent and makes library code testable without mocking exit behaviour.
 
 ### Sub-package dependency rules
@@ -174,7 +174,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 
 - **Built-in generics**: always `list[x]`, `tuple[x, y]`, `dict[k, v]`, `set[x]` — never `List`, `Tuple`, `Dict`, `Set` from `typing`
 - **Union syntax**: always `X | Y` and `X | None` — never `Union[X, Y]` or `Optional[X]`
-- **Type aliases**: always `type Foo = ...` (PEP 695) — never `Foo: TypeAlias = ...` or bare `Foo = ...`
+- **Type aliases**: always `type Foo = ...` (PEP 695) — never `Foo: TypeAlias = ...` or bare `Foo = ...`. Exception: a shared **Typer parameter alias** (`Name = Annotated[T, typer.Option(...)]` / `typer.Argument(...)` reused across CLI commands, e.g. in `cli/params.py`) must use a plain assignment, because Typer reads the embedded `Option`/`Argument` metadata off the annotation object and cannot resolve it through a PEP 695 `TypeAliasType` (it raises `RuntimeError: Type not yet supported`).
 - **No `from __future__ import annotations`**: not needed in Python 3.14 (PEP 649 deferred evaluation is the default)
 - **No string-quoted forward references**: never `"ClassName"` in annotations; if a forward reference is needed, reorder definitions so the referenced name is declared first
 - **No `cast()`**: never use `typing.cast()`; fix the type properly instead

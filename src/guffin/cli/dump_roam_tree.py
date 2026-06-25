@@ -70,7 +70,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint
 from guffin.cli.logging_config import configure_logging
-from guffin.roam.primitives import ANCHORED_UID_PATTERN
+from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -213,43 +213,10 @@ def dump_trees(
 
 @app.command()
 def main(
-    target: Annotated[
-        str,
-        typer.Argument(
-            help=(
-                "Roam page title or node UID to dump. "
-                f"Treated as a node UID if it matches {ANCHORED_UID_PATTERN}; "
-                "otherwise treated as a page title."
-            ),
-        ),
-    ],
-    local_api_port: Annotated[
-        int,
-        typer.Option(
-            "--port",
-            "-p",
-            envvar="GUFFIN_ROAM_LOCAL_API_PORT",
-            help="Port for Roam Local API",
-        ),
-    ],
-    graph_name: Annotated[
-        str,
-        typer.Option(
-            "--graph",
-            "-g",
-            envvar="GUFFIN_ROAM_GRAPH_NAME",
-            help="Name of the Roam graph",
-        ),
-    ],
-    api_bearer_token: Annotated[
-        str,
-        typer.Option(
-            "--token",
-            "-t",
-            envvar="GUFFIN_ROAM_API_TOKEN",
-            help="Bearer token for Roam Local API authentication",
-        ),
-    ],
+    target: TargetArgument,
+    local_api_port: PortOption,
+    graph_name: GraphOption,
+    api_bearer_token: TokenOption,
     node_props: Annotated[
         str | None,
         typer.Option(
