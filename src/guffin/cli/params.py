@@ -26,8 +26,8 @@ TargetArgument = Annotated[
     str,
     typer.Argument(
         help=(
-            "Roam page title or node UID. "
-            f"Treated as a node UID if it matches {ANCHORED_UID_PATTERN}; "
+            "Roam page title (optionally wrapped in [[ ]]), node UID, or block reference (( uid )). "
+            f"Treated as a node UID when wrapped in (( )) or matching {ANCHORED_UID_PATTERN}; "
             "otherwise treated as a page title."
         ),
     ),

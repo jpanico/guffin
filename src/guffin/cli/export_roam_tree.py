@@ -25,12 +25,14 @@ result in one of two output formats controlled by ``--format``:
   override for the bundled Bergfink Typst template.  Requires Pandoc and
   Typst to be installed.
 
-``TARGET`` is interpreted as a **node UID** if it matches
+``TARGET`` accepts a Roam **page title** (optionally wrapped in ``[[ ]]``), a
+**node UID**, or a Roam **block reference** ``((uid))``.  It is treated as a node
+UID when wrapped in ``(( ))`` or when it matches
 :data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN` — either a synthetic
 nine-character UID or an ``MM-DD-YYYY`` Daily Note Page UID; otherwise it is
-treated as a **page title**.  A page whose title happens to match one of those
-UID forms would be misidentified — this edge case is considered negligible in
-practice.
+treated as a page title (any ``[[ ]]`` wrapper is stripped).  A page whose title
+happens to match one of those UID forms would be misidentified — this edge case
+is considered negligible in practice.
 
 Logging is colorized by level via :mod:`guffin.logging_config` and
 configurable via the ``LOG_LEVEL`` environment variable (default: ``INFO``).
@@ -164,9 +166,10 @@ def main(
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown or PDF.
 
-    TARGET is interpreted as a node UID (fetches the subtree rooted there) if
-    it matches ``^[A-Za-z0-9_-]{9}$``, otherwise as a page title (fetches all
-    blocks on that page).
+    TARGET is a Roam page title (optionally wrapped in ``[[ ]]``), a node UID, or a
+    block reference ``((uid))``.  When wrapped in ``(( ))`` or matching the node-UID
+    pattern, it fetches the subtree rooted at that node; otherwise it is treated as a
+    page title and fetches all blocks on that page.
 
     With ``--format markdown`` (default): ``--bundle`` writes a
     ``<target>.mdbundle/`` directory with images; ``--no-bundle`` writes a

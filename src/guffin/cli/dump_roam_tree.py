@@ -17,12 +17,14 @@ hierarchy:
 - **Raw results** (``--raw-results`` / ``-r/-R``) — raw Datalog query results
   as returned by the Roam Local API, before any transcription.
 
-``TARGET`` is interpreted as a **node UID** if it matches
+``TARGET`` accepts a Roam **page title** (optionally wrapped in ``[[ ]]``), a
+**node UID**, or a Roam **block reference** ``((uid))``.  It is treated as a node
+UID when wrapped in ``(( ))`` or when it matches
 :data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN` — either a synthetic
 nine-character UID or an ``MM-DD-YYYY`` Daily Note Page UID; otherwise it is
-treated as a **page title**.  A page whose title happens to match one of those
-UID forms would be misidentified — this edge case is considered negligible in
-practice.
+treated as a page title (any ``[[ ]]`` wrapper is stripped).  A page whose title
+happens to match one of those UID forms would be misidentified — this edge case
+is considered negligible in practice.
 
 Logging is colorized by level via :mod:`guffin.logging_config` and
 configurable via the ``LOG_LEVEL`` environment variable (default: ``INFO``).
@@ -280,13 +282,16 @@ def main(
 ) -> None:
     """Dump a Roam Research page or node subtree as a Rich tree to the console.
 
-    TARGET is interpreted as a node UID (fetches the subtree rooted there) if
-    it matches :data:`~guffin.roam.primitives.ANCHORED_UID_PATTERN`, otherwise as a
-    page title (fetches all blocks on that page).  Use ``--vertex-tree`` / ``-v/-V``
-    and ``--node-tree`` / ``-n/-N`` to control which trees are printed (vertex tree
-    is shown by default).  Use ``--raw-results`` / ``-r/-R`` to also print the raw
-    Datalog query results.  Use ``--include-refs`` / ``-i/-I`` to additionally fetch
-    nodes referenced via ``:block/refs`` from the target page or its descendants.
+    TARGET is a Roam page title (optionally wrapped in ``[[ ]]``), a node UID, or a
+    block reference ``((uid))``.  When wrapped in ``(( ))`` or matching the node-UID
+    pattern, it fetches the subtree rooted at that node; otherwise it is treated as a
+    page title and fetches all blocks on that page.
+
+    Use ``--vertex-tree`` / ``-v/-V`` and ``--node-tree`` / ``-n/-N`` to control which
+    trees are printed (vertex tree is shown by default).  Use ``--raw-results`` /
+    ``-r/-R`` to also print the raw Datalog query results.  Use ``--include-refs`` /
+    ``-i/-I`` to additionally fetch nodes referenced via ``:block/refs`` from the
+    target page or its descendants.
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, api_bearer_token=%r, node_props=%r, vertex_props=%r, "
