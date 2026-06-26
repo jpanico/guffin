@@ -1,0 +1,1621 @@
+CBLaoUHKI:
+  uid: CBLaoUHKI
+  id: 5463
+  string: '[[>]] [[!TIP]] Tip
+
+    Optional body via Shift+Enter'
+  order: 6
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5464
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+Ajsp3Z_xv:
+  uid: Ajsp3Z_xv
+  id: 5647
+  string: '> Tip: With “Require a space after marker” ON (default), markers only trigger
+    when followed by a visible space/tab/NBSP or end-of-line.'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  props: null
+  title: null
+  attrs: null
+LBFKibPIj:
+  uid: LBFKibPIj
+  id: 4223
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 4224
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: Test Article
+  attrs: null
+_BCMCvPhJ:
+  uid: _BCMCvPhJ
+  id: 5651
+  string: Bullet
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5649
+  - id: 5650
+  props: null
+  title: null
+  attrs: null
+2LWLXERWg:
+  uid: 2LWLXERWg
+  id: 5469
+  string: '[[>]] [[!WARNING]] Warning
+
+    Optional body via Shift+Enter'
+  order: 4
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5470
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+-gG94Gziw:
+  uid: -gG94Gziw
+  id: 11823
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: attribute1
+  attrs: null
+oVtdQG8i6:
+  uid: oVtdQG8i6
+  id: 5687
+  string: '`↤`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5685
+  - id: 5686
+  props: null
+  title: null
+  attrs: null
+uE5Cc1dLS:
+  uid: uE5Cc1dLS
+  id: 5675
+  string: '`≠`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5673
+  - id: 5674
+  props: null
+  title: null
+  attrs: null
+d87aKN4hh:
+  uid: d87aKN4hh
+  id: 5453
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 5454
+  - id: 5460
+  - id: 5461
+  - id: 5463
+  - id: 5465
+  - id: 5467
+  - id: 5469
+  - id: 5471
+  - id: 5473
+  - id: 5475
+  - id: 5477
+  - id: 5478
+  - id: 11236
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: callouts demo
+  attrs: null
+B4UA05wqF:
+  uid: B4UA05wqF
+  id: 5677
+  string: '`^`'
+  order: 0
+  heading: null
+  children:
+  - id: 5678
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5676
+  props: null
+  title: null
+  attrs: null
+zULz_y5WG:
+  uid: zULz_y5WG
+  id: 5683
+  string: '`??`'
+  order: 0
+  heading: null
+  children:
+  - id: 5684
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5682
+  props: null
+  title: null
+  attrs: null
+qdCuaCd_m:
+  uid: qdCuaCd_m
+  id: 5694
+  string: Process / ongoing
+  order: 15
+  heading: null
+  children:
+  - id: 5695
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+jDLtdo5HR:
+  uid: jDLtdo5HR
+  id: 5653
+  string: '`=`'
+  order: 0
+  heading: null
+  children:
+  - id: 5654
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5652
+  props: null
+  title: null
+  attrs: null
+KfjRLh7m6:
+  uid: KfjRLh7m6
+  id: 5659
+  string: '`=>`'
+  order: 0
+  heading: null
+  children:
+  - id: 5660
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5658
+  props: null
+  title: null
+  attrs: null
+WAgi7UK_T:
+  uid: WAgi7UK_T
+  id: 5656
+  string: '`->`'
+  order: 0
+  heading: null
+  children:
+  - id: 5657
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5655
+  props: null
+  title: null
+  attrs: null
+PZVQH4ZQe:
+  uid: PZVQH4ZQe
+  id: 5467
+  string: '[[>]] [[!QUESTION]] Question
+
+    Optional body via Shift+Enter'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5468
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+dPZqAiKrK:
+  uid: dPZqAiKrK
+  id: 11494
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 11502
+  - id: 11503
+  - id: 11504
+  - id: 11822
+  refs:
+  - id: 4223
+  page: null
+  open: true
+  children_view_type: null
+  parents: null
+  props: null
+  title: '[[Test Article]] 5'
+  attrs:
+  - - source:
+      - uid
+      - dPZqAiKrK
+      value:
+      - uid
+      - dPZqAiKrK
+    - source:
+      - uid
+      - Up9F5BMq9
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - Up9F5BMq9
+      value:
+      - uid
+      - HGasV4ras
+  - - source:
+      - uid
+      - dPZqAiKrK
+      value:
+      - uid
+      - dPZqAiKrK
+    - source:
+      - uid
+      - Up9F5BMq9
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - Up9F5BMq9
+      value:
+      - uid
+      - nC88efm_x
+  - - source:
+      - uid
+      - dPZqAiKrK
+      value:
+      - uid
+      - dPZqAiKrK
+    - source:
+      - uid
+      - v3WbOVP7U
+      value:
+      - uid
+      - -gG94Gziw
+    - source:
+      - uid
+      - v3WbOVP7U
+      value: ' 5, #[[callouts demo]]'
+blrJGkQVp:
+  uid: blrJGkQVp
+  id: 5471
+  string: '[[>]] [[!FAILURE]] Failure
+
+    Optional body via Shift+Enter'
+  order: 10
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5472
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+oQ6hWy0y7:
+  uid: oQ6hWy0y7
+  id: 5475
+  string: '[[>]] [[!BUG]] Bug
+
+    Optional body via Shift+Enter'
+  order: 11
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5476
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+oZCTywBkn:
+  uid: oZCTywBkn
+  id: 5670
+  string: Right-angle arrow
+  order: 7
+  heading: null
+  children:
+  - id: 5671
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+f-Lafbeay:
+  uid: f-Lafbeay
+  id: 5680
+  string: '`∴` (configurable)'
+  order: 0
+  heading: null
+  children:
+  - id: 5681
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5679
+  props: null
+  title: null
+  attrs: null
+NX0_hsJA_:
+  uid: NX0_hsJA_
+  id: 5696
+  string: '`↻`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5694
+  - id: 5695
+  props: null
+  title: null
+  attrs: null
+OWVKyWC3q:
+  uid: OWVKyWC3q
+  id: 5685
+  string: Depends on / prerequisite
+  order: 12
+  heading: null
+  children:
+  - id: 5686
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+OexZiLR_O:
+  uid: OexZiLR_O
+  id: 5450
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: '>'
+  attrs: null
+v3WbOVP7U:
+  uid: v3WbOVP7U
+  id: 11822
+  string: 'attribute1:: 5, #[[callouts demo]]'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 5453
+  - id: 11823
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  props: null
+  title: null
+  attrs: null
+RFzweTcL1:
+  uid: RFzweTcL1
+  id: 5688
+  string: Decision / choice
+  order: 13
+  heading: null
+  children:
+  - id: 5689
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+jJF8rfQXO:
+  uid: jJF8rfQXO
+  id: 5478
+  string: '[[>]] [[!QUOTE]] Quote
+
+    Optional body via Shift+Enter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5456
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+KuIjT9oGp:
+  uid: KuIjT9oGp
+  id: 5681
+  string: '`∴`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5679
+  - id: 5680
+  props: null
+  title: null
+  attrs: null
+Jw_ZxuVxr:
+  uid: Jw_ZxuVxr
+  id: 5692
+  string: '`@`'
+  order: 0
+  heading: null
+  children:
+  - id: 5693
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5691
+  props: null
+  title: null
+  attrs: null
+tGPNuZYco:
+  uid: tGPNuZYco
+  id: 5454
+  string: '[[>]] [[!NOTE]] Note
+
+    Optional body via Shift+Enter'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5455
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+v_8oFrt1s:
+  uid: v_8oFrt1s
+  id: 5666
+  string: '`!`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5664
+  - id: 5665
+  props: null
+  title: null
+  attrs: null
+4YZgl5cYa:
+  uid: 4YZgl5cYa
+  id: 5657
+  string: '`→`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5655
+  - id: 5656
+  props: null
+  title: null
+  attrs: null
+kPqUpd641:
+  uid: kPqUpd641
+  id: 5654
+  string: '`=`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5652
+  - id: 5653
+  props: null
+  title: null
+  attrs: null
+nlN78fCtg:
+  uid: nlN78fCtg
+  id: 5693
+  string: '`↗`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5691
+  - id: 5692
+  props: null
+  title: null
+  attrs: null
+vXoWB-OG_:
+  uid: vXoWB-OG_
+  id: 5684
+  string: '`◊`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5682
+  - id: 5683
+  props: null
+  title: null
+  attrs: null
+2B28nP0fN:
+  uid: 2B28nP0fN
+  id: 5672
+  string: '`⤷`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5670
+  - id: 5671
+  props: null
+  title: null
+  attrs: null
+8x-Tk-O5b:
+  uid: 8x-Tk-O5b
+  id: 5661
+  string: Question
+  order: 4
+  heading: null
+  children:
+  - id: 5662
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+DZhDzcotF:
+  uid: DZhDzcotF
+  id: 5695
+  string: '`...`'
+  order: 0
+  heading: null
+  children:
+  - id: 5696
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5694
+  props: null
+  title: null
+  attrs: null
+dNk4bk1iw:
+  uid: dNk4bk1iw
+  id: 5652
+  string: Equal / definition
+  order: 1
+  heading: null
+  children:
+  - id: 5653
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+fYPVSBubU:
+  uid: fYPVSBubU
+  id: 5465
+  string: '[[>]] [[!SUCCESS]] Success
+
+    Optional body via Shift+Enter'
+  order: 8
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5466
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+OZba4Vi3o:
+  uid: OZba4Vi3o
+  id: 5667
+  string: Idea / addition
+  order: 6
+  heading: null
+  children:
+  - id: 5668
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+tjv91T19w:
+  uid: tjv91T19w
+  id: 5660
+  string: '`⇒`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5658
+  - id: 5659
+  props: null
+  title: null
+  attrs: null
+Zl0dZ-LuU:
+  uid: Zl0dZ-LuU
+  id: 11236
+  string: '[[>]] [[!Definition]] Definition (not Roam-native)
+
+    Optional body via Shift+Enter'
+  order: 12
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 11238
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+EJ5HIvlOy:
+  uid: EJ5HIvlOy
+  id: 5674
+  string: '`~`'
+  order: 0
+  heading: null
+  children:
+  - id: 5675
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5673
+  props: null
+  title: null
+  attrs: null
+ZcfOxAW8t:
+  uid: ZcfOxAW8t
+  id: 5646
+  string: Marker → bullet map (default)
+  order: 0
+  heading: 2
+  children:
+  - id: 5647
+  - id: 5648
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  props: null
+  title: null
+  attrs: null
+HGasV4ras:
+  uid: HGasV4ras
+  id: 11243
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: Guffin
+  attrs: null
+nC88efm_x:
+  uid: nC88efm_x
+  id: 5618
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 5646
+  refs: null
+  page: null
+  open: true
+  children_view_type: null
+  parents: null
+  props: null
+  title: Better Bullets
+  attrs: null
+7grZRDfnd:
+  uid: 7grZRDfnd
+  id: 5648
+  string: '{{[[table]]}}'
+  order: 1
+  heading: null
+  children:
+  - id: 5649
+  - id: 5652
+  - id: 5655
+  - id: 5658
+  - id: 5661
+  - id: 5664
+  - id: 5667
+  - id: 5670
+  - id: 5673
+  - id: 5676
+  - id: 5679
+  - id: 5682
+  - id: 5685
+  - id: 5688
+  - id: 5691
+  - id: 5694
+  refs:
+  - id: 2216
+  page:
+    id: 5618
+  open: false
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  props: null
+  title: null
+  attrs: null
+vKtsbai-C:
+  uid: vKtsbai-C
+  id: 5477
+  string: '[[>]] [[!EXAMPLE]] Example
+
+    Optional body via Shift+Enter'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5458
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+mt2pJMg-B:
+  uid: mt2pJMg-B
+  id: 5460
+  string: '[[>]] [[!SUMMARY]] Summary
+
+    Optional body via Shift+Enter'
+  order: 7
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5457
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+eSRf16Kaj:
+  uid: eSRf16Kaj
+  id: 5689
+  string: '`|`'
+  order: 0
+  heading: null
+  children:
+  - id: 5690
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5688
+  props: null
+  title: null
+  attrs: null
+ZgUWBRb7j:
+  uid: ZgUWBRb7j
+  id: 5462
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: '!INFO'
+  attrs: null
+UhO5FcuMA:
+  uid: UhO5FcuMA
+  id: 5663
+  string: '`?`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5661
+  - id: 5662
+  props: null
+  title: null
+  attrs: null
+DTLR8M_sl:
+  uid: DTLR8M_sl
+  id: 5655
+  string: Leads to
+  order: 2
+  heading: null
+  children:
+  - id: 5656
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+RXwAqq0_T:
+  uid: RXwAqq0_T
+  id: 261
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: tags
+  attrs: null
+v3GYZq3tO:
+  uid: v3GYZq3tO
+  id: 5650
+  string: Marker
+  order: 0
+  heading: null
+  children:
+  - id: 5651
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5649
+  props: null
+  title: null
+  attrs: null
+TeB_pRnMW:
+  uid: TeB_pRnMW
+  id: 5686
+  string: '`<-`'
+  order: 0
+  heading: null
+  children:
+  - id: 5687
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5685
+  props: null
+  title: null
+  attrs: null
+WVvR1vklx:
+  uid: WVvR1vklx
+  id: 5679
+  string: Conclusion / synthesis
+  order: 10
+  heading: null
+  children:
+  - id: 5680
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+zplCdLDOV:
+  uid: zplCdLDOV
+  id: 5649
+  string: Meaning
+  order: 0
+  heading: null
+  children:
+  - id: 5650
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+cBp6Inlbg:
+  uid: cBp6Inlbg
+  id: 5665
+  string: '`!`'
+  order: 0
+  heading: null
+  children:
+  - id: 5666
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5664
+  props: null
+  title: null
+  attrs: null
+M75pdqK84:
+  uid: M75pdqK84
+  id: 5664
+  string: Important / warning
+  order: 5
+  heading: null
+  children:
+  - id: 5665
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+kNK5nidqB:
+  uid: kNK5nidqB
+  id: 5662
+  string: '`?`'
+  order: 0
+  heading: null
+  children:
+  - id: 5663
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5661
+  props: null
+  title: null
+  attrs: null
+AKAMsYfSW:
+  uid: AKAMsYfSW
+  id: 11503
+  string: hello world!
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  props: null
+  title: null
+  attrs: null
+4I7bW8Zf_:
+  uid: 4I7bW8Zf_
+  id: 5461
+  string: '[[>]] [[!INFO]] Info
+
+    Optional body via Shift+Enter'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+uMVC0fvaZ:
+  uid: uMVC0fvaZ
+  id: 5668
+  string: '`+`'
+  order: 0
+  heading: null
+  children:
+  - id: 5669
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5667
+  props: null
+  title: null
+  attrs: null
+GV3tAKsLN:
+  uid: GV3tAKsLN
+  id: 5678
+  string: '`▸`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5676
+  - id: 5677
+  props: null
+  title: null
+  attrs: null
+drw6chE89:
+  uid: drw6chE89
+  id: 5691
+  string: Reference / related
+  order: 14
+  heading: null
+  children:
+  - id: 5692
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+Up9F5BMq9:
+  uid: Up9F5BMq9
+  id: 11504
+  string: 'tags:: #Guffin,#[[Better Bullets]]'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 261
+  - id: 5618
+  - id: 11243
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  props: null
+  title: null
+  attrs: null
+Am1m9Nk_u:
+  uid: Am1m9Nk_u
+  id: 5676
+  string: Evidence / support
+  order: 9
+  heading: null
+  children:
+  - id: 5677
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+keiYVs1oE:
+  uid: keiYVs1oE
+  id: 5690
+  string: '`⎇`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5688
+  - id: 5689
+  props: null
+  title: null
+  attrs: null
+2-2g3rmpU:
+  uid: 2-2g3rmpU
+  id: 11502
+  string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
+    \ – DO NOT REMOVE\nFeatures:\n\n - **attributes**"
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  props: null
+  title: null
+  attrs: []
+-CgA_YrJD:
+  uid: -CgA_YrJD
+  id: 5658
+  string: Result
+  order: 3
+  heading: null
+  children:
+  - id: 5659
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+f8X4aoVut:
+  uid: f8X4aoVut
+  id: 5673
+  string: Contrast / however
+  order: 8
+  heading: null
+  children:
+  - id: 5674
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
+8Vd5M8RXF:
+  uid: 8Vd5M8RXF
+  id: 5473
+  string: '[[>]] [[!DANGER]] Danger
+
+    Optional body via Shift+Enter'
+  order: 5
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5474
+  page:
+    id: 5453
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5453
+  props: null
+  title: null
+  attrs: null
+BY3Wk3SIh:
+  uid: BY3Wk3SIh
+  id: 5671
+  string: '`v>` (configurable)'
+  order: 0
+  heading: null
+  children:
+  - id: 5672
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5670
+  props: null
+  title: null
+  attrs: null
+KQJjAUkzT:
+  uid: KQJjAUkzT
+  id: 5669
+  string: '`+`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  - id: 5667
+  - id: 5668
+  props: null
+  title: null
+  attrs: null
+JlT4c3ZtZ:
+  uid: JlT4c3ZtZ
+  id: 5682
+  string: Hypothesis / tentative
+  order: 11
+  heading: null
+  children:
+  - id: 5683
+  refs: null
+  page:
+    id: 5618
+  open: true
+  children_view_type: null
+  parents:
+  - id: 5618
+  - id: 5646
+  - id: 5648
+  props: null
+  title: null
+  attrs: null
