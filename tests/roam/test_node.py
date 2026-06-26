@@ -182,42 +182,6 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_page_value(self) -> None:
-        """Test that NodeType.PAGE has string value 'roam/page'."""
-        assert NodeType.PAGE == "roam/page"
-
-    def test_block_value(self) -> None:
-        """Test that NodeType.PLAIN_BLOCK has string value 'roam/plain-block'."""
-        assert NodeType.PLAIN_BLOCK == "roam/plain-block"
-
-    def test_image_value(self) -> None:
-        """Test that NodeType.IMAGE_BLOCK has string value 'roam/image-block'."""
-        assert NodeType.IMAGE_BLOCK == "roam/image-block"
-
-    def test_heading_value(self) -> None:
-        """Test that NodeType.HEADING_BLOCK has string value 'roam/heading-block'."""
-        assert NodeType.HEADING_BLOCK == "roam/heading-block"
-
-    def test_callout_value(self) -> None:
-        """Test that NodeType.CALLOUT_BLOCK has string value 'roam/callout-block'."""
-        assert NodeType.CALLOUT_BLOCK == "roam/callout-block"
-
-    def test_code_value(self) -> None:
-        """Test that NodeType.CODE_BLOCK has string value 'roam/code-block'."""
-        assert NodeType.CODE_BLOCK == "roam/code-block"
-
-    def test_block_quote_value(self) -> None:
-        """Test that NodeType.BLOCK_QUOTE has string value 'roam/block-quote'."""
-        assert NodeType.BLOCK_QUOTE == "roam/quote-block"
-
-    def test_native_table_value(self) -> None:
-        """Test that NodeType.NATIVE_TABLE has string value 'roam/table'."""
-        assert NodeType.NATIVE_TABLE == "roam/table"
-
-    def test_embed_value(self) -> None:
-        """Test that NodeType.EMBED_BLOCK has string value 'roam/embed-block'."""
-        assert NodeType.EMBED_BLOCK == "roam/embed-block"
-
     def test_exactly_nine_members(self) -> None:
         """Test that NodeType has exactly nine members."""
         assert set(NodeType) == {

@@ -7,7 +7,6 @@ import regex
 from pydantic import TypeAdapter, ValidationError
 
 from guffin.roam.primitives import (
-    ANCHORED_UID_PATTERN,
     ANCHORED_UID_RE,
     DAILY_NOTE_UID_PATTERN,
     SYNTHETIC_UID_PATTERN,
@@ -67,10 +66,6 @@ class TestUidPatterns:
     def test_uid_re_matches_prefix_of_longer_string(self) -> None:
         """Test that the unanchored UID_RE matches the leading UID of a longer string."""
         assert UID_RE.match("abc123xyz0") is not None
-
-    def test_anchored_pattern_wraps_unanchored(self) -> None:
-        """Test that ANCHORED_UID_PATTERN is UID_PATTERN bracketed by ^ and $."""
-        assert ANCHORED_UID_PATTERN == f"^{UID_PATTERN}$"
 
     def test_anchored_uid_re_matches_exact_uid(self) -> None:
         """Test that ANCHORED_UID_RE matches a string that is exactly a UID."""

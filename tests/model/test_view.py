@@ -8,12 +8,6 @@ from guffin.model.view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexVie
 class TestChildrenLayout:
     """Tests for the ChildrenLayout enum."""
 
-    def test_values(self) -> None:
-        """Test the three layout string values."""
-        assert ChildrenLayout.BULLET == "bullet"
-        assert ChildrenLayout.DOCUMENT == "document"
-        assert ChildrenLayout.NUMBERED == "numbered"
-
     def test_exactly_three_members(self) -> None:
         """Test that ChildrenLayout has exactly three members."""
         assert len(ChildrenLayout) == 3

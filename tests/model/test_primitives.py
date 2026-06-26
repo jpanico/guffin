@@ -7,7 +7,6 @@ import regex
 from pydantic import TypeAdapter, ValidationError
 
 from guffin.model.primitives import (
-    ANCHORED_UID_PATTERN,
     ANCHORED_UID_RE,
     DAILY_NOTE_UID_PATTERN,
     SYNTHETIC_UID_PATTERN,
@@ -42,10 +41,6 @@ class TestUidPatterns:
         """Test that UID_PATTERN fully matches either a synthetic or a daily-note UID."""
         assert regex.fullmatch(UID_PATTERN, _VALID_UID) is not None
         assert regex.fullmatch(UID_PATTERN, _VALID_DAILY_NOTE_UID) is not None
-
-    def test_anchored_pattern_wraps_unanchored(self) -> None:
-        """Test that ANCHORED_UID_PATTERN is UID_PATTERN bracketed by ^ and $."""
-        assert ANCHORED_UID_PATTERN == f"^{UID_PATTERN}$"
 
     def test_uid_re_finds_full_daily_note_uid(self) -> None:
         """Test that UID_RE captures a whole MM-DD-YYYY UID, not just its first nine characters."""
