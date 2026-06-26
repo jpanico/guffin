@@ -62,7 +62,7 @@ class NodeTree(BaseModel):
             for every node in :attr:`tree_network` or :attr:`refs_by_id`; excluded from
             serialization.
         page_name_map: Map of :attr:`~guffin.roam.node.RoamNode.title` →
-            :class:`~guffin.roam.node.RoamNode` for every :attr:`~guffin.roam.node.NodeType.ROAM_PAGE`
+            :class:`~guffin.roam.node.RoamNode` for every :attr:`~guffin.roam.node.NodeType.PAGE`
             node in :attr:`tree_network` or :attr:`refs_by_id`; excluded from serialization.
 
     Methods:
@@ -103,7 +103,7 @@ class NodeTree(BaseModel):
     page_name_map: dict[str, RoamNode] = Field(
         ...,
         exclude=True,
-        description="Map of title → RoamNode for every ROAM_PAGE node in tree_network or refs_by_id.",
+        description="Map of title → RoamNode for every PAGE node in tree_network or refs_by_id.",
     )
 
     @classmethod
@@ -145,7 +145,7 @@ class NodeTree(BaseModel):
         id_map: Final[dict[Id, RoamNode]] = {n.id: n for n in tree_network} | refs_by_id
         uid_map: Final[dict[Uid, RoamNode]] = {n.uid: n for n in id_map.values()}
         page_name_map: Final[dict[str, RoamNode]] = {
-            n.title: n for n in id_map.values() if node_type(n) == NodeType.ROAM_PAGE and n.title is not None
+            n.title: n for n in id_map.values() if node_type(n) == NodeType.PAGE and n.title is not None
         }
         cls._creating = True
         try:

@@ -82,7 +82,7 @@ def article1_node_tree() -> NodeTree:
     )
     all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
     root_node: Final[RoamNode] = next(
-        n for n in all_nodes if node_type(n) == NodeType.ROAM_PAGE and n.title == "[[Test Article]] 1"
+        n for n in all_nodes if node_type(n) == NodeType.PAGE and n.title == "[[Test Article]] 1"
     )
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
 

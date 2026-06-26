@@ -20,7 +20,7 @@ from guffin.roam.node_tree import NodeTree
 
 
 def _empty_tree() -> NodeTree:
-    """Return a NodeTree with no ROAM_PAGE nodes (page_name_map is empty)."""
+    """Return a NodeTree with no PAGE nodes (page_name_map is empty)."""
     node = RoamNode(
         uid="stub00001",
         id=1,

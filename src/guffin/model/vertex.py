@@ -336,7 +336,7 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.GUFFIN_CODE_BLOCK]]):
     """Normalized (transcribed) form of a Roam fenced code block node.
 
     Corresponds to a source :class:`~guffin.roam.node.RoamNode` classified as
-    :attr:`~guffin.roam.node.NodeType.ROAM_CODE_BLOCK` — its ``:block/string`` is
+    :attr:`~guffin.roam.node.NodeType.CODE_BLOCK` — its ``:block/string`` is
     a CommonMark fenced code block.
 
     Attributes:

@@ -473,7 +473,7 @@ class TestNodeTreeIdMap:
 
 
 class TestNodeTreePageNameMap:
-    """Tests for NodeTree.page_name_map — title → RoamNode index for all ROAM_PAGE nodes."""
+    """Tests for NodeTree.page_name_map — title → RoamNode index for all PAGE nodes."""
 
     def test_single_root_page_maps_by_title(self) -> None:
         """Test that a one-node tree produces page_name_map = {root.title: root}."""
@@ -482,7 +482,7 @@ class TestNodeTreePageNameMap:
         assert tree.page_name_map == {"My Page": root}
 
     def test_excludes_block_nodes(self) -> None:
-        """Test that block (non-ROAM_PAGE) nodes are absent from page_name_map."""
+        """Test that block (non-PAGE) nodes are absent from page_name_map."""
         root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         block = RoamNode(
             uid="block0001",
@@ -493,10 +493,10 @@ class TestNodeTreePageNameMap:
             page=IdObject(id=1),
         )
         tree = NodeTree.build(super_network=[root, block], root_node=root)
-        assert all(node_type(n) == NodeType.ROAM_PAGE for n in tree.page_name_map.values())
+        assert all(node_type(n) == NodeType.PAGE for n in tree.page_name_map.values())
 
     def test_includes_ref_page_nodes(self) -> None:
-        """Test that ROAM_PAGE nodes from refs_by_id appear in page_name_map."""
+        """Test that PAGE nodes from refs_by_id appear in page_name_map."""
         root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         block = RoamNode(
             uid="block0001",
@@ -513,7 +513,7 @@ class TestNodeTreePageNameMap:
         assert tree.page_name_map["Ref Page"] is ref_page
 
     def test_maps_by_title(self) -> None:
-        """Test that page_name_map[n.title] == n for every ROAM_PAGE node in id_map."""
+        """Test that page_name_map[n.title] == n for every PAGE node in id_map."""
         root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
         block = RoamNode(
             uid="block0001",
@@ -536,9 +536,9 @@ class TestNodeTreePageNameMap:
         assert tree.root_node.title in tree.page_name_map
 
     def test_article_fixture_all_values_are_pages(self) -> None:
-        """Test that every value in the article fixture's page_name_map is a ROAM_PAGE node."""
+        """Test that every value in the article fixture's page_name_map is a PAGE node."""
         tree = article1_node_tree()
-        assert all(node_type(n) == NodeType.ROAM_PAGE for n in tree.page_name_map.values())
+        assert all(node_type(n) == NodeType.PAGE for n in tree.page_name_map.values())
 
     def test_excluded_from_model_dump(self) -> None:
         """Test that page_name_map does not appear in model_dump() output."""

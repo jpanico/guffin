@@ -127,8 +127,8 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
     ``node_type`` is the :attr:`~guffin.roam.node.NodeType` value string.
     ``title_text`` is determined by :func:`~guffin.roam.node.node_type`:
 
-    - :attr:`~guffin.roam.node.NodeType.ROAM_IMAGE_BLOCK` — ``[<alt>](<firestore_url>)``.
-    - :attr:`~guffin.roam.node.NodeType.ROAM_HEADING_BLOCK` — when ``"heading"``
+    - :attr:`~guffin.roam.node.NodeType.IMAGE_BLOCK` — ``[<alt>](<firestore_url>)``.
+    - :attr:`~guffin.roam.node.NodeType.HEADING_BLOCK` — when ``"heading"``
       is in *props*, ``H{n}: <string>`` (level from
       :func:`~guffin.roam.node.effective_heading_level`); otherwise the raw
       block string.
@@ -152,35 +152,35 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
     nt: Final[NodeType] = node_type(node)
     title_text: str
     match nt:
-        case NodeType.ROAM_IMAGE_BLOCK:
+        case NodeType.IMAGE_BLOCK:
             assert node.string is not None
             m = IMAGE_LINK_RE.search(node.string)
             assert m is not None
             title_text = f"[{m.group('alt')}](<firestore_url>)"
-        case NodeType.ROAM_HEADING_BLOCK:
+        case NodeType.HEADING_BLOCK:
             level: Final[int | None] = effective_heading_level(node)
             title_text = f"H{level}: {node.string}"
-        case NodeType.ROAM_PAGE:
+        case NodeType.PAGE:
             assert node.title is not None
             title_text = node.title
-        case NodeType.ROAM_CALLOUT_BLOCK:
+        case NodeType.CALLOUT_BLOCK:
             assert node.string is not None
             callout: Final[RoamCallout | None] = parse_callout(node.string)
             assert callout is not None
             title_text = _trunc(callout.title)
-        case NodeType.ROAM_PLAIN_BLOCK:
+        case NodeType.PLAIN_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string)
-        case NodeType.ROAM_CODE_BLOCK:
+        case NodeType.CODE_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string)
-        case NodeType.ROAM_BLOCK_QUOTE:
+        case NodeType.BLOCK_QUOTE:
             assert node.string is not None
             title_text = _trunc(strip_block_quote_marker(node.string))
-        case NodeType.ROAM_NATIVE_TABLE:
+        case NodeType.NATIVE_TABLE:
             assert node.string is not None
             title_text = _trunc(node.string)
-        case NodeType.ROAM_EMBED_BLOCK:
+        case NodeType.EMBED_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string)
         case _ as unreachable:

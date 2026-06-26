@@ -2,9 +2,9 @@
 
 Public symbols:
 
-- :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``ROAM_PAGE``, ``ROAM_PLAIN_BLOCK``,
-  ``ROAM_IMAGE_BLOCK``, ``ROAM_HEADING_BLOCK``, ``ROAM_CALLOUT_BLOCK``,
-  ``ROAM_CODE_BLOCK``, ``ROAM_BLOCK_QUOTE``, ``ROAM_NATIVE_TABLE``, ``ROAM_EMBED_BLOCK``.
+- :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``PLAIN_BLOCK``,
+  ``IMAGE_BLOCK``, ``HEADING_BLOCK``, ``CALLOUT_BLOCK``,
+  ``CODE_BLOCK``, ``BLOCK_QUOTE``, ``NATIVE_TABLE``, ``EMBED_BLOCK``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
 - :func:`effective_heading_level` — return the effective heading level for a
@@ -12,7 +12,7 @@ Public symbols:
 - :func:`effective_children_view_type` — return a :class:`RoamNode`'s children view type,
   falling back to :data:`DEFAULT_CHILDREN_VIEW_TYPE` when unset.
 - :func:`image_size` — return the :class:`~guffin.common.geometry.ImageSize` recorded in
-  a :attr:`NodeType.ROAM_IMAGE_BLOCK` node's ``image-size`` prop, or ``None`` if the node
+  a :attr:`NodeType.IMAGE_BLOCK` node's ``image-size`` prop, or ``None`` if the node
   is not an image block.
 - :data:`NodesByUid` — ``dict`` mapping each :attr:`~RoamNode.uid` to its :class:`RoamNode`.
 - :data:`DEFAULT_CHILDREN_VIEW_TYPE` — fallback :class:`~guffin.roam.primitives.ChildrenViewType`
@@ -73,36 +73,36 @@ dict.  Used by :func:`image_size` to extract dimensions without Unknown-type pro
 class NodeType(enum.StrEnum):
     """Entity type of a Roam pull-block.
 
-    - **ROAM_PAGE**: ``title`` is a string, ``string`` is ``None``.
-    - **ROAM_PLAIN_BLOCK**: ``string`` is set, ``title`` is ``None``, no special Roam properties.
-    - **ROAM_HEADING_BLOCK**: ``heading`` (levels 1–3) or ``props['ah-level']`` (levels 4–6) is set; the entire
+    - **PAGE**: ``title`` is a string, ``string`` is ``None``.
+    - **PLAIN_BLOCK**: ``string`` is set, ``title`` is ``None``, no special Roam properties.
+    - **HEADING_BLOCK**: ``heading`` (levels 1–3) or ``props['ah-level']`` (levels 4–6) is set; the entire
       block content is the heading text.
-    - **ROAM_IMAGE_BLOCK**: ``string`` consists solely of a single Markdown image link to a Cloud Firestore URL.
+    - **IMAGE_BLOCK**: ``string`` consists solely of a single Markdown image link to a Cloud Firestore URL.
       Produced by drag-and-drop into the Roam UI; supports image-resize properties via ``props``.
-    - **ROAM_CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the twelve
+    - **CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the twelve
       recognised callout type keywords (``INFO``, ``QUOTE``, ``EXAMPLE``, ``NOTE``, ``WARNING``, ``DANGER``,
       ``TIP``, ``SUMMARY``, ``SUCCESS``, ``QUESTION``, ``FAILURE``, ``BUG``).
-    - **ROAM_CODE_BLOCK**: ``string``, with surrounding whitespace trimmed, is a CommonMark fenced code
+    - **CODE_BLOCK**: ``string``, with surrounding whitespace trimmed, is a CommonMark fenced code
       block (opened by a ```` ``` ```` or ``~~~`` fence).
-    - **ROAM_BLOCK_QUOTE**: ``string`` starts with ``[[>]]`` but does *not* match the callout marker
+    - **BLOCK_QUOTE**: ``string`` starts with ``[[>]]`` but does *not* match the callout marker
       pattern ``[[>]] [[!<TYPE>]]`` — i.e. a plain ``[[>]]``-prefixed blockquote.
-    - **ROAM_NATIVE_TABLE**: ``string``, with surrounding whitespace trimmed, equals
+    - **NATIVE_TABLE**: ``string``, with surrounding whitespace trimmed, equals
       :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER` (``"{{table}}"``); its child blocks
       form the table rows.
-    - **ROAM_EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
+    - **EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
       trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` (matched by
       :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
     """
 
-    ROAM_PAGE = "roam/page"
-    ROAM_PLAIN_BLOCK = "roam/plain-block"
-    ROAM_HEADING_BLOCK = "roam/heading-block"
-    ROAM_IMAGE_BLOCK = "roam/image-block"
-    ROAM_CALLOUT_BLOCK = "roam/callout-block"
-    ROAM_CODE_BLOCK = "roam/code-block"
-    ROAM_BLOCK_QUOTE = "roam/quote-block"
-    ROAM_NATIVE_TABLE = "roam/table"
-    ROAM_EMBED_BLOCK = "roam/embed-block"
+    PAGE = "roam/page"
+    PLAIN_BLOCK = "roam/plain-block"
+    HEADING_BLOCK = "roam/heading-block"
+    IMAGE_BLOCK = "roam/image-block"
+    CALLOUT_BLOCK = "roam/callout-block"
+    CODE_BLOCK = "roam/code-block"
+    BLOCK_QUOTE = "roam/quote-block"
+    NATIVE_TABLE = "roam/table"
+    EMBED_BLOCK = "roam/embed-block"
 
 
 class RoamNode(BaseModel):
@@ -288,7 +288,7 @@ def image_size(node: RoamNode) -> ImageSize | None:
         node: The node to inspect.
 
     Returns:
-        ``None`` if *node* is not a :attr:`~NodeType.ROAM_IMAGE_BLOCK`.
+        ``None`` if *node* is not a :attr:`~NodeType.IMAGE_BLOCK`.
         An :class:`~guffin.common.geometry.ImageSize` with both dimensions ``None``
         if the node has no ``image-size`` prop or the prop is an empty map.
         Otherwise an :class:`~guffin.common.geometry.ImageSize` populated from the
@@ -298,7 +298,7 @@ def image_size(node: RoamNode) -> ImageSize | None:
         ValidationError: If the ``image-size`` prop exists but does not match the
             expected ``{url: {width, height}}`` structure.
     """
-    if node_type(node) != NodeType.ROAM_IMAGE_BLOCK:
+    if node_type(node) != NodeType.IMAGE_BLOCK:
         return None
     if node.props is None:
         return ImageSize()
@@ -323,56 +323,56 @@ type NodesByUid = dict[Uid, RoamNode]
 def node_type(node: RoamNode) -> NodeType:
     """Return the :class:`NodeType` of *node*.
 
-    Discriminates first on :attr:`~RoamNode.title`: returns :attr:`NodeType.ROAM_PAGE` when
+    Discriminates first on :attr:`~RoamNode.title`: returns :attr:`NodeType.PAGE` when
     ``title`` is a non-``None`` string.  For title-less nodes (blocks), returns
-    :attr:`NodeType.ROAM_IMAGE_BLOCK` when ``string`` consists solely of a single Markdown image
+    :attr:`NodeType.IMAGE_BLOCK` when ``string`` consists solely of a single Markdown image
     link (as matched by :data:`~guffin.roam.markdown.IMAGE_LINK_RE`),
-    :attr:`NodeType.ROAM_HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
-    :attr:`NodeType.ROAM_CALLOUT_BLOCK` when ``string`` matches the full callout marker pattern
+    :attr:`NodeType.HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
+    :attr:`NodeType.CALLOUT_BLOCK` when ``string`` matches the full callout marker pattern
     (as matched by :data:`~guffin.roam.markdown.CALLOUT_RE`),
-    :attr:`NodeType.ROAM_BLOCK_QUOTE` when :func:`~guffin.roam.primitives.is_roam_block_quote`
+    :attr:`NodeType.BLOCK_QUOTE` when :func:`~guffin.roam.primitives.is_roam_block_quote`
     returns ``True`` for ``string`` — i.e. a Roam ``[[>]]``-prefixed blockquote or a standard
     Markdown ``>``-prefixed blockquote,
-    :attr:`NodeType.ROAM_CODE_BLOCK` when the trimmed ``string`` is a fenced code block
+    :attr:`NodeType.CODE_BLOCK` when the trimmed ``string`` is a fenced code block
     (as determined by :func:`~guffin.common.markdown.is_fenced_code_block`),
-    :attr:`NodeType.ROAM_NATIVE_TABLE` when the trimmed ``string`` equals
+    :attr:`NodeType.NATIVE_TABLE` when the trimmed ``string`` equals
     :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`,
-    :attr:`NodeType.ROAM_EMBED_BLOCK` when the trimmed ``string`` is wholly a Roam block embed
+    :attr:`NodeType.EMBED_BLOCK` when the trimmed ``string`` is wholly a Roam block embed
     (as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`),
-    and :attr:`NodeType.ROAM_PLAIN_BLOCK` otherwise.
+    and :attr:`NodeType.PLAIN_BLOCK` otherwise.
 
     Args:
         node: The node whose entity type to determine.
 
     Returns:
-        :attr:`NodeType.ROAM_PAGE` if ``title`` is set;
-        :attr:`NodeType.ROAM_IMAGE_BLOCK` if ``string`` is solely a single Markdown image link;
-        :attr:`NodeType.ROAM_HEADING_BLOCK` if ``heading`` or ``props['ah-level']`` is set;
-        :attr:`NodeType.ROAM_CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
-        :attr:`NodeType.ROAM_BLOCK_QUOTE` if :func:`~guffin.roam.primitives.is_roam_block_quote` is ``True``;
-        :attr:`NodeType.ROAM_CODE_BLOCK` if the trimmed ``string`` is a CommonMark fenced code block;
-        :attr:`NodeType.ROAM_NATIVE_TABLE` if the trimmed ``string`` equals
+        :attr:`NodeType.PAGE` if ``title`` is set;
+        :attr:`NodeType.IMAGE_BLOCK` if ``string`` is solely a single Markdown image link;
+        :attr:`NodeType.HEADING_BLOCK` if ``heading`` or ``props['ah-level']`` is set;
+        :attr:`NodeType.CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
+        :attr:`NodeType.BLOCK_QUOTE` if :func:`~guffin.roam.primitives.is_roam_block_quote` is ``True``;
+        :attr:`NodeType.CODE_BLOCK` if the trimmed ``string`` is a CommonMark fenced code block;
+        :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` equals
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`;
-        :attr:`NodeType.ROAM_EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
-        :attr:`NodeType.ROAM_PLAIN_BLOCK` otherwise.
+        :attr:`NodeType.EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
+        :attr:`NodeType.PLAIN_BLOCK` otherwise.
     """
     if node.title is not None:
-        return NodeType.ROAM_PAGE
+        return NodeType.PAGE
     # A title-less pull-block is a Block, so its string is set (enforced by _validate_entity_type).
     assert node.string is not None
     string: Final[str] = node.string
     if IMAGE_LINK_RE.fullmatch(string.strip()):
-        return NodeType.ROAM_IMAGE_BLOCK
+        return NodeType.IMAGE_BLOCK
     if effective_heading_level(node) is not None:
-        return NodeType.ROAM_HEADING_BLOCK
+        return NodeType.HEADING_BLOCK
     if CALLOUT_RE.match(string):
-        return NodeType.ROAM_CALLOUT_BLOCK
+        return NodeType.CALLOUT_BLOCK
     if is_roam_block_quote(string):
-        return NodeType.ROAM_BLOCK_QUOTE
+        return NodeType.BLOCK_QUOTE
     if is_fenced_code_block(string.strip()):
-        return NodeType.ROAM_CODE_BLOCK
+        return NodeType.CODE_BLOCK
     if string.strip() == ROAM_NATIVE_TABLE_MARKER:
-        return NodeType.ROAM_NATIVE_TABLE
+        return NodeType.NATIVE_TABLE
     if BLOCK_EMBED_RE.fullmatch(string.strip()):
-        return NodeType.ROAM_EMBED_BLOCK
-    return NodeType.ROAM_PLAIN_BLOCK
+        return NodeType.EMBED_BLOCK
+    return NodeType.PLAIN_BLOCK

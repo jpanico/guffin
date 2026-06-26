@@ -165,23 +165,23 @@ def vertex_type(node: RoamNode) -> VertexType:
     """
     logger.debug("node=%r", node)
     match node_type(node):
-        case NodeType.ROAM_PAGE:
+        case NodeType.PAGE:
             return VertexType.GUFFIN_PAGE
-        case NodeType.ROAM_PLAIN_BLOCK:
+        case NodeType.PLAIN_BLOCK:
             return VertexType.GUFFIN_TEXT
-        case NodeType.ROAM_CODE_BLOCK:
+        case NodeType.CODE_BLOCK:
             return VertexType.GUFFIN_CODE_BLOCK
-        case NodeType.ROAM_HEADING_BLOCK:
+        case NodeType.HEADING_BLOCK:
             return VertexType.GUFFIN_HEADING
-        case NodeType.ROAM_IMAGE_BLOCK:
+        case NodeType.IMAGE_BLOCK:
             return VertexType.GUFFIN_IMAGE
-        case NodeType.ROAM_CALLOUT_BLOCK:
+        case NodeType.CALLOUT_BLOCK:
             return VertexType.GUFFIN_CALLOUT
-        case NodeType.ROAM_BLOCK_QUOTE:
+        case NodeType.BLOCK_QUOTE:
             return VertexType.GUFFIN_BLOCK_QUOTE
-        case NodeType.ROAM_NATIVE_TABLE:
+        case NodeType.NATIVE_TABLE:
             return VertexType.GUFFIN_TABLE
-        case NodeType.ROAM_EMBED_BLOCK:
+        case NodeType.EMBED_BLOCK:
             return VertexType.GUFFIN_BLOCK_EMBED
 
 
@@ -489,7 +489,7 @@ def to_table(table_tree: NodeTree) -> Table:
 
     Args:
         table_tree: A :class:`~guffin.roam.node_tree.NodeTree` whose root is a
-            :attr:`~guffin.roam.node.NodeType.ROAM_NATIVE_TABLE` node.
+            :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE` node.
 
     Returns:
         A :class:`~guffin.common.table.Table` with default header flags.
@@ -621,7 +621,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
 
     Traverses *node_tree* in pre-order DFS order.  Most nodes are transcribed
     one-to-one via :func:`transcribe_standalone_node`.  Exception: a
-    :attr:`~guffin.roam.node.NodeType.ROAM_NATIVE_TABLE` node and all of its
+    :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE` node and all of its
     descendants are consumed together into a single
     :class:`~guffin.vertex.TableVertex` via :func:`to_table_vertex`; those
     descendants are skipped when the DFS iterator later yields them.
@@ -656,7 +656,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     for node in node_tree.dfs():
         if node.id in consumed:
             continue
-        if node_type(node) == NodeType.ROAM_NATIVE_TABLE:
+        if node_type(node) == NodeType.NATIVE_TABLE:
             table_vertex, nodes_consumed = to_table_vertex(node, node_tree)
             consumed.update(nodes_consumed)
             vertices.append(table_vertex)
@@ -669,7 +669,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     # ref vertices.  refs_by_id is not in DFS order, so a single-pass consumed-set guard could
     # encounter a cell before its table; a dedicated table pass avoids that.
     for ref_node in node_tree.refs_by_id.values():
-        if node_type(ref_node) != NodeType.ROAM_NATIVE_TABLE:
+        if node_type(ref_node) != NodeType.NATIVE_TABLE:
             continue
         try:
             ref_table_vertex, ref_nodes_consumed = to_table_vertex(ref_node, node_tree)
@@ -679,7 +679,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         ref_consumed.update(ref_nodes_consumed)
         ref_vertices.append(ref_table_vertex)
     for ref_node in node_tree.refs_by_id.values():
-        if ref_node.id in ref_consumed or node_type(ref_node) == NodeType.ROAM_NATIVE_TABLE:
+        if ref_node.id in ref_consumed or node_type(ref_node) == NodeType.NATIVE_TABLE:
             continue
         try:
             ref_vertices.append(transcribe_standalone_node(ref_node, node_tree))

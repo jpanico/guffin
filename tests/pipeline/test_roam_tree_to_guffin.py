@@ -860,7 +860,7 @@ def _make_table_root(
     node_id: int,
     row_ids: list[int],
 ) -> RoamNode:
-    """Return a ROAM_NATIVE_TABLE root RoamNode."""
+    """Return a NATIVE_TABLE root RoamNode."""
     return RoamNode(
         uid=uid,
         id=node_id,
