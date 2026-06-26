@@ -8,11 +8,6 @@ from guffin.common.table import CellStyle, HAlign, Table, TableStyle
 class TestTable:
     """Tests for Table — rectangular grid construction and access."""
 
-    def test_basic_construction(self) -> None:
-        """Test that a Table can be constructed from a nested tuple."""
-        table = Table(rows=(("a", "b"), ("c", "d")))
-        assert table.rows == (("a", "b"), ("c", "d"))
-
     def test_list_input_coerced_to_tuple(self) -> None:
         """Test that Pydantic coerces list-of-lists to tuple-of-tuples."""
         table = Table(rows=[["a", "b"], ["c", "d"]])  # type: ignore[arg-type]

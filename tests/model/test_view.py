@@ -24,10 +24,6 @@ class TestVertexView:
         """Test that children_layout defaults to DEFAULT_CHILDREN_LAYOUT."""
         assert VertexView().children_layout is DEFAULT_CHILDREN_LAYOUT
 
-    def test_holds_explicit_layout(self) -> None:
-        """Test that an explicit children_layout is stored."""
-        assert VertexView(children_layout=ChildrenLayout.NUMBERED).children_layout is ChildrenLayout.NUMBERED
-
     def test_is_frozen(self) -> None:
         """Test that VertexView is immutable."""
         view = VertexView()

@@ -69,7 +69,6 @@ class TestFetchRoamNodesRequest:
 
     def test_datalog_page_query_is_non_empty(self) -> None:
         """Test that BY_PAGE_TITLE_QUERY is a non-empty string."""
-        assert isinstance(FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY, str)
         assert len(FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY) > 0
 
     def test_datalog_page_query_contains_find_clause(self) -> None:

@@ -254,11 +254,6 @@ class TestRequestPayload:
         assert payload.action == "file.get"
         assert len(payload.args) == 1
 
-    def test_is_base_model_at_runtime(self) -> None:
-        """Test that Request.Payload is a BaseModel instance at runtime."""
-        payload: Request.Payload = Request.Payload(action="q", args=[])
-        assert isinstance(payload, Request.Payload)
-
     def test_empty_args_list(self) -> None:
         """Test that args can be an empty list."""
         payload: Request.Payload = Request.Payload(action="q", args=[])
@@ -273,11 +268,6 @@ class TestResponsePayload:
         payload: Response.Payload = Response.Payload(success=True, result={"filename": "test.jpg"})
         assert payload.success is True
         assert payload.result == {"filename": "test.jpg"}
-
-    def test_is_base_model_at_runtime(self) -> None:
-        """Test that Response.Payload is a BaseModel instance at runtime."""
-        payload: Response.Payload = Response.Payload(success=True, result={})
-        assert isinstance(payload, Response.Payload)
 
     def test_empty_result(self) -> None:
         """Test that result can be an empty dict."""

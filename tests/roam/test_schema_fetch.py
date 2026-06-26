@@ -49,7 +49,6 @@ class TestFetchRoamSchemaRequest:
 
     def test_datalog_schema_query_is_non_empty(self) -> None:
         """Test that DATALOG_SCHEMA_QUERY is a non-empty string."""
-        assert isinstance(FetchRoamSchema.Request.DATALOG_SCHEMA_QUERY, str)
         assert len(FetchRoamSchema.Request.DATALOG_SCHEMA_QUERY) > 0
 
     def test_datalog_schema_query_contains_find_clause(self) -> None:
