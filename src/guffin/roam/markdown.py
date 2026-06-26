@@ -6,7 +6,9 @@ Public symbols:
   quote (and callout); :data:`CALLOUT_RE` — compiled regex that matches and decomposes a full
   callout block string; :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
   link whose URL is a Cloud Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
-  a Roam page reference ``[[<page_name>]]``; :data:`BLOCK_REF_RE` — compiled regex matching a
+  a Roam page reference ``[[<page_name>]]``; :data:`TAG_RE` — compiled regex matching a Roam tag
+  in either page-reference (``#[[…]]``) or bare-word (``#word``) form; :data:`BLOCK_REF_RE` —
+  compiled regex matching a
   Roam block reference ``((<uid>))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
   block embed ``{{embed: ((<uid>))}}``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
   Roam aliased page link ``[display]([[Page Name]])``; :data:`ITALIC_RE` — compiled regex
@@ -279,16 +281,31 @@ def firestore_url_file_name(firestore_url: str) -> str | None:
     return None
 
 
-PAGE_REF_RE: Final[regex.Pattern[str]] = regex.compile(r"\[\[(?P<page_name>(?:[^\[\]\n]++|(?R))+)\]\]")
+_PAGE_REF: Final[str] = r"(?P<page_ref>\[\[(?P<page_name>(?:[^\[\]\n]++|(?&page_ref))+)\]\])"
+"""Reusable pattern fragment for a Roam page reference ``[[<page_name>]]``.
+
+Inside the ``[[`` … ``]]`` delimiters a page name is **permissive**: it may contain any characters
+except the bracket delimiters and a newline, and it may nest further references.  The whole ``[[…]]``
+reference is captured by the named group ``page_ref`` and its inner name by ``page_name``.
+
+Nesting is expressed by recursing the ``page_ref`` subpattern via ``(?&page_ref)`` — a *named*-group
+recursion rather than ``(?R)`` whole-pattern recursion — so the fragment composes correctly when
+embedded in a larger pattern such as :data:`TAG_RE` (where ``(?R)`` would wrongly recurse the host
+pattern).  The non-bracket-character run uses a possessive ``++`` quantifier, which keeps matching
+linear on long unterminated input.  Compiled standalone as :data:`PAGE_REF_RE`.
+"""
+
+PAGE_REF_RE: Final[regex.Pattern[str]] = regex.compile(_PAGE_REF)
 """Compiled regex matching a Roam page reference ``[[<page_name>]]``.
 
-A page name may itself contain nested page references, so the pattern is
-recursive: it matches a balanced ``[[`` … ``]]`` pair using the third-party
-:mod:`regex` module's ``(?R)`` whole-pattern recursion (stdlib :mod:`re` cannot
-match balanced nesting).
+A page name may itself contain nested page references, so the pattern is recursive: it matches a
+balanced ``[[`` … ``]]`` pair via the named-group recursion of :data:`_PAGE_REF` (stdlib :mod:`re`
+cannot match balanced nesting).  Within the brackets the name is unrestricted apart from the bracket
+delimiters and newlines.
 
-Named group:
+Named groups:
 
+- ``page_ref`` — the full ``[[…]]`` reference; equal to the whole match (``match.group(0)``).
 - ``page_name`` — the content between the *outermost* balanced ``[[`` and ``]]``
   delimiters; non-empty, and itself possibly containing further ``[[…]]``
   references.  It may span spaces and punctuation but not a newline, since a Roam
@@ -303,6 +320,45 @@ Example matches:
 - ``[[0.2 Introduction [[v01]]]]`` → ``page_name`` is ``0.2 Introduction [[v01]]``.
 - ``[[[[[[Illustration]] Brief]] -- Draft]]`` → ``page_name`` is
   ``[[[[Illustration]] Brief]] -- Draft``.
+"""
+
+_BARE_TAG_NAME: Final[str] = r"[\p{L}\p{N}_—-]{1,45}"  # letters, digits, underscore, hyphen, em-dash
+"""Pattern: the page name in the bracket-less ``#<name>`` tag form.
+
+The compact ``#<name>`` notation can only reference a page whose name contains no whitespace and
+(almost) no punctuation: a run of 1 to 45 characters drawn from Unicode letters and digits plus the
+three connectors underscore (``_``), hyphen (``-``), and em-dash (``—``).  The upper bound is a Guffin
+policy limit.  This is far more restrictive than the bracketed :data:`_PAGE_REF` form, where a page
+name may contain arbitrary characters.
+"""
+
+TAG_RE: Final[regex.Pattern[str]] = regex.compile(rf"#(?:{_PAGE_REF}|(?P<bare_page_name>{_BARE_TAG_NAME}))")
+"""Compiled regex matching a Roam tag, in either of its two forms.
+
+A tag opens with ``#`` and is immediately followed by exactly one of:
+
+1. **Bracketed page reference** — a full :data:`PAGE_REF_RE` ``[[…]]`` reference (possibly
+   compound/nested, with an unrestricted page name), contributing the ``page_ref`` and ``page_name``
+   groups (e.g. ``#[[Better Bullets]]``, ``#[[a [[b]] c]]``, ``#[[Chapter 7: intro]]``).
+2. **Bare page name** — the compact bracket-less form, a :data:`_BARE_TAG_NAME` (letters, digits,
+   underscore, hyphen, and em-dash; no whitespace and no other punctuation), captured by the
+   ``bare_page_name`` group (e.g. ``#Guffin``, ``#some-tag``).
+
+Both forms reference a page; they differ only in how permissive the page name may be.  For a bracketed
+tag the ``bare_page_name`` group is ``None``; for a bare tag the ``page_ref`` and ``page_name`` groups
+are ``None``.  In both forms ``match.group(0)`` includes the leading ``#``.
+
+Because the bare form admits no whitespace or other punctuation, ``#Guffin,more`` captures only
+``Guffin`` (it stops at the comma) and ``#a.b`` captures only ``a`` (it stops at the dot).
+
+Named groups:
+
+- ``page_ref`` — the full ``[[…]]`` reference (form 1); ``None`` for a bare tag.
+- ``page_name`` — the referenced page name (form 1); ``None`` for a bare tag.
+- ``bare_page_name`` — the bracket-less page name following ``#`` (form 2); ``None`` for a bracketed tag.
+
+Adjacent tags are matched separately; use :meth:`regex.Pattern.finditer` to enumerate every tag in
+a string.
 """
 
 BLOCK_REF_RE: Final[regex.Pattern[str]] = regex.compile(rf"\(\((?P<uid>{SYNTHETIC_UID_PATTERN})\)\)")

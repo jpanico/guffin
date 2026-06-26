@@ -10,6 +10,7 @@ from guffin.roam.markdown import (
     BLOCK_REF_RE,
     CALLOUT_RE,
     PAGE_REF_RE,
+    TAG_RE,
     CalloutType,
     RoamCallout,
     firestore_url_file_name,
@@ -309,6 +310,123 @@ class TestPageRefRE:
     def test_no_match_across_newline(self) -> None:
         """Test that a reference whose name spans a newline does not match."""
         assert PAGE_REF_RE.search("[[foo\nbar]]") is None
+
+
+# ---------------------------------------------------------------------------
+# TestTagRE
+# ---------------------------------------------------------------------------
+
+
+class TestTagRE:
+    """Tests for TAG_RE — a tag is ``#`` followed by a bracketed page reference or a bare page name."""
+
+    # --- bare page-name form (bare_page_name): letters + digits only ---
+
+    def test_bare_full_match(self) -> None:
+        """A bare tag is consumed whole, including the leading '#'."""
+        m = TAG_RE.search("#Guffin")
+        assert m is not None
+        assert m.group(0) == "#Guffin"
+        assert m.group("bare_page_name") == "Guffin"
+        assert m.group("page_ref") is None
+        assert m.group("page_name") is None
+
+    def test_bare_stops_at_punctuation(self) -> None:
+        """The bare form admits no punctuation, so it stops at a comma."""
+        m = TAG_RE.search("#Guffin,more")
+        assert m is not None
+        assert m.group(0) == "#Guffin"
+        assert m.group("bare_page_name") == "Guffin"
+
+    def test_bare_stops_at_dot(self) -> None:
+        """A dot is punctuation outside the allowed connectors, so the bare form stops before it."""
+        m = TAG_RE.search("#a.b")
+        assert m is not None
+        assert m.group("bare_page_name") == "a"
+
+    def test_bare_stops_at_whitespace(self) -> None:
+        """A bare tag terminates at the first whitespace character."""
+        m = TAG_RE.search("#Guffin is great")
+        assert m is not None
+        assert m.group("bare_page_name") == "Guffin"
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "Guffin",  # capitalized
+            "todo",  # lowercase
+            "v01",  # letters + digits
+            "café",  # non-ASCII letters allowed
+            "2024",  # all digits
+            "some-tag",  # hyphen allowed
+            "a_b_c",  # underscore allowed
+            "a—b",  # em-dash allowed
+        ],
+    )
+    def test_valid_bare_characters(self, name: str) -> None:
+        """Letters, digits, and the connectors underscore/hyphen/em-dash are accepted."""
+        m = TAG_RE.search(f"#{name} ")
+        assert m is not None
+        assert m.group("bare_page_name") == name
+
+    def test_bare_at_max_length(self) -> None:
+        """A 45-character bare name is matched whole (upper bound)."""
+        name = "a" * 45
+        m = TAG_RE.search(f"#{name}")
+        assert m is not None
+        assert m.group("bare_page_name") == name
+
+    def test_bare_over_max_length_truncated(self) -> None:
+        """A bare name longer than 45 chars matches only its first 45 characters."""
+        m = TAG_RE.search("#" + "a" * 46)
+        assert m is not None
+        assert m.group("bare_page_name") == "a" * 45
+
+    # --- bracketed page-reference form (page_ref / page_name): permissive ---
+
+    def test_page_ref_full_match(self) -> None:
+        """A bracketed tag is consumed whole, exposing page_ref and page_name."""
+        m = TAG_RE.search("#[[Better Bullets]]")
+        assert m is not None
+        assert m.group(0) == "#[[Better Bullets]]"
+        assert m.group("page_ref") == "[[Better Bullets]]"
+        assert m.group("page_name") == "Better Bullets"
+        assert m.group("bare_page_name") is None
+
+    def test_page_ref_compound_nested(self) -> None:
+        """A bracketed tag may reference a compound page name containing a nested reference."""
+        m = TAG_RE.search("#[[a [[b]] c]]")
+        assert m is not None
+        assert m.group(0) == "#[[a [[b]] c]]"
+        assert m.group("page_name") == "a [[b]] c"
+
+    def test_page_ref_allows_punctuation(self) -> None:
+        """A bracketed page name is permissive — it may contain punctuation such as a colon."""
+        m = TAG_RE.search("#[[Chapter 7: intro]]")
+        assert m is not None
+        assert m.group("page_name") == "Chapter 7: intro"
+
+    def test_no_match_page_ref_across_newline(self) -> None:
+        """A bracketed page name spanning a newline does not match."""
+        assert TAG_RE.search("#[[foo\nbar]]") is None
+
+    # --- no-match cases ---
+
+    def test_no_match_plain_text(self) -> None:
+        """Text without a '#' does not match."""
+        assert TAG_RE.search("no tags here") is None
+
+    def test_no_match_hash_then_whitespace(self) -> None:
+        """A '#' immediately followed by whitespace does not start a tag."""
+        assert TAG_RE.search("# spaced") is None
+
+    def test_no_match_hash_then_punctuation(self) -> None:
+        """A '#' immediately followed by punctuation is neither a bracketed nor a bare tag."""
+        assert TAG_RE.search("#,") is None
+
+    def test_no_match_unterminated_page_ref(self) -> None:
+        """A '#[[' with no closing ']]' is not a tag."""
+        assert TAG_RE.search("#[[unclosed") is None
 
 
 # ---------------------------------------------------------------------------
