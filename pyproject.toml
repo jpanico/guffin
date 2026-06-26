@@ -45,7 +45,7 @@ check = [
     "black .",
     "ruff check --fix src/ tests/",
     "pyright",
-    "pytest",
+    "pytest -n auto",
 ]
 
 [tool.black]
