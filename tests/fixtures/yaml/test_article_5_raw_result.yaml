@@ -317,7 +317,7 @@
       - source:
         - uid
         - v3WbOVP7U
-        value: ' 5, #[[callouts demo]]'
+        value: ' 5, #[[callouts demo]], #v01'
     prevent-clean: 1781541470279
     children:
     - id: 11502
@@ -337,13 +337,13 @@
     - id: 11822
     - id: 11823
     uid: dPZqAiKrK
-    word-count: 23
+    word-count: 24
     edit-user:
       id: 3
     time: 1781833303933
     title: '[[Test Article]] 5'
-    edit-nonce: F--j0fkGy
-    edit-time: 1782433916907
+    edit-nonce: d377MoLIJ
+    edit-time: 1782500255031
     open: true
     refs:
     - id: 4223
@@ -458,19 +458,20 @@
     title: '>'
     edit-nonce: 2POM1zS7j
     edit-time: 1773784559631
-- - string: 'attribute1:: 5, #[[callouts demo]]'
+- - string: 'attribute1:: 5, #[[callouts demo]], #v01'
     user:
       id: 3
     id: 11822
     uid: v3WbOVP7U
     parents:
     - id: 11494
-    time: 1782433916907
+    time: 1782500255031
     order: 3
     open: true
     page:
       id: 11494
     refs:
+    - id: 4381
     - id: 5453
     - id: 11823
 - - string: Decision / choice
@@ -588,6 +589,46 @@
     open: true
     page:
       id: 5618
+- - attrs:
+    - - source:
+        - uid
+        - igM26JNa2
+        value:
+        - uid
+        - igM26JNa2
+      - source:
+        - uid
+        - tcSQVWaAo
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - tcSQVWaAo
+        value:
+        - uid
+        - cBrKZ4MS4
+    prevent-clean: 1773834126432
+    children:
+    - id: 4383
+    user:
+      id: 3
+    sidebar: 9
+    id: 4381
+    lookup:
+    - id: 261
+    - id: 4239
+    - id: 4381
+    - id: 4383
+    uid: igM26JNa2
+    word-count: 3
+    edit-user:
+      id: 3
+    time: 1776523140434
+    title: v01
+    edit-nonce: 7PhDLVVmu
+    edit-time: 1776523140434
+    open: false
 - - string: '`=`'
     user:
       id: 3
@@ -828,6 +869,21 @@
     edit-nonce: mBHIs-ssl
     edit-time: 1773854756434
     open: true
+- - string: 'tags:: #[[Book Structure]]'
+    user:
+      id: 3
+    id: 4383
+    uid: tcSQVWaAo
+    parents:
+    - id: 4381
+    time: 1773242279621
+    order: 0
+    open: false
+    page:
+      id: 4381
+    refs:
+    - id: 261
+    - id: 4239
 - - string: '{{[[table]]}}'
     children:
     - id: 5649

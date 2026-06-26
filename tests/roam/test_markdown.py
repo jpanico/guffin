@@ -6,6 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from guffin.roam.markdown import (
+    ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     BLOCK_REF_RE,
     CALLOUT_RE,
@@ -427,6 +428,91 @@ class TestTagRE:
     def test_no_match_unterminated_page_ref(self) -> None:
         """A '#[[' with no closing ']]' is not a tag."""
         assert TAG_RE.search("#[[unclosed") is None
+
+
+# ---------------------------------------------------------------------------
+# TestAttributeAssignmentRE
+# ---------------------------------------------------------------------------
+
+
+class TestAttributeAssignmentRE:
+    """Tests for ATTRIBUTE_ASSIGNMENT_RE — ``<attribute>:: <value>[, <value>]…``."""
+
+    # --- fixture-derived examples ---
+
+    def test_attribute1_example(self) -> None:
+        """The fixture 'attribute1' assignment: a slug value and two tag values."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("attribute1:: 5, #[[callouts demo]], #v01")
+        assert m is not None
+        assert m.group("attribute") == "attribute1"
+        assert m.group("values") == "5, #[[callouts demo]], #v01"
+        assert m.captures("value") == ["5", "#[[callouts demo]]", "#v01"]
+
+    def test_tags_example(self) -> None:
+        """The fixture 'tags' assignment: two tag values, no spaces around the comma."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("tags:: #Guffin,#[[Better Bullets]]")
+        assert m is not None
+        assert m.group("attribute") == "tags"
+        assert m.captures("value") == ["#Guffin", "#[[Better Bullets]]"]
+
+    # --- structure ---
+
+    def test_single_slug_value(self) -> None:
+        """A single bare-slug value is captured."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("status:: done")
+        assert m is not None
+        assert m.group("attribute") == "status"
+        assert m.captures("value") == ["done"]
+
+    def test_single_bare_tag_value(self) -> None:
+        """A single bare-tag value is captured."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("topic:: #Guffin")
+        assert m is not None
+        assert m.captures("value") == ["#Guffin"]
+
+    def test_no_space_after_separator(self) -> None:
+        """The separator need not be followed by whitespace."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("k::a")
+        assert m is not None
+        assert m.group("attribute") == "k"
+        assert m.captures("value") == ["a"]
+
+    def test_leading_whitespace_after_separator_excluded(self) -> None:
+        """Whitespace between '::' and the first value is not part of 'values'."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("k::   v")
+        assert m is not None
+        assert m.group("values") == "v"
+
+    def test_value_with_nested_page_ref(self) -> None:
+        """A tag value may reference a compound (nested) page name."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("k:: #[[a [[b]] c]], z")
+        assert m is not None
+        assert m.captures("value") == ["#[[a [[b]] c]]", "z"]
+
+    def test_match_on_inner_line(self) -> None:
+        """MULTILINE: an assignment on a later line of a block string still matches."""
+        m = ATTRIBUTE_ASSIGNMENT_RE.search("intro text\ntags:: #Guffin")
+        assert m is not None
+        assert m.group("attribute") == "tags"
+        assert m.captures("value") == ["#Guffin"]
+
+    # --- no-match cases ---
+
+    def test_no_match_missing_separator(self) -> None:
+        """A line without '::' is not an assignment."""
+        assert ATTRIBUTE_ASSIGNMENT_RE.search("tags #Guffin") is None
+
+    def test_no_match_not_line_anchored(self) -> None:
+        """An assignment not at the start of a line does not match."""
+        assert ATTRIBUTE_ASSIGNMENT_RE.search("prefix tags:: #Guffin") is None
+
+    def test_no_match_empty_values(self) -> None:
+        """An assignment with no value after '::' does not match."""
+        assert ATTRIBUTE_ASSIGNMENT_RE.search("tags:: ") is None
+
+    def test_no_match_punctuation_attribute(self) -> None:
+        """An attribute name with disallowed punctuation does not match."""
+        assert ATTRIBUTE_ASSIGNMENT_RE.search("a.b:: x") is None
 
 
 # ---------------------------------------------------------------------------

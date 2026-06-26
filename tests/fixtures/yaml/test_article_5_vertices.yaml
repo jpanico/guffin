@@ -34,6 +34,7 @@
 - vertex_type: guffin/text
   uid: v3WbOVP7U
   refs:
+  - igM26JNa2
   - d87aKN4hh
   - -gG94Gziw
-  text: 'attribute1:: 5, #[callouts demo](x-guffin:vertex/d87aKN4hh)'
+  text: 'attribute1:: 5, #[callouts demo](x-guffin:vertex/d87aKN4hh), #v01'

@@ -7,8 +7,9 @@ Public symbols:
   callout block string; :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
   link whose URL is a Cloud Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
   a Roam page reference ``[[<page_name>]]``; :data:`TAG_RE` — compiled regex matching a Roam tag
-  in either page-reference (``#[[…]]``) or bare-word (``#word``) form; :data:`BLOCK_REF_RE` —
-  compiled regex matching a
+  in either page-reference (``#[[…]]``) or bare-word (``#word``) form; :data:`ATTRIBUTE_ASSIGNMENT_RE`
+  — compiled regex matching a line-anchored Roam attribute assignment ``attribute:: value, …``;
+  :data:`BLOCK_REF_RE` — compiled regex matching a
   Roam block reference ``((<uid>))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
   block embed ``{{embed: ((<uid>))}}``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
   Roam aliased page link ``[display]([[Page Name]])``; :data:`ITALIC_RE` — compiled regex
@@ -16,6 +17,8 @@ Public symbols:
   highlight syntax ``^^text^^``; :data:`COLOR_BOLD_RE`, :data:`COLOR_HIGHLIGHT_RE`,
   :data:`COLOR_UNDERLINE_RE`, :data:`COLOR_BOX_RE`, :data:`BG_COLOR_LINE_RE` — compiled regexes
   for the five Color Highlighter inline and block-level color constructs.
+- **Pattern fragments**: :data:`SLUG` — a short restricted token (letters, digits, underscore,
+  hyphen, em-dash), reused as a building block of larger patterns such as :data:`TAG_RE`.
 - **Enumerations**: :class:`CalloutType` — the twelve Roam callout type keywords.
 - **Callout model**: :class:`RoamCallout` — parsed decomposition of a callout block string.
 - **Callout parser**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`.
@@ -281,18 +284,29 @@ def firestore_url_file_name(firestore_url: str) -> str | None:
     return None
 
 
-_PAGE_REF: Final[str] = r"(?P<page_ref>\[\[(?P<page_name>(?:[^\[\]\n]++|(?&page_ref))+)\]\])"
+_PAGE_REF_BODY: Final[str] = r"(?:[^\[\]\n]++|(?&page_ref))+"
+"""The content between a page reference's ``[[`` and ``]]`` delimiters: a non-empty run of bracket-free.
+
+text interleaved with nested page references.
+
+Recurses the enclosing ``page_ref`` group via ``(?&page_ref)``, so it only resolves inside a pattern
+that defines a ``page_ref`` group wrapping it (see :data:`_PAGE_REF` and :data:`ATTRIBUTE_ASSIGNMENT_RE`).
+The non-bracket run uses a possessive ``++`` quantifier, which keeps matching linear on long
+unterminated input.
+"""
+
+_PAGE_REF: Final[str] = rf"(?P<page_ref>\[\[(?P<page_name>{_PAGE_REF_BODY})\]\])"
 """Reusable pattern fragment for a Roam page reference ``[[<page_name>]]``.
 
 Inside the ``[[`` … ``]]`` delimiters a page name is **permissive**: it may contain any characters
 except the bracket delimiters and a newline, and it may nest further references.  The whole ``[[…]]``
-reference is captured by the named group ``page_ref`` and its inner name by ``page_name``.
+reference is captured by the named group ``page_ref`` and its inner name (:data:`_PAGE_REF_BODY`) by
+``page_name``.
 
 Nesting is expressed by recursing the ``page_ref`` subpattern via ``(?&page_ref)`` — a *named*-group
 recursion rather than ``(?R)`` whole-pattern recursion — so the fragment composes correctly when
 embedded in a larger pattern such as :data:`TAG_RE` (where ``(?R)`` would wrongly recurse the host
-pattern).  The non-bracket-character run uses a possessive ``++`` quantifier, which keeps matching
-linear on long unterminated input.  Compiled standalone as :data:`PAGE_REF_RE`.
+pattern).  Compiled standalone as :data:`PAGE_REF_RE`.
 """
 
 PAGE_REF_RE: Final[regex.Pattern[str]] = regex.compile(_PAGE_REF)
@@ -322,17 +336,15 @@ Example matches:
   ``[[[[Illustration]] Brief]] -- Draft``.
 """
 
-_BARE_TAG_NAME: Final[str] = r"[\p{L}\p{N}_—-]{1,45}"  # letters, digits, underscore, hyphen, em-dash
-"""Pattern: the page name in the bracket-less ``#<name>`` tag form.
+SLUG: Final[str] = r"[\p{L}\p{N}_—-]{1,45}"  # letters, digits, underscore, hyphen, em-dash
+"""Pattern: a slug — a short, restricted token of 1 to 45 characters.
 
-The compact ``#<name>`` notation can only reference a page whose name contains no whitespace and
-(almost) no punctuation: a run of 1 to 45 characters drawn from Unicode letters and digits plus the
-three connectors underscore (``_``), hyphen (``-``), and em-dash (``—``).  The upper bound is a Guffin
-policy limit.  This is far more restrictive than the bracketed :data:`_PAGE_REF` form, where a page
-name may contain arbitrary characters.
+A slug contains no whitespace and (almost) no punctuation: a run of Unicode letters and digits plus
+the three connectors underscore (``_``), hyphen (``-``), and em-dash (``—``).  The 1-to-45-character
+upper bound is a Guffin policy limit.
 """
 
-TAG_RE: Final[regex.Pattern[str]] = regex.compile(rf"#(?:{_PAGE_REF}|(?P<bare_page_name>{_BARE_TAG_NAME}))")
+TAG_RE: Final[regex.Pattern[str]] = regex.compile(rf"#(?:{_PAGE_REF}|(?P<bare_page_name>{SLUG}))")
 """Compiled regex matching a Roam tag, in either of its two forms.
 
 A tag opens with ``#`` and is immediately followed by exactly one of:
@@ -340,9 +352,9 @@ A tag opens with ``#`` and is immediately followed by exactly one of:
 1. **Bracketed page reference** — a full :data:`PAGE_REF_RE` ``[[…]]`` reference (possibly
    compound/nested, with an unrestricted page name), contributing the ``page_ref`` and ``page_name``
    groups (e.g. ``#[[Better Bullets]]``, ``#[[a [[b]] c]]``, ``#[[Chapter 7: intro]]``).
-2. **Bare page name** — the compact bracket-less form, a :data:`_BARE_TAG_NAME` (letters, digits,
-   underscore, hyphen, and em-dash; no whitespace and no other punctuation), captured by the
-   ``bare_page_name`` group (e.g. ``#Guffin``, ``#some-tag``).
+2. **Bare page name** — the compact bracket-less form, a :data:`SLUG` (letters, digits, underscore,
+   hyphen, and em-dash; no whitespace and no other punctuation), captured by the ``bare_page_name``
+   group (e.g. ``#Guffin``, ``#some-tag``).
 
 Both forms reference a page; they differ only in how permissive the page name may be.  For a bracketed
 tag the ``bare_page_name`` group is ``None``; for a bare tag the ``page_ref`` and ``page_name`` groups
@@ -359,6 +371,50 @@ Named groups:
 
 Adjacent tags are matched separately; use :meth:`regex.Pattern.finditer` to enumerate every tag in
 a string.
+"""
+
+_ATTRIBUTE_VALUE: Final[str] = rf"(?P<value>#(?:(?&page_ref)|{SLUG})|{SLUG})"
+"""Pattern fragment for one attribute-assignment value, captured by the repeated ``value`` group.
+
+A value is either a tag — ``#`` followed by a page reference or a :data:`SLUG` — or a bare
+:data:`SLUG`.  The page reference is reached via ``(?&page_ref)``, so this fragment resolves only
+inside a pattern that defines that subroutine (it is embedded solely in :data:`ATTRIBUTE_ASSIGNMENT_RE`).
+"""
+
+ATTRIBUTE_ASSIGNMENT_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"(?(DEFINE)(?P<page_ref>\[\[{_PAGE_REF_BODY}\]\]))"
+    rf"^(?P<attribute>{SLUG})::[ \t]*"
+    rf"(?P<values>{_ATTRIBUTE_VALUE}(?:[ \t]*,[ \t]*{_ATTRIBUTE_VALUE})*)",
+    regex.MULTILINE,
+)
+"""Compiled regex matching a Roam attribute assignment ``<attribute>:: <value>[, <value>]…``.
+
+The assignment is anchored to the start of a line (:data:`regex.MULTILINE` is set so the ``^`` anchor
+matches at the start of any line within a multi-line block string).  Structure:
+
+- The **attribute** is a single :data:`SLUG`, terminated by the ``::`` separator.
+- The **values** are a comma-separated list of one or more elements, each either a Roam tag (``#`` plus
+  a page reference or a :data:`SLUG`, per :data:`TAG_RE`) or a bare :data:`SLUG`.  Whitespace around the
+  commas and after ``::`` is permitted and not captured.
+
+A capture-free, recursive page-reference subroutine is defined up front via ``(?(DEFINE)…)`` (sharing
+:data:`_PAGE_REF_BODY` with :data:`_PAGE_REF`) and invoked from each value with ``(?&page_ref)``; a
+``DEFINE`` subroutine is needed because the per-value page reference recurs in a repeated context, where
+the named groups of :data:`_PAGE_REF` could not be duplicated.
+
+Named groups:
+
+- ``attribute`` — the attribute name preceding ``::``.
+- ``values`` — the whole comma-separated value list following ``::`` (leading whitespace after ``::``
+  excluded), including the intervening separators.
+- ``value`` — repeated once per list element; enumerate the elements with ``match.captures("value")``.
+
+Example matches:
+
+- ``attribute1:: 5, #[[callouts demo]], #v01`` → ``attribute`` is ``attribute1``; ``captures("value")``
+  is ``["5", "#[[callouts demo]]", "#v01"]``.
+- ``tags:: #Guffin,#[[Better Bullets]]`` → ``attribute`` is ``tags``; ``captures("value")`` is
+  ``["#Guffin", "#[[Better Bullets]]"]``.
 """
 
 BLOCK_REF_RE: Final[regex.Pattern[str]] = regex.compile(rf"\(\((?P<uid>{SYNTHETIC_UID_PATTERN})\)\)")
