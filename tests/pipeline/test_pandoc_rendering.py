@@ -7,6 +7,7 @@
 from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
+import pytest
 from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
@@ -534,37 +535,42 @@ class TestBuildBlocksCoalescing:
 class TestVertexTreeToPandocArticleFixture:
     """Integration tests for vertex_tree_to_pandoc() using the Test Article 1 fixture."""
 
-    def test_metadata_title_is_test_article_1(self) -> None:
+    @pytest.fixture(scope="class")
+    def doc(self) -> pf.Doc:
+        """Render the Test Article 1 fixture once and share the read-only Doc across the class.
+
+        The tests below only inspect the result, so a single Pandoc invocation suffices for all of
+        them (the call is the dominant cost in this module).
+        """
+        rendered, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {}, {})
+        return rendered
+
+    def test_metadata_title_is_test_article_1(self, doc: pf.Doc) -> None:
         """Doc metadata title matches the page title from the fixture."""
-        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {}, {})
         assert _collect_text(doc.metadata["title"]) == "Test Article 1"
 
-    def test_block_count(self) -> None:
+    def test_block_count(self, doc: pf.Doc) -> None:
         """The fixture produces the expected number of top-level blocks."""
-        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {}, {})
         # 1 Div(callout) + 3 H1s + 4 H2s + 3 H3s + 1 H4 + 2 Para(Link) + 3 BulletList = 17
         assert len(list(doc.content)) == 17
 
-    def test_first_block_is_section_1_header(self) -> None:
+    def test_first_block_is_section_1_header(self, doc: pf.Doc) -> None:
         """The second block is an H1 Header for 'Section 1' (first block is the callout Para)."""
-        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {}, {})
         second = list(doc.content)[1]
         assert isinstance(second, pf.Header)
         assert second.level == 1
         assert _collect_text(second) == "Section 1"
 
-    def test_image_renders_as_fallback_link_when_no_image_files(self) -> None:
+    def test_image_renders_as_fallback_link_when_no_image_files(self, doc: pf.Doc) -> None:
         """The ImageVertex in the fixture renders as a pf.Link when image_files is empty."""
-        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {}, {})
         blocks = list(doc.content)
         image_para = next(
             (b for b in blocks if isinstance(b, pf.Para) and isinstance(list(b.content)[0], pf.Link)), None
         )
         assert image_para is not None
 
-    def test_text_content_vertex_renders_as_bullet_list(self) -> None:
+    def test_text_content_vertex_renders_as_bullet_list(self, doc: pf.Doc) -> None:
         """Each TextVertex renders as a top-level BulletList."""
-        doc, _ = vertex_tree_to_pandoc(article1_vertex_tree(), {}, {})
         blocks = list(doc.content)
         bullet_lists = [b for b in blocks if isinstance(b, pf.BulletList)]
         assert len(bullet_lists) == 3
