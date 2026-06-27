@@ -20,12 +20,14 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView
-from guffin.model.link import VertexLinkKind, vertex_link_url
+from guffin.model.link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.pipeline.pandoc_rendering import (
+    _attribute_assignment_text,
     parse_inline_md,
     build_child_blocks,
     vertex_tree_to_pandoc,
 )
+from guffin.model.attribute import Attribute, AttributeAssignment, LiteralValue
 
 from conftest import article1_vertex_tree
 
@@ -577,3 +579,37 @@ class TestVertexTreeToPandocArticleFixture:
         items = list(bullet_lists[1].content)
         assert len(items) == 1
         assert _collect_text(list(items[0].content)[0]) == "AI assistant (Claude Opus 4.6):"
+
+
+# ---------------------------------------------------------------------------
+# TestAttributeAssignmentText
+# ---------------------------------------------------------------------------
+
+
+class TestAttributeAssignmentText:
+    """Tests for _attribute_assignment_text — the reconstructed attribute-assignment Markdown line."""
+
+    @staticmethod
+    def _assignment() -> AttributeAssignment:
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+        return AttributeAssignment(
+            attribute=Attribute(name="attribute1", link=link),
+            values=(LiteralValue(value="5"),),
+        )
+
+    def test_attribute_name_wrapped_in_bold_italic_underline_markup(self) -> None:
+        """The attribute name is [***name***]{.underline} and the '::' separator collapses to ':'."""
+        text = _attribute_assignment_text(self._assignment())
+        assert text == "[***attribute1***]{.underline}: 5"
+
+    def test_markup_parses_to_underline_bold_italic(self) -> None:
+        """The reconstructed line parses so the attribute name is Underline > Strong > Emph."""
+        text = _attribute_assignment_text(self._assignment())
+        inlines = parse_inline_md([text])[text]
+        underline = inlines[0]
+        assert isinstance(underline, pf.Underline)
+        strong = list(underline.content)[0]
+        assert isinstance(strong, pf.Strong)
+        emph = list(strong.content)[0]
+        assert isinstance(emph, pf.Emph)
+        assert _collect_text(emph) == "attribute1"

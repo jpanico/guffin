@@ -288,10 +288,12 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
 def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     """Reconstruct the Pandoc-Markdown line for an :class:`~guffin.model.attribute.AttributeAssignment`.
 
-    Produces ``<attribute>:: <value>, …`` where each
+    Produces ``[***<attribute>***]{.underline}: <value>, …`` where each
     :class:`~guffin.model.attribute.ReferenceValue` is rendered as a hashtag link
     ``#[<name>](<x-guffin-url>)`` and each :class:`~guffin.model.attribute.LiteralValue` as its bare
-    text.  The attribute name itself is emitted as plain text.
+    text.  The Roam ``::`` attribute separator is collapsed to a single ``:`` in the output.  The
+    attribute name is wrapped in bold-italic-underline markup so it renders with that emphasis in both
+    the Markdown (``<u>***name***</u>``) and PDF (``#underline[#strong[#emph[…]]]``) output formats.
 
     Args:
         assignment: The parsed attribute assignment to render.
@@ -307,7 +309,8 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
         )
         for value in assignment.values
     ]
-    return f"{assignment.attribute.name}:: {', '.join(parts)}"
+    attribute_markup: Final[str] = f"[***{assignment.attribute.name}***]{{.underline}}"
+    return f"{attribute_markup}: {', '.join(parts)}"
 
 
 def _flowing_text(vertex: TextVertex | AttributeAssignmentVertex) -> str:

@@ -8,5 +8,5 @@
 > - **attributes**
 
 - hello world!
-- tags:: \#Guffin, \#Better Bullets
-- attribute1:: 5, \#callouts demo, \#v01
+- <u>***tags***</u>: \#Guffin, \#Better Bullets
+- <u>***attribute1***</u>: 5, \#callouts demo, \#v01
