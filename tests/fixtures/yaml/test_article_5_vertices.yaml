@@ -24,17 +24,51 @@
 - vertex_type: guffin/text
   uid: AKAMsYfSW
   text: hello world!
-- vertex_type: guffin/text
+- vertex_type: guffin/attribute-assignment
   uid: Up9F5BMq9
   refs:
   - RXwAqq0_T
   - nC88efm_x
   - HGasV4ras
-  text: 'tags:: #Guffin,#[Better Bullets](x-guffin:vertex/nC88efm_x)'
-- vertex_type: guffin/text
+  assignment:
+    attribute:
+      name: tags
+      link:
+      - vertex
+      - RXwAqq0_T
+    values:
+    - kind: reference
+      name: Guffin
+      link:
+      - vertex
+      - HGasV4ras
+    - kind: reference
+      name: Better Bullets
+      link:
+      - vertex
+      - nC88efm_x
+- vertex_type: guffin/attribute-assignment
   uid: v3WbOVP7U
   refs:
   - igM26JNa2
   - d87aKN4hh
   - -gG94Gziw
-  text: 'attribute1:: 5, #[callouts demo](x-guffin:vertex/d87aKN4hh), #v01'
+  assignment:
+    attribute:
+      name: attribute1
+      link:
+      - vertex
+      - -gG94Gziw
+    values:
+    - kind: literal
+      value: '5'
+    - kind: reference
+      name: callouts demo
+      link:
+      - vertex
+      - d87aKN4hh
+    - kind: reference
+      name: v01
+      link:
+      - vertex
+      - igM26JNa2

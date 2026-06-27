@@ -6,7 +6,9 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
+from guffin.model.attribute import LiteralValue, ReferenceValue
 from guffin.model.vertex import (
+    AttributeAssignmentVertex,
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -24,6 +26,7 @@ from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import RoamNode
 from guffin.pipeline.roam_tree_to_guffin import (
     build_view_map,
+    to_attribute_assignment_vertex,
     to_block_quote_vertex,
     to_callout_vertex,
     to_code_block_vertex,
@@ -55,7 +58,7 @@ _CALLOUT_STRING: str = "[[>]] [[!NOTE]] This is a note"
 # Raw Roam form: closing fence attached to the final content line (no separating newline).
 _CODE_STRING: str = "```python\ndef f():\n    pass```"
 
-from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, article1_node_tree
+from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, article1_node_tree, article5_node_tree
 
 # ---------------------------------------------------------------------------
 # Factory helpers
@@ -802,6 +805,43 @@ class TestTranscribeNode:
 
 
 # ---------------------------------------------------------------------------
+# TestToAttributeAssignmentVertex
+# ---------------------------------------------------------------------------
+
+
+class TestToAttributeAssignmentVertex:
+    """Tests for to_attribute_assignment_vertex using the Test Article 5 fixture."""
+
+    def test_resolves_attribute_and_values(self) -> None:
+        """The 'attribute1:: 5, #[[callouts demo]], #v01' node resolves to a structured assignment."""
+        tree = article5_node_tree()
+        vertex = to_attribute_assignment_vertex(tree.uid_map["v3WbOVP7U"], tree)
+        assert isinstance(vertex, AttributeAssignmentVertex)
+        assignment = vertex.assignment
+        assert assignment.attribute.name == "attribute1"
+        assert assignment.attribute.link.uid == "-gG94Gziw"
+        literal, ref_cd, ref_v01 = assignment.values
+        assert isinstance(literal, LiteralValue) and literal.value == "5"
+        assert isinstance(ref_cd, ReferenceValue) and (ref_cd.name, ref_cd.link.uid) == ("callouts demo", "d87aKN4hh")
+        assert isinstance(ref_v01, ReferenceValue) and (ref_v01.name, ref_v01.link.uid) == ("v01", "igM26JNa2")
+
+    def test_dispatched_via_transcribe_standalone_node(self) -> None:
+        """Transcribe_standalone_node routes an attribute-assignment node to an AttributeAssignmentVertex."""
+        tree = article5_node_tree()
+        vertex = transcribe_standalone_node(tree.uid_map["Up9F5BMq9"], tree)
+        assert isinstance(vertex, AttributeAssignmentVertex)
+        assert vertex.assignment.attribute.name == "tags"
+        names = [v.name for v in vertex.assignment.values if isinstance(v, ReferenceValue)]
+        assert names == ["Guffin", "Better Bullets"]
+
+    def test_non_attribute_node_raises(self) -> None:
+        """A node whose string is not an attribute assignment is rejected."""
+        tree = article5_node_tree()
+        with pytest.raises(ValueError):
+            to_attribute_assignment_vertex(tree.uid_map["AKAMsYfSW"], tree)  # 'hello world!'
+
+
+# ---------------------------------------------------------------------------
 # TestTranscribeArticleFixture
 # ---------------------------------------------------------------------------
 
@@ -981,7 +1021,7 @@ class TestToTableVertex:
         return root, _node_tree(root, col1_row1, col1_row2, col2_row1, col2_row2)
 
     def test_returns_table_vertex(self) -> None:
-        """to_table_vertex returns a TableVertex as the first element of the pair."""
+        """To_table_vertex returns a TableVertex as the first element of the pair."""
         root, imap = self._make_2x2_inputs()
         vertex, _ = to_table_vertex(root, imap)
         assert isinstance(vertex, TableVertex)
@@ -1039,7 +1079,7 @@ class TestBuildViewMap:
     """Tests for build_view_map."""
 
     def test_records_only_non_default_layouts(self) -> None:
-        """build_view_map records non-default children-view-types and omits default (bullet) ones."""
+        """Build_view_map records non-default children-view-types and omits default (bullet) ones."""
         root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2), IdObject(id=3), IdObject(id=4)])
         # BULLET equals the default, so this node is omitted from the sparse map.
         bullet = RoamNode(
@@ -1095,7 +1135,7 @@ class TestToRenderBundle:
     """Tests for to_render_bundle."""
 
     def test_bundles_transcribe_and_build_view_map(self) -> None:
-        """to_render_bundle pairs transcribe() content with build_view_map() presentation."""
+        """To_render_bundle pairs transcribe() content with build_view_map() presentation."""
         root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
         child = RoamNode(
             uid="numberd01",

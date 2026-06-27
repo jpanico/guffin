@@ -39,7 +39,9 @@ Public symbols:
 - :class:`BlockQuoteVertex` — normalized (transcribed) form of a Roam block-quote block node.
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
 - :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
-- :data:`Vertex` — union of all nine concrete vertex types.
+- :class:`AttributeAssignmentVertex` — normalized (transcribed) form of a Roam attribute
+  assignment block node.
+- :data:`Vertex` — union of all ten concrete vertex types.
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
 """
@@ -54,6 +56,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
 from guffin.common.markdown import HeadingLevel
+from guffin.model.attribute import AttributeAssignment
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
 
@@ -102,6 +105,9 @@ class VertexType(StrEnum):
         BLOCK_EMBED: Normalized form of a Roam *Block* node whose
             ``:block/string`` is wholly a block embed (``{{embed: ((<uid>))}}``),
             transcluding the referenced block.
+        ATTRIBUTE_ASSIGNMENT: Normalized form of a Roam *Block* node whose
+            ``:block/string`` is wholly an attribute assignment
+            (``<attribute>:: <value>, …``).
     """
 
     PAGE = "guffin/page"
@@ -113,6 +119,7 @@ class VertexType(StrEnum):
     BLOCK_QUOTE = "guffin/block-quote"
     TABLE = "guffin/table"
     BLOCK_EMBED = "guffin/block-embed"
+    ATTRIBUTE_ASSIGNMENT = "guffin/attribute-assignment"
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
@@ -430,6 +437,27 @@ class BlockEmbedVertex(_BaseVertex[Literal[VertexType.BLOCK_EMBED]]):
         return value
 
 
+class AttributeAssignmentVertex(_BaseVertex[Literal[VertexType.ATTRIBUTE_ASSIGNMENT]]):
+    """Normalized (transcribed) form of a Roam attribute-assignment block node.
+
+    Produced when the source :class:`~guffin.roam.node.RoamNode` has a ``:block/string`` that is
+    wholly a Roam attribute assignment (``<attribute>:: <value>, …``).
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.ATTRIBUTE_ASSIGNMENT`.
+            Serialized as ``'vertex-type'``.
+        assignment: The parsed :class:`~guffin.model.attribute.AttributeAssignment` — the attribute
+            (a page reference) and its ordered values.
+    """
+
+    vertex_type: Literal[VertexType.ATTRIBUTE_ASSIGNMENT] = Field(
+        default=VertexType.ATTRIBUTE_ASSIGNMENT,
+        serialization_alias="vertex-type",
+        description="Always VertexType.ATTRIBUTE_ASSIGNMENT (serialized as 'vertex-type').",
+    )
+    assignment: AttributeAssignment = Field(..., description="The parsed attribute and its ordered values.")
+
+
 type Vertex = (
     PageVertex
     | HeadingVertex
@@ -440,8 +468,9 @@ type Vertex = (
     | BlockQuoteVertex
     | TableVertex
     | BlockEmbedVertex
+    | AttributeAssignmentVertex
 )
-"""Union of all nine concrete, normalized vertex types.
+"""Union of all ten concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
@@ -452,7 +481,8 @@ vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discri
 
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
 :class:`HeadingVertex`, :class:`TextVertex`, :class:`ImageVertex`, :class:`CalloutVertex`,
-:class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`, and :class:`BlockEmbedVertex`.
+:class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`, :class:`BlockEmbedVertex`, and
+:class:`AttributeAssignmentVertex`.
 
 Example::
 

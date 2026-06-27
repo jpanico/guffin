@@ -27,6 +27,8 @@ Public symbols:
   block-quote node.
 - :func:`to_block_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
   block embed node.
+- :func:`to_attribute_assignment_vertex` — build an :class:`~guffin.vertex.AttributeAssignmentVertex`
+  from an attribute-assignment node.
 - :func:`to_table` — build a :class:`~guffin.common.table.Table` from a
   :class:`~guffin.roam.node_tree.NodeTree` rooted at a native table node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node,
@@ -47,8 +49,10 @@ from typing import Final, assert_never
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
 
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeValue, LiteralValue, ReferenceValue
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
+    AttributeAssignmentVertex,
     BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
@@ -84,7 +88,9 @@ from guffin.common.markdown import FencedCodeBlock, parse_fenced_code_block
 from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
 from guffin.roam.markdown import (
+    ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
+    TAG_RE,
     RoamCallout,
     firestore_url_file_name,
     image_link_alt_text,
@@ -184,8 +190,7 @@ def vertex_type(node: RoamNode) -> VertexType:
         case NodeType.EMBED_BLOCK:
             return VertexType.BLOCK_EMBED
         case NodeType.ATTRIBUTE_BLOCK:
-            # No dedicated vertex type yet; render attribute assignments as plain text.
-            return VertexType.TEXT
+            return VertexType.ATTRIBUTE_ASSIGNMENT
 
 
 @validate_call
@@ -473,6 +478,96 @@ def to_block_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
     )
 
 
+def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
+    """Return a reference :class:`~guffin.model.link.VertexLink` to the page titled *page_name*.
+
+    Args:
+        page_name: The exact title of the referenced Roam page.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree`; its
+            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves the title to the page node.
+
+    Returns:
+        A :attr:`~guffin.model.link.VertexLinkKind.REFERENCE`-kind link to the page's UID.
+
+    Raises:
+        ValueError: When no page titled *page_name* is present in the tree (e.g. the referenced page
+            was not fetched).
+    """
+    page: Final[RoamNode | None] = tree.page_name_map.get(page_name)
+    if page is None:
+        raise ValueError(f"attribute assignment references unknown page {page_name!r}")
+    return VertexLink(kind=VertexLinkKind.REFERENCE, uid=page.uid)
+
+
+def _to_attribute_value(raw_value: str, tree: NodeTree) -> AttributeValue:
+    """Convert one raw attribute-value token into an :data:`~guffin.model.attribute.AttributeValue`.
+
+    A token that is wholly a Roam tag (per :data:`~guffin.roam.markdown.TAG_RE`) becomes a
+    :class:`~guffin.model.attribute.ReferenceValue` linking to the referenced page; any other token
+    becomes a :class:`~guffin.model.attribute.LiteralValue`.
+
+    Args:
+        raw_value: A single value token captured from the attribute assignment (e.g. ``5`` or
+            ``#[[callouts demo]]``).
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve a referenced page.
+
+    Returns:
+        A :class:`~guffin.model.attribute.LiteralValue` or :class:`~guffin.model.attribute.ReferenceValue`.
+
+    Raises:
+        ValueError: When a referenced page is not present in the tree.
+    """
+    tag_match: Final[regex.Match[str] | None] = TAG_RE.fullmatch(raw_value)
+    if tag_match is None:
+        return LiteralValue(value=raw_value)
+    page_name: Final[str | None] = tag_match.group("page_name") or tag_match.group("bare_page_name")
+    assert page_name is not None  # exactly one of the tag's name groups matches
+    return ReferenceValue(name=page_name, link=_page_reference_link(page_name, tree))
+
+
+@validate_call
+def to_attribute_assignment_vertex(node: RoamNode, tree: NodeTree) -> AttributeAssignmentVertex:
+    """Build an :class:`~guffin.vertex.AttributeAssignmentVertex` from an attribute-assignment *node*.
+
+    Parses ``node.string`` — a Roam attribute assignment ``<attribute>:: <value>, …`` matched in full
+    by :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE` — into an
+    :class:`~guffin.model.attribute.AttributeAssignment`.  The attribute name and every tag-valued
+    element are resolved to :class:`~guffin.model.link.VertexLink` references via the tree's
+    :attr:`~guffin.roam.node_tree.NodeTree.page_name_map`; non-tag values become literals.
+
+    Args:
+        node: An attribute-assignment node whose ``string`` is wholly ``<attribute>:: <value>, …``.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to; its
+            :attr:`~guffin.roam.node_tree.NodeTree.id_map` resolves child/ref stubs and its
+            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves referenced page titles.
+
+    Returns:
+        An :class:`~guffin.vertex.AttributeAssignmentVertex`.
+
+    Raises:
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
+        ValueError: If ``node.string`` is ``None``, is not wholly an attribute assignment, or
+            references a page absent from *tree*.
+    """
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    match: Final[regex.Match[str] | None] = ATTRIBUTE_ASSIGNMENT_RE.fullmatch(node.string.strip())
+    if match is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} string is not an attribute assignment: {node.string!r}")
+    attribute_name: Final[str] = match.group("attribute")
+    assignment: Final[AttributeAssignment] = AttributeAssignment(
+        attribute=Attribute(name=attribute_name, link=_page_reference_link(attribute_name, tree)),
+        values=tuple(_to_attribute_value(raw, tree) for raw in match.captures("value")),
+    )
+    return AttributeAssignmentVertex(
+        uid=node.uid,
+        assignment=assignment,
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
+    )
+
+
 @validate_call
 def to_table(table_tree: NodeTree) -> Table:
     """Build a :class:`~guffin.common.table.Table` from a :class:`~guffin.roam.node_tree.NodeTree` rooted at a native.
@@ -614,6 +709,8 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
         case VertexType.BLOCK_EMBED:
             return to_block_embed_vertex(node, tree)
+        case VertexType.ATTRIBUTE_ASSIGNMENT:
+            return to_attribute_assignment_vertex(node, tree)
         case _ as unreachable:
             assert_never(unreachable)
 

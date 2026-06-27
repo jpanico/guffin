@@ -33,6 +33,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import Table as GuffinTable, TableStyle
+from guffin.model.attribute import LiteralValue
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
@@ -446,6 +447,16 @@ def build_vertex_panel(
             title_content = (
                 f"[bold orange1]{markup_escape('EMBED:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(vertex.vertex_link.uid)}[/bold #00aa00]"
+            )
+        case VertexType.ATTRIBUTE_ASSIGNMENT:
+            value_summary: Final[str] = ", ".join(
+                value.value if isinstance(value, LiteralValue) else f"#{value.name}"
+                for value in vertex.assignment.values
+            )
+            summary: Final[str] = f"{vertex.assignment.attribute.name}:: {value_summary}"
+            title_content = (
+                f"[bold orange1]{markup_escape('ATTR:')}[/bold orange1]"
+                f" [bold #00aa00]{markup_escape(_trunc(summary, truncate=truncate))}[/bold #00aa00]"
             )
         case _ as unreachable:
             assert_never(unreachable)

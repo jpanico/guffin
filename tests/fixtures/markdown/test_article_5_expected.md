@@ -8,5 +8,5 @@
 > - **attributes**
 
 - hello world!
-- tags:: \#Guffin,#Better Bullets
+- tags:: \#Guffin, \#Better Bullets
 - attribute1:: 5, \#callouts demo, \#v01

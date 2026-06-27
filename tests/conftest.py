@@ -32,8 +32,10 @@ FIXTURES_MDBUNDLE_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures"
 """Absolute path to the ``tests/fixtures/mdbundle/`` directory."""
 
 PDF_CREATION_TIMESTAMP: int = 1704067200
-"""Fixed UNIX timestamp (2024-01-01T00:00:00Z) pinned via ``GUFFIN_PDF_CREATION_TIMESTAMP`` so PDF
-export is byte-reproducible; shared by the live PDF fixture test and ``regen_fixtures.py --pdf``."""
+"""Fixed UNIX timestamp (2024-01-01T00:00:00Z) pinned via ``GUFFIN_PDF_CREATION_TIMESTAMP`` so PDF.
+
+export is byte-reproducible; shared by the live PDF fixture test and ``regen_fixtures.py --pdf``.
+"""
 
 
 @pytest.fixture
@@ -93,3 +95,20 @@ def article1_vertex_tree() -> VertexTree:
         (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
     )
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
+
+
+def article5_node_tree() -> NodeTree:
+    """Load and return the ``[[Test Article]] 5`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
+
+    Loads all nodes from ``test_article_5_nodes_by_uid.yaml`` (anchor subtree plus referenced pages)
+    so that :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` is populated and attribute/tag page
+    references resolve to ``x-guffin`` vertex links during transcription.
+    """
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
+        (FIXTURES_YAML_DIR / "test_article_5_nodes_by_uid.yaml").read_text()
+    )
+    all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
+    root_node: Final[RoamNode] = next(
+        n for n in all_nodes if node_type(n) == NodeType.PAGE and n.title == "[[Test Article]] 5"
+    )
+    return NodeTree.build(super_network=all_nodes, root_node=root_node)

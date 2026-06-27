@@ -89,7 +89,9 @@ from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import HAlign
+from guffin.model.attribute import AttributeAssignment, ReferenceValue
 from guffin.model.vertex import (
+    AttributeAssignmentVertex,
     BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
@@ -104,7 +106,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
-from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link
+from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
@@ -283,6 +285,49 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
 )
 
 
+def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
+    """Reconstruct the Pandoc-Markdown line for an :class:`~guffin.model.attribute.AttributeAssignment`.
+
+    Produces ``<attribute>:: <value>, …`` where each
+    :class:`~guffin.model.attribute.ReferenceValue` is rendered as a hashtag link
+    ``#[<name>](<x-guffin-url>)`` and each :class:`~guffin.model.attribute.LiteralValue` as its bare
+    text.  The attribute name itself is emitted as plain text.
+
+    Args:
+        assignment: The parsed attribute assignment to render.
+
+    Returns:
+        A Pandoc-Markdown string suitable for inline parsing.
+    """
+    parts: Final[list[str]] = [
+        (
+            f"#[{value.name}]({vertex_link_url(value.link.uid, value.link.kind)})"
+            if isinstance(value, ReferenceValue)
+            else value.value
+        )
+        for value in assignment.values
+    ]
+    return f"{assignment.attribute.name}:: {', '.join(parts)}"
+
+
+def _flowing_text(vertex: TextVertex | AttributeAssignmentVertex) -> str:
+    """Return the inline-Markdown text of a text-like vertex.
+
+    For a :class:`~guffin.vertex.TextVertex` this is its ``text``; for an
+    :class:`~guffin.vertex.AttributeAssignmentVertex` it is the reconstructed assignment line (see
+    :func:`_attribute_assignment_text`).  Both render the same way — as flowing inline content.
+
+    Args:
+        vertex: The text-like vertex.
+
+    Returns:
+        The vertex's inline-Markdown text.
+    """
+    if isinstance(vertex, AttributeAssignmentVertex):
+        return _attribute_assignment_text(vertex.assignment)
+    return vertex.text
+
+
 def _block_ref_target(
     vertex: TextVertex,
     vertex_tree: VertexTree,
@@ -318,14 +363,14 @@ def _block_ref_target(
 
 
 def _build_list_item(
-    vertex: TextVertex,
+    vertex: TextVertex | AttributeAssignmentVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
     depth: int,
 ) -> pf.ListItem:
-    """Build a Pandoc :class:`~panflute.ListItem` from a :class:`~guffin.vertex.TextVertex`.
+    """Build a Pandoc :class:`~panflute.ListItem` from a text-like vertex.
 
     The item body is a :class:`~panflute.Plain` inline block, or — when the
     vertex text contains a fenced code block — the block elements produced by a
@@ -334,7 +379,8 @@ def _build_list_item(
     vertex's own children layout, and appended as nested blocks inside the item.
 
     Args:
-        vertex: The text-content vertex to render as a list item.
+        vertex: The text-like vertex (a :class:`~guffin.vertex.TextVertex` or
+            :class:`~guffin.vertex.AttributeAssignmentVertex`) to render as a list item.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
@@ -346,11 +392,12 @@ def _build_list_item(
         A :class:`~panflute.ListItem` wrapping the vertex text and any
         nested children.
     """
+    text: Final[str] = _flowing_text(vertex)
     content: list[pf.Block]
-    if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
-        content = parse_block_md(vertex.text)
+    if _CONTAINS_CODE_BLOCK_RE.search(text):
+        content = parse_block_md(text)
     else:
-        inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
+        inlines: Final[list[pf.Inline]] = inline_map.get(text, [pf.Str(text)])
         bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(inlines)
         if bg is not None:
             bg_color, inner = bg
@@ -456,7 +503,7 @@ def build_child_blocks(
                         depth + 1,
                     )
                 )
-        elif isinstance(vertex, TextVertex) and layout is not ChildrenLayout.DOCUMENT:
+        elif isinstance(vertex, (TextVertex, AttributeAssignmentVertex)) and layout is not ChildrenLayout.DOCUMENT:
             pending_items.append(_build_list_item(vertex, vertex_tree, image_files, inline_map, view_map, depth))
         else:
             flush_pending()
@@ -545,14 +592,14 @@ def _heading_vertex_to_blocks(
 
 
 def _text_vertex_to_blocks(
-    vertex: TextVertex,
+    vertex: TextVertex | AttributeAssignmentVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
-    """Render a :class:`~guffin.vertex.TextVertex` to flowing (document) block elements.
+    """Render a text-like vertex to flowing (document) block elements.
 
     Produces one :class:`~panflute.Para` — or the block elements from a full block-level
     parse via :func:`parse_block_md` when the text contains a fenced code block — followed
@@ -564,7 +611,8 @@ def _text_vertex_to_blocks(
     transcluded) case.
 
     Args:
-        vertex: The text-content vertex to render.
+        vertex: The text-like vertex (a :class:`~guffin.vertex.TextVertex` or
+            :class:`~guffin.vertex.AttributeAssignmentVertex`) to render.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
@@ -575,11 +623,12 @@ def _text_vertex_to_blocks(
     Returns:
         A :class:`~panflute.Para` (or block-parsed elements) followed by any child blocks.
     """
+    text: Final[str] = _flowing_text(vertex)
     para_blocks: list[pf.Block]
-    if _CONTAINS_CODE_BLOCK_RE.search(vertex.text):
-        para_blocks = parse_block_md(vertex.text)
+    if _CONTAINS_CODE_BLOCK_RE.search(text):
+        para_blocks = parse_block_md(text)
     else:
-        text_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
+        text_inlines: Final[list[pf.Inline]] = inline_map.get(text, [pf.Str(text)])
         bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(text_inlines)
         if bg is not None:
             bg_color, inner = bg
@@ -933,6 +982,8 @@ def _vertex_to_blocks(
             return _table_vertex_to_blocks(vertex, inline_map)
         case BlockEmbedVertex():
             return _block_embed_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
+        case AttributeAssignmentVertex():
+            return _text_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -972,6 +1023,8 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
             case TableVertex():
                 for row in vertex.table.rows:
                     texts.extend(row)
+            case AttributeAssignmentVertex():
+                texts.append(_attribute_assignment_text(vertex.assignment))
             case _:
                 pass
     return parse_inline_md(texts)
@@ -1104,6 +1157,9 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
                 return display
             case BlockEmbedVertex():
                 return display
+            case AttributeAssignmentVertex():
+                assignment_text: str = _attribute_assignment_text(vertex.assignment)
+                return inline_map.get(assignment_text, [pf.Str(assignment_text)])
 
     return _resolve
 
