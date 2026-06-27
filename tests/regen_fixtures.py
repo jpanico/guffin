@@ -254,9 +254,8 @@ def main() -> None:
         render(
             render_bundle,
             filename_stem=out_stem,
-            output_dir=pathlib.Path(tmp_dir),
             api_endpoint=endpoint,
-            bundle=False,
+            options=MarkdownRenderOptions(output_dir=pathlib.Path(tmp_dir), bundle=False),
         )
         rendered: Final[str] = (pathlib.Path(tmp_dir) / f"{out_stem}.md").read_text(encoding="utf-8")
     md_path.write_text(rendered, encoding="utf-8")
