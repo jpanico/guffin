@@ -183,6 +183,8 @@ guffin/
 │       ├── render/                      # Output rendering: model → output (export + terminal) + config
 │       │   ├── render_options.py          # OutputFormat (markdown/pdf/epub) discriminator; RenderOptions
 │       │   │                              #   base + MarkdownRenderOptions/PdfRenderOptions/EpubRenderOptions
+│       │   ├── project.py                 # ProjectType (default/book/manuscript), ProjectProfile +
+│       │   │                              #   subclasses, StructuralPolicy (modeled on Quarto project:type:)
 │       │   ├── image_fetch.py             # Pandoc-free image asset fetching; ImageRef (UID + path +
 │       │   │                              #   ImageSize); fetch_images() → {uid: ImageRef};
 │       │   │                              #   fetch_and_enrich_images() → (VertexTree, {uid: ImageRef})
