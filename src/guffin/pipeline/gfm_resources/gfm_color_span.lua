@@ -7,6 +7,8 @@
 --     "highlight-color" attribute          → <mark style="background-color: COLOR">...</mark>
 --   Span with "underline-color" attribute  → <span style="text-decoration: underline; color: COLOR">...</span>
 --   Span with "box-color" attribute        → <span style="border: 1px solid COLOR; padding: 2px 4px">...</span>
+--   Span with class "pill"                  → <span style="background-color: #FF851C; color: black; font-weight: bold; border-radius: 1em; padding: 0.05em 0.6em; white-space: nowrap">...</span>
+--                                              (a capsule-shaped badge with fully rounded ends)
 --
 -- Handled Div cases:
 --   Div with "bg-color" attribute          → <span style="background-color: COLOR">...</span>
@@ -40,6 +42,13 @@ function Span(el)
   local box_color = el.attributes["box-color"]
   if box_color then
     local result = pandoc.List({pandoc.RawInline('html', '<span style="border: 1px solid ' .. box_color .. '; padding: 2px 4px">')})
+    result:extend(el.content)
+    result:extend({pandoc.RawInline('html', '</span>')})
+    return result
+  end
+
+  if el.classes:includes("pill") then
+    local result = pandoc.List({pandoc.RawInline('html', '<span style="background-color: #FF851C; color: black; font-weight: bold; border-radius: 1em; padding: 0.05em 0.6em; white-space: nowrap">')})
     result:extend(el.content)
     result:extend({pandoc.RawInline('html', '</span>')})
     return result

@@ -289,11 +289,14 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     """Reconstruct the Pandoc-Markdown line for an :class:`~guffin.model.attribute.AttributeAssignment`.
 
     Produces ``[***<attribute>***]{.underline}: <value>, …`` where each
-    :class:`~guffin.model.attribute.ReferenceValue` is rendered as a hashtag link
-    ``#[<name>](<x-guffin-url>)`` and each :class:`~guffin.model.attribute.LiteralValue` as its bare
-    text.  The Roam ``::`` attribute separator is collapsed to a single ``:`` in the output.  The
-    attribute name is wrapped in bold-italic-underline markup so it renders with that emphasis in both
-    the Markdown (``<u>***name***</u>``) and PDF (``#underline[#strong[#emph[…]]]``) output formats.
+    :class:`~guffin.model.attribute.ReferenceValue` is rendered as a "pill"-styled hashtag link
+    ``[#[<name>](<x-guffin-url>)]{.pill}`` and each :class:`~guffin.model.attribute.LiteralValue` as
+    its bare text.  The Roam ``::`` attribute separator is collapsed to a single ``:`` in the output.
+    The attribute name is wrapped in bold-italic-underline markup so it renders with that emphasis in
+    both the Markdown (``<u>***name***</u>``) and PDF (``#underline[#strong[#emph[…]]]``) output
+    formats.  The ``.pill`` span wrapping each reference value — covering both the ``#`` and the name —
+    is rewritten by the ``pill`` Lua filter into an orange capsule-shaped badge (rounded "pill" ends)
+    in both output formats.
 
     Args:
         assignment: The parsed attribute assignment to render.
@@ -303,7 +306,7 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     """
     parts: Final[list[str]] = [
         (
-            f"#[{value.name}]({vertex_link_url(value.link.uid, value.link.kind)})"
+            f"[#[{value.name}]({vertex_link_url(value.link.uid, value.link.kind)})]{{.pill}}"
             if isinstance(value, ReferenceValue)
             else value.value
         )

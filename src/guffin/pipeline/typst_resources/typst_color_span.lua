@@ -7,6 +7,9 @@
 --     "highlight-color" attribute          → #highlight(fill: COLOR)[...]
 --   Span with "underline-color" attribute  → #underline[#text(fill: COLOR)[...]]
 --   Span with "box-color" attribute        → #box(stroke: COLOR)[...]
+--   Span with class "pill"                  → #box(fill: rgb("#FF851C"), inset: (x: 0.5em), outset: (y: 0.35em), radius: 1em)[#text(fill: black, weight: "bold", size: 0.85em)[...]]
+--                                              (a capsule-shaped badge; the large radius clamps to
+--                                               half the box height, yielding fully rounded ends)
 --
 -- Handled Div cases:
 --   Div with "bg-color" attribute          → #block(fill: COLOR, width: 100%)[...]
@@ -41,6 +44,13 @@ function Span(el)
     local result = pandoc.List({pandoc.RawInline('typst', '#box(stroke: ' .. box_color .. ')[')})
     result:extend(el.content)
     result:extend({pandoc.RawInline('typst', ']')})
+    return result
+  end
+
+  if el.classes:includes("pill") then
+    local result = pandoc.List({pandoc.RawInline('typst', '#box(fill: rgb("#FF851C"), inset: (x: 0.5em), outset: (y: 0.35em), radius: 1em)[#text(fill: black, weight: "bold", size: 0.85em)[')})
+    result:extend(el.content)
+    result:extend({pandoc.RawInline('typst', ']]')})
     return result
   end
 end
