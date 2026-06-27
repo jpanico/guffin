@@ -138,3 +138,22 @@ div.sourceCode pre.numberSource code > span > a:first-child::before {
 div.sourceCode pre.numberSource code > span > a {
   text-decoration: none;
 }
+
+/*
+ * Tables. Pandoc emits a borderless <table>; this adds a grid matching the PDF output —
+ * rules separating the header row from the body, between body rows, and between columns.
+ */
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+th, td {
+  border: 1px solid #bbbbbb;
+  padding: 0.3em 0.6em;
+}
+
+thead th {
+  border-bottom: 2px solid #777777;
+  background-color: #f2f2f2;
+}
