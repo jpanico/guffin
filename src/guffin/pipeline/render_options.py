@@ -49,6 +49,8 @@ class RenderOptions(BaseModel):
             if it does not already exist.
         cache_dir: Optional directory for caching downloaded Cloud Firestore assets across
             runs; ``None`` disables caching.
+        suppress_attributes: When ``True``, omit Roam attribute assignments
+            (``<attribute>:: <value>, …``) from the rendered output.  Defaults to ``False``.
         dump_pandoc_ast: When ``True``, write the Pandoc JSON AST (the serialized Panflute
             document) to ``<output_dir>/<filename_stem>.pandoc.json`` before the Pandoc
             conversion step.  Defaults to ``False``.
@@ -58,6 +60,9 @@ class RenderOptions(BaseModel):
 
     output_dir: Path = Field(..., description="Directory the exported document is written into.")
     cache_dir: Path | None = Field(default=None, description="Directory for caching downloaded Cloud Firestore assets.")
+    suppress_attributes: bool = Field(
+        default=False, description="Omit Roam attribute assignments from the rendered output."
+    )
     dump_pandoc_ast: bool = Field(
         default=False, description="Write the Pandoc JSON AST alongside the output before conversion."
     )

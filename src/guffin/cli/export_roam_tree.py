@@ -137,6 +137,16 @@ def main(
             ),
         ),
     ] = None,
+    suppress_attributes: Annotated[
+        bool,
+        typer.Option(
+            "--suppress-attributes/--no-suppress-attributes",
+            help=(
+                "When enabled, omits Roam attribute assignments (<attribute>:: <value>, ...) "
+                "from the exported document. Applies to both --format markdown and --format pdf."
+            ),
+        ),
+    ] = False,
     dump_pandoc_ast: Annotated[
         bool,
         typer.Option(
@@ -168,7 +178,7 @@ def main(
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, output_dir=%r, "
-        "output_format=%r, bundle=%r, cache_dir=%r, template_dir=%r, dump_pandoc_ast=%r",
+        "output_format=%r, bundle=%r, cache_dir=%r, template_dir=%r, suppress_attributes=%r, dump_pandoc_ast=%r",
         target,
         local_api_port,
         graph_name,
@@ -177,6 +187,7 @@ def main(
         bundle,
         cache_dir,
         template_dir,
+        suppress_attributes,
         dump_pandoc_ast,
     )
 
@@ -214,6 +225,7 @@ def main(
             output_dir=output_dir,
             cache_dir=cache_dir,
             template_dir=template_dir,
+            suppress_attributes=suppress_attributes,
             dump_pandoc_ast=dump_pandoc_ast,
         )
         try:
@@ -226,6 +238,7 @@ def main(
             output_dir=output_dir,
             cache_dir=cache_dir,
             bundle=bundle,
+            suppress_attributes=suppress_attributes,
             dump_pandoc_ast=dump_pandoc_ast,
         )
         try:

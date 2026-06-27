@@ -36,7 +36,7 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex_tree import VertexTree
+from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.pipeline.pandoc_rendering import (
     InlineMap,
@@ -119,6 +119,10 @@ def render(
     cache_dir: Final[Path | None] = options.cache_dir
     bundle: Final[bool] = options.bundle
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
+    # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
+    content: Final[VertexTree] = (
+        drop_attribute_assignments(render_bundle.content) if options.suppress_attributes else render_bundle.content
+    )
     gfm_dir: Final[Path] = _gfm_resources_dir()
     if bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"
@@ -127,7 +131,7 @@ def render(
 
         # the Paths in the returned ImageRefs are absolute
         fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(
-            render_bundle.content, api_endpoint, bundle_dir, cache_dir
+            content, api_endpoint, bundle_dir, cache_dir
         )
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
@@ -160,11 +164,11 @@ def render(
     else:
         output_dir.mkdir(parents=True, exist_ok=True)
         no_bundle_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
-            render_bundle.content, {}, render_bundle.view, title_in_header=True
+            content, {}, render_bundle.view, title_in_header=True
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
-        resolve_vertex_links(no_bundle_doc, render_bundle.content, make_resolver(no_bundle_inline_map))
+        resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map))
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)
         no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str,

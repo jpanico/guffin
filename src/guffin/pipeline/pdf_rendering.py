@@ -41,7 +41,7 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex_tree import VertexTree
+from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
 from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.pipeline.pandoc_rendering import (
     InlineMap,
@@ -179,6 +179,10 @@ def render(
     cache_dir: Final[Path | None] = options.cache_dir
     template_dir: Final[Path | None] = options.template_dir
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
+    # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
+    content: Final[VertexTree] = (
+        drop_attribute_assignments(render_bundle.content) if options.suppress_attributes else render_bundle.content
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.pdf"
 
@@ -212,7 +216,7 @@ def render(
 
     with tempfile.TemporaryDirectory() as tmp:
         fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(
-            render_bundle.content, api_endpoint, Path(tmp), cache_dir
+            content, api_endpoint, Path(tmp), cache_dir
         )
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]

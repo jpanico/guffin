@@ -17,6 +17,8 @@ Public symbols:
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
+- :func:`drop_attribute_assignments` — return a new :class:`VertexTree` with every
+  :class:`~guffin.model.vertex.AttributeAssignmentVertex` (and its descendants) removed.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
   :attr:`~guffin.model.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
 """
@@ -32,6 +34,7 @@ from guffin.common.geometry import ImageSize
 logger = logging.getLogger(__name__)
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
+    AttributeAssignmentVertex,
     HeadingVertex,
     ImageVertex,
     PageVertex,
@@ -225,6 +228,49 @@ def map_vertices(tree: VertexTree, func: Callable[[Vertex], Vertex]) -> VertexTr
         tree_vertices=[func(vtx) for vtx in tree.tree_vertices],
         ref_vertices=[func(vtx) for vtx in tree.ref_vertices],
     )
+
+
+@validate_call
+def drop_attribute_assignments(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`VertexTree` with every attribute-assignment subtree removed.
+
+    Every :class:`~guffin.model.vertex.AttributeAssignmentVertex` — and every vertex reachable
+    through its :attr:`~guffin.model.vertex._BaseVertex.children` — is dropped from both
+    :attr:`~VertexTree.tree_vertices` and :attr:`~VertexTree.ref_vertices`.  Each surviving
+    vertex that listed a dropped vertex among its children has that child reference removed, so the
+    result remains a well-formed tree.  The original *tree* is not modified.
+
+    Args:
+        tree: The source :class:`VertexTree`.
+
+    Returns:
+        A new :class:`VertexTree` with no :class:`~guffin.model.vertex.AttributeAssignmentVertex`
+        (nor any descendant of one).
+    """
+    dropped: Final[set[Uid]] = set()
+    stack: Final[list[Uid]] = [
+        vtx.uid for vtx in (*tree.tree_vertices, *tree.ref_vertices) if isinstance(vtx, AttributeAssignmentVertex)
+    ]
+    while stack:
+        uid: Uid = stack.pop()
+        if uid in dropped:
+            continue
+        dropped.add(uid)
+        vtx: Vertex | None = tree.uid_map.get(uid)
+        if vtx is not None and vtx.children:
+            stack.extend(vtx.children)
+
+    def _prune(vertices: list[Vertex]) -> list[Vertex]:
+        kept: list[Vertex] = []
+        for vtx in vertices:
+            if vtx.uid in dropped:
+                continue
+            if vtx.children and any(child in dropped for child in vtx.children):
+                vtx = vtx.model_copy(update={"children": [child for child in vtx.children if child not in dropped]})
+            kept.append(vtx)
+        return kept
+
+    return VertexTree(tree_vertices=_prune(tree.tree_vertices), ref_vertices=_prune(tree.ref_vertices))
 
 
 @validate_call
