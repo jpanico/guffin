@@ -127,9 +127,7 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     console.rule("[bold]Node Tree[/bold]")
     console.print()
     console.print(node_rich_tree)
-    refs_box: Final[Panel | None] = build_rich_refs_box(
-        fetch_result.anchor_tree, effective_props, truncate=truncate
-    )
+    refs_box: Final[Panel | None] = build_rich_refs_box(fetch_result.anchor_tree, effective_props, truncate=truncate)
     if refs_box is not None:
         console.print(refs_box)
     console.print(
