@@ -1,4 +1,4 @@
-"""Unit tests for guffin.pipeline.image_fetch."""
+"""Unit tests for guffin.render.image_fetch."""
 
 import logging
 import os
@@ -13,7 +13,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.vertex import ImageVertex, PageVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree
-from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images, fetch_images
+from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images, fetch_images
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.primitives import Uid
@@ -57,7 +57,7 @@ class TestFetchImages:
         def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
             return asset
 
-        monkeypatch.setattr("guffin.pipeline.image_fetch.fetch_and_cache_asset", _fake)
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
         tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
         result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
@@ -81,7 +81,7 @@ class TestFetchImages:
         def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
             return asset
 
-        monkeypatch.setattr("guffin.pipeline.image_fetch.fetch_and_cache_asset", _fake)
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
         tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
         result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
@@ -96,10 +96,10 @@ class TestFetchImages:
         def _raising(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
             raise RuntimeError("network down")
 
-        monkeypatch.setattr("guffin.pipeline.image_fetch.fetch_and_cache_asset", _raising)
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _raising)
 
         tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
-        with caplog.at_level(logging.WARNING, logger="guffin.pipeline.image_fetch"):
+        with caplog.at_level(logging.WARNING, logger="guffin.render.image_fetch"):
             result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
 
         assert result == {}
@@ -117,7 +117,7 @@ class TestFetchImages:
                 image_size=ImageSize(width=1, height=1),
             )
 
-        monkeypatch.setattr("guffin.pipeline.image_fetch.fetch_and_cache_asset", _fake)
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
         page: Final[PageVertex] = PageVertex(uid="page00001", title="P", children=["img00001a"])
         text: Final[TextVertex] = TextVertex(uid="txt00001a", text="hello")
@@ -143,7 +143,7 @@ class TestFetchAndEnrichImages:
         def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
             return asset
 
-        monkeypatch.setattr("guffin.pipeline.image_fetch.fetch_and_cache_asset", _fake)
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
         tree: Final[VertexTree] = VertexTree(tree_vertices=[_image_vertex("img00001a")])
         fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(tree, _ENDPOINT, tmp_path)
@@ -167,7 +167,7 @@ class TestFetchAndEnrichImages:
                 image_size=ImageSize(width=10, height=20),
             )
 
-        monkeypatch.setattr("guffin.pipeline.image_fetch.fetch_and_cache_asset", _fake)
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
 
         original_image: Final[ImageVertex] = _image_vertex("img00001a")
         tree: Final[VertexTree] = VertexTree(tree_vertices=[original_image])

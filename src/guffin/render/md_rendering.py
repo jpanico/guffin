@@ -10,7 +10,7 @@ Public symbols:
 
 - :func:`render` — end-to-end: render a :class:`~guffin.vertex_tree.VertexTree` to
   a ``.mdbundle`` directory or plain ``.md`` file (parallel entry point to
-  :func:`~guffin.pipeline.pdf_rendering.render`).
+  :func:`~guffin.render.pdf_rendering.render`).
 """
 
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false
@@ -23,7 +23,7 @@ import logging
 from pathlib import Path
 from typing import Final
 
-_GFM_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.gfm_resources"
+_GFM_RESOURCES_PACKAGE: Final[str] = "guffin.render.gfm_resources"
 # Lua-filter filenames, resolved against the bundled gfm_resources directory at render time.
 _GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
 _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
@@ -37,15 +37,15 @@ from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
-from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
-from guffin.pipeline.pandoc_rendering import (
+from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
+from guffin.render.pandoc_rendering import (
     InlineMap,
     make_resolver,
     pandoc_to_json,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
-from guffin.pipeline.render_options import MarkdownRenderOptions
+from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
@@ -66,7 +66,7 @@ def _strip_list_separator_comments(gfm: str) -> str:
 
 
 def _gfm_resources_dir() -> Path:
-    """Return the absolute path to the bundled ``guffin/pipeline/gfm_resources/`` directory."""
+    """Return the absolute path to the bundled ``guffin/render/gfm_resources/`` directory."""
     pkg_files = importlib.resources.files(_GFM_RESOURCES_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
@@ -83,14 +83,14 @@ def render(
     """Render *render_bundle* to a Markdown file or bundle inside ``options.output_dir``.
 
     Converts *render_bundle*'s content tree to a Panflute :class:`~panflute.Doc` via
-    :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc` (with the page
+    :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc` (with the page
     title rendered as an H1 header), then invokes Pandoc to produce
     GFM output.  Writes the result in one of two modes controlled by
     ``options.bundle``:
 
     - ``bundle=True`` (default) — fetches Cloud Firestore image assets and
       enriches the vertex tree with each image's native pixel size via
-      :func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, places the images
+      :func:`~guffin.render.image_fetch.fetch_and_enrich_images`, places the images
       in the bundle directory, and writes a self-contained
       ``<filename_stem>.mdbundle/`` directory containing the
       Markdown file and all images.  Image links in the Markdown reference

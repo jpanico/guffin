@@ -2,18 +2,18 @@
 
 Converts the normalized vertex tree produced by
 :func:`~guffin.pipeline.roam_tree_to_guffin.transcribe` into a Panflute
-:class:`~panflute.Doc` via :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc`,
+:class:`~panflute.Doc` via :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`,
 then exports the document to PDF by serializing the Doc to Pandoc JSON and
 invoking Pandoc via :mod:`pypandoc`.
 
 Cloud Firestore image assets are fetched via
-:func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, written to a temporary
+:func:`~guffin.render.image_fetch.fetch_and_enrich_images`, written to a temporary
 directory, and embedded in the PDF as local-path
 :class:`~panflute.Image` elements.  An optional *cache_dir* avoids
 re-downloading unchanged assets across runs.
 
 The Bergfink Pandoc/Typst template (bundled as package data under
-``guffin/pipeline/typst_resources/``, alongside the ``typst_*.lua`` Pandoc filters) is used by
+``guffin/render/typst_resources/``, alongside the ``typst_*.lua`` Pandoc filters) is used by
 default.  Pass *template_dir* to point at a
 directory containing a ``user_cfg.typ`` override; Bergfink's ``$if(user-config)$``
 mechanism will load it in place of the bundled default.
@@ -42,23 +42,23 @@ from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
-from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
-from guffin.pipeline.pandoc_rendering import (
+from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
+from guffin.render.pandoc_rendering import (
     InlineMap,
     make_resolver,
     pandoc_to_json,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
-from guffin.pipeline.render_options import PdfRenderOptions
+from guffin.render.render_options import PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
 
 
-_TYPST_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.typst_resources"
-_CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.pipeline.callout_icons"
+_TYPST_RESOURCES_PACKAGE: Final[str] = "guffin.render.typst_resources"
+_CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.render.callout_icons"
 _TEMPLATE_ENTRY: Final[str] = "bergfink.typst"
 _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 # Lua-filter filenames, resolved against the bundled typst_resources directory at render time.
@@ -68,7 +68,7 @@ _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 
 
 def _typst_resources_dir() -> Path:
-    """Return the absolute path to the bundled ``guffin/pipeline/typst_resources/`` directory."""
+    """Return the absolute path to the bundled ``guffin/render/typst_resources/`` directory."""
     pkg_files = importlib.resources.files(_TYPST_RESOURCES_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
@@ -76,7 +76,7 @@ def _typst_resources_dir() -> Path:
 
 
 def _callout_icons_dir() -> Path:
-    """Return the absolute path to the bundled ``guffin/pipeline/callout_icons/`` directory."""
+    """Return the absolute path to the bundled ``guffin/render/callout_icons/`` directory."""
     pkg_files = importlib.resources.files(_CALLOUT_ICONS_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
@@ -154,9 +154,9 @@ def render(
     Writes ``<output_dir>/<filename_stem>.pdf``.  Fetches all Cloud
     Firestore image assets into a temporary directory and enriches the vertex
     tree with each image's native pixel size via
-    :func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, builds a Panflute
+    :func:`~guffin.render.image_fetch.fetch_and_enrich_images`, builds a Panflute
     :class:`~panflute.Doc` via
-    :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc`, serializes it
+    :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`, serializes it
     to Pandoc JSON, and invokes Pandoc (with the Typst PDF engine and the
     bundled Bergfink template) via :mod:`pypandoc` to produce the PDF.  The
     temporary image directory is removed after Pandoc completes.

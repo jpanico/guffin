@@ -1,4 +1,4 @@
-"""Tests for guffin.pipeline.epub_rendering."""
+"""Tests for guffin.render.epub_rendering."""
 
 import zipfile
 from pathlib import Path
@@ -9,8 +9,8 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import CodeBlockVertex, PageVertex
 from guffin.model.vertex_tree import VertexTree
-from guffin.pipeline.epub_rendering import render
-from guffin.pipeline.render_options import EpubRenderOptions
+from guffin.render.epub_rendering import render
+from guffin.render.render_options import EpubRenderOptions
 from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.local_api import ApiEndpoint
 
@@ -28,7 +28,7 @@ def _article5_bundle() -> RenderBundle:
 class TestRenderEpub:
     """Integration tests for the epub_rendering Pandoc output path.
 
-    ``[[Test Article]] 5`` contains no images, so :func:`~guffin.pipeline.epub_rendering.render`
+    ``[[Test Article]] 5`` contains no images, so :func:`~guffin.render.epub_rendering.render`
     fetches nothing and the supplied :class:`~guffin.roam.local_api.ApiEndpoint` is never called.
     """
 

@@ -1,11 +1,11 @@
-"""Unit tests for guffin.pipeline.md_rendering."""
+"""Unit tests for guffin.render.md_rendering."""
 
 from pathlib import Path
 from typing import Final
 
 from guffin.common.filenames import shell_safe_filename
-from guffin.pipeline.md_rendering import render
-from guffin.pipeline.render_options import MarkdownRenderOptions
+from guffin.render.md_rendering import render
+from guffin.render.render_options import MarkdownRenderOptions
 from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.model.render_bundle import RenderBundle
 from guffin.roam.local_api import ApiEndpoint
@@ -19,7 +19,7 @@ class TestRenderArticleFixture:
     def test_article_fixture_renders_to_expected_markdown(self, tmp_path: Path) -> None:
         """Rendering article1 to a plain ``.md`` file matches the expected fixture.
 
-        Exercises the full :func:`~guffin.pipeline.md_rendering.render` path with
+        Exercises the full :func:`~guffin.render.md_rendering.render` path with
         ``bundle=False`` — the same path used by ``tests/regen_fixtures.py`` to
         produce the expected fixture — so the production resolver and every GFM
         Lua filter are covered.  ``bundle=False`` never fetches images, so the

@@ -13,7 +13,7 @@ hierarchy:
   as returned by the Roam Local API; each panel body lists selected
   :class:`~guffin.roam.node.RoamNode` fields, configurable via
   ``--node-props`` (defaults to
-  :data:`~guffin.pipeline.rich_rendering.DEFAULT_NODE_PANEL_PROPS`).
+  :data:`~guffin.render.rich_rendering.DEFAULT_NODE_PANEL_PROPS`).
 - **Raw results** (``--raw-results`` / ``-r/-R``) — raw Datalog query results
   as returned by the Roam Local API, before any transcription.
 
@@ -56,7 +56,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.tree import Tree as RichTree
 
-from guffin.pipeline.rich_rendering import (
+from guffin.render.rich_rendering import (
     DEFAULT_NODE_PANEL_PROPS,
     DEFAULT_VERTEX_PANEL_PROPS,
     build_rich_node_tree,
@@ -64,7 +64,7 @@ from guffin.pipeline.rich_rendering import (
     build_rich_refs_box,
     build_rich_vertex_tree,
 )
-from guffin.pipeline.image_fetch import fetch_and_enrich_images
+from guffin.render.image_fetch import fetch_and_enrich_images
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
 from guffin.cli.common import fetch_roam_trees
@@ -105,7 +105,7 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     Logs a warning and returns early when
     :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.anchor_tree` is ``None``.
     After the tree, prints a ``refs`` box containing one
-    :func:`~guffin.pipeline.rich_rendering.build_node_panel` panel per node in
+    :func:`~guffin.render.rich_rendering.build_node_panel` panel per node in
     :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` (omitted when empty).
 
     Args:
@@ -113,7 +113,7 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
             is rendered.
         node_props: Comma-separated :class:`~guffin.roam.node.RoamNode` field names
             to include in each panel body, or ``None`` to use
-            :data:`~guffin.pipeline.rich_rendering.DEFAULT_NODE_PANEL_PROPS`.
+            :data:`~guffin.render.rich_rendering.DEFAULT_NODE_PANEL_PROPS`.
         console: Rich :class:`~rich.console.Console` to print to.
         truncate: When ``False``, render full (untruncated) panel strings.
     """
@@ -147,7 +147,7 @@ def _dump_vertex_tree(
 
     Logs a warning and returns early when *vertex_tree* is ``None``.  Otherwise
     fetches every :class:`~guffin.vertex.ImageVertex` asset (to a temporary
-    directory) via :func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images` so
+    directory) via :func:`~guffin.render.image_fetch.fetch_and_enrich_images` so
     each image's :attr:`~guffin.vertex.ImageVertex.original_image_size` is
     populated before rendering.
 
@@ -156,7 +156,7 @@ def _dump_vertex_tree(
             or ``None`` when vertex tree computation was skipped.
         vertex_props: Comma-separated :class:`~guffin.vertex.Vertex` field names
             to include in each panel body, or ``None`` to use
-            :data:`~guffin.pipeline.rich_rendering.DEFAULT_VERTEX_PANEL_PROPS`.
+            :data:`~guffin.render.rich_rendering.DEFAULT_VERTEX_PANEL_PROPS`.
         api_endpoint: Roam Local API endpoint used to fetch image assets for
             original-size enrichment.
         console: Rich :class:`~rich.console.Console` to print to.
@@ -202,10 +202,10 @@ def dump_trees(
             vertex tree computation was skipped.
         node_props: Comma-separated list of :class:`~guffin.roam.node.RoamNode`
             field names to include in each node panel body, or ``None`` to use
-            :data:`~guffin.pipeline.rich_rendering.DEFAULT_NODE_PANEL_PROPS`.
+            :data:`~guffin.render.rich_rendering.DEFAULT_NODE_PANEL_PROPS`.
         vertex_props: Comma-separated list of :class:`~guffin.vertex.Vertex`
             field names to include in each vertex panel body, or ``None`` to use
-            :data:`~guffin.pipeline.rich_rendering.DEFAULT_VERTEX_PANEL_PROPS`.
+            :data:`~guffin.render.rich_rendering.DEFAULT_VERTEX_PANEL_PROPS`.
         api_endpoint: Roam Local API endpoint (URL + bearer token), forwarded
             to :func:`_dump_vertex_tree`.
         show_raw_results: When ``True``, call :func:`_dump_raw_table`.

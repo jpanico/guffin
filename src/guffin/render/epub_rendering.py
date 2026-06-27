@@ -2,7 +2,7 @@
 
 Converts the normalized vertex tree produced by
 :func:`~guffin.pipeline.roam_tree_to_guffin.transcribe` into a Panflute
-:class:`~panflute.Doc` via :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc`,
+:class:`~panflute.Doc` via :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`,
 then exports the document to EPUB by serializing the Doc to Pandoc JSON and invoking Pandoc
 (its ``epub3`` writer) via :mod:`pypandoc`.
 
@@ -13,13 +13,13 @@ is filled in automatically by Pandoc.  Top-level headings become the e-book's ch
 Pandoc's default EPUB split level.
 
 Cloud Firestore image assets are fetched via
-:func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, written to a temporary directory,
+:func:`~guffin.render.image_fetch.fetch_and_enrich_images`, written to a temporary directory,
 and embedded in the EPUB by Pandoc's writer as local-path :class:`~panflute.Image` elements.  An
 optional *cache_dir* avoids re-downloading unchanged assets across runs.
 
 Roam color/highlight/pill styling is preserved by the bundled ``epub_*.lua`` Pandoc filters (under
-``guffin/pipeline/epub_resources/``), which emit inline-styled XHTML; ``epub_callout.lua`` also
-prepends a shared SVG icon from ``guffin/pipeline/callout_icons/`` into each callout's title header
+``guffin/render/epub_resources/``), which emit inline-styled XHTML; ``epub_callout.lua`` also
+prepends a shared SVG icon from ``guffin/render/callout_icons/`` into each callout's title header
 (icon + title, mirroring the gentle-clues PDF callout).  The bundled ``epub.css`` stylesheet (same
 directory) is applied via Pandoc ``--css`` and sets the e-book's font family and callout styling.
 
@@ -46,23 +46,23 @@ from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
-from guffin.pipeline.image_fetch import ImageRef, fetch_and_enrich_images
-from guffin.pipeline.pandoc_rendering import (
+from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
+from guffin.render.pandoc_rendering import (
     InlineMap,
     make_resolver,
     pandoc_to_json,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
-from guffin.pipeline.render_options import EpubRenderOptions
+from guffin.render.render_options import EpubRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
 
 
-_EPUB_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.epub_resources"
-_CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.pipeline.callout_icons"
+_EPUB_RESOURCES_PACKAGE: Final[str] = "guffin.render.epub_resources"
+_CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.render.callout_icons"
 # Lua-filter filenames, resolved against the bundled epub_resources directory at render time.
 _EPUB_COLOR_SPAN_FILTER: Final[str] = "epub_color_span.lua"
 _EPUB_MARK_FILTER: Final[str] = "epub_mark.lua"
@@ -75,7 +75,7 @@ _EPUB_WRITER: Final[str] = "epub3"
 
 
 def _epub_resources_dir() -> Path:
-    """Return the absolute path to the bundled ``guffin/pipeline/epub_resources/`` directory."""
+    """Return the absolute path to the bundled ``guffin/render/epub_resources/`` directory."""
     pkg_files = importlib.resources.files(_EPUB_RESOURCES_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
@@ -83,7 +83,7 @@ def _epub_resources_dir() -> Path:
 
 
 def _callout_icons_dir() -> Path:
-    """Return the absolute path to the bundled ``guffin/pipeline/callout_icons/`` directory."""
+    """Return the absolute path to the bundled ``guffin/render/callout_icons/`` directory."""
     pkg_files = importlib.resources.files(_CALLOUT_ICONS_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
@@ -101,8 +101,8 @@ def render(
 
     Writes ``<output_dir>/<filename_stem>.epub``.  Fetches all Cloud Firestore image assets into
     a temporary directory and enriches the vertex tree with each image's native pixel size via
-    :func:`~guffin.pipeline.image_fetch.fetch_and_enrich_images`, builds a Panflute
-    :class:`~panflute.Doc` via :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc`
+    :func:`~guffin.render.image_fetch.fetch_and_enrich_images`, builds a Panflute
+    :class:`~panflute.Doc` via :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`
     (storing the page title as document metadata so it becomes the EPUB ``dc:title`` and title
     page), serializes it to Pandoc JSON, and invokes Pandoc's ``epub3`` writer via :mod:`pypandoc`
     to produce the EPUB.  The temporary image directory is removed after Pandoc completes.

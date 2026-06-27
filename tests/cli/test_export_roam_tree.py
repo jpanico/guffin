@@ -101,7 +101,7 @@ class TestExportRoamTreeBundle:
             return_value=mock_result,
         ):
             with patch(
-                "guffin.pipeline.md_rendering.fetch_and_enrich_images",
+                "guffin.render.md_rendering.fetch_and_enrich_images",
                 return_value=(vertex_tree, {}),
             ):
                 saved_handlers = logging.root.handlers[:]

@@ -54,20 +54,21 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `render_bundle.py` — `RenderBundle`: a `VertexTree` (content) paired with its `ViewMap` (presentation), held as separate fields so they travel together while staying decoupled
     - `link.py` — custom `x-guffin` URL scheme for inter-vertex links; `VertexLinkKind`, `VertexLink`, `vertex_link_url()`, `parse_vertex_link()`, `is_vertex_link()`
     - `attribute.py` — normalized model of a Roam attribute assignment (`<attribute>:: <value>, …`): `Attribute` (the named page, carrying a `VertexLink`), the `AttributeValue` discriminated union (`LiteralValue` | `ReferenceValue`, with `AttributeValueKind` and `attribute_value_adapter`), and `AttributeAssignment` pairing an attribute with its ordered values
-  - **`pipeline/` sub-package** (`src/guffin/pipeline/`) — production pipeline: Roam-to-model transcription, text normalization, and output rendering
+  - **`pipeline/` sub-package** (`src/guffin/pipeline/`) — ingest pipeline: source-to-model transcription and text normalization (shared by every use — export, dump, future interchange)
     - `roam_md_to_pandoc_md.py` — converts Roam-flavored Markdown strings to Pandoc Markdown; `to_pandoc_md()` is the main entry point
     - `roam_tree_to_guffin.py` — transcribes a `NodeTree` into the guffin render model: `transcribe()` derives the `VertexTree` content (applying `to_pandoc_md()` to all text fields), `build_view_map()` derives the presentation `ViewMap`, and `to_render_bundle()` bundles both into a `RenderBundle`
+  - **`render/` sub-package** (`src/guffin/render/`) — output rendering: turns the normalized model into consumable output (document export and terminal display) plus the configuration and bundled resources that drive it
     - `render_options.py` — immutable export settings carried from a front end to a rendering entry point: `OutputFormat` (markdown/pdf/epub enum discriminator), `RenderOptions` (format-independent base: `output_dir`, `cache_dir`, `suppress_attributes`, `dump_pandoc_ast`), and the per-format subclasses `MarkdownRenderOptions` (`bundle`), `PdfRenderOptions` (`template_dir`), and `EpubRenderOptions` (no extra fields yet)
     - `image_fetch.py` — Pandoc-free image-asset fetching; `ImageRef` (UID + on-disk path + `ImageSize`) and `fetch_images()` (fetches a `VertexTree`'s Cloud Firestore image assets to a local dir, returning `{uid: ImageRef}`)
     - `pandoc_rendering.py` — shared Pandoc/Panflute rendering utilities; `vertex_tree_to_pandoc()` builds a Panflute `Doc` from a `VertexTree` (batch-parsing inline Pandoc Markdown via a single Pandoc call)
     - `md_rendering.py` — renders a `VertexTree` to Markdown: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to GFM via Pandoc, writes a plain `.md` or `.mdbundle/` directory
     - `pdf_rendering.py` — renders a `VertexTree` to PDF: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to PDF via Pandoc + Typst
     - `epub_rendering.py` — renders a `VertexTree` to EPUB 3: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to EPUB via Pandoc (page title → `dc:title`, top-level headings → chapters, images embedded into the package)
-    - `rich_rendering.py` — Rich panel/tree rendering for `NodeTree` and `VertexTree`
-    - `typst_resources/` — bundled package data for PDF output (consumed only by `pdf_rendering.py`): the Bergfink Typst/Pandoc template (`user_cfg.typ` is the intended customization point; see `src/guffin/pipeline/typst_resources/README.md`) plus the `typst_*.lua` Pandoc filters
-    - `gfm_resources/` — bundled package data for Markdown output (consumed only by `md_rendering.py`): the `gfm_*.lua` Pandoc filters (callout, color-span, image, mark; see `src/guffin/pipeline/gfm_resources/README.md`)
-    - `epub_resources/` — bundled package data for EPUB output (consumed only by `epub_rendering.py`): the `epub_*.lua` Pandoc filters (callout, color-span, mark, number-lines) emitting inline-styled XHTML, plus `epub.css` (the default stylesheet applied via `--css`; the font-family customization point); see `src/guffin/pipeline/epub_resources/README.md`
-    - `callout_icons/` — bundled SVG badge icons (`info.svg`, `memo.svg`, …), one per gentle-clues callout function, **shared** by PDF and EPUB output so both render an identical callout icon set; inlined by `typst_callout.lua` (into the gentle-clues `icon:`) and `epub_callout.lua` (into the callout title header), located via the `GUFFIN_CALLOUT_ICONS_DIR` env var set by the renderer; see `src/guffin/pipeline/callout_icons/README.md`
+    - `rich_rendering.py` — Rich panel/tree rendering for `NodeTree` and `VertexTree` (the terminal-display renderer used by `dump-roam-tree`)
+    - `typst_resources/` — bundled package data for PDF output (consumed only by `pdf_rendering.py`): the Bergfink Typst/Pandoc template (`user_cfg.typ` is the intended customization point; see `src/guffin/render/typst_resources/README.md`) plus the `typst_*.lua` Pandoc filters
+    - `gfm_resources/` — bundled package data for Markdown output (consumed only by `md_rendering.py`): the `gfm_*.lua` Pandoc filters (callout, color-span, image, mark; see `src/guffin/render/gfm_resources/README.md`)
+    - `epub_resources/` — bundled package data for EPUB output (consumed only by `epub_rendering.py`): the `epub_*.lua` Pandoc filters (callout, color-span, mark, number-lines) emitting inline-styled XHTML, plus `epub.css` (the default stylesheet applied via `--css`; the font-family customization point); see `src/guffin/render/epub_resources/README.md`
+    - `callout_icons/` — bundled SVG badge icons (`info.svg`, `memo.svg`, …), one per gentle-clues callout function, **shared** by PDF and EPUB output so both render an identical callout icon set; inlined by `typst_callout.lua` (into the gentle-clues `icon:`) and `epub_callout.lua` (into the callout title header), located via the `GUFFIN_CALLOUT_ICONS_DIR` env var set by the renderer; see `src/guffin/render/callout_icons/README.md`
   - **`common/` sub-package** (`src/guffin/common/`) — cross-cutting helpers shared across the package
     - `code_language.py` — `CodeLanguage` StrEnum of programming-language identifiers for fenced code block info strings
     - `filenames.py` — `shell_safe_filename()` normalizes strings to POSIX-safe filenames
@@ -167,11 +168,12 @@ Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `test
 | Package | May depend on | May NOT depend on |
 |---|---|---|
 | `common/` | stdlib, third-party only | any `guffin` package |
-| `roam/` | `common/` | `guffin` root modules, `model/`, `pipeline/`, `cli/` |
-| `model/` | `common/` | `guffin` root modules, `roam/`, `pipeline/`, `cli/` |
-| `guffin` (root modules) | `roam/`, `common/`, `model/` | `pipeline/`, `cli/` |
-| `pipeline/` | `common/`, `roam/`, `model/`, `guffin` root modules | `cli/` |
-| `cli/` | `common/`, `roam/`, `model/`, `guffin` root modules, `pipeline/` | — |
+| `roam/` | `common/` | `guffin` root modules, `model/`, `pipeline/`, `render/`, `cli/` |
+| `model/` | `common/` | `guffin` root modules, `roam/`, `pipeline/`, `render/`, `cli/` |
+| `guffin` (root modules) | `roam/`, `common/`, `model/` | `pipeline/`, `render/`, `cli/` |
+| `pipeline/` | `common/`, `roam/`, `model/`, `guffin` root modules | `render/`, `cli/` |
+| `render/` | `common/`, `roam/`, `model/`, `guffin` root modules | `pipeline/`, `cli/` |
+| `cli/` | `common/`, `roam/`, `model/`, `guffin` root modules, `pipeline/`, `render/` | — |
 
 No package may take a dependency on `cli/`.
 

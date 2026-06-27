@@ -1,6 +1,6 @@
 # EPUB resources
 
-Bundled package data consumed only by `guffin/pipeline/epub_rendering.py` when converting a
+Bundled package data consumed only by `guffin/render/epub_rendering.py` when converting a
 `VertexTree` to EPUB 3 via Pandoc.
 
 EPUB content documents are XHTML, so these Pandoc Lua filters emit the same raw-HTML markup as

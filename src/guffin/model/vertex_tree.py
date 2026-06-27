@@ -63,7 +63,7 @@ class VertexTree(BaseModel):
         ref_vertices: Stub vertices transcribed from
             :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` — nodes referenced
             from the anchor tree but not part of it.  Used only for UID lookup
-            (e.g. by :func:`~guffin.pipeline.pandoc_rendering.resolve_vertex_links`);
+            (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
             not traversed by :class:`VertexTreeDFSIterator` or the filter helpers.
         uid_map: Map of :attr:`~guffin.model.vertex._BaseVertex.uid` →
             :data:`~guffin.model.vertex.Vertex` for every vertex in :attr:`tree_vertices` and

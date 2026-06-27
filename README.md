@@ -13,7 +13,7 @@ Python 3.14 toolkit for exporting Roam Research graph sub-trees to self-containe
 - Git
 - [Pandoc](https://pandoc.org/installing.html) — required for all export formats (`brew install pandoc`)
 - [Typst](https://typst.app) — PDF engine used by Pandoc (`brew install typst`)
-- **Noto Sans** and **Noto Sans Mono** (static, not variable) _fonts_ — required for PDF rendering with the default Bergfink template; install the static variants from Google Fonts via Font Book, or override the fonts in `src/guffin/pipeline/typst_resources/user_cfg.typ`
+- **Noto Sans** and **Noto Sans Mono** (static, not variable) _fonts_ — required for PDF rendering with the default Bergfink template; install the static variants from Google Fonts via Font Book, or override the fonts in `src/guffin/render/typst_resources/user_cfg.typ`
 
 ### Initial Setup
 
@@ -175,10 +175,12 @@ guffin/
 │       │   └── attribute.py               # Roam attribute-assignment model: Attribute, LiteralValue,
 │       │                                  #   ReferenceValue, AttributeValue, AttributeAssignment
 │       │
-│       ├── pipeline/                    # Production pipeline: transcription, normalization, rendering
+│       ├── pipeline/                    # Ingest: source → model transcription + normalization (shared)
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
-│       │   ├── roam_tree_to_guffin.py     # NodeTree → guffin render model: transcribe() (VertexTree),
-│       │   │                              #   build_view_map() (ViewMap), to_render_bundle()
+│       │   └── roam_tree_to_guffin.py     # NodeTree → guffin render model: transcribe() (VertexTree),
+│       │                                  #   build_view_map() (ViewMap), to_render_bundle()
+│       │
+│       ├── render/                      # Output rendering: model → output (export + terminal) + config
 │       │   ├── render_options.py          # OutputFormat (markdown/pdf/epub) discriminator; RenderOptions
 │       │   │                              #   base + MarkdownRenderOptions/PdfRenderOptions/EpubRenderOptions
 │       │   ├── image_fetch.py             # Pandoc-free image asset fetching; ImageRef (UID + path +
@@ -191,7 +193,7 @@ guffin/
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
 │       │   ├── epub_rendering.py          # VertexTree → EPUB 3 via Pandoc (title → dc:title,
 │       │   │                              #   headings → chapters, images embedded)
-│       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree
+│       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree (dump)
 │       │   ├── gfm_resources/             # GFM Pandoc Lua filters (package data): gfm_callout,
 │       │   │                              #   gfm_color_span, gfm_image, gfm_mark
 │       │   ├── typst_resources/           # Bergfink Typst template + typst_*.lua filters
