@@ -2,9 +2,12 @@
 -- Lua filter for the Typst/PDF output path.
 -- Transforms Div.callout-{type} produced by pandoc_rendering.py into a
 -- gentle-clues callout block (bergfink.typst imports gentle-clues:1.3.1).
+-- Each gentle-clues default icon is overridden with the shared SVG from
+-- pipeline/callout_icons/ (so PDF and EPUB render an identical icon set).
 
 
 -- Mapping from Guffin CalloutType (lowercased) to gentle-clues function names.
+-- The function name is also the basename of the shared icon SVG (e.g. "info" -> info.svg).
 local TYPST_FNS = {
   ["callout-info"]      = "info",
   ["callout-note"]      = "memo",
@@ -19,6 +22,26 @@ local TYPST_FNS = {
   ["callout-failure"]   = "error",
   ["callout-bug"]       = "error",
 }
+
+-- Absolute path to the bundled callout_icons directory, supplied by pdf_rendering.py
+-- via the GUFFIN_CALLOUT_ICONS_DIR environment variable.
+local function icons_dir()
+  return os.getenv("GUFFIN_CALLOUT_ICONS_DIR")
+end
+
+-- Read the shared SVG for `fn_name` and return a Typst `image(bytes(...), format: "svg")`
+-- expression, or nil if the icon dir / file is unavailable (gentle-clues then keeps its default).
+local function icon_typst(fn_name)
+  local dir = icons_dir()
+  if not dir then return nil end
+  local fh = io.open(dir .. "/" .. fn_name .. ".svg", "r")
+  if not fh then return nil end
+  local svg = fh:read("*a")
+  fh:close()
+  -- Collapse newlines (Typst string literals are single-line) then escape for the literal.
+  svg = svg:gsub("[\r\n]", " "):gsub("\\", "\\\\"):gsub('"', '\\"')
+  return 'image(bytes("' .. svg .. '"), format: "svg")'
+end
 
 function Div(el)
   local fn_name = nil
@@ -46,15 +69,19 @@ function Div(el)
   -- #set par(justify: true, first-line-indent: ...).  Inside code mode,
   -- function names and set rules have no # prefix.
   -- gentle-clues expects title as a string literal, not a content block.
-  local open_str
+  local args = {}
   if title_inlines and #title_inlines > 0 then
     local title_text = pandoc.utils.stringify(title_inlines)
     -- Escape backslash then double-quote for a Typst string literal.
     title_text = title_text:gsub("\\", "\\\\"):gsub('"', '\\"')
-    open_str = "#{\nset par(first-line-indent: 0pt, justify: false)\n" .. fn_name .. "(title: \"" .. title_text .. "\")[\n"
-  else
-    open_str = "#{\nset par(first-line-indent: 0pt, justify: false)\n" .. fn_name .. "[\n"
+    args[#args + 1] = 'title: "' .. title_text .. '"'
   end
+  local icon = icon_typst(fn_name)
+  if icon then
+    args[#args + 1] = "icon: " .. icon
+  end
+  local open_str = "#{\nset par(first-line-indent: 0pt, justify: false)\n"
+    .. fn_name .. "(" .. table.concat(args, ", ") .. ")[\n"
 
   -- Return: open raw block, rendered body blocks, close raw block.
   -- The "]" closes the gentle-clues content block; "}" closes the #{...} scope.

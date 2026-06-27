@@ -75,3 +75,29 @@ div.callout-warning  { border-left-color: #e07b00; background-color: #fff8f0; }
 div.callout-danger   { border-left-color: #e53935; background-color: #fff0f0; }
 div.callout-failure  { border-left-color: #c62828; background-color: #fff0f0; }
 div.callout-bug      { border-left-color: #d81b60; background-color: #fff0f5; }
+
+/*
+ * Keep the callout content flush inside the padded box. Without this, the title
+ * paragraph's default top margin renders as an empty leading line (the box has
+ * padding, so the margin cannot collapse out of it).
+ */
+div.callout > :first-child { margin-top: 0; }
+div.callout > :last-child { margin-bottom: 0; }
+div.callout-title > p { margin-top: 0; margin-bottom: 0; }
+
+/*
+ * Type indicator (shared SVG icon + label word) prepended to each callout by the
+ * epub_callout.lua filter as a `callout-label` sub-Div. The icon is the same SVG the
+ * PDF output uses, inlined into the XHTML; it is sized to the text here.
+ */
+div.callout-label {
+  font-weight: bold;
+  margin-bottom: 0.35em;
+}
+
+div.callout-label svg {
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.18em;
+  margin-right: 0.35em;
+}

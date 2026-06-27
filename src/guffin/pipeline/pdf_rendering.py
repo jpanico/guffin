@@ -58,6 +58,7 @@ logger = logging.getLogger(__name__)
 
 
 _TYPST_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.typst_resources"
+_CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.pipeline.callout_icons"
 _TEMPLATE_ENTRY: Final[str] = "bergfink.typst"
 _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 # Lua-filter filenames, resolved against the bundled typst_resources directory at render time.
@@ -69,6 +70,14 @@ _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 def _typst_resources_dir() -> Path:
     """Return the absolute path to the bundled ``guffin/pipeline/typst_resources/`` directory."""
     pkg_files = importlib.resources.files(_TYPST_RESOURCES_PACKAGE)
+    # ``as_file`` gives a real filesystem path even for zipped wheels.
+    with importlib.resources.as_file(pkg_files) as resources_path:
+        return resources_path
+
+
+def _callout_icons_dir() -> Path:
+    """Return the absolute path to the bundled ``guffin/pipeline/callout_icons/`` directory."""
+    pkg_files = importlib.resources.files(_CALLOUT_ICONS_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
         return resources_path
@@ -188,6 +197,9 @@ def render(
 
     bundled_dir: Final[Path] = _typst_resources_dir()
     template_path: Final[Path] = bundled_dir / _TEMPLATE_ENTRY
+
+    # typst_callout.lua reads this to inline the shared callout icons into gentle-clues.
+    os.environ["GUFFIN_CALLOUT_ICONS_DIR"] = str(_callout_icons_dir())
 
     extra_args: list[str] = [
         "--pdf-engine=typst",

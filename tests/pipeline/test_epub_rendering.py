@@ -65,6 +65,24 @@ class TestRenderEpub:
             )
             assert "background-color: #FF851C" in chapter
 
+    def test_callout_gets_icon_label(self, tmp_path: Path) -> None:
+        """A callout is prefixed with a callout-label carrying the inline shared SVG icon and word."""
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
+        render(
+            _article5_bundle(),
+            filename_stem=stem,
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path),
+        )
+        with zipfile.ZipFile(tmp_path / f"{stem}.epub") as zf:
+            chapter: Final[str] = next(
+                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
+            )
+            # The info callout gets a label div containing an inline SVG icon and the type word.
+            assert 'class="callout-label"' in chapter
+            assert "<svg" in chapter
+            assert "Info" in chapter
+
     def test_suppress_attributes_drops_pills(self, tmp_path: Path) -> None:
         """With suppress_attributes, the attribute pills are absent from the EPUB."""
         stem: Final[str] = shell_safe_filename("[[Test Article]] 5")

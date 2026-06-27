@@ -18,8 +18,10 @@ and embedded in the EPUB by Pandoc's writer as local-path :class:`~panflute.Imag
 optional *cache_dir* avoids re-downloading unchanged assets across runs.
 
 Roam color/highlight/pill styling is preserved by the bundled ``epub_*.lua`` Pandoc filters (under
-``guffin/pipeline/epub_resources/``), which emit inline-styled XHTML.  The bundled ``epub.css``
-stylesheet (same directory) is applied via Pandoc ``--css`` and sets the e-book's font family.
+``guffin/pipeline/epub_resources/``), which emit inline-styled XHTML; ``epub_callout.lua`` also
+prepends a type indicator (a shared SVG icon from ``guffin/pipeline/callout_icons/`` plus a label
+word) to each callout.  The bundled ``epub.css`` stylesheet (same directory) is applied via Pandoc
+``--css`` and sets the e-book's font family and callout styling.
 
 Public symbols:
 
@@ -33,6 +35,7 @@ Public symbols:
 
 import importlib.resources
 import logging
+import os
 import tempfile
 from pathlib import Path
 from typing import Final
@@ -59,9 +62,11 @@ logger = logging.getLogger(__name__)
 
 
 _EPUB_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.epub_resources"
+_CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.pipeline.callout_icons"
 # Lua-filter filenames, resolved against the bundled epub_resources directory at render time.
 _EPUB_COLOR_SPAN_FILTER: Final[str] = "epub_color_span.lua"
 _EPUB_MARK_FILTER: Final[str] = "epub_mark.lua"
+_EPUB_CALLOUT_FILTER: Final[str] = "epub_callout.lua"
 # Bundled default stylesheet (the customization point for the e-book's font family).
 _EPUB_STYLESHEET: Final[str] = "epub.css"
 # Pandoc EPUB writer name (EPUB 3).
@@ -71,6 +76,14 @@ _EPUB_WRITER: Final[str] = "epub3"
 def _epub_resources_dir() -> Path:
     """Return the absolute path to the bundled ``guffin/pipeline/epub_resources/`` directory."""
     pkg_files = importlib.resources.files(_EPUB_RESOURCES_PACKAGE)
+    # ``as_file`` gives a real filesystem path even for zipped wheels.
+    with importlib.resources.as_file(pkg_files) as resources_path:
+        return resources_path
+
+
+def _callout_icons_dir() -> Path:
+    """Return the absolute path to the bundled ``guffin/pipeline/callout_icons/`` directory."""
+    pkg_files = importlib.resources.files(_CALLOUT_ICONS_PACKAGE)
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
         return resources_path
@@ -120,6 +133,8 @@ def render(
     output_path: Final[Path] = output_dir / f"{filename_stem}.epub"
 
     epub_dir: Final[Path] = _epub_resources_dir()
+    # epub_callout.lua reads this to inline the shared callout icons into the callout label.
+    os.environ["GUFFIN_CALLOUT_ICONS_DIR"] = str(_callout_icons_dir())
 
     with tempfile.TemporaryDirectory() as tmp:
         fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(
@@ -143,6 +158,7 @@ def render(
             format="json",
             outputfile=str(output_path),
             extra_args=[
+                f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
                 f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
                 f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
                 f"--css={epub_dir / _EPUB_STYLESHEET}",

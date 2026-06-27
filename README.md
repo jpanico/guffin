@@ -196,8 +196,10 @@ guffin/
 │       │   │                              #   gfm_color_span, gfm_image, gfm_mark
 │       │   ├── typst_resources/           # Bergfink Typst template + typst_*.lua filters
 │       │   │                              #   (package data; see typst_resources/README.md)
-│       │   └── epub_resources/            # EPUB package data: epub_*.lua filters (color-span, mark)
-│       │                                  #   + epub.css default stylesheet (font/callout styling)
+│       │   ├── epub_resources/            # EPUB package data: epub_*.lua filters (callout, color-span,
+│       │   │                              #   mark) + epub.css default stylesheet (font/callout styling)
+│       │   └── callout_icons/             # Shared SVG callout badge icons (info, memo, …) used by
+│       │                                  #   both PDF and EPUB; see callout_icons/README.md
 │       │
 │       └── roam/                        # Roam Research data model, API, and processing
 │           ├── primitives.py              # Foundational type aliases (Uid, Id, Order, PageTitle),
