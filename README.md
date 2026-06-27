@@ -138,7 +138,7 @@ guffin/
 │       │   ├── common.py                  # Shared tree-loading pipeline (fetch_roam_trees);
 │       │   │                              #   deduce_out_file_stem()
 │       │   ├── dump_roam_tree.py          # dump-roam-tree: render Roam subtree as a Rich tree
-│       │   ├── export_roam_tree.py        # export-roam-tree: export to Markdown or PDF
+│       │   ├── export_roam_tree.py        # export-roam-tree: export to Markdown, PDF, or EPUB
 │       │   ├── logging_config.py          # Colorized logging; reads LOG_LEVEL env var
 │       │   └── params.py                  # Shared Typer Argument/Option declarations (TargetArgument,
 │       │                                  #   PortOption, GraphOption, TokenOption)
@@ -157,25 +157,30 @@ guffin/
 │       ├── model/                       # Core normalized-graph model (depends only on common/)
 │       │   ├── primitives.py              # Uid type alias; SYNTHETIC/DAILY_NOTE/UID_PATTERN(/RE),
 │       │   │                              #   ANCHORED_UID_PATTERN(/RE), is_daily_note_uid()
-│       │   ├── vertex.py                  # Vertex union + nine concrete types (PageVertex,
+│       │   ├── vertex.py                  # Vertex union + ten concrete types (PageVertex,
 │       │   │                              #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
 │       │   │                              #   CodeBlockVertex, BlockQuoteVertex, TableVertex,
-│       │   │                              #   BlockEmbedVertex); VertexType, VertexChildren,
-│       │   │                              #   VertexRefs, vertex_adapter
+│       │   │                              #   BlockEmbedVertex, AttributeAssignmentVertex); VertexType,
+│       │   │                              #   VertexChildren, VertexRefs, vertex_adapter
 │       │   ├── vertex_tree.py             # VertexTree (tree_vertices, ref_vertices, uid_map),
-│       │   │                              #   VertexTreeDFSIterator, root_vertex(), map_vertices();
-│       │   │                              #   filter helpers (page_vertices, image_vertices, …)
+│       │   │                              #   VertexTreeDFSIterator, root_vertex(), map_vertices(),
+│       │   │                              #   drop_attribute_assignments(); filter helpers
+│       │   │                              #   (page_vertices, image_vertices, …)
 │       │   ├── view.py                    # Presentation overlay: ChildrenLayout, VertexView, ViewMap,
 │       │   │                              #   DEFAULT_CHILDREN_LAYOUT
 │       │   ├── render_bundle.py           # RenderBundle: VertexTree content + ViewMap presentation
-│       │   └── link.py                    # x-guffin inter-vertex link scheme; VertexLinkKind,
-│       │                                  #   VertexLink, vertex_link_url(), parse_vertex_link(),
-│       │                                  #   is_vertex_link()
+│       │   ├── link.py                    # x-guffin inter-vertex link scheme; VertexLinkKind,
+│       │   │                              #   VertexLink, vertex_link_url(), parse_vertex_link(),
+│       │   │                              #   is_vertex_link()
+│       │   └── attribute.py               # Roam attribute-assignment model: Attribute, LiteralValue,
+│       │                                  #   ReferenceValue, AttributeValue, AttributeAssignment
 │       │
 │       ├── pipeline/                    # Production pipeline: transcription, normalization, rendering
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
 │       │   ├── roam_tree_to_guffin.py     # NodeTree → guffin render model: transcribe() (VertexTree),
 │       │   │                              #   build_view_map() (ViewMap), to_render_bundle()
+│       │   ├── render_options.py          # OutputFormat (markdown/pdf/epub) discriminator; RenderOptions
+│       │   │                              #   base + MarkdownRenderOptions/PdfRenderOptions/EpubRenderOptions
 │       │   ├── image_fetch.py             # Pandoc-free image asset fetching; ImageRef (UID + path +
 │       │   │                              #   ImageSize); fetch_images() → {uid: ImageRef};
 │       │   │                              #   fetch_and_enrich_images() → (VertexTree, {uid: ImageRef})
@@ -184,11 +189,15 @@ guffin/
 │       │   │                              #   resolve_vertex_links() replace x-guffin links in-place
 │       │   ├── md_rendering.py            # VertexTree → GFM Markdown; writes .mdbundle or plain .md
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
+│       │   ├── epub_rendering.py          # VertexTree → EPUB 3 via Pandoc (title → dc:title,
+│       │   │                              #   headings → chapters, images embedded)
 │       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree
 │       │   ├── gfm_resources/             # GFM Pandoc Lua filters (package data): gfm_callout,
 │       │   │                              #   gfm_color_span, gfm_image, gfm_mark
-│       │   └── typst_resources/           # Bergfink Typst template + typst_*.lua filters
-│       │                                  #   (package data; see typst_resources/README.md)
+│       │   ├── typst_resources/           # Bergfink Typst template + typst_*.lua filters
+│       │   │                              #   (package data; see typst_resources/README.md)
+│       │   └── epub_resources/            # EPUB package data: epub_*.lua filters (color-span, mark)
+│       │                                  #   + epub.css default stylesheet (font/callout styling)
 │       │
 │       └── roam/                        # Roam Research data model, API, and processing
 │           ├── primitives.py              # Foundational type aliases (Uid, Id, Order, PageTitle),
@@ -240,11 +249,11 @@ The package provides two command-line utilities.
 
 ### `export-roam-tree` — Export a Roam page or node subtree
 
-Fetches a Roam `Page` or `Node` subtree via the Local API, normalizes it, and writes the result in one of two formats controlled by `--format`. The positional argument is interpreted as a **node UID** if it matches `^[A-Za-z0-9_-]{9}$` (exactly 9 alphanumeric/dash/underscore characters); otherwise it is treated as a **page title**.
+Fetches a Roam `Page` or `Node` subtree via the Local API, normalizes it, and writes the result in one of three formats controlled by `--format`. The positional argument is interpreted as a **node UID** when wrapped in `(( ))` or when it matches an anchored UID pattern (a 9-character synthetic UID or an `MM-DD-YYYY` Daily Note UID); otherwise it is treated as a **page title** (any `[[ ]]` wrapper is stripped).
 
 ```bash
 export-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token <token> --output-dir <output_dir> \
-  [--format markdown|pdf] [--bundle|--no-bundle] [--cache-dir <dir>]
+  [--format markdown|pdf|epub] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
 ```
 
 #### Markdown output (default)
@@ -271,7 +280,20 @@ export-roam-tree wdMgyBiP9 --port 3333 --graph SCFH --token your-bearer-token --
 export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token --output-dir ~/docs --format pdf
 ```
 
-The `--bundle/--no-bundle` flags are ignored with `--format pdf`. The `--cache-dir` option works with both formats.
+Pass `--template-dir <dir>` (a directory containing a `user_cfg.typ`) to override the bundled Bergfink Typst styling.
+
+#### EPUB output
+
+`--format epub` builds a Pandoc object model directly from the vertex tree via Panflute, fetches and embeds Cloud Firestore images, and produces an EPUB 3 e-book via Pandoc. The page title becomes the EPUB `dc:title` and top-level headings become the e-book's chapters. Requires `pandoc` on `PATH` (no Typst).
+
+```bash
+# Creates ~/docs/Test Article.epub
+export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token --output-dir ~/docs --format epub
+```
+
+#### Cross-format options
+
+`--bundle/--no-bundle` applies only to Markdown and `--template-dir` only to PDF; each is ignored by the other formats. `--cache-dir` (cache downloaded images across runs) and `--suppress-attributes` (omit Roam attribute assignments from the output) apply to all three formats.
 
 #### Environment variables
 
@@ -282,10 +304,12 @@ export GUFFIN_ROAM_LOCAL_API_PORT=3333
 export GUFFIN_ROAM_GRAPH_NAME=SCFH
 export GUFFIN_ROAM_API_TOKEN=<your-bearer-token>
 export GUFFIN_EXPORT_DIR=~/docs
-export GUFFIN_CACHE_DIR=~/.cache/roam   # optional: skip re-downloading unchanged images
+export GUFFIN_CACHE_DIR=~/.cache/roam        # optional: skip re-downloading unchanged images
+export GUFFIN_PDF_TEMPLATE_DIR=~/mytheme     # optional: user_cfg.typ override for --format pdf
 
 export-roam-tree "Test Article"                      # Markdown bundle (default)
 export-roam-tree "Test Article" --format pdf         # PDF
+export-roam-tree "Test Article" --format epub        # EPUB
 ```
 
 To change the log level (default: `INFO`), set `LOG_LEVEL`:
