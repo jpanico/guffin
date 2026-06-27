@@ -186,36 +186,36 @@ class TestVertexType:
     """Tests for vertex_type."""
 
     def test_page_node_returns_roam_page(self) -> None:
-        """Test that a page node classifies as GUFFIN_PAGE."""
-        assert vertex_type(_make_page()) is VertexType.GUFFIN_PAGE
+        """Test that a page node classifies as PAGE."""
+        assert vertex_type(_make_page()) is VertexType.PAGE
 
     def test_image_node_returns_roam_image(self) -> None:
-        """Test that an image block node classifies as GUFFIN_IMAGE."""
-        assert vertex_type(_make_image()) is VertexType.GUFFIN_IMAGE
+        """Test that an image block node classifies as IMAGE."""
+        assert vertex_type(_make_image()) is VertexType.IMAGE
 
     def test_native_heading_node_returns_roam_heading(self) -> None:
-        """Test that a native heading block node classifies as GUFFIN_HEADING."""
-        assert vertex_type(_make_heading()) is VertexType.GUFFIN_HEADING
+        """Test that a native heading block node classifies as HEADING."""
+        assert vertex_type(_make_heading()) is VertexType.HEADING
 
     def test_ah_level_heading_node_returns_roam_heading(self) -> None:
-        """Test that an Augmented Headings block node classifies as GUFFIN_HEADING."""
-        assert vertex_type(_make_ah_heading()) is VertexType.GUFFIN_HEADING
+        """Test that an Augmented Headings block node classifies as HEADING."""
+        assert vertex_type(_make_ah_heading()) is VertexType.HEADING
 
     def test_plain_text_node_returns_roam_text_content(self) -> None:
-        """Test that a plain text block node classifies as GUFFIN_TEXT."""
-        assert vertex_type(_make_text()) is VertexType.GUFFIN_TEXT
+        """Test that a plain text block node classifies as TEXT."""
+        assert vertex_type(_make_text()) is VertexType.TEXT
 
     def test_code_block_node_returns_guffin_code_block(self) -> None:
-        """Test that a fenced code block node classifies as GUFFIN_CODE_BLOCK."""
-        assert vertex_type(_make_code()) is VertexType.GUFFIN_CODE_BLOCK
+        """Test that a fenced code block node classifies as CODE_BLOCK."""
+        assert vertex_type(_make_code()) is VertexType.CODE_BLOCK
 
     def test_md_block_quote_returns_guffin_block_quote(self) -> None:
-        """Test that a standard Markdown block-quote node classifies as GUFFIN_BLOCK_QUOTE."""
-        assert vertex_type(_make_block_quote(string="> quoted text")) is VertexType.GUFFIN_BLOCK_QUOTE
+        """Test that a standard Markdown block-quote node classifies as BLOCK_QUOTE."""
+        assert vertex_type(_make_block_quote(string="> quoted text")) is VertexType.BLOCK_QUOTE
 
     def test_roam_block_quote_returns_guffin_block_quote(self) -> None:
-        """Test that a Roam-style block-quote node classifies as GUFFIN_BLOCK_QUOTE."""
-        assert vertex_type(_make_block_quote(string="[[>]] quoted text")) is VertexType.GUFFIN_BLOCK_QUOTE
+        """Test that a Roam-style block-quote node classifies as BLOCK_QUOTE."""
+        assert vertex_type(_make_block_quote(string="[[>]] quoted text")) is VertexType.BLOCK_QUOTE
 
     def test_node_with_neither_title_nor_string_raises_validation_error(self) -> None:
         """Test that constructing a node missing both title and string raises ValidationError."""
@@ -237,9 +237,9 @@ class TestToPageVertex:
     """Tests for to_page_vertex."""
 
     def test_returns_roam_page_vertex_type(self) -> None:
-        """Test that to_page_vertex produces a vertex with type GUFFIN_PAGE."""
+        """Test that to_page_vertex produces a vertex with type PAGE."""
         node = _make_page()
-        assert to_page_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_PAGE
+        assert to_page_vertex(node, _node_tree(node)).vertex_type is VertexType.PAGE
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
@@ -322,9 +322,9 @@ class TestToImageVertex:
     """Tests for to_image_vertex."""
 
     def test_returns_roam_image_vertex_type(self) -> None:
-        """Test that to_image_vertex produces a vertex with type GUFFIN_IMAGE."""
+        """Test that to_image_vertex produces a vertex with type IMAGE."""
         node = _make_image()
-        assert to_image_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_IMAGE
+        assert to_image_vertex(node, _node_tree(node)).vertex_type is VertexType.IMAGE
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
@@ -397,9 +397,9 @@ class TestToHeadingVertex:
     """Tests for to_heading_vertex."""
 
     def test_returns_roam_heading_vertex_type(self) -> None:
-        """Test that to_heading_vertex produces a vertex with type GUFFIN_HEADING."""
+        """Test that to_heading_vertex produces a vertex with type HEADING."""
         node = _make_heading()
-        assert to_heading_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_HEADING
+        assert to_heading_vertex(node, _node_tree(node)).vertex_type is VertexType.HEADING
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
@@ -455,9 +455,9 @@ class TestToTextVertex:
     """Tests for to_text_vertex."""
 
     def test_returns_roam_text_content_vertex_type(self) -> None:
-        """Test that to_text_vertex produces a vertex with type GUFFIN_TEXT."""
+        """Test that to_text_vertex produces a vertex with type TEXT."""
         node = _make_text()
-        assert to_text_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_TEXT
+        assert to_text_vertex(node, _node_tree(node)).vertex_type is VertexType.TEXT
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
@@ -500,9 +500,9 @@ class TestToCalloutVertex:
     """Tests for to_callout_vertex."""
 
     def test_returns_guffin_callout_vertex_type(self) -> None:
-        """Test that to_callout_vertex produces a vertex with type GUFFIN_CALLOUT."""
+        """Test that to_callout_vertex produces a vertex with type CALLOUT."""
         node = _make_callout()
-        assert to_callout_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_CALLOUT
+        assert to_callout_vertex(node, _node_tree(node)).vertex_type is VertexType.CALLOUT
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
@@ -661,9 +661,9 @@ class TestToBlockQuoteVertex:
         assert isinstance(to_block_quote_vertex(node, _node_tree(node)), BlockQuoteVertex)
 
     def test_vertex_type_is_guffin_block_quote(self) -> None:
-        """Test that the vertex_type is GUFFIN_BLOCK_QUOTE."""
+        """Test that the vertex_type is BLOCK_QUOTE."""
         node = _make_block_quote()
-        assert to_block_quote_vertex(node, _node_tree(node)).vertex_type is VertexType.GUFFIN_BLOCK_QUOTE
+        assert to_block_quote_vertex(node, _node_tree(node)).vertex_type is VertexType.BLOCK_QUOTE
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
@@ -717,45 +717,45 @@ class TestTranscribeNode:
     """Integration tests for transcribe_standalone_node — verifies correct dispatch to each vertex builder."""
 
     def test_transcribes_page_node(self) -> None:
-        """Test that a page node is transcribed to a GUFFIN_PAGE vertex with correct fields."""
+        """Test that a page node is transcribed to a PAGE vertex with correct fields."""
         node = _make_page(title="My Page")
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, PageVertex)
-        assert v.vertex_type is VertexType.GUFFIN_PAGE
+        assert v.vertex_type is VertexType.PAGE
         assert v.title == "My Page"
 
     def test_transcribes_image_node(self) -> None:
-        """Test that an image block node is transcribed to a GUFFIN_IMAGE vertex with correct fields."""
+        """Test that an image block node is transcribed to a IMAGE vertex with correct fields."""
         node = _make_image()
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, ImageVertex)
-        assert v.vertex_type is VertexType.GUFFIN_IMAGE
+        assert v.vertex_type is VertexType.IMAGE
         assert v.file_name == "photo.jpeg"
         assert v.media_type == "image/jpeg"
 
     def test_transcribes_heading_node(self) -> None:
-        """Test that a heading block node is transcribed to a GUFFIN_HEADING vertex with correct fields."""
+        """Test that a heading block node is transcribed to a HEADING vertex with correct fields."""
         node = _make_heading(string="Intro", heading=1)
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, HeadingVertex)
-        assert v.vertex_type is VertexType.GUFFIN_HEADING
+        assert v.vertex_type is VertexType.HEADING
         assert v.text == "Intro"
         assert v.heading_level == 1
 
     def test_transcribes_text_content_node(self) -> None:
-        """Test that a plain text block node is transcribed to a GUFFIN_TEXT vertex."""
+        """Test that a plain text block node is transcribed to a TEXT vertex."""
         node = _make_text(string="Body text")
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, TextVertex)
-        assert v.vertex_type is VertexType.GUFFIN_TEXT
+        assert v.vertex_type is VertexType.TEXT
         assert v.text == "Body text"
 
     def test_transcribes_block_quote_node(self) -> None:
-        """Test that a block-quote node is transcribed to a GUFFIN_BLOCK_QUOTE vertex."""
+        """Test that a block-quote node is transcribed to a BLOCK_QUOTE vertex."""
         node = _make_block_quote(string="> Quoted content")
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, BlockQuoteVertex)
-        assert v.vertex_type is VertexType.GUFFIN_BLOCK_QUOTE
+        assert v.vertex_type is VertexType.BLOCK_QUOTE
         assert v.text == "Quoted content"
 
     def test_children_resolved_via_id_map(self) -> None:
@@ -794,7 +794,7 @@ class TestTranscribeNode:
         node = RoamNode.model_validate(raw)
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, ImageVertex)
-        assert v.vertex_type is VertexType.GUFFIN_IMAGE
+        assert v.vertex_type is VertexType.IMAGE
         assert v.uid == "mPCzedeKx"
         assert v.source.host == "firebasestorage.googleapis.com"
         assert v.alt_text == "A flower"
@@ -987,10 +987,10 @@ class TestToTableVertex:
         assert isinstance(vertex, TableVertex)
 
     def test_vertex_type_is_guffin_table(self) -> None:
-        """The returned vertex has vertex_type GUFFIN_TABLE."""
+        """The returned vertex has vertex_type TABLE."""
         root, imap = self._make_2x2_inputs()
         vertex, _ = to_table_vertex(root, imap)
-        assert vertex.vertex_type is VertexType.GUFFIN_TABLE
+        assert vertex.vertex_type is VertexType.TABLE
 
     def test_uid_preserved(self) -> None:
         """The vertex uid matches the source node uid."""

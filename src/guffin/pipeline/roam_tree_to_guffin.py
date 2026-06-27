@@ -166,26 +166,26 @@ def vertex_type(node: RoamNode) -> VertexType:
     logger.debug("node=%r", node)
     match node_type(node):
         case NodeType.PAGE:
-            return VertexType.GUFFIN_PAGE
+            return VertexType.PAGE
         case NodeType.PLAIN_BLOCK:
-            return VertexType.GUFFIN_TEXT
+            return VertexType.TEXT
         case NodeType.CODE_BLOCK:
-            return VertexType.GUFFIN_CODE_BLOCK
+            return VertexType.CODE_BLOCK
         case NodeType.HEADING_BLOCK:
-            return VertexType.GUFFIN_HEADING
+            return VertexType.HEADING
         case NodeType.IMAGE_BLOCK:
-            return VertexType.GUFFIN_IMAGE
+            return VertexType.IMAGE
         case NodeType.CALLOUT_BLOCK:
-            return VertexType.GUFFIN_CALLOUT
+            return VertexType.CALLOUT
         case NodeType.BLOCK_QUOTE:
-            return VertexType.GUFFIN_BLOCK_QUOTE
+            return VertexType.BLOCK_QUOTE
         case NodeType.NATIVE_TABLE:
-            return VertexType.GUFFIN_TABLE
+            return VertexType.TABLE
         case NodeType.EMBED_BLOCK:
-            return VertexType.GUFFIN_BLOCK_EMBED
+            return VertexType.BLOCK_EMBED
         case NodeType.ATTRIBUTE_BLOCK:
             # No dedicated vertex type yet; render attribute assignments as plain text.
-            return VertexType.GUFFIN_TEXT
+            return VertexType.TEXT
 
 
 @validate_call
@@ -596,23 +596,23 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
     """
     logger.debug("node=%r, tree root uid=%r, heading_offset=%d", node, tree.root_node.uid, heading_offset)
     match vertex_type(node):
-        case VertexType.GUFFIN_PAGE:
+        case VertexType.PAGE:
             return to_page_vertex(node, tree)
-        case VertexType.GUFFIN_IMAGE:
+        case VertexType.IMAGE:
             return to_image_vertex(node, tree)
-        case VertexType.GUFFIN_HEADING:
+        case VertexType.HEADING:
             return to_heading_vertex(node, tree, heading_offset)
-        case VertexType.GUFFIN_TEXT:
+        case VertexType.TEXT:
             return to_text_vertex(node, tree)
-        case VertexType.GUFFIN_CALLOUT:
+        case VertexType.CALLOUT:
             return to_callout_vertex(node, tree)
-        case VertexType.GUFFIN_CODE_BLOCK:
+        case VertexType.CODE_BLOCK:
             return to_code_block_vertex(node, tree)
-        case VertexType.GUFFIN_BLOCK_QUOTE:
+        case VertexType.BLOCK_QUOTE:
             return to_block_quote_vertex(node, tree)
-        case VertexType.GUFFIN_TABLE:
-            raise NotImplementedError(f"RoamNode uid={node.uid!r}: GUFFIN_TABLE is not a standalone NodeType")
-        case VertexType.GUFFIN_BLOCK_EMBED:
+        case VertexType.TABLE:
+            raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
+        case VertexType.BLOCK_EMBED:
             return to_block_embed_vertex(node, tree)
         case _ as unreachable:
             assert_never(unreachable)

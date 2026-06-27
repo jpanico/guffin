@@ -80,39 +80,39 @@ class VertexType(StrEnum):
     string-valued so they serialize cleanly to/from JSON without extra conversion.
 
     Values:
-        GUFFIN_PAGE: Normalized form of a Roam *Page* node — ``:node/title`` is
+        PAGE: Normalized form of a Roam *Page* node — ``:node/title`` is
             present; ``:block/string`` is absent.
-        GUFFIN_TEXT: Normalized form of a Roam *Block* node that has no
+        TEXT: Normalized form of a Roam *Block* node that has no
             ``heading`` property — i.e. normal body text.
-        GUFFIN_HEADING: Normalized form of a Roam *Block* node that carries a
+        HEADING: Normalized form of a Roam *Block* node that carries a
             ``heading`` property (value 1, 2, or 3).
-        GUFFIN_IMAGE: Normalized form of a Roam *Block* node whose
+        IMAGE: Normalized form of a Roam *Block* node whose
             ``:block/string`` embeds a Cloud Firestore URL pointing to a
             Roam-managed image upload.
-        GUFFIN_CALLOUT: Normalized form of a Roam *Block* node whose
+        CALLOUT: Normalized form of a Roam *Block* node whose
             ``:block/string`` starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
-        GUFFIN_CODE_BLOCK: Normalized form of a Roam *Block* node whose
+        CODE_BLOCK: Normalized form of a Roam *Block* node whose
             ``:block/string`` is a CommonMark fenced code block.
-        GUFFIN_BLOCK_QUOTE: Normalized form of a Roam *Block* node whose
+        BLOCK_QUOTE: Normalized form of a Roam *Block* node whose
             ``:block/string`` is a standard Markdown block quote (``> text``) or a
             Roam-specific block quote (``[[>]] text``).
-        GUFFIN_TABLE: Normalized form of a Roam native table node — a block whose
+        TABLE: Normalized form of a Roam native table node — a block whose
             ``:block/string`` equals ``{{table}}``, with its child blocks forming the
             rows and each child's children forming the cells.
-        GUFFIN_BLOCK_EMBED: Normalized form of a Roam *Block* node whose
+        BLOCK_EMBED: Normalized form of a Roam *Block* node whose
             ``:block/string`` is wholly a block embed (``{{embed: ((<uid>))}}``),
             transcluding the referenced block.
     """
 
-    GUFFIN_PAGE = "guffin/page"
-    GUFFIN_TEXT = "guffin/text"
-    GUFFIN_HEADING = "guffin/heading"
-    GUFFIN_IMAGE = "guffin/image"
-    GUFFIN_CALLOUT = "guffin/callout"
-    GUFFIN_CODE_BLOCK = "guffin/code-block"
-    GUFFIN_BLOCK_QUOTE = "guffin/block-quote"
-    GUFFIN_TABLE = "guffin/table"
-    GUFFIN_BLOCK_EMBED = "guffin/block-embed"
+    PAGE = "guffin/page"
+    TEXT = "guffin/text"
+    HEADING = "guffin/heading"
+    IMAGE = "guffin/image"
+    CALLOUT = "guffin/callout"
+    CODE_BLOCK = "guffin/code-block"
+    BLOCK_QUOTE = "guffin/block-quote"
+    TABLE = "guffin/table"
+    BLOCK_EMBED = "guffin/block-embed"
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
@@ -125,7 +125,7 @@ class _BaseVertex[VT: VertexType](BaseModel):
 
     Type Parameters:
         VT: The :class:`VertexType` literal for the concrete subtype (e.g.
-            ``Literal[VertexType.GUFFIN_PAGE]``).
+            ``Literal[VertexType.PAGE]``).
 
     Attributes:
         vertex_type: Discriminator field identifying the concrete subtype.
@@ -149,7 +149,7 @@ class _BaseVertex[VT: VertexType](BaseModel):
     refs: VertexRefs | None = Field(default=None, description="Referenced UIDs resolved from raw IdObject stubs.")
 
 
-class PageVertex(_BaseVertex[Literal[VertexType.GUFFIN_PAGE]]):
+class PageVertex(_BaseVertex[Literal[VertexType.PAGE]]):
     """Normalized (transcribed) form of a Roam Page node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has
@@ -157,20 +157,20 @@ class PageVertex(_BaseVertex[Literal[VertexType.GUFFIN_PAGE]]):
     is collapsed into :attr:`text`.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_PAGE`.
+        vertex_type: Always :attr:`~VertexType.PAGE`.
             Serialized as ``'vertex-type'``.
         title: Page title from the source node's ``title`` field.
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_PAGE] = Field(
-        default=VertexType.GUFFIN_PAGE,
+    vertex_type: Literal[VertexType.PAGE] = Field(
+        default=VertexType.PAGE,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_PAGE (serialized as 'vertex-type').",
+        description="Always VertexType.PAGE (serialized as 'vertex-type').",
     )
     title: str = Field(..., description="Page title from the source node's title field.")
 
 
-class HeadingVertex(_BaseVertex[Literal[VertexType.GUFFIN_HEADING]]):
+class HeadingVertex(_BaseVertex[Literal[VertexType.HEADING]]):
     """Normalized (transcribed) form of a Roam Heading block node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has an
@@ -178,49 +178,49 @@ class HeadingVertex(_BaseVertex[Literal[VertexType.GUFFIN_HEADING]]):
     Augmented Headings ``props['ah-level']`` value (h4–h6).
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_HEADING`.
+        vertex_type: Always :attr:`~VertexType.HEADING`.
             Serialized as ``'vertex-type'``.
         text: Block string from the source node's ``string`` field.
         heading_level: Effective heading level in the range 1–6.
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_HEADING] = Field(
-        default=VertexType.GUFFIN_HEADING,
+    vertex_type: Literal[VertexType.HEADING] = Field(
+        default=VertexType.HEADING,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_HEADING (serialized as 'vertex-type').",
+        description="Always VertexType.HEADING (serialized as 'vertex-type').",
     )
     text: str = Field(..., description="Block string from the source node's string field.")
     heading_level: HeadingLevel = Field(..., description="Effective heading level (1–6).")
 
 
-class TextVertex(_BaseVertex[Literal[VertexType.GUFFIN_TEXT]]):
+class TextVertex(_BaseVertex[Literal[VertexType.TEXT]]):
     """Normalized (transcribed) form of a plain-text Roam Block node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has
     ``:block/string`` set with no heading property and no embedded Firestore URL.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_TEXT`.
+        vertex_type: Always :attr:`~VertexType.TEXT`.
             Serialized as ``'vertex-type'``.
         text: Block string from the source node's ``string`` field.
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_TEXT] = Field(
-        default=VertexType.GUFFIN_TEXT,
+    vertex_type: Literal[VertexType.TEXT] = Field(
+        default=VertexType.TEXT,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_TEXT (serialized as 'vertex-type').",
+        description="Always VertexType.TEXT (serialized as 'vertex-type').",
     )
     text: str = Field(..., description="Block string from the source node's string field.")
 
 
-class ImageVertex(_BaseVertex[Literal[VertexType.GUFFIN_IMAGE]]):
+class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
     """Normalized (transcribed) form of a Roam Cloud Firestore image block node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
     ``:block/string`` that embeds a Cloud Firestore storage URL.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_IMAGE`.
+        vertex_type: Always :attr:`~VertexType.IMAGE`.
             Serialized as ``'vertex-type'``.
         source: Cloud Firestore storage URL for the image file.
         alt_text: Alt text extracted from the Markdown image link
@@ -239,10 +239,10 @@ class ImageVertex(_BaseVertex[Literal[VertexType.GUFFIN_IMAGE]]):
             Serialized as ``'original-image-size'``.
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_IMAGE] = Field(
-        default=VertexType.GUFFIN_IMAGE,
+    vertex_type: Literal[VertexType.IMAGE] = Field(
+        default=VertexType.IMAGE,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_IMAGE (serialized as 'vertex-type').",
+        description="Always VertexType.IMAGE (serialized as 'vertex-type').",
     )
     source: HttpUrl = Field(..., description="Cloud Firestore storage URL for the image file.")
     alt_text: str | None = Field(
@@ -286,14 +286,14 @@ class ImageVertex(_BaseVertex[Literal[VertexType.GUFFIN_IMAGE]]):
         return val
 
 
-class CalloutVertex(_BaseVertex[Literal[VertexType.GUFFIN_CALLOUT]]):
+class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
     """Normalized (transcribed) form of a Roam callout block node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
     ``:block/string`` that starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_CALLOUT`.
+        vertex_type: Always :attr:`~VertexType.CALLOUT`.
             Serialized as ``'vertex-type'``.
         callout_type: Callout category, one of the twelve recognised callout type keywords.
             Serialized as ``'callout-type'``.
@@ -318,10 +318,10 @@ class CalloutVertex(_BaseVertex[Literal[VertexType.GUFFIN_CALLOUT]]):
         FAILURE = "failure"
         BUG = "bug"
 
-    vertex_type: Literal[VertexType.GUFFIN_CALLOUT] = Field(
-        default=VertexType.GUFFIN_CALLOUT,
+    vertex_type: Literal[VertexType.CALLOUT] = Field(
+        default=VertexType.CALLOUT,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_CALLOUT (serialized as 'vertex-type').",
+        description="Always VertexType.CALLOUT (serialized as 'vertex-type').",
     )
     callout_type: CalloutType = Field(
         ...,
@@ -332,7 +332,7 @@ class CalloutVertex(_BaseVertex[Literal[VertexType.GUFFIN_CALLOUT]]):
     body: str = Field(..., description="Callout body text accumulated from child nodes.")
 
 
-class CodeBlockVertex(_BaseVertex[Literal[VertexType.GUFFIN_CODE_BLOCK]]):
+class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
     """Normalized (transcribed) form of a Roam fenced code block node.
 
     Corresponds to a source :class:`~guffin.roam.node.RoamNode` classified as
@@ -340,23 +340,23 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.GUFFIN_CODE_BLOCK]]):
     a CommonMark fenced code block.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_CODE_BLOCK`.
+        vertex_type: Always :attr:`~VertexType.CODE_BLOCK`.
             Serialized as ``'vertex-type'``.
         code: Code content of the fenced block — the lines between the fences.
         language: Programming language of the code block
             (:class:`~guffin.common.code_language.CodeLanguage`).
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_CODE_BLOCK] = Field(
-        default=VertexType.GUFFIN_CODE_BLOCK,
+    vertex_type: Literal[VertexType.CODE_BLOCK] = Field(
+        default=VertexType.CODE_BLOCK,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_CODE_BLOCK (serialized as 'vertex-type').",
+        description="Always VertexType.CODE_BLOCK (serialized as 'vertex-type').",
     )
     code: str = Field(..., description="Code content of the fenced block (the lines between the fences).")
     language: CodeLanguage = Field(..., description="Programming language of the fenced code block.")
 
 
-class BlockQuoteVertex(_BaseVertex[Literal[VertexType.GUFFIN_BLOCK_QUOTE]]):
+class BlockQuoteVertex(_BaseVertex[Literal[VertexType.BLOCK_QUOTE]]):
     """Normalized (transcribed) form of a Roam block-quote node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
@@ -364,20 +364,20 @@ class BlockQuoteVertex(_BaseVertex[Literal[VertexType.GUFFIN_BLOCK_QUOTE]]):
     Roam-specific block quote (``[[>]] text``).
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_BLOCK_QUOTE`.
+        vertex_type: Always :attr:`~VertexType.BLOCK_QUOTE`.
             Serialized as ``'vertex-type'``.
         text: Block string with the leading block-quote marker stripped.
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_BLOCK_QUOTE] = Field(
-        default=VertexType.GUFFIN_BLOCK_QUOTE,
+    vertex_type: Literal[VertexType.BLOCK_QUOTE] = Field(
+        default=VertexType.BLOCK_QUOTE,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_BLOCK_QUOTE (serialized as 'vertex-type').",
+        description="Always VertexType.BLOCK_QUOTE (serialized as 'vertex-type').",
     )
     text: str = Field(..., description="Block string with the leading block-quote marker stripped.")
 
 
-class TableVertex(_BaseVertex[Literal[VertexType.GUFFIN_TABLE]]):
+class TableVertex(_BaseVertex[Literal[VertexType.TABLE]]):
     """Normalized (transcribed) form of a Roam native table node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
@@ -385,22 +385,22 @@ class TableVertex(_BaseVertex[Literal[VertexType.GUFFIN_TABLE]]):
     rows and each child's children forming the cells.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_TABLE`.
+        vertex_type: Always :attr:`~VertexType.TABLE`.
             Serialized as ``'vertex-type'``.
         table: Data model for the table grid, row/column header flags, and cell content.
         table_style: View/styling overlay for the table.
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_TABLE] = Field(
-        default=VertexType.GUFFIN_TABLE,
+    vertex_type: Literal[VertexType.TABLE] = Field(
+        default=VertexType.TABLE,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_TABLE (serialized as 'vertex-type').",
+        description="Always VertexType.TABLE (serialized as 'vertex-type').",
     )
     table: Table = Field(..., description="Data model for the table grid and cell content.")
     table_style: TableStyle = Field(..., description="View/styling overlay for the table.")
 
 
-class BlockEmbedVertex(_BaseVertex[Literal[VertexType.GUFFIN_BLOCK_EMBED]]):
+class BlockEmbedVertex(_BaseVertex[Literal[VertexType.BLOCK_EMBED]]):
     """Normalized (transcribed) form of a Roam block embed node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
@@ -408,17 +408,17 @@ class BlockEmbedVertex(_BaseVertex[Literal[VertexType.GUFFIN_BLOCK_EMBED]]):
     transcluding the referenced block.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.GUFFIN_BLOCK_EMBED`.
+        vertex_type: Always :attr:`~VertexType.BLOCK_EMBED`.
             Serialized as ``'vertex-type'``.
         vertex_link: Link to the embedded (transcluded) vertex; its
             :attr:`~guffin.model.link.VertexLink.kind` is always
             :attr:`~guffin.model.link.VertexLinkKind.EMBED`.
     """
 
-    vertex_type: Literal[VertexType.GUFFIN_BLOCK_EMBED] = Field(
-        default=VertexType.GUFFIN_BLOCK_EMBED,
+    vertex_type: Literal[VertexType.BLOCK_EMBED] = Field(
+        default=VertexType.BLOCK_EMBED,
         serialization_alias="vertex-type",
-        description="Always VertexType.GUFFIN_BLOCK_EMBED (serialized as 'vertex-type').",
+        description="Always VertexType.BLOCK_EMBED (serialized as 'vertex-type').",
     )
     vertex_link: VertexLink = Field(..., description="Embed link to the transcluded vertex (kind is always EMBED).")
 

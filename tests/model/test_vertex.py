@@ -16,7 +16,7 @@ class TestBlockEmbedVertex:
     def test_valid_construction(self) -> None:
         """A BlockEmbedVertex with an EMBED-kind link has the expected fields."""
         vertex = BlockEmbedVertex(uid="block0001", vertex_link=_EMBED_LINK)
-        assert vertex.vertex_type is VertexType.GUFFIN_BLOCK_EMBED
+        assert vertex.vertex_type is VertexType.BLOCK_EMBED
         assert vertex.uid == "block0001"
         assert vertex.vertex_link == _EMBED_LINK
         assert vertex.vertex_link.kind is VertexLinkKind.EMBED

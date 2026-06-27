@@ -408,41 +408,41 @@ def build_vertex_panel(
     logger.debug("vertex=%r", vertex)
     title_content: str
     match vertex.vertex_type:
-        case VertexType.GUFFIN_PAGE:
+        case VertexType.PAGE:
             title_content = f"[bold #00aa00]{markup_escape(vertex.title)}[/bold #00aa00]"
-        case VertexType.GUFFIN_HEADING:
+        case VertexType.HEADING:
             title_content = (
                 f"[bold orange1]H{vertex.heading_level}[/bold orange1]"
                 f"[bold #00aa00]{markup_escape(f': {_trunc(vertex.text, truncate=truncate)}')}[/bold #00aa00]"
             )
-        case VertexType.GUFFIN_TEXT:
+        case VertexType.TEXT:
             title_content = f"[bold #00aa00]{markup_escape(_trunc(vertex.text, truncate=truncate))}[/bold #00aa00]"
-        case VertexType.GUFFIN_IMAGE:
+        case VertexType.IMAGE:
             title_content = (
                 f"[bold orange1]{markup_escape(f'IMAGE [{vertex.alt_text or ""}]')}[/bold orange1]"
                 f"[bold #00aa00](<firestore_url>)[/bold #00aa00]"
             )
-        case VertexType.GUFFIN_CALLOUT:
+        case VertexType.CALLOUT:
             title_content = (
                 f"[bold orange1]{markup_escape(f'CALLOUT [{vertex.callout_type.value}]:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(_trunc(vertex.title, truncate=truncate))}[/bold #00aa00]"
             )
-        case VertexType.GUFFIN_CODE_BLOCK:
+        case VertexType.CODE_BLOCK:
             title_content = (
                 f"[bold orange1]{markup_escape(f'CODE [{vertex.language.value}]:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(_trunc(vertex.code, truncate=truncate))}[/bold #00aa00]"
             )
-        case VertexType.GUFFIN_BLOCK_QUOTE:
+        case VertexType.BLOCK_QUOTE:
             title_content = (
                 f"[bold orange1]{markup_escape('QUOTE:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(_trunc(vertex.text, truncate=truncate))}[/bold #00aa00]"
             )
-        case VertexType.GUFFIN_TABLE:
+        case VertexType.TABLE:
             title_content = (
                 f"[bold orange1]{markup_escape('TABLE')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(f'({vertex.table.num_rows}×{vertex.table.num_cols})')}[/bold #00aa00]"
             )
-        case VertexType.GUFFIN_BLOCK_EMBED:
+        case VertexType.BLOCK_EMBED:
             title_content = (
                 f"[bold orange1]{markup_escape('EMBED:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(vertex.vertex_link.uid)}[/bold #00aa00]"
