@@ -45,6 +45,7 @@ from guffin.pipeline.pandoc_rendering import (
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
+from guffin.pipeline.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
@@ -76,19 +77,16 @@ def _gfm_resources_dir() -> Path:
 def render(
     render_bundle: RenderBundle,
     filename_stem: str,
-    output_dir: Path,
     api_endpoint: ApiEndpoint,
-    cache_dir: Path | None = None,
-    bundle: bool = True,
-    dump_pandoc_ast: bool = False,
+    options: MarkdownRenderOptions,
 ) -> None:
-    """Render *render_bundle* to a Markdown file or bundle inside *output_dir*.
+    """Render *render_bundle* to a Markdown file or bundle inside ``options.output_dir``.
 
     Converts *render_bundle*'s content tree to a Panflute :class:`~panflute.Doc` via
     :func:`~guffin.pipeline.pandoc_rendering.vertex_tree_to_pandoc` (with the page
     title rendered as an H1 header), then invokes Pandoc to produce
     GFM output.  Writes the result in one of two modes controlled by
-    *bundle*:
+    ``options.bundle``:
 
     - ``bundle=True`` (default) — fetches Cloud Firestore image assets and
       enriches the vertex tree with each image's native pixel size via
@@ -108,20 +106,19 @@ def render(
         render_bundle: The content tree (with its presentation view map) to render.
         filename_stem: Output filename stem, used verbatim to derive the output
             path; the caller is responsible for POSIX-safety.
-        output_dir: Directory in which the output file or bundle is written;
-            created if it does not already exist.
         api_endpoint: Roam Local API endpoint used to fetch image assets
-            (bundle mode only; not called when *bundle* is ``False``).
-        cache_dir: Optional directory for caching downloaded image assets
-            across runs.  Ignored when *bundle* is ``False``.
-        bundle: When ``True`` (default), writes a ``.mdbundle`` directory with
-            embedded images.  When ``False``, writes a plain ``.md`` file.
-        dump_pandoc_ast: When ``True``, writes the Pandoc JSON AST (the
-            serialized Panflute Doc) to
-            ``<output_dir>/<filename_stem>.pandoc.json`` before
-            invoking Pandoc.  Useful for debugging the intermediate
-            representation.
+            (bundle mode only; not called when ``options.bundle`` is ``False``).
+        options: The Markdown rendering options.  Reads ``output_dir`` (where the
+            output file or bundle is written; created if absent), ``bundle``
+            (``.mdbundle`` directory with embedded images vs. a plain ``.md`` file),
+            ``cache_dir`` (optional cross-run asset cache, ignored when ``bundle`` is
+            ``False``), and ``dump_pandoc_ast`` (write the serialized Panflute Doc to
+            ``<output_dir>/<filename_stem>.pandoc.json`` before invoking Pandoc).
     """
+    output_dir: Final[Path] = options.output_dir
+    cache_dir: Final[Path | None] = options.cache_dir
+    bundle: Final[bool] = options.bundle
+    dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
     gfm_dir: Final[Path] = _gfm_resources_dir()
     if bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"

@@ -5,6 +5,7 @@ from typing import Final
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.pipeline.md_rendering import render
+from guffin.pipeline.render_options import MarkdownRenderOptions
 from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.model.render_bundle import RenderBundle
 from guffin.roam.local_api import ApiEndpoint
@@ -31,7 +32,12 @@ class TestRenderArticleFixture:
         endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
             local_api_port=3333, graph_name="test", bearer_token="test"
         )
-        render(render_bundle, filename_stem=stem, output_dir=tmp_path, api_endpoint=endpoint, bundle=False)
+        render(
+            render_bundle,
+            filename_stem=stem,
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, bundle=False),
+        )
         result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
         expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert result == expected

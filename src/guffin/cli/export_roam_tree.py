@@ -39,7 +39,6 @@ configurable via the ``LOG_LEVEL`` environment variable (default: ``INFO``).
 
 Public symbols:
 
-- :class:`OutputFormat` — output format enum (``markdown``, ``pdf``).
 - :data:`app` — the :class:`~typer.Typer` application instance.
 - :func:`main` — the CLI entry point; registered as the ``export-roam-tree``
   console script.
@@ -54,7 +53,6 @@ Example::
     export-roam-tree "Test Article"  # reads all options from env vars
 """
 
-import enum
 import logging
 import pathlib
 from typing import Annotated, Final
@@ -65,6 +63,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.cli.logging_config import configure_logging
 from guffin.pipeline.md_rendering import render as render_md
 from guffin.pipeline.pdf_rendering import render as render_pdf
+from guffin.pipeline.render_options import MarkdownRenderOptions, OutputFormat, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
@@ -75,19 +74,6 @@ configure_logging()
 logger = logging.getLogger(__name__)
 
 app = typer.Typer()
-
-
-class OutputFormat(enum.StrEnum):
-    """Output format for the exported document.
-
-    Values:
-        MARKDOWN: Render to GFM; supports ``--bundle/--no-bundle``.
-        PDF: Render directly to PDF via the Pandoc object model (Panflute);
-            ``--bundle/--no-bundle`` and ``--cache-dir`` do not apply.
-    """
-
-    MARKDOWN = "markdown"
-    PDF = "pdf"
 
 
 @app.command()
@@ -224,14 +210,26 @@ def main(
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content)
 
     if output_format is OutputFormat.PDF:
+        pdf_options: Final[PdfRenderOptions] = PdfRenderOptions(
+            output_dir=output_dir,
+            cache_dir=cache_dir,
+            template_dir=template_dir,
+            dump_pandoc_ast=dump_pandoc_ast,
+        )
         try:
-            render_pdf(render_bundle, out_file_stem, output_dir, api_endpoint, cache_dir, template_dir, dump_pandoc_ast)
+            render_pdf(render_bundle, out_file_stem, api_endpoint, pdf_options)
         except Exception as e:
             logger.error("Error rendering PDF for %r: %s", target, e)
             raise typer.Exit(code=1)
     else:
+        md_options: Final[MarkdownRenderOptions] = MarkdownRenderOptions(
+            output_dir=output_dir,
+            cache_dir=cache_dir,
+            bundle=bundle,
+            dump_pandoc_ast=dump_pandoc_ast,
+        )
         try:
-            render_md(render_bundle, out_file_stem, output_dir, api_endpoint, cache_dir, bundle, dump_pandoc_ast)
+            render_md(render_bundle, out_file_stem, api_endpoint, md_options)
         except Exception as e:
             logger.error("Error rendering Markdown for %r: %s", target, e)
             raise typer.Exit(code=1)

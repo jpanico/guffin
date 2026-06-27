@@ -50,6 +50,7 @@ from guffin.pipeline.pandoc_rendering import (
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
+from guffin.pipeline.render_options import PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
@@ -136,13 +137,10 @@ def _dump_typst_sources(
 def render(
     render_bundle: RenderBundle,
     filename_stem: str,
-    output_dir: Path,
     api_endpoint: ApiEndpoint,
-    cache_dir: Path | None = None,
-    template_dir: Path | None = None,
-    dump_pandoc_ast: bool = False,
+    options: PdfRenderOptions,
 ) -> None:
-    """Render *render_bundle* to a PDF file inside *output_dir*.
+    """Render *render_bundle* to a PDF file inside ``options.output_dir``.
 
     Writes ``<output_dir>/<filename_stem>.pdf``.  Fetches all Cloud
     Firestore image assets into a temporary directory and enriches the vertex
@@ -160,30 +158,27 @@ def render(
         render_bundle: The content tree (with its presentation view map) to render.
         filename_stem: Output filename stem, used verbatim to derive the output
             path; the caller is responsible for POSIX-safety.
-        output_dir: Directory in which the ``.pdf`` file is written; created
-            if it does not already exist.
         api_endpoint: Roam Local API endpoint used to fetch image assets.
-        cache_dir: Optional directory for caching downloaded image assets
-            across runs.  Uses a SHA-256 hash of the Cloud Firestore URL as
-            the cache key.
-        template_dir: Optional directory containing a ``user_cfg.typ`` file
-            that overrides the bundled Bergfink default styling.  When
-            supplied, Pandoc receives ``-V user-config=<template_dir>/user_cfg.typ``
-            so Bergfink loads the user-supplied config in place of the
-            bundled one.  All other template files are always sourced from
-            the bundled package data.
-        dump_pandoc_ast: When ``True``, writes the Pandoc JSON AST (the
-            serialized Panflute Doc) to
-            ``<output_dir>/<filename_stem>.pandoc.json`` before
-            invoking Pandoc.  Useful for debugging the intermediate
-            representation.
+        options: The PDF rendering options.  Reads ``output_dir`` (where the ``.pdf``
+            is written; created if absent), ``cache_dir`` (optional cross-run asset
+            cache keyed by a SHA-256 hash of the Cloud Firestore URL), ``template_dir``
+            (optional directory with a ``user_cfg.typ`` override for the bundled
+            Bergfink styling — passed to Pandoc as ``-V user-config=...`` so Bergfink
+            loads it in place of the bundled default; all other template files always
+            come from the bundled package data), and ``dump_pandoc_ast`` (write the
+            serialized Panflute Doc to ``<output_dir>/<filename_stem>.pandoc.json``
+            before invoking Pandoc).
 
     Raises:
         RuntimeError: If Pandoc or Typst is not found, or if the Pandoc
             conversion fails.
-        FileNotFoundError: If *template_dir* is supplied but does not contain
-            ``user_cfg.typ``.
+        FileNotFoundError: If ``options.template_dir`` is supplied but does not
+            contain ``user_cfg.typ``.
     """
+    output_dir: Final[Path] = options.output_dir
+    cache_dir: Final[Path | None] = options.cache_dir
+    template_dir: Final[Path | None] = options.template_dir
+    dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.pdf"
 

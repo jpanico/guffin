@@ -48,6 +48,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
 from guffin.pipeline.md_rendering import render
 from guffin.pipeline.pdf_rendering import render as render_pdf
+from guffin.pipeline.render_options import MarkdownRenderOptions, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
@@ -314,7 +315,12 @@ def main() -> None:
     if args.pdf:
         FIXTURES_PDF.mkdir(parents=True, exist_ok=True)
         os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
-        render_pdf(render_bundle, filename_stem=out_stem, output_dir=FIXTURES_PDF, api_endpoint=endpoint)
+        render_pdf(
+            render_bundle,
+            filename_stem=out_stem,
+            api_endpoint=endpoint,
+            options=PdfRenderOptions(output_dir=FIXTURES_PDF),
+        )
         pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{out_stem}.pdf"
         print(f"  wrote {pdf_path}")
 
@@ -324,9 +330,8 @@ def main() -> None:
         render(
             render_bundle,
             filename_stem=out_stem,
-            output_dir=FIXTURES_MDBUNDLE,
             api_endpoint=endpoint,
-            bundle=True,
+            options=MarkdownRenderOptions(output_dir=FIXTURES_MDBUNDLE, bundle=True),
         )
         mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{out_stem}.mdbundle"
         print(f"  wrote {mdbundle_path}")
