@@ -19,11 +19,20 @@ result in one of two output formats controlled by ``--format``:
 - **PDF** (``--format pdf``) — builds a Pandoc object model directly from
   the :class:`~guffin.vertex_tree.VertexTree` via
   :func:`~guffin.pipeline.pdf_rendering.render_pdf` and writes
-  ``<output_dir>/<target>.pdf``.  The ``--bundle/--no-bundle`` and
-  ``--cache-dir`` options do not apply and are ignored.  Pass
+  ``<output_dir>/<target>.pdf``.  The ``--bundle/--no-bundle`` option does
+  not apply and is ignored.  Pass
   ``--template-dir`` to supply a directory containing a ``user_cfg.typ``
   override for the bundled Bergfink Typst template.  Requires Pandoc and
   Typst to be installed.
+
+- **EPUB** (``--format epub``) — builds a Pandoc object model directly from
+  the :class:`~guffin.vertex_tree.VertexTree` via
+  :func:`~guffin.pipeline.epub_rendering.render` and writes
+  ``<output_dir>/<target>.epub``.  The page title becomes the EPUB
+  ``dc:title`` and top-level headings become the e-book's chapters; images
+  are embedded into the package.  The ``--bundle/--no-bundle`` and
+  ``--template-dir`` options do not apply and are ignored.  Requires Pandoc
+  to be installed.
 
 ``TARGET`` accepts a Roam **page title** (optionally wrapped in ``[[ ]]``), a
 **node UID**, or a Roam **block reference** ``((uid))``.  It is treated as a node
@@ -48,6 +57,7 @@ Example::
     export-roam-tree "Test Article" -p 3333 -g SCFH -t tok -o ~/docs
     export-roam-tree "Test Article" -p 3333 -g SCFH -t tok -o ~/docs --format pdf
     export-roam-tree "Test Article" -p 3333 -g SCFH -t tok -o ~/docs --format pdf --template-dir ~/mytheme
+    export-roam-tree "Test Article" -p 3333 -g SCFH -t tok -o ~/docs --format epub
     export-roam-tree "Test Article" -p 3333 -g SCFH -t tok -o ~/docs --no-bundle
     export-roam-tree wdMgyBiP9 -p 3333 -g SCFH -t tok -o ~/docs
     export-roam-tree "Test Article"  # reads all options from env vars
@@ -61,9 +71,15 @@ import typer
 
 from guffin.model.render_bundle import RenderBundle
 from guffin.cli.logging_config import configure_logging
+from guffin.pipeline.epub_rendering import render as render_epub
 from guffin.pipeline.md_rendering import render as render_md
 from guffin.pipeline.pdf_rendering import render as render_pdf
-from guffin.pipeline.render_options import MarkdownRenderOptions, OutputFormat, PdfRenderOptions
+from guffin.pipeline.render_options import (
+    EpubRenderOptions,
+    MarkdownRenderOptions,
+    OutputFormat,
+    PdfRenderOptions,
+)
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
@@ -99,7 +115,8 @@ def main(
             help=(
                 "Output format: 'markdown' (default) renders to GFM and supports "
                 "--bundle/--no-bundle; 'pdf' builds a PDF directly from the vertex tree "
-                "via Pandoc (requires Pandoc + a PDF engine on PATH)."
+                "via Pandoc (requires Pandoc + a PDF engine on PATH); 'epub' builds an "
+                "EPUB 3 e-book via Pandoc (requires Pandoc on PATH)."
             ),
         ),
     ] = OutputFormat.MARKDOWN,
@@ -175,6 +192,10 @@ def main(
     the bundled Bergfink template.  Pass ``--template-dir`` to a directory
     containing ``user_cfg.typ`` to override the default styling.  The
     ``--bundle/--no-bundle`` options are ignored.
+
+    With ``--format epub``: writes ``<target>.epub`` via Pandoc.  The page
+    title becomes the EPUB title and top-level headings become chapters.  The
+    ``--bundle/--no-bundle`` and ``--template-dir`` options are ignored.
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, output_dir=%r, "
@@ -232,6 +253,18 @@ def main(
             render_pdf(render_bundle, out_file_stem, api_endpoint, pdf_options)
         except Exception as e:
             logger.error("Error rendering PDF for %r: %s", target, e)
+            raise typer.Exit(code=1)
+    elif output_format is OutputFormat.EPUB:
+        epub_options: Final[EpubRenderOptions] = EpubRenderOptions(
+            output_dir=output_dir,
+            cache_dir=cache_dir,
+            suppress_attributes=suppress_attributes,
+            dump_pandoc_ast=dump_pandoc_ast,
+        )
+        try:
+            render_epub(render_bundle, out_file_stem, api_endpoint, epub_options)
+        except Exception as e:
+            logger.error("Error rendering EPUB for %r: %s", target, e)
             raise typer.Exit(code=1)
     else:
         md_options: Final[MarkdownRenderOptions] = MarkdownRenderOptions(

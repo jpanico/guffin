@@ -19,9 +19,10 @@ pip install -e ".[dev]"
 ## Key Commands
 ```bash
 dump-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> [-v/-V] [-n/-N] [-r/-R] [--node-props <props>]
-export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>]
+export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf|epub] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
 # --format markdown (default): writes <target>.mdbundle/ (--bundle) or <target>.md (--no-bundle)
 # --format pdf: writes <target>.pdf via Pandoc + Typst; requires typst on PATH
+# --format epub: writes <target>.epub (EPUB 3) via Pandoc; requires pandoc on PATH (no typst)
 # --template-dir: directory containing user_cfg.typ overrides for PDF styling (pdf only)
 
 # Run the full check pipeline (format + lint + type check + tests) in one shot:
@@ -42,7 +43,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
 - `src/guffin/` — main package
   - **`cli/` sub-package** (`src/guffin/cli/`) — CLI entry points and supporting infrastructure
     - `dump_roam_tree.py` — dumps a Roam page or node subtree as a Rich tree to the terminal; supports `--vertex-tree`/`--node-tree`/`--raw-results` flags (`dump-roam-tree`)
-    - `export_roam_tree.py` — exports a Roam page or node subtree; `--format markdown` (default) writes a `.mdbundle` or plain `.md`; `--format pdf` writes a PDF via Panflute + Pandoc + Typst; target is a page title or node UID (`export-roam-tree`)
+    - `export_roam_tree.py` — exports a Roam page or node subtree; `--format markdown` (default) writes a `.mdbundle` or plain `.md`; `--format pdf` writes a PDF via Panflute + Pandoc + Typst; `--format epub` writes an EPUB 3 e-book via Panflute + Pandoc; target is a page title or node UID (`export-roam-tree`)
     - `logging_config.py` — colorized logging (`configure_logging()`); reads `LOG_LEVEL` env var
     - `common.py` — tree-loading pipeline for CLI commands; `fetch_roam_trees` resolves a target, fetches nodes, and returns a `(NodeFetchResult, VertexTree | None)` pair
   - **`model/` sub-package** (`src/guffin/model/`) — core normalized-graph model: UID primitives, vertex types, tree, presentation overlay, render bundle, and inter-vertex links
@@ -56,14 +57,16 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
   - **`pipeline/` sub-package** (`src/guffin/pipeline/`) — production pipeline: Roam-to-model transcription, text normalization, and output rendering
     - `roam_md_to_pandoc_md.py` — converts Roam-flavored Markdown strings to Pandoc Markdown; `to_pandoc_md()` is the main entry point
     - `roam_tree_to_guffin.py` — transcribes a `NodeTree` into the guffin render model: `transcribe()` derives the `VertexTree` content (applying `to_pandoc_md()` to all text fields), `build_view_map()` derives the presentation `ViewMap`, and `to_render_bundle()` bundles both into a `RenderBundle`
-    - `render_options.py` — immutable export settings carried from a front end to a rendering entry point: `OutputFormat` (markdown/pdf enum discriminator), `RenderOptions` (format-independent base: `output_dir`, `cache_dir`, `suppress_attributes`, `dump_pandoc_ast`), and the per-format subclasses `MarkdownRenderOptions` (`bundle`) and `PdfRenderOptions` (`template_dir`)
+    - `render_options.py` — immutable export settings carried from a front end to a rendering entry point: `OutputFormat` (markdown/pdf/epub enum discriminator), `RenderOptions` (format-independent base: `output_dir`, `cache_dir`, `suppress_attributes`, `dump_pandoc_ast`), and the per-format subclasses `MarkdownRenderOptions` (`bundle`), `PdfRenderOptions` (`template_dir`), and `EpubRenderOptions` (no extra fields yet)
     - `image_fetch.py` — Pandoc-free image-asset fetching; `ImageRef` (UID + on-disk path + `ImageSize`) and `fetch_images()` (fetches a `VertexTree`'s Cloud Firestore image assets to a local dir, returning `{uid: ImageRef}`)
     - `pandoc_rendering.py` — shared Pandoc/Panflute rendering utilities; `vertex_tree_to_pandoc()` builds a Panflute `Doc` from a `VertexTree` (batch-parsing inline Pandoc Markdown via a single Pandoc call)
     - `md_rendering.py` — renders a `VertexTree` to Markdown: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to GFM via Pandoc, writes a plain `.md` or `.mdbundle/` directory
     - `pdf_rendering.py` — renders a `VertexTree` to PDF: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to PDF via Pandoc + Typst
+    - `epub_rendering.py` — renders a `VertexTree` to EPUB 3: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to EPUB via Pandoc (page title → `dc:title`, top-level headings → chapters, images embedded into the package)
     - `rich_rendering.py` — Rich panel/tree rendering for `NodeTree` and `VertexTree`
     - `typst_resources/` — bundled package data for PDF output (consumed only by `pdf_rendering.py`): the Bergfink Typst/Pandoc template (`user_cfg.typ` is the intended customization point; see `src/guffin/pipeline/typst_resources/README.md`) plus the `typst_*.lua` Pandoc filters
     - `gfm_resources/` — bundled package data for Markdown output (consumed only by `md_rendering.py`): the `gfm_*.lua` Pandoc filters (callout, color-span, image, mark; see `src/guffin/pipeline/gfm_resources/README.md`)
+    - `epub_resources/` — bundled package data for EPUB output (consumed only by `epub_rendering.py`): the `epub_*.lua` Pandoc filters (color-span, mark) emitting inline-styled XHTML; see `src/guffin/pipeline/epub_resources/README.md`
   - **`common/` sub-package** (`src/guffin/common/`) — cross-cutting helpers shared across the package
     - `code_language.py` — `CodeLanguage` StrEnum of programming-language identifiers for fenced code block info strings
     - `filenames.py` — `shell_safe_filename()` normalizes strings to POSIX-safe filenames

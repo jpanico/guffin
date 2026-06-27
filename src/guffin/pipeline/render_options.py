@@ -5,18 +5,20 @@ end so the options can be constructed and passed without pulling in CLI dependen
 
 :class:`RenderOptions` holds the settings common to every output format (destination directory,
 asset cache, AST dump).  Each format then has its own subclass carrying only the switches that
-apply to it — :class:`MarkdownRenderOptions` (the ``bundle`` mode) and :class:`PdfRenderOptions`
-(the Typst ``template_dir`` override) — tagged by an ``output_format`` discriminator.  A renderer
-accepts its own subclass, so every field it receives is one it can act on.
+apply to it — :class:`MarkdownRenderOptions` (the ``bundle`` mode), :class:`PdfRenderOptions`
+(the Typst ``template_dir`` override), and :class:`EpubRenderOptions` (no extra switches yet) —
+tagged by an ``output_format`` discriminator.  A renderer accepts its own subclass, so every field
+it receives is one it can act on.
 
 This carries the destination and configuration knobs — not the remaining operands a render call
 also needs (the content bundle, output filename stem, or API endpoint).
 
 Public symbols:
 
-- **Enumerations**: :class:`OutputFormat` — the supported output formats (markdown / pdf).
+- **Enumerations**: :class:`OutputFormat` — the supported output formats (markdown / pdf / epub).
 - **Models**: :class:`RenderOptions` — the format-independent base options;
-  :class:`MarkdownRenderOptions` — Markdown (GFM) options; :class:`PdfRenderOptions` — PDF options.
+  :class:`MarkdownRenderOptions` — Markdown (GFM) options; :class:`PdfRenderOptions` — PDF options;
+  :class:`EpubRenderOptions` — EPUB options.
 """
 
 import enum
@@ -32,10 +34,12 @@ class OutputFormat(enum.StrEnum):
     Attributes:
         MARKDOWN: Render to GFM (:class:`MarkdownRenderOptions`).
         PDF: Render directly to PDF via the Pandoc object model / Panflute (:class:`PdfRenderOptions`).
+        EPUB: Render to EPUB 3 via Pandoc (:class:`EpubRenderOptions`).
     """
 
     MARKDOWN = "markdown"
     PDF = "pdf"
+    EPUB = "epub"
 
 
 class RenderOptions(BaseModel):
@@ -100,4 +104,19 @@ class PdfRenderOptions(RenderOptions):
     )
     template_dir: Path | None = Field(
         default=None, description="Directory holding a user_cfg.typ Typst styling override."
+    )
+
+
+class EpubRenderOptions(RenderOptions):
+    """Options for rendering to EPUB 3 via Pandoc.
+
+    Carries only the format-independent base options for now; the page title supplies the EPUB
+    ``dc:title`` and Pandoc fills the remaining required metadata (identifier, date, language).
+
+    Attributes:
+        output_format: Always :attr:`OutputFormat.EPUB` (the discriminator).
+    """
+
+    output_format: Literal[OutputFormat.EPUB] = Field(
+        default=OutputFormat.EPUB, description="Discriminator identifying EPUB options."
     )
