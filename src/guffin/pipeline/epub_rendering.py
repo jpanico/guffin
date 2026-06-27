@@ -18,7 +18,8 @@ and embedded in the EPUB by Pandoc's writer as local-path :class:`~panflute.Imag
 optional *cache_dir* avoids re-downloading unchanged assets across runs.
 
 Roam color/highlight/pill styling is preserved by the bundled ``epub_*.lua`` Pandoc filters (under
-``guffin/pipeline/epub_resources/``), which emit inline-styled XHTML.
+``guffin/pipeline/epub_resources/``), which emit inline-styled XHTML.  The bundled ``epub.css``
+stylesheet (same directory) is applied via Pandoc ``--css`` and sets the e-book's font family.
 
 Public symbols:
 
@@ -61,6 +62,8 @@ _EPUB_RESOURCES_PACKAGE: Final[str] = "guffin.pipeline.epub_resources"
 # Lua-filter filenames, resolved against the bundled epub_resources directory at render time.
 _EPUB_COLOR_SPAN_FILTER: Final[str] = "epub_color_span.lua"
 _EPUB_MARK_FILTER: Final[str] = "epub_mark.lua"
+# Bundled default stylesheet (the customization point for the e-book's font family).
+_EPUB_STYLESHEET: Final[str] = "epub.css"
 # Pandoc EPUB writer name (EPUB 3).
 _EPUB_WRITER: Final[str] = "epub3"
 
@@ -142,6 +145,7 @@ def render(
             extra_args=[
                 f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
                 f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
+                f"--css={epub_dir / _EPUB_STYLESHEET}",
             ],
         )
 
