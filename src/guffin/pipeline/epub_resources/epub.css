@@ -46,58 +46,95 @@ blockquote {
 
 /*
  * Callouts. guffin emits <div class="callout callout-TYPE"> with an inner
- * <div class="callout-title">, where TYPE is one of the twelve Roam callout
- * keywords below. The shared `div.callout` rule carries the common box; each
- * `div.callout-TYPE` rule (later in source order, equal specificity) overrides
- * only the accent color and background.
+ * <div class="callout-title">, where TYPE is one of the twelve Roam callout keywords.
+ * Mirroring the gentle-clues callout in the PDF output, the title is a tinted header
+ * band (the shared SVG icon prepended by epub_callout.lua, then the title text) and the
+ * body sits on the white box background, with a colored left accent bar.
  */
 div.callout {
+  border: 1px solid #dddddd;
   border-left: 4px solid #888888;
-  padding: 0.5em 1em;
+  background-color: #ffffff;
   margin: 1em 0;
-  background-color: #f5f5f5;
+  padding: 0 0.85em 0.7em;
   color: #000000;
 }
 
+/*
+ * Header band spans the full width of the box: its negative horizontal margins cancel
+ * the box's side padding, while its own padding insets the icon + title. The bottom
+ * border keeps the header delineated in readers (e.g. Apple Books) that drop author
+ * background colors. Body blocks sit in the box's padding and keep their own indentation
+ * (notably lists, whose padding-left must not be overridden).
+ */
 div.callout-title {
   font-weight: bold;
+  padding: 0.4em 0.85em;
+  margin: 0 -0.85em;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-div.callout-info     { border-left-color: #4a90d9; background-color: #f0f7ff; }
-div.callout-note     { border-left-color: #888888; background-color: #f5f5f5; }
-div.callout-quote    { border-left-color: #9e9e9e; background-color: #f5f5f5; }
-div.callout-example  { border-left-color: #7e57c2; background-color: #f5f0ff; }
-div.callout-summary  { border-left-color: #00acc1; background-color: #e0f7fa; }
-div.callout-question { border-left-color: #f9a825; background-color: #fffbe6; }
-div.callout-tip      { border-left-color: #4caf50; background-color: #f0fff0; }
-div.callout-success  { border-left-color: #2e7d32; background-color: #f0fff0; }
-div.callout-warning  { border-left-color: #e07b00; background-color: #fff8f0; }
-div.callout-danger   { border-left-color: #e53935; background-color: #fff0f0; }
-div.callout-failure  { border-left-color: #c62828; background-color: #fff0f0; }
-div.callout-bug      { border-left-color: #d81b60; background-color: #fff0f5; }
-
-/*
- * Keep the callout content flush inside the padded box. Without this, the title
- * paragraph's default top margin renders as an empty leading line (the box has
- * padding, so the margin cannot collapse out of it).
- */
-div.callout > :first-child { margin-top: 0; }
-div.callout > :last-child { margin-bottom: 0; }
-div.callout-title > p { margin-top: 0; margin-bottom: 0; }
-
-/*
- * Type indicator (shared SVG icon + label word) prepended to each callout by the
- * epub_callout.lua filter as a `callout-label` sub-Div. The icon is the same SVG the
- * PDF output uses, inlined into the XHTML; it is sized to the text here.
- */
-div.callout-label {
-  font-weight: bold;
-  margin-bottom: 0.35em;
-}
-
-div.callout-label svg {
+div.callout-title svg {
   width: 1.15em;
   height: 1.15em;
   vertical-align: -0.18em;
-  margin-right: 0.35em;
+  margin-right: 0.4em;
+}
+
+div.callout-title > p {
+  margin: 0;
+}
+
+div.callout-title + * { margin-top: 0.7em; }
+div.callout > :last-child { margin-bottom: 0; }
+
+/* Per type: the box's left accent bar. */
+div.callout-info     { border-left-color: #4a90d9; }
+div.callout-note     { border-left-color: #888888; }
+div.callout-quote    { border-left-color: #9e9e9e; }
+div.callout-example  { border-left-color: #7e57c2; }
+div.callout-summary  { border-left-color: #00acc1; }
+div.callout-question { border-left-color: #f9a825; }
+div.callout-tip      { border-left-color: #4caf50; }
+div.callout-success  { border-left-color: #2e7d32; }
+div.callout-warning  { border-left-color: #e07b00; }
+div.callout-danger   { border-left-color: #e53935; }
+div.callout-failure  { border-left-color: #c62828; }
+div.callout-bug      { border-left-color: #d81b60; }
+
+/* Per type: the header band tint. */
+div.callout-info     > div.callout-title { background-color: #e3f0fc; }
+div.callout-note     > div.callout-title { background-color: #ededed; }
+div.callout-quote    > div.callout-title { background-color: #efefef; }
+div.callout-example  > div.callout-title { background-color: #ece3fa; }
+div.callout-summary  > div.callout-title { background-color: #d4f1f6; }
+div.callout-question > div.callout-title { background-color: #fdf2cf; }
+div.callout-tip      > div.callout-title { background-color: #ddf3de; }
+div.callout-success  > div.callout-title { background-color: #dcefdd; }
+div.callout-warning  > div.callout-title { background-color: #fdecd6; }
+div.callout-danger   > div.callout-title { background-color: #fbdddd; }
+div.callout-failure  > div.callout-title { background-color: #fadddd; }
+div.callout-bug      > div.callout-title { background-color: #fbdde7; }
+
+/*
+ * Code line numbers (skylighting "numberSource"). These higher-specificity rules override
+ * skylighting's inline defaults to match the Typst/PDF gutter: drop the underline on each number,
+ * remove the divider line (the PDF has none), and tighten the fixed 3em gutter toward the widest
+ * number. The em geometry preserves skylighting's relationship (span left = number-box width =
+ * margin + 1em), just scaled down.
+ */
+div.sourceCode pre.numberSource {
+  margin-left: 1.3em;
+  border-left: none;
+  padding-left: 0;
+}
+div.sourceCode pre.numberSource code > span {
+  left: -2.3em;
+}
+div.sourceCode pre.numberSource code > span > a:first-child::before {
+  width: 2.3em;
+  text-decoration: none;
+}
+div.sourceCode pre.numberSource code > span > a {
+  text-decoration: none;
 }

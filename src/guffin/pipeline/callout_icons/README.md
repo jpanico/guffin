@@ -26,8 +26,8 @@ Consumed at render time by:
 
 - `pipeline/pdf_rendering.py` → `typst_resources/typst_callout.lua` — inlines the SVG into the
   gentle-clues `icon:` argument as `image(bytes(...), format: "svg")`.
-- `pipeline/epub_rendering.py` → `epub_resources/epub_callout.lua` — inlines the SVG into the
-  `callout-label` prepended to each callout `<div>`.
+- `pipeline/epub_rendering.py` → `epub_resources/epub_callout.lua` — inlines the SVG into each
+  callout's `callout-title` header.
 
 Both filters locate this directory via the Pandoc metadata field `callout-icons-dir`, set by the
 respective renderer.

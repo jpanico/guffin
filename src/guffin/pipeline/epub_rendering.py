@@ -19,9 +19,9 @@ optional *cache_dir* avoids re-downloading unchanged assets across runs.
 
 Roam color/highlight/pill styling is preserved by the bundled ``epub_*.lua`` Pandoc filters (under
 ``guffin/pipeline/epub_resources/``), which emit inline-styled XHTML; ``epub_callout.lua`` also
-prepends a type indicator (a shared SVG icon from ``guffin/pipeline/callout_icons/`` plus a label
-word) to each callout.  The bundled ``epub.css`` stylesheet (same directory) is applied via Pandoc
-``--css`` and sets the e-book's font family and callout styling.
+prepends a shared SVG icon from ``guffin/pipeline/callout_icons/`` into each callout's title header
+(icon + title, mirroring the gentle-clues PDF callout).  The bundled ``epub.css`` stylesheet (same
+directory) is applied via Pandoc ``--css`` and sets the e-book's font family and callout styling.
 
 Public symbols:
 
@@ -67,6 +67,7 @@ _CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.pipeline.callout_icons"
 _EPUB_COLOR_SPAN_FILTER: Final[str] = "epub_color_span.lua"
 _EPUB_MARK_FILTER: Final[str] = "epub_mark.lua"
 _EPUB_CALLOUT_FILTER: Final[str] = "epub_callout.lua"
+_EPUB_NUMBER_LINES_FILTER: Final[str] = "epub_number_lines.lua"
 # Bundled default stylesheet (the customization point for the e-book's font family).
 _EPUB_STYLESHEET: Final[str] = "epub.css"
 # Pandoc EPUB writer name (EPUB 3).
@@ -161,6 +162,7 @@ def render(
                 f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
                 f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
                 f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
+                f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
                 f"--css={epub_dir / _EPUB_STYLESHEET}",
             ],
         )

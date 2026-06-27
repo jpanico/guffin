@@ -197,7 +197,7 @@ guffin/
 │       │   ├── typst_resources/           # Bergfink Typst template + typst_*.lua filters
 │       │   │                              #   (package data; see typst_resources/README.md)
 │       │   ├── epub_resources/            # EPUB package data: epub_*.lua filters (callout, color-span,
-│       │   │                              #   mark) + epub.css default stylesheet (font/callout styling)
+│       │   │                              #   mark, number-lines) + epub.css default stylesheet
 │       │   └── callout_icons/             # Shared SVG callout badge icons (info, memo, …) used by
 │       │                                  #   both PDF and EPUB; see callout_icons/README.md
 │       │

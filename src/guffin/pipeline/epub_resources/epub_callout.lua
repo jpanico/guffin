@@ -1,10 +1,10 @@
 -- epub_callout.lua
 -- Lua filter for the EPUB output path.
--- Prepends a type indicator (shared SVG icon + label word) to each
--- Div.callout produced by pandoc_rendering.py, as a `callout-label` sub-Div
--- styled by epub_resources/epub.css.
--- The SVG comes from pipeline/callout_icons/ (the same files the PDF path uses),
--- so both formats render an identical icon set.
+-- Prepends the shared SVG callout icon to the title of each Div.callout produced
+-- by pandoc_rendering.py, mirroring the gentle-clues header (icon + title) in the
+-- PDF output. The SVG comes from pipeline/callout_icons/ (the same files the PDF
+-- path uses), so both formats render an identical icon set. A callout without a
+-- title gets an icon-only header.
 
 -- Guffin CalloutType class -> shared icon SVG basename (matches callout_icons/<name>.svg).
 local ICON = {
@@ -20,22 +20,6 @@ local ICON = {
   ["callout-danger"]    = "danger",
   ["callout-failure"]   = "error",
   ["callout-bug"]       = "error",
-}
-
--- Guffin CalloutType class -> human label word shown beside the icon.
-local LABEL = {
-  ["callout-info"]      = "Info",
-  ["callout-note"]      = "Note",
-  ["callout-quote"]     = "Quote",
-  ["callout-example"]   = "Example",
-  ["callout-summary"]   = "Summary",
-  ["callout-question"]  = "Question",
-  ["callout-tip"]       = "Tip",
-  ["callout-success"]   = "Success",
-  ["callout-warning"]   = "Warning",
-  ["callout-danger"]    = "Danger",
-  ["callout-failure"]   = "Failure",
-  ["callout-bug"]       = "Bug",
 }
 
 -- Absolute path to the bundled callout_icons directory, supplied by epub_rendering.py
@@ -58,25 +42,34 @@ end
 function Div(el)
   if not el.classes:includes("callout") then return nil end
 
-  local icon_name, label
+  local icon_name
   for _, cls in ipairs(el.classes) do
     if ICON[cls] then
       icon_name = ICON[cls]
-      label = LABEL[cls]
       break
     end
   end
   if not icon_name then return nil end
 
-  local label_inlines = pandoc.List()
   local svg = read_svg(icon_name)
-  if svg then
-    label_inlines:insert(pandoc.RawInline("html", svg))
-    label_inlines:insert(pandoc.Space())
-  end
-  label_inlines:insert(pandoc.Str(label))
+  if not svg then return nil end
+  local icon = pandoc.RawInline("html", svg)
 
-  local label_div = pandoc.Div({ pandoc.Plain(label_inlines) }, pandoc.Attr("", { "callout-label" }))
-  table.insert(el.content, 1, label_div)
+  -- Prepend the icon to the existing callout-title paragraph; if the callout has no
+  -- title, add an icon-only callout-title header.
+  for _, block in ipairs(el.content) do
+    if block.t == "Div" and block.classes:includes("callout-title") then
+      if #block.content > 0 and block.content[1].t == "Para" then
+        local para = block.content[1]
+        local content = pandoc.List({ icon, pandoc.Space() })
+        content:extend(para.content)
+        para.content = content
+      end
+      return el
+    end
+  end
+
+  local title = pandoc.Div({ pandoc.Para({ icon }) }, pandoc.Attr("", { "callout-title" }))
+  table.insert(el.content, 1, title)
   return el
 end

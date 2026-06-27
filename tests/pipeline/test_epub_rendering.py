@@ -4,8 +4,11 @@ import zipfile
 from pathlib import Path
 from typing import Final
 
+from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.model.render_bundle import RenderBundle
+from guffin.model.vertex import CodeBlockVertex, PageVertex
+from guffin.model.vertex_tree import VertexTree
 from guffin.pipeline.epub_rendering import render
 from guffin.pipeline.render_options import EpubRenderOptions
 from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
@@ -65,8 +68,8 @@ class TestRenderEpub:
             )
             assert "background-color: #FF851C" in chapter
 
-    def test_callout_gets_icon_label(self, tmp_path: Path) -> None:
-        """A callout is prefixed with a callout-label carrying the inline shared SVG icon and word."""
+    def test_callout_title_gets_icon(self, tmp_path: Path) -> None:
+        """The shared SVG icon is prepended into the callout title header (no separate label)."""
         stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
         render(
             _article5_bundle(),
@@ -78,10 +81,30 @@ class TestRenderEpub:
             chapter: Final[str] = next(
                 zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
             )
-            # The info callout gets a label div containing an inline SVG icon and the type word.
-            assert 'class="callout-label"' in chapter
-            assert "<svg" in chapter
-            assert "Info" in chapter
+            # The icon is inlined into the callout-title header; there is no callout-label.
+            title_idx: Final[int] = chapter.find('class="callout-title"')
+            assert title_idx != -1
+            assert "<svg" in chapter[title_idx : title_idx + 200]
+            assert "callout-label" not in chapter
+
+    def test_code_block_gets_line_numbers(self, tmp_path: Path) -> None:
+        """Fenced code blocks are emitted with Pandoc line numbering (skylighting numberSource)."""
+        page: Final[PageVertex] = PageVertex(uid="page00001", title="Code", children=["codeaaaaa"])
+        code: Final[CodeBlockVertex] = CodeBlockVertex(
+            uid="codeaaaaa", code="print(1)\nprint(2)\nprint(3)", language=CodeLanguage.PYTHON
+        )
+        bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, code]))
+        render(bundle, filename_stem="code", api_endpoint=_ENDPOINT, options=EpubRenderOptions(output_dir=tmp_path))
+        with zipfile.ZipFile(tmp_path / "code.epub") as zf:
+            chapter: Final[str] = next(
+                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
+            )
+            # Pandoc may place the line-number counter CSS in the chapter <style> or a stylesheet.
+            all_text: Final[str] = "\n".join(
+                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith((".xhtml", ".css"))
+            )
+            assert "numberSource" in chapter
+            assert "counter(source-line)" in all_text
 
     def test_suppress_attributes_drops_pills(self, tmp_path: Path) -> None:
         """With suppress_attributes, the attribute pills are absent from the EPUB."""
