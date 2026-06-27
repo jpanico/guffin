@@ -182,8 +182,8 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_exactly_nine_members(self) -> None:
-        """Test that NodeType has exactly nine members."""
+    def test_exactly_ten_members(self) -> None:
+        """Test that NodeType has exactly ten members."""
         assert set(NodeType) == {
             NodeType.PAGE,
             NodeType.PLAIN_BLOCK,
@@ -194,6 +194,7 @@ class TestNodeType:
             NodeType.BLOCK_QUOTE,
             NodeType.NATIVE_TABLE,
             NodeType.EMBED_BLOCK,
+            NodeType.ATTRIBUTE_BLOCK,
         }
 
 
@@ -421,6 +422,21 @@ class TestNodeTypeFunction:
     def test_embed_mixed_with_text_is_plain_block(self) -> None:
         """Test that an embed mixed with surrounding text is not a EMBED_BLOCK."""
         node = _make_text(string="see {{embed: ((wjN-kVF3B))}} here")
+        assert node_type(node) is NodeType.PLAIN_BLOCK
+
+    def test_attribute_assignment_returns_attribute_block(self) -> None:
+        """Test that a block whose entire string is an attribute assignment returns ATTRIBUTE_BLOCK."""
+        node = _make_text(string="attribute1:: 5, #[[callouts demo]], #v01")
+        assert node_type(node) is NodeType.ATTRIBUTE_BLOCK
+
+    def test_attribute_block_with_surrounding_whitespace_returns_attribute_block(self) -> None:
+        """Test that surrounding whitespace around an attribute assignment is tolerated."""
+        node = _make_text(string="  tags:: #Guffin,#[[Better Bullets]]  ")
+        assert node_type(node) is NodeType.ATTRIBUTE_BLOCK
+
+    def test_attribute_like_prose_is_plain_block(self) -> None:
+        """Test that 'attr:: free prose' (values not a comma list) is not an ATTRIBUTE_BLOCK."""
+        node = _make_text(string="Note:: this is a sentence")
         assert node_type(node) is NodeType.PLAIN_BLOCK
 
     def test_result_is_str_enum(self) -> None:

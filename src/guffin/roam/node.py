@@ -4,7 +4,7 @@ Public symbols:
 
 - :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``PLAIN_BLOCK``,
   ``IMAGE_BLOCK``, ``HEADING_BLOCK``, ``CALLOUT_BLOCK``,
-  ``CODE_BLOCK``, ``BLOCK_QUOTE``, ``NATIVE_TABLE``, ``EMBED_BLOCK``.
+  ``CODE_BLOCK``, ``BLOCK_QUOTE``, ``NATIVE_TABLE``, ``EMBED_BLOCK``, ``ATTRIBUTE_BLOCK``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
 - :func:`effective_heading_level` — return the effective heading level for a
@@ -36,6 +36,7 @@ from pydantic import (
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel, is_fenced_code_block
 from guffin.roam.markdown import (
+    ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     CALLOUT_RE,
     IMAGE_LINK_RE,
@@ -92,6 +93,9 @@ class NodeType(enum.StrEnum):
     - **EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
       trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` (matched by
       :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
+    - **ATTRIBUTE_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam
+      attribute assignment ``<attribute>:: <value>[, <value>]…`` (matched in full by
+      :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`).
     """
 
     PAGE = "roam/page"
@@ -103,6 +107,7 @@ class NodeType(enum.StrEnum):
     BLOCK_QUOTE = "roam/quote-block"
     NATIVE_TABLE = "roam/table"
     EMBED_BLOCK = "roam/embed-block"
+    ATTRIBUTE_BLOCK = "roam/attribute-block"
 
 
 class RoamNode(BaseModel):
@@ -339,6 +344,8 @@ def node_type(node: RoamNode) -> NodeType:
     :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`,
     :attr:`NodeType.EMBED_BLOCK` when the trimmed ``string`` is wholly a Roam block embed
     (as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`),
+    :attr:`NodeType.ATTRIBUTE_BLOCK` when the trimmed ``string`` is wholly a Roam attribute
+    assignment (as matched in full by :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`),
     and :attr:`NodeType.PLAIN_BLOCK` otherwise.
 
     Args:
@@ -354,6 +361,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` equals
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`;
         :attr:`NodeType.EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
+        :attr:`NodeType.ATTRIBUTE_BLOCK` if the trimmed ``string`` is wholly a Roam attribute assignment;
         :attr:`NodeType.PLAIN_BLOCK` otherwise.
     """
     if node.title is not None:
@@ -375,4 +383,6 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.NATIVE_TABLE
     if BLOCK_EMBED_RE.fullmatch(string.strip()):
         return NodeType.EMBED_BLOCK
+    if ATTRIBUTE_ASSIGNMENT_RE.fullmatch(string.strip()):
+        return NodeType.ATTRIBUTE_BLOCK
     return NodeType.PLAIN_BLOCK

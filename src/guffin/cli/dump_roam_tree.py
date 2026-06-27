@@ -81,7 +81,7 @@ logger = logging.getLogger(__name__)
 app = typer.Typer()
 
 
-def _dump_raw_table(fetch_result: NodeFetchResult, console: Console) -> None:
+def _dump_raw_table(fetch_result: NodeFetchResult, console: Console, truncate: bool) -> None:
     """Print the raw-results Rich table for *fetch_result* to *console*.
 
     Delegates table construction to :func:`build_rich_raw_table`, then prints
@@ -90,15 +90,16 @@ def _dump_raw_table(fetch_result: NodeFetchResult, console: Console) -> None:
     Args:
         fetch_result: Fetch result passed through to :func:`build_rich_raw_table`.
         console: Rich :class:`~rich.console.Console` to print to.
+        truncate: When ``False``, render full (untruncated) cell values.
     """
-    raw_table: Final[Table] = build_rich_raw_table(fetch_result)
+    raw_table: Final[Table] = build_rich_raw_table(fetch_result, truncate=truncate)
     console.rule("[bold]Raw Results[/bold]")
     console.print()
     console.print(raw_table)
     console.print(f"{raw_table.row_count} raw pull-block(s)")
 
 
-def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, console: Console) -> None:
+def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, console: Console, truncate: bool) -> None:
     """Render and print the node tree from *fetch_result* as a Rich tree.
 
     Logs a warning and returns early when
@@ -114,6 +115,7 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
             to include in each panel body, or ``None`` to use
             :data:`~guffin.pipeline.rich_rendering.DEFAULT_NODE_PANEL_PROPS`.
         console: Rich :class:`~rich.console.Console` to print to.
+        truncate: When ``False``, render full (untruncated) panel strings.
     """
     if fetch_result.anchor_tree is None:
         logger.warning("show_node_tree=True but anchor_tree is None; skipping node tree output")
@@ -121,11 +123,13 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     effective_props: Final[list[str]] = (
         [p.strip() for p in node_props.split(",")] if node_props is not None else list(DEFAULT_NODE_PANEL_PROPS)
     )
-    node_rich_tree: Final[RichTree] = build_rich_node_tree(fetch_result.anchor_tree, effective_props)
+    node_rich_tree: Final[RichTree] = build_rich_node_tree(fetch_result.anchor_tree, effective_props, truncate=truncate)
     console.rule("[bold]Node Tree[/bold]")
     console.print()
     console.print(node_rich_tree)
-    refs_box: Final[Panel | None] = build_rich_refs_box(fetch_result.anchor_tree, effective_props)
+    refs_box: Final[Panel | None] = build_rich_refs_box(
+        fetch_result.anchor_tree, effective_props, truncate=truncate
+    )
     if refs_box is not None:
         console.print(refs_box)
     console.print(
@@ -135,7 +139,11 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
 
 
 def _dump_vertex_tree(
-    vertex_tree: VertexTree | None, vertex_props: str | None, api_endpoint: ApiEndpoint, console: Console
+    vertex_tree: VertexTree | None,
+    vertex_props: str | None,
+    api_endpoint: ApiEndpoint,
+    console: Console,
+    truncate: bool,
 ) -> None:
     """Fetch image sizes, enrich *vertex_tree*, then render and print it as a Rich tree.
 
@@ -154,6 +162,7 @@ def _dump_vertex_tree(
         api_endpoint: Roam Local API endpoint used to fetch image assets for
             original-size enrichment.
         console: Rich :class:`~rich.console.Console` to print to.
+        truncate: When ``False``, render full (untruncated) panel strings.
     """
     if vertex_tree is None:
         logger.warning("show_vertex_tree=True but vertex_tree is None; skipping vertex tree output")
@@ -163,7 +172,7 @@ def _dump_vertex_tree(
     effective_props: Final[list[str]] = (
         [p.strip() for p in vertex_props.split(",")] if vertex_props is not None else list(DEFAULT_VERTEX_PANEL_PROPS)
     )
-    vertex_rich_tree: Final[RichTree] = build_rich_vertex_tree(enriched_tree, effective_props)
+    vertex_rich_tree: Final[RichTree] = build_rich_vertex_tree(enriched_tree, effective_props, truncate=truncate)
     logger.debug("vertex_rich_tree=%r", vertex_rich_tree)
     console.rule("[bold]Vertex Tree[/bold]")
     console.print()
@@ -180,6 +189,7 @@ def dump_trees(
     show_raw_results: bool,
     show_node_tree: bool,
     show_vertex_tree: bool,
+    truncate: bool,
 ) -> None:
     """Dispatch to the enabled display functions and print results to the console.
 
@@ -203,14 +213,15 @@ def dump_trees(
         show_raw_results: When ``True``, call :func:`_dump_raw_table`.
         show_node_tree: When ``True``, call :func:`_dump_node_tree`.
         show_vertex_tree: When ``True``, call :func:`_dump_vertex_tree`.
+        truncate: When ``False``, render full (untruncated) string values in every view.
     """
     console: Final[Console] = Console()
     if show_raw_results:
-        _dump_raw_table(fetch_result, console)
+        _dump_raw_table(fetch_result, console, truncate)
     if show_node_tree:
-        _dump_node_tree(fetch_result, node_props, console)
+        _dump_node_tree(fetch_result, node_props, console, truncate)
     if show_vertex_tree:
-        _dump_vertex_tree(vertex_tree, vertex_props, api_endpoint, console)
+        _dump_vertex_tree(vertex_tree, vertex_props, api_endpoint, console, truncate)
 
 
 @app.command()
@@ -279,6 +290,14 @@ def main(
             help="When enabled, render and print the vertex tree.",
         ),
     ] = True,
+    truncate: Annotated[
+        bool,
+        typer.Option(
+            "--truncate/--no-truncate",
+            help="When disabled (--no-truncate), render full string values in all output instead of "
+            "shortening long strings with an ellipsis.",
+        ),
+    ] = True,
 ) -> None:
     """Dump a Roam Research page or node subtree as a Rich tree to the console.
 
@@ -291,11 +310,12 @@ def main(
     trees are printed (vertex tree is shown by default).  Use ``--raw-results`` /
     ``-r/-R`` to also print the raw Datalog query results.  Use ``--include-refs`` /
     ``-i/-I`` to additionally fetch nodes referenced via ``:block/refs`` from the
-    target page or its descendants.
+    target page or its descendants.  Use ``--no-truncate`` to render full string
+    values across every view instead of shortening long strings with an ellipsis.
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, api_bearer_token=%r, node_props=%r, vertex_props=%r, "
-        "show_raw_results=%r, show_vertex_tree=%r, show_node_tree=%r, include_refs=%r",
+        "show_raw_results=%r, show_vertex_tree=%r, show_node_tree=%r, include_refs=%r, truncate=%r",
         target,
         local_api_port,
         graph_name,
@@ -306,6 +326,7 @@ def main(
         show_vertex_tree,
         show_node_tree,
         include_refs,
+        truncate,
     )
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
         local_api_port=local_api_port,
@@ -344,6 +365,7 @@ def main(
         show_raw_results=show_raw_results,
         show_node_tree=show_node_tree,
         show_vertex_tree=show_vertex_tree,
+        truncate=truncate,
     )
 
 

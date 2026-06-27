@@ -115,12 +115,12 @@ def _format_node_prop(node: RoamNode, prop: str) -> str:
             return f"{prop}=?"
 
 
-def _trunc(val: str, max_len: int = 40) -> str:
-    return val[:max_len] + "…" if len(val) > max_len else val
+def _trunc(val: str, max_len: int = 40, *, truncate: bool = True) -> str:
+    return val[:max_len] + "…" if truncate and len(val) > max_len else val
 
 
 @validate_call
-def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS) -> Panel:
+def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS, *, truncate: bool = True) -> Panel:
     """Render *node* as a Rich Panel for display in a terminal tree.
 
     The panel title has the form ``<node_type> title_text (id)`` where
@@ -144,6 +144,8 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             to include.  Controls the ``H{n}:`` title prefix (shown only when
             ``"heading"`` is present) and the body pairs (``heading`` itself is
             never written to the body).  Defaults to :data:`DEFAULT_NODE_PANEL_PROPS`.
+        truncate: When ``True`` (default), long title strings are shortened with an
+            ellipsis; when ``False``, they are rendered in full.
 
     Returns:
         A :class:`~rich.panel.Panel` with a labelled title and metadata body.
@@ -167,31 +169,38 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             assert node.string is not None
             callout: Final[RoamCallout | None] = parse_callout(node.string)
             assert callout is not None
-            title_text = _trunc(callout.title)
+            title_text = _trunc(callout.title, truncate=truncate)
         case NodeType.PLAIN_BLOCK:
             assert node.string is not None
-            title_text = _trunc(node.string)
+            title_text = _trunc(node.string, truncate=truncate)
         case NodeType.CODE_BLOCK:
             assert node.string is not None
-            title_text = _trunc(node.string)
+            title_text = _trunc(node.string, truncate=truncate)
         case NodeType.BLOCK_QUOTE:
             assert node.string is not None
-            title_text = _trunc(strip_block_quote_marker(node.string))
+            title_text = _trunc(strip_block_quote_marker(node.string), truncate=truncate)
         case NodeType.NATIVE_TABLE:
             assert node.string is not None
-            title_text = _trunc(node.string)
+            title_text = _trunc(node.string, truncate=truncate)
         case NodeType.EMBED_BLOCK:
             assert node.string is not None
-            title_text = _trunc(node.string)
+            title_text = _trunc(node.string, truncate=truncate)
+        case NodeType.ATTRIBUTE_BLOCK:
+            assert node.string is not None
+            title_text = _trunc(node.string, truncate=truncate)
         case _ as unreachable:
             assert_never(unreachable)
-    title: Final[str] = f"[#00aa00]<{nt.value}> [bold reverse]{title_text}[/bold reverse] ({node.id})[/#00aa00]"
+    title: Final[str] = (
+        f"[#00aa00]<{nt.value}> [bold reverse]{markup_escape(title_text)}[/bold reverse] ({node.id})[/#00aa00]"
+    )
     content: Final[str] = "  ".join(_format_node_prop(node, p) for p in props)
     return Panel(Text(content), title=title, expand=False)
 
 
 @validate_call
-def build_rich_node_tree(tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_PROPS) -> RichTree:
+def build_rich_node_tree(
+    tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_PROPS, *, truncate: bool = True
+) -> RichTree:
     """Build a Rich tree from *tree* using a depth-first traversal.
 
     Iterates *tree* in pre-order depth-first order via
@@ -202,6 +211,8 @@ def build_rich_node_tree(tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_P
         tree: The :class:`~guffin.roam.node_tree.NodeTree` to render.
         props: Ordered list of :class:`~guffin.roam.node.RoamNode` field names
             to include in each panel body.  Defaults to :data:`DEFAULT_NODE_PANEL_PROPS`.
+        truncate: When ``True`` (default), long panel strings are shortened with an
+            ellipsis; when ``False``, they are rendered in full.
 
     Returns:
         A :class:`~rich.tree.Tree` rooted at the single root node of *tree*.
@@ -211,16 +222,18 @@ def build_rich_node_tree(tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_P
     rich_node_map: Final[dict[Id, RichTree]] = {}
     dfs_iter: Final[NodeTreeDFSIterator] = tree.dfs()
     root_node: Final[RoamNode] = next(dfs_iter)
-    root_rich: Final[RichTree] = RichTree(build_node_panel(root_node, props))
+    root_rich: Final[RichTree] = RichTree(build_node_panel(root_node, props, truncate=truncate))
     rich_node_map[root_node.id] = root_rich
     for node in dfs_iter:
         parent_rich: RichTree = rich_node_map[child_to_parent[node.id]]
-        rich_node_map[node.id] = parent_rich.add(build_node_panel(node, props))
+        rich_node_map[node.id] = parent_rich.add(build_node_panel(node, props, truncate=truncate))
     return root_rich
 
 
 @validate_call
-def build_rich_refs_box(tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_PROPS) -> Panel | None:
+def build_rich_refs_box(
+    tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_PROPS, *, truncate: bool = True
+) -> Panel | None:
     """Build a Rich :class:`~rich.panel.Panel` summarising the back-reference nodes in *tree*.
 
     For each node in :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`, renders a
@@ -236,6 +249,8 @@ def build_rich_refs_box(tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_PR
             :attr:`~guffin.roam.node_tree.NodeTree.tree_network` are used.
         props: Ordered list of :class:`~guffin.roam.node.RoamNode` field names
             to include in each node panel body.  Defaults to :data:`DEFAULT_NODE_PANEL_PROPS`.
+        truncate: When ``True`` (default), long panel strings are shortened with an
+            ellipsis; when ``False``, they are rendered in full.
 
     Returns:
         A :class:`~rich.panel.Panel` titled ``refs`` grouping one row per referenced
@@ -254,7 +269,7 @@ def build_rich_refs_box(tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_PR
         row: Table = Table.grid(padding=(0, 1))
         row.add_column()
         row.add_column()
-        row.add_row(build_node_panel(ref_node, props), back_refs_panel)
+        row.add_row(build_node_panel(ref_node, props, truncate=truncate), back_refs_panel)
         ref_rows.append(row)
     return Panel(Group(*ref_rows), title="refs")
 
@@ -364,7 +379,9 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
 
 
 @validate_call
-def build_vertex_panel(vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_PROPS) -> Panel:
+def build_vertex_panel(
+    vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_PROPS, *, truncate: bool = True
+) -> Panel:
     """Render *vertex* as a Rich Panel for display in a terminal tree.
 
     The panel title shows a type-specific summary with the vertex ``uid`` in
@@ -382,6 +399,8 @@ def build_vertex_panel(vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_P
         vertex: The :data:`~guffin.vertex.Vertex` to render.
         props: Vertex property names to include in the panel body.  Defaults to
             :data:`DEFAULT_VERTEX_PANEL_PROPS`.
+        truncate: When ``True`` (default), long title strings are shortened with an
+            ellipsis; when ``False``, they are rendered in full.
 
     Returns:
         A :class:`~rich.panel.Panel` with a labelled title and metadata body.
@@ -394,10 +413,10 @@ def build_vertex_panel(vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_P
         case VertexType.GUFFIN_HEADING:
             title_content = (
                 f"[bold orange1]H{vertex.heading_level}[/bold orange1]"
-                f"[bold #00aa00]{markup_escape(f': {_trunc(vertex.text)}')}[/bold #00aa00]"
+                f"[bold #00aa00]{markup_escape(f': {_trunc(vertex.text, truncate=truncate)}')}[/bold #00aa00]"
             )
         case VertexType.GUFFIN_TEXT:
-            title_content = f"[bold #00aa00]{markup_escape(_trunc(vertex.text))}[/bold #00aa00]"
+            title_content = f"[bold #00aa00]{markup_escape(_trunc(vertex.text, truncate=truncate))}[/bold #00aa00]"
         case VertexType.GUFFIN_IMAGE:
             title_content = (
                 f"[bold orange1]{markup_escape(f'IMAGE [{vertex.alt_text or ""}]')}[/bold orange1]"
@@ -406,17 +425,17 @@ def build_vertex_panel(vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_P
         case VertexType.GUFFIN_CALLOUT:
             title_content = (
                 f"[bold orange1]{markup_escape(f'CALLOUT [{vertex.callout_type.value}]:')}[/bold orange1]"
-                f" [bold #00aa00]{markup_escape(_trunc(vertex.title))}[/bold #00aa00]"
+                f" [bold #00aa00]{markup_escape(_trunc(vertex.title, truncate=truncate))}[/bold #00aa00]"
             )
         case VertexType.GUFFIN_CODE_BLOCK:
             title_content = (
                 f"[bold orange1]{markup_escape(f'CODE [{vertex.language.value}]:')}[/bold orange1]"
-                f" [bold #00aa00]{markup_escape(_trunc(vertex.code))}[/bold #00aa00]"
+                f" [bold #00aa00]{markup_escape(_trunc(vertex.code, truncate=truncate))}[/bold #00aa00]"
             )
         case VertexType.GUFFIN_BLOCK_QUOTE:
             title_content = (
                 f"[bold orange1]{markup_escape('QUOTE:')}[/bold orange1]"
-                f" [bold #00aa00]{markup_escape(_trunc(vertex.text))}[/bold #00aa00]"
+                f" [bold #00aa00]{markup_escape(_trunc(vertex.text, truncate=truncate))}[/bold #00aa00]"
             )
         case VertexType.GUFFIN_TABLE:
             title_content = (
@@ -443,7 +462,9 @@ def build_vertex_panel(vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_P
 
 
 @validate_call
-def build_rich_vertex_tree(vertex_tree: VertexTree, props: list[str] = DEFAULT_VERTEX_PANEL_PROPS) -> RichTree:
+def build_rich_vertex_tree(
+    vertex_tree: VertexTree, props: list[str] = DEFAULT_VERTEX_PANEL_PROPS, *, truncate: bool = True
+) -> RichTree:
     """Build a Rich tree from *vertex_tree* using a depth-first traversal.
 
     Locates the root vertex (the one not referenced as a child by any other
@@ -454,6 +475,8 @@ def build_rich_vertex_tree(vertex_tree: VertexTree, props: list[str] = DEFAULT_V
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` to render.
         props: Vertex property names to include in each panel body.  Defaults to
             :data:`DEFAULT_VERTEX_PANEL_PROPS`.
+        truncate: When ``True`` (default), long panel strings are shortened with an
+            ellipsis; when ``False``, they are rendered in full.
 
     Returns:
         A :class:`~rich.tree.Tree` rooted at the single root vertex of
@@ -466,11 +489,11 @@ def build_rich_vertex_tree(vertex_tree: VertexTree, props: list[str] = DEFAULT_V
     rich_map: Final[dict[Uid, RichTree]] = {}
     dfs_iter: Final[VertexTreeDFSIterator] = vertex_tree.dfs()
     root: Final[Vertex] = next(dfs_iter)
-    root_rich: Final[RichTree] = RichTree(build_vertex_panel(root, props))
+    root_rich: Final[RichTree] = RichTree(build_vertex_panel(root, props, truncate=truncate))
     rich_map[root.uid] = root_rich
     for vertex in dfs_iter:
         parent_rich: RichTree = rich_map[child_to_parent[vertex.uid]]
-        rich_map[vertex.uid] = parent_rich.add(build_vertex_panel(vertex, props))
+        rich_map[vertex.uid] = parent_rich.add(build_vertex_panel(vertex, props, truncate=truncate))
     return root_rich
 
 
@@ -502,9 +525,17 @@ _RAW_RESULTS_EXCLUDED_ATTRS: Final[frozenset[str]] = frozenset(
         "edit-time",
         "edit-user",
         "word-count",
+        "lookup",
+        "attrs",
     }
 )
-"""Pull-block attribute keys suppressed from the raw-results Rich table."""
+"""Pull-block attribute keys suppressed from the raw-results Rich table.
+
+Includes the two attribute-system keys ``lookup`` (Roam's ``:attrs/lookup`` reverse index, a list of
+entity ids) and ``attrs`` (the ``:entity/attrs`` structured assertions).  Both are parsed onto
+:class:`~guffin.roam.node.RoamNode` but otherwise unused by the pipeline, so they are internal
+bookkeeping rather than table-worthy content.
+"""
 
 _RAW_RESULTS_COL_ORDER: Final[tuple[str, ...]] = (
     "id",
@@ -564,7 +595,8 @@ _RAW_RESULTS_COL_TRUNCATE: Final[dict[str, int]] = {
 }
 """Maximum display length (in characters) for specific columns in the raw-results table.
 
-Cell values longer than the limit are silently truncated to that many characters.
+Cell values longer than the limit are truncated to that many characters and suffixed with an
+ellipsis (``…``) to mark the elision.
 """
 
 _URL_RE: Final[regex.Pattern[str]] = regex.compile(r"https?://[^\s\"']+")
@@ -586,7 +618,7 @@ def _truncate_urls_in_cell(cell: str) -> str:
 
 
 @validate_call
-def build_rich_raw_table(fetch_result: NodeFetchResult) -> Table:
+def build_rich_raw_table(fetch_result: NodeFetchResult, *, truncate: bool = True) -> Table:
     """Build and return a Rich :class:`~rich.table.Table` of raw Datalog pull-blocks.
 
     Rows are sorted by ``id``; columns cover every attribute key present across
@@ -595,14 +627,17 @@ def build_rich_raw_table(fetch_result: NodeFetchResult) -> Table:
     alphabetically).  :class:`~guffin.roam.primitives.IdObject` values and
     single-entry ``{"id": …}`` ref dicts are rendered as plain integer ids; lists
     of such refs are rendered as a comma-separated id sequence.  Column headers
-    are overridden per :data:`_RAW_RESULTS_COL_HEADERS`; cell values are
-    truncated per :data:`_RAW_RESULTS_COL_TRUNCATE`; URLs inside ``props``
-    cells are additionally shortened to 15 characters via
+    are overridden per :data:`_RAW_RESULTS_COL_HEADERS`; when *truncate* is ``True``
+    cell values are truncated per :data:`_RAW_RESULTS_COL_TRUNCATE`; URLs inside
+    ``props`` cells are additionally shortened to 15 characters via
     :func:`_truncate_urls_in_cell`.
 
     Args:
         fetch_result: Fetch result whose :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.raw_result`
             supplies the pull-block rows.
+        truncate: When ``True`` (default), per-column length limits in
+            :data:`_RAW_RESULTS_COL_TRUNCATE` are applied; when ``False``, cell values
+            are rendered in full (URL shortening inside ``props`` still applies).
 
     Returns:
         A fully populated :class:`~rich.table.Table` ready for printing.
@@ -649,8 +684,10 @@ def build_rich_raw_table(fetch_result: NodeFetchResult) -> Table:
             if key == "props":
                 cell = _truncate_urls_in_cell(cell)
             trunc: int | None = _RAW_RESULTS_COL_TRUNCATE.get(key)
-            if trunc is not None:
-                cell = cell[:trunc]
-            row_vals.append(cell)
+            if truncate and trunc is not None and len(cell) > trunc:
+                cell = cell[:trunc] + "…"
+            # Escape Rich console-markup metacharacters so bracketed content (e.g. ``[[page]]``
+            # whose name starts lowercase) renders literally instead of being parsed as a tag.
+            row_vals.append(markup_escape(cell))
         raw_table.add_row(*row_vals)
     return raw_table

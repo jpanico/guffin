@@ -183,6 +183,9 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.GUFFIN_TABLE
         case NodeType.EMBED_BLOCK:
             return VertexType.GUFFIN_BLOCK_EMBED
+        case NodeType.ATTRIBUTE_BLOCK:
+            # No dedicated vertex type yet; render attribute assignments as plain text.
+            return VertexType.GUFFIN_TEXT
 
 
 @validate_call
