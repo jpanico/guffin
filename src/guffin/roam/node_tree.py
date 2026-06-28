@@ -386,10 +386,13 @@ def to_table(table_tree: NodeTree) -> Table:
 
     Raises:
         ValidationError: If *table_tree* is ``None`` or invalid.
-        ValueError: If the root node has no children (empty table).
+        ValueError: If the root node is not a :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE` node,
+            or if it has no children (empty table).
     """
     logger.debug("table_tree root uid=%r", table_tree.root_node.uid)
     root: Final[RoamNode] = table_tree.root_node
+    if node_type(root) is not NodeType.NATIVE_TABLE:
+        raise ValueError(f"RoamNode uid={root.uid!r} is not a native table (node_type={node_type(root)})")
     if not root.children:
         raise ValueError(f"RoamNode uid={root.uid!r} has no children (empty table)")
     col1_cells: Final[list[RoamNode]] = sorted(

@@ -842,3 +842,18 @@ class TestToTable:
         tree = NodeTree.build(root, [root])
         with pytest.raises(ValueError, match="no children"):
             to_table(tree)
+
+    def test_non_native_table_root_raises(self) -> None:
+        """A root that is not a native-table node raises ValueError (checked before children)."""
+        root = RoamNode(
+            uid="blokuid01",
+            id=10,
+            string="just a regular block",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            children=[IdObject(id=11)],
+        )
+        child = _make_cell_node("celluid01", 11, 10, "x")
+        tree = NodeTree.build(root, [root, child])
+        with pytest.raises(ValueError, match="not a native table"):
+            to_table(tree)
