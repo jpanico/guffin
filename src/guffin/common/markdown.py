@@ -6,9 +6,11 @@ Public symbols:
 - :data:`MD_BLOCK_QUOTE_PREFIX` — string prefix for a standard CommonMark blockquote line.
 - :data:`CODE_BLOCK_RE` — compiled regex matching a backtick-fenced code block where fences
   may share a line with adjacent content.
+- :data:`MD_LINK_RE` — compiled regex matching a CommonMark inline link ``[text](url)``.
 - :func:`is_fenced_code_block` — whether a string is a single CommonMark fenced code block.
 - :class:`FencedCodeBlock` — the info string and code content extracted from a fenced code block.
 - :func:`parse_fenced_code_block` — extract the info string and code content from a fenced code block.
+- :func:`unwrap_links` — replace each CommonMark inline link with its display text.
 """
 
 from typing import Annotated, Final, NamedTuple
@@ -38,6 +40,28 @@ Numbered groups (no named groups):
 - Group 2 — the code body between the opening and closing fences; spans newlines
   (:data:`regex.DOTALL` is set).
 """
+
+MD_LINK_RE: Final[regex.Pattern[str]] = regex.compile(r"\[([^\]]*)\]\([^)]*\)")
+"""Compiled regex matching a CommonMark inline link ``[text](url)``.
+
+Group 1 captures the link's display text; the destination in parentheses is matched but not
+captured.  Used by :func:`unwrap_links` to reduce a link to its display text.
+"""
+
+
+@validate_call
+def unwrap_links(text: str) -> str:
+    """Replace each CommonMark inline link ``[text](url)`` in *text* with its display text.
+
+    Args:
+        text: The string to unwrap.
+
+    Returns:
+        *text* with every ``[label](destination)`` link replaced by ``label``; non-link content
+        is left unchanged.
+    """
+    return MD_LINK_RE.sub(r"\1", text)
+
 
 # Opening code fence: up to three spaces of indentation, then a run of at least
 # three backticks or three tildes, then an optional info string (the remainder

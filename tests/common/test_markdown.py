@@ -2,7 +2,7 @@
 
 import pytest
 
-from guffin.common.markdown import is_fenced_code_block, parse_fenced_code_block
+from guffin.common.markdown import is_fenced_code_block, parse_fenced_code_block, unwrap_links
 
 
 class TestIsFencedCodeBlock:
@@ -76,3 +76,27 @@ class TestParseFencedCodeBlock:
         """Test that a string not opening with a fence raises ValueError."""
         with pytest.raises(ValueError):
             parse_fenced_code_block("not a code block")
+
+
+class TestUnwrapLinks:
+    """Tests for unwrap_links — reducing CommonMark inline links to their display text."""
+
+    def test_single_link(self) -> None:
+        """A lone link is replaced by its display text."""
+        assert unwrap_links("[Test Article](x-guffin:vertex/abc)") == "Test Article"
+
+    def test_link_among_text(self) -> None:
+        """Surrounding text is preserved; only the link is unwrapped."""
+        assert unwrap_links("see [the page](http://x) now") == "see the page now"
+
+    def test_multiple_links(self) -> None:
+        """Every link in the string is unwrapped."""
+        assert unwrap_links("[a](u1) and [b](u2)") == "a and b"
+
+    def test_no_links_unchanged(self) -> None:
+        """A string with no links is returned unchanged."""
+        assert unwrap_links("plain text, no links") == "plain text, no links"
+
+    def test_empty_link_text(self) -> None:
+        """A link with empty display text unwraps to the empty string."""
+        assert unwrap_links("x[](u)y") == "xy"

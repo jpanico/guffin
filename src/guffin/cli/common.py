@@ -13,10 +13,10 @@ import logging
 import textwrap
 from typing import Final
 
-import regex
 from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
+from guffin.common.markdown import unwrap_links
 from guffin.model.vertex import (
     AttributeAssignmentVertex,
     BlockEmbedVertex,
@@ -39,14 +39,6 @@ from guffin.roam.node_tree import NodeTree
 from guffin.transcribe.roam_tree_to_guffin import to_render_bundle
 
 logger = logging.getLogger(__name__)
-
-_MD_LINK_RE: Final[regex.Pattern[str]] = regex.compile(r"\[([^\]]*)\]\([^)]*\)")
-"""Matches a Markdown inline link ``[text](url)``; group 1 is the link text.
-
-Used to unwrap links to their text when deriving a filename stem, so a rendered page
-reference like ``[Test Article](x-guffin:vertex/abc)`` contributes only ``Test Article``
-rather than leaking the URL into the filename.
-"""
 
 
 @validate_call
@@ -141,7 +133,7 @@ def deduce_out_file_stem(vertex_tree: VertexTree) -> str:
         A shell-safe filename stem (no extension or directory component).
     """
     basis: Final[str] = _stem_basis(root_vertex(vertex_tree), vertex_tree)
-    unwrapped_basis: Final[str] = _MD_LINK_RE.sub(r"\1", basis)
+    unwrapped_basis: Final[str] = unwrap_links(basis)
     # The clip marker deliberately ends in "_" (retained by shell_safe_filename, which strips
     # only leading underscores) so that an appended extension reads "..._.pdf" — a distinctive,
     # non-dot ending — rather than a run of dots "....pdf".
