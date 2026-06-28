@@ -29,10 +29,9 @@ Public symbols:
   block embed node.
 - :func:`to_attribute_assignment_vertex` — build an :class:`~guffin.vertex.AttributeAssignmentVertex`
   from an attribute-assignment node.
-- :func:`to_table` — build a :class:`~guffin.common.table.Table` from a
-  :class:`~guffin.roam.node_tree.NodeTree` rooted at a native table node.
-- :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node,
-  returning it together with the IDs of all consumed descendant nodes.
+- :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node
+  (via :func:`~guffin.roam.node_tree.to_table` + Markdown normalization), returning it together
+  with the IDs of all consumed descendant nodes.
 - :func:`transcribe_standalone_node` — transcribe a :class:`~guffin.roam.node.RoamNode` into
   the appropriate :data:`~guffin.vertex.Vertex` subtype.
 - :func:`transcribe` — transcribe all nodes in a :class:`~guffin.roam.node_tree.NodeTree`
@@ -81,7 +80,7 @@ from guffin.roam.node import (
     image_size,
     node_type,
 )
-from guffin.roam.node_tree import NodeTree
+from guffin.roam.node_tree import NodeTree, to_table
 from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import FencedCodeBlock, parse_fenced_code_block
@@ -569,61 +568,11 @@ def to_attribute_assignment_vertex(node: RoamNode, tree: NodeTree) -> AttributeA
 
 
 @validate_call
-def to_table(table_tree: NodeTree) -> Table:
-    """Build a :class:`~guffin.common.table.Table` from a :class:`~guffin.roam.node_tree.NodeTree` rooted at a native.
-
-    table.
-
-    node.
-
-    Reconstructs the 2-D cell grid from the Roam native table's chain structure.
-    The root's direct children are the first-column cells, sorted by
-    :attr:`~guffin.roam.node.RoamNode.order` to establish row sequence.  For each
-    first-column cell, the algorithm follows the single-child chain — each cell's
-    sole child is the next-column cell in the same row — collecting cell strings
-    until the chain ends.  Each cell's :attr:`~guffin.roam.node.RoamNode.string`
-    is passed through :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md` before
-    being stored.
-
-    Args:
-        table_tree: A :class:`~guffin.roam.node_tree.NodeTree` whose root is a
-            :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE` node.
-
-    Returns:
-        A :class:`~guffin.common.table.Table` with default header flags.
-
-    Raises:
-        ValidationError: If *table_tree* is ``None`` or invalid.
-        ValueError: If the root node has no children (empty table).
-    """
-    logger.debug("table_tree root uid=%r", table_tree.root_node.uid)
-    root: Final[RoamNode] = table_tree.root_node
-    if not root.children:
-        raise ValueError(f"RoamNode uid={root.uid!r} has no children (empty table)")
-    col1_cells: Final[list[RoamNode]] = sorted(
-        [table_tree.id_map[c.id] for c in root.children if c.id in table_tree.id_map],
-        key=lambda n: n.order if n.order is not None else 0,
-    )
-    rows: Final[list[tuple[str, ...]]] = []
-    for col1_cell in col1_cells:
-        row: list[str] = []
-        cell: RoamNode | None = col1_cell
-        while cell is not None:
-            row.append(to_pandoc_md(cell.string, table_tree) if cell.string is not None else "")
-            next_cells: list[RoamNode] = sorted(
-                [table_tree.id_map[c.id] for c in (cell.children or []) if c.id in table_tree.id_map],
-                key=lambda n: n.order if n.order is not None else 0,
-            )
-            cell = next_cells[0] if next_cells else None
-        rows.append(tuple(row))
-    return Table(rows=tuple(rows), has_row_header=True)
-
-
-@validate_call
 def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozenset[Id]]:
     """Build a :class:`~guffin.vertex.TableVertex` from a native table *node*.
 
-    Delegates :class:`~guffin.common.table.Table` construction to :func:`to_table`.
+    Delegates raw-grid reconstruction to :func:`~guffin.roam.node_tree.to_table`, then normalizes
+    each cell string with :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md`.
     All descendant nodes (rows and cells) are consumed into the returned
     :class:`~guffin.vertex.TableVertex`; consequently
     :attr:`~guffin.vertex.TableVertex.children` is always ``None`` — the descendants
@@ -652,12 +601,17 @@ def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozen
         raise ValueError(f"RoamNode uid={node.uid!r} has no children (empty table)")
     table_tree: Final[NodeTree] = NodeTree.build(node, list(tree.id_map.values()))
     consumed_ids: Final[frozenset[Id]] = frozenset(n.id for n in table_tree.tree_network)
+    raw_table: Final[Table] = to_table(table_tree)
+    # Normalize each raw Roam cell string to Pandoc Markdown (the roam-layer to_table leaves it raw).
+    normalized: Final[Table] = raw_table.model_copy(
+        update={"rows": tuple(tuple(to_pandoc_md(cell, table_tree) for cell in row) for row in raw_table.rows)}
+    )
     return (
         TableVertex(
             uid=node.uid,
             children=None,
             refs=_resolve_refs(node, tree.id_map),
-            table=to_table(table_tree),
+            table=normalized,
             table_style=TableStyle(),
         ),
         consumed_ids,

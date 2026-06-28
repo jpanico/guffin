@@ -15,6 +15,8 @@ Public symbols:
 - :func:`is_tree` — validate all tree invariants for a :class:`~guffin.roam.node.RoamNode` root
   and its :data:`~guffin.roam.node_network.NodeNetwork`; returns a
   :class:`~guffin.common.validation.ValidationResult`.
+- :func:`to_table` — reconstruct a :class:`~guffin.common.table.Table` (raw cell strings) from a
+  :class:`NodeTree` rooted at a Roam native-table node.
 """
 
 import logging
@@ -34,6 +36,7 @@ from guffin.roam.node_network import (
 )
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.primitives import Id, Uid
+from guffin.common.table import Table
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 
 logger = logging.getLogger(__name__)
@@ -359,3 +362,50 @@ def is_tree(root_node: RoamNode, network: NodeNetwork) -> ValidationResult:
             is_acyclic,
         ],
     )
+
+
+@validate_call
+def to_table(table_tree: NodeTree) -> Table:
+    """Reconstruct a :class:`~guffin.common.table.Table` from a Roam native-table :class:`NodeTree`.
+
+    Rebuilds the 2-D cell grid from the Roam native table's chain structure.  The root's direct
+    children are the first-column cells, sorted by :attr:`~guffin.roam.node.RoamNode.order` to
+    establish row sequence.  For each first-column cell, the algorithm follows the single-child
+    chain — each cell's sole child is the next-column cell in the same row — collecting cell
+    strings until the chain ends.
+
+    Cell strings are stored verbatim (the raw Roam :attr:`~guffin.roam.node.RoamNode.string`); any
+    Markdown normalization is the caller's concern.
+
+    Args:
+        table_tree: A :class:`NodeTree` whose root is a
+            :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE` node.
+
+    Returns:
+        A :class:`~guffin.common.table.Table` of raw cell strings, with a row header.
+
+    Raises:
+        ValidationError: If *table_tree* is ``None`` or invalid.
+        ValueError: If the root node has no children (empty table).
+    """
+    logger.debug("table_tree root uid=%r", table_tree.root_node.uid)
+    root: Final[RoamNode] = table_tree.root_node
+    if not root.children:
+        raise ValueError(f"RoamNode uid={root.uid!r} has no children (empty table)")
+    col1_cells: Final[list[RoamNode]] = sorted(
+        [table_tree.id_map[c.id] for c in root.children if c.id in table_tree.id_map],
+        key=lambda n: n.order if n.order is not None else 0,
+    )
+    rows: Final[list[tuple[str, ...]]] = []
+    for col1_cell in col1_cells:
+        row: list[str] = []
+        cell: RoamNode | None = col1_cell
+        while cell is not None:
+            row.append(cell.string if cell.string is not None else "")
+            next_cells: list[RoamNode] = sorted(
+                [table_tree.id_map[c.id] for c in (cell.children or []) if c.id in table_tree.id_map],
+                key=lambda n: n.order if n.order is not None else 0,
+            )
+            cell = next_cells[0] if next_cells else None
+        rows.append(tuple(row))
+    return Table(rows=tuple(rows), has_row_header=True)

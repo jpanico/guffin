@@ -10,7 +10,8 @@ from guffin.roam.node_network import (
 )
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.primitives import Id, IdObject
-from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator, is_tree
+from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
+from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator, is_tree, to_table
 from guffin.common.validation import ValidationError
 
 from conftest import article1_node_tree
@@ -742,3 +743,102 @@ class TestNodeTreeDFSIterator:
             3333,
         ]
         assert [n.id for n in NodeTreeDFSIterator(tree)] == expected_ids
+
+
+def _make_table_root(uid: str, node_id: int, row_ids: list[int]) -> RoamNode:
+    """Return a NATIVE_TABLE root RoamNode."""
+    return RoamNode(
+        uid=uid,
+        id=node_id,
+        string=ROAM_NATIVE_TABLE_MARKER,
+        parents=[IdObject(id=1)],
+        page=IdObject(id=1),
+        children=[IdObject(id=rid) for rid in row_ids],
+    )
+
+
+def _make_cell_node(
+    uid: str,
+    node_id: int,
+    parent_id: int,
+    string: str,
+    order: int = 0,
+    child_id: int | None = None,
+) -> RoamNode:
+    """Return a table-cell RoamNode.
+
+    In Roam's native table structure every cell's sole child (when present) is the
+    next-column cell in the same row; supply *child_id* to wire that link.
+    """
+    return RoamNode(
+        uid=uid,
+        id=node_id,
+        string=string,
+        order=order,
+        parents=[IdObject(id=parent_id)],
+        page=IdObject(id=1),
+        children=[IdObject(id=child_id)] if child_id is not None else None,
+    )
+
+
+def _build_2x2_tree() -> NodeTree:
+    """Return a NodeTree for a 2×2 table: row 1 = (A, B), row 2 = (C, D).
+
+    Structure: root's children are the col-1 cells; each col-1 cell's sole child
+    is the col-2 cell in the same row.
+    """
+    root = _make_table_root("tabluid01", 10, [11, 12])
+    col1_row1 = _make_cell_node("cel11uid1", 11, 10, "A", order=0, child_id=13)
+    col1_row2 = _make_cell_node("cel12uid1", 12, 10, "C", order=1, child_id=14)
+    col2_row1 = _make_cell_node("cel21uid1", 13, 11, "B", order=0)
+    col2_row2 = _make_cell_node("cel22uid1", 14, 12, "D", order=0)
+    return NodeTree.build(root, [root, col1_row1, col1_row2, col2_row1, col2_row2])
+
+
+class TestToTable:
+    """Tests for to_table — reconstructing a raw-cell Table from a native-table NodeTree."""
+
+    def test_2x2_table_dimensions(self) -> None:
+        """A 2-row 2-column table yields num_rows=2 and num_cols=2."""
+        table = to_table(_build_2x2_tree())
+        assert table.num_rows == 2
+        assert table.num_cols == 2
+
+    def test_2x2_table_cell_content(self) -> None:
+        """Cell content is preserved in row-major order."""
+        table = to_table(_build_2x2_tree())
+        assert table.rows[0] == ("A", "B")
+        assert table.rows[1] == ("C", "D")
+
+    def test_rows_sorted_by_order(self) -> None:
+        """Col-1 cells are sorted ascending by order, determining row sequence."""
+        root = _make_table_root("tabluid01", 10, [11, 12])
+        col1_row1 = _make_cell_node("cel11uid1", 11, 10, "second", order=1)
+        col1_row2 = _make_cell_node("cel12uid1", 12, 10, "first", order=0)
+        tree = NodeTree.build(root, [root, col1_row1, col1_row2])
+        table = to_table(tree)
+        assert table.rows[0] == ("first",)
+        assert table.rows[1] == ("second",)
+
+    def test_3_column_chain_traversal(self) -> None:
+        """A 3-column row is built by following the col1→col2→col3 child chain."""
+        root = _make_table_root("tabluid01", 10, [11])
+        col1 = _make_cell_node("col1uid01", 11, 10, "X", order=0, child_id=12)
+        col2 = _make_cell_node("col2uid01", 12, 11, "Y", order=0, child_id=13)
+        col3 = _make_cell_node("col3uid01", 13, 12, "Z", order=0)
+        tree = NodeTree.build(root, [root, col1, col2, col3])
+        table = to_table(tree)
+        assert table.rows[0] == ("X", "Y", "Z")
+
+    def test_empty_table_raises(self) -> None:
+        """A table root with no children raises ValueError."""
+        root = RoamNode(
+            uid="tabluid01",
+            id=10,
+            string=ROAM_NATIVE_TABLE_MARKER,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        tree = NodeTree.build(root, [root])
+        with pytest.raises(ValueError, match="no children"):
+            to_table(tree)

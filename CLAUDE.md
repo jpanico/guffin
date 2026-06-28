@@ -83,7 +83,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `schema.py` — Datomic schema model types (`RoamNamespace`, etc.)
     - `node.py` — `RoamNode`, `NodeType`, `node_type`, `NodesByUid`
     - `node_network.py` — `NodeNetwork` type alias; network validators (`all_children_present`, `all_parents_present`, `has_unique_ids`, `is_acyclic`) and utilities (`all_descendants`, `refs_ids`)
-    - `node_tree.py` — `NodeTree` (factory `build()`, fields `root_node`/`tree_network`/`refs_by_id`), `NodeTreeDFSIterator`, `is_tree`
+    - `node_tree.py` — `NodeTree` (factory `build()`, fields `root_node`/`tree_network`/`refs_by_id`), `NodeTreeDFSIterator`, `is_tree`, `to_table` (reconstructs a raw-cell `common.Table` from a native-table `NodeTree`)
     - `asset.py` — Cloud Firestore asset model
     - `local_api.py` — `ApiEndpoint` model for the Roam Local API
     - `node_fetch_result.py` — `NodeFetchAnchor`, `NodeFetchSpec`, `NodeFetchResult`; fetch result model and factory methods (`from_raw`, `from_network`); `anchor_node` helper
