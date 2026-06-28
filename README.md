@@ -1,9 +1,12 @@
 # guffin
 
-Python 3.14 toolkit for exporting Roam Research graph sub-trees to self-contained documents. Supports two output formats:
+Python 3.14 toolkit for exporting Roam Research graph sub-trees to self-contained documents. Supports three output formats:
 
 - **Markdown** — renders to Github Flavored Markdown (GFM) and optionally bundles Roam-hosted (Cloud Firestore) images into a self-contained `.mdbundle` directory.
 - **PDF** — builds a Pandoc object model directly from a graph sub-tree via [Panflute](https://github.com/sergiocorreia/panflute), fetches and embeds Roam-hosted (Cloud Firestore) images, and produces a PDF via [Pandoc](https://pandoc.org) + [Typst](https://typst.app).
+- **EPUB** — builds the same Panflute object model and embeds Roam-hosted images into the package, then produces an EPUB 3 e-book via [Pandoc](https://pandoc.org) (no Typst required); the page title becomes the e-book title and top-level headings become chapters.
+
+It also includes `dump-roam-tree`, a companion tool that renders a graph sub-tree as a colorized tree in the terminal for interactive inspection.
 
 ## Development Setup
 
@@ -154,7 +157,7 @@ guffin/
 │       │   ├── table.py                   # Table, TableStyle, HAlign — 2-D cell grid model
 │       │   └── validation.py              # Generic accumulator-pipeline validation framework
 │       │
-│       ├── model/                       # Core normalized-graph model (depends only on common/)
+│       ├── model/                       # Core Guffin normalized-graph model (depends only on common/)
 │       │   ├── primitives.py              # Uid type alias; SYNTHETIC/DAILY_NOTE/UID_PATTERN(/RE),
 │       │   │                              #   ANCHORED_UID_PATTERN(/RE), is_daily_note_uid()
 │       │   ├── vertex.py                  # Vertex union + ten concrete types (PageVertex,
