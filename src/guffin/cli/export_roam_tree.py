@@ -241,44 +241,71 @@ def main(
 
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content)
 
-    if output_format is OutputFormat.PDF:
-        pdf_options: Final[PdfRenderOptions] = PdfRenderOptions(
-            output_dir=output_dir,
-            cache_dir=cache_dir,
-            template_dir=template_dir,
-            suppress_attributes=suppress_attributes,
-            dump_pandoc_ast=dump_pandoc_ast,
-        )
-        try:
-            render_pdf(render_bundle, out_file_stem, api_endpoint, pdf_options)
-        except Exception as e:
-            logger.error("Error rendering PDF for %r: %s", target, e)
-            raise typer.Exit(code=1)
-    elif output_format is OutputFormat.EPUB:
-        epub_options: Final[EpubRenderOptions] = EpubRenderOptions(
-            output_dir=output_dir,
-            cache_dir=cache_dir,
-            suppress_attributes=suppress_attributes,
-            dump_pandoc_ast=dump_pandoc_ast,
-        )
-        try:
-            render_epub(render_bundle, out_file_stem, api_endpoint, epub_options)
-        except Exception as e:
-            logger.error("Error rendering EPUB for %r: %s", target, e)
-            raise typer.Exit(code=1)
-    else:
-        md_options: Final[MarkdownRenderOptions] = MarkdownRenderOptions(
-            output_dir=output_dir,
-            cache_dir=cache_dir,
-            bundle=bundle,
-            suppress_attributes=suppress_attributes,
-            dump_pandoc_ast=dump_pandoc_ast,
-        )
-        try:
-            render_md(render_bundle, out_file_stem, api_endpoint, md_options)
-        except Exception as e:
-            logger.error("Error rendering Markdown for %r: %s", target, e)
-            raise typer.Exit(code=1)
+    _render(
+        output_format,
+        render_bundle,
+        out_file_stem,
+        api_endpoint,
+        target,
+        output_dir,
+        cache_dir,
+        template_dir,
+        bundle,
+        suppress_attributes,
+        dump_pandoc_ast,
+    )
+
+
+def _render(
+    output_format: OutputFormat,
+    render_bundle: RenderBundle,
+    filename_stem: str,
+    api_endpoint: ApiEndpoint,
+    target: str,
+    output_dir: pathlib.Path,
+    cache_dir: pathlib.Path | None,
+    template_dir: pathlib.Path | None,
+    bundle: bool,
+    suppress_attributes: bool,
+    dump_pandoc_ast: bool,
+) -> None:
+    """Render *render_bundle* with the renderer selected by *output_format*; exit 1 on failure.
+
+    Builds the format-specific :class:`~guffin.render.render_options.RenderOptions` subclass and
+    dispatches to the matching renderer; each renderer reads only the option fields that apply to
+    its format (``bundle`` is Markdown-only, ``template_dir`` is PDF-only).  Any rendering failure
+    is logged and turned into a :class:`typer.Exit` with code 1.
+    """
+    try:
+        if output_format is OutputFormat.PDF:
+            pdf_options: Final[PdfRenderOptions] = PdfRenderOptions(
+                output_dir=output_dir,
+                cache_dir=cache_dir,
+                template_dir=template_dir,
+                suppress_attributes=suppress_attributes,
+                dump_pandoc_ast=dump_pandoc_ast,
+            )
+            render_pdf(render_bundle, filename_stem, api_endpoint, pdf_options)
+        elif output_format is OutputFormat.EPUB:
+            epub_options: Final[EpubRenderOptions] = EpubRenderOptions(
+                output_dir=output_dir,
+                cache_dir=cache_dir,
+                suppress_attributes=suppress_attributes,
+                dump_pandoc_ast=dump_pandoc_ast,
+            )
+            render_epub(render_bundle, filename_stem, api_endpoint, epub_options)
+        else:
+            md_options: Final[MarkdownRenderOptions] = MarkdownRenderOptions(
+                output_dir=output_dir,
+                cache_dir=cache_dir,
+                bundle=bundle,
+                suppress_attributes=suppress_attributes,
+                dump_pandoc_ast=dump_pandoc_ast,
+            )
+            render_md(render_bundle, filename_stem, api_endpoint, md_options)
+    except Exception as e:
+        logger.error("Error rendering %s for %r: %s", output_format.value, target, e)
+        raise typer.Exit(code=1)
 
 
 if __name__ == "__main__":
