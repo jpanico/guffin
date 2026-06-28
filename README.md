@@ -242,7 +242,8 @@ guffin/
 │   └── refresh-mdbundle-folders.sh        # Refresh existing .mdbundle folders (macOS)
 │
 ├── docs/
-│   ├── processing_pipeline.md             # High-level overview of the core data processing pipeline
+│   ├── processing_pipeline.md             # High-level overview of the data pipeline (fetch → model)
+│   ├── render-pipeline.md                 # Render layer (model → output) + the project-type model
 │   ├── roam-local-api.md                  # Roam Local API (JSON over HTTP) reference
 │   ├── roam-md.md                         # Roam-flavored Markdown vs. CommonMark differences
 │   ├── roam-querying.md                   # Datalog query language and all queries used in this project
@@ -389,7 +390,8 @@ See [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) for detailed instructions a
 
 ## Documentation
 
-- [docs/processing_pipeline.md](docs/processing_pipeline.md) — High-level overview of the core data processing pipeline
+- [docs/processing_pipeline.md](docs/processing_pipeline.md) — High-level overview of the data pipeline (fetch → model)
+- [docs/render-pipeline.md](docs/render-pipeline.md) — The render layer (model → output two-stage pipeline) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`)
 - [docs/roam-local-api.md](docs/roam-local-api.md) — Roam Local API reference (JSON over HTTP)
 - [docs/roam-md.md](docs/roam-md.md) — Roam-flavored Markdown vs. CommonMark differences
 - [docs/roam-querying.md](docs/roam-querying.md) — Datalog query language, query structure, and all queries used in this project

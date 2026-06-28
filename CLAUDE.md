@@ -198,7 +198,8 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `docs/roam-local-api.md` — Roam Local API reference (endpoints, request/response shapes)
 - `docs/roam-querying.md` — Datalog query patterns used to fetch Roam nodes
 - `docs/roam-schema.md` — Roam Datomic schema reference (attributes, value types, cardinality)
-- `docs/processing_pipeline.md` — high-level overview of the core data processing pipeline
+- `docs/processing_pipeline.md` — high-level overview of the core data processing pipeline (fetch → model)
+- `docs/render-pipeline.md` — the render layer (model → output two-stage pipeline) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`
 
 ## Environment Variables
 - `GUFFIN_ROAM_LOCAL_API_PORT` — port for Roam Local API (all CLI tools)
