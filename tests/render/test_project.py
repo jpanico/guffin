@@ -7,7 +7,9 @@ from guffin.render.project import (
     DefaultProfile,
     Division,
     ManuscriptProfile,
+    ProjectProfile,
     ProjectType,
+    profile_for,
 )
 
 
@@ -58,3 +60,29 @@ class TestProfileDiscriminator:
         assert profile.authors == ("Ada", "Babbage")
         assert profile.identifier == "ISBN-1"
         assert profile.date is None
+
+
+class TestProfileFor:
+    """profile_for maps a project type to its default-valued profile subclass."""
+
+    def test_maps_each_type_to_its_subclass(self) -> None:
+        """Each ProjectType yields the matching profile subclass."""
+        assert isinstance(profile_for(ProjectType.DEFAULT), DefaultProfile)
+        assert isinstance(profile_for(ProjectType.BOOK), BookProfile)
+        assert isinstance(profile_for(ProjectType.MANUSCRIPT), ManuscriptProfile)
+
+    def test_returned_subtype_survives_validate_call(self) -> None:
+        """A subclass passed where the base is annotated keeps its concrete type and policy.
+
+        Guards the renderers' ``profile: ProjectProfile`` parameters: pydantic ``@validate_call``
+        must not coerce a ``BookProfile`` down to the base and lose its structural policy.
+        """
+        from pydantic import validate_call
+
+        @validate_call
+        def accept(profile: ProjectProfile) -> ProjectProfile:
+            return profile
+
+        result: Final = accept(profile_for(ProjectType.BOOK))
+        assert isinstance(result, BookProfile)
+        assert result.structural_policy.top_level_division is Division.CHAPTER

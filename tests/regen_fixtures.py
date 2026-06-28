@@ -48,6 +48,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
 from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf
+from guffin.render.project import DefaultProfile
 from guffin.render.render_options import MarkdownRenderOptions, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node import RoamNode
@@ -253,6 +254,7 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as tmp_dir:
         render(
             render_bundle,
+            profile=DefaultProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
             options=MarkdownRenderOptions(output_dir=pathlib.Path(tmp_dir), bundle=False),
@@ -316,6 +318,7 @@ def main() -> None:
         os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
         render_pdf(
             render_bundle,
+            profile=DefaultProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
             options=PdfRenderOptions(output_dir=FIXTURES_PDF),
@@ -328,6 +331,7 @@ def main() -> None:
         FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
         render(
             render_bundle,
+            profile=DefaultProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
             options=MarkdownRenderOptions(output_dir=FIXTURES_MDBUNDLE, bundle=True),

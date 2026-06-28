@@ -263,7 +263,7 @@ Fetches a Roam `Page` or `Node` subtree via the Local API, normalizes it, and wr
 
 ```bash
 export-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token <token> --output-dir <output_dir> \
-  [--format markdown|pdf|epub] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
+  [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
 ```
 
 #### Markdown output (default)
@@ -304,6 +304,8 @@ export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-tok
 #### Cross-format options
 
 `--bundle/--no-bundle` applies only to Markdown and `--template-dir` only to PDF; each is ignored by the other formats. `--cache-dir` (cache downloaded images across runs) and `--suppress-attributes` (omit Roam attribute assignments from the output) apply to all three formats.
+
+`--type default|book|manuscript` (default `default`) selects the **project profile** — the kind of work being produced — independently of `--format` (see [docs/render-pipeline.md](docs/render-pipeline.md)). The profile is currently plumbed through to every renderer but its structural effects (chapters vs. sections, title page, numbering) are not yet applied to the output.
 
 #### Environment variables
 

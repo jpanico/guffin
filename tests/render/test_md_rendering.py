@@ -5,6 +5,7 @@ from typing import Final
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.render.md_rendering import render
+from guffin.render.project import DefaultProfile
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.model.render_bundle import RenderBundle
@@ -34,6 +35,7 @@ class TestRenderArticleFixture:
         )
         render(
             render_bundle,
+            profile=DefaultProfile(),
             filename_stem=stem,
             api_endpoint=endpoint,
             options=MarkdownRenderOptions(output_dir=tmp_path, bundle=False),

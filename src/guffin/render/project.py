@@ -17,12 +17,14 @@ Public symbols:
 - **Models**: :class:`StructuralPolicy` — the format-independent structural directives derived from a
   profile; :class:`ProjectProfile` — the format-independent base profile; and the per-type subclasses
   :class:`DefaultProfile`, :class:`BookProfile`, :class:`ManuscriptProfile`.
+- **Functions**: :func:`profile_for` — build a default-valued :class:`ProjectProfile` for a
+  :class:`ProjectType`.
 """
 
 import enum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, validate_call
 
 
 class ProjectType(enum.StrEnum):
@@ -176,3 +178,26 @@ class ManuscriptProfile(ProjectProfile):
             number_sections=False,
             emit_abstract=True,
         )
+
+
+@validate_call
+def profile_for(project_type: ProjectType) -> ProjectProfile:
+    """Return a default-valued :class:`ProjectProfile` of the given *project_type*.
+
+    Maps each :class:`ProjectType` to its corresponding profile subclass, constructed with default
+    (empty) bibliographic metadata.  Front ends use this to turn a selected project type into a
+    profile to pass to a renderer.
+
+    Args:
+        project_type: The kind of work to build a profile for.
+
+    Returns:
+        A :class:`DefaultProfile`, :class:`BookProfile`, or :class:`ManuscriptProfile`.
+    """
+    match project_type:
+        case ProjectType.DEFAULT:
+            return DefaultProfile()
+        case ProjectType.BOOK:
+            return BookProfile()
+        case ProjectType.MANUSCRIPT:
+            return ManuscriptProfile()

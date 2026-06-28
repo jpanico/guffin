@@ -74,6 +74,7 @@ from guffin.cli.logging_config import configure_logging
 from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render as render_md
 from guffin.render.pdf_rendering import render as render_pdf
+from guffin.render.project import ProjectProfile, ProjectType, profile_for
 from guffin.render.render_options import (
     EpubRenderOptions,
     MarkdownRenderOptions,
@@ -120,6 +121,18 @@ def main(
             ),
         ),
     ] = OutputFormat.MARKDOWN,
+    project_type: Annotated[
+        ProjectType,
+        typer.Option(
+            "--type",
+            "-T",
+            help=(
+                "Kind of work to produce: 'default' (an article-like single document), "
+                "'book' (a multi-chapter book), or 'manuscript' (a scholarly paper). "
+                "Selects the project profile; its structural effects apply to all formats."
+            ),
+        ),
+    ] = ProjectType.DEFAULT,
     bundle: Annotated[
         bool,
         typer.Option(
@@ -199,12 +212,14 @@ def main(
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, output_dir=%r, "
-        "output_format=%r, bundle=%r, cache_dir=%r, template_dir=%r, suppress_attributes=%r, dump_pandoc_ast=%r",
+        "output_format=%r, project_type=%r, bundle=%r, cache_dir=%r, template_dir=%r, "
+        "suppress_attributes=%r, dump_pandoc_ast=%r",
         target,
         local_api_port,
         graph_name,
         output_dir,
         output_format,
+        project_type,
         bundle,
         cache_dir,
         template_dir,
@@ -240,10 +255,12 @@ def main(
         raise typer.Exit(code=1)
 
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content)
+    profile: Final[ProjectProfile] = profile_for(project_type)
 
     _render(
         output_format,
         render_bundle,
+        profile,
         out_file_stem,
         api_endpoint,
         target,
@@ -259,6 +276,7 @@ def main(
 def _render(
     output_format: OutputFormat,
     render_bundle: RenderBundle,
+    profile: ProjectProfile,
     filename_stem: str,
     api_endpoint: ApiEndpoint,
     target: str,
@@ -272,9 +290,10 @@ def _render(
     """Render *render_bundle* with the renderer selected by *output_format*; exit 1 on failure.
 
     Builds the format-specific :class:`~guffin.render.render_options.RenderOptions` subclass and
-    dispatches to the matching renderer; each renderer reads only the option fields that apply to
-    its format (``bundle`` is Markdown-only, ``template_dir`` is PDF-only).  Any rendering failure
-    is logged and turned into a :class:`typer.Exit` with code 1.
+    dispatches to the matching renderer, passing *profile* (the project type and bibliographic
+    metadata) through to it.  Each renderer reads only the option fields that apply to its format
+    (``bundle`` is Markdown-only, ``template_dir`` is PDF-only).  Any rendering failure is logged
+    and turned into a :class:`typer.Exit` with code 1.
     """
     try:
         if output_format is OutputFormat.PDF:
@@ -285,7 +304,7 @@ def _render(
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
             )
-            render_pdf(render_bundle, filename_stem, api_endpoint, pdf_options)
+            render_pdf(render_bundle, profile, filename_stem, api_endpoint, pdf_options)
         elif output_format is OutputFormat.EPUB:
             epub_options: Final[EpubRenderOptions] = EpubRenderOptions(
                 output_dir=output_dir,
@@ -293,7 +312,7 @@ def _render(
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
             )
-            render_epub(render_bundle, filename_stem, api_endpoint, epub_options)
+            render_epub(render_bundle, profile, filename_stem, api_endpoint, epub_options)
         else:
             md_options: Final[MarkdownRenderOptions] = MarkdownRenderOptions(
                 output_dir=output_dir,
@@ -302,7 +321,7 @@ def _render(
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
             )
-            render_md(render_bundle, filename_stem, api_endpoint, md_options)
+            render_md(render_bundle, profile, filename_stem, api_endpoint, md_options)
     except Exception as e:
         logger.error("Error rendering %s for %r: %s", output_format.value, target, e)
         raise typer.Exit(code=1)

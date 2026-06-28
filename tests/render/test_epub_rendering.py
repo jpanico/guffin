@@ -10,6 +10,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import CodeBlockVertex, PageVertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
+from guffin.render.project import DefaultProfile
 from guffin.render.render_options import EpubRenderOptions
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.local_api import ApiEndpoint
@@ -37,6 +38,7 @@ class TestRenderEpub:
         stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
         render(
             _article5_bundle(),
+            profile=DefaultProfile(),
             filename_stem=stem,
             api_endpoint=_ENDPOINT,
             options=EpubRenderOptions(output_dir=tmp_path),
@@ -58,6 +60,7 @@ class TestRenderEpub:
         stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
         render(
             _article5_bundle(),
+            profile=DefaultProfile(),
             filename_stem=stem,
             api_endpoint=_ENDPOINT,
             options=EpubRenderOptions(output_dir=tmp_path),
@@ -73,6 +76,7 @@ class TestRenderEpub:
         stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
         render(
             _article5_bundle(),
+            profile=DefaultProfile(),
             filename_stem=stem,
             api_endpoint=_ENDPOINT,
             options=EpubRenderOptions(output_dir=tmp_path),
@@ -94,7 +98,13 @@ class TestRenderEpub:
             uid="codeaaaaa", code="print(1)\nprint(2)\nprint(3)", language=CodeLanguage.PYTHON
         )
         bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, code]))
-        render(bundle, filename_stem="code", api_endpoint=_ENDPOINT, options=EpubRenderOptions(output_dir=tmp_path))
+        render(
+            bundle,
+            profile=DefaultProfile(),
+            filename_stem="code",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path),
+        )
         with zipfile.ZipFile(tmp_path / "code.epub") as zf:
             chapter: Final[str] = next(
                 zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
@@ -111,6 +121,7 @@ class TestRenderEpub:
         stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
         render(
             _article5_bundle(),
+            profile=DefaultProfile(),
             filename_stem=stem,
             api_endpoint=_ENDPOINT,
             options=EpubRenderOptions(output_dir=tmp_path, suppress_attributes=True),

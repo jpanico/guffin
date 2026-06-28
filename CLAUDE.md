@@ -19,10 +19,11 @@ pip install -e ".[dev]"
 ## Key Commands
 ```bash
 dump-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> [-v/-V] [-n/-N] [-r/-R] [--node-props <props>]
-export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf|epub] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
+export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
 # --format markdown (default): writes <target>.mdbundle/ (--bundle) or <target>.md (--no-bundle)
 # --format pdf: writes <target>.pdf via Pandoc + Typst; requires typst on PATH
 # --format epub: writes <target>.epub (EPUB 3) via Pandoc; requires pandoc on PATH (no typst)
+# --type (-T): project profile (default/book/manuscript); plumbed to all renderers, structural effects not yet applied
 # --template-dir: directory containing user_cfg.typ overrides for PDF styling (pdf only)
 
 # Run the full check pipeline (format + lint + type check + tests) in one shot:
@@ -59,7 +60,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `roam_tree_to_guffin.py` — transcribes a `NodeTree` into the guffin render model: `transcribe()` derives the `VertexTree` content (applying `to_pandoc_md()` to all text fields), `build_view_map()` derives the presentation `ViewMap`, and `to_render_bundle()` bundles both into a `RenderBundle`
   - **`render/` sub-package** (`src/guffin/render/`) — output rendering: turns the normalized model into consumable output (document export and terminal display) plus the configuration and bundled resources that drive it
     - `render_options.py` — immutable export settings carried from a front end to a rendering entry point: `OutputFormat` (markdown/pdf/epub enum discriminator), `RenderOptions` (format-independent base: `output_dir`, `cache_dir`, `suppress_attributes`, `dump_pandoc_ast`), and the per-format subclasses `MarkdownRenderOptions` (`bundle`), `PdfRenderOptions` (`template_dir`), and `EpubRenderOptions` (no extra fields yet)
-    - `project.py` — the *kind* of work being rendered, modeled on Quarto's `project: type:` (concept only — no Quarto artifacts): `ProjectType` (default/book/manuscript discriminator), `Division` (section/chapter/part), the `ProjectProfile` base + per-type subclasses `DefaultProfile`/`BookProfile`/`ManuscriptProfile`, and `StructuralPolicy` (format-independent structural directives a profile resolves to). Orthogonal to `OutputFormat`; not yet wired into the renderers
+    - `project.py` — the *kind* of work being rendered, modeled on Quarto's `project: type:` (concept only — no Quarto artifacts): `ProjectType` (default/book/manuscript discriminator), `Division` (section/chapter/part), the `ProjectProfile` base + per-type subclasses `DefaultProfile`/`BookProfile`/`ManuscriptProfile`, `StructuralPolicy` (format-independent structural directives a profile resolves to), and `profile_for()` (maps a `ProjectType` to its default-valued profile). Orthogonal to `OutputFormat`; a `profile: ProjectProfile` is plumbed into every render entry point (via the CLI `--type` flag), but its structural/metadata effects are not yet applied to output
     - `image_fetch.py` — Pandoc-free image-asset fetching; `ImageRef` (UID + on-disk path + `ImageSize`) and `fetch_images()` (fetches a `VertexTree`'s Cloud Firestore image assets to a local dir, returning `{uid: ImageRef}`)
     - `pandoc_rendering.py` — shared Pandoc/Panflute rendering utilities; `vertex_tree_to_pandoc()` builds a Panflute `Doc` from a `VertexTree` (batch-parsing inline Pandoc Markdown via a single Pandoc call)
     - `md_rendering.py` — renders a `VertexTree` to Markdown: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to GFM via Pandoc, writes a plain `.md` or `.mdbundle/` directory

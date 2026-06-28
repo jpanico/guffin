@@ -7,10 +7,11 @@ This is the downstream companion to [processing_pipeline.md](processing_pipeline
 covers *fetch → model* (Roam → `VertexTree`); this one covers *model → output* and the
 project-type model layered on top of it.
 
-> Status note: the project-type model (`render/project.py`) exists as a foundation but is **not yet
-> wired** into the renderers or the CLI. This doc describes both the current shape and the intended
-> design so the wiring has a spec to follow. Sections that describe planned behavior are marked
-> _(planned)_.
+> Status note: the project-type model (`render/project.py`) is defined and **plumbed** — a
+> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point — but its
+> structural and metadata effects are **not yet applied** to the output. This doc describes both the
+> current shape and the intended design so the remaining wiring has a spec to follow. Sections that
+> describe planned behavior are marked _(planned)_.
 
 
 ## Where the render layer sits
@@ -166,13 +167,13 @@ separate from the Python wiring.
 
 ## Status & next steps
 
-`render/project.py` defines the model; nothing reads `StructuralPolicy` yet and there is no CLI
-`--type` flag. The next increment:
-
-1. **Plumbing** — pass a `ProjectProfile` into the render entry points (a separate argument, or a
-   `Publication`/`Document` aggregate pairing `RenderBundle` + `ProjectProfile`), and add a CLI
-   `--type default|book|manuscript` flag (parallel to `--format`).
-2. **First behavior** — wire `top_level_division` only. Start with EPUB (`--split-level` derived from
-   the policy) as a quick, verifiable slice, then the PDF Bergfink "book mode" as the
+1. **Plumbing — done.** `render/project.py` defines the model and `profile_for()` maps a
+   `ProjectType` to its default-valued profile. The CLI exposes `--type default|book|manuscript`
+   (parallel to `--format`, default `default`), and each render entry point
+   (`render/{md,pdf,epub}_rendering.py::render`) now takes a `profile: ProjectProfile` argument,
+   threaded through `cli/export_roam_tree.py::_render`. Nothing reads `StructuralPolicy` to shape
+   output yet — the renderers currently only log it.
+2. **First behavior** _(next)_ — wire `top_level_division` only. Start with EPUB (`--split-level`
+   derived from the policy) as a quick, verifiable slice, then the PDF Bergfink "book mode" as the
    visually-compelling second increment.
 3. Title page / numbering / abstract follow as later increments.

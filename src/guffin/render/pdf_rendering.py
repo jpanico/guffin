@@ -50,6 +50,7 @@ from guffin.render.pandoc_rendering import (
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
+from guffin.render.project import ProjectProfile
 from guffin.render.render_options import PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
@@ -145,6 +146,7 @@ def _dump_typst_sources(
 @validate_call
 def render(
     render_bundle: RenderBundle,
+    profile: ProjectProfile,
     filename_stem: str,
     api_endpoint: ApiEndpoint,
     options: PdfRenderOptions,
@@ -165,6 +167,8 @@ def render(
 
     Args:
         render_bundle: The content tree (with its presentation view map) to render.
+        profile: The project profile (project type and bibliographic metadata) describing the kind
+            of work being rendered.
         filename_stem: Output filename stem, used verbatim to derive the output
             path; the caller is responsible for POSIX-safety.
         api_endpoint: Roam Local API endpoint used to fetch image assets.
@@ -184,6 +188,7 @@ def render(
         FileNotFoundError: If ``options.template_dir`` is supplied but does not
             contain ``user_cfg.typ``.
     """
+    logger.debug("rendering PDF; structural_policy=%s", profile.structural_policy)
     output_dir: Final[Path] = options.output_dir
     cache_dir: Final[Path | None] = options.cache_dir
     template_dir: Final[Path | None] = options.template_dir
