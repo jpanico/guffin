@@ -54,7 +54,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `render_bundle.py` — `RenderBundle`: a `VertexTree` (content) paired with its `ViewMap` (presentation), held as separate fields so they travel together while staying decoupled
     - `link.py` — custom `x-guffin` URL scheme for inter-vertex links; `VertexLinkKind`, `VertexLink`, `vertex_link_url()`, `parse_vertex_link()`, `is_vertex_link()`
     - `attribute.py` — normalized model of a Roam attribute assignment (`<attribute>:: <value>, …`): `Attribute` (the named page, carrying a `VertexLink`), the `AttributeValue` discriminated union (`LiteralValue` | `ReferenceValue`, with `AttributeValueKind` and `attribute_value_adapter`), and `AttributeAssignment` pairing an attribute with its ordered values
-  - **`pipeline/` sub-package** (`src/guffin/pipeline/`) — ingest pipeline: source-to-model transcription and text normalization (shared by every use — export, dump, future interchange)
+  - **`transcribe/` sub-package** (`src/guffin/transcribe/`) — the source→model bridge: source-to-model transcription and text normalization (shared by every use — export, dump, future interchange)
     - `roam_md_to_pandoc_md.py` — converts Roam-flavored Markdown strings to Pandoc Markdown; `to_pandoc_md()` is the main entry point
     - `roam_tree_to_guffin.py` — transcribes a `NodeTree` into the guffin render model: `transcribe()` derives the `VertexTree` content (applying `to_pandoc_md()` to all text fields), `build_view_map()` derives the presentation `ViewMap`, and `to_render_bundle()` bundles both into a `RenderBundle`
   - **`render/` sub-package** (`src/guffin/render/`) — output rendering: turns the normalized model into consumable output (document export and terminal display) plus the configuration and bundled resources that drive it
@@ -169,12 +169,12 @@ Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `test
 | Package | May depend on | May NOT depend on |
 |---|---|---|
 | `common/` | stdlib, third-party only | any `guffin` package |
-| `roam/` | `common/` | `guffin` root modules, `model/`, `pipeline/`, `render/`, `cli/` |
-| `model/` | `common/` | `guffin` root modules, `roam/`, `pipeline/`, `render/`, `cli/` |
-| `guffin` (root modules) | `roam/`, `common/`, `model/` | `pipeline/`, `render/`, `cli/` |
-| `pipeline/` | `common/`, `roam/`, `model/`, `guffin` root modules | `render/`, `cli/` |
-| `render/` | `common/`, `roam/`, `model/`, `guffin` root modules | `pipeline/`, `cli/` |
-| `cli/` | `common/`, `roam/`, `model/`, `guffin` root modules, `pipeline/`, `render/` | — |
+| `roam/` | `common/` | `guffin` root modules, `model/`, `transcribe/`, `render/`, `cli/` |
+| `model/` | `common/` | `guffin` root modules, `roam/`, `transcribe/`, `render/`, `cli/` |
+| `guffin` (root modules) | `roam/`, `common/`, `model/` | `transcribe/`, `render/`, `cli/` |
+| `transcribe/` | `common/`, `roam/`, `model/`, `guffin` root modules | `render/`, `cli/` |
+| `render/` | `common/`, `roam/`, `model/`, `guffin` root modules | `transcribe/`, `cli/` |
+| `cli/` | `common/`, `roam/`, `model/`, `guffin` root modules, `transcribe/`, `render/` | — |
 
 No package may take a dependency on `cli/`.
 

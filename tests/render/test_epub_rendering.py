@@ -11,7 +11,7 @@ from guffin.model.vertex import CodeBlockVertex, PageVertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
 from guffin.render.render_options import EpubRenderOptions
-from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
+from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.local_api import ApiEndpoint
 
 from conftest import article5_node_tree

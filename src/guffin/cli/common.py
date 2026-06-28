@@ -36,7 +36,7 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec
 from guffin.roam.node_tree import NodeTree
-from guffin.pipeline.roam_tree_to_guffin import to_render_bundle
+from guffin.transcribe.roam_tree_to_guffin import to_render_bundle
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ def fetch_roam_trees(
     *api_endpoint*, constructs a :class:`~guffin.roam.node_tree.NodeTree`, and optionally
     transcribes it into a :class:`~guffin.model.render_bundle.RenderBundle` (its
     :class:`~guffin.model.vertex_tree.VertexTree` content paired with the presentation
-    :data:`~guffin.model.view.ViewMap`) via :func:`~guffin.pipeline.roam_tree_to_guffin.to_render_bundle`.
+    :data:`~guffin.model.view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
 
     Propagates any exception raised during fetching or transcription; callers are
     responsible for exit behaviour.

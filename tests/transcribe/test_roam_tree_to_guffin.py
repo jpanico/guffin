@@ -24,7 +24,7 @@ from guffin.model.vertex import (
 from guffin.common.code_language import CodeLanguage
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import RoamNode
-from guffin.pipeline.roam_tree_to_guffin import (
+from guffin.transcribe.roam_tree_to_guffin import (
     build_view_map,
     to_attribute_assignment_vertex,
     to_block_quote_vertex,

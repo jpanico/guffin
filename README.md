@@ -175,7 +175,7 @@ guffin/
 │       │   └── attribute.py               # Roam attribute-assignment model: Attribute, LiteralValue,
 │       │                                  #   ReferenceValue, AttributeValue, AttributeAssignment
 │       │
-│       ├── pipeline/                    # Ingest: source → model transcription + normalization (shared)
+│       ├── transcribe/                  # Source → model bridge: transcription + normalization (shared)
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
 │       │   └── roam_tree_to_guffin.py     # NodeTree → guffin render model: transcribe() (VertexTree),
 │       │                                  #   build_view_map() (ViewMap), to_render_bundle()

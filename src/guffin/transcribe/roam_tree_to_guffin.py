@@ -70,7 +70,7 @@ from guffin.model.vertex import (
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
-from guffin.pipeline.roam_md_to_pandoc_md import to_pandoc_md
+from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import (
     DEFAULT_CHILDREN_VIEW_TYPE,
@@ -582,7 +582,7 @@ def to_table(table_tree: NodeTree) -> Table:
     first-column cell, the algorithm follows the single-child chain — each cell's
     sole child is the next-column cell in the same row — collecting cell strings
     until the chain ends.  Each cell's :attr:`~guffin.roam.node.RoamNode.string`
-    is passed through :func:`~guffin.pipeline.roam_md_to_pandoc_md.to_pandoc_md` before
+    is passed through :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md` before
     being stored.
 
     Args:

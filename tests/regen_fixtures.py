@@ -53,7 +53,7 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult
-from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
+from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.node_tree import NodeTree
 
 from conftest import PDF_CREATION_TIMESTAMP

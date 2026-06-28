@@ -16,7 +16,7 @@ from guffin.roam.local_api import Response as LocalApiResponse
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 
-from guffin.pipeline.roam_tree_to_guffin import transcribe
+from guffin.transcribe.roam_tree_to_guffin import transcribe
 
 from conftest import (
     FIXTURES_MD_DIR,

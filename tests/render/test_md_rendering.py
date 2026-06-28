@@ -6,7 +6,7 @@ from typing import Final
 from guffin.common.filenames import shell_safe_filename
 from guffin.render.md_rendering import render
 from guffin.render.render_options import MarkdownRenderOptions
-from guffin.pipeline.roam_tree_to_guffin import build_view_map, transcribe
+from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.model.render_bundle import RenderBundle
 from guffin.roam.local_api import ApiEndpoint
 

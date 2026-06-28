@@ -1,7 +1,7 @@
 """Render a :class:`~guffin.vertex_tree.VertexTree` to an EPUB 3 file via the Pandoc object model.
 
 Converts the normalized vertex tree produced by
-:func:`~guffin.pipeline.roam_tree_to_guffin.transcribe` into a Panflute
+:func:`~guffin.transcribe.roam_tree_to_guffin.transcribe` into a Panflute
 :class:`~panflute.Doc` via :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`,
 then exports the document to EPUB by serializing the Doc to Pandoc JSON and invoking Pandoc
 (its ``epub3`` writer) via :mod:`pypandoc`.
