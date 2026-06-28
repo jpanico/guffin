@@ -209,6 +209,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `GUFFIN_EXPORT_DIR` — output directory for `export-roam-tree`
 - `GUFFIN_CACHE_DIR` — directory for caching downloaded Cloud Firestore assets (`export-roam-tree`)
 - `GUFFIN_PDF_TEMPLATE_DIR` — directory containing a `user_cfg.typ` override for PDF styling (`export-roam-tree --format pdf`)
-- `GUFFIN_DUMP_PANDOC_AST` — set to any non-empty value to dump the Pandoc JSON AST to `<output-dir>/<target>.pandoc.json` before the Pandoc conversion step (`export-roam-tree`, both formats)
+- `GUFFIN_DUMP_PANDOC_AST` — set to any non-empty value to dump the Pandoc JSON AST to `<output-dir>/<target>.pandoc.json` before the Pandoc conversion step (`export-roam-tree`, all formats)
+- `GUFFIN_DUMP_TYPST` — set to any non-empty value to dump the intermediate Typst sources `<output-dir>/<target>.body.typ` (bare body) and `<output-dir>/<target>.full.typ` (with template applied) for debugging (`export-roam-tree --format pdf`); no effect on the produced PDF
 - `GUFFIN_PDF_CREATION_TIMESTAMP` — UNIX timestamp passed to Typst via Pandoc `--pdf-engine-opt=--creation-timestamp` to pin the PDF creation date for byte-reproducible output (`export-roam-tree --format pdf`); used by the live PDF fixture test
 - `GUFFIN_LIVE_TESTS` — set to any non-empty value to enable live tests (e.g. `GUFFIN_LIVE_TESTS=1`); requires Roam Desktop running locally

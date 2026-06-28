@@ -309,7 +309,7 @@ export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-tok
 
 #### Environment variables
 
-All options can be supplied via environment variables:
+The connection and path options can be supplied via environment variables (the `--format`, `--type`, `--bundle/--no-bundle`, and `--suppress-attributes` flags are not env-backed and must be passed on the command line):
 
 ```bash
 export GUFFIN_ROAM_LOCAL_API_PORT=3333
@@ -318,6 +318,7 @@ export GUFFIN_ROAM_API_TOKEN=<your-bearer-token>
 export GUFFIN_EXPORT_DIR=~/docs
 export GUFFIN_CACHE_DIR=~/.cache/roam        # optional: skip re-downloading unchanged images
 export GUFFIN_PDF_TEMPLATE_DIR=~/mytheme     # optional: user_cfg.typ override for --format pdf
+export GUFFIN_DUMP_PANDOC_AST=1              # optional: dump the Pandoc JSON AST before conversion (debug)
 
 export-roam-tree "Test Article"                      # Markdown bundle (default)
 export-roam-tree "Test Article" --format pdf         # PDF
