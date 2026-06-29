@@ -24,8 +24,9 @@ from typing import Final, TypeGuard, assert_never
 import regex
 from pydantic import validate_call
 
-from rich.console import Group
+from rich.console import Group, RenderableType
 from rich.markup import escape as markup_escape
+from rich.padding import Padding
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
@@ -389,9 +390,10 @@ _ATTRIBUTES_KEY_STYLE: Final[str] = "#1e90ff"
 def _attributes_panel(assignments: list[AttributeAssignment]) -> Panel:
     """Build the light-blue 'Attributes' sub-panel summarising a vertex's attribute assignments.
 
-    Each assignment renders as a ``<name>:: <value>, …`` line, with reference values shown as
-    ``#<name>`` and literal values as their text.  The attribute key is rendered in a deeper,
-    more-saturated blue (:data:`_ATTRIBUTES_KEY_STYLE`) than its values to set it apart.
+    Each assignment renders in Roam-agnostic notation as ``<name> = <value>, …``, with reference
+    values shown as ``[<page-name>](<page-uid>)`` and literal values as their text.  The attribute
+    key is rendered in a deeper, more-saturated blue (:data:`_ATTRIBUTES_KEY_STYLE`) than its values
+    to set it apart.
 
     Args:
         assignments: The vertex's folded attribute assignments.
@@ -403,10 +405,12 @@ def _attributes_panel(assignments: list[AttributeAssignment]) -> Panel:
     for index, assignment in enumerate(assignments):
         if index > 0:
             body.append("\n")
-        body.append(f"{assignment.attribute.name}:: ", style=_ATTRIBUTES_KEY_STYLE)
+        body.append(assignment.attribute.name, style=_ATTRIBUTES_KEY_STYLE)
+        body.append(" = ")
         body.append(
             ", ".join(
-                value.value if isinstance(value, LiteralValue) else f"#{value.name}" for value in assignment.values
+                value.value if isinstance(value, LiteralValue) else f"[{value.name}]({value.link.uid})"
+                for value in assignment.values
             )
         )
     return Panel(
@@ -414,6 +418,7 @@ def _attributes_panel(assignments: list[AttributeAssignment]) -> Panel:
         title="Attributes",
         border_style=_ATTRIBUTES_PANEL_STYLE,
         style=_ATTRIBUTES_PANEL_STYLE,
+        padding=(0, 2),
         expand=False,
     )
 
@@ -499,9 +504,11 @@ def build_vertex_panel(
     text_props: Final[list[Text]] = [ren for ren in prop_renderings if isinstance(ren, Text)]
     table_props: Final[list[Table]] = [ren for ren in prop_renderings if isinstance(ren, Table)]
     meta_line: Final[Text] = Text("  ").join(text_props) if text_props else Text("")
-    extras: Final[list[Table | Panel]] = [*table_props]
+    extras: Final[list[RenderableType]] = [*table_props]
     if vertex.attribute_assignments:
-        extras.append(_attributes_panel(vertex.attribute_assignments))
+        # A blank line above sets the sub-panel apart from the metadata line; none below, since it is
+        # the last element and the parent panel's bottom border already closes it off.
+        extras.append(Padding(_attributes_panel(vertex.attribute_assignments), (1, 0, 0, 0)))
     content: Final[Text | Group] = Group(meta_line, *extras) if extras else meta_line
     return Panel(content, title=title, expand=False)
 
