@@ -23,7 +23,7 @@ export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <ou
 # --format markdown (default): writes <target>.mdbundle/ (--bundle) or <target>.md (--no-bundle)
 # --format pdf: writes <target>.pdf via Pandoc + Typst; requires typst on PATH
 # --format epub: writes <target>.epub (EPUB 3) via Pandoc; requires pandoc on PATH (no typst)
-# --type (-T): project profile (default/book/manuscript); plumbed to all renderers, structural effects not yet applied
+# --type (-T): project profile (default/book/manuscript); plumbed to all renderers (EPUB split-level applied; remaining structural/metadata effects not yet applied)
 # --template-dir: directory containing user_cfg.typ overrides for PDF styling (pdf only)
 
 # Run the full check pipeline (format + lint + type check + tests) in one shot:
@@ -60,7 +60,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `roam_tree_to_guffin.py` — transcribes a `NodeTree` into the guffin render model: `transcribe()` derives the `VertexTree` content (applying `to_pandoc_md()` to all text fields), `build_view_map()` derives the presentation `ViewMap`, and `to_render_bundle()` bundles both into a `RenderBundle`
   - **`render/` sub-package** (`src/guffin/render/`) — output rendering: turns the normalized model into consumable output (document export and terminal display) plus the configuration and bundled resources that drive it
     - `render_options.py` — immutable export settings carried from a front end to a rendering entry point: `OutputFormat` (markdown/pdf/epub enum discriminator), `RenderOptions` (format-independent base: `output_dir`, `cache_dir`, `suppress_attributes`, `dump_pandoc_ast`), and the per-format subclasses `MarkdownRenderOptions` (`bundle`), `PdfRenderOptions` (`template_dir`), and `EpubRenderOptions` (no extra fields yet)
-    - `project.py` — the *kind* of work being rendered, modeled on Quarto's `project: type:` (concept only — no Quarto artifacts): `ProjectType` (default/book/manuscript discriminator), `Division` (section/chapter/part), the `ProjectProfile` base + per-type subclasses `DefaultProfile`/`BookProfile`/`ManuscriptProfile`, `StructuralPolicy` (format-independent structural directives a profile resolves to), and `profile_for()` (maps a `ProjectType` to its default-valued profile). Orthogonal to `OutputFormat`; a `profile: ProjectProfile` is plumbed into every render entry point (via the CLI `--type` flag), but its structural/metadata effects are not yet applied to output
+    - `project.py` — the *kind* of work being rendered, modeled on Quarto's `project: type:` (concept only — no Quarto artifacts): `ProjectType` (default/book/manuscript discriminator), `TopLevelDivision` (section/chapter/part), the `ProjectProfile` base + per-type subclasses `DefaultProfile`/`BookProfile`/`ManuscriptProfile`, `StructuralPolicy` (format-independent structural directives a profile resolves to), and `profile_for()` (maps a `ProjectType` to its default-valued profile). Orthogonal to `OutputFormat`; a `profile: ProjectProfile` is plumbed into every render entry point (via the CLI `--type` flag). The first structural effect is applied — EPUB derives `--split-level` from `top_level_division` — but the remaining structural effects (PDF chapters, numbering, title page) and all metadata effects are not yet applied to output
     - `image_fetch.py` — Pandoc-free image-asset fetching; `ImageRef` (UID + on-disk path + `ImageSize`) and `fetch_images()` (fetches a `VertexTree`'s Cloud Firestore image assets to a local dir, returning `{uid: ImageRef}`)
     - `pandoc_rendering.py` — shared Pandoc/Panflute rendering utilities; `vertex_tree_to_pandoc()` builds a Panflute `Doc` from a `VertexTree` (batch-parsing inline Pandoc Markdown via a single Pandoc call)
     - `md_rendering.py` — renders a `VertexTree` to Markdown: invokes `pandoc_rendering`, serializes to Pandoc JSON, converts to GFM via Pandoc, writes a plain `.md` or `.mdbundle/` directory
@@ -199,7 +199,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `docs/roam-local-api.md` — Roam Local API reference (endpoints, request/response shapes)
 - `docs/roam-querying.md` — Datalog query patterns used to fetch Roam nodes
 - `docs/roam-schema.md` — Roam Datomic schema reference (attributes, value types, cardinality)
-- `docs/processing_pipeline.md` — high-level overview of the core data processing pipeline (fetch → model)
+- `docs/processing_pipeline.md` — high-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages; the render stage is detailed in `render-pipeline.md`
 - `docs/render-pipeline.md` — the render layer (model → output two-stage pipeline) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`
 
 ## Environment Variables

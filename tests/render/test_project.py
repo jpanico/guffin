@@ -5,10 +5,10 @@ from typing import Final
 from guffin.render.project import (
     BookProfile,
     DefaultProfile,
-    Division,
     ManuscriptProfile,
     ProjectProfile,
     ProjectType,
+    TopLevelDivision,
     profile_for,
 )
 
@@ -19,7 +19,7 @@ class TestStructuralPolicy:
     def test_default_is_article_like(self) -> None:
         """Default: sections, no title page, unnumbered, no abstract."""
         policy: Final = DefaultProfile().structural_policy
-        assert policy.top_level_division is Division.SECTION
+        assert policy.top_level_division is TopLevelDivision.SECTION
         assert not policy.emit_title_page
         assert not policy.number_sections
         assert not policy.emit_abstract
@@ -27,19 +27,19 @@ class TestStructuralPolicy:
     def test_book_uses_chapters(self) -> None:
         """Book: chapters, title page, numbered."""
         policy: Final = BookProfile().structural_policy
-        assert policy.top_level_division is Division.CHAPTER
+        assert policy.top_level_division is TopLevelDivision.CHAPTER
         assert policy.emit_title_page
         assert policy.number_sections
 
     def test_book_with_parts_promotes_top_level(self) -> None:
         """A book with parts makes the top-level division a part."""
         policy: Final = BookProfile(with_parts=True).structural_policy
-        assert policy.top_level_division is Division.PART
+        assert policy.top_level_division is TopLevelDivision.PART
 
     def test_manuscript_emits_abstract(self) -> None:
         """Manuscript: sections, title block, unnumbered, abstract."""
         policy: Final = ManuscriptProfile().structural_policy
-        assert policy.top_level_division is Division.SECTION
+        assert policy.top_level_division is TopLevelDivision.SECTION
         assert policy.emit_abstract
         assert not policy.number_sections
 
@@ -85,4 +85,4 @@ class TestProfileFor:
 
         result: Final = accept(profile_for(ProjectType.BOOK))
         assert isinstance(result, BookProfile)
-        assert result.structural_policy.top_level_division is Division.CHAPTER
+        assert result.structural_policy.top_level_division is TopLevelDivision.CHAPTER

@@ -3,33 +3,18 @@
 How the **render** layer turns the normalized model into output, and where **project types**
 (`book` vs. `article` vs. `manuscript`) fit into that.
 
-This is the downstream companion to [processing_pipeline.md](processing_pipeline.md): that doc
-covers *fetch → model* (Roam → `VertexTree`); this one covers *model → output* and the
-project-type model layered on top of it.
+This is the downstream companion to [processing_pipeline.md](processing_pipeline.md), which gives the
+high-level overview of the whole pipeline and where the render layer sits among the sub-packages.
+This doc goes deep on the *model → output* render layer and the project-type model layered on top of
+it.
 
 > Status note: the project-type model (`render/project.py`) is defined and **plumbed** — a
-> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point — but its
-> structural and metadata effects are **not yet applied** to the output. This doc describes both the
-> current shape and the intended design so the remaining wiring has a spec to follow. Sections that
-> describe planned behavior are marked _(planned)_.
-
-
-## Where the render layer sits
-
-The package layering is a directional pipeline:
-
-```
-roam/        →   transcribe/   →   model/      →   render/
-(source)         (source→model)    (the content)   (model→output)
-```
-
-- `transcribe/` produces a `RenderBundle` (a `VertexTree` of content + a `ViewMap` presentation
-  overlay). It is **project-type-agnostic**: the same transcribed tree becomes a book or an article
-  purely by how it is *rendered*.
-- `render/` consumes that `RenderBundle` and emits Markdown, PDF, EPUB (export) or a Rich terminal
-  tree (dump).
-
-`transcribe/` and `render/` are sibling layers with **no code cross-dependency**.
+> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. The first
+> structural effect is applied: EPUB derives its `--split-level` from `top_level_division`. The
+> remaining structural effects (PDF chapters, numbering, title page) and all metadata effects are
+> **not yet applied**. This doc describes both the current shape and the intended design so the
+> remaining wiring has a spec to follow. Sections that describe planned behavior are marked
+> _(planned)_.
 
 
 ## The render layer is a two-stage pipeline
@@ -148,7 +133,7 @@ invocation time**, and the mechanism differs per format:
 
 | Policy directive | PDF (Typst / Bergfink) | EPUB (Pandoc) |
 |---|---|---|
-| chapters vs. sections | Bergfink template variable (Typst ignores `--top-level-division`) | `--split-level` |
+| chapters vs. sections | Bergfink template variable (Typst ignores `--top-level-division`) | `--split-level` ✅ |
 | numbering | template / `--number-sections` | `--number-sections` |
 | title page | Bergfink `titlepage.typ` partial | auto-generated from metadata |
 
@@ -156,6 +141,15 @@ So the structural half **cannot** be absorbed entirely into stage 1: at minimum 
 (`--split-level`) and the PDF path (a Bergfink template variable) must consult the policy. The
 heaviest single piece is teaching the Bergfink Typst template a "book mode," which is template work,
 separate from the Python wiring.
+
+The EPUB `--split-level` is wired: `epub_rendering._split_level_for()` maps `top_level_division` to a
+Pandoc split level (valid range 1–6). Pandoc splits an EPUB into separate content files at the chosen
+heading level, so the split must fall where a standalone "chapter" file begins. A book *with parts*
+puts chapters at heading level 2 (parts occupy level 1) and therefore splits at level 2; every other
+division keeps its top-level unit at level 1 and splits there. (Pandoc has no level-0 / "never split"
+option, so an article and a book-without-parts produce the same level-1 chunking — the
+section-vs-chapter distinction for those is a labelling/numbering concern, surfaced by later
+increments rather than by chunking.)
 
 ### Summary
 
@@ -173,7 +167,9 @@ separate from the Python wiring.
    (`render/{md,pdf,epub}_rendering.py::render`) now takes a `profile: ProjectProfile` argument,
    threaded through `cli/export_roam_tree.py::_render`. Nothing reads `StructuralPolicy` to shape
    output yet — the renderers currently only log it.
-2. **First behavior** _(next)_ — wire `top_level_division` only. Start with EPUB (`--split-level`
-   derived from the policy) as a quick, verifiable slice, then the PDF Bergfink "book mode" as the
-   visually-compelling second increment.
+2. **First behavior — EPUB split-level done.** `epub_rendering` derives `--split-level` from
+   `top_level_division` (`_split_level_for()`): a parts-based book splits at level 2, everything else
+   at level 1. The PDF Bergfink "book mode" (chapters vs. sections) is the next, visually-compelling
+   increment — and the heaviest, since Typst ignores `--top-level-division` and the switch lives in
+   the template.
 3. Title page / numbering / abstract follow as later increments.

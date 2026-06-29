@@ -242,7 +242,7 @@ guffin/
 │   └── refresh-mdbundle-folders.sh        # Refresh existing .mdbundle folders (macOS)
 │
 ├── docs/
-│   ├── processing_pipeline.md             # High-level overview of the data pipeline (fetch → model)
+│   ├── processing_pipeline.md             # High-level overview of the whole pipeline (fetch → transcribe → render)
 │   ├── render-pipeline.md                 # Render layer (model → output) + the project-type model
 │   ├── roam-local-api.md                  # Roam Local API (JSON over HTTP) reference
 │   ├── roam-md.md                         # Roam-flavored Markdown vs. CommonMark differences
@@ -305,7 +305,7 @@ export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-tok
 
 `--bundle/--no-bundle` applies only to Markdown and `--template-dir` only to PDF; each is ignored by the other formats. `--cache-dir` (cache downloaded images across runs) and `--suppress-attributes` (omit Roam attribute assignments from the output) apply to all three formats.
 
-`--type default|book|manuscript` (default `default`) selects the **project profile** — the kind of work being produced — independently of `--format` (see [docs/render-pipeline.md](docs/render-pipeline.md)). The profile is currently plumbed through to every renderer but its structural effects (chapters vs. sections, title page, numbering) are not yet applied to the output.
+`--type default|book|manuscript` (default `default`) selects the **project profile** — the kind of work being produced — independently of `--format` (see [docs/render-pipeline.md](docs/render-pipeline.md)). The profile is plumbed through to every renderer; so far its only applied effect is the EPUB split level (a parts-based book splits into separate files at the chapter level). The remaining structural effects (PDF chapters, numbering, title page) are not yet applied to the output.
 
 #### Environment variables
 
@@ -393,7 +393,7 @@ See [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) for detailed instructions a
 
 ## Documentation
 
-- [docs/processing_pipeline.md](docs/processing_pipeline.md) — High-level overview of the data pipeline (fetch → model)
+- [docs/processing_pipeline.md](docs/processing_pipeline.md) — High-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages
 - [docs/render-pipeline.md](docs/render-pipeline.md) — The render layer (model → output two-stage pipeline) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`)
 - [docs/roam-local-api.md](docs/roam-local-api.md) — Roam Local API reference (JSON over HTTP)
 - [docs/roam-md.md](docs/roam-md.md) — Roam-flavored Markdown vs. CommonMark differences

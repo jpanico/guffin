@@ -7,10 +7,10 @@ from typing import Final
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import CodeBlockVertex, PageVertex
+from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
-from guffin.render.project import DefaultProfile
+from guffin.render.project import BookProfile, DefaultProfile
 from guffin.render.render_options import EpubRenderOptions
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.local_api import ApiEndpoint
@@ -131,3 +131,53 @@ class TestRenderEpub:
                 zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
             )
             assert "background-color: #FF851C" not in chapter
+
+
+def _multi_level_bundle() -> RenderBundle:
+    """A page with two level-1 headings, each containing a level-2 heading (for split tests)."""
+    page: Final[PageVertex] = PageVertex(uid="page00001", title="Doc", children=["chap00001", "chap00002"])
+    chap1: Final[HeadingVertex] = HeadingVertex(
+        uid="chap00001", text="Chapter One", heading_level=1, children=["sec000001"]
+    )
+    sec1: Final[HeadingVertex] = HeadingVertex(uid="sec000001", text="Section A", heading_level=2)
+    chap2: Final[HeadingVertex] = HeadingVertex(
+        uid="chap00002", text="Chapter Two", heading_level=1, children=["sec000002"]
+    )
+    sec2: Final[HeadingVertex] = HeadingVertex(uid="sec000002", text="Section B", heading_level=2)
+    return RenderBundle(content=VertexTree(tree_vertices=[page, chap1, sec1, chap2, sec2]))
+
+
+def _content_file_count(epub_path: Path) -> int:
+    """Count the EPUB's split content documents (``chNNN.xhtml`` spine entries)."""
+    with zipfile.ZipFile(epub_path) as zf:
+        return sum(1 for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name)
+
+
+class TestSplitLevel:
+    """The EPUB ``--split-level`` is derived from the profile's top-level division.
+
+    Verified through the public ``render`` by counting the EPUB's split content files: an article
+    (sections) and a book without parts both keep their top-level unit at heading level 1 and split
+    there (equal chunking), while a book *with* parts puts chapters at level 2 and splits deeper.
+    """
+
+    def test_split_level_follows_top_level_division(self, tmp_path: Path) -> None:
+        """SECTION and CHAPTER chunk identically (level 1); a parts-based book chunks deeper."""
+        bundle: Final[RenderBundle] = _multi_level_bundle()
+        for stem, profile in (
+            ("article", DefaultProfile()),  # SECTION -> split-level 1
+            ("book", BookProfile()),  # CHAPTER -> split-level 1
+            ("parts", BookProfile(with_parts=True)),  # PART -> split-level 2
+        ):
+            render(
+                bundle,
+                profile=profile,
+                filename_stem=stem,
+                api_endpoint=_ENDPOINT,
+                options=EpubRenderOptions(output_dir=tmp_path),
+            )
+        article: Final[int] = _content_file_count(tmp_path / "article.epub")
+        book: Final[int] = _content_file_count(tmp_path / "book.epub")
+        parts: Final[int] = _content_file_count(tmp_path / "parts.epub")
+        assert article == book  # both split at heading level 1
+        assert parts > book  # the parts-based book also splits at level 2

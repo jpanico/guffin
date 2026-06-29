@@ -1,60 +1,68 @@
-# Basic processing pipeline
+# Guffin processing pipeline
 
-A high-level overview of the core data processing pipeline that is utilized by the scripts in this project.
+A high-level overview of how Guffin turns a Roam page or node subtree into a self-contained
+document. The pipeline is a **directional flow across sub-packages**: fetch the Roam graph,
+transcribe it into a normalized content model, then render that model to output.
 
-1. `FetchSpec`: user supplies a qualifier (`NodeFetchAnchor`) that identifies the anchor (starting) node in the Roam Datomic query, as well as some join semantics (`include_refs`)
-2. *"Raw" result*: `FetchSpec` is used to query the Roam Datomic DB., which results in a list of Datomic pull-blocks (`NodeFetchResult.raw_result`)
-3. `NodeNetwork`: Each raw result pull-block is parsed into a `RoamNode`, validating it using the Pydantic model specified on `RoamNode`
-4. `NodeTree`: build a `NodeTree` (DAG) from `NodeNetwork`, using the `RoamNode` identified in `NodeFetchAnchor` as the root of the tree. Apply all referential integrity constraints specified in the Pydantic `@model_validator` `_validate_is_tree`.
-5. `VertexTree`: "transcribe" the `NodeTree` into a Roam agnostic `VertexTree`, via `roam_transcribe.py::transcribe`. During transcription, Roam flavored Markdown (Roamdown) is translated into Pandoc Markdown.
-6. **Panflute Doc** (`pandoc_rendering.py`): shared by both output paths. `vertex_tree_to_pandoc()` walks the `VertexTree`, batch-parses all inline Pandoc Markdown text in a single Pandoc subprocess call (`parse_inline_md`), and builds a Panflute `Doc` (in-memory Pandoc AST). The `Doc` is then serialized to a Pandoc JSON string via `pf.dump()`.
-7. **Output** (two mutually exclusive paths, controlled by `--format`):
-   - **Markdown** (`md_rendering.py`): invoke Pandoc via `pypandoc` to convert the Pandoc JSON to a GFM string, then either write a plain `.md` file (`--no-bundle`) or fetch Cloud Firestore image assets and write a self-contained `.mdbundle/` directory (`--bundle`).
-   - **PDF** (`pdf_rendering.py`): fetch Cloud Firestore image assets, then invoke Pandoc + Typst via `pypandoc` to convert the Pandoc JSON directly to a `.pdf` file.
 
-## Diagram
+## The pipeline at a glance
+
+```mermaid
+flowchart LR
+    ROAM["<b>roam/</b><br/><i>fetch source data</i>"]
+    TRANSCRIBE["<b>transcribe/</b><br/><i>source → model</i>"]
+    MODEL["<b>model/</b><br/><i>source-agnostic Guffin model</i>"]
+    RENDER["<b>render/</b><br/><i>model → output</i>"]
+
+    ROAM --> TRANSCRIBE --> MODEL --> RENDER
+```
+
+- **Fetch (`roam/`)** — a user qualifier (a page title or node UID) becomes a `NodeFetchAnchor` /
+  `NodeFetchSpec`, which drives a Datalog pull-block query against the Roam Datomic DB through the
+  Roam Local API. The raw results are parsed into validated `RoamNode` models and assembled into a
+  `NodeTree` (a rooted DAG with referential-integrity validation).
+- **Transcribe (`transcribe/`)** — `to_render_bundle()` converts the Roam-specific `NodeTree` into a
+  Roam-agnostic `RenderBundle`: a `VertexTree` of normalized content paired with a `ViewMap`
+  presentation overlay. Roam-flavored Markdown (Roamdown) is translated to Pandoc Markdown here.
+- **Render (`render/`)** — the `RenderBundle`, together with a `ProjectProfile` (what *kind* of work)
+  and `RenderOptions` (how / where to output), is rendered to Markdown, PDF, or EPUB. This stage is
+  itself a two-stage Panflute → Pandoc pipeline; see [render-pipeline.md](render-pipeline.md).
+
+The flow is one-directional and the layers don't reach back: each stage depends only on those to its
+left, with `model/` as the shared content layer that `transcribe/` produces and `render/` consumes.
+`transcribe/` and `render/` are siblings with **no code cross-dependency**. Orthogonal to all of
+this, the `cli/` entry points orchestrate the flow and `common/` provides cross-cutting helpers.
+
+
+## Detailed data flow
+
+The artifacts that flow through the fetch and transcribe stages, ending at the `RenderBundle` that
+the render layer consumes. (The render stage is expanded in [render-pipeline.md](render-pipeline.md).)
 
 ```mermaid
 flowchart TD
-    USER["<b>User Input</b><br/>qualifier string<br/><i>page title or node UID</i>"]
-
+    USER["<b>User input</b><br/>qualifier string<br/><i>page title or node UID</i>"]
     ANCHOR["<b>NodeFetchAnchor</b><br/>qualifier + kind<br/><i>PAGE_TITLE | NODE_UID</i>"]
-
-    SPEC["<b>NodeFetchSpec</b><br/>anchor · include_refs · include_node_tree"]
-
+    SPEC["<b>NodeFetchSpec</b><br/>anchor · include_refs"]
     QUERY["<b>Roam Datomic DB</b><br/>Datalog pull-block query<br/><i>via Roam Local API</i>"]
-
-    RAW["<b>Raw Result</b><br/>NodeFetchResult.raw_result<br/><i>list[list[dict]] — one pull-block per row</i>"]
-
-    NETWORK["<b>NodeNetwork</b><br/>list[RoamNode]<br/><i>Pydantic model validation per pull-block</i>"]
-
+    RAW["<b>Raw result</b><br/>NodeFetchResult.raw_result<br/><i>list of pull-blocks</i>"]
+    NETWORK["<b>NodeNetwork</b><br/>RoamNode records<br/><i>Pydantic validation per pull-block</i>"]
     TREE["<b>NodeTree</b><br/>rooted DAG<br/><i>referential integrity via _validate_is_tree</i>"]
+    BUNDLE["<b>RenderBundle</b><br/>VertexTree + ViewMap<br/><i>Roamdown → Pandoc Markdown · roam_tree_to_guffin.py</i>"]
+    RENDER["<b>render/</b><br/>Markdown · PDF · EPUB<br/><i>+ ProjectProfile + RenderOptions · see render-pipeline.md</i>"]
+    OUT["<b>.md / .mdbundle · .pdf · .epub</b>"]
 
-    VTREE["<b>VertexTree</b><br/>Roam-agnostic vertex tree<br/><i>Roamdown → Pandoc Markdown  ·  roam_transcribe.py</i>"]
-
-    PANFLUTE["<b>Panflute Doc</b><br/>Pandoc AST in memory<br/><i>inline Pandoc Markdown batch-parsed  ·  pandoc_rendering.py</i>"]
-
-    PANDOC_JSON["<b>Pandoc JSON</b><br/>serialized AST string<br/><i>pf.dump()</i>"]
-
-    MDTEXT["<b>GFM string</b><br/><i>pypandoc → Pandoc  ·  md_rendering.py</i>"]
-
-    BUNDLE["<b>.mdbundle/</b><br/>GFM + fetched images"]
-
-    MDFILE["<b>.md file</b><br/>plain GFM"]
-
-    PDF["<b>.pdf file</b><br/><i>pypandoc → Pandoc + Typst  ·  pdf_rendering.py</i>"]
-
-    USER    -->|"qualify()"| ANCHOR
+    USER    -->|"NodeFetchAnchor(qualifier)"| ANCHOR
     ANCHOR  -->|"NodeFetchSpec(...)"| SPEC
-    SPEC    -->|"FetchRoamNodes.fetch_roam_nodes()"| QUERY
+    SPEC    -->|"fetch_roam_nodes()"| QUERY
     QUERY   -->|"raw JSON response"| RAW
     RAW     -->|"RoamNode.model_validate() × N"| NETWORK
-    NETWORK -->|"build_tree(anchor)"| TREE
-    TREE    -->|"transcribe()"| VTREE
-    VTREE   -->|"vertex_tree_to_pandoc()"| PANFLUTE
-    PANFLUTE -->|"pf.dump()"| PANDOC_JSON
-    PANDOC_JSON -->|"--format markdown"| MDTEXT
-    PANDOC_JSON -->|"--format pdf"| PDF
-    MDTEXT  -->|"--bundle"| BUNDLE
-    MDTEXT  -->|"--no-bundle"| MDFILE
+    NETWORK -->|"NodeTree.build(anchor)"| TREE
+    TREE    -->|"to_render_bundle()"| BUNDLE
+    BUNDLE  -->|"render(...)"| RENDER
+    RENDER  --> OUT
 ```
+
+The `cli/` layer wires these together end to end: `fetch_roam_trees()` (in `cli/common.py`) runs the
+fetch and transcribe stages and returns a `RenderBundle`, which `export-roam-tree` then hands to the
+format-specific renderer selected by `--format`.

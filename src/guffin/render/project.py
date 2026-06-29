@@ -13,7 +13,8 @@ maps onto its own mechanism (PDF document class / EPUB split level / etc.).
 Public symbols:
 
 - **Enumerations**: :class:`ProjectType` — the supported project types (default / book / manuscript);
-  :class:`Division` — the top-level structural division a project's highest headings represent.
+  :class:`TopLevelDivision` — the top-level structural division a project's highest headings
+  represent.
 - **Models**: :class:`StructuralPolicy` — the format-independent structural directives derived from a
   profile; :class:`ProjectProfile` — the format-independent base profile; and the per-type subclasses
   :class:`DefaultProfile`, :class:`BookProfile`, :class:`ManuscriptProfile`.
@@ -41,7 +42,7 @@ class ProjectType(enum.StrEnum):
     MANUSCRIPT = "manuscript"
 
 
-class Division(enum.StrEnum):
+class TopLevelDivision(enum.StrEnum):
     """The structural division a project's top-level (level-1) headings represent.
 
     Mirrors Pandoc's ``--top-level-division`` rungs; each renderer maps it onto its own
@@ -73,7 +74,7 @@ class StructuralPolicy(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
-    top_level_division: Division = Field(..., description="What a level-1 heading becomes.")
+    top_level_division: TopLevelDivision = Field(..., description="What a level-1 heading becomes.")
     emit_title_page: bool = Field(..., description="Render a standalone title page (and TOC).")
     number_sections: bool = Field(..., description="Number the divisions.")
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
@@ -122,7 +123,7 @@ class DefaultProfile(ProjectProfile):
     def structural_policy(self) -> StructuralPolicy:
         """Sections, no title page, unnumbered, no abstract."""
         return StructuralPolicy(
-            top_level_division=Division.SECTION,
+            top_level_division=TopLevelDivision.SECTION,
             emit_title_page=False,
             number_sections=False,
             emit_abstract=False,
@@ -147,7 +148,7 @@ class BookProfile(ProjectProfile):
     def structural_policy(self) -> StructuralPolicy:
         """Chapters (or parts), a title page + TOC, numbered, no abstract."""
         return StructuralPolicy(
-            top_level_division=Division.PART if self.with_parts else Division.CHAPTER,
+            top_level_division=TopLevelDivision.PART if self.with_parts else TopLevelDivision.CHAPTER,
             emit_title_page=True,
             number_sections=True,
             emit_abstract=False,
@@ -173,7 +174,7 @@ class ManuscriptProfile(ProjectProfile):
     def structural_policy(self) -> StructuralPolicy:
         """Sections, a title block, unnumbered, with an abstract."""
         return StructuralPolicy(
-            top_level_division=Division.SECTION,
+            top_level_division=TopLevelDivision.SECTION,
             emit_title_page=True,
             number_sections=False,
             emit_abstract=True,

@@ -54,7 +54,7 @@ from guffin.render.pandoc_rendering import (
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
-from guffin.render.project import ProjectProfile
+from guffin.render.project import ProjectProfile, TopLevelDivision
 from guffin.render.render_options import EpubRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
@@ -91,6 +91,23 @@ def _callout_icons_dir() -> Path:
         return resources_path
 
 
+def _split_level_for(division: TopLevelDivision) -> int:
+    """Return the Pandoc EPUB ``--split-level`` for a top-level *division*.
+
+    Pandoc splits an EPUB into separate content files at headings of this level (valid range 1-6).
+    The split should fall on the heading level where a standalone "chapter" unit begins: a book
+    with parts puts chapters at level 2 (parts occupy level 1), so it splits at 2; every other
+    division keeps the top-level unit at level 1 and splits there.
+
+    Args:
+        division: The top-level structural division the highest headings represent.
+
+    Returns:
+        The ``--split-level`` value: ``2`` for :attr:`TopLevelDivision.PART`, otherwise ``1``.
+    """
+    return 2 if division is TopLevelDivision.PART else 1
+
+
 @validate_call
 def render(
     render_bundle: RenderBundle,
@@ -109,12 +126,18 @@ def render(
     page), serializes it to Pandoc JSON, and invokes Pandoc's ``epub3`` writer via :mod:`pypandoc`
     to produce the EPUB.  The temporary image directory is removed after Pandoc completes.
 
+    The EPUB is split into separate content files at the heading level given by ``--split-level``,
+    derived from ``profile``'s structural policy: a book with parts (chapters at heading level 2)
+    splits at level 2, every other project type splits at level 1 so each top-level heading begins
+    a new file.
+
     Pandoc must be installed and on ``PATH``.
 
     Args:
         render_bundle: The content tree (with its presentation view map) to render.
         profile: The project profile (project type and bibliographic metadata) describing the kind
-            of work being rendered.
+            of work being rendered.  Its structural policy's ``top_level_division`` selects the
+            EPUB ``--split-level``.
         filename_stem: Output filename stem, used verbatim to derive the output path; the caller
             is responsible for POSIX-safety.
         api_endpoint: Roam Local API endpoint used to fetch image assets.
@@ -128,6 +151,7 @@ def render(
         RuntimeError: If Pandoc is not found, or if the Pandoc conversion fails.
     """
     logger.debug("rendering EPUB; structural_policy=%s", profile.structural_policy)
+    split_level: Final[int] = _split_level_for(profile.structural_policy.top_level_division)
     output_dir: Final[Path] = options.output_dir
     cache_dir: Final[Path | None] = options.cache_dir
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
@@ -169,6 +193,7 @@ def render(
                 f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
                 f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
                 f"--css={epub_dir / _EPUB_STYLESHEET}",
+                f"--split-level={split_level}",
             ],
         )
 
