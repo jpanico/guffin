@@ -91,7 +91,6 @@ from guffin.common.geometry import ImageSize
 from guffin.common.table import HAlign
 from guffin.model.attribute import AttributeAssignment, ReferenceValue
 from guffin.model.vertex import (
-    AttributeAssignmentVertex,
     BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
@@ -316,22 +315,39 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     return f"{attribute_markup}: {', '.join(parts)}"
 
 
-def _flowing_text(vertex: TextVertex | AttributeAssignmentVertex) -> str:
-    """Return the inline-Markdown text of a text-like vertex.
+def _attribute_pill_blocks(
+    attribute_assignments: list[AttributeAssignment] | None,
+    inline_map: InlineMap,
+    layout: ChildrenLayout,
+) -> tuple[list[pf.ListItem], list[pf.Block]]:
+    r"""Render a vertex's attribute assignments as trailing pill blocks for the given *layout*.
 
-    For a :class:`~guffin.vertex.TextVertex` this is its ``text``; for an
-    :class:`~guffin.vertex.AttributeAssignmentVertex` it is the reconstructed assignment line (see
-    :func:`_attribute_assignment_text`).  Both render the same way — as flowing inline content.
+    Each :class:`~guffin.model.attribute.AttributeAssignment` is reconstructed into its
+    Pandoc-Markdown pill line (see :func:`_attribute_assignment_text`) and rendered as a single
+    flowing block.  Under a list layout the blocks are :class:`~panflute.ListItem`\\ s (so they
+    join the parent's bullet/numbered list as trailing items, reproducing their former
+    representation as trailing child blocks); under ``DOCUMENT`` layout they are
+    :class:`~panflute.Para`\\ s.
 
     Args:
-        vertex: The text-like vertex.
+        attribute_assignments: The parent vertex's attribute assignments, or ``None``.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        layout: The parent's children layout, governing list-item vs. paragraph rendering.
 
     Returns:
-        The vertex's inline-Markdown text.
+        A ``(list_items, paragraphs)`` pair; exactly one side is populated per *layout*
+        (``list_items`` for BULLET/NUMBERED, ``paragraphs`` for DOCUMENT), the other empty.
     """
-    if isinstance(vertex, AttributeAssignmentVertex):
-        return _attribute_assignment_text(vertex.assignment)
-    return vertex.text
+    list_items: list[pf.ListItem] = []
+    paragraphs: list[pf.Block] = []
+    for assignment in attribute_assignments or ():
+        pill_text: str = _attribute_assignment_text(assignment)
+        pill_inlines: list[pf.Inline] = inline_map.get(pill_text, [pf.Str(pill_text)])
+        if layout is ChildrenLayout.DOCUMENT:
+            paragraphs.append(pf.Para(*pill_inlines))
+        else:
+            list_items.append(pf.ListItem(pf.Plain(*pill_inlines)))
+    return list_items, paragraphs
 
 
 def _block_ref_target(
@@ -369,24 +385,24 @@ def _block_ref_target(
 
 
 def _build_list_item(
-    vertex: TextVertex | AttributeAssignmentVertex,
+    vertex: TextVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
     depth: int,
 ) -> pf.ListItem:
-    """Build a Pandoc :class:`~panflute.ListItem` from a text-like vertex.
+    """Build a Pandoc :class:`~panflute.ListItem` from a text vertex.
 
     The item body is a :class:`~panflute.Plain` inline block, or — when the
     vertex text contains a fenced code block — the block elements produced by a
     full block-level parse via :func:`parse_block_md`.  If the vertex has
-    children they are rendered recursively via :func:`build_child_blocks` using the
-    vertex's own children layout, and appended as nested blocks inside the item.
+    children (or folded attribute assignments) they are rendered recursively via
+    :func:`build_child_blocks` using the vertex's own children layout, and appended as nested
+    blocks inside the item.
 
     Args:
-        vertex: The text-like vertex (a :class:`~guffin.vertex.TextVertex` or
-            :class:`~guffin.vertex.AttributeAssignmentVertex`) to render as a list item.
+        vertex: The :class:`~guffin.vertex.TextVertex` to render as a list item.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
@@ -396,9 +412,9 @@ def _build_list_item(
 
     Returns:
         A :class:`~panflute.ListItem` wrapping the vertex text and any
-        nested children.
+        nested children and attribute pills.
     """
-    text: Final[str] = _flowing_text(vertex)
+    text: Final[str] = vertex.text
     content: list[pf.Block]
     if _CONTAINS_CODE_BLOCK_RE.search(text):
         content = parse_block_md(text)
@@ -410,18 +426,18 @@ def _build_list_item(
             content = [pf.Div(pf.Plain(*inner), attributes={"bg-color": bg_color})]
         else:
             content = [pf.Plain(*inlines)]
-    if vertex.children:
-        content.extend(
-            build_child_blocks(
-                vertex.children,
-                vertex_tree,
-                image_files,
-                inline_map,
-                view_map,
-                _children_layout(vertex.uid, view_map),
-                depth + 1,
-            )
+    content.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            image_files,
+            inline_map,
+            view_map,
+            _children_layout(vertex.uid, view_map),
+            depth + 1,
+            vertex.attribute_assignments,
         )
+    )
     return pf.ListItem(*content)
 
 
@@ -434,6 +450,7 @@ def build_child_blocks(
     view_map: ViewMap,
     layout: ChildrenLayout,
     depth: int,
+    attribute_assignments: list[AttributeAssignment] | None = None,
 ) -> list[pf.Block]:
     """Build a list of Pandoc block elements from an ordered list of child UIDs.
 
@@ -466,11 +483,14 @@ def build_child_blocks(
         view_map: Presentation view map keyed by vertex uid, governing child layout.
         layout: The layout governing how *child_uids* are wrapped (their parent's layout).
         depth: Tree depth of the children (1 = direct children of the page root).
+        attribute_assignments: The parent vertex's attribute assignments, appended after the
+            rendered children as trailing pill blocks in the same *layout* (list items under a
+            list layout, paragraphs under ``DOCUMENT``).  ``None`` when the parent has none.
 
     Returns:
         A flat list of :class:`~panflute.Block` elements representing the
-        rendered children, with consecutive text vertices grouped into a
-        :class:`~panflute.BulletList` or :class:`~panflute.OrderedList` per *layout*.
+        rendered children (and any trailing attribute pills), with consecutive text vertices
+        grouped into a :class:`~panflute.BulletList` or :class:`~panflute.OrderedList` per *layout*.
     """
     result: Final[list[pf.Block]] = []
     pending_items: Final[list[pf.ListItem]] = []
@@ -497,25 +517,31 @@ def build_child_blocks(
             # referenced block — never wrapped in a list item.
             flush_pending()
             result.extend(_vertex_to_blocks(ref_target, vertex_tree, image_files, inline_map, view_map, depth))
-            if isinstance(vertex, TextVertex) and vertex.children:
+            if isinstance(vertex, TextVertex) and (vertex.children or vertex.attribute_assignments):
                 result.extend(
                     build_child_blocks(
-                        vertex.children,
+                        vertex.children or [],
                         vertex_tree,
                         image_files,
                         inline_map,
                         view_map,
                         _children_layout(vertex.uid, view_map),
                         depth + 1,
+                        vertex.attribute_assignments,
                     )
                 )
-        elif isinstance(vertex, (TextVertex, AttributeAssignmentVertex)) and layout is not ChildrenLayout.DOCUMENT:
+        elif isinstance(vertex, TextVertex) and layout is not ChildrenLayout.DOCUMENT:
             pending_items.append(_build_list_item(vertex, vertex_tree, image_files, inline_map, view_map, depth))
         else:
             flush_pending()
             result.extend(_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth))
 
+    # Trailing attribute pills folded onto the parent render as items in the same layout, after the
+    # real children — reproducing their former representation as trailing child blocks.
+    pill_items, pill_paras = _attribute_pill_blocks(attribute_assignments, inline_map, layout)
+    pending_items.extend(pill_items)
     flush_pending()
+    result.extend(pill_paras)
     return result
 
 
@@ -551,6 +577,7 @@ def _page_vertex_to_blocks(
         view_map,
         _children_layout(vertex.uid, view_map),
         1,
+        vertex.attribute_assignments,
     )
 
 
@@ -582,34 +609,35 @@ def _heading_vertex_to_blocks(
     """
     inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
     blocks: list[pf.Block] = [pf.Header(*inlines, level=vertex.heading_level)]
-    if vertex.children:
-        blocks.extend(
-            build_child_blocks(
-                vertex.children,
-                vertex_tree,
-                image_files,
-                inline_map,
-                view_map,
-                _children_layout(vertex.uid, view_map),
-                depth + 1,
-            )
+    blocks.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            image_files,
+            inline_map,
+            view_map,
+            _children_layout(vertex.uid, view_map),
+            depth + 1,
+            vertex.attribute_assignments,
         )
+    )
     return blocks
 
 
 def _text_vertex_to_blocks(
-    vertex: TextVertex | AttributeAssignmentVertex,
+    vertex: TextVertex,
     vertex_tree: VertexTree,
     image_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
-    """Render a text-like vertex to flowing (document) block elements.
+    """Render a text vertex to flowing (document) block elements.
 
     Produces one :class:`~panflute.Para` — or the block elements from a full block-level
     parse via :func:`parse_block_md` when the text contains a fenced code block — followed
-    by the recursively rendered children laid out per the vertex's own children layout.
+    by the recursively rendered children (and trailing attribute pills) laid out per the vertex's
+    own children layout.
 
     This always renders the bare, document-flow form; whether the vertex is *itself* wrapped
     in a bullet/numbered list item is decided by :func:`build_child_blocks` from the parent's
@@ -617,8 +645,7 @@ def _text_vertex_to_blocks(
     transcluded) case.
 
     Args:
-        vertex: The text-like vertex (a :class:`~guffin.vertex.TextVertex` or
-            :class:`~guffin.vertex.AttributeAssignmentVertex`) to render.
+        vertex: The :class:`~guffin.vertex.TextVertex` to render.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
             local image file path.
@@ -627,9 +654,9 @@ def _text_vertex_to_blocks(
         depth: Tree depth of *vertex* (1 = direct page child).
 
     Returns:
-        A :class:`~panflute.Para` (or block-parsed elements) followed by any child blocks.
+        A :class:`~panflute.Para` (or block-parsed elements) followed by any child and pill blocks.
     """
-    text: Final[str] = _flowing_text(vertex)
+    text: Final[str] = vertex.text
     para_blocks: list[pf.Block]
     if _CONTAINS_CODE_BLOCK_RE.search(text):
         para_blocks = parse_block_md(text)
@@ -641,18 +668,18 @@ def _text_vertex_to_blocks(
             para_blocks = [pf.Div(pf.Para(*inner), attributes={"bg-color": bg_color})]
         else:
             para_blocks = [pf.Para(*text_inlines)]
-    if vertex.children:
-        para_blocks.extend(
-            build_child_blocks(
-                vertex.children,
-                vertex_tree,
-                image_files,
-                inline_map,
-                view_map,
-                _children_layout(vertex.uid, view_map),
-                depth + 1,
-            )
+    para_blocks.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            image_files,
+            inline_map,
+            view_map,
+            _children_layout(vertex.uid, view_map),
+            depth + 1,
+            vertex.attribute_assignments,
         )
+    )
     return para_blocks
 
 
@@ -758,18 +785,18 @@ def _callout_vertex_to_blocks(
         )
         body_doc: Final[pf.Doc] = pf.load(StringIO(body_json))
         callout_blocks.extend(list(body_doc.content))
-    if vertex.children:
-        callout_blocks.extend(
-            build_child_blocks(
-                vertex.children,
-                vertex_tree,
-                image_files,
-                inline_map,
-                view_map,
-                _children_layout(vertex.uid, view_map),
-                depth + 1,
-            )
+    callout_blocks.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            image_files,
+            inline_map,
+            view_map,
+            _children_layout(vertex.uid, view_map),
+            depth + 1,
+            vertex.attribute_assignments,
         )
+    )
     return [pf.Div(*callout_blocks, classes=["callout", f"callout-{callout_type}"])]
 
 
@@ -817,18 +844,18 @@ def _block_quote_vertex_to_blocks(
         A single-element list containing the :class:`~panflute.BlockQuote`.
     """
     inner_blocks: list[pf.Block] = parse_block_md(vertex.text.replace("\n", "\n\n"))
-    if vertex.children:
-        inner_blocks.extend(
-            build_child_blocks(
-                vertex.children,
-                vertex_tree,
-                image_files,
-                inline_map,
-                view_map,
-                _children_layout(vertex.uid, view_map),
-                depth + 1,
-            )
+    inner_blocks.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            image_files,
+            inline_map,
+            view_map,
+            _children_layout(vertex.uid, view_map),
+            depth + 1,
+            vertex.attribute_assignments,
         )
+    )
     return [pf.BlockQuote(*inner_blocks)]
 
 
@@ -931,18 +958,18 @@ def _block_embed_vertex_to_blocks(
     blocks: Final[list[pf.Block]] = list(
         _vertex_to_blocks(target, vertex_tree, image_files, inline_map, view_map, depth)
     )
-    if vertex.children:
-        blocks.extend(
-            build_child_blocks(
-                vertex.children,
-                vertex_tree,
-                image_files,
-                inline_map,
-                view_map,
-                _children_layout(vertex.uid, view_map),
-                depth + 1,
-            )
+    blocks.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            image_files,
+            inline_map,
+            view_map,
+            _children_layout(vertex.uid, view_map),
+            depth + 1,
+            vertex.attribute_assignments,
         )
+    )
     return blocks
 
 
@@ -988,8 +1015,6 @@ def _vertex_to_blocks(
             return _table_vertex_to_blocks(vertex, inline_map)
         case BlockEmbedVertex():
             return _block_embed_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
-        case AttributeAssignmentVertex():
-            return _text_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -1029,10 +1054,11 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
             case TableVertex():
                 for row in vertex.table.rows:
                     texts.extend(row)
-            case AttributeAssignmentVertex():
-                texts.append(_attribute_assignment_text(vertex.assignment))
             case _:
                 pass
+        # Attribute pills (folded onto any vertex) contribute their reconstructed inline text.
+        for assignment in vertex.attribute_assignments or ():
+            texts.append(_attribute_assignment_text(assignment))
     return parse_inline_md(texts)
 
 
@@ -1100,6 +1126,7 @@ def vertex_tree_to_pandoc(
                 view_map,
                 _children_layout(root.uid, view_map),
                 depth=1,
+                attribute_assignments=root.attribute_assignments,
             )
         )
     else:
@@ -1163,9 +1190,6 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
                 return display
             case BlockEmbedVertex():
                 return display
-            case AttributeAssignmentVertex():
-                assignment_text: str = _attribute_assignment_text(vertex.assignment)
-                return inline_map.get(assignment_text, [pf.Str(assignment_text)])
 
     return _resolve
 

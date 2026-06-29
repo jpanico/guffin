@@ -7,31 +7,10 @@
   children:
   - 2-2g3rmpU
   - AKAMsYfSW
-  - Up9F5BMq9
-  - v3WbOVP7U
   refs:
   - LBFKibPIj
-  title: '[Test Article](x-guffin:vertex/LBFKibPIj) 5'
-- vertex_type: guffin/callout
-  uid: 2-2g3rmpU
-  refs:
-  - OexZiLR_O
-  - ZgUWBRb7j
-  callout_type: info
-  title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
-    – DO NOT REMOVE
-  body: "Features:\n\n - **attributes**"
-- vertex_type: guffin/text
-  uid: AKAMsYfSW
-  text: hello world!
-- vertex_type: guffin/attribute-assignment
-  uid: Up9F5BMq9
-  refs:
-  - RXwAqq0_T
-  - nC88efm_x
-  - HGasV4ras
-  assignment:
-    attribute:
+  attribute_assignments:
+  - attribute:
       name: tags
       link:
       - vertex
@@ -47,14 +26,7 @@
       link:
       - vertex
       - nC88efm_x
-- vertex_type: guffin/attribute-assignment
-  uid: v3WbOVP7U
-  refs:
-  - igM26JNa2
-  - d87aKN4hh
-  - -gG94Gziw
-  assignment:
-    attribute:
+  - attribute:
       name: attribute1
       link:
       - vertex
@@ -72,3 +44,16 @@
       link:
       - vertex
       - igM26JNa2
+  title: '[Test Article](x-guffin:vertex/LBFKibPIj) 5'
+- vertex_type: guffin/callout
+  uid: 2-2g3rmpU
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
+  callout_type: info
+  title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+    – DO NOT REMOVE
+  body: "Features:\n\n - **attributes**"
+- vertex_type: guffin/text
+  uid: AKAMsYfSW
+  text: hello world!

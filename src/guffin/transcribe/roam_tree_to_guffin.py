@@ -27,8 +27,6 @@ Public symbols:
   block-quote node.
 - :func:`to_block_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
   block embed node.
-- :func:`to_attribute_assignment_vertex` — build an :class:`~guffin.vertex.AttributeAssignmentVertex`
-  from an attribute-assignment node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node
   (via :func:`~guffin.roam.node_tree.to_table` + Markdown normalization), returning it together
   with the IDs of all consumed descendant nodes.
@@ -51,7 +49,6 @@ from pydantic import HttpUrl, TypeAdapter, validate_call
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeValue, LiteralValue, ReferenceValue
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
-    AttributeAssignmentVertex,
     BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
@@ -113,24 +110,89 @@ def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChild
     """Return an ordered list of child UIDs for *node*, or ``None`` if childless.
 
     Children are sorted by :attr:`~guffin.roam.node.RoamNode.order`.  Stubs
-    whose id is absent from *id_map* are silently dropped.
+    whose id is absent from *id_map* are silently dropped.  Attribute-block children are
+    excluded — they are folded into the parent vertex's
+    :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` (see
+    :func:`_resolve_attribute_assignments`) rather than transcribed as separate vertices.
 
     Args:
         node: The node whose children are to be resolved.
         id_map: Mapping from Datomic entity id to :class:`~guffin.roam.node.RoamNode`.
 
     Returns:
-        Sorted list of child UIDs, or ``None`` when *node* has no children or
+        Sorted list of child UIDs, or ``None`` when *node* has no (non-attribute) children or
         all child stubs are unresolvable.
     """
     if not node.children:
         return None
     resolved: Final[list[RoamNode]] = sorted(
-        [id_map[c.id] for c in node.children if c.id in id_map],
+        [
+            id_map[c.id]
+            for c in node.children
+            if c.id in id_map and node_type(id_map[c.id]) is not NodeType.ATTRIBUTE_BLOCK
+        ],
         key=lambda n: n.order if n.order is not None else 0,
     )
     uids: Final[VertexChildren] = [n.uid for n in resolved]
     return uids if uids else None
+
+
+def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssignment:
+    """Parse an attribute-block *node*'s string into an :class:`~guffin.model.attribute.AttributeAssignment`.
+
+    The attribute name and every tag-valued element are resolved to
+    :class:`~guffin.model.link.VertexLink` references via the tree's
+    :attr:`~guffin.roam.node_tree.NodeTree.page_name_map`; non-tag values become literals.
+
+    Args:
+        node: An attribute-block node whose ``string`` is wholly ``<attribute>:: <value>, …``.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve referenced page titles.
+
+    Returns:
+        The parsed :class:`~guffin.model.attribute.AttributeAssignment`.
+
+    Raises:
+        ValueError: If ``node.string`` is ``None``, is not wholly an attribute assignment, or
+            references a page absent from *tree*.
+    """
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    match: Final[regex.Match[str] | None] = ATTRIBUTE_ASSIGNMENT_RE.fullmatch(node.string.strip())
+    if match is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} string is not an attribute assignment: {node.string!r}")
+    attribute_name: Final[str] = match.group("attribute")
+    return AttributeAssignment(
+        attribute=Attribute(name=attribute_name, link=_page_reference_link(attribute_name, tree)),
+        values=tuple(_to_attribute_value(raw, tree) for raw in match.captures("value")),
+    )
+
+
+def _resolve_attribute_assignments(node: RoamNode, tree: NodeTree) -> list[AttributeAssignment] | None:
+    """Return the attribute assignments folded onto *node*'s vertex, or ``None`` if there are none.
+
+    Finds *node*'s :attr:`~guffin.roam.node.NodeType.ATTRIBUTE_BLOCK` children (sorted by
+    :attr:`~guffin.roam.node.RoamNode.order`) and parses each into an
+    :class:`~guffin.model.attribute.AttributeAssignment` via :func:`_parse_attribute_assignment`.
+
+    Args:
+        node: The node whose attribute-block children are to be folded in.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to.
+
+    Returns:
+        The parsed assignments in source order, or ``None`` when *node* has no attribute-block children.
+    """
+    if not node.children:
+        return None
+    attr_nodes: Final[list[RoamNode]] = sorted(
+        [
+            tree.id_map[c.id]
+            for c in node.children
+            if c.id in tree.id_map and node_type(tree.id_map[c.id]) is NodeType.ATTRIBUTE_BLOCK
+        ],
+        key=lambda n: n.order if n.order is not None else 0,
+    )
+    assignments: Final[list[AttributeAssignment]] = [_parse_attribute_assignment(n, tree) for n in attr_nodes]
+    return assignments if assignments else None
 
 
 def _resolve_refs(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexRefs | None:
@@ -189,7 +251,9 @@ def vertex_type(node: RoamNode) -> VertexType:
         case NodeType.EMBED_BLOCK:
             return VertexType.BLOCK_EMBED
         case NodeType.ATTRIBUTE_BLOCK:
-            return VertexType.ATTRIBUTE_ASSIGNMENT
+            # Attribute blocks are not transcribed as standalone vertices; they are folded into
+            # their parent vertex's attribute_assignments field (see _resolve_attribute_assignments).
+            raise ValueError(f"RoamNode uid={node.uid!r} is an attribute block; it has no standalone VertexType")
 
 
 @validate_call
@@ -217,6 +281,7 @@ def to_page_vertex(node: RoamNode, tree: NodeTree) -> PageVertex:
         title=to_pandoc_md(node.title, tree),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -264,6 +329,7 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
         scaled_image_size=size,
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -300,6 +366,7 @@ def to_heading_vertex(node: RoamNode, tree: NodeTree, heading_offset: int = 0) -
         heading_level=heading + heading_offset,
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -328,6 +395,7 @@ def to_text_vertex(node: RoamNode, tree: NodeTree) -> TextVertex:
         text=to_pandoc_md(node.string, tree),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -367,6 +435,7 @@ def to_callout_vertex(node: RoamNode, tree: NodeTree) -> CalloutVertex:
         body=body,
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -405,6 +474,7 @@ def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
         language=CodeLanguage(parsed.info),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -438,6 +508,7 @@ def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
         text=to_pandoc_md(strip_block_quote_marker(node.string), tree),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -474,6 +545,7 @@ def to_block_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
         vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=embed_match.group("uid")),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
 
 
@@ -525,49 +597,6 @@ def _to_attribute_value(raw_value: str, tree: NodeTree) -> AttributeValue:
 
 
 @validate_call
-def to_attribute_assignment_vertex(node: RoamNode, tree: NodeTree) -> AttributeAssignmentVertex:
-    """Build an :class:`~guffin.vertex.AttributeAssignmentVertex` from an attribute-assignment *node*.
-
-    Parses ``node.string`` — a Roam attribute assignment ``<attribute>:: <value>, …`` matched in full
-    by :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE` — into an
-    :class:`~guffin.model.attribute.AttributeAssignment`.  The attribute name and every tag-valued
-    element are resolved to :class:`~guffin.model.link.VertexLink` references via the tree's
-    :attr:`~guffin.roam.node_tree.NodeTree.page_name_map`; non-tag values become literals.
-
-    Args:
-        node: An attribute-assignment node whose ``string`` is wholly ``<attribute>:: <value>, …``.
-        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to; its
-            :attr:`~guffin.roam.node_tree.NodeTree.id_map` resolves child/ref stubs and its
-            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves referenced page titles.
-
-    Returns:
-        An :class:`~guffin.vertex.AttributeAssignmentVertex`.
-
-    Raises:
-        ValidationError: If *node* or *tree* is ``None`` or invalid.
-        ValueError: If ``node.string`` is ``None``, is not wholly an attribute assignment, or
-            references a page absent from *tree*.
-    """
-    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
-    if node.string is None:
-        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
-    match: Final[regex.Match[str] | None] = ATTRIBUTE_ASSIGNMENT_RE.fullmatch(node.string.strip())
-    if match is None:
-        raise ValueError(f"RoamNode uid={node.uid!r} string is not an attribute assignment: {node.string!r}")
-    attribute_name: Final[str] = match.group("attribute")
-    assignment: Final[AttributeAssignment] = AttributeAssignment(
-        attribute=Attribute(name=attribute_name, link=_page_reference_link(attribute_name, tree)),
-        values=tuple(_to_attribute_value(raw, tree) for raw in match.captures("value")),
-    )
-    return AttributeAssignmentVertex(
-        uid=node.uid,
-        assignment=assignment,
-        children=_resolve_children(node, tree.id_map),
-        refs=_resolve_refs(node, tree.id_map),
-    )
-
-
-@validate_call
 def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozenset[Id]]:
     """Build a :class:`~guffin.vertex.TableVertex` from a native table *node*.
 
@@ -611,6 +640,7 @@ def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozen
             uid=node.uid,
             children=None,
             refs=_resolve_refs(node, tree.id_map),
+            attribute_assignments=_resolve_attribute_assignments(node, tree),
             table=normalized,
             table_style=TableStyle(),
         ),
@@ -663,8 +693,6 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
         case VertexType.BLOCK_EMBED:
             return to_block_embed_vertex(node, tree)
-        case VertexType.ATTRIBUTE_ASSIGNMENT:
-            return to_attribute_assignment_vertex(node, tree)
         case _ as unreachable:
             assert_never(unreachable)
 
@@ -710,6 +738,10 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     for node in node_tree.dfs():
         if node.id in consumed:
             continue
+        # Attribute blocks are folded into their parent vertex's attribute_assignments field
+        # (see _resolve_attribute_assignments), not transcribed as standalone vertices.
+        if node_type(node) is NodeType.ATTRIBUTE_BLOCK:
+            continue
         if node_type(node) == NodeType.NATIVE_TABLE:
             table_vertex, nodes_consumed = to_table_vertex(node, node_tree)
             consumed.update(nodes_consumed)
@@ -733,7 +765,8 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         ref_consumed.update(ref_nodes_consumed)
         ref_vertices.append(ref_table_vertex)
     for ref_node in node_tree.refs_by_id.values():
-        if ref_node.id in ref_consumed or node_type(ref_node) == NodeType.NATIVE_TABLE:
+        # Native tables are consumed above; attribute blocks are not standalone vertices.
+        if ref_node.id in ref_consumed or node_type(ref_node) in (NodeType.NATIVE_TABLE, NodeType.ATTRIBUTE_BLOCK):
             continue
         try:
             ref_vertices.append(transcribe_standalone_node(ref_node, node_tree))

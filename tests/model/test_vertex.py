@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 from guffin.model.attribute import Attribute, AttributeAssignment, LiteralValue, ReferenceValue
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import AttributeAssignmentVertex, BlockEmbedVertex, VertexType, vertex_adapter
+from guffin.model.vertex import BlockEmbedVertex, TextVertex, VertexType, vertex_adapter
 
 # A representative embed link to a 9-character destination UID.
 _EMBED_LINK = VertexLink(kind=VertexLinkKind.EMBED, uid="tgt000001")
@@ -37,8 +37,8 @@ class TestBlockEmbedVertex:
         assert restored == vertex
 
 
-class TestAttributeAssignmentVertex:
-    """Tests for the AttributeAssignmentVertex concrete vertex type."""
+class TestAttributeAssignmentsField:
+    """Tests for the attribute_assignments field shared by every vertex type (on _BaseVertex)."""
 
     @staticmethod
     def _assignment() -> AttributeAssignment:
@@ -47,16 +47,20 @@ class TestAttributeAssignmentVertex:
             values=(LiteralValue(value="5"), ReferenceValue(name="callouts demo", link=_REF_LINK)),
         )
 
-    def test_valid_construction(self) -> None:
-        """An AttributeAssignmentVertex carries its discriminator and assignment."""
-        vertex = AttributeAssignmentVertex(uid="block0001", assignment=self._assignment())
-        assert vertex.vertex_type is VertexType.ATTRIBUTE_ASSIGNMENT
-        assert vertex.uid == "block0001"
-        assert vertex.assignment.attribute.name == "attribute1"
+    def test_defaults_to_none(self) -> None:
+        """A vertex with no folded attributes has attribute_assignments == None."""
+        vertex = TextVertex(uid="block0001", text="hello")
+        assert vertex.attribute_assignments is None
 
-    def test_adapter_round_trips_via_discriminator(self) -> None:
-        """Vertex_adapter selects AttributeAssignmentVertex (and its value union) from a dumped dict."""
-        vertex = AttributeAssignmentVertex(uid="block0001", assignment=self._assignment())
+    def test_carries_assignments(self) -> None:
+        """A vertex records its folded attribute assignments in order."""
+        vertex = TextVertex(uid="block0001", text="hello", attribute_assignments=[self._assignment()])
+        assert vertex.attribute_assignments is not None
+        assert vertex.attribute_assignments[0].attribute.name == "attribute1"
+
+    def test_adapter_round_trips_with_assignments(self) -> None:
+        """Vertex_adapter round-trips a vertex carrying attribute assignments (and their value union)."""
+        vertex = TextVertex(uid="block0001", text="hello", attribute_assignments=[self._assignment()])
         restored = vertex_adapter.validate_python(vertex.model_dump())
-        assert isinstance(restored, AttributeAssignmentVertex)
+        assert isinstance(restored, TextVertex)
         assert restored == vertex

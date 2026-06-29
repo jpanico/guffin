@@ -8,7 +8,6 @@ from pydantic import ValidationError
 
 from guffin.model.attribute import LiteralValue, ReferenceValue
 from guffin.model.vertex import (
-    AttributeAssignmentVertex,
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -26,7 +25,6 @@ from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node import RoamNode
 from guffin.transcribe.roam_tree_to_guffin import (
     build_view_map,
-    to_attribute_assignment_vertex,
     to_block_quote_vertex,
     to_callout_vertex,
     to_code_block_vertex,
@@ -804,40 +802,42 @@ class TestTranscribeNode:
 
 
 # ---------------------------------------------------------------------------
-# TestToAttributeAssignmentVertex
+# TestAttributeAssignmentFolding
 # ---------------------------------------------------------------------------
 
 
-class TestToAttributeAssignmentVertex:
-    """Tests for to_attribute_assignment_vertex using the Test Article 5 fixture."""
+class TestAttributeAssignmentFolding:
+    """Attribute-block children are folded onto the parent vertex (Test Article 5 fixture)."""
 
-    def test_resolves_attribute_and_values(self) -> None:
-        """The 'attribute1:: 5, #[[callouts demo]], #v01' node resolves to a structured assignment."""
-        tree = article5_node_tree()
-        vertex = to_attribute_assignment_vertex(tree.uid_map["v3WbOVP7U"], tree)
-        assert isinstance(vertex, AttributeAssignmentVertex)
-        assignment = vertex.assignment
-        assert assignment.attribute.name == "attribute1"
-        assert assignment.attribute.link.uid == "-gG94Gziw"
-        literal, ref_cd, ref_v01 = assignment.values
+    def test_page_carries_folded_assignments(self) -> None:
+        """The page's two attribute-block children become its attribute_assignments, in source order."""
+        vtree = transcribe(article5_node_tree())
+        page = next(v for v in vtree.tree_vertices if isinstance(v, PageVertex))
+        assert page.attribute_assignments is not None
+        assert [a.attribute.name for a in page.attribute_assignments] == ["tags", "attribute1"]
+
+        tags, attr1 = page.attribute_assignments
+        assert [v.name for v in tags.values if isinstance(v, ReferenceValue)] == ["Guffin", "Better Bullets"]
+        assert attr1.attribute.link.uid == "-gG94Gziw"
+        literal, ref_cd, ref_v01 = attr1.values
         assert isinstance(literal, LiteralValue) and literal.value == "5"
         assert isinstance(ref_cd, ReferenceValue) and (ref_cd.name, ref_cd.link.uid) == ("callouts demo", "d87aKN4hh")
         assert isinstance(ref_v01, ReferenceValue) and (ref_v01.name, ref_v01.link.uid) == ("v01", "igM26JNa2")
 
-    def test_dispatched_via_transcribe_standalone_node(self) -> None:
-        """Transcribe_standalone_node routes an attribute-assignment node to an AttributeAssignmentVertex."""
-        tree = article5_node_tree()
-        vertex = transcribe_standalone_node(tree.uid_map["Up9F5BMq9"], tree)
-        assert isinstance(vertex, AttributeAssignmentVertex)
-        assert vertex.assignment.attribute.name == "tags"
-        names = [v.name for v in vertex.assignment.values if isinstance(v, ReferenceValue)]
-        assert names == ["Guffin", "Better Bullets"]
+    def test_attribute_blocks_are_not_standalone_vertices(self) -> None:
+        """No vertex is emitted for the attribute-block nodes, and they are dropped from page children."""
+        vtree = transcribe(article5_node_tree())
+        uids = {v.uid for v in vtree.tree_vertices}
+        assert "Up9F5BMq9" not in uids
+        assert "v3WbOVP7U" not in uids
+        page = next(v for v in vtree.tree_vertices if isinstance(v, PageVertex))
+        assert page.children == ["2-2g3rmpU", "AKAMsYfSW"]
 
-    def test_non_attribute_node_raises(self) -> None:
-        """A node whose string is not an attribute assignment is rejected."""
+    def test_vertex_type_rejects_attribute_block(self) -> None:
+        """vertex_type raises for an attribute block — it has no standalone VertexType."""
         tree = article5_node_tree()
         with pytest.raises(ValueError):
-            to_attribute_assignment_vertex(tree.uid_map["AKAMsYfSW"], tree)  # 'hello world!'
+            vertex_type(tree.uid_map["Up9F5BMq9"])
 
 
 # ---------------------------------------------------------------------------

@@ -160,11 +160,11 @@ guffin/
 │       ├── model/                       # Core Guffin normalized-graph model (depends only on common/)
 │       │   ├── primitives.py              # Uid type alias; SYNTHETIC/DAILY_NOTE/UID_PATTERN(/RE),
 │       │   │                              #   ANCHORED_UID_PATTERN(/RE), is_daily_note_uid()
-│       │   ├── vertex.py                  # Vertex union + ten concrete types (PageVertex,
+│       │   ├── vertex.py                  # Vertex union + nine concrete types (PageVertex,
 │       │   │                              #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
 │       │   │                              #   CodeBlockVertex, BlockQuoteVertex, TableVertex,
-│       │   │                              #   BlockEmbedVertex, AttributeAssignmentVertex); VertexType,
-│       │   │                              #   VertexChildren, VertexRefs, vertex_adapter
+│       │   │                              #   BlockEmbedVertex); _BaseVertex.attribute_assignments;
+│       │   │                              #   VertexType, VertexChildren, VertexRefs, vertex_adapter
 │       │   ├── vertex_tree.py             # VertexTree (tree_vertices, ref_vertices, uid_map),
 │       │   │                              #   VertexTreeDFSIterator, root_vertex(), map_vertices(),
 │       │   │                              #   drop_attribute_assignments(); filter helpers

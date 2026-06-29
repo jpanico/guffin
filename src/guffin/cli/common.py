@@ -18,7 +18,6 @@ from pydantic import validate_call
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.model.vertex import (
-    AttributeAssignmentVertex,
     BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
@@ -112,8 +111,6 @@ def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
             return "_".join(vertex.table.rows[0])
         case BlockEmbedVertex():
             return _stem_basis(vertex_tree.uid_map[vertex.vertex_link.uid], vertex_tree)
-        case AttributeAssignmentVertex():
-            return vertex.assignment.attribute.name
 
 
 @validate_call

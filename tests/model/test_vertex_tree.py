@@ -10,7 +10,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeAssignment, LiteralValue
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import AttributeAssignmentVertex, ImageVertex, TextVertex, Vertex
+from guffin.model.vertex import ImageVertex, TextVertex, Vertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, enrich_image_original_sizes, map_vertices
 
 logger = logging.getLogger(__name__)
@@ -80,45 +80,36 @@ class TestMapVertices:
         assert texts == ["changed", "world"]
 
 
-def _attribute_vertex(uid: str, children: list[str] | None = None) -> AttributeAssignmentVertex:
-    return AttributeAssignmentVertex(
-        uid=uid,
-        children=children,
-        assignment=AttributeAssignment(
-            attribute=Attribute(name="tags", link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageaaaaa")),
-            values=(LiteralValue(value="x"),),
-        ),
+def _assignment() -> AttributeAssignment:
+    return AttributeAssignment(
+        attribute=Attribute(name="tags", link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageaaaaa")),
+        values=(LiteralValue(value="x"),),
     )
 
 
 class TestDropAttributeAssignments:
     """Tests for drop_attribute_assignments()."""
 
-    def test_removes_attribute_vertex_and_fixes_parent_children(self) -> None:
-        """An attribute child is dropped and its uid removed from the parent's children list."""
-        root: Final[TextVertex] = TextVertex(uid="root00001", text="root", children=["keep00001", "attr00001"])
+    def test_clears_attribute_assignments_and_preserves_other_fields(self) -> None:
+        """A vertex's attribute_assignments are cleared to None; its other fields are untouched."""
+        root: Final[TextVertex] = TextVertex(
+            uid="root00001", text="root", children=["keep00001"], attribute_assignments=[_assignment()]
+        )
         keep: Final[TextVertex] = TextVertex(uid="keep00001", text="keep")
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[root, keep, _attribute_vertex("attr00001")])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[root, keep])
         result: Final[VertexTree] = drop_attribute_assignments(tree)
-        uids: Final[list[str]] = [v.uid for v in result.tree_vertices]
-        assert uids == ["root00001", "keep00001"]
+        assert [v.uid for v in result.tree_vertices] == ["root00001", "keep00001"]
         new_root: Final[Vertex] = next(v for v in result.tree_vertices if v.uid == "root00001")
+        assert new_root.attribute_assignments is None
         assert new_root.children == ["keep00001"]
-
-    def test_removes_descendants_of_attribute_vertex(self) -> None:
-        """Vertices reachable through a dropped attribute vertex are dropped too."""
-        root: Final[TextVertex] = TextVertex(uid="root00001", text="root", children=["attr00001"])
-        attr: Final[AttributeAssignmentVertex] = _attribute_vertex("attr00001", children=["desc00001"])
-        desc: Final[TextVertex] = TextVertex(uid="desc00001", text="descendant")
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[root, attr, desc])
-        result: Final[VertexTree] = drop_attribute_assignments(tree)
-        assert [v.uid for v in result.tree_vertices] == ["root00001"]
+        assert isinstance(new_root, TextVertex) and new_root.text == "root"
 
     def test_tree_without_attributes_unchanged(self) -> None:
-        """A tree with no attribute vertices passes every vertex through."""
+        """A tree with no attribute assignments passes every vertex through unchanged."""
         tree: Final[VertexTree] = _make_text_tree([("aaaaaaaaa", "hello"), ("bbbbbbbbb", "world")])
         result: Final[VertexTree] = drop_attribute_assignments(tree)
         assert [v.uid for v in result.tree_vertices] == ["aaaaaaaaa", "bbbbbbbbb"]
+        assert all(v.attribute_assignments is None for v in result.tree_vertices)
 
     def test_returns_new_tree_instance(self) -> None:
         """The original tree is not mutated; a distinct VertexTree is returned."""
