@@ -22,7 +22,7 @@ from guffin.model.vertex import (
 )
 from guffin.common.code_language import CodeLanguage
 from guffin.roam.node_network import min_effective_heading_level
-from guffin.roam.node import RoamNode
+from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.transcribe.roam_tree_to_guffin import (
     build_view_map,
     to_block_quote_vertex,
@@ -825,13 +825,15 @@ class TestAttributeAssignmentFolding:
         assert isinstance(ref_v01, ReferenceValue) and (ref_v01.name, ref_v01.link.uid) == ("v01", "igM26JNa2")
 
     def test_attribute_blocks_are_not_standalone_vertices(self) -> None:
-        """No vertex is emitted for the attribute-block nodes, and they are dropped from page children."""
-        vtree = transcribe(article5_node_tree())
-        uids = {v.uid for v in vtree.tree_vertices}
-        assert "Up9F5BMq9" not in uids
-        assert "v3WbOVP7U" not in uids
-        page = next(v for v in vtree.tree_vertices if isinstance(v, PageVertex))
-        assert page.children == ["2-2g3rmpU", "AKAMsYfSW"]
+        """Attribute-block nodes are folded onto parents — never emitted as vertices or left in children."""
+        tree = article5_node_tree()
+        attr_block_uids = {n.uid for n in tree.tree_network if node_type(n) is NodeType.ATTRIBUTE_BLOCK}
+        assert attr_block_uids  # sanity: the fixture has attribute blocks to fold
+        vtree = transcribe(tree)
+        tree_uids = {v.uid for v in vtree.tree_vertices}
+        child_uids = {child for v in vtree.tree_vertices if v.children for child in v.children}
+        assert attr_block_uids.isdisjoint(tree_uids)
+        assert attr_block_uids.isdisjoint(child_uids)
 
     def test_vertex_type_rejects_attribute_block(self) -> None:
         """vertex_type raises for an attribute block — it has no standalone VertexType."""

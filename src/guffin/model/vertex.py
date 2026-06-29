@@ -146,7 +146,7 @@ class _BaseVertex[VT: VertexType](BaseModel):
             Serialized as ``'attribute-assignments'``.
     """
 
-    model_config = ConfigDict(frozen=True, populate_by_name=True)
+    model_config = ConfigDict(frozen=True, validate_by_name=True)
 
     vertex_type: VT
     uid: Uid = Field(..., description="Nine-character stable block/page identifier.")

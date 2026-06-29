@@ -69,7 +69,7 @@ class VertexTree(BaseModel):
             :attr:`ref_vertices`; excluded from serialization.
     """
 
-    model_config = ConfigDict(frozen=True, populate_by_name=True)
+    model_config = ConfigDict(frozen=True, validate_by_name=True)
 
     tree_vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
         ..., description="Transcribed vertices, one per source RoamNode."

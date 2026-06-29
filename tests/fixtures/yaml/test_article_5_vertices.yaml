@@ -7,6 +7,7 @@
   children:
   - 2-2g3rmpU
   - AKAMsYfSW
+  - RjNKPZfjB
   refs:
   - LBFKibPIj
   attribute_assignments:
@@ -57,3 +58,37 @@
 - vertex_type: guffin/text
   uid: AKAMsYfSW
   text: hello world!
+- vertex_type: guffin/text
+  uid: RjNKPZfjB
+  children:
+  - aVKZ0NyYr
+  - hF-KdTW65
+  - pYRfjtiHS
+  refs:
+  - BxGxeeGk1
+  - 2xY4zCjId
+  attribute_assignments:
+  - attribute:
+      name: date
+      link:
+      - vertex
+      - ZyUTn2I17
+    values:
+    - kind: literal
+      value: '2027-01-01'
+  text: 'guffin-meta:: #.rm-g'
+- vertex_type: guffin/text
+  uid: aVKZ0NyYr
+  refs:
+  - PZyg8sHJZ
+  text: 'title:: "Source Code For Humans"'
+- vertex_type: guffin/text
+  uid: hF-KdTW65
+  refs:
+  - MhnnPhnTB
+  text: 'authors:: Joe Panico'
+- vertex_type: guffin/text
+  uid: pYRfjtiHS
+  refs:
+  - 2_S3ySs7O
+  text: 'identifier:: '

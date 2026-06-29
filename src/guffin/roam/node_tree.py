@@ -79,7 +79,7 @@ class NodeTree(BaseModel):
             of :meth:`node_ids` — i.e. refs that resolve to nodes outside this tree.
     """
 
-    model_config = ConfigDict(frozen=True, populate_by_name=True)
+    model_config = ConfigDict(frozen=True, validate_by_name=True)
 
     _creating: ClassVar[bool] = False
 

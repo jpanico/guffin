@@ -181,6 +181,21 @@
     open: true
     page:
       id: 5618
+- - string: 'title:: "Source Code For Humans"'
+    user:
+      id: 3
+    id: 11841
+    uid: aVKZ0NyYr
+    parents:
+    - id: 11494
+    - id: 11833
+    time: 1782758594148
+    order: 0
+    open: false
+    page:
+      id: 11494
+    refs:
+    - id: 11843
 - - string: Process / ongoing
     children:
     - id: 5695
@@ -197,6 +212,33 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1782758625910
+    user:
+      id: 3
+    id: 11845
+    uid: ZyUTn2I17
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782758625910
+    title: date
+    edit-nonce: sesNaxUp-
+    edit-time: 1782758625910
+- - string: 'date:: 2027-01-01'
+    user:
+      id: 3
+    id: 11844
+    uid: 5qQtO7uF3
+    parents:
+    - id: 11494
+    - id: 11833
+    time: 1782758740882
+    order: 2
+    open: true
+    page:
+      id: 11494
+    refs:
+    - id: 11845
 - - string: '`=`'
     children:
     - id: 5654
@@ -214,6 +256,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1782758757998
+    user:
+      id: 3
+    id: 11847
+    uid: 2_S3ySs7O
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782758757998
+    title: identifier
+    edit-nonce: xbfm4ahh-
+    edit-time: 1782758757997
 - - string: '`=>`'
     children:
     - id: 5660
@@ -318,32 +372,54 @@
         - uid
         - v3WbOVP7U
         value: ' 5, #[[callouts demo]], #v01'
+    - - source:
+        - uid
+        - dPZqAiKrK
+        value:
+        - uid
+        - dPZqAiKrK
+      - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - BxGxeeGk1
     prevent-clean: 1781541470279
     children:
     - id: 11502
     - id: 11503
     - id: 11504
     - id: 11822
+    - id: 11833
     user:
       id: 3
     sidebar: 24
     id: 11494
     lookup:
     - id: 261
+    - id: 321
     - id: 5618
     - id: 11243
     - id: 11494
     - id: 11504
     - id: 11822
     - id: 11823
+    - id: 11833
+    - id: 11839
     uid: dPZqAiKrK
-    word-count: 24
+    word-count: 41
     edit-user:
       id: 3
     time: 1781833303933
     title: '[[Test Article]] 5'
-    edit-nonce: d377MoLIJ
-    edit-time: 1782500255031
+    edit-nonce: M6sSA6rP7
+    edit-time: 1782758757992
     open: true
     refs:
     - id: 4223
@@ -775,6 +851,21 @@
     open: true
     page:
       id: 5618
+- - string: 'authors:: Joe Panico'
+    user:
+      id: 3
+    id: 11834
+    uid: hF-KdTW65
+    parents:
+    - id: 11494
+    - id: 11833
+    time: 1782758582158
+    order: 1
+    open: true
+    page:
+      id: 11494
+    refs:
+    - id: 11842
 - - string: '`⇒`'
     user:
       id: 3
@@ -950,6 +1041,17 @@
     refs:
     - id: 5450
     - id: 5457
+- - user:
+      id: 3
+    id: 321
+    uid: BxGxeeGk1
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1681476821748
+    title: .rm-g
+    edit-nonce: 0497-MGDf
+    edit-time: 1681476821746
 - - string: '`|`'
     children:
     - id: 5690
@@ -979,6 +1081,18 @@
     title: '!INFO'
     edit-nonce: z3caCCN5O
     edit-time: 1773788725520
+- - prevent-clean: 1782758582158
+    user:
+      id: 3
+    id: 11842
+    uid: MhnnPhnTB
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782758582159
+    title: authors
+    edit-nonce: DECoGhfwR
+    edit-time: 1782758582158
 - - string: '`?`'
     user:
       id: 3
@@ -1023,6 +1137,21 @@
     title: tags
     edit-nonce: 2NuWcfGas
     edit-time: 1663513397401
+- - string: 'identifier:: '
+    user:
+      id: 3
+    id: 11846
+    uid: pYRfjtiHS
+    parents:
+    - id: 11494
+    - id: 11833
+    time: 1782758757992
+    order: 3
+    open: true
+    page:
+      id: 11494
+    refs:
+    - id: 11847
 - - string: Marker
     children:
     - id: 5651
@@ -1331,6 +1460,83 @@
     refs:
     - id: 5450
     - id: 5474
+- - attrs:
+    - - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - RjNKPZfjB
+      - source:
+        - uid
+        - aVKZ0NyYr
+        value:
+        - uid
+        - PZyg8sHJZ
+      - source:
+        - uid
+        - aVKZ0NyYr
+        value: ' "Source Code For Humans"'
+    - - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - RjNKPZfjB
+      - source:
+        - uid
+        - hF-KdTW65
+        value:
+        - uid
+        - MhnnPhnTB
+      - source:
+        - uid
+        - hF-KdTW65
+        value: ' Joe Panico'
+    - - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - RjNKPZfjB
+      - source:
+        - uid
+        - 5qQtO7uF3
+        value:
+        - uid
+        - ZyUTn2I17
+      - source:
+        - uid
+        - 5qQtO7uF3
+        value: ' 2027-01-01'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11834
+    - id: 11841
+    - id: 11844
+    - id: 11846
+    user:
+      id: 3
+    id: 11833
+    lookup:
+    - id: 11833
+    - id: 11834
+    - id: 11841
+    - id: 11842
+    - id: 11843
+    - id: 11844
+    - id: 11845
+    uid: RjNKPZfjB
+    parents:
+    - id: 11494
+    time: 1782757905597
+    order: 4
+    open: false
+    page:
+      id: 11494
+    refs:
+    - id: 321
+    - id: 11839
 - - string: '`v>` (configurable)'
     children:
     - id: 5672
@@ -1348,6 +1554,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1782757905599
+    user:
+      id: 3
+    id: 11839
+    uid: 2xY4zCjId
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782757905599
+    title: guffin-meta
+    edit-nonce: Wn0wt68Sc
+    edit-time: 1782757905599
 - - string: '`+`'
     user:
       id: 3
@@ -1380,3 +1598,15 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1782758586968
+    user:
+      id: 3
+    id: 11843
+    uid: PZyg8sHJZ
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782758586968
+    title: title
+    edit-nonce: D_07ml4rh
+    edit-time: 1782758586968

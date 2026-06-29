@@ -9,6 +9,7 @@ root_node:
   - id: 11503
   - id: 11504
   - id: 11822
+  - id: 11833
   refs:
   - id: 4223
   page: null
@@ -70,7 +71,61 @@ root_node:
       - uid
       - v3WbOVP7U
       value: ' 5, #[[callouts demo]], #v01'
+  - - source:
+      - uid
+      - dPZqAiKrK
+      value:
+      - uid
+      - dPZqAiKrK
+    - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - BxGxeeGk1
 tree_network:
+- uid: aVKZ0NyYr
+  id: 11841
+  string: 'title:: "Source Code For Humans"'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11843
+  page:
+    id: 11494
+  open: false
+  children_view_type: null
+  parents:
+  - id: 11494
+  - id: 11833
+  props: null
+  title: null
+  attrs: null
+- uid: 5qQtO7uF3
+  id: 11844
+  string: 'date:: 2027-01-01'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 11845
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  - id: 11833
+  props: null
+  title: null
+  attrs: null
 - uid: dPZqAiKrK
   id: 11494
   string: null
@@ -81,6 +136,7 @@ tree_network:
   - id: 11503
   - id: 11504
   - id: 11822
+  - id: 11833
   refs:
   - id: 4223
   page: null
@@ -142,6 +198,24 @@ tree_network:
       - uid
       - v3WbOVP7U
       value: ' 5, #[[callouts demo]], #v01'
+  - - source:
+      - uid
+      - dPZqAiKrK
+      value:
+      - uid
+      - dPZqAiKrK
+    - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - BxGxeeGk1
 - uid: v3WbOVP7U
   id: 11822
   string: 'attribute1:: 5, #[[callouts demo]], #v01'
@@ -158,6 +232,42 @@ tree_network:
   children_view_type: null
   parents:
   - id: 11494
+  props: null
+  title: null
+  attrs: null
+- uid: hF-KdTW65
+  id: 11834
+  string: 'authors:: Joe Panico'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 11842
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  - id: 11833
+  props: null
+  title: null
+  attrs: null
+- uid: pYRfjtiHS
+  id: 11846
+  string: 'identifier:: '
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 11847
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  - id: 11833
   props: null
   title: null
   attrs: null
@@ -215,6 +325,76 @@ tree_network:
   props: null
   title: null
   attrs: []
+- uid: RjNKPZfjB
+  id: 11833
+  string: 'guffin-meta:: #.rm-g'
+  order: 4
+  heading: null
+  children:
+  - id: 11834
+  - id: 11841
+  - id: 11844
+  - id: 11846
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11494
+  open: false
+  children_view_type: null
+  parents:
+  - id: 11494
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - RjNKPZfjB
+    - source:
+      - uid
+      - aVKZ0NyYr
+      value:
+      - uid
+      - PZyg8sHJZ
+    - source:
+      - uid
+      - aVKZ0NyYr
+      value: ' "Source Code For Humans"'
+  - - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - RjNKPZfjB
+    - source:
+      - uid
+      - hF-KdTW65
+      value:
+      - uid
+      - MhnnPhnTB
+    - source:
+      - uid
+      - hF-KdTW65
+      value: ' Joe Panico'
+  - - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - RjNKPZfjB
+    - source:
+      - uid
+      - 5qQtO7uF3
+      value:
+      - uid
+      - ZyUTn2I17
+    - source:
+      - uid
+      - 5qQtO7uF3
+      value: ' 2027-01-01'
 refs_by_id:
   '4223':
     uid: LBFKibPIj
@@ -274,6 +454,36 @@ refs_by_id:
     parents: null
     props: null
     title: callouts demo
+    attrs: null
+  '11845':
+    uid: ZyUTn2I17
+    id: 11845
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: date
+    attrs: null
+  '11847':
+    uid: 2_S3ySs7O
+    id: 11847
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: identifier
     attrs: null
   '5450':
     uid: OexZiLR_O
@@ -355,6 +565,21 @@ refs_by_id:
     props: null
     title: Better Bullets
     attrs: null
+  '321':
+    uid: BxGxeeGk1
+    id: 321
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: .rm-g
+    attrs: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
@@ -370,6 +595,21 @@ refs_by_id:
     props: null
     title: '!INFO'
     attrs: null
+  '11842':
+    uid: MhnnPhnTB
+    id: 11842
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: authors
+    attrs: null
   '261':
     uid: RXwAqq0_T
     id: 261
@@ -384,6 +624,36 @@ refs_by_id:
     parents: null
     props: null
     title: tags
+    attrs: null
+  '11839':
+    uid: 2xY4zCjId
+    id: 11839
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: guffin-meta
+    attrs: null
+  '11843':
+    uid: PZyg8sHJZ
+    id: 11843
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: title
     attrs: null
   '5646':
     uid: ZcfOxAW8t
