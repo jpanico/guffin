@@ -76,7 +76,7 @@ class TestExportRoamTreeNoBundle:
                 logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        output_file: pathlib.Path = tmp_path / "Test_Article_1.md"
+        output_file: pathlib.Path = tmp_path / "Test_Article_1.default.md"
         assert output_file.exists()
         expected: str = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert output_file.read_text() == expected
@@ -126,9 +126,9 @@ class TestExportRoamTreeBundle:
                     logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        bundle_dir: pathlib.Path = tmp_path / "Test_Article_1.mdbundle"
+        bundle_dir: pathlib.Path = tmp_path / "Test_Article_1.default.mdbundle"
         assert bundle_dir.is_dir()
-        assert (bundle_dir / "Test_Article_1.md").exists()
+        assert (bundle_dir / "Test_Article_1.default.md").exists()
 
 
 class TestExportRoamTreeMdbundleFromRaw:
@@ -148,7 +148,7 @@ class TestExportRoamTreeMdbundleFromRaw:
         raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_raw_result.yaml").read_text())
         api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
 
-        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.mdbundle"
+        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.default.mdbundle"
         cache_dir: Final[pathlib.Path] = tmp_path / "cache"
         cache_dir.mkdir()
         for asset in baseline.iterdir():
@@ -187,7 +187,7 @@ class TestExportRoamTreeMdbundleFromRaw:
                 logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = output_dir / "Test_Article_3.mdbundle"
+        actual: Final[pathlib.Path] = output_dir / "Test_Article_3.default.mdbundle"
         assert actual.is_dir()
         expected_names: Final[list[str]] = sorted(f.name for f in baseline.iterdir())
         actual_names: Final[list[str]] = sorted(f.name for f in actual.iterdir())
@@ -250,7 +250,7 @@ class TestExportRoamTreeMdbundleLive:
 
         Roam credentials (GUFFIN_ROAM_*) are read from the environment by the CLI.
         """
-        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_1.mdbundle"
+        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_1.default.mdbundle"
         assert baseline.exists(), (
             f"baseline mdbundle missing: {baseline}. Record it with: "
             'python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --mdbundle'
@@ -267,7 +267,7 @@ class TestExportRoamTreeMdbundleLive:
             logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.mdbundle"
+        actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.default.mdbundle"
         assert actual.exists()
         expected_names: Final[list[str]] = sorted(f.name for f in baseline.iterdir())
         actual_names: Final[list[str]] = sorted(f.name for f in actual.iterdir())
@@ -292,7 +292,7 @@ class TestExportRoamTreePdfLive:
         Pins Typst's creation timestamp via GUFFIN_PDF_CREATION_TIMESTAMP so the output is
         reproducible; Roam credentials (GUFFIN_ROAM_*) are read from the environment by the CLI.
         """
-        baseline: Final[pathlib.Path] = FIXTURES_PDF_DIR / "Test_Article_1.pdf"
+        baseline: Final[pathlib.Path] = FIXTURES_PDF_DIR / "Test_Article_1.default.pdf"
         assert baseline.exists(), (
             f"baseline PDF missing: {baseline}. Record it with: "
             'python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --pdf'
@@ -310,6 +310,6 @@ class TestExportRoamTreePdfLive:
             logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.pdf"
+        actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.default.pdf"
         assert actual.exists()
         assert actual.read_bytes() == baseline.read_bytes()

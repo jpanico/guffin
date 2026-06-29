@@ -48,7 +48,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.cli.logging_config import configure_logging
 from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf
-from guffin.render.project import DefaultProfile
+from guffin.render.project import DefaultProfile, ProjectType
 from guffin.render.render_options import MarkdownRenderOptions, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node import RoamNode
@@ -207,7 +207,7 @@ def main() -> None:
     nodes: Final[list[RoamNode]] = list(anchor_tree.tree_network)
     vertex_tree: Final[VertexTree] = transcribe(anchor_tree)
     render_bundle: Final[RenderBundle] = RenderBundle(content=vertex_tree, view=build_view_map(anchor_tree))
-    out_stem: Final[str] = deduce_out_file_stem(vertex_tree)
+    out_stem: Final[str] = deduce_out_file_stem(vertex_tree, ProjectType.DEFAULT)
     print(f"  fetched {len(result.network)} node(s) total, {len(nodes)} anchor node(s)")
     print(f"  transcribed {len(vertex_tree.tree_vertices)} vertex/vertices")
 

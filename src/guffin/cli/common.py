@@ -5,8 +5,8 @@ Public symbols:
 - :func:`fetch_roam_trees` — fetch nodes for a :class:`~guffin.roam.node_fetch_result.NodeFetchSpec`
   and return a :class:`~guffin.roam.node_fetch_result.NodeFetchResult` paired with an optional
   :class:`~guffin.vertex_tree.VertexTree`, ready for rendering or further processing.
-- :func:`deduce_out_file_stem` — derive a shell-safe output filename stem from a
-  :class:`~guffin.model.vertex_tree.VertexTree`'s root vertex.
+- :func:`deduce_out_file_stem` — derive a shell-safe output filename stem (suffixed with the
+  project type) from a :class:`~guffin.model.vertex_tree.VertexTree`'s root vertex.
 """
 
 import logging
@@ -32,6 +32,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, root_vertex
+from guffin.render.project import ProjectType
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec
@@ -116,7 +117,7 @@ def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
 
 
 @validate_call
-def deduce_out_file_stem(vertex_tree: VertexTree) -> str:
+def deduce_out_file_stem(vertex_tree: VertexTree, project_type: ProjectType) -> str:
     """Derive a filename stem for the export output from *vertex_tree*'s root vertex.
 
     The stem basis is taken from the root vertex according to its type — page title,
@@ -124,13 +125,17 @@ def deduce_out_file_stem(vertex_tree: VertexTree) -> str:
     first table row's cells joined by ``_``, or (for a block embed) the embedded
     vertex's basis.  Markdown links in the basis are unwrapped to their text (so a
     rendered page reference contributes only its text, not the URL), then the basis is
-    shortened to 40 characters and normalised to a POSIX-safe filename.
+    shortened to 40 characters and normalised to a POSIX-safe filename.  Finally,
+    ``.<project_type>`` is appended so that exports of the same target under different
+    project types land in distinct files (e.g. ``Foo.book``, ``Foo.manuscript``).
 
     Args:
         vertex_tree: The transcribed tree whose root supplies the stem basis.
+        project_type: The project type whose value is appended as a ``.<type>`` segment.
 
     Returns:
-        A shell-safe filename stem (no extension or directory component).
+        A shell-safe filename stem of the form ``<basis>.<project_type>`` (no format
+        extension or directory component); the renderer appends the format extension.
     """
     basis: Final[str] = _stem_basis(root_vertex(vertex_tree), vertex_tree)
     unwrapped_basis: Final[str] = unwrap_links(basis)
@@ -138,4 +143,4 @@ def deduce_out_file_stem(vertex_tree: VertexTree) -> str:
     # only leading underscores) so that an appended extension reads "..._.pdf" — a distinctive,
     # non-dot ending — rather than a run of dots "....pdf".
     clipped_basis: Final[str] = textwrap.shorten(unwrapped_basis, width=40, placeholder="..._")
-    return shell_safe_filename(clipped_basis)
+    return f"{shell_safe_filename(clipped_basis)}.{project_type.value}"

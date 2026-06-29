@@ -197,16 +197,20 @@ def main(
     pattern, it fetches the subtree rooted at that node; otherwise it is treated as a
     page title and fetches all blocks on that page.
 
-    With ``--format markdown`` (default): ``--bundle`` writes a
-    ``<target>.mdbundle/`` directory with images; ``--no-bundle`` writes a
-    plain ``<target>.md`` file.
+    In every format the output filename stem embeds the selected ``--type`` as a
+    ``.<type>`` segment, so the same target exported under different project types lands
+    in distinct files — e.g. ``<target>.default.epub``, ``<target>.book.pdf``.
 
-    With ``--format pdf``: writes ``<target>.pdf`` via Pandoc + Typst using
+    With ``--format markdown`` (default): ``--bundle`` writes a
+    ``<target>.<type>.mdbundle/`` directory with images; ``--no-bundle`` writes a
+    plain ``<target>.<type>.md`` file.
+
+    With ``--format pdf``: writes ``<target>.<type>.pdf`` via Pandoc + Typst using
     the bundled Bergfink template.  Pass ``--template-dir`` to a directory
     containing ``user_cfg.typ`` to override the default styling.  The
     ``--bundle/--no-bundle`` options are ignored.
 
-    With ``--format epub``: writes ``<target>.epub`` via Pandoc.  The page
+    With ``--format epub``: writes ``<target>.<type>.epub`` via Pandoc.  The page
     title becomes the EPUB title and top-level headings become chapters.  The
     ``--bundle/--no-bundle`` and ``--template-dir`` options are ignored.
     """
@@ -254,7 +258,7 @@ def main(
         logger.error("render_bundle is None; cannot export without a render bundle")
         raise typer.Exit(code=1)
 
-    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content)
+    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
     profile: Final[ProjectProfile] = profile_for(project_type)
 
     _render(

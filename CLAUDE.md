@@ -20,10 +20,11 @@ pip install -e ".[dev]"
 ```bash
 dump-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> [-v/-V] [-n/-N] [-r/-R] [--node-props <props>]
 export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
-# --format markdown (default): writes <target>.mdbundle/ (--bundle) or <target>.md (--no-bundle)
-# --format pdf: writes <target>.pdf via Pandoc + Typst; requires typst on PATH
-# --format epub: writes <target>.epub (EPUB 3) via Pandoc; requires pandoc on PATH (no typst)
-# --type (-T): project profile (default/book/manuscript); plumbed to all renderers (applied so far: EPUB split-level from top_level_division, and number_sections in both EPUB and PDF; remaining structural/metadata effects not yet applied)
+# output filename stem embeds the project type: <target>.<type>.<ext> (e.g. Foo.default.epub, Foo.book.pdf)
+# --format markdown (default): writes <target>.<type>.mdbundle/ (--bundle) or <target>.<type>.md (--no-bundle)
+# --format pdf: writes <target>.<type>.pdf via Pandoc + Typst; requires typst on PATH
+# --format epub: writes <target>.<type>.epub (EPUB 3) via Pandoc; requires pandoc on PATH (no typst)
+# --type (-T): project profile (default/book/manuscript); appended to the output filename stem; plumbed to all renderers (applied so far: EPUB split-level from top_level_division, and number_sections in both EPUB and PDF; remaining structural/metadata effects not yet applied)
 # --template-dir: directory containing user_cfg.typ overrides for PDF styling (pdf only)
 
 # Run the full check pipeline (format + lint + type check + tests) in one shot:
