@@ -39,6 +39,12 @@ export-roam-tree = "guffin.cli.export_roam_tree:app"
 [tool.hatch.envs.default]
 features = ["dev"]
 
+[tool.hatch.envs.default.env-vars]
+# Silence the pyright-python "new version available" notice, which fires for any value other than
+# "latest" (even when the pinned version already equals the latest).  "latest" also keeps the CLI
+# checker aligned with the newer pyright engine bundled in editors like Pylance, reducing drift.
+PYRIGHT_PYTHON_FORCE_VERSION = "latest"
+
 [tool.hatch.envs.default.scripts]
 check = [
     "pydocstringformatter --write src/",
