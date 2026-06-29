@@ -181,3 +181,36 @@ class TestSplitLevel:
         parts: Final[int] = _content_file_count(tmp_path / "parts.epub")
         assert article == book  # both split at heading level 1
         assert parts > book  # the parts-based book also splits at level 2
+
+
+def _has_section_numbers(epub_path: Path) -> bool:
+    """Whether any EPUB content document carries Pandoc heading-numbering markup."""
+    with zipfile.ZipFile(epub_path) as zf:
+        xhtml: Final[str] = "\n".join(
+            zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml")
+        )
+    return "header-section-number" in xhtml
+
+
+class TestNumberSections:
+    """Heading numbering follows the profile's structural policy (Pandoc ``--number-sections``)."""
+
+    def test_book_numbers_headings_default_does_not(self, tmp_path: Path) -> None:
+        """A book (number_sections=True) numbers headings; the default article does not."""
+        bundle: Final[RenderBundle] = _multi_level_bundle()
+        render(
+            bundle,
+            profile=DefaultProfile(),
+            filename_stem="plain",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path),
+        )
+        render(
+            bundle,
+            profile=BookProfile(),
+            filename_stem="numbered",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path),
+        )
+        assert _has_section_numbers(tmp_path / "numbered.epub")
+        assert not _has_section_numbers(tmp_path / "plain.epub")

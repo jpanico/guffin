@@ -84,30 +84,68 @@ def _callout_icons_dir() -> Path:
         return resources_path
 
 
+def _typst_template_args(
+    bundled_dir: Path,
+    template_path: Path,
+    template_dir: Path | None,
+    number_sections: bool,
+) -> list[str]:
+    """Build the Pandoc args that apply the Bergfink Typst template.
+
+    Shared by the PDF conversion and the ``GUFFIN_DUMP_TYPST`` full-Typst dump, so the dumped
+    ``<stem>.full.typ`` always reflects the same template, filters, and variables as the produced
+    PDF.  Excludes the PDF-engine-only flags (``--pdf-engine``, ``--pdf-engine-opt``).
+
+    Args:
+        bundled_dir: Bundled templates directory, used as Pandoc's resource path.
+        template_path: Path to the Bergfink Typst template entry point.
+        template_dir: Optional user template directory; when set, its ``user_cfg.typ`` is passed as
+            the Bergfink ``user-config`` override.
+        number_sections: When ``True``, enables the Bergfink ``number-sections`` variable.
+
+    Returns:
+        The Pandoc ``extra_args`` that apply the template (filters, resource path, and variables).
+    """
+    args: Final[list[str]] = [
+        f"--template={template_path}",
+        f"--resource-path={bundled_dir}",
+        f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+        "-V",
+        "listings=true",
+    ]
+    # Bergfink reads section numbering from its own `number-sections` variable; Pandoc's
+    # `--number-sections` flag does not set it, so pass it explicitly via -V.
+    if number_sections:
+        args.extend(["-V", "number-sections=true"])
+    if template_dir is not None:
+        args.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
+    return args
+
+
 def _dump_typst_sources(
     json_str: str,
     output_dir: Path,
     stem: str,
-    template_path: Path,
     bundled_dir: Path,
-    template_dir: Path | None,
+    template_args: list[str],
 ) -> None:
     """Dump intermediate Typst sources for debugging when ``GUFFIN_DUMP_TYPST`` is set.
 
     A no-op unless the ``GUFFIN_DUMP_TYPST`` environment variable is non-empty.  When
     enabled, converts the Pandoc JSON to Typst twice and writes both files to
     *output_dir*: ``<stem>.body.typ`` (the bare body) and ``<stem>.full.typ`` (with the
-    template applied).  Purely a debugging aid for inspecting the Typst the PDF is built
-    from; it has no effect on the produced PDF.
+    template applied, using *template_args*).  Purely a debugging aid for inspecting the Typst the
+    PDF is built from; it has no effect on the produced PDF.
 
     Args:
         json_str: The Pandoc JSON (serialized Panflute Doc) to convert to Typst.
         output_dir: Directory the ``.typ`` files are written into.
         stem: Output filename stem, shared with the ``.pdf``.
-        template_path: Path to the Bergfink Typst template entry point.
-        bundled_dir: Bundled templates directory, used as Pandoc's resource path.
-        template_dir: Optional user template directory; when set, a ``user-config``
-            override is applied to the full-Typst conversion.
+        bundled_dir: Bundled templates directory, used as Pandoc's resource path for the bare body.
+        template_args: The same template-applying Pandoc args used by the PDF conversion (from
+            :func:`_typst_template_args`), so the full dump matches the produced PDF.
     """
     if not os.environ.get("GUFFIN_DUMP_TYPST"):
         return
@@ -124,19 +162,8 @@ def _dump_typst_sources(
     typst_body_path: Final[Path] = output_dir / f"{stem}.body.typ"
     typst_body_path.write_text(typst_body, encoding="utf-8")
     logger.info("Wrote Typst body to %s", typst_body_path)
-    typst_full_extra: list[str] = [
-        f"--template={template_path}",
-        f"--resource-path={bundled_dir}",
-        f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
-        "-V",
-        "listings=true",
-    ]
-    if template_dir is not None:
-        typst_full_extra.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
     typst_full: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
-        json_str, "typst", format="json", extra_args=typst_full_extra
+        json_str, "typst", format="json", extra_args=template_args
     )
     typst_full_path: Final[Path] = output_dir / f"{stem}.full.typ"
     typst_full_path.write_text(typst_full, encoding="utf-8")
@@ -162,6 +189,9 @@ def render(
     to Pandoc JSON, and invokes Pandoc (with the Typst PDF engine and the
     bundled Bergfink template) via :mod:`pypandoc` to produce the PDF.  The
     temporary image directory is removed after Pandoc completes.
+
+    When ``profile``'s structural policy sets ``number_sections``, headings are numbered (the
+    Bergfink template's ``number-sections`` variable).
 
     Pandoc and Typst must be installed and on ``PATH``.
 
@@ -206,23 +236,18 @@ def render(
     # typst_callout.lua reads this to inline the shared callout icons into gentle-clues.
     os.environ["GUFFIN_CALLOUT_ICONS_DIR"] = str(_callout_icons_dir())
 
-    extra_args: list[str] = [
-        "--pdf-engine=typst",
-        f"--template={template_path}",
-        f"--resource-path={bundled_dir}",
-        f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
-        "-V",
-        "listings=true",
-    ]
-
+    # Validate the optional user-config override up front (the -V arg itself is added by
+    # _typst_template_args).
     if template_dir is not None:
         user_cfg_path: Final[Path] = template_dir / _USER_CFG_FILENAME
         if not user_cfg_path.is_file():
             raise FileNotFoundError(f"template_dir={template_dir!r} does not contain {_USER_CFG_FILENAME!r}")
-        extra_args.extend(["-V", f"user-config={user_cfg_path}"])
         logger.debug("using user_cfg override: %s", user_cfg_path)
+
+    template_args: Final[list[str]] = _typst_template_args(
+        bundled_dir, template_path, template_dir, profile.structural_policy.number_sections
+    )
+    extra_args: list[str] = ["--pdf-engine=typst", *template_args]
 
     # Reproducible builds: when GUFFIN_PDF_CREATION_TIMESTAMP is set, pin Typst's PDF creation
     # date (a UNIX timestamp) so the output is byte-identical across runs.  Used by fixture tests.
@@ -247,7 +272,7 @@ def render(
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 
-        _dump_typst_sources(json_str, output_dir, filename_stem, template_path, bundled_dir, template_dir)
+        _dump_typst_sources(json_str, output_dir, filename_stem, bundled_dir, template_args)
 
         pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str, "pdf", format="json", outputfile=str(output_path), extra_args=extra_args

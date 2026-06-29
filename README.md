@@ -305,7 +305,7 @@ export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-tok
 
 `--bundle/--no-bundle` applies only to Markdown and `--template-dir` only to PDF; each is ignored by the other formats. `--cache-dir` (cache downloaded images across runs) and `--suppress-attributes` (omit Roam attribute assignments from the output) apply to all three formats.
 
-`--type default|book|manuscript` (default `default`) selects the **project profile** — the kind of work being produced — independently of `--format` (see [docs/render-pipeline.md](docs/render-pipeline.md)). The profile is plumbed through to every renderer; so far its only applied effect is the EPUB split level (a parts-based book splits into separate files at the chapter level). The remaining structural effects (PDF chapters, numbering, title page) are not yet applied to the output.
+`--type default|book|manuscript` (default `default`) selects the **project profile** — the kind of work being produced — independently of `--format` (see [docs/render-pipeline.md](docs/render-pipeline.md)). The profile is plumbed through to every renderer; so far its applied effects are the EPUB split level (a parts-based book splits into separate files at the chapter level) and heading numbering for the `book` type in both EPUB and PDF. The remaining structural effects (PDF chapters vs. sections, title page) are not yet applied to the output.
 
 #### Environment variables
 

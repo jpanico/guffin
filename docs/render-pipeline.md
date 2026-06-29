@@ -9,12 +9,12 @@ This doc goes deep on the *model → output* render layer and the project-type m
 it.
 
 > Status note: the project-type model (`render/project.py`) is defined and **plumbed** — a
-> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. The first
-> structural effect is applied: EPUB derives its `--split-level` from `top_level_division`. The
-> remaining structural effects (PDF chapters, numbering, title page) and all metadata effects are
-> **not yet applied**. This doc describes both the current shape and the intended design so the
-> remaining wiring has a spec to follow. Sections that describe planned behavior are marked
-> _(planned)_.
+> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. Two
+> structural effects are applied: EPUB derives its `--split-level` from `top_level_division`, and
+> both formats honour `number_sections`. The remaining structural effects (PDF chapters vs.
+> sections, title page) and all metadata effects are **not yet applied**. This doc describes both
+> the current shape and the intended design so the remaining wiring has a spec to follow. Sections
+> that describe planned behavior are marked _(planned)_.
 
 
 ## The render layer is a two-stage pipeline
@@ -124,7 +124,7 @@ The **bibliographic** fields (`title`, `authors`, `date`, `identifier`, `abstrac
 metadata to its format natively (LaTeX/Typst title block, EPUB `dc:*`, the `abstract` template
 variable). **The format renderers do not change for this half.**
 
-### Stage 2 — structure _(planned)_
+### Stage 2 — structure _(partially applied)_
 
 The `StructuralPolicy` directives (`top_level_division`, `number_sections`, title page) are **not
 representable in the Pandoc AST** — the AST has only `Header` elements with a level 1–6, no
@@ -134,7 +134,7 @@ invocation time**, and the mechanism differs per format:
 | Policy directive | PDF (Typst / Bergfink) | EPUB (Pandoc) |
 |---|---|---|
 | chapters vs. sections | Bergfink template variable (Typst ignores `--top-level-division`) | `--split-level` ✅ |
-| numbering | template / `--number-sections` | `--number-sections` |
+| numbering | `-V number-sections=true` (Bergfink variable) ✅ | `--number-sections` ✅ |
 | title page | Bergfink `titlepage.typ` partial | auto-generated from metadata |
 
 So the structural half **cannot** be absorbed entirely into stage 1: at minimum the EPUB renderer
@@ -150,6 +150,14 @@ division keeps its top-level unit at level 1 and splits there. (Pandoc has no le
 option, so an article and a book-without-parts produce the same level-1 chunking — the
 section-vs-chapter distinction for those is a labelling/numbering concern, surfaced by later
 increments rather than by chunking.)
+
+`number_sections` is wired for both formats, but the lever differs: EPUB passes Pandoc's
+`--number-sections` flag (the epub writer numbers headings directly), while PDF passes
+`-V number-sections=true` — Bergfink reads numbering from its own `number-sections` variable, and
+the `--number-sections` *flag* does not set it. Both derive the boolean from
+`profile.structural_policy.number_sections`. On the PDF side the template-applying args are built
+once by `pdf_rendering._typst_template_args()` and shared with the `GUFFIN_DUMP_TYPST` dump, so the
+dumped Typst always matches the produced PDF.
 
 ### Summary
 
@@ -167,9 +175,12 @@ increments rather than by chunking.)
    (`render/{md,pdf,epub}_rendering.py::render`) now takes a `profile: ProjectProfile` argument,
    threaded through `cli/export_roam_tree.py::_render`. Nothing reads `StructuralPolicy` to shape
    output yet — the renderers currently only log it.
-2. **First behavior — EPUB split-level done.** `epub_rendering` derives `--split-level` from
-   `top_level_division` (`_split_level_for()`): a parts-based book splits at level 2, everything else
-   at level 1. The PDF Bergfink "book mode" (chapters vs. sections) is the next, visually-compelling
-   increment — and the heaviest, since Typst ignores `--top-level-division` and the switch lives in
-   the template.
-3. Title page / numbering / abstract follow as later increments.
+2. **Structural effects so far.** Two `StructuralPolicy` directives are applied:
+   - `top_level_division` → EPUB `--split-level` (`epub_rendering._split_level_for()`): a parts-based
+     book splits at level 2, everything else at level 1.
+   - `number_sections` → both formats (EPUB `--number-sections`; PDF `-V number-sections=true`).
+3. **Next: PDF chapters vs. sections** — apply `top_level_division` to PDF (Bergfink "book mode").
+   The heaviest piece: Typst ignores `--top-level-division`, and Bergfink has no chapter concept yet
+   (level-1 headings would need page breaks and chapter styling authored into the template), so this
+   is net-new Typst work, not a flag.
+4. Title page / abstract / metadata follow as later increments.

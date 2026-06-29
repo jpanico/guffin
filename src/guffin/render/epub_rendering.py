@@ -129,7 +129,8 @@ def render(
     The EPUB is split into separate content files at the heading level given by ``--split-level``,
     derived from ``profile``'s structural policy: a book with parts (chapters at heading level 2)
     splits at level 2, every other project type splits at level 1 so each top-level heading begins
-    a new file.
+    a new file.  When the policy's ``number_sections`` is set, headings are numbered via Pandoc's
+    ``--number-sections``.
 
     Pandoc must be installed and on ``PATH``.
 
@@ -152,6 +153,7 @@ def render(
     """
     logger.debug("rendering EPUB; structural_policy=%s", profile.structural_policy)
     split_level: Final[int] = _split_level_for(profile.structural_policy.top_level_division)
+    number_sections: Final[bool] = profile.structural_policy.number_sections
     output_dir: Final[Path] = options.output_dir
     cache_dir: Final[Path | None] = options.cache_dir
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
@@ -182,19 +184,18 @@ def render(
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 
+        extra_args: list[str] = [
+            f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
+            f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
+            f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
+            f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
+            f"--css={epub_dir / _EPUB_STYLESHEET}",
+            f"--split-level={split_level}",
+        ]
+        if number_sections:
+            extra_args.append("--number-sections")
         pypandoc.convert_text(  # type: ignore[no-untyped-call]
-            json_str,
-            _EPUB_WRITER,
-            format="json",
-            outputfile=str(output_path),
-            extra_args=[
-                f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
-                f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
-                f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
-                f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
-                f"--css={epub_dir / _EPUB_STYLESHEET}",
-                f"--split-level={split_level}",
-            ],
+            json_str, _EPUB_WRITER, format="json", outputfile=str(output_path), extra_args=extra_args
         )
 
     logger.info("Wrote EPUB to %s", output_path)
