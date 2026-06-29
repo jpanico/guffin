@@ -105,14 +105,22 @@ SHOULD_NORMALIZE_HEADING_LEVELS: Final[bool] = True
 _url_adapter: TypeAdapter[HttpUrl] = TypeAdapter(HttpUrl)
 """Pydantic :class:`~pydantic.TypeAdapter` for validating and coercing URL strings to :class:`~pydantic.HttpUrl`."""
 
+_META_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(r"^(?P<domain>[^\s:]+)-meta::")
+"""Matches a Guffin ``<domain>-meta::`` container block.
+
+The block's children are folded onto the parent vertex's ``attribute_assignments`` (with
+``domain=<domain>``); the right-hand side after ``::`` (typically the ``#.rm-g`` styling hook) is
+ignored.  Anchored at the start so ``domain`` captures the prefix before ``-meta::``.
+"""
+
 
 def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChildren | None:
     """Return an ordered list of child UIDs for *node*, or ``None`` if childless.
 
     Children are sorted by :attr:`~guffin.roam.node.RoamNode.order`.  Stubs
-    whose id is absent from *id_map* are silently dropped.  Attribute-block children are
-    excluded — they are folded into the parent vertex's
-    :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` (see
+    whose id is absent from *id_map* are silently dropped.  Attribute-block children and
+    ``<domain>-meta::`` container children (:func:`_is_meta_block`) are excluded — they are folded
+    into the parent vertex's :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` (see
     :func:`_resolve_attribute_assignments`) rather than transcribed as separate vertices.
 
     Args:
@@ -129,7 +137,9 @@ def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChild
         [
             id_map[c.id]
             for c in node.children
-            if c.id in id_map and node_type(id_map[c.id]) is not NodeType.ATTRIBUTE_BLOCK
+            if c.id in id_map
+            and node_type(id_map[c.id]) is not NodeType.ATTRIBUTE_BLOCK
+            and not _is_meta_block(id_map[c.id])
         ],
         key=lambda n: n.order if n.order is not None else 0,
     )
@@ -167,31 +177,117 @@ def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssi
     )
 
 
+def _is_meta_block(node: RoamNode) -> bool:
+    """Return whether *node* is a Guffin ``<domain>-meta::`` container block (see :data:`_META_BLOCK_RE`)."""
+    return node.string is not None and _META_BLOCK_RE.match(node.string.strip()) is not None
+
+
+def _meta_domain(node: RoamNode) -> str:
+    """Return the ``<domain>`` captured from a ``<domain>-meta::`` block (caller ensures it matches)."""
+    assert node.string is not None
+    match: Final[regex.Match[str] | None] = _META_BLOCK_RE.match(node.string.strip())
+    assert match is not None
+    return match.group("domain")
+
+
+def _strip_surrounding_quotes(token: str) -> str:
+    """Strip one pair of matching surrounding single or double quotes from *token*, if present."""
+    if len(token) >= 2 and token[0] == token[-1] and token[0] in ("'", '"'):
+        return token[1:-1]
+    return token
+
+
+def _parse_meta_child(node: RoamNode, domain: str, tree: NodeTree) -> AttributeAssignment:
+    """Parse a ``<domain>-meta`` child *node* into an :class:`~guffin.model.attribute.AttributeAssignment`.
+
+    This is the Guffin-specific (non-Roam-standard) attribute form: the child's string is
+    ``<name>:: <value>, …`` whose values need not satisfy Roam's strict attribute syntax.  The name
+    (text before ``::``) is resolved to its page :class:`~guffin.model.link.VertexLink` and the
+    attribute is tagged with *domain*.  The right-hand side is split on commas; each token is trimmed,
+    its surrounding quotes stripped, and rendered as a :class:`~guffin.model.attribute.ReferenceValue`
+    when it is a tag (per :data:`~guffin.roam.markdown.TAG_RE`) or a
+    :class:`~guffin.model.attribute.LiteralValue` otherwise.  An empty right-hand side yields no values.
+
+    Args:
+        node: A ``<domain>-meta`` child node whose ``string`` is ``<name>:: <value>, …``.
+        domain: The domain captured from the enclosing ``<domain>-meta::`` block.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve the attribute name's page.
+
+    Returns:
+        The parsed :class:`~guffin.model.attribute.AttributeAssignment` with ``attribute.domain`` set.
+
+    Raises:
+        ValueError: If ``node.string`` is ``None``, lacks a ``::`` separator, or names a page absent
+            from *tree*.
+    """
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    name_part, separator, value_part = node.string.strip().partition("::")
+    if not separator:
+        raise ValueError(f"RoamNode uid={node.uid!r} meta child is not an attribute assignment: {node.string!r}")
+    name: Final[str] = name_part.strip()
+    values: Final[tuple[AttributeValue, ...]] = tuple(
+        _to_attribute_value(_strip_surrounding_quotes(token.strip()), tree)
+        for token in value_part.split(",")
+        if token.strip()
+    )
+    return AttributeAssignment(
+        attribute=Attribute(name=name, link=_page_reference_link(name, tree), domain=domain),
+        values=values,
+    )
+
+
+def _meta_child_assignments(meta_block: RoamNode, tree: NodeTree) -> list[AttributeAssignment]:
+    """Return the attribute assignments folded from a ``<domain>-meta::`` *meta_block*'s children.
+
+    Every child of *meta_block* (sorted by :attr:`~guffin.roam.node.RoamNode.order`) is parsed via
+    :func:`_parse_meta_child` with the block's captured domain.
+
+    Args:
+        meta_block: A node for which :func:`_is_meta_block` is ``True``.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the block belongs to.
+
+    Returns:
+        The assignments parsed from the meta block's children, in source order.
+    """
+    domain: Final[str] = _meta_domain(meta_block)
+    meta_children: Final[list[RoamNode]] = sorted(
+        [tree.id_map[gc.id] for gc in (meta_block.children or []) if gc.id in tree.id_map],
+        key=lambda n: n.order if n.order is not None else 0,
+    )
+    return [_parse_meta_child(child, domain, tree) for child in meta_children]
+
+
 def _resolve_attribute_assignments(node: RoamNode, tree: NodeTree) -> list[AttributeAssignment] | None:
     """Return the attribute assignments folded onto *node*'s vertex, or ``None`` if there are none.
 
-    Finds *node*'s :attr:`~guffin.roam.node.NodeType.ATTRIBUTE_BLOCK` children (sorted by
-    :attr:`~guffin.roam.node.RoamNode.order`) and parses each into an
-    :class:`~guffin.model.attribute.AttributeAssignment` via :func:`_parse_attribute_assignment`.
+    Two child forms are folded, in *node*'s child order:
+
+    - **Roam-standard** :attr:`~guffin.roam.node.NodeType.ATTRIBUTE_BLOCK` children, each parsed via
+      :func:`_parse_attribute_assignment` (default domain).
+    - **Guffin** ``<domain>-meta::`` container children (see :func:`_is_meta_block`), whose own
+      children are each parsed via :func:`_parse_meta_child` with the captured domain
+      (:func:`_meta_child_assignments`).
 
     Args:
-        node: The node whose attribute-block children are to be folded in.
+        node: The node whose attribute-block and ``<domain>-meta`` children are to be folded in.
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to.
 
     Returns:
-        The parsed assignments in source order, or ``None`` when *node* has no attribute-block children.
+        The parsed assignments in source order, or ``None`` when *node* has none.
     """
     if not node.children:
         return None
-    attr_nodes: Final[list[RoamNode]] = sorted(
-        [
-            tree.id_map[c.id]
-            for c in node.children
-            if c.id in tree.id_map and node_type(tree.id_map[c.id]) is NodeType.ATTRIBUTE_BLOCK
-        ],
+    children: Final[list[RoamNode]] = sorted(
+        [tree.id_map[c.id] for c in node.children if c.id in tree.id_map],
         key=lambda n: n.order if n.order is not None else 0,
     )
-    assignments: Final[list[AttributeAssignment]] = [_parse_attribute_assignment(n, tree) for n in attr_nodes]
+    assignments: Final[list[AttributeAssignment]] = []
+    for child in children:
+        if _is_meta_block(child):
+            assignments.extend(_meta_child_assignments(child, tree))
+        elif node_type(child) is NodeType.ATTRIBUTE_BLOCK:
+            assignments.append(_parse_attribute_assignment(child, tree))
     return assignments if assignments else None
 
 
@@ -697,6 +793,15 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             assert_never(unreachable)
 
 
+def _consume_subtree(node: RoamNode, tree: NodeTree, consumed: set[Id]) -> None:
+    """Add *node* and every descendant id (resolved via *tree*'s ``id_map``) to *consumed*."""
+    stack: Final[list[RoamNode]] = [node]
+    while stack:
+        current: RoamNode = stack.pop()
+        consumed.add(current.id)
+        stack.extend(tree.id_map[c.id] for c in (current.children or []) if c.id in tree.id_map)
+
+
 @validate_call
 def transcribe(node_tree: NodeTree) -> VertexTree:
     """Transcribe every node in *node_tree* into a :class:`~guffin.vertex_tree.VertexTree`.
@@ -738,6 +843,13 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     for node in node_tree.dfs():
         if node.id in consumed:
             continue
+        # A <domain>-meta:: container and its whole subtree are folded onto the parent vertex's
+        # attribute_assignments (see _resolve_attribute_assignments); consume them so they are not
+        # transcribed as standalone vertices.  Checked before the attribute-block guard so a meta
+        # block whose value happens to parse as an attribute is still consumed (not folded twice).
+        if _is_meta_block(node):
+            _consume_subtree(node, node_tree, consumed)
+            continue
         # Attribute blocks are folded into their parent vertex's attribute_assignments field
         # (see _resolve_attribute_assignments), not transcribed as standalone vertices.
         if node_type(node) is NodeType.ATTRIBUTE_BLOCK:
@@ -765,8 +877,12 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         ref_consumed.update(ref_nodes_consumed)
         ref_vertices.append(ref_table_vertex)
     for ref_node in node_tree.refs_by_id.values():
-        # Native tables are consumed above; attribute blocks are not standalone vertices.
-        if ref_node.id in ref_consumed or node_type(ref_node) in (NodeType.NATIVE_TABLE, NodeType.ATTRIBUTE_BLOCK):
+        # Native tables are consumed above; attribute blocks and meta containers are not vertices.
+        if (
+            ref_node.id in ref_consumed
+            or node_type(ref_node) in (NodeType.NATIVE_TABLE, NodeType.ATTRIBUTE_BLOCK)
+            or _is_meta_block(ref_node)
+        ):
             continue
         try:
             ref_vertices.append(transcribe_standalone_node(ref_node, node_tree))

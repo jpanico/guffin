@@ -7,7 +7,6 @@
   children:
   - 2-2g3rmpU
   - AKAMsYfSW
-  - RjNKPZfjB
   refs:
   - LBFKibPIj
   attribute_assignments:
@@ -16,6 +15,7 @@
       link:
       - vertex
       - RXwAqq0_T
+      domain: Default
     values:
     - kind: reference
       name: Guffin
@@ -32,6 +32,7 @@
       link:
       - vertex
       - -gG94Gziw
+      domain: Default
     values:
     - kind: literal
       value: '5'
@@ -45,6 +46,56 @@
       link:
       - vertex
       - igM26JNa2
+  - attribute:
+      name: title
+      link:
+      - vertex
+      - PZyg8sHJZ
+      domain: guffin
+    values:
+    - kind: literal
+      value: Source Code For Humans
+  - attribute:
+      name: authors
+      link:
+      - vertex
+      - MhnnPhnTB
+      domain: guffin
+    values:
+    - kind: literal
+      value: Joe Panico
+    - kind: literal
+      value: Emi Panico
+  - attribute:
+      name: date
+      link:
+      - vertex
+      - ZyUTn2I17
+      domain: guffin
+    values:
+    - kind: literal
+      value: '2027-01-01'
+  - attribute:
+      name: identifier
+      link:
+      - vertex
+      - 2_S3ySs7O
+      domain: guffin
+    values:
+    - kind: literal
+      value: 978-1788399081
+  - attribute:
+      name: tags
+      link:
+      - vertex
+      - RXwAqq0_T
+      domain: guffin
+    values:
+    - kind: reference
+      name: Guffin
+      link:
+      - vertex
+      - HGasV4ras
   title: '[Test Article](x-guffin:vertex/LBFKibPIj) 5'
 - vertex_type: guffin/callout
   uid: 2-2g3rmpU
@@ -58,37 +109,3 @@
 - vertex_type: guffin/text
   uid: AKAMsYfSW
   text: hello world!
-- vertex_type: guffin/text
-  uid: RjNKPZfjB
-  children:
-  - aVKZ0NyYr
-  - hF-KdTW65
-  - pYRfjtiHS
-  refs:
-  - BxGxeeGk1
-  - 2xY4zCjId
-  attribute_assignments:
-  - attribute:
-      name: date
-      link:
-      - vertex
-      - ZyUTn2I17
-    values:
-    - kind: literal
-      value: '2027-01-01'
-  text: 'guffin-meta:: #.rm-g'
-- vertex_type: guffin/text
-  uid: aVKZ0NyYr
-  refs:
-  - PZyg8sHJZ
-  text: 'title:: "Source Code For Humans"'
-- vertex_type: guffin/text
-  uid: hF-KdTW65
-  refs:
-  - MhnnPhnTB
-  text: 'authors:: Joe Panico'
-- vertex_type: guffin/text
-  uid: pYRfjtiHS
-  refs:
-  - 2_S3ySs7O
-  text: 'identifier:: '

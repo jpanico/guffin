@@ -6,7 +6,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from guffin.model.attribute import LiteralValue, ReferenceValue
+from guffin.model.attribute import DEFAULT_ATTRIBUTE_DOMAIN, LiteralValue, ReferenceValue
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
@@ -810,13 +810,14 @@ class TestAttributeAssignmentFolding:
     """Attribute-block children are folded onto the parent vertex (Test Article 5 fixture)."""
 
     def test_page_carries_folded_assignments(self) -> None:
-        """The page's two attribute-block children become its attribute_assignments, in source order."""
+        """The page's standard (Default-domain) attribute-block children fold in source order."""
         vtree = transcribe(article5_node_tree())
         page = next(v for v in vtree.tree_vertices if isinstance(v, PageVertex))
         assert page.attribute_assignments is not None
-        assert [a.attribute.name for a in page.attribute_assignments] == ["tags", "attribute1"]
+        default = [a for a in page.attribute_assignments if a.attribute.domain == DEFAULT_ATTRIBUTE_DOMAIN]
+        assert [a.attribute.name for a in default] == ["tags", "attribute1"]
 
-        tags, attr1 = page.attribute_assignments
+        tags, attr1 = default
         assert [v.name for v in tags.values if isinstance(v, ReferenceValue)] == ["Guffin", "Better Bullets"]
         assert attr1.attribute.link.uid == "-gG94Gziw"
         literal, ref_cd, ref_v01 = attr1.values
@@ -840,6 +841,44 @@ class TestAttributeAssignmentFolding:
         tree = article5_node_tree()
         with pytest.raises(ValueError):
             vertex_type(tree.uid_map["Up9F5BMq9"])
+
+
+# ---------------------------------------------------------------------------
+# TestMetaBlockFolding
+# ---------------------------------------------------------------------------
+
+
+class TestMetaBlockFolding:
+    """A ``<domain>-meta::`` container folds its children onto the parent as domain attributes (TA5)."""
+
+    def test_meta_children_fold_with_domain(self) -> None:
+        """``guffin-meta`` children become guffin-domain attributes on the page; values are normalised."""
+        vtree = transcribe(article5_node_tree())
+        page = next(v for v in vtree.tree_vertices if isinstance(v, PageVertex))
+        assert page.attribute_assignments is not None
+        guffin = {a.attribute.name: a for a in page.attribute_assignments if a.attribute.domain == "guffin"}
+        assert list(guffin) == ["title", "authors", "date", "identifier", "tags"]
+        # Quoted literal -> surrounding quotes stripped, kept as one value.
+        (title_value,) = guffin["title"].values
+        assert isinstance(title_value, LiteralValue) and title_value.value == "Source Code For Humans"
+        # Comma-separated RHS -> one literal value per trimmed token.
+        assert [v.value for v in guffin["authors"].values if isinstance(v, LiteralValue)] == [
+            "Joe Panico",
+            "Emi Panico",
+        ]
+        # A tag value -> reference.
+        assert [v.name for v in guffin["tags"].values if isinstance(v, ReferenceValue)] == ["Guffin"]
+
+    def test_meta_block_and_children_consumed(self) -> None:
+        """The meta block and its children are consumed — never vertices, never in any children list."""
+        tree = article5_node_tree()
+        meta = tree.uid_map["RjNKPZfjB"]
+        subtree_uids = {meta.uid} | {tree.id_map[c.id].uid for c in (meta.children or []) if c.id in tree.id_map}
+        vtree = transcribe(tree)
+        tree_uids = {v.uid for v in vtree.tree_vertices}
+        child_uids = {child for v in vtree.tree_vertices if v.children for child in v.children}
+        assert subtree_uids.isdisjoint(tree_uids)
+        assert subtree_uids.isdisjoint(child_uids)
 
 
 # ---------------------------------------------------------------------------

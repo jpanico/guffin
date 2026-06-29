@@ -296,6 +296,26 @@ ZyUTn2I17:
   props: null
   title: null
   attrs: null
+ZQ8KWa3iR:
+  uid: ZQ8KWa3iR
+  id: 11848
+  string: 'tags:: #Guffin'
+  order: 4
+  heading: null
+  children: null
+  refs:
+  - id: 261
+  - id: 11243
+  page:
+    id: 11494
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11494
+  - id: 11833
+  props: null
+  title: null
+  attrs: null
 jDLtdo5HR:
   uid: jDLtdo5HR
   id: 5653
@@ -1014,7 +1034,7 @@ OZba4Vi3o:
 hF-KdTW65:
   uid: hF-KdTW65
   id: 11834
-  string: 'authors:: Joe Panico'
+  string: 'authors:: Joe Panico, Emi Panico'
   order: 1
   heading: null
   children: null
@@ -1364,7 +1384,7 @@ RXwAqq0_T:
 pYRfjtiHS:
   uid: pYRfjtiHS
   id: 11846
-  string: 'identifier:: '
+  string: 'identifier:: 978-1788399081'
   order: 3
   heading: null
   children: null
@@ -1777,12 +1797,13 @@ RjNKPZfjB:
   - id: 11841
   - id: 11844
   - id: 11846
+  - id: 11848
   refs:
   - id: 321
   - id: 11839
   page:
     id: 11494
-  open: false
+  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -1813,22 +1834,6 @@ RjNKPZfjB:
       - RjNKPZfjB
     - source:
       - uid
-      - hF-KdTW65
-      value:
-      - uid
-      - MhnnPhnTB
-    - source:
-      - uid
-      - hF-KdTW65
-      value: ' Joe Panico'
-  - - source:
-      - uid
-      - RjNKPZfjB
-      value:
-      - uid
-      - RjNKPZfjB
-    - source:
-      - uid
       - 5qQtO7uF3
       value:
       - uid
@@ -1837,6 +1842,56 @@ RjNKPZfjB:
       - uid
       - 5qQtO7uF3
       value: ' 2027-01-01'
+  - - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - RjNKPZfjB
+    - source:
+      - uid
+      - pYRfjtiHS
+      value:
+      - uid
+      - 2_S3ySs7O
+    - source:
+      - uid
+      - pYRfjtiHS
+      value: ' 978-1788399081'
+  - - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - RjNKPZfjB
+    - source:
+      - uid
+      - ZQ8KWa3iR
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - ZQ8KWa3iR
+      value:
+      - uid
+      - HGasV4ras
+  - - source:
+      - uid
+      - RjNKPZfjB
+      value:
+      - uid
+      - RjNKPZfjB
+    - source:
+      - uid
+      - hF-KdTW65
+      value:
+      - uid
+      - MhnnPhnTB
+    - source:
+      - uid
+      - hF-KdTW65
+      value: ' Joe Panico, Emi Panico'
 BY3Wk3SIh:
   uid: BY3Wk3SIh
   id: 5671

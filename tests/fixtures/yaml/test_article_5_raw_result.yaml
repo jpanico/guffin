@@ -239,6 +239,22 @@
       id: 11494
     refs:
     - id: 11845
+- - string: 'tags:: #Guffin'
+    user:
+      id: 3
+    id: 11848
+    uid: ZQ8KWa3iR
+    parents:
+    - id: 11494
+    - id: 11833
+    time: 1782766024683
+    order: 4
+    open: true
+    page:
+      id: 11494
+    refs:
+    - id: 261
+    - id: 11243
 - - string: '`=`'
     children:
     - id: 5654
@@ -413,13 +429,13 @@
     - id: 11833
     - id: 11839
     uid: dPZqAiKrK
-    word-count: 41
+    word-count: 47
     edit-user:
       id: 3
     time: 1781833303933
     title: '[[Test Article]] 5'
-    edit-nonce: M6sSA6rP7
-    edit-time: 1782758757992
+    edit-nonce: SGSZvjDYm
+    edit-time: 1782766063577
     open: true
     refs:
     - id: 4223
@@ -851,7 +867,7 @@
     open: true
     page:
       id: 5618
-- - string: 'authors:: Joe Panico'
+- - string: 'authors:: Joe Panico, Emi Panico'
     user:
       id: 3
     id: 11834
@@ -859,7 +875,7 @@
     parents:
     - id: 11494
     - id: 11833
-    time: 1782758582158
+    time: 1782766063577
     order: 1
     open: true
     page:
@@ -1137,7 +1153,7 @@
     title: tags
     edit-nonce: 2NuWcfGas
     edit-time: 1663513397401
-- - string: 'identifier:: '
+- - string: 'identifier:: 978-1788399081'
     user:
       id: 3
     id: 11846
@@ -1145,7 +1161,7 @@
     parents:
     - id: 11494
     - id: 11833
-    time: 1782758757992
+    time: 1782762885142
     order: 3
     open: true
     page:
@@ -1485,22 +1501,6 @@
         - RjNKPZfjB
       - source:
         - uid
-        - hF-KdTW65
-        value:
-        - uid
-        - MhnnPhnTB
-      - source:
-        - uid
-        - hF-KdTW65
-        value: ' Joe Panico'
-    - - source:
-        - uid
-        - RjNKPZfjB
-        value:
-        - uid
-        - RjNKPZfjB
-      - source:
-        - uid
         - 5qQtO7uF3
         value:
         - uid
@@ -1509,16 +1509,69 @@
         - uid
         - 5qQtO7uF3
         value: ' 2027-01-01'
+    - - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - RjNKPZfjB
+      - source:
+        - uid
+        - pYRfjtiHS
+        value:
+        - uid
+        - 2_S3ySs7O
+      - source:
+        - uid
+        - pYRfjtiHS
+        value: ' 978-1788399081'
+    - - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - RjNKPZfjB
+      - source:
+        - uid
+        - ZQ8KWa3iR
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - ZQ8KWa3iR
+        value:
+        - uid
+        - HGasV4ras
+    - - source:
+        - uid
+        - RjNKPZfjB
+        value:
+        - uid
+        - RjNKPZfjB
+      - source:
+        - uid
+        - hF-KdTW65
+        value:
+        - uid
+        - MhnnPhnTB
+      - source:
+        - uid
+        - hF-KdTW65
+        value: ' Joe Panico, Emi Panico'
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11834
     - id: 11841
     - id: 11844
     - id: 11846
+    - id: 11848
     user:
       id: 3
     id: 11833
     lookup:
+    - id: 261
+    - id: 11243
     - id: 11833
     - id: 11834
     - id: 11841
@@ -1526,12 +1579,15 @@
     - id: 11843
     - id: 11844
     - id: 11845
+    - id: 11846
+    - id: 11847
+    - id: 11848
     uid: RjNKPZfjB
     parents:
     - id: 11494
     time: 1782757905597
     order: 4
-    open: false
+    open: true
     page:
       id: 11494
     refs:
