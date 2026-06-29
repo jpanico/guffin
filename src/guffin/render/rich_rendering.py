@@ -33,6 +33,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import Table as GuffinTable, TableStyle
+from guffin.model.attribute import AttributeAssignment, LiteralValue
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
@@ -378,6 +379,45 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
             return Text(f"{prop}=?")
 
 
+_ATTRIBUTES_PANEL_STYLE: Final[str] = "#87cefa"
+"""Light-blue Rich style for the vertex 'Attributes' sub-panel border, title, and values."""
+
+_ATTRIBUTES_KEY_STYLE: Final[str] = "#1e90ff"
+"""Deeper, more-saturated blue for the attribute key, to set it apart from the lighter values."""
+
+
+def _attributes_panel(assignments: list[AttributeAssignment]) -> Panel:
+    """Build the light-blue 'Attributes' sub-panel summarising a vertex's attribute assignments.
+
+    Each assignment renders as a ``<name>:: <value>, …`` line, with reference values shown as
+    ``#<name>`` and literal values as their text.  The attribute key is rendered in a deeper,
+    more-saturated blue (:data:`_ATTRIBUTES_KEY_STYLE`) than its values to set it apart.
+
+    Args:
+        assignments: The vertex's folded attribute assignments.
+
+    Returns:
+        A :class:`~rich.panel.Panel` titled "Attributes" rendered in a light-blue style.
+    """
+    body: Final[Text] = Text()
+    for index, assignment in enumerate(assignments):
+        if index > 0:
+            body.append("\n")
+        body.append(f"{assignment.attribute.name}:: ", style=_ATTRIBUTES_KEY_STYLE)
+        body.append(
+            ", ".join(
+                value.value if isinstance(value, LiteralValue) else f"#{value.name}" for value in assignment.values
+            )
+        )
+    return Panel(
+        body,
+        title="Attributes",
+        border_style=_ATTRIBUTES_PANEL_STYLE,
+        style=_ATTRIBUTES_PANEL_STYLE,
+        expand=False,
+    )
+
+
 @validate_call
 def build_vertex_panel(
     vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_PROPS, *, truncate: bool = True
@@ -393,7 +433,9 @@ def build_vertex_panel(
     - :class:`~guffin.vertex.ImageVertex` — ``IMAGE [<alt>](<firestore_url>)``.
     - :class:`~guffin.vertex.CalloutVertex` — ``CALLOUT [<type>]: <title>``.
 
-    The panel body renders each name in *props* via :func:`_format_vertex_prop`.
+    The panel body renders each name in *props* via :func:`_format_vertex_prop`.  When *vertex*
+    carries folded attribute assignments, a light-blue "Attributes" sub-panel
+    (:func:`_attributes_panel`) is appended below the metadata.
 
     Args:
         vertex: The :data:`~guffin.vertex.Vertex` to render.
@@ -457,7 +499,10 @@ def build_vertex_panel(
     text_props: Final[list[Text]] = [ren for ren in prop_renderings if isinstance(ren, Text)]
     table_props: Final[list[Table]] = [ren for ren in prop_renderings if isinstance(ren, Table)]
     meta_line: Final[Text] = Text("  ").join(text_props) if text_props else Text("")
-    content: Final[Text | Group] = Group(meta_line, *table_props) if table_props else meta_line
+    extras: Final[list[Table | Panel]] = [*table_props]
+    if vertex.attribute_assignments:
+        extras.append(_attributes_panel(vertex.attribute_assignments))
+    content: Final[Text | Group] = Group(meta_line, *extras) if extras else meta_line
     return Panel(content, title=title, expand=False)
 
 
