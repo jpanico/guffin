@@ -34,7 +34,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import Table as GuffinTable, TableStyle
-from guffin.model.attribute import AttributeAssignment, LiteralValue
+from guffin.model.attribute import DEFAULT_ATTRIBUTE_DOMAIN, AttributeAssignment, LiteralValue
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
@@ -387,19 +387,20 @@ _ATTRIBUTES_KEY_STYLE: Final[str] = "#1e90ff"
 """Deeper, more-saturated blue for the attribute key, to set it apart from the lighter values."""
 
 
-def _attributes_panel(assignments: list[AttributeAssignment]) -> Panel:
-    """Build the light-blue 'Attributes' sub-panel summarising a vertex's attribute assignments.
+def _attributes_panel(domain: str, assignments: list[AttributeAssignment]) -> Panel:
+    """Build the light-blue ``Attributes (<domain>)`` sub-panel for one domain's attribute assignments.
 
     Each assignment renders in Roam-agnostic notation as ``<name> = <value>, …``, with reference
     values shown as ``[<page-name>](<page-uid>)`` and literal values as their text.  The attribute
-    key is rendered in a deeper, more-saturated blue (:data:`_ATTRIBUTES_KEY_STYLE`) than its values
+    name is rendered in a deeper, more-saturated blue (:data:`_ATTRIBUTES_KEY_STYLE`) than the rest
     to set it apart.
 
     Args:
-        assignments: The vertex's folded attribute assignments.
+        domain: The attribute domain shown in the panel title.
+        assignments: The assignments belonging to *domain*, in order.
 
     Returns:
-        A :class:`~rich.panel.Panel` titled "Attributes" rendered in a light-blue style.
+        A :class:`~rich.panel.Panel` titled ``Attributes (<domain>)`` rendered in a light-blue style.
     """
     body: Final[Text] = Text()
     for index, assignment in enumerate(assignments):
@@ -415,12 +416,35 @@ def _attributes_panel(assignments: list[AttributeAssignment]) -> Panel:
         )
     return Panel(
         body,
-        title="Attributes",
+        title=f"Attributes ({domain})",
         border_style=_ATTRIBUTES_PANEL_STYLE,
         style=_ATTRIBUTES_PANEL_STYLE,
         padding=(0, 2),
         expand=False,
     )
+
+
+def _attribute_panels(assignments: list[AttributeAssignment]) -> list[Panel]:
+    """Build one ``Attributes (<domain>)`` sub-panel per distinct attribute domain.
+
+    Assignments are grouped by their attribute's
+    :attr:`~guffin.model.attribute.Attribute.domain`, preserving order within each group.
+    Non-default domains appear in first-appearance order, followed by the
+    :data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` group last.
+
+    Args:
+        assignments: The vertex's folded attribute assignments.
+
+    Returns:
+        A list of domain sub-panels, with the default-domain panel last when present.
+    """
+    by_domain: Final[dict[str, list[AttributeAssignment]]] = {}
+    for assignment in assignments:
+        by_domain.setdefault(assignment.attribute.domain, []).append(assignment)
+    ordered_domains: Final[list[str]] = [domain for domain in by_domain if domain != DEFAULT_ATTRIBUTE_DOMAIN]
+    if DEFAULT_ATTRIBUTE_DOMAIN in by_domain:
+        ordered_domains.append(DEFAULT_ATTRIBUTE_DOMAIN)
+    return [_attributes_panel(domain, by_domain[domain]) for domain in ordered_domains]
 
 
 @validate_call
@@ -439,8 +463,9 @@ def build_vertex_panel(
     - :class:`~guffin.vertex.CalloutVertex` — ``CALLOUT [<type>]: <title>``.
 
     The panel body renders each name in *props* via :func:`_format_vertex_prop`.  When *vertex*
-    carries folded attribute assignments, a light-blue "Attributes" sub-panel
-    (:func:`_attributes_panel`) is appended below the metadata.
+    carries folded attribute assignments, a light-blue ``Attributes (<domain>)`` sub-panel is
+    appended below the metadata for each distinct attribute domain (:func:`_attribute_panels`),
+    with the default-domain panel last.
 
     Args:
         vertex: The :data:`~guffin.vertex.Vertex` to render.
@@ -506,9 +531,10 @@ def build_vertex_panel(
     meta_line: Final[Text] = Text("  ").join(text_props) if text_props else Text("")
     extras: Final[list[RenderableType]] = [*table_props]
     if vertex.attribute_assignments:
-        # A blank line above sets the sub-panel apart from the metadata line; none below, since it is
-        # the last element and the parent panel's bottom border already closes it off.
-        extras.append(Padding(_attributes_panel(vertex.attribute_assignments), (1, 0, 0, 0)))
+        # One sub-panel per domain.  A blank line above each separates it from the metadata line or
+        # the preceding sub-panel; none below, so the last one sits against the parent's bottom border.
+        for attributes_panel in _attribute_panels(vertex.attribute_assignments):
+            extras.append(Padding(attributes_panel, (1, 0, 0, 0)))
     content: Final[Text | Group] = Group(meta_line, *extras) if extras else meta_line
     return Panel(content, title=title, expand=False)
 

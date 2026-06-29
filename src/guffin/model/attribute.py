@@ -15,6 +15,7 @@ Public symbols:
   :class:`AttributeAssignment` — an :class:`Attribute` paired with its ordered values.
 - **Adapters**: :data:`attribute_value_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for
   validating a raw mapping into the appropriate :data:`AttributeValue`.
+- **Constants**: :data:`DEFAULT_ATTRIBUTE_DOMAIN` — the default :attr:`Attribute.domain` value.
 """
 
 import enum
@@ -23,6 +24,9 @@ from typing import Annotated, Final, Literal
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 from guffin.model.link import VertexLink
+
+DEFAULT_ATTRIBUTE_DOMAIN: Final[str] = "Default"
+"""The default namespace assigned to an :class:`Attribute` when no domain is specified."""
 
 
 class AttributeValueKind(enum.StrEnum):
@@ -43,12 +47,14 @@ class Attribute(BaseModel):
     Attributes:
         name: The attribute name, i.e. the title of the referenced Roam *Page*.
         link: A reference link to the page named by :attr:`name`.
+        domain: The namespace the attribute belongs to; defaults to ``"Default"``.
     """
 
     model_config = ConfigDict(frozen=True)
 
     name: str = Field(..., description="The attribute name — the title of the referenced page.")
     link: VertexLink = Field(..., description="Reference link to the page named by `name`.")
+    domain: str = Field(default=DEFAULT_ATTRIBUTE_DOMAIN, description="The namespace the attribute belongs to.")
 
 
 class LiteralValue(BaseModel):
