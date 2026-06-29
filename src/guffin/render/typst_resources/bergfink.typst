@@ -203,6 +203,24 @@ $endif$
 $default_styles.typ()$
 $yamltable.typ()$
 
+$if(top-level-division)$
+// Book mode (top-level-division = chapter/part): level-1 headings are chapters.  Each opens on a
+// new page, and—when section numbering is enabled—headings are numbered hierarchically from level 1
+// (1, 1.1, 1.1.1), matching the EPUB book output.  Emitted only when the renderer passes
+// top-level-division, so the default (section) layout is unchanged.
+#show heading.where(level: 1): it => {
+  pagebreak(weak: true)
+  it
+}
+#set heading(
+  numbering: if cfg.number-sections {
+    (..nums) => nums.pos().map(str).join(".")
+  } else {
+    none
+  },
+)
+$endif$
+
 // listings
 #show raw.where(block: true): code => {
 $if(listings)$

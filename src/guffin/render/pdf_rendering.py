@@ -50,7 +50,7 @@ from guffin.render.pandoc_rendering import (
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
-from guffin.render.project import ProjectProfile
+from guffin.render.project import ProjectProfile, TopLevelDivision
 from guffin.render.render_options import PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
@@ -89,6 +89,7 @@ def _typst_template_args(
     template_path: Path,
     template_dir: Path | None,
     number_sections: bool,
+    top_level_division: TopLevelDivision,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
 
@@ -102,6 +103,9 @@ def _typst_template_args(
         template_dir: Optional user template directory; when set, its ``user_cfg.typ`` is passed as
             the Bergfink ``user-config`` override.
         number_sections: When ``True``, enables the Bergfink ``number-sections`` variable.
+        top_level_division: When not :attr:`TopLevelDivision.SECTION`, enables the template's book
+            mode (chapters open a new page, numbered hierarchically from level 1) by passing the
+            ``top-level-division`` variable; ``SECTION`` passes nothing, leaving the default layout.
 
     Returns:
         The Pandoc ``extra_args`` that apply the template (filters, resource path, and variables).
@@ -119,6 +123,9 @@ def _typst_template_args(
     # `--number-sections` flag does not set it, so pass it explicitly via -V.
     if number_sections:
         args.extend(["-V", "number-sections=true"])
+    # Book mode is gated on this variable; SECTION passes nothing so the default layout is unchanged.
+    if top_level_division is not TopLevelDivision.SECTION:
+        args.extend(["-V", f"top-level-division={top_level_division.value}"])
     if template_dir is not None:
         args.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
     return args
@@ -191,7 +198,10 @@ def render(
     temporary image directory is removed after Pandoc completes.
 
     When ``profile``'s structural policy sets ``number_sections``, headings are numbered (the
-    Bergfink template's ``number-sections`` variable).
+    Bergfink template's ``number-sections`` variable).  When its ``top_level_division`` is not
+    ``SECTION`` (i.e. a book), the template's book mode is enabled: level-1 headings (chapters) open
+    on a new page and, with numbering on, are numbered hierarchically from level 1 — mirroring the
+    EPUB book output.
 
     Pandoc and Typst must be installed and on ``PATH``.
 
@@ -245,7 +255,11 @@ def render(
         logger.debug("using user_cfg override: %s", user_cfg_path)
 
     template_args: Final[list[str]] = _typst_template_args(
-        bundled_dir, template_path, template_dir, profile.structural_policy.number_sections
+        bundled_dir,
+        template_path,
+        template_dir,
+        profile.structural_policy.number_sections,
+        profile.structural_policy.top_level_division,
     )
     extra_args: list[str] = ["--pdf-engine=typst", *template_args]
 
