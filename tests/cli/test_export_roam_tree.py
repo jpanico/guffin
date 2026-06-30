@@ -13,6 +13,7 @@ from typer.testing import CliRunner
 
 from guffin.cli.export_roam_tree import app
 from guffin.common.provenance import Provenance
+from guffin.model.render_bundle import RenderBundle
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import Response as LocalApiResponse
 from guffin.roam.node_fetch import RoamNodeNotFoundError
@@ -326,8 +327,10 @@ class TestExportRoamTreeColophon:
     these flag-plumbing checks fast — no Pandoc subprocess — while still exercising the full CLI path.
     """
 
-    def _provenance_for_flag(self, tmp_path: pathlib.Path, colophon_flag: str) -> Provenance | None:
-        """Invoke the CLI with *colophon_flag* (renderer mocked) and return the render options' provenance."""
+    def _render_call_for_flag(
+        self, tmp_path: pathlib.Path, colophon_flag: str
+    ) -> tuple[RenderBundle, MarkdownRenderOptions]:
+        """Invoke the CLI with *colophon_flag* (renderer mocked); return the (bundle, options) it received."""
         fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
             anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
         )
@@ -361,13 +364,19 @@ class TestExportRoamTreeColophon:
             finally:
                 logging.root.handlers = saved_handlers
         assert result.exit_code == 0, result.output
-        options: Final[MarkdownRenderOptions] = mock_render_md.call_args.args[4]
-        return options.provenance
+        call_args = mock_render_md.call_args
+        bundle: RenderBundle = call_args.args[0]
+        options: MarkdownRenderOptions = call_args.args[4]
+        return bundle, options
 
-    def test_colophon_flag_gathers_provenance(self, tmp_path: pathlib.Path) -> None:
-        """--colophon makes the CLI gather provenance and pass it on the render options."""
-        assert isinstance(self._provenance_for_flag(tmp_path, "--colophon"), Provenance)
+    def test_colophon_flag_sets_emit_and_stamps_bundle(self, tmp_path: pathlib.Path) -> None:
+        """--colophon sets emit_colophon on the options and stamps the bundle with gathered provenance."""
+        bundle, options = self._render_call_for_flag(tmp_path, "--colophon")
+        assert options.emit_colophon is True
+        assert isinstance(bundle.provenance, Provenance)
 
-    def test_no_colophon_flag_passes_no_provenance(self, tmp_path: pathlib.Path) -> None:
-        """--no-colophon leaves the render options' provenance unset (None)."""
-        assert self._provenance_for_flag(tmp_path, "--no-colophon") is None
+    def test_no_colophon_flag_disables_emit_and_leaves_bundle_unstamped(self, tmp_path: pathlib.Path) -> None:
+        """--no-colophon clears emit_colophon and leaves the bundle's provenance unset (None)."""
+        bundle, options = self._render_call_for_flag(tmp_path, "--no-colophon")
+        assert options.emit_colophon is False
+        assert bundle.provenance is None

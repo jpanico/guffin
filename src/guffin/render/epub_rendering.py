@@ -178,7 +178,10 @@ def render(
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
         image_files: Final[dict[Uid, Path]] = {uid: ref.path for uid, ref in image_refs.items()}
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
-            enriched_tree, image_files, render_bundle.view, provenance=options.provenance
+            enriched_tree,
+            image_files,
+            render_bundle.view,
+            provenance=render_bundle.provenance if options.emit_colophon else None,
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]

@@ -283,7 +283,7 @@ def render(
         profile.structural_policy.number_sections,
         profile.structural_policy.top_level_division,
         profile.structural_policy.emit_title_page,
-        options.provenance,
+        render_bundle.provenance if options.emit_colophon else None,
     )
     extra_args: list[str] = ["--pdf-engine=typst", *template_args]
 

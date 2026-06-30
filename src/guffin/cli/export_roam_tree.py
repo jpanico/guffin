@@ -268,16 +268,22 @@ def main(
     except Exception:
         logger.exception("Error fetching %r from graph %r", target, graph_name)
         raise typer.Exit(code=1)
-    render_bundle: Final[RenderBundle | None] = trees[1]
-    if render_bundle is None:
+    fetched_bundle: Final[RenderBundle | None] = trees[1]
+    if fetched_bundle is None:
         logger.error("render_bundle is None; cannot export without a render bundle")
         raise typer.Exit(code=1)
 
-    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
-    profile: Final[ProjectProfile] = profile_for(project_type)
+    # The colophon's data (provenance) is stamped onto the bundle as origin metadata; whether to
+    # render it is the separate emit_colophon option carried on the render options.
     provenance: Final[Provenance | None] = gather_provenance(extra={"type": project_type.value}) if colophon else None
     if provenance is not None:
         logger.info("provenance: %s", provenance.summary())
+    render_bundle: Final[RenderBundle] = (
+        fetched_bundle.model_copy(update={"provenance": provenance}) if provenance is not None else fetched_bundle
+    )
+
+    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
+    profile: Final[ProjectProfile] = profile_for(project_type)
 
     _render(
         output_format,
@@ -292,7 +298,7 @@ def main(
         bundle,
         suppress_attributes,
         dump_pandoc_ast,
-        provenance,
+        colophon,
     )
 
 
@@ -309,16 +315,16 @@ def _render(
     bundle: bool,
     suppress_attributes: bool,
     dump_pandoc_ast: bool,
-    provenance: Provenance | None,
+    emit_colophon: bool,
 ) -> None:
     """Render *render_bundle* with the renderer selected by *output_format*; exit 1 on failure.
 
     Builds the format-specific :class:`~guffin.render.render_options.RenderOptions` subclass and
     dispatches to the matching renderer, passing *profile* (the project type and bibliographic
     metadata) through to it.  Each renderer reads only the option fields that apply to its format
-    (``bundle`` is Markdown-only, ``template_dir`` is PDF-only); *provenance*, when set, is carried
-    on every format's options and emitted as an end-of-document colophon.  Any rendering failure is
-    logged and turned into a :class:`typer.Exit` with code 1.
+    (``bundle`` is Markdown-only, ``template_dir`` is PDF-only); *emit_colophon* is carried on every
+    format's options and, when set, stamps the output with a colophon built from the bundle's
+    provenance.  Any rendering failure is logged and turned into a :class:`typer.Exit` with code 1.
     """
     try:
         if output_format is OutputFormat.PDF:
@@ -328,7 +334,7 @@ def _render(
                 template_dir=template_dir,
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
-                provenance=provenance,
+                emit_colophon=emit_colophon,
             )
             render_pdf(render_bundle, profile, filename_stem, api_endpoint, pdf_options)
         elif output_format is OutputFormat.EPUB:
@@ -337,7 +343,7 @@ def _render(
                 cache_dir=cache_dir,
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
-                provenance=provenance,
+                emit_colophon=emit_colophon,
             )
             render_epub(render_bundle, profile, filename_stem, api_endpoint, epub_options)
         else:
@@ -347,7 +353,7 @@ def _render(
                 bundle=bundle,
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
-                provenance=provenance,
+                emit_colophon=emit_colophon,
             )
             render_md(render_bundle, profile, filename_stem, api_endpoint, md_options)
     except Exception as e:
