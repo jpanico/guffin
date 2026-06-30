@@ -115,6 +115,20 @@ class TestFetchRoamNodesRequest:
         """Test that payload_by_node_uid() includes the node UID in args."""
         assert "wdMgyBiP9" in FetchRoamNodes.Request.payload_by_node_uid("wdMgyBiP9").args
 
+    def test_with_refs_queries_pull_subtrees_of_all_page_refs(self) -> None:
+        """The subtree branch uses the page-ref rule, so anchor-self refs (e.g. a page-title.
+
+        reference) get their full subtrees pulled, not only refs from descendant blocks.
+        """
+        for query in (
+            FetchRoamNodes.Request.BY_PAGE_TITLE_WITH_REFS_QUERY,
+            FetchRoamNodes.Request.BY_NODE_UID_WITH_REFS_QUERY,
+        ):
+            assert "(page-ref ?anchor ?ref)\n" in query
+            assert "(descendant ?ref ?node)" in query
+            # The old descendant-block-only subtree branch must be gone.
+            assert "(descendant ?anchor ?block)" not in query
+
 
 class TestFetchRoamNodesResponsePayload:
     """Tests for FetchRoamNodes.Response.Payload validation."""

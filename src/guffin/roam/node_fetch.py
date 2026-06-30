@@ -141,8 +141,7 @@ class FetchRoamNodes:
         _REF_DESCENDANT_OR_JOIN_BRANCH: Final[str] = textwrap.indent(
             textwrap.dedent("""\
                 (and [?anchor :node/title ?title]
-                     (descendant ?anchor ?block)
-                     [?block :block/refs ?ref]
+                     (page-ref ?anchor ?ref)
                      (descendant ?ref ?node))"""),
             "   ",
         )
@@ -186,10 +185,12 @@ class FetchRoamNodes:
            (via the ``descendant`` rule).
         3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
            its descendants (via the ``page-ref`` rule).
-        4. Every block reachable through ``:block/children`` from any ``:block/refs`` target
-           of a descendant block of the anchor.  Combined with branch 3 (which fetches the
-           ref targets themselves), this pulls every referenced block together with its full
-           subtree, so referenced multi-block constructs (e.g. a ``{{table}}``) arrive complete.
+        4. Every block reachable through ``:block/children`` from any ``page-ref`` target of the
+           anchor — i.e. the full subtree of every referenced node, whether referenced by the anchor
+           node itself (e.g. a page-title reference) or by any of its descendants.  Combined with
+           branch 3 (which fetches the ref targets themselves), this pulls every referenced block
+           together with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
+           arrive complete.
         """
 
         _BY_NODE_UID_QUERY_BASE: Final[str] = textwrap.dedent("""\
@@ -211,8 +212,7 @@ class FetchRoamNodes:
         _REF_DESCENDANT_OR_JOIN_BRANCH_UID: Final[str] = textwrap.indent(
             textwrap.dedent("""\
                 (and [?anchor :block/uid ?uid]
-                     (descendant ?anchor ?block)
-                     [?block :block/refs ?ref]
+                     (page-ref ?anchor ?ref)
                      (descendant ?ref ?node))"""),
             "   ",
         )
@@ -256,10 +256,12 @@ class FetchRoamNodes:
            (via the ``descendant`` rule).
         3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
            its descendants (via the ``page-ref`` rule).
-        4. Every block reachable through ``:block/children`` from any ``:block/refs`` target
-           of a descendant block of the anchor.  Combined with branch 3 (which fetches the
-           ref targets themselves), this pulls every referenced block together with its full
-           subtree, so referenced multi-block constructs (e.g. a ``{{table}}``) arrive complete.
+        4. Every block reachable through ``:block/children`` from any ``page-ref`` target of the
+           anchor — i.e. the full subtree of every referenced node, whether referenced by the anchor
+           node itself (e.g. a page-title reference) or by any of its descendants.  Combined with
+           branch 3 (which fetches the ref targets themselves), this pulls every referenced block
+           together with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
+           arrive complete.
         """
 
         @staticmethod
