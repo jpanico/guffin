@@ -193,6 +193,9 @@ $endif$
 $if(footer-provenance)$
 #(cfg.footer-provenance = "$footer-provenance$")
 $endif$
+$if(titlepage-provenance)$
+#(cfg.titlepage-provenance = "$titlepage-provenance$")
+$endif$
 $if(figure-prefix)$
 #(cfg.figure-prefix = "$figure-prefix$")
 $endif$

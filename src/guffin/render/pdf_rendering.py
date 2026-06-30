@@ -111,9 +111,10 @@ def _typst_template_args(
             ``top-level-division`` variable; ``SECTION`` passes nothing, leaving the default layout.
         emit_title_page: When ``True``, enables the Bergfink ``titlepage`` variable so the template
             renders a title page from the document metadata; ``False`` passes nothing (no title page).
-        provenance: When set, passes its :meth:`~guffin.common.provenance.Provenance.summary` as the
-            Bergfink ``footer-provenance`` variable so the template renders it on a line below the
-            page footer; ``None`` passes nothing (no provenance in the footer).
+        provenance: When set, passes its :meth:`~guffin.common.provenance.Provenance.summary` to the
+            template — as the Bergfink ``titlepage-provenance`` variable (rendered at the foot of the
+            title page) when *emit_title_page* is set, otherwise as ``footer-provenance`` (a line
+            below the running page footer); ``None`` passes nothing.
 
     Returns:
         The Pandoc ``extra_args`` that apply the template (filters, resource path, and variables).
@@ -137,9 +138,11 @@ def _typst_template_args(
     # Bergfink renders a title page only when the `titlepage` variable is set; pass nothing otherwise.
     if emit_title_page:
         args.extend(["-V", "titlepage=true"])
-    # In PDF the provenance rides the page footer (a line below it) rather than an end-of-body block.
+    # In PDF the provenance rides the title page when one is emitted (at its foot), otherwise the
+    # running page footer (a line below it) — never an end-of-body block.
     if provenance is not None:
-        args.extend(["-V", f"footer-provenance={provenance.summary()}"])
+        provenance_var: Final[str] = "titlepage-provenance" if emit_title_page else "footer-provenance"
+        args.extend(["-V", f"{provenance_var}={provenance.summary()}"])
     if template_dir is not None:
         args.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
     return args
@@ -218,9 +221,9 @@ def render(
     EPUB book output.  When its ``emit_title_page`` is set, the Bergfink ``titlepage`` partial renders
     a title page from the document metadata.
 
-    When ``options.provenance`` is set, its summary is rendered on a line below the page footer (via
-    the Bergfink ``footer-provenance`` variable) — unlike Markdown/EPUB, which carry it as an
-    end-of-document block.
+    When ``options.provenance`` is set, its summary is rendered at the foot of the title page when one
+    is emitted (``emit_title_page``), otherwise on a line below the running page footer — unlike
+    Markdown/EPUB, which carry it as an end-of-document block.
 
     Pandoc and Typst must be installed and on ``PATH``.
 

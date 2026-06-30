@@ -50,6 +50,7 @@
   titlepage-logo: none,
   titlepage-logo-width: none,
   titlepage-supervisor: none,
+  titlepage-provenance: none,
   // Table of contents
   toc: false,
   toc-depth: 6,

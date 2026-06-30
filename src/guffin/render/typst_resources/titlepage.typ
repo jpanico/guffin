@@ -50,6 +50,11 @@
 #h(1fr)
 #logo
 
+#if cfg.titlepage-provenance != none [
+  #v(0.6em)
+  #text(size: 0.7em, fill: gray)[#cfg.titlepage-provenance]
+]
+
 // start page numbers after title page
 #counter(page).update(0)
 
