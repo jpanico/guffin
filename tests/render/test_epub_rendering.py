@@ -219,3 +219,33 @@ class TestNumberSections:
         )
         assert _has_section_numbers(tmp_path / "numbered.epub")
         assert not _has_section_numbers(tmp_path / "plain.epub")
+
+
+def _has_title_page(epub_path: Path) -> bool:
+    """Whether the EPUB package includes a generated title-page document."""
+    with zipfile.ZipFile(epub_path) as zf:
+        return any("title_page" in name for name in zf.namelist())
+
+
+class TestTitlePage:
+    """The EPUB title page follows the profile's ``emit_title_page`` (Pandoc ``--epub-title-page``)."""
+
+    def test_book_has_title_page_default_does_not(self, tmp_path: Path) -> None:
+        """A book (emit_title_page=True) includes a title page; the default article omits it."""
+        bundle: Final[RenderBundle] = _article5_bundle()
+        render(
+            bundle,
+            profile=DefaultProfile(),
+            filename_stem="article",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path),
+        )
+        render(
+            bundle,
+            profile=BookProfile(),
+            filename_stem="book",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path),
+        )
+        assert _has_title_page(tmp_path / "book.epub")
+        assert not _has_title_page(tmp_path / "article.epub")

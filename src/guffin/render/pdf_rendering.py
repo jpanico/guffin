@@ -90,6 +90,7 @@ def _typst_template_args(
     template_dir: Path | None,
     number_sections: bool,
     top_level_division: TopLevelDivision,
+    emit_title_page: bool,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
 
@@ -106,6 +107,8 @@ def _typst_template_args(
         top_level_division: When not :attr:`TopLevelDivision.SECTION`, enables the template's book
             mode (chapters open a new page, numbered hierarchically from level 1) by passing the
             ``top-level-division`` variable; ``SECTION`` passes nothing, leaving the default layout.
+        emit_title_page: When ``True``, enables the Bergfink ``titlepage`` variable so the template
+            renders a title page from the document metadata; ``False`` passes nothing (no title page).
 
     Returns:
         The Pandoc ``extra_args`` that apply the template (filters, resource path, and variables).
@@ -126,6 +129,9 @@ def _typst_template_args(
     # Book mode is gated on this variable; SECTION passes nothing so the default layout is unchanged.
     if top_level_division is not TopLevelDivision.SECTION:
         args.extend(["-V", f"top-level-division={top_level_division.value}"])
+    # Bergfink renders a title page only when the `titlepage` variable is set; pass nothing otherwise.
+    if emit_title_page:
+        args.extend(["-V", "titlepage=true"])
     if template_dir is not None:
         args.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
     return args
@@ -201,7 +207,8 @@ def render(
     Bergfink template's ``number-sections`` variable).  When its ``top_level_division`` is not
     ``SECTION`` (i.e. a book), the template's book mode is enabled: level-1 headings (chapters) open
     on a new page and, with numbering on, are numbered hierarchically from level 1 — mirroring the
-    EPUB book output.
+    EPUB book output.  When its ``emit_title_page`` is set, the Bergfink ``titlepage`` partial renders
+    a title page from the document metadata.
 
     Pandoc and Typst must be installed and on ``PATH``.
 
@@ -260,6 +267,7 @@ def render(
         template_dir,
         profile.structural_policy.number_sections,
         profile.structural_policy.top_level_division,
+        profile.structural_policy.emit_title_page,
     )
     extra_args: list[str] = ["--pdf-engine=typst", *template_args]
 

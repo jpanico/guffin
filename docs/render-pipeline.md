@@ -9,13 +9,13 @@ This doc goes deep on the *model → output* render layer and the project-type m
 it.
 
 > Status note: the project-type model (`render/project.py`) is defined and **plumbed** — a
-> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. Two
+> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. All three
 > structural directives are applied in both formats: `top_level_division` (EPUB `--split-level`; PDF
-> book mode — chapter page breaks + level-1 numbering) and `number_sections`. Bibliographic
-> **metadata** is also applied — sourced from a root page's `guffin`-domain attributes (see Stage 1).
-> The remaining structural effect (title page) is **not yet applied**, and `abstract` is **deferred
-> indefinitely**. This doc describes both the current shape and the intended design so the remaining
-> wiring has a spec to follow. Sections that describe planned behavior are marked _(planned)_.
+> book mode — chapter page breaks + level-1 numbering), `number_sections`, and `emit_title_page`
+> (PDF Bergfink `titlepage`; EPUB `--epub-title-page`). Bibliographic **metadata** is also applied —
+> sourced from a root page's `guffin`-domain attributes (see Stage 1). `abstract` is **deferred
+> indefinitely**. This doc describes both the current shape and the intended design. Sections that
+> describe planned behavior are marked _(planned)_.
 
 
 ## The render layer is a two-stage pipeline
@@ -144,7 +144,7 @@ invocation time**, and the mechanism differs per format:
 |---|---|---|
 | chapters vs. sections | `-V top-level-division` → Bergfink book mode (Typst ignores `--top-level-division`) ✅ | `--split-level` ✅ |
 | numbering | `-V number-sections=true` (Bergfink variable) ✅ | `--number-sections` ✅ |
-| title page | Bergfink `titlepage.typ` partial | auto-generated from metadata |
+| title page | `-V titlepage=true` → Bergfink `titlepage.typ` partial ✅ | `--epub-title-page=true\|false` ✅ |
 
 So the structural half **cannot** be absorbed entirely into stage 1: the EPUB renderer
 (`--split-level`) and the PDF path (a Bergfink template variable) each consult the policy. The
@@ -194,15 +194,17 @@ its top-level headings unnumbered.)
    (`render/{md,pdf,epub}_rendering.py::render`) now takes a `profile: ProjectProfile` argument,
    threaded through `cli/export_roam_tree.py::_render`. Nothing reads `StructuralPolicy` to shape
    output yet — the renderers currently only log it.
-2. **Structural effects so far.** Two `StructuralPolicy` directives are applied, in both formats:
+2. **Structural effects — done.** All three `StructuralPolicy` directives are applied, in both formats:
    - `top_level_division` → EPUB `--split-level` (`epub_rendering._split_level_for()`: a parts-based
      book splits at level 2, everything else at level 1) and PDF book mode (`bergfink.typst`: a page
      break before each level-1 chapter plus hierarchical level-1 numbering, mirroring EPUB).
    - `number_sections` → both formats (EPUB `--number-sections`; PDF `-V number-sections=true`).
+   - `emit_title_page` → PDF Bergfink title page (`-V titlepage=true` → `titlepage.typ`, rendered
+     from the document metadata) and EPUB `--epub-title-page=true|false` (Pandoc's metadata-driven
+     title page). A `default` article emits none; a book/manuscript emits one.
 3. **Bibliographic metadata — done.** A root page's `guffin`-domain attributes (title/authors/date/
    identifier, folded from a `guffin-meta::` block) populate the document metadata via
    `pandoc_rendering._document_metadata`; `title` overrides the page title and the rest map to the
    writer's native metadata (Typst title block, EPUB `dc:*`). These never render as body pills.
-4. **Next increments.** Title page (`emit_title_page`) — now that the title/author/date metadata
-   exists for it to render. A possible refinement: distinguish PART from CHAPTER in PDF book mode
-   (currently both just page-break and number from level 1). (`abstract` is deferred indefinitely.)
+4. **Possible refinements.** Distinguish PART from CHAPTER in PDF book mode (currently both just
+   page-break and number from level 1). (`abstract` is deferred indefinitely.)

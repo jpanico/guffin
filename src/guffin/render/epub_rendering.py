@@ -130,7 +130,8 @@ def render(
     derived from ``profile``'s structural policy: a book with parts (chapters at heading level 2)
     splits at level 2, every other project type splits at level 1 so each top-level heading begins
     a new file.  When the policy's ``number_sections`` is set, headings are numbered via Pandoc's
-    ``--number-sections``.
+    ``--number-sections``.  The policy's ``emit_title_page`` drives Pandoc's ``--epub-title-page``,
+    which includes (or omits) a title page generated from the document metadata.
 
     Pandoc must be installed and on ``PATH``.
 
@@ -154,6 +155,7 @@ def render(
     logger.debug("rendering EPUB; structural_policy=%s", profile.structural_policy)
     split_level: Final[int] = _split_level_for(profile.structural_policy.top_level_division)
     number_sections: Final[bool] = profile.structural_policy.number_sections
+    emit_title_page: Final[bool] = profile.structural_policy.emit_title_page
     output_dir: Final[Path] = options.output_dir
     cache_dir: Final[Path | None] = options.cache_dir
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
@@ -191,6 +193,8 @@ def render(
             f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
             f"--css={epub_dir / _EPUB_STYLESHEET}",
             f"--split-level={split_level}",
+            # Pandoc generates an EPUB title page from the metadata by default; gate it on the policy.
+            f"--epub-title-page={'true' if emit_title_page else 'false'}",
         ]
         if number_sections:
             extra_args.append("--number-sections")
