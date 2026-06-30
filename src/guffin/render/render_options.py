@@ -8,7 +8,8 @@ asset cache, AST dump).  Each format then has its own subclass carrying only the
 apply to it — :class:`MarkdownRenderOptions` (the ``bundle`` mode), :class:`PdfRenderOptions`
 (the Typst ``template_dir`` override), and :class:`EpubRenderOptions` (no extra switches yet) —
 tagged by an ``output_format`` discriminator.  A renderer accepts its own subclass, so every field
-it receives is one it can act on.
+it receives is one it can act on.  :meth:`RenderOptions.for_format` is the factory that builds the
+right subclass for a given :class:`OutputFormat` from the full set of knobs.
 
 This carries the destination and configuration knobs — not the remaining operands a render call
 also needs (the content bundle, output filename stem, or API endpoint).
@@ -16,14 +17,15 @@ also needs (the content bundle, output filename stem, or API endpoint).
 Public symbols:
 
 - **Enumerations**: :class:`OutputFormat` — the supported output formats (markdown / pdf / epub).
-- **Models**: :class:`RenderOptions` — the format-independent base options;
+- **Models**: :class:`RenderOptions` — the format-independent base options (with the
+  :meth:`RenderOptions.for_format` factory building the right subclass for an output format);
   :class:`MarkdownRenderOptions` — Markdown (GFM) options; :class:`PdfRenderOptions` — PDF options;
   :class:`EpubRenderOptions` — EPUB options.
 """
 
 import enum
 from pathlib import Path
-from typing import Literal
+from typing import Literal, assert_never
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -76,6 +78,67 @@ class RenderOptions(BaseModel):
     emit_colophon: bool = Field(
         default=False, description="Stamp the output with a colophon from the bundle's provenance."
     )
+
+    @staticmethod
+    def for_format(
+        output_format: OutputFormat,
+        *,
+        output_dir: Path,
+        cache_dir: Path | None = None,
+        template_dir: Path | None = None,
+        bundle: bool = True,
+        suppress_attributes: bool = False,
+        dump_pandoc_ast: bool = False,
+        emit_colophon: bool = False,
+    ) -> RenderOptions:
+        """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
+
+        The single place that assembles per-format options, so callers thread one object rather than a
+        long parameter list.  Format-specific knobs apply only to the format that uses them
+        (``template_dir`` to PDF, ``bundle`` to Markdown); the rest are common to every format.
+
+        Args:
+            output_format: The output format whose options subclass to build.
+            output_dir: Directory the exported document is written into.
+            cache_dir: Directory for caching downloaded Cloud Firestore assets; ``None`` disables it.
+            template_dir: PDF-only ``user_cfg.typ`` override directory; ``None`` uses the bundled template.
+            bundle: Markdown-only; write a ``.mdbundle`` directory (``True``) or a plain ``.md``.
+            suppress_attributes: Omit Roam attribute assignments from the output.
+            dump_pandoc_ast: Write the Pandoc JSON AST alongside the output before conversion.
+            emit_colophon: Stamp the output with a provenance colophon from the bundle's provenance.
+
+        Returns:
+            The :class:`RenderOptions` subclass matching *output_format*.
+        """
+        match output_format:
+            case OutputFormat.PDF:
+                return PdfRenderOptions(
+                    output_dir=output_dir,
+                    cache_dir=cache_dir,
+                    template_dir=template_dir,
+                    suppress_attributes=suppress_attributes,
+                    dump_pandoc_ast=dump_pandoc_ast,
+                    emit_colophon=emit_colophon,
+                )
+            case OutputFormat.EPUB:
+                return EpubRenderOptions(
+                    output_dir=output_dir,
+                    cache_dir=cache_dir,
+                    suppress_attributes=suppress_attributes,
+                    dump_pandoc_ast=dump_pandoc_ast,
+                    emit_colophon=emit_colophon,
+                )
+            case OutputFormat.MARKDOWN:
+                return MarkdownRenderOptions(
+                    output_dir=output_dir,
+                    cache_dir=cache_dir,
+                    bundle=bundle,
+                    suppress_attributes=suppress_attributes,
+                    dump_pandoc_ast=dump_pandoc_ast,
+                    emit_colophon=emit_colophon,
+                )
+            case _ as unreachable:
+                assert_never(unreachable)
 
 
 class MarkdownRenderOptions(RenderOptions):

@@ -6,7 +6,8 @@ Public symbols:
   its :data:`~guffin.model.view.ViewMap` (presentation), plus optional
   :class:`~guffin.common.provenance.Provenance` recording the software that produced the bundle's
   data.  Content and presentation are held as separate fields so they stay decoupled while
-  travelling together as one bundle.
+  travelling together as one bundle.  :meth:`RenderBundle.with_provenance` returns a copy stamped
+  with a given provenance.
 """
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -35,3 +36,21 @@ class RenderBundle(BaseModel):
     provenance: Provenance | None = Field(
         default=None, description="Software (commit + timestamps) that produced this bundle's data."
     )
+
+    def with_provenance(self, provenance: Provenance | None) -> RenderBundle:
+        """Return a copy of this bundle stamped with *provenance*, or ``self`` unchanged when ``None``.
+
+        A pure enrichment helper: the bundle's producer captures provenance separately (e.g. via
+        :func:`~guffin.common.provenance.gather_provenance`) and attaches it here, keeping this model
+        free of any runtime-capture side effects.
+
+        Args:
+            provenance: The provenance to record on the returned bundle, or ``None`` to leave the
+                bundle unchanged.
+
+        Returns:
+            A new :class:`RenderBundle` carrying *provenance*, or ``self`` when *provenance* is ``None``.
+        """
+        if provenance is None:
+            return self
+        return self.model_copy(update={"provenance": provenance})

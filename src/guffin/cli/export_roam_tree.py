@@ -81,6 +81,7 @@ from guffin.render.render_options import (
     MarkdownRenderOptions,
     OutputFormat,
     PdfRenderOptions,
+    RenderOptions,
 )
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
@@ -92,6 +93,9 @@ configure_logging()
 logger = logging.getLogger(__name__)
 
 app = typer.Typer()
+
+_SECRET_PARAMS: Final[frozenset[str]] = frozenset({"api_bearer_token"})
+"""``main`` parameter names excluded from the debug args log so secrets never reach the logs."""
 
 
 @app.command()
@@ -228,29 +232,12 @@ def main(
     title becomes the EPUB title and top-level headings become chapters.  The
     ``--bundle/--no-bundle`` and ``--template-dir`` options are ignored.
     """
-    logger.debug(
-        "target=%r, local_api_port=%r, graph_name=%r, output_dir=%r, "
-        "output_format=%r, project_type=%r, bundle=%r, cache_dir=%r, template_dir=%r, "
-        "suppress_attributes=%r, dump_pandoc_ast=%r, colophon=%r",
-        target,
-        local_api_port,
-        graph_name,
-        output_dir,
-        output_format,
-        project_type,
-        bundle,
-        cache_dir,
-        template_dir,
-        suppress_attributes,
-        dump_pandoc_ast,
-        colophon,
-    )
+    # Captured as the first statement so locals() is exactly the CLI parameters; the bearer token
+    # is filtered out (see _SECRET_PARAMS) so it never reaches the logs.
+    cli_args: Final[dict[str, object]] = locals()
+    logger.debug("args: %r", {name: value for name, value in cli_args.items() if name not in _SECRET_PARAMS})
 
-    api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
-        local_api_port=local_api_port,
-        graph_name=graph_name,
-        bearer_token=api_bearer_token,
-    )
+    api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port, graph_name, api_bearer_token)
 
     try:
         trees: Final[tuple[NodeFetchResult, RenderBundle | None]] = fetch_roam_trees(
@@ -278,86 +265,50 @@ def main(
     provenance: Final[Provenance | None] = gather_provenance(extra={"type": project_type.value}) if colophon else None
     if provenance is not None:
         logger.info("provenance: %s", provenance.summary())
-    render_bundle: Final[RenderBundle] = (
-        fetched_bundle.model_copy(update={"provenance": provenance}) if provenance is not None else fetched_bundle
-    )
+    render_bundle: Final[RenderBundle] = fetched_bundle.with_provenance(provenance)
 
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
     profile: Final[ProjectProfile] = profile_for(project_type)
-
-    _render(
+    options: Final[RenderOptions] = RenderOptions.for_format(
         output_format,
-        render_bundle,
-        profile,
-        out_file_stem,
-        api_endpoint,
-        target,
-        output_dir,
-        cache_dir,
-        template_dir,
-        bundle,
-        suppress_attributes,
-        dump_pandoc_ast,
-        colophon,
+        output_dir=output_dir,
+        cache_dir=cache_dir,
+        template_dir=template_dir,
+        bundle=bundle,
+        suppress_attributes=suppress_attributes,
+        dump_pandoc_ast=dump_pandoc_ast,
+        emit_colophon=colophon,
     )
+
+    _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)
 
 
 def _render(
-    output_format: OutputFormat,
     render_bundle: RenderBundle,
     profile: ProjectProfile,
     filename_stem: str,
     api_endpoint: ApiEndpoint,
     target: str,
-    output_dir: pathlib.Path,
-    cache_dir: pathlib.Path | None,
-    template_dir: pathlib.Path | None,
-    bundle: bool,
-    suppress_attributes: bool,
-    dump_pandoc_ast: bool,
-    emit_colophon: bool,
+    options: RenderOptions,
 ) -> None:
-    """Render *render_bundle* with the renderer selected by *output_format*; exit 1 on failure.
+    """Dispatch *render_bundle* to the renderer matching *options*' concrete type; exit 1 on failure.
 
-    Builds the format-specific :class:`~guffin.render.render_options.RenderOptions` subclass and
-    dispatches to the matching renderer, passing *profile* (the project type and bibliographic
-    metadata) through to it.  Each renderer reads only the option fields that apply to its format
-    (``bundle`` is Markdown-only, ``template_dir`` is PDF-only); *emit_colophon* is carried on every
-    format's options and, when set, stamps the output with a colophon built from the bundle's
-    provenance.  Any rendering failure is logged and turned into a :class:`typer.Exit` with code 1.
+    *options* is the format-specific :class:`~guffin.render.render_options.RenderOptions` subclass
+    built by :meth:`~guffin.render.render_options.RenderOptions.for_format`; its type selects the
+    renderer.  *profile* (the project type and bibliographic metadata) is passed through to it.  Any
+    rendering failure is logged and turned into a :class:`typer.Exit` with code 1.
     """
     try:
-        if output_format is OutputFormat.PDF:
-            pdf_options: Final[PdfRenderOptions] = PdfRenderOptions(
-                output_dir=output_dir,
-                cache_dir=cache_dir,
-                template_dir=template_dir,
-                suppress_attributes=suppress_attributes,
-                dump_pandoc_ast=dump_pandoc_ast,
-                emit_colophon=emit_colophon,
-            )
-            render_pdf(render_bundle, profile, filename_stem, api_endpoint, pdf_options)
-        elif output_format is OutputFormat.EPUB:
-            epub_options: Final[EpubRenderOptions] = EpubRenderOptions(
-                output_dir=output_dir,
-                cache_dir=cache_dir,
-                suppress_attributes=suppress_attributes,
-                dump_pandoc_ast=dump_pandoc_ast,
-                emit_colophon=emit_colophon,
-            )
-            render_epub(render_bundle, profile, filename_stem, api_endpoint, epub_options)
+        if isinstance(options, PdfRenderOptions):
+            render_pdf(render_bundle, profile, filename_stem, api_endpoint, options)
+        elif isinstance(options, EpubRenderOptions):
+            render_epub(render_bundle, profile, filename_stem, api_endpoint, options)
+        elif isinstance(options, MarkdownRenderOptions):
+            render_md(render_bundle, profile, filename_stem, api_endpoint, options)
         else:
-            md_options: Final[MarkdownRenderOptions] = MarkdownRenderOptions(
-                output_dir=output_dir,
-                cache_dir=cache_dir,
-                bundle=bundle,
-                suppress_attributes=suppress_attributes,
-                dump_pandoc_ast=dump_pandoc_ast,
-                emit_colophon=emit_colophon,
-            )
-            render_md(render_bundle, profile, filename_stem, api_endpoint, md_options)
+            raise TypeError(f"unsupported render options type: {type(options).__name__}")
     except Exception as e:
-        logger.error("Error rendering %s for %r: %s", output_format.value, target, e)
+        logger.error("Error rendering %s for %r: %s", type(options).__name__, target, e)
         raise typer.Exit(code=1)
 
 
