@@ -25,7 +25,7 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 from guffin.model.link import VertexLink
 
-DEFAULT_ATTRIBUTE_DOMAIN: Final[str] = "Default"
+DEFAULT_ATTRIBUTE_DOMAIN: Final[str] = "default"
 """The default namespace assigned to an :class:`Attribute` when no domain is specified."""
 
 
@@ -47,7 +47,7 @@ class Attribute(BaseModel):
     Attributes:
         name: The attribute name, i.e. the title of the referenced Roam *Page*.
         link: A reference link to the page named by :attr:`name`.
-        domain: The namespace the attribute belongs to; defaults to ``"Default"``.
+        domain: The namespace the attribute belongs to; defaults to ``"default"``.
     """
 
     model_config = ConfigDict(frozen=True)

@@ -89,7 +89,7 @@ from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import HAlign
-from guffin.model.attribute import AttributeAssignment, ReferenceValue
+from guffin.model.attribute import DEFAULT_ATTRIBUTE_DOMAIN, AttributeAssignment, ReferenceValue
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -287,15 +287,15 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
 def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     """Reconstruct the Pandoc-Markdown line for an :class:`~guffin.model.attribute.AttributeAssignment`.
 
-    Produces ``[***<attribute>***]{.underline}: <value>, …`` where each
+    Produces ``[***<domain>/<attribute>***]{.underline}: <value>, …`` where each
     :class:`~guffin.model.attribute.ReferenceValue` is rendered as a "pill"-styled hashtag link
     ``[#[<name>](<x-guffin-url>)]{.pill}`` and each :class:`~guffin.model.attribute.LiteralValue` as
     its bare text.  The Roam ``::`` attribute separator is collapsed to a single ``:`` in the output.
-    The attribute name is wrapped in bold-italic-underline markup so it renders with that emphasis in
-    both the Markdown (``<u>***name***</u>``) and PDF (``#underline[#strong[#emph[…]]]``) output
-    formats.  The ``.pill`` span wrapping each reference value — covering both the ``#`` and the name —
-    is rewritten by the ``pill`` Lua filter into an orange capsule-shaped badge (rounded "pill" ends)
-    in both output formats.
+    The attribute label is the ``<domain>/<name>`` pair (so e.g. ``default/tags`` or ``guffin/title``),
+    wrapped in bold-italic-underline markup so it renders with that emphasis in both the Markdown
+    (``<u>***label***</u>``) and PDF (``#underline[#strong[#emph[…]]]``) output formats.  The ``.pill``
+    span wrapping each reference value — covering both the ``#`` and the name — is rewritten by the
+    ``pill`` Lua filter into an orange capsule-shaped badge (rounded "pill" ends) in both output formats.
 
     Args:
         assignment: The parsed attribute assignment to render.
@@ -311,8 +311,31 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
         )
         for value in assignment.values
     ]
-    attribute_markup: Final[str] = f"[***{assignment.attribute.name}***]{{.underline}}"
+    attribute_label: Final[str] = f"{assignment.attribute.domain}/{assignment.attribute.name}"
+    attribute_markup: Final[str] = f"[***{attribute_label}***]{{.underline}}"
     return f"{attribute_markup}: {', '.join(parts)}"
+
+
+def _default_domain_last(attribute_assignments: list[AttributeAssignment] | None) -> list[AttributeAssignment]:
+    """Return *attribute_assignments* reordered so the default domain renders last.
+
+    Non-:data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` assignments keep their source order
+    and precede the default-domain ones (which also keep their relative order).
+
+    Args:
+        attribute_assignments: The assignments to reorder, or ``None``.
+
+    Returns:
+        A new list with default-domain assignments moved to the end; empty when the input is ``None``.
+    """
+    assignments: Final[list[AttributeAssignment]] = attribute_assignments or []
+    non_default: Final[list[AttributeAssignment]] = [
+        a for a in assignments if a.attribute.domain != DEFAULT_ATTRIBUTE_DOMAIN
+    ]
+    default: Final[list[AttributeAssignment]] = [
+        a for a in assignments if a.attribute.domain == DEFAULT_ATTRIBUTE_DOMAIN
+    ]
+    return non_default + default
 
 
 def _attribute_pill_blocks(
@@ -327,7 +350,9 @@ def _attribute_pill_blocks(
     flowing block.  Under a list layout the blocks are :class:`~panflute.ListItem`\\ s (so they
     join the parent's bullet/numbered list as trailing items, reproducing their former
     representation as trailing child blocks); under ``DOCUMENT`` layout they are
-    :class:`~panflute.Para`\\ s.
+    :class:`~panflute.Para`\\ s.  Assignments in the
+    :data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` domain are always rendered last
+    (non-default domains keep their source order ahead of them).
 
     Args:
         attribute_assignments: The parent vertex's attribute assignments, or ``None``.
@@ -340,7 +365,7 @@ def _attribute_pill_blocks(
     """
     list_items: list[pf.ListItem] = []
     paragraphs: list[pf.Block] = []
-    for assignment in attribute_assignments or ():
+    for assignment in _default_domain_last(attribute_assignments):
         pill_text: str = _attribute_assignment_text(assignment)
         pill_inlines: list[pf.Inline] = inline_map.get(pill_text, [pf.Str(pill_text)])
         if layout is ChildrenLayout.DOCUMENT:

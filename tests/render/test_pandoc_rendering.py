@@ -598,9 +598,9 @@ class TestAttributeAssignmentText:
         )
 
     def test_attribute_name_wrapped_in_bold_italic_underline_markup(self) -> None:
-        """The attribute name is [***name***]{.underline} and the '::' separator collapses to ':'."""
+        """The label is [***<domain>/<name>***]{.underline} and the '::' separator collapses to ':'."""
         text = _attribute_assignment_text(self._assignment())
-        assert text == "[***attribute1***]{.underline}: 5"
+        assert text == "[***default/attribute1***]{.underline}: 5"
 
     def test_markup_parses_to_underline_bold_italic(self) -> None:
         """The reconstructed line parses so the attribute name is Underline > Strong > Emph."""
@@ -612,4 +612,4 @@ class TestAttributeAssignmentText:
         assert isinstance(strong, pf.Strong)
         emph = list(strong.content)[0]
         assert isinstance(emph, pf.Emph)
-        assert _collect_text(emph) == "attribute1"
+        assert _collect_text(emph) == "default/attribute1"
