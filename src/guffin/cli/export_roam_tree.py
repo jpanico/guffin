@@ -128,9 +128,9 @@ def main(
             "--type",
             "-T",
             help=(
-                "Kind of work to produce: 'default' (an article-like single document), "
-                "'book' (a multi-chapter book), or 'manuscript' (a scholarly paper). "
-                "Selects the project profile; its structural effects apply to all formats."
+                "Kind of work to produce: "
+                + ", ".join(f"'{member.value}' ({member.description})" for member in ProjectType)
+                + ". Selects the project profile; its structural effects apply to all formats."
             ),
         ),
     ] = ProjectType.DEFAULT,

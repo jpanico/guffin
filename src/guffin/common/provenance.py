@@ -30,7 +30,7 @@ _SHORT_COMMIT_LENGTH: Final[int] = 7
 """Leading commit-hash characters shown by :meth:`Provenance.summary` (git's / GitHub's short-SHA length)."""
 
 _TIMESTAMP_FORMAT: Final[str] = "%Y-%m-%dT%H:%M"
-"""strftime format for :meth:`Provenance.summary` timestamps: date and time to the minute, no timezone."""
+"""Strftime format for :meth:`Provenance.summary` timestamps: date and time to the minute, no timezone."""
 
 
 class Provenance(BaseModel):

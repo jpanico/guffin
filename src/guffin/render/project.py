@@ -23,7 +23,7 @@ Public symbols:
 """
 
 import enum
-from typing import Literal
+from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, validate_call
 
@@ -31,15 +31,28 @@ from pydantic import BaseModel, ConfigDict, Field, validate_call
 class ProjectType(enum.StrEnum):
     """The kind of work a render produces, used as the discriminator of the profile subclasses.
 
+    Each member pairs its string value — the profile discriminator, CLI ``--type`` choice, and
+    output-filename segment — with a one-line :attr:`description` of the kind of work it produces.
+
     Attributes:
+        description: A one-line description of the kind of work the member produces.
         DEFAULT: A flowing, article-like single document (:class:`DefaultProfile`).
         BOOK: A multi-chapter book (:class:`BookProfile`).
         MANUSCRIPT: A scholarly article/paper (:class:`ManuscriptProfile`).
     """
 
-    DEFAULT = "default"
-    BOOK = "book"
-    MANUSCRIPT = "manuscript"
+    DEFAULT = ("default", "an article-like single document")
+    BOOK = ("book", "a multi-chapter book")
+    MANUSCRIPT = ("manuscript", "a scholarly paper")
+
+    description: str
+
+    def __new__(cls, value: str, description: str) -> Self:
+        """Create a member whose string value is *value* and that carries *description*."""
+        member = str.__new__(cls, value)
+        member._value_ = value
+        member.description = description
+        return member
 
 
 class TopLevelDivision(enum.StrEnum):

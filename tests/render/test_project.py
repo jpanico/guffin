@@ -13,6 +13,25 @@ from guffin.render.project import (
 )
 
 
+class TestProjectType:
+    """ProjectType members carry both a string value and a description, behaving as a StrEnum."""
+
+    def test_values_are_preserved(self) -> None:
+        """The string value (discriminator / CLI choice / filename segment) is the bare type name."""
+        assert ProjectType.DEFAULT.value == "default"
+        assert ProjectType.BOOK.value == "book"
+        assert ProjectType.MANUSCRIPT.value == "manuscript"
+        # StrEnum identity: value-based lookup and string comparison still work.
+        assert ProjectType("book") is ProjectType.BOOK
+        assert ProjectType.MANUSCRIPT == "manuscript"
+
+    def test_descriptions(self) -> None:
+        """Each member exposes its one-line description."""
+        assert ProjectType.DEFAULT.description == "an article-like single document"
+        assert ProjectType.BOOK.description == "a multi-chapter book"
+        assert ProjectType.MANUSCRIPT.description == "a scholarly paper"
+
+
 class TestStructuralPolicy:
     """The structural policy each project type resolves to."""
 
