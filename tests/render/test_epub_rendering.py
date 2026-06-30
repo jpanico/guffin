@@ -34,7 +34,7 @@ class TestRenderEpub:
     """
 
     def test_produces_valid_epub_package(self, tmp_path: Path) -> None:
-        """Rendering article5 yields a well-formed EPUB OCF container with the page title."""
+        """Rendering article5 yields a well-formed EPUB OCF container with metadata from guffin-meta."""
         stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
         render(
             _article5_bundle(),
@@ -53,7 +53,12 @@ class TestRenderEpub:
             assert any(name.endswith(".opf") for name in names)
             assert any(name.endswith(".xhtml") and "ch" in name for name in names)
             opf: Final[str] = zf.read(next(name for name in names if name.endswith(".opf"))).decode("utf-8")
-            assert "Test Article 5" in opf
+            # The guffin-meta title attribute overrides the Roam page title, and the other
+            # metadata-domain attributes populate the EPUB dc:* fields.
+            assert "Source Code For Humans" in opf and "Test Article 5" not in opf
+            assert "Joe Panico" in opf and "Emi Panico" in opf  # authors -> dc:creator (one each)
+            assert "2027-01-01" in opf  # date -> dc:date
+            assert "978-1788399081" in opf  # identifier -> dc:identifier
 
     def test_preserves_pill_styling(self, tmp_path: Path) -> None:
         """Attribute reference values render as inline-styled pill spans in the EPUB XHTML."""

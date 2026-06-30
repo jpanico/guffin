@@ -11,10 +11,11 @@ it.
 > Status note: the project-type model (`render/project.py`) is defined and **plumbed** — a
 > `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. Two
 > structural directives are applied in both formats: `top_level_division` (EPUB `--split-level`; PDF
-> book mode — chapter page breaks + level-1 numbering) and `number_sections`. The remaining
-> structural effect (title page) and all metadata effects are **not yet applied**. This doc
-> describes both the current shape and the intended design so the remaining wiring has a spec to
-> follow. Sections that describe planned behavior are marked _(planned)_.
+> book mode — chapter page breaks + level-1 numbering) and `number_sections`. Bibliographic
+> **metadata** is also applied — sourced from a root page's `guffin`-domain attributes (see Stage 1).
+> The remaining structural effect (title page) is **not yet applied**, and `abstract` is **deferred
+> indefinitely**. This doc describes both the current shape and the intended design so the remaining
+> wiring has a spec to follow. Sections that describe planned behavior are marked _(planned)_.
 
 
 ## The render layer is a two-stage pipeline
@@ -24,7 +25,7 @@ Every export format goes through the same two stages:
 ```mermaid
 flowchart LR
     VB["RenderBundle<br/><i>VertexTree + ViewMap</i>"]
-    PP["ProjectProfile<br/><i>project_type + metadata</i>"]
+    PP["ProjectProfile<br/><i>project_type</i>"]
     RO["RenderOptions<br/><i>output_format + knobs</i>"]
 
     subgraph render["render/"]
@@ -32,8 +33,8 @@ flowchart LR
       S2["<b>Stage 2</b><br/>md / pdf / epub _rendering<br/><i>Doc → format output</i>"]
     end
 
+    VB -. "metadata (guffin attrs)" .-> S1
     VB --> S1
-    PP -. "metadata" .-> S1
     PP -. "StructuralPolicy" .-> S2
     RO --> S2
     S1 --> S2
@@ -90,8 +91,11 @@ Just a native vocabulary and the structural semantics it implies, expressed as G
 models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
 
 - `ProjectType` — `default` | `book` | `manuscript` (the discriminator).
-- `ProjectProfile` — the format-independent base, carrying bibliographic metadata
-  (`title`, `authors`, `date`, `identifier`) shared by every kind of work.
+- `ProjectProfile` — the format-independent base, with bibliographic fields
+  (`title`, `authors`, `date`, `identifier`) shared by every kind of work. _Note:_ these fields are
+  **not currently the metadata source** — bibliographic metadata is sourced from the content's
+  `guffin`-domain attributes instead (see Stage 1), so the profile fields are presently unused (a
+  possible future fallback/override).
 - Per-type subclasses — `DefaultProfile`, `BookProfile` (`with_parts`),
   `ManuscriptProfile` (`abstract`, `keywords`).
 - `StructuralPolicy` — the format-independent structural directives a profile **resolves to** (via
@@ -117,12 +121,17 @@ In the **render layer only** — never in `transcribe/`. Two reasons:
 
 Within `render/`, the profile's effects split across the two stages.
 
-### Stage 1 — metadata _(planned)_
+### Stage 1 — metadata _(applied)_
 
-The **bibliographic** fields (`title`, `authors`, `date`, `identifier`, `abstract`) become
-`doc.metadata` on the Panflute `Doc` in `vertex_tree_to_pandoc()`. Every Pandoc writer then maps the
-metadata to its format natively (LaTeX/Typst title block, EPUB `dc:*`, the `abstract` template
-variable). **The format renderers do not change for this half.**
+The bibliographic metadata source is a root page's **`guffin`-domain attributes** — the attributes
+folded from a `guffin-meta::` container block (the Guffin metadata convention). In
+`vertex_tree_to_pandoc()`, `_document_metadata()` reads them and maps recognised names to
+`doc.metadata`: `title` → title (**overriding** the Roam page title), `authors` → `author` (one
+entry per value, so comma-separated authors become multiple), `date` → date, `identifier` →
+identifier. Every Pandoc writer then maps the metadata to its format natively (Typst title block;
+EPUB `dc:title` / `dc:creator` / `dc:date` / `dc:identifier`) — **the format renderers do not change
+for this half.** Metadata-domain attributes never render as body pills, and any unrecognised
+`guffin`-domain attribute is dropped from the output entirely. (`abstract` is deferred indefinitely.)
 
 ### Stage 2 — structure _(partially applied)_
 
@@ -173,7 +182,7 @@ its top-level headings unnumbered.)
 
 | Profile data | Stage | Consumed in | Format renderers change? |
 |---|---|---|---|
-| `title`, `authors`, `date`, `identifier`, `abstract` | 1 (metadata) | `pandoc_rendering` | no |
+| `title`, `authors`, `date`, `identifier` (`guffin`-domain attributes) | 1 (metadata) ✅ | `pandoc_rendering._document_metadata` | no |
 | `top_level_division`, `number_sections`, title page | 2 (structure) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
 
 
@@ -190,7 +199,10 @@ its top-level headings unnumbered.)
      book splits at level 2, everything else at level 1) and PDF book mode (`bergfink.typst`: a page
      break before each level-1 chapter plus hierarchical level-1 numbering, mirroring EPUB).
    - `number_sections` → both formats (EPUB `--number-sections`; PDF `-V number-sections=true`).
-3. **Next increments.** Title page (`emit_title_page`) and abstract, then the Stage-1 bibliographic
-   metadata once its source is decided (CLI flags vs. a Roam-attribute convention). A possible
-   refinement: distinguish PART from CHAPTER in PDF book mode (currently both just page-break and
-   number from level 1).
+3. **Bibliographic metadata — done.** A root page's `guffin`-domain attributes (title/authors/date/
+   identifier, folded from a `guffin-meta::` block) populate the document metadata via
+   `pandoc_rendering._document_metadata`; `title` overrides the page title and the rest map to the
+   writer's native metadata (Typst title block, EPUB `dc:*`). These never render as body pills.
+4. **Next increments.** Title page (`emit_title_page`) — now that the title/author/date metadata
+   exists for it to render. A possible refinement: distinguish PART from CHAPTER in PDF book mode
+   (currently both just page-break and number from level 1). (`abstract` is deferred indefinitely.)

@@ -316,6 +316,56 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     return f"{attribute_markup}: {', '.join(parts)}"
 
 
+_METADATA_DOMAIN: Final[str] = "guffin"
+"""The attribute domain whose assignments carry document-level metadata rather than body content.
+
+Attributes in this domain are never rendered as inline pills: those with a name recognised by
+:data:`_METADATA_KEY_BY_NAME` populate the Pandoc document metadata (see :func:`_document_metadata`);
+any others are dropped from the output entirely.
+"""
+
+_METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
+    "title": "title",
+    "authors": "author",
+    "date": "date",
+    "identifier": "identifier",
+}
+"""Maps a recognised metadata-domain attribute name to its Pandoc document-metadata key."""
+
+
+def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) -> dict[str, pf.MetaValue]:
+    """Build the Pandoc document metadata from a root vertex's metadata-domain attributes.
+
+    Only attributes in :data:`_METADATA_DOMAIN` whose name is recognised by
+    :data:`_METADATA_KEY_BY_NAME` contribute; each maps to its Pandoc key.  ``author`` becomes a
+    :class:`~panflute.MetaList` (one entry per value — e.g. one per author); every other key becomes a
+    :class:`~panflute.MetaInlines` of the comma-joined values.  Attributes with no values are skipped.
+
+    Args:
+        attribute_assignments: The root vertex's attribute assignments, or ``None``.
+
+    Returns:
+        A ``{pandoc-key: MetaValue}`` mapping (possibly empty).
+    """
+    metadata: dict[str, pf.MetaValue] = {}
+    for assignment in attribute_assignments or ():
+        if assignment.attribute.domain != _METADATA_DOMAIN:
+            continue
+        key: str | None = _METADATA_KEY_BY_NAME.get(assignment.attribute.name)
+        if key is None:
+            continue
+        value_strings: list[str] = [
+            value.name if isinstance(value, ReferenceValue) else value.value for value in assignment.values
+        ]
+        if not value_strings:
+            continue
+        if key == "author":
+            metadata[key] = pf.MetaList(*[pf.MetaInlines(pf.Str(text)) for text in value_strings])
+        else:
+            metadata[key] = pf.MetaInlines(pf.Str(", ".join(value_strings)))
+    return metadata
+
+
 def _default_domain_last(attribute_assignments: list[AttributeAssignment] | None) -> list[AttributeAssignment]:
     """Return *attribute_assignments* reordered so the default domain renders last.
 
@@ -350,9 +400,10 @@ def _attribute_pill_blocks(
     flowing block.  Under a list layout the blocks are :class:`~panflute.ListItem`\\ s (so they
     join the parent's bullet/numbered list as trailing items, reproducing their former
     representation as trailing child blocks); under ``DOCUMENT`` layout they are
-    :class:`~panflute.Para`\\ s.  Assignments in the
-    :data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` domain are always rendered last
-    (non-default domains keep their source order ahead of them).
+    :class:`~panflute.Para`\\ s.  Assignments in :data:`_METADATA_DOMAIN` are excluded entirely (they
+    are document metadata, not body content — see :func:`_document_metadata`); of the rest, those in
+    the :data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` domain are always rendered last
+    (other domains keep their source order ahead of them).
 
     Args:
         attribute_assignments: The parent vertex's attribute assignments, or ``None``.
@@ -365,7 +416,10 @@ def _attribute_pill_blocks(
     """
     list_items: list[pf.ListItem] = []
     paragraphs: list[pf.Block] = []
-    for assignment in _default_domain_last(attribute_assignments):
+    renderable: Final[list[AttributeAssignment]] = [
+        a for a in (attribute_assignments or []) if a.attribute.domain != _METADATA_DOMAIN
+    ]
+    for assignment in _default_domain_last(renderable):
         pill_text: str = _attribute_assignment_text(assignment)
         pill_inlines: list[pf.Inline] = inline_map.get(pill_text, [pf.Str(pill_text)])
         if layout is ChildrenLayout.DOCUMENT:
@@ -1081,9 +1135,11 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
                     texts.extend(row)
             case _:
                 pass
-        # Attribute pills (folded onto any vertex) contribute their reconstructed inline text.
+        # Attribute pills (folded onto any vertex) contribute their reconstructed inline text;
+        # metadata-domain attributes are document metadata, not pills, so they are skipped.
         for assignment in vertex.attribute_assignments or ():
-            texts.append(_attribute_assignment_text(assignment))
+            if assignment.attribute.domain != _METADATA_DOMAIN:
+                texts.append(_attribute_assignment_text(assignment))
     return parse_inline_md(texts)
 
 
@@ -1108,6 +1164,11 @@ def vertex_tree_to_pandoc(
       ``title`` field; children rendered as body blocks.
     - ``True`` (Markdown path) — title rendered as a level-1
       :class:`~panflute.Header` prepended to the body blocks; no metadata.
+
+    A root :class:`~guffin.vertex.PageVertex`'s metadata-domain attributes (see
+    :func:`_document_metadata`) populate the document metadata: a ``title`` attribute overrides the
+    page title (in both the header and metadata forms) and ``author`` / ``date`` / ``identifier``
+    are added to the metadata.  Metadata-domain attributes never appear as body pills.
 
     Args:
         vertex_tree: The normalized vertex tree to convert.
@@ -1137,11 +1198,17 @@ def vertex_tree_to_pandoc(
     blocks: list[pf.Block] = []
 
     if isinstance(root, PageVertex):
-        title_inlines: Final[list[pf.Inline]] = inline_map.get(root.title, [pf.Str(root.title)])
+        doc_metadata: Final[dict[str, pf.MetaValue]] = _document_metadata(root.attribute_assignments)
+        page_title_inlines: Final[list[pf.Inline]] = strip_links(list(inline_map.get(root.title, [pf.Str(root.title)])))
+        # A metadata-domain `title` attribute overrides the Roam page title.
+        title_meta: Final[pf.MetaValue] = doc_metadata.get("title", pf.MetaInlines(*page_title_inlines))
         if title_in_header:
-            blocks.append(pf.Header(*title_inlines, level=1))
+            blocks.append(pf.Header(*list(title_meta.content), level=1))
         else:
-            metadata["title"] = pf.MetaInlines(*strip_links(list(title_inlines)))
+            metadata["title"] = title_meta
+        for meta_key in ("author", "date", "identifier"):
+            if meta_key in doc_metadata:
+                metadata[meta_key] = doc_metadata[meta_key]
         blocks.extend(
             build_child_blocks(
                 root.children or [],
