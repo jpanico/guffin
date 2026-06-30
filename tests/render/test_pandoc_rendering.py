@@ -4,6 +4,7 @@
 # Rationale: panflute has no type stubs; all six rules are triggered entirely by
 # Unknown propagation from that import — suppressing them here avoids false positives.
 
+from datetime import UTC, datetime
 from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
@@ -12,6 +13,7 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.common.provenance import Provenance
 from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
@@ -237,6 +239,46 @@ class TestVertexTreeToPandocPageVertex:
         assert blocks[0].level == 1
         assert isinstance(blocks[1], pf.Header)
         assert blocks[1].level == 2
+
+
+class TestVertexTreeToPandocColophon:
+    """vertex_tree_to_pandoc() appends a provenance colophon only when provenance is provided."""
+
+    def test_no_colophon_without_provenance(self) -> None:
+        """With no provenance (the default), no horizontal-rule colophon is appended."""
+        tree = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["head0001a"]),
+                HeadingVertex(uid="head0001a", text="Section", heading_level=2),
+            ]
+        )
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        assert not any(isinstance(block, pf.HorizontalRule) for block in doc.content)
+
+    def test_colophon_appended_with_provenance(self) -> None:
+        """Provenance appends a trailing HorizontalRule and an emphasized summary line."""
+        provenance = Provenance(
+            commit="abc123def456",
+            dirty=True,
+            committed_at=datetime(2026, 6, 29, 14, 2, 11, tzinfo=UTC),
+            exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
+        )
+        tree = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["head0001a"]),
+                HeadingVertex(uid="head0001a", text="Section", heading_level=2),
+            ]
+        )
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {}, title_in_header=True, provenance=provenance)
+        blocks = list(doc.content)
+        # The body (H1 + H2) is followed by the colophon: a rule and an inline-styled HTML line
+        # carrying the verbatim summary at a reduced (0.7em) size.
+        assert isinstance(blocks[-2], pf.HorizontalRule)
+        colophon = blocks[-1]
+        assert isinstance(colophon, pf.RawBlock)
+        assert colophon.format == "html"
+        assert "font-size: 0.7em" in colophon.text
+        assert provenance.summary() in colophon.text
 
 
 # ---------------------------------------------------------------------------

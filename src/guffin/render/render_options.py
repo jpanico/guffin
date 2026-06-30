@@ -27,6 +27,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from guffin.common.provenance import Provenance
+
 
 class OutputFormat(enum.StrEnum):
     """Output format for an exported document, used as the discriminator of the options subclasses.
@@ -58,6 +60,8 @@ class RenderOptions(BaseModel):
         dump_pandoc_ast: When ``True``, write the Pandoc JSON AST (the serialized Panflute
             document) to ``<output_dir>/<filename_stem>.pandoc.json`` before the Pandoc
             conversion step.  Defaults to ``False``.
+        provenance: When set, the source-commit/export-time facts to embed as an end-of-document
+            provenance colophon; ``None`` (default) emits no colophon.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -69,6 +73,9 @@ class RenderOptions(BaseModel):
     )
     dump_pandoc_ast: bool = Field(
         default=False, description="Write the Pandoc JSON AST alongside the output before conversion."
+    )
+    provenance: Provenance | None = Field(
+        default=None, description="Source-commit/export-time facts to embed as a colophon; None emits none."
     )
 
 

@@ -265,7 +265,7 @@ Fetches a Roam `Page` or `Node` subtree via the Local API, normalizes it, and wr
 
 ```bash
 export-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token <token> --output-dir <output_dir> \
-  [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
+  [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes] [--colophon|--no-colophon]
 ```
 
 #### Markdown output (default)
@@ -305,7 +305,7 @@ export-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-tok
 
 #### Cross-format options
 
-`--bundle/--no-bundle` applies only to Markdown and `--template-dir` only to PDF; each is ignored by the other formats. `--cache-dir` (cache downloaded images across runs) and `--suppress-attributes` (omit Roam attribute assignments from the output) apply to all three formats.
+`--bundle/--no-bundle` applies only to Markdown and `--template-dir` only to PDF; each is ignored by the other formats. `--cache-dir` (cache downloaded images across runs) and `--suppress-attributes` (omit Roam attribute assignments from the output) apply to all three formats. `--colophon/--no-colophon` (on by default) controls whether a provenance colophon — the source git commit (hash + commit time, marked `-dirty` for uncommitted changes) and the export time — is embedded in the output, so any generated document can be traced back to the exact source that produced it. It applies to all three formats; PDF renders it on a line below the page footer, while Markdown and EPUB carry it as an end-of-document line.
 
 `--type default|book|manuscript` (default `default`) selects the **project profile** — the kind of work being produced — independently of `--format` (see [docs/render-pipeline.md](docs/render-pipeline.md)). The selected type is appended to the output filename stem as a `.<type>` segment (e.g. `Foo.default.epub`, `Foo.book.pdf`), so the same target exported under different types lands in distinct files. The profile is plumbed through to every renderer. So far it applies `top_level_division` in both formats — for `--type book`, EPUB splits each chapter into its own content file while PDF opens each chapter on a new page, and both number headings hierarchically from level 1 — plus `number_sections`. The remaining structural effect (title page) is not yet applied to the output.
 
@@ -321,6 +321,7 @@ export GUFFIN_EXPORT_DIR=~/docs
 export GUFFIN_CACHE_DIR=~/.cache/roam        # optional: skip re-downloading unchanged images
 export GUFFIN_PDF_TEMPLATE_DIR=~/mytheme     # optional: user_cfg.typ override for --format pdf
 export GUFFIN_DUMP_PANDOC_AST=1              # optional: dump the Pandoc JSON AST before conversion (debug)
+export GUFFIN_EMIT_COLOPHON=0                # optional: omit the provenance colophon (backs --no-colophon)
 
 export-roam-tree "Test Article"                      # Markdown bundle (default)
 export-roam-tree "Test Article" --format pdf         # PDF

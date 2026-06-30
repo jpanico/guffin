@@ -144,7 +144,7 @@ def render(
         image_files: Final[dict[Uid, Path]] = {uid: Path(ref.path.name) for uid, ref in image_refs.items()}
 
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
-            enriched_tree, image_files, render_bundle.view, title_in_header=True
+            enriched_tree, image_files, render_bundle.view, title_in_header=True, provenance=options.provenance
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
@@ -169,7 +169,7 @@ def render(
     else:
         output_dir.mkdir(parents=True, exist_ok=True)
         no_bundle_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
-            content, {}, render_bundle.view, title_in_header=True
+            content, {}, render_bundle.view, title_in_header=True, provenance=options.provenance
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]

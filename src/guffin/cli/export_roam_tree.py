@@ -69,6 +69,7 @@ from typing import Annotated, Final
 
 import typer
 
+from guffin.common.provenance import Provenance, gather_provenance
 from guffin.model.render_bundle import RenderBundle
 from guffin.cli.logging_config import configure_logging
 from guffin.render.epub_rendering import render as render_epub
@@ -189,6 +190,19 @@ def main(
             ),
         ),
     ] = False,
+    colophon: Annotated[
+        bool,
+        typer.Option(
+            "--colophon/--no-colophon",
+            envvar="GUFFIN_EMIT_COLOPHON",
+            help=(
+                "When enabled (default), embeds an end-of-document provenance colophon recording "
+                "the source git commit (hash + commit time, with a -dirty marker for uncommitted "
+                "changes) and the export time, so any output document traces back to its exact "
+                "source. Applies to all formats."
+            ),
+        ),
+    ] = True,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown or PDF.
 
@@ -217,7 +231,7 @@ def main(
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, output_dir=%r, "
         "output_format=%r, project_type=%r, bundle=%r, cache_dir=%r, template_dir=%r, "
-        "suppress_attributes=%r, dump_pandoc_ast=%r",
+        "suppress_attributes=%r, dump_pandoc_ast=%r, colophon=%r",
         target,
         local_api_port,
         graph_name,
@@ -229,6 +243,7 @@ def main(
         template_dir,
         suppress_attributes,
         dump_pandoc_ast,
+        colophon,
     )
 
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
@@ -260,6 +275,9 @@ def main(
 
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
     profile: Final[ProjectProfile] = profile_for(project_type)
+    provenance: Final[Provenance | None] = gather_provenance() if colophon else None
+    if provenance is not None:
+        logger.info("provenance: %s", provenance.summary())
 
     _render(
         output_format,
@@ -274,6 +292,7 @@ def main(
         bundle,
         suppress_attributes,
         dump_pandoc_ast,
+        provenance,
     )
 
 
@@ -290,14 +309,16 @@ def _render(
     bundle: bool,
     suppress_attributes: bool,
     dump_pandoc_ast: bool,
+    provenance: Provenance | None,
 ) -> None:
     """Render *render_bundle* with the renderer selected by *output_format*; exit 1 on failure.
 
     Builds the format-specific :class:`~guffin.render.render_options.RenderOptions` subclass and
     dispatches to the matching renderer, passing *profile* (the project type and bibliographic
     metadata) through to it.  Each renderer reads only the option fields that apply to its format
-    (``bundle`` is Markdown-only, ``template_dir`` is PDF-only).  Any rendering failure is logged
-    and turned into a :class:`typer.Exit` with code 1.
+    (``bundle`` is Markdown-only, ``template_dir`` is PDF-only); *provenance*, when set, is carried
+    on every format's options and emitted as an end-of-document colophon.  Any rendering failure is
+    logged and turned into a :class:`typer.Exit` with code 1.
     """
     try:
         if output_format is OutputFormat.PDF:
@@ -307,6 +328,7 @@ def _render(
                 template_dir=template_dir,
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
+                provenance=provenance,
             )
             render_pdf(render_bundle, profile, filename_stem, api_endpoint, pdf_options)
         elif output_format is OutputFormat.EPUB:
@@ -315,6 +337,7 @@ def _render(
                 cache_dir=cache_dir,
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
+                provenance=provenance,
             )
             render_epub(render_bundle, profile, filename_stem, api_endpoint, epub_options)
         else:
@@ -324,6 +347,7 @@ def _render(
                 bundle=bundle,
                 suppress_attributes=suppress_attributes,
                 dump_pandoc_ast=dump_pandoc_ast,
+                provenance=provenance,
             )
             render_md(render_bundle, profile, filename_stem, api_endpoint, md_options)
     except Exception as e:

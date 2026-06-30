@@ -19,7 +19,7 @@ pip install -e ".[dev]"
 ## Key Commands
 ```bash
 dump-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> [-v/-V] [-n/-N] [-r/-R] [--node-props <props>]
-export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes]
+export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes] [--colophon|--no-colophon]
 # output filename stem embeds the project type: <target>.<type>.<ext> (e.g. Foo.default.epub, Foo.book.pdf)
 # --format markdown (default): writes <target>.<type>.mdbundle/ (--bundle) or <target>.<type>.md (--no-bundle)
 # --format pdf: writes <target>.<type>.pdf via Pandoc + Typst; requires typst on PATH
@@ -78,6 +78,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `geometry.py` — `ImageSize` Pydantic model for pixel dimensions (width × height) of a 2-D image
     - `markdown.py` — CommonMark fenced code block utilities: `is_fenced_code_block()`, `FencedCodeBlock` NamedTuple, `parse_fenced_code_block()`
     - `media_type.py` — `MediaType` enum; MIME type detection from file names
+    - `provenance.py` — export provenance: `Provenance` model (source git `commit` + `dirty` flag + `committed_at`/`exported_at` timestamps, with `summary()` rendering a one-line identifier) and `gather_provenance()` (captures it from `git` against the package's own source tree); `UNKNOWN_COMMIT`
     - `validation.py` — generic accumulator-pipeline validation framework
   - **`roam/` sub-package** (`src/guffin/roam/`) — all Roam Research data model, API, and processing modules
     - `primitives.py` — foundational type aliases, stub models, `UID_PATTERN`/`UID_RE`, `ANCHORED_UID_PATTERN`/`ANCHORED_UID_RE` (dependency root)
@@ -211,6 +212,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `GUFFIN_CACHE_DIR` — directory for caching downloaded Cloud Firestore assets (`export-roam-tree`)
 - `GUFFIN_PDF_TEMPLATE_DIR` — directory containing a `user_cfg.typ` override for PDF styling (`export-roam-tree --format pdf`)
 - `GUFFIN_DUMP_PANDOC_AST` — set to any non-empty value to dump the Pandoc JSON AST to `<output-dir>/<target>.pandoc.json` before the Pandoc conversion step (`export-roam-tree`, all formats)
+- `GUFFIN_EMIT_COLOPHON` — backs the `--colophon/--no-colophon` flag (default on); set falsy (e.g. `0`) to omit the provenance colophon (source commit + export time) from output (`export-roam-tree`, all formats). Placement differs by format: PDF renders it on a line below the page footer (Bergfink `footer-provenance` variable); Markdown and EPUB carry it as an end-of-document block. The test suite forces it off via an autouse conftest fixture so byte-for-byte fixtures stay stable
 - `GUFFIN_DUMP_TYPST` — set to any non-empty value to dump the intermediate Typst sources `<output-dir>/<target>.body.typ` (bare body) and `<output-dir>/<target>.full.typ` (with template applied) for debugging (`export-roam-tree --format pdf`); no effect on the produced PDF
 - `GUFFIN_PDF_CREATION_TIMESTAMP` — UNIX timestamp passed to Typst via Pandoc `--pdf-engine-opt=--creation-timestamp` to pin the PDF creation date for byte-reproducible output (`export-roam-tree --format pdf`); used by the live PDF fixture test
 - `GUFFIN_LIVE_TESTS` — set to any non-empty value to enable live tests (e.g. `GUFFIN_LIVE_TESTS=1`); requires Roam Desktop running locally

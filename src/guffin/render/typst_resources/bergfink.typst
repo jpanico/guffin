@@ -190,6 +190,9 @@ $endif$
 $if(footer-center)$
 #(cfg.footer-center = "$footer-center$")
 $endif$
+$if(footer-provenance)$
+#(cfg.footer-provenance = "$footer-provenance$")
+$endif$
 $if(figure-prefix)$
 #(cfg.figure-prefix = "$figure-prefix$")
 $endif$

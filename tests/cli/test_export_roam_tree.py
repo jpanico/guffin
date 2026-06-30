@@ -313,3 +313,48 @@ class TestExportRoamTreePdfLive:
         actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.default.pdf"
         assert actual.exists()
         assert actual.read_bytes() == baseline.read_bytes()
+
+
+class TestExportRoamTreeColophon:
+    """The provenance colophon is embedded in the output exactly when --colophon is in effect."""
+
+    def _export_md(self, tmp_path: pathlib.Path, colophon_flag: str) -> str:
+        """Export [[Test Article]] 3 to a plain .md offline with *colophon_flag*; return the .md text."""
+        raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_raw_result.yaml").read_text())
+        api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
+        runner: CliRunner = CliRunner()
+        with patch("guffin.roam.node_fetch.invoke_action", return_value=api_response):
+            saved_handlers = logging.root.handlers[:]
+            logging.root.handlers.clear()
+            try:
+                result = runner.invoke(
+                    app,
+                    [
+                        "[[Test Article]] 3",
+                        "--port",
+                        "3333",
+                        "--graph",
+                        "SCFH",
+                        "--token",
+                        "tok",
+                        "--output-dir",
+                        str(tmp_path),
+                        "--format",
+                        "markdown",
+                        "--no-bundle",
+                        colophon_flag,
+                    ],
+                )
+            finally:
+                logging.root.handlers = saved_handlers
+        assert result.exit_code == 0, result.output
+        return (tmp_path / "Test_Article_3.default.md").read_text(encoding="utf-8")
+
+    def test_colophon_flag_embeds_provenance(self, tmp_path: pathlib.Path) -> None:
+        """--colophon appends the provenance summary line to the document."""
+        # The "· exported " segment is distinctive to the Provenance.summary() colophon.
+        assert "· exported " in self._export_md(tmp_path, "--colophon")
+
+    def test_no_colophon_flag_omits_provenance(self, tmp_path: pathlib.Path) -> None:
+        """--no-colophon leaves no provenance line in the document."""
+        assert "· exported " not in self._export_md(tmp_path, "--no-colophon")

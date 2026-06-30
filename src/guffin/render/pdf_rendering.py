@@ -40,6 +40,7 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
+from guffin.common.provenance import Provenance
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
@@ -91,6 +92,7 @@ def _typst_template_args(
     number_sections: bool,
     top_level_division: TopLevelDivision,
     emit_title_page: bool,
+    provenance: Provenance | None,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
 
@@ -109,6 +111,9 @@ def _typst_template_args(
             ``top-level-division`` variable; ``SECTION`` passes nothing, leaving the default layout.
         emit_title_page: When ``True``, enables the Bergfink ``titlepage`` variable so the template
             renders a title page from the document metadata; ``False`` passes nothing (no title page).
+        provenance: When set, passes its :meth:`~guffin.common.provenance.Provenance.summary` as the
+            Bergfink ``footer-provenance`` variable so the template renders it on a line below the
+            page footer; ``None`` passes nothing (no provenance in the footer).
 
     Returns:
         The Pandoc ``extra_args`` that apply the template (filters, resource path, and variables).
@@ -132,6 +137,9 @@ def _typst_template_args(
     # Bergfink renders a title page only when the `titlepage` variable is set; pass nothing otherwise.
     if emit_title_page:
         args.extend(["-V", "titlepage=true"])
+    # In PDF the provenance rides the page footer (a line below it) rather than an end-of-body block.
+    if provenance is not None:
+        args.extend(["-V", f"footer-provenance={provenance.summary()}"])
     if template_dir is not None:
         args.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
     return args
@@ -210,6 +218,10 @@ def render(
     EPUB book output.  When its ``emit_title_page`` is set, the Bergfink ``titlepage`` partial renders
     a title page from the document metadata.
 
+    When ``options.provenance`` is set, its summary is rendered on a line below the page footer (via
+    the Bergfink ``footer-provenance`` variable) — unlike Markdown/EPUB, which carry it as an
+    end-of-document block.
+
     Pandoc and Typst must be installed and on ``PATH``.
 
     Args:
@@ -268,6 +280,7 @@ def render(
         profile.structural_policy.number_sections,
         profile.structural_policy.top_level_division,
         profile.structural_policy.emit_title_page,
+        options.provenance,
     )
     extra_args: list[str] = ["--pdf-engine=typst", *template_args]
 
@@ -285,6 +298,8 @@ def render(
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
         image_files: Final[dict[Uid, Path]] = {uid: ref.path for uid, ref in image_refs.items()}
+        # The PDF provenance rides the page footer (see _typst_template_args), not an end-of-body
+        # colophon, so it is deliberately not passed to vertex_tree_to_pandoc here.
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
             enriched_tree, image_files, render_bundle.view
         )

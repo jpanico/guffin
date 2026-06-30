@@ -75,6 +75,7 @@ Public symbols:
 
 from collections.abc import Callable
 from io import StringIO
+import html
 import logging
 import uuid
 
@@ -88,6 +89,7 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
+from guffin.common.provenance import Provenance
 from guffin.common.table import HAlign
 from guffin.model.attribute import DEFAULT_ATTRIBUTE_DOMAIN, AttributeAssignment, ReferenceValue
 from guffin.model.vertex import (
@@ -1143,6 +1145,25 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
     return parse_inline_md(texts)
 
 
+_COLOPHON_FONT_SIZE: Final[str] = "0.7em"
+"""Colophon text size relative to body, matching the PDF footer's text-size-to-body ratio."""
+
+
+def _colophon_blocks(provenance: Provenance) -> list[pf.Block]:
+    """Return the end-of-document provenance colophon blocks for *provenance*.
+
+    A :class:`~panflute.HorizontalRule` followed by the
+    :meth:`~guffin.common.provenance.Provenance.summary` text (verbatim, so it matches the PDF footer
+    exactly) rendered as an inline-styled HTML paragraph at :data:`_COLOPHON_FONT_SIZE` — the same
+    text-size-to-body ratio as the PDF footer.  Emitted as a raw-HTML block because only HTML-based
+    writers (GFM, EPUB) consume the body colophon; the PDF routes provenance to its page footer
+    instead.
+    """
+    summary: Final[str] = html.escape(provenance.summary())
+    paragraph: Final[str] = f'<p style="font-size: {_COLOPHON_FONT_SIZE}"><em>{summary}</em></p>'
+    return [pf.HorizontalRule(), pf.RawBlock(paragraph, format="html")]
+
+
 @validate_call
 def vertex_tree_to_pandoc(
     vertex_tree: VertexTree,
@@ -1150,6 +1171,7 @@ def vertex_tree_to_pandoc(
     view_map: ViewMap,
     *,
     title_in_header: bool = False,
+    provenance: Provenance | None = None,
 ) -> tuple[pf.Doc, InlineMap]:
     """Convert a :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
 
@@ -1184,6 +1206,9 @@ def vertex_tree_to_pandoc(
         title_in_header: When ``True``, render a root
             :class:`~guffin.vertex.PageVertex` title as an H1 header instead
             of storing it in document metadata.  Defaults to ``False``.
+        provenance: When set, append an end-of-document provenance colophon (a horizontal rule and
+            an emphasized line of :meth:`~guffin.common.provenance.Provenance.summary` text); ``None``
+            (default) appends nothing.
 
     Returns:
         A two-tuple of the :class:`~panflute.Doc` ready for serialization via
@@ -1223,6 +1248,9 @@ def vertex_tree_to_pandoc(
         )
     else:
         blocks.extend(_vertex_to_blocks(root, vertex_tree, image_files, inline_map, view_map, depth=0))
+
+    if provenance is not None:
+        blocks.extend(_colophon_blocks(provenance))
 
     return pf.Doc(*blocks, metadata=metadata), inline_map
 

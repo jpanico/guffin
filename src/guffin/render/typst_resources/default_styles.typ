@@ -129,6 +129,11 @@
       align: (left, center, right),
       footer-left(), cfg.footer-center, footer-right(),
     )
+    // Provenance line, below the normal footer row when supplied.
+    #if cfg.footer-provenance != none [
+      #v(0.2em)
+      #align(center, text(size: 0.7em, fill: gray)[#cfg.footer-provenance])
+    ]
   ] else []
 }
 

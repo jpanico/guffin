@@ -72,6 +72,7 @@
   footer-left: "%author%",
   footer-center: none,
   footer-right: "%page%",
+  footer-provenance: none,
   // Abstract
   abstract-title: "Abstract",
   abstract: none,
