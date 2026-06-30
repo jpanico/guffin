@@ -78,7 +78,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `geometry.py` — `ImageSize` Pydantic model for pixel dimensions (width × height) of a 2-D image
     - `markdown.py` — CommonMark fenced code block utilities: `is_fenced_code_block()`, `FencedCodeBlock` NamedTuple, `parse_fenced_code_block()`
     - `media_type.py` — `MediaType` enum; MIME type detection from file names
-    - `provenance.py` — export provenance: `Provenance` model (source git `commit` + `dirty` flag + `committed_at`/`exported_at` timestamps, with `summary()` rendering a one-line identifier) and `gather_provenance()` (captures it from `git` against the package's own source tree); `UNKNOWN_COMMIT`
+    - `provenance.py` — export provenance: `Provenance` model (source git `commit` + `dirty` flag + `committed_at`/`exported_at` timestamps + an arbitrary `extra` `dict[str, str]` of caller-supplied key→value facts, with `summary()` rendering a one-line identifier — the CLI records the project type via `extra={"type": ...}`, keeping `common/` free of any `render/` dependency) and `gather_provenance()` (captures it from `git` against the package's own source tree); `UNKNOWN_COMMIT`
     - `validation.py` — generic accumulator-pipeline validation framework
   - **`roam/` sub-package** (`src/guffin/roam/`) — all Roam Research data model, API, and processing modules
     - `primitives.py` — foundational type aliases, stub models, `UID_PATTERN`/`UID_RE`, `ANCHORED_UID_PATTERN`/`ANCHORED_UID_RE` (dependency root)

@@ -39,6 +39,8 @@ class Provenance(BaseModel):
     Together these answer, for any document the exporter produces, exactly which source code
     produced it and when: the git commit (with a ``dirty`` marker when the working tree had
     uncommitted changes to tracked files), the commit's own timestamp, and the moment the export ran.
+    Callers may attach further free-form facts via :attr:`extra` (e.g. the project type) without this
+    module needing to know about them.
 
     Attributes:
         commit: The full git commit hash of the source tree, or :data:`UNKNOWN_COMMIT` when it
@@ -47,6 +49,9 @@ class Provenance(BaseModel):
             ``True`` the commit hash alone does not capture the exact source.
         committed_at: The commit's own timestamp, or ``None`` when unknown.
         exported_at: The moment the export ran, or ``None`` when not recorded.
+        extra: Arbitrary caller-supplied ``key → value`` facts, rendered by :meth:`summary` right
+            after the leading ``guffin`` segment, in insertion order, as ``key value`` segments; lets
+            front ends record context (such as the project type) without this layer depending on theirs.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -55,24 +60,28 @@ class Provenance(BaseModel):
     dirty: bool = Field(default=False, description="Whether the working tree had uncommitted tracked changes.")
     committed_at: datetime | None = Field(default=None, description="The commit's own timestamp.")
     exported_at: datetime | None = Field(default=None, description="The moment the export ran.")
+    extra: dict[str, str] = Field(
+        default_factory=dict, description="Arbitrary caller-supplied key→value facts appended to the summary."
+    )
 
     @validate_call
     def summary(self) -> str:
         """Return a single-line identifier encoding the commit and timestamps.
 
-        The commit hash is shortened to its first :data:`_SHORT_COMMIT_LENGTH` characters and
-        carries a ``-dirty`` suffix when :attr:`dirty` is set; the commit and export timestamps are
-        appended (date and time to the minute, no timezone — see :data:`_TIMESTAMP_FORMAT`) when
-        present.  Example::
+        Each :attr:`extra` ``key value`` pair follows the leading ``guffin`` segment, in insertion
+        order; then the commit hash — shortened to its first :data:`_SHORT_COMMIT_LENGTH` characters,
+        with a ``-dirty`` suffix when :attr:`dirty` is set — and the commit and export timestamps
+        (date and time to the minute, no timezone — see :data:`_TIMESTAMP_FORMAT`) when present.
+        Example::
 
-            guffin · 1ce1966-dirty · committed 2026-06-29T14:02 · exported 2026-06-29T22:40
+            guffin · type book · 1ce1966-dirty · committed 2026-06-29T14:02 · exported 2026-06-29T22:40
 
         Returns:
             The provenance as one compact, human- and machine-readable line.
         """
         short_commit: Final[str] = self.commit[:_SHORT_COMMIT_LENGTH]
         commit: Final[str] = f"{short_commit}-dirty" if self.dirty else short_commit
-        parts: Final[list[str]] = ["guffin", commit]
+        parts: Final[list[str]] = ["guffin", *(f"{key} {value}" for key, value in self.extra.items()), commit]
         if self.committed_at is not None:
             parts.append(f"committed {self.committed_at.strftime(_TIMESTAMP_FORMAT)}")
         if self.exported_at is not None:
@@ -104,7 +113,7 @@ def _git_dirty(repo_dir: Path) -> bool:
 
 
 @validate_call
-def gather_provenance() -> Provenance:
+def gather_provenance(extra: dict[str, str] | None = None) -> Provenance:
     """Capture the current source git commit, dirty state, and export time as a :class:`Provenance`.
 
     Runs ``git`` against the directory containing this module — the installed package's own source
@@ -113,16 +122,23 @@ def gather_provenance() -> Provenance:
     :data:`UNKNOWN_COMMIT` so an export can still proceed.  ``exported_at`` is set to the current
     UTC time in every case.
 
+    Args:
+        extra: Optional arbitrary ``key → value`` facts to record on the result's
+            :attr:`Provenance.extra` (e.g. the project type); ``None`` records none.
+
     Returns:
         The captured :class:`Provenance`.
     """
     repo_dir: Final[Path] = Path(__file__).resolve().parent
     exported_at: Final[datetime] = datetime.now(UTC)
+    extra_fields: Final[dict[str, str]] = dict(extra) if extra else {}
     try:
         commit: Final[str] = _git(repo_dir, "rev-parse", "HEAD")
         dirty: Final[bool] = _git_dirty(repo_dir)
         committed_at: Final[datetime] = datetime.fromisoformat(_git(repo_dir, "show", "-s", "--format=%cI", "HEAD"))
     except (OSError, subprocess.SubprocessError, ValueError) as exc:
         logger.warning("could not determine source git provenance: %s", exc)
-        return Provenance(commit=UNKNOWN_COMMIT, exported_at=exported_at)
-    return Provenance(commit=commit, dirty=dirty, committed_at=committed_at, exported_at=exported_at)
+        return Provenance(commit=UNKNOWN_COMMIT, exported_at=exported_at, extra=extra_fields)
+    return Provenance(
+        commit=commit, dirty=dirty, committed_at=committed_at, exported_at=exported_at, extra=extra_fields
+    )

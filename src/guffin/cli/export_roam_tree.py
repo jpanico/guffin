@@ -275,7 +275,7 @@ def main(
 
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
     profile: Final[ProjectProfile] = profile_for(project_type)
-    provenance: Final[Provenance | None] = gather_provenance() if colophon else None
+    provenance: Final[Provenance | None] = gather_provenance(extra={"type": project_type.value}) if colophon else None
     if provenance is not None:
         logger.info("provenance: %s", provenance.summary())
 

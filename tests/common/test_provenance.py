@@ -33,6 +33,15 @@ class TestProvenanceSummary:
         provenance: Final[Provenance] = Provenance(commit=UNKNOWN_COMMIT)
         assert provenance.summary() == "guffin · unknown"
 
+    def test_extra_fields_render_after_guffin_in_order(self) -> None:
+        """Extra key→value facts render as 'key value' segments right after 'guffin', in order."""
+        provenance: Final[Provenance] = Provenance(
+            commit="abc123",
+            exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
+            extra={"type": "book", "edition": "2"},
+        )
+        assert provenance.summary() == "guffin · type book · edition 2 · abc123 · exported 2026-06-29T22:40"
+
 
 class TestGatherProvenance:
     """:func:`gather_provenance` captures the current source commit and export time."""
