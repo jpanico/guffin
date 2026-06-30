@@ -51,7 +51,9 @@ check = [
     "black .",
     "ruff check --fix src/ tests/",
     "pyright",
-    "pytest -n auto",
+    # loadscope groups each test module/class onto one worker, so the module-scoped render fixtures
+    # (which spawn Pandoc/Typst) are built once per module rather than re-run on every worker.
+    "pytest -n auto --dist loadscope",
 ]
 
 [tool.black]

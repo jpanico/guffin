@@ -12,6 +12,8 @@ import yaml
 from typer.testing import CliRunner
 
 from guffin.cli.export_roam_tree import app
+from guffin.common.provenance import Provenance
+from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import Response as LocalApiResponse
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
@@ -316,21 +318,34 @@ class TestExportRoamTreePdfLive:
 
 
 class TestExportRoamTreeColophon:
-    """The provenance colophon is embedded in the output exactly when --colophon is in effect."""
+    """The --colophon/--no-colophon flag controls whether the CLI gathers provenance for the renderer.
 
-    def _export_md(self, tmp_path: pathlib.Path, colophon_flag: str) -> str:
-        """Export [[Test Article]] 3 to a plain .md offline with *colophon_flag*; return the .md text."""
-        raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_raw_result.yaml").read_text())
-        api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
+    The CLI's responsibility is to decide whether to capture provenance and hand it to the renderer
+    on the render options; turning that provenance into a colophon in the output is the render layer's
+    job and is covered there (``tests/render/test_pandoc_rendering.py``).  Mocking the renderer keeps
+    these flag-plumbing checks fast — no Pandoc subprocess — while still exercising the full CLI path.
+    """
+
+    def _provenance_for_flag(self, tmp_path: pathlib.Path, colophon_flag: str) -> Provenance | None:
+        """Invoke the CLI with *colophon_flag* (renderer mocked) and return the render options' provenance."""
+        fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
+            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
+        )
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
         runner: CliRunner = CliRunner()
-        with patch("guffin.roam.node_fetch.invoke_action", return_value=api_response):
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch("guffin.cli.export_roam_tree.render_md") as mock_render_md,
+        ):
             saved_handlers = logging.root.handlers[:]
             logging.root.handlers.clear()
             try:
                 result = runner.invoke(
                     app,
                     [
-                        "[[Test Article]] 3",
+                        "[[Test Article]] 1",
                         "--port",
                         "3333",
                         "--graph",
@@ -339,8 +354,6 @@ class TestExportRoamTreeColophon:
                         "tok",
                         "--output-dir",
                         str(tmp_path),
-                        "--format",
-                        "markdown",
                         "--no-bundle",
                         colophon_flag,
                     ],
@@ -348,13 +361,13 @@ class TestExportRoamTreeColophon:
             finally:
                 logging.root.handlers = saved_handlers
         assert result.exit_code == 0, result.output
-        return (tmp_path / "Test_Article_3.default.md").read_text(encoding="utf-8")
+        options: Final[MarkdownRenderOptions] = mock_render_md.call_args.args[4]
+        return options.provenance
 
-    def test_colophon_flag_embeds_provenance(self, tmp_path: pathlib.Path) -> None:
-        """--colophon appends the provenance summary line to the document."""
-        # The "· exported " segment is distinctive to the Provenance.summary() colophon.
-        assert "· exported " in self._export_md(tmp_path, "--colophon")
+    def test_colophon_flag_gathers_provenance(self, tmp_path: pathlib.Path) -> None:
+        """--colophon makes the CLI gather provenance and pass it on the render options."""
+        assert isinstance(self._provenance_for_flag(tmp_path, "--colophon"), Provenance)
 
-    def test_no_colophon_flag_omits_provenance(self, tmp_path: pathlib.Path) -> None:
-        """--no-colophon leaves no provenance line in the document."""
-        assert "· exported " not in self._export_md(tmp_path, "--no-colophon")
+    def test_no_colophon_flag_passes_no_provenance(self, tmp_path: pathlib.Path) -> None:
+        """--no-colophon leaves the render options' provenance unset (None)."""
+        assert self._provenance_for_flag(tmp_path, "--no-colophon") is None

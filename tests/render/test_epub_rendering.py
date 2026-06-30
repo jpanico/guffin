@@ -1,8 +1,14 @@
-"""Tests for guffin.render.epub_rendering."""
+"""Tests for guffin.render.epub_rendering.
+
+Each distinct EPUB is rendered once via a module-scoped fixture and shared across the assertion
+tests, so the (slow) Pandoc subprocess is spawned per artifact rather than per assertion.
+"""
 
 import zipfile
 from pathlib import Path
 from typing import Final
+
+import pytest
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
@@ -10,7 +16,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
-from guffin.render.project import BookProfile, DefaultProfile
+from guffin.render.project import BookProfile, DefaultProfile, ProjectProfile
 from guffin.render.render_options import EpubRenderOptions
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.local_api import ApiEndpoint
@@ -18,124 +24,13 @@ from guffin.roam.local_api import ApiEndpoint
 from conftest import article5_node_tree
 
 _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+_ARTICLE5_STEM: Final[str] = shell_safe_filename("[[Test Article]] 5")
 
 
 def _article5_bundle() -> RenderBundle:
     """Build the image-free ``[[Test Article]] 5`` render bundle (keeps the test offline)."""
     node_tree = article5_node_tree()
     return RenderBundle(content=transcribe(node_tree), view=build_view_map(node_tree))
-
-
-class TestRenderEpub:
-    """Integration tests for the epub_rendering Pandoc output path.
-
-    ``[[Test Article]] 5`` contains no images, so :func:`~guffin.render.epub_rendering.render`
-    fetches nothing and the supplied :class:`~guffin.roam.local_api.ApiEndpoint` is never called.
-    """
-
-    def test_produces_valid_epub_package(self, tmp_path: Path) -> None:
-        """Rendering article5 yields a well-formed EPUB OCF container with metadata from guffin-meta."""
-        stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
-        render(
-            _article5_bundle(),
-            profile=DefaultProfile(),
-            filename_stem=stem,
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        epub_path: Final[Path] = tmp_path / f"{stem}.epub"
-        assert epub_path.is_file()
-        with zipfile.ZipFile(epub_path) as zf:
-            # OCF requires a literal `application/epub+zip` mimetype entry.
-            assert zf.read("mimetype") == b"application/epub+zip"
-            names: Final[list[str]] = zf.namelist()
-            assert any(name.endswith("nav.xhtml") for name in names)
-            assert any(name.endswith(".opf") for name in names)
-            assert any(name.endswith(".xhtml") and "ch" in name for name in names)
-            opf: Final[str] = zf.read(next(name for name in names if name.endswith(".opf"))).decode("utf-8")
-            # The guffin-meta title attribute overrides the Roam page title, and the other
-            # metadata-domain attributes populate the EPUB dc:* fields.
-            assert "Source Code For Humans" in opf and "Test Article 5" not in opf
-            assert "Joe Panico" in opf and "Emi Panico" in opf  # authors -> dc:creator (one each)
-            assert "2027-01-01" in opf  # date -> dc:date
-            assert "978-1788399081" in opf  # identifier -> dc:identifier
-
-    def test_preserves_pill_styling(self, tmp_path: Path) -> None:
-        """Attribute reference values render as inline-styled pill spans in the EPUB XHTML."""
-        stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
-        render(
-            _article5_bundle(),
-            profile=DefaultProfile(),
-            filename_stem=stem,
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        with zipfile.ZipFile(tmp_path / f"{stem}.epub") as zf:
-            chapter: Final[str] = next(
-                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
-            )
-            assert "background-color: #FF851C" in chapter
-
-    def test_callout_title_gets_icon(self, tmp_path: Path) -> None:
-        """The shared SVG icon is prepended into the callout title header (no separate label)."""
-        stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
-        render(
-            _article5_bundle(),
-            profile=DefaultProfile(),
-            filename_stem=stem,
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        with zipfile.ZipFile(tmp_path / f"{stem}.epub") as zf:
-            chapter: Final[str] = next(
-                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
-            )
-            # The icon is inlined into the callout-title header; there is no callout-label.
-            title_idx: Final[int] = chapter.find('class="callout-title"')
-            assert title_idx != -1
-            assert "<svg" in chapter[title_idx : title_idx + 200]
-            assert "callout-label" not in chapter
-
-    def test_code_block_gets_line_numbers(self, tmp_path: Path) -> None:
-        """Fenced code blocks are emitted with Pandoc line numbering (skylighting numberSource)."""
-        page: Final[PageVertex] = PageVertex(uid="page00001", title="Code", children=["codeaaaaa"])
-        code: Final[CodeBlockVertex] = CodeBlockVertex(
-            uid="codeaaaaa", code="print(1)\nprint(2)\nprint(3)", language=CodeLanguage.PYTHON
-        )
-        bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, code]))
-        render(
-            bundle,
-            profile=DefaultProfile(),
-            filename_stem="code",
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        with zipfile.ZipFile(tmp_path / "code.epub") as zf:
-            chapter: Final[str] = next(
-                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
-            )
-            # Pandoc may place the line-number counter CSS in the chapter <style> or a stylesheet.
-            all_text: Final[str] = "\n".join(
-                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith((".xhtml", ".css"))
-            )
-            assert "numberSource" in chapter
-            assert "counter(source-line)" in all_text
-
-    def test_suppress_attributes_drops_pills(self, tmp_path: Path) -> None:
-        """With suppress_attributes, the attribute pills are absent from the EPUB."""
-        stem: Final[str] = shell_safe_filename("[[Test Article]] 5")
-        render(
-            _article5_bundle(),
-            profile=DefaultProfile(),
-            filename_stem=stem,
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path, suppress_attributes=True),
-        )
-        with zipfile.ZipFile(tmp_path / f"{stem}.epub") as zf:
-            chapter: Final[str] = next(
-                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name
-            )
-            assert "background-color: #FF851C" not in chapter
 
 
 def _multi_level_bundle() -> RenderBundle:
@@ -152,40 +47,93 @@ def _multi_level_bundle() -> RenderBundle:
     return RenderBundle(content=VertexTree(tree_vertices=[page, chap1, sec1, chap2, sec2]))
 
 
+def _render_epub(
+    out_dir: Path,
+    bundle: RenderBundle,
+    profile: ProjectProfile,
+    stem: str,
+    suppress_attributes: bool = False,
+) -> Path:
+    """Render *bundle* to ``<out_dir>/<stem>.epub`` and return the path."""
+    render(
+        bundle,
+        profile=profile,
+        filename_stem=stem,
+        api_endpoint=_ENDPOINT,
+        options=EpubRenderOptions(output_dir=out_dir, suppress_attributes=suppress_attributes),
+    )
+    return out_dir / f"{stem}.epub"
+
+
+# --- Module-scoped rendered EPUB artifacts (each rendered exactly once) ------------------------
+
+
+@pytest.fixture(scope="module")
+def article5_default_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """``[[Test Article]] 5`` rendered with the default (article) profile."""
+    return _render_epub(tmp_path_factory.mktemp("a5_default"), _article5_bundle(), DefaultProfile(), _ARTICLE5_STEM)
+
+
+@pytest.fixture(scope="module")
+def article5_suppressed_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """``[[Test Article]] 5`` rendered with attribute assignments suppressed."""
+    return _render_epub(
+        tmp_path_factory.mktemp("a5_suppressed"),
+        _article5_bundle(),
+        DefaultProfile(),
+        _ARTICLE5_STEM,
+        suppress_attributes=True,
+    )
+
+
+@pytest.fixture(scope="module")
+def article5_book_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """``[[Test Article]] 5`` rendered with the book profile (which emits a title page)."""
+    return _render_epub(tmp_path_factory.mktemp("a5_book"), _article5_bundle(), BookProfile(), _ARTICLE5_STEM)
+
+
+@pytest.fixture(scope="module")
+def code_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """A single fenced-code-block document rendered to EPUB."""
+    page: Final[PageVertex] = PageVertex(uid="page00001", title="Code", children=["codeaaaaa"])
+    code: Final[CodeBlockVertex] = CodeBlockVertex(
+        uid="codeaaaaa", code="print(1)\nprint(2)\nprint(3)", language=CodeLanguage.PYTHON
+    )
+    bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, code]))
+    return _render_epub(tmp_path_factory.mktemp("code"), bundle, DefaultProfile(), "code")
+
+
+@pytest.fixture(scope="module")
+def multi_level_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
+    """The multi-level bundle rendered under three profiles, keyed ``article`` / ``book`` / ``parts``."""
+    out: Final[Path] = tmp_path_factory.mktemp("multi_level")
+    bundle: Final[RenderBundle] = _multi_level_bundle()
+    return {
+        "article": _render_epub(out, bundle, DefaultProfile(), "article"),  # SECTION -> split-level 1
+        "book": _render_epub(out, bundle, BookProfile(), "book"),  # CHAPTER -> split-level 1
+        "parts": _render_epub(out, bundle, BookProfile(with_parts=True), "parts"),  # PART -> split-level 2
+    }
+
+
+# --- EPUB content accessors -------------------------------------------------------------------
+
+
+def _chapter_xhtml(epub_path: Path) -> str:
+    """Return the first split content document (``chNNN.xhtml``) of *epub_path*."""
+    with zipfile.ZipFile(epub_path) as zf:
+        return next(zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name)
+
+
+def _all_text(epub_path: Path) -> str:
+    """Return every XHTML and CSS document of *epub_path* joined into one string."""
+    with zipfile.ZipFile(epub_path) as zf:
+        return "\n".join(zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith((".xhtml", ".css")))
+
+
 def _content_file_count(epub_path: Path) -> int:
     """Count the EPUB's split content documents (``chNNN.xhtml`` spine entries)."""
     with zipfile.ZipFile(epub_path) as zf:
         return sum(1 for name in zf.namelist() if name.endswith(".xhtml") and "ch" in name)
-
-
-class TestSplitLevel:
-    """The EPUB ``--split-level`` is derived from the profile's top-level division.
-
-    Verified through the public ``render`` by counting the EPUB's split content files: an article
-    (sections) and a book without parts both keep their top-level unit at heading level 1 and split
-    there (equal chunking), while a book *with* parts puts chapters at level 2 and splits deeper.
-    """
-
-    def test_split_level_follows_top_level_division(self, tmp_path: Path) -> None:
-        """SECTION and CHAPTER chunk identically (level 1); a parts-based book chunks deeper."""
-        bundle: Final[RenderBundle] = _multi_level_bundle()
-        for stem, profile in (
-            ("article", DefaultProfile()),  # SECTION -> split-level 1
-            ("book", BookProfile()),  # CHAPTER -> split-level 1
-            ("parts", BookProfile(with_parts=True)),  # PART -> split-level 2
-        ):
-            render(
-                bundle,
-                profile=profile,
-                filename_stem=stem,
-                api_endpoint=_ENDPOINT,
-                options=EpubRenderOptions(output_dir=tmp_path),
-            )
-        article: Final[int] = _content_file_count(tmp_path / "article.epub")
-        book: Final[int] = _content_file_count(tmp_path / "book.epub")
-        parts: Final[int] = _content_file_count(tmp_path / "parts.epub")
-        assert article == book  # both split at heading level 1
-        assert parts > book  # the parts-based book also splits at level 2
 
 
 def _has_section_numbers(epub_path: Path) -> bool:
@@ -197,55 +145,91 @@ def _has_section_numbers(epub_path: Path) -> bool:
     return "header-section-number" in xhtml
 
 
-class TestNumberSections:
-    """Heading numbering follows the profile's structural policy (Pandoc ``--number-sections``)."""
-
-    def test_book_numbers_headings_default_does_not(self, tmp_path: Path) -> None:
-        """A book (number_sections=True) numbers headings; the default article does not."""
-        bundle: Final[RenderBundle] = _multi_level_bundle()
-        render(
-            bundle,
-            profile=DefaultProfile(),
-            filename_stem="plain",
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        render(
-            bundle,
-            profile=BookProfile(),
-            filename_stem="numbered",
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        assert _has_section_numbers(tmp_path / "numbered.epub")
-        assert not _has_section_numbers(tmp_path / "plain.epub")
-
-
 def _has_title_page(epub_path: Path) -> bool:
     """Whether the EPUB package includes a generated title-page document."""
     with zipfile.ZipFile(epub_path) as zf:
         return any("title_page" in name for name in zf.namelist())
 
 
+class TestRenderEpub:
+    """Integration tests for the epub_rendering Pandoc output path.
+
+    ``[[Test Article]] 5`` contains no images, so :func:`~guffin.render.epub_rendering.render`
+    fetches nothing and the supplied :class:`~guffin.roam.local_api.ApiEndpoint` is never called.
+    """
+
+    def test_produces_valid_epub_package(self, article5_default_epub: Path) -> None:
+        """Rendering article5 yields a well-formed EPUB OCF container with metadata from guffin-meta."""
+        assert article5_default_epub.is_file()
+        with zipfile.ZipFile(article5_default_epub) as zf:
+            # OCF requires a literal `application/epub+zip` mimetype entry.
+            assert zf.read("mimetype") == b"application/epub+zip"
+            names: Final[list[str]] = zf.namelist()
+            assert any(name.endswith("nav.xhtml") for name in names)
+            assert any(name.endswith(".opf") for name in names)
+            assert any(name.endswith(".xhtml") and "ch" in name for name in names)
+            opf: Final[str] = zf.read(next(name for name in names if name.endswith(".opf"))).decode("utf-8")
+            # The guffin-meta title attribute overrides the Roam page title, and the other
+            # metadata-domain attributes populate the EPUB dc:* fields.
+            assert "Source Code For Humans" in opf and "Test Article 5" not in opf
+            assert "Joe Panico" in opf and "Emi Panico" in opf  # authors -> dc:creator (one each)
+            assert "2027-01-01" in opf  # date -> dc:date
+            assert "978-1788399081" in opf  # identifier -> dc:identifier
+
+    def test_preserves_pill_styling(self, article5_default_epub: Path) -> None:
+        """Attribute reference values render as inline-styled pill spans in the EPUB XHTML."""
+        assert "background-color: #FF851C" in _chapter_xhtml(article5_default_epub)
+
+    def test_callout_title_gets_icon(self, article5_default_epub: Path) -> None:
+        """The shared SVG icon is prepended into the callout title header (no separate label)."""
+        chapter: Final[str] = _chapter_xhtml(article5_default_epub)
+        # The icon is inlined into the callout-title header; there is no callout-label.
+        title_idx: Final[int] = chapter.find('class="callout-title"')
+        assert title_idx != -1
+        assert "<svg" in chapter[title_idx : title_idx + 200]
+        assert "callout-label" not in chapter
+
+    def test_code_block_gets_line_numbers(self, code_epub: Path) -> None:
+        """Fenced code blocks are emitted with Pandoc line numbering (skylighting numberSource)."""
+        # Pandoc may place the line-number counter CSS in the chapter <style> or a stylesheet.
+        assert "numberSource" in _chapter_xhtml(code_epub)
+        assert "counter(source-line)" in _all_text(code_epub)
+
+    def test_suppress_attributes_drops_pills(self, article5_suppressed_epub: Path) -> None:
+        """With suppress_attributes, the attribute pills are absent from the EPUB."""
+        assert "background-color: #FF851C" not in _chapter_xhtml(article5_suppressed_epub)
+
+
+class TestSplitLevel:
+    """The EPUB ``--split-level`` is derived from the profile's top-level division.
+
+    Verified through the public ``render`` by counting the EPUB's split content files: an article
+    (sections) and a book without parts both keep their top-level unit at heading level 1 and split
+    there (equal chunking), while a book *with* parts puts chapters at level 2 and splits deeper.
+    """
+
+    def test_split_level_follows_top_level_division(self, multi_level_epubs: dict[str, Path]) -> None:
+        """SECTION and CHAPTER chunk identically (level 1); a parts-based book chunks deeper."""
+        article: Final[int] = _content_file_count(multi_level_epubs["article"])
+        book: Final[int] = _content_file_count(multi_level_epubs["book"])
+        parts: Final[int] = _content_file_count(multi_level_epubs["parts"])
+        assert article == book  # both split at heading level 1
+        assert parts > book  # the parts-based book also splits at level 2
+
+
+class TestNumberSections:
+    """Heading numbering follows the profile's structural policy (Pandoc ``--number-sections``)."""
+
+    def test_book_numbers_headings_default_does_not(self, multi_level_epubs: dict[str, Path]) -> None:
+        """A book (number_sections=True) numbers headings; the default article does not."""
+        assert _has_section_numbers(multi_level_epubs["book"])
+        assert not _has_section_numbers(multi_level_epubs["article"])
+
+
 class TestTitlePage:
     """The EPUB title page follows the profile's ``emit_title_page`` (Pandoc ``--epub-title-page``)."""
 
-    def test_book_has_title_page_default_does_not(self, tmp_path: Path) -> None:
+    def test_book_has_title_page_default_does_not(self, article5_default_epub: Path, article5_book_epub: Path) -> None:
         """A book (emit_title_page=True) includes a title page; the default article omits it."""
-        bundle: Final[RenderBundle] = _article5_bundle()
-        render(
-            bundle,
-            profile=DefaultProfile(),
-            filename_stem="article",
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        render(
-            bundle,
-            profile=BookProfile(),
-            filename_stem="book",
-            api_endpoint=_ENDPOINT,
-            options=EpubRenderOptions(output_dir=tmp_path),
-        )
-        assert _has_title_page(tmp_path / "book.epub")
-        assert not _has_title_page(tmp_path / "article.epub")
+        assert _has_title_page(article5_book_epub)
+        assert not _has_title_page(article5_default_epub)
