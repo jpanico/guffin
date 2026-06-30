@@ -10,6 +10,9 @@ from guffin.model.attribute import (
     LiteralValue,
     ReferenceValue,
     attribute_value_adapter,
+    attribute_value_text,
+    sole_value,
+    sole_value_text,
 )
 from guffin.model.link import VertexLink, VertexLinkKind
 
@@ -134,3 +137,56 @@ class TestFrozen:
         assignment = AttributeAssignment(attribute=Attribute(name="a", link=_LINK), values=(LiteralValue(value="x"),))
         with pytest.raises(ValidationError):
             assignment.attribute = Attribute(name="b", link=_LINK)  # type: ignore[misc]
+
+
+def _assignment(*values: LiteralValue | ReferenceValue) -> AttributeAssignment:
+    """Build an AttributeAssignment with the given values."""
+    return AttributeAssignment(attribute=Attribute(name="a", link=_LINK), values=values)
+
+
+class TestAttributeValueText:
+    """attribute_value_text() yields a literal's value or a reference's name."""
+
+    def test_literal_value_returns_its_value(self) -> None:
+        """A LiteralValue's text is its literal token."""
+        assert attribute_value_text(LiteralValue(value="5")) == "5"
+
+    def test_reference_value_returns_its_name(self) -> None:
+        """A ReferenceValue's text is the referenced page name."""
+        assert attribute_value_text(ReferenceValue(name="callouts demo", link=_LINK)) == "callouts demo"
+
+
+class TestSoleValue:
+    """sole_value() returns the one value, requiring exactly one."""
+
+    def test_returns_the_single_value(self) -> None:
+        """A one-value assignment yields that value."""
+        only = LiteralValue(value="x")
+        assert sole_value(_assignment(only)) == only
+
+    def test_zero_values_raises(self) -> None:
+        """An assignment with no values raises ValueError."""
+        with pytest.raises(ValueError):
+            sole_value(_assignment())
+
+    def test_multiple_values_raises(self) -> None:
+        """An assignment with more than one value raises ValueError."""
+        with pytest.raises(ValueError):
+            sole_value(_assignment(LiteralValue(value="a"), LiteralValue(value="b")))
+
+
+class TestSoleValueText:
+    """sole_value_text() returns the text of the one value."""
+
+    def test_returns_literal_text(self) -> None:
+        """The sole literal value's text is returned."""
+        assert sole_value_text(_assignment(LiteralValue(value="2027-01-01"))) == "2027-01-01"
+
+    def test_returns_reference_text(self) -> None:
+        """The sole reference value's name is returned."""
+        assert sole_value_text(_assignment(ReferenceValue(name="SomePage", link=_LINK))) == "SomePage"
+
+    def test_multiple_values_raises(self) -> None:
+        """It propagates sole_value()'s error when there isn't exactly one value."""
+        with pytest.raises(ValueError):
+            sole_value_text(_assignment(LiteralValue(value="a"), LiteralValue(value="b")))

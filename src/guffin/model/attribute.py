@@ -18,12 +18,15 @@ Public symbols:
   validating a raw mapping into the appropriate :data:`AttributeValue`.
 - **Constants**: :data:`DEFAULT_ATTRIBUTE_DOMAIN` — the default :attr:`Attribute.domain` value;
   :data:`GUFFIN_ATTRIBUTE_DOMAIN` — Guffin's own reserved domain.
+- **Functions**: :func:`attribute_value_text` — an :data:`AttributeValue`'s text (literal value or
+  reference name); :func:`sole_value` — the single value of an :class:`AttributeAssignment` (raises
+  unless it has exactly one); :func:`sole_value_text` — the text of that single value.
 """
 
 import enum
 from typing import Annotated, Final, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
 
 from guffin.model.link import VertexLink
 
@@ -150,3 +153,55 @@ class AttributeAssignment(BaseModel):
     values: tuple[Annotated[AttributeValue, Field(discriminator="kind")], ...] = Field(
         ..., description="The ordered values assigned to the attribute."
     )
+
+
+@validate_call
+def attribute_value_text(value: AttributeValue) -> str:
+    """Return *value*'s text — its literal token or, for a reference, the referenced page name.
+
+    Args:
+        value: The attribute-assignment value to read.
+
+    Returns:
+        :attr:`LiteralValue.value` for a :class:`LiteralValue`, or :attr:`ReferenceValue.name` for a
+        :class:`ReferenceValue`.
+    """
+    return value.name if isinstance(value, ReferenceValue) else value.value
+
+
+@validate_call
+def sole_value(assignment: AttributeAssignment) -> AttributeValue:
+    """Return the single value of *assignment*, requiring it to carry exactly one.
+
+    Args:
+        assignment: An attribute assignment expected to have exactly one value.
+
+    Returns:
+        The assignment's sole :data:`AttributeValue`.
+
+    Raises:
+        ValueError: If *assignment* does not have exactly one value.
+    """
+    if len(assignment.values) != 1:
+        raise ValueError(
+            f"expected exactly one value for attribute {assignment.attribute.name!r}, got {len(assignment.values)}"
+        )
+    return assignment.values[0]
+
+
+@validate_call
+def sole_value_text(assignment: AttributeAssignment) -> str:
+    """Return the text of *assignment*'s single value, requiring it to carry exactly one.
+
+    Composes :func:`sole_value` with :func:`attribute_value_text`.
+
+    Args:
+        assignment: An attribute assignment expected to have exactly one value.
+
+    Returns:
+        The text of the assignment's sole value (the literal token or the referenced page name).
+
+    Raises:
+        ValueError: If *assignment* does not have exactly one value.
+    """
+    return attribute_value_text(sole_value(assignment))

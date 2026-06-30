@@ -96,6 +96,7 @@ from guffin.model.attribute import (
     AttributeAssignment,
     GuffinAttribute,
     ReferenceValue,
+    attribute_value_text,
 )
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -361,9 +362,7 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
         key: str | None = _METADATA_KEY_BY_NAME.get(assignment.attribute.name)
         if key is None:
             continue
-        value_strings: list[str] = [
-            value.name if isinstance(value, ReferenceValue) else value.value for value in assignment.values
-        ]
+        value_strings: list[str] = [attribute_value_text(value) for value in assignment.values]
         if not value_strings:
             continue
         if key == "author":
