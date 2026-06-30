@@ -42,19 +42,22 @@ Public symbols:
 - :data:`Vertex` — union of all nine concrete vertex types.
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
+- :func:`find_attribute_assignment` — find a vertex's folded attribute assignment by name and domain.
+- :func:`find_guffin_attribute` — find a vertex's :class:`~guffin.model.attribute.GuffinAttribute`
+  assignment (the Guffin domain is supplied automatically).
 """
 
 from enum import StrEnum
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, TypeAdapter, field_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, TypeAdapter, field_validator, validate_call
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
 from guffin.common.markdown import HeadingLevel
-from guffin.model.attribute import AttributeAssignment
+from guffin.model.attribute import AttributeAssignment, GuffinAttribute
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
 
@@ -471,3 +474,41 @@ Example::
     v = vertex_adapter.validate_python({"vertex_type": "guffin/page", "uid": "abc", "text": "My Page"})
     assert isinstance(v, PageVertex)
 """
+
+
+@validate_call
+def find_attribute_assignment(vertex: Vertex, attribute_name: str, attribute_domain: str) -> AttributeAssignment | None:
+    """Return *vertex*'s attribute assignment named *attribute_name* in *attribute_domain*, or ``None``.
+
+    Args:
+        vertex: The vertex whose folded attribute assignments are searched.
+        attribute_name: The attribute name to match (the page named before ``::``).
+        attribute_domain: The domain the matched attribute must belong to.
+
+    Returns:
+        The first matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when
+        *vertex* has no attribute named *attribute_name* in *attribute_domain*.
+    """
+    for assignment in vertex.attribute_assignments or ():
+        if assignment.attribute.name == attribute_name and assignment.attribute.domain == attribute_domain:
+            return assignment
+    return None
+
+
+@validate_call
+def find_guffin_attribute(vertex: Vertex, attribute: GuffinAttribute) -> AttributeAssignment | None:
+    """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
+
+    Convenience over :func:`find_attribute_assignment` that supplies
+    :attr:`~guffin.model.attribute.GuffinAttribute.DOMAIN` as the domain, so callers neither restate
+    nor risk mismatching it.
+
+    Args:
+        vertex: The vertex whose folded attribute assignments are searched.
+        attribute: The Guffin attribute to look up.
+
+    Returns:
+        The matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when *vertex*
+        has no such Guffin attribute.
+    """
+    return find_attribute_assignment(vertex, attribute, GuffinAttribute.DOMAIN)

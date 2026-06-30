@@ -91,7 +91,12 @@ from pydantic import ConfigDict, validate_call
 from guffin.common.geometry import ImageSize
 from guffin.common.provenance import Provenance
 from guffin.common.table import HAlign
-from guffin.model.attribute import DEFAULT_ATTRIBUTE_DOMAIN, AttributeAssignment, ReferenceValue
+from guffin.model.attribute import (
+    DEFAULT_ATTRIBUTE_DOMAIN,
+    AttributeAssignment,
+    GuffinAttribute,
+    ReferenceValue,
+)
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -318,7 +323,7 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     return f"{attribute_markup}: {', '.join(parts)}"
 
 
-_METADATA_DOMAIN: Final[str] = "guffin"
+_METADATA_DOMAIN: Final[str] = GuffinAttribute.DOMAIN
 """The attribute domain whose assignments carry document-level metadata rather than body content.
 
 Attributes in this domain are never rendered as inline pills: those with a name recognised by
@@ -327,12 +332,12 @@ any others are dropped from the output entirely.
 """
 
 _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
-    "title": "title",
-    "authors": "author",
-    "date": "date",
-    "identifier": "identifier",
+    GuffinAttribute.TITLE: "title",
+    GuffinAttribute.AUTHORS: "author",
+    GuffinAttribute.DATE: "date",
+    GuffinAttribute.IDENTIFIER: "identifier",
 }
-"""Maps a recognised metadata-domain attribute name to its Pandoc document-metadata key."""
+"""Maps a recognised :class:`~guffin.model.attribute.GuffinAttribute` to its Pandoc metadata key."""
 
 
 def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) -> dict[str, pf.MetaValue]:

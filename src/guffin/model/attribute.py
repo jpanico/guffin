@@ -9,13 +9,15 @@ Public symbols:
 
 - **Type aliases**: :data:`AttributeValue` — discriminated union of :class:`LiteralValue` and
   :class:`ReferenceValue`.
-- **Enumerations**: :class:`AttributeValueKind` — the two value kinds (literal / reference).
+- **Enumerations**: :class:`AttributeValueKind` — the two value kinds (literal / reference);
+  :class:`GuffinAttribute` — the attributes Guffin recognizes in :data:`GUFFIN_ATTRIBUTE_DOMAIN`.
 - **Models**: :class:`Attribute` — the named attribute (a page) preceding ``::``; :class:`LiteralValue`
   — a bare literal value; :class:`ReferenceValue` — a value that references a page; and
   :class:`AttributeAssignment` — an :class:`Attribute` paired with its ordered values.
 - **Adapters**: :data:`attribute_value_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for
   validating a raw mapping into the appropriate :data:`AttributeValue`.
-- **Constants**: :data:`DEFAULT_ATTRIBUTE_DOMAIN` — the default :attr:`Attribute.domain` value.
+- **Constants**: :data:`DEFAULT_ATTRIBUTE_DOMAIN` — the default :attr:`Attribute.domain` value;
+  :data:`GUFFIN_ATTRIBUTE_DOMAIN` — Guffin's own reserved domain.
 """
 
 import enum
@@ -27,6 +29,33 @@ from guffin.model.link import VertexLink
 
 DEFAULT_ATTRIBUTE_DOMAIN: Final[str] = "default"
 """The default namespace assigned to an :class:`Attribute` when no domain is specified."""
+
+GUFFIN_ATTRIBUTE_DOMAIN: Final[str] = "guffin"
+"""Guffin's own reserved :attr:`Attribute.domain` namespace."""
+
+
+class GuffinAttribute(enum.StrEnum):
+    """The attributes Guffin recognizes, all in the :attr:`DOMAIN` namespace.
+
+    Each member's value is the attribute name as it appears in Roam (the page named before ``::``).
+    :attr:`DOMAIN` — bound to :data:`GUFFIN_ATTRIBUTE_DOMAIN` — is the shared :attr:`Attribute.domain`
+    every member belongs to; it is a class-level constant, not itself an attribute name (and so does
+    not appear when iterating the enum).
+
+    Attributes:
+        DOMAIN: The shared :attr:`Attribute.domain` of every member.
+        TITLE: The document title.
+        AUTHORS: The document author(s).
+        DATE: The document date.
+        IDENTIFIER: The document identifier.
+    """
+
+    DOMAIN = enum.nonmember(GUFFIN_ATTRIBUTE_DOMAIN)
+
+    TITLE = "title"
+    AUTHORS = "authors"
+    DATE = "date"
+    IDENTIFIER = "identifier"
 
 
 class AttributeValueKind(enum.StrEnum):
