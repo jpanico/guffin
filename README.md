@@ -4,7 +4,9 @@ Python 3.14 toolkit for exporting Roam Research graph sub-trees to self-containe
 
 - **Markdown** — renders to Github Flavored Markdown (GFM) and optionally bundles Roam-hosted (Cloud Firestore) images into a self-contained `.mdbundle` directory.
 - **PDF** — builds a Pandoc object model directly from a graph sub-tree via [Panflute](https://github.com/sergiocorreia/panflute), fetches and embeds Roam-hosted (Cloud Firestore) images, and produces a PDF via [Pandoc](https://pandoc.org) + [Typst](https://typst.app).
-- **EPUB** — builds the same Panflute object model and embeds Roam-hosted images into the package, then produces an EPUB 3 e-book via [Pandoc](https://pandoc.org) (no Typst required); the page title becomes the e-book title and top-level headings become chapters.
+- **EPUB** — builds the same Panflute object model and embeds Roam-hosted images into the package, then produces an EPUB 3 e-book via [Pandoc](https://pandoc.org) (no Typst required); top-level headings become chapters.
+
+Every export is shaped by a **project type** (`--type default|book|manuscript`) that selects a structural profile: where the document divides (sections vs. chapters vs. parts), whether sections are numbered, and whether a title page is emitted. A `book`, for example, starts each top-level heading on a new chapter page, numbers its sections, and renders a title page; a `default` article does none of these. Bibliographic **metadata** — title, authors, date, identifier — is sourced from a `guffin-meta::` block on the root page and mapped to each format's native metadata (the PDF/EPUB title page and the EPUB `dc:*` fields); a `title` attribute there overrides the Roam page title.
 
 It also includes `dump-roam-tree`, a companion tool that renders a graph sub-tree as a colorized tree in the terminal for interactive inspection.
 
