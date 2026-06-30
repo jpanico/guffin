@@ -145,6 +145,13 @@ class FetchRoamNodes:
                      (descendant ?ref ?node))"""),
             "   ",
         )
+        _REF2_OR_JOIN_BRANCH: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                (and [?anchor :node/title ?title]
+                     (page-ref ?anchor ?via)
+                     (page-ref ?via ?node))"""),
+            "   ",
+        )
         BY_PAGE_TITLE_QUERY: Final[str] = f"{_BY_PAGE_TITLE_QUERY_BASE})]"
         """Datalog query fetching a page and all its descendant blocks by page title.
 
@@ -169,7 +176,8 @@ class FetchRoamNodes:
         """
 
         BY_PAGE_TITLE_WITH_REFS_QUERY: Final[str] = (
-            f"{_BY_PAGE_TITLE_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH}\n{_REF_DESCENDANT_OR_JOIN_BRANCH})]"
+            f"{_BY_PAGE_TITLE_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH}\n"
+            f"{_REF_DESCENDANT_OR_JOIN_BRANCH}\n{_REF2_OR_JOIN_BRANCH})]"
         )
         """Datalog query fetching a page, all its descendants, all ``:block/refs`` targets, and their descendants.
 
@@ -191,6 +199,11 @@ class FetchRoamNodes:
            branch 3 (which fetches the ref targets themselves), this pulls every referenced block
            together with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
            arrive complete.
+        5. Second-hop ref targets: every node ``page-ref``-reachable from a (first-hop) ``page-ref``
+           target of the anchor — i.e. pages referenced by a referenced node's own subtree (e.g. a
+           ``tags::`` attribute on a referenced page).  These arrive as bare nodes (no subtree pull),
+           bounding fan-out to two ref hops while still letting a referenced node's attributes resolve
+           their own page references.
         """
 
         _BY_NODE_UID_QUERY_BASE: Final[str] = textwrap.dedent("""\
@@ -214,6 +227,13 @@ class FetchRoamNodes:
                 (and [?anchor :block/uid ?uid]
                      (page-ref ?anchor ?ref)
                      (descendant ?ref ?node))"""),
+            "   ",
+        )
+        _REF2_OR_JOIN_BRANCH_UID: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                (and [?anchor :block/uid ?uid]
+                     (page-ref ?anchor ?via)
+                     (page-ref ?via ?node))"""),
             "   ",
         )
         BY_NODE_UID_QUERY: Final[str] = f"{_BY_NODE_UID_QUERY_BASE})]"
@@ -240,7 +260,8 @@ class FetchRoamNodes:
         """
 
         BY_NODE_UID_WITH_REFS_QUERY: Final[str] = (
-            f"{_BY_NODE_UID_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH_UID}\n{_REF_DESCENDANT_OR_JOIN_BRANCH_UID})]"
+            f"{_BY_NODE_UID_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH_UID}\n"
+            f"{_REF_DESCENDANT_OR_JOIN_BRANCH_UID}\n{_REF2_OR_JOIN_BRANCH_UID})]"
         )
         """Datalog query fetching a node, all its descendants, all ``:block/refs`` targets, and their descendants.
 
@@ -262,6 +283,11 @@ class FetchRoamNodes:
            branch 3 (which fetches the ref targets themselves), this pulls every referenced block
            together with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
            arrive complete.
+        5. Second-hop ref targets: every node ``page-ref``-reachable from a (first-hop) ``page-ref``
+           target of the anchor — i.e. pages referenced by a referenced node's own subtree (e.g. a
+           ``tags::`` attribute on a referenced page).  These arrive as bare nodes (no subtree pull),
+           bounding fan-out to two ref hops while still letting a referenced node's attributes resolve
+           their own page references.
         """
 
         @staticmethod

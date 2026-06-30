@@ -115,8 +115,9 @@ class NodeTree(BaseModel):
 
         Uses :func:`~guffin.roam.node_network.all_descendants` to extract the subtree rooted
         at *root_node* from *super_network*, builds :attr:`refs_by_id` from the direct ref
-        targets of :attr:`tree_network` plus all their transitive descendants available in
-        *super_network*, derives :attr:`id_map`, :attr:`uid_map`, and :attr:`page_name_map`
+        targets of :attr:`tree_network` plus all their transitive descendants and the second-hop
+        ref targets of those (bare nodes) available in *super_network*, derives :attr:`id_map`,
+        :attr:`uid_map`, and :attr:`page_name_map`
         from the combined node pool, then delegates to the Pydantic constructor (which runs
         all validators including :meth:`_validate_is_tree`).
 
@@ -165,12 +166,16 @@ class NodeTree(BaseModel):
 
     @classmethod
     def _build_refs_by_id(cls, tree_network: NodeNetwork, super_network: NodeNetwork) -> dict[Id, RoamNode]:
-        """Build the ``refs_by_id`` map from *tree_network*'s refs and their transitive descendants.
+        """Build the ``refs_by_id`` map from *tree_network*'s refs, their descendants, and second-hop refs.
 
         Collects all direct ``:block/refs`` targets of *tree_network* nodes, validates that each
         resolves within *super_network*, then expands with all transitive descendants of those ref
-        nodes available in *super_network*.  Missing child ids are skipped silently — the fetch
-        query intentionally omits subtrees of non-embed refs.
+        nodes available in *super_network*.  Finally adds the second-hop ref targets — the
+        ``:block/refs`` of the gathered (first-hop) ref nodes and their descendants — as bare nodes,
+        so a referenced node's own attributes (e.g. a ``tags::`` attribute on a referenced page) can
+        resolve their page references.  Matches the two-hop reach of the with-refs fetch query.
+        Missing child ids are skipped silently — the fetch query intentionally omits subtrees of
+        non-embed refs (and of second-hop refs).
 
         Args:
             tree_network: The constituent nodes of the tree.
@@ -206,6 +211,16 @@ class NodeTree(BaseModel):
                     continue
                 refs_by_id[child_ref.id] = child
                 stack.append(child)
+        # Second ref hop: include the ref targets of everything gathered so far (the first-hop ref
+        # targets and their descendants) as bare nodes, matching the two-hop fetch query, so a
+        # referenced node's own attributes (e.g. a `tags::` attribute on a referenced page) can
+        # resolve their page references.  Their subtrees are intentionally not expanded — child stubs
+        # absent from super_network are skipped, bounding the pool to two ref hops.
+        second_hop_ids: Final[set[Id]] = refs_ids(list(refs_by_id.values())) - refs_by_id.keys()
+        for second_hop_id in second_hop_ids:
+            second_hop_node: RoamNode | None = super_by_id.get(second_hop_id)
+            if second_hop_node is not None:
+                refs_by_id[second_hop_id] = second_hop_node
         return refs_by_id
 
     @model_validator(mode="before")

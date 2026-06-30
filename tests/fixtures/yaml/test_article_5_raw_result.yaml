@@ -29,6 +29,24 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1773227413486
+    children:
+    - id: 4304
+    - id: 4305
+    - id: 4306
+    - id: 4315
+    user:
+      id: 3
+    sidebar: 5
+    id: 4239
+    uid: cBrKZ4MS4
+    word-count: 660
+    edit-user:
+      id: 3
+    time: 1773227413486
+    title: Book Structure
+    edit-nonce: 2ALC9FfX2
+    edit-time: 1776207690212
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
     user:
@@ -45,6 +63,18 @@
     refs:
     - id: 5450
     - id: 5462
+- - prevent-clean: 1775578686108
+    user:
+      id: 3
+    id: 5456
+    uid: Q-T5fKOEq
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773784822816
+    title: '!QUOTE'
+    edit-nonce: 1EZLHH-tr
+    edit-time: 1773784822815
 - - prevent-clean: 1782152316083
     children:
     - id: 4224
@@ -197,6 +227,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1781439339635
+    user:
+      id: 3
+    id: 11238
+    uid: r-BwcT9SY
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1781439339635
+    title: '!Definition'
+    edit-nonce: uOnKJOpMA
+    edit-time: 1781439339634
 - - string: 'title:: "Source Code For Humans"'
     user:
       id: 3
@@ -317,6 +359,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1774971833334
+    user:
+      id: 3
+    id: 5455
+    uid: GyoWxXiMq
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773784812757
+    title: '!NOTE'
+    edit-nonce: 27pBJOE2e
+    edit-time: 1773784812756
 - - string: '`->`'
     children:
     - id: 5657
@@ -455,6 +509,18 @@
     open: true
     refs:
     - id: 4223
+- - prevent-clean: 1781439305015
+    user:
+      id: 3
+    id: 5476
+    uid: LxvmTECEq
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788887349
+    title: '!BUG'
+    edit-nonce: EW9bRaVhj
+    edit-time: 1773788887348
 - - string: '[[>]] [[!FAILURE]] Failure
 
       Optional body via Shift+Enter'
@@ -582,6 +648,18 @@
     - id: 4381
     - id: 5453
     - id: 11823
+- - prevent-clean: 1774790977399
+    user:
+      id: 3
+    id: 5457
+    uid: NdzIKCUiw
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773784864945
+    title: '!SUMMARY'
+    edit-nonce: JKAYS_nsx
+    edit-time: 1773784864944
 - - string: Decision / choice
     children:
     - id: 5689
@@ -737,6 +815,42 @@
     edit-nonce: 7PhDLVVmu
     edit-time: 1776523140434
     open: false
+- - prevent-clean: 1773788927048
+    user:
+      id: 3
+    id: 5458
+    uid: lS4kg-3mw
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773784871352
+    title: '!EXAMPLE'
+    edit-nonce: 2BprPZlZC
+    edit-time: 1773784871351
+- - prevent-clean: 1781088375215
+    user:
+      id: 3
+    id: 5470
+    uid: Y2mxk0bpD
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788823345
+    title: '!WARNING'
+    edit-nonce: y9E9ja7jh
+    edit-time: 1773788823344
+- - prevent-clean: 1776271057182
+    user:
+      id: 3
+    id: 2216
+    uid: xFhfCd8lJ
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1758728932895
+    title: table
+    edit-nonce: TSwT5h8I1
+    edit-time: 1758728932884
 - - string: '`=`'
     user:
       id: 3
@@ -769,6 +883,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1773788804819
+    user:
+      id: 3
+    id: 5466
+    uid: jH8aemWDv
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788773533
+    title: '!SUCCESS'
+    edit-nonce: TAVtO5mkL
+    edit-time: 1773788773533
 - - string: '`◊`'
     user:
       id: 3
@@ -817,6 +943,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1773788823345
+    user:
+      id: 3
+    id: 5468
+    uid: xZC0Q6cvU
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788804819
+    title: '!QUESTION'
+    edit-nonce: gq5PQ9i0S
+    edit-time: 1773788804819
 - - string: '`...`'
     children:
     - id: 5696
@@ -850,6 +988,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1773788871196
+    user:
+      id: 3
+    id: 5472
+    uid: rOZQNUic-
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788842047
+    title: '!FAILURE'
+    edit-nonce: Is-LuPMfL
+    edit-time: 1773788842046
 - - string: '[[>]] [[!SUCCESS]] Success
 
       Optional body via Shift+Enter'
@@ -948,6 +1098,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1774306639472
+    user:
+      id: 3
+    id: 5474
+    uid: rf9UnDP-P
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788871196
+    title: '!DANGER'
+    edit-nonce: MeNDZHmOj
+    edit-time: 1773788871195
 - - heading: 2
     string: Marker → bullet map (default)
     children:
@@ -1141,6 +1303,18 @@
     open: true
     page:
       id: 5618
+- - prevent-clean: 1773788773533
+    user:
+      id: 3
+    id: 5464
+    uid: o1ZTAD2_S
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1773788756749
+    title: '!TIP'
+    edit-nonce: 1kVhjdFo5
+    edit-time: 1773788756749
 - - string: Leads to
     children:
     - id: 5656

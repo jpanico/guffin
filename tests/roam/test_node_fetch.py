@@ -128,6 +128,9 @@ class TestFetchRoamNodesRequest:
             assert "(descendant ?ref ?node)" in query
             # The old descendant-block-only subtree branch must be gone.
             assert "(descendant ?anchor ?block)" not in query
+            # Second ref hop: ref targets of ref targets (bare nodes).
+            assert "(page-ref ?anchor ?via)" in query
+            assert "(page-ref ?via ?node)" in query
 
 
 class TestFetchRoamNodesResponsePayload:
