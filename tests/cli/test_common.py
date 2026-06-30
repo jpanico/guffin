@@ -7,6 +7,14 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
+from guffin.model.attribute import (
+    DEFAULT_ATTRIBUTE_DOMAIN,
+    GUFFIN_ATTRIBUTE_DOMAIN,
+    Attribute,
+    AttributeAssignment,
+    GuffinAttribute,
+    LiteralValue,
+)
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -150,3 +158,33 @@ class TestDeduceOutFileStem:
         # A page titled "[[Test Article]] 3" transcribes to a rendered page-ref link.
         tree = _tree(PageVertex(uid="page00001", title="[Test Article](x-guffin:vertex/LBFKibPIj) 3"))
         assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "Test_Article_3.default"
+
+    def test_guffin_title_attribute_takes_precedence(self) -> None:
+        """A guffin/title attribute on the root overrides the vertex's own title for the stem basis."""
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+        page = PageVertex(
+            uid="page00001",
+            title="Page Title",
+            attribute_assignments=[
+                AttributeAssignment(
+                    attribute=Attribute(name=GuffinAttribute.TITLE, link=link, domain=GUFFIN_ATTRIBUTE_DOMAIN),
+                    values=(LiteralValue(value="Override Title"),),
+                )
+            ],
+        )
+        assert deduce_out_file_stem(_tree(page), ProjectType.DEFAULT) == "Override_Title.default"
+
+    def test_non_guffin_title_attribute_is_ignored(self) -> None:
+        """A ``title`` attribute outside the guffin domain does not override the basis."""
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+        page = PageVertex(
+            uid="page00001",
+            title="Page Title",
+            attribute_assignments=[
+                AttributeAssignment(
+                    attribute=Attribute(name="title", link=link, domain=DEFAULT_ATTRIBUTE_DOMAIN),
+                    values=(LiteralValue(value="Override Title"),),
+                )
+            ],
+        )
+        assert deduce_out_file_stem(_tree(page), ProjectType.DEFAULT) == "Page_Title.default"
