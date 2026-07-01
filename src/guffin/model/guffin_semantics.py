@@ -4,7 +4,8 @@ Public symbols:
 
 - **Enumerations**: :class:`GuffinSemantics` — the attributes Guffin recognizes, each member a
   :class:`GuffinAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain;
-  :class:`Role` — the role a Guffin attribute plays (publishing / semantics).
+  :class:`Role` — the role a Guffin attribute plays (publishing / semantics); :class:`Level` — the
+  structural level at which a Guffin attribute applies (document / header).
 - **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Role`.
 """
@@ -28,20 +29,34 @@ class Role(enum.StrEnum):
     SEMANTICS = "semantics"
 
 
+class Level(enum.StrEnum):
+    """The structural level at which a Guffin attribute applies.
+
+    Attributes:
+        DOCUMENT: The attribute applies to the document as a whole.
+        HEADER: The attribute applies to an individual header (section).
+    """
+
+    DOCUMENT = "document"
+    HEADER = "header"
+
+
 class GuffinAttribute(Attribute):
-    """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`Role`.
+    """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`Role` and :class:`Level`.
 
     Specializes :class:`~guffin.model.attribute.Attribute` by pinning :attr:`domain` to
     :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` (any other value is rejected) and adding a
-    required :attr:`role`.
+    required :attr:`role` and :attr:`level`.
 
     Attributes:
         domain: Always :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`.
         role: The role this attribute plays.
+        level: The structural level at which this attribute applies.
     """
 
     domain: AttributeDomain = Field(default=AttributeDomain.GUFFIN, description="Always the guffin domain.")
     role: Role = Field(..., description="The role this attribute plays.")
+    level: Level = Field(..., description="The structural level at which this attribute applies.")
 
     @field_validator("domain")
     @classmethod
@@ -56,7 +71,8 @@ class GuffinSemantics(enum.Enum):
     """The attributes Guffin recognizes, each a :class:`GuffinAttribute` in the guffin domain.
 
     Each member's value is the :class:`GuffinAttribute` for that attribute — its name paired with the
-    :class:`Role` it plays.  Every attribute defined here is a :attr:`Role.PUBLISHING` attribute.
+    :class:`Role` and :class:`Level` it carries.  Every attribute defined here is a
+    :attr:`Role.PUBLISHING`, :attr:`Level.DOCUMENT` attribute.
 
     Attributes:
         TITLE: The document title.
@@ -67,7 +83,7 @@ class GuffinSemantics(enum.Enum):
 
     _value_: GuffinAttribute
 
-    TITLE = GuffinAttribute(name="title", role=Role.PUBLISHING)
-    AUTHORS = GuffinAttribute(name="authors", role=Role.PUBLISHING)
-    DATE = GuffinAttribute(name="date", role=Role.PUBLISHING)
-    IDENTIFIER = GuffinAttribute(name="identifier", role=Role.PUBLISHING)
+    TITLE = GuffinAttribute(name="title", role=Role.PUBLISHING, level=Level.DOCUMENT)
+    AUTHORS = GuffinAttribute(name="authors", role=Role.PUBLISHING, level=Level.DOCUMENT)
+    DATE = GuffinAttribute(name="date", role=Role.PUBLISHING, level=Level.DOCUMENT)
+    IDENTIFIER = GuffinAttribute(name="identifier", role=Role.PUBLISHING, level=Level.DOCUMENT)
