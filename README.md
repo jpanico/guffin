@@ -188,9 +188,9 @@ guffin/
 │       │                                  #   Anchor (PAGE/HEADING, carries its VertexType), Matter
 │       │                                  #   (front/body/back-matter), GuffinAttribute (Attribute pinned
 │       │                                  #   to guffin domain + Anchor), GuffinSemantics (enum of
-│       │                                  #   GuffinAttribute: TITLE/AUTHORS/DATE/IDENTIFIER + ELEMENT_TYPE),
-│       │                                  #   StructuralElement (book parts COVER…COLOPHON, each w/ Matter),
-│       │                                  #   element_type_of()
+│       │                                  #   GuffinAttribute: TITLE/AUTHORS/DATE/IDENTIFIER + the
+│       │                                  #   ELEMENT_TYPE & MATTER heading tags), StructuralElement (book
+│       │                                  #   parts COVER…COLOPHON, each w/ Matter), element_type_of()/matter_of()
 │       │
 │       ├── transcribe/                  # Source → model bridge: transcription + normalization (shared)
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
@@ -212,6 +212,8 @@ guffin/
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
 │       │   ├── epub_rendering.py          # VertexTree → EPUB 3 via Pandoc (title → dc:title,
 │       │   │                              #   headings → chapters, images embedded)
+│       │   ├── epub_semantics.py          # EPUB structural semantics: EpubDivision, EpubType (epub:type
+│       │   │                              #   terms + division), epub_type_for() (StructuralElement→EpubType)
 │       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree (dump)
 │       │   ├── gfm_resources/             # GFM Pandoc Lua filters (package data): gfm_callout,
 │       │   │                              #   gfm_color_span, gfm_image, gfm_mark

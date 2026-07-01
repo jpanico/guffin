@@ -702,12 +702,24 @@ def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]
     - the ``unnumbered`` class — added when the heading's
       :class:`~guffin.model.guffin_semantics.Matter` is outside
       :attr:`~guffin.model.guffin_semantics.Matter.BODY`, so Pandoc's ``--number-sections`` numbers
-      only body-matter chapters.  The matter comes from the ``element-type``'s
-      :class:`~guffin.model.guffin_semantics.StructuralElement`, or — for a bespoke section with no
-      element type — from a bare ``matter`` tag.
+      only body-matter chapters.  A bare ``matter`` tag takes precedence — letting an author override
+      the default division for a non-standard placement — otherwise the matter is the ``element-type``'s
+      :class:`~guffin.model.guffin_semantics.StructuralElement` matter.  When both are present and
+      disagree, the ``matter`` tag wins and the override is logged.
     """
     element: Final[StructuralElement | None] = _element_type_of_vertex(vertex)
-    matter: Final[Matter | None] = element.matter if element is not None else _matter_of_vertex(vertex)
+    override: Final[Matter | None] = _matter_of_vertex(vertex)
+    if element is not None and override is not None and override is not element.matter:
+        logger.warning(
+            "heading uid=%r: matter %r overrides its element-type %r (%s matter)",
+            vertex.uid,
+            override.value,
+            element.value,
+            element.matter.value,
+        )
+    matter: Final[Matter | None] = (
+        override if override is not None else (element.matter if element is not None else None)
+    )
     classes: Final[list[str]] = ["unnumbered"] if matter is not None and matter is not Matter.BODY else []
     epub_type: Final[EpubType | None] = epub_type_for(element) if element is not None else None
     attributes: Final[dict[str, str]] = {"epub:type": epub_type.value} if epub_type is not None else {}

@@ -188,9 +188,10 @@ its top-level headings unnumbered.)
 
 ## The `GuffinSemantics` vocabulary (model → format mapping)
 
-> **Intent / roadmap.** The vocabulary below exists in `model/guffin_semantics.py`; the per-format
-> mappings that consume it are not built yet. This section records the design so the mappings, when
-> added, stay consistent with it.
+> **Status.** The vocabulary lives in `model/guffin_semantics.py`; the **EPUB** mapping that consumes
+> it (`render/epub_semantics.py` + the `pandoc_rendering` header stamping) is **built**. The
+> `→ PDF/Typst` and `→ GFM` mappings, and the EPUB `<body>` division post-processing, are still future
+> work.
 
 `model/guffin_semantics.py` defines a **format-independent vocabulary aligned with publishing-industry
 standards and conventions** — the semantic identity of the pieces of a document, independent of how
@@ -205,13 +206,15 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
 - **`GuffinSemantics`** — the enum of recognized guffin attributes, each a `GuffinAttribute`:
   - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `AUTHORS`, `DATE`, `IDENTIFIER` —
     bibliographic facts, folded from a `guffin-meta::` block on the root page.
-  - *A heading-anchored tag* (`Anchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) — declares which
-    structural element a heading is.
+  - *Heading-anchored tags* (`Anchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
+    `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
+    for a bespoke heading with no specific element type.
 - **`StructuralElement`** — the legal values of an `element-type` tag: a book's organizational parts
   (`COVER` … `COLOPHON`, incl. `PART`/`CHAPTER`/`SECTION`/`SUB_SECTION`/`SUB_SUB_SECTION`). Each member
   carries its **`Matter`** — the `front-matter`/`body-matter`/`back-matter` division it belongs to.
-- **`element_type_of(assignment)`** — reads an `element-type` assignment's sole value and coerces it to
-  a `StructuralElement` (rejecting non-members); `StructuralElement` *is* the spec of legal values.
+- **`element_type_of(assignment)` / `matter_of(assignment)`** — read an `element-type` / `matter`
+  assignment's sole value and coerce it to a `StructuralElement` / `Matter` (rejecting non-members);
+  each enum *is* the spec of its legal values.
 
 Member **names follow publishing labels** (`acknowledgements`, `appendices`, `table-of-contents`,
 `list-of-illustrations`, `about-the-author`), which deliberately diverge from any one format's terms —
@@ -223,13 +226,19 @@ divergence is by design: the model speaks the publishing domain, and the render 
 - Everything in `model/guffin_semantics.py` lives in `model/` with **zero render/format dependency**
   (it depends only on `model/attribute.py` and the leaf `model/vertex_type.py`).
 - Every per-format mapping lives in `render/`, as an **explicit map keyed on the model member** —
-  never a name-equality lookup against the format's own vocabulary. Some members will have no
-  counterpart in a given format (and vice-versa), so the map is deliberately partial.
-- **Short-term goal:** a `StructuralElement → EpubType` (`render/epub_semantics.py`) map drives EPUB
-  structural rendering (e.g. `COLOPHON → EpubType.COLOPHON`, `INTRODUCTION → EpubType.INTRODUCTION`),
-  stamping `epub:type` on the section headers tagged via `element-type::`.
-- **Long-term goal:** sibling maps (`→ PDF/Typst`, `→ GFM`) let the *same* authored tags drive every
-  `export-roam-tree` output format.
+  never a name-equality lookup against the format's own vocabulary. Some members have no counterpart
+  in a given format (and vice-versa), so the map is deliberately partial.
+- **EPUB — done.** `render/epub_semantics.py::epub_type_for()` is the explicit `StructuralElement →
+  EpubType` map (e.g. `COLOPHON → EpubType.COLOPHON`, `ACKNOWLEDGEMENTS → EpubType.ACKNOWLEDGMENTS`,
+  `None` for elements with no EPUB term). During Doc construction, `pandoc_rendering._heading_semantics`
+  uses a heading's `element-type` / `matter` tags to (a) stamp `epub:type` on the section header and
+  (b) add the `unnumbered` class to any non-body-matter section, so Pandoc's `--number-sections`
+  numbers only body-matter chapters. A bare `matter::` tag **overrides** the element's default matter
+  (logging any disagreement), letting an author place a bespoke or non-standard section. The
+  `epub:type` rides along harmlessly in the other formats (GFM drops it, Typst ignores it).
+- **PDF / GFM — future.** Sibling maps (`→ PDF/Typst`, `→ GFM`) will let the same authored tags drive
+  those formats. The EPUB `<body epub:type>` division post-processing (Pandoc misfiles divisions for
+  terms outside its recognized subset) is also still open.
 
 ## Status & next steps
 
@@ -251,5 +260,10 @@ divergence is by design: the model speaks the publishing domain, and the render 
    identifier, folded from a `guffin-meta::` block) populate the document metadata via
    `pandoc_rendering._document_metadata`; `title` overrides the page title and the rest map to the
    writer's native metadata (Typst title block, EPUB `dc:*`). These never render as body pills.
-4. **Possible refinements.** Distinguish PART from CHAPTER in PDF book mode (currently both just
+4. **Structural-element tagging — done (EPUB).** Headings tagged `element-type::` / `matter::` drive
+   the section `epub:type` and the front/body/back-matter distinction — which also excludes
+   non-body-matter sections from `--number-sections` (see the `GuffinSemantics` vocabulary section
+   above). Remaining EPUB refinement: the `<body epub:type>` division post-processing (Pandoc misfiles
+   divisions for terms outside its recognized subset).
+5. **Possible refinements.** Distinguish PART from CHAPTER in PDF book mode (currently both just
    page-break and number from level 1). (`abstract` is deferred indefinitely.)

@@ -4,6 +4,7 @@
 # Rationale: panflute has no type stubs; all six rules are triggered entirely by
 # Unknown propagation from that import — suppressing them here avoids false positives.
 
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -342,8 +343,8 @@ class TestVertexTreeToPandocHeadingVertex:
 class TestVertexTreeToPandocHeadingSemantics:
     """A heading's element-type / matter tags drive its Header's epub:type and unnumbered class."""
 
-    def _heading_with_tag(self, name: str, value: str) -> pf.Header:
-        """Render an H1 tagged with ``<name> = value`` (guffin domain) and return its Header."""
+    def _tree_with_heading_tags(self, tags: list[tuple[str, str]]) -> VertexTree:
+        """Build a VertexTree whose single H1 carries each ``(name, value)`` as a guffin-domain tag."""
         link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
         heading = HeadingVertex(
             uid="head0001a",
@@ -356,15 +357,23 @@ class TestVertexTreeToPandocHeadingSemantics:
                     ),
                     values=(LiteralValue(value=value),),
                 )
+                for name, value in tags
             ],
         )
-        tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["head0001a"]), heading])
-        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        return VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["head0001a"]), heading])
+
+    def _heading_with_tag(self, name: str, value: str) -> pf.Header:
+        """Render an H1 tagged with ``<name> = value`` (guffin domain) and return its Header."""
+        doc, _ = vertex_tree_to_pandoc(self._tree_with_heading_tags([(name, value)]), {}, {})
         return next(block for block in doc.content if isinstance(block, pf.Header))
 
     def _heading_with_element_type(self, term: str) -> pf.Header:
         """Render an H1 tagged with ``element-type = term``."""
         return self._heading_with_tag("element-type", term)
+
+    def _matter_warned(self, caplog: pytest.LogCaptureFixture) -> bool:
+        """Whether a WARNING mentioning the matter override/conflict was logged."""
+        return any(record.levelno == logging.WARNING and "matter" in record.getMessage() for record in caplog.records)
 
     def test_mapped_element_stamps_epub_type(self) -> None:
         """A mapped element stamps the corresponding epub:type, bridging spelling divergences."""
@@ -409,28 +418,25 @@ class TestVertexTreeToPandocHeadingSemantics:
         """A bare body-matter tag leaves the heading numbered."""
         assert "unnumbered" not in self._heading_with_tag("matter", "body-matter").classes
 
-    def test_element_type_takes_precedence_over_matter(self) -> None:
-        """With both tags present, the element-type's matter wins over a bare matter tag."""
-        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
-
-        def tag(name: str, value: str) -> AttributeAssignment:
-            return AttributeAssignment(
-                attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
-                values=(LiteralValue(value=value),),
-            )
-
-        heading = HeadingVertex(
-            uid="head0001a",
-            text="Section",
-            heading_level=1,
-            attribute_assignments=[tag("element-type", "chapter"), tag("matter", "front-matter")],
-        )
-        tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["head0001a"]), heading])
-        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+    def test_matter_tag_overrides_conflicting_element_type(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A conflicting matter:: tag overrides the element-type's matter, with a warning logged."""
+        tree = self._tree_with_heading_tags([("element-type", "chapter"), ("matter", "front-matter")])
+        with caplog.at_level(logging.WARNING):
+            doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         header = next(block for block in doc.content if isinstance(block, pf.Header))
-        # element-type=chapter is body matter, so the heading stays numbered despite the front-matter tag.
-        assert "unnumbered" not in header.classes
+        # matter:: front-matter overrides chapter's body matter -> unnumbered; epub:type still from element-type.
+        assert "unnumbered" in header.classes
         assert header.attributes["epub:type"] == "chapter"
+        assert self._matter_warned(caplog)
+
+    def test_agreeing_matter_tag_does_not_warn(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A matter:: tag that agrees with the element-type's matter is redundant, not a conflict."""
+        tree = self._tree_with_heading_tags([("element-type", "chapter"), ("matter", "body-matter")])
+        with caplog.at_level(logging.WARNING):
+            doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        header = next(block for block in doc.content if isinstance(block, pf.Header))
+        assert "unnumbered" not in header.classes
+        assert not self._matter_warned(caplog)
 
 
 # ---------------------------------------------------------------------------
