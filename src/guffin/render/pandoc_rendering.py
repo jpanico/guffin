@@ -92,12 +92,12 @@ from guffin.common.geometry import ImageSize
 from guffin.common.provenance import Provenance
 from guffin.common.table import HAlign
 from guffin.model.attribute import (
-    DEFAULT_ATTRIBUTE_DOMAIN,
     AttributeAssignment,
-    GuffinAttribute,
+    AttributeDomain,
     ReferenceValue,
     attribute_value_text,
 )
+from guffin.model.guffin_semantics import GuffinAttribute
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -319,7 +319,7 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
         )
         for value in assignment.values
     ]
-    attribute_label: Final[str] = f"{assignment.attribute.domain}/{assignment.attribute.name}"
+    attribute_label: Final[str] = f"{assignment.attribute.definition.domain}/{assignment.attribute.definition.name}"
     attribute_markup: Final[str] = f"[***{attribute_label}***]{{.underline}}"
     return f"{attribute_markup}: {', '.join(parts)}"
 
@@ -338,7 +338,7 @@ _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
     GuffinAttribute.DATE: "date",
     GuffinAttribute.IDENTIFIER: "identifier",
 }
-"""Maps a recognised :class:`~guffin.model.attribute.GuffinAttribute` to its Pandoc metadata key."""
+"""Maps a recognised :class:`~guffin.model.guffin_semantics.GuffinAttribute` to its Pandoc metadata key."""
 
 
 def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) -> dict[str, pf.MetaValue]:
@@ -357,9 +357,9 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
     """
     metadata: dict[str, pf.MetaValue] = {}
     for assignment in attribute_assignments or ():
-        if assignment.attribute.domain != _METADATA_DOMAIN:
+        if assignment.attribute.definition.domain != _METADATA_DOMAIN:
             continue
-        key: str | None = _METADATA_KEY_BY_NAME.get(assignment.attribute.name)
+        key: str | None = _METADATA_KEY_BY_NAME.get(assignment.attribute.definition.name)
         if key is None:
             continue
         value_strings: list[str] = [attribute_value_text(value) for value in assignment.values]
@@ -375,7 +375,7 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
 def _default_domain_last(attribute_assignments: list[AttributeAssignment] | None) -> list[AttributeAssignment]:
     """Return *attribute_assignments* reordered so the default domain renders last.
 
-    Non-:data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` assignments keep their source order
+    Non-:attr:`~guffin.model.attribute.AttributeDomain.DEFAULT` assignments keep their source order
     and precede the default-domain ones (which also keep their relative order).
 
     Args:
@@ -386,10 +386,10 @@ def _default_domain_last(attribute_assignments: list[AttributeAssignment] | None
     """
     assignments: Final[list[AttributeAssignment]] = attribute_assignments or []
     non_default: Final[list[AttributeAssignment]] = [
-        a for a in assignments if a.attribute.domain != DEFAULT_ATTRIBUTE_DOMAIN
+        a for a in assignments if a.attribute.definition.domain != AttributeDomain.DEFAULT
     ]
     default: Final[list[AttributeAssignment]] = [
-        a for a in assignments if a.attribute.domain == DEFAULT_ATTRIBUTE_DOMAIN
+        a for a in assignments if a.attribute.definition.domain == AttributeDomain.DEFAULT
     ]
     return non_default + default
 
@@ -408,7 +408,7 @@ def _attribute_pill_blocks(
     representation as trailing child blocks); under ``DOCUMENT`` layout they are
     :class:`~panflute.Para`\\ s.  Assignments in :data:`_METADATA_DOMAIN` are excluded entirely (they
     are document metadata, not body content — see :func:`_document_metadata`); of the rest, those in
-    the :data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` domain are always rendered last
+    the :attr:`~guffin.model.attribute.AttributeDomain.DEFAULT` domain are always rendered last
     (other domains keep their source order ahead of them).
 
     Args:
@@ -423,7 +423,7 @@ def _attribute_pill_blocks(
     list_items: list[pf.ListItem] = []
     paragraphs: list[pf.Block] = []
     renderable: Final[list[AttributeAssignment]] = [
-        a for a in (attribute_assignments or []) if a.attribute.domain != _METADATA_DOMAIN
+        a for a in (attribute_assignments or []) if a.attribute.definition.domain != _METADATA_DOMAIN
     ]
     for assignment in _default_domain_last(renderable):
         pill_text: str = _attribute_assignment_text(assignment)
@@ -1144,7 +1144,7 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
         # Attribute pills (folded onto any vertex) contribute their reconstructed inline text;
         # metadata-domain attributes are document metadata, not pills, so they are skipped.
         for assignment in vertex.attribute_assignments or ():
-            if assignment.attribute.domain != _METADATA_DOMAIN:
+            if assignment.attribute.definition.domain != _METADATA_DOMAIN:
                 texts.append(_attribute_assignment_text(assignment))
     return parse_inline_md(texts)
 

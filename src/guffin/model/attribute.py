@@ -9,15 +9,15 @@ Public symbols:
 
 - **Type aliases**: :data:`AttributeValue` — discriminated union of :class:`LiteralValue` and
   :class:`ReferenceValue`.
-- **Enumerations**: :class:`AttributeValueKind` — the two value kinds (literal / reference);
-  :class:`GuffinAttribute` — the attributes Guffin recognizes in :data:`GUFFIN_ATTRIBUTE_DOMAIN`.
-- **Models**: :class:`Attribute` — the named attribute (a page) preceding ``::``; :class:`LiteralValue`
+- **Enumerations**: :class:`AttributeDomain` — the namespaces an :class:`Attribute` may belong to
+  (default / guffin); :class:`AttributeValueKind` — the two value kinds (literal / reference).
+- **Models**: :class:`Attribute` — a Roam attribute's graph-independent identity (name + domain);
+  :class:`AttributeInstance` — an occurrence of an :class:`Attribute` bound to a specific Roam
+  database via a runtime link to its page, the thing preceding ``::``; :class:`LiteralValue`
   — a bare literal value; :class:`ReferenceValue` — a value that references a page; and
-  :class:`AttributeAssignment` — an :class:`Attribute` paired with its ordered values.
+  :class:`AttributeAssignment` — an :class:`AttributeInstance` paired with its ordered values.
 - **Adapters**: :data:`attribute_value_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for
   validating a raw mapping into the appropriate :data:`AttributeValue`.
-- **Constants**: :data:`DEFAULT_ATTRIBUTE_DOMAIN` — the default :attr:`Attribute.domain` value;
-  :data:`GUFFIN_ATTRIBUTE_DOMAIN` — Guffin's own reserved domain.
 - **Functions**: :func:`attribute_value_text` — an :data:`AttributeValue`'s text (literal value or
   reference name); :func:`sole_value` — the single value of an :class:`AttributeAssignment` (raises
   unless it has exactly one); :func:`sole_value_text` — the text of that single value.
@@ -30,35 +30,17 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
 
 from guffin.model.link import VertexLink
 
-DEFAULT_ATTRIBUTE_DOMAIN: Final[str] = "default"
-"""The default namespace assigned to an :class:`Attribute` when no domain is specified."""
 
-GUFFIN_ATTRIBUTE_DOMAIN: Final[str] = "guffin"
-"""Guffin's own reserved :attr:`Attribute.domain` namespace."""
-
-
-class GuffinAttribute(enum.StrEnum):
-    """The attributes Guffin recognizes, all in the :attr:`DOMAIN` namespace.
-
-    Each member's value is the attribute name as it appears in Roam (the page named before ``::``).
-    :attr:`DOMAIN` — bound to :data:`GUFFIN_ATTRIBUTE_DOMAIN` — is the shared :attr:`Attribute.domain`
-    every member belongs to; it is a class-level constant, not itself an attribute name (and so does
-    not appear when iterating the enum).
+class AttributeDomain(enum.StrEnum):
+    """The namespace an :class:`Attribute` belongs to.
 
     Attributes:
-        DOMAIN: The shared :attr:`Attribute.domain` of every member.
-        TITLE: The document title.
-        AUTHORS: The document author(s).
-        DATE: The document date.
-        IDENTIFIER: The document identifier.
+        DEFAULT: The default namespace, for attributes with no reserved domain.
+        GUFFIN: Guffin's own reserved namespace.
     """
 
-    DOMAIN = enum.nonmember(GUFFIN_ATTRIBUTE_DOMAIN)
-
-    TITLE = "title"
-    AUTHORS = "authors"
-    DATE = "date"
-    IDENTIFIER = "identifier"
+    DEFAULT = "default"
+    GUFFIN = "guffin"
 
 
 class AttributeValueKind(enum.StrEnum):
@@ -74,19 +56,44 @@ class AttributeValueKind(enum.StrEnum):
 
 
 class Attribute(BaseModel):
-    """The attribute of an attribute assignment — the page named before the ``::`` separator.
+    """A Roam attribute — the identity of the page named before the ``::`` separator.
+
+    Runtime-independent: an :class:`Attribute` is described purely by its name and domain, both of
+    which are stable across graphs.  It carries no reference to any particular Roam database instance,
+    so the same :class:`Attribute` denotes "the attribute called *name* in *domain*" regardless of
+    which graph it was read from.  (Contrast :class:`AttributeInstance`, which binds this identity to a
+    specific graph's page via a runtime link.)
 
     Attributes:
         name: The attribute name, i.e. the title of the referenced Roam *Page*.
-        link: A reference link to the page named by :attr:`name`.
-        domain: The namespace the attribute belongs to; defaults to ``"default"``.
+        domain: The namespace the attribute belongs to; defaults to :attr:`AttributeDomain.DEFAULT`.
     """
 
     model_config = ConfigDict(frozen=True)
 
     name: str = Field(..., description="The attribute name — the title of the referenced page.")
-    link: VertexLink = Field(..., description="Reference link to the page named by `name`.")
-    domain: str = Field(default=DEFAULT_ATTRIBUTE_DOMAIN, description="The namespace the attribute belongs to.")
+    domain: AttributeDomain = Field(
+        default=AttributeDomain.DEFAULT, description="The namespace the attribute belongs to."
+    )
+
+
+class AttributeInstance(BaseModel):
+    """A particular occurrence of an attribute — its :class:`Attribute` paired with a link to its page.
+
+    Runtime-dependent: whereas the :class:`Attribute` :attr:`definition` is graph-independent, the
+    :attr:`link` binds it to the runtime identity of a specific Roam database instance — it resolves
+    to the attribute page (by UID) within the graph this instance was read from, and is meaningful
+    only against that graph.
+
+    Attributes:
+        definition: The attribute (name + domain) this is an instance of.
+        link: A reference link to the page named by the attribute.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    definition: Attribute = Field(..., description="The attribute (name + domain) this is an instance of.")
+    link: VertexLink = Field(..., description="Reference link to the attribute's page.")
 
 
 class LiteralValue(BaseModel):
@@ -140,7 +147,7 @@ A Pydantic :class:`~pydantic.TypeAdapter` that discriminates on the ``kind`` fie
 
 
 class AttributeAssignment(BaseModel):
-    """A Roam attribute assignment: an :class:`Attribute` paired with its ordered values.
+    """A Roam attribute assignment: an :class:`AttributeInstance` paired with its ordered values.
 
     Attributes:
         attribute: The attribute (the page named before ``::``).
@@ -149,7 +156,7 @@ class AttributeAssignment(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
-    attribute: Attribute = Field(..., description="The attribute — the page named before `::`.")
+    attribute: AttributeInstance = Field(..., description="The attribute — the page named before `::`.")
     values: tuple[Annotated[AttributeValue, Field(discriminator="kind")], ...] = Field(
         ..., description="The ordered values assigned to the attribute."
     )
@@ -183,9 +190,8 @@ def sole_value(assignment: AttributeAssignment) -> AttributeValue:
         ValueError: If *assignment* does not have exactly one value.
     """
     if len(assignment.values) != 1:
-        raise ValueError(
-            f"expected exactly one value for attribute {assignment.attribute.name!r}, got {len(assignment.values)}"
-        )
+        name: Final[str] = assignment.attribute.definition.name
+        raise ValueError(f"expected exactly one value for attribute {name!r}, got {len(assignment.values)}")
     return assignment.values[0]
 
 

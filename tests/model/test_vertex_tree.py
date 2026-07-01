@@ -8,7 +8,7 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.model.attribute import Attribute, AttributeAssignment, LiteralValue
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import ImageVertex, TextVertex, Vertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, enrich_image_original_sizes, map_vertices
@@ -82,7 +82,9 @@ class TestMapVertices:
 
 def _assignment() -> AttributeAssignment:
     return AttributeAssignment(
-        attribute=Attribute(name="tags", link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageaaaaa")),
+        attribute=AttributeInstance(
+            definition=Attribute(name="tags"), link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageaaaaa")
+        ),
         values=(LiteralValue(value="x"),),
     )
 

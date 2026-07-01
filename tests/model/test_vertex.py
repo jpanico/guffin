@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from guffin.model.attribute import Attribute, AttributeAssignment, LiteralValue, ReferenceValue
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue, ReferenceValue
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import BlockEmbedVertex, TextVertex, VertexType, vertex_adapter
 
@@ -43,7 +43,7 @@ class TestAttributeAssignmentsField:
     @staticmethod
     def _assignment() -> AttributeAssignment:
         return AttributeAssignment(
-            attribute=Attribute(name="attribute1", link=_REF_LINK),
+            attribute=AttributeInstance(definition=Attribute(name="attribute1"), link=_REF_LINK),
             values=(LiteralValue(value="5"), ReferenceValue(name="callouts demo", link=_REF_LINK)),
         )
 
@@ -56,7 +56,7 @@ class TestAttributeAssignmentsField:
         """A vertex records its folded attribute assignments in order."""
         vertex = TextVertex(uid="block0001", text="hello", attribute_assignments=[self._assignment()])
         assert vertex.attribute_assignments is not None
-        assert vertex.attribute_assignments[0].attribute.name == "attribute1"
+        assert vertex.attribute_assignments[0].attribute.definition.name == "attribute1"
 
     def test_adapter_round_trips_with_assignments(self) -> None:
         """Vertex_adapter round-trips a vertex carrying attribute assignments (and their value union)."""

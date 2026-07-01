@@ -29,7 +29,7 @@ from guffin.render.pandoc_rendering import (
     build_child_blocks,
     vertex_tree_to_pandoc,
 )
-from guffin.model.attribute import Attribute, AttributeAssignment, LiteralValue
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue
 
 from conftest import article1_vertex_tree
 
@@ -635,7 +635,7 @@ class TestAttributeAssignmentText:
     def _assignment() -> AttributeAssignment:
         link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
         return AttributeAssignment(
-            attribute=Attribute(name="attribute1", link=link),
+            attribute=AttributeInstance(definition=Attribute(name="attribute1"), link=link),
             values=(LiteralValue(value="5"),),
         )
 

@@ -46,7 +46,15 @@ from typing import Final, assert_never
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
 
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeValue, LiteralValue, ReferenceValue
+from guffin.model.attribute import (
+    Attribute,
+    AttributeAssignment,
+    AttributeDomain,
+    AttributeInstance,
+    AttributeValue,
+    LiteralValue,
+    ReferenceValue,
+)
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -172,7 +180,9 @@ def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssi
         raise ValueError(f"RoamNode uid={node.uid!r} string is not an attribute assignment: {node.string!r}")
     attribute_name: Final[str] = match.group("attribute")
     return AttributeAssignment(
-        attribute=Attribute(name=attribute_name, link=_page_reference_link(attribute_name, tree)),
+        attribute=AttributeInstance(
+            definition=Attribute(name=attribute_name), link=_page_reference_link(attribute_name, tree)
+        ),
         values=tuple(_to_attribute_value(raw, tree) for raw in match.captures("value")),
     )
 
@@ -182,12 +192,18 @@ def _is_meta_block(node: RoamNode) -> bool:
     return node.string is not None and _META_BLOCK_RE.match(node.string.strip()) is not None
 
 
-def _meta_domain(node: RoamNode) -> str:
-    """Return the ``<domain>`` captured from a ``<domain>-meta::`` block (caller ensures it matches)."""
+def _meta_domain(node: RoamNode) -> AttributeDomain:
+    """Return the :class:`AttributeDomain` captured from a ``<domain>-meta::`` block.
+
+    The caller ensures *node* is a meta block (:func:`_is_meta_block`).
+
+    Raises:
+        ValueError: If the captured ``<domain>`` prefix is not a recognised :class:`AttributeDomain`.
+    """
     assert node.string is not None
     match: Final[regex.Match[str] | None] = _META_BLOCK_RE.match(node.string.strip())
     assert match is not None
-    return match.group("domain")
+    return AttributeDomain(match.group("domain"))
 
 
 def _strip_surrounding_quotes(token: str) -> str:
@@ -197,7 +213,7 @@ def _strip_surrounding_quotes(token: str) -> str:
     return token
 
 
-def _parse_meta_child(node: RoamNode, domain: str, tree: NodeTree) -> AttributeAssignment:
+def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -> AttributeAssignment:
     """Parse a ``<domain>-meta`` child *node* into an :class:`~guffin.model.attribute.AttributeAssignment`.
 
     This is the Guffin-specific (non-Roam-standard) attribute form: the child's string is
@@ -232,7 +248,9 @@ def _parse_meta_child(node: RoamNode, domain: str, tree: NodeTree) -> AttributeA
         if token.strip()
     )
     return AttributeAssignment(
-        attribute=Attribute(name=name, link=_page_reference_link(name, tree), domain=domain),
+        attribute=AttributeInstance(
+            definition=Attribute(name=name, domain=domain), link=_page_reference_link(name, tree)
+        ),
         values=values,
     )
 
@@ -250,7 +268,7 @@ def _meta_child_assignments(meta_block: RoamNode, tree: NodeTree) -> list[Attrib
     Returns:
         The assignments parsed from the meta block's children, in source order.
     """
-    domain: Final[str] = _meta_domain(meta_block)
+    domain: Final[AttributeDomain] = _meta_domain(meta_block)
     meta_children: Final[list[RoamNode]] = sorted(
         [tree.id_map[gc.id] for gc in (meta_block.children or []) if gc.id in tree.id_map],
         key=lambda n: n.order if n.order is not None else 0,

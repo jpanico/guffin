@@ -17,7 +17,8 @@ from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
-from guffin.model.attribute import AttributeAssignment, GuffinAttribute, sole_value_text
+from guffin.model.attribute import AttributeAssignment, sole_value_text
+from guffin.model.guffin_semantics import GuffinAttribute
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -95,7 +96,7 @@ def fetch_roam_trees(
 def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
     """Return the raw (un-clipped) filename-stem basis for *vertex*.
 
-    A :data:`~guffin.model.attribute.GuffinAttribute.TITLE` attribute on *vertex* takes precedence:
+    A :data:`~guffin.model.guffin_semantics.GuffinAttribute.TITLE` attribute on *vertex* takes precedence:
     when present, its sole value's text is the basis.  Otherwise the basis comes from the vertex's
     type — page title, block text, etc.  For a :class:`~guffin.model.vertex.BlockEmbedVertex`, recurses
     into the embedded vertex resolved through *vertex_tree*'s ``uid_map``.

@@ -34,7 +34,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.common.geometry import ImageSize
 from guffin.common.table import Table as GuffinTable, TableStyle
-from guffin.model.attribute import DEFAULT_ATTRIBUTE_DOMAIN, AttributeAssignment, LiteralValue
+from guffin.model.attribute import AttributeAssignment, AttributeDomain, LiteralValue
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
@@ -387,7 +387,7 @@ _ATTRIBUTES_KEY_STYLE: Final[str] = "#1e90ff"
 """Deeper, more-saturated blue for the attribute key, to set it apart from the lighter values."""
 
 
-def _attributes_panel(domain: str, assignments: list[AttributeAssignment]) -> Panel:
+def _attributes_panel(domain: AttributeDomain, assignments: list[AttributeAssignment]) -> Panel:
     """Build the light-blue ``Attributes (<domain>)`` sub-panel for one domain's attribute assignments.
 
     Each assignment renders in Roam-agnostic notation as ``<name> = <value>, …``, with reference
@@ -406,7 +406,7 @@ def _attributes_panel(domain: str, assignments: list[AttributeAssignment]) -> Pa
     for index, assignment in enumerate(assignments):
         if index > 0:
             body.append("\n")
-        body.append(assignment.attribute.name, style=_ATTRIBUTES_KEY_STYLE)
+        body.append(assignment.attribute.definition.name, style=_ATTRIBUTES_KEY_STYLE)
         body.append(" = ")
         body.append(
             ", ".join(
@@ -430,7 +430,7 @@ def _attribute_panels(assignments: list[AttributeAssignment]) -> list[Panel]:
     Assignments are grouped by their attribute's
     :attr:`~guffin.model.attribute.Attribute.domain`, preserving order within each group.
     Non-default domains appear in first-appearance order, followed by the
-    :data:`~guffin.model.attribute.DEFAULT_ATTRIBUTE_DOMAIN` group last.
+    :attr:`~guffin.model.attribute.AttributeDomain.DEFAULT` group last.
 
     Args:
         assignments: The vertex's folded attribute assignments.
@@ -438,12 +438,14 @@ def _attribute_panels(assignments: list[AttributeAssignment]) -> list[Panel]:
     Returns:
         A list of domain sub-panels, with the default-domain panel last when present.
     """
-    by_domain: Final[dict[str, list[AttributeAssignment]]] = {}
+    by_domain: Final[dict[AttributeDomain, list[AttributeAssignment]]] = {}
     for assignment in assignments:
-        by_domain.setdefault(assignment.attribute.domain, []).append(assignment)
-    ordered_domains: Final[list[str]] = [domain for domain in by_domain if domain != DEFAULT_ATTRIBUTE_DOMAIN]
-    if DEFAULT_ATTRIBUTE_DOMAIN in by_domain:
-        ordered_domains.append(DEFAULT_ATTRIBUTE_DOMAIN)
+        by_domain.setdefault(assignment.attribute.definition.domain, []).append(assignment)
+    ordered_domains: Final[list[AttributeDomain]] = [
+        domain for domain in by_domain if domain != AttributeDomain.DEFAULT
+    ]
+    if AttributeDomain.DEFAULT in by_domain:
+        ordered_domains.append(AttributeDomain.DEFAULT)
     return [_attributes_panel(domain, by_domain[domain]) for domain in ordered_domains]
 
 

@@ -8,13 +8,13 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import (
-    DEFAULT_ATTRIBUTE_DOMAIN,
-    GUFFIN_ATTRIBUTE_DOMAIN,
     Attribute,
     AttributeAssignment,
-    GuffinAttribute,
+    AttributeDomain,
+    AttributeInstance,
     LiteralValue,
 )
+from guffin.model.guffin_semantics import GuffinAttribute
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -167,7 +167,9 @@ class TestDeduceOutFileStem:
             title="Page Title",
             attribute_assignments=[
                 AttributeAssignment(
-                    attribute=Attribute(name=GuffinAttribute.TITLE, link=link, domain=GUFFIN_ATTRIBUTE_DOMAIN),
+                    attribute=AttributeInstance(
+                        definition=Attribute(name=GuffinAttribute.TITLE, domain=AttributeDomain.GUFFIN), link=link
+                    ),
                     values=(LiteralValue(value="Override Title"),),
                 )
             ],
@@ -182,7 +184,9 @@ class TestDeduceOutFileStem:
             title="Page Title",
             attribute_assignments=[
                 AttributeAssignment(
-                    attribute=Attribute(name="title", link=link, domain=DEFAULT_ATTRIBUTE_DOMAIN),
+                    attribute=AttributeInstance(
+                        definition=Attribute(name="title", domain=AttributeDomain.DEFAULT), link=link
+                    ),
                     values=(LiteralValue(value="Override Title"),),
                 )
             ],

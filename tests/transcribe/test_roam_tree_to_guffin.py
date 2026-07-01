@@ -6,7 +6,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from guffin.model.attribute import DEFAULT_ATTRIBUTE_DOMAIN, LiteralValue, ReferenceValue
+from guffin.model.attribute import AttributeDomain, LiteralValue, ReferenceValue
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
@@ -814,8 +814,8 @@ class TestAttributeAssignmentFolding:
         vtree = transcribe(article5_node_tree())
         page = next(v for v in vtree.tree_vertices if isinstance(v, PageVertex))
         assert page.attribute_assignments is not None
-        default = [a for a in page.attribute_assignments if a.attribute.domain == DEFAULT_ATTRIBUTE_DOMAIN]
-        assert [a.attribute.name for a in default] == ["tags", "attribute1"]
+        default = [a for a in page.attribute_assignments if a.attribute.definition.domain == AttributeDomain.DEFAULT]
+        assert [a.attribute.definition.name for a in default] == ["tags", "attribute1"]
 
         tags, attr1 = default
         assert [v.name for v in tags.values if isinstance(v, ReferenceValue)] == ["Guffin", "Better Bullets"]
@@ -856,7 +856,11 @@ class TestMetaBlockFolding:
         vtree = transcribe(article5_node_tree())
         page = next(v for v in vtree.tree_vertices if isinstance(v, PageVertex))
         assert page.attribute_assignments is not None
-        guffin = {a.attribute.name: a for a in page.attribute_assignments if a.attribute.domain == "guffin"}
+        guffin = {
+            a.attribute.definition.name: a
+            for a in page.attribute_assignments
+            if a.attribute.definition.domain == "guffin"
+        }
         assert list(guffin) == ["title", "authors", "date", "identifier", "tags"]
         # Quoted literal -> surrounding quotes stripped, kept as one value.
         (title_value,) = guffin["title"].values

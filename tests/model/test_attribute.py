@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from guffin.model.attribute import (
     Attribute,
     AttributeAssignment,
+    AttributeInstance,
     AttributeValueKind,
     LiteralValue,
     ReferenceValue,
@@ -91,7 +92,7 @@ class TestAttributeAssignment:
     @staticmethod
     def _make() -> AttributeAssignment:
         return AttributeAssignment(
-            attribute=Attribute(name="attribute1", link=_LINK),
+            attribute=AttributeInstance(definition=Attribute(name="attribute1"), link=_LINK),
             values=(LiteralValue(value="5"), ReferenceValue(name="callouts demo", link=_LINK)),
         )
 
@@ -106,7 +107,7 @@ class TestAttributeAssignment:
     def test_list_values_coerced_to_tuple(self) -> None:
         """A list of values is coerced to an immutable tuple."""
         assignment = AttributeAssignment(
-            attribute=Attribute(name="a", link=_LINK),
+            attribute=AttributeInstance(definition=Attribute(name="a"), link=_LINK),
             values=[LiteralValue(value="x")],  # type: ignore[arg-type]
         )
         assert isinstance(assignment.values, tuple)
@@ -122,9 +123,15 @@ class TestFrozen:
 
     def test_attribute_is_frozen(self) -> None:
         """Reassigning an Attribute field raises."""
-        attribute = Attribute(name="a", link=_LINK)
+        attribute = Attribute(name="a")
         with pytest.raises(ValidationError):
             attribute.name = "b"  # type: ignore[misc]
+
+    def test_attribute_instance_is_frozen(self) -> None:
+        """Reassigning an AttributeInstance field raises."""
+        instance = AttributeInstance(definition=Attribute(name="a"), link=_LINK)
+        with pytest.raises(ValidationError):
+            instance.link = _LINK  # type: ignore[misc]
 
     def test_literal_value_is_frozen(self) -> None:
         """Reassigning a LiteralValue field raises."""
@@ -134,14 +141,16 @@ class TestFrozen:
 
     def test_attribute_assignment_is_frozen(self) -> None:
         """Reassigning an AttributeAssignment field raises."""
-        assignment = AttributeAssignment(attribute=Attribute(name="a", link=_LINK), values=(LiteralValue(value="x"),))
+        assignment = AttributeAssignment(
+            attribute=AttributeInstance(definition=Attribute(name="a"), link=_LINK), values=(LiteralValue(value="x"),)
+        )
         with pytest.raises(ValidationError):
-            assignment.attribute = Attribute(name="b", link=_LINK)  # type: ignore[misc]
+            assignment.attribute = AttributeInstance(definition=Attribute(name="b"), link=_LINK)  # type: ignore[misc]
 
 
 def _assignment(*values: LiteralValue | ReferenceValue) -> AttributeAssignment:
     """Build an AttributeAssignment with the given values."""
-    return AttributeAssignment(attribute=Attribute(name="a", link=_LINK), values=values)
+    return AttributeAssignment(attribute=AttributeInstance(definition=Attribute(name="a"), link=_LINK), values=values)
 
 
 class TestAttributeValueText:

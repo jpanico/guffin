@@ -43,7 +43,7 @@ Public symbols:
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment by name and domain.
-- :func:`find_guffin_attribute` — find a vertex's :class:`~guffin.model.attribute.GuffinAttribute`
+- :func:`find_guffin_attribute` — find a vertex's :class:`~guffin.model.guffin_semantics.GuffinAttribute`
   assignment (the Guffin domain is supplied automatically).
 """
 
@@ -57,7 +57,8 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
 from guffin.common.markdown import HeadingLevel
-from guffin.model.attribute import AttributeAssignment, GuffinAttribute
+from guffin.model.attribute import AttributeAssignment, AttributeDomain
+from guffin.model.guffin_semantics import GuffinAttribute
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
 
@@ -477,7 +478,9 @@ Example::
 
 
 @validate_call
-def find_attribute_assignment(vertex: Vertex, attribute_name: str, attribute_domain: str) -> AttributeAssignment | None:
+def find_attribute_assignment(
+    vertex: Vertex, attribute_name: str, attribute_domain: AttributeDomain
+) -> AttributeAssignment | None:
     """Return *vertex*'s attribute assignment named *attribute_name* in *attribute_domain*, or ``None``.
 
     Args:
@@ -490,7 +493,10 @@ def find_attribute_assignment(vertex: Vertex, attribute_name: str, attribute_dom
         *vertex* has no attribute named *attribute_name* in *attribute_domain*.
     """
     for assignment in vertex.attribute_assignments or ():
-        if assignment.attribute.name == attribute_name and assignment.attribute.domain == attribute_domain:
+        if (
+            assignment.attribute.definition.name == attribute_name
+            and assignment.attribute.definition.domain == attribute_domain
+        ):
             return assignment
     return None
 
@@ -500,7 +506,7 @@ def find_guffin_attribute(vertex: Vertex, attribute: GuffinAttribute) -> Attribu
     """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
 
     Convenience over :func:`find_attribute_assignment` that supplies
-    :attr:`~guffin.model.attribute.GuffinAttribute.DOMAIN` as the domain, so callers neither restate
+    :attr:`~guffin.model.guffin_semantics.GuffinAttribute.DOMAIN` as the domain, so callers neither restate
     nor risk mismatching it.
 
     Args:
