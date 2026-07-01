@@ -20,9 +20,7 @@
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
-  body: 'A baseline Roam document, with almost no features
-
-    Features:
+  body: 'Features:
 
     - 3 top-level blocks
 

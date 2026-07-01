@@ -586,7 +586,6 @@ class TestToCalloutVertex:
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "qnCiceZgk")
         tree: NodeTree = NodeTree.build(fixture_node, nodes)
         expected: str = (
-            "A baseline Roam document, with almost no features\n"
             "Features:\n"
             "- 3 top-level blocks\n"
             "- nested blocks\n"
