@@ -97,7 +97,7 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
 )
-from guffin.model.guffin_semantics import GuffinSemantics, element_type_of
+from guffin.model.guffin_semantics import GuffinSemantics, Matter, StructuralElement, element_type_of
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -668,24 +668,33 @@ def _page_vertex_to_blocks(
     )
 
 
-def _epub_type_attributes(vertex: HeadingVertex) -> dict[str, str]:
-    """Return ``{"epub:type": <term>}`` for a heading with a mappable ``element-type`` tag, else ``{}``.
+def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]]:
+    """Return the ``(classes, attributes)`` a heading's ``element-type`` tag contributes to its Header.
 
-    Reads the heading's :attr:`~guffin.model.guffin_semantics.GuffinSemantics.ELEMENT_TYPE` tag,
-    resolves it to a :class:`~guffin.model.guffin_semantics.StructuralElement`, and maps that to its
-    :func:`~guffin.render.epub_semantics.epub_type_for` term.  Only EPUB output consumes ``epub:type``
-    (GFM drops it, Typst ignores it), so it is stamped unconditionally.  An untagged heading, a tag
-    whose value is not a recognised element, or an element with no EPUB counterpart, contributes nothing.
+    The tag resolves to a :class:`~guffin.model.guffin_semantics.StructuralElement`, which drives two
+    independent things:
+
+    - the ``epub:type`` attribute — the mapped :func:`~guffin.render.epub_semantics.epub_type_for`
+      term.  Only EPUB consumes it (GFM drops it, Typst ignores it), so it is stamped unconditionally;
+      an element with no EPUB counterpart adds none.
+    - the ``unnumbered`` class — added for any element outside :attr:`~guffin.model.guffin_semantics.Matter.BODY`,
+      so Pandoc's ``--number-sections`` numbers only body-matter chapters and leaves front/back matter
+      unnumbered (per publishing convention).
+
+    An untagged heading or an unrecognised tag value contributes nothing on either axis.
     """
     assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)
     if assignment is None:
-        return {}
+        return [], {}
     try:
-        epub_type: Final[EpubType | None] = epub_type_for(element_type_of(assignment))
+        element: Final[StructuralElement] = element_type_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring element-type on vertex uid=%r: %s", vertex.uid, exc)
-        return {}
-    return {"epub:type": epub_type.value} if epub_type is not None else {}
+        return [], {}
+    classes: Final[list[str]] = [] if element.matter is Matter.BODY else ["unnumbered"]
+    epub_type: Final[EpubType | None] = epub_type_for(element)
+    attributes: Final[dict[str, str]] = {"epub:type": epub_type.value} if epub_type is not None else {}
+    return classes, attributes
 
 
 def _heading_vertex_to_blocks(
@@ -715,7 +724,8 @@ def _heading_vertex_to_blocks(
         A :class:`~panflute.Header` block followed by any child blocks.
     """
     inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
-    blocks: list[pf.Block] = [pf.Header(*inlines, level=vertex.heading_level, attributes=_epub_type_attributes(vertex))]
+    classes, attributes = _heading_semantics(vertex)
+    blocks: list[pf.Block] = [pf.Header(*inlines, level=vertex.heading_level, classes=classes, attributes=attributes)]
     blocks.extend(
         build_child_blocks(
             vertex.children or [],

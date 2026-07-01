@@ -340,7 +340,7 @@ class TestVertexTreeToPandocHeadingVertex:
 
 
 class TestVertexTreeToPandocElementTypeEpub:
-    """A heading's element-type tag is stamped onto its Header as epub:type (EPUB structural semantics)."""
+    """A heading's element-type tag drives its Header's epub:type and unnumbered class."""
 
     def _heading_with_element_type(self, term: str) -> pf.Header:
         """Render an H1 tagged with ``element-type = term`` (guffin domain) and return its Header."""
@@ -374,6 +374,25 @@ class TestVertexTreeToPandocElementTypeEpub:
     def test_unknown_element_is_ignored(self) -> None:
         """An unrecognised element-type value is dropped (no epub:type), not raised."""
         assert "epub:type" not in self._heading_with_element_type("not-an-element").attributes
+
+    def test_non_body_matter_is_unnumbered(self) -> None:
+        """Front- and back-matter elements mark the Header unnumbered (excluded from --number-sections)."""
+        assert "unnumbered" in self._heading_with_element_type("acknowledgements").classes  # front matter
+        assert "unnumbered" in self._heading_with_element_type("colophon").classes  # back matter
+        assert "unnumbered" in self._heading_with_element_type("cover").classes  # front, no epub:type
+
+    def test_body_matter_is_numbered(self) -> None:
+        """A body-matter element leaves the Header numbered (no unnumbered class)."""
+        assert "unnumbered" not in self._heading_with_element_type("chapter").classes
+
+    def test_untagged_heading_is_numbered(self) -> None:
+        """An untagged heading is not marked unnumbered."""
+        page = PageVertex(uid="page00001", title="Doc", children=["head0001a"])
+        heading = HeadingVertex(uid="head0001a", text="Plain", heading_level=1)
+        tree = VertexTree(tree_vertices=[page, heading])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        header = next(block for block in doc.content if isinstance(block, pf.Header))
+        assert "unnumbered" not in header.classes
 
 
 # ---------------------------------------------------------------------------
