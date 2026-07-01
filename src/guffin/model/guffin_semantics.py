@@ -16,7 +16,7 @@ Public symbols:
 """
 
 import enum
-from typing import Self
+from typing import Final, Self
 
 from pydantic import Field, field_validator, validate_call
 
@@ -166,17 +166,24 @@ class StructuralElement(enum.StrEnum):
 def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
     """Return the :class:`StructuralElement` that an ``element-type`` assignment names.
 
-    Reads the sole value of an :attr:`GuffinSemantics.ELEMENT_TYPE` assignment and coerces it to a
-    :class:`StructuralElement`, which is the authoritative set of legal ``element-type`` values.
+    Verifies *assignment* is for the :attr:`GuffinSemantics.ELEMENT_TYPE` attribute, then coerces its
+    sole value to a :class:`StructuralElement` — the authoritative set of legal ``element-type`` values.
 
     Args:
-        assignment: An ``element-type`` attribute assignment (expected to carry exactly one value).
+        assignment: An :attr:`GuffinSemantics.ELEMENT_TYPE` attribute assignment (one value expected).
 
     Returns:
         The named :class:`StructuralElement`.
 
     Raises:
-        ValueError: If the assignment does not carry exactly one value, or its value is not a
-            recognised :class:`StructuralElement`.
+        ValueError: If *assignment* is not for the ``element-type`` attribute, does not carry exactly
+            one value, or its value is not a recognised :class:`StructuralElement`.
     """
+    element_type: Final[GuffinAttribute] = GuffinSemantics.ELEMENT_TYPE.value
+    definition: Final[Attribute] = assignment.attribute.definition
+    if definition.name != element_type.name or definition.domain != element_type.domain:
+        raise ValueError(
+            f"expected an {element_type.name!r} assignment in the {element_type.domain} domain, "
+            f"got {definition.name!r} in {definition.domain}"
+        )
     return StructuralElement(sole_value_text(assignment))
