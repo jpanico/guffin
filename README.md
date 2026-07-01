@@ -153,8 +153,9 @@ guffin/
 │       │   ├── filenames.py               # POSIX filename normalization (shell_safe_filename)
 │       │   ├── geometry.py                # Generic 2D geometry types (ImageSize)
 │       │   ├── markdown.py                # HeadingLevel; CommonMark fenced code block utilities
-│       │   │                              #   (is_fenced_code_block, FencedCodeBlock,
-│       │   │                              #   parse_fenced_code_block); MD_BLOCK_QUOTE_PREFIX
+│       │   │                              #   (is_fenced_code_block, contains_fenced_code_block,
+│       │   │                              #   FencedCodeBlock, parse_fenced_code_block);
+│       │   │                              #   MD_BLOCK_QUOTE_PREFIX
 │       │   ├── media_type.py              # MediaType enum; MIME type detection from filenames
 │       │   ├── table.py                   # Table, TableStyle, HAlign — 2-D cell grid model
 │       │   └── validation.py              # Generic accumulator-pipeline validation framework
@@ -205,9 +206,12 @@ guffin/
 │       │   ├── image_fetch.py             # Pandoc-free image asset fetching; ImageRef (UID + path +
 │       │   │                              #   ImageSize); fetch_images() → {uid: ImageRef};
 │       │   │                              #   fetch_and_enrich_images() → (VertexTree, {uid: ImageRef})
-│       │   ├── pandoc_rendering.py        # Shared Pandoc/Panflute utilities; vertex_tree_to_pandoc()
-│       │   │                              #   builds a Panflute Doc; VertexLinkResolver type alias and
-│       │   │                              #   resolve_vertex_links() replace x-guffin links in-place
+│       │   ├── pandoc_ast.py              # Guffin-independent Pandoc AST helpers: InlineMap,
+│       │   │                              #   strip_links(), parse_inline_md(), parse_block_md(),
+│       │   │                              #   pandoc_to_json()
+│       │   ├── pandoc_rendering.py        # Shared Guffin-model→Pandoc utilities (on pandoc_ast);
+│       │   │                              #   vertex_tree_to_pandoc() builds a Panflute Doc;
+│       │   │                              #   VertexLinkResolver + resolve_vertex_links() (x-guffin)
 │       │   ├── md_rendering.py            # VertexTree → GFM Markdown; writes .mdbundle or plain .md
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
 │       │   ├── epub_rendering.py          # VertexTree → EPUB 3 via Pandoc (title → dc:title,

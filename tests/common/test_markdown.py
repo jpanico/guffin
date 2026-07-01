@@ -2,7 +2,12 @@
 
 import pytest
 
-from guffin.common.markdown import is_fenced_code_block, parse_fenced_code_block, unwrap_links
+from guffin.common.markdown import (
+    contains_fenced_code_block,
+    is_fenced_code_block,
+    parse_fenced_code_block,
+    unwrap_links,
+)
 
 
 class TestIsFencedCodeBlock:
@@ -47,6 +52,46 @@ class TestIsFencedCodeBlock:
     def test_empty_string_is_false(self) -> None:
         """Test that an empty string is not a fenced code block."""
         assert is_fenced_code_block("") is False
+
+
+class TestContainsFencedCodeBlock:
+    """Tests for contains_fenced_code_block — any-line opening-fence detection."""
+
+    def test_whole_string_fence(self) -> None:
+        """Test that a string that is itself a fenced code block is detected."""
+        assert contains_fenced_code_block("```\ncode\n```") is True
+
+    def test_fence_after_prose(self) -> None:
+        """Test that a fence opening on a later line is detected (unlike is_fenced_code_block)."""
+        assert contains_fenced_code_block("intro paragraph\n\n```python\nx = 1\n```") is True
+
+    def test_tilde_fence(self) -> None:
+        """Test that a tilde fence is detected, not only backticks."""
+        assert contains_fenced_code_block("prose\n\n~~~\ncode\n~~~") is True
+
+    def test_indented_fence(self) -> None:
+        """Test that a fence indented up to three spaces is detected."""
+        assert contains_fenced_code_block("prose\n\n   ```\ncode\n   ```") is True
+
+    def test_four_space_indent_is_not_fence(self) -> None:
+        """Test that four spaces of indentation is an indented block, not a fence."""
+        assert contains_fenced_code_block("    ```\ncode") is False
+
+    def test_mid_line_backticks_are_not_a_fence(self) -> None:
+        """Test that a fence run not at line start (after other text) is not detected."""
+        assert contains_fenced_code_block("see the ``` marker") is False
+
+    def test_inline_code_is_false(self) -> None:
+        """Test that single-backtick inline code is not a fenced code block."""
+        assert contains_fenced_code_block("some `inline` code") is False
+
+    def test_prose_only_is_false(self) -> None:
+        """Test that fence-free prose is not detected."""
+        assert contains_fenced_code_block("just a paragraph of text") is False
+
+    def test_empty_string_is_false(self) -> None:
+        """Test that an empty string contains no fenced code block."""
+        assert contains_fenced_code_block("") is False
 
 
 class TestParseFencedCodeBlock:

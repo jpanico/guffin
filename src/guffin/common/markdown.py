@@ -8,6 +8,7 @@ Public symbols:
   may share a line with adjacent content.
 - :data:`MD_LINK_RE` — compiled regex matching a CommonMark inline link ``[text](url)``.
 - :func:`is_fenced_code_block` — whether a string is a single CommonMark fenced code block.
+- :func:`contains_fenced_code_block` — whether any line of a string opens a fenced code block.
 - :class:`FencedCodeBlock` — the info string and code content extracted from a fenced code block.
 - :func:`parse_fenced_code_block` — extract the info string and code content from a fenced code block.
 - :func:`unwrap_links` — replace each CommonMark inline link with its display text.
@@ -112,6 +113,26 @@ def is_fenced_code_block(text: str) -> bool:
     if closing_index is None:
         return True
     return all(not line.strip() for line in lines[closing_index + 1 :])
+
+
+@validate_call
+def contains_fenced_code_block(text: str) -> bool:
+    r"""Return whether any line of *text* opens a CommonMark fenced code block.
+
+    Scans *text* line by line for an opening code fence — up to three spaces of
+    indentation followed by a run of at least three backticks (```` ``` ````) or
+    at least three tildes (``~~~``).  Unlike :func:`is_fenced_code_block` (which
+    requires *text* to be *wholly* a single fenced code block), the fence may
+    appear on any line, so this flags text that mixes prose with a block-level
+    fence — content that must be parsed at block level rather than inline.
+
+    Args:
+        text: The string to scan.
+
+    Returns:
+        ``True`` if any line is an opening code fence; ``False`` otherwise.
+    """
+    return any(_OPENING_FENCE_RE.fullmatch(line) is not None for line in text.splitlines())
 
 
 class FencedCodeBlock(NamedTuple):

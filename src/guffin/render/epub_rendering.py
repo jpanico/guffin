@@ -48,12 +48,11 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.render.pandoc_rendering import (
-    InlineMap,
     make_resolver,
-    pandoc_to_json,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
+from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.project import ProjectProfile, TopLevelDivision
 from guffin.render.render_options import EpubRenderOptions
 from guffin.roam.local_api import ApiEndpoint
