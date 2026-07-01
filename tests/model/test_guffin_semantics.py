@@ -11,7 +11,15 @@ from guffin.model.attribute import (
     AttributeInstance,
     LiteralValue,
 )
-from guffin.model.guffin_semantics import Anchor, GuffinAttribute, GuffinSemantics, StructuralElement, element_type_of
+from guffin.model.guffin_semantics import (
+    Anchor,
+    GuffinAttribute,
+    GuffinSemantics,
+    Matter,
+    StructuralElement,
+    element_type_of,
+    matter_of,
+)
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import find_guffin_attribute, vertex_adapter
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
@@ -69,6 +77,24 @@ class TestElementTypeOf:
         """A value that is not a recognised StructuralElement raises."""
         with pytest.raises(ValueError):
             element_type_of(_assignment("element-type", "not-an-element"))
+
+
+class TestMatterOf:
+    """matter_of validates the attribute identity and coerces the value to a Matter."""
+
+    def test_returns_named_matter(self) -> None:
+        """A valid matter assignment yields the named Matter."""
+        assert matter_of(_assignment("matter", "front-matter")) is Matter.FRONT
+
+    def test_wrong_attribute_name_rejected(self) -> None:
+        """An assignment for a different attribute raises, even with a valid matter value."""
+        with pytest.raises(ValueError):
+            matter_of(_assignment("element-type", "front-matter"))
+
+    def test_unknown_value_rejected(self) -> None:
+        """A value that is not a recognised Matter raises."""
+        with pytest.raises(ValueError):
+            matter_of(_assignment("matter", "middle-matter"))
 
 
 def _article6_vertex_tree() -> VertexTree:

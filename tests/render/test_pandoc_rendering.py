@@ -339,11 +339,11 @@ class TestVertexTreeToPandocHeadingVertex:
         assert _collect_text(blocks[1]) == "Section"
 
 
-class TestVertexTreeToPandocElementTypeEpub:
-    """A heading's element-type tag drives its Header's epub:type and unnumbered class."""
+class TestVertexTreeToPandocHeadingSemantics:
+    """A heading's element-type / matter tags drive its Header's epub:type and unnumbered class."""
 
-    def _heading_with_element_type(self, term: str) -> pf.Header:
-        """Render an H1 tagged with ``element-type = term`` (guffin domain) and return its Header."""
+    def _heading_with_tag(self, name: str, value: str) -> pf.Header:
+        """Render an H1 tagged with ``<name> = value`` (guffin domain) and return its Header."""
         link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
         heading = HeadingVertex(
             uid="head0001a",
@@ -352,15 +352,19 @@ class TestVertexTreeToPandocElementTypeEpub:
             attribute_assignments=[
                 AttributeAssignment(
                     attribute=AttributeInstance(
-                        definition=Attribute(name="element-type", domain=AttributeDomain.GUFFIN), link=link
+                        definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link
                     ),
-                    values=(LiteralValue(value=term),),
+                    values=(LiteralValue(value=value),),
                 )
             ],
         )
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["head0001a"]), heading])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         return next(block for block in doc.content if isinstance(block, pf.Header))
+
+    def _heading_with_element_type(self, term: str) -> pf.Header:
+        """Render an H1 tagged with ``element-type = term``."""
+        return self._heading_with_tag("element-type", term)
 
     def test_mapped_element_stamps_epub_type(self) -> None:
         """A mapped element stamps the corresponding epub:type, bridging spelling divergences."""
@@ -393,6 +397,40 @@ class TestVertexTreeToPandocElementTypeEpub:
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         header = next(block for block in doc.content if isinstance(block, pf.Header))
         assert "unnumbered" not in header.classes
+
+    def test_bare_matter_tag_unnumbers_without_epub_type(self) -> None:
+        """A bespoke section tagged with a bare front-/back-matter is unnumbered and has no epub:type."""
+        front = self._heading_with_tag("matter", "front-matter")
+        assert "unnumbered" in front.classes
+        assert "epub:type" not in front.attributes
+        assert "unnumbered" in self._heading_with_tag("matter", "back-matter").classes
+
+    def test_bare_body_matter_tag_is_numbered(self) -> None:
+        """A bare body-matter tag leaves the heading numbered."""
+        assert "unnumbered" not in self._heading_with_tag("matter", "body-matter").classes
+
+    def test_element_type_takes_precedence_over_matter(self) -> None:
+        """With both tags present, the element-type's matter wins over a bare matter tag."""
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+
+        def tag(name: str, value: str) -> AttributeAssignment:
+            return AttributeAssignment(
+                attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+                values=(LiteralValue(value=value),),
+            )
+
+        heading = HeadingVertex(
+            uid="head0001a",
+            text="Section",
+            heading_level=1,
+            attribute_assignments=[tag("element-type", "chapter"), tag("matter", "front-matter")],
+        )
+        tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["head0001a"]), heading])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        header = next(block for block in doc.content if isinstance(block, pf.Header))
+        # element-type=chapter is body matter, so the heading stays numbered despite the front-matter tag.
+        assert "unnumbered" not in header.classes
+        assert header.attributes["epub:type"] == "chapter"
 
 
 # ---------------------------------------------------------------------------

@@ -97,7 +97,7 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
 )
-from guffin.model.guffin_semantics import GuffinSemantics, Matter, StructuralElement, element_type_of
+from guffin.model.guffin_semantics import GuffinSemantics, Matter, StructuralElement, element_type_of, matter_of
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -668,31 +668,48 @@ def _page_vertex_to_blocks(
     )
 
 
-def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]]:
-    """Return the ``(classes, attributes)`` a heading's ``element-type`` tag contributes to its Header.
-
-    The tag resolves to a :class:`~guffin.model.guffin_semantics.StructuralElement`, which drives two
-    independent things:
-
-    - the ``epub:type`` attribute — the mapped :func:`~guffin.render.epub_semantics.epub_type_for`
-      term.  Only EPUB consumes it (GFM drops it, Typst ignores it), so it is stamped unconditionally;
-      an element with no EPUB counterpart adds none.
-    - the ``unnumbered`` class — added for any element outside :attr:`~guffin.model.guffin_semantics.Matter.BODY`,
-      so Pandoc's ``--number-sections`` numbers only body-matter chapters and leaves front/back matter
-      unnumbered (per publishing convention).
-
-    An untagged heading or an unrecognised tag value contributes nothing on either axis.
-    """
+def _element_type_of_vertex(vertex: HeadingVertex) -> StructuralElement | None:
+    """Resolve a heading's ``element-type`` tag to a StructuralElement, or ``None`` (bad values logged)."""
     assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)
     if assignment is None:
-        return [], {}
+        return None
     try:
-        element: Final[StructuralElement] = element_type_of(assignment)
+        return element_type_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring element-type on vertex uid=%r: %s", vertex.uid, exc)
-        return [], {}
-    classes: Final[list[str]] = [] if element.matter is Matter.BODY else ["unnumbered"]
-    epub_type: Final[EpubType | None] = epub_type_for(element)
+        return None
+
+
+def _matter_of_vertex(vertex: HeadingVertex) -> Matter | None:
+    """Resolve a heading's bare ``matter`` tag to a Matter, or ``None`` (bad values logged)."""
+    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.MATTER)
+    if assignment is None:
+        return None
+    try:
+        return matter_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring matter on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]]:
+    """Return the ``(classes, attributes)`` a heading's guffin tags contribute to its Header.
+
+    - the ``epub:type`` attribute — the mapped :func:`~guffin.render.epub_semantics.epub_type_for`
+      term for the heading's ``element-type``.  Only EPUB consumes it (GFM drops it, Typst ignores
+      it), so it is stamped unconditionally; an untagged heading or an element with no EPUB
+      counterpart adds none.
+    - the ``unnumbered`` class — added when the heading's
+      :class:`~guffin.model.guffin_semantics.Matter` is outside
+      :attr:`~guffin.model.guffin_semantics.Matter.BODY`, so Pandoc's ``--number-sections`` numbers
+      only body-matter chapters.  The matter comes from the ``element-type``'s
+      :class:`~guffin.model.guffin_semantics.StructuralElement`, or — for a bespoke section with no
+      element type — from a bare ``matter`` tag.
+    """
+    element: Final[StructuralElement | None] = _element_type_of_vertex(vertex)
+    matter: Final[Matter | None] = element.matter if element is not None else _matter_of_vertex(vertex)
+    classes: Final[list[str]] = ["unnumbered"] if matter is not None and matter is not Matter.BODY else []
+    epub_type: Final[EpubType | None] = epub_type_for(element) if element is not None else None
     attributes: Final[dict[str, str]] = {"epub:type": epub_type.value} if epub_type is not None else {}
     return classes, attributes
 

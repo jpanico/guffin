@@ -12,7 +12,8 @@ Public symbols:
 - **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Anchor`.
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
-  :class:`StructuralElement` (raising if it is not one).
+  :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
+  assignment's value as a :class:`Matter`.
 """
 
 import enum
@@ -95,7 +96,8 @@ class GuffinSemantics(enum.Enum):
     - **Document metadata** (:attr:`Anchor.PAGE`) — bibliographic facts about the work as a whole:
       :attr:`TITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`IDENTIFIER`.
     - **Heading tags** (:attr:`Anchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
-      declares which :class:`StructuralElement` the heading is.
+      declares which :class:`StructuralElement` the heading is; :attr:`MATTER` declares its
+      :class:`Matter` division directly, for a bespoke section with no specific element type.
 
     Attributes:
         TITLE: The document title.
@@ -103,6 +105,7 @@ class GuffinSemantics(enum.Enum):
         DATE: The document date.
         IDENTIFIER: The document identifier.
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
+        MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
     """
 
     _value_: GuffinAttribute
@@ -112,6 +115,7 @@ class GuffinSemantics(enum.Enum):
     DATE = GuffinAttribute(name="date", anchor=Anchor.PAGE)
     IDENTIFIER = GuffinAttribute(name="identifier", anchor=Anchor.PAGE)
     ELEMENT_TYPE = GuffinAttribute(name="element-type", anchor=Anchor.HEADING)
+    MATTER = GuffinAttribute(name="matter", anchor=Anchor.HEADING)
 
 
 class StructuralElement(enum.StrEnum):
@@ -188,3 +192,30 @@ def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
             f"got {definition.name!r} in {definition.domain}"
         )
     return StructuralElement(sole_value_text(assignment))
+
+
+@validate_call
+def matter_of(assignment: AttributeAssignment) -> Matter:
+    """Return the :class:`Matter` that a ``matter`` assignment names.
+
+    Verifies *assignment* is for the :attr:`GuffinSemantics.MATTER` attribute, then coerces its sole
+    value to a :class:`Matter` (``front-matter`` / ``body-matter`` / ``back-matter``).
+
+    Args:
+        assignment: A :attr:`GuffinSemantics.MATTER` attribute assignment (one value expected).
+
+    Returns:
+        The named :class:`Matter`.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``matter`` attribute, does not carry exactly one
+            value, or its value is not a recognised :class:`Matter`.
+    """
+    matter_attribute: Final[GuffinAttribute] = GuffinSemantics.MATTER.value
+    definition: Final[Attribute] = assignment.attribute.definition
+    if definition.name != matter_attribute.name or definition.domain != matter_attribute.domain:
+        raise ValueError(
+            f"expected a {matter_attribute.name!r} assignment in the {matter_attribute.domain} domain, "
+            f"got {definition.name!r} in {definition.domain}"
+        )
+    return Matter(sole_value_text(assignment))
