@@ -1,3 +1,19 @@
+- - string: 'matter:: front-matter'
+    user:
+      id: 3
+    id: 11891
+    uid: aIPqy4neT
+    parents:
+    - id: 11850
+    - id: 11871
+    - id: 11890
+    time: 1782936070230
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11892
 - - string: '**Unto the Honorable, Prudent, and Wise Magistrates of the Free Imperial
       City of Nuremberg, and to all curious Christian Readers, grace and peace.**'
     user:
@@ -114,7 +130,7 @@
     - id: 11850
     - id: 11871
     time: 1782932431138
-    order: 2
+    order: 3
     open: true
     page:
       id: 11850
@@ -149,7 +165,7 @@
     - id: 11850
     - id: 11871
     time: 1782932439058
-    order: 3
+    order: 4
     open: true
     page:
       id: 11850
@@ -374,13 +390,13 @@
     - id: 11850
     - id: 11855
     uid: 7o-Klx3P6
-    word-count: 801
+    word-count: 808
     edit-user:
       id: 3
     time: 1782918659454
     title: '[[Test Article]] 6'
-    edit-nonce: NbJPQ5G9-
-    edit-time: 1782933177937
+    edit-nonce: XHfgeak5h
+    edit-time: 1782936070230
     open: true
     refs:
     - id: 4223
@@ -395,7 +411,7 @@
     - id: 11862
     time: 1782932532215
     order: 0
-    open: true
+    open: false
     page:
       id: 11850
     refs:
@@ -727,6 +743,45 @@
     title: Acknowledgements
     edit-nonce: D0Pid56I9
     edit-time: 1773228899534
+- - attrs:
+    - - source:
+        - uid
+        - YGoODHoSM
+        value:
+        - uid
+        - YGoODHoSM
+      - source:
+        - uid
+        - aIPqy4neT
+        value:
+        - uid
+        - eYctDQDaV
+      - source:
+        - uid
+        - aIPqy4neT
+        value: ' front-matter'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11891
+    user:
+      id: 3
+    id: 11890
+    lookup:
+    - id: 11890
+    - id: 11891
+    - id: 11892
+    uid: YGoODHoSM
+    parents:
+    - id: 11850
+    - id: 11871
+    time: 1782936052438
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: I must humbly acknowledge the labor of the learned Master Heinrich, who
       took it upon himself to turn this history from the Latin tongue into our own
       plain German, that the burghers and merchants of this city might read of the
@@ -934,6 +989,7 @@
     - id: 11873
     - id: 11874
     - id: 11875
+    - id: 11890
     user:
       id: 3
     id: 11871
@@ -984,6 +1040,18 @@
       id: 11850
     refs:
     - id: 4338
+- - prevent-clean: 1782936070235
+    user:
+      id: 3
+    id: 11892
+    uid: eYctDQDaV
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782936070235
+    title: matter
+    edit-nonce: uW69frL-Z
+    edit-time: 1782936070234
 - - string: 'authors:: Marco Polo, Rustichello da Pisa'
     user:
       id: 3
@@ -1026,7 +1094,7 @@
     - id: 11850
     - id: 11871
     time: 1782932425485
-    order: 1
+    order: 2
     open: true
     page:
       id: 11850
@@ -1046,7 +1114,26 @@
     open: true
     page:
       id: 4384
-- - prevent-clean: 1773275006107
+- - attrs:
+    - - source:
+        - uid
+        - jqAiDA6IM
+        value:
+        - uid
+        - GuHqKi9Y_
+      - source:
+        - uid
+        - YGoODHoSM
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - YGoODHoSM
+        value:
+        - uid
+        - BxGxeeGk1
+    prevent-clean: 1773275006107
     children:
     - id: 4427
     - id: 4597
@@ -1054,6 +1141,12 @@
     user:
       id: 3
     id: 4384
+    lookup:
+    - id: 321
+    - id: 4384
+    - id: 11839
+    - id: 11871
+    - id: 11890
     uid: GuHqKi9Y_
     word-count: 256
     edit-user:
@@ -1093,7 +1186,7 @@
     - id: 11850
     - id: 11871
     time: 1782932416405
-    order: 0
+    order: 1
     open: true
     page:
       id: 11850

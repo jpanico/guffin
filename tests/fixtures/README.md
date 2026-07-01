@@ -28,9 +28,9 @@ This directory contains test data used by the guffin test suite.
 
 ## Test Articles
 
-Six live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
+Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 `[[Test Article]] 1`, `[[Test Article]] 2`, `[[Test Article]] 3`,
-`[[Test Article]] 4`, and `[[Test Article]] 5`.
+`[[Test Article]] 4`, `[[Test Article]] 5`, and `[[Test Article]] 6`.
 
 ### Article Features
 
@@ -86,7 +86,7 @@ Six live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 
 #### `[[Test Article]] 6`
 
-- **`StructuralElement`**: headings tagged with `element-type::` (`guffin`-domain, in a `guffin-meta::` block) whose values are `StructuralElement`s (e.g. `acknowledgements`, `introduction`) — "The Travels of Marco Polo"
+- StructuralElements for ProjectType:BOOK
 
 ### Fixtures
 
@@ -136,4 +136,5 @@ python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
 python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
 python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
 python tests/regen_fixtures.py "[[Test Article]] 5" --prefix test_article_5
+python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6
 ```

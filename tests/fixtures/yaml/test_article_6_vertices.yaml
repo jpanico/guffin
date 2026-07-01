@@ -131,6 +131,17 @@
   - i8m_qcu2R
   refs:
   - GuHqKi9Y_
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: matter
+        domain: guffin
+      link:
+      - vertex
+      - eYctDQDaV
+    values:
+    - kind: literal
+      value: front-matter
   text: '[Who is this Book for?](x-guffin:vertex/GuHqKi9Y_)'
   heading_level: 1
 - vertex_type: guffin/text

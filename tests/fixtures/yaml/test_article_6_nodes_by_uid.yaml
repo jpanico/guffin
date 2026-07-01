@@ -1,3 +1,23 @@
+aIPqy4neT:
+  uid: aIPqy4neT
+  id: 11891
+  string: 'matter:: front-matter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11892
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11871
+  - id: 11890
+  props: null
+  title: null
+  attrs: null
 snXG7pnjI:
   uid: snXG7pnjI
   id: 11870
@@ -134,7 +154,7 @@ ZyUTn2I17:
     the __mappae mundi__ (world maps), this document will radically expand your borders.
     It provides definitive proof of navigable seas to the east of Asia, island nations
     such as Cipangu (Japan), and detailed distances measured in days of travel.'
-  order: 2
+  order: 3
   heading: null
   children: null
   refs: null
@@ -177,7 +197,7 @@ i8m_qcu2R:
     or seeking alliances against the Saracens. You will find intelligence on the locations
     of Nestorian Christians, the religious tolerance of the Tartars, and the various
     idolaters that populate the Indies.'
-  order: 3
+  order: 4
   heading: null
   children: null
   refs: null
@@ -447,7 +467,7 @@ NLMrjV2AB:
   - id: 11876
   page:
     id: 11850
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 11850
@@ -810,6 +830,43 @@ qmplSzgnD:
       value:
       - uid
       - BxGxeeGk1
+YGoODHoSM:
+  uid: YGoODHoSM
+  id: 11890
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11891
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11871
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - YGoODHoSM
+      value:
+      - uid
+      - YGoODHoSM
+    - source:
+      - uid
+      - aIPqy4neT
+      value:
+      - uid
+      - eYctDQDaV
+    - source:
+      - uid
+      - aIPqy4neT
+      value: ' front-matter'
 OPAjTYc1n:
   uid: OPAjTYc1n
   id: 11867
@@ -1066,6 +1123,7 @@ jqAiDA6IM:
   - id: 11873
   - id: 11874
   - id: 11875
+  - id: 11890
   refs:
   - id: 4384
   page:
@@ -1120,6 +1178,21 @@ dpoX6c0Pl:
   props: null
   title: null
   attrs: null
+eYctDQDaV:
+  uid: eYctDQDaV
+  id: 11892
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: matter
+  attrs: null
 jYi3QvhTN:
   uid: jYi3QvhTN
   id: 11856
@@ -1166,7 +1239,7 @@ Gn10okg1P:
     This text offers a comprehensive operational overview of the Mongol Empire under
     Kublai Khan, detailing his military structure, courier system, administrative
     laws, and the unfathomable scale of his revenues.'
-  order: 1
+  order: 2
   heading: null
   children: null
   refs: null
@@ -1218,7 +1291,25 @@ GuHqKi9Y_:
   parents: null
   props: null
   title: Who is this Book for?
-  attrs: null
+  attrs:
+  - - source:
+      - uid
+      - jqAiDA6IM
+      value:
+      - uid
+      - GuHqKi9Y_
+    - source:
+      - uid
+      - YGoODHoSM
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - YGoODHoSM
+      value:
+      - uid
+      - BxGxeeGk1
 xLG8Ir4vl:
   uid: xLG8Ir4vl
   id: 4391
@@ -1249,7 +1340,7 @@ v_yb2JFwl:
     to Cathay, including the preferred currencies (such as the Great Khan’s paper
     money), safe routes, and the relative dangers of bandits and deserts along the
     Silk Road.'
-  order: 0
+  order: 1
   heading: null
   children: null
   refs: null
