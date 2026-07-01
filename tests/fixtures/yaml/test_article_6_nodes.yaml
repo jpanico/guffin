@@ -166,7 +166,7 @@
   refs: null
   page:
     id: 11850
-  children_view_type: null
+  children_view_type: document
   parents:
   - id: 11850
   props: null
@@ -265,7 +265,7 @@
       - BxGxeeGk1
 - uid: NLMrjV2AB
   id: 11863
-  string: 'element-type:: acknowledgements'
+  string: 'element-type:: acknowledgments'
   order: 0
   heading: null
   children: null
@@ -563,7 +563,7 @@
     - source:
       - uid
       - NLMrjV2AB
-      value: ' acknowledgements'
+      value: ' acknowledgments'
 - uid: doB1NIOh9
   id: 11889
   string: To the curious and patient reader, greetings.
@@ -673,7 +673,7 @@
   - id: 4384
   page:
     id: 11850
-  children_view_type: null
+  children_view_type: document
   parents:
   - id: 11850
   props: null

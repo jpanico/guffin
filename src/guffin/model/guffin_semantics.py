@@ -121,13 +121,22 @@ class GuffinSemantics(enum.Enum):
 class StructuralElement(enum.StrEnum):
     """The structural elements of a book — its organizational parts, each in a :class:`Matter` division.
 
-    The reusable section types an author tags a heading with, from :attr:`COVER` through
+    The reusable section types an author tags a heading with, from :attr:`TITLE_PAGE` through
     :attr:`COLOPHON` — title page, foreword, preface, parts and chapters, appendices, glossary, index,
     colophon, and so on.  Member names follow publishing conventions; each member's value is that name,
     and :attr:`matter` is the front/body/back-matter division it conventionally belongs to.
 
+    :attr:`matter` is aligned with the Chicago Manual of Style (CMOS), the de facto US book-publishing
+    standard — this is the *conventional* placement, independent of any output format.  How a specific
+    format's toolchain happens to divide these parts is a separate, format-specific concern resolved
+    where that format is rendered.
+
+    Only the book's **interior** is classified by matter, so there is no ``cover`` member: per CMOS the
+    cover (and jacket) is the exterior, outside the front/body/back-matter division.  In practice a
+    cover is supplied as document metadata / a cover image, not authored as a tagged content section.
+
     Attributes:
-        matter: The :class:`Matter` division this element belongs to.
+        matter: The :class:`Matter` division this element conventionally belongs to, per CMOS.
     """
 
     def __new__(cls, value: str, matter: Matter) -> Self:
@@ -139,11 +148,10 @@ class StructuralElement(enum.StrEnum):
 
     matter: Matter
 
-    COVER = ("cover", Matter.FRONT)
     TITLE_PAGE = ("title-page", Matter.FRONT)
     COPYRIGHT_PAGE = ("copyright-page", Matter.FRONT)
     EPIGRAPH = ("epigraph", Matter.FRONT)
-    ACKNOWLEDGEMENTS = ("acknowledgements", Matter.FRONT)
+    ACKNOWLEDGMENTS = ("acknowledgments", Matter.FRONT)
     FOREWORD = ("foreword", Matter.FRONT)
     PREFACE = ("preface", Matter.FRONT)
     INTRODUCTION = ("introduction", Matter.FRONT)
@@ -155,10 +163,12 @@ class StructuralElement(enum.StrEnum):
     SECTION = ("section", Matter.BODY)
     SUB_SECTION = ("sub-section", Matter.BODY)
     SUB_SUB_SECTION = ("sub-sub-section", Matter.BODY)
-    CONCLUSION = ("conclusion", Matter.BACK)
-    EPILOGUE = ("epilogue", Matter.BACK)
+    # Conclusion and epilogue close the text proper (per CMOS): end of the body matter, not back
+    # matter.  An afterword, being commentary *about* the text, opens the back matter instead.
+    CONCLUSION = ("conclusion", Matter.BODY)
+    EPILOGUE = ("epilogue", Matter.BODY)
     AFTERWORD = ("afterword", Matter.BACK)
-    APPENDICES = ("appendices", Matter.BACK)
+    APPENDIX = ("appendix", Matter.BACK)
     GLOSSARY = ("glossary", Matter.BACK)
     ENDNOTES = ("endnotes", Matter.BACK)
     BIBLIOGRAPHY = ("bibliography", Matter.BACK)

@@ -302,7 +302,7 @@ Lo-2ftdb7:
   page:
     id: 11850
   open: false
-  children_view_type: null
+  children_view_type: document
   parents:
   - id: 11850
   props: null
@@ -459,7 +459,7 @@ uN_MwuWeZ:
 NLMrjV2AB:
   uid: NLMrjV2AB
   id: 11863
-  string: 'element-type:: acknowledgements'
+  string: 'element-type:: acknowledgments'
   order: 0
   heading: null
   children: null
@@ -924,7 +924,7 @@ d2r0m-pwA:
     - source:
       - uid
       - NLMrjV2AB
-      value: ' acknowledgements'
+      value: ' acknowledgments'
 Wwn_ElnkO:
   uid: Wwn_ElnkO
   id: 4597
@@ -1129,7 +1129,7 @@ jqAiDA6IM:
   page:
     id: 11850
   open: false
-  children_view_type: null
+  children_view_type: document
   parents:
   - id: 11850
   props: null
@@ -1171,7 +1171,7 @@ dpoX6c0Pl:
   - id: 4338
   page:
     id: 11850
-  open: false
+  open: true
   children_view_type: document
   parents:
   - id: 11850

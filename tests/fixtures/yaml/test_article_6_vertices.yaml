@@ -87,7 +87,7 @@
       - asCh2FQQp
     values:
     - kind: literal
-      value: acknowledgements
+      value: acknowledgments
   text: '[Acknowledgements](x-guffin:vertex/qmplSzgnD)'
   heading_level: 1
 - vertex_type: guffin/text

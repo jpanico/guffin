@@ -191,7 +191,7 @@ guffin/
 │       │                                  #   to guffin domain + Anchor), GuffinSemantics (enum of
 │       │                                  #   GuffinAttribute: TITLE/AUTHORS/DATE/IDENTIFIER + the
 │       │                                  #   ELEMENT_TYPE & MATTER heading tags), StructuralElement (book
-│       │                                  #   parts COVER…COLOPHON, each w/ Matter), element_type_of()/matter_of()
+│       │                                  #   parts TITLE_PAGE…COLOPHON, each w/ Matter), element_type_of()/matter_of()
 │       │
 │       ├── transcribe/                  # Source → model bridge: transcription + normalization (shared)
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown

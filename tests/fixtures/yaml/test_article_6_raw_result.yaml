@@ -279,6 +279,7 @@
     - id: 11850
     time: 1782933154792
     order: 4
+    view-type: document
     open: false
     page:
       id: 11850
@@ -395,12 +396,12 @@
       id: 3
     time: 1782918659454
     title: '[[Test Article]] 6'
-    edit-nonce: XHfgeak5h
-    edit-time: 1782936070230
+    edit-nonce: 6odTDhqHz
+    edit-time: 1782943254276
     open: true
     refs:
     - id: 4223
-- - string: 'element-type:: acknowledgements'
+- - string: 'element-type:: acknowledgments'
     user:
       id: 3
     id: 11863
@@ -409,7 +410,7 @@
     - id: 11850
     - id: 11861
     - id: 11862
-    time: 1782932532215
+    time: 1782943254276
     order: 0
     open: false
     page:
@@ -814,7 +815,7 @@
       - source:
         - uid
         - NLMrjV2AB
-        value: ' acknowledgements'
+        value: ' acknowledgments'
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11863
@@ -998,6 +999,7 @@
     - id: 11850
     time: 1782932288703
     order: 3
+    view-type: document
     open: false
     page:
       id: 11850
@@ -1035,7 +1037,7 @@
     time: 1782931197048
     order: 2
     view-type: document
-    open: false
+    open: true
     page:
       id: 11850
     refs:

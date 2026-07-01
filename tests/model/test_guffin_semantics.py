@@ -115,13 +115,13 @@ class TestElementTypeOfArticle6Fixture:
             if (assignment := find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)) is not None
         }
         assert resolved == {
-            "dpoX6c0Pl": StructuralElement.ACKNOWLEDGEMENTS,
+            "dpoX6c0Pl": StructuralElement.ACKNOWLEDGMENTS,
             "Lo-2ftdb7": StructuralElement.INTRODUCTION,
         }
 
-    def test_acknowledgements_heading_resolves(self) -> None:
-        """The Acknowledgements heading's element-type tag resolves to ACKNOWLEDGEMENTS via find + coerce."""
+    def test_acknowledgments_heading_resolves(self) -> None:
+        """The Acknowledgements heading's element-type tag resolves to ACKNOWLEDGMENTS via find + coerce."""
         heading = next(v for v in VertexTreeDFSIterator(_article6_vertex_tree()) if v.uid == "dpoX6c0Pl")
         assignment = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
         assert assignment is not None
-        assert element_type_of(assignment) is StructuralElement.ACKNOWLEDGEMENTS
+        assert element_type_of(assignment) is StructuralElement.ACKNOWLEDGMENTS

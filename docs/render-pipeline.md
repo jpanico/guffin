@@ -210,16 +210,23 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
     `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
     for a bespoke heading with no specific element type.
 - **`StructuralElement`** — the legal values of an `element-type` tag: a book's organizational parts
-  (`COVER` … `COLOPHON`, incl. `PART`/`CHAPTER`/`SECTION`/`SUB_SECTION`/`SUB_SUB_SECTION`). Each member
+  (`TITLE_PAGE` … `COLOPHON`, incl. `PART`/`CHAPTER`/`SECTION`/`SUB_SECTION`/`SUB_SUB_SECTION`; no `cover`
+  — per CMOS only the interior is matter-classified, the cover being exterior). Each member
   carries its **`Matter`** — the `front-matter`/`body-matter`/`back-matter` division it belongs to.
+  This is the **conventional** placement, aligned with the **Chicago Manual of Style (CMOS)** and
+  independent of any output format (e.g. `conclusion`/`epilogue` are body matter, `afterword` opens
+  the back matter). How a given format's toolchain actually divides these parts is a separate concern,
+  recorded per-format in `render/` (for EPUB, on `EpubType.division`; see below).
 - **`element_type_of(assignment)` / `matter_of(assignment)`** — read an `element-type` / `matter`
   assignment's sole value and coerce it to a `StructuralElement` / `Matter` (rejecting non-members);
   each enum *is* the spec of its legal values.
 
-Member **names follow publishing labels** (`acknowledgements`, `appendices`, `table-of-contents`,
-`list-of-illustrations`, `about-the-author`), which deliberately diverge from any one format's terms —
-e.g. EPUB's Structural Semantics Vocabulary uses `acknowledgments`, `appendix`, `toc`, `loi`. That
-divergence is by design: the model speaks the publishing domain, and the render layer translates.
+Member **names follow publishing labels** (`table-of-contents`, `list-of-illustrations`,
+`about-the-author`), some of which deliberately diverge from any one format's terms — e.g. EPUB's
+Structural Semantics Vocabulary abbreviates `table-of-contents`/`list-of-illustrations` to
+`toc`/`loi`. That divergence is by design: the model speaks the publishing domain, and the render
+layer translates. (Where a publishing label and a format term happen to coincide — `acknowledgments`,
+`appendix`, `colophon` — no translation is needed; the member-keyed map still routes them explicitly.)
 
 ### How it maps to output (the design contract)
 
@@ -229,16 +236,26 @@ divergence is by design: the model speaks the publishing domain, and the render 
   never a name-equality lookup against the format's own vocabulary. Some members have no counterpart
   in a given format (and vice-versa), so the map is deliberately partial.
 - **EPUB — done.** `render/epub_semantics.py::epub_type_for()` is the explicit `StructuralElement →
-  EpubType` map (e.g. `COLOPHON → EpubType.COLOPHON`, `ACKNOWLEDGEMENTS → EpubType.ACKNOWLEDGMENTS`,
+  EpubType` map (e.g. `COLOPHON → EpubType.COLOPHON`, `TABLE_OF_CONTENTS → EpubType.TOC`,
   `None` for elements with no EPUB term). During Doc construction, `pandoc_rendering._heading_semantics`
   uses a heading's `element-type` / `matter` tags to (a) stamp `epub:type` on the section header and
   (b) add the `unnumbered` class to any non-body-matter section, so Pandoc's `--number-sections`
   numbers only body-matter chapters. A bare `matter::` tag **overrides** the element's default matter
   (logging any disagreement), letting an author place a bespoke or non-standard section. The
   `epub:type` rides along harmlessly in the other formats (GFM drops it, Typst ignores it).
+  - **`EpubType.division` records Pandoc, not CMOS.** Whereas `StructuralElement.matter` is the CMOS
+    placement (see above), each `EpubType.division` records the `<body epub:type>` division **Pandoc
+    assigns that term out of the box** — verified empirically against Pandoc 3.8.3's output (Pandoc
+    classifies only its own hardcoded subset and defaults the rest to `bodymatter`). The two are
+    intentionally different reference points; their **divergence set** — currently `epigraph`,
+    `introduction`, `table-of-contents`, `list-of-illustrations`, `prologue`, `afterword`, `glossary`,
+    `endnotes` (flagged inline in `epub_semantics.py`) — is precisely the worklist for the still-open
+    `<body>` division post-processing below.
 - **PDF / GFM — future.** Sibling maps (`→ PDF/Typst`, `→ GFM`) will let the same authored tags drive
-  those formats. The EPUB `<body epub:type>` division post-processing (Pandoc misfiles divisions for
-  terms outside its recognized subset) is also still open.
+  those formats. The EPUB `<body epub:type>` division post-processing — rewriting Pandoc's
+  `EpubType.division` to the CMOS `StructuralElement.matter` for the divergent terms above — is also
+  still open (low priority: it is `<body>`-level metadata, invisible in Apple Books, and the visible
+  numbering/nav is already correct).
 
 ## Status & next steps
 
@@ -263,7 +280,9 @@ divergence is by design: the model speaks the publishing domain, and the render 
 4. **Structural-element tagging — done (EPUB).** Headings tagged `element-type::` / `matter::` drive
    the section `epub:type` and the front/body/back-matter distinction — which also excludes
    non-body-matter sections from `--number-sections` (see the `GuffinSemantics` vocabulary section
-   above). Remaining EPUB refinement: the `<body epub:type>` division post-processing (Pandoc misfiles
-   divisions for terms outside its recognized subset).
+   above). Remaining EPUB refinement: `<body epub:type>` division post-processing — rewriting the
+   Pandoc-assigned division (`EpubType.division`) to the CMOS placement (`StructuralElement.matter`)
+   for the terms where they diverge. Low priority (invisible in Apple Books; numbering/nav already
+   correct).
 5. **Possible refinements.** Distinguish PART from CHAPTER in PDF book mode (currently both just
    page-break and number from level 1). (`abstract` is deferred indefinitely.)

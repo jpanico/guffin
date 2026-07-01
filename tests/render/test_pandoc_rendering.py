@@ -238,13 +238,13 @@ class TestVertexTreeToPandocHeadingSemantics:
         return any(record.levelno == logging.WARNING and "matter" in record.getMessage() for record in caplog.records)
 
     def test_mapped_element_stamps_epub_type(self) -> None:
-        """A mapped element stamps the corresponding epub:type, bridging spelling divergences."""
+        """A mapped element stamps the corresponding epub:type, bridging label divergences."""
         assert self._heading_with_element_type("colophon").attributes["epub:type"] == "colophon"
-        assert self._heading_with_element_type("acknowledgements").attributes["epub:type"] == "acknowledgments"
+        assert self._heading_with_element_type("table-of-contents").attributes["epub:type"] == "toc"
 
     def test_unmapped_element_stamps_nothing(self) -> None:
-        """An element with no EPUB counterpart (cover) leaves the Header without epub:type."""
-        assert "epub:type" not in self._heading_with_element_type("cover").attributes
+        """An element with no EPUB counterpart (title-page) leaves the Header without epub:type."""
+        assert "epub:type" not in self._heading_with_element_type("title-page").attributes
 
     def test_unknown_element_is_ignored(self) -> None:
         """An unrecognised element-type value is dropped (no epub:type), not raised."""
@@ -252,9 +252,9 @@ class TestVertexTreeToPandocHeadingSemantics:
 
     def test_non_body_matter_is_unnumbered(self) -> None:
         """Front- and back-matter elements mark the Header unnumbered (excluded from --number-sections)."""
-        assert "unnumbered" in self._heading_with_element_type("acknowledgements").classes  # front matter
+        assert "unnumbered" in self._heading_with_element_type("acknowledgments").classes  # front matter
         assert "unnumbered" in self._heading_with_element_type("colophon").classes  # back matter
-        assert "unnumbered" in self._heading_with_element_type("cover").classes  # front, no epub:type
+        assert "unnumbered" in self._heading_with_element_type("title-page").classes  # front, no epub:type
 
     def test_body_matter_is_numbered(self) -> None:
         """A body-matter element leaves the Header numbered (no unnumbered class)."""
