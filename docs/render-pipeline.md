@@ -186,6 +186,49 @@ its top-level headings unnumbered.)
 | `top_level_division`, `number_sections`, title page | 2 (structure) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
 
 
+## The `GuffinSemantics` vocabulary (model → format mapping)
+
+> **Intent / roadmap.** The vocabulary below exists in `model/guffin_semantics.py`; the per-format
+> mappings that consume it are not built yet. This section records the design so the mappings, when
+> added, stay consistent with it.
+
+`model/guffin_semantics.py` defines a **format-independent vocabulary aligned with publishing-industry
+standards and conventions** — the semantic identity of the pieces of a document, independent of how
+any output format renders them. It is intentionally *not* modeled on EPUB (or PDF, or GFM).
+
+Each recognized attribute is a `GuffinAttribute` (an `Attribute` pinned to the `guffin` domain)
+carrying two orthogonal descriptors:
+
+- **`Role`** — `PUBLISHING` (a bibliographic/output-metadata fact) or `STRUCTURAL` (tags a document
+  element with its structural function).
+- **`Level`** — `DOCUMENT` (applies to the work as a whole) or `HEADER` (applies to one heading /
+  section).
+
+`GuffinSemantics` is the enum registry of these, in two groups:
+
+| Group | Role / Level | Members |
+|---|---|---|
+| Publishing metadata | `PUBLISHING` / `DOCUMENT` | `TITLE`, `AUTHORS`, `DATE`, `IDENTIFIER` |
+| Structural sections | `STRUCTURAL` / `HEADER` | `COVER`, `TITLE_PAGE`, `COPYRIGHT_PAGE`, `EPIGRAPH`, `ACKNOWLEDGEMENTS`, `FOREWORD`, `PREFACE`, `INTRODUCTION`, `TABLE_OF_CONTENTS`, `PART`, `CHAPTER`, `SECTION`, `SUB_SECTION`, `SUB_SUB_SECTION`, `CONCLUSION`, `EPILOGUE`, `AFTERWORD`, `APPENDICES`, `GLOSSARY`, `LIST_OF_ILLUSTRATIONS`, `ENDNOTES`, `BIBLIOGRAPHY`, `INDEX`, `ABOUT_THE_AUTHOR`, `COLOPHON` |
+
+Member **names follow publishing labels** (`acknowledgements`, `appendices`, `table-of-contents`,
+`list-of-illustrations`, `about-the-author`), which deliberately diverge from any one format's terms —
+e.g. EPUB's Structural Semantics Vocabulary uses `acknowledgments`, `appendix`, `toc`, `loi`. That
+divergence is by design: the model speaks the publishing domain, and the render layer translates.
+
+### How it maps to output (the design contract)
+
+- `GuffinSemantics`/`GuffinAttribute`/`Role`/`Level` live in `model/` with **zero render/format
+  dependency**.
+- Every per-format mapping lives in `render/`, as an **explicit map keyed on the `GuffinSemantics`
+  member** — never a name-equality lookup against the format's own vocabulary. Some members will have
+  no counterpart in a given format (and vice-versa), so the map is deliberately partial.
+- **Short-term goal:** a `GuffinSemantics → EpubType` (`render/epub_semantics.py`) map drives EPUB
+  structural rendering (e.g. `COLOPHON → EpubType.COLOPHON`, `INTRODUCTION → EpubType.INTRODUCTION`),
+  stamping `epub:type` on section headers.
+- **Long-term goal:** sibling maps (`→ PDF/Typst`, `→ GFM`) let the *same* authored tags drive every
+  `export-roam-tree` output format.
+
 ## Status & next steps
 
 1. **Plumbing — done.** `render/project.py` defines the model and `profile_for()` maps a

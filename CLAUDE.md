@@ -167,6 +167,7 @@ Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `test
 ## Architecture
 - **CLI isolation**: only modules in the `cli/` sub-package may import or use the Typer package (the entry points `export_roam_tree.py` / `dump_roam_tree.py` and CLI-only support modules such as `cli/params.py`). All modules outside `cli/` must be front-end agnostic so they can be used outside a CLI context without pulling in CLI dependencies. Within `cli/`, keep Typer out of modules that have a non-CLI reason to stay framework-free (e.g. `cli/common.py`, whose helpers are unit-tested directly).
 - **Exit-point isolation**: all explicit process-exit calls (`typer.Exit`, `sys.exit`, etc.) must live exclusively in the CLI modules. Library code propagates exceptions; CLIs decide whether and how to exit. This keeps control-flow transparent and makes library code testable without mocking exit behaviour.
+- **Semantic-vocabulary isolation**: `model/guffin_semantics.py` (`GuffinSemantics`/`GuffinAttribute`/`Role`/`Level`) is a **format-independent vocabulary aligned with publishing-industry conventions** — it must never depend on, or be named after, any output format. Member names follow publishing labels, deliberately diverging from format-specific terms (e.g. `acknowledgements`/`appendices`/`table-of-contents`, not EPUB SSV's `acknowledgments`/`appendix`/`toc`). Each per-format mapping (`GuffinSemantics → EpubType`, `→ PDF`, `→ GFM`) lives in `render/` and is keyed on the enum member — never a name-equality lookup against a format's own vocabulary. See `docs/render-pipeline.md`.
 
 ### Sub-package dependency rules
 
@@ -203,7 +204,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `docs/roam-querying.md` — Datalog query patterns used to fetch Roam nodes
 - `docs/roam-schema.md` — Roam Datomic schema reference (attributes, value types, cardinality)
 - `docs/processing_pipeline.md` — high-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages; the render stage is detailed in `render-pipeline.md`
-- `docs/render-pipeline.md` — the render layer (model → output two-stage pipeline) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`
+- `docs/render-pipeline.md` — the render layer (model → output two-stage pipeline) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`; and the format-independent `GuffinSemantics` vocabulary and how it maps to each output format
 
 ## Environment Variables
 - `GUFFIN_ROAM_LOCAL_API_PORT` — port for Roam Local API (all CLI tools)
