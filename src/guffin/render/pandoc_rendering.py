@@ -97,7 +97,7 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
 )
-from guffin.model.guffin_semantics import GuffinAttribute
+from guffin.model.guffin_semantics import GuffinSemantics
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -324,7 +324,7 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     return f"{attribute_markup}: {', '.join(parts)}"
 
 
-_METADATA_DOMAIN: Final[str] = GuffinAttribute.DOMAIN
+_METADATA_DOMAIN: Final[AttributeDomain] = AttributeDomain.GUFFIN
 """The attribute domain whose assignments carry document-level metadata rather than body content.
 
 Attributes in this domain are never rendered as inline pills: those with a name recognised by
@@ -333,12 +333,12 @@ any others are dropped from the output entirely.
 """
 
 _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
-    GuffinAttribute.TITLE: "title",
-    GuffinAttribute.AUTHORS: "author",
-    GuffinAttribute.DATE: "date",
-    GuffinAttribute.IDENTIFIER: "identifier",
+    GuffinSemantics.TITLE.value.name: "title",
+    GuffinSemantics.AUTHORS.value.name: "author",
+    GuffinSemantics.DATE.value.name: "date",
+    GuffinSemantics.IDENTIFIER.value.name: "identifier",
 }
-"""Maps a recognised :class:`~guffin.model.guffin_semantics.GuffinAttribute` to its Pandoc metadata key."""
+"""Maps a recognised :class:`~guffin.model.guffin_semantics.GuffinSemantics` to its Pandoc metadata key."""
 
 
 def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) -> dict[str, pf.MetaValue]:

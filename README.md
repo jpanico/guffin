@@ -177,8 +177,13 @@ guffin/
 │       │   ├── link.py                    # x-guffin inter-vertex link scheme; VertexLinkKind,
 │       │   │                              #   VertexLink, vertex_link_url(), parse_vertex_link(),
 │       │   │                              #   is_vertex_link()
-│       │   └── attribute.py               # Roam attribute-assignment model: Attribute, LiteralValue,
-│       │                                  #   ReferenceValue, AttributeValue, AttributeAssignment
+│       │   ├── attribute.py               # Roam attribute-assignment model: Attribute (graph-independent
+│       │   │                              #   identity: name + AttributeDomain), AttributeInstance (graph-
+│       │   │                              #   bound: Attribute + VertexLink), AttributeDomain, LiteralValue,
+│       │   │                              #   ReferenceValue, AttributeValue, AttributeAssignment
+│       │   └── guffin_semantics.py        # Guffin's attribute vocabulary: Role, GuffinAttribute (Attribute
+│       │                                  #   subclass pinned to the guffin domain + Role), GuffinSemantics
+│       │                                  #   (enum of GuffinAttribute: TITLE/AUTHORS/DATE/IDENTIFIER)
 │       │
 │       ├── transcribe/                  # Source → model bridge: transcription + normalization (shared)
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown

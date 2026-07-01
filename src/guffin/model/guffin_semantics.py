@@ -2,34 +2,72 @@
 
 Public symbols:
 
-- **Enumerations**: :class:`GuffinAttribute` — the attributes Guffin recognizes in the
-  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain.
+- **Enumerations**: :class:`Role` — the role a Guffin attribute plays (publishing / semantics);
+  :class:`GuffinSemantics` — the attributes Guffin recognizes, each member a :class:`GuffinAttribute`
+  in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain.
+- **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
+  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Role`.
 """
 
 import enum
 
-from guffin.model.attribute import AttributeDomain
+from pydantic import Field, field_validator
+
+from guffin.model.attribute import Attribute, AttributeDomain
 
 
-class GuffinAttribute(enum.StrEnum):
-    """The attributes Guffin recognizes, all in the :attr:`DOMAIN` namespace.
-
-    Each member's value is the attribute name as it appears in Roam (the page named before ``::``).
-    :attr:`DOMAIN` — bound to :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` — is the shared
-    :attr:`~guffin.model.attribute.Attribute.domain` every member belongs to; it is a class-level
-    constant, not itself an attribute name (and so does not appear when iterating the enum).
+class Role(enum.StrEnum):
+    """The role a Guffin attribute plays.
 
     Attributes:
-        DOMAIN: The shared :attr:`~guffin.model.attribute.Attribute.domain` of every member.
+        PUBLISHING: A publishing role — the attribute contributes to bibliographic/output metadata.
+        SEMANTICS: A semantics role — the attribute conveys structural meaning about the content.
+    """
+
+    PUBLISHING = "publishing"
+    SEMANTICS = "semantics"
+
+
+class GuffinAttribute(Attribute):
+    """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`Role`.
+
+    Specializes :class:`~guffin.model.attribute.Attribute` by pinning :attr:`domain` to
+    :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` (any other value is rejected) and adding a
+    required :attr:`role`.
+
+    Attributes:
+        domain: Always :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`.
+        role: The role this attribute plays.
+    """
+
+    domain: AttributeDomain = Field(default=AttributeDomain.GUFFIN, description="Always the guffin domain.")
+    role: Role = Field(..., description="The role this attribute plays.")
+
+    @field_validator("domain")
+    @classmethod
+    def _domain_must_be_guffin(cls, value: AttributeDomain) -> AttributeDomain:
+        """Reject any domain other than :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`."""
+        if value is not AttributeDomain.GUFFIN:
+            raise ValueError(f"GuffinAttribute.domain is fixed to {AttributeDomain.GUFFIN!r}, got {value!r}")
+        return value
+
+
+class GuffinSemantics(enum.Enum):
+    """The attributes Guffin recognizes, each a :class:`GuffinAttribute` in the guffin domain.
+
+    Each member's value is the :class:`GuffinAttribute` for that attribute — its name paired with the
+    :class:`Role` it plays.  Every attribute defined here is a :attr:`Role.PUBLISHING` attribute.
+
+    Attributes:
         TITLE: The document title.
         AUTHORS: The document author(s).
         DATE: The document date.
         IDENTIFIER: The document identifier.
     """
 
-    DOMAIN = enum.nonmember(AttributeDomain.GUFFIN)
+    _value_: GuffinAttribute
 
-    TITLE = "title"
-    AUTHORS = "authors"
-    DATE = "date"
-    IDENTIFIER = "identifier"
+    TITLE = GuffinAttribute(name="title", role=Role.PUBLISHING)
+    AUTHORS = GuffinAttribute(name="authors", role=Role.PUBLISHING)
+    DATE = GuffinAttribute(name="date", role=Role.PUBLISHING)
+    IDENTIFIER = GuffinAttribute(name="identifier", role=Role.PUBLISHING)
