@@ -181,9 +181,11 @@ guffin/
 │       │   │                              #   identity: name + AttributeDomain), AttributeInstance (graph-
 │       │   │                              #   bound: Attribute + VertexLink), AttributeDomain, LiteralValue,
 │       │   │                              #   ReferenceValue, AttributeValue, AttributeAssignment
-│       │   └── guffin_semantics.py        # Guffin's attribute vocabulary: Role, GuffinAttribute (Attribute
-│       │                                  #   subclass pinned to the guffin domain + Role), GuffinSemantics
-│       │                                  #   (enum of GuffinAttribute: TITLE/AUTHORS/DATE/IDENTIFIER)
+│       │   └── guffin_semantics.py        # Guffin's attribute vocabulary: Role (PUBLISHING/STRUCTURAL),
+│       │                                  #   Level (DOCUMENT/HEADER), GuffinAttribute (Attribute subclass
+│       │                                  #   pinned to the guffin domain + Role + Level), GuffinSemantics
+│       │                                  #   (enum of GuffinAttribute: publishing metadata TITLE/AUTHORS/
+│       │                                  #   DATE/IDENTIFIER + structural section tags COVER…COLOPHON)
 │       │
 │       ├── transcribe/                  # Source → model bridge: transcription + normalization (shared)
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown

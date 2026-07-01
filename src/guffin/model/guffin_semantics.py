@@ -3,8 +3,9 @@
 Public symbols:
 
 - **Enumerations**: :class:`GuffinSemantics` — the attributes Guffin recognizes, each member a
-  :class:`GuffinAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain;
-  :class:`Role` — the role a Guffin attribute plays (publishing / semantics); :class:`Level` — the
+  :class:`GuffinAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain
+  (publishing metadata + structural book-section tags);
+  :class:`Role` — the role a Guffin attribute plays (publishing / structural); :class:`Level` — the
   structural level at which a Guffin attribute applies (document / header).
 - **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Role`.
@@ -22,11 +23,11 @@ class Role(enum.StrEnum):
 
     Attributes:
         PUBLISHING: A publishing role — the attribute contributes to bibliographic/output metadata.
-        SEMANTICS: A semantics role — the attribute conveys structural meaning about the content.
+        STRUCTURAL: A structural role — the attribute conveys structural meaning about the content.
     """
 
     PUBLISHING = "publishing"
-    SEMANTICS = "semantics"
+    STRUCTURAL = "structural"
 
 
 class Level(enum.StrEnum):
@@ -67,23 +68,90 @@ class GuffinAttribute(Attribute):
         return value
 
 
+def _publishing(name: str) -> GuffinAttribute:
+    """Build a publishing (:attr:`Role.PUBLISHING`, :attr:`Level.DOCUMENT`) attribute named *name*."""
+    return GuffinAttribute(name=name, role=Role.PUBLISHING, level=Level.DOCUMENT)
+
+
+def _structural(name: str) -> GuffinAttribute:
+    """Build a structural (:attr:`Role.STRUCTURAL`, :attr:`Level.HEADER`) attribute named *name*."""
+    return GuffinAttribute(name=name, role=Role.STRUCTURAL, level=Level.HEADER)
+
+
 class GuffinSemantics(enum.Enum):
     """The attributes Guffin recognizes, each a :class:`GuffinAttribute` in the guffin domain.
 
     Each member's value is the :class:`GuffinAttribute` for that attribute — its name paired with the
-    :class:`Role` and :class:`Level` it carries.  Every attribute defined here is a
-    :attr:`Role.PUBLISHING`, :attr:`Level.DOCUMENT` attribute.
+    :class:`Role` and :class:`Level` it carries.  Two groups:
+
+    - **Publishing metadata** (:attr:`Role.PUBLISHING`, :attr:`Level.DOCUMENT`) — document-level
+      bibliographic facts: :attr:`TITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`IDENTIFIER`.
+    - **Structural sections** (:attr:`Role.STRUCTURAL`, :attr:`Level.HEADER`) — book-structure tags an
+      author applies to a heading, from :attr:`COVER` through :attr:`COLOPHON`.
 
     Attributes:
         TITLE: The document title.
         AUTHORS: The document author(s).
         DATE: The document date.
         IDENTIFIER: The document identifier.
+        COVER: The book cover.
+        TITLE_PAGE: The title page.
+        COPYRIGHT_PAGE: The copyright page.
+        EPIGRAPH: An epigraph.
+        ACKNOWLEDGEMENTS: The acknowledgements.
+        FOREWORD: The foreword.
+        PREFACE: The preface.
+        INTRODUCTION: The introduction.
+        TABLE_OF_CONTENTS: The table of contents.
+        PART: A part.
+        CHAPTER: A chapter.
+        SECTION: A section.
+        SUB_SECTION: A subsection.
+        SUB_SUB_SECTION: A sub-subsection.
+        CONCLUSION: The conclusion.
+        EPILOGUE: The epilogue.
+        AFTERWORD: The afterword.
+        APPENDICES: The appendices.
+        GLOSSARY: The glossary.
+        LIST_OF_ILLUSTRATIONS: The list of illustrations.
+        ENDNOTES: The endnotes.
+        BIBLIOGRAPHY: The bibliography.
+        INDEX: The index.
+        ABOUT_THE_AUTHOR: The "about the author" section.
+        COLOPHON: The colophon.
     """
 
     _value_: GuffinAttribute
 
-    TITLE = GuffinAttribute(name="title", role=Role.PUBLISHING, level=Level.DOCUMENT)
-    AUTHORS = GuffinAttribute(name="authors", role=Role.PUBLISHING, level=Level.DOCUMENT)
-    DATE = GuffinAttribute(name="date", role=Role.PUBLISHING, level=Level.DOCUMENT)
-    IDENTIFIER = GuffinAttribute(name="identifier", role=Role.PUBLISHING, level=Level.DOCUMENT)
+    # Publishing metadata (Role.PUBLISHING, Level.DOCUMENT).
+    TITLE = _publishing("title")
+    AUTHORS = _publishing("authors")
+    DATE = _publishing("date")
+    IDENTIFIER = _publishing("identifier")
+
+    # Structural book-structure sections (Role.STRUCTURAL, Level.HEADER).
+    COVER = _structural("cover")
+    TITLE_PAGE = _structural("title-page")
+    COPYRIGHT_PAGE = _structural("copyright-page")
+    EPIGRAPH = _structural("epigraph")
+    ACKNOWLEDGEMENTS = _structural("acknowledgements")
+    FOREWORD = _structural("foreword")
+    PREFACE = _structural("preface")
+    INTRODUCTION = _structural("introduction")
+    TABLE_OF_CONTENTS = _structural("table-of-contents")
+    PART = _structural("part")
+    CHAPTER = _structural("chapter")
+    SECTION = _structural("section")
+    SUB_SECTION = _structural("sub-section")
+    SUB_SUB_SECTION = _structural("sub-sub-section")
+    CONCLUSION = _structural("conclusion")
+    EPILOGUE = _structural("epilogue")
+    AFTERWORD = _structural("afterword")
+    APPENDICES = _structural("appendices")
+    GLOSSARY = _structural("glossary")
+    LIST_OF_ILLUSTRATIONS = _structural("list-of-illustrations")
+    ENDNOTES = _structural("endnotes")
+    BIBLIOGRAPHY = _structural("bibliography")
+    INDEX = _structural("index")
+    ABOUT_THE_AUTHOR = _structural("about-the-author")
+    COLOPHON = _structural("colophon")

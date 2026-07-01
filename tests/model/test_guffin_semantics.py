@@ -18,7 +18,7 @@ class TestGuffinAttribute:
     def test_non_guffin_domain_is_rejected(self) -> None:
         """Constructing with any domain other than GUFFIN raises."""
         with pytest.raises(ValidationError):
-            GuffinAttribute(name="x", role=Role.SEMANTICS, level=Level.DOCUMENT, domain=AttributeDomain.DEFAULT)
+            GuffinAttribute(name="x", role=Role.STRUCTURAL, level=Level.DOCUMENT, domain=AttributeDomain.DEFAULT)
 
     def test_role_is_required(self) -> None:
         """Constructing without a role raises."""
