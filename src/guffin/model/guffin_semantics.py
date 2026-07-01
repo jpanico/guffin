@@ -2,62 +2,81 @@
 
 Public symbols:
 
-- **Enumerations**: :class:`GuffinSemantics` — the attributes Guffin recognizes, each member a
-  :class:`GuffinAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain
-  (publishing metadata + structural book-section tags);
-  :class:`Role` — the role a Guffin attribute plays (publishing / structural); :class:`Level` — the
-  structural level at which a Guffin attribute applies (document / header).
+- **Enumerations**: :class:`GuffinSemantics` — the attributes Guffin recognizes (document metadata +
+  the ``element-type`` heading tag), each member a :class:`GuffinAttribute` in the
+  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
+  domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading), each
+  carrying its :class:`~guffin.model.vertex_type.VertexType`; :class:`Matter` —
+  the book division a part belongs to (front / body / back); :class:`StructuralElement` — a book's
+  structural elements by name, each carrying its :class:`Matter` division (its organizational parts).
 - **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
-  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Role`.
+  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Anchor`.
+- **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
+  :class:`StructuralElement` (raising if it is not one).
 """
 
 import enum
+from typing import Self
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, validate_call
 
-from guffin.model.attribute import Attribute, AttributeDomain
-
-
-class Role(enum.StrEnum):
-    """The role a Guffin attribute plays.
-
-    Attributes:
-        PUBLISHING: A publishing role — the attribute contributes to bibliographic/output metadata.
-        STRUCTURAL: A structural role — the attribute conveys structural meaning about the content.
-    """
-
-    PUBLISHING = "publishing"
-    STRUCTURAL = "structural"
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, sole_value_text
+from guffin.model.vertex_type import VertexType
 
 
-class Level(enum.StrEnum):
-    """The structural level at which a Guffin attribute applies.
+class Anchor(enum.StrEnum):
+    """The kind of vertex a Guffin attribute attaches to.
+
+    Each member carries the :class:`~guffin.model.vertex_type.VertexType` it corresponds to — the type
+    of vertex an attribute with this anchor may be declared on.
 
     Attributes:
-        DOCUMENT: The attribute applies to the document as a whole.
-        HEADER: The attribute applies to an individual header (section).
+        vertex_type: The :class:`~guffin.model.vertex_type.VertexType` this anchor corresponds to.
+        PAGE: The attribute attaches to a page vertex (the whole document).
+        HEADING: The attribute attaches to a heading vertex (a section).
     """
 
-    DOCUMENT = "document"
-    HEADER = "header"
+    def __new__(cls, value: str, vertex_type: VertexType) -> Self:
+        """Create a member whose string value is *value* and that carries *vertex_type*."""
+        member = str.__new__(cls, value)
+        member._value_ = value
+        member.vertex_type = vertex_type
+        return member
+
+    vertex_type: VertexType
+
+    PAGE = ("page", VertexType.PAGE)
+    HEADING = ("heading", VertexType.HEADING)
+
+
+class Matter(enum.StrEnum):
+    """A top-level division of a book — the publishing-standard grouping its parts belong to.
+
+    Attributes:
+        FRONT: Front matter — material preceding the main text (title page, foreword, preface, …).
+        BODY: Body matter — the main text (parts, chapters).
+        BACK: Back matter — material following the main text (appendices, glossary, colophon, …).
+    """
+
+    FRONT = "front-matter"
+    BODY = "body-matter"
+    BACK = "back-matter"
 
 
 class GuffinAttribute(Attribute):
-    """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`Role` and :class:`Level`.
+    """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`Anchor`.
 
     Specializes :class:`~guffin.model.attribute.Attribute` by pinning :attr:`domain` to
     :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` (any other value is rejected) and adding a
-    required :attr:`role` and :attr:`level`.
+    required :attr:`anchor`.
 
     Attributes:
         domain: Always :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`.
-        role: The role this attribute plays.
-        level: The structural level at which this attribute applies.
+        anchor: The kind of vertex this attribute attaches to.
     """
 
     domain: AttributeDomain = Field(default=AttributeDomain.GUFFIN, description="Always the guffin domain.")
-    role: Role = Field(..., description="The role this attribute plays.")
-    level: Level = Field(..., description="The structural level at which this attribute applies.")
+    anchor: Anchor = Field(..., description="The kind of vertex this attribute attaches to.")
 
     @field_validator("domain")
     @classmethod
@@ -68,90 +87,96 @@ class GuffinAttribute(Attribute):
         return value
 
 
-def _publishing(name: str) -> GuffinAttribute:
-    """Build a publishing (:attr:`Role.PUBLISHING`, :attr:`Level.DOCUMENT`) attribute named *name*."""
-    return GuffinAttribute(name=name, role=Role.PUBLISHING, level=Level.DOCUMENT)
-
-
-def _structural(name: str) -> GuffinAttribute:
-    """Build a structural (:attr:`Role.STRUCTURAL`, :attr:`Level.HEADER`) attribute named *name*."""
-    return GuffinAttribute(name=name, role=Role.STRUCTURAL, level=Level.HEADER)
-
-
 class GuffinSemantics(enum.Enum):
-    """The attributes Guffin recognizes, each a :class:`GuffinAttribute` in the guffin domain.
+    """The attributes Guffin recognizes, each a :class:`GuffinAttribute`.
 
-    Each member's value is the :class:`GuffinAttribute` for that attribute — its name paired with the
-    :class:`Role` and :class:`Level` it carries.  Two groups:
+    Each member's value is the :class:`GuffinAttribute` for that attribute.  Two kinds:
 
-    - **Publishing metadata** (:attr:`Role.PUBLISHING`, :attr:`Level.DOCUMENT`) — document-level
-      bibliographic facts: :attr:`TITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`IDENTIFIER`.
-    - **Structural sections** (:attr:`Role.STRUCTURAL`, :attr:`Level.HEADER`) — book-structure tags an
-      author applies to a heading, from :attr:`COVER` through :attr:`COLOPHON`.
+    - **Document metadata** (:attr:`Anchor.PAGE`) — bibliographic facts about the work as a whole:
+      :attr:`TITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`IDENTIFIER`.
+    - **Heading tags** (:attr:`Anchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
+      declares which :class:`StructuralElement` the heading is.
 
     Attributes:
         TITLE: The document title.
         AUTHORS: The document author(s).
         DATE: The document date.
         IDENTIFIER: The document identifier.
-        COVER: The book cover.
-        TITLE_PAGE: The title page.
-        COPYRIGHT_PAGE: The copyright page.
-        EPIGRAPH: An epigraph.
-        ACKNOWLEDGEMENTS: The acknowledgements.
-        FOREWORD: The foreword.
-        PREFACE: The preface.
-        INTRODUCTION: The introduction.
-        TABLE_OF_CONTENTS: The table of contents.
-        PART: A part.
-        CHAPTER: A chapter.
-        SECTION: A section.
-        SUB_SECTION: A subsection.
-        SUB_SUB_SECTION: A sub-subsection.
-        CONCLUSION: The conclusion.
-        EPILOGUE: The epilogue.
-        AFTERWORD: The afterword.
-        APPENDICES: The appendices.
-        GLOSSARY: The glossary.
-        LIST_OF_ILLUSTRATIONS: The list of illustrations.
-        ENDNOTES: The endnotes.
-        BIBLIOGRAPHY: The bibliography.
-        INDEX: The index.
-        ABOUT_THE_AUTHOR: The "about the author" section.
-        COLOPHON: The colophon.
+        ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
     """
 
     _value_: GuffinAttribute
 
-    # Publishing metadata (Role.PUBLISHING, Level.DOCUMENT).
-    TITLE = _publishing("title")
-    AUTHORS = _publishing("authors")
-    DATE = _publishing("date")
-    IDENTIFIER = _publishing("identifier")
+    TITLE = GuffinAttribute(name="title", anchor=Anchor.PAGE)
+    AUTHORS = GuffinAttribute(name="authors", anchor=Anchor.PAGE)
+    DATE = GuffinAttribute(name="date", anchor=Anchor.PAGE)
+    IDENTIFIER = GuffinAttribute(name="identifier", anchor=Anchor.PAGE)
+    ELEMENT_TYPE = GuffinAttribute(name="element-type", anchor=Anchor.HEADING)
 
-    # Structural book-structure sections (Role.STRUCTURAL, Level.HEADER).
-    COVER = _structural("cover")
-    TITLE_PAGE = _structural("title-page")
-    COPYRIGHT_PAGE = _structural("copyright-page")
-    EPIGRAPH = _structural("epigraph")
-    ACKNOWLEDGEMENTS = _structural("acknowledgements")
-    FOREWORD = _structural("foreword")
-    PREFACE = _structural("preface")
-    INTRODUCTION = _structural("introduction")
-    TABLE_OF_CONTENTS = _structural("table-of-contents")
-    PART = _structural("part")
-    CHAPTER = _structural("chapter")
-    SECTION = _structural("section")
-    SUB_SECTION = _structural("sub-section")
-    SUB_SUB_SECTION = _structural("sub-sub-section")
-    CONCLUSION = _structural("conclusion")
-    EPILOGUE = _structural("epilogue")
-    AFTERWORD = _structural("afterword")
-    APPENDICES = _structural("appendices")
-    GLOSSARY = _structural("glossary")
-    LIST_OF_ILLUSTRATIONS = _structural("list-of-illustrations")
-    ENDNOTES = _structural("endnotes")
-    BIBLIOGRAPHY = _structural("bibliography")
-    INDEX = _structural("index")
-    ABOUT_THE_AUTHOR = _structural("about-the-author")
-    COLOPHON = _structural("colophon")
+
+class StructuralElement(enum.StrEnum):
+    """The structural elements of a book — its organizational parts, each in a :class:`Matter` division.
+
+    The reusable section types an author tags a heading with, from :attr:`COVER` through
+    :attr:`COLOPHON` — title page, foreword, preface, parts and chapters, appendices, glossary, index,
+    colophon, and so on.  Member names follow publishing conventions; each member's value is that name,
+    and :attr:`matter` is the front/body/back-matter division it conventionally belongs to.
+
+    Attributes:
+        matter: The :class:`Matter` division this element belongs to.
+    """
+
+    def __new__(cls, value: str, matter: Matter) -> Self:
+        """Create a member whose string value is *value* and that carries *matter*."""
+        member = str.__new__(cls, value)
+        member._value_ = value
+        member.matter = matter
+        return member
+
+    matter: Matter
+
+    COVER = ("cover", Matter.FRONT)
+    TITLE_PAGE = ("title-page", Matter.FRONT)
+    COPYRIGHT_PAGE = ("copyright-page", Matter.FRONT)
+    EPIGRAPH = ("epigraph", Matter.FRONT)
+    ACKNOWLEDGEMENTS = ("acknowledgements", Matter.FRONT)
+    FOREWORD = ("foreword", Matter.FRONT)
+    PREFACE = ("preface", Matter.FRONT)
+    INTRODUCTION = ("introduction", Matter.FRONT)
+    TABLE_OF_CONTENTS = ("table-of-contents", Matter.FRONT)
+    LIST_OF_ILLUSTRATIONS = ("list-of-illustrations", Matter.FRONT)
+    PART = ("part", Matter.BODY)
+    CHAPTER = ("chapter", Matter.BODY)
+    SECTION = ("section", Matter.BODY)
+    SUB_SECTION = ("sub-section", Matter.BODY)
+    SUB_SUB_SECTION = ("sub-sub-section", Matter.BODY)
+    CONCLUSION = ("conclusion", Matter.BACK)
+    EPILOGUE = ("epilogue", Matter.BACK)
+    AFTERWORD = ("afterword", Matter.BACK)
+    APPENDICES = ("appendices", Matter.BACK)
+    GLOSSARY = ("glossary", Matter.BACK)
+    ENDNOTES = ("endnotes", Matter.BACK)
+    BIBLIOGRAPHY = ("bibliography", Matter.BACK)
+    INDEX = ("index", Matter.BACK)
+    ABOUT_THE_AUTHOR = ("about-the-author", Matter.BACK)
+    COLOPHON = ("colophon", Matter.BACK)
+
+
+@validate_call
+def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
+    """Return the :class:`StructuralElement` that an ``element-type`` assignment names.
+
+    Reads the sole value of an :attr:`GuffinSemantics.ELEMENT_TYPE` assignment and coerces it to a
+    :class:`StructuralElement`, which is the authoritative set of legal ``element-type`` values.
+
+    Args:
+        assignment: An ``element-type`` attribute assignment (expected to carry exactly one value).
+
+    Returns:
+        The named :class:`StructuralElement`.
+
+    Raises:
+        ValueError: If the assignment does not carry exactly one value, or its value is not a
+            recognised :class:`StructuralElement`.
+    """
+    return StructuralElement(sole_value_text(assignment))

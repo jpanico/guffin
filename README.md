@@ -162,11 +162,14 @@ guffin/
 │       ├── model/                       # Core Guffin normalized-graph model (depends only on common/)
 │       │   ├── primitives.py              # Uid type alias; SYNTHETIC/DAILY_NOTE/UID_PATTERN(/RE),
 │       │   │                              #   ANCHORED_UID_PATTERN(/RE), is_daily_note_uid()
+│       │   ├── vertex_type.py             # VertexType StrEnum (PAGE/TEXT/HEADING/IMAGE/…); leaf module
+│       │   │                              #   so vertex.py and guffin_semantics.py share it acyclically
 │       │   ├── vertex.py                  # Vertex union + nine concrete types (PageVertex,
 │       │   │                              #   HeadingVertex, TextVertex, ImageVertex, CalloutVertex,
 │       │   │                              #   CodeBlockVertex, BlockQuoteVertex, TableVertex,
 │       │   │                              #   BlockEmbedVertex); _BaseVertex.attribute_assignments;
-│       │   │                              #   VertexType, VertexChildren, VertexRefs, vertex_adapter
+│       │   │                              #   find_attribute_assignment/find_guffin_attribute;
+│       │   │                              #   VertexChildren, VertexRefs, vertex_adapter (re-exports VertexType)
 │       │   ├── vertex_tree.py             # VertexTree (tree_vertices, ref_vertices, uid_map),
 │       │   │                              #   VertexTreeDFSIterator, root_vertex(), map_vertices(),
 │       │   │                              #   drop_attribute_assignments(); filter helpers
@@ -181,11 +184,13 @@ guffin/
 │       │   │                              #   identity: name + AttributeDomain), AttributeInstance (graph-
 │       │   │                              #   bound: Attribute + VertexLink), AttributeDomain, LiteralValue,
 │       │   │                              #   ReferenceValue, AttributeValue, AttributeAssignment
-│       │   └── guffin_semantics.py        # Guffin's attribute vocabulary: Role (PUBLISHING/STRUCTURAL),
-│       │                                  #   Level (DOCUMENT/HEADER), GuffinAttribute (Attribute subclass
-│       │                                  #   pinned to the guffin domain + Role + Level), GuffinSemantics
-│       │                                  #   (enum of GuffinAttribute: publishing metadata TITLE/AUTHORS/
-│       │                                  #   DATE/IDENTIFIER + structural section tags COVER…COLOPHON)
+│       │   └── guffin_semantics.py        # Guffin's format-independent, publishing-standard vocabulary:
+│       │                                  #   Anchor (PAGE/HEADING, carries its VertexType), Matter
+│       │                                  #   (front/body/back-matter), GuffinAttribute (Attribute pinned
+│       │                                  #   to guffin domain + Anchor), GuffinSemantics (enum of
+│       │                                  #   GuffinAttribute: TITLE/AUTHORS/DATE/IDENTIFIER + ELEMENT_TYPE),
+│       │                                  #   StructuralElement (book parts COVER…COLOPHON, each w/ Matter),
+│       │                                  #   element_type_of()
 │       │
 │       ├── transcribe/                  # Source → model bridge: transcription + normalization (shared)
 │       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
