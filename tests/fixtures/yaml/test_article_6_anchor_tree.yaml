@@ -1,0 +1,1342 @@
+root_node:
+  uid: 7o-Klx3P6
+  id: 11850
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 11852
+  - id: 11855
+  - id: 11861
+  - id: 11871
+  - id: 11878
+  refs:
+  - id: 4223
+  page: null
+  open: true
+  children_view_type: null
+  parents: null
+  props: null
+  title: '[[Test Article]] 6'
+  attrs:
+  - - source:
+      - uid
+      - 7o-Klx3P6
+      value:
+      - uid
+      - 7o-Klx3P6
+    - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - BxGxeeGk1
+tree_network:
+- uid: snXG7pnjI
+  id: 11870
+  string: '**Unto the Honorable, Prudent, and Wise Magistrates of the Free Imperial
+    City of Nuremberg, and to all curious Christian Readers, grace and peace.**'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  props: null
+  title: null
+  attrs: null
+- uid: Nt9obFYPS
+  id: 11879
+  string: 'element-type:: introduction'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  - id: 11880
+  props: null
+  title: null
+  attrs: null
+- uid: 09l1XWuD3
+  id: 11874
+  string: '**The Cartographer and Cosmographer:** If you are tasked with updating
+    the __mappae mundi__ (world maps), this document will radically expand your borders.
+    It provides definitive proof of navigable seas to the east of Asia, island nations
+    such as Cipangu (Japan), and detailed distances measured in days of travel.'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11871
+  props: null
+  title: null
+  attrs: null
+- uid: i8m_qcu2R
+  id: 11875
+  string: '**The Theologian and the Friar:** For those tracking the spread of Christendom
+    or seeking alliances against the Saracens. You will find intelligence on the locations
+    of Nestorian Christians, the religious tolerance of the Tartars, and the various
+    idolaters that populate the Indies.'
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11871
+  props: null
+  title: null
+  attrs: null
+- uid: VUkL4I2fu
+  id: 11859
+  string: 'identifier:: ISTC ip00901000'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 11847
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11855
+  props: null
+  title: null
+  attrs: null
+- uid: oUtEaVgwV
+  id: 11880
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11879
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - oUtEaVgwV
+      value:
+      - uid
+      - oUtEaVgwV
+    - source:
+      - uid
+      - Nt9obFYPS
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - Nt9obFYPS
+      value: ' introduction'
+- uid: Lo-2ftdb7
+  id: 11878
+  string: An Epistle to the Reader, from the Printer
+  order: 4
+  heading: 2
+  children:
+  - id: 11880
+  - id: 11882
+  - id: 11883
+  - id: 11884
+  - id: 11885
+  - id: 11886
+  - id: 11887
+  - id: 11888
+  - id: 11889
+  refs: null
+  page:
+    id: 11850
+  open: false
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - Lo-2ftdb7
+      value:
+      - uid
+      - Lo-2ftdb7
+    - source:
+      - uid
+      - oUtEaVgwV
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - oUtEaVgwV
+      value:
+      - uid
+      - BxGxeeGk1
+- uid: WM9mjgmUj
+  id: 11866
+  string: First and foremost, let boundless thanks be rendered unto Almighty God,
+    who in these latter days hath bestowed upon mankind the ingenious and subtle art
+    of impressing letters by metal without the stroke of a quill, whereby such profitable
+    knowledge might be multiplied and spread among the principalities of the earth.
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  props: null
+  title: null
+  attrs: null
+- uid: uN_MwuWeZ
+  id: 11858
+  string: 'date:: 1477-01-01'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 11845
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11855
+  props: null
+  title: null
+  attrs: null
+- uid: 7o-Klx3P6
+  id: 11850
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 11852
+  - id: 11855
+  - id: 11861
+  - id: 11871
+  - id: 11878
+  refs:
+  - id: 4223
+  page: null
+  open: true
+  children_view_type: null
+  parents: null
+  props: null
+  title: '[[Test Article]] 6'
+  attrs:
+  - - source:
+      - uid
+      - 7o-Klx3P6
+      value:
+      - uid
+      - 7o-Klx3P6
+    - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - BxGxeeGk1
+- uid: NLMrjV2AB
+  id: 11863
+  string: 'element-type:: acknowledgements'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  - id: 11862
+  props: null
+  title: null
+  attrs: null
+- uid: 24R3MJ1pP
+  id: 11884
+  string: It is natural for the mind to rebel against such claims, to assume them
+    to be the fictions of a romancer. Yet I urge you to approach this topography with
+    a clear and open judgment. Marco Polo was not a poet, but a merchant and an administrator
+    in the court of the Great Khan. His accounts are laid out not for idle entertainment,
+    but as a systematic record of provinces, revenues, and trade routes.
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: 4nmDcSocA
+  id: 11885
+  string: Therefore, do not attempt to swallow this book whole. Read it measure by
+    measure. Allow the structure of his journey—from the deserts of Persia to the
+    high plains of the Tartars, and onward to the coastlines of the Indies—to build
+    a new map within your thoughts.
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: yVoGbTEa3
+  id: 11857
+  string: 'title:: "The Travels of Marco Polo"'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11843
+  page:
+    id: 11850
+  open: false
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11855
+  props: null
+  title: null
+  attrs: null
+- uid: xDLdP7phb
+  id: 11882
+  string: Before you embark upon the text that follows, it is proper that you are
+    given some instruction on how to receive it. We have labored at great length to
+    strike these pages from metal type, bringing the words of the Venetian, Messer
+    Marco Polo, into our plain German tongue. But the architecture of these Eastern
+    realms is exceedingly complex, and to comprehend such vast and foreign territories
+    without guidance places a heavy burden upon the mind.
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: RoZyY87Nr
+  id: 11888
+  string: __— F.C., Nuremberg.__
+  order: 8
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: shFahtwt3
+  id: 11855
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 11856
+  - id: 11857
+  - id: 11858
+  - id: 11859
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: false
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - shFahtwt3
+    - source:
+      - uid
+      - yVoGbTEa3
+      value:
+      - uid
+      - PZyg8sHJZ
+    - source:
+      - uid
+      - yVoGbTEa3
+      value: ' "The Travels of Marco Polo"'
+  - - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - shFahtwt3
+    - source:
+      - uid
+      - jYi3QvhTN
+      value:
+      - uid
+      - MhnnPhnTB
+    - source:
+      - uid
+      - jYi3QvhTN
+      value: ' Marco Polo, Rustichello da Pisa'
+  - - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - shFahtwt3
+    - source:
+      - uid
+      - uN_MwuWeZ
+      value:
+      - uid
+      - ZyUTn2I17
+    - source:
+      - uid
+      - uN_MwuWeZ
+      value: ' 1477-01-01'
+  - - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - shFahtwt3
+    - source:
+      - uid
+      - VUkL4I2fu
+      value:
+      - uid
+      - 2_S3ySs7O
+    - source:
+      - uid
+      - VUkL4I2fu
+      value: ' ISTC ip00901000'
+- uid: mwRFIaxIs
+  id: 11887
+  string: God preserve you in your reading.
+  order: 7
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: OPAjTYc1n
+  id: 11867
+  string: I must humbly acknowledge the labor of the learned Master Heinrich, who
+    took it upon himself to turn this history from the Latin tongue into our own plain
+    German, that the burghers and merchants of this city might read of the spices
+    and silks of the Orient without the barrier of a scholar’s language.
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  props: null
+  title: null
+  attrs: null
+- uid: d2r0m-pwA
+  id: 11862
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11863
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - d2r0m-pwA
+      value:
+      - uid
+      - d2r0m-pwA
+    - source:
+      - uid
+      - NLMrjV2AB
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - NLMrjV2AB
+      value: ' acknowledgements'
+- uid: doB1NIOh9
+  id: 11889
+  string: To the curious and patient reader, greetings.
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: vALZLA1Jn
+  id: 11868
+  string: Likewise, my gratitude is bound to the worshipful Herr Sebaldus of the Merchant
+    Guild, whose generous purse did furnish the stout rag paper and the fine lamp-black
+    ink required to bring this heavy labor to the press. Without his patronage, these
+    marvels of India and Persia would have remained locked within the dusty scriptoriums
+    of the monasteries.
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  props: null
+  title: null
+  attrs: null
+- uid: rhPsF4zq3
+  id: 11852
+  string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+    – DO NOT REMOVE
+
+    Features:
+
+    - StructuralElements for ProjectType:BOOK'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs: null
+- uid: vK5kBX3Dr
+  id: 11886
+  string: We have placed this volume before you so that the boundaries of your world
+    might be expanded. Bear the weight of its strangeness, and your understanding
+    shall be greatly enriched.
+  order: 6
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: ROYjinXfM
+  id: 11883
+  string: You will find no familiar landmarks here. The author speaks of kingdoms
+    that dwarf our own Holy Roman Empire, of cities crisscrossed by bridges of marble,
+    of stones that burn like wood, and of paper that commands the value of gold.
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11878
+  props: null
+  title: null
+  attrs: null
+- uid: jqAiDA6IM
+  id: 11871
+  string: '[[Who is this Book for?]]'
+  order: 3
+  heading: 2
+  children:
+  - id: 11872
+  - id: 11873
+  - id: 11874
+  - id: 11875
+  refs:
+  - id: 4384
+  page:
+    id: 11850
+  open: false
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs: null
+- uid: dpoX6c0Pl
+  id: 11861
+  string: '[[Acknowledgements]]'
+  order: 2
+  heading: 2
+  children:
+  - id: 11862
+  - id: 11865
+  - id: 11866
+  - id: 11867
+  - id: 11868
+  - id: 11869
+  - id: 11870
+  refs:
+  - id: 4338
+  page:
+    id: 11850
+  open: false
+  children_view_type: document
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs: null
+- uid: jYi3QvhTN
+  id: 11856
+  string: 'authors:: Marco Polo, Rustichello da Pisa'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 11842
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11855
+  props: null
+  title: null
+  attrs: null
+- uid: eiAZVhVrz
+  id: 11869
+  string: Finally, I commend the diligent journeymen of my workshop, who stood long
+    hours at the press to strike these pages clean and true.
+  order: 6
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  props: null
+  title: null
+  attrs: null
+- uid: Gn10okg1P
+  id: 11873
+  string: '**The Sovereign and the Statesman:** For kings, princes, and dukes who
+    wish to understand the geopolitical architecture of the world beyond the Levant.
+    This text offers a comprehensive operational overview of the Mongol Empire under
+    Kublai Khan, detailing his military structure, courier system, administrative
+    laws, and the unfathomable scale of his revenues.'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11871
+  props: null
+  title: null
+  attrs: null
+- uid: v_yb2JFwl
+  id: 11872
+  string: '**The Enterprising Merchant:** If your trade involves the acquisition of
+    pepper, ginger, silk, or precious stones, this book serves as a practical geographical
+    manual. You will find detailed accounts of the major trading hubs from Hormuz
+    to Cathay, including the preferred currencies (such as the Great Khan’s paper
+    money), safe routes, and the relative dangers of bandits and deserts along the
+    Silk Road.'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11871
+  props: null
+  title: null
+  attrs: null
+- uid: IACS5F7wi
+  id: 11865
+  string: Herein is completed the noble and wondrous Book of the magnificent Venetian,
+    Messer Marco Polo, which declareth the great marvels of the East, of Cathay, and
+    of the mighty Khan of the Tartars.
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11861
+  props: null
+  title: null
+  attrs: null
+refs_by_id:
+  '4223':
+    uid: LBFKibPIj
+    id: 4223
+    string: null
+    order: null
+    heading: null
+    children:
+    - id: 4224
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: Test Article
+    attrs: null
+  '11845':
+    uid: ZyUTn2I17
+    id: 11845
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: date
+    attrs: null
+  '11847':
+    uid: 2_S3ySs7O
+    id: 11847
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: identifier
+    attrs: null
+  '5450':
+    uid: OexZiLR_O
+    id: 5450
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: '>'
+    attrs: null
+  '11876':
+    uid: asCh2FQQp
+    id: 11876
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: element-type
+    attrs: null
+  '4338':
+    uid: qmplSzgnD
+    id: 4338
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: Acknowledgements
+    attrs:
+    - - source:
+        - uid
+        - dpoX6c0Pl
+        value:
+        - uid
+        - qmplSzgnD
+      - source:
+        - uid
+        - d2r0m-pwA
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - d2r0m-pwA
+        value:
+        - uid
+        - BxGxeeGk1
+  '321':
+    uid: BxGxeeGk1
+    id: 321
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: .rm-g
+    attrs: null
+  '5462':
+    uid: ZgUWBRb7j
+    id: 5462
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: '!INFO'
+    attrs: null
+  '11842':
+    uid: MhnnPhnTB
+    id: 11842
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: authors
+    attrs: null
+  '4384':
+    uid: GuHqKi9Y_
+    id: 4384
+    string: null
+    order: null
+    heading: null
+    children:
+    - id: 4427
+    - id: 4597
+    - id: 4600
+    refs: null
+    page: null
+    open: true
+    children_view_type: null
+    parents: null
+    props: null
+    title: Who is this Book for?
+    attrs: null
+  '11839':
+    uid: 2xY4zCjId
+    id: 11839
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: guffin-meta
+    attrs: null
+  '11843':
+    uid: PZyg8sHJZ
+    id: 11843
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: title
+    attrs: null
+  '4427':
+    uid: GJKWwLPSj
+    id: 4427
+    string: where does a section on "who this book is for" belong? [[Claude]]
+    order: 2
+    heading: null
+    children:
+    - id: 4387
+    - id: 4388
+    - id: 4391
+    - id: 4392
+    refs:
+    - id: 4428
+    page:
+      id: 4384
+    open: false
+    children_view_type: null
+    parents:
+    - id: 4384
+    props: null
+    title: null
+    attrs: null
+  '4597':
+    uid: Wwn_ElnkO
+    id: 4597
+    string: Who this book is not for
+    order: 1
+    heading: 3
+    children:
+    - id: 4598
+    - id: 4599
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    props: null
+    title: null
+    attrs: null
+  '4600':
+    uid: Bl5IgRIYf
+    id: 4600
+    string: Intended Audience
+    order: 0
+    heading: 3
+    children:
+    - id: 4601
+    - id: 4602
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    props: null
+    title: null
+    attrs: null
+  '4601':
+    uid: oaDIyA-Js
+    id: 4601
+    string: 'Software Engineering Managers (addressable audience: ~5 million worldwide)'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: false
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4600
+    props: null
+    title: null
+    attrs: null
+  '4602':
+    uid: 39_RTkGv-
+    id: 4602
+    string: 'Programmers, with at least a rudimentary understanding of computer programming,
+      in **any** [[Programming Language]] (addressable audience: ~40 million worldwide)'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 8657
+    page:
+      id: 4384
+    open: false
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4600
+    props: null
+    title: null
+    attrs: null
+  '4598':
+    uid: YESkCZ8tW
+    id: 4598
+    string: People with no understanding of computer programming, who want to learn
+      how to code
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4597
+    props: null
+    title: null
+    attrs: null
+  '4599':
+    uid: fQV20MHbZ
+    id: 4599
+    string: Experienced software engineers looking for specific
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4597
+    props: null
+    title: null
+    attrs: null
+  '4387':
+    uid: PjkhzuQ8m
+    id: 4387
+    string: If it's **a few sentences**, it fits naturally inside the introduction
+      — just fold it into the opening where you're framing the book's purpose.
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4427
+    props: null
+    title: null
+    attrs: null
+  '4388':
+    uid: kPcAk-Bw1
+    id: 4388
+    string: 'If it''s **more substantial** (different reader types, prerequisite knowledge,
+      how different audiences might navigate the book differently), it works better
+      as its own short named section, typically placed either:'
+    order: 1
+    heading: null
+    children:
+    - id: 4389
+    - id: 4390
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4427
+    props: null
+    title: null
+    attrs: null
+  '4391':
+    uid: xLG8Ir4vl
+    id: 4391
+    string: 'The O''Reilly pattern is worth knowing because it''s so widespread in
+      technical publishing: preface → who this book is for → (sometimes) conventions
+      used in this book → introduction. Readers have come to expect it in that genre,
+      which is itself a reason to follow it.'
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4427
+    props: null
+    title: null
+    attrs: null
+  '4392':
+    uid: N60tgmwap
+    id: 4392
+    string: The main thing to avoid is burying it deep inside the introduction, where
+      a reader scanning the front matter to decide if the book is right for them might
+      miss it entirely.
+    order: 3
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4427
+    props: null
+    title: null
+    attrs: null
+  '4389':
+    uid: TPRmrrxwE
+    id: 4389
+    string: '**In the preface** — this is the most common home for it in technical
+      books, since "who this is for" is meta-information __about__ the book rather
+      than content __of__ the book'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4388
+    - id: 4427
+    props: null
+    title: null
+    attrs: null
+  '4390':
+    uid: zpV7AGpCS
+    id: 4390
+    string: '**As a standalone section between the preface and introduction**, sometimes
+      literally titled "Who This Book Is For" — O''Reilly books do this frequently
+      and it''s become something of a technical publishing convention'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4384
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4384
+    - id: 4388
+    - id: 4427
+    props: null
+    title: null
+    attrs: null
+  '4224':
+    uid: 7MoH-wIQh
+    id: 4224
+    string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
+      \ TEST DATA – DO NOT REMOVE\n "
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 5462
+    page:
+      id: 4223
+    open: true
+    children_view_type: null
+    parents:
+    - id: 4223
+    props: null
+    title: null
+    attrs: null
+  '8657':
+    uid: ZsFRjGDDy
+    id: 8657
+    string: null
+    order: null
+    heading: null
+    children:
+    - id: 8662
+    - id: 8670
+    - id: 8676
+    - id: 8677
+    refs: null
+    page: null
+    open: true
+    children_view_type: null
+    parents: null
+    props: null
+    title: Programming Language
+    attrs:
+    - - source:
+        - uid
+        - ZsFRjGDDy
+        value:
+        - uid
+        - ZsFRjGDDy
+      - source:
+        - uid
+        - HrLHMMak9
+        value:
+        - uid
+        - nA2eO0MzU
+      - source:
+        - uid
+        - HrLHMMak9
+        value:
+        - uid
+        - ExJBKbXY2
+  '4428':
+    uid: TWqtTA-9e
+    id: 4428
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: Claude
+    attrs: null

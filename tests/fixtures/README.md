@@ -84,6 +84,10 @@ Six live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 
 - **attributes**
 
+#### `[[Test Article]] 6`
+
+- **`StructuralElement`**: headings tagged with `element-type::` (`guffin`-domain, in a `guffin-meta::` block) whose values are `StructuralElement`s (e.g. `acknowledgements`, `introduction`) — "The Travels of Marco Polo"
+
 ### Fixtures
 
 For each source article, `tests/regen_fixtures.py` generates six fixture files that capture different stages and views of the data pipeline.
