@@ -29,7 +29,7 @@ from guffin.render.pandoc_rendering import (
     build_child_blocks,
     vertex_tree_to_pandoc,
 )
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
 
 from conftest import article1_vertex_tree
 
@@ -337,6 +337,43 @@ class TestVertexTreeToPandocHeadingVertex:
         assert isinstance(blocks[1], pf.Header)
         assert blocks[1].level == 3
         assert _collect_text(blocks[1]) == "Section"
+
+
+class TestVertexTreeToPandocElementTypeEpub:
+    """A heading's element-type tag is stamped onto its Header as epub:type (EPUB structural semantics)."""
+
+    def _heading_with_element_type(self, term: str) -> pf.Header:
+        """Render an H1 tagged with ``element-type = term`` (guffin domain) and return its Header."""
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+        heading = HeadingVertex(
+            uid="head0001a",
+            text="Section",
+            heading_level=1,
+            attribute_assignments=[
+                AttributeAssignment(
+                    attribute=AttributeInstance(
+                        definition=Attribute(name="element-type", domain=AttributeDomain.GUFFIN), link=link
+                    ),
+                    values=(LiteralValue(value=term),),
+                )
+            ],
+        )
+        tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["head0001a"]), heading])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        return next(block for block in doc.content if isinstance(block, pf.Header))
+
+    def test_mapped_element_stamps_epub_type(self) -> None:
+        """A mapped element stamps the corresponding epub:type, bridging spelling divergences."""
+        assert self._heading_with_element_type("colophon").attributes["epub:type"] == "colophon"
+        assert self._heading_with_element_type("acknowledgements").attributes["epub:type"] == "acknowledgments"
+
+    def test_unmapped_element_stamps_nothing(self) -> None:
+        """An element with no EPUB counterpart (cover) leaves the Header without epub:type."""
+        assert "epub:type" not in self._heading_with_element_type("cover").attributes
+
+    def test_unknown_element_is_ignored(self) -> None:
+        """An unrecognised element-type value is dropped (no epub:type), not raised."""
+        assert "epub:type" not in self._heading_with_element_type("not-an-element").attributes
 
 
 # ---------------------------------------------------------------------------

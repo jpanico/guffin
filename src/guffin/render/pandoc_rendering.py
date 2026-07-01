@@ -97,7 +97,7 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
 )
-from guffin.model.guffin_semantics import GuffinSemantics
+from guffin.model.guffin_semantics import GuffinSemantics, element_type_of
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -110,10 +110,12 @@ from guffin.model.vertex import (
     TextVertex,
     Vertex,
     VertexChildren,
+    find_guffin_attribute,
 )
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
 from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
+from guffin.render.epub_semantics import EpubType, epub_type_for
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
@@ -666,6 +668,26 @@ def _page_vertex_to_blocks(
     )
 
 
+def _epub_type_attributes(vertex: HeadingVertex) -> dict[str, str]:
+    """Return ``{"epub:type": <term>}`` for a heading with a mappable ``element-type`` tag, else ``{}``.
+
+    Reads the heading's :attr:`~guffin.model.guffin_semantics.GuffinSemantics.ELEMENT_TYPE` tag,
+    resolves it to a :class:`~guffin.model.guffin_semantics.StructuralElement`, and maps that to its
+    :func:`~guffin.render.epub_semantics.epub_type_for` term.  Only EPUB output consumes ``epub:type``
+    (GFM drops it, Typst ignores it), so it is stamped unconditionally.  An untagged heading, a tag
+    whose value is not a recognised element, or an element with no EPUB counterpart, contributes nothing.
+    """
+    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)
+    if assignment is None:
+        return {}
+    try:
+        epub_type: Final[EpubType | None] = epub_type_for(element_type_of(assignment))
+    except ValueError as exc:
+        logger.warning("ignoring element-type on vertex uid=%r: %s", vertex.uid, exc)
+        return {}
+    return {"epub:type": epub_type.value} if epub_type is not None else {}
+
+
 def _heading_vertex_to_blocks(
     vertex: HeadingVertex,
     vertex_tree: VertexTree,
@@ -693,7 +715,7 @@ def _heading_vertex_to_blocks(
         A :class:`~panflute.Header` block followed by any child blocks.
     """
     inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
-    blocks: list[pf.Block] = [pf.Header(*inlines, level=vertex.heading_level)]
+    blocks: list[pf.Block] = [pf.Header(*inlines, level=vertex.heading_level, attributes=_epub_type_attributes(vertex))]
     blocks.extend(
         build_child_blocks(
             vertex.children or [],
