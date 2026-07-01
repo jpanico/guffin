@@ -9,9 +9,12 @@ from pathlib import Path
 from typing import Final
 
 import pytest
+import regex
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex
 from guffin.model.vertex_tree import VertexTree
@@ -233,3 +236,76 @@ class TestTitlePage:
         """A book (emit_title_page=True) includes a title page; the default article omits it."""
         assert _has_title_page(article5_book_epub)
         assert not _has_title_page(article5_default_epub)
+
+
+def _tagged_heading(uid: str, text: str, name: str, value: str) -> HeadingVertex:
+    """Build a level-1 HeadingVertex carrying a single ``<name> = value`` guffin-domain tag."""
+    link: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+    return HeadingVertex(
+        uid=uid,
+        text=text,
+        heading_level=1,
+        attribute_assignments=[
+            AttributeAssignment(
+                attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+                values=(LiteralValue(value=value),),
+            )
+        ],
+    )
+
+
+_SECTION_ID_RE: Final[regex.Pattern[str]] = regex.compile(r'<section\b[^>]*\bid="([^"]*)"')
+_BODY_DIVISION_RE: Final[regex.Pattern[str]] = regex.compile(r'<body\b[^>]*\bepub:type="([^"]*)"')
+
+
+def _body_division_by_section_id(epub_path: Path) -> dict[str, str]:
+    """Map each split content document's first ``<section>`` id to its ``<body>`` division."""
+    result: Final[dict[str, str]] = {}
+    with zipfile.ZipFile(epub_path) as archive:
+        for name in archive.namelist():
+            if not (name.endswith(".xhtml") and "ch" in name):
+                continue
+            xhtml: str = archive.read(name).decode("utf-8")
+            section: regex.Match[str] | None = _SECTION_ID_RE.search(xhtml)
+            body: regex.Match[str] | None = _BODY_DIVISION_RE.search(xhtml)
+            if section is not None and body is not None:
+                result[section.group(1)] = body.group(1)
+    return result
+
+
+class TestBodyDivisionRestoration:
+    """The post-processing pass sets each content document's <body> division to its CMOS matter."""
+
+    @pytest.fixture(scope="class")
+    def tagged_book_epub(self, tmp_path_factory: pytest.TempPathFactory) -> Path:
+        """A book whose three chapters are an introduction, a bespoke back-matter, and a body chapter."""
+        page: Final[PageVertex] = PageVertex(
+            uid="page00001", title="Doc", children=["head0001a", "head0002b", "head0003c"]
+        )
+        bundle: Final[RenderBundle] = RenderBundle(
+            content=VertexTree(
+                tree_vertices=[
+                    page,
+                    _tagged_heading("head0001a", "Front Intro", "element-type", "introduction"),
+                    _tagged_heading("head0002b", "Back Notes", "matter", "back-matter"),
+                    _tagged_heading("head0003c", "Body Chapter", "element-type", "chapter"),
+                ]
+            )
+        )
+        return _render_epub(tmp_path_factory.mktemp("divisions"), bundle, BookProfile(), "divisions")
+
+    def test_element_type_overrides_pandoc_default(self, tagged_book_epub: Path) -> None:
+        """An introduction (CMOS front matter) becomes frontmatter, not Pandoc's default bodymatter."""
+        assert _body_division_by_section_id(tagged_book_epub)["front-intro"] == "frontmatter"
+
+    def test_bespoke_matter_tag_sets_division(self, tagged_book_epub: Path) -> None:
+        """A bespoke matter:: back-matter section (no epub:type) becomes backmatter."""
+        assert _body_division_by_section_id(tagged_book_epub)["back-notes"] == "backmatter"
+
+    def test_body_matter_stays_bodymatter(self, tagged_book_epub: Path) -> None:
+        """A body-matter chapter keeps the bodymatter division."""
+        assert _body_division_by_section_id(tagged_book_epub)["body-chapter"] == "bodymatter"
+
+    def test_scaffold_attribute_is_stripped(self, tagged_book_epub: Path) -> None:
+        """The data-guffin-matter scaffold never reaches the packaged e-book."""
+        assert "data-guffin-matter" not in _all_text(tagged_book_epub)

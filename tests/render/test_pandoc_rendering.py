@@ -30,6 +30,7 @@ from guffin.render.pandoc_rendering import (
     vertex_tree_to_pandoc,
 )
 from guffin.render.pandoc_ast import parse_inline_md
+from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
 
 from conftest import article1_vertex_tree
@@ -299,6 +300,22 @@ class TestVertexTreeToPandocHeadingSemantics:
         header = next(block for block in doc.content if isinstance(block, pf.Header))
         assert "unnumbered" not in header.classes
         assert not self._matter_warned(caplog)
+
+    def test_matter_data_attribute_carries_cmos_division(self) -> None:
+        """A tagged heading stamps its CMOS matter as the data-guffin-matter <body> division."""
+        assert self._heading_with_element_type("introduction").attributes[MATTER_DATA_ATTRIBUTE] == "frontmatter"
+        assert self._heading_with_element_type("chapter").attributes[MATTER_DATA_ATTRIBUTE] == "bodymatter"
+        assert self._heading_with_element_type("colophon").attributes[MATTER_DATA_ATTRIBUTE] == "backmatter"
+
+    def test_bare_matter_tag_carries_division(self) -> None:
+        """A bespoke matter:: tag stamps its division in data-guffin-matter (with no epub:type)."""
+        header = self._heading_with_tag("matter", "back-matter")
+        assert header.attributes[MATTER_DATA_ATTRIBUTE] == "backmatter"
+        assert "epub:type" not in header.attributes
+
+    def test_untagged_heading_has_no_matter_attribute(self) -> None:
+        """A heading whose matter does not resolve carries no data-guffin-matter attribute."""
+        assert MATTER_DATA_ATTRIBUTE not in self._heading_with_element_type("not-an-element").attributes
 
 
 # ---------------------------------------------------------------------------

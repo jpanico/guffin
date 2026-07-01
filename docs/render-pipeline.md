@@ -189,9 +189,9 @@ its top-level headings unnumbered.)
 ## The `GuffinSemantics` vocabulary (model → format mapping)
 
 > **Status.** The vocabulary lives in `model/guffin_semantics.py`; the **EPUB** mapping that consumes
-> it (`render/epub_semantics.py` + the `pandoc_rendering` header stamping) is **built**. The
-> `→ PDF/Typst` and `→ GFM` mappings, and the EPUB `<body>` division post-processing, are still future
-> work.
+> it (`render/epub_semantics.py` + the `pandoc_rendering` header stamping) is **built**, including the
+> `<body>` division post-processing (`render/epub_post_processing.py`) that restores the CMOS placement.
+> The `→ PDF/Typst` and `→ GFM` mappings are still future work.
 
 `model/guffin_semantics.py` defines a **format-independent vocabulary aligned with publishing-industry
 standards and conventions** — the semantic identity of the pieces of a document, independent of how
@@ -249,13 +249,20 @@ layer translates. (Where a publishing label and a format term happen to coincide
     classifies only its own hardcoded subset and defaults the rest to `bodymatter`). The two are
     intentionally different reference points; their **divergence set** — currently `epigraph`,
     `introduction`, `table-of-contents`, `list-of-illustrations`, `prologue`, `afterword`, `glossary`,
-    `endnotes` (flagged inline in `epub_semantics.py`) — is precisely the worklist for the still-open
-    `<body>` division post-processing below.
+    `endnotes` (flagged inline in `epub_semantics.py`) — is exactly what the `<body>` division
+    post-processing (below) corrects. A characterization test (`test_epub_semantics.py`) re-derives
+    `EpubType.division` from a live Pandoc run so any change in Pandoc's classification is caught.
+  - **`<body>` division post-processing — done.** `pandoc_rendering._heading_semantics` stamps every
+    matter-tagged heading with its CMOS division in a `data-guffin-matter` section attribute (mapped
+    from `Matter` by `epub_semantics.epub_division_for_matter`); after Pandoc packages the EPUB,
+    `render/epub_post_processing.py::restore_matter_divisions` rewrites each content document's `<body
+    epub:type>` to that stamped division and strips the scaffold attribute. This is driven by the
+    heading's **`Matter`**, not its `epub:type`, so it also corrects bespoke `matter::` sections that
+    carry no `epub:type` (e.g. a matter-only "Who is this Book for?"). It is `<body>`-level metadata,
+    invisible in Apple Books, but makes the package's structural semantics conformant.
 - **PDF / GFM — future.** Sibling maps (`→ PDF/Typst`, `→ GFM`) will let the same authored tags drive
-  those formats. The EPUB `<body epub:type>` division post-processing — rewriting Pandoc's
-  `EpubType.division` to the CMOS `StructuralElement.matter` for the divergent terms above — is also
-  still open (low priority: it is `<body>`-level metadata, invisible in Apple Books, and the visible
-  numbering/nav is already correct).
+  those formats. (The `data-guffin-matter`/`epub:type` scaffolding rides along harmlessly there — GFM
+  drops it, Typst ignores it.)
 
 ## Status & next steps
 
@@ -278,11 +285,11 @@ layer translates. (Where a publishing label and a format term happen to coincide
    `pandoc_rendering._document_metadata`; `title` overrides the page title and the rest map to the
    writer's native metadata (Typst title block, EPUB `dc:*`). These never render as body pills.
 4. **Structural-element tagging — done (EPUB).** Headings tagged `element-type::` / `matter::` drive
-   the section `epub:type` and the front/body/back-matter distinction — which also excludes
-   non-body-matter sections from `--number-sections` (see the `GuffinSemantics` vocabulary section
-   above). Remaining EPUB refinement: `<body epub:type>` division post-processing — rewriting the
-   Pandoc-assigned division (`EpubType.division`) to the CMOS placement (`StructuralElement.matter`)
-   for the terms where they diverge. Low priority (invisible in Apple Books; numbering/nav already
-   correct).
+   the section `epub:type`, the front/body/back-matter distinction (which excludes non-body-matter
+   sections from `--number-sections`), and the content document's `<body epub:type>` division: the
+   heading's CMOS matter is stamped as `data-guffin-matter` and, after packaging,
+   `render/epub_post_processing.py` promotes it to `<body>` and strips the scaffold — so the packaged
+   e-book reflects the CMOS placement rather than Pandoc's default (see the `GuffinSemantics`
+   vocabulary section above).
 5. **Possible refinements.** Distinguish PART from CHAPTER in PDF book mode (currently both just
    page-break and number from level 1). (`abstract` is deferred indefinitely.)

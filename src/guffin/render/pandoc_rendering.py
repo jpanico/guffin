@@ -108,7 +108,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
 from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
-from guffin.render.epub_semantics import EpubType, epub_type_for
+from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
 from guffin.roam.primitives import Uid
 
@@ -581,6 +581,11 @@ def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]
       the default division for a non-standard placement — otherwise the matter is the ``element-type``'s
       :class:`~guffin.model.guffin_semantics.StructuralElement` matter.  When both are present and
       disagree, the ``matter`` tag wins and the override is logged.
+    - the :data:`~guffin.render.epub_semantics.MATTER_DATA_ATTRIBUTE` attribute — the heading's
+      resolved matter, as its CMOS ``<body>`` :class:`~guffin.render.epub_semantics.EpubDivision`
+      value, stamped whenever a matter resolves.  The EPUB post-processing pass
+      (:mod:`guffin.render.epub_post_processing`) promotes it to the content document's ``<body
+      epub:type>`` and strips it; like ``epub:type`` it rides along harmlessly in the other formats.
     """
     element: Final[StructuralElement | None] = _element_type_of_vertex(vertex)
     override: Final[Matter | None] = _matter_of_vertex(vertex)
@@ -597,7 +602,11 @@ def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]
     )
     classes: Final[list[str]] = ["unnumbered"] if matter is not None and matter is not Matter.BODY else []
     epub_type: Final[EpubType | None] = epub_type_for(element) if element is not None else None
-    attributes: Final[dict[str, str]] = {"epub:type": epub_type.value} if epub_type is not None else {}
+    attributes: Final[dict[str, str]] = {}
+    if epub_type is not None:
+        attributes["epub:type"] = epub_type.value
+    if matter is not None:
+        attributes[MATTER_DATA_ATTRIBUTE] = epub_division_for_matter(matter).value
     return classes, attributes
 
 

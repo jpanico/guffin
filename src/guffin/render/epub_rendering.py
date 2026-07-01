@@ -46,6 +46,7 @@ from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
+from guffin.render.epub_post_processing import restore_matter_divisions
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.render.pandoc_rendering import (
     make_resolver,
@@ -204,4 +205,5 @@ def render(
             json_str, _EPUB_WRITER, format="json", outputfile=str(output_path), extra_args=extra_args
         )
 
+    restore_matter_divisions(output_path)
     logger.info("Wrote EPUB to %s", output_path)

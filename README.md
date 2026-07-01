@@ -215,9 +215,13 @@ guffin/
 │       │   ├── md_rendering.py            # VertexTree → GFM Markdown; writes .mdbundle or plain .md
 │       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
 │       │   ├── epub_rendering.py          # VertexTree → EPUB 3 via Pandoc (title → dc:title,
-│       │   │                              #   headings → chapters, images embedded)
+│       │   │                              #   headings → chapters, images embedded); then
+│       │   │                              #   restore_matter_divisions() on the packaged file
 │       │   ├── epub_semantics.py          # EPUB structural semantics: EpubDivision, EpubType (epub:type
-│       │   │                              #   terms + division), epub_type_for() (StructuralElement→EpubType)
+│       │   │                              #   terms + Pandoc division), epub_type_for(), MATTER_DATA_ATTRIBUTE,
+│       │   │                              #   epub_division_for_matter() (CMOS Matter → EpubDivision)
+│       │   ├── epub_post_processing.py      # EPUB post-pass: rewrite each <body epub:type> to the CMOS
+│       │   │                              #   division stamped in data-guffin-matter, then strip the scaffold
 │       │   ├── rich_rendering.py          # Rich panel/tree rendering for NodeTree and VertexTree (dump)
 │       │   ├── gfm_resources/             # GFM Pandoc Lua filters (package data): gfm_callout,
 │       │   │                              #   gfm_color_span, gfm_image, gfm_mark

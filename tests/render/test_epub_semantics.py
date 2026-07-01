@@ -8,8 +8,8 @@ import pypandoc  # type: ignore[import-untyped]
 import pytest
 import regex
 
-from guffin.model.guffin_semantics import StructuralElement
-from guffin.render.epub_semantics import EpubType, epub_type_for
+from guffin.model.guffin_semantics import Matter, StructuralElement
+from guffin.render.epub_semantics import EpubDivision, EpubType, epub_division_for_matter, epub_type_for
 
 _BODY_EPUB_TYPE_RE: Final[regex.Pattern[str]] = regex.compile(r'<body\b[^>]*epub:type="([^"]*)"')
 _SECTION_EPUB_TYPE_RE: Final[regex.Pattern[str]] = regex.compile(r'<section\b[^>]*epub:type="([^"]*)"')
@@ -49,6 +49,16 @@ def _pandoc_body_division_by_term(work_dir: Path) -> dict[str, str]:
             if body is not None and section is not None:
                 divisions[section.group(1)] = body.group(1)
     return divisions
+
+
+class TestEpubDivisionForMatter:
+    """epub_division_for_matter maps each CMOS Matter to its EPUB <body> division."""
+
+    def test_maps_every_matter(self) -> None:
+        """Each Matter maps to the same-named EpubDivision."""
+        assert epub_division_for_matter(Matter.FRONT) is EpubDivision.FRONTMATTER
+        assert epub_division_for_matter(Matter.BODY) is EpubDivision.BODYMATTER
+        assert epub_division_for_matter(Matter.BACK) is EpubDivision.BACKMATTER
 
 
 class TestEpubTypeDivisionMatchesPandoc:

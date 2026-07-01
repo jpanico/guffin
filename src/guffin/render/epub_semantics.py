@@ -15,17 +15,23 @@ conventionally belongs.
 The conventional (publishing-standard) placement is a separate concern, carried by
 :attr:`~guffin.model.guffin_semantics.StructuralElement.matter`, which is aligned with the Chicago
 Manual of Style (CMOS).  The two intentionally diverge: their difference is exactly the set of
-sections whose Pandoc-assigned ``<body>`` division would need post-processing to restore the CMOS
-placement — ``epigraph``, ``introduction``, ``table-of-contents``, ``list-of-illustrations``,
-``prologue``, ``afterword``, ``glossary``, and ``endnotes`` (each marked inline below).
+sections whose Pandoc-assigned ``<body>`` division is post-processed to restore the CMOS placement —
+``epigraph``, ``introduction``, ``table-of-contents``, ``list-of-illustrations``, ``prologue``,
+``afterword``, ``glossary``, and ``endnotes`` (each marked inline below).  That post-processing
+(:mod:`guffin.render.epub_post_processing`) reads the CMOS division a heading carries in the
+:data:`MATTER_DATA_ATTRIBUTE` section attribute, mapped from its ``Matter`` by
+:func:`epub_division_for_matter`.
 
 Public symbols:
 
+- **Constants**: :data:`MATTER_DATA_ATTRIBUTE` — the section attribute carrying a heading's CMOS
+  ``<body>`` division for the post-processing pass.
 - **Enumerations**: :class:`EpubDivision` — the three top-level EPUB structural divisions;
   :class:`EpubType` — the ``epub:type`` terms Guffin supports, each carrying its :class:`EpubDivision`.
 - **Functions**: :func:`epub_type_for` — map a
   :class:`~guffin.model.guffin_semantics.StructuralElement` to its :class:`EpubType`, or ``None`` when
-  it has no EPUB counterpart.
+  it has no EPUB counterpart; :func:`epub_division_for_matter` — map a CMOS ``Matter`` to its
+  :class:`EpubDivision`.
 """
 
 import enum
@@ -33,7 +39,16 @@ from typing import Final, Self
 
 from pydantic import validate_call
 
-from guffin.model.guffin_semantics import StructuralElement
+from guffin.model.guffin_semantics import Matter, StructuralElement
+
+MATTER_DATA_ATTRIBUTE: Final[str] = "data-guffin-matter"
+"""Section attribute carrying a heading's CMOS ``<body>`` division (an :class:`EpubDivision` value).
+
+Stamped on a heading whenever its :class:`~guffin.model.guffin_semantics.Matter` resolves, so the
+division survives on the ``<section>`` in Pandoc's EPUB output.  The
+:mod:`guffin.render.epub_post_processing` pass promotes it to the content document's ``<body
+epub:type>`` and then removes it, so it never reaches the reader (and other formats drop it).
+"""
 
 
 class EpubDivision(enum.StrEnum):
@@ -141,3 +156,27 @@ def epub_type_for(element: StructuralElement) -> EpubType | None:
         The mapped :class:`EpubType`, or ``None`` if *element* is not represented in EPUB.
     """
     return _EPUB_TYPE_BY_STRUCTURAL_ELEMENT.get(element)
+
+
+_EPUB_DIVISION_BY_MATTER: Final[dict[Matter, EpubDivision]] = {
+    Matter.FRONT: EpubDivision.FRONTMATTER,
+    Matter.BODY: EpubDivision.BODYMATTER,
+    Matter.BACK: EpubDivision.BACKMATTER,
+}
+"""Maps a CMOS :class:`~guffin.model.guffin_semantics.Matter` to the EPUB ``<body>`` division that.
+
+expresses it — the conventional (CMOS) placement Guffin wants, regardless of Pandoc's own default.
+"""
+
+
+@validate_call
+def epub_division_for_matter(matter: Matter) -> EpubDivision:
+    """Return the EPUB ``<body>`` division that expresses a CMOS *matter*.
+
+    Args:
+        matter: The book division a heading belongs to.
+
+    Returns:
+        The corresponding :class:`EpubDivision`.
+    """
+    return _EPUB_DIVISION_BY_MATTER[matter]
