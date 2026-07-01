@@ -2,9 +2,9 @@
 
 Public symbols:
 
-- **Enumerations**: :class:`Role` — the role a Guffin attribute plays (publishing / semantics);
-  :class:`GuffinSemantics` — the attributes Guffin recognizes, each member a :class:`GuffinAttribute`
-  in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain.
+- **Enumerations**: :class:`GuffinSemantics` — the attributes Guffin recognizes, each member a
+  :class:`GuffinAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain;
+  :class:`Role` — the role a Guffin attribute plays (publishing / semantics).
 - **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Role`.
 """
