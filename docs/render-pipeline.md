@@ -227,11 +227,12 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 
 ### Summary
 
-| Profile data | Phase | Consumed in | Format renderers change? |
+| Directive / data (source) | Phase | Consumed in | Format renderers change? |
 |---|---|---|---|
-| `title`, `subtitle`, `authors`, `date`, `publisher`, `rights`, `identifier` (`guffin`-domain attributes) | 1 (build) ✅ | `pandoc_rendering._document_metadata` | no (Bergfink title page extended for `publisher`/`rights`) |
-| `top_level_division`, `number_sections` (+ `number_sections` option override), title page | 2 (convert) ✅ | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
-| `drop_preamble` (+ `include_preamble` option override) | 0 (prepare) ✅ | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
+| `title`, `subtitle`, `authors`, `date`, `publisher`, `rights`, `identifier` (**content**: `guffin`-domain attributes — not the profile's unused bibliographic fields) | 1 (build) ✅ | `pandoc_rendering._document_metadata` | no (Bergfink title page extended for `publisher`/`rights`) |
+| `top_level_division`, `number_sections` (+ `number_sections` option override), title page (profile policy) | 2 (convert) ✅ | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
+| `drop_preamble` (+ `include_preamble` option override) (profile policy) | 0 (prepare) ✅ | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
+| `emit_abstract` (profile policy; `ManuscriptProfile.abstract`/`keywords`) | — | nothing — **deferred indefinitely** | — |
 
 
 ## The `GuffinSemantics` vocabulary (model → format mapping)
@@ -239,7 +240,10 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 > **Status.** The vocabulary lives in `model/guffin_semantics.py`; the **EPUB** mapping that consumes
 > it (`render/epub_semantics.py` + the `pandoc_rendering` header stamping) is **built**, including the
 > `<body>` division post-processing (`render/epub_post_processing.py`) that restores the CMOS placement.
-> The `→ PDF/Typst` and `→ GFM` mappings are still future work.
+> Two vocabulary-driven effects are already **format-independent**: the matter-derived `unnumbered`
+> numbering exemption (stamped in the shared Doc build; honored by both paginated formats) and parts
+> detection (`has_parts` → the PART division's pagination). The **per-element** `→ PDF/Typst` and
+> `→ GFM` maps (the analogue of the EPUB `epub:type` map) are still future work.
 
 `model/guffin_semantics.py` defines a **format-independent vocabulary aligned with publishing-industry
 standards and conventions** — the semantic identity of the pieces of a document, independent of how
@@ -269,6 +273,12 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
 - **`element_type_of(assignment)` / `matter_of(assignment)`** — read an `element-type` / `matter`
   assignment's sole value and coerce it to a `StructuralElement` / `Matter` (rejecting non-members);
   each enum *is* the spec of its legal values.
+- **`find_guffin_attribute(vertex, attribute)`** — a vertex's assignment for a `GuffinSemantics`
+  attribute (the Guffin domain supplied automatically).
+- **`has_parts(tree)`** — whether a `VertexTree` structures its top level as parts: any level-1
+  heading tagged `element-type:: part`. The vocabulary's structure-detection entry point — it drives
+  `BookProfile.with_parts` (via `cli/common.resolve_profile`), and with it the PART division's
+  pagination in both paginated formats.
 
 Member **names follow publishing labels** (`table-of-contents`, `list-of-illustrations`,
 `about-the-author`), some of which deliberately diverge from any one format's terms — e.g. EPUB's
@@ -289,8 +299,10 @@ layer translates. (Where a publishing label and a format term happen to coincide
   EpubType` map (e.g. `COLOPHON → EpubType.COLOPHON`, `TABLE_OF_CONTENTS → EpubType.TOC`,
   `None` for elements with no EPUB term). During Doc construction, `pandoc_rendering._heading_semantics`
   uses a heading's `element-type` / `matter` tags to (a) stamp `epub:type` on the section header and
-  (b) add the `unnumbered` class to any non-body-matter section, so Pandoc's `--number-sections`
-  numbers only body-matter chapters. A bare `matter::` tag **overrides** the element's default matter
+  (b) add the `unnumbered` class to any non-body-matter section, so only body-matter chapters are
+  numbered — the class is stamped in the shared Doc build, so the exemption holds in **both**
+  paginated formats (Pandoc's `--number-sections` for EPUB, the Typst writer for PDF), not just
+  EPUB. A bare `matter::` tag **overrides** the element's default matter
   (logging any disagreement), letting an author place a bespoke or non-standard section. The
   `epub:type` rides along harmlessly in the other formats (GFM drops it, Typst ignores it).
   - **`EpubType.division` records Pandoc, not CMOS.** Whereas `StructuralElement.matter` is the CMOS
@@ -310,47 +322,23 @@ layer translates. (Where a publishing label and a format term happen to coincide
     heading's **`Matter`**, not its `epub:type`, so it also corrects bespoke `matter::` sections that
     carry no `epub:type` (e.g. a matter-only "Who is this Book for?"). It is `<body>`-level metadata,
     invisible in Apple Books, but makes the package's structural semantics conformant.
-- **PDF / GFM — future.** Sibling maps (`→ PDF/Typst`, `→ GFM`) will let the same authored tags drive
-  those formats. (The `data-guffin-matter`/`epub:type` scaffolding rides along harmlessly there — GFM
-  drops it, Typst ignores it.)
+- **PDF / GFM — partially reached, per-element maps future.** The tags already drive two
+  format-independent effects in PDF: the matter-derived `unnumbered` exemption (above) and, via
+  `has_parts` → the PART division, part/chapter pagination. What remains future is the
+  **per-element** sibling map (`StructuralElement → PDF/Typst`, `→ GFM`) — the analogue of
+  `epub_type_for`, letting an element's identity drive format-specific styling/placement. (The
+  `data-guffin-matter`/`epub:type` scaffolding rides along harmlessly meanwhile — GFM drops it,
+  Typst ignores it.)
 
 ## Status & next steps
 
-1. **Plumbing — done.** `render/project.py` defines the model and `profile_for()` maps a
-   `ProjectType` to its default-valued profile. The CLI exposes `--type default|book|manuscript`
-   (parallel to `--format`, default `default`), and each render entry point
-   (`render/{md,pdf,epub}_rendering.py::render`) now takes a `profile: ProjectProfile` argument,
-   threaded through `cli/export_roam_tree.py::_render`. Nothing reads `StructuralPolicy` to shape
-   output yet — the renderers currently only log it.
-2. **Structural effects — done.** All four `StructuralPolicy` directives are applied, in both
-   paginated formats:
-   - `top_level_division` → EPUB `--split-level` (`epub_rendering._split_level_for()`: a parts-based
-     book splits at level 2, everything else at level 1) and PDF book mode (`bergfink.typst`: a page
-     break before each level-1 heading — and, in a parts book, before each level-2 chapter — plus
-     hierarchical level-1 numbering, mirroring EPUB). A parts book is auto-detected from the
-     content: a level-1 heading tagged `element-type:: part` (`resolve_profile` / `has_parts`).
-   - `number_sections` → both formats (EPUB `--number-sections`; PDF `-V number-sections=true`).
-   - `emit_title_page` → PDF Bergfink title page (`-V titlepage=true` → `titlepage.typ`, rendered
-     from the document metadata) and EPUB `--epub-title-page=true|false` (Pandoc's metadata-driven
-     title page). A `default` article emits none; a book/manuscript emits one.
-   - `drop_preamble` → both formats prune the root page's loose preamble from the `VertexTree`
-     (`model/vertex_tree.py::drop_root_preamble()`) before the Doc build; a book drops it, other
-     types keep it, and the `include_preamble` render option (CLI `--preamble/--no-preamble`)
-     overrides in either direction.
-3. **Bibliographic metadata — done.** A root page's `guffin`-domain attributes (title/subtitle/
-   authors/date/publisher/rights/identifier, folded from a `guffin-meta::` block) populate the
-   document metadata via `pandoc_rendering._document_metadata`; `title` overrides the page title and
-   the rest map to the writer's native metadata (Typst title block, EPUB `dc:*`). The title page
-   shows the same fields in the same order in both paginated formats (the Bergfink title page was
-   extended with `publisher`/`rights` for parity). These never render as body pills.
-4. **Structural-element tagging — done (EPUB).** Headings tagged `element-type::` / `matter::` drive
-   the section `epub:type`, the front/body/back-matter distinction (which excludes non-body-matter
-   sections from `--number-sections`), and the content document's `<body epub:type>` division: the
-   heading's CMOS matter is stamped as `data-guffin-matter` and, after packaging,
-   `render/epub_post_processing.py` promotes it to `<body>` and strips the scaffold — so the packaged
-   e-book reflects the CMOS placement rather than Pandoc's default (see the `GuffinSemantics`
-   vocabulary section above).
-5. **Possible refinements.** PDF book mode now distinguishes PART from CHAPTER for pagination
+The project-type model, structural effects, bibliographic metadata, and structural-element tagging
+described above are all built; what remains:
+
+1. **Possible refinements.** PDF book mode now distinguishes PART from CHAPTER for pagination
    (a parts book breaks pages at chapters too), but numbering still runs hierarchically from
    level 1 in both — a parts book numbers its parts `1`, `2`, … rather than `I`, `II`, … with
    chapters numbered continuously. (`abstract` is deferred indefinitely.)
+2. **Per-element format maps.** The `StructuralElement → PDF/Typst` and `→ GFM` sibling maps (the
+   analogue of the EPUB `epub_type_for`), letting an element's identity drive format-specific
+   styling/placement; see the `GuffinSemantics` vocabulary section above.
