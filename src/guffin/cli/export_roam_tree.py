@@ -3,23 +3,25 @@
 
 Fetches all descendant blocks identified by ``TARGET`` via the Roam Local API,
 transcribes them into a :class:`~guffin.vertex_tree.VertexTree`, and writes the
-result in one of two output formats controlled by ``--format``:
+result in one of three output formats controlled by ``--format``.  In every
+format the output filename stem embeds the selected ``--type`` project profile as
+a ``.<type>`` segment (e.g. ``Foo.book.pdf``):
 
 - **Markdown** (default, ``--format markdown``) — renders the tree to
-  GFM via :func:`~guffin.render.md_rendering.vertex_tree_to_md`, then writes in one
+  GFM via :func:`~guffin.render.md_rendering.render`, then writes in one
   of two bundle modes:
 
   - **Bundle mode** (default, ``--bundle``) — fetches Cloud Firestore images
-    and writes a self-contained ``<output_dir>/<target>.mdbundle/`` directory
-    via :func:`~guffin.render.md_rendering.bundle_md_document`.  Pass
-    ``--cache-dir`` to avoid re-downloading unchanged assets across runs.
+    and writes a self-contained ``<output_dir>/<target>.<type>.mdbundle/``
+    directory.  Pass ``--cache-dir`` to avoid re-downloading unchanged assets
+    across runs.
   - **Plain mode** (``--no-bundle``) — writes the GFM text directly
-    to ``<output_dir>/<target>.md``.
+    to ``<output_dir>/<target>.<type>.md``.
 
 - **PDF** (``--format pdf``) — builds a Pandoc object model directly from
   the :class:`~guffin.vertex_tree.VertexTree` via
-  :func:`~guffin.render.pdf_rendering.render_pdf` and writes
-  ``<output_dir>/<target>.pdf``.  The ``--bundle/--no-bundle`` option does
+  :func:`~guffin.render.pdf_rendering.render` and writes
+  ``<output_dir>/<target>.<type>.pdf``.  The ``--bundle/--no-bundle`` option does
   not apply and is ignored.  Pass
   ``--template-dir`` to supply a directory containing a ``user_cfg.typ``
   override for the bundled Bergfink Typst template.  Requires Pandoc and
@@ -28,7 +30,7 @@ result in one of two output formats controlled by ``--format``:
 - **EPUB** (``--format epub``) — builds a Pandoc object model directly from
   the :class:`~guffin.vertex_tree.VertexTree` via
   :func:`~guffin.render.epub_rendering.render` and writes
-  ``<output_dir>/<target>.epub``.  The page title becomes the EPUB
+  ``<output_dir>/<target>.<type>.epub``.  The page title becomes the EPUB
   ``dc:title`` and top-level headings become the e-book's chapters; images
   are embedded into the package.  The ``--bundle/--no-bundle`` and
   ``--template-dir`` options do not apply and are ignored.  Requires Pandoc
@@ -43,7 +45,7 @@ treated as a page title (any ``[[ ]]`` wrapper is stripped).  A page whose title
 happens to match one of those UID forms would be misidentified — this edge case
 is considered negligible in practice.
 
-Logging is colorized by level via :mod:`guffin.logging_config` and
+Logging is colorized by level via :mod:`guffin.cli.logging_config` and
 configurable via the ``LOG_LEVEL`` environment variable (default: ``INFO``).
 
 Public symbols:
@@ -69,9 +71,11 @@ from typing import Annotated, Final
 
 import typer
 
+from guffin.cli.common import deduce_out_file_stem, fetch_roam_trees
+from guffin.cli.logging_config import configure_logging
+from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.common.provenance import Provenance, gather_provenance
 from guffin.model.render_bundle import RenderBundle
-from guffin.cli.logging_config import configure_logging
 from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render as render_md
 from guffin.render.pdf_rendering import render as render_pdf
@@ -86,8 +90,6 @@ from guffin.render.render_options import (
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
-from guffin.cli.common import deduce_out_file_stem, fetch_roam_trees
-from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -208,7 +210,7 @@ def main(
         ),
     ] = True,
 ) -> None:
-    """Export a Roam Research page or node subtree to Markdown or PDF.
+    """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
 
     TARGET is a Roam page title (optionally wrapped in ``[[ ]]``), a node UID, or a
     block reference ``((uid))``.  When wrapped in ``(( ))`` or matching the node-UID

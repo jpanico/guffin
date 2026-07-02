@@ -17,14 +17,18 @@ from typing import Final, Literal, Self, final
 
 from pydantic import Base64Bytes, BaseModel, ConfigDict, Field, HttpUrl, validate_call
 
+from guffin.common.media_type import MediaType
 from guffin.roam.asset import RoamAsset
 from guffin.roam.local_api import (
     ApiEndpoint,
-    Request as LocalApiRequest,
-    Response as LocalApiResponse,
     invoke_action,
 )
-from guffin.common.media_type import MediaType
+from guffin.roam.local_api import (
+    Request as LocalApiRequest,
+)
+from guffin.roam.local_api import (
+    Response as LocalApiResponse,
+)
 
 logger = logging.getLogger(__name__)
 

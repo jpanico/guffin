@@ -2,6 +2,7 @@
 
 import textwrap
 
+from guffin.cli.common import deduce_out_file_stem
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
@@ -30,8 +31,6 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.project import ProjectType
-
-from guffin.cli.common import deduce_out_file_stem
 
 _IMAGE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"

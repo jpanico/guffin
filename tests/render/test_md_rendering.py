@@ -3,15 +3,15 @@
 from pathlib import Path
 from typing import Final
 
+from conftest import FIXTURES_MD_DIR, article1_node_tree
+
 from guffin.common.filenames import shell_safe_filename
+from guffin.model.render_bundle import RenderBundle
 from guffin.render.md_rendering import render
 from guffin.render.project import DefaultProfile
 from guffin.render.render_options import MarkdownRenderOptions
-from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
-from guffin.model.render_bundle import RenderBundle
 from guffin.roam.local_api import ApiEndpoint
-
-from conftest import FIXTURES_MD_DIR, article1_node_tree
+from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 
 
 class TestRenderArticleFixture:

@@ -54,9 +54,9 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, TypeAdapter, field_v
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
+from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
-from guffin.common.markdown import HeadingLevel
 from guffin.model.attribute import AttributeAssignment, AttributeDomain
 from guffin.model.guffin_semantics import GuffinSemantics
 from guffin.model.link import VertexLink, VertexLinkKind

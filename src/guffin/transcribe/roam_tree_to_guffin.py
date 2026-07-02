@@ -46,6 +46,11 @@ from typing import Final, assert_never
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
 
+from guffin.common.code_language import CodeLanguage
+from guffin.common.geometry import ImageSize
+from guffin.common.markdown import FencedCodeBlock, HeadingLevel, parse_fenced_code_block
+from guffin.common.media_type import MediaType
+from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import (
     Attribute,
     AttributeAssignment,
@@ -56,6 +61,7 @@ from guffin.model.attribute import (
     ReferenceValue,
 )
 from guffin.model.link import VertexLink, VertexLinkKind
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -71,26 +77,8 @@ from guffin.model.vertex import (
     VertexRefs,
     VertexType,
 )
-from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
-from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
-from guffin.roam.node_network import min_effective_heading_level
-from guffin.roam.node import (
-    DEFAULT_CHILDREN_VIEW_TYPE,
-    NodeType,
-    RoamNode,
-    effective_children_view_type,
-    effective_heading_level,
-    image_size,
-    node_type,
-)
-from guffin.roam.node_tree import NodeTree, to_table
-from guffin.common.code_language import CodeLanguage
-from guffin.common.geometry import ImageSize
-from guffin.common.markdown import FencedCodeBlock, parse_fenced_code_block
-from guffin.common.media_type import MediaType
-from guffin.common.table import Table, TableStyle
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
@@ -102,8 +90,19 @@ from guffin.roam.markdown import (
     parse_callout,
     strip_block_quote_marker,
 )
-from guffin.common.markdown import HeadingLevel
+from guffin.roam.node import (
+    DEFAULT_CHILDREN_VIEW_TYPE,
+    NodeType,
+    RoamNode,
+    effective_children_view_type,
+    effective_heading_level,
+    image_size,
+    node_type,
+)
+from guffin.roam.node_network import min_effective_heading_level
+from guffin.roam.node_tree import NodeTree, to_table
 from guffin.roam.primitives import Id
+from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
 

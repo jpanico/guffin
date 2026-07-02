@@ -18,11 +18,14 @@ from pydantic import BaseModel, ConfigDict, ValidationError, validate_call
 
 from guffin.roam.local_api import (
     ApiEndpoint,
-    Request as LocalApiRequest,
-    Response as LocalApiResponse,
     invoke_action,
 )
-from guffin.roam.node_network import NodeNetwork
+from guffin.roam.local_api import (
+    Request as LocalApiRequest,
+)
+from guffin.roam.local_api import (
+    Response as LocalApiResponse,
+)
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch_result import (
     NodeFetchAnchor,
@@ -30,6 +33,7 @@ from guffin.roam.node_fetch_result import (
     NodeFetchSpec,
     QueryAnchorKind,
 )
+from guffin.roam.node_network import NodeNetwork
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)

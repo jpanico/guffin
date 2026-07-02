@@ -40,12 +40,13 @@ import tempfile
 from typing import Final
 
 import yaml
+from conftest import PDF_CREATION_TIMESTAMP
 
 from guffin.cli.common import deduce_out_file_stem
+from guffin.cli.logging_config import configure_logging
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import vertex_adapter
 from guffin.model.vertex_tree import VertexTree
-from guffin.cli.logging_config import configure_logging
 from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf
 from guffin.render.project import DefaultProfile, ProjectType
@@ -54,10 +55,8 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult
-from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.node_tree import NodeTree
-
-from conftest import PDF_CREATION_TIMESTAMP
+from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 
 configure_logging()
 

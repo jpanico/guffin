@@ -80,6 +80,7 @@ select = [
     "D",     # pydocstyle
     "E501",  # line too long
     "F401",  # unused imports
+    "I",     # isort — enforce sorted, grouped imports
     "UP",    # pyupgrade — enforce modern Python idioms
 ]
 

@@ -1,5 +1,8 @@
 """Unit tests for guffin.transcribe.roam_md_to_pandoc_md."""
 
+from guffin.roam.node import RoamNode
+from guffin.roam.node_tree import NodeTree
+from guffin.roam.primitives import IdObject
 from guffin.transcribe.roam_md_to_pandoc_md import (
     convert_bg_color_line,
     convert_block_link,
@@ -10,13 +13,10 @@ from guffin.transcribe.roam_md_to_pandoc_md import (
     convert_color_underline,
     convert_highlights,
     convert_italics,
-    convert_page_link_aliases,
     convert_page_link,
+    convert_page_link_aliases,
     to_pandoc_md,
 )
-from guffin.roam.node import RoamNode
-from guffin.roam.primitives import IdObject
-from guffin.roam.node_tree import NodeTree
 
 
 def _empty_tree() -> NodeTree:

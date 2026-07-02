@@ -1,20 +1,19 @@
 """Tests for the guffin.roam.node_tree module."""
 
 import pytest
+from conftest import article1_node_tree
 
+from guffin.common.validation import ValidationError
+from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
+from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import (
     all_children_present,
     all_parents_present,
     has_unique_ids,
     is_acyclic,
 )
-from guffin.roam.node import NodeType, RoamNode, node_type
-from guffin.roam.primitives import Id, IdObject
-from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator, is_tree, to_table
-from guffin.common.validation import ValidationError
-
-from conftest import article1_node_tree
+from guffin.roam.primitives import Id, IdObject
 
 
 class TestIsTree:

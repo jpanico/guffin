@@ -15,7 +15,7 @@ Public symbols:
 
 import logging
 import subprocess
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final
 

@@ -28,10 +28,10 @@ from typing import Final
 
 from pydantic import validate_call
 
-from guffin.roam.node import RoamNode, effective_heading_level
 from guffin.common.markdown import HeadingLevel
-from guffin.roam.primitives import Id, Uid
 from guffin.common.validation import ValidationError
+from guffin.roam.node import RoamNode, effective_heading_level
+from guffin.roam.primitives import Id, Uid
 
 type NodeNetwork = list[RoamNode]
 """A collection of :class:`~guffin.roam.node.RoamNode` instances.

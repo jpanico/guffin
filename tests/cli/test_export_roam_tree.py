@@ -9,6 +9,14 @@ from unittest.mock import patch
 
 import pytest
 import yaml
+from conftest import (
+    FIXTURES_MD_DIR,
+    FIXTURES_MDBUNDLE_DIR,
+    FIXTURES_PDF_DIR,
+    FIXTURES_YAML_DIR,
+    PDF_CREATION_TIMESTAMP,
+    article1_node_tree,
+)
 from typer.testing import CliRunner
 
 from guffin.cli.export_roam_tree import app
@@ -18,17 +26,7 @@ from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import Response as LocalApiResponse
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
-
 from guffin.transcribe.roam_tree_to_guffin import transcribe
-
-from conftest import (
-    FIXTURES_MD_DIR,
-    FIXTURES_MDBUNDLE_DIR,
-    FIXTURES_PDF_DIR,
-    FIXTURES_YAML_DIR,
-    PDF_CREATION_TIMESTAMP,
-    article1_node_tree,
-)
 
 
 class TestExportRoamTreeNoBundle:

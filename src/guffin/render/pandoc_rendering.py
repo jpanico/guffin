@@ -67,17 +67,15 @@ alias — live in :mod:`guffin.render.pandoc_ast`.
 # The four suppressed rules are triggered entirely by that Unknown propagation — disabling them
 # here avoids dozens of cascading false-positive errors without relaxing any other strict checks.
 
-from collections.abc import Callable
-from io import StringIO
 import html
 import logging
-
+from collections.abc import Callable
+from io import StringIO
 from pathlib import Path
 from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
-
 from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
@@ -91,6 +89,7 @@ from guffin.model.attribute import (
     attribute_value_text,
 )
 from guffin.model.guffin_semantics import GuffinSemantics, Matter, StructuralElement, element_type_of, matter_of
+from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -107,7 +106,6 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
-from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
 from guffin.roam.primitives import Uid

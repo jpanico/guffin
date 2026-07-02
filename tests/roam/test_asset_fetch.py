@@ -9,14 +9,13 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
+from conftest import FIXTURES_IMAGES_DIR
 from pydantic import HttpUrl, ValidationError
 
+from guffin.common.media_type import MediaType
 from guffin.roam.asset import RoamAsset
 from guffin.roam.asset_fetch import FetchRoamAsset, fetch_and_cache_asset
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
-from guffin.common.media_type import MediaType
-
-from conftest import FIXTURES_IMAGES_DIR
 
 logger = logging.getLogger(__name__)
 

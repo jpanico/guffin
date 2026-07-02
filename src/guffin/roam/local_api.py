@@ -17,8 +17,8 @@ Public symbols:
 import logging
 from typing import ClassVar, Final, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, validate_call
 import requests
+from pydantic import BaseModel, ConfigDict, Field, validate_call
 
 logger = logging.getLogger(__name__)
 

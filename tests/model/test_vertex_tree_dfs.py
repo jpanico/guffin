@@ -1,6 +1,7 @@
 """Tests for guffin.model.vertex_tree.VertexTreeDFSIterator."""
 
 import pytest
+from conftest import article1_vertex_tree
 
 from guffin.model.vertex import (
     HeadingVertex,
@@ -10,8 +11,6 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 from guffin.roam.primitives import Uid
-
-from conftest import article1_vertex_tree
 
 
 class TestVertexTreeDFSIterator:

@@ -19,6 +19,7 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.model.attribute import AttributeAssignment, sole_value_text
 from guffin.model.guffin_semantics import GuffinSemantics
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -32,7 +33,6 @@ from guffin.model.vertex import (
     Vertex,
     find_guffin_attribute,
 )
-from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.render.project import ProjectType
 from guffin.roam.local_api import ApiEndpoint

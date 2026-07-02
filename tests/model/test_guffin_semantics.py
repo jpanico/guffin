@@ -2,6 +2,7 @@
 
 import pytest
 import yaml
+from conftest import FIXTURES_YAML_DIR
 from pydantic import ValidationError
 
 from guffin.model.attribute import (
@@ -23,8 +24,6 @@ from guffin.model.guffin_semantics import (
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import find_guffin_attribute, vertex_adapter
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
-
-from conftest import FIXTURES_YAML_DIR
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
 

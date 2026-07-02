@@ -10,6 +10,7 @@ from typing import Final
 
 import pytest
 import regex
+from conftest import article5_node_tree
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
@@ -21,10 +22,8 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
 from guffin.render.project import BookProfile, DefaultProfile, ProjectProfile
 from guffin.render.render_options import EpubRenderOptions
-from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 from guffin.roam.local_api import ApiEndpoint
-
-from conftest import article5_node_tree
+from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 
 _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 _ARTICLE5_STEM: Final[str] = shell_safe_filename("[[Test Article]] 5")

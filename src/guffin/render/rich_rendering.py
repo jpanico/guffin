@@ -23,7 +23,6 @@ from typing import Final, TypeGuard, assert_never
 
 import regex
 from pydantic import validate_call
-
 from rich.console import Group, RenderableType
 from rich.markup import escape as markup_escape
 from rich.padding import Padding
@@ -33,7 +32,8 @@ from rich.text import Text
 from rich.tree import Tree as RichTree
 
 from guffin.common.geometry import ImageSize
-from guffin.common.table import Table as GuffinTable, TableStyle
+from guffin.common.table import Table as GuffinTable
+from guffin.common.table import TableStyle
 from guffin.model.attribute import AttributeAssignment, AttributeDomain, LiteralValue
 from guffin.model.vertex import (
     BlockQuoteVertex,
@@ -46,10 +46,10 @@ from guffin.model.vertex import (
     VertexType,
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
+from guffin.roam.markdown import IMAGE_LINK_RE, RoamCallout, parse_callout, strip_block_quote_marker
 from guffin.roam.node import NodeType, RoamNode, effective_heading_level, node_type
 from guffin.roam.node_fetch_result import NodeFetchResult
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator
-from guffin.roam.markdown import IMAGE_LINK_RE, RoamCallout, parse_callout, strip_block_quote_marker
 from guffin.roam.primitives import Id, IdObject, Uid
 
 logger = logging.getLogger(__name__)

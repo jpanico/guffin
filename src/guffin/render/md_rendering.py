@@ -30,20 +30,20 @@ _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
 
-import regex
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
+import regex
 from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
+from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     make_resolver,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
-from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.project import ProjectProfile
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint

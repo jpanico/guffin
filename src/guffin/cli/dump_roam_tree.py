@@ -56,6 +56,12 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.tree import Tree as RichTree
 
+from guffin.cli.common import fetch_roam_trees
+from guffin.cli.logging_config import configure_logging
+from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
+from guffin.model.render_bundle import RenderBundle
+from guffin.model.vertex_tree import VertexTree
+from guffin.render.image_fetch import fetch_and_enrich_images
 from guffin.render.rich_rendering import (
     DEFAULT_NODE_PANEL_PROPS,
     DEFAULT_VERTEX_PANEL_PROPS,
@@ -64,15 +70,9 @@ from guffin.render.rich_rendering import (
     build_rich_refs_box,
     build_rich_vertex_tree,
 )
-from guffin.render.image_fetch import fetch_and_enrich_images
+from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec, QueryAnchorKind
-from guffin.cli.common import fetch_roam_trees
-from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex_tree import VertexTree
-from guffin.roam.local_api import ApiEndpoint
-from guffin.cli.logging_config import configure_logging
-from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 
 configure_logging()
 logger = logging.getLogger(__name__)

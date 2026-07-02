@@ -26,7 +26,6 @@ from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
-
 from pydantic import validate_call
 
 logger = logging.getLogger(__name__)

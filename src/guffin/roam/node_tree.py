@@ -25,6 +25,9 @@ from typing import ClassVar, Final
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_call
 
+from guffin.common.table import Table
+from guffin.common.validation import ValidationError, ValidationResult, validate_all
+from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import (
     NodeNetwork,
     all_children_present,
@@ -34,10 +37,7 @@ from guffin.roam.node_network import (
     is_acyclic,
     refs_ids,
 )
-from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.primitives import Id, Uid
-from guffin.common.table import Table
-from guffin.common.validation import ValidationError, ValidationResult, validate_all
 
 logger = logging.getLogger(__name__)
 

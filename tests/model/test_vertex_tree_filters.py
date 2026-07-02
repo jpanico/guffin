@@ -1,11 +1,11 @@
 """Tests for guffin.model.vertex_tree filter helpers: image_vertices, image_urls, root_vertex."""
 
+from conftest import article1_vertex_tree
+
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.vertex import ImageVertex, PageVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree, image_urls, image_vertices, root_vertex
-
-from conftest import article1_vertex_tree
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fa.jpeg?alt=media&token=aaa"
 _URL_B = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fb.jpeg?alt=media&token=bbb"

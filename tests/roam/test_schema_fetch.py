@@ -11,8 +11,8 @@ import requests
 from pydantic import ValidationError
 
 from guffin.roam.local_api import ApiEndpoint
+from guffin.roam.schema import RoamSchema, SchemaAttribute, SchemaNamespace
 from guffin.roam.schema_fetch import FetchRoamSchema
-from guffin.roam.schema import SchemaAttribute, SchemaNamespace, RoamSchema
 
 logger = logging.getLogger(__name__)
 

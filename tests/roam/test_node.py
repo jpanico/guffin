@@ -1,11 +1,11 @@
 """Tests for the roam_node module."""
 
-import yaml
 import pytest
+import yaml
+from conftest import FIXTURES_YAML_DIR
 from pydantic import ValidationError
 
 from guffin.common.geometry import ImageSize
-from guffin.roam.primitives import ChildrenViewType, IdObject
 from guffin.roam.node import (
     DEFAULT_CHILDREN_VIEW_TYPE,
     NodeType,
@@ -14,8 +14,7 @@ from guffin.roam.node import (
     image_size,
     node_type,
 )
-
-from conftest import FIXTURES_YAML_DIR
+from guffin.roam.primitives import ChildrenViewType, IdObject
 
 _FIRESTORE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"

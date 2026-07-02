@@ -6,7 +6,9 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
+from guffin.common.code_language import CodeLanguage
 from guffin.model.attribute import AttributeDomain, LiteralValue, ReferenceValue
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
@@ -20,9 +22,12 @@ from guffin.model.vertex import (
     VertexType,
     vertex_adapter,
 )
-from guffin.common.code_language import CodeLanguage
-from guffin.roam.node_network import min_effective_heading_level
+from guffin.model.view import ChildrenLayout, VertexView
+from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
+from guffin.roam.node_network import min_effective_heading_level
+from guffin.roam.node_tree import NodeTree
+from guffin.roam.primitives import ChildrenViewType, IdObject
 from guffin.transcribe.roam_tree_to_guffin import (
     build_view_map,
     to_block_quote_vertex,
@@ -38,11 +43,6 @@ from guffin.transcribe.roam_tree_to_guffin import (
     transcribe_standalone_node,
     vertex_type,
 )
-from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
-from guffin.model.render_bundle import RenderBundle
-from guffin.model.view import ChildrenLayout, VertexView
-from guffin.roam.node_tree import NodeTree
-from guffin.roam.primitives import ChildrenViewType, IdObject
 
 # A real Firestore URL whose path yields a predictable file_name and media_type:
 #   file_name  = "photo.jpeg"

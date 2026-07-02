@@ -1,7 +1,10 @@
 """Tests for the guffin.roam.node_network module."""
 
 import pytest
+from conftest import article1_node_tree
 
+from guffin.common.validation import ValidationError
+from guffin.roam.node import RoamNode
 from guffin.roam.node_network import (
     all_children_present,
     all_descendants,
@@ -12,11 +15,7 @@ from guffin.roam.node_network import (
     min_effective_heading_level,
     refs_ids,
 )
-from guffin.roam.node import RoamNode
 from guffin.roam.primitives import IdObject
-from guffin.common.validation import ValidationError
-
-from conftest import article1_node_tree
 
 
 class TestAllDescendants:

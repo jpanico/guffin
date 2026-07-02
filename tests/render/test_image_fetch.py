@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Final
 
 import pytest
+from conftest import article1_vertex_tree
 from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
@@ -17,8 +18,6 @@ from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images, fetch_i
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.primitives import Uid
-
-from conftest import article1_vertex_tree
 
 _IMAGE_URL: HttpUrl = HttpUrl("https://example.com/imgs/photo.jpeg")
 _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint(

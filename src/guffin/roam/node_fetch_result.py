@@ -21,10 +21,10 @@ from typing import Final
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator, validate_call
 
-from guffin.roam.node_network import NodeNetwork
 from guffin.roam.node import NodesByUid, RoamNode
-from guffin.roam.primitives import ANCHORED_UID_RE
+from guffin.roam.node_network import NodeNetwork
 from guffin.roam.node_tree import NodeTree
+from guffin.roam.primitives import ANCHORED_UID_RE
 
 
 @enum.unique

@@ -5,7 +5,6 @@ from typing import Final
 import pytest
 from pydantic import ValidationError
 
-from guffin.roam.node_network import NodeNetwork
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch_result import (
     NodeFetchAnchor,
@@ -15,6 +14,7 @@ from guffin.roam.node_fetch_result import (
     anchor_node,
     anchor_tree,
 )
+from guffin.roam.node_network import NodeNetwork
 from guffin.roam.primitives import IdObject
 
 # ---------------------------------------------------------------------------

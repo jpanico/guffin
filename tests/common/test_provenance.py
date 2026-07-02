@@ -1,8 +1,9 @@
 """Tests for :mod:`guffin.common.provenance`."""
 
-import regex
 from datetime import UTC, datetime
 from typing import Final
+
+import regex
 
 from guffin.common.provenance import UNKNOWN_COMMIT, Provenance, gather_provenance
 
