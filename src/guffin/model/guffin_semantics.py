@@ -34,6 +34,7 @@ primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
 import enum
 import logging
 from collections.abc import Callable, Iterator
+from itertools import chain
 from typing import Final, Self
 
 from pydantic import Field, field_validator, validate_call
@@ -388,9 +389,11 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
 
     Each :class:`GuffinSemantics` member's :class:`GuffinAttribute` carries an :class:`Anchor`
     naming the :class:`~guffin.model.vertex.VertexType` it attaches to; this validator enforces
-    that invariant across *tree*: every guffin-domain assignment whose name is a recognised member
-    must be declared on a vertex of the anchor's type.  Default-domain assignments and
-    unrecognised guffin-domain names are outside the vocabulary and pass through unchecked.
+    that invariant across *tree* — both its tree vertices and its referenced-vertex stubs
+    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`): every guffin-domain assignment
+    whose name is a recognised member must be declared on a vertex of the anchor's type.
+    Default-domain assignments and unrecognised guffin-domain names are outside the vocabulary and
+    pass through unchecked.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
@@ -402,7 +405,7 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     """
     violations: Final[list[str]] = [
         violation
-        for vertex in tree.tree_vertices
+        for vertex in chain(tree.tree_vertices, tree.ref_vertices)
         for assignment in vertex.attribute_assignments or ()
         if (violation := _anchor_violation(vertex, assignment)) is not None
     ]
@@ -418,6 +421,8 @@ def _tagged_assignments(tree: VertexTree, attribute: GuffinSemantics) -> Iterato
     """Return every ``(vertex, assignment)`` pair in *tree* whose assignment is for *attribute*.
 
     An assignment matches when its name and domain equal the member's :class:`GuffinAttribute`.
+    Both the tree vertices and the referenced-vertex stubs
+    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`) are walked.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to walk.
@@ -428,7 +433,7 @@ def _tagged_assignments(tree: VertexTree, attribute: GuffinSemantics) -> Iterato
     """
     return (
         (vertex, assignment)
-        for vertex in tree.tree_vertices
+        for vertex in chain(tree.tree_vertices, tree.ref_vertices)
         for assignment in vertex.attribute_assignments or ()
         if _is_assignment_for(assignment, attribute)
     )
@@ -543,8 +548,10 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`, and
-    :func:`all_matter_tags_level_1` — via :func:`~guffin.common.validation.validate_all`.  All
-    validators run regardless of prior failures; the result accumulates every error found.
+    :func:`all_matter_tags_level_1` — via :func:`~guffin.common.validation.validate_all`.  Every
+    validator covers both the tree vertices and the referenced-vertex stubs
+    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`).  All validators run regardless of
+    prior failures; the result accumulates every error found.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.

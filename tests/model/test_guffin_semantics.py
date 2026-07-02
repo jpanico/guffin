@@ -193,8 +193,13 @@ def _attributed_tree(
     domain: AttributeDomain,
     value: str = "some value",
     heading_level: int = 1,
+    ref_heading_names: list[str] | None = None,
 ) -> VertexTree:
-    """A page + heading at *heading_level*, each carrying single-*value* assignments for the given names."""
+    """A page + heading at *heading_level*, each carrying single-*value* assignments for the given names.
+
+    When *ref_heading_names* is given, a stub heading (also at *heading_level*) carrying those
+    assignments is added to ``ref_vertices``.
+    """
 
     def _assignments(names: list[str]) -> list[AttributeAssignment] | None:
         return [_assignment(name, value, domain) for name in names] or None
@@ -208,7 +213,19 @@ def _attributed_tree(
         heading_level=heading_level,
         attribute_assignments=_assignments(heading_names),
     )
-    return VertexTree(tree_vertices=[page, heading])
+    ref_vertices = (
+        [
+            HeadingVertex(
+                uid="refhead01",
+                text="Ref Heading",
+                heading_level=heading_level,
+                attribute_assignments=_assignments(ref_heading_names),
+            )
+        ]
+        if ref_heading_names
+        else []
+    )
+    return VertexTree(tree_vertices=[page, heading], ref_vertices=ref_vertices)
 
 
 class TestAllAttributesAnchored:
@@ -254,6 +271,13 @@ class TestAllAttributesAnchored:
         tree = _attributed_tree([], ["not-a-member"], AttributeDomain.GUFFIN)
         assert all_attributes_anchored(tree) is None
 
+    def test_ref_vertices_are_checked(self) -> None:
+        """A misanchored attribute on a referenced-vertex stub is also a violation."""
+        tree = _attributed_tree([], [], AttributeDomain.GUFFIN, ref_heading_names=["publisher"])
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "uid='refhead01'" in error.message
+
 
 class TestAllElementTypeValuesLegal:
     """all_element_type_values_legal() rejects element-type values outside StructuralElement."""
@@ -275,6 +299,15 @@ class TestAllElementTypeValuesLegal:
         """Assignments for other attributes are outside this validator's scope."""
         tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="bogus")
         assert all_element_type_values_legal(tree) is None
+
+    def test_ref_vertices_are_checked(self) -> None:
+        """An illegal element-type value on a referenced-vertex stub is also a violation."""
+        tree = _attributed_tree(
+            [], [], AttributeDomain.GUFFIN, value="not-an-element", ref_heading_names=["element-type"]
+        )
+        error = all_element_type_values_legal(tree)
+        assert error is not None
+        assert "uid='refhead01'" in error.message
 
 
 class TestAllMatterValuesLegal:
@@ -298,6 +331,13 @@ class TestAllMatterValuesLegal:
         tree = _attributed_tree([], ["element-type"], AttributeDomain.GUFFIN, value="bogus")
         assert all_matter_values_legal(tree) is None
 
+    def test_ref_vertices_are_checked(self) -> None:
+        """An illegal matter value on a referenced-vertex stub is also a violation."""
+        tree = _attributed_tree([], [], AttributeDomain.GUFFIN, value="middle-matter", ref_heading_names=["matter"])
+        error = all_matter_values_legal(tree)
+        assert error is not None
+        assert "uid='refhead01'" in error.message
+
 
 class TestAllMatterTagsLevel1:
     """all_matter_tags_level_1() restricts matter tags to level-1 headings."""
@@ -319,6 +359,15 @@ class TestAllMatterTagsLevel1:
         """A matter tag on the page is the anchor validator's concern, not this one's."""
         tree = _attributed_tree(["matter"], [], AttributeDomain.GUFFIN, value="front-matter")
         assert all_matter_tags_level_1(tree) is None
+
+    def test_ref_vertices_are_checked(self) -> None:
+        """A matter tag on a deeper referenced-stub heading is also a violation."""
+        tree = _attributed_tree(
+            [], [], AttributeDomain.GUFFIN, value="front-matter", heading_level=2, ref_heading_names=["matter"]
+        )
+        error = all_matter_tags_level_1(tree)
+        assert error is not None
+        assert "uid='refhead01'" in error.message
 
 
 class TestValidateSemantics:
