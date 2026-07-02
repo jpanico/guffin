@@ -16,7 +16,12 @@ Public symbols:
   assignment's value as a :class:`Matter`; :func:`find_guffin_attribute` — find a vertex's
   assignment for a :class:`GuffinSemantics` attribute (the Guffin domain supplied automatically);
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
-  top level as parts (any level-1 heading tagged ``element-type:: part``).
+  top level as parts (any level-1 heading tagged ``element-type:: part``);
+  :func:`all_attributes_anchored` — :data:`~guffin.common.validation.Validator` requiring every
+  recognised guffin attribute to sit on its :class:`Anchor`'s vertex type;
+  :func:`validate_semantics` — run every vocabulary validator over a
+  :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
+  :class:`~guffin.common.validation.ValidationResult`.
 
 This module sits at the top of the ``model/`` conceptual stack: it may depend on the structural
 primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
@@ -29,8 +34,9 @@ from typing import Final, Self
 
 from pydantic import Field, field_validator, validate_call
 
+from guffin.common.validation import ValidationError, ValidationResult, validate_all
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, sole_value_text
-from guffin.model.vertex import Vertex, VertexType, find_attribute_assignment
+from guffin.model.vertex import HeadingVertex, Vertex, VertexType, find_attribute_assignment
 from guffin.model.vertex_tree import VertexTree, heading_vertices
 
 logger = logging.getLogger(__name__)
@@ -195,6 +201,30 @@ class StructuralElement(enum.StrEnum):
     COLOPHON = ("colophon", Matter.BACK)
 
 
+def _verified_sole_value(assignment: AttributeAssignment, attribute: GuffinSemantics) -> str:
+    """Verify *assignment* is for the Guffin *attribute* and return its sole value's text.
+
+    Args:
+        assignment: The attribute assignment to verify (one value expected).
+        attribute: The :class:`GuffinSemantics` member the assignment must be for.
+
+    Returns:
+        The text of the assignment's sole value.
+
+    Raises:
+        ValueError: If *assignment* is not for *attribute* (by name and domain), or does not carry
+            exactly one value.
+    """
+    expected: Final[GuffinAttribute] = attribute.value
+    assignment_attribute: Final[Attribute] = assignment.attribute.definition
+    if assignment_attribute.name != expected.name or assignment_attribute.domain != expected.domain:
+        raise ValueError(
+            f"expected an assignment of {expected.name!r} in the {expected.domain} domain, "
+            f"got {assignment_attribute.name!r} in {assignment_attribute.domain}"
+        )
+    return sole_value_text(assignment)
+
+
 @validate_call
 def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
     """Return the :class:`StructuralElement` that an ``element-type`` assignment names.
@@ -212,14 +242,7 @@ def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
         ValueError: If *assignment* is not for the ``element-type`` attribute, does not carry exactly
             one value, or its value is not a recognised :class:`StructuralElement`.
     """
-    element_type: Final[GuffinAttribute] = GuffinSemantics.ELEMENT_TYPE.value
-    definition: Final[Attribute] = assignment.attribute.definition
-    if definition.name != element_type.name or definition.domain != element_type.domain:
-        raise ValueError(
-            f"expected an {element_type.name!r} assignment in the {element_type.domain} domain, "
-            f"got {definition.name!r} in {definition.domain}"
-        )
-    return StructuralElement(sole_value_text(assignment))
+    return StructuralElement(_verified_sole_value(assignment, GuffinSemantics.ELEMENT_TYPE))
 
 
 @validate_call
@@ -239,14 +262,7 @@ def matter_of(assignment: AttributeAssignment) -> Matter:
         ValueError: If *assignment* is not for the ``matter`` attribute, does not carry exactly one
             value, or its value is not a recognised :class:`Matter`.
     """
-    matter_attribute: Final[GuffinAttribute] = GuffinSemantics.MATTER.value
-    definition: Final[Attribute] = assignment.attribute.definition
-    if definition.name != matter_attribute.name or definition.domain != matter_attribute.domain:
-        raise ValueError(
-            f"expected a {matter_attribute.name!r} assignment in the {matter_attribute.domain} domain, "
-            f"got {definition.name!r} in {definition.domain}"
-        )
-    return Matter(sole_value_text(assignment))
+    return Matter(_verified_sole_value(assignment, GuffinSemantics.MATTER))
 
 
 @validate_call
@@ -268,6 +284,31 @@ def find_guffin_attribute(vertex: Vertex, attribute: GuffinSemantics) -> Attribu
     return find_attribute_assignment(vertex, attribute.value.name, attribute.value.domain)
 
 
+def _is_part_heading(heading: HeadingVertex) -> bool:
+    """Return whether *heading* is a level-1 heading tagged ``element-type:: part``.
+
+    An assignment whose value is not a recognised :class:`StructuralElement` is ignored with a
+    warning.
+
+    Args:
+        heading: The heading vertex to check.
+
+    Returns:
+        ``True`` when *heading* declares itself a part, else ``False``.
+    """
+    if heading.heading_level != 1:
+        return False
+    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
+    if assignment is None:
+        return False
+    try:
+        element: Final[StructuralElement] = element_type_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring element-type on vertex uid=%r: %s", heading.uid, exc)
+        return False
+    return element is StructuralElement.PART
+
+
 @validate_call
 def has_parts(tree: VertexTree) -> bool:
     """Return whether *tree* structures its top level as parts.
@@ -284,17 +325,89 @@ def has_parts(tree: VertexTree) -> bool:
     Returns:
         ``True`` when a level-1 heading is tagged as a part, else ``False``.
     """
-    for heading in heading_vertices(tree):
-        if heading.heading_level != 1:
-            continue
-        assignment = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
-        if assignment is None:
-            continue
-        try:
-            element = element_type_of(assignment)
-        except ValueError as exc:
-            logger.warning("ignoring element-type on vertex uid=%r: %s", heading.uid, exc)
-            continue
-        if element is StructuralElement.PART:
-            return True
-    return False
+    return any(_is_part_heading(heading) for heading in heading_vertices(tree))
+
+
+_SEMANTICS_BY_NAME: Final[dict[str, GuffinSemantics]] = {member.value.name: member for member in GuffinSemantics}
+"""Maps each recognised guffin attribute name to its :class:`GuffinSemantics` member."""
+
+
+def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment) -> str | None:
+    """Describe how *assignment* violates the anchor invariant on *vertex*, or ``None``.
+
+    ``None`` when *assignment* is outside the vocabulary (non-guffin domain, or a name matching no
+    :class:`GuffinSemantics` member) or when it sits on its anchor's vertex type; otherwise a
+    description naming the attribute, its expected anchor, the actual vertex type, and the vertex
+    uid.
+
+    Args:
+        vertex: The vertex the assignment is declared on.
+        assignment: The attribute assignment to check.
+
+    Returns:
+        The violation description, or ``None`` when there is no violation.
+    """
+    assignment_attribute: Final[Attribute] = assignment.attribute.definition
+    if assignment_attribute.domain is not AttributeDomain.GUFFIN:
+        return None
+    member: Final[GuffinSemantics | None] = _SEMANTICS_BY_NAME.get(assignment_attribute.name)
+    if member is None:
+        return None
+    anchor: Final[Anchor] = member.value.anchor
+    if vertex.vertex_type is anchor.vertex_type:
+        return None
+    return (
+        f"{assignment_attribute.name!r} is {anchor.value}-anchored but declared on a "
+        f"{vertex.vertex_type.value!r} vertex (uid={vertex.uid!r})"
+    )
+
+
+@validate_call
+def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every guffin attribute to sit on its anchor.
+
+    Each :class:`GuffinSemantics` member's :class:`GuffinAttribute` carries an :class:`Anchor`
+    naming the :class:`~guffin.model.vertex.VertexType` it attaches to; this validator enforces
+    that invariant across *tree*: every guffin-domain assignment whose name is a recognised member
+    must be declared on a vertex of the anchor's type.  Default-domain assignments and
+    unrecognised guffin-domain names are outside the vocabulary and pass through unchecked.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every recognised guffin attribute is correctly anchored; a
+        :class:`~guffin.common.validation.ValidationError` listing every misanchored assignment
+        (attribute name, expected anchor, actual vertex type, and vertex uid) otherwise.
+    """
+    violations: Final[list[str]] = [
+        violation
+        for vertex in tree.tree_vertices
+        for assignment in vertex.attribute_assignments or ()
+        if (violation := _anchor_violation(vertex, assignment)) is not None
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="misanchored guffin attributes: " + "; ".join(violations),
+        validator=all_attributes_anchored,
+    )
+
+
+@validate_call
+def validate_semantics(tree: VertexTree) -> ValidationResult:
+    """Return a :class:`~guffin.common.validation.ValidationResult` for the vocabulary invariants on *tree*.
+
+    Runs every vocabulary validator — currently :func:`all_attributes_anchored` — via
+    :func:`~guffin.common.validation.validate_all`.  All validators run regardless of prior
+    failures; the result accumulates every error found.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        A :class:`~guffin.common.validation.ValidationResult` that is valid when *tree* satisfies
+        every vocabulary invariant, or contains one
+        :class:`~guffin.common.validation.ValidationError` per failed validator otherwise.
+    """
+    return validate_all(tree, [all_attributes_anchored])

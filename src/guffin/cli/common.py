@@ -19,8 +19,9 @@ from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
+from guffin.common.validation import ValidationResult
 from guffin.model.attribute import AttributeAssignment, sole_value_text
-from guffin.model.guffin_semantics import GuffinSemantics, find_guffin_attribute, has_parts
+from guffin.model.guffin_semantics import GuffinSemantics, find_guffin_attribute, has_parts, validate_semantics
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -59,6 +60,10 @@ def fetch_roam_trees(
     :class:`~guffin.model.vertex_tree.VertexTree` content paired with the presentation
     :data:`~guffin.model.view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
 
+    The transcribed content is checked against the guffin vocabulary invariants
+    (:func:`~guffin.model.guffin_semantics.validate_semantics`); violations — e.g. a guffin
+    attribute declared on the wrong vertex type — are logged as warnings but never fail the fetch.
+
     Propagates any exception raised during fetching or transcription; callers are
     responsible for exit behaviour.
 
@@ -90,6 +95,11 @@ def fetch_roam_trees(
     ), "anchor_tree is None; fetch_spec has include_node_tree=False, which is unsupported here"
     anchor_tree: Final[NodeTree] = result.anchor_tree
     render_bundle: Final[RenderBundle] = to_render_bundle(anchor_tree)
+    # Vocabulary invariants (e.g. guffin attributes on their anchored vertex type) are advisory:
+    # violations are surfaced loudly but never fail the fetch — a misplaced tag simply has no effect.
+    validation_result: Final[ValidationResult] = validate_semantics(render_bundle.content)
+    for validation_error in validation_result.errors:
+        logger.warning("guffin semantics validation: %s", validation_error)
     logger.debug("node_tree=%r\n\nrender_bundle=%r", anchor_tree, render_bundle)
     return result, render_bundle
 

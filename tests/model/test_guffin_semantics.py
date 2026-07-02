@@ -20,10 +20,12 @@ from guffin.model.guffin_semantics import (
     GuffinSemantics,
     Matter,
     StructuralElement,
+    all_attributes_anchored,
     element_type_of,
     find_guffin_attribute,
     has_parts,
     matter_of,
+    validate_semantics,
 )
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import HeadingVertex, PageVertex, vertex_adapter
@@ -180,3 +182,78 @@ class TestHasParts:
         with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
             assert has_parts(_tagged_heading_tree(1, "not-an-element")) is False
         assert "ignoring element-type" in caplog.text
+
+
+def _attributed_tree(page_names: list[str], heading_names: list[str], domain: AttributeDomain) -> VertexTree:
+    """A page + level-1 heading, each carrying single-value assignments for the given attribute names."""
+
+    def _assignments(names: list[str]) -> list[AttributeAssignment] | None:
+        return [_assignment(name, "some value", domain) for name in names] or None
+
+    page = PageVertex(
+        uid="pageroot1", title="Doc", children=["head00001"], attribute_assignments=_assignments(page_names)
+    )
+    heading = HeadingVertex(
+        uid="head00001", text="A Heading", heading_level=1, attribute_assignments=_assignments(heading_names)
+    )
+    return VertexTree(tree_vertices=[page, heading])
+
+
+class TestAllAttributesAnchored:
+    """all_attributes_anchored() enforces the GuffinAttribute.anchor invariant across a tree."""
+
+    def test_correctly_anchored_attributes_pass(self) -> None:
+        """Page metadata on the page and heading tags on a heading produce no error."""
+        tree = _attributed_tree(["title", "authors"], ["element-type", "matter"], AttributeDomain.GUFFIN)
+        assert all_attributes_anchored(tree) is None
+
+    def test_page_attribute_on_heading_is_reported(self) -> None:
+        """A page-anchored guffin attribute declared on a heading is a violation."""
+        tree = _attributed_tree([], ["publisher"], AttributeDomain.GUFFIN)
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "'publisher' is page-anchored" in error.message
+        assert "uid='head00001'" in error.message
+
+    def test_heading_attribute_on_page_is_reported(self) -> None:
+        """A heading-anchored guffin attribute declared on the page is a violation."""
+        tree = _attributed_tree(["element-type"], [], AttributeDomain.GUFFIN)
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "'element-type' is heading-anchored" in error.message
+        assert "uid='pageroot1'" in error.message
+
+    def test_all_violations_accumulate_into_one_error(self) -> None:
+        """Multiple misanchored attributes are all listed in the single error message."""
+        tree = _attributed_tree(["matter"], ["title", "rights"], AttributeDomain.GUFFIN)
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "'matter'" in error.message
+        assert "'title'" in error.message
+        assert "'rights'" in error.message
+
+    def test_default_domain_attributes_are_not_checked(self) -> None:
+        """A default-domain attribute sharing a recognised name is outside the vocabulary."""
+        tree = _attributed_tree([], ["title"], AttributeDomain.DEFAULT)
+        assert all_attributes_anchored(tree) is None
+
+    def test_unrecognised_guffin_names_are_not_checked(self) -> None:
+        """A guffin-domain attribute with an unrecognised name is outside the vocabulary."""
+        tree = _attributed_tree([], ["not-a-member"], AttributeDomain.GUFFIN)
+        assert all_attributes_anchored(tree) is None
+
+
+class TestValidateSemantics:
+    """validate_semantics() accumulates the vocabulary validators into a ValidationResult."""
+
+    def test_valid_tree_yields_valid_result(self) -> None:
+        """A correctly tagged tree validates cleanly."""
+        tree = _attributed_tree(["title"], ["element-type"], AttributeDomain.GUFFIN)
+        assert validate_semantics(tree).is_valid
+
+    def test_misanchored_tree_yields_error(self) -> None:
+        """A misanchored attribute surfaces as a ValidationError in the result."""
+        result = validate_semantics(_attributed_tree(["matter"], [], AttributeDomain.GUFFIN))
+        assert not result.is_valid
+        assert len(result.errors) == 1
+        assert "misanchored guffin attributes" in result.errors[0].message
