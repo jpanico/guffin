@@ -17,9 +17,12 @@ Public symbols:
   assignment for a :class:`GuffinSemantics` attribute (the Guffin domain supplied automatically);
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
   top level as parts (any level-1 heading tagged ``element-type:: part``);
-  :func:`all_attributes_anchored` — :data:`~guffin.common.validation.Validator` requiring every
-  recognised guffin attribute to sit on its :class:`Anchor`'s vertex type;
-  :func:`validate_semantics` — run every vocabulary validator over a
+  the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
+  (every recognised guffin attribute sits on its :class:`Anchor`'s vertex type),
+  :func:`all_element_type_values_legal` (every ``element-type`` value is a
+  :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
+  :class:`Matter`), and :func:`all_matter_tags_level_1` (every ``matter`` tag sits on a level-1
+  heading); :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
   :class:`~guffin.common.validation.ValidationResult`.
 
@@ -30,6 +33,7 @@ primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
 
 import enum
 import logging
+from collections.abc import Callable, Iterator
 from typing import Final, Self
 
 from pydantic import Field, field_validator, validate_call
@@ -201,6 +205,22 @@ class StructuralElement(enum.StrEnum):
     COLOPHON = ("colophon", Matter.BACK)
 
 
+def _is_assignment_for(assignment: AttributeAssignment, attribute: GuffinSemantics) -> bool:
+    """Return whether *assignment* is for the Guffin *attribute* (by name and domain).
+
+    Args:
+        assignment: The attribute assignment to test.
+        attribute: The :class:`GuffinSemantics` member to match against.
+
+    Returns:
+        ``True`` when the assignment's attribute name and domain equal the member's
+        :class:`GuffinAttribute`, else ``False``.
+    """
+    expected: Final[GuffinAttribute] = attribute.value
+    assignment_attribute: Final[Attribute] = assignment.attribute.definition
+    return assignment_attribute.name == expected.name and assignment_attribute.domain == expected.domain
+
+
 def _verified_sole_value(assignment: AttributeAssignment, attribute: GuffinSemantics) -> str:
     """Verify *assignment* is for the Guffin *attribute* and return its sole value's text.
 
@@ -215,9 +235,9 @@ def _verified_sole_value(assignment: AttributeAssignment, attribute: GuffinSeman
         ValueError: If *assignment* is not for *attribute* (by name and domain), or does not carry
             exactly one value.
     """
-    expected: Final[GuffinAttribute] = attribute.value
-    assignment_attribute: Final[Attribute] = assignment.attribute.definition
-    if assignment_attribute.name != expected.name or assignment_attribute.domain != expected.domain:
+    if not _is_assignment_for(assignment, attribute):
+        expected: Final[GuffinAttribute] = attribute.value
+        assignment_attribute: Final[Attribute] = assignment.attribute.definition
         raise ValueError(
             f"expected an assignment of {expected.name!r} in the {expected.domain} domain, "
             f"got {assignment_attribute.name!r} in {assignment_attribute.domain}"
@@ -394,13 +414,137 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     )
 
 
+def _tagged_assignments(tree: VertexTree, attribute: GuffinSemantics) -> Iterator[tuple[Vertex, AttributeAssignment]]:
+    """Return every ``(vertex, assignment)`` pair in *tree* whose assignment is for *attribute*.
+
+    An assignment matches when its name and domain equal the member's :class:`GuffinAttribute`.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to walk.
+        attribute: The Guffin attribute whose assignments to return.
+
+    Returns:
+        A lazy iterator of each matching assignment, paired with the vertex it is declared on.
+    """
+    return (
+        (vertex, assignment)
+        for vertex in tree.tree_vertices
+        for assignment in vertex.attribute_assignments or ()
+        if _is_assignment_for(assignment, attribute)
+    )
+
+
+def _illegal_value_violations(
+    tree: VertexTree,
+    attribute: GuffinSemantics,
+    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter],
+) -> list[str]:
+    """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to walk.
+        attribute: The Guffin attribute whose assignments to check.
+        value_coercer: The value coercer for the attribute (e.g. :func:`element_type_of`); a
+            :exc:`ValueError` from it marks the assignment as a violation.
+
+    Returns:
+        One description per rejected assignment (the vertex uid and the coercion error); empty
+        when every assignment coerces.
+    """
+    violations: Final[list[str]] = []
+    for vertex, assignment in _tagged_assignments(tree, attribute):
+        try:
+            value_coercer(assignment)
+        except ValueError as exc:
+            violations.append(f"on vertex uid={vertex.uid!r}: {exc}")
+    return violations
+
+
+@validate_call
+def all_element_type_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``element-type`` values.
+
+    Every :attr:`GuffinSemantics.ELEMENT_TYPE` assignment in *tree* must carry exactly one value,
+    and that value must name a :class:`StructuralElement` member — the authoritative set of legal
+    ``element-type`` values.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``element-type`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, GuffinSemantics.ELEMENT_TYPE, element_type_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal element-type values: " + "; ".join(violations),
+        validator=all_element_type_values_legal,
+    )
+
+
+@validate_call
+def all_matter_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``matter`` values.
+
+    Every :attr:`GuffinSemantics.MATTER` assignment in *tree* must carry exactly one value, and
+    that value must name a :class:`Matter` member — the authoritative set of legal ``matter``
+    values.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``matter`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, GuffinSemantics.MATTER, matter_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal matter values: " + "; ".join(violations),
+        validator=all_matter_values_legal,
+    )
+
+
+@validate_call
+def all_matter_tags_level_1(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every ``matter`` tag to sit on a level-1 heading.
+
+    A ``matter`` tag declares a heading's top-level book division, so it applies to level-1
+    headings only.  Non-heading hosts are not this validator's concern — they are already
+    reported by :func:`all_attributes_anchored`.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``matter`` tag sits on a level-1 heading; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"'matter' tag on a level-{vertex.heading_level} heading (uid={vertex.uid!r}); "
+        "'matter' applies to level-1 headings only"
+        for vertex, _assignment in _tagged_assignments(tree, GuffinSemantics.MATTER)
+        if isinstance(vertex, HeadingVertex) and vertex.heading_level != 1
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="misplaced matter tags: " + "; ".join(violations),
+        validator=all_matter_tags_level_1,
+    )
+
+
 @validate_call
 def validate_semantics(tree: VertexTree) -> ValidationResult:
     """Return a :class:`~guffin.common.validation.ValidationResult` for the vocabulary invariants on *tree*.
 
-    Runs every vocabulary validator — currently :func:`all_attributes_anchored` — via
-    :func:`~guffin.common.validation.validate_all`.  All validators run regardless of prior
-    failures; the result accumulates every error found.
+    Runs every vocabulary validator — :func:`all_attributes_anchored`,
+    :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`, and
+    :func:`all_matter_tags_level_1` — via :func:`~guffin.common.validation.validate_all`.  All
+    validators run regardless of prior failures; the result accumulates every error found.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
@@ -410,4 +554,12 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
         every vocabulary invariant, or contains one
         :class:`~guffin.common.validation.ValidationError` per failed validator otherwise.
     """
-    return validate_all(tree, [all_attributes_anchored])
+    return validate_all(
+        tree,
+        [
+            all_attributes_anchored,
+            all_element_type_values_legal,
+            all_matter_values_legal,
+            all_matter_tags_level_1,
+        ],
+    )

@@ -279,11 +279,14 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   heading tagged `element-type:: part`. The vocabulary's structure-detection entry point — it drives
   `BookProfile.with_parts` (via `cli/common.resolve_profile`), and with it the PART division's
   pagination in both paginated formats.
-- **`validate_semantics(tree)` / `all_attributes_anchored(tree)`** — the vocabulary's validation
-  pass (built on `common/validation`): every recognized guffin attribute must sit on the vertex type
-  its `Anchor` names (the `Anchor.vertex_type` correspondence is the enforced invariant). Run by
-  `cli/common.fetch_roam_trees` on the transcribed content; violations are logged as warnings —
-  advisory, never fatal — since a misanchored tag simply has no effect on the output.
+- **`validate_semantics(tree)`** — the vocabulary's validation pass (built on `common/validation`),
+  accumulating four validators: `all_attributes_anchored` (every recognized guffin attribute sits
+  on the vertex type its `Anchor` names — the `Anchor.vertex_type` correspondence is the enforced
+  invariant), `all_element_type_values_legal` / `all_matter_values_legal` (every `element-type` /
+  `matter` value is a `StructuralElement` / `Matter` member), and `all_matter_tags_level_1` (a
+  `matter` tag applies to level-1 headings only). Run by `cli/common.fetch_roam_trees` on the
+  transcribed content; violations are logged as warnings — advisory, never fatal — since a
+  misplaced or illegal tag simply has no effect on the output.
 
 Member **names follow publishing labels** (`table-of-contents`, `list-of-illustrations`,
 `about-the-author`), some of which deliberately diverge from any one format's terms — e.g. EPUB's

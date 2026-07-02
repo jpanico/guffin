@@ -21,6 +21,9 @@ from guffin.model.guffin_semantics import (
     Matter,
     StructuralElement,
     all_attributes_anchored,
+    all_element_type_values_legal,
+    all_matter_tags_level_1,
+    all_matter_values_legal,
     element_type_of,
     find_guffin_attribute,
     has_parts,
@@ -184,17 +187,26 @@ class TestHasParts:
         assert "ignoring element-type" in caplog.text
 
 
-def _attributed_tree(page_names: list[str], heading_names: list[str], domain: AttributeDomain) -> VertexTree:
-    """A page + level-1 heading, each carrying single-value assignments for the given attribute names."""
+def _attributed_tree(
+    page_names: list[str],
+    heading_names: list[str],
+    domain: AttributeDomain,
+    value: str = "some value",
+    heading_level: int = 1,
+) -> VertexTree:
+    """A page + heading at *heading_level*, each carrying single-*value* assignments for the given names."""
 
     def _assignments(names: list[str]) -> list[AttributeAssignment] | None:
-        return [_assignment(name, "some value", domain) for name in names] or None
+        return [_assignment(name, value, domain) for name in names] or None
 
     page = PageVertex(
         uid="pageroot1", title="Doc", children=["head00001"], attribute_assignments=_assignments(page_names)
     )
     heading = HeadingVertex(
-        uid="head00001", text="A Heading", heading_level=1, attribute_assignments=_assignments(heading_names)
+        uid="head00001",
+        text="A Heading",
+        heading_level=heading_level,
+        attribute_assignments=_assignments(heading_names),
     )
     return VertexTree(tree_vertices=[page, heading])
 
@@ -243,17 +255,95 @@ class TestAllAttributesAnchored:
         assert all_attributes_anchored(tree) is None
 
 
+class TestAllElementTypeValuesLegal:
+    """all_element_type_values_legal() rejects element-type values outside StructuralElement."""
+
+    def test_legal_value_passes(self) -> None:
+        """An element-type assignment naming a StructuralElement produces no error."""
+        tree = _attributed_tree([], ["element-type"], AttributeDomain.GUFFIN, value="chapter")
+        assert all_element_type_values_legal(tree) is None
+
+    def test_illegal_value_reported(self) -> None:
+        """An element-type value outside StructuralElement is a violation naming the vertex."""
+        tree = _attributed_tree([], ["element-type"], AttributeDomain.GUFFIN, value="not-an-element")
+        error = all_element_type_values_legal(tree)
+        assert error is not None
+        assert "uid='head00001'" in error.message
+        assert "not-an-element" in error.message
+
+    def test_other_attributes_ignored(self) -> None:
+        """Assignments for other attributes are outside this validator's scope."""
+        tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="bogus")
+        assert all_element_type_values_legal(tree) is None
+
+
+class TestAllMatterValuesLegal:
+    """all_matter_values_legal() rejects matter values outside Matter."""
+
+    def test_legal_value_passes(self) -> None:
+        """A matter assignment naming a Matter division produces no error."""
+        tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="front-matter")
+        assert all_matter_values_legal(tree) is None
+
+    def test_illegal_value_reported(self) -> None:
+        """A matter value outside Matter is a violation naming the vertex."""
+        tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="middle-matter")
+        error = all_matter_values_legal(tree)
+        assert error is not None
+        assert "uid='head00001'" in error.message
+        assert "middle-matter" in error.message
+
+    def test_other_attributes_ignored(self) -> None:
+        """Assignments for other attributes are outside this validator's scope."""
+        tree = _attributed_tree([], ["element-type"], AttributeDomain.GUFFIN, value="bogus")
+        assert all_matter_values_legal(tree) is None
+
+
+class TestAllMatterTagsLevel1:
+    """all_matter_tags_level_1() restricts matter tags to level-1 headings."""
+
+    def test_matter_on_level_1_heading_passes(self) -> None:
+        """A matter tag on a level-1 heading produces no error."""
+        tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="front-matter")
+        assert all_matter_tags_level_1(tree) is None
+
+    def test_matter_on_deeper_heading_reported(self) -> None:
+        """A matter tag on a level-2 heading is a violation naming the level and vertex."""
+        tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="front-matter", heading_level=2)
+        error = all_matter_tags_level_1(tree)
+        assert error is not None
+        assert "level-2" in error.message
+        assert "uid='head00001'" in error.message
+
+    def test_matter_on_non_heading_left_to_anchor_validator(self) -> None:
+        """A matter tag on the page is the anchor validator's concern, not this one's."""
+        tree = _attributed_tree(["matter"], [], AttributeDomain.GUFFIN, value="front-matter")
+        assert all_matter_tags_level_1(tree) is None
+
+
 class TestValidateSemantics:
     """validate_semantics() accumulates the vocabulary validators into a ValidationResult."""
 
     def test_valid_tree_yields_valid_result(self) -> None:
         """A correctly tagged tree validates cleanly."""
-        tree = _attributed_tree(["title"], ["element-type"], AttributeDomain.GUFFIN)
+        tree = _attributed_tree(["title"], ["element-type"], AttributeDomain.GUFFIN, value="chapter")
         assert validate_semantics(tree).is_valid
 
     def test_misanchored_tree_yields_error(self) -> None:
         """A misanchored attribute surfaces as a ValidationError in the result."""
-        result = validate_semantics(_attributed_tree(["matter"], [], AttributeDomain.GUFFIN))
+        result = validate_semantics(_attributed_tree(["matter"], [], AttributeDomain.GUFFIN, value="front-matter"))
         assert not result.is_valid
         assert len(result.errors) == 1
         assert "misanchored guffin attributes" in result.errors[0].message
+
+    def test_violations_accumulate_across_validators(self) -> None:
+        """Distinct invariant violations each surface as their own ValidationError."""
+        # An illegal matter value on a level-2 heading violates two invariants at once.
+        result = validate_semantics(
+            _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="middle-matter", heading_level=2)
+        )
+        assert not result.is_valid
+        assert len(result.errors) == 2
+        messages = " | ".join(error.message for error in result.errors)
+        assert "illegal matter values" in messages
+        assert "misplaced matter tags" in messages
