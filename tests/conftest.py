@@ -39,7 +39,7 @@ export is byte-reproducible; shared by the live PDF fixture test and ``regen_fix
 
 
 @pytest.fixture(autouse=True)
-def _neutralize_render_env(monkeypatch: pytest.MonkeyPatch) -> None:
+def neutralize_render_env(monkeypatch: pytest.MonkeyPatch) -> None:
     """Pin the render-shaping environment variables for every test.
 
     The colophon embeds the live export time and source commit, which would vary every run and per
