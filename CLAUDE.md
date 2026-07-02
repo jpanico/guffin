@@ -2,13 +2,24 @@
 
 ## Project Overview
 Python 3.14 toolkit for exporting Roam Research pages to self-contained
-documents.  Supports two output formats:
+documents.  Supports three output formats:
 
 - **Markdown** — renders to GFM and optionally bundles Cloud
   Firestore-hosted images into a self-contained `.mdbundle` directory.
 - **PDF** — builds a Pandoc object model directly from the `VertexTree`
   via Panflute, fetches and embeds Cloud Firestore images, and produces a
-  PDF via Pandoc + Typst.
+  PDF via Pandoc + Typst (the bundled Bergfink template).
+- **EPUB** — builds the same Pandoc object model and produces an EPUB 3
+  e-book via Pandoc, with images embedded into the package.
+
+Orthogonal to the format, a **project type** (`default`/`book`/`manuscript`,
+CLI `--type`) says what *kind* of work is being produced; its structural
+policy drives title page, heading numbering, chapter/part pagination, and
+preamble handling in the paginated formats.  Document structure and
+bibliographic metadata are declared in the Roam content itself through the
+format-independent `guffin`-domain attribute vocabulary (`guffin-meta::`
+metadata, `element-type::`/`matter::` heading tags), which each renderer
+maps to its format's own conventions.
 
 ## Setup
 ```bash
@@ -210,7 +221,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `docs/roam-querying.md` — Datalog query patterns used to fetch Roam nodes
 - `docs/roam-schema.md` — Roam Datomic schema reference (attributes, value types, cardinality)
 - `docs/processing_pipeline.md` — high-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages; the render stage is detailed in `render-pipeline.md`
-- `docs/render-pipeline.md` — the render layer (model → output two-stage pipeline) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`; and the format-independent `GuffinSemantics` vocabulary and how it maps to each output format
+- `docs/render-pipeline.md` — the render layer (model → output four-phase pipeline: prepare → build → convert → post-process) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`; and the format-independent `GuffinSemantics` vocabulary and how it maps to each output format
 
 ## Environment Variables
 - `GUFFIN_ROAM_LOCAL_API_PORT` — port for Roam Local API (all CLI tools)

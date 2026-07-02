@@ -26,7 +26,8 @@ flowchart LR
   presentation overlay. Roam-flavored Markdown (Roamdown) is translated to Pandoc Markdown here.
 - **Render (`render/`)** — the `RenderBundle`, together with a `ProjectProfile` (what *kind* of work)
   and `RenderOptions` (how / where to output), is rendered to Markdown, PDF, or EPUB. This stage is
-  itself a two-stage Panflute → Pandoc pipeline; see [render-pipeline.md](render-pipeline.md).
+  itself a four-phase pipeline (model transforms → Panflute Doc → Pandoc conversion → package
+  post-processing); see [render-pipeline.md](render-pipeline.md).
 
 The flow is one-directional and the layers don't reach back: each stage depends only on those to its
 left, with `model/` as the shared content layer that `transcribe/` produces and `render/` consumes.

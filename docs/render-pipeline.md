@@ -15,14 +15,16 @@ it.
 > `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`), and `drop_preamble` (a
 > model-side prune of the root page's loose preamble, overridable via the CLI
 > `--preamble/--no-preamble`). Bibliographic **metadata** is also applied — sourced from a root
-> page's `guffin`-domain attributes (see Stage 1). `abstract` is **deferred indefinitely**. This doc
+> page's `guffin`-domain attributes (see Phase 1 — metadata). `abstract` is **deferred indefinitely**. This doc
 > describes both the current shape and the intended design. Sections that describe planned behavior
 > are marked _(planned)_.
 
 
-## The render layer is a two-stage pipeline
+## The render layer is a four-phase pipeline
 
-Every export format goes through the same two stages:
+Every export format runs through the same core — build a format-neutral Pandoc `Doc` (Phase 1),
+then convert it (Phase 2) — bracketed by two conditional phases: model transforms before the build
+(Phase 0), and package post-processing after the conversion (Phase 3, EPUB only).
 
 ```mermaid
 flowchart LR
@@ -31,24 +33,40 @@ flowchart LR
     RO["RenderOptions<br/><i>output_format + knobs</i>"]
 
     subgraph render["render/"]
-      S1["<b>Stage 1</b><br/>vertex_tree_to_pandoc()<br/><i>VertexTree → Panflute Doc</i>"]
-      S2["<b>Stage 2</b><br/>md / pdf / epub _rendering<br/><i>Doc → format output</i>"]
+      P0["<b>Phase 0 — prepare</b><br/>model transforms<br/><i>VertexTree → VertexTree</i>"]
+      P1["<b>Phase 1 — build</b><br/>vertex_tree_to_pandoc()<br/><i>VertexTree → Panflute Doc</i>"]
+      P2["<b>Phase 2 — convert</b><br/>md / pdf / epub _rendering<br/><i>Doc → format output</i>"]
+      P3["<b>Phase 3 — post-process</b><br/>epub_post_processing<br/><i>.epub → .epub</i>"]
     end
 
-    VB -. "metadata (guffin attrs)" .-> S1
-    VB --> S1
-    PP -. "StructuralPolicy" .-> S2
-    RO --> S2
-    S1 --> S2
-    S2 --> OUT["Markdown · PDF · EPUB"]
+    VB --> P0
+    VB -. "metadata (guffin attrs)" .-> P1
+    PP -. "StructuralPolicy" .-> P0
+    PP -. "StructuralPolicy" .-> P2
+    RO --> P0
+    RO --> P2
+    P0 --> P1
+    P1 --> P2
+    P2 --> P3
+    P3 --> OUT["Markdown · PDF · EPUB"]
 ```
 
-- **Stage 1 — `render/pandoc_rendering.py::vertex_tree_to_pandoc()`**: walks the `VertexTree`,
-  batch-parses inline Pandoc Markdown, and builds a **format-neutral** Panflute `Doc` (the in-memory
-  Pandoc AST). Shared by all formats.
-- **Stage 2 — `render/{md,pdf,epub}_rendering.py`**: serializes the `Doc` to Pandoc JSON and invokes
-  Pandoc (plus Typst for PDF), applying the **format-specific** writer, Lua filters, templates, and
-  bundled resources.
+- **Phase 0 — prepare** (in each `render()` entry point): transforms on the `VertexTree`, before
+  any Pandoc structure exists — `drop_attribute_assignments()` (the `suppress_attributes` option),
+  `drop_root_preamble()` (the profile's `drop_preamble` directive, overridable via the
+  `include_preamble` option), and `fetch_and_enrich_images()` (Cloud Firestore assets +
+  `enrich_image_original_sizes()`).  Conditional: which transforms run depends on the options and
+  the structural policy.
+- **Phase 1 — build** — `render/pandoc_rendering.py::vertex_tree_to_pandoc()`: walks the
+  `VertexTree`, batch-parses inline Pandoc Markdown, and builds a **format-neutral** Panflute `Doc`
+  (the in-memory Pandoc AST). Shared by all formats.
+- **Phase 2 — convert** — `render/{md,pdf,epub}_rendering.py`: serializes the `Doc` to Pandoc JSON
+  and invokes Pandoc (plus Typst for PDF), applying the **format-specific** writer, Lua filters,
+  templates, and bundled resources.
+- **Phase 3 — post-process** — `render/epub_post_processing.py` (EPUB only): rewrites the packaged
+  `.epub` for effects Pandoc's writer cannot be told at invocation time —
+  `restore_matter_divisions()` (the CMOS `<body>` divisions) and `stamp_titlepage_provenance()`
+  (the provenance colophon onto the generated title page).
 
 
 ## Three orthogonal inputs
@@ -96,8 +114,8 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
 - `ProjectProfile` — the format-independent base, with bibliographic fields
   (`title`, `authors`, `date`, `identifier`) shared by every kind of work. _Note:_ these fields are
   **not currently the metadata source** — bibliographic metadata is sourced from the content's
-  `guffin`-domain attributes instead (see Stage 1), so the profile fields are presently unused (a
-  possible future fallback/override).
+  `guffin`-domain attributes instead (see Phase 1 — metadata), so the profile fields are presently
+  unused (a possible future fallback/override).
 - Per-type subclasses — `DefaultProfile`, `BookProfile` (`with_parts`),
   `ManuscriptProfile` (`abstract`, `keywords`).
 - `StructuralPolicy` — the format-independent structural directives a profile **resolves to** (via
@@ -121,9 +139,10 @@ In the **render layer only** — never in `transcribe/`. Two reasons:
 2. **Structural.** `ProjectProfile` lives in `render/`, and `transcribe/` may not depend on
    `render/` (sibling layers). So `transcribe/` *cannot* import it — it would invert the layering.
 
-Within `render/`, the profile's effects split across the two stages.
+Within `render/`, the profile's effects split across the pipeline phases: metadata is consumed in
+the build (Phase 1); structure is consumed in the prepare and convert phases (Phases 0 and 2).
 
-### Stage 1 — metadata _(applied)_
+### Phase 1 (build) — metadata _(applied)_
 
 The bibliographic metadata source is a root page's **`guffin`-domain attributes** — the attributes
 folded from a `guffin-meta::` container block (the Guffin metadata convention). In
@@ -143,32 +162,32 @@ generated title page, while on the PDF side the bundled Bergfink template was ex
 `titlepage.typ` (upstream Bergfink renders only title, subtitle, authors, date). `identifier` is
 catalog metadata only (EPUB OPF `dc:identifier`); no format renders it on the title page.
 
-### Stage 2 — structure _(partially applied)_
+### Phases 0 & 2 (prepare / convert) — structure _(applied)_
 
-The `StructuralPolicy` directives (`top_level_division`, `number_sections`, title page) are **not
-representable in the Pandoc AST** — the AST has only `Header` elements with a level 1–6, no
-"chapter," "numbered," or "title page" node. They are produced by the **writer + template at
-invocation time**, and the mechanism differs per format:
+Three of the `StructuralPolicy` directives (`top_level_division`, `number_sections`, title page)
+are **not representable in the Pandoc AST** — the AST has only `Header` elements with a level 1–6,
+no "chapter," "numbered," or "title page" node. They are produced by the **writer + template at
+invocation time** (Phase 2), and the mechanism differs per format:
 
 | Policy directive | PDF (Typst / Bergfink) | EPUB (Pandoc) |
 |---|---|---|
 | chapters vs. sections | `-V top-level-division` → Bergfink book mode (Typst ignores `--top-level-division`) ✅ | `--split-level` ✅ |
 | numbering | `-V number-sections=true` (Bergfink variable) ✅ | `--number-sections` ✅ |
 | title page | `-V titlepage=true` → Bergfink `titlepage.typ` partial ✅ | `--epub-title-page=true\|false` ✅ |
-| loose preamble | model prune (`drop_root_preamble`) before the Doc build ✅ | same model prune ✅ |
+| loose preamble | model prune (`drop_root_preamble`), Phase 0 ✅ | same model prune, Phase 0 ✅ |
 
-`drop_preamble` is the exception to "writer + template at invocation time": it *is* expressible
-before the AST — the root page's loose preamble (children preceding its first heading child, which
-belong to no titled division) is pruned from the `VertexTree` by
-`model/vertex_tree.py::drop_root_preamble()` before `vertex_tree_to_pandoc()` runs, identically in
-both paginated renderers. Without the prune, a book's preamble surfaces badly: Pandoc's EPUB writer
-wraps the orphaned blocks in a synthetic first chapter *titled with the document title* (duplicating
-the title page, and stamped `bodymatter` ahead of the front matter), and the PDF strands them on
-their own page before chapter 1. An explicit `include_preamble` render option (CLI
-`--preamble/--no-preamble`) overrides the profile's directive in either direction; Markdown output
-is untouched (no pagination, no prune).
+The fourth, `drop_preamble`, *is* expressible before the AST and is applied in Phase 0 (prepare):
+the root page's loose preamble (children preceding its first heading child, which belong to no
+titled division) is pruned from the `VertexTree` by `model/vertex_tree.py::drop_root_preamble()`
+before `vertex_tree_to_pandoc()` runs, identically in both paginated renderers. Without the prune,
+a book's preamble surfaces badly: Pandoc's EPUB writer wraps the orphaned blocks in a synthetic
+first chapter *titled with the document title* (duplicating the title page, and stamped
+`bodymatter` ahead of the front matter), and the PDF strands them on their own page before
+chapter 1. An explicit `include_preamble` render option (CLI `--preamble/--no-preamble`) overrides
+the profile's directive in either direction; Markdown output is untouched (no pagination, no
+prune).
 
-So the structural half **cannot** be absorbed entirely into stage 1: the EPUB renderer
+So the structural half **cannot** be absorbed entirely into the build (Phase 1): the EPUB renderer
 (`--split-level`) and the PDF path (a Bergfink template variable) each consult the policy. The
 chapters-vs-sections distinction was the heaviest piece, since Bergfink had no chapter concept and it
 had to be authored into the Typst template (below) rather than toggled with a flag.
@@ -208,11 +227,11 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 
 ### Summary
 
-| Profile data | Stage | Consumed in | Format renderers change? |
+| Profile data | Phase | Consumed in | Format renderers change? |
 |---|---|---|---|
-| `title`, `subtitle`, `authors`, `date`, `publisher`, `rights`, `identifier` (`guffin`-domain attributes) | 1 (metadata) ✅ | `pandoc_rendering._document_metadata` | no (Bergfink title page extended for `publisher`/`rights`) |
-| `top_level_division`, `number_sections` (+ `number_sections` option override), title page | 2 (structure) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
-| `drop_preamble` (+ `include_preamble` option override) | 2 (structure) ✅ | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
+| `title`, `subtitle`, `authors`, `date`, `publisher`, `rights`, `identifier` (`guffin`-domain attributes) | 1 (build) ✅ | `pandoc_rendering._document_metadata` | no (Bergfink title page extended for `publisher`/`rights`) |
+| `top_level_division`, `number_sections` (+ `number_sections` option override), title page | 2 (convert) ✅ | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
+| `drop_preamble` (+ `include_preamble` option override) | 0 (prepare) ✅ | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
 
 
 ## The `GuffinSemantics` vocabulary (model → format mapping)
