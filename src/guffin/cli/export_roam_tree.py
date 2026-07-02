@@ -213,6 +213,7 @@ def main(
         bool | None,
         typer.Option(
             "--preamble/--no-preamble",
+            envvar="GUFFIN_INCLUDE_PREAMBLE",
             help=(
                 "PDF and EPUB only. Keep (--preamble) or drop (--no-preamble) the root page's "
                 "loose preamble: children preceding its first heading, which belong to no titled "
@@ -225,6 +226,7 @@ def main(
         bool | None,
         typer.Option(
             "--numbering/--no-numbering",
+            envvar="GUFFIN_NUMBER_SECTIONS",
             help=(
                 "PDF and EPUB only. Turn all heading numbering on (--numbering) or off "
                 "(--no-numbering). Unset (default), the --type profile decides: 'book' numbers "
