@@ -231,7 +231,7 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
 - **`GuffinAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`Anchor`**: the
   kind of vertex it attaches to. `Anchor` has `PAGE` and `HEADING`, and each member carries the
   `VertexType` it corresponds to (the Anchor↔VertexType correspondence is a single source of truth on
-  the enum, in the leaf module `model/vertex_type.py`).
+  the enum; `VertexType` is defined in `model/vertex.py`).
 - **`GuffinSemantics`** — the enum of recognized guffin attributes, each a `GuffinAttribute`:
   - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
     `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts, folded from a `guffin-meta::` block
@@ -261,7 +261,8 @@ layer translates. (Where a publishing label and a format term happen to coincide
 ### How it maps to output (the design contract)
 
 - Everything in `model/guffin_semantics.py` lives in `model/` with **zero render/format dependency**
-  (it depends only on `model/attribute.py` and the leaf `model/vertex_type.py`).
+  (it depends only on the `model/` structural primitives — `attribute.py`, `vertex.py`,
+  `vertex_tree.py` — sitting at the top of that stack).
 - Every per-format mapping lives in `render/`, as an **explicit map keyed on the model member** —
   never a name-equality lookup against the format's own vocabulary. Some members have no counterpart
   in a given format (and vice-versa), so the map is deliberately partial.

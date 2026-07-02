@@ -6,7 +6,7 @@ Public symbols:
   the ``element-type`` heading tag), each member a :class:`GuffinAttribute` in the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
   domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading), each
-  carrying its :class:`~guffin.model.vertex_type.VertexType`; :class:`Matter` —
+  carrying its :class:`~guffin.model.vertex.VertexType`; :class:`Matter` —
   the book division a part belongs to (front / body / back); :class:`StructuralElement` — a book's
   structural elements by name, each carrying its :class:`Matter` division (its organizational parts).
 - **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
@@ -30,9 +30,8 @@ from typing import Final, Self
 from pydantic import Field, field_validator, validate_call
 
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, sole_value_text
-from guffin.model.vertex import Vertex, find_attribute_assignment
+from guffin.model.vertex import Vertex, VertexType, find_attribute_assignment
 from guffin.model.vertex_tree import VertexTree, heading_vertices
-from guffin.model.vertex_type import VertexType
 
 logger = logging.getLogger(__name__)
 
@@ -40,11 +39,11 @@ logger = logging.getLogger(__name__)
 class Anchor(enum.StrEnum):
     """The kind of vertex a Guffin attribute attaches to.
 
-    Each member carries the :class:`~guffin.model.vertex_type.VertexType` it corresponds to — the type
+    Each member carries the :class:`~guffin.model.vertex.VertexType` it corresponds to — the type
     of vertex an attribute with this anchor may be declared on.
 
     Attributes:
-        vertex_type: The :class:`~guffin.model.vertex_type.VertexType` this anchor corresponds to.
+        vertex_type: The :class:`~guffin.model.vertex.VertexType` this anchor corresponds to.
         PAGE: The attribute attaches to a page vertex (the whole document).
         HEADING: The attribute attaches to a heading vertex (a section).
     """
