@@ -241,9 +241,10 @@ def render(
             loads it in place of the bundled default; all other template files always
             come from the bundled package data), ``dump_pandoc_ast`` (write the
             serialized Panflute Doc to ``<output_dir>/<filename_stem>.pandoc.json``
-            before invoking Pandoc), and ``include_preamble`` (keep or drop the root
+            before invoking Pandoc), ``include_preamble`` (keep or drop the root
             page's loose preamble; ``None`` defers to the profile policy's
-            ``drop_preamble``).
+            ``drop_preamble``), and ``number_sections`` (turn heading numbering on
+            or off; ``None`` defers to the profile policy's ``number_sections``).
 
     Raises:
         RuntimeError: If Pandoc or Typst is not found, or if the Pandoc
@@ -284,11 +285,15 @@ def render(
             raise FileNotFoundError(f"template_dir={template_dir!r} does not contain {_USER_CFG_FILENAME!r}")
         logger.debug("using user_cfg override: %s", user_cfg_path)
 
+    # An explicit number_sections option overrides the profile's directive.
+    number_sections: Final[bool] = (
+        profile.structural_policy.number_sections if options.number_sections is None else options.number_sections
+    )
     template_args: Final[list[str]] = _typst_template_args(
         bundled_dir,
         template_path,
         template_dir,
-        profile.structural_policy.number_sections,
+        number_sections,
         profile.structural_policy.top_level_division,
         profile.structural_policy.emit_title_page,
         render_bundle.provenance if options.emit_colophon else None,

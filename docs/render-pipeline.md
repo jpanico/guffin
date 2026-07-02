@@ -186,7 +186,9 @@ increments rather than by chunking.)
 `--number-sections` flag (the epub writer numbers headings directly), while PDF passes
 `-V number-sections=true` — Bergfink reads numbering from its own `number-sections` variable, and
 the `--number-sections` *flag* does not set it. Both derive the boolean from
-`profile.structural_policy.number_sections`. On the PDF side the template-applying args are built
+`profile.structural_policy.number_sections`, subject to the tri-state `number_sections` render
+option (CLI `--numbering/--no-numbering`; `None` defers to the profile, an explicit value turns
+all heading numbering on or off). On the PDF side the template-applying args are built
 once by `pdf_rendering._typst_template_args()` and shared with the `GUFFIN_DUMP_TYPST` dump, so the
 dumped Typst always matches the produced PDF.
 
@@ -205,7 +207,7 @@ its top-level headings unnumbered.)
 | Profile data | Stage | Consumed in | Format renderers change? |
 |---|---|---|---|
 | `title`, `subtitle`, `authors`, `date`, `publisher`, `rights`, `identifier` (`guffin`-domain attributes) | 1 (metadata) ✅ | `pandoc_rendering._document_metadata` | no (Bergfink title page extended for `publisher`/`rights`) |
-| `top_level_division`, `number_sections`, title page | 2 (structure) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
+| `top_level_division`, `number_sections` (+ `number_sections` option override), title page | 2 (structure) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
 | `drop_preamble` (+ `include_preamble` option override) | 2 (structure) ✅ | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
 
 

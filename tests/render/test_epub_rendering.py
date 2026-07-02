@@ -58,6 +58,7 @@ def _render_epub(
     suppress_attributes: bool = False,
     include_preamble: bool | None = None,
     emit_colophon: bool = False,
+    number_sections: bool | None = None,
 ) -> Path:
     """Render *bundle* to ``<out_dir>/<stem>.epub`` and return the path."""
     render(
@@ -70,6 +71,7 @@ def _render_epub(
             suppress_attributes=suppress_attributes,
             include_preamble=include_preamble,
             emit_colophon=emit_colophon,
+            number_sections=number_sections,
         ),
     )
     return out_dir / f"{stem}.epub"
@@ -122,6 +124,9 @@ def multi_level_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Pat
         "article": _render_epub(out, bundle, DefaultProfile(), "article"),  # SECTION -> split-level 1
         "book": _render_epub(out, bundle, BookProfile(), "book"),  # CHAPTER -> split-level 1
         "parts": _render_epub(out, bundle, BookProfile(with_parts=True), "parts"),  # PART -> split-level 2
+        # number_sections option overrides of the profile policy:
+        "book_unnumbered": _render_epub(out, bundle, BookProfile(), "book_unnumbered", number_sections=False),
+        "article_numbered": _render_epub(out, bundle, DefaultProfile(), "article_numbered", number_sections=True),
     }
 
 
@@ -319,12 +324,17 @@ class TestSplitLevel:
 
 
 class TestNumberSections:
-    """Heading numbering follows the profile's structural policy (Pandoc ``--number-sections``)."""
+    """Heading numbering follows the profile's policy and the ``number_sections`` option override."""
 
     def test_book_numbers_headings_default_does_not(self, multi_level_epubs: dict[str, Path]) -> None:
         """A book (number_sections=True) numbers headings; the default article does not."""
         assert _has_section_numbers(multi_level_epubs["book"])
         assert not _has_section_numbers(multi_level_epubs["article"])
+
+    def test_number_sections_option_overrides_policy(self, multi_level_epubs: dict[str, Path]) -> None:
+        """number_sections=False unnumbers a book; number_sections=True numbers an article."""
+        assert not _has_section_numbers(multi_level_epubs["book_unnumbered"])
+        assert _has_section_numbers(multi_level_epubs["article_numbered"])
 
 
 class TestTitlePage:

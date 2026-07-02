@@ -130,9 +130,10 @@ def render(
     The EPUB is split into separate content files at the heading level given by ``--split-level``,
     derived from ``profile``'s structural policy: a book with parts (chapters at heading level 2)
     splits at level 2, every other project type splits at level 1 so each top-level heading begins
-    a new file.  When the policy's ``number_sections`` is set, headings are numbered via Pandoc's
-    ``--number-sections``.  The policy's ``emit_title_page`` drives Pandoc's ``--epub-title-page``,
-    which includes (or omits) a title page generated from the document metadata.
+    a new file.  When the policy's ``number_sections`` is set (subject to the option override
+    below), headings are numbered via Pandoc's ``--number-sections``.  The policy's
+    ``emit_title_page`` drives Pandoc's ``--epub-title-page``, which includes (or omits) a title
+    page generated from the document metadata.
 
     When ``options.emit_colophon`` is set and the bundle carries provenance, its summary rides the
     foot of the generated title page when one is emitted (stamped after packaging via
@@ -153,15 +154,20 @@ def render(
             created if absent), ``cache_dir`` (optional cross-run asset cache), ``suppress_attributes``
             (drop Roam attribute assignments before the build), ``dump_pandoc_ast`` (write the
             serialized Panflute Doc to ``<output_dir>/<filename_stem>.pandoc.json`` before invoking
-            Pandoc), and ``include_preamble`` (keep or drop the root page's loose preamble;
-            ``None`` defers to the profile policy's ``drop_preamble``).
+            Pandoc), ``include_preamble`` (keep or drop the root page's loose preamble; ``None``
+            defers to the profile policy's ``drop_preamble``), and ``number_sections`` (turn
+            heading numbering on or off; ``None`` defers to the profile policy's
+            ``number_sections``).
 
     Raises:
         RuntimeError: If Pandoc is not found, or if the Pandoc conversion fails.
     """
     logger.debug("rendering EPUB; structural_policy=%s", profile.structural_policy)
     split_level: Final[int] = _split_level_for(profile.structural_policy.top_level_division)
-    number_sections: Final[bool] = profile.structural_policy.number_sections
+    # An explicit number_sections option overrides the profile's directive.
+    number_sections: Final[bool] = (
+        profile.structural_policy.number_sections if options.number_sections is None else options.number_sections
+    )
     emit_title_page: Final[bool] = profile.structural_policy.emit_title_page
     # An explicit include_preamble option overrides the profile's drop_preamble directive.
     drop_preamble: Final[bool] = (

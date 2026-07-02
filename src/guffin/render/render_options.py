@@ -92,13 +92,14 @@ class RenderOptions(BaseModel):
         dump_pandoc_ast: bool = False,
         emit_colophon: bool = False,
         include_preamble: bool | None = None,
+        number_sections: bool | None = None,
     ) -> RenderOptions:
         """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
 
         The single place that assembles per-format options, so callers thread one object rather than a
         long parameter list.  Format-specific knobs apply only to the format that uses them
-        (``template_dir`` to PDF, ``bundle`` to Markdown, ``include_preamble`` to PDF and EPUB); the
-        rest are common to every format.
+        (``template_dir`` to PDF, ``bundle`` to Markdown, ``include_preamble`` and
+        ``number_sections`` to PDF and EPUB); the rest are common to every format.
 
         Args:
             output_format: The output format whose options subclass to build.
@@ -111,6 +112,9 @@ class RenderOptions(BaseModel):
             emit_colophon: Stamp the output with a provenance colophon from the bundle's provenance.
             include_preamble: PDF/EPUB-only; keep the root page's loose preamble (``True``), drop
                 it (``False``), or defer to the project profile's policy (``None``, default).
+            number_sections: PDF/EPUB-only; number the headings (``True``), turn all heading
+                numbering off (``False``), or defer to the project profile's policy (``None``,
+                default).
 
         Returns:
             The :class:`RenderOptions` subclass matching *output_format*.
@@ -125,6 +129,7 @@ class RenderOptions(BaseModel):
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
                     include_preamble=include_preamble,
+                    number_sections=number_sections,
                 )
             case OutputFormat.EPUB:
                 return EpubRenderOptions(
@@ -134,6 +139,7 @@ class RenderOptions(BaseModel):
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
                     include_preamble=include_preamble,
+                    number_sections=number_sections,
                 )
             case OutputFormat.MARKDOWN:
                 return MarkdownRenderOptions(
@@ -177,6 +183,9 @@ class PdfRenderOptions(RenderOptions):
             first heading child) in the output.  ``None`` (default) defers to the project
             profile's :attr:`~guffin.render.project.StructuralPolicy.drop_preamble` directive;
             ``True`` forces the preamble in, ``False`` forces it out.
+        number_sections: Whether headings are numbered.  ``None`` (default) defers to the project
+            profile's :attr:`~guffin.render.project.StructuralPolicy.number_sections` directive;
+            ``True`` forces numbering on, ``False`` forces all heading numbering off.
     """
 
     output_format: Literal[OutputFormat.PDF] = Field(
@@ -187,6 +196,9 @@ class PdfRenderOptions(RenderOptions):
     )
     include_preamble: bool | None = Field(
         default=None, description="Keep the root page's loose preamble; None defers to the profile's policy."
+    )
+    number_sections: bool | None = Field(
+        default=None, description="Number the headings; None defers to the profile's policy."
     )
 
 
@@ -202,6 +214,9 @@ class EpubRenderOptions(RenderOptions):
             first heading child) in the output.  ``None`` (default) defers to the project
             profile's :attr:`~guffin.render.project.StructuralPolicy.drop_preamble` directive;
             ``True`` forces the preamble in, ``False`` forces it out.
+        number_sections: Whether headings are numbered.  ``None`` (default) defers to the project
+            profile's :attr:`~guffin.render.project.StructuralPolicy.number_sections` directive;
+            ``True`` forces numbering on, ``False`` forces all heading numbering off.
     """
 
     output_format: Literal[OutputFormat.EPUB] = Field(
@@ -209,4 +224,7 @@ class EpubRenderOptions(RenderOptions):
     )
     include_preamble: bool | None = Field(
         default=None, description="Keep the root page's loose preamble; None defers to the profile's policy."
+    )
+    number_sections: bool | None = Field(
+        default=None, description="Number the headings; None defers to the profile's policy."
     )

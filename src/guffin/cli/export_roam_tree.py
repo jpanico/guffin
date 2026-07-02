@@ -221,6 +221,17 @@ def main(
             ),
         ),
     ] = None,
+    numbering: Annotated[
+        bool | None,
+        typer.Option(
+            "--numbering/--no-numbering",
+            help=(
+                "PDF and EPUB only. Turn all heading numbering on (--numbering) or off "
+                "(--no-numbering). Unset (default), the --type profile decides: 'book' numbers "
+                "its headings, other types do not. Ignored when --format markdown."
+            ),
+        ),
+    ] = None,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
 
@@ -293,6 +304,7 @@ def main(
         dump_pandoc_ast=dump_pandoc_ast,
         emit_colophon=colophon,
         include_preamble=preamble,
+        number_sections=numbering,
     )
 
     _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)
