@@ -2,6 +2,8 @@
 
 Public symbols:
 
+- :class:`SemanticsValidationError` — raised when strict semantics validation rejects the
+  transcribed content.
 - :func:`fetch_roam_trees` — fetch nodes for a :class:`~guffin.roam.node_fetch_result.NodeFetchSpec`
   and return a :class:`~guffin.roam.node_fetch_result.NodeFetchResult` paired with an optional
   :class:`~guffin.vertex_tree.VertexTree`, ready for rendering or further processing.
@@ -46,11 +48,26 @@ from guffin.transcribe.roam_tree_to_guffin import to_render_bundle
 logger = logging.getLogger(__name__)
 
 
+class SemanticsValidationError(Exception):
+    """Raised when strict semantics validation rejects the transcribed content.
+
+    Attributes:
+        result: The :class:`~guffin.common.validation.ValidationResult` whose errors caused the
+            rejection.
+    """
+
+    def __init__(self, result: ValidationResult) -> None:
+        """Store the full validation result for inspection by callers."""
+        super().__init__("guffin semantics validation failed: " + "; ".join(str(e) for e in result.errors))
+        self.result: ValidationResult = result
+
+
 @validate_call
 def fetch_roam_trees(
     fetch_spec: NodeFetchSpec,
     include_vertex_tree: bool,
     api_endpoint: ApiEndpoint,
+    strict_semantics: bool = False,
 ) -> tuple[NodeFetchResult, RenderBundle | None]:
     """Fetch Roam nodes for *fetch_spec* and build a validated node tree and render bundle.
 
@@ -61,8 +78,9 @@ def fetch_roam_trees(
     :data:`~guffin.model.view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
 
     The transcribed content is checked against the guffin vocabulary invariants
-    (:func:`~guffin.model.guffin_semantics.validate_semantics`); violations — e.g. a guffin
-    attribute declared on the wrong vertex type — are logged as warnings but never fail the fetch.
+    (:func:`~guffin.model.guffin_semantics.validate_semantics`); how violations — e.g. a guffin
+    attribute declared on the wrong vertex type — are handled depends on *strict_semantics*:
+    logged as warnings (``False``), or raised as a :class:`SemanticsValidationError` (``True``).
 
     Propagates any exception raised during fetching or transcription; callers are
     responsible for exit behaviour.
@@ -74,10 +92,17 @@ def fetch_roam_trees(
             (content + view) and returns it as the second element of the pair.  When ``False``,
             skips transcription and returns ``None`` instead.
         api_endpoint: Configured API endpoint used to fetch nodes.
+        strict_semantics: When ``True``, vocabulary violations in the transcribed content raise a
+            :class:`SemanticsValidationError`; when ``False`` (default), they are logged as
+            warnings and the fetch succeeds.
 
     Returns:
         A ``(fetch_result, render_bundle)`` pair ready for rendering or further processing.
         ``render_bundle`` is ``None`` when *include_vertex_tree* is ``False``.
+
+    Raises:
+        SemanticsValidationError: If *strict_semantics* is set and the transcribed content
+            violates any guffin vocabulary invariant.
     """
     result: Final[NodeFetchResult] = FetchRoamNodes.fetch_roam_nodes(
         anchor=fetch_spec.anchor,
@@ -95,9 +120,11 @@ def fetch_roam_trees(
     ), "anchor_tree is None; fetch_spec has include_node_tree=False, which is unsupported here"
     anchor_tree: Final[NodeTree] = result.anchor_tree
     render_bundle: Final[RenderBundle] = to_render_bundle(anchor_tree)
-    # Vocabulary invariants (e.g. guffin attributes on their anchored vertex type) are advisory:
-    # violations are surfaced loudly but never fail the fetch — a misplaced tag simply has no effect.
     validation_result: Final[ValidationResult] = validate_semantics(render_bundle.content)
+    if strict_semantics and not validation_result.is_valid:
+        raise SemanticsValidationError(validation_result)
+    # Without strict_semantics, vocabulary violations are advisory: surfaced loudly but never
+    # failing the fetch — a misplaced tag simply has no effect.
     for validation_error in validation_result.errors:
         logger.warning("guffin semantics validation: %s", validation_error)
     logger.debug("node_tree=%r\n\nrender_bundle=%r", anchor_tree, render_bundle)

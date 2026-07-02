@@ -285,8 +285,11 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   invariant), `all_element_type_values_legal` / `all_matter_values_legal` (every `element-type` /
   `matter` value is a `StructuralElement` / `Matter` member), and `all_matter_tags_level_1` (a
   `matter` tag applies to level-1 headings only). Run by `cli/common.fetch_roam_trees` on the
-  transcribed content; violations are logged as warnings — advisory, never fatal — since a
-  misplaced or illegal tag simply has no effect on the output.
+  transcribed content (tree and ref vertices). Consequences differ per command: `dump-roam-tree`
+  logs violations as warnings (advisory — a misplaced or illegal tag simply has no effect on the
+  terminal dump), while `export-roam-tree` fetches with `strict_semantics=True`, so violations
+  raise `SemanticsValidationError` and abort the export — a publishable artifact must not be
+  built from content that violates the vocabulary.
 
 Member **names follow publishing labels** (`table-of-contents`, `list-of-illustrations`,
 `about-the-author`), some of which deliberately diverge from any one format's terms — e.g. EPUB's

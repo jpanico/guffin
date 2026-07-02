@@ -21,6 +21,7 @@ from typer.testing import CliRunner
 
 from guffin.cli.export_roam_tree import app
 from guffin.common.provenance import Provenance
+from guffin.common.validation import ValidationError, ValidationResult
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.project import BookProfile, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
@@ -315,6 +316,50 @@ class TestExportRoamTreePdfLive:
         actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.default.pdf"
         assert actual.exists()
         assert actual.read_bytes() == baseline.read_bytes()
+
+
+class TestExportRoamTreeStrictSemantics:
+    """export-roam-tree aborts (exit 1) on guffin vocabulary violations; nothing is rendered."""
+
+    def test_vocabulary_violation_aborts_export(self, tmp_path: pathlib.Path) -> None:
+        """A validation failure in the fetched content exits with code 1 before any rendering."""
+        fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
+            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
+        )
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        invalid: Final[ValidationResult] = ValidationResult(
+            errors=(ValidationError(validator=lambda tree: None, message="synthetic violation"),)
+        )
+        runner: CliRunner = CliRunner()
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch("guffin.cli.common.validate_semantics", return_value=invalid),
+            patch("guffin.cli.export_roam_tree.render_md") as mock_render_md,
+        ):
+            saved_handlers = logging.root.handlers[:]
+            logging.root.handlers.clear()
+            try:
+                result = runner.invoke(
+                    app,
+                    [
+                        "[[Test Article]] 1",
+                        "--port",
+                        "3333",
+                        "--graph",
+                        "SCFH",
+                        "--token",
+                        "tok",
+                        "--output-dir",
+                        str(tmp_path),
+                        "--no-bundle",
+                    ],
+                )
+            finally:
+                logging.root.handlers = saved_handlers
+        assert result.exit_code == 1
+        mock_render_md.assert_not_called()
 
 
 class TestExportRoamTreeColophon:

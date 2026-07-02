@@ -1,13 +1,19 @@
 """Tests for guffin.cli.common."""
 
+import logging
 import textwrap
+from unittest.mock import patch
 
-from guffin.cli.common import deduce_out_file_stem, resolve_profile
+import pytest
+from conftest import article1_node_tree
+
+from guffin.cli.common import SemanticsValidationError, deduce_out_file_stem, fetch_roam_trees, resolve_profile
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
+from guffin.common.validation import ValidationError, ValidationResult
 from guffin.model.attribute import (
     Attribute,
     AttributeAssignment,
@@ -31,6 +37,8 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.project import BookProfile, ProjectType, TopLevelDivision
+from guffin.roam.local_api import ApiEndpoint
+from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 
 _IMAGE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
@@ -234,3 +242,44 @@ class TestResolveProfile:
         """Part-tagged content does not affect a non-book project type."""
         profile = resolve_profile(ProjectType.DEFAULT, _content_tree(part_tagged=True))
         assert not isinstance(profile, BookProfile)
+
+
+def _dummy_validator(tree: VertexTree) -> ValidationError | None:
+    """Stand-in validator identity for building synthetic ValidationResults."""
+    return None
+
+
+def _invalid_result() -> ValidationResult:
+    """A ValidationResult carrying a single synthetic failure."""
+    return ValidationResult(errors=(ValidationError(validator=_dummy_validator, message="synthetic violation"),))
+
+
+class TestFetchRoamTreesStrictSemantics:
+    """fetch_roam_trees() escalates vocabulary violations per its strict_semantics flag."""
+
+    def _fetch(self, strict_semantics: bool) -> object:
+        """Run fetch_roam_trees over the article1 fixture with validate_semantics forced invalid."""
+        fetch_spec = NodeFetchSpec(anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True)
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        endpoint = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="tok")
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch("guffin.cli.common.validate_semantics", return_value=_invalid_result()),
+        ):
+            return fetch_roam_trees(fetch_spec, True, endpoint, strict_semantics=strict_semantics)
+
+    def test_strict_raises_on_violation(self) -> None:
+        """strict_semantics=True turns a vocabulary violation into a SemanticsValidationError."""
+        with pytest.raises(SemanticsValidationError) as exc_info:
+            self._fetch(strict_semantics=True)
+        assert "synthetic violation" in str(exc_info.value)
+        assert not exc_info.value.result.is_valid
+
+    def test_advisory_warns_and_succeeds(self, caplog: pytest.LogCaptureFixture) -> None:
+        """strict_semantics=False (the default) logs the violation and returns the bundle."""
+        with caplog.at_level(logging.WARNING, logger="guffin.cli.common"):
+            result = self._fetch(strict_semantics=False)
+        assert result is not None
+        assert "synthetic violation" in caplog.text

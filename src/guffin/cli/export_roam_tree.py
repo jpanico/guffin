@@ -71,7 +71,7 @@ from typing import Annotated, Final
 
 import typer
 
-from guffin.cli.common import deduce_out_file_stem, fetch_roam_trees, resolve_profile
+from guffin.cli.common import SemanticsValidationError, deduce_out_file_stem, fetch_roam_trees, resolve_profile
 from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.common.provenance import Provenance, gather_provenance
@@ -267,8 +267,13 @@ def main(
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port, graph_name, api_bearer_token)
 
     try:
+        # An export must not publish content that violates the guffin vocabulary, so semantics
+        # validation is strict here (dump-roam-tree keeps it advisory).
         trees: Final[tuple[NodeFetchResult, RenderBundle | None]] = fetch_roam_trees(
-            NodeFetchSpec(anchor=NodeFetchAnchor(qualifier=target), include_refs=True), True, api_endpoint
+            NodeFetchSpec(anchor=NodeFetchAnchor(qualifier=target), include_refs=True),
+            True,
+            api_endpoint,
+            strict_semantics=True,
         )
     except RoamNodeNotFoundError as exc:
         kind_label: Final[str] = "Page" if exc.fetch_spec.anchor.kind == QueryAnchorKind.PAGE_TITLE else "Node"
@@ -278,6 +283,11 @@ def main(
             exc.fetch_spec.anchor.qualifier,
             graph_name,
         )
+        raise typer.Exit(code=1)
+    except SemanticsValidationError as exc:
+        for validation_error in exc.result.errors:
+            logger.error("guffin semantics validation: %s", validation_error)
+        logger.error("aborting export of %r: the content violates the guffin vocabulary (see above)", target)
         raise typer.Exit(code=1)
     except Exception:
         logger.exception("Error fetching %r from graph %r", target, graph_name)
