@@ -14,6 +14,7 @@ from conftest import article5_node_tree
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
+from guffin.common.provenance import Provenance
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.render_bundle import RenderBundle
@@ -56,6 +57,7 @@ def _render_epub(
     stem: str,
     suppress_attributes: bool = False,
     include_preamble: bool | None = None,
+    emit_colophon: bool = False,
 ) -> Path:
     """Render *bundle* to ``<out_dir>/<stem>.epub`` and return the path."""
     render(
@@ -64,7 +66,10 @@ def _render_epub(
         filename_stem=stem,
         api_endpoint=_ENDPOINT,
         options=EpubRenderOptions(
-            output_dir=out_dir, suppress_attributes=suppress_attributes, include_preamble=include_preamble
+            output_dir=out_dir,
+            suppress_attributes=suppress_attributes,
+            include_preamble=include_preamble,
+            emit_colophon=emit_colophon,
         ),
     )
     return out_dir / f"{stem}.epub"
@@ -166,6 +171,21 @@ def _meta_bundle() -> RenderBundle:
 def meta_book_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """The metadata bundle rendered as a book (which emits a title page)."""
     return _render_epub(tmp_path_factory.mktemp("meta_book"), _meta_bundle(), BookProfile(), "meta_book")
+
+
+_PROVENANCE: Final[Provenance] = Provenance(commit="abc123", dirty=False)
+_PROVENANCE_SUMMARY: Final[str] = _PROVENANCE.summary()
+
+
+@pytest.fixture(scope="module")
+def colophon_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
+    """A provenance-carrying bundle rendered with the colophon on, keyed ``book`` / ``article``."""
+    out: Final[Path] = tmp_path_factory.mktemp("colophon")
+    bundle: Final[RenderBundle] = _multi_level_bundle().with_provenance(_PROVENANCE)
+    return {
+        "book": _render_epub(out, bundle, BookProfile(), "book", emit_colophon=True),
+        "article": _render_epub(out, bundle, DefaultProfile(), "article", emit_colophon=True),
+    }
 
 
 @pytest.fixture(scope="module")
@@ -334,6 +354,24 @@ class TestTitlePageFields:
         opf: Final[str] = _opf(meta_book_epub)
         assert "<dc:publisher>Henry Colburn</dc:publisher>" in opf
         assert "<dc:rights>Public domain</dc:rights>" in opf
+
+
+class TestColophonPlacement:
+    """The provenance colophon rides the title page when one is emitted, else ends the document."""
+
+    def test_book_colophon_rides_title_page(self, colophon_epubs: dict[str, Path]) -> None:
+        """A book's provenance is stamped as a paragraph at the foot of the title page."""
+        title_page: Final[str] = _title_page_xhtml(colophon_epubs["book"])
+        assert f'<p class="provenance">{_PROVENANCE_SUMMARY}</p>' in title_page
+
+    def test_book_has_no_end_of_document_colophon(self, colophon_epubs: dict[str, Path]) -> None:
+        """With the provenance on the title page, no colophon block trails the body content."""
+        assert _all_text(colophon_epubs["book"]).count(_PROVENANCE_SUMMARY) == 1  # title page only
+
+    def test_article_colophon_is_end_of_document(self, colophon_epubs: dict[str, Path]) -> None:
+        """Without a title page, the provenance falls back to the end-of-document block."""
+        assert not _has_title_page(colophon_epubs["article"])
+        assert _PROVENANCE_SUMMARY in _all_text(colophon_epubs["article"])
 
 
 class TestPreambleDrop:

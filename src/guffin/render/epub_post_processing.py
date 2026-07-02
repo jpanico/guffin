@@ -1,23 +1,35 @@
-"""EPUB post-processing: restore CMOS ``<body>`` divisions on the packaged e-book.
+"""EPUB post-processing: content rewrites applied to the packaged e-book.
 
-Pandoc assigns each content document's ``<body epub:type>`` division from its own hardcoded
-classification of the section's ``epub:type`` term, which diverges from the conventional (CMOS)
-placement for several terms (see :mod:`guffin.render.epub_semantics`).  During rendering each
-matter-tagged heading is stamped with its CMOS division in the
-:data:`~guffin.render.epub_semantics.MATTER_DATA_ATTRIBUTE` section attribute; this pass rewrites the
-finished ``.epub`` so every content document's ``<body epub:type>`` reflects that stamped division,
-then removes the attribute so it never reaches the reader.
+Two passes operate on the finished ``.epub`` (both preserve entry order, timestamps, and per-entry
+compression, so the ``mimetype`` entry stays first and uncompressed):
+
+- **CMOS division restoration.**  Pandoc assigns each content document's ``<body epub:type>``
+  division from its own hardcoded classification of the section's ``epub:type`` term, which
+  diverges from the conventional (CMOS) placement for several terms (see
+  :mod:`guffin.render.epub_semantics`).  During rendering each matter-tagged heading is stamped
+  with its CMOS division in the :data:`~guffin.render.epub_semantics.MATTER_DATA_ATTRIBUTE`
+  section attribute; :func:`restore_matter_divisions` rewrites the packaged e-book so every
+  content document's ``<body epub:type>`` reflects that stamped division, then removes the
+  attribute so it never reaches the reader.
+
+- **Title-page provenance.**  Pandoc's generated title page is built from the document metadata
+  alone and cannot carry arbitrary extra content; :func:`stamp_titlepage_provenance` injects a
+  provenance line at the foot of the generated title page after packaging.
 
 Public symbols:
 
 - **Functions**: :func:`restore_matter_divisions` — rewrite an ``.epub`` in place so each content
-  document's ``<body>`` division matches its stamped CMOS matter.
+  document's ``<body>`` division matches its stamped CMOS matter;
+  :func:`stamp_titlepage_provenance` — inject a provenance line at the foot of the generated
+  title page.
 """
 
 import logging
 import zipfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Final
+from xml.sax.saxutils import escape
 
 import regex
 from pydantic import validate_call
@@ -29,6 +41,34 @@ logger = logging.getLogger(__name__)
 _FIRST_SECTION_RE: Final[regex.Pattern[str]] = regex.compile(r"<section\b[^>]*>")
 _MATTER_ATTRIBUTE_RE: Final[regex.Pattern[str]] = regex.compile(rf'\s*{regex.escape(MATTER_DATA_ATTRIBUTE)}="([^"]*)"')
 _BODY_DIVISION_RE: Final[regex.Pattern[str]] = regex.compile(r'(<body\b[^>]*\bepub:type=")[^"]*(")')
+_TITLE_PAGE_SUFFIX: Final[str] = "title_page.xhtml"
+_SECTION_CLOSE: Final[str] = "</section>"
+
+
+def _rewrite_xhtml_entries(epub_path: Path, transform: Callable[[str, str], str]) -> None:
+    """Rewrite the EPUB at *epub_path* in place, applying *transform* to every XHTML entry.
+
+    *transform* receives each entry's filename and XHTML source and returns the (possibly
+    unchanged) replacement source.  Entry order, timestamps, and per-entry compression are
+    preserved, so the ``mimetype`` entry stays first and uncompressed.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+        transform: ``(filename, xhtml) -> xhtml`` mapping applied to each ``.xhtml`` entry.
+    """
+    with zipfile.ZipFile(epub_path) as source:
+        infos: Final[list[zipfile.ZipInfo]] = source.infolist()
+        payloads: Final[dict[str, bytes]] = {info.filename: source.read(info.filename) for info in infos}
+
+    for info in infos:
+        if info.filename.endswith(".xhtml"):
+            payloads[info.filename] = transform(info.filename, payloads[info.filename].decode("utf-8")).encode("utf-8")
+
+    temp_path: Final[Path] = epub_path.with_name(f"{epub_path.name}.tmp")
+    with zipfile.ZipFile(temp_path, "w") as target:
+        for info in infos:
+            target.writestr(info, payloads[info.filename])
+    temp_path.replace(epub_path)
 
 
 def _rewrite_document(xhtml: str) -> str:
@@ -68,17 +108,38 @@ def restore_matter_divisions(epub_path: Path) -> None:
     Args:
         epub_path: Path to the ``.epub`` file to rewrite.
     """
-    with zipfile.ZipFile(epub_path) as source:
-        infos: Final[list[zipfile.ZipInfo]] = source.infolist()
-        payloads: Final[dict[str, bytes]] = {info.filename: source.read(info.filename) for info in infos}
-
-    for info in infos:
-        if info.filename.endswith(".xhtml"):
-            payloads[info.filename] = _rewrite_document(payloads[info.filename].decode("utf-8")).encode("utf-8")
-
-    temp_path: Final[Path] = epub_path.with_name(f"{epub_path.name}.tmp")
-    with zipfile.ZipFile(temp_path, "w") as target:
-        for info in infos:
-            target.writestr(info, payloads[info.filename])
-    temp_path.replace(epub_path)
+    _rewrite_xhtml_entries(epub_path, lambda _filename, xhtml: _rewrite_document(xhtml))
     logger.info("Restored CMOS <body> divisions in %s", epub_path)
+
+
+@validate_call
+def stamp_titlepage_provenance(epub_path: Path, summary: str) -> None:
+    """Inject *summary* as a provenance line at the foot of the EPUB's generated title page.
+
+    Rewrites the EPUB at *epub_path* in place: a ``<p class="provenance">`` paragraph holding the
+    (XML-escaped) *summary* text is inserted at the end of the title-page document's ``titlepage``
+    section, so the provenance rides the title page rather than floating at the end of the body
+    content.  Entry order, timestamps, and per-entry compression are preserved, so the ``mimetype``
+    entry stays first and uncompressed.
+
+    When the package contains no generated title-page document (``title_page.xhtml``), a warning is
+    logged and the EPUB is left unchanged.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+        summary: The provenance summary line to inject (plain text; escaped for XML here).
+    """
+    provenance_para: Final[str] = f'  <p class="provenance">{escape(summary)}</p>\n'
+    stamped_names: Final[list[str]] = []
+
+    def _stamp(filename: str, xhtml: str) -> str:
+        if not filename.endswith(_TITLE_PAGE_SUFFIX) or _SECTION_CLOSE not in xhtml:
+            return xhtml
+        stamped_names.append(filename)
+        return xhtml.replace(_SECTION_CLOSE, f"{provenance_para}{_SECTION_CLOSE}", 1)
+
+    _rewrite_xhtml_entries(epub_path, _stamp)
+    if stamped_names:
+        logger.info("Stamped title-page provenance in %s", epub_path)
+    else:
+        logger.warning("No title-page document found in %s; provenance not stamped", epub_path)

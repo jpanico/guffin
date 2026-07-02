@@ -44,9 +44,10 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
+from guffin.common.provenance import Provenance
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
-from guffin.render.epub_post_processing import restore_matter_divisions
+from guffin.render.epub_post_processing import restore_matter_divisions, stamp_titlepage_provenance
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -133,6 +134,11 @@ def render(
     ``--number-sections``.  The policy's ``emit_title_page`` drives Pandoc's ``--epub-title-page``,
     which includes (or omits) a title page generated from the document metadata.
 
+    When ``options.emit_colophon`` is set and the bundle carries provenance, its summary rides the
+    foot of the generated title page when one is emitted (stamped after packaging via
+    :func:`~guffin.render.epub_post_processing.stamp_titlepage_provenance`), otherwise it is
+    appended as an end-of-document colophon block — mirroring the PDF placement rules.
+
     Pandoc must be installed and on ``PATH``.
 
     Args:
@@ -185,11 +191,14 @@ def render(
         enriched_tree: Final[VertexTree] = fetched[0]
         image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
         image_files: Final[dict[Uid, Path]] = {uid: ref.path for uid, ref in image_refs.items()}
+        # The provenance rides the title page when one is emitted (stamped after packaging, below);
+        # otherwise it renders as an end-of-document colophon block — mirroring the PDF placement.
+        provenance: Final[Provenance | None] = render_bundle.provenance if options.emit_colophon else None
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
             enriched_tree,
             image_files,
             render_bundle.view,
-            provenance=render_bundle.provenance if options.emit_colophon else None,
+            provenance=None if emit_title_page else provenance,
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
@@ -214,4 +223,6 @@ def render(
         )
 
     restore_matter_divisions(output_path)
+    if emit_title_page and provenance is not None:
+        stamp_titlepage_provenance(output_path, provenance.summary())
     logger.info("Wrote EPUB to %s", output_path)
