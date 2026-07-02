@@ -2,7 +2,7 @@
 
 import textwrap
 
-from guffin.cli.common import deduce_out_file_stem
+from guffin.cli.common import deduce_out_file_stem, resolve_profile
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
@@ -30,7 +30,7 @@ from guffin.model.vertex import (
     Vertex,
 )
 from guffin.model.vertex_tree import VertexTree
-from guffin.render.project import ProjectType
+from guffin.render.project import BookProfile, ProjectType, TopLevelDivision
 
 _IMAGE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
@@ -192,3 +192,45 @@ class TestDeduceOutFileStem:
             ],
         )
         assert deduce_out_file_stem(_tree(page), ProjectType.DEFAULT) == "Page_Title.default"
+
+
+def _content_tree(part_tagged: bool) -> VertexTree:
+    """A page with one level-1 heading, optionally tagged ``element-type:: part``."""
+    link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+    assignments = (
+        [
+            AttributeAssignment(
+                attribute=AttributeInstance(
+                    definition=Attribute(name="element-type", domain=AttributeDomain.GUFFIN), link=link
+                ),
+                values=(LiteralValue(value="part"),),
+            )
+        ]
+        if part_tagged
+        else None
+    )
+    page = PageVertex(uid="pageroot1", title="Doc", children=["head00001"])
+    heading = HeadingVertex(uid="head00001", text="Book I", heading_level=1, attribute_assignments=assignments)
+    return VertexTree(tree_vertices=[page, heading])
+
+
+class TestResolveProfile:
+    """resolve_profile() refines the project type's default profile from the content."""
+
+    def test_book_with_part_tagged_content_becomes_parts_book(self) -> None:
+        """A book whose content declares parts resolves to a with_parts BookProfile (PART division)."""
+        profile = resolve_profile(ProjectType.BOOK, _content_tree(part_tagged=True))
+        assert isinstance(profile, BookProfile)
+        assert profile.with_parts is True
+        assert profile.structural_policy.top_level_division is TopLevelDivision.PART
+
+    def test_book_without_parts_keeps_chapter_division(self) -> None:
+        """A book with no part-tagged headings keeps the default chapters-at-level-1 profile."""
+        profile = resolve_profile(ProjectType.BOOK, _content_tree(part_tagged=False))
+        assert isinstance(profile, BookProfile)
+        assert profile.with_parts is False
+
+    def test_non_book_type_ignores_part_tags(self) -> None:
+        """Part-tagged content does not affect a non-book project type."""
+        profile = resolve_profile(ProjectType.DEFAULT, _content_tree(part_tagged=True))
+        assert not isinstance(profile, BookProfile)

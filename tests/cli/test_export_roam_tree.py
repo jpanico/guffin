@@ -22,6 +22,7 @@ from typer.testing import CliRunner
 from guffin.cli.export_roam_tree import app
 from guffin.common.provenance import Provenance
 from guffin.model.render_bundle import RenderBundle
+from guffin.render.project import BookProfile, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import Response as LocalApiResponse
 from guffin.roam.node_fetch import RoamNodeNotFoundError
@@ -378,3 +379,63 @@ class TestExportRoamTreeColophon:
         bundle, options = self._render_call_for_flag(tmp_path, "--no-colophon")
         assert options.emit_colophon is False
         assert bundle.provenance is None
+
+
+class TestExportRoamTreeProfile:
+    """The CLI resolves the profile from the --type and the fetched content (see resolve_profile).
+
+    ``[[Test Article]] 1`` carries no ``element-type:: part`` headings, so a book export resolves
+    to the chapters-at-level-1 profile; the parts upgrade itself is unit-tested in
+    ``tests/cli/test_common.py``.  Mocking the renderer keeps these plumbing checks fast — no
+    Pandoc subprocess — while still exercising the full CLI path.
+    """
+
+    def _profile_for_args(self, tmp_path: pathlib.Path, extra_args: list[str]) -> ProjectProfile:
+        """Invoke the CLI with *extra_args* (renderer mocked); return the profile it received."""
+        fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
+            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
+        )
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        runner: CliRunner = CliRunner()
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch("guffin.cli.export_roam_tree.render_md") as mock_render_md,
+        ):
+            saved_handlers = logging.root.handlers[:]
+            logging.root.handlers.clear()
+            try:
+                result = runner.invoke(
+                    app,
+                    [
+                        "[[Test Article]] 1",
+                        "--port",
+                        "3333",
+                        "--graph",
+                        "SCFH",
+                        "--token",
+                        "tok",
+                        "--output-dir",
+                        str(tmp_path),
+                        "--no-bundle",
+                        *extra_args,
+                    ],
+                )
+            finally:
+                logging.root.handlers = saved_handlers
+        assert result.exit_code == 0, result.output
+        profile: ProjectProfile = mock_render_md.call_args.args[1]
+        return profile
+
+    def test_book_type_without_part_content_keeps_chapter_division(self, tmp_path: pathlib.Path) -> None:
+        """--type book on partless content yields the chapters-at-level-1 book profile."""
+        profile = self._profile_for_args(tmp_path, ["--type", "book"])
+        assert isinstance(profile, BookProfile)
+        assert profile.with_parts is False
+        assert profile.structural_policy.top_level_division is TopLevelDivision.CHAPTER
+
+    def test_default_type_yields_default_profile(self, tmp_path: pathlib.Path) -> None:
+        """--type default resolves to the (non-book) default profile."""
+        profile = self._profile_for_args(tmp_path, ["--type", "default"])
+        assert not isinstance(profile, BookProfile)

@@ -216,12 +216,20 @@ $default_styles.typ()$
 $yamltable.typ()$
 
 $if(top-level-division)$
-// Book mode (top-level-division = chapter/part): level-1 headings are chapters.  Each opens on a
-// new page, and—when section numbering is enabled—headings are numbered hierarchically from level 1
-// (1, 1.1, 1.1.1), matching the EPUB book output.  Emitted only when the renderer passes
-// top-level-division, so the default (section) layout is unchanged.
+// Book mode (top-level-division = chapter/part): level-1 headings are the top division and each
+// opens on a new page.  In a parts book (top-level-division = part) chapters live at level 2, so
+// level-2 headings open on a new page as well.  When section numbering is enabled, headings are
+// numbered hierarchically from level 1 (1, 1.1, 1.1.1), matching the EPUB book output.  Emitted
+// only when the renderer passes top-level-division, so the default (section) layout is unchanged.
+#let top-division = "$top-level-division$"
 #show heading.where(level: 1): it => {
   pagebreak(weak: true)
+  it
+}
+#show heading.where(level: 2): it => {
+  if top-division == "part" {
+    pagebreak(weak: true)
+  }
   it
 }
 #set heading(

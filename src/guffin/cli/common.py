@@ -7,6 +7,8 @@ Public symbols:
   :class:`~guffin.vertex_tree.VertexTree`, ready for rendering or further processing.
 - :func:`deduce_out_file_stem` — derive a shell-safe output filename stem (suffixed with the
   project type) from a :class:`~guffin.model.vertex_tree.VertexTree`'s root vertex.
+- :func:`resolve_profile` — build the :class:`~guffin.render.project.ProjectProfile` for a project
+  type, refined by the content (a book with part-tagged level-1 headings becomes a parts book).
 """
 
 import logging
@@ -33,8 +35,8 @@ from guffin.model.vertex import (
     Vertex,
     find_guffin_attribute,
 )
-from guffin.model.vertex_tree import VertexTree, root_vertex
-from guffin.render.project import ProjectType
+from guffin.model.vertex_tree import VertexTree, has_parts, root_vertex
+from guffin.render.project import BookProfile, ProjectProfile, ProjectType, profile_for
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec
@@ -149,3 +151,27 @@ def deduce_out_file_stem(vertex_tree: VertexTree, project_type: ProjectType) -> 
     # non-dot ending — rather than a run of dots "....pdf".
     clipped_basis: Final[str] = textwrap.shorten(unwrapped_basis, width=40, placeholder="..._")
     return f"{shell_safe_filename(clipped_basis)}.{project_type.value}"
+
+
+@validate_call
+def resolve_profile(project_type: ProjectType, content: VertexTree) -> ProjectProfile:
+    """Build the :class:`~guffin.render.project.ProjectProfile` for *project_type* and *content*.
+
+    Starts from :func:`~guffin.render.project.profile_for`'s default-valued profile, then lets the
+    content refine it: a book whose *content* declares parts (any level-1 heading tagged
+    ``element-type:: part`` — see :func:`~guffin.model.vertex_tree.has_parts`) becomes a parts book
+    (:attr:`~guffin.render.project.BookProfile.with_parts`), so its level-2 headings are treated as
+    the chapters.  Other project types pass through unchanged.
+
+    Args:
+        project_type: The kind of work to build a profile for.
+        content: The transcribed content the profile will describe.
+
+    Returns:
+        The resolved :class:`~guffin.render.project.ProjectProfile`.
+    """
+    base_profile: Final[ProjectProfile] = profile_for(project_type)
+    if isinstance(base_profile, BookProfile) and has_parts(content):
+        logger.info("level-1 part heading detected; using the parts book layout (chapters at level 2)")
+        return base_profile.model_copy(update={"with_parts": True})
+    return base_profile

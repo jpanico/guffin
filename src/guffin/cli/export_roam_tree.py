@@ -71,7 +71,7 @@ from typing import Annotated, Final
 
 import typer
 
-from guffin.cli.common import deduce_out_file_stem, fetch_roam_trees
+from guffin.cli.common import deduce_out_file_stem, fetch_roam_trees, resolve_profile
 from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.common.provenance import Provenance, gather_provenance
@@ -79,7 +79,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render as render_md
 from guffin.render.pdf_rendering import render as render_pdf
-from guffin.render.project import ProjectProfile, ProjectType, profile_for
+from guffin.render.project import ProjectProfile, ProjectType
 from guffin.render.render_options import (
     EpubRenderOptions,
     MarkdownRenderOptions,
@@ -295,7 +295,9 @@ def main(
     render_bundle: Final[RenderBundle] = fetched_bundle.with_provenance(provenance)
 
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
-    profile: Final[ProjectProfile] = profile_for(project_type)
+    # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
+    # parts book; the content itself, not a CLI switch, is the source of that structure.
+    profile: Final[ProjectProfile] = resolve_profile(project_type, render_bundle.content)
     options: Final[RenderOptions] = RenderOptions.for_format(
         output_format,
         output_dir=output_dir,

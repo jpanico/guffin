@@ -128,6 +128,19 @@ The subtitle guard in `titlepage.typ` was also tightened from `!= none` to `not 
 the `base_cfg.typ` default is the empty string, which previously left a stray `v(0.65em)` spacer
 on title pages without a subtitle.
 
+#### Book mode (`bergfink.typst`)
+
+A template block gated on the Pandoc `top-level-division` variable (passed by `pdf_rendering.py` as
+`-V top-level-division=chapter|part` for book projects; never passed for the default section
+layout, which therefore stays byte-identical). When active, the block:
+
+- adds a `pagebreak(weak: true)` show rule before every **level-1** heading (the top division —
+  chapters, or parts in a parts book — opens on a new page);
+- when the division is `part`, adds the same page break before every **level-2** heading, since
+  that is where a parts book's chapters live;
+- overrides heading numbering with a hierarchical join (`1`, `1.1`, `1.1.1`) starting at level 1
+  when `cfg.number-sections` is enabled, matching Pandoc's EPUB `--number-sections` output.
+
 #### Provenance colophon (`base_cfg.typ`, `bergfink.typst`, `titlepage.typ`, `default_styles.typ`)
 
 Two new keys were added to the `cfg` dictionary in `base_cfg.typ`, backing the export provenance

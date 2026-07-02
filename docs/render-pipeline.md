@@ -196,11 +196,15 @@ dumped Typst always matches the produced PDF.
 `SECTION`, `pdf_rendering` passes `-V top-level-division=<chapter|part>`, which activates a book-mode
 block in `bergfink.typst` (gated on that variable, so the default `SECTION` render emits no new Typst
 and stays byte-identical). Book mode adds a `pagebreak(weak: true)` before every level-1 heading — so
-chapters open on a new page, the print analogue of EPUB splitting each chapter into its own content
-file — and, when numbering is on, overrides heading numbering with a hierarchical join
-(`1`, `1.1`, `1.1.1`) starting at level 1, matching Pandoc's EPUB numbering. (The bundled
-`user_cfg.typ` otherwise starts numbering at level 2, which is why an un-booked `--type book` PDF left
-its top-level headings unnumbered.)
+the top division opens on a new page, the print analogue of EPUB splitting at the top level — and,
+when the division is `part`, before every level-2 heading as well, since that is where a parts book's
+chapters live (the analogue of the EPUB `--split-level=2`). When numbering is on, book mode also
+overrides heading numbering with a hierarchical join (`1`, `1.1`, `1.1.1`) starting at level 1,
+matching Pandoc's EPUB numbering. (The bundled `user_cfg.typ` otherwise starts numbering at level 2,
+which is why an un-booked `--type book` PDF left its top-level headings unnumbered.) The parts book
+is selected by the content itself: `cli/common.resolve_profile` upgrades a `--type book` export to
+`BookProfile(with_parts=True)` when `model/vertex_tree.has_parts()` finds a level-1 heading tagged
+`element-type:: part` — the structure is declared once, in the Roam source, not restated as a flag.
 
 ### Summary
 
@@ -302,7 +306,9 @@ layer translates. (Where a publishing label and a format term happen to coincide
    paginated formats:
    - `top_level_division` → EPUB `--split-level` (`epub_rendering._split_level_for()`: a parts-based
      book splits at level 2, everything else at level 1) and PDF book mode (`bergfink.typst`: a page
-     break before each level-1 chapter plus hierarchical level-1 numbering, mirroring EPUB).
+     break before each level-1 heading — and, in a parts book, before each level-2 chapter — plus
+     hierarchical level-1 numbering, mirroring EPUB). A parts book is auto-detected from the
+     content: a level-1 heading tagged `element-type:: part` (`resolve_profile` / `has_parts`).
    - `number_sections` → both formats (EPUB `--number-sections`; PDF `-V number-sections=true`).
    - `emit_title_page` → PDF Bergfink title page (`-V titlepage=true` → `titlepage.typ`, rendered
      from the document metadata) and EPUB `--epub-title-page=true|false` (Pandoc's metadata-driven
@@ -324,5 +330,7 @@ layer translates. (Where a publishing label and a format term happen to coincide
    `render/epub_post_processing.py` promotes it to `<body>` and strips the scaffold — so the packaged
    e-book reflects the CMOS placement rather than Pandoc's default (see the `GuffinSemantics`
    vocabulary section above).
-5. **Possible refinements.** Distinguish PART from CHAPTER in PDF book mode (currently both just
-   page-break and number from level 1). (`abstract` is deferred indefinitely.)
+5. **Possible refinements.** PDF book mode now distinguishes PART from CHAPTER for pagination
+   (a parts book breaks pages at chapters too), but numbering still runs hierarchically from
+   level 1 in both — a parts book numbers its parts `1`, `2`, … rather than `I`, `II`, … with
+   chapters numbered continuously. (`abstract` is deferred indefinitely.)
