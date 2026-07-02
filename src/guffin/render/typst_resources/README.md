@@ -109,6 +109,41 @@ numbering-fn = (..args) => {
 
 This key has no effect unless `number-sections` is also `true`.
 
+#### Title-page publisher and rights (`base_cfg.typ`, `bergfink.typst`, `titlepage.typ`)
+
+Two new keys were added to the `cfg` dictionary in `base_cfg.typ`, for title-page parity with
+Pandoc's generated EPUB title page (which renders both fields natively):
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `publisher` | string/none | `none` | Publisher name, rendered above the date at the title-page foot |
+| `rights` | string/none | `none` | Rights statement, rendered in small text below the date line |
+
+`bergfink.typst` maps the Pandoc `publisher` and `rights` metadata variables into these keys
+(alongside the existing `title`/`subtitle` mappings), and `titlepage.typ` renders them at the page
+foot mirroring the Pandoc EPUB field order (publisher, date, rights). Both default to `none`, so
+documents without the metadata are unaffected.
+
+The subtitle guard in `titlepage.typ` was also tightened from `!= none` to `not in (none, "")`:
+the `base_cfg.typ` default is the empty string, which previously left a stray `v(0.65em)` spacer
+on title pages without a subtitle.
+
+#### Provenance colophon (`base_cfg.typ`, `bergfink.typst`, `titlepage.typ`, `default_styles.typ`)
+
+Two new keys were added to the `cfg` dictionary in `base_cfg.typ`, backing the export provenance
+colophon (`export-roam-tree --colophon`; the summary text is supplied by `pdf_rendering.py` as a
+Pandoc variable — `titlepage-provenance` when a title page is emitted, else `footer-provenance`):
+
+| Key | Type | Default | Description |
+|---|---|---|---|
+| `titlepage-provenance` | string/none | `none` | Provenance line rendered in small gray text at the very foot of the title page |
+| `footer-provenance` | string/none | `none` | Provenance line rendered centered in small gray text below the running page footer |
+
+`bergfink.typst` maps the two Pandoc variables into these keys; `titlepage.typ` renders
+`titlepage-provenance` below the date/rights block, and `default_styles.typ` renders
+`footer-provenance` inside the page-footer rule. Both default to `none`, so documents rendered
+without a colophon are unaffected.
+
 ### Updating
 
 To update to a newer upstream commit, re-copy the files from the repository above, update the commit reference in this README, and re-apply the modifications described above.

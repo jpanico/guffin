@@ -13,7 +13,7 @@
   #title[#cfg.title]
 ]
 
-#if cfg.subtitle != none [
+#if cfg.subtitle not in (none, "") [
   #v(0.65em)
   #text(size: 1.1em)[#cfg.subtitle]
 ]
@@ -46,9 +46,20 @@
 
 #v(1fr)
 
+// Foot fields mirror the Pandoc EPUB title-page order: publisher, date, rights.
+#if cfg.publisher != none [
+  #cfg.publisher
+  #v(0.2em)
+]
+
 #cfg.date.display(cfg.dateformat)
 #h(1fr)
 #logo
+
+#if cfg.rights != none [
+  #v(0.4em)
+  #text(size: 0.8em)[#cfg.rights]
+]
 
 #if cfg.titlepage-provenance != none [
   #v(0.6em)

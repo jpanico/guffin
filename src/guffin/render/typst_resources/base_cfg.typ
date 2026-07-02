@@ -8,6 +8,8 @@
   authors: (),
   title: "",
   subtitle: "",
+  publisher: none,
+  rights: none,
   keywords: "",
   lang: "en",
   region: "US",

@@ -94,15 +94,19 @@ class GuffinSemantics(enum.Enum):
     Each member's value is the :class:`GuffinAttribute` for that attribute.  Two kinds:
 
     - **Document metadata** (:attr:`Anchor.PAGE`) — bibliographic facts about the work as a whole:
-      :attr:`TITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`IDENTIFIER`.
+      :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`PUBLISHER`,
+      :attr:`RIGHTS`, :attr:`IDENTIFIER`.
     - **Heading tags** (:attr:`Anchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
       declares which :class:`StructuralElement` the heading is; :attr:`MATTER` declares its
       :class:`Matter` division directly, for a bespoke section with no specific element type.
 
     Attributes:
         TITLE: The document title.
+        SUBTITLE: The document subtitle.
         AUTHORS: The document author(s).
         DATE: The document date.
+        PUBLISHER: The publisher of the work.
+        RIGHTS: The rights statement for the work (e.g. a copyright line).
         IDENTIFIER: The document identifier.
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
@@ -111,8 +115,11 @@ class GuffinSemantics(enum.Enum):
     _value_: GuffinAttribute
 
     TITLE = GuffinAttribute(name="title", anchor=Anchor.PAGE)
+    SUBTITLE = GuffinAttribute(name="subtitle", anchor=Anchor.PAGE)
     AUTHORS = GuffinAttribute(name="authors", anchor=Anchor.PAGE)
     DATE = GuffinAttribute(name="date", anchor=Anchor.PAGE)
+    PUBLISHER = GuffinAttribute(name="publisher", anchor=Anchor.PAGE)
+    RIGHTS = GuffinAttribute(name="rights", anchor=Anchor.PAGE)
     IDENTIFIER = GuffinAttribute(name="identifier", anchor=Anchor.PAGE)
     ELEMENT_TYPE = GuffinAttribute(name="element-type", anchor=Anchor.HEADING)
     MATTER = GuffinAttribute(name="matter", anchor=Anchor.HEADING)

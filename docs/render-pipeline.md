@@ -128,12 +128,20 @@ Within `render/`, the profile's effects split across the two stages.
 The bibliographic metadata source is a root page's **`guffin`-domain attributes** — the attributes
 folded from a `guffin-meta::` container block (the Guffin metadata convention). In
 `vertex_tree_to_pandoc()`, `_document_metadata()` reads them and maps recognised names to
-`doc.metadata`: `title` → title (**overriding** the Roam page title), `authors` → `author` (one
-entry per value, so comma-separated authors become multiple), `date` → date, `identifier` →
-identifier. Every Pandoc writer then maps the metadata to its format natively (Typst title block;
-EPUB `dc:title` / `dc:creator` / `dc:date` / `dc:identifier`) — **the format renderers do not change
+`doc.metadata`: `title` → title (**overriding** the Roam page title), `subtitle` → subtitle,
+`authors` → `author` (one entry per value, so comma-separated authors become multiple), `date` →
+date, `publisher` → publisher, `rights` → rights, `identifier` → identifier. Every Pandoc writer
+then maps the metadata to its format natively (Typst title block; EPUB `dc:title` / `dc:creator` /
+`dc:date` / `dc:publisher` / `dc:rights` / `dc:identifier`) — **the format renderers do not change
 for this half.** Metadata-domain attributes never render as body pills, and any unrecognised
 `guffin`-domain attribute is dropped from the output entirely. (`abstract` is deferred indefinitely.)
+
+The **title page** shows the same fields in both paginated formats, in the same order (title,
+subtitle, authors, publisher, date, rights): Pandoc's EPUB writer renders them natively on its
+generated title page, while on the PDF side the bundled Bergfink template was extended to match —
+`publisher` and `rights` are Guffin-authored additions to `base_cfg.typ` / `bergfink.typst` /
+`titlepage.typ` (upstream Bergfink renders only title, subtitle, authors, date). `identifier` is
+catalog metadata only (EPUB OPF `dc:identifier`); no format renders it on the title page.
 
 ### Stage 2 — structure _(partially applied)_
 
@@ -196,7 +204,7 @@ its top-level headings unnumbered.)
 
 | Profile data | Stage | Consumed in | Format renderers change? |
 |---|---|---|---|
-| `title`, `authors`, `date`, `identifier` (`guffin`-domain attributes) | 1 (metadata) ✅ | `pandoc_rendering._document_metadata` | no |
+| `title`, `subtitle`, `authors`, `date`, `publisher`, `rights`, `identifier` (`guffin`-domain attributes) | 1 (metadata) ✅ | `pandoc_rendering._document_metadata` | no (Bergfink title page extended for `publisher`/`rights`) |
 | `top_level_division`, `number_sections`, title page | 2 (structure) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
 | `drop_preamble` (+ `include_preamble` option override) | 2 (structure) ✅ | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
 
@@ -219,8 +227,9 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   `VertexType` it corresponds to (the Anchor↔VertexType correspondence is a single source of truth on
   the enum, in the leaf module `model/vertex_type.py`).
 - **`GuffinSemantics`** — the enum of recognized guffin attributes, each a `GuffinAttribute`:
-  - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `AUTHORS`, `DATE`, `IDENTIFIER` —
-    bibliographic facts, folded from a `guffin-meta::` block on the root page.
+  - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
+    `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts, folded from a `guffin-meta::` block
+    on the root page.
   - *Heading-anchored tags* (`Anchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
     `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
     for a bespoke heading with no specific element type.
@@ -300,10 +309,12 @@ layer translates. (Where a publishing label and a format term happen to coincide
      (`model/vertex_tree.py::drop_root_preamble()`) before the Doc build; a book drops it, other
      types keep it, and the `include_preamble` render option (CLI `--preamble/--no-preamble`)
      overrides in either direction.
-3. **Bibliographic metadata — done.** A root page's `guffin`-domain attributes (title/authors/date/
-   identifier, folded from a `guffin-meta::` block) populate the document metadata via
-   `pandoc_rendering._document_metadata`; `title` overrides the page title and the rest map to the
-   writer's native metadata (Typst title block, EPUB `dc:*`). These never render as body pills.
+3. **Bibliographic metadata — done.** A root page's `guffin`-domain attributes (title/subtitle/
+   authors/date/publisher/rights/identifier, folded from a `guffin-meta::` block) populate the
+   document metadata via `pandoc_rendering._document_metadata`; `title` overrides the page title and
+   the rest map to the writer's native metadata (Typst title block, EPUB `dc:*`). The title page
+   shows the same fields in the same order in both paginated formats (the Bergfink title page was
+   extended with `publisher`/`rights` for parity). These never render as body pills.
 4. **Structural-element tagging — done (EPUB).** Headings tagged `element-type::` / `matter::` drive
    the section `epub:type`, the front/body/back-matter distinction (which excludes non-body-matter
    sections from `--number-sections`), and the content document's `<body epub:type>` division: the

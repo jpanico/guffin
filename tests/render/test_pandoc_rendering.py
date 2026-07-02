@@ -79,6 +79,38 @@ class TestVertexTreeToPandocPageVertex:
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         assert "title" not in doc.metadata
 
+    def test_all_metadata_attributes_reach_doc_metadata(self) -> None:
+        """Every recognised guffin-domain metadata attribute lands under its Pandoc key."""
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
+
+        def _meta(name: str, value: str) -> AttributeAssignment:
+            return AttributeAssignment(
+                attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+                values=(LiteralValue(value=value),),
+            )
+
+        page = PageVertex(
+            uid="page00001",
+            title="Roam Title",
+            attribute_assignments=[
+                _meta("title", "Real Title"),
+                _meta("subtitle", "A Subtitle"),
+                _meta("authors", "An Author"),
+                _meta("date", "2026-07-02"),
+                _meta("publisher", "A Publisher"),
+                _meta("rights", "All rights reserved"),
+                _meta("identifier", "urn:isbn:1"),
+            ],
+        )
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page]), {}, {})
+        assert _collect_text(doc.metadata["title"]) == "Real Title"  # overrides the Roam page title
+        assert _collect_text(doc.metadata["subtitle"]) == "A Subtitle"
+        assert _collect_text(doc.metadata["date"]) == "2026-07-02"
+        assert _collect_text(doc.metadata["publisher"]) == "A Publisher"
+        assert _collect_text(doc.metadata["rights"]) == "All rights reserved"
+        assert _collect_text(doc.metadata["identifier"]) == "urn:isbn:1"
+        assert [_collect_text(entry) for entry in doc.metadata["author"].content] == ["An Author"]
+
     def test_title_in_header_renders_h1_not_metadata(self) -> None:
         """title_in_header=True renders page title as H1 body block, not metadata."""
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="My Page")])

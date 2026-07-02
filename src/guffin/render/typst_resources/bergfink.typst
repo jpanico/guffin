@@ -58,6 +58,12 @@ $endif$
 $if(subtitle)$
 #(cfg.subtitle = "$subtitle$")
 $endif$
+$if(publisher)$
+#(cfg.publisher = "$publisher$")
+$endif$
+$if(rights)$
+#(cfg.rights = "$rights$")
+$endif$
 $if(supervisor)$
 #(cfg.supervisor = "$supervisor$")
 $endif$

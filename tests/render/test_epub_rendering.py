@@ -134,6 +134,40 @@ def _preamble_bundle() -> RenderBundle:
     return RenderBundle(content=VertexTree(tree_vertices=[page, loose, chap1, body1, chap2]))
 
 
+def _meta_bundle() -> RenderBundle:
+    """A one-chapter page carrying every recognised guffin-domain metadata attribute."""
+    link: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
+
+    def _meta(name: str, value: str) -> AttributeAssignment:
+        return AttributeAssignment(
+            attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+            values=(LiteralValue(value=value),),
+        )
+
+    page: Final[PageVertex] = PageVertex(
+        uid="page00003",
+        title="Meta Doc",
+        children=["chap00001"],
+        attribute_assignments=[
+            _meta("title", "Voyage of the Beagle"),
+            _meta("subtitle", "A Naturalist Abroad"),
+            _meta("authors", "Charles Darwin"),
+            _meta("date", "1839-01-01"),
+            _meta("publisher", "Henry Colburn"),
+            _meta("rights", "Public domain"),
+            _meta("identifier", "urn:isbn:9780"),
+        ],
+    )
+    chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+    return RenderBundle(content=VertexTree(tree_vertices=[page, chap]))
+
+
+@pytest.fixture(scope="module")
+def meta_book_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The metadata bundle rendered as a book (which emits a title page)."""
+    return _render_epub(tmp_path_factory.mktemp("meta_book"), _meta_bundle(), BookProfile(), "meta_book")
+
+
 @pytest.fixture(scope="module")
 def preamble_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
     """The preamble bundle rendered three ways, keyed ``book`` / ``book_kept`` / ``article``.
@@ -184,6 +218,18 @@ def _has_title_page(epub_path: Path) -> bool:
     """Whether the EPUB package includes a generated title-page document."""
     with zipfile.ZipFile(epub_path) as zf:
         return any("title_page" in name for name in zf.namelist())
+
+
+def _title_page_xhtml(epub_path: Path) -> str:
+    """Return the generated title-page document of *epub_path*."""
+    with zipfile.ZipFile(epub_path) as zf:
+        return next(zf.read(name).decode("utf-8") for name in zf.namelist() if "title_page" in name)
+
+
+def _opf(epub_path: Path) -> str:
+    """Return the EPUB package document (``.opf``) of *epub_path*."""
+    with zipfile.ZipFile(epub_path) as zf:
+        return next(zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".opf"))
 
 
 class TestRenderEpub:
@@ -268,6 +314,26 @@ class TestTitlePage:
         """A book (emit_title_page=True) includes a title page; the default article omits it."""
         assert _has_title_page(article5_book_epub)
         assert not _has_title_page(article5_default_epub)
+
+
+class TestTitlePageFields:
+    """The guffin-meta metadata fields render on the generated EPUB title page and in the OPF."""
+
+    def test_title_page_carries_all_visible_fields(self, meta_book_epub: Path) -> None:
+        """Title, subtitle, author, publisher, date, and rights all render on the title page."""
+        title_page: Final[str] = _title_page_xhtml(meta_book_epub)
+        assert '<h1 class="title">Voyage of the Beagle</h1>' in title_page
+        assert '<p class="subtitle">A Naturalist Abroad</p>' in title_page
+        assert '<p class="author">Charles Darwin</p>' in title_page
+        assert '<p class="publisher">Henry Colburn</p>' in title_page
+        assert '<p class="date">1839-01-01</p>' in title_page
+        assert '<div class="rights">Public domain</div>' in title_page
+
+    def test_publisher_and_rights_reach_package_metadata(self, meta_book_epub: Path) -> None:
+        """Publisher and rights also populate the OPF dc:* catalog metadata."""
+        opf: Final[str] = _opf(meta_book_epub)
+        assert "<dc:publisher>Henry Colburn</dc:publisher>" in opf
+        assert "<dc:rights>Public domain</dc:rights>" in opf
 
 
 class TestPreambleDrop:

@@ -209,8 +209,11 @@ any others are dropped from the output entirely.
 
 _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
     GuffinSemantics.TITLE.value.name: "title",
+    GuffinSemantics.SUBTITLE.value.name: "subtitle",
     GuffinSemantics.AUTHORS.value.name: "author",
     GuffinSemantics.DATE.value.name: "date",
+    GuffinSemantics.PUBLISHER.value.name: "publisher",
+    GuffinSemantics.RIGHTS.value.name: "rights",
     GuffinSemantics.IDENTIFIER.value.name: "identifier",
 }
 """Maps a recognised :class:`~guffin.model.guffin_semantics.GuffinSemantics` to its Pandoc metadata key."""
@@ -1136,8 +1139,9 @@ def vertex_tree_to_pandoc(
 
     A root :class:`~guffin.vertex.PageVertex`'s metadata-domain attributes (see
     :func:`_document_metadata`) populate the document metadata: a ``title`` attribute overrides the
-    page title (in both the header and metadata forms) and ``author`` / ``date`` / ``identifier``
-    are added to the metadata.  Metadata-domain attributes never appear as body pills.
+    page title (in both the header and metadata forms) and ``subtitle`` / ``author`` / ``date`` /
+    ``publisher`` / ``rights`` / ``identifier`` are added to the metadata.  Metadata-domain
+    attributes never appear as body pills.
 
     Args:
         vertex_tree: The normalized vertex tree to convert.
@@ -1178,7 +1182,7 @@ def vertex_tree_to_pandoc(
             blocks.append(pf.Header(*list(title_meta.content), level=1))
         else:
             metadata["title"] = title_meta
-        for meta_key in ("author", "date", "identifier"):
+        for meta_key in ("subtitle", "author", "date", "publisher", "rights", "identifier"):
             if meta_key in doc_metadata:
                 metadata[meta_key] = doc_metadata[meta_key]
         blocks.extend(

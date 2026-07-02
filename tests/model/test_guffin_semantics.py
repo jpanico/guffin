@@ -55,6 +55,20 @@ class TestGuffinAttribute:
             GuffinAttribute(name="x")  # type: ignore[call-arg]
 
 
+class TestGuffinSemanticsMembers:
+    """The GuffinSemantics vocabulary partitions into page-anchored metadata and heading tags."""
+
+    def test_page_anchored_metadata_members(self) -> None:
+        """The document-metadata members are page-anchored and carry their attribute names."""
+        page_members = {m.value.name for m in GuffinSemantics if m.value.anchor is Anchor.PAGE}
+        assert page_members == {"title", "subtitle", "authors", "date", "publisher", "rights", "identifier"}
+
+    def test_heading_anchored_tag_members(self) -> None:
+        """The heading-tag members are heading-anchored."""
+        heading_members = {m.value.name for m in GuffinSemantics if m.value.anchor is Anchor.HEADING}
+        assert heading_members == {"element-type", "matter"}
+
+
 class TestElementTypeOf:
     """element_type_of validates the attribute identity and coerces the value to a StructuralElement."""
 
