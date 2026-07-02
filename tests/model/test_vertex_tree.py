@@ -8,7 +8,7 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import HeadingVertex, ImageVertex, PageVertex, TextVertex, Vertex
 from guffin.model.vertex_tree import (
@@ -16,7 +16,6 @@ from guffin.model.vertex_tree import (
     drop_attribute_assignments,
     drop_root_preamble,
     enrich_image_original_sizes,
-    has_parts,
     map_vertices,
 )
 
@@ -125,55 +124,6 @@ class TestDropAttributeAssignments:
         tree: Final[VertexTree] = _make_text_tree([("aaaaaaaaa", "hello")])
         result: Final[VertexTree] = drop_attribute_assignments(tree)
         assert result is not tree
-
-
-def _element_type_assignment(value: str) -> AttributeAssignment:
-    """Build a guffin-domain ``element-type`` assignment carrying *value*."""
-    return AttributeAssignment(
-        attribute=AttributeInstance(
-            definition=Attribute(name="element-type", domain=AttributeDomain.GUFFIN),
-            link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageaaaaa"),
-        ),
-        values=(LiteralValue(value=value),),
-    )
-
-
-def _tagged_heading_tree(heading_level: int, element_type: str | None) -> VertexTree:
-    """A page with one heading at *heading_level*, optionally tagged ``element-type:: <value>``."""
-    page: Final[PageVertex] = PageVertex(uid="pageroot1", title="Doc", children=["head00001"])
-    heading: Final[HeadingVertex] = HeadingVertex(
-        uid="head00001",
-        text="A Heading",
-        heading_level=heading_level,
-        attribute_assignments=[_element_type_assignment(element_type)] if element_type is not None else None,
-    )
-    return VertexTree(tree_vertices=[page, heading])
-
-
-class TestHasParts:
-    """Tests for has_parts()."""
-
-    def test_level_1_part_heading_detected(self) -> None:
-        """A level-1 heading tagged element-type:: part makes the tree a parts tree."""
-        assert has_parts(_tagged_heading_tree(1, "part")) is True
-
-    def test_level_1_non_part_element_type_is_not_parts(self) -> None:
-        """A level-1 heading tagged with a different element type does not."""
-        assert has_parts(_tagged_heading_tree(1, "chapter")) is False
-
-    def test_part_tag_below_level_1_is_not_parts(self) -> None:
-        """A part tag on a deeper heading does not make the tree a parts tree."""
-        assert has_parts(_tagged_heading_tree(2, "part")) is False
-
-    def test_untagged_headings_are_not_parts(self) -> None:
-        """Headings without element-type tags leave the tree partless."""
-        assert has_parts(_tagged_heading_tree(1, None)) is False
-
-    def test_unrecognised_element_type_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
-        """A junk element-type value is ignored (warned), not raised."""
-        with caplog.at_level(logging.WARNING, logger="guffin.model.vertex_tree"):
-            assert has_parts(_tagged_heading_tree(1, "not-an-element")) is False
-        assert "ignoring element-type" in caplog.text
 
 
 def _make_preamble_tree() -> VertexTree:

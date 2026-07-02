@@ -15,8 +15,6 @@ Public symbols:
 - :func:`image_vertices` — return all :class:`~guffin.model.vertex.ImageVertex` instances in a :class:`VertexTree`.
 - :func:`image_urls` — return all Cloud Firestore image URLs from a :class:`VertexTree`.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
-- :func:`has_parts` — return whether a :class:`VertexTree` structures its top level as parts
-  (any level-1 heading tagged ``element-type:: part``).
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
 - :func:`drop_attribute_assignments` — return a new :class:`VertexTree` with every vertex's
@@ -36,7 +34,6 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator, val
 from guffin.common.geometry import ImageSize
 
 logger = logging.getLogger(__name__)
-from guffin.model.guffin_semantics import GuffinSemantics, StructuralElement, element_type_of
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
     HeadingVertex,
@@ -44,7 +41,6 @@ from guffin.model.vertex import (
     PageVertex,
     TextVertex,
     Vertex,
-    find_guffin_attribute,
 )
 
 
@@ -210,39 +206,6 @@ def root_vertex(tree: VertexTree) -> Vertex:
     """
     child_uids: Final[set[Uid]] = {uid for v in tree.tree_vertices if v.children for uid in v.children}
     return next(v for v in tree.tree_vertices if v.uid not in child_uids)
-
-
-@validate_call
-def has_parts(tree: VertexTree) -> bool:
-    """Return whether *tree* structures its top level as parts.
-
-    ``True`` when any level-1 :class:`~guffin.model.vertex.HeadingVertex` carries an
-    ``element-type`` assignment naming
-    :attr:`~guffin.model.guffin_semantics.StructuralElement.PART` — the content's own declaration
-    that its level-1 headings are parts (so its chapters live at level 2).  Assignments whose value
-    is not a recognised :class:`~guffin.model.guffin_semantics.StructuralElement` are ignored with
-    a warning.
-
-    Args:
-        tree: The :class:`VertexTree` to inspect.
-
-    Returns:
-        ``True`` when a level-1 heading is tagged as a part, else ``False``.
-    """
-    for heading in heading_vertices(tree):
-        if heading.heading_level != 1:
-            continue
-        assignment = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
-        if assignment is None:
-            continue
-        try:
-            element = element_type_of(assignment)
-        except ValueError as exc:
-            logger.warning("ignoring element-type on vertex uid=%r: %s", heading.uid, exc)
-            continue
-        if element is StructuralElement.PART:
-            return True
-    return False
 
 
 @validate_call

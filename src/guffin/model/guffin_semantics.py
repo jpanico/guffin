@@ -13,16 +13,28 @@ Public symbols:
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Anchor`.
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
-  assignment's value as a :class:`Matter`.
+  assignment's value as a :class:`Matter`; :func:`find_guffin_attribute` — find a vertex's
+  assignment for a :class:`GuffinSemantics` attribute (the Guffin domain supplied automatically);
+  :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
+  top level as parts (any level-1 heading tagged ``element-type:: part``).
+
+This module sits at the top of the ``model/`` conceptual stack: it may depend on the structural
+primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
+:mod:`~guffin.model.vertex_tree`), and none of them may depend on it.
 """
 
 import enum
+import logging
 from typing import Final, Self
 
 from pydantic import Field, field_validator, validate_call
 
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, sole_value_text
+from guffin.model.vertex import Vertex, find_attribute_assignment
+from guffin.model.vertex_tree import VertexTree, heading_vertices
 from guffin.model.vertex_type import VertexType
+
+logger = logging.getLogger(__name__)
 
 
 class Anchor(enum.StrEnum):
@@ -236,3 +248,54 @@ def matter_of(assignment: AttributeAssignment) -> Matter:
             f"got {definition.name!r} in {definition.domain}"
         )
     return Matter(sole_value_text(assignment))
+
+
+@validate_call
+def find_guffin_attribute(vertex: Vertex, attribute: GuffinSemantics) -> AttributeAssignment | None:
+    """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
+
+    Convenience over :func:`~guffin.model.vertex.find_attribute_assignment` that reads the name and
+    domain from the member's :class:`GuffinAttribute`, so callers neither restate nor risk
+    mismatching them.
+
+    Args:
+        vertex: The vertex whose folded attribute assignments are searched.
+        attribute: The Guffin attribute to look up.
+
+    Returns:
+        The matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when *vertex*
+        has no such Guffin attribute.
+    """
+    return find_attribute_assignment(vertex, attribute.value.name, attribute.value.domain)
+
+
+@validate_call
+def has_parts(tree: VertexTree) -> bool:
+    """Return whether *tree* structures its top level as parts.
+
+    ``True`` when any level-1 :class:`~guffin.model.vertex.HeadingVertex` carries an
+    ``element-type`` assignment naming :attr:`StructuralElement.PART` — the content's own
+    declaration that its level-1 headings are parts (so its chapters live at level 2).
+    Assignments whose value is not a recognised :class:`StructuralElement` are ignored with a
+    warning.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to inspect.
+
+    Returns:
+        ``True`` when a level-1 heading is tagged as a part, else ``False``.
+    """
+    for heading in heading_vertices(tree):
+        if heading.heading_level != 1:
+            continue
+        assignment = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
+        if assignment is None:
+            continue
+        try:
+            element = element_type_of(assignment)
+        except ValueError as exc:
+            logger.warning("ignoring element-type on vertex uid=%r: %s", heading.uid, exc)
+            continue
+        if element is StructuralElement.PART:
+            return True
+    return False

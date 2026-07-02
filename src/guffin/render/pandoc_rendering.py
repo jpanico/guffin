@@ -88,7 +88,14 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
 )
-from guffin.model.guffin_semantics import GuffinSemantics, Matter, StructuralElement, element_type_of, matter_of
+from guffin.model.guffin_semantics import (
+    GuffinSemantics,
+    Matter,
+    StructuralElement,
+    element_type_of,
+    find_guffin_attribute,
+    matter_of,
+)
 from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -102,7 +109,6 @@ from guffin.model.vertex import (
     TextVertex,
     Vertex,
     VertexChildren,
-    find_guffin_attribute,
 )
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap

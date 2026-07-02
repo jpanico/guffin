@@ -203,7 +203,7 @@ overrides heading numbering with a hierarchical join (`1`, `1.1`, `1.1.1`) start
 matching Pandoc's EPUB numbering. (The bundled `user_cfg.typ` otherwise starts numbering at level 2,
 which is why an un-booked `--type book` PDF left its top-level headings unnumbered.) The parts book
 is selected by the content itself: `cli/common.resolve_profile` upgrades a `--type book` export to
-`BookProfile(with_parts=True)` when `model/vertex_tree.has_parts()` finds a level-1 heading tagged
+`BookProfile(with_parts=True)` when `model/guffin_semantics.has_parts()` finds a level-1 heading tagged
 `element-type:: part` — the structure is declared once, in the Roam source, not restated as a flag.
 
 ### Summary

@@ -1,5 +1,7 @@
 """Tests for guffin.model.guffin_semantics."""
 
+import logging
+
 import pytest
 import yaml
 from conftest import FIXTURES_YAML_DIR
@@ -19,10 +21,12 @@ from guffin.model.guffin_semantics import (
     Matter,
     StructuralElement,
     element_type_of,
+    find_guffin_attribute,
+    has_parts,
     matter_of,
 )
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import find_guffin_attribute, vertex_adapter
+from guffin.model.vertex import HeadingVertex, PageVertex, vertex_adapter
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
@@ -138,3 +142,41 @@ class TestElementTypeOfArticle6Fixture:
         assignment = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
         assert assignment is not None
         assert element_type_of(assignment) is StructuralElement.ACKNOWLEDGMENTS
+
+
+def _tagged_heading_tree(heading_level: int, element_type: str | None) -> VertexTree:
+    """A page with one heading at *heading_level*, optionally tagged ``element-type:: <value>``."""
+    page = PageVertex(uid="pageroot1", title="Doc", children=["head00001"])
+    heading = HeadingVertex(
+        uid="head00001",
+        text="A Heading",
+        heading_level=heading_level,
+        attribute_assignments=[_assignment("element-type", element_type)] if element_type is not None else None,
+    )
+    return VertexTree(tree_vertices=[page, heading])
+
+
+class TestHasParts:
+    """Tests for has_parts()."""
+
+    def test_level_1_part_heading_detected(self) -> None:
+        """A level-1 heading tagged element-type:: part makes the tree a parts tree."""
+        assert has_parts(_tagged_heading_tree(1, "part")) is True
+
+    def test_level_1_non_part_element_type_is_not_parts(self) -> None:
+        """A level-1 heading tagged with a different element type does not."""
+        assert has_parts(_tagged_heading_tree(1, "chapter")) is False
+
+    def test_part_tag_below_level_1_is_not_parts(self) -> None:
+        """A part tag on a deeper heading does not make the tree a parts tree."""
+        assert has_parts(_tagged_heading_tree(2, "part")) is False
+
+    def test_untagged_headings_are_not_parts(self) -> None:
+        """Headings without element-type tags leave the tree partless."""
+        assert has_parts(_tagged_heading_tree(1, None)) is False
+
+    def test_unrecognised_element_type_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A junk element-type value is ignored (warned), not raised."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+            assert has_parts(_tagged_heading_tree(1, "not-an-element")) is False
+        assert "ignoring element-type" in caplog.text

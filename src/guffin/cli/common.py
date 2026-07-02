@@ -20,7 +20,7 @@ from pydantic import validate_call
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.model.attribute import AttributeAssignment, sole_value_text
-from guffin.model.guffin_semantics import GuffinSemantics
+from guffin.model.guffin_semantics import GuffinSemantics, find_guffin_attribute, has_parts
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -33,9 +33,8 @@ from guffin.model.vertex import (
     TableVertex,
     TextVertex,
     Vertex,
-    find_guffin_attribute,
 )
-from guffin.model.vertex_tree import VertexTree, has_parts, root_vertex
+from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.render.project import BookProfile, ProjectProfile, ProjectType, profile_for
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
@@ -159,7 +158,7 @@ def resolve_profile(project_type: ProjectType, content: VertexTree) -> ProjectPr
 
     Starts from :func:`~guffin.render.project.profile_for`'s default-valued profile, then lets the
     content refine it: a book whose *content* declares parts (any level-1 heading tagged
-    ``element-type:: part`` — see :func:`~guffin.model.vertex_tree.has_parts`) becomes a parts book
+    ``element-type:: part`` — see :func:`~guffin.model.guffin_semantics.has_parts`) becomes a parts book
     (:attr:`~guffin.render.project.BookProfile.with_parts`), so its level-2 headings are treated as
     the chapters.  Other project types pass through unchanged.
 

@@ -43,8 +43,6 @@ Public symbols:
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment by name and domain.
-- :func:`find_guffin_attribute` — find a vertex's :class:`~guffin.model.guffin_semantics.GuffinSemantics`
-  assignment (the Guffin domain is supplied automatically).
 """
 
 from enum import StrEnum
@@ -58,7 +56,6 @@ from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import AttributeAssignment, AttributeDomain
-from guffin.model.guffin_semantics import GuffinSemantics
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
 from guffin.model.vertex_type import VertexType
@@ -457,22 +454,3 @@ def find_attribute_assignment(
         ):
             return assignment
     return None
-
-
-@validate_call
-def find_guffin_attribute(vertex: Vertex, attribute: GuffinSemantics) -> AttributeAssignment | None:
-    """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
-
-    Convenience over :func:`find_attribute_assignment` that reads the name and domain from the
-    member's :class:`~guffin.model.guffin_semantics.GuffinAttribute`, so callers neither restate nor
-    risk mismatching them.
-
-    Args:
-        vertex: The vertex whose folded attribute assignments are searched.
-        attribute: The Guffin attribute to look up.
-
-    Returns:
-        The matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when *vertex*
-        has no such Guffin attribute.
-    """
-    return find_attribute_assignment(vertex, attribute.value.name, attribute.value.domain)
