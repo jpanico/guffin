@@ -9,13 +9,15 @@ This doc goes deep on the *model → output* render layer and the project-type m
 it.
 
 > Status note: the project-type model (`render/project.py`) is defined and **plumbed** — a
-> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. All three
-> structural directives are applied in both formats: `top_level_division` (EPUB `--split-level`; PDF
-> book mode — chapter page breaks + level-1 numbering), `number_sections`, and `emit_title_page`
-> (PDF Bergfink `titlepage`; EPUB `--epub-title-page`). Bibliographic **metadata** is also applied —
-> sourced from a root page's `guffin`-domain attributes (see Stage 1). `abstract` is **deferred
-> indefinitely**. This doc describes both the current shape and the intended design. Sections that
-> describe planned behavior are marked _(planned)_.
+> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. All four
+> structural directives are applied in both paginated formats: `top_level_division` (EPUB
+> `--split-level`; PDF book mode — chapter page breaks + level-1 numbering), `number_sections`,
+> `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`), and `drop_preamble` (a
+> model-side prune of the root page's loose preamble, overridable via the CLI
+> `--preamble/--no-preamble`). Bibliographic **metadata** is also applied — sourced from a root
+> page's `guffin`-domain attributes (see Stage 1). `abstract` is **deferred indefinitely**. This doc
+> describes both the current shape and the intended design. Sections that describe planned behavior
+> are marked _(planned)_.
 
 
 ## The render layer is a two-stage pipeline
@@ -102,11 +104,11 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
   `profile.structural_policy`). Renderers consume this rather than branching on `ProjectType`, so the
   type→structure semantics live in one place.
 
-| `ProjectType` | top-level division | title page | numbered | abstract |
-|---|---|---|---|---|
-| `default` (article) | section | no | no | no |
-| `book` | chapter (or part) | yes | yes | no |
-| `manuscript` | section | yes | no | yes |
+| `ProjectType` | top-level division | title page | numbered | abstract | loose preamble |
+|---|---|---|---|---|---|
+| `default` (article) | section | no | no | no | kept |
+| `book` | chapter (or part) | yes | yes | no | dropped |
+| `manuscript` | section | yes | no | yes | kept |
 
 
 ## Where the profile is consumed
@@ -145,6 +147,18 @@ invocation time**, and the mechanism differs per format:
 | chapters vs. sections | `-V top-level-division` → Bergfink book mode (Typst ignores `--top-level-division`) ✅ | `--split-level` ✅ |
 | numbering | `-V number-sections=true` (Bergfink variable) ✅ | `--number-sections` ✅ |
 | title page | `-V titlepage=true` → Bergfink `titlepage.typ` partial ✅ | `--epub-title-page=true\|false` ✅ |
+| loose preamble | model prune (`drop_root_preamble`) before the Doc build ✅ | same model prune ✅ |
+
+`drop_preamble` is the exception to "writer + template at invocation time": it *is* expressible
+before the AST — the root page's loose preamble (children preceding its first heading child, which
+belong to no titled division) is pruned from the `VertexTree` by
+`model/vertex_tree.py::drop_root_preamble()` before `vertex_tree_to_pandoc()` runs, identically in
+both paginated renderers. Without the prune, a book's preamble surfaces badly: Pandoc's EPUB writer
+wraps the orphaned blocks in a synthetic first chapter *titled with the document title* (duplicating
+the title page, and stamped `bodymatter` ahead of the front matter), and the PDF strands them on
+their own page before chapter 1. An explicit `include_preamble` render option (CLI
+`--preamble/--no-preamble`) overrides the profile's directive in either direction; Markdown output
+is untouched (no pagination, no prune).
 
 So the structural half **cannot** be absorbed entirely into stage 1: the EPUB renderer
 (`--split-level`) and the PDF path (a Bergfink template variable) each consult the policy. The
@@ -184,6 +198,7 @@ its top-level headings unnumbered.)
 |---|---|---|---|
 | `title`, `authors`, `date`, `identifier` (`guffin`-domain attributes) | 1 (metadata) ✅ | `pandoc_rendering._document_metadata` | no |
 | `top_level_division`, `number_sections`, title page | 2 (structure) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
+| `drop_preamble` (+ `include_preamble` option override) | 2 (structure) ✅ | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
 
 
 ## The `GuffinSemantics` vocabulary (model → format mapping)
@@ -272,7 +287,8 @@ layer translates. (Where a publishing label and a format term happen to coincide
    (`render/{md,pdf,epub}_rendering.py::render`) now takes a `profile: ProjectProfile` argument,
    threaded through `cli/export_roam_tree.py::_render`. Nothing reads `StructuralPolicy` to shape
    output yet — the renderers currently only log it.
-2. **Structural effects — done.** All three `StructuralPolicy` directives are applied, in both formats:
+2. **Structural effects — done.** All four `StructuralPolicy` directives are applied, in both
+   paginated formats:
    - `top_level_division` → EPUB `--split-level` (`epub_rendering._split_level_for()`: a parts-based
      book splits at level 2, everything else at level 1) and PDF book mode (`bergfink.typst`: a page
      break before each level-1 chapter plus hierarchical level-1 numbering, mirroring EPUB).
@@ -280,6 +296,10 @@ layer translates. (Where a publishing label and a format term happen to coincide
    - `emit_title_page` → PDF Bergfink title page (`-V titlepage=true` → `titlepage.typ`, rendered
      from the document metadata) and EPUB `--epub-title-page=true|false` (Pandoc's metadata-driven
      title page). A `default` article emits none; a book/manuscript emits one.
+   - `drop_preamble` → both formats prune the root page's loose preamble from the `VertexTree`
+     (`model/vertex_tree.py::drop_root_preamble()`) before the Doc build; a book drops it, other
+     types keep it, and the `include_preamble` render option (CLI `--preamble/--no-preamble`)
+     overrides in either direction.
 3. **Bibliographic metadata — done.** A root page's `guffin`-domain attributes (title/authors/date/
    identifier, folded from a `guffin-meta::` block) populate the document metadata via
    `pandoc_rendering._document_metadata`; `title` overrides the page title and the rest map to the

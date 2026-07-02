@@ -209,6 +209,18 @@ def main(
             ),
         ),
     ] = True,
+    preamble: Annotated[
+        bool | None,
+        typer.Option(
+            "--preamble/--no-preamble",
+            help=(
+                "PDF and EPUB only. Keep (--preamble) or drop (--no-preamble) the root page's "
+                "loose preamble: children preceding its first heading, which belong to no titled "
+                "division. Unset (default), the --type profile decides: 'book' drops the "
+                "preamble, other types keep it. Ignored when --format markdown."
+            ),
+        ),
+    ] = None,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
 
@@ -280,6 +292,7 @@ def main(
         suppress_attributes=suppress_attributes,
         dump_pandoc_ast=dump_pandoc_ast,
         emit_colophon=colophon,
+        include_preamble=preamble,
     )
 
     _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)

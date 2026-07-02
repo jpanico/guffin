@@ -7,8 +7,8 @@ and the structural semantics each implies, expressed as Guffin's own Pydantic mo
 The project profile is orthogonal to the output format
 (:class:`~guffin.render.render_options.RenderOptions`): the profile says *what kind of work* the
 content is, the format says *how/where* to render it.  A profile resolves to a format-independent
-:class:`StructuralPolicy` (top-level division, title page, numbering, abstract) that each renderer
-maps onto its own mechanism (PDF document class / EPUB split level / etc.).
+:class:`StructuralPolicy` (top-level division, title page, numbering, abstract, preamble handling)
+that each renderer maps onto its own mechanism (PDF document class / EPUB split level / etc.).
 
 Public symbols:
 
@@ -83,6 +83,8 @@ class StructuralPolicy(BaseModel):
         emit_title_page: Whether to render a standalone title page (and a table of contents).
         number_sections: Whether divisions are numbered.
         emit_abstract: Whether to render an abstract block from the profile.
+        drop_preamble: Whether to drop the root page's loose preamble — children preceding its
+            first heading child, content belonging to no titled division — from paginated output.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -91,6 +93,7 @@ class StructuralPolicy(BaseModel):
     emit_title_page: bool = Field(..., description="Render a standalone title page (and TOC).")
     number_sections: bool = Field(..., description="Number the divisions.")
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
+    drop_preamble: bool = Field(..., description="Drop root-page children preceding the first heading.")
 
 
 class ProjectProfile(BaseModel):
@@ -134,12 +137,13 @@ class DefaultProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Sections, no title page, unnumbered, no abstract."""
+        """Sections, no title page, unnumbered, no abstract, preamble kept."""
         return StructuralPolicy(
             top_level_division=TopLevelDivision.SECTION,
             emit_title_page=False,
             number_sections=False,
             emit_abstract=False,
+            drop_preamble=False,
         )
 
 
@@ -159,12 +163,18 @@ class BookProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Chapters (or parts), a title page + TOC, numbered, no abstract."""
+        """Chapters (or parts), a title page + TOC, numbered, no abstract, preamble dropped.
+
+        A book's root page is a container for its divisions: loose preamble ahead of the first
+        chapter belongs to no division (and would otherwise surface as a spurious title-bearing
+        chapter in paginated output), so it is dropped by default.
+        """
         return StructuralPolicy(
             top_level_division=TopLevelDivision.PART if self.with_parts else TopLevelDivision.CHAPTER,
             emit_title_page=True,
             number_sections=True,
             emit_abstract=False,
+            drop_preamble=True,
         )
 
 
@@ -185,12 +195,13 @@ class ManuscriptProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Sections, a title block, unnumbered, with an abstract."""
+        """Sections, a title block, unnumbered, with an abstract, preamble kept."""
         return StructuralPolicy(
             top_level_division=TopLevelDivision.SECTION,
             emit_title_page=True,
             number_sections=False,
             emit_abstract=True,
+            drop_preamble=False,
         )
 
 

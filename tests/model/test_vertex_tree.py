@@ -10,8 +10,14 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import ImageVertex, TextVertex, Vertex
-from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, enrich_image_original_sizes, map_vertices
+from guffin.model.vertex import HeadingVertex, ImageVertex, PageVertex, TextVertex, Vertex
+from guffin.model.vertex_tree import (
+    VertexTree,
+    drop_attribute_assignments,
+    drop_root_preamble,
+    enrich_image_original_sizes,
+    map_vertices,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -118,6 +124,75 @@ class TestDropAttributeAssignments:
         tree: Final[VertexTree] = _make_text_tree([("aaaaaaaaa", "hello")])
         result: Final[VertexTree] = drop_attribute_assignments(tree)
         assert result is not tree
+
+
+def _make_preamble_tree() -> VertexTree:
+    """A page whose leading children (one with a nested subtree) precede its first heading."""
+    page: Final[PageVertex] = PageVertex(
+        uid="pageroot1", title="Doc", children=["pre000001", "pre000002", "chap00001", "trail0001"]
+    )
+    pre1: Final[TextVertex] = TextVertex(uid="pre000001", text="loose callout", children=["pre1child"])
+    pre1_child: Final[TextVertex] = TextVertex(uid="pre1child", text="nested under preamble")
+    pre2: Final[TextVertex] = TextVertex(uid="pre000002", text="more preamble")
+    chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+    trail: Final[TextVertex] = TextVertex(uid="trail0001", text="after the heading")
+    return VertexTree(tree_vertices=[page, pre1, pre1_child, pre2, chap, trail])
+
+
+class TestDropRootPreamble:
+    """Tests for drop_root_preamble()."""
+
+    def test_drops_leading_children_and_their_subtrees(self) -> None:
+        """Children ahead of the first heading — and their descendants — are removed."""
+        result: Final[VertexTree] = drop_root_preamble(_make_preamble_tree())
+        assert sorted(v.uid for v in result.tree_vertices) == ["chap00001", "pageroot1", "trail0001"]
+        new_root: Final[Vertex] = next(v for v in result.tree_vertices if v.uid == "pageroot1")
+        assert new_root.children == ["chap00001", "trail0001"]
+
+    def test_retains_loose_content_after_first_heading(self) -> None:
+        """Only the leading run is preamble; loose children after the heading survive."""
+        result: Final[VertexTree] = drop_root_preamble(_make_preamble_tree())
+        assert "trail0001" in result.uid_map
+
+    def test_original_tree_unmodified(self) -> None:
+        """The prune is copy-on-write; the source tree keeps its preamble."""
+        tree: Final[VertexTree] = _make_preamble_tree()
+        drop_root_preamble(tree)
+        assert "pre000001" in tree.uid_map
+        root: Final[Vertex] = next(v for v in tree.tree_vertices if v.uid == "pageroot1")
+        assert root.children == ["pre000001", "pre000002", "chap00001", "trail0001"]
+
+    def test_noop_when_first_child_is_heading(self) -> None:
+        """A page with no preamble passes through as the same tree object."""
+        page: Final[PageVertex] = PageVertex(uid="pageroot1", title="Doc", children=["chap00001"])
+        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page, chap])
+        assert drop_root_preamble(tree) is tree
+
+    def test_noop_for_non_page_root(self) -> None:
+        """A subtree export rooted at a non-page vertex passes through unchanged."""
+        root: Final[TextVertex] = TextVertex(uid="root00001", text="block root", children=["child0001"])
+        child: Final[TextVertex] = TextVertex(uid="child0001", text="child")
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[root, child])
+        assert drop_root_preamble(tree) is tree
+
+    def test_warns_and_retains_when_no_heading_children(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A page with no heading children keeps all content and logs a warning."""
+        page: Final[PageVertex] = PageVertex(uid="pageroot1", title="Doc", children=["text00001"])
+        text: Final[TextVertex] = TextVertex(uid="text00001", text="only loose content")
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page, text])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.vertex_tree"):
+            result: Final[VertexTree] = drop_root_preamble(tree)
+        assert result is tree
+        assert "no heading children" in caplog.text
+
+    def test_ref_vertices_preserved(self) -> None:
+        """Stub ref vertices are untouched by the prune."""
+        tree: Final[VertexTree] = _make_preamble_tree()
+        stub: Final[TextVertex] = TextVertex(uid="refstub01", text="referenced elsewhere")
+        with_refs: Final[VertexTree] = VertexTree(tree_vertices=tree.tree_vertices, ref_vertices=[stub])
+        result: Final[VertexTree] = drop_root_preamble(with_refs)
+        assert [v.uid for v in result.ref_vertices] == ["refstub01"]
 
 
 class TestEnrichImageOriginalSizes:

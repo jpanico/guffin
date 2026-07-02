@@ -45,7 +45,7 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
+from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
 from guffin.render.epub_post_processing import restore_matter_divisions
 from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
@@ -145,9 +145,10 @@ def render(
         api_endpoint: Roam Local API endpoint used to fetch image assets.
         options: The EPUB rendering options.  Reads ``output_dir`` (where the ``.epub`` is written;
             created if absent), ``cache_dir`` (optional cross-run asset cache), ``suppress_attributes``
-            (drop Roam attribute assignments before the build), and ``dump_pandoc_ast`` (write the
+            (drop Roam attribute assignments before the build), ``dump_pandoc_ast`` (write the
             serialized Panflute Doc to ``<output_dir>/<filename_stem>.pandoc.json`` before invoking
-            Pandoc).
+            Pandoc), and ``include_preamble`` (keep or drop the root page's loose preamble;
+            ``None`` defers to the profile policy's ``drop_preamble``).
 
     Raises:
         RuntimeError: If Pandoc is not found, or if the Pandoc conversion fails.
@@ -156,13 +157,20 @@ def render(
     split_level: Final[int] = _split_level_for(profile.structural_policy.top_level_division)
     number_sections: Final[bool] = profile.structural_policy.number_sections
     emit_title_page: Final[bool] = profile.structural_policy.emit_title_page
+    # An explicit include_preamble option overrides the profile's drop_preamble directive.
+    drop_preamble: Final[bool] = (
+        profile.structural_policy.drop_preamble if options.include_preamble is None else not options.include_preamble
+    )
     output_dir: Final[Path] = options.output_dir
     cache_dir: Final[Path | None] = options.cache_dir
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
-    content: Final[VertexTree] = (
+    stripped: Final[VertexTree] = (
         drop_attribute_assignments(render_bundle.content) if options.suppress_attributes else render_bundle.content
     )
+    # Loose preamble (root-page children ahead of the first heading) is pruned so it cannot
+    # surface as a spurious title-bearing chapter ahead of the book's first division.
+    content: Final[VertexTree] = drop_root_preamble(stripped) if drop_preamble else stripped
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.epub"
 

@@ -6,8 +6,9 @@ end so the options can be constructed and passed without pulling in CLI dependen
 :class:`RenderOptions` holds the settings common to every output format (destination directory,
 asset cache, AST dump).  Each format then has its own subclass carrying only the switches that
 apply to it — :class:`MarkdownRenderOptions` (the ``bundle`` mode), :class:`PdfRenderOptions`
-(the Typst ``template_dir`` override), and :class:`EpubRenderOptions` (no extra switches yet) —
-tagged by an ``output_format`` discriminator.  A renderer accepts its own subclass, so every field
+(the Typst ``template_dir`` override and the ``include_preamble`` policy override), and
+:class:`EpubRenderOptions` (the ``include_preamble`` policy override) — tagged by an
+``output_format`` discriminator.  A renderer accepts its own subclass, so every field
 it receives is one it can act on.  :meth:`RenderOptions.for_format` is the factory that builds the
 right subclass for a given :class:`OutputFormat` from the full set of knobs.
 
@@ -90,12 +91,14 @@ class RenderOptions(BaseModel):
         suppress_attributes: bool = False,
         dump_pandoc_ast: bool = False,
         emit_colophon: bool = False,
+        include_preamble: bool | None = None,
     ) -> RenderOptions:
         """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
 
         The single place that assembles per-format options, so callers thread one object rather than a
         long parameter list.  Format-specific knobs apply only to the format that uses them
-        (``template_dir`` to PDF, ``bundle`` to Markdown); the rest are common to every format.
+        (``template_dir`` to PDF, ``bundle`` to Markdown, ``include_preamble`` to PDF and EPUB); the
+        rest are common to every format.
 
         Args:
             output_format: The output format whose options subclass to build.
@@ -106,6 +109,8 @@ class RenderOptions(BaseModel):
             suppress_attributes: Omit Roam attribute assignments from the output.
             dump_pandoc_ast: Write the Pandoc JSON AST alongside the output before conversion.
             emit_colophon: Stamp the output with a provenance colophon from the bundle's provenance.
+            include_preamble: PDF/EPUB-only; keep the root page's loose preamble (``True``), drop
+                it (``False``), or defer to the project profile's policy (``None``, default).
 
         Returns:
             The :class:`RenderOptions` subclass matching *output_format*.
@@ -119,6 +124,7 @@ class RenderOptions(BaseModel):
                     suppress_attributes=suppress_attributes,
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
+                    include_preamble=include_preamble,
                 )
             case OutputFormat.EPUB:
                 return EpubRenderOptions(
@@ -127,6 +133,7 @@ class RenderOptions(BaseModel):
                     suppress_attributes=suppress_attributes,
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
+                    include_preamble=include_preamble,
                 )
             case OutputFormat.MARKDOWN:
                 return MarkdownRenderOptions(
@@ -166,6 +173,10 @@ class PdfRenderOptions(RenderOptions):
         output_format: Always :attr:`OutputFormat.PDF` (the discriminator).
         template_dir: Optional directory containing a ``user_cfg.typ`` override for the bundled
             Bergfink Typst template styling; ``None`` uses the bundled default.
+        include_preamble: Whether to keep the root page's loose preamble (children preceding its
+            first heading child) in the output.  ``None`` (default) defers to the project
+            profile's :attr:`~guffin.render.project.StructuralPolicy.drop_preamble` directive;
+            ``True`` forces the preamble in, ``False`` forces it out.
     """
 
     output_format: Literal[OutputFormat.PDF] = Field(
@@ -174,18 +185,28 @@ class PdfRenderOptions(RenderOptions):
     template_dir: Path | None = Field(
         default=None, description="Directory holding a user_cfg.typ Typst styling override."
     )
+    include_preamble: bool | None = Field(
+        default=None, description="Keep the root page's loose preamble; None defers to the profile's policy."
+    )
 
 
 class EpubRenderOptions(RenderOptions):
     """Options for rendering to EPUB 3 via Pandoc.
 
-    Carries only the format-independent base options for now; the page title supplies the EPUB
-    ``dc:title`` and Pandoc fills the remaining required metadata (identifier, date, language).
+    The page title supplies the EPUB ``dc:title`` and Pandoc fills the remaining required
+    metadata (identifier, date, language).
 
     Attributes:
         output_format: Always :attr:`OutputFormat.EPUB` (the discriminator).
+        include_preamble: Whether to keep the root page's loose preamble (children preceding its
+            first heading child) in the output.  ``None`` (default) defers to the project
+            profile's :attr:`~guffin.render.project.StructuralPolicy.drop_preamble` directive;
+            ``True`` forces the preamble in, ``False`` forces it out.
     """
 
     output_format: Literal[OutputFormat.EPUB] = Field(
         default=OutputFormat.EPUB, description="Discriminator identifying EPUB options."
+    )
+    include_preamble: bool | None = Field(
+        default=None, description="Keep the root page's loose preamble; None defers to the profile's policy."
     )

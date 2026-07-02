@@ -17,7 +17,7 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex
+from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
 from guffin.render.project import BookProfile, DefaultProfile, ProjectProfile
@@ -55,6 +55,7 @@ def _render_epub(
     profile: ProjectProfile,
     stem: str,
     suppress_attributes: bool = False,
+    include_preamble: bool | None = None,
 ) -> Path:
     """Render *bundle* to ``<out_dir>/<stem>.epub`` and return the path."""
     render(
@@ -62,7 +63,9 @@ def _render_epub(
         profile=profile,
         filename_stem=stem,
         api_endpoint=_ENDPOINT,
-        options=EpubRenderOptions(output_dir=out_dir, suppress_attributes=suppress_attributes),
+        options=EpubRenderOptions(
+            output_dir=out_dir, suppress_attributes=suppress_attributes, include_preamble=include_preamble
+        ),
     )
     return out_dir / f"{stem}.epub"
 
@@ -114,6 +117,36 @@ def multi_level_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Pat
         "article": _render_epub(out, bundle, DefaultProfile(), "article"),  # SECTION -> split-level 1
         "book": _render_epub(out, bundle, BookProfile(), "book"),  # CHAPTER -> split-level 1
         "parts": _render_epub(out, bundle, BookProfile(with_parts=True), "parts"),  # PART -> split-level 2
+    }
+
+
+def _preamble_bundle() -> RenderBundle:
+    """A page with a loose leading block ahead of its two chapter headings (for preamble tests)."""
+    page: Final[PageVertex] = PageVertex(
+        uid="page00002", title="Preamble Doc", children=["loose0001", "chap00001", "chap00002"]
+    )
+    loose: Final[TextVertex] = TextVertex(uid="loose0001", text="Loose preamble content")
+    chap1: Final[HeadingVertex] = HeadingVertex(
+        uid="chap00001", text="Chapter One", heading_level=1, children=["body00001"]
+    )
+    body1: Final[TextVertex] = TextVertex(uid="body00001", text="Chapter one body")
+    chap2: Final[HeadingVertex] = HeadingVertex(uid="chap00002", text="Chapter Two", heading_level=1)
+    return RenderBundle(content=VertexTree(tree_vertices=[page, loose, chap1, body1, chap2]))
+
+
+@pytest.fixture(scope="module")
+def preamble_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
+    """The preamble bundle rendered three ways, keyed ``book`` / ``book_kept`` / ``article``.
+
+    A book (policy drop), a book with the preamble forced back in (``include_preamble=True``),
+    and a default article (policy keep).
+    """
+    out: Final[Path] = tmp_path_factory.mktemp("preamble")
+    bundle: Final[RenderBundle] = _preamble_bundle()
+    return {
+        "book": _render_epub(out, bundle, BookProfile(), "book"),
+        "book_kept": _render_epub(out, bundle, BookProfile(), "book_kept", include_preamble=True),
+        "article": _render_epub(out, bundle, DefaultProfile(), "article"),
     }
 
 
@@ -235,6 +268,34 @@ class TestTitlePage:
         """A book (emit_title_page=True) includes a title page; the default article omits it."""
         assert _has_title_page(article5_book_epub)
         assert not _has_title_page(article5_default_epub)
+
+
+class TestPreambleDrop:
+    """The root page's loose preamble follows ``drop_preamble`` and its ``include_preamble`` override.
+
+    Loose preamble ahead of the first heading would otherwise surface as a spurious synthetic
+    chapter that Pandoc's EPUB writer titles with the document title — duplicating the title page.
+    """
+
+    def test_book_drops_preamble_by_default(self, preamble_epubs: dict[str, Path]) -> None:
+        """A book's loose preamble is pruned: its text is absent and no extra chapter is split."""
+        assert "Loose preamble content" not in _all_text(preamble_epubs["book"])
+        assert _content_file_count(preamble_epubs["book"]) == 2  # the two chapters only
+
+    def test_book_drop_removes_synthetic_title_chapter(self, preamble_epubs: dict[str, Path]) -> None:
+        """Without preamble, no body chapter carries the document title (only the title page does)."""
+        first_chapter: Final[str] = _chapter_xhtml(preamble_epubs["book"])
+        assert "Chapter One" in first_chapter
+        assert "Preamble Doc" not in first_chapter
+
+    def test_include_preamble_overrides_book_drop(self, preamble_epubs: dict[str, Path]) -> None:
+        """include_preamble=True forces the loose preamble back into a book render."""
+        assert "Loose preamble content" in _all_text(preamble_epubs["book_kept"])
+        assert _content_file_count(preamble_epubs["book_kept"]) == 3  # synthetic chapter + two chapters
+
+    def test_article_keeps_preamble_by_default(self, preamble_epubs: dict[str, Path]) -> None:
+        """A default (article) profile does not drop the preamble."""
+        assert "Loose preamble content" in _all_text(preamble_epubs["article"])
 
 
 def _tagged_heading(uid: str, text: str, name: str, value: str) -> HeadingVertex:

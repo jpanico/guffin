@@ -36,19 +36,21 @@ class TestStructuralPolicy:
     """The structural policy each project type resolves to."""
 
     def test_default_is_article_like(self) -> None:
-        """Default: sections, no title page, unnumbered, no abstract."""
+        """Default: sections, no title page, unnumbered, no abstract, preamble kept."""
         policy: Final = DefaultProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.SECTION
         assert not policy.emit_title_page
         assert not policy.number_sections
         assert not policy.emit_abstract
+        assert not policy.drop_preamble
 
     def test_book_uses_chapters(self) -> None:
-        """Book: chapters, title page, numbered."""
+        """Book: chapters, title page, numbered, preamble dropped."""
         policy: Final = BookProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.CHAPTER
         assert policy.emit_title_page
         assert policy.number_sections
+        assert policy.drop_preamble
 
     def test_book_with_parts_promotes_top_level(self) -> None:
         """A book with parts makes the top-level division a part."""
@@ -56,11 +58,12 @@ class TestStructuralPolicy:
         assert policy.top_level_division is TopLevelDivision.PART
 
     def test_manuscript_emits_abstract(self) -> None:
-        """Manuscript: sections, title block, unnumbered, abstract."""
+        """Manuscript: sections, title block, unnumbered, abstract, preamble kept."""
         policy: Final = ManuscriptProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.SECTION
         assert policy.emit_abstract
         assert not policy.number_sections
+        assert not policy.drop_preamble
 
 
 class TestProfileDiscriminator:

@@ -19,6 +19,8 @@ Public symbols:
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
 - :func:`drop_attribute_assignments` — return a new :class:`VertexTree` with every vertex's
   :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` cleared.
+- :func:`drop_root_preamble` — return a new :class:`VertexTree` with the root page's loose
+  preamble (children preceding its first heading child) pruned.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
   :attr:`~guffin.model.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
 """
@@ -248,6 +250,68 @@ def drop_attribute_assignments(tree: VertexTree) -> VertexTree:
         return vtx.model_copy(update={"attribute_assignments": None}) if vtx.attribute_assignments else vtx
 
     return map_vertices(tree, _clear)
+
+
+@validate_call
+def drop_root_preamble(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`VertexTree` with the root page's loose preamble pruned.
+
+    The *loose preamble* is the run of a root :class:`~guffin.model.vertex.PageVertex`'s children
+    that precede its first :class:`~guffin.model.vertex.HeadingVertex` child — content that belongs
+    to no titled division.  Those children (and their entire subtrees) are removed from
+    :attr:`~VertexTree.tree_vertices` and from the root's
+    :attr:`~guffin.model.vertex._BaseVertex.children` list.  The original *tree* is not modified.
+
+    The tree passes through unchanged when there is nothing to prune or nothing to anchor the
+    prune to:
+
+    - the root is not a :class:`~guffin.model.vertex.PageVertex` (a subtree export);
+    - the root's first child is already a heading (no preamble);
+    - the root has no heading children at all (every child would be preamble; the content is
+      retained and a warning is logged instead).
+
+    Args:
+        tree: The source :class:`VertexTree`.
+
+    Returns:
+        A new :class:`VertexTree` without the preamble vertices, or *tree* itself when no prune
+        applies.
+    """
+    root: Final[Vertex] = root_vertex(tree)
+    if not isinstance(root, PageVertex) or not root.children:
+        return tree
+    child_vertices: Final[list[Vertex]] = [tree.uid_map[uid] for uid in root.children]
+    heading_index: Final[int | None] = next(
+        (idx for idx, vtx in enumerate(child_vertices) if isinstance(vtx, HeadingVertex)), None
+    )
+    if heading_index is None:
+        logger.warning("root page uid=%r has no heading children; loose preamble retained", root.uid)
+        return tree
+    if heading_index == 0:
+        return tree
+
+    # Collect the preamble children and every descendant beneath them.
+    preamble_uids: Final[set[Uid]] = set()
+    pending: Final[list[Uid]] = list(root.children[:heading_index])
+    while pending:
+        uid = pending.pop()
+        preamble_uids.add(uid)
+        vertex = tree.uid_map.get(uid)
+        if vertex is not None and vertex.children:
+            pending.extend(vertex.children)
+    logger.info(
+        "dropping %d loose preamble vertices ahead of the first heading child of root page uid=%r",
+        len(preamble_uids),
+        root.uid,
+    )
+
+    pruned_root: Final[Vertex] = root.model_copy(update={"children": list(root.children[heading_index:])})
+    return VertexTree(
+        tree_vertices=[
+            pruned_root if vtx.uid == root.uid else vtx for vtx in tree.tree_vertices if vtx.uid not in preamble_uids
+        ],
+        ref_vertices=tree.ref_vertices,
+    )
 
 
 @validate_call
