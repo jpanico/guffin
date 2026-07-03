@@ -217,6 +217,14 @@ class TestVertexType:
         """Test that a Roam-style block-quote node classifies as BLOCK_QUOTE."""
         assert vertex_type(_make_block_quote(string="[[>]] quoted text")) is VertexType.BLOCK_QUOTE
 
+    def test_bare_table_marker_returns_guffin_table(self) -> None:
+        """Test that a bare {{table}} marker node classifies as TABLE."""
+        assert vertex_type(_make_text(string="{{table}}")) is VertexType.TABLE
+
+    def test_page_ref_table_marker_returns_guffin_table(self) -> None:
+        """Test that the page-reference marker form {{[[table]]}} classifies as TABLE."""
+        assert vertex_type(_make_text(string="{{[[table]]}}")) is VertexType.TABLE
+
     def test_node_with_neither_title_nor_string_raises_validation_error(self) -> None:
         """Test that constructing a node missing both title and string raises ValidationError."""
         with pytest.raises(ValidationError):

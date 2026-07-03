@@ -408,6 +408,26 @@ class TestNodeTypeFunction:
         node = _make_text(string="[[>]] [[!INVALID]] text")
         assert node_type(node) is NodeType.BLOCK_QUOTE
 
+    def test_bare_table_marker_returns_native_table(self) -> None:
+        """Test that a block whose string is the bare {{table}} marker returns NATIVE_TABLE."""
+        node = _make_text(string="{{table}}")
+        assert node_type(node) is NodeType.NATIVE_TABLE
+
+    def test_page_ref_table_marker_returns_native_table(self) -> None:
+        """Test that the page-reference marker form {{[[table]]}} also returns NATIVE_TABLE."""
+        node = _make_text(string="{{[[table]]}}")
+        assert node_type(node) is NodeType.NATIVE_TABLE
+
+    def test_table_marker_with_surrounding_whitespace_returns_native_table(self) -> None:
+        """Test that surrounding whitespace around a table marker is tolerated."""
+        node = _make_text(string="  {{[[table]]}}  ")
+        assert node_type(node) is NodeType.NATIVE_TABLE
+
+    def test_table_marker_mixed_with_text_is_plain_block(self) -> None:
+        """Test that a table marker mixed with surrounding text is not a NATIVE_TABLE."""
+        node = _make_text(string="see {{table}} here")
+        assert node_type(node) is NodeType.PLAIN_BLOCK
+
     def test_embed_block_returns_embed(self) -> None:
         """Test that a block whose entire string is a block embed returns EMBED_BLOCK."""
         node = _make_text(string="{{embed: ((wjN-kVF3B))}}")

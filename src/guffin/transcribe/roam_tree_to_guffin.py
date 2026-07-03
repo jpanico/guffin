@@ -724,7 +724,7 @@ def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozen
 
     Args:
         node: A native-table node whose :attr:`~guffin.roam.node.RoamNode.string`
-            equals :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`.
+            is one of :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`.
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
             its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve row and
             cell stubs to their full node records.

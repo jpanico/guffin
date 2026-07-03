@@ -40,7 +40,7 @@ from guffin.roam.markdown import (
     BLOCK_EMBED_RE,
     CALLOUT_RE,
     IMAGE_LINK_RE,
-    ROAM_NATIVE_TABLE_MARKER,
+    ROAM_NATIVE_TABLE_MARKERS,
     is_roam_block_quote,
 )
 from guffin.roam.primitives import (
@@ -87,9 +87,9 @@ class NodeType(enum.StrEnum):
       block (opened by a ```` ``` ```` or ``~~~`` fence).
     - **BLOCK_QUOTE**: ``string`` starts with ``[[>]]`` but does *not* match the callout marker
       pattern ``[[>]] [[!<TYPE>]]`` — i.e. a plain ``[[>]]``-prefixed blockquote.
-    - **NATIVE_TABLE**: ``string``, with surrounding whitespace trimmed, equals
-      :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER` (``"{{table}}"``); its child blocks
-      form the table rows.
+    - **NATIVE_TABLE**: ``string``, with surrounding whitespace trimmed, is one of
+      :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS` (``"{{table}}"`` /
+      ``"{{[[table]]}}"``); its child blocks form the table rows.
     - **EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
       trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` (matched by
       :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
@@ -340,8 +340,8 @@ def node_type(node: RoamNode) -> NodeType:
     Markdown ``>``-prefixed blockquote,
     :attr:`NodeType.CODE_BLOCK` when the trimmed ``string`` is a fenced code block
     (as determined by :func:`~guffin.common.markdown.is_fenced_code_block`),
-    :attr:`NodeType.NATIVE_TABLE` when the trimmed ``string`` equals
-    :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`,
+    :attr:`NodeType.NATIVE_TABLE` when the trimmed ``string`` is one of
+    :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`,
     :attr:`NodeType.EMBED_BLOCK` when the trimmed ``string`` is wholly a Roam block embed
     (as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`),
     :attr:`NodeType.ATTRIBUTE_BLOCK` when the trimmed ``string`` is wholly a Roam attribute
@@ -358,8 +358,8 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
         :attr:`NodeType.BLOCK_QUOTE` if :func:`~guffin.roam.primitives.is_roam_block_quote` is ``True``;
         :attr:`NodeType.CODE_BLOCK` if the trimmed ``string`` is a CommonMark fenced code block;
-        :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` equals
-        :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKER`;
+        :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` is one of
+        :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`;
         :attr:`NodeType.EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
         :attr:`NodeType.ATTRIBUTE_BLOCK` if the trimmed ``string`` is wholly a Roam attribute assignment;
         :attr:`NodeType.PLAIN_BLOCK` otherwise.
@@ -379,7 +379,7 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.BLOCK_QUOTE
     if is_fenced_code_block(string.strip()):
         return NodeType.CODE_BLOCK
-    if string.strip() == ROAM_NATIVE_TABLE_MARKER:
+    if string.strip() in ROAM_NATIVE_TABLE_MARKERS:
         return NodeType.NATIVE_TABLE
     if BLOCK_EMBED_RE.fullmatch(string.strip()):
         return NodeType.EMBED_BLOCK

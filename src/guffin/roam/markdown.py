@@ -29,8 +29,9 @@ Public symbols:
 - **Image-link accessors**: :func:`image_link_url`, :func:`image_link_alt_text` — extract the Cloud
   Firestore URL and the alt text from the first image link in a block string;
   :func:`firestore_url_file_name` — decode the original filename from a Firestore storage URL.
-- **Table marker**: :data:`ROAM_NATIVE_TABLE_MARKER` — the block string that identifies a Roam
-  native table block.
+- **Table marker**: :data:`ROAM_NATIVE_TABLE_MARKER` — the canonical block string identifying a Roam
+  native table block; :data:`ROAM_NATIVE_TABLE_MARKERS` — every recognised spelling of the marker
+  (``{{table}}`` and ``{{[[table]]}}``).
 """
 
 import enum
@@ -202,11 +203,18 @@ def strip_block_quote_marker(block_string: str) -> str:
 
 
 ROAM_NATIVE_TABLE_MARKER: Final[str] = "{{table}}"
-"""Block string that identifies a Roam native table block.
+"""The canonical block string identifying a Roam native table block.
 
 A block whose :attr:`~guffin.roam.node.RoamNode.string` (after stripping surrounding
-whitespace) equals this marker is a Roam native table container; its child blocks
-form the rows, and each child's children are the cells.
+whitespace) is one of :data:`ROAM_NATIVE_TABLE_MARKERS` is a Roam native table container;
+its child blocks form the rows, and each child's children are the cells.
+"""
+
+ROAM_NATIVE_TABLE_MARKERS: Final[frozenset[str]] = frozenset({ROAM_NATIVE_TABLE_MARKER, "{{[[table]]}}"})
+"""Every recognised spelling of the Roam native table marker.
+
+Roam writes the component as either the bare :data:`ROAM_NATIVE_TABLE_MARKER` form
+(``{{table}}``) or the page-reference form (``{{[[table]]}}``); the two are equivalent.
 """
 
 IMAGE_LINK_RE: Final[regex.Pattern[str]] = regex.compile(
