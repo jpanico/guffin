@@ -20,6 +20,8 @@ from typing import ClassVar, Final, Literal
 import requests
 from pydantic import BaseModel, ConfigDict, Field, validate_call
 
+from guffin.common.json_value import JsonValue
+
 logger = logging.getLogger(__name__)
 
 
@@ -186,18 +188,22 @@ def invoke_action(request_payload: Request.Payload, api_endpoint: ApiEndpoint) -
     """
     logger.debug("payload: %s, api_endpoint: %s", request_payload, api_endpoint)
     request_headers: Final[Request.Headers] = Request.Headers.with_bearer_token(api_endpoint.bearer_token)
+    request_url: Final[str] = str(api_endpoint.url)
+    json_body: Final[dict[str, JsonValue]] = request_payload.model_dump(mode="json")
+    header_fields: Final[dict[str, str]] = request_headers.model_dump(by_alias=True)
 
     response: Final[requests.Response] = requests.post(
-        str(api_endpoint.url),
-        json=request_payload.model_dump(mode="json"),
-        headers=request_headers.model_dump(by_alias=True),
+        request_url,
+        json=json_body,
+        headers=header_fields,
         stream=False,
     )
     logger.debug("response: %s", response)
 
-    if response.status_code == 200:
-        return Response.Payload.model_validate_json(response.text)
-    else:
-        error_msg: str = f"Failed to make request. Status Code: {response.status_code}, Response: {response.text}"
+    if response.status_code != 200:
+        error_msg: Final[str] = (
+            f"Failed to make request. Status Code: {response.status_code}, Response: {response.text}"
+        )
         logger.error(error_msg)
         raise requests.exceptions.HTTPError(error_msg)
+    return Response.Payload.model_validate_json(response.text)

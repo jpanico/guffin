@@ -91,7 +91,6 @@ from guffin.roam.markdown import (
     strip_block_quote_marker,
 )
 from guffin.roam.node import (
-    DEFAULT_CHILDREN_VIEW_TYPE,
     NodeType,
     RoamNode,
     effective_children_view_type,
@@ -101,7 +100,7 @@ from guffin.roam.node import (
 )
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
-from guffin.roam.primitives import Id
+from guffin.roam.primitives import DEFAULT_CHILDREN_VIEW_TYPE, Id
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -914,7 +913,7 @@ def build_view_map(node_tree: NodeTree) -> ViewMap:
 
     This is the presentation counterpart to :func:`transcribe` (which derives content): it
     records, for each node whose effective children-view-type differs from
-    :data:`~guffin.roam.node.DEFAULT_CHILDREN_VIEW_TYPE`, a
+    :data:`~guffin.roam.primitives.DEFAULT_CHILDREN_VIEW_TYPE`, a
     :class:`~guffin.model.view.VertexView` keyed by the node's uid.  The map is sparse — a uid
     absent from it takes :data:`~guffin.model.view.DEFAULT_CHILDREN_LAYOUT`.
 

@@ -10,24 +10,22 @@ Public symbols:
 - :func:`effective_heading_level` — return the effective heading level for a
   :class:`RoamNode`, or ``None`` if it is not a heading.
 - :func:`effective_children_view_type` — return a :class:`RoamNode`'s children view type,
-  falling back to :data:`DEFAULT_CHILDREN_VIEW_TYPE` when unset.
+  falling back to :data:`~guffin.roam.primitives.DEFAULT_CHILDREN_VIEW_TYPE` when unset.
 - :func:`image_size` — return the :class:`~guffin.common.geometry.ImageSize` recorded in
   a :attr:`NodeType.IMAGE_BLOCK` node's ``image-size`` prop, or ``None`` if the node
   is not an image block.
 - :data:`NodesByUid` — ``dict`` mapping each :attr:`~RoamNode.uid` to its :class:`RoamNode`.
-- :data:`DEFAULT_CHILDREN_VIEW_TYPE` — fallback :class:`~guffin.roam.primitives.ChildrenViewType`
-  for a block whose ``children_view_type`` is unset.
 """
 
 import enum
 import logging
 from typing import Final
 
+import regex
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
-    TypeAdapter,
     field_validator,
     model_validator,
     validate_call,
@@ -44,6 +42,8 @@ from guffin.roam.markdown import (
     is_roam_block_quote,
 )
 from guffin.roam.primitives import (
+    DEFAULT_CHILDREN_VIEW_TYPE,
+    IMAGE_SIZE_PROP_ADAPTER,
     ChildrenViewType,
     Id,
     IdObject,
@@ -58,17 +58,8 @@ from guffin.roam.schema import SchemaAttribute
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_CHILDREN_VIEW_TYPE: Final[ChildrenViewType] = ChildrenViewType.BULLET
-"""Fallback :class:`~guffin.roam.primitives.ChildrenViewType` for an unset ``children_view_type``."""
-
-_IMAGE_SIZE_PROP_ADAPTER: Final[TypeAdapter[dict[str, dict[str, int | None]]]] = TypeAdapter(
-    dict[str, dict[str, int | None]]
-)
-"""Pydantic :class:`~pydantic.TypeAdapter` for validating the ``image-size`` block prop.
-
-The ``image-size`` prop maps an image URL string to a ``{"width": int|None, "height": int|None}``
-dict.  Used by :func:`image_size` to extract dimensions without Unknown-type propagation.
-"""
+_AH_LEVEL_RE: Final[regex.Pattern[str]] = regex.compile(r"h(?P<level>[1-6])")
+"""Compiled regex matching an Augmented Headings ``ah-level`` block-prop value (``h1`` … ``h6``)."""
 
 
 class NodeType(enum.StrEnum):
@@ -257,16 +248,13 @@ def effective_heading_level(node: RoamNode) -> HeadingLevel | None:
     """
     if node.heading is not None:
         return node.heading
-    if node.props is not None:
-        ah_level = node.props.get("ah-level")
-        if isinstance(ah_level, str) and len(ah_level) == 2 and ah_level[0] == "h":
-            try:
-                level = int(ah_level[1])
-                if 1 <= level <= 6:
-                    return level
-            except ValueError:
-                pass
-    return None
+    ah_level: Final[object | None] = (node.props or {}).get("ah-level")
+    if not isinstance(ah_level, str):
+        return None
+    ah_match: Final[regex.Match[str] | None] = _AH_LEVEL_RE.fullmatch(ah_level)
+    if ah_match is None:
+        return None
+    return int(ah_match.group("level"))
 
 
 @validate_call
@@ -278,7 +266,7 @@ def effective_children_view_type(node: RoamNode) -> ChildrenViewType:
 
     Returns:
         :attr:`~RoamNode.children_view_type` if set, otherwise
-        :data:`DEFAULT_CHILDREN_VIEW_TYPE`.
+        :data:`~guffin.roam.primitives.DEFAULT_CHILDREN_VIEW_TYPE`.
     """
     if node.children_view_type is None:
         return DEFAULT_CHILDREN_VIEW_TYPE
@@ -310,7 +298,7 @@ def image_size(node: RoamNode) -> ImageSize | None:
     raw: Final[object | None] = node.props.get("image-size")
     if raw is None:
         return ImageSize()
-    size_map: Final[dict[str, dict[str, int | None]]] = _IMAGE_SIZE_PROP_ADAPTER.validate_python(raw)
+    size_map: Final[dict[str, dict[str, int | None]]] = IMAGE_SIZE_PROP_ADAPTER.validate_python(raw)
     first_entry: Final[dict[str, int | None] | None] = next(iter(size_map.values()), None)
     if first_entry is None:
         return ImageSize()

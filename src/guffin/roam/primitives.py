@@ -6,6 +6,9 @@ Public symbols are organized into the following groups:
 - **Composite type aliases**: :data:`UidPair`, :data:`RawChildren`, :data:`RawRefs`.
 - **Stub models**: :class:`IdObject`, :class:`LinkObject`.
 - **Enums**: :class:`ChildrenViewType` — Roam block ``:children/view-type`` values.
+- **Constants**: :data:`DEFAULT_CHILDREN_VIEW_TYPE` — fallback :class:`ChildrenViewType` for a
+  block whose ``:children/view-type`` is unset; :data:`IMAGE_SIZE_PROP_ADAPTER` — Pydantic
+  :class:`~pydantic.TypeAdapter` validating the ``image-size`` block prop.
 - **Pattern constants**: :data:`SYNTHETIC_UID_PATTERN` (Roam-generated 9-char UID) and
   :data:`DAILY_NOTE_UID_PATTERN` (``MM-DD-YYYY`` daily-note-page UID) compose
   :data:`UID_PATTERN` / :data:`UID_RE` — the unanchored regex matching *any* node UID;
@@ -17,7 +20,7 @@ import enum
 from typing import Annotated, Final, Literal
 
 import regex
-from pydantic import BaseModel, ConfigDict, Field, validate_call
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
 
 SYNTHETIC_UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
 """Regex for a Roam-generated node UID: nine alphanumeric/dash/underscore characters (the common case).
@@ -87,6 +90,19 @@ class ChildrenViewType(enum.StrEnum):
     BULLET = "bullet"
     DOCUMENT = "document"
     NUMBERED = "numbered"
+
+
+DEFAULT_CHILDREN_VIEW_TYPE: Final[ChildrenViewType] = ChildrenViewType.BULLET
+"""Fallback :class:`ChildrenViewType` for a block whose ``:children/view-type`` is unset."""
+
+IMAGE_SIZE_PROP_ADAPTER: Final[TypeAdapter[dict[str, dict[str, int | None]]]] = TypeAdapter(
+    dict[str, dict[str, int | None]]
+)
+"""Pydantic :class:`~pydantic.TypeAdapter` for validating the ``image-size`` block prop.
+
+The ``image-size`` prop maps an image URL string to a ``{"width": int|None, "height": int|None}``
+dict; validating through the adapter extracts dimensions without Unknown-type propagation.
+"""
 
 
 class IdObject(BaseModel):

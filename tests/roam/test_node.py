@@ -7,14 +7,13 @@ from pydantic import ValidationError
 
 from guffin.common.geometry import ImageSize
 from guffin.roam.node import (
-    DEFAULT_CHILDREN_VIEW_TYPE,
     NodeType,
     RoamNode,
     effective_children_view_type,
     image_size,
     node_type,
 )
-from guffin.roam.primitives import ChildrenViewType, IdObject
+from guffin.roam.primitives import DEFAULT_CHILDREN_VIEW_TYPE, ChildrenViewType, IdObject
 
 _FIRESTORE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
@@ -555,7 +554,7 @@ class TestImageSize:
         """Test that image_size raises ValidationError when image-size prop has an invalid structure.
 
         The expected structure is ``dict[str, dict[str, int | None]]``; passing a plain
-        string value triggers ``_IMAGE_SIZE_PROP_ADAPTER.validate_python`` to raise
+        string value triggers ``IMAGE_SIZE_PROP_ADAPTER.validate_python`` to raise
         ``ValidationError``.
         """
         node = RoamNode(

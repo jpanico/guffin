@@ -45,12 +45,13 @@ class Table(BaseModel):
         if not self.rows:
             raise ValueError("rows must be non-empty")
         col_count: Final[int] = len(self.rows[0])
-        for idx, row in enumerate(self.rows[1:], start=1):
-            if len(row) != col_count:
-                raise ValueError(
-                    f"all rows must have the same column count; "
-                    f"row 0 has {col_count} column(s) but row {idx} has {len(row)}"
-                )
+        ragged: Final[list[str]] = [
+            f"row {idx} has {len(row)}" for idx, row in enumerate(self.rows[1:], start=1) if len(row) != col_count
+        ]
+        if ragged:
+            raise ValueError(
+                f"all rows must have the same column count; row 0 has {col_count} column(s) but " + "; ".join(ragged)
+            )
         return self
 
     @property

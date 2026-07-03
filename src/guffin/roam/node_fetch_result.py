@@ -315,6 +315,25 @@ def anchor_node(network: NodeNetwork, anchor: NodeFetchAnchor) -> RoamNode:
     return found
 
 
+def _resolved_children(node: RoamNode, id_to_node: dict[int, RoamNode]) -> list[RoamNode]:
+    """Resolve *node*'s child references to their full node records via *id_to_node*.
+
+    Args:
+        node: The node whose ``:block/children`` references to resolve.
+        id_to_node: Mapping from ``:db/id`` to its :class:`~guffin.roam.node.RoamNode`.
+
+    Returns:
+        The child nodes in source order; empty when *node* has no children.
+
+    Raises:
+        ValueError: If any child reference resolves to an ``:db/id`` absent from *id_to_node*.
+    """
+    missing: Final[list[int]] = [ref.id for ref in node.children or () if ref.id not in id_to_node]
+    if missing:
+        raise ValueError(f"child ids {missing!r} not found in network (parent uid={node.uid!r})")
+    return [id_to_node[ref.id] for ref in node.children or ()]
+
+
 @validate_call
 def anchor_tree(network: NodeNetwork, anchor: NodeFetchAnchor) -> NodeNetwork:
     """Return all nodes in *network* reachable from the anchor node via.
@@ -351,11 +370,6 @@ def anchor_tree(network: NodeNetwork, anchor: NodeFetchAnchor) -> NodeNetwork:
             continue
         visited.add(node.id)
         result.append(node)
-        if not node.children:
-            continue
-        for child_ref in node.children:
-            if child_ref.id not in id_to_node:
-                raise ValueError(f"child id {child_ref.id!r} not found in network (parent uid={node.uid!r})")
-            stack.append(id_to_node[child_ref.id])
+        stack.extend(_resolved_children(node, id_to_node))
 
     return result
