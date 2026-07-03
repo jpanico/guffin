@@ -283,8 +283,9 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   accumulating four validators: `all_attributes_anchored` (every recognized guffin attribute sits
   on the vertex type its `Anchor` names — the `Anchor.vertex_type` correspondence is the enforced
   invariant), `all_element_type_values_legal` / `all_matter_values_legal` (every `element-type` /
-  `matter` value is a `StructuralElement` / `Matter` member), and `all_matter_tags_level_1` (a
-  `matter` tag applies to level-1 headings only). Run by `cli/common.fetch_roam_trees` on the
+  `matter` value is a `StructuralElement` / `Matter` member), and `all_matter_tags_at_section_level`
+  (a `matter` tag sits at the book's section level — level 1, or level 2 in a parts book, since
+  that is where chapter-shaped sections live). Run by `cli/common.fetch_roam_trees` on the
   transcribed content (tree and ref vertices). Consequences differ per command: `dump-roam-tree`
   logs violations as warnings (advisory — a misplaced or illegal tag simply has no effect on the
   terminal dump), while `export-roam-tree` fetches with `strict_semantics=True`, so violations

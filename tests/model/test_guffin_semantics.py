@@ -22,7 +22,7 @@ from guffin.model.guffin_semantics import (
     StructuralElement,
     all_attributes_anchored,
     all_element_type_values_legal,
-    all_matter_tags_level_1,
+    all_matter_tags_at_section_level,
     all_matter_values_legal,
     element_type_of,
     find_guffin_attribute,
@@ -149,6 +149,25 @@ class TestElementTypeOfArticle6Fixture:
         assert element_type_of(assignment) is StructuralElement.ACKNOWLEDGMENTS
 
 
+class TestValidateSemanticsArticle6Fixture:
+    """validate_semantics passes the real, tag-rich [[Test Article]] 6 fixture."""
+
+    def test_fixture_is_semantically_valid(self) -> None:
+        """The fixture's guffin-meta metadata, element-type tags, and matter tag all validate cleanly."""
+        tree = _article6_vertex_tree()
+        # Precondition: the fixture actually exercises the vocabulary, so a pass is not vacuous.
+        tagged = [
+            vertex
+            for vertex in VertexTreeDFSIterator(tree)
+            if find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE) is not None
+            or find_guffin_attribute(vertex, GuffinSemantics.MATTER) is not None
+        ]
+        assert tagged, "fixture carries no vocabulary tags; regenerate it from [[Test Article]] 6"
+        result = validate_semantics(tree)
+        assert result.errors == ()
+        assert result.is_valid
+
+
 def _tagged_heading_tree(heading_level: int, element_type: str | None) -> VertexTree:
     """A page with one heading at *heading_level*, optionally tagged ``element-type:: <value>``."""
     page = PageVertex(uid="pageroot1", title="Doc", children=["head00001"])
@@ -194,25 +213,36 @@ def _attributed_tree(
     value: str = "some value",
     heading_level: int = 1,
     ref_heading_names: list[str] | None = None,
+    with_part: bool = False,
 ) -> VertexTree:
     """A page + heading at *heading_level*, each carrying single-*value* assignments for the given names.
 
     When *ref_heading_names* is given, a stub heading (also at *heading_level*) carrying those
-    assignments is added to ``ref_vertices``.
+    assignments is added to ``ref_vertices``.  When *with_part* is set, a level-1 heading tagged
+    ``element-type:: part`` is added, making the tree a parts book.
     """
 
     def _assignments(names: list[str]) -> list[AttributeAssignment] | None:
         return [_assignment(name, value, domain) for name in names] or None
 
-    page = PageVertex(
-        uid="pageroot1", title="Doc", children=["head00001"], attribute_assignments=_assignments(page_names)
-    )
+    children = ["head00001"] + (["parthead1"] if with_part else [])
+    page = PageVertex(uid="pageroot1", title="Doc", children=children, attribute_assignments=_assignments(page_names))
     heading = HeadingVertex(
         uid="head00001",
         text="A Heading",
         heading_level=heading_level,
         attribute_assignments=_assignments(heading_names),
     )
+    tree_vertices: list[HeadingVertex | PageVertex] = [page, heading]
+    if with_part:
+        tree_vertices.append(
+            HeadingVertex(
+                uid="parthead1",
+                text="Book I",
+                heading_level=1,
+                attribute_assignments=[_assignment("element-type", "part")],
+            )
+        )
     ref_vertices = (
         [
             HeadingVertex(
@@ -225,7 +255,7 @@ def _attributed_tree(
         if ref_heading_names
         else []
     )
-    return VertexTree(tree_vertices=[page, heading], ref_vertices=ref_vertices)
+    return VertexTree(tree_vertices=tree_vertices, ref_vertices=ref_vertices)
 
 
 class TestAllAttributesAnchored:
@@ -339,33 +369,52 @@ class TestAllMatterValuesLegal:
         assert "uid='refhead01'" in error.message
 
 
-class TestAllMatterTagsLevel1:
-    """all_matter_tags_level_1() restricts matter tags to level-1 headings."""
+class TestAllMatterTagsAtSectionLevel:
+    """all_matter_tags_at_section_level() restricts matter tags to the book's section level."""
 
-    def test_matter_on_level_1_heading_passes(self) -> None:
-        """A matter tag on a level-1 heading produces no error."""
+    def test_chapters_book_matter_on_level_1_passes(self) -> None:
+        """In a chapters book (no parts), a matter tag on a level-1 heading produces no error."""
         tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="front-matter")
-        assert all_matter_tags_level_1(tree) is None
+        assert all_matter_tags_at_section_level(tree) is None
 
-    def test_matter_on_deeper_heading_reported(self) -> None:
-        """A matter tag on a level-2 heading is a violation naming the level and vertex."""
+    def test_chapters_book_matter_on_level_2_reported(self) -> None:
+        """In a chapters book, a matter tag on a level-2 heading is a violation naming the vertex."""
         tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="front-matter", heading_level=2)
-        error = all_matter_tags_level_1(tree)
+        error = all_matter_tags_at_section_level(tree)
         assert error is not None
         assert "level-2" in error.message
+        assert "chapters book" in error.message
+        assert "uid='head00001'" in error.message
+
+    def test_parts_book_matter_on_level_2_passes(self) -> None:
+        """In a parts book, sections live at level 2, so a matter tag there produces no error."""
+        tree = _attributed_tree(
+            [], ["matter"], AttributeDomain.GUFFIN, value="front-matter", heading_level=2, with_part=True
+        )
+        assert all_matter_tags_at_section_level(tree) is None
+
+    def test_parts_book_matter_on_level_1_reported(self) -> None:
+        """In a parts book, level 1 is the part layer, so a matter tag there is a violation."""
+        tree = _attributed_tree(
+            [], ["matter"], AttributeDomain.GUFFIN, value="front-matter", heading_level=1, with_part=True
+        )
+        error = all_matter_tags_at_section_level(tree)
+        assert error is not None
+        assert "level-1" in error.message
+        assert "parts book" in error.message
         assert "uid='head00001'" in error.message
 
     def test_matter_on_non_heading_left_to_anchor_validator(self) -> None:
         """A matter tag on the page is the anchor validator's concern, not this one's."""
         tree = _attributed_tree(["matter"], [], AttributeDomain.GUFFIN, value="front-matter")
-        assert all_matter_tags_level_1(tree) is None
+        assert all_matter_tags_at_section_level(tree) is None
 
     def test_ref_vertices_are_checked(self) -> None:
-        """A matter tag on a deeper referenced-stub heading is also a violation."""
+        """A matter tag on a misleveled referenced-stub heading is also a violation."""
         tree = _attributed_tree(
             [], [], AttributeDomain.GUFFIN, value="front-matter", heading_level=2, ref_heading_names=["matter"]
         )
-        error = all_matter_tags_level_1(tree)
+        error = all_matter_tags_at_section_level(tree)
         assert error is not None
         assert "uid='refhead01'" in error.message
 

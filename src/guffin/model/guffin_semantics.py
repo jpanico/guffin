@@ -21,8 +21,9 @@ Public symbols:
   (every recognised guffin attribute sits on its :class:`Anchor`'s vertex type),
   :func:`all_element_type_values_legal` (every ``element-type`` value is a
   :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
-  :class:`Matter`), and :func:`all_matter_tags_level_1` (every ``matter`` tag sits on a level-1
-  heading); :func:`validate_semantics` — run every vocabulary validator over a
+  :class:`Matter`), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
+  the book's section level — level 1, or level 2 in a parts book);
+  :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
   :class:`~guffin.common.validation.ValidationResult`.
 
@@ -514,31 +515,35 @@ def all_matter_values_legal(tree: VertexTree) -> ValidationError | None:
 
 
 @validate_call
-def all_matter_tags_level_1(tree: VertexTree) -> ValidationError | None:
-    """:data:`~guffin.common.validation.Validator` requiring every ``matter`` tag to sit on a level-1 heading.
+def all_matter_tags_at_section_level(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every ``matter`` tag to sit at the section level.
 
-    A ``matter`` tag declares a heading's top-level book division, so it applies to level-1
-    headings only.  Non-heading hosts are not this validator's concern — they are already
-    reported by :func:`all_attributes_anchored`.
+    A ``matter`` tag declares a bespoke section's book division, and sections sit at the book's
+    *section level* — the heading level where chapter-shaped divisions live: level 1 in a chapters
+    book, level 2 when the tree structures its top level as parts (see :func:`has_parts`).
+    Non-heading hosts are not this validator's concern — they are already reported by
+    :func:`all_attributes_anchored`.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
 
     Returns:
-        ``None`` when every ``matter`` tag sits on a level-1 heading; a
+        ``None`` when every ``matter`` tag sits at the section level; a
         :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
     """
+    parts: Final[bool] = has_parts(tree)
+    section_level: Final[int] = 2 if parts else 1
+    shape: Final[str] = "a parts book (sections at level 2)" if parts else "a chapters book (sections at level 1)"
     violations: Final[list[str]] = [
-        f"'matter' tag on a level-{vertex.heading_level} heading (uid={vertex.uid!r}); "
-        "'matter' applies to level-1 headings only"
+        f"'matter' tag on a level-{vertex.heading_level} heading (uid={vertex.uid!r}); this tree is {shape}"
         for vertex, _assignment in _tagged_assignments(tree, GuffinSemantics.MATTER)
-        if isinstance(vertex, HeadingVertex) and vertex.heading_level != 1
+        if isinstance(vertex, HeadingVertex) and vertex.heading_level != section_level
     ]
     if not violations:
         return None
     return ValidationError(
         message="misplaced matter tags: " + "; ".join(violations),
-        validator=all_matter_tags_level_1,
+        validator=all_matter_tags_at_section_level,
     )
 
 
@@ -548,7 +553,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`, and
-    :func:`all_matter_tags_level_1` — via :func:`~guffin.common.validation.validate_all`.  Every
+    :func:`all_matter_tags_at_section_level` — via :func:`~guffin.common.validation.validate_all`.  Every
     validator covers both the tree vertices and the referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`).  All validators run regardless of
     prior failures; the result accumulates every error found.
@@ -567,6 +572,6 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_attributes_anchored,
             all_element_type_values_legal,
             all_matter_values_legal,
-            all_matter_tags_level_1,
+            all_matter_tags_at_section_level,
         ],
     )
