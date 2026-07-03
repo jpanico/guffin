@@ -273,6 +273,10 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
 - **`element_type_of(assignment)` / `matter_of(assignment)`** — read an `element-type` / `matter`
   assignment's sole value and coerce it to a `StructuralElement` / `Matter` (rejecting non-members);
   each enum *is* the spec of its legal values.
+- **`element_type_of_vertex(vertex)` / `matter_of_vertex(vertex)` / `resolved_matter(vertex)`** —
+  the tolerant per-heading readers consumers build on: absent or illegal tags resolve to `None`
+  (with a warning) instead of raising, and `resolved_matter` applies the precedence rule — a bare
+  `matter::` tag overrides the element's conventional placement, logging any disagreement.
 - **`find_guffin_attribute(vertex, attribute)`** — a vertex's assignment for a `GuffinSemantics`
   attribute (the Guffin domain supplied automatically).
 - **`has_parts(tree)`** — whether a `VertexTree` structures its top level as parts: any level-1

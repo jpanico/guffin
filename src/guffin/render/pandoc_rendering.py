@@ -92,9 +92,8 @@ from guffin.model.guffin_semantics import (
     GuffinSemantics,
     Matter,
     StructuralElement,
-    element_type_of,
-    find_guffin_attribute,
-    matter_of,
+    element_type_of_vertex,
+    resolved_matter,
 )
 from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex import (
@@ -256,28 +255,6 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
     return metadata
 
 
-def _default_domain_last(attribute_assignments: list[AttributeAssignment] | None) -> list[AttributeAssignment]:
-    """Return *attribute_assignments* reordered so the default domain renders last.
-
-    Non-:attr:`~guffin.model.attribute.AttributeDomain.DEFAULT` assignments keep their source order
-    and precede the default-domain ones (which also keep their relative order).
-
-    Args:
-        attribute_assignments: The assignments to reorder, or ``None``.
-
-    Returns:
-        A new list with default-domain assignments moved to the end; empty when the input is ``None``.
-    """
-    assignments: Final[list[AttributeAssignment]] = attribute_assignments or []
-    non_default: Final[list[AttributeAssignment]] = [
-        a for a in assignments if a.attribute.definition.domain != AttributeDomain.DEFAULT
-    ]
-    default: Final[list[AttributeAssignment]] = [
-        a for a in assignments if a.attribute.definition.domain == AttributeDomain.DEFAULT
-    ]
-    return non_default + default
-
-
 def _attribute_pill_blocks(
     attribute_assignments: list[AttributeAssignment] | None,
     inline_map: InlineMap,
@@ -291,9 +268,8 @@ def _attribute_pill_blocks(
     join the parent's bullet/numbered list as trailing items, reproducing their former
     representation as trailing child blocks); under ``DOCUMENT`` layout they are
     :class:`~panflute.Para`\\ s.  Assignments in :data:`_METADATA_DOMAIN` are excluded entirely (they
-    are document metadata, not body content — see :func:`_document_metadata`); of the rest, those in
-    the :attr:`~guffin.model.attribute.AttributeDomain.DEFAULT` domain are always rendered last
-    (other domains keep their source order ahead of them).
+    are document metadata, not body content — see :func:`_document_metadata`); the rest render in
+    source order.
 
     Args:
         attribute_assignments: The parent vertex's attribute assignments, or ``None``.
@@ -309,7 +285,7 @@ def _attribute_pill_blocks(
     renderable: Final[list[AttributeAssignment]] = [
         a for a in (attribute_assignments or []) if a.attribute.definition.domain != _METADATA_DOMAIN
     ]
-    for assignment in _default_domain_last(renderable):
+    for assignment in renderable:
         pill_text: str = _attribute_assignment_text(assignment)
         pill_inlines: list[pf.Inline] = inline_map.get(pill_text, [pf.Str(pill_text)])
         if layout is ChildrenLayout.DOCUMENT:
@@ -550,30 +526,6 @@ def _page_vertex_to_blocks(
     )
 
 
-def _element_type_of_vertex(vertex: HeadingVertex) -> StructuralElement | None:
-    """Resolve a heading's ``element-type`` tag to a StructuralElement, or ``None`` (bad values logged)."""
-    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)
-    if assignment is None:
-        return None
-    try:
-        return element_type_of(assignment)
-    except ValueError as exc:
-        logger.warning("ignoring element-type on vertex uid=%r: %s", vertex.uid, exc)
-        return None
-
-
-def _matter_of_vertex(vertex: HeadingVertex) -> Matter | None:
-    """Resolve a heading's bare ``matter`` tag to a Matter, or ``None`` (bad values logged)."""
-    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.MATTER)
-    if assignment is None:
-        return None
-    try:
-        return matter_of(assignment)
-    except ValueError as exc:
-        logger.warning("ignoring matter on vertex uid=%r: %s", vertex.uid, exc)
-        return None
-
-
 def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]]:
     """Return the ``(classes, attributes)`` a heading's guffin tags contribute to its Header.
 
@@ -581,32 +533,20 @@ def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]
       term for the heading's ``element-type``.  Only EPUB consumes it (GFM drops it, Typst ignores
       it), so it is stamped unconditionally; an untagged heading or an element with no EPUB
       counterpart adds none.
-    - the ``unnumbered`` class — added when the heading's
-      :class:`~guffin.model.guffin_semantics.Matter` is outside
+    - the ``unnumbered`` class — added when the heading's resolved
+      :class:`~guffin.model.guffin_semantics.Matter`
+      (:func:`~guffin.model.guffin_semantics.resolved_matter`: a bare ``matter`` tag overrides the
+      ``element-type``'s conventional placement) is outside
       :attr:`~guffin.model.guffin_semantics.Matter.BODY`, so Pandoc's ``--number-sections`` numbers
-      only body-matter chapters.  A bare ``matter`` tag takes precedence — letting an author override
-      the default division for a non-standard placement — otherwise the matter is the ``element-type``'s
-      :class:`~guffin.model.guffin_semantics.StructuralElement` matter.  When both are present and
-      disagree, the ``matter`` tag wins and the override is logged.
+      only body-matter chapters.
     - the :data:`~guffin.render.epub_semantics.MATTER_DATA_ATTRIBUTE` attribute — the heading's
       resolved matter, as its CMOS ``<body>`` :class:`~guffin.render.epub_semantics.EpubDivision`
       value, stamped whenever a matter resolves.  The EPUB post-processing pass
       (:mod:`guffin.render.epub_post_processing`) promotes it to the content document's ``<body
       epub:type>`` and strips it; like ``epub:type`` it rides along harmlessly in the other formats.
     """
-    element: Final[StructuralElement | None] = _element_type_of_vertex(vertex)
-    override: Final[Matter | None] = _matter_of_vertex(vertex)
-    if element is not None and override is not None and override is not element.matter:
-        logger.warning(
-            "heading uid=%r: matter %r overrides its element-type %r (%s matter)",
-            vertex.uid,
-            override.value,
-            element.value,
-            element.matter.value,
-        )
-    matter: Final[Matter | None] = (
-        override if override is not None else (element.matter if element is not None else None)
-    )
+    element: Final[StructuralElement | None] = element_type_of_vertex(vertex)
+    matter: Final[Matter | None] = resolved_matter(vertex)
     classes: Final[list[str]] = ["unnumbered"] if matter is not None and matter is not Matter.BODY else []
     epub_type: Final[EpubType | None] = epub_type_for(element) if element is not None else None
     attributes: Final[dict[str, str]] = {}

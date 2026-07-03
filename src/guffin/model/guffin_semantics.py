@@ -15,6 +15,10 @@ Public symbols:
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
   assignment's value as a :class:`Matter`; :func:`find_guffin_attribute` — find a vertex's
   assignment for a :class:`GuffinSemantics` attribute (the Guffin domain supplied automatically);
+  :func:`element_type_of_vertex` / :func:`matter_of_vertex` — resolve a heading's ``element-type``
+  / bare ``matter`` tag to its enum member, tolerating absent or illegal assignments (``None``,
+  warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
+  ``matter`` tag overrides the element's conventional placement, logging any disagreement);
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
   top level as parts (any level-1 heading tagged ``element-type:: part``);
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
@@ -306,6 +310,82 @@ def find_guffin_attribute(vertex: Vertex, attribute: GuffinSemantics) -> Attribu
     return find_attribute_assignment(vertex, attribute.value.name, attribute.value.domain)
 
 
+@validate_call
+def element_type_of_vertex(vertex: HeadingVertex) -> StructuralElement | None:
+    """Resolve *vertex*'s ``element-type`` tag to a :class:`StructuralElement`, or ``None``.
+
+    ``None`` when *vertex* carries no ``element-type`` assignment, or when the assignment does not
+    coerce to a :class:`StructuralElement` (ignored with a warning).
+
+    Args:
+        vertex: The heading vertex whose tag to resolve.
+
+    Returns:
+        The named :class:`StructuralElement`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)
+    if assignment is None:
+        return None
+    try:
+        return element_type_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring element-type on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def matter_of_vertex(vertex: HeadingVertex) -> Matter | None:
+    """Resolve *vertex*'s bare ``matter`` tag to a :class:`Matter`, or ``None``.
+
+    ``None`` when *vertex* carries no ``matter`` assignment, or when the assignment does not
+    coerce to a :class:`Matter` (ignored with a warning).
+
+    Args:
+        vertex: The heading vertex whose tag to resolve.
+
+    Returns:
+        The named :class:`Matter`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.MATTER)
+    if assignment is None:
+        return None
+    try:
+        return matter_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring matter on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def resolved_matter(vertex: HeadingVertex) -> Matter | None:
+    """Return *vertex*'s resolved :class:`Matter` division, or ``None`` when none applies.
+
+    A bare ``matter`` tag takes precedence — letting an author override the default division for a
+    non-standard placement — otherwise the matter is the ``element-type``'s
+    :class:`StructuralElement` conventional placement.  When both are present and disagree, the
+    ``matter`` tag wins and the override is logged.
+
+    Args:
+        vertex: The heading vertex whose division to resolve.
+
+    Returns:
+        The resolved :class:`Matter`, or ``None`` when *vertex* carries neither tag.
+    """
+    element: Final[StructuralElement | None] = element_type_of_vertex(vertex)
+    override: Final[Matter | None] = matter_of_vertex(vertex)
+    if element is not None and override is not None and override is not element.matter:
+        logger.warning(
+            "heading uid=%r: matter %r overrides its element-type %r (%s matter)",
+            vertex.uid,
+            override.value,
+            element.value,
+            element.matter.value,
+        )
+    if override is not None:
+        return override
+    return element.matter if element is not None else None
+
+
 def _is_part_heading(heading: HeadingVertex) -> bool:
     """Return whether *heading* is a level-1 heading tagged ``element-type:: part``.
 
@@ -318,17 +398,7 @@ def _is_part_heading(heading: HeadingVertex) -> bool:
     Returns:
         ``True`` when *heading* declares itself a part, else ``False``.
     """
-    if heading.heading_level != 1:
-        return False
-    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
-    if assignment is None:
-        return False
-    try:
-        element: Final[StructuralElement] = element_type_of(assignment)
-    except ValueError as exc:
-        logger.warning("ignoring element-type on vertex uid=%r: %s", heading.uid, exc)
-        return False
-    return element is StructuralElement.PART
+    return heading.heading_level == 1 and element_type_of_vertex(heading) is StructuralElement.PART
 
 
 @validate_call

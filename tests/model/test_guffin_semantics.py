@@ -25,9 +25,12 @@ from guffin.model.guffin_semantics import (
     all_matter_tags_at_section_level,
     all_matter_values_legal,
     element_type_of,
+    element_type_of_vertex,
     find_guffin_attribute,
     has_parts,
     matter_of,
+    matter_of_vertex,
+    resolved_matter,
     validate_semantics,
 )
 from guffin.model.link import VertexLink, VertexLinkKind
@@ -183,6 +186,83 @@ def _tagged_heading_tree(heading_level: int, element_type: str | None) -> Vertex
         attribute_assignments=[_assignment("element-type", element_type)] if element_type is not None else None,
     )
     return VertexTree(tree_vertices=[page, heading])
+
+
+def _heading_with(assignments: list[AttributeAssignment] | None) -> HeadingVertex:
+    """A level-1 heading carrying *assignments*."""
+    return HeadingVertex(uid="head00001", text="A Heading", heading_level=1, attribute_assignments=assignments)
+
+
+class TestElementTypeOfVertex:
+    """element_type_of_vertex() resolves a heading's element-type tag, tolerating absence and junk."""
+
+    def test_tagged_heading_resolves(self) -> None:
+        """A heading tagged with a legal element-type resolves to its StructuralElement."""
+        heading = _heading_with([_assignment("element-type", "chapter")])
+        assert element_type_of_vertex(heading) is StructuralElement.CHAPTER
+
+    def test_untagged_heading_is_none(self) -> None:
+        """A heading with no element-type assignment resolves to None."""
+        assert element_type_of_vertex(_heading_with(None)) is None
+
+    def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """An illegal element-type value resolves to None and logs a warning."""
+        heading = _heading_with([_assignment("element-type", "not-an-element")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+            assert element_type_of_vertex(heading) is None
+        assert "ignoring element-type" in caplog.text
+
+
+class TestMatterOfVertex:
+    """matter_of_vertex() resolves a heading's bare matter tag, tolerating absence and junk."""
+
+    def test_tagged_heading_resolves(self) -> None:
+        """A heading tagged with a legal matter resolves to its Matter."""
+        heading = _heading_with([_assignment("matter", "back-matter")])
+        assert matter_of_vertex(heading) is Matter.BACK
+
+    def test_untagged_heading_is_none(self) -> None:
+        """A heading with no matter assignment resolves to None."""
+        assert matter_of_vertex(_heading_with(None)) is None
+
+    def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """An illegal matter value resolves to None and logs a warning."""
+        heading = _heading_with([_assignment("matter", "middle-matter")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+            assert matter_of_vertex(heading) is None
+        assert "ignoring matter" in caplog.text
+
+
+class TestResolvedMatter:
+    """resolved_matter() resolves a heading's division: a bare matter tag beats the element default."""
+
+    def test_element_default_when_no_override(self) -> None:
+        """Without a matter tag, the element-type's conventional placement resolves."""
+        heading = _heading_with([_assignment("element-type", "acknowledgments")])
+        assert resolved_matter(heading) is Matter.FRONT
+
+    def test_bare_matter_alone_resolves(self) -> None:
+        """A bare matter tag with no element-type resolves directly."""
+        heading = _heading_with([_assignment("matter", "front-matter")])
+        assert resolved_matter(heading) is Matter.FRONT
+
+    def test_override_beats_element_default_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A disagreeing matter tag wins over the element's placement, logging the override."""
+        heading = _heading_with([_assignment("element-type", "acknowledgments"), _assignment("matter", "back-matter")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+            assert resolved_matter(heading) is Matter.BACK
+        assert "overrides its element-type" in caplog.text
+
+    def test_agreeing_override_does_not_warn(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A matter tag agreeing with the element's placement resolves without an override warning."""
+        heading = _heading_with([_assignment("element-type", "acknowledgments"), _assignment("matter", "front-matter")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+            assert resolved_matter(heading) is Matter.FRONT
+        assert "overrides" not in caplog.text
+
+    def test_untagged_heading_is_none(self) -> None:
+        """A heading with neither tag resolves to no division."""
+        assert resolved_matter(_heading_with(None)) is None
 
 
 class TestHasParts:
