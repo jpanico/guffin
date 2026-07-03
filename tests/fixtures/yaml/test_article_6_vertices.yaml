@@ -9,6 +9,10 @@
   - dpoX6c0Pl
   - jqAiDA6IM
   - Lo-2ftdb7
+  - lSrjeyDaT
+  - lZKsMSgZX
+  - oF7Lczujl
+  - MGvH7SY4M
   refs:
   - LBFKibPIj
   attribute_assignments:
@@ -22,6 +26,16 @@
     values:
     - kind: literal
       value: The Travels of Marco Polo
+  - attribute:
+      definition:
+        name: subtitle
+        domain: guffin
+      link:
+      - vertex
+      - MKBTy5omz
+    values:
+    - kind: literal
+      value: Wonders of the World and the Court of the Great Khan
   - attribute:
       definition:
         name: authors
@@ -44,6 +58,28 @@
     values:
     - kind: literal
       value: '1477-01-01'
+  - attribute:
+      definition:
+        name: publisher
+        domain: guffin
+      link:
+      - vertex
+      - HZFZjnFeu
+    values:
+    - kind: literal
+      value: Friedrich Creussner
+    - kind: literal
+      value: Nuremberg
+  - attribute:
+      definition:
+        name: rights
+        domain: guffin
+      link:
+      - vertex
+      - br-LT4oUD
+    values:
+    - kind: literal
+      value: Cum Privilegio
   - attribute:
       definition:
         name: identifier
@@ -88,8 +124,8 @@
     values:
     - kind: literal
       value: acknowledgments
-  text: '[Acknowledgements](x-guffin:vertex/qmplSzgnD)'
-  heading_level: 1
+  text: '[Acknowledgments](x-guffin:vertex/qmplSzgnD)'
+  heading_level: 2
 - vertex_type: guffin/text
   uid: snXG7pnjI
   text: '**Unto the Honorable, Prudent, and Wise Magistrates of the Free Imperial
@@ -143,7 +179,7 @@
     - kind: literal
       value: front-matter
   text: '[Who is this Book for?](x-guffin:vertex/GuHqKi9Y_)'
-  heading_level: 1
+  heading_level: 2
 - vertex_type: guffin/text
   uid: v_yb2JFwl
   text: '**The Enterprising Merchant:** If your trade involves the acquisition of
@@ -194,7 +230,7 @@
     - kind: literal
       value: introduction
   text: An Epistle to the Reader, from the Printer
-  heading_level: 1
+  heading_level: 2
 - vertex_type: guffin/text
   uid: doB1NIOh9
   text: To the curious and patient reader, greetings.
@@ -235,3 +271,89 @@
 - vertex_type: guffin/text
   uid: RoZyY87Nr
   text: '*— F.C., Nuremberg.*'
+- vertex_type: guffin/heading
+  uid: lSrjeyDaT
+  children:
+  - bFYi5U_xl
+  - tljWl5ZoV
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: part
+  text: 'Book I: Account of Regions Visited or Heard of on the Journey from the Lesser
+    Armenia to the Court of the Great Kaan'
+  heading_level: 1
+- vertex_type: guffin/text
+  uid: bFYi5U_xl
+  text: 'This is loose matter that is immediately under Part 1 (Book I: Account of
+    Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court
+    of the Great Kaan), but is not under any Chapter.'
+- vertex_type: guffin/heading
+  uid: tljWl5ZoV
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: chapter
+  text: '**Chapter 1:** Here the Book Begins; and First it Speaks of the Lesser Hermenia.'
+  heading_level: 2
+- vertex_type: guffin/heading
+  uid: lZKsMSgZX
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: part
+  text: '**Book II: The Kaan, His Court and Capital**'
+  heading_level: 1
+- vertex_type: guffin/heading
+  uid: oF7Lczujl
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: part
+  text: '**Book III: Japan, the Archipelago, Southern India, and the Coasts and Islands
+    of the Indian Sea**'
+  heading_level: 1
+- vertex_type: guffin/heading
+  uid: MGvH7SY4M
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: part
+  text: '**Book IV: Wars Among the Tartar Princes and Some Account of the Northern
+    Countries**'
+  heading_level: 1

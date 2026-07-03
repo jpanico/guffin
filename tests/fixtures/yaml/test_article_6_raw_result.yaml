@@ -9,7 +9,7 @@
     - id: 11890
     time: 1782936070230
     order: 0
-    open: true
+    open: false
     page:
       id: 11850
     refs:
@@ -89,6 +89,60 @@
     open: true
     page:
       id: 4384
+- - string: 'subtitle:: "Wonders of the World and the Court of the Great Khan"'
+    user:
+      id: 3
+    id: 11893
+    uid: NS19XW9sL
+    parents:
+    - id: 11850
+    - id: 11855
+    time: 1782990409102
+    order: 1
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11894
+- - attrs:
+    - - source:
+        - uid
+        - SIX6cRZ6m
+        value:
+        - uid
+        - SIX6cRZ6m
+      - source:
+        - uid
+        - rysYJi7Fs
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - rysYJi7Fs
+        value: ' part'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11916
+    user:
+      id: 3
+    id: 11913
+    lookup:
+    - id: 11876
+    - id: 11913
+    - id: 11916
+    uid: SIX6cRZ6m
+    parents:
+    - id: 11850
+    - id: 11904
+    time: 1782992972171
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'element-type:: introduction'
     user:
       id: 3
@@ -105,7 +159,23 @@
       id: 11850
     refs:
     - id: 11876
-- - prevent-clean: 1782758625910
+- - string: 'element-type:: part'
+    user:
+      id: 3
+    id: 11916
+    uid: rysYJi7Fs
+    parents:
+    - id: 11850
+    - id: 11904
+    - id: 11913
+    time: 1782992997422
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11876
+- - prevent-clean: 1782990182427
     user:
       id: 3
     id: 11845
@@ -169,6 +239,45 @@
     open: true
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - 2gJ7AJ9VF
+        value:
+        - uid
+        - 2gJ7AJ9VF
+      - source:
+        - uid
+        - kRO2pVBCU
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - kRO2pVBCU
+        value: ' part'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11907
+    user:
+      id: 3
+    id: 11909
+    lookup:
+    - id: 11876
+    - id: 11907
+    - id: 11909
+    uid: 2gJ7AJ9VF
+    parents:
+    - id: 11850
+    - id: 11902
+    time: 1782992852117
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'identifier:: ISTC ip00901000'
     user:
       id: 3
@@ -178,12 +287,27 @@
     - id: 11850
     - id: 11855
     time: 1782919288603
-    order: 3
+    order: 6
     open: true
     page:
       id: 11850
     refs:
     - id: 11847
+- - string: 'This is loose matter that is immediately under Part 1 (Book I: Account
+      of Regions Visited or Heard of on the Journey from the Lesser Armenia to the
+      Court of the Great Kaan), but is not under any Chapter.'
+    user:
+      id: 3
+    id: 11920
+    uid: bFYi5U_xl
+    parents:
+    - id: 11850
+    - id: 11902
+    time: 1783095623218
+    order: 1
+    open: true
+    page:
+      id: 11850
 - - prevent-clean: 1782758757998
     user:
       id: 3
@@ -328,6 +452,21 @@
     open: true
     page:
       id: 4384
+- - string: 'rights:: Cum Privilegio'
+    user:
+      id: 3
+    id: 11897
+    uid: LWP5sl53w
+    parents:
+    - id: 11850
+    - id: 11855
+    time: 1782990555594
+    order: 5
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11898
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -340,6 +479,46 @@
     title: '>'
     edit-nonce: 2POM1zS7j
     edit-time: 1773784559631
+- - attrs:
+    - - source:
+        - uid
+        - oF7Lczujl
+        value:
+        - uid
+        - oF7Lczujl
+      - source:
+        - uid
+        - SIX6cRZ6m
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - SIX6cRZ6m
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 1
+    string: '**Book III: Japan, the Archipelago, Southern India, and the Coasts and
+      Islands of the Indian Sea**'
+    children:
+    - id: 11913
+    user:
+      id: 3
+    id: 11904
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11904
+    - id: 11913
+    uid: oF7Lczujl
+    parents:
+    - id: 11850
+    time: 1782992574877
+    order: 7
+    open: true
+    page:
+      id: 11850
 - - string: 'date:: 1477-01-01'
     user:
       id: 3
@@ -349,7 +528,7 @@
     - id: 11850
     - id: 11855
     time: 1782919145790
-    order: 2
+    order: 3
     open: true
     page:
       id: 11850
@@ -381,6 +560,10 @@
     - id: 11861
     - id: 11871
     - id: 11878
+    - id: 11902
+    - id: 11903
+    - id: 11904
+    - id: 11905
     user:
       id: 3
     sidebar: 19
@@ -391,13 +574,13 @@
     - id: 11850
     - id: 11855
     uid: 7o-Klx3P6
-    word-count: 808
+    word-count: 976
     edit-user:
       id: 3
     time: 1782918659454
     title: '[[Test Article]] 6'
-    edit-nonce: 6odTDhqHz
-    edit-time: 1782943254276
+    edit-nonce: WFpsuyzV_
+    edit-time: 1783095825643
     open: true
     refs:
     - id: 4223
@@ -449,7 +632,7 @@
     open: true
     page:
       id: 4384
-- - prevent-clean: 1782932532219
+- - prevent-clean: 1782992851357
     user:
       id: 3
     id: 11876
@@ -492,6 +675,21 @@
       id: 11850
     refs:
     - id: 11843
+- - string: 'publisher:: Friedrich Creussner, Nuremberg,'
+    user:
+      id: 3
+    id: 11895
+    uid: LMf_YBKmS
+    parents:
+    - id: 11850
+    - id: 11855
+    time: 1782990290599
+    order: 4
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11896
 - - string: Before you embark upon the text that follows, it is proper that you are
       given some instruction on how to receive it. We have labored at great length
       to strike these pages from metal type, bringing the words of the Venetian, Messer
@@ -510,6 +708,30 @@
     open: true
     page:
       id: 11850
+- - prevent-clean: 1782990143275
+    user:
+      id: 3
+    id: 11894
+    uid: MKBTy5omz
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782990143276
+    title: subtitle
+    edit-nonce: YGYHATTNI
+    edit-time: 1782990143274
+- - prevent-clean: 1782990193074
+    user:
+      id: 3
+    id: 11896
+    uid: HZFZjnFeu
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782990182427
+    title: publisher
+    edit-nonce: Q1cGBHvZ_
+    edit-time: 1782990182426
 - - string: __— F.C., Nuremberg.__
     user:
       id: 3
@@ -520,6 +742,49 @@
     - id: 11878
     time: 1782933174536
     order: 8
+    open: true
+    page:
+      id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - lSrjeyDaT
+        value:
+        - uid
+        - lSrjeyDaT
+      - source:
+        - uid
+        - 2gJ7AJ9VF
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 2gJ7AJ9VF
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 1
+    string: 'Book I: Account of Regions Visited or Heard of on the Journey from the
+      Lesser Armenia to the Court of the Great Kaan'
+    children:
+    - id: 11906
+    - id: 11909
+    - id: 11920
+    user:
+      id: 3
+    id: 11902
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11902
+    - id: 11909
+    uid: lSrjeyDaT
+    parents:
+    - id: 11850
+    time: 1782992534736
+    order: 5
+    view-type: document
     open: true
     page:
       id: 11850
@@ -565,6 +830,45 @@
     edit-nonce: pCsSC06xR
     edit-time: 1776074084079
     open: true
+- - attrs:
+    - - source:
+        - uid
+        - RbM-trDdE
+        value:
+        - uid
+        - RbM-trDdE
+      - source:
+        - uid
+        - vSGgmBM_w
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - vSGgmBM_w
+        value: ' part'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11915
+    user:
+      id: 3
+    id: 11912
+    lookup:
+    - id: 11876
+    - id: 11912
+    - id: 11915
+    uid: RbM-trDdE
+    parents:
+    - id: 11850
+    - id: 11903
+    time: 1782992964518
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'If it''s **more substantial** (different reader types, prerequisite knowledge,
       how different audiences might navigate the book differently), it works better
       as its own short named section, typically placed either:'
@@ -648,12 +952,63 @@
         - uid
         - VUkL4I2fu
         value: ' ISTC ip00901000'
+    - - source:
+        - uid
+        - shFahtwt3
+        value:
+        - uid
+        - shFahtwt3
+      - source:
+        - uid
+        - LMf_YBKmS
+        value:
+        - uid
+        - HZFZjnFeu
+      - source:
+        - uid
+        - LMf_YBKmS
+        value: ' Friedrich Creussner, Nuremberg,'
+    - - source:
+        - uid
+        - shFahtwt3
+        value:
+        - uid
+        - shFahtwt3
+      - source:
+        - uid
+        - NS19XW9sL
+        value:
+        - uid
+        - MKBTy5omz
+      - source:
+        - uid
+        - NS19XW9sL
+        value: ' "Wonders of the World and the Court of the Great Khan"'
+    - - source:
+        - uid
+        - shFahtwt3
+        value:
+        - uid
+        - shFahtwt3
+      - source:
+        - uid
+        - LWP5sl53w
+        value:
+        - uid
+        - br-LT4oUD
+      - source:
+        - uid
+        - LWP5sl53w
+        value: ' Cum Privilegio'
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11856
     - id: 11857
     - id: 11858
     - id: 11859
+    - id: 11893
+    - id: 11895
+    - id: 11897
     user:
       id: 3
     id: 11855
@@ -667,6 +1022,12 @@
     - id: 11857
     - id: 11858
     - id: 11859
+    - id: 11893
+    - id: 11894
+    - id: 11895
+    - id: 11896
+    - id: 11897
+    - id: 11898
     uid: shFahtwt3
     parents:
     - id: 11850
@@ -707,6 +1068,22 @@
     open: true
     page:
       id: 11850
+- - string: 'element-type:: part'
+    user:
+      id: 3
+    id: 11917
+    uid: aAimDzV9X
+    parents:
+    - id: 11850
+    - id: 11905
+    - id: 11914
+    time: 1782993004260
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - attrs:
     - - source:
         - uid
@@ -727,6 +1104,8 @@
         - uid
         - BxGxeeGk1
     prevent-clean: 1773228899534
+    children:
+    - id: 11901
     user:
       id: 3
     id: 4338
@@ -740,10 +1119,10 @@
     word-count: 0
     edit-user:
       id: 3
-    time: 1773228899534
-    title: Acknowledgements
-    edit-nonce: D0Pid56I9
-    edit-time: 1773228899534
+    time: 1782992197092
+    title: Acknowledgments
+    edit-nonce: -NwPlbAM0
+    edit-time: 1782992197092
 - - attrs:
     - - source:
         - uid
@@ -777,7 +1156,7 @@
     - id: 11871
     time: 1782936052438
     order: 0
-    open: true
+    open: false
     page:
       id: 11850
     refs:
@@ -832,7 +1211,7 @@
     - id: 11861
     time: 1782931237956
     order: 0
-    open: true
+    open: false
     page:
       id: 11850
     refs:
@@ -867,6 +1246,63 @@
     open: true
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - MGvH7SY4M
+        value:
+        - uid
+        - MGvH7SY4M
+      - source:
+        - uid
+        - Zmj8N0TYR
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - Zmj8N0TYR
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 1
+    string: '**Book IV: Wars Among the Tartar Princes and Some Account of the Northern
+      Countries**'
+    children:
+    - id: 11914
+    user:
+      id: 3
+    id: 11905
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11905
+    - id: 11914
+    uid: MGvH7SY4M
+    parents:
+    - id: 11850
+    time: 1782992585889
+    order: 8
+    open: true
+    page:
+      id: 11850
+- - string: 'element-type:: chapter'
+    user:
+      id: 3
+    id: 11911
+    uid: DZwV0sSKU
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11906
+    - id: 11910
+    time: 1782992950184
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - string: Likewise, my gratitude is bound to the worshipful Herr Sebaldus of the
       Merchant Guild, whose generous purse did furnish the stout rag paper and the
       fine lamp-black ink required to bring this heavy labor to the press. Without
@@ -884,6 +1320,45 @@
     open: true
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - Zmj8N0TYR
+        value:
+        - uid
+        - Zmj8N0TYR
+      - source:
+        - uid
+        - aAimDzV9X
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - aAimDzV9X
+        value: ' part'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11917
+    user:
+      id: 3
+    id: 11914
+    lookup:
+    - id: 11876
+    - id: 11914
+    - id: 11917
+    uid: Zmj8N0TYR
+    parents:
+    - id: 11850
+    - id: 11905
+    time: 1782992977427
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - user:
       id: 3
     id: 321
@@ -1019,7 +1494,7 @@
     page:
       id: 4384
 - - heading: 2
-    string: '[[Acknowledgements]]'
+    string: '[[Acknowledgments]]'
     children:
     - id: 11862
     - id: 11865
@@ -1034,14 +1509,38 @@
     uid: dpoX6c0Pl
     parents:
     - id: 11850
-    time: 1782931197048
+    time: 1782992197092
     order: 2
     view-type: document
-    open: true
+    open: false
     page:
       id: 11850
     refs:
     - id: 4338
+- - prevent-clean: 1782990193074
+    user:
+      id: 3
+    id: 11898
+    uid: br-LT4oUD
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782990193074
+    title: rights
+    edit-nonce: LC-2a0QnP
+    edit-time: 1782990193074
+- - string: ''
+    user:
+      id: 3
+    id: 11901
+    uid: sDUbCET-K
+    parents:
+    - id: 4338
+    time: 1782992197088
+    order: 0
+    open: true
+    page:
+      id: 4338
 - - prevent-clean: 1782936070235
     user:
       id: 3
@@ -1054,6 +1553,47 @@
     title: matter
     edit-nonce: uW69frL-Z
     edit-time: 1782936070234
+- - attrs:
+    - - source:
+        - uid
+        - tljWl5ZoV
+        value:
+        - uid
+        - tljWl5ZoV
+      - source:
+        - uid
+        - o0VN-NN3k
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - o0VN-NN3k
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: '**Chapter 1:** Here the Book Begins; and First it Speaks of the Lesser
+      Hermenia.'
+    children:
+    - id: 11910
+    user:
+      id: 3
+    id: 11906
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11906
+    - id: 11910
+    uid: tljWl5ZoV
+    parents:
+    - id: 11850
+    - id: 11902
+    time: 1782992784109
+    order: 2
+    open: true
+    page:
+      id: 11850
 - - string: 'authors:: Marco Polo, Rustichello da Pisa'
     user:
       id: 3
@@ -1063,7 +1603,7 @@
     - id: 11850
     - id: 11855
     time: 1782919069748
-    order: 1
+    order: 2
     open: true
     page:
       id: 11850
@@ -1100,6 +1640,22 @@
     open: true
     page:
       id: 11850
+- - string: 'element-type:: part'
+    user:
+      id: 3
+    id: 11915
+    uid: vSGgmBM_w
+    parents:
+    - id: 11850
+    - id: 11903
+    - id: 11912
+    time: 1782992991166
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - string: '**In the preface** — this is the most common home for it in technical
       books, since "who this is for" is meta-information __about__ the book rather
       than content __of__ the book'
@@ -1116,6 +1672,45 @@
     open: true
     page:
       id: 4384
+- - attrs:
+    - - source:
+        - uid
+        - lZKsMSgZX
+        value:
+        - uid
+        - lZKsMSgZX
+      - source:
+        - uid
+        - RbM-trDdE
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - RbM-trDdE
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 1
+    string: '**Book II: The Kaan, His Court and Capital**'
+    children:
+    - id: 11912
+    user:
+      id: 3
+    id: 11903
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11903
+    - id: 11912
+    uid: lZKsMSgZX
+    parents:
+    - id: 11850
+    time: 1782992560189
+    order: 6
+    open: true
+    page:
+      id: 11850
 - - attrs:
     - - source:
         - uid
@@ -1174,6 +1769,62 @@
     open: true
     page:
       id: 4384
+- - attrs:
+    - - source:
+        - uid
+        - o0VN-NN3k
+        value:
+        - uid
+        - o0VN-NN3k
+      - source:
+        - uid
+        - DZwV0sSKU
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - DZwV0sSKU
+        value: ' chapter'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11911
+    user:
+      id: 3
+    id: 11910
+    lookup:
+    - id: 11876
+    - id: 11910
+    - id: 11911
+    uid: o0VN-NN3k
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11906
+    time: 1782992940260
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
+- - string: 'element-type:: part'
+    user:
+      id: 3
+    id: 11907
+    uid: kRO2pVBCU
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11909
+    time: 1782992924047
+    order: 0
+    open: true
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - string: '**The Enterprising Merchant:** If your trade involves the acquisition
       of pepper, ginger, silk, or precious stones, this book serves as a practical
       geographical manual. You will find detailed accounts of the major trading hubs
@@ -1205,7 +1856,7 @@
     open: false
     page:
       id: 4384
-- - prevent-clean: 1782757905599
+- - prevent-clean: 1782992852120
     user:
       id: 3
     id: 11839
@@ -1217,7 +1868,7 @@
     title: guffin-meta
     edit-nonce: Wn0wt68Sc
     edit-time: 1782757905599
-- - prevent-clean: 1782758586968
+- - prevent-clean: 1782990143276
     user:
       id: 3
     id: 11843

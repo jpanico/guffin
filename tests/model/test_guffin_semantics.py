@@ -139,6 +139,11 @@ class TestElementTypeOfArticle6Fixture:
         assert resolved == {
             "dpoX6c0Pl": StructuralElement.ACKNOWLEDGMENTS,
             "Lo-2ftdb7": StructuralElement.INTRODUCTION,
+            "lSrjeyDaT": StructuralElement.PART,
+            "tljWl5ZoV": StructuralElement.CHAPTER,
+            "lZKsMSgZX": StructuralElement.PART,
+            "oF7Lczujl": StructuralElement.PART,
+            "MGvH7SY4M": StructuralElement.PART,
         }
 
     def test_acknowledgments_heading_resolves(self) -> None:

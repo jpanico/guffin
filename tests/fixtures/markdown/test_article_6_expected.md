@@ -7,7 +7,7 @@
 >
 > - StructuralElements for ProjectType:BOOK
 
-# Acknowledgements
+## Acknowledgments
 
 **Unto the Honorable, Prudent, and Wise Magistrates of the Free Imperial City of Nuremberg, and to all curious Christian Readers, grace and peace.**
 
@@ -21,7 +21,7 @@ Likewise, my gratitude is bound to the worshipful Herr Sebaldus of the Merchant 
 
 Finally, I commend the diligent journeymen of my workshop, who stood long hours at the press to strike these pages clean and true.
 
-# Who is this Book for?
+## Who is this Book for?
 
 **The Enterprising Merchant:** If your trade involves the acquisition of pepper, ginger, silk, or precious stones, this book serves as a practical geographical manual. You will find detailed accounts of the major trading hubs from Hormuz to Cathay, including the preferred currencies (such as the Great Khan’s paper money), safe routes, and the relative dangers of bandits and deserts along the Silk Road.
 
@@ -31,7 +31,7 @@ Finally, I commend the diligent journeymen of my workshop, who stood long hours 
 
 **The Theologian and the Friar:** For those tracking the spread of Christendom or seeking alliances against the Saracens. You will find intelligence on the locations of Nestorian Christians, the religious tolerance of the Tartars, and the various idolaters that populate the Indies.
 
-# An Epistle to the Reader, from the Printer
+## An Epistle to the Reader, from the Printer
 
 To the curious and patient reader, greetings.
 
@@ -48,3 +48,15 @@ We have placed this volume before you so that the boundaries of your world might
 God preserve you in your reading.
 
 *— F.C., Nuremberg.*
+
+# Book I: Account of Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court of the Great Kaan
+
+This is loose matter that is immediately under Part 1 (Book I: Account of Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court of the Great Kaan), but is not under any Chapter.
+
+## **Chapter 1:** Here the Book Begins; and First it Speaks of the Lesser Hermenia.
+
+# **Book II: The Kaan, His Court and Capital**
+
+# **Book III: Japan, the Archipelago, Southern India, and the Coasts and Islands of the Indian Sea**
+
+# **Book IV: Wars Among the Tartar Princes and Some Account of the Northern Countries**

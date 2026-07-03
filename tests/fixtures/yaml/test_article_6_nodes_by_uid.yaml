@@ -9,7 +9,7 @@ aIPqy4neT:
   - id: 11892
   page:
     id: 11850
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 11850
@@ -112,6 +112,62 @@ N60tgmwap:
   props: null
   title: null
   attrs: null
+NS19XW9sL:
+  uid: NS19XW9sL
+  id: 11893
+  string: 'subtitle:: "Wonders of the World and the Court of the Great Khan"'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 11894
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11855
+  props: null
+  title: null
+  attrs: null
+SIX6cRZ6m:
+  uid: SIX6cRZ6m
+  id: 11913
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11916
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11904
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - SIX6cRZ6m
+      value:
+      - uid
+      - SIX6cRZ6m
+    - source:
+      - uid
+      - rysYJi7Fs
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - rysYJi7Fs
+      value: ' part'
 Nt9obFYPS:
   uid: Nt9obFYPS
   id: 11879
@@ -129,6 +185,26 @@ Nt9obFYPS:
   - id: 11850
   - id: 11878
   - id: 11880
+  props: null
+  title: null
+  attrs: null
+rysYJi7Fs:
+  uid: rysYJi7Fs
+  id: 11916
+  string: 'element-type:: part'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11904
+  - id: 11913
   props: null
   title: null
   attrs: null
@@ -211,11 +287,48 @@ i8m_qcu2R:
   props: null
   title: null
   attrs: null
+2gJ7AJ9VF:
+  uid: 2gJ7AJ9VF
+  id: 11909
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11907
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 2gJ7AJ9VF
+      value:
+      - uid
+      - 2gJ7AJ9VF
+    - source:
+      - uid
+      - kRO2pVBCU
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - kRO2pVBCU
+      value: ' part'
 VUkL4I2fu:
   uid: VUkL4I2fu
   id: 11859
   string: 'identifier:: ISTC ip00901000'
-  order: 3
+  order: 6
   heading: null
   children: null
   refs:
@@ -227,6 +340,26 @@ VUkL4I2fu:
   parents:
   - id: 11850
   - id: 11855
+  props: null
+  title: null
+  attrs: null
+bFYi5U_xl:
+  uid: bFYi5U_xl
+  id: 11920
+  string: 'This is loose matter that is immediately under Part 1 (Book I: Account
+    of Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court
+    of the Great Kaan), but is not under any Chapter.'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
   props: null
   title: null
   attrs: null
@@ -383,6 +516,25 @@ zpV7AGpCS:
   props: null
   title: null
   attrs: null
+LWP5sl53w:
+  uid: LWP5sl53w
+  id: 11897
+  string: 'rights:: Cum Privilegio'
+  order: 5
+  heading: null
+  children: null
+  refs:
+  - id: 11898
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11855
+  props: null
+  title: null
+  attrs: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -398,11 +550,48 @@ OexZiLR_O:
   props: null
   title: '>'
   attrs: null
+oF7Lczujl:
+  uid: oF7Lczujl
+  id: 11904
+  string: '**Book III: Japan, the Archipelago, Southern India, and the Coasts and
+    Islands of the Indian Sea**'
+  order: 7
+  heading: 1
+  children:
+  - id: 11913
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - oF7Lczujl
+      value:
+      - uid
+      - oF7Lczujl
+    - source:
+      - uid
+      - SIX6cRZ6m
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - SIX6cRZ6m
+      value:
+      - uid
+      - BxGxeeGk1
 uN_MwuWeZ:
   uid: uN_MwuWeZ
   id: 11858
   string: 'date:: 1477-01-01'
-  order: 2
+  order: 3
   heading: null
   children: null
   refs:
@@ -429,6 +618,10 @@ uN_MwuWeZ:
   - id: 11861
   - id: 11871
   - id: 11878
+  - id: 11902
+  - id: 11903
+  - id: 11904
+  - id: 11905
   refs:
   - id: 4223
   page: null
@@ -572,6 +765,25 @@ yVoGbTEa3:
   props: null
   title: null
   attrs: null
+LMf_YBKmS:
+  uid: LMf_YBKmS
+  id: 11895
+  string: 'publisher:: Friedrich Creussner, Nuremberg,'
+  order: 4
+  heading: null
+  children: null
+  refs:
+  - id: 11896
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11855
+  props: null
+  title: null
+  attrs: null
 xDLdP7phb:
   uid: xDLdP7phb
   id: 11882
@@ -595,6 +807,36 @@ xDLdP7phb:
   props: null
   title: null
   attrs: null
+MKBTy5omz:
+  uid: MKBTy5omz
+  id: 11894
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: subtitle
+  attrs: null
+HZFZjnFeu:
+  uid: HZFZjnFeu
+  id: 11896
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: publisher
+  attrs: null
 RoZyY87Nr:
   uid: RoZyY87Nr
   id: 11888
@@ -613,6 +855,45 @@ RoZyY87Nr:
   props: null
   title: null
   attrs: null
+lSrjeyDaT:
+  uid: lSrjeyDaT
+  id: 11902
+  string: 'Book I: Account of Regions Visited or Heard of on the Journey from the
+    Lesser Armenia to the Court of the Great Kaan'
+  order: 5
+  heading: 1
+  children:
+  - id: 11906
+  - id: 11909
+  - id: 11920
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: document
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - lSrjeyDaT
+      value:
+      - uid
+      - lSrjeyDaT
+    - source:
+      - uid
+      - 2gJ7AJ9VF
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - 2gJ7AJ9VF
+      value:
+      - uid
+      - BxGxeeGk1
 ZsFRjGDDy:
   uid: ZsFRjGDDy
   id: 8657
@@ -650,6 +931,43 @@ ZsFRjGDDy:
       value:
       - uid
       - ExJBKbXY2
+RbM-trDdE:
+  uid: RbM-trDdE
+  id: 11912
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11915
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11903
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - RbM-trDdE
+      value:
+      - uid
+      - RbM-trDdE
+    - source:
+      - uid
+      - vSGgmBM_w
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - vSGgmBM_w
+      value: ' part'
 kPcAk-Bw1:
   uid: kPcAk-Bw1
   id: 4388
@@ -683,6 +1001,9 @@ shFahtwt3:
   - id: 11857
   - id: 11858
   - id: 11859
+  - id: 11893
+  - id: 11895
+  - id: 11897
   refs:
   - id: 321
   - id: 11839
@@ -759,6 +1080,54 @@ shFahtwt3:
       - uid
       - VUkL4I2fu
       value: ' ISTC ip00901000'
+  - - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - shFahtwt3
+    - source:
+      - uid
+      - LMf_YBKmS
+      value:
+      - uid
+      - HZFZjnFeu
+    - source:
+      - uid
+      - LMf_YBKmS
+      value: ' Friedrich Creussner, Nuremberg,'
+  - - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - shFahtwt3
+    - source:
+      - uid
+      - NS19XW9sL
+      value:
+      - uid
+      - MKBTy5omz
+    - source:
+      - uid
+      - NS19XW9sL
+      value: ' "Wonders of the World and the Court of the Great Khan"'
+  - - source:
+      - uid
+      - shFahtwt3
+      value:
+      - uid
+      - shFahtwt3
+    - source:
+      - uid
+      - LWP5sl53w
+      value:
+      - uid
+      - br-LT4oUD
+    - source:
+      - uid
+      - LWP5sl53w
+      value: ' Cum Privilegio'
 39_RTkGv-:
   uid: 39_RTkGv-
   id: 4602
@@ -797,20 +1166,41 @@ mwRFIaxIs:
   props: null
   title: null
   attrs: null
+aAimDzV9X:
+  uid: aAimDzV9X
+  id: 11917
+  string: 'element-type:: part'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11905
+  - id: 11914
+  props: null
+  title: null
+  attrs: null
 qmplSzgnD:
   uid: qmplSzgnD
   id: 4338
   string: null
   order: null
   heading: null
-  children: null
+  children:
+  - id: 11901
   refs: null
   page: null
   open: null
   children_view_type: null
   parents: null
   props: null
-  title: Acknowledgements
+  title: Acknowledgments
   attrs:
   - - source:
       - uid
@@ -843,7 +1233,7 @@ YGoODHoSM:
   - id: 11839
   page:
     id: 11850
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 11850
@@ -901,7 +1291,7 @@ d2r0m-pwA:
   - id: 11839
   page:
     id: 11850
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 11850
@@ -962,6 +1352,64 @@ doB1NIOh9:
   props: null
   title: null
   attrs: null
+MGvH7SY4M:
+  uid: MGvH7SY4M
+  id: 11905
+  string: '**Book IV: Wars Among the Tartar Princes and Some Account of the Northern
+    Countries**'
+  order: 8
+  heading: 1
+  children:
+  - id: 11914
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - MGvH7SY4M
+      value:
+      - uid
+      - MGvH7SY4M
+    - source:
+      - uid
+      - Zmj8N0TYR
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - Zmj8N0TYR
+      value:
+      - uid
+      - BxGxeeGk1
+DZwV0sSKU:
+  uid: DZwV0sSKU
+  id: 11911
+  string: 'element-type:: chapter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11906
+  - id: 11910
+  props: null
+  title: null
+  attrs: null
 vALZLA1Jn:
   uid: vALZLA1Jn
   id: 11868
@@ -984,6 +1432,43 @@ vALZLA1Jn:
   props: null
   title: null
   attrs: null
+Zmj8N0TYR:
+  uid: Zmj8N0TYR
+  id: 11914
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11917
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11905
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - Zmj8N0TYR
+      value:
+      - uid
+      - Zmj8N0TYR
+    - source:
+      - uid
+      - aAimDzV9X
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - aAimDzV9X
+      value: ' part'
 BxGxeeGk1:
   uid: BxGxeeGk1
   id: 321
@@ -1156,7 +1641,7 @@ fQV20MHbZ:
 dpoX6c0Pl:
   uid: dpoX6c0Pl
   id: 11861
-  string: '[[Acknowledgements]]'
+  string: '[[Acknowledgments]]'
   order: 2
   heading: 2
   children:
@@ -1171,10 +1656,42 @@ dpoX6c0Pl:
   - id: 4338
   page:
     id: 11850
-  open: true
+  open: false
   children_view_type: document
   parents:
   - id: 11850
+  props: null
+  title: null
+  attrs: null
+br-LT4oUD:
+  uid: br-LT4oUD
+  id: 11898
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: rights
+  attrs: null
+sDUbCET-K:
+  uid: sDUbCET-K
+  id: 11901
+  string: ''
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 4338
+  open: true
+  children_view_type: null
+  parents:
+  - id: 4338
   props: null
   title: null
   attrs: null
@@ -1193,11 +1710,49 @@ eYctDQDaV:
   props: null
   title: matter
   attrs: null
+tljWl5ZoV:
+  uid: tljWl5ZoV
+  id: 11906
+  string: '**Chapter 1:** Here the Book Begins; and First it Speaks of the Lesser
+    Hermenia.'
+  order: 2
+  heading: 2
+  children:
+  - id: 11910
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - tljWl5ZoV
+      value:
+      - uid
+      - tljWl5ZoV
+    - source:
+      - uid
+      - o0VN-NN3k
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - o0VN-NN3k
+      value:
+      - uid
+      - BxGxeeGk1
 jYi3QvhTN:
   uid: jYi3QvhTN
   id: 11856
   string: 'authors:: Marco Polo, Rustichello da Pisa'
-  order: 1
+  order: 2
   heading: null
   children: null
   refs:
@@ -1253,6 +1808,26 @@ Gn10okg1P:
   props: null
   title: null
   attrs: null
+vSGgmBM_w:
+  uid: vSGgmBM_w
+  id: 11915
+  string: 'element-type:: part'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11903
+  - id: 11912
+  props: null
+  title: null
+  attrs: null
 TPRmrrxwE:
   uid: TPRmrrxwE
   id: 4389
@@ -1274,6 +1849,42 @@ TPRmrrxwE:
   props: null
   title: null
   attrs: null
+lZKsMSgZX:
+  uid: lZKsMSgZX
+  id: 11903
+  string: '**Book II: The Kaan, His Court and Capital**'
+  order: 6
+  heading: 1
+  children:
+  - id: 11912
+  refs: null
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - lZKsMSgZX
+      value:
+      - uid
+      - lZKsMSgZX
+    - source:
+      - uid
+      - RbM-trDdE
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - RbM-trDdE
+      value:
+      - uid
+      - BxGxeeGk1
 GuHqKi9Y_:
   uid: GuHqKi9Y_
   id: 4384
@@ -1328,6 +1939,64 @@ xLG8Ir4vl:
   parents:
   - id: 4384
   - id: 4427
+  props: null
+  title: null
+  attrs: null
+o0VN-NN3k:
+  uid: o0VN-NN3k
+  id: 11910
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11911
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11906
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - o0VN-NN3k
+      value:
+      - uid
+      - o0VN-NN3k
+    - source:
+      - uid
+      - DZwV0sSKU
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - DZwV0sSKU
+      value: ' chapter'
+kRO2pVBCU:
+  uid: kRO2pVBCU
+  id: 11907
+  string: 'element-type:: part'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  open: true
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11909
   props: null
   title: null
   attrs: null
