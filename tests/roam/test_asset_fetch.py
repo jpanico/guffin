@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
-from conftest import FIXTURES_IMAGES_DIR
+from conftest import FIXTURES_IMAGES_DIR, FIXTURES_PDF_DIR
 from pydantic import HttpUrl, ValidationError
 
 from guffin.common.media_type import MediaType
@@ -250,8 +250,8 @@ class TestFetchRoamAssetFetch:
 
     @pytest.mark.live
     @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
-    def test_live(self, live_api_endpoint: ApiEndpoint) -> None:
-        """Fetch a Cloud Firestore asset and verify the returned RoamAsset is well-formed."""
+    def test_live_image(self, live_api_endpoint: ApiEndpoint) -> None:
+        """Fetch a Cloud Firestore image asset and verify the returned RoamAsset is well-formed."""
         url: HttpUrl = HttpUrl(
             "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F-9owRBegJ8.jpeg.enc?alt=media&token=9b673aae-8089-4a91-84df-9dac152a7f94"
         )
@@ -266,6 +266,26 @@ class TestFetchRoamAssetFetch:
         assert roam_asset.file_name == "flower.jpeg"
         assert roam_asset.contents == expected_contents
         assert roam_asset.media_type == "image/jpeg"
+        assert isinstance(roam_asset.last_modified, datetime)
+
+    @pytest.mark.live
+    @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
+    def test_live_pdf(self, live_api_endpoint: ApiEndpoint) -> None:
+        """Fetch a Cloud Firestore PDF asset and verify the returned RoamAsset is well-formed."""
+        url: HttpUrl = HttpUrl(
+            "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03"
+        )
+        roam_asset: RoamAsset = FetchRoamAsset.fetch(api_endpoint=live_api_endpoint, firebase_url=url)
+        logger.debug("roam_asset: %s", roam_asset)
+
+        # Read the expected PDF file
+        with open(FIXTURES_PDF_DIR / "dummy.pdf", "rb") as f:
+            expected_contents: bytes = f.read()
+
+        # Assert the fetched file matches the expected file
+        assert roam_asset.file_name == "dummy.pdf"
+        assert roam_asset.contents == expected_contents
+        assert roam_asset.media_type == "application/pdf"
         assert isinstance(roam_asset.last_modified, datetime)
 
 
