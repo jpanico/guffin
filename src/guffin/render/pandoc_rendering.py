@@ -91,14 +91,14 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
 )
-from guffin.model.guffin_semantics import (
-    GuffinSemantics,
+from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
+from guffin.model.publishing_semantics import (
     Matter,
+    PublishingSemantics,
     StructuralElement,
     element_type_of_vertex,
     resolved_matter,
 )
-from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -218,15 +218,15 @@ any others are dropped from the output entirely.
 """
 
 _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
-    GuffinSemantics.TITLE.value.name: "title",
-    GuffinSemantics.SUBTITLE.value.name: "subtitle",
-    GuffinSemantics.AUTHORS.value.name: "author",
-    GuffinSemantics.DATE.value.name: "date",
-    GuffinSemantics.PUBLISHER.value.name: "publisher",
-    GuffinSemantics.RIGHTS.value.name: "rights",
-    GuffinSemantics.IDENTIFIER.value.name: "identifier",
+    PublishingSemantics.TITLE.value.name: "title",
+    PublishingSemantics.SUBTITLE.value.name: "subtitle",
+    PublishingSemantics.AUTHORS.value.name: "author",
+    PublishingSemantics.DATE.value.name: "date",
+    PublishingSemantics.PUBLISHER.value.name: "publisher",
+    PublishingSemantics.RIGHTS.value.name: "rights",
+    PublishingSemantics.IDENTIFIER.value.name: "identifier",
 }
-"""Maps a recognised :class:`~guffin.model.guffin_semantics.GuffinSemantics` to its Pandoc metadata key."""
+"""Maps a recognised :class:`~guffin.model.publishing_semantics.PublishingSemantics` to its Pandoc metadata key."""
 
 
 def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) -> dict[str, pf.MetaValue]:
@@ -539,10 +539,10 @@ def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]
       it), so it is stamped unconditionally; an untagged heading or an element with no EPUB
       counterpart adds none.
     - the ``unnumbered`` class — added when the heading's resolved
-      :class:`~guffin.model.guffin_semantics.Matter`
-      (:func:`~guffin.model.guffin_semantics.resolved_matter`: a bare ``matter`` tag overrides the
+      :class:`~guffin.model.publishing_semantics.Matter`
+      (:func:`~guffin.model.publishing_semantics.resolved_matter`: a bare ``matter`` tag overrides the
       ``element-type``'s conventional placement) is outside
-      :attr:`~guffin.model.guffin_semantics.Matter.BODY`, so Pandoc's ``--number-sections`` numbers
+      :attr:`~guffin.model.publishing_semantics.Matter.BODY`, so Pandoc's ``--number-sections`` numbers
       only body-matter chapters.
     - the :data:`~guffin.render.epub_semantics.MATTER_DATA_ATTRIBUTE` attribute — the heading's
       resolved matter, as its CMOS ``<body>`` :class:`~guffin.render.epub_semantics.EpubDivision`

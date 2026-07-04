@@ -1,4 +1,4 @@
-"""Tests for guffin.model.guffin_semantics."""
+"""Tests for guffin.model.publishing_semantics."""
 
 import logging
 
@@ -14,11 +14,12 @@ from guffin.model.attribute import (
     AttributeInstance,
     LiteralValue,
 )
-from guffin.model.guffin_semantics import (
+from guffin.model.link import VertexLink, VertexLinkKind
+from guffin.model.publishing_semantics import (
     Anchor,
-    GuffinAttribute,
-    GuffinSemantics,
     Matter,
+    PublishingAttribute,
+    PublishingSemantics,
     StructuralElement,
     all_attributes_anchored,
     all_element_type_values_legal,
@@ -26,14 +27,13 @@ from guffin.model.guffin_semantics import (
     all_matter_values_legal,
     element_type_of,
     element_type_of_vertex,
-    find_guffin_attribute,
+    find_publishing_attribute,
     has_parts,
     matter_of,
     matter_of_vertex,
     resolved_matter,
     validate_semantics,
 )
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import BlockEmbedVertex, HeadingVertex, PageVertex, vertex_adapter
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
@@ -48,36 +48,36 @@ def _assignment(name: str, value: str, domain: AttributeDomain = AttributeDomain
     )
 
 
-class TestGuffinAttribute:
-    """GuffinAttribute pins its domain to GUFFIN and requires an anchor."""
+class TestPublishingAttribute:
+    """PublishingAttribute pins its domain to GUFFIN and requires an anchor."""
 
     def test_domain_defaults_to_guffin(self) -> None:
         """The domain is the guffin domain without being passed."""
-        attribute = GuffinAttribute(name="title", anchor=Anchor.PAGE)
+        attribute = PublishingAttribute(name="title", anchor=Anchor.PAGE)
         assert attribute.domain is AttributeDomain.GUFFIN
 
     def test_non_guffin_domain_is_rejected(self) -> None:
         """Constructing with any domain other than GUFFIN raises."""
         with pytest.raises(ValidationError):
-            GuffinAttribute(name="x", anchor=Anchor.PAGE, domain=AttributeDomain.DEFAULT)
+            PublishingAttribute(name="x", anchor=Anchor.PAGE, domain=AttributeDomain.DEFAULT)
 
     def test_anchor_is_required(self) -> None:
         """Constructing without an anchor raises."""
         with pytest.raises(ValidationError):
-            GuffinAttribute(name="x")  # type: ignore[call-arg]
+            PublishingAttribute(name="x")  # type: ignore[call-arg]
 
 
-class TestGuffinSemanticsMembers:
-    """The GuffinSemantics vocabulary partitions into page-anchored metadata and heading tags."""
+class TestPublishingSemanticsMembers:
+    """The PublishingSemantics vocabulary partitions into page-anchored metadata and heading tags."""
 
     def test_page_anchored_metadata_members(self) -> None:
         """The document-metadata members are page-anchored and carry their attribute names."""
-        page_members = {m.value.name for m in GuffinSemantics if m.value.anchor is Anchor.PAGE}
+        page_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.PAGE}
         assert page_members == {"title", "subtitle", "authors", "date", "publisher", "rights", "identifier"}
 
     def test_heading_anchored_tag_members(self) -> None:
         """The heading-tag members are heading-anchored."""
-        heading_members = {m.value.name for m in GuffinSemantics if m.value.anchor is Anchor.HEADING}
+        heading_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.HEADING}
         assert heading_members == {"element-type", "matter"}
 
 
@@ -137,7 +137,7 @@ class TestElementTypeOfArticle6Fixture:
         resolved = {
             vertex.uid: element_type_of(assignment)
             for vertex in VertexTreeDFSIterator(tree)
-            if (assignment := find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)) is not None
+            if (assignment := find_publishing_attribute(vertex, PublishingSemantics.ELEMENT_TYPE)) is not None
         }
         assert resolved == {
             "dpoX6c0Pl": StructuralElement.ACKNOWLEDGMENTS,
@@ -152,7 +152,7 @@ class TestElementTypeOfArticle6Fixture:
     def test_acknowledgments_heading_resolves(self) -> None:
         """The Acknowledgements heading's element-type tag resolves to ACKNOWLEDGMENTS via find + coerce."""
         heading = next(v for v in VertexTreeDFSIterator(_article6_vertex_tree()) if v.uid == "dpoX6c0Pl")
-        assignment = find_guffin_attribute(heading, GuffinSemantics.ELEMENT_TYPE)
+        assignment = find_publishing_attribute(heading, PublishingSemantics.ELEMENT_TYPE)
         assert assignment is not None
         assert element_type_of(assignment) is StructuralElement.ACKNOWLEDGMENTS
 
@@ -167,8 +167,8 @@ class TestValidateSemanticsArticle6Fixture:
         tagged = [
             vertex
             for vertex in VertexTreeDFSIterator(tree)
-            if find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE) is not None
-            or find_guffin_attribute(vertex, GuffinSemantics.MATTER) is not None
+            if find_publishing_attribute(vertex, PublishingSemantics.ELEMENT_TYPE) is not None
+            or find_publishing_attribute(vertex, PublishingSemantics.MATTER) is not None
         ]
         assert tagged, "fixture carries no vocabulary tags; regenerate it from [[Test Article]] 6"
         result = validate_semantics(tree)
@@ -208,7 +208,7 @@ class TestElementTypeOfVertex:
     def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """An illegal element-type value resolves to None and logs a warning."""
         heading = _heading_with([_assignment("element-type", "not-an-element")])
-        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert element_type_of_vertex(heading) is None
         assert "ignoring element-type" in caplog.text
 
@@ -228,7 +228,7 @@ class TestMatterOfVertex:
     def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """An illegal matter value resolves to None and logs a warning."""
         heading = _heading_with([_assignment("matter", "middle-matter")])
-        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert matter_of_vertex(heading) is None
         assert "ignoring matter" in caplog.text
 
@@ -249,14 +249,14 @@ class TestResolvedMatter:
     def test_override_beats_element_default_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """A disagreeing matter tag wins over the element's placement, logging the override."""
         heading = _heading_with([_assignment("element-type", "acknowledgments"), _assignment("matter", "back-matter")])
-        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert resolved_matter(heading) is Matter.BACK
         assert "overrides its element-type" in caplog.text
 
     def test_agreeing_override_does_not_warn(self, caplog: pytest.LogCaptureFixture) -> None:
         """A matter tag agreeing with the element's placement resolves without an override warning."""
         heading = _heading_with([_assignment("element-type", "acknowledgments"), _assignment("matter", "front-matter")])
-        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert resolved_matter(heading) is Matter.FRONT
         assert "overrides" not in caplog.text
 
@@ -286,7 +286,7 @@ class TestHasParts:
 
     def test_unrecognised_element_type_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """A junk element-type value is ignored (warned), not raised."""
-        with caplog.at_level(logging.WARNING, logger="guffin.model.guffin_semantics"):
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert has_parts(_tagged_heading_tree(1, "not-an-element")) is False
         assert "ignoring element-type" in caplog.text
 
@@ -369,7 +369,7 @@ def _attributed_tree(
 
 
 class TestAllAttributesAnchored:
-    """all_attributes_anchored() enforces the GuffinAttribute.anchor invariant across a tree."""
+    """all_attributes_anchored() enforces the PublishingAttribute.anchor invariant across a tree."""
 
     def test_correctly_anchored_attributes_pass(self) -> None:
         """Page metadata on the page and heading tags on a heading produce no error."""

@@ -23,7 +23,12 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.common.validation import ValidationResult
 from guffin.model.attribute import AttributeAssignment, sole_value_text
-from guffin.model.guffin_semantics import GuffinSemantics, find_guffin_attribute, has_parts, validate_semantics
+from guffin.model.publishing_semantics import (
+    PublishingSemantics,
+    find_publishing_attribute,
+    has_parts,
+    validate_semantics,
+)
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -79,7 +84,7 @@ def fetch_roam_trees(
     :data:`~guffin.model.view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
 
     The transcribed content is checked against the guffin vocabulary invariants
-    (:func:`~guffin.model.guffin_semantics.validate_semantics`); how violations — e.g. a guffin
+    (:func:`~guffin.model.publishing_semantics.validate_semantics`); how violations — e.g. a guffin
     attribute declared on the wrong vertex type — are handled depends on *strict_semantics*:
     logged as warnings (``False``), or raised as a :class:`SemanticsValidationError` (``True``).
 
@@ -135,12 +140,12 @@ def fetch_roam_trees(
 def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
     """Return the raw (un-clipped) filename-stem basis for *vertex*.
 
-    A :data:`~guffin.model.guffin_semantics.GuffinSemantics.TITLE` attribute on *vertex* takes precedence:
+    A :data:`~guffin.model.publishing_semantics.PublishingSemantics.TITLE` attribute on *vertex* takes precedence:
     when present, its sole value's text is the basis.  Otherwise the basis comes from the vertex's
     type — page title, block text, etc.  For a :class:`~guffin.model.vertex.BlockEmbedVertex`, recurses
     into the embedded vertex resolved through *vertex_tree*'s ``uid_map``.
     """
-    title_assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.TITLE)
+    title_assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.TITLE)
     if title_assignment is not None:
         return sole_value_text(title_assignment)
     match vertex:
@@ -198,7 +203,7 @@ def resolve_profile(project_type: ProjectType, content: VertexTree) -> ProjectPr
 
     Starts from :func:`~guffin.render.project.profile_for`'s default-valued profile, then lets the
     content refine it: a book whose *content* declares parts (any level-1 heading tagged
-    ``element-type:: part`` — see :func:`~guffin.model.guffin_semantics.has_parts`) becomes a parts book
+    ``element-type:: part`` — see :func:`~guffin.model.publishing_semantics.has_parts`) becomes a parts book
     (:attr:`~guffin.render.project.BookProfile.with_parts`), so its level-2 headings are treated as
     the chapters.  Other project types pass through unchanged.
 

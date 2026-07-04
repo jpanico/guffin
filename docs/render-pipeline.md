@@ -222,7 +222,7 @@ overrides heading numbering with a hierarchical join (`1`, `1.1`, `1.1.1`) start
 matching Pandoc's EPUB numbering. (The bundled `user_cfg.typ` otherwise starts numbering at level 2,
 which is why an un-booked `--type book` PDF left its top-level headings unnumbered.) The parts book
 is selected by the content itself: `cli/common.resolve_profile` upgrades a `--type book` export to
-`BookProfile(with_parts=True)` when `model/guffin_semantics.has_parts()` finds a level-1 heading tagged
+`BookProfile(with_parts=True)` when `model/publishing_semantics.has_parts()` finds a level-1 heading tagged
 `element-type:: part` — the structure is declared once, in the Roam source, not restated as a flag.
 
 ### Summary
@@ -235,9 +235,9 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 | `emit_abstract` (profile policy; `ManuscriptProfile.abstract`/`keywords`) | — | nothing — **deferred indefinitely** | — |
 
 
-## The `GuffinSemantics` vocabulary (model → format mapping)
+## The `PublishingSemantics` vocabulary (model → format mapping)
 
-> **Status.** The vocabulary lives in `model/guffin_semantics.py`; the **EPUB** mapping that consumes
+> **Status.** The vocabulary lives in `model/publishing_semantics.py`; the **EPUB** mapping that consumes
 > it (`render/epub_semantics.py` + the `pandoc_rendering` header stamping) is **built**, including the
 > `<body>` division post-processing (`render/epub_post_processing.py`) that restores the CMOS placement.
 > Two vocabulary-driven effects are already **format-independent**: the matter-derived `unnumbered`
@@ -245,17 +245,17 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 > detection (`has_parts` → the PART division's pagination). The **per-element** `→ PDF/Typst` and
 > `→ GFM` maps (the analogue of the EPUB `epub:type` map) are still future work.
 
-`model/guffin_semantics.py` defines a **format-independent vocabulary aligned with publishing-industry
+`model/publishing_semantics.py` defines a **format-independent vocabulary aligned with publishing-industry
 standards and conventions** — the semantic identity of the pieces of a document, independent of how
 any output format renders them. It is intentionally *not* modeled on EPUB (or PDF, or GFM).
 
 ### The pieces
 
-- **`GuffinAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`Anchor`**: the
+- **`PublishingAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`Anchor`**: the
   kind of vertex it attaches to. `Anchor` has `PAGE` and `HEADING`, and each member carries the
   `VertexType` it corresponds to (the Anchor↔VertexType correspondence is a single source of truth on
   the enum; `VertexType` is defined in `model/vertex.py`).
-- **`GuffinSemantics`** — the enum of recognized guffin attributes, each a `GuffinAttribute`:
+- **`PublishingSemantics`** — the enum of recognized guffin attributes, each a `PublishingAttribute`:
   - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
     `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts, folded from a `guffin-meta::` block
     on the root page.
@@ -277,7 +277,7 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   the tolerant per-heading readers consumers build on: absent or illegal tags resolve to `None`
   (with a warning) instead of raising, and `resolved_matter` applies the precedence rule — a bare
   `matter::` tag overrides the element's conventional placement, logging any disagreement.
-- **`find_guffin_attribute(vertex, attribute)`** — a vertex's assignment for a `GuffinSemantics`
+- **`find_publishing_attribute(vertex, attribute)`** — a vertex's assignment for a `PublishingSemantics`
   attribute (the Guffin domain supplied automatically).
 - **`has_parts(tree)`** — whether a `VertexTree` structures its top level as parts: any level-1
   heading tagged `element-type:: part`. The vocabulary's structure-detection entry point — it drives
@@ -305,7 +305,7 @@ layer translates. (Where a publishing label and a format term happen to coincide
 
 ### How it maps to output (the design contract)
 
-- Everything in `model/guffin_semantics.py` lives in `model/` with **zero render/format dependency**
+- Everything in `model/publishing_semantics.py` lives in `model/` with **zero render/format dependency**
   (it depends only on the `model/` structural primitives — `attribute.py`, `vertex.py`,
   `vertex_tree.py` — sitting at the top of that stack).
 - Every per-format mapping lives in `render/`, as an **explicit map keyed on the model member** —
@@ -357,4 +357,4 @@ described above are all built; what remains:
    chapters numbered continuously. (`abstract` is deferred indefinitely.)
 2. **Per-element format maps.** The `StructuralElement → PDF/Typst` and `→ GFM` sibling maps (the
    analogue of the EPUB `epub_type_for`), letting an element's identity drive format-specific
-   styling/placement; see the `GuffinSemantics` vocabulary section above.
+   styling/placement; see the `PublishingSemantics` vocabulary section above.

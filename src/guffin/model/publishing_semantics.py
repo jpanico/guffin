@@ -1,20 +1,20 @@
-"""Guffin's own attribute vocabulary — the attributes Guffin recognizes in its reserved domain.
+"""The publishing-semantics vocabulary — the attributes Guffin recognizes in its reserved domain.
 
 Public symbols:
 
-- **Enumerations**: :class:`GuffinSemantics` — the attributes Guffin recognizes (document metadata +
-  the ``element-type`` heading tag), each member a :class:`GuffinAttribute` in the
+- **Enumerations**: :class:`PublishingSemantics` — the attributes Guffin recognizes (document metadata +
+  the ``element-type`` heading tag), each member a :class:`PublishingAttribute` in the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
   domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading), each
   carrying its :class:`~guffin.model.vertex.VertexType`; :class:`Matter` —
   the book division a part belongs to (front / body / back); :class:`StructuralElement` — a book's
   structural elements by name, each carrying its :class:`Matter` division (its organizational parts).
-- **Models**: :class:`GuffinAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
+- **Models**: :class:`PublishingAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Anchor`.
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
-  assignment's value as a :class:`Matter`; :func:`find_guffin_attribute` — find a vertex's
-  assignment for a :class:`GuffinSemantics` attribute (the Guffin domain supplied automatically);
+  assignment's value as a :class:`Matter`; :func:`find_publishing_attribute` — find a vertex's
+  assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` — resolve a heading's ``element-type``
   / bare ``matter`` tag to its enum member, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
@@ -92,7 +92,7 @@ class Matter(enum.StrEnum):
     BACK = "back-matter"
 
 
-class GuffinAttribute(Attribute):
+class PublishingAttribute(Attribute):
     """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`Anchor`.
 
     Specializes :class:`~guffin.model.attribute.Attribute` by pinning :attr:`domain` to
@@ -112,14 +112,14 @@ class GuffinAttribute(Attribute):
     def _domain_must_be_guffin(cls, value: AttributeDomain) -> AttributeDomain:
         """Reject any domain other than :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`."""
         if value is not AttributeDomain.GUFFIN:
-            raise ValueError(f"GuffinAttribute.domain is fixed to {AttributeDomain.GUFFIN!r}, got {value!r}")
+            raise ValueError(f"PublishingAttribute.domain is fixed to {AttributeDomain.GUFFIN!r}, got {value!r}")
         return value
 
 
-class GuffinSemantics(enum.Enum):
-    """The attributes Guffin recognizes, each a :class:`GuffinAttribute`.
+class PublishingSemantics(enum.Enum):
+    """The attributes Guffin recognizes, each a :class:`PublishingAttribute`.
 
-    Each member's value is the :class:`GuffinAttribute` for that attribute.  Two kinds:
+    Each member's value is the :class:`PublishingAttribute` for that attribute.  Two kinds:
 
     - **Document metadata** (:attr:`Anchor.PAGE`) — bibliographic facts about the work as a whole:
       :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`PUBLISHER`,
@@ -140,17 +140,17 @@ class GuffinSemantics(enum.Enum):
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
     """
 
-    _value_: GuffinAttribute
+    _value_: PublishingAttribute
 
-    TITLE = GuffinAttribute(name="title", anchor=Anchor.PAGE)
-    SUBTITLE = GuffinAttribute(name="subtitle", anchor=Anchor.PAGE)
-    AUTHORS = GuffinAttribute(name="authors", anchor=Anchor.PAGE)
-    DATE = GuffinAttribute(name="date", anchor=Anchor.PAGE)
-    PUBLISHER = GuffinAttribute(name="publisher", anchor=Anchor.PAGE)
-    RIGHTS = GuffinAttribute(name="rights", anchor=Anchor.PAGE)
-    IDENTIFIER = GuffinAttribute(name="identifier", anchor=Anchor.PAGE)
-    ELEMENT_TYPE = GuffinAttribute(name="element-type", anchor=Anchor.HEADING)
-    MATTER = GuffinAttribute(name="matter", anchor=Anchor.HEADING)
+    TITLE = PublishingAttribute(name="title", anchor=Anchor.PAGE)
+    SUBTITLE = PublishingAttribute(name="subtitle", anchor=Anchor.PAGE)
+    AUTHORS = PublishingAttribute(name="authors", anchor=Anchor.PAGE)
+    DATE = PublishingAttribute(name="date", anchor=Anchor.PAGE)
+    PUBLISHER = PublishingAttribute(name="publisher", anchor=Anchor.PAGE)
+    RIGHTS = PublishingAttribute(name="rights", anchor=Anchor.PAGE)
+    IDENTIFIER = PublishingAttribute(name="identifier", anchor=Anchor.PAGE)
+    ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=Anchor.HEADING)
+    MATTER = PublishingAttribute(name="matter", anchor=Anchor.HEADING)
 
 
 class StructuralElement(enum.StrEnum):
@@ -212,28 +212,28 @@ class StructuralElement(enum.StrEnum):
     COLOPHON = ("colophon", Matter.BACK)
 
 
-def _is_assignment_for(assignment: AttributeAssignment, attribute: GuffinSemantics) -> bool:
+def _is_assignment_for(assignment: AttributeAssignment, attribute: PublishingSemantics) -> bool:
     """Return whether *assignment* is for the Guffin *attribute* (by name and domain).
 
     Args:
         assignment: The attribute assignment to test.
-        attribute: The :class:`GuffinSemantics` member to match against.
+        attribute: The :class:`PublishingSemantics` member to match against.
 
     Returns:
         ``True`` when the assignment's attribute name and domain equal the member's
-        :class:`GuffinAttribute`, else ``False``.
+        :class:`PublishingAttribute`, else ``False``.
     """
-    expected: Final[GuffinAttribute] = attribute.value
+    expected: Final[PublishingAttribute] = attribute.value
     assignment_attribute: Final[Attribute] = assignment.attribute.definition
     return assignment_attribute.name == expected.name and assignment_attribute.domain == expected.domain
 
 
-def _verified_sole_value(assignment: AttributeAssignment, attribute: GuffinSemantics) -> str:
+def _verified_sole_value(assignment: AttributeAssignment, attribute: PublishingSemantics) -> str:
     """Verify *assignment* is for the Guffin *attribute* and return its sole value's text.
 
     Args:
         assignment: The attribute assignment to verify (one value expected).
-        attribute: The :class:`GuffinSemantics` member the assignment must be for.
+        attribute: The :class:`PublishingSemantics` member the assignment must be for.
 
     Returns:
         The text of the assignment's sole value.
@@ -243,7 +243,7 @@ def _verified_sole_value(assignment: AttributeAssignment, attribute: GuffinSeman
             exactly one value.
     """
     if not _is_assignment_for(assignment, attribute):
-        expected: Final[GuffinAttribute] = attribute.value
+        expected: Final[PublishingAttribute] = attribute.value
         assignment_attribute: Final[Attribute] = assignment.attribute.definition
         raise ValueError(
             f"expected an assignment of {expected.name!r} in the {expected.domain} domain, "
@@ -256,11 +256,11 @@ def _verified_sole_value(assignment: AttributeAssignment, attribute: GuffinSeman
 def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
     """Return the :class:`StructuralElement` that an ``element-type`` assignment names.
 
-    Verifies *assignment* is for the :attr:`GuffinSemantics.ELEMENT_TYPE` attribute, then coerces its
+    Verifies *assignment* is for the :attr:`PublishingSemantics.ELEMENT_TYPE` attribute, then coerces its
     sole value to a :class:`StructuralElement` — the authoritative set of legal ``element-type`` values.
 
     Args:
-        assignment: An :attr:`GuffinSemantics.ELEMENT_TYPE` attribute assignment (one value expected).
+        assignment: An :attr:`PublishingSemantics.ELEMENT_TYPE` attribute assignment (one value expected).
 
     Returns:
         The named :class:`StructuralElement`.
@@ -269,18 +269,18 @@ def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
         ValueError: If *assignment* is not for the ``element-type`` attribute, does not carry exactly
             one value, or its value is not a recognised :class:`StructuralElement`.
     """
-    return StructuralElement(_verified_sole_value(assignment, GuffinSemantics.ELEMENT_TYPE))
+    return StructuralElement(_verified_sole_value(assignment, PublishingSemantics.ELEMENT_TYPE))
 
 
 @validate_call
 def matter_of(assignment: AttributeAssignment) -> Matter:
     """Return the :class:`Matter` that a ``matter`` assignment names.
 
-    Verifies *assignment* is for the :attr:`GuffinSemantics.MATTER` attribute, then coerces its sole
+    Verifies *assignment* is for the :attr:`PublishingSemantics.MATTER` attribute, then coerces its sole
     value to a :class:`Matter` (``front-matter`` / ``body-matter`` / ``back-matter``).
 
     Args:
-        assignment: A :attr:`GuffinSemantics.MATTER` attribute assignment (one value expected).
+        assignment: A :attr:`PublishingSemantics.MATTER` attribute assignment (one value expected).
 
     Returns:
         The named :class:`Matter`.
@@ -289,15 +289,15 @@ def matter_of(assignment: AttributeAssignment) -> Matter:
         ValueError: If *assignment* is not for the ``matter`` attribute, does not carry exactly one
             value, or its value is not a recognised :class:`Matter`.
     """
-    return Matter(_verified_sole_value(assignment, GuffinSemantics.MATTER))
+    return Matter(_verified_sole_value(assignment, PublishingSemantics.MATTER))
 
 
 @validate_call
-def find_guffin_attribute(vertex: Vertex, attribute: GuffinSemantics) -> AttributeAssignment | None:
+def find_publishing_attribute(vertex: Vertex, attribute: PublishingSemantics) -> AttributeAssignment | None:
     """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
 
     Convenience over :func:`~guffin.model.vertex.find_attribute_assignment` that reads the name and
-    domain from the member's :class:`GuffinAttribute`, so callers neither restate nor risk
+    domain from the member's :class:`PublishingAttribute`, so callers neither restate nor risk
     mismatching them.
 
     Args:
@@ -324,7 +324,7 @@ def element_type_of_vertex(vertex: HeadingVertex) -> StructuralElement | None:
     Returns:
         The named :class:`StructuralElement`, or ``None``.
     """
-    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.ELEMENT_TYPE)
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.ELEMENT_TYPE)
     if assignment is None:
         return None
     try:
@@ -347,7 +347,7 @@ def matter_of_vertex(vertex: HeadingVertex) -> Matter | None:
     Returns:
         The named :class:`Matter`, or ``None``.
     """
-    assignment: Final[AttributeAssignment | None] = find_guffin_attribute(vertex, GuffinSemantics.MATTER)
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.MATTER)
     if assignment is None:
         return None
     try:
@@ -424,15 +424,17 @@ def has_parts(tree: VertexTree) -> bool:
     return any(_is_part_heading(vertex) for vertex in transcluded_vertices(tree) if isinstance(vertex, HeadingVertex))
 
 
-_SEMANTICS_BY_NAME: Final[dict[str, GuffinSemantics]] = {member.value.name: member for member in GuffinSemantics}
-"""Maps each recognised guffin attribute name to its :class:`GuffinSemantics` member."""
+_SEMANTICS_BY_NAME: Final[dict[str, PublishingSemantics]] = {
+    member.value.name: member for member in PublishingSemantics
+}
+"""Maps each recognised guffin attribute name to its :class:`PublishingSemantics` member."""
 
 
 def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment) -> str | None:
     """Describe how *assignment* violates the anchor invariant on *vertex*, or ``None``.
 
     ``None`` when *assignment* is outside the vocabulary (non-guffin domain, or a name matching no
-    :class:`GuffinSemantics` member) or when it sits on its anchor's vertex type; otherwise a
+    :class:`PublishingSemantics` member) or when it sits on its anchor's vertex type; otherwise a
     description naming the attribute, its expected anchor, the actual vertex type, and the vertex
     uid.
 
@@ -446,7 +448,7 @@ def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment) -> str | 
     assignment_attribute: Final[Attribute] = assignment.attribute.definition
     if assignment_attribute.domain is not AttributeDomain.GUFFIN:
         return None
-    member: Final[GuffinSemantics | None] = _SEMANTICS_BY_NAME.get(assignment_attribute.name)
+    member: Final[PublishingSemantics | None] = _SEMANTICS_BY_NAME.get(assignment_attribute.name)
     if member is None:
         return None
     anchor: Final[Anchor] = member.value.anchor
@@ -462,7 +464,7 @@ def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment) -> str | 
 def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every guffin attribute to sit on its anchor.
 
-    Each :class:`GuffinSemantics` member's :class:`GuffinAttribute` carries an :class:`Anchor`
+    Each :class:`PublishingSemantics` member's :class:`PublishingAttribute` carries an :class:`Anchor`
     naming the :class:`~guffin.model.vertex.VertexType` it attaches to; this validator enforces
     that invariant across *tree* — both its tree vertices and its referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`): every guffin-domain assignment
@@ -492,10 +494,12 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     )
 
 
-def _tagged_assignments(tree: VertexTree, attribute: GuffinSemantics) -> Iterator[tuple[Vertex, AttributeAssignment]]:
+def _tagged_assignments(
+    tree: VertexTree, attribute: PublishingSemantics
+) -> Iterator[tuple[Vertex, AttributeAssignment]]:
     """Return every ``(vertex, assignment)`` pair in *tree* whose assignment is for *attribute*.
 
-    An assignment matches when its name and domain equal the member's :class:`GuffinAttribute`.
+    An assignment matches when its name and domain equal the member's :class:`PublishingAttribute`.
     Both the tree vertices and the referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`) are walked.
 
@@ -516,7 +520,7 @@ def _tagged_assignments(tree: VertexTree, attribute: GuffinSemantics) -> Iterato
 
 def _illegal_value_violations(
     tree: VertexTree,
-    attribute: GuffinSemantics,
+    attribute: PublishingSemantics,
     value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
@@ -544,7 +548,7 @@ def _illegal_value_violations(
 def all_element_type_values_legal(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring legal ``element-type`` values.
 
-    Every :attr:`GuffinSemantics.ELEMENT_TYPE` assignment in *tree* must carry exactly one value,
+    Every :attr:`PublishingSemantics.ELEMENT_TYPE` assignment in *tree* must carry exactly one value,
     and that value must name a :class:`StructuralElement` member — the authoritative set of legal
     ``element-type`` values.
 
@@ -555,7 +559,7 @@ def all_element_type_values_legal(tree: VertexTree) -> ValidationError | None:
         ``None`` when every ``element-type`` value is legal; a
         :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
     """
-    violations: Final[list[str]] = _illegal_value_violations(tree, GuffinSemantics.ELEMENT_TYPE, element_type_of)
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.ELEMENT_TYPE, element_type_of)
     if not violations:
         return None
     return ValidationError(
@@ -568,7 +572,7 @@ def all_element_type_values_legal(tree: VertexTree) -> ValidationError | None:
 def all_matter_values_legal(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring legal ``matter`` values.
 
-    Every :attr:`GuffinSemantics.MATTER` assignment in *tree* must carry exactly one value, and
+    Every :attr:`PublishingSemantics.MATTER` assignment in *tree* must carry exactly one value, and
     that value must name a :class:`Matter` member — the authoritative set of legal ``matter``
     values.
 
@@ -579,7 +583,7 @@ def all_matter_values_legal(tree: VertexTree) -> ValidationError | None:
         ``None`` when every ``matter`` value is legal; a
         :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
     """
-    violations: Final[list[str]] = _illegal_value_violations(tree, GuffinSemantics.MATTER, matter_of)
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.MATTER, matter_of)
     if not violations:
         return None
     return ValidationError(
@@ -610,7 +614,7 @@ def all_matter_tags_at_section_level(tree: VertexTree) -> ValidationError | None
     shape: Final[str] = "a parts book (sections at level 2)" if parts else "a chapters book (sections at level 1)"
     violations: Final[list[str]] = [
         f"'matter' tag on a level-{vertex.heading_level} heading (uid={vertex.uid!r}); this tree is {shape}"
-        for vertex, _assignment in _tagged_assignments(tree, GuffinSemantics.MATTER)
+        for vertex, _assignment in _tagged_assignments(tree, PublishingSemantics.MATTER)
         if isinstance(vertex, HeadingVertex) and vertex.heading_level != section_level
     ]
     if not violations:

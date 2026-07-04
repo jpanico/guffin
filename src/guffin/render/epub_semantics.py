@@ -13,7 +13,7 @@ against Pandoc's output), deliberately aligned with Pandoc — *not* a statement
 conventionally belongs.
 
 The conventional (publishing-standard) placement is a separate concern, carried by
-:attr:`~guffin.model.guffin_semantics.StructuralElement.matter`, which is aligned with the Chicago
+:attr:`~guffin.model.publishing_semantics.StructuralElement.matter`, which is aligned with the Chicago
 Manual of Style (CMOS).  The two intentionally diverge: their difference is exactly the set of
 sections whose Pandoc-assigned ``<body>`` division is post-processed to restore the CMOS placement —
 ``epigraph``, ``introduction``, ``table-of-contents``, ``list-of-illustrations``, ``prologue``,
@@ -29,7 +29,7 @@ Public symbols:
 - **Enumerations**: :class:`EpubDivision` — the three top-level EPUB structural divisions;
   :class:`EpubType` — the ``epub:type`` terms Guffin supports, each carrying its :class:`EpubDivision`.
 - **Functions**: :func:`epub_type_for` — map a
-  :class:`~guffin.model.guffin_semantics.StructuralElement` to its :class:`EpubType`, or ``None`` when
+  :class:`~guffin.model.publishing_semantics.StructuralElement` to its :class:`EpubType`, or ``None`` when
   it has no EPUB counterpart; :func:`epub_division_for_matter` — map a CMOS ``Matter`` to its
   :class:`EpubDivision`.
 """
@@ -39,12 +39,12 @@ from typing import Final, Self
 
 from pydantic import validate_call
 
-from guffin.model.guffin_semantics import Matter, StructuralElement
+from guffin.model.publishing_semantics import Matter, StructuralElement
 
 MATTER_DATA_ATTRIBUTE: Final[str] = "data-guffin-matter"
 """Section attribute carrying a heading's CMOS ``<body>`` division (an :class:`EpubDivision` value).
 
-Stamped on a heading whenever its :class:`~guffin.model.guffin_semantics.Matter` resolves, so the
+Stamped on a heading whenever its :class:`~guffin.model.publishing_semantics.Matter` resolves, so the
 division survives on the ``<section>`` in Pandoc's EPUB output.  The
 :mod:`guffin.render.epub_post_processing` pass promotes it to the content document's ``<body
 epub:type>`` and then removes it, so it never reaches the reader (and other formats drop it).
@@ -135,7 +135,7 @@ _EPUB_TYPE_BY_STRUCTURAL_ELEMENT: Final[dict[StructuralElement, EpubType]] = {
     StructuralElement.INDEX: EpubType.INDEX,
     StructuralElement.COLOPHON: EpubType.COLOPHON,
 }
-"""Maps a :class:`~guffin.model.guffin_semantics.StructuralElement` to its ``epub:type`` term.
+"""Maps a :class:`~guffin.model.publishing_semantics.StructuralElement` to its ``epub:type`` term.
 
 Deliberately partial: elements with no EPUB counterpart — ``title-page`` (metadata driven), the
 generic ``section``/``sub-section``/``sub-sub-section`` body divisions, and ``about-the-author`` — are
@@ -163,7 +163,7 @@ _EPUB_DIVISION_BY_MATTER: Final[dict[Matter, EpubDivision]] = {
     Matter.BODY: EpubDivision.BODYMATTER,
     Matter.BACK: EpubDivision.BACKMATTER,
 }
-"""Maps a CMOS :class:`~guffin.model.guffin_semantics.Matter` to the EPUB ``<body>`` division that.
+"""Maps a CMOS :class:`~guffin.model.publishing_semantics.Matter` to the EPUB ``<body>`` division that.
 
 expresses it — the conventional (CMOS) placement Guffin wants, regardless of Pandoc's own default.
 """

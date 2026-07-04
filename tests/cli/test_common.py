@@ -21,8 +21,8 @@ from guffin.model.attribute import (
     AttributeInstance,
     LiteralValue,
 )
-from guffin.model.guffin_semantics import GuffinSemantics
 from guffin.model.link import VertexLink, VertexLinkKind
+from guffin.model.publishing_semantics import PublishingSemantics
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
@@ -175,7 +175,7 @@ class TestDeduceOutFileStem:
             attribute_assignments=[
                 AttributeAssignment(
                     attribute=AttributeInstance(
-                        definition=Attribute(name=GuffinSemantics.TITLE.value.name, domain=AttributeDomain.GUFFIN),
+                        definition=Attribute(name=PublishingSemantics.TITLE.value.name, domain=AttributeDomain.GUFFIN),
                         link=link,
                     ),
                     values=(LiteralValue(value="Override Title"),),
