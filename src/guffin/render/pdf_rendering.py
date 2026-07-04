@@ -47,7 +47,7 @@ from pypdf import PdfReader
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.provenance import Provenance
-from guffin.model.publishing_semantics import DEFAULT_PDF_RENDER, PdfRender, pdf_render_of_vertex
+from guffin.model.publishing_semantics import DEFAULT_PDF_RENDER, PdfRender, drop_unpublished, pdf_render_of_vertex
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex, PdfVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
@@ -413,10 +413,11 @@ def render(
     drop_preamble: Final[bool] = (
         profile.structural_policy.drop_preamble if options.include_preamble is None else not options.include_preamble
     )
+    # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
+    # fetch nor any later structural decision.
+    published: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
-    stripped: Final[VertexTree] = (
-        drop_attribute_assignments(render_bundle.content) if options.suppress_attributes else render_bundle.content
-    )
+    stripped: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Loose preamble (root-page children ahead of the first heading) is pruned so it cannot
     # strand on its own page ahead of the book's first division.
     content: Final[VertexTree] = drop_root_preamble(stripped) if drop_preamble else stripped

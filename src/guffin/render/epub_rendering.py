@@ -45,6 +45,7 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.provenance import Provenance
+from guffin.model.publishing_semantics import drop_unpublished
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
@@ -177,10 +178,11 @@ def render(
     output_dir: Final[Path] = options.output_dir
     cache_dir: Final[Path | None] = options.cache_dir
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
+    # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
+    # fetch nor any later structural decision.
+    published: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
-    stripped: Final[VertexTree] = (
-        drop_attribute_assignments(render_bundle.content) if options.suppress_attributes else render_bundle.content
-    )
+    stripped: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Loose preamble (root-page children ahead of the first heading) is pruned so it cannot
     # surface as a spurious title-bearing chapter ahead of the book's first division.
     content: Final[VertexTree] = drop_root_preamble(stripped) if drop_preamble else stripped

@@ -3,12 +3,13 @@
 Public symbols:
 
 - **Constants**: :data:`DEFAULT_PDF_RENDER` — the :class:`PdfRender` placement of an untagged
-  PDF embed.
+  PDF embed; :data:`DEFAULT_PUBLISH` — the publication state of an untagged vertex.
 - **Enumerations**: :class:`PublishingSemantics` — the attributes Guffin recognizes (document metadata +
-  the ``element-type``/``matter`` heading tags + the ``pdf-render`` PDF tag), each member a
+  the ``element-type``/``matter`` heading tags + the ``pdf-render`` PDF tag + the ``publish``
+  block tag), each member a
   :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
-  domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading / pdf),
-  each carrying its :class:`~guffin.model.vertex.VertexType`; :class:`Matter` —
+  domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading /
+  pdf / block), each carrying its :class:`~guffin.model.vertex.VertexType` set; :class:`Matter` —
   the book division a part belongs to (front / body / back); :class:`StructuralElement` — a book's
   structural elements by name, each carrying its :class:`Matter` division (its organizational parts);
   :class:`PdfRender` — how an embedded PDF asset is placed in paginated output (inline / link).
@@ -17,22 +18,27 @@ Public symbols:
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
   assignment's value as a :class:`Matter`; :func:`pdf_render_of` — read a ``pdf-render``
-  assignment's value as a :class:`PdfRender`; :func:`find_publishing_attribute` — find a vertex's
+  assignment's value as a :class:`PdfRender`; :func:`publish_of` — read a ``publish``
+  assignment's value as a boolean; :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
-  :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` —
-  resolve a heading's ``element-type`` / bare ``matter`` tag, or a PDF embed's ``pdf-render`` tag,
-  to its enum member, tolerating absent or illegal assignments (``None``,
+  :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
+  :func:`publish_of_vertex` —
+  resolve a heading's ``element-type`` / bare ``matter`` tag, a PDF embed's ``pdf-render`` tag,
+  or any block's ``publish`` tag, to its value, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
   top level as parts (any render-visible level-1 heading — block-embed-transcluded headings
   included — tagged ``element-type:: part``);
+  :func:`drop_unpublished` — prune every ``publish:: false`` subtree (block embeds of pruned
+  content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
-  (every recognised guffin attribute sits on its :class:`Anchor`'s vertex type),
+  (every recognised guffin attribute sits on one of its :class:`Anchor`'s vertex types),
   :func:`all_element_type_values_legal` (every ``element-type`` value is a
   :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
   :class:`Matter`), :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
-  :class:`PdfRender`), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
+  :class:`PdfRender`), :func:`all_publish_values_legal` (every ``publish`` value is a boolean
+  literal), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
   the book's section level — level 1, or level 2 in a parts book);
   :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
@@ -58,8 +64,16 @@ from guffin.model.attribute import (
     AttributeDomain,
     verified_sole_value_text,
 )
-from guffin.model.vertex import HeadingVertex, PdfVertex, Vertex, VertexType, find_attribute_assignment
-from guffin.model.vertex_tree import VertexTree, assignments_for, transcluded_vertices
+from guffin.model.primitives import Uid
+from guffin.model.vertex import (
+    BlockEmbedVertex,
+    HeadingVertex,
+    PdfVertex,
+    Vertex,
+    VertexType,
+    find_attribute_assignment,
+)
+from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
 
 logger = logging.getLogger(__name__)
 
@@ -67,28 +81,32 @@ logger = logging.getLogger(__name__)
 class Anchor(enum.StrEnum):
     """The kind of vertex a Guffin attribute attaches to.
 
-    Each member carries the :class:`~guffin.model.vertex.VertexType` it corresponds to — the type
-    of vertex an attribute with this anchor may be declared on.
+    Each member carries the set of :class:`~guffin.model.vertex.VertexType` it corresponds to —
+    the types of vertex an attribute with this anchor may be declared on.  :attr:`BLOCK`'s set is
+    derived from :class:`~guffin.model.vertex.VertexType` itself (every type except a page), so a
+    future vertex type is covered without touching this enum.
 
     Attributes:
-        vertex_type: The :class:`~guffin.model.vertex.VertexType` this anchor corresponds to.
+        vertex_types: The :class:`~guffin.model.vertex.VertexType` set this anchor corresponds to.
         PAGE: The attribute attaches to a page vertex (the whole document).
         HEADING: The attribute attaches to a heading vertex (a section).
         PDF: The attribute attaches to a PDF vertex (an embedded PDF asset).
+        BLOCK: The attribute attaches to any block vertex — every vertex type except a page.
     """
 
-    def __new__(cls, value: str, vertex_type: VertexType) -> Self:
-        """Create a member whose string value is *value* and that carries *vertex_type*."""
+    def __new__(cls, value: str, vertex_types: frozenset[VertexType]) -> Self:
+        """Create a member whose string value is *value* and that carries *vertex_types*."""
         member = str.__new__(cls, value)
         member._value_ = value
-        member.vertex_type = vertex_type
+        member.vertex_types = vertex_types
         return member
 
-    vertex_type: VertexType
+    vertex_types: frozenset[VertexType]
 
-    PAGE = ("page", VertexType.PAGE)
-    HEADING = ("heading", VertexType.HEADING)
-    PDF = ("pdf", VertexType.PDF)
+    PAGE = ("page", frozenset({VertexType.PAGE}))
+    HEADING = ("heading", frozenset({VertexType.HEADING}))
+    PDF = ("pdf", frozenset({VertexType.PDF}))
+    BLOCK = ("block", frozenset(VertexType) - {VertexType.PAGE})
 
 
 class Matter(enum.StrEnum):
@@ -120,6 +138,12 @@ class PdfRender(enum.StrEnum):
 
 DEFAULT_PDF_RENDER: Final[PdfRender] = PdfRender.LINK
 """The :class:`PdfRender` placement of a PDF embed carrying no ``pdf-render`` tag."""
+
+DEFAULT_PUBLISH: Final[bool] = True
+"""The publication state of a vertex carrying no ``publish`` tag."""
+
+_PUBLISH_LITERALS: Final[dict[str, bool]] = {"true": True, "false": False}
+"""Maps each legal ``publish`` value literal to the publication state it names."""
 
 
 class PublishingAttribute(Attribute):
@@ -159,6 +183,8 @@ class PublishingSemantics(enum.Enum):
       :class:`Matter` division directly, for a bespoke section with no specific element type.
     - **PDF tags** (:attr:`Anchor.PDF`) — applied to an individual embedded PDF asset:
       :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated output.
+    - **Block tags** (:attr:`Anchor.BLOCK`) — applied to any block vertex: :attr:`PUBLISH`
+      declares whether the block, with its entire subtree, appears in rendered output.
 
     Attributes:
         TITLE: The document title.
@@ -171,6 +197,8 @@ class PublishingSemantics(enum.Enum):
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
         PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a link).
+        PUBLISH: Tags a block with its publication state; ``false`` omits the block and every
+            descendant from all rendered output (absent, :data:`DEFAULT_PUBLISH` applies).
     """
 
     _value_: PublishingAttribute
@@ -185,6 +213,7 @@ class PublishingSemantics(enum.Enum):
     ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=Anchor.HEADING)
     MATTER = PublishingAttribute(name="matter", anchor=Anchor.HEADING)
     PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=Anchor.PDF)
+    PUBLISH = PublishingAttribute(name="publish", anchor=Anchor.BLOCK)
 
 
 class StructuralElement(enum.StrEnum):
@@ -306,6 +335,30 @@ def pdf_render_of(assignment: AttributeAssignment) -> PdfRender:
     return PdfRender(verified_sole_value_text(assignment, PublishingSemantics.PDF_RENDER.value))
 
 
+@validate_call
+def publish_of(assignment: AttributeAssignment) -> bool:
+    """Return the publication state that a ``publish`` assignment names.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.PUBLISH` attribute, then coerces
+    its sole value to a boolean (``true`` / ``false``).
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.PUBLISH` attribute assignment (one value expected).
+
+    Returns:
+        The named publication state.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``publish`` attribute, does not carry exactly
+            one value, or its value is neither ``true`` nor ``false``.
+    """
+    literal: Final[str] = verified_sole_value_text(assignment, PublishingSemantics.PUBLISH.value)
+    published: Final[bool | None] = _PUBLISH_LITERALS.get(literal)
+    if published is None:
+        raise ValueError(f"'publish' value must be 'true' or 'false'; got {literal!r}")
+    return published
+
+
 @validate_call(config=ConfigDict(strict=True))
 def find_publishing_attribute(vertex: Vertex, attribute: PublishingSemantics) -> AttributeAssignment | None:
     """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
@@ -398,6 +451,30 @@ def pdf_render_of_vertex(vertex: PdfVertex) -> PdfRender | None:
 
 
 @validate_call
+def publish_of_vertex(vertex: Vertex) -> bool | None:
+    """Resolve *vertex*'s ``publish`` tag to its publication state, or ``None``.
+
+    ``None`` when *vertex* carries no ``publish`` assignment, or when the assignment does not
+    coerce to a boolean (ignored with a warning).  An untagged vertex's state is
+    :data:`DEFAULT_PUBLISH`.
+
+    Args:
+        vertex: The vertex whose tag to resolve.
+
+    Returns:
+        The named publication state, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.PUBLISH)
+    if assignment is None:
+        return None
+    try:
+        return publish_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring publish on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
 def resolved_matter(vertex: HeadingVertex) -> Matter | None:
     """Return *vertex*'s resolved :class:`Matter` division, or ``None`` when none applies.
 
@@ -464,6 +541,68 @@ def has_parts(tree: VertexTree) -> bool:
     return any(_is_part_heading(vertex) for vertex in transcluded_vertices(tree) if isinstance(vertex, HeadingVertex))
 
 
+@validate_call
+def drop_unpublished(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`VertexTree` without the unpublished subtrees.
+
+    A vertex tagged ``publish:: false`` is unpublished: it is removed — together with every
+    descendant — from both :attr:`~guffin.model.vertex_tree.VertexTree.tree_vertices` and
+    :attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`, and its uid is stripped from every
+    surviving vertex's children list.  The tag travels with the content: a
+    :class:`~guffin.model.vertex.BlockEmbedVertex` whose transclusion target was removed is
+    removed as well (applied to a fixpoint, so an embed of an embed of unpublished content also
+    vanishes).  Assignments that do not coerce to a boolean are ignored with a warning (the
+    vertex stays published).  The original *tree* is not modified; it passes through unchanged
+    when nothing is tagged unpublished.
+
+    Args:
+        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
+
+    Returns:
+        A new :class:`~guffin.model.vertex_tree.VertexTree` without the unpublished vertices, or
+        *tree* itself when no prune applies.
+
+    Raises:
+        ValueError: If the tree's root vertex is itself unpublished — the export target cannot
+            be omitted from its own output.
+    """
+    pending: list[Uid] = [vertex.uid for vertex in tree.uid_map.values() if publish_of_vertex(vertex) is False]
+    if not pending:
+        return tree
+    removed: Final[set[Uid]] = set()
+    while pending:
+        # Close over descendants, then cascade to embeds whose target vanished; repeat to a fixpoint.
+        while pending:
+            uid = pending.pop()
+            if uid in removed:
+                continue
+            removed.add(uid)
+            vertex = tree.uid_map.get(uid)
+            if vertex is not None and vertex.children:
+                pending.extend(vertex.children)
+        pending = [
+            vertex.uid
+            for vertex in tree.uid_map.values()
+            if vertex.uid not in removed and isinstance(vertex, BlockEmbedVertex) and vertex.vertex_link.uid in removed
+        ]
+    root_uid: Final[Uid] = root_vertex(tree).uid
+    if root_uid in removed:
+        raise ValueError(f"the export target itself (root vertex uid={root_uid!r}) is tagged 'publish:: false'")
+    logger.info("dropping %d unpublished vertices (publish:: false)", len(removed))
+
+    def _strip_children(vertex: Vertex) -> Vertex:
+        if vertex.children and any(child_uid in removed for child_uid in vertex.children):
+            return vertex.model_copy(
+                update={"children": [child_uid for child_uid in vertex.children if child_uid not in removed]}
+            )
+        return vertex
+
+    return VertexTree(
+        tree_vertices=[_strip_children(v) for v in tree.tree_vertices if v.uid not in removed],
+        ref_vertices=[_strip_children(v) for v in tree.ref_vertices if v.uid not in removed],
+    )
+
+
 _SEMANTICS_BY_NAME: Final[dict[str, PublishingSemantics]] = {
     member.value.name: member for member in PublishingSemantics
 }
@@ -492,7 +631,7 @@ def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment) -> str | 
     if member is None:
         return None
     anchor: Final[Anchor] = member.value.anchor
-    if vertex.vertex_type is anchor.vertex_type:
+    if vertex.vertex_type in anchor.vertex_types:
         return None
     return (
         f"{assignment_attribute.name!r} is {anchor.value}-anchored but declared on a "
@@ -505,10 +644,10 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every guffin attribute to sit on its anchor.
 
     Each :class:`PublishingSemantics` member's :class:`PublishingAttribute` carries an :class:`Anchor`
-    naming the :class:`~guffin.model.vertex.VertexType` it attaches to; this validator enforces
+    naming the :class:`~guffin.model.vertex.VertexType` set it attaches to; this validator enforces
     that invariant across *tree* — both its tree vertices and its referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`): every guffin-domain assignment
-    whose name is a recognised member must be declared on a vertex of the anchor's type.
+    whose name is a recognised member must be declared on a vertex of one of the anchor's types.
     Default-domain assignments and unrecognised guffin-domain names are outside the vocabulary and
     pass through unchecked.
 
@@ -537,7 +676,7 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
 def _illegal_value_violations(
     tree: VertexTree,
     attribute: PublishingSemantics,
-    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter | PdfRender],
+    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter | PdfRender | bool],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
 
@@ -633,6 +772,30 @@ def all_pdf_render_values_legal(tree: VertexTree) -> ValidationError | None:
 
 
 @validate_call
+def all_publish_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``publish`` values.
+
+    Every :attr:`PublishingSemantics.PUBLISH` assignment in *tree* must carry exactly one value,
+    and that value must be ``true`` or ``false`` — the authoritative set of legal ``publish``
+    values.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``publish`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.PUBLISH, publish_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal publish values: " + "; ".join(violations),
+        validator=all_publish_values_legal,
+    )
+
+
+@validate_call
 def all_matter_tags_at_section_level(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every ``matter`` tag to sit at the section level.
 
@@ -671,7 +834,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
-    :func:`all_pdf_render_values_legal`, and
+    :func:`all_pdf_render_values_legal`, :func:`all_publish_values_legal`, and
     :func:`all_matter_tags_at_section_level` — via :func:`~guffin.common.validation.validate_all`.  Every
     validator covers both the tree vertices and the referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`).  All validators run regardless of
@@ -692,6 +855,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_element_type_values_legal,
             all_matter_values_legal,
             all_pdf_render_values_legal,
+            all_publish_values_legal,
             all_matter_tags_at_section_level,
         ],
     )

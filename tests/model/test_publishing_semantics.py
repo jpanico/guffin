@@ -17,6 +17,7 @@ from guffin.model.attribute import (
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
+    DEFAULT_PUBLISH,
     Anchor,
     Matter,
     PdfRender,
@@ -28,6 +29,8 @@ from guffin.model.publishing_semantics import (
     all_matter_tags_at_section_level,
     all_matter_values_legal,
     all_pdf_render_values_legal,
+    all_publish_values_legal,
+    drop_unpublished,
     element_type_of,
     element_type_of_vertex,
     find_publishing_attribute,
@@ -36,10 +39,20 @@ from guffin.model.publishing_semantics import (
     matter_of_vertex,
     pdf_render_of,
     pdf_render_of_vertex,
+    publish_of,
+    publish_of_vertex,
     resolved_matter,
     validate_semantics,
 )
-from guffin.model.vertex import BlockEmbedVertex, HeadingVertex, PageVertex, PdfVertex, vertex_adapter
+from guffin.model.vertex import (
+    BlockEmbedVertex,
+    HeadingVertex,
+    PageVertex,
+    PdfVertex,
+    TextVertex,
+    VertexType,
+    vertex_adapter,
+)
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
@@ -680,3 +693,151 @@ class TestValidateSemantics:
         messages = " | ".join(error.message for error in result.errors)
         assert "illegal matter values" in messages
         assert "misplaced matter tags" in messages
+
+
+class TestAnchorVertexTypes:
+    """Anchor members carry the vertex-type sets they attach to."""
+
+    def test_single_type_anchors(self) -> None:
+        """The page, heading, and pdf anchors each cover exactly their one vertex type."""
+        assert Anchor.PAGE.vertex_types == frozenset({VertexType.PAGE})
+        assert Anchor.HEADING.vertex_types == frozenset({VertexType.HEADING})
+        assert Anchor.PDF.vertex_types == frozenset({VertexType.PDF})
+
+    def test_block_anchor_covers_every_type_except_page(self) -> None:
+        """The block anchor covers every vertex type but PAGE."""
+        assert VertexType.PAGE not in Anchor.BLOCK.vertex_types
+        assert Anchor.BLOCK.vertex_types == frozenset(VertexType) - {VertexType.PAGE}
+
+
+class TestPublishOf:
+    """publish_of() reads a publish assignment's sole value as a boolean."""
+
+    def test_false_literal(self) -> None:
+        """'false' names the unpublished state."""
+        assert publish_of(_assignment("publish", "false")) is False
+
+    def test_true_literal(self) -> None:
+        """'true' names the published state."""
+        assert publish_of(_assignment("publish", "true")) is True
+
+    def test_rejects_wrong_attribute(self) -> None:
+        """An assignment for a different attribute is rejected."""
+        with pytest.raises(ValueError, match="publish"):
+            publish_of(_assignment("matter", "false"))
+
+    def test_rejects_non_boolean_literal(self) -> None:
+        """A value that is neither 'true' nor 'false' is rejected."""
+        with pytest.raises(ValueError, match="'maybe'"):
+            publish_of(_assignment("publish", "maybe"))
+
+
+class TestPublishOfVertex:
+    """publish_of_vertex() resolves a vertex's publish tag, tolerating absence and bad values."""
+
+    def test_tagged_vertex_resolves(self) -> None:
+        """A tagged heading resolves to its declared state."""
+        heading = _heading_with([_assignment("publish", "false")])
+        assert publish_of_vertex(heading) is False
+
+    def test_untagged_vertex_is_none(self) -> None:
+        """An untagged vertex resolves to None (DEFAULT_PUBLISH applies)."""
+        assert publish_of_vertex(_heading_with(None)) is None
+        assert DEFAULT_PUBLISH is True
+
+    def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A non-boolean value is ignored with a warning."""
+        heading = _heading_with([_assignment("publish", "maybe")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert publish_of_vertex(heading) is None
+        assert any("ignoring publish" in record.message for record in caplog.records)
+
+
+class TestAllPublishValuesLegal:
+    """all_publish_values_legal() requires every publish value to be a boolean literal."""
+
+    def test_legal_values_pass(self) -> None:
+        """'true'/'false' values produce no error."""
+        tree = _attributed_tree([], ["publish"], AttributeDomain.GUFFIN, value="false")
+        assert all_publish_values_legal(tree) is None
+
+    def test_illegal_value_is_reported(self) -> None:
+        """A non-boolean publish value is a violation."""
+        tree = _attributed_tree([], ["publish"], AttributeDomain.GUFFIN, value="maybe")
+        error = all_publish_values_legal(tree)
+        assert error is not None
+        assert "illegal publish values" in error.message
+        assert "uid='head00001'" in error.message
+
+    def test_publish_on_page_is_misanchored(self) -> None:
+        """A publish tag on a page vertex is reported by the anchor validator."""
+        tree = _attributed_tree(["publish"], [], AttributeDomain.GUFFIN, value="false")
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "'publish' is block-anchored" in error.message
+
+
+def _text_vertex(uid: str, children: list[str] | None = None, publish: str | None = None) -> TextVertex:
+    """Build a TextVertex, optionally with children and a publish tag."""
+    return TextVertex(
+        uid=uid,
+        text=f"text {uid}",
+        children=children,
+        attribute_assignments=[_assignment("publish", publish)] if publish is not None else None,
+    )
+
+
+class TestDropUnpublished:
+    """drop_unpublished() prunes publish:: false subtrees, embeds of pruned content included."""
+
+    def test_untagged_tree_passes_through(self) -> None:
+        """A tree with no publish tags is returned unchanged (the same object)."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["keep00001"])
+        tree = VertexTree(tree_vertices=[root, _text_vertex("keep00001")])
+        assert drop_unpublished(tree) is tree
+
+    def test_tagged_subtree_is_pruned(self) -> None:
+        """A tagged vertex vanishes with its descendants, and the parent's children list is stripped."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["keep00001", "drop00001"])
+        drop = _text_vertex("drop00001", children=["nest00001"], publish="false")
+        tree = VertexTree(
+            tree_vertices=[root, _text_vertex("keep00001"), drop, _text_vertex("nest00001")],
+        )
+        pruned = drop_unpublished(tree)
+        assert [vtx.uid for vtx in pruned.tree_vertices] == ["pageroot1", "keep00001"]
+        assert pruned.uid_map["pageroot1"].children == ["keep00001"]
+
+    def test_publish_true_is_kept(self) -> None:
+        """An explicit publish:: true is the same as untagged: nothing is pruned."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["keep00001"])
+        tree = VertexTree(tree_vertices=[root, _text_vertex("keep00001", publish="true")])
+        assert drop_unpublished(tree) is tree
+
+    def test_embed_of_unpublished_target_vanishes(self) -> None:
+        """A block embed whose transclusion target is unpublished is pruned with it."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["keep00001", "embd00001"])
+        embed = BlockEmbedVertex(uid="embd00001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="reftgt001"))
+        target = _text_vertex("reftgt001", publish="false")
+        tree = VertexTree(tree_vertices=[root, _text_vertex("keep00001"), embed], ref_vertices=[target])
+        pruned = drop_unpublished(tree)
+        assert [vtx.uid for vtx in pruned.tree_vertices] == ["pageroot1", "keep00001"]
+        assert pruned.ref_vertices == []
+        assert pruned.uid_map["pageroot1"].children == ["keep00001"]
+
+    def test_illegal_value_prunes_nothing(self) -> None:
+        """A vertex whose publish value is not a boolean stays published (tolerant reader)."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["keep00001"])
+        tree = VertexTree(tree_vertices=[root, _text_vertex("keep00001", publish="maybe")])
+        assert drop_unpublished(tree) is tree
+
+    def test_unpublished_root_raises(self) -> None:
+        """An export target tagged publish:: false is rejected outright."""
+        root = HeadingVertex(
+            uid="head00001",
+            text="A Heading",
+            heading_level=1,
+            attribute_assignments=[_assignment("publish", "false")],
+        )
+        tree = VertexTree(tree_vertices=[root])
+        with pytest.raises(ValueError, match="export target"):
+            drop_unpublished(tree)

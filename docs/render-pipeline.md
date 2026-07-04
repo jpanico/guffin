@@ -252,9 +252,10 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
 ### The pieces
 
 - **`PublishingAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`Anchor`**: the
-  kind of vertex it attaches to. `Anchor` has `PAGE` and `HEADING`, and each member carries the
-  `VertexType` it corresponds to (the Anchor↔VertexType correspondence is a single source of truth on
-  the enum; `VertexType` is defined in `model/vertex.py`).
+  kind of vertex it attaches to. `Anchor` has `PAGE`, `HEADING`, `PDF`, and `BLOCK`, and each member
+  carries the `frozenset[VertexType]` it corresponds to (the Anchor↔VertexType correspondence is a
+  single source of truth on the enum; `VertexType` is defined in `model/vertex.py`). `BLOCK` covers
+  every vertex type except a page, derived from `VertexType` itself.
 - **`PublishingSemantics`** — the enum of recognized guffin attributes, each a `PublishingAttribute`:
   - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
     `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts, folded from a `guffin-meta::` block
@@ -262,6 +263,11 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   - *Heading-anchored tags* (`Anchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
     `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
     for a bespoke heading with no specific element type.
+  - *PDF-anchored tags* (`Anchor.PDF`): `PDF_RENDER` (`pdf-render::`) declares an embedded PDF
+    asset's `PdfRender` placement in paginated output (`inline` pages vs the default `link`).
+  - *Block-anchored tags* (`Anchor.BLOCK`): `PUBLISH` (`publish::`) declares a block's publication
+    state; `publish:: false` omits the block and its entire subtree from every rendered output
+    (untagged, `DEFAULT_PUBLISH` — published — applies).
 - **`StructuralElement`** — the legal values of an `element-type` tag: a book's organizational parts
   (`TITLE_PAGE` … `COLOPHON`, incl. `PART`/`CHAPTER`/`SECTION`/`SUB_SECTION`/`SUB_SUB_SECTION`; no `cover`
   — per CMOS only the interior is matter-classified, the cover being exterior). Each member
@@ -283,11 +289,18 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   heading tagged `element-type:: part`. The vocabulary's structure-detection entry point — it drives
   `BookProfile.with_parts` (via `cli/common.resolve_profile`), and with it the PART division's
   pagination in both paginated formats.
+- **`drop_unpublished(tree)`** — the vocabulary's pruning transformer, applied first in every
+  renderer's prepare phase: each `publish:: false` vertex is removed with its entire subtree
+  (before asset fetching, so omitted assets are never downloaded), and a block embed whose
+  transclusion target was removed vanishes with it, to a fixpoint. An export root tagged
+  `publish:: false` raises — the export target cannot be omitted from its own output.
 - **`validate_semantics(tree)`** — the vocabulary's validation pass (built on `common/validation`),
-  accumulating four validators: `all_attributes_anchored` (every recognized guffin attribute sits
-  on the vertex type its `Anchor` names — the `Anchor.vertex_type` correspondence is the enforced
-  invariant), `all_element_type_values_legal` / `all_matter_values_legal` (every `element-type` /
-  `matter` value is a `StructuralElement` / `Matter` member), and `all_matter_tags_at_section_level`
+  accumulating six validators: `all_attributes_anchored` (every recognized guffin attribute sits
+  on one of the vertex types its `Anchor` names — the `Anchor.vertex_types` correspondence is the
+  enforced invariant), `all_element_type_values_legal` / `all_matter_values_legal` /
+  `all_pdf_render_values_legal` / `all_publish_values_legal` (every `element-type` / `matter` /
+  `pdf-render` / `publish` value is a `StructuralElement` / `Matter` / `PdfRender` member / boolean
+  literal), and `all_matter_tags_at_section_level`
   (a `matter` tag sits at the book's section level — level 1, or level 2 in a parts book, since
   that is where chapter-shaped sections live). Run by `cli/common.fetch_roam_trees` on the
   transcribed content (tree and ref vertices). Consequences differ per command: `dump-roam-tree`

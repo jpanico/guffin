@@ -35,6 +35,7 @@ import pypandoc  # type: ignore[import-untyped]
 import regex
 from pydantic import validate_call
 
+from guffin.model.publishing_semantics import drop_unpublished
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
@@ -124,10 +125,11 @@ def render(
     cache_dir: Final[Path | None] = options.cache_dir
     bundle: Final[bool] = options.bundle
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
+    # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
+    # fetch nor the rendered output.
+    published: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
-    content: Final[VertexTree] = (
-        drop_attribute_assignments(render_bundle.content) if options.suppress_attributes else render_bundle.content
-    )
+    content: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     gfm_dir: Final[Path] = _gfm_resources_dir()
     if bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"
