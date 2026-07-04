@@ -134,5 +134,15 @@
   heading_level: 1
 - vertex_type: guffin/heading
   uid: JW5PswS6v
+  children:
+  - 4ahwZimtO
+  - pTvGGeTlB
   text: Section 3.1
   heading_level: 2
+- vertex_type: guffin/text
+  uid: 4ahwZimtO
+  text: 'the following block contains the canonical w3.org "Dummy" PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+- vertex_type: guffin/pdf
+  uid: pTvGGeTlB
+  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
+  file_name: u-F9pv-nvn.pdf.enc

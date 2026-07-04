@@ -151,6 +151,25 @@ TaN67WqnA:
   props: null
   title: null
   attrs: null
+pTvGGeTlB:
+  uid: pTvGGeTlB
+  id: 11922
+  string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: null
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 3333
+  props: null
+  title: null
+  attrs: null
 Ma5KGUH9O:
   uid: Ma5KGUH9O
   id: 4758
@@ -387,6 +406,25 @@ cNW8lmXIM:
   props: null
   title: null
   attrs: null
+4ahwZimtO:
+  uid: 4ahwZimtO
+  id: 11921
+  string: 'the following block contains the canonical w3.org "Dummy" PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 3333
+  props: null
+  title: null
+  attrs: null
 5f1ahOFdp:
   uid: 5f1ahOFdp
   id: 4026
@@ -431,11 +469,13 @@ JW5PswS6v:
   string: Section 3.1
   order: 0
   heading: 2
-  children: null
+  children:
+  - id: 11921
+  - id: 11922
   refs: null
   page:
     id: 3327
-  open: false
+  open: true
   children_view_type: null
   parents:
   - id: 3327

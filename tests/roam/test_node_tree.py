@@ -718,6 +718,8 @@ class TestNodeTreeDFSIterator:
           4026  — Section 2.2          (order=1, child of 3329)
           3330  — Section 3            (order=3, child of root)
           3333  — Section 3.1          (order=0, child of 3330)
+          11921 — text block           (order=0, child of 3333)
+          11922 — PDF block            (order=1, child of 3333)
         """
         tree = article1_node_tree()
         expected_ids: list[Id] = [
@@ -740,6 +742,8 @@ class TestNodeTreeDFSIterator:
             4026,
             3330,
             3333,
+            11921,
+            11922,
         ]
         assert [n.id for n in NodeTreeDFSIterator(tree)] == expected_ids
 
