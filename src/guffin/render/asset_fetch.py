@@ -1,7 +1,7 @@
 """Image and PDF asset fetching for the rendering pipeline — Pandoc-free.
 
 Walks a :class:`~guffin.vertex_tree.VertexTree`, fetches every asset-bearing
-vertex's (:class:`~guffin.vertex.ImageVertex` or :class:`~guffin.vertex.PdfVertex`)
+vertex's (:data:`~guffin.model.vertex.AssetVertex`)
 Cloud Firestore asset to a local directory via
 :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, and returns a
 ``{uid: AssetRef}`` mapping bundling each asset's on-disk location.
@@ -30,7 +30,7 @@ from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
-from guffin.model.vertex import ImageVertex, PdfVertex
+from guffin.model.vertex import is_asset_vertex
 from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes, enrich_pdf_original_file_names
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
@@ -47,8 +47,7 @@ class AssetRef(NamedTuple):
     successfully fetched from Cloud Firestore.
 
     Attributes:
-        uid: The source :class:`~guffin.vertex.ImageVertex` or
-            :class:`~guffin.vertex.PdfVertex` UID.
+        uid: The source :data:`~guffin.model.vertex.AssetVertex` UID.
         path: Local filesystem path of the written asset file.
         size: Native pixel dimensions of an image asset — an empty
             :class:`~guffin.common.geometry.ImageSize` when they could not be
@@ -124,8 +123,8 @@ def fetch_assets(
 ) -> dict[Uid, AssetRef]:
     """Fetch every asset-bearing vertex's file to *asset_dir*.
 
-    Scans for :class:`~guffin.vertex.ImageVertex` and
-    :class:`~guffin.vertex.PdfVertex` entries, delegating fetching and caching
+    Scans for asset-bearing vertices (:data:`~guffin.model.vertex.AssetVertex`),
+    delegating fetching and caching
     to :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`.  Each fetched
     asset is written to *asset_dir* under its original upload filename
     (normalized to a POSIX-safe form, with a numeric suffix appended when two
@@ -157,7 +156,7 @@ def fetch_assets(
     asset_refs: Final[dict[Uid, AssetRef]] = {}
     claimed_names: Final[dict[str, str]] = {}
     for vertex in vertex_tree.uid_map.values():
-        if not isinstance(vertex, ImageVertex | PdfVertex):
+        if not is_asset_vertex(vertex):
             continue
         try:
             asset: RoamAsset = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)

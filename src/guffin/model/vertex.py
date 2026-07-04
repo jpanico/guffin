@@ -41,14 +41,18 @@ Public symbols:
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
 - :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
 - :data:`Vertex` — union of all ten concrete vertex types.
+- :data:`AssetVertex` — union of the asset-bearing vertex types
+  (:class:`ImageVertex` | :class:`PdfVertex`).
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
+- :func:`is_asset_vertex` — whether a vertex is asset-bearing, narrowing it to
+  :data:`AssetVertex`.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment for an
   :class:`~guffin.model.attribute.Attribute`.
 """
 
 from enum import StrEnum
-from typing import Annotated, Literal
+from typing import Annotated, Final, Literal, TypeIs, get_args
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, TypeAdapter, field_validator, validate_call
 
@@ -502,6 +506,21 @@ Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
 """
 
+type AssetVertex = ImageVertex | PdfVertex
+"""Union of the asset-bearing vertex types.
+
+An asset-bearing vertex's content is not inline text but a file hosted in
+Cloud Firestore storage: every member carries a ``source`` storage URL and a
+``file_name`` decoded from it.  Use :func:`is_asset_vertex` to classify (and
+statically narrow) a :data:`Vertex`.
+
+This union is the single source of truth for asset-bearing-ness; the runtime
+classification is derived mechanically from it.
+"""
+
+_ASSET_VERTEX_CLASSES: Final[tuple[type[ImageVertex] | type[PdfVertex], ...]] = get_args(AssetVertex.__value__)
+"""The :data:`AssetVertex` union members as a runtime tuple, derived from the union itself."""
+
 vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discriminator="vertex_type")])
 """Pydantic :class:`~pydantic.TypeAdapter` for validating a raw dict into the correct :data:`Vertex` subtype.
 
@@ -515,6 +534,25 @@ Example::
     v = vertex_adapter.validate_python({"vertex_type": "guffin/page", "uid": "abc", "text": "My Page"})
     assert isinstance(v, PageVertex)
 """
+
+
+@validate_call
+def is_asset_vertex(vertex: Vertex) -> TypeIs[AssetVertex]:
+    """Whether *vertex* is asset-bearing.
+
+    Being asset-bearing is an inherent property of the vertex type: the
+    vertex's content is a Cloud Firestore-hosted file rather than inline
+    text.  Membership is declared solely by the :data:`AssetVertex` union;
+    the check runs against the runtime tuple derived from it.
+
+    Args:
+        vertex: The vertex to classify.
+
+    Returns:
+        ``True`` when *vertex* is one of the :data:`AssetVertex` member
+        types, narrowing it to :data:`AssetVertex`.
+    """
+    return isinstance(vertex, _ASSET_VERTEX_CLASSES)
 
 
 @validate_call

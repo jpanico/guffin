@@ -40,11 +40,11 @@ from guffin.model.vertex import (
     CalloutVertex,
     ImageVertex,
     PageVertex,
-    PdfVertex,
     TableVertex,
     TextVertex,
     Vertex,
     VertexType,
+    is_asset_vertex,
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
@@ -344,9 +344,7 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
         case "text":
             return Text(f"text={vertex.text}" if isinstance(vertex, TextVertex | BlockQuoteVertex) else "text=N/A")
         case "file_name":
-            return Text(
-                f"file_name={vertex.file_name}" if isinstance(vertex, ImageVertex | PdfVertex) else "file_name=N/A"
-            )
+            return Text(f"file_name={vertex.file_name}" if is_asset_vertex(vertex) else "file_name=N/A")
         case "media_type":
             return Text(
                 f"media_type={vertex.media_type.value}" if isinstance(vertex, ImageVertex) else "media_type=N/A"
@@ -363,7 +361,7 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
             size: Final[ImageSize | None] = vertex.original_image_size
             return Text(f"original_image_size=({size})" if size is not None else "original_image_size=None")
         case "source":
-            return Text(f"source={vertex.source}" if isinstance(vertex, ImageVertex | PdfVertex) else "source=N/A")
+            return Text(f"source={vertex.source}" if is_asset_vertex(vertex) else "source=N/A")
         case "alt_text":
             return Text(f"alt_text={vertex.alt_text}" if isinstance(vertex, ImageVertex) else "alt_text=N/A")
         case "body":

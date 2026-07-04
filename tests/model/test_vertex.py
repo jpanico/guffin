@@ -1,11 +1,23 @@
 """Unit tests for guffin.model.vertex concrete vertex types."""
 
 import pytest
-from pydantic import ValidationError
+from pydantic import HttpUrl, ValidationError
 
+from guffin.common.geometry import ImageSize
+from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue, ReferenceValue
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import BlockEmbedVertex, TextVertex, VertexType, find_attribute_assignment, vertex_adapter
+from guffin.model.vertex import (
+    BlockEmbedVertex,
+    ImageVertex,
+    PageVertex,
+    PdfVertex,
+    TextVertex,
+    VertexType,
+    find_attribute_assignment,
+    is_asset_vertex,
+    vertex_adapter,
+)
 
 # A representative embed link to a 9-character destination UID.
 _EMBED_LINK = VertexLink(kind=VertexLinkKind.EMBED, uid="tgt000001")
@@ -93,3 +105,27 @@ class TestFindAttributeAssignment:
         """A vertex with no folded assignments at all yields None."""
         vertex = TextVertex(uid="block0001", text="hello")
         assert find_attribute_assignment(vertex, Attribute(name="a")) is None
+
+
+class TestIsAssetVertex:
+    """Tests for the is_asset_vertex() asset-bearing classification predicate."""
+
+    def test_image_vertex_is_asset_bearing(self) -> None:
+        """An ImageVertex is asset-bearing."""
+        vertex = ImageVertex(
+            uid="img00001a",
+            source=HttpUrl("https://example.com/imgs/photo.jpeg"),
+            media_type=MediaType.JPEG,
+            scaled_image_size=ImageSize(),
+        )
+        assert is_asset_vertex(vertex)
+
+    def test_pdf_vertex_is_asset_bearing(self) -> None:
+        """A PdfVertex is asset-bearing."""
+        vertex = PdfVertex(uid="pdf00001a", source=HttpUrl("https://example.com/pdfs/paper.pdf"))
+        assert is_asset_vertex(vertex)
+
+    def test_non_asset_vertices_are_not_asset_bearing(self) -> None:
+        """Page and text vertices are not asset-bearing."""
+        assert not is_asset_vertex(PageVertex(uid="page00001", title="P"))
+        assert not is_asset_vertex(TextVertex(uid="txt00001a", text="hello"))
