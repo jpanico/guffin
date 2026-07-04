@@ -170,17 +170,19 @@ def _read_sidecar_original_file_name(sidecar_path: Path) -> str | None:
     return raw.get("original_file_name")
 
 
-def _cached_asset(cache_dir: Path, cache_key: str, sidecar_path: Path, firebase_url: HttpUrl) -> RoamAsset | None:
-    """Return the cached asset for *cache_key*, or ``None`` on a cache miss.
+def _cached_asset(cache_dir: Path | None, cache_key: str, firebase_url: HttpUrl) -> RoamAsset | None:
+    """Return the cached asset for *cache_key*, or ``None`` when the cache cannot serve it.
 
-    A cache entry is a ``<cache_key>.<ext>`` file paired with its metadata
-    sidecar; entries are assumed coherent, so a present cached file is always
-    served together with the original filename its sidecar records.
+    ``None`` when *cache_dir* is ``None`` (no cache configured) or holds no
+    file for *cache_key*.  A cache entry is a ``<cache_key>.<ext>`` file
+    paired with its metadata sidecar; entries are assumed coherent, so a
+    present cached file is always served together with the original filename
+    its sidecar records.
 
     Args:
-        cache_dir: Directory holding cached asset files and their sidecars.
+        cache_dir: Directory holding cached asset files and their sidecars,
+            or ``None`` when caching is disabled.
         cache_key: The SHA-256 hex digest keying the asset's cache entry.
-        sidecar_path: Path of the entry's metadata sidecar.
         firebase_url: The asset's Cloud Firestore URL, for logging only.
 
     Returns:
@@ -191,6 +193,8 @@ def _cached_asset(cache_dir: Path, cache_key: str, sidecar_path: Path, firebase_
         ValueError: If multiple cache files exist for *cache_key*, or the
             cached file has an unrecognized extension.
     """
+    if cache_dir is None:
+        return None
     cached_files: Final[list[Path]] = [
         path for path in cache_dir.glob(f"{cache_key}.*") if not path.name.endswith(_SIDECAR_SUFFIX)
     ]
@@ -208,8 +212,34 @@ def _cached_asset(cache_dir: Path, cache_key: str, sidecar_path: Path, firebase_
         last_modified=datetime.now(),
         media_type=cached_media_type,
         contents=cached_path.read_bytes(),
-        original_file_name=_read_sidecar_original_file_name(sidecar_path),
+        original_file_name=_read_sidecar_original_file_name(cache_dir / f"{cache_key}{_SIDECAR_SUFFIX}"),
     )
+
+
+def _encache_asset(cache_dir: Path | None, cache_key: str, asset: RoamAsset, firebase_url: HttpUrl) -> None:
+    """Write *asset* into the cache as the entry for *cache_key*.
+
+    A no-op when *cache_dir* is ``None`` (no cache configured).  A cache
+    entry is a ``<cache_key>.<ext>`` file paired with its metadata sidecar;
+    both are written together, keeping the entry coherent.  *cache_dir* is
+    created if absent.
+
+    Args:
+        cache_dir: Directory holding cached asset files and their sidecars,
+            or ``None`` when caching is disabled.
+        cache_key: The SHA-256 hex digest keying the asset's cache entry.
+        asset: The fetched asset to cache.
+        firebase_url: The asset's Cloud Firestore URL, for logging only.
+    """
+    if cache_dir is None:
+        return
+    file_name: Final[str] = f"{cache_key}{asset.media_type.extension}"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    (cache_dir / file_name).write_bytes(asset.contents)
+    (cache_dir / f"{cache_key}{_SIDECAR_SUFFIX}").write_text(
+        json.dumps({"original_file_name": asset.original_file_name}), encoding="utf-8"
+    )
+    logger.info("Cached asset: %s -> %s", firebase_url, file_name)
 
 
 @validate_call
@@ -250,25 +280,15 @@ def fetch_and_cache_asset(
         requests.exceptions.HTTPError: If the Local API returns a non-200 status.
     """
     cache_key: Final[str] = hashlib.sha256(str(firebase_url).encode()).hexdigest()
-    sidecar_path: Final[Path | None] = (cache_dir / f"{cache_key}{_SIDECAR_SUFFIX}") if cache_dir is not None else None
-
-    if cache_dir is not None and sidecar_path is not None:
-        cached: Final[RoamAsset | None] = _cached_asset(cache_dir, cache_key, sidecar_path, firebase_url)
-        if cached is not None:
-            return cached
+    cached: Final[RoamAsset | None] = _cached_asset(cache_dir, cache_key, firebase_url)
+    if cached is not None:
+        return cached
 
     asset: Final[RoamAsset] = FetchRoamAsset.fetch(firebase_url=firebase_url, api_endpoint=api_endpoint)
-    ext: Final[str] = asset.media_type.extension
-    file_name: Final[str] = f"{cache_key}{ext}"
-
-    if cache_dir is not None and sidecar_path is not None:
-        cache_dir.mkdir(parents=True, exist_ok=True)
-        (cache_dir / file_name).write_bytes(asset.contents)
-        sidecar_path.write_text(json.dumps({"original_file_name": asset.original_file_name}), encoding="utf-8")
-        logger.info("Cached asset: %s -> %s", firebase_url, file_name)
+    _encache_asset(cache_dir, cache_key, asset, firebase_url)
 
     return RoamAsset.create(
-        file_name=file_name,
+        file_name=f"{cache_key}{asset.media_type.extension}",
         last_modified=asset.last_modified,
         media_type=asset.media_type,
         contents=asset.contents,
