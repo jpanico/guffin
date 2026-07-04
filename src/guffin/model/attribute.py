@@ -11,7 +11,9 @@ Public symbols:
   :class:`ReferenceValue`.
 - **Enumerations**: :class:`AttributeDomain` — the namespaces an :class:`Attribute` may belong to
   (default / guffin); :class:`AttributeValueKind` — the two value kinds (literal / reference).
-- **Models**: :class:`Attribute` — a Roam attribute's graph-independent identity (name + domain);
+- **Models**: :class:`Attribute` — a Roam attribute's graph-independent identity (name + domain;
+  equality and hashing are identity-based, so a subclass instance compares equal to any
+  :class:`Attribute` with the same identity);
   :class:`AttributeInstance` — an occurrence of an :class:`Attribute` bound to a specific Roam
   database via a runtime link to its page, the thing preceding ``::``; :class:`LiteralValue`
   — a bare literal value; :class:`ReferenceValue` — a value that references a page; and
@@ -66,6 +68,10 @@ class Attribute(BaseModel):
     which graph it was read from.  (Contrast :class:`AttributeInstance`, which binds this identity to a
     specific graph's page via a runtime link.)
 
+    Equality and hashing are **identity-based**: two attributes are equal exactly when their
+    ``name`` + ``domain`` pairs are equal.  Fields added by subclasses play no part, so a subclass
+    instance compares equal to any :class:`Attribute` carrying the same identity.
+
     Attributes:
         name: The attribute name, i.e. the title of the referenced Roam *Page*.
         domain: The namespace the attribute belongs to; defaults to :attr:`AttributeDomain.DEFAULT`.
@@ -77,6 +83,16 @@ class Attribute(BaseModel):
     domain: AttributeDomain = Field(
         default=AttributeDomain.DEFAULT, description="The namespace the attribute belongs to."
     )
+
+    def __eq__(self, other: object) -> bool:
+        """Return whether *other* is an :class:`Attribute` with the same identity (name + domain)."""
+        if not isinstance(other, Attribute):
+            return NotImplemented
+        return self.name == other.name and self.domain == other.domain
+
+    def __hash__(self) -> int:
+        """Hash the identity (name + domain) pair, consistently with :meth:`__eq__`."""
+        return hash((self.name, self.domain))
 
 
 class AttributeInstance(BaseModel):
@@ -219,8 +235,8 @@ def sole_value_text(assignment: AttributeAssignment) -> str:
 def is_assignment_for(assignment: AttributeAssignment, attribute: Attribute) -> bool:
     """Return whether *assignment* assigns *attribute*.
 
-    An :class:`Attribute`'s identity is its name + domain pair, so the assignment matches
-    when its attribute definition carries the same name and the same domain — nothing else
+    Delegates to :class:`Attribute` equality, which is identity-based (name + domain), so the
+    assignment matches when its attribute definition carries the same identity — nothing else
     participates in the comparison.
 
     Args:
@@ -228,7 +244,6 @@ def is_assignment_for(assignment: AttributeAssignment, attribute: Attribute) -> 
         attribute: The attribute to match against.
 
     Returns:
-        ``True`` when the assignment's attribute name and domain equal *attribute*'s, else ``False``.
+        ``True`` when the assignment's attribute equals *attribute*, else ``False``.
     """
-    assignment_attribute: Final[Attribute] = assignment.attribute.definition
-    return assignment_attribute.name == attribute.name and assignment_attribute.domain == attribute.domain
+    return assignment.attribute.definition == attribute

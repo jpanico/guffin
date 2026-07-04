@@ -225,3 +225,48 @@ class TestIsAssignmentFor:
             values=(),
         )
         assert is_assignment_for(guffin_assignment, Attribute(name="a", domain=AttributeDomain.GUFFIN)) is True
+
+
+class _ExtendedAttribute(Attribute):
+    """An Attribute subclass with an extra field, for identity-equality tests."""
+
+    extra: str = "x"
+
+
+class TestAttributeEquality:
+    """Attribute equality and hashing are identity-based: the name + domain pair, nothing else."""
+
+    def test_same_identity_is_equal(self) -> None:
+        """Two attributes with the same name and domain are equal."""
+        assert Attribute(name="a") == Attribute(name="a")
+
+    def test_different_name_is_not_equal(self) -> None:
+        """Attributes with different names are unequal."""
+        assert Attribute(name="a") != Attribute(name="b")
+
+    def test_different_domain_is_not_equal(self) -> None:
+        """The same name in different domains is unequal — identity is the pair."""
+        assert Attribute(name="a") != Attribute(name="a", domain=AttributeDomain.GUFFIN)
+
+    def test_subclass_equals_base_with_same_identity(self) -> None:
+        """A subclass instance equals a plain Attribute carrying the same identity, both ways."""
+        extended = _ExtendedAttribute(name="a", extra="y")
+        plain = Attribute(name="a")
+        assert extended == plain
+        assert plain == extended
+
+    def test_subclass_fields_play_no_part(self) -> None:
+        """Subclass instances differing only in subclass fields are equal."""
+        assert _ExtendedAttribute(name="a", extra="y") == _ExtendedAttribute(name="a", extra="z")
+
+    def test_hash_is_consistent_with_equality(self) -> None:
+        """Equal attributes hash equally, across the subclass boundary."""
+        assert hash(_ExtendedAttribute(name="a")) == hash(Attribute(name="a"))
+
+    def test_set_collapses_by_identity(self) -> None:
+        """A set keyed by attributes collapses same-identity instances to one element."""
+        assert len({Attribute(name="a"), _ExtendedAttribute(name="a"), _ExtendedAttribute(name="a", extra="y")}) == 1
+
+    def test_non_attribute_is_not_equal(self) -> None:
+        """Comparison against a non-Attribute object is False, not an error."""
+        assert Attribute(name="a") != "a"
