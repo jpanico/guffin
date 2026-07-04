@@ -20,7 +20,9 @@ Public symbols:
   validating a raw mapping into the appropriate :data:`AttributeValue`.
 - **Functions**: :func:`attribute_value_text` — an :data:`AttributeValue`'s text (literal value or
   reference name); :func:`sole_value` — the single value of an :class:`AttributeAssignment` (raises
-  unless it has exactly one); :func:`sole_value_text` — the text of that single value.
+  unless it has exactly one); :func:`sole_value_text` — the text of that single value;
+  :func:`is_assignment_for` — whether an :class:`AttributeAssignment` assigns a given
+  :class:`Attribute` (identity: name + domain).
 """
 
 import enum
@@ -211,3 +213,22 @@ def sole_value_text(assignment: AttributeAssignment) -> str:
         ValueError: If *assignment* does not have exactly one value.
     """
     return attribute_value_text(sole_value(assignment))
+
+
+@validate_call
+def is_assignment_for(assignment: AttributeAssignment, attribute: Attribute) -> bool:
+    """Return whether *assignment* assigns *attribute*.
+
+    An :class:`Attribute`'s identity is its name + domain pair, so the assignment matches
+    when its attribute definition carries the same name and the same domain — nothing else
+    participates in the comparison.
+
+    Args:
+        assignment: The attribute assignment to test.
+        attribute: The attribute to match against.
+
+    Returns:
+        ``True`` when the assignment's attribute name and domain equal *attribute*'s, else ``False``.
+    """
+    assignment_attribute: Final[Attribute] = assignment.attribute.definition
+    return assignment_attribute.name == attribute.name and assignment_attribute.domain == attribute.domain

@@ -43,7 +43,8 @@ Public symbols:
 - :data:`Vertex` — union of all ten concrete vertex types.
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
-- :func:`find_attribute_assignment` — find a vertex's folded attribute assignment by name and domain.
+- :func:`find_attribute_assignment` — find a vertex's folded attribute assignment for an
+  :class:`~guffin.model.attribute.Attribute`.
 """
 
 from enum import StrEnum
@@ -56,7 +57,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
-from guffin.model.attribute import AttributeAssignment, AttributeDomain
+from guffin.model.attribute import Attribute, AttributeAssignment, is_assignment_for
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
 
@@ -508,24 +509,21 @@ Example::
 
 
 @validate_call
-def find_attribute_assignment(
-    vertex: Vertex, attribute_name: str, attribute_domain: AttributeDomain
-) -> AttributeAssignment | None:
-    """Return *vertex*'s attribute assignment named *attribute_name* in *attribute_domain*, or ``None``.
+def find_attribute_assignment(vertex: Vertex, attribute: Attribute) -> AttributeAssignment | None:
+    """Return *vertex*'s attribute assignment for *attribute*, or ``None``.
+
+    An assignment matches when it assigns *attribute* per
+    :func:`~guffin.model.attribute.is_assignment_for` (identity: name + domain).
 
     Args:
         vertex: The vertex whose folded attribute assignments are searched.
-        attribute_name: The attribute name to match (the page named before ``::``).
-        attribute_domain: The domain the matched attribute must belong to.
+        attribute: The attribute to match.
 
     Returns:
         The first matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when
-        *vertex* has no attribute named *attribute_name* in *attribute_domain*.
+        *vertex* has no assignment for *attribute*.
     """
     for assignment in vertex.attribute_assignments or ():
-        if (
-            assignment.attribute.definition.name == attribute_name
-            and assignment.attribute.definition.domain == attribute_domain
-        ):
+        if is_assignment_for(assignment, attribute):
             return assignment
     return None

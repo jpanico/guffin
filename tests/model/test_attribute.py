@@ -6,12 +6,14 @@ from pydantic import ValidationError
 from guffin.model.attribute import (
     Attribute,
     AttributeAssignment,
+    AttributeDomain,
     AttributeInstance,
     AttributeValueKind,
     LiteralValue,
     ReferenceValue,
     attribute_value_adapter,
     attribute_value_text,
+    is_assignment_for,
     sole_value,
     sole_value_text,
 )
@@ -199,3 +201,27 @@ class TestSoleValueText:
         """It propagates sole_value()'s error when there isn't exactly one value."""
         with pytest.raises(ValueError):
             sole_value_text(_assignment(LiteralValue(value="a"), LiteralValue(value="b")))
+
+
+class TestIsAssignmentFor:
+    """is_assignment_for() matches an assignment against an Attribute's name + domain identity."""
+
+    def test_same_name_and_domain_matches(self) -> None:
+        """An assignment matches the attribute it was built for."""
+        assert is_assignment_for(_assignment(), Attribute(name="a")) is True
+
+    def test_different_name_does_not_match(self) -> None:
+        """An attribute with another name does not match."""
+        assert is_assignment_for(_assignment(), Attribute(name="b")) is False
+
+    def test_different_domain_does_not_match(self) -> None:
+        """The same name in another domain does not match — identity is the name + domain pair."""
+        assert is_assignment_for(_assignment(), Attribute(name="a", domain=AttributeDomain.GUFFIN)) is False
+
+    def test_guffin_domain_assignment_matches_its_attribute(self) -> None:
+        """A guffin-domain assignment matches an Attribute carrying the same name and domain."""
+        guffin_assignment = AttributeAssignment(
+            attribute=AttributeInstance(definition=Attribute(name="a", domain=AttributeDomain.GUFFIN), link=_LINK),
+            values=(),
+        )
+        assert is_assignment_for(guffin_assignment, Attribute(name="a", domain=AttributeDomain.GUFFIN)) is True

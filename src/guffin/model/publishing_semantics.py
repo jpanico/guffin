@@ -46,7 +46,7 @@ from typing import Final, Self
 from pydantic import Field, field_validator, validate_call
 
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, sole_value_text
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, is_assignment_for, sole_value_text
 from guffin.model.vertex import HeadingVertex, Vertex, VertexType, find_attribute_assignment
 from guffin.model.vertex_tree import VertexTree, transcluded_vertices
 
@@ -212,22 +212,6 @@ class StructuralElement(enum.StrEnum):
     COLOPHON = ("colophon", Matter.BACK)
 
 
-def _is_assignment_for(assignment: AttributeAssignment, attribute: PublishingSemantics) -> bool:
-    """Return whether *assignment* is for the Guffin *attribute* (by name and domain).
-
-    Args:
-        assignment: The attribute assignment to test.
-        attribute: The :class:`PublishingSemantics` member to match against.
-
-    Returns:
-        ``True`` when the assignment's attribute name and domain equal the member's
-        :class:`PublishingAttribute`, else ``False``.
-    """
-    expected: Final[PublishingAttribute] = attribute.value
-    assignment_attribute: Final[Attribute] = assignment.attribute.definition
-    return assignment_attribute.name == expected.name and assignment_attribute.domain == expected.domain
-
-
 def _verified_sole_value(assignment: AttributeAssignment, attribute: PublishingSemantics) -> str:
     """Verify *assignment* is for the Guffin *attribute* and return its sole value's text.
 
@@ -242,7 +226,7 @@ def _verified_sole_value(assignment: AttributeAssignment, attribute: PublishingS
         ValueError: If *assignment* is not for *attribute* (by name and domain), or does not carry
             exactly one value.
     """
-    if not _is_assignment_for(assignment, attribute):
+    if not is_assignment_for(assignment, attribute.value):
         expected: Final[PublishingAttribute] = attribute.value
         assignment_attribute: Final[Attribute] = assignment.attribute.definition
         raise ValueError(
@@ -296,9 +280,9 @@ def matter_of(assignment: AttributeAssignment) -> Matter:
 def find_publishing_attribute(vertex: Vertex, attribute: PublishingSemantics) -> AttributeAssignment | None:
     """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
 
-    Convenience over :func:`~guffin.model.vertex.find_attribute_assignment` that reads the name and
-    domain from the member's :class:`PublishingAttribute`, so callers neither restate nor risk
-    mismatching them.
+    Convenience over :func:`~guffin.model.vertex.find_attribute_assignment` that passes the
+    member's :class:`PublishingAttribute`, so callers neither restate nor risk mismatching its
+    identity.
 
     Args:
         vertex: The vertex whose folded attribute assignments are searched.
@@ -308,7 +292,7 @@ def find_publishing_attribute(vertex: Vertex, attribute: PublishingSemantics) ->
         The matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when *vertex*
         has no such Guffin attribute.
     """
-    return find_attribute_assignment(vertex, attribute.value.name, attribute.value.domain)
+    return find_attribute_assignment(vertex, attribute.value)
 
 
 @validate_call
@@ -514,7 +498,7 @@ def _tagged_assignments(
         (vertex, assignment)
         for vertex in chain(tree.tree_vertices, tree.ref_vertices)
         for assignment in vertex.attribute_assignments or ()
-        if _is_assignment_for(assignment, attribute)
+        if is_assignment_for(assignment, attribute.value)
     )
 
 
