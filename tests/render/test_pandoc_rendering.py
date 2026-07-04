@@ -664,8 +664,10 @@ class TestVertexTreeToPandocArticleFixture:
 
     def test_block_count(self, doc: pf.Doc) -> None:
         """The fixture produces the expected number of top-level blocks."""
-        # 1 Div(callout) + 3 H1s + 5 H2s + 3 H3s + 1 H4 + 4 Para(Link) + 5 BulletList = 22
-        assert len(list(doc.content)) == 22
+        # 1 Div(callout) + 3 H1s + 6 H2s + 3 H3s + 1 H4 + 4 Para(Link) + 6 BulletList = 24
+        # (the unpublished Section 3.1_5 is included: this builds straight from the vertex
+        # tree; drop_unpublished is a renderer-level prepare step, not part of the Doc build)
+        assert len(list(doc.content)) == 24
 
     def test_first_block_is_section_1_header(self, doc: pf.Doc) -> None:
         """The second block is an H1 Header for 'Section 1' (first block is the callout Para)."""
@@ -686,7 +688,7 @@ class TestVertexTreeToPandocArticleFixture:
         """Each TextVertex renders as a top-level BulletList."""
         blocks = list(doc.content)
         bullet_lists = [b for b in blocks if isinstance(b, pf.BulletList)]
-        assert len(bullet_lists) == 5
+        assert len(bullet_lists) == 6
         items = list(bullet_lists[1].content)
         assert len(items) == 1
         assert _collect_text(list(items[0].content)[0]) == "AI assistant (Claude Opus 4.6):"

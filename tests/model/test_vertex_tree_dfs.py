@@ -159,7 +159,10 @@ class TestVertexTreeDFSIterator:
           JW5PswS6v  — Section 3.1          (children[0] of Section 3)
           4ahwZimtO  — text block           (children[0] of Section 3.1)
           pTvGGeTlB  — PDF block            (children[1] of Section 3.1)
-          NEINf57lK  — Section 3.2          (children[1] of Section 3)
+          zE0QjA3N9  — Section 3.1_5        (children[1] of Section 3; publish:: false)
+          5baESCL4s  — text block           (children[0] of Section 3.1_5)
+          dR1TZ3P8J  — text block           (children[1] of Section 3.1_5)
+          NEINf57lK  — Section 3.2          (children[2] of Section 3)
           YCexI8mL4  — text block           (children[0] of Section 3.2)
           J4TkjuhVB  — PDF block            (children[1] of Section 3.2; pdf-render:: inline)
         """
@@ -186,6 +189,9 @@ class TestVertexTreeDFSIterator:
             "JW5PswS6v",
             "4ahwZimtO",
             "pTvGGeTlB",
+            "zE0QjA3N9",
+            "5baESCL4s",
+            "dR1TZ3P8J",
             "NEINf57lK",
             "YCexI8mL4",
             "J4TkjuhVB",

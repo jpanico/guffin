@@ -720,7 +720,12 @@ class TestNodeTreeDFSIterator:
           3333  — Section 3.1          (order=0, child of 3330)
           11921 — text block           (order=0, child of 3333)
           11922 — PDF block            (order=1, child of 3333)
-          11927 — Section 3.2          (order=1, child of 3330)
+          11936 — Section 3.1_5        (order=1, child of 3330; publish:: false)
+          11941 — guffin-meta:: block  (order=0, child of 11936)
+          11942 — publish:: false      (order=0, child of 11941)
+          11938 — text block           (order=1, child of 11936)
+          11939 — text block           (order=2, child of 11936)
+          11927 — Section 3.2          (order=2, child of 3330)
           11928 — text block           (order=0, child of 11927)
           11934 — PDF block            (order=1, child of 11927)
           11930 — guffin-meta:: block  (order=0, child of 11934)
@@ -749,6 +754,11 @@ class TestNodeTreeDFSIterator:
             3333,
             11921,
             11922,
+            11936,
+            11941,
+            11942,
+            11938,
+            11939,
             11927,
             11928,
             11934,

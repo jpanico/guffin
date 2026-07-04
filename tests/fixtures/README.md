@@ -58,8 +58,10 @@ Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 - 3 top-level `headers`, all H1
 - nested `headers` down to H4, via __Augmented Headings__ extension
 - a node, (Ma5KGUH9O) "AI assistant (Claude Opus 4.6):" that has property: BLOCK_HEADING = 0, which is not a valid Markdown level. It seems that this can happen when first a valid level value (1-6) is assigned, and then the heading level is removed altogether through the Roam UI.
-- a single JPEG `image` that **has not** been resized through the Roam UI (illustration 1.1)
+- a pair of JPEG `image`s that **have not** been resized through the Roam UI (illustration 1.1)
 - a single JPEG `image` that **has** been resized through the Roam UI (illustration 2.1)
+- an embedded PDF document that has no special PublishingSemantics Attributes attached
+- an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
 - this INFO `Callout box`, which contains Roam `page references`
 
 #### `[[Test Article]] 2`

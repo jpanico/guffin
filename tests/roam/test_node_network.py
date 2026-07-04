@@ -867,8 +867,19 @@ class TestRefsIds:
         - The Section 3.2 text block, whose inline ``guffin-meta::`` mention made Roam create
           (and reference) a page literally titled "the following block embeds a PDF with
           guffin-meta" (11932).
+        - Section 3.1_5's ``publish:: false`` meta child, referencing the "publish" page (11943).
         """
-        assert refs_ids(article1_node_tree().tree_network) == {246, 321, 4223, 5450, 5462, 11839, 11932, 11933}
+        assert refs_ids(article1_node_tree().tree_network) == {
+            246,
+            321,
+            4223,
+            5450,
+            5462,
+            11839,
+            11932,
+            11933,
+            11943,
+        }
 
 
 class TestDirectRefsNodes:

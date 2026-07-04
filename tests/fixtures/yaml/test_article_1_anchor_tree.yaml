@@ -19,6 +19,65 @@ root_node:
   title: '[[Test Article]] 1'
   attrs: null
 tree_network:
+- uid: 5baESCL4s
+  id: 11938
+  string: '**t’s an approximately** 600-year-old mystery that continues to stump scholars,
+    cryptographers, physicists, and computer scientists: a roughly 240-page medieval
+    codex written in an indecipherable language, brimming with bizarre drawings of
+    esoteric plants, naked women, and astrological symbols. Known as the Voynich manuscript,
+    it defies classification, much less comprehension.'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11936
+  props: null
+  title: null
+  attrs: null
+- uid: ivTC6d-rG
+  id: 11941
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11942
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11936
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - ivTC6d-rG
+      value:
+      - uid
+      - ivTC6d-rG
+    - source:
+      - uid
+      - 8zcad3VSa
+      value:
+      - uid
+      - Jv502NGK6
+    - source:
+      - uid
+      - 8zcad3VSa
+      value: ' false'
 - uid: EWMNZcPZX
   id: 11931
   string: 'pdf-render:: inline'
@@ -29,7 +88,7 @@ tree_network:
   - id: 11933
   page:
     id: 3327
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 3327
@@ -56,6 +115,30 @@ tree_network:
   - id: 3327
   - id: 3329
   - id: 3332
+  props: null
+  title: null
+  attrs: null
+- uid: dR1TZ3P8J
+  id: 11939
+  string: And yet, over the years a steady stream of researchers have stepped up with
+    new claims to have cracked its secrets. Just last summer, an anthropologist at
+    Foothill College in California declared that the text was a [“vulgar Latin dialect” ](https://www.academia.edu/39776000/A_Proposal_for_Reading_the_Voynich_Manuscript)written
+    in an obscure Roman shorthand. And earlier in the year, Gerard Cheshire, an academic
+    at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
+    the journal Romance Studies arguing the script is a mix of languages he called
+    “proto-Romance.”
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11936
   props: null
   title: null
   attrs: null
@@ -108,6 +191,7 @@ tree_network:
   children:
   - id: 3333
   - id: 11927
+  - id: 11936
   refs: null
   page:
     id: 3327
@@ -250,6 +334,26 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: 8zcad3VSa
+  id: 11942
+  string: 'publish:: false'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11943
+  page:
+    id: 3327
+  open: false
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11936
+  - id: 11941
+  props: null
+  title: null
+  attrs: null
 - uid: 3BX-iWc-p
   id: 3331
   string: Section 1.1
@@ -338,7 +442,7 @@ tree_network:
   refs: null
   page:
     id: 3327
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 3327
@@ -402,11 +506,16 @@ tree_network:
     a valid level value (1-6) is assigned, and then the heading level is removed altogether
     through the Roam UI.
 
-    - a single JPEG `image` that **has not** been resized through the Roam UI (illustration
+    - a pair of JPEG `image`s that **have not** been resized through the Roam UI (illustration
     1.1)
 
     - a single JPEG `image` that **has** been resized through the Roam UI (illustration
     2.1)
+
+    - an embedded PDF document that has no special PublishingSemantics Attributes
+    attached
+
+    - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
 
     - this INFO `Callout box`, which contains Roam `page references` '
   order: 0
@@ -462,7 +571,7 @@ tree_network:
 - uid: NEINf57lK
   id: 11927
   string: Section 3.2
-  order: 1
+  order: 2
   heading: 2
   children:
   - id: 11928
@@ -524,7 +633,7 @@ tree_network:
   refs: null
   page:
     id: 3327
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 3327
@@ -532,6 +641,44 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: zE0QjA3N9
+  id: 11936
+  string: Section 3.1_5
+  order: 1
+  heading: 2
+  children:
+  - id: 11938
+  - id: 11939
+  - id: 11941
+  refs: null
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - zE0QjA3N9
+      value:
+      - uid
+      - zE0QjA3N9
+    - source:
+      - uid
+      - ivTC6d-rG
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - ivTC6d-rG
+      value:
+      - uid
+      - BxGxeeGk1
 - uid: GvRO438Ze
   id: 11930
   string: 'guffin-meta:: #.rm-g'
@@ -635,6 +782,21 @@ refs_by_id:
     parents: null
     props: null
     title: pdf
+    attrs: null
+  '11943':
+    uid: Jv502NGK6
+    id: 11943
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    open: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: publish
     attrs: null
   '5450':
     uid: OexZiLR_O

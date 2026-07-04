@@ -33,11 +33,16 @@
     a valid level value (1-6) is assigned, and then the heading level is removed altogether
     through the Roam UI.
 
-    - a single JPEG `image` that **has not** been resized through the Roam UI (illustration
+    - a pair of JPEG `image`s that **have not** been resized through the Roam UI (illustration
     1.1)
 
     - a single JPEG `image` that **has** been resized through the Roam UI (illustration
     2.1)
+
+    - an embedded PDF document that has no special PublishingSemantics Attributes
+    attached
+
+    - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
 
     - this INFO `Callout box`, which contains Roam `page references`'
 - vertex_type: guffin/heading
@@ -130,6 +135,7 @@
   uid: 40bvW14UU
   children:
   - JW5PswS6v
+  - zE0QjA3N9
   - NEINf57lK
   text: Section 3
   heading_level: 1
@@ -147,6 +153,40 @@
   uid: pTvGGeTlB
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
   file_name: u-F9pv-nvn.pdf.enc
+- vertex_type: guffin/heading
+  uid: zE0QjA3N9
+  children:
+  - 5baESCL4s
+  - dR1TZ3P8J
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: publish
+        domain: guffin
+      link:
+      - vertex
+      - Jv502NGK6
+    values:
+    - kind: literal
+      value: 'false'
+  text: Section 3.1_5
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: 5baESCL4s
+  text: '**t’s an approximately** 600-year-old mystery that continues to stump scholars,
+    cryptographers, physicists, and computer scientists: a roughly 240-page medieval
+    codex written in an indecipherable language, brimming with bizarre drawings of
+    esoteric plants, naked women, and astrological symbols. Known as the Voynich manuscript,
+    it defies classification, much less comprehension.'
+- vertex_type: guffin/text
+  uid: dR1TZ3P8J
+  text: And yet, over the years a steady stream of researchers have stepped up with
+    new claims to have cracked its secrets. Just last summer, an anthropologist at
+    Foothill College in California declared that the text was a [“vulgar Latin dialect” ](https://www.academia.edu/39776000/A_Proposal_for_Reading_the_Voynich_Manuscript)written
+    in an obscure Roman shorthand. And earlier in the year, Gerard Cheshire, an academic
+    at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
+    the journal Romance Studies arguing the script is a mix of languages he called
+    “proto-Romance.”
 - vertex_type: guffin/heading
   uid: NEINf57lK
   children:

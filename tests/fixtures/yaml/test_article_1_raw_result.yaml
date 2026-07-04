@@ -1,3 +1,61 @@
+- - string: '**t’s an approximately** 600-year-old mystery that continues to stump
+      scholars, cryptographers, physicists, and computer scientists: a roughly 240-page
+      medieval codex written in an indecipherable language, brimming with bizarre
+      drawings of esoteric plants, naked women, and astrological symbols. Known as
+      the Voynich manuscript, it defies classification, much less comprehension.'
+    user:
+      id: 3
+    id: 11938
+    uid: 5baESCL4s
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11936
+    time: 1783197978884
+    order: 1
+    open: true
+    page:
+      id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - ivTC6d-rG
+        value:
+        - uid
+        - ivTC6d-rG
+      - source:
+        - uid
+        - 8zcad3VSa
+        value:
+        - uid
+        - Jv502NGK6
+      - source:
+        - uid
+        - 8zcad3VSa
+        value: ' false'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11942
+    user:
+      id: 3
+    id: 11941
+    lookup:
+    - id: 11941
+    - id: 11942
+    - id: 11943
+    uid: ivTC6d-rG
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11936
+    time: 1783198031037
+    order: 0
+    open: true
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
     user:
@@ -27,7 +85,7 @@
     - id: 11934
     time: 1783193653621
     order: 0
-    open: true
+    open: false
     page:
       id: 3327
     refs:
@@ -63,7 +121,7 @@
     open: true
     page:
       id: 3327
-- - prevent-clean: 1783193648589
+- - prevent-clean: 1783198078497
     user:
       id: 3
     id: 11933
@@ -75,6 +133,27 @@
     title: pdf-render
     edit-nonce: aD6s7sefP
     edit-time: 1783193648588
+- - string: And yet, over the years a steady stream of researchers have stepped up
+      with new claims to have cracked its secrets. Just last summer, an anthropologist
+      at Foothill College in California declared that the text was a [“vulgar Latin
+      dialect” ](https://www.academia.edu/39776000/A_Proposal_for_Reading_the_Voynich_Manuscript)written
+      in an obscure Roman shorthand. And earlier in the year, Gerard Cheshire, an
+      academic at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
+      the journal Romance Studies arguing the script is a mix of languages he called
+      “proto-Romance.”
+    user:
+      id: 3
+    id: 11939
+    uid: dR1TZ3P8J
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11936
+    time: 1783197989412
+    order: 2
+    open: true
+    page:
+      id: 3327
 - - user:
       id: 3
     id: 246
@@ -107,6 +186,18 @@
     - id: 3
     page:
       id: 3327
+- - prevent-clean: 1783198078496
+    user:
+      id: 3
+    id: 11943
+    uid: Jv502NGK6
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1783198078497
+    title: publish
+    edit-nonce: Ly4YGHxfs
+    edit-time: 1783198078495
 - - prevent-clean: 1781542258419
     user:
       id: 3
@@ -142,6 +233,7 @@
     children:
     - id: 3333
     - id: 11927
+    - id: 11936
     user:
       id: 3
     id: 3330
@@ -255,6 +347,8 @@
     - id: 3334
     time: 1781088515943
     order: 0
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -278,6 +372,23 @@
     open: true
     page:
       id: 3327
+- - string: 'publish:: false'
+    user:
+      id: 3
+    id: 11942
+    uid: 8zcad3VSa
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11936
+    - id: 11941
+    time: 1783198083047
+    order: 0
+    open: false
+    page:
+      id: 3327
+    refs:
+    - id: 11943
 - - heading: 2
     string: Section 1.1
     children:
@@ -313,21 +424,23 @@
     open: false
     page:
       id: 3327
-- - id: 11806
-    order: 0
-    page:
-      id: 3327
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
+    user:
+      id: 3
+    id: 11806
+    uid: pfkKREU_Y
     parents:
     - id: 3327
     - id: 3328
     - id: 3331
     - id: 3334
     - id: 11165
-    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
-    uid: pfkKREU_Y
     time: 1782304880511
-    user:
-      id: 3
+    order: 0
+    seen-by:
+    - id: 3
+    page:
+      id: 3327
 - - user:
       id: 3
     id: 321
@@ -385,7 +498,7 @@
     order: 0
     seen-by:
     - id: 3
-    open: true
+    open: false
     page:
       id: 3327
 - - attrs:
@@ -448,11 +561,16 @@
       first a valid level value (1-6) is assigned, and then the heading level is removed
       altogether through the Roam UI.
 
-      - a single JPEG `image` that **has not** been resized through the Roam UI (illustration
-      1.1)
+      - a pair of JPEG `image`s that **have not** been resized through the Roam UI
+      (illustration 1.1)
 
       - a single JPEG `image` that **has** been resized through the Roam UI (illustration
       2.1)
+
+      - an embedded PDF document that has no special PublishingSemantics Attributes
+      attached
+
+      - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
 
       - this INFO `Callout box`, which contains Roam `page references` '
     user:
@@ -461,7 +579,7 @@
     uid: cNW8lmXIM
     parents:
     - id: 3327
-    time: 1781043136363
+    time: 1783197757774
     order: 0
     open: true
     page:
@@ -530,8 +648,8 @@
     parents:
     - id: 3327
     - id: 3330
-    time: 1783193473291
-    order: 1
+    time: 1783197826443
+    order: 2
     seen-by:
     - id: 3
     open: true
@@ -548,16 +666,16 @@
     sidebar: 21
     id: 3327
     uid: 6olpFWiw1
-    word-count: 275
+    word-count: 440
     edit-user:
       id: 3
     time: 1780882773773
     title: '[[Test Article]] 1'
     seen-by:
     - id: 3
-    edit-nonce: klOtv6qOU
+    edit-nonce: JMQHpjV5Z
     view-type: bullet
-    edit-time: 1783193694613
+    edit-time: 1783198083047
     refs:
     - id: 4223
 - - prevent-clean: 1783193606904
@@ -588,6 +706,48 @@
     order: 0
     seen-by:
     - id: 3
+    open: false
+    page:
+      id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - zE0QjA3N9
+        value:
+        - uid
+        - zE0QjA3N9
+      - source:
+        - uid
+        - ivTC6d-rG
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - ivTC6d-rG
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: Section 3.1_5
+    children:
+    - id: 11938
+    - id: 11939
+    - id: 11941
+    user:
+      id: 3
+    id: 11936
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11936
+    - id: 11941
+    uid: zE0QjA3N9
+    parents:
+    - id: 3327
+    - id: 3330
+    time: 1783197881519
+    order: 1
     open: true
     page:
       id: 3327
