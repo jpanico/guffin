@@ -22,6 +22,7 @@ Public symbols:
 """
 
 import logging
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Final, NamedTuple
 
@@ -86,24 +87,22 @@ def _preferred_file_name(asset: RoamAsset) -> str:
     return safe_name
 
 
-def _claim_file_name(asset: RoamAsset, claimed_names: dict[str, str]) -> str:
-    """Claim a distinct on-disk filename for *asset* within one fetch pass.
+def _resolved_file_name(asset: RoamAsset, claimed_names: Mapping[str, str]) -> str:
+    """The distinct on-disk filename for *asset*, given the names already claimed.
 
-    Starts from :func:`_preferred_file_name` and, when that name is already
-    claimed by a *different* asset, appends an increasing numeric suffix to
-    the stem (``paper.pdf`` → ``paper-1.pdf`` → ``paper-2.pdf`` …) until an
-    unclaimed name is found.  The same underlying asset (identified by its
-    ``<sha256>.<ext>`` cache filename) re-claims its existing name, so an
-    asset referenced from several vertices is written once under one name.
+    Starts from :func:`_preferred_file_name` and, while that name is claimed
+    by a *different* asset, appends an increasing numeric suffix to the stem
+    (``paper.pdf`` → ``paper-1.pdf`` → ``paper-2.pdf`` …) until a free name
+    is found.  An asset (identified by its ``<sha256>.<ext>`` cache
+    filename) that already holds a claim resolves to its claimed name again.
 
     Args:
         asset: The fetched asset to name.
-        claimed_names: Mapping of already-claimed filename to the cache
-            filename of the asset holding the claim; updated in place with
-            the returned claim.
+        claimed_names: Read-only mapping of already-claimed filename to the
+            cache filename of the asset holding the claim.
 
     Returns:
-        The claimed filename for the asset.
+        The resolved filename for the asset.
     """
     preferred: Final[str] = _preferred_file_name(asset)
     stem: Final[str] = Path(preferred).stem
@@ -113,7 +112,6 @@ def _claim_file_name(asset: RoamAsset, claimed_names: dict[str, str]) -> str:
     while candidate in claimed_names and claimed_names[candidate] != asset.file_name:
         candidate = f"{stem}-{counter}{suffix}"
         counter += 1
-    claimed_names[candidate] = asset.file_name
     return candidate
 
 
@@ -163,15 +161,18 @@ def fetch_assets(
             continue
         try:
             asset: RoamAsset = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)
-            asset_path: Path = asset_dir / _claim_file_name(asset, claimed_names)
-            asset_path.write_bytes(asset.contents)
-            size: ImageSize | None = asset.image_size if isinstance(asset, RoamImageAsset) else None
-            asset_refs[vertex.uid] = AssetRef(
-                uid=vertex.uid, path=asset_path, size=size, original_file_name=asset.original_file_name
-            )
-            logger.info("Fetched asset uid=%r -> %s", vertex.uid, asset_path.name)
         except Exception as e:
             logger.warning("Failed to fetch asset uid=%r source=%s: %s", vertex.uid, vertex.source, e)
+            continue
+        file_name: str = _resolved_file_name(asset, claimed_names)
+        claimed_names[file_name] = asset.file_name
+        asset_path: Path = asset_dir / file_name
+        asset_path.write_bytes(asset.contents)
+        size: ImageSize | None = asset.image_size if isinstance(asset, RoamImageAsset) else None
+        asset_refs[vertex.uid] = AssetRef(
+            uid=vertex.uid, path=asset_path, size=size, original_file_name=asset.original_file_name
+        )
+        logger.info("Fetched asset uid=%r -> %s", vertex.uid, asset_path.name)
     return asset_refs
 
 
