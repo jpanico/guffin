@@ -33,13 +33,12 @@ from pydantic import (
 
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel, is_fenced_code_block
+from guffin.roam.blockquote import CALLOUT_RE, is_roam_block_quote
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
-    CALLOUT_RE,
     IMAGE_LINK_RE,
     ROAM_NATIVE_TABLE_MARKERS,
-    is_roam_block_quote,
 )
 from guffin.roam.primitives import (
     DEFAULT_CHILDREN_VIEW_TYPE,
@@ -322,8 +321,8 @@ def node_type(node: RoamNode) -> NodeType:
     link (as matched by :data:`~guffin.roam.markdown.IMAGE_LINK_RE`),
     :attr:`NodeType.HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
     :attr:`NodeType.CALLOUT_BLOCK` when ``string`` matches the full callout marker pattern
-    (as matched by :data:`~guffin.roam.markdown.CALLOUT_RE`),
-    :attr:`NodeType.BLOCK_QUOTE` when :func:`~guffin.roam.primitives.is_roam_block_quote`
+    (as matched by :data:`~guffin.roam.blockquote.CALLOUT_RE`),
+    :attr:`NodeType.BLOCK_QUOTE` when :func:`~guffin.roam.blockquote.is_roam_block_quote`
     returns ``True`` for ``string`` — i.e. a Roam ``[[>]]``-prefixed blockquote or a standard
     Markdown ``>``-prefixed blockquote,
     :attr:`NodeType.CODE_BLOCK` when the trimmed ``string`` is a fenced code block
@@ -344,7 +343,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.IMAGE_BLOCK` if ``string`` is solely a single Markdown image link;
         :attr:`NodeType.HEADING_BLOCK` if ``heading`` or ``props['ah-level']`` is set;
         :attr:`NodeType.CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
-        :attr:`NodeType.BLOCK_QUOTE` if :func:`~guffin.roam.primitives.is_roam_block_quote` is ``True``;
+        :attr:`NodeType.BLOCK_QUOTE` if :func:`~guffin.roam.blockquote.is_roam_block_quote` is ``True``;
         :attr:`NodeType.CODE_BLOCK` if the trimmed ``string`` is a CommonMark fenced code block;
         :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` is one of
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`;

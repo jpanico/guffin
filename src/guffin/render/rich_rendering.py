@@ -46,7 +46,8 @@ from guffin.model.vertex import (
     VertexType,
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
-from guffin.roam.markdown import IMAGE_LINK_RE, RoamCallout, parse_callout, strip_block_quote_marker
+from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
+from guffin.roam.markdown import IMAGE_LINK_RE
 from guffin.roam.node import NodeType, RoamNode, effective_heading_level, node_type
 from guffin.roam.node_fetch_result import NodeFetchResult
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator

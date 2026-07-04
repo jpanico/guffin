@@ -79,16 +79,14 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
+from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     TAG_RE,
-    RoamCallout,
     firestore_url_file_name,
     image_link_alt_text,
     image_link_url,
-    parse_callout,
-    strip_block_quote_marker,
 )
 from guffin.roam.node import (
     NodeType,
@@ -595,7 +593,7 @@ def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
     """Build a :class:`~guffin.vertex.BlockQuoteVertex` from a block-quote *node*.
 
     Strips the leading block-quote marker (``>`` or ``[[>]]``) from ``node.string``
-    via :func:`~guffin.roam.primitives.strip_block_quote_marker` before storing the
+    via :func:`~guffin.roam.blockquote.strip_block_quote_marker` before storing the
     remaining content as :attr:`~guffin.vertex.BlockQuoteVertex.text`.
 
     Args:

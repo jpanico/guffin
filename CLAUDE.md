@@ -101,7 +101,8 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `validation.py` — generic accumulator-pipeline validation framework
   - **`roam/` sub-package** (`src/guffin/roam/`) — all Roam Research data model, API, and processing modules
     - `primitives.py` — foundational type aliases, stub models, `UID_PATTERN`/`UID_RE`, `ANCHORED_UID_PATTERN`/`ANCHORED_UID_RE`, `DEFAULT_CHILDREN_VIEW_TYPE`, `IMAGE_SIZE_PROP_ADAPTER` (dependency root)
-    - `markdown.py` — Roam Markdown constructs: `CALLOUT_RE`, `CalloutType`, `RoamCallout`, `parse_callout`, `IMAGE_LINK_RE`, block-quote helpers (`is_roam_block_quote`, `strip_block_quote_marker`), `ROAM_NATIVE_TABLE_MARKER`
+    - `blockquote.py` — Roam block-quote constructs (callouts are a styled subtype): `ROAM_BLOCK_QUOTE_PREFIX`, `CALLOUT_RE`, `CalloutType`, `RoamCallout`, `parse_callout`, block-quote helpers (`is_roam_block_quote`, `strip_block_quote_marker`)
+    - `markdown.py` — Roam Markdown constructs: `IMAGE_LINK_RE`, `ROAM_NATIVE_TABLE_MARKER`
     - `schema.py` — Datomic schema model types (`RoamNamespace`, etc.)
     - `node.py` — `RoamNode`, `NodeType`, `node_type`, `NodesByUid`
     - `node_network.py` — `NodeNetwork` type alias; network validators (`all_children_present`, `all_parents_present`, `has_unique_ids`, `is_acyclic`) and utilities (`all_descendants`, `refs_ids`)
