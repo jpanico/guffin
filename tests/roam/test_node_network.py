@@ -859,8 +859,16 @@ class TestRefsIds:
         The test_article_1 fixture contains:
         - The page title "[[Test Article]] 1", producing a ref to the "Test Article" page (id 4223).
         - A callout block with [[>]] and [[!INFO]] wikilinks, producing two more ref ids (5450, 5462).
+        - A Section 3.2 PDF embed in the page-reference form ``{{[[pdf]]: <url>}}``, referencing
+          the "pdf" page (246).
+        - Its ``guffin-meta:: #.rm-g`` child block, referencing the "guffin-meta" (11839) and
+          ".rm-g" (321) pages, with the nested ``pdf-render:: inline`` referencing the
+          "pdf-render" page (11933).
+        - The Section 3.2 text block, whose inline ``guffin-meta::`` mention made Roam create
+          (and reference) a page literally titled "the following block embeds a PDF with
+          guffin-meta" (11932).
         """
-        assert refs_ids(article1_node_tree().tree_network) == {4223, 5450, 5462}
+        assert refs_ids(article1_node_tree().tree_network) == {246, 321, 4223, 5450, 5462, 11839, 11932, 11933}
 
 
 class TestDirectRefsNodes:

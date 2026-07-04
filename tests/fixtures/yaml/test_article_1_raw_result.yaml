@@ -14,6 +14,24 @@
     refs:
     - id: 5450
     - id: 5462
+- - string: 'pdf-render:: inline'
+    user:
+      id: 3
+    id: 11931
+    uid: EWMNZcPZX
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11927
+    - id: 11930
+    - id: 11934
+    time: 1783193653621
+    order: 0
+    open: true
+    page:
+      id: 3327
+    refs:
+    - id: 11933
 - - prevent-clean: 1782152316083
     children:
     - id: 4224
@@ -45,6 +63,29 @@
     open: true
     page:
       id: 3327
+- - prevent-clean: 1783193648589
+    user:
+      id: 3
+    id: 11933
+    uid: Jy_Ee6w8E
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1783193648589
+    title: pdf-render
+    edit-nonce: aD6s7sefP
+    edit-time: 1783193648588
+- - user:
+      id: 3
+    id: 246
+    uid: q3JUnfC1_
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1660223836199
+    title: pdf
+    edit-nonce: 3tY6WtfXy
+    edit-time: 1660223836198
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
     user:
       id: 3
@@ -100,6 +141,7 @@
     string: Section 3
     children:
     - id: 3333
+    - id: 11927
     user:
       id: 3
     id: 3330
@@ -108,6 +150,8 @@
     - id: 3327
     time: 1770568926764
     order: 3
+    seen-by:
+    - id: 3
     open: true
     page:
       id: 3327
@@ -131,19 +175,21 @@
     open: true
     page:
       id: 3327
-- - id: 11922
-    order: 1
-    page:
-      id: 3327
+- - string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
+    user:
+      id: 3
+    id: 11922
+    uid: pTvGGeTlB
     parents:
     - id: 3327
     - id: 3330
     - id: 3333
-    string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
-    uid: pTvGGeTlB
     time: 1783127013369
-    user:
-      id: 3
+    order: 1
+    seen-by:
+    - id: 3
+    page:
+      id: 3327
 - - heading: 0
     string: 'AI assistant (Claude Opus 4.6): '
     prevent-clean: 1780850098668
@@ -282,6 +328,17 @@
     time: 1782304880511
     user:
       id: 3
+- - user:
+      id: 3
+    id: 321
+    uid: BxGxeeGk1
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1681476821748
+    title: .rm-g
+    edit-nonce: 0497-MGDf
+    edit-time: 1681476821746
 - - prevent-clean: 1782226716897
     user:
       id: 3
@@ -294,6 +351,24 @@
     title: '!INFO'
     edit-nonce: z3caCCN5O
     edit-time: 1773788725520
+- - string: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
+    user:
+      id: 3
+    id: 11928
+    uid: YCexI8mL4
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11927
+    time: 1783193635038
+    order: 0
+    seen-by:
+    - id: 3
+    open: true
+    page:
+      id: 3327
+    refs:
+    - id: 11932
 - - heading: 2
     string: Section 2.1
     children:
@@ -313,6 +388,50 @@
     open: true
     page:
       id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - J4TkjuhVB
+        value:
+        - uid
+        - J4TkjuhVB
+      - source:
+        - uid
+        - GvRO438Ze
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - GvRO438Ze
+        value:
+        - uid
+        - BxGxeeGk1
+    string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407}}'
+    children:
+    - id: 11930
+    user:
+      id: 3
+    id: 11934
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11930
+    - id: 11934
+    uid: J4TkjuhVB
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11927
+    time: 1783193683175
+    order: 1
+    seen-by:
+    - id: 3
+    open: true
+    page:
+      id: 3327
+    refs:
+    - id: 246
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
@@ -378,6 +497,46 @@
     open: false
     page:
       id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - NEINf57lK
+        value:
+        - uid
+        - NEINf57lK
+      - source:
+        - uid
+        - YCexI8mL4
+        value:
+        - uid
+        - vuPFRAwZI
+      - source:
+        - uid
+        - YCexI8mL4
+        value: ' pdf-render: "inline"'
+    heading: 2
+    string: Section 3.2
+    children:
+    - id: 11928
+    - id: 11934
+    user:
+      id: 3
+    id: 11927
+    lookup:
+    - id: 11927
+    - id: 11928
+    - id: 11932
+    uid: NEINf57lK
+    parents:
+    - id: 3327
+    - id: 3330
+    time: 1783193473291
+    order: 1
+    seen-by:
+    - id: 3
+    open: true
+    page:
+      id: 3327
 - - prevent-clean: 1773356473975
     children:
     - id: 3328
@@ -389,18 +548,30 @@
     sidebar: 21
     id: 3327
     uid: 6olpFWiw1
-    word-count: 228
+    word-count: 275
     edit-user:
       id: 3
     time: 1780882773773
     title: '[[Test Article]] 1'
     seen-by:
     - id: 3
-    edit-nonce: FsaloCvd3
+    edit-nonce: klOtv6qOU
     view-type: bullet
-    edit-time: 1783127013369
+    edit-time: 1783193694613
     refs:
     - id: 4223
+- - prevent-clean: 1783193606904
+    user:
+      id: 3
+    id: 11932
+    uid: vuPFRAwZI
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1783193606904
+    title: the following block embeds a PDF with guffin-meta
+    edit-nonce: ugFSEY-Me
+    edit-time: 1783193606904
 - - heading: 2
     string: Section 3.1
     children:
@@ -415,9 +586,64 @@
     - id: 3330
     time: 1770568971504
     order: 0
-    open: false
+    seen-by:
+    - id: 3
+    open: true
     page:
       id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - GvRO438Ze
+        value:
+        - uid
+        - GvRO438Ze
+      - source:
+        - uid
+        - EWMNZcPZX
+        value:
+        - uid
+        - Jy_Ee6w8E
+      - source:
+        - uid
+        - EWMNZcPZX
+        value: ' inline'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 11931
+    user:
+      id: 3
+    id: 11930
+    lookup:
+    - id: 11930
+    - id: 11931
+    - id: 11933
+    uid: GvRO438Ze
+    parents:
+    - id: 3327
+    - id: 3330
+    - id: 11927
+    - id: 11934
+    time: 1783193588227
+    order: 0
+    open: true
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
+- - prevent-clean: 1782992852120
+    user:
+      id: 3
+    id: 11839
+    uid: 2xY4zCjId
+    word-count: 0
+    edit-user:
+      id: 3
+    time: 1782757905599
+    title: guffin-meta
+    edit-nonce: Wn0wt68Sc
+    edit-time: 1782757905599
 - - string: this image **has been resized** through the Roam UI (width:257, height:None)
     user:
       id: 3

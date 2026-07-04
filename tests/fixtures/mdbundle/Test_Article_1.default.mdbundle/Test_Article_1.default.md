@@ -49,3 +49,9 @@
 - the following block contains the canonical w3.org “Dummy” PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
 
 [dummy.pdf](dummy.pdf "dummy.pdf")
+
+## Section 3.2
+
+- the following block embeds a PDF with guffin-meta:: pdf-render: “inline”
+
+[dummy.pdf](dummy-1.pdf "dummy.pdf")

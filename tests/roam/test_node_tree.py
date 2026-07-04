@@ -720,6 +720,11 @@ class TestNodeTreeDFSIterator:
           3333  — Section 3.1          (order=0, child of 3330)
           11921 — text block           (order=0, child of 3333)
           11922 — PDF block            (order=1, child of 3333)
+          11927 — Section 3.2          (order=1, child of 3330)
+          11928 — text block           (order=0, child of 11927)
+          11934 — PDF block            (order=1, child of 11927)
+          11930 — guffin-meta:: block  (order=0, child of 11934)
+          11931 — pdf-render:: inline  (order=0, child of 11930)
         """
         tree = article1_node_tree()
         expected_ids: list[Id] = [
@@ -744,6 +749,11 @@ class TestNodeTreeDFSIterator:
             3333,
             11921,
             11922,
+            11927,
+            11928,
+            11934,
+            11930,
+            11931,
         ]
         assert [n.id for n in NodeTreeDFSIterator(tree)] == expected_ids
 

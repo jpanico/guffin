@@ -18,6 +18,28 @@
   props: null
   title: null
   attrs: null
+EWMNZcPZX:
+  uid: EWMNZcPZX
+  id: 11931
+  string: 'pdf-render:: inline'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11933
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  - id: 11930
+  - id: 11934
+  props: null
+  title: null
+  attrs: null
 LBFKibPIj:
   uid: LBFKibPIj
   id: 4223
@@ -53,6 +75,36 @@ yFUau9Cpg:
   - id: 3332
   props: null
   title: null
+  attrs: null
+Jy_Ee6w8E:
+  uid: Jy_Ee6w8E
+  id: 11933
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: pdf-render
+  attrs: null
+q3JUnfC1_:
+  uid: q3JUnfC1_
+  id: 246
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: pdf
   attrs: null
 zZG-BfWvs:
   uid: zZG-BfWvs
@@ -120,6 +172,7 @@ OexZiLR_O:
   heading: 1
   children:
   - id: 3333
+  - id: 11927
   refs: null
   page:
     id: 3327
@@ -330,6 +383,21 @@ pfkKREU_Y:
   props: null
   title: null
   attrs: null
+BxGxeeGk1:
+  uid: BxGxeeGk1
+  id: 321
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: .rm-g
+  attrs: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
   id: 5462
@@ -344,6 +412,26 @@ ZgUWBRb7j:
   parents: null
   props: null
   title: '!INFO'
+  attrs: null
+YCexI8mL4:
+  uid: YCexI8mL4
+  id: 11928
+  string: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11932
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  props: null
+  title: null
   attrs: null
 drtANJYTg:
   uid: drtANJYTg
@@ -365,6 +453,45 @@ drtANJYTg:
   props: null
   title: null
   attrs: null
+J4TkjuhVB:
+  uid: J4TkjuhVB
+  id: 11934
+  string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407}}'
+  order: 1
+  heading: null
+  children:
+  - id: 11930
+  refs:
+  - id: 246
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - J4TkjuhVB
+      value:
+      - uid
+      - J4TkjuhVB
+    - source:
+      - uid
+      - GvRO438Ze
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - GvRO438Ze
+      value:
+      - uid
+      - BxGxeeGk1
 cNW8lmXIM:
   uid: cNW8lmXIM
   id: 11113
@@ -443,6 +570,42 @@ cNW8lmXIM:
   props: null
   title: null
   attrs: null
+NEINf57lK:
+  uid: NEINf57lK
+  id: 11927
+  string: Section 3.2
+  order: 1
+  heading: 2
+  children:
+  - id: 11928
+  - id: 11934
+  refs: null
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - NEINf57lK
+      value:
+      - uid
+      - NEINf57lK
+    - source:
+      - uid
+      - YCexI8mL4
+      value:
+      - uid
+      - vuPFRAwZI
+    - source:
+      - uid
+      - YCexI8mL4
+      value: ' pdf-render: "inline"'
 6olpFWiw1:
   uid: 6olpFWiw1
   id: 3327
@@ -463,6 +626,21 @@ cNW8lmXIM:
   props: null
   title: '[[Test Article]] 1'
   attrs: null
+vuPFRAwZI:
+  uid: vuPFRAwZI
+  id: 11932
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: the following block embeds a PDF with guffin-meta
+  attrs: null
 JW5PswS6v:
   uid: JW5PswS6v
   id: 3333
@@ -475,13 +653,67 @@ JW5PswS6v:
   refs: null
   page:
     id: 3327
-  open: false
+  open: true
   children_view_type: null
   parents:
   - id: 3327
   - id: 3330
   props: null
   title: null
+  attrs: null
+GvRO438Ze:
+  uid: GvRO438Ze
+  id: 11930
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11931
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  open: true
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  - id: 11934
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - GvRO438Ze
+      value:
+      - uid
+      - GvRO438Ze
+    - source:
+      - uid
+      - EWMNZcPZX
+      value:
+      - uid
+      - Jy_Ee6w8E
+    - source:
+      - uid
+      - EWMNZcPZX
+      value: ' inline'
+2xY4zCjId:
+  uid: 2xY4zCjId
+  id: 11839
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  open: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: guffin-meta
   attrs: null
 tWkumkdUE:
   uid: tWkumkdUE

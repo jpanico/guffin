@@ -30,6 +30,7 @@ from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree
 from guffin.roam.primitives import ChildrenViewType, IdObject
 from guffin.transcribe.roam_tree_to_guffin import (
+    _is_meta_block,
     build_view_map,
     to_block_quote_vertex,
     to_callout_vertex,
@@ -986,9 +987,17 @@ class TestTranscribeArticleFixture:
     """End-to-end fixture test: transcribe the Test Article NodeNetwork and compare to the vertex fixture."""
 
     def test_transcribe_article_nodes_matches_vertex_fixture(self) -> None:
-        """Test that transcribing test_article_1_nodes.yaml produces the vertices in test_article_1_vertices.yaml."""
+        """Test that transcribing test_article_1_nodes.yaml produces the vertices in test_article_1_vertices.yaml.
+
+        Attribute blocks and ``<domain>-meta::`` container blocks are skipped: full
+        transcription folds them onto their parent vertex's ``attribute_assignments``
+        rather than transcribing them standalone, so they have no counterpart in the
+        vertices fixture.
+        """
         node_tree = article1_node_tree()
-        nodes = list(node_tree.tree_network)
+        nodes = [
+            n for n in node_tree.tree_network if node_type(n) is not NodeType.ATTRIBUTE_BLOCK and not _is_meta_block(n)
+        ]
         min_level = min_effective_heading_level(node_tree.tree_network)
         heading_offset: int = (1 - min_level) if min_level is not None else 0
 

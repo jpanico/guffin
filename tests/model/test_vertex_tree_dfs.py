@@ -159,6 +159,9 @@ class TestVertexTreeDFSIterator:
           JW5PswS6v  — Section 3.1          (children[0] of Section 3)
           4ahwZimtO  — text block           (children[0] of Section 3.1)
           pTvGGeTlB  — PDF block            (children[1] of Section 3.1)
+          NEINf57lK  — Section 3.2          (children[1] of Section 3)
+          YCexI8mL4  — text block           (children[0] of Section 3.2)
+          J4TkjuhVB  — PDF block            (children[1] of Section 3.2; pdf-render:: inline)
         """
         tree = article1_vertex_tree()
         expected_uids: list[Uid] = [
@@ -183,5 +186,8 @@ class TestVertexTreeDFSIterator:
             "JW5PswS6v",
             "4ahwZimtO",
             "pTvGGeTlB",
+            "NEINf57lK",
+            "YCexI8mL4",
+            "J4TkjuhVB",
         ]
         assert [v.uid for v in VertexTreeDFSIterator(tree)] == expected_uids

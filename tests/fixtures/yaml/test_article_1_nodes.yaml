@@ -5,6 +5,26 @@
 #
 # The transient 'open' field is excluded from live-test comparisons and is
 # omitted entirely here so it defaults to None on model_validate.
+- uid: EWMNZcPZX
+  id: 11931
+  string: 'pdf-render:: inline'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11933
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  - id: 11930
+  - id: 11934
+  props: null
+  title: null
+  attrs: null
 - uid: yFUau9Cpg
   id: 4025
   string: Section 2.1.1
@@ -69,6 +89,7 @@
   heading: 1
   children:
   - id: 3333
+  - id: 11927
   refs: null
   page:
     id: 3327
@@ -258,6 +279,24 @@
   props: null
   title: null
   attrs: null
+- uid: YCexI8mL4
+  id: 11928
+  string: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11932
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  props: null
+  title: null
+  attrs: null
 - uid: drtANJYTg
   id: 3332
   string: Section 2.1
@@ -276,6 +315,43 @@
   props: null
   title: null
   attrs: null
+- uid: J4TkjuhVB
+  id: 11934
+  string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407}}'
+  order: 1
+  heading: null
+  children:
+  - id: 11930
+  refs:
+  - id: 246
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - J4TkjuhVB
+      value:
+      - uid
+      - J4TkjuhVB
+    - source:
+      - uid
+      - GvRO438Ze
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - GvRO438Ze
+      value:
+      - uid
+      - BxGxeeGk1
 - uid: cNW8lmXIM
   id: 11113
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -348,6 +424,40 @@
   props: null
   title: null
   attrs: null
+- uid: NEINf57lK
+  id: 11927
+  string: Section 3.2
+  order: 1
+  heading: 2
+  children:
+  - id: 11928
+  - id: 11934
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - NEINf57lK
+      value:
+      - uid
+      - NEINf57lK
+    - source:
+      - uid
+      - YCexI8mL4
+      value:
+      - uid
+      - vuPFRAwZI
+    - source:
+      - uid
+      - YCexI8mL4
+      value: ' pdf-render: "inline"'
 - uid: 6olpFWiw1
   id: 3327
   string: null
@@ -384,6 +494,43 @@
   props: null
   title: null
   attrs: null
+- uid: GvRO438Ze
+  id: 11930
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11931
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3330
+  - id: 11927
+  - id: 11934
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - GvRO438Ze
+      value:
+      - uid
+      - GvRO438Ze
+    - source:
+      - uid
+      - EWMNZcPZX
+      value:
+      - uid
+      - Jy_Ee6w8E
+    - source:
+      - uid
+      - EWMNZcPZX
+      value: ' inline'
 - uid: tWkumkdUE
   id: 11167
   string: this image **has been resized** through the Roam UI (width:257, height:None)

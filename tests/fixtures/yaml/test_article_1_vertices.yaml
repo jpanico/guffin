@@ -130,6 +130,7 @@
   uid: 40bvW14UU
   children:
   - JW5PswS6v
+  - NEINf57lK
   text: Section 3
   heading_level: 1
 - vertex_type: guffin/heading
@@ -146,3 +147,32 @@
   uid: pTvGGeTlB
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
   file_name: u-F9pv-nvn.pdf.enc
+- vertex_type: guffin/heading
+  uid: NEINf57lK
+  children:
+  - YCexI8mL4
+  - J4TkjuhVB
+  text: Section 3.2
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: YCexI8mL4
+  refs:
+  - vuPFRAwZI
+  text: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
+- vertex_type: guffin/pdf
+  uid: J4TkjuhVB
+  refs:
+  - q3JUnfC1_
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: pdf-render
+        domain: guffin
+      link:
+      - vertex
+      - Jy_Ee6w8E
+    values:
+    - kind: literal
+      value: inline
+  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407
+  file_name: 3IX5aCGhi_.pdf.enc

@@ -703,7 +703,7 @@ def _image_vertex_to_blocks(
         label_text: Final[str] = vertex.alt_text or vertex.file_name or str(vertex.source)
         label: Final[list[pf.Inline]] = inline_map.get(label_text, [pf.Str(label_text)])
         link: Final[pf.Link] = pf.Link(*label, url=str(vertex.source))
-        logger.warning("Image uid=%r not fetched; rendering as link", vertex.uid)
+        logger.debug("Image uid=%r has no local asset file; rendering as link to its remote source", vertex.uid)
         return [pf.Para(link)]
 
 
@@ -734,7 +734,7 @@ def _pdf_vertex_to_blocks(
     label_text: Final[str] = vertex.original_file_name or storage_label
     pdf_path: Final[Path | None] = asset_files.get(vertex.uid)
     if pdf_path is None:
-        logger.warning("PDF uid=%r not fetched; rendering as link to its remote source", vertex.uid)
+        logger.debug("PDF uid=%r has no local asset file; rendering as link to its remote source", vertex.uid)
     url: Final[str] = str(pdf_path) if pdf_path is not None else str(vertex.source)
     return [pf.Para(pf.Link(pf.Str(label_text), url=url, title=label_text))]
 
