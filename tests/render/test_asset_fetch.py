@@ -8,13 +8,13 @@ from typing import Final
 
 import pytest
 from conftest import article1_vertex_tree
-from pydantic import HttpUrl
+from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.vertex import ImageVertex, PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree
-from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets, fetch_assets
+from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets, fetch_asset, fetch_assets
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.primitives import Uid
@@ -60,6 +60,73 @@ def _pdf_asset(
         contents=contents,
         original_file_name=original_file_name,
     )
+
+
+class TestFetchAsset:
+    """Tests for fetch_asset() — the single-vertex primitive; fetch_and_cache_asset is mocked."""
+
+    def test_writes_asset_and_returns_ref(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The asset lands in asset_dir under its original name and the AssetRef describes it."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="dummy.pdf", file_name="0f0f0f.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        ref: Final[AssetRef] = fetch_asset(PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path)
+
+        assert ref.uid == "pdf00001a"
+        assert ref.path == tmp_path / "dummy.pdf"
+        assert ref.path.read_bytes() == b"%PDF-1.7 body"
+        assert ref.size is None
+        assert ref.original_file_name == "dummy.pdf"
+
+    def test_avoids_names_claimed_by_other_sources(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A name claimed by a different source is avoided via a numeric suffix; the mapping is untouched."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="paper.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+        claimed: Final[dict[str, str]] = {"paper.pdf": "https://example.com/pdfs/other.pdf"}
+
+        ref: Final[AssetRef] = fetch_asset(
+            PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path, claimed_names=claimed
+        )
+
+        assert ref.path == tmp_path / "paper-1.pdf"
+        assert claimed == {"paper.pdf": "https://example.com/pdfs/other.pdf"}
+
+    def test_own_claim_is_reused(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A name already claimed by the vertex's own source resolves to that same name."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="paper.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+        claimed: Final[dict[str, str]] = {"paper.pdf": str(_PDF_URL)}
+
+        ref: Final[AssetRef] = fetch_asset(
+            PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path, claimed_names=claimed
+        )
+
+        assert ref.path == tmp_path / "paper.pdf"
+
+    def test_rejects_non_asset_vertex(self, tmp_path: Path) -> None:
+        """A vertex that is not asset-bearing is rejected at the signature."""
+        with pytest.raises(ValidationError):
+            fetch_asset(TextVertex(uid="txt00001a", text="hello"), _ENDPOINT, tmp_path)  # type: ignore[arg-type]
+
+    def test_fetch_failure_propagates(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A fetch error propagates to the caller; the primitive does not swallow it."""
+
+        def _raising(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            raise RuntimeError("network down")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _raising)
+
+        with pytest.raises(RuntimeError, match="network down"):
+            fetch_asset(PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path)
 
 
 class TestFetchAssets:

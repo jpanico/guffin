@@ -13,6 +13,8 @@ Public symbols:
 
 - :class:`AssetRef` — association of an asset vertex's UID, on-disk path, (for
   images) native pixel size, and (when known) original upload filename.
+- :func:`fetch_asset` — fetch a single asset-bearing vertex's file to a local
+  directory; return its :class:`AssetRef`.
 - :func:`fetch_assets` — fetch every asset-bearing vertex's file from a
   :class:`~guffin.vertex_tree.VertexTree` to a local directory; return a
   ``{uid: AssetRef}`` mapping.
@@ -30,7 +32,7 @@ from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
-from guffin.model.vertex import is_asset_vertex
+from guffin.model.vertex import AssetVertex, is_asset_vertex
 from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes, enrich_pdf_original_file_names
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
@@ -86,19 +88,20 @@ def _preferred_file_name(asset: RoamAsset) -> str:
     return safe_name
 
 
-def _resolved_file_name(asset: RoamAsset, claimed_names: Mapping[str, str]) -> str:
+def _resolved_file_name(asset: RoamAsset, source_url: str, claimed_names: Mapping[str, str]) -> str:
     """The distinct on-disk filename for *asset*, given the names already claimed.
 
     Starts from :func:`_preferred_file_name` and, while that name is claimed
-    by a *different* asset, appends an increasing numeric suffix to the stem
-    (``paper.pdf`` → ``paper-1.pdf`` → ``paper-2.pdf`` …) until a free name
-    is found.  An asset (identified by its ``<sha256>.<ext>`` cache
-    filename) that already holds a claim resolves to its claimed name again.
+    by an asset from a *different* source, appends an increasing numeric
+    suffix to the stem (``paper.pdf`` → ``paper-1.pdf`` → ``paper-2.pdf`` …)
+    until a free name is found.  An asset whose *source_url* already holds a
+    claim resolves to its claimed name again.
 
     Args:
         asset: The fetched asset to name.
+        source_url: The source URL identifying the asset.
         claimed_names: Read-only mapping of already-claimed filename to the
-            cache filename of the asset holding the claim.
+            source URL of the asset holding the claim.
 
     Returns:
         The resolved filename for the asset.
@@ -108,10 +111,54 @@ def _resolved_file_name(asset: RoamAsset, claimed_names: Mapping[str, str]) -> s
     suffix: Final[str] = Path(preferred).suffix
     candidate = preferred
     counter = 1
-    while candidate in claimed_names and claimed_names[candidate] != asset.file_name:
+    while candidate in claimed_names and claimed_names[candidate] != source_url:
         candidate = f"{stem}-{counter}{suffix}"
         counter += 1
     return candidate
+
+
+@validate_call
+def fetch_asset(
+    vertex: AssetVertex,
+    api_endpoint: ApiEndpoint,
+    asset_dir: Path,
+    cache_dir: Path | None = None,
+    claimed_names: Mapping[str, str] | None = None,
+) -> AssetRef:
+    """Fetch *vertex*'s Cloud Firestore asset to *asset_dir*.
+
+    Delegates fetching and caching to
+    :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, writes the asset
+    into *asset_dir* under its original upload filename (normalized to a
+    POSIX-safe form, falling back to the deterministic ``<sha256>.<ext>``
+    cache filename when the original is unknown or normalizes to nothing
+    usable), and returns the resulting association.
+
+    Args:
+        vertex: The asset-bearing vertex whose asset to fetch.
+        api_endpoint: Roam Local API endpoint (URL + bearer token).
+        asset_dir: Directory where the fetched asset file is written.
+        cache_dir: Optional directory for caching downloaded assets across
+            runs.
+        claimed_names: Read-only mapping of filenames already in use in
+            *asset_dir* to the source URL of the asset holding each name.
+            The written filename is disambiguated with a numeric suffix
+            rather than colliding with a name held by a different source;
+            a source that already holds a claim reuses its name.  ``None``
+            (the default) means no names are claimed.  Never modified.
+
+    Returns:
+        An :class:`AssetRef` bundling the written file's path, the native
+        pixel size for an image asset (``None`` for a non-image asset), and
+        the original upload filename when known.
+    """
+    names: Final[Mapping[str, str]] = claimed_names if claimed_names is not None else {}
+    asset: Final[RoamAsset] = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)
+    file_name: Final[str] = _resolved_file_name(asset, str(vertex.source), names)
+    asset_path: Final[Path] = asset_dir / file_name
+    asset_path.write_bytes(asset.contents)
+    size: Final[ImageSize | None] = asset.image_size if isinstance(asset, RoamImageAsset) else None
+    return AssetRef(uid=vertex.uid, path=asset_path, size=size, original_file_name=asset.original_file_name)
 
 
 @validate_call
@@ -124,14 +171,11 @@ def fetch_assets(
     """Fetch every asset-bearing vertex's file to *asset_dir*.
 
     Scans for asset-bearing vertices (:data:`~guffin.model.vertex.AssetVertex`),
-    delegating fetching and caching
-    to :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`.  Each fetched
-    asset is written to *asset_dir* under its original upload filename
-    (normalized to a POSIX-safe form, with a numeric suffix appended when two
-    distinct assets share a name), falling back to the deterministic
-    ``<sha256>.<ext>`` cache filename when the original is unknown or
-    normalizes to nothing usable.  Vertices that fail to fetch are skipped
-    with a warning and will fall back to a hyperlink in the rendered output.
+    fetching each one via :func:`fetch_asset` and coordinating the filename
+    claims across the whole tree, so two distinct assets sharing an upload
+    name land under distinct (numeric-suffixed) filenames.  Vertices that
+    fail to fetch are skipped with a warning and will fall back to a
+    hyperlink in the rendered output.
 
     Every vertex in :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` is scanned
     (covering both :attr:`~guffin.model.vertex_tree.VertexTree.tree_vertices` and
@@ -159,19 +203,13 @@ def fetch_assets(
         if not is_asset_vertex(vertex):
             continue
         try:
-            asset: RoamAsset = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)
+            ref: AssetRef = fetch_asset(vertex, api_endpoint, asset_dir, cache_dir, claimed_names=claimed_names)
         except Exception as e:
             logger.warning("Failed to fetch asset uid=%r source=%s: %s", vertex.uid, vertex.source, e)
             continue
-        file_name: str = _resolved_file_name(asset, claimed_names)
-        claimed_names[file_name] = asset.file_name
-        asset_path: Path = asset_dir / file_name
-        asset_path.write_bytes(asset.contents)
-        size: ImageSize | None = asset.image_size if isinstance(asset, RoamImageAsset) else None
-        asset_refs[vertex.uid] = AssetRef(
-            uid=vertex.uid, path=asset_path, size=size, original_file_name=asset.original_file_name
-        )
-        logger.info("Fetched asset uid=%r -> %s", vertex.uid, asset_path.name)
+        claimed_names[ref.path.name] = str(vertex.source)
+        asset_refs[vertex.uid] = ref
+        logger.info("Fetched asset uid=%r -> %s", vertex.uid, ref.path.name)
     return asset_refs
 
 
