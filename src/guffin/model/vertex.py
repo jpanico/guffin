@@ -57,7 +57,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
-from guffin.model.attribute import Attribute, AttributeAssignment, is_assignment_for
+from guffin.model.attribute import Attribute, AttributeAssignment, find_assignment_for
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
 
@@ -512,8 +512,8 @@ Example::
 def find_attribute_assignment(vertex: Vertex, attribute: Attribute) -> AttributeAssignment | None:
     """Return *vertex*'s attribute assignment for *attribute*, or ``None``.
 
-    An assignment matches when it assigns *attribute* per
-    :func:`~guffin.model.attribute.is_assignment_for` (identity: name + domain).
+    Convenience over :func:`~guffin.model.attribute.find_assignment_for` that searches the
+    vertex's folded attribute assignments (matching by attribute identity: name + domain).
 
     Args:
         vertex: The vertex whose folded attribute assignments are searched.
@@ -523,7 +523,4 @@ def find_attribute_assignment(vertex: Vertex, attribute: Attribute) -> Attribute
         The first matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when
         *vertex* has no assignment for *attribute*.
     """
-    for assignment in vertex.attribute_assignments or ():
-        if is_assignment_for(assignment, attribute):
-            return assignment
-    return None
+    return find_assignment_for(vertex.attribute_assignments, attribute)

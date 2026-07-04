@@ -265,6 +265,30 @@ class TestResolvedMatter:
         assert resolved_matter(_heading_with(None)) is None
 
 
+class TestFindPublishingAttribute:
+    """find_publishing_attribute() requires an actual PublishingSemantics member (strict validation)."""
+
+    def test_member_finds_assignment(self) -> None:
+        """A vertex carrying the member's attribute yields the assignment."""
+        heading = _heading_with([_assignment("element-type", "chapter")])
+        assignment = find_publishing_attribute(heading, PublishingSemantics.ELEMENT_TYPE)
+        assert assignment is not None
+        assert assignment.attribute.definition.name == "element-type"
+
+    def test_member_payload_is_rejected(self) -> None:
+        """The member's PublishingAttribute payload is not coerced by value — members only."""
+        heading = _heading_with(None)
+        with pytest.raises(ValidationError):
+            find_publishing_attribute(heading, PublishingSemantics.ELEMENT_TYPE.value)  # type: ignore[arg-type]
+
+    def test_identity_equal_attribute_is_rejected(self) -> None:
+        """A bare Attribute carrying a member's identity (equal under identity-equality) is rejected."""
+        heading = _heading_with(None)
+        impostor = Attribute(name="element-type", domain=AttributeDomain.GUFFIN)
+        with pytest.raises(ValidationError):
+            find_publishing_attribute(heading, impostor)  # type: ignore[arg-type]
+
+
 class TestHasParts:
     """Tests for has_parts()."""
 

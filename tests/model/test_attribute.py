@@ -1,5 +1,7 @@
 """Tests for guffin.model.attribute."""
 
+import logging
+
 import pytest
 from pydantic import ValidationError
 
@@ -13,9 +15,12 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_adapter,
     attribute_value_text,
+    find_assignment_for,
     is_assignment_for,
     sole_value,
     sole_value_text,
+    verified_sole_value_text,
+    verify_assignment_for,
 )
 from guffin.model.link import VertexLink, VertexLinkKind
 
@@ -225,6 +230,96 @@ class TestIsAssignmentFor:
             values=(),
         )
         assert is_assignment_for(guffin_assignment, Attribute(name="a", domain=AttributeDomain.GUFFIN)) is True
+
+
+class TestVerifyAssignmentFor:
+    """verify_assignment_for() passes silently on a match and raises descriptively otherwise."""
+
+    def test_matching_attribute_passes(self) -> None:
+        """An assignment for the expected attribute verifies without raising."""
+        verify_assignment_for(_assignment(), Attribute(name="a"))
+
+    def test_wrong_attribute_raises_with_both_identities(self) -> None:
+        """The error names the expected and the actual identity."""
+        with pytest.raises(ValueError, match="expected an assignment of 'b'.*got 'a'"):
+            verify_assignment_for(_assignment(), Attribute(name="b"))
+
+    def test_wrong_domain_raises(self) -> None:
+        """The same name in a different domain is rejected — verification is by identity."""
+        with pytest.raises(ValueError, match="expected an assignment"):
+            verify_assignment_for(_assignment(), Attribute(name="a", domain=AttributeDomain.GUFFIN))
+
+
+def _assignment_of(name: str, domain: AttributeDomain = AttributeDomain.DEFAULT) -> AttributeAssignment:
+    """Build a value-less AttributeAssignment for the attribute named *name* in *domain*."""
+    return AttributeAssignment(
+        attribute=AttributeInstance(definition=Attribute(name=name, domain=domain), link=_LINK), values=()
+    )
+
+
+class TestFindAssignmentFor:
+    """find_assignment_for() returns the first assignment for an attribute, or None."""
+
+    def test_finds_matching_assignment(self) -> None:
+        """The assignment for the sought attribute is returned from a mixed collection."""
+        sought = _assignment_of("b")
+        assert find_assignment_for([_assignment_of("a"), sought], Attribute(name="b")) == sought
+
+    def test_returns_first_match_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """With several assignments for the attribute, the first wins and a warning is logged.
+
+        Neither Guffin nor Roam defines the semantics of assigning the same attribute more than
+        once on one node, so the duplicate is surfaced rather than silently ignored.
+        """
+        first = _assignment_of("a")
+        with caplog.at_level(logging.WARNING, logger="guffin.model.attribute"):
+            result = find_assignment_for([first, _assignment_of("a")], Attribute(name="a"))
+        assert result is not None
+        assert result == first
+        assert any("multiple-assignment semantics are undefined" in r.message for r in caplog.records)
+
+    def test_single_match_does_not_warn(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A single matching assignment (amid other attributes) produces no warning."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.attribute"):
+            find_assignment_for([_assignment_of("a"), _assignment_of("b")], Attribute(name="a"))
+        assert not caplog.records
+
+    def test_none_when_no_match(self) -> None:
+        """A collection with no assignment for the attribute yields None."""
+        assert find_assignment_for([_assignment_of("a")], Attribute(name="b")) is None
+
+    def test_none_collection_treated_as_empty(self) -> None:
+        """A None collection (a vertex without assignments) yields None."""
+        assert find_assignment_for(None, Attribute(name="a")) is None
+
+    def test_matches_by_identity_not_domain_alone(self) -> None:
+        """The same name in a different domain does not match."""
+        assert find_assignment_for([_assignment_of("a")], Attribute(name="a", domain=AttributeDomain.GUFFIN)) is None
+
+
+class TestVerifiedSoleValueText:
+    """verified_sole_value_text() reads the one value's text after verifying the assignment's attribute."""
+
+    def test_returns_sole_value_text_for_matching_attribute(self) -> None:
+        """A one-value assignment for the expected attribute yields the value's text."""
+        assert verified_sole_value_text(_assignment(LiteralValue(value="chapter")), Attribute(name="a")) == "chapter"
+
+    def test_wrong_attribute_raises(self) -> None:
+        """An assignment of a different attribute is rejected."""
+        with pytest.raises(ValueError, match="expected an assignment of 'b'"):
+            verified_sole_value_text(_assignment(LiteralValue(value="x")), Attribute(name="b"))
+
+    def test_wrong_domain_raises(self) -> None:
+        """The same name in a different domain is rejected — verification is by identity."""
+        with pytest.raises(ValueError, match="expected an assignment"):
+            verified_sole_value_text(
+                _assignment(LiteralValue(value="x")), Attribute(name="a", domain=AttributeDomain.GUFFIN)
+            )
+
+    def test_multiple_values_raises(self) -> None:
+        """It propagates sole_value()'s error when there isn't exactly one value."""
+        with pytest.raises(ValueError):
+            verified_sole_value_text(_assignment(LiteralValue(value="a"), LiteralValue(value="b")), Attribute(name="a"))
 
 
 class _ExtendedAttribute(Attribute):

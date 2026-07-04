@@ -10,6 +10,8 @@ Public symbols:
   :class:`VertexTree`.
 - :func:`transcluded_vertices` — return every render-visible vertex in a :class:`VertexTree`: the
   tree vertices plus all content transcluded through block embeds.
+- :func:`assignments_for` — return every ``(vertex, assignment)`` pair in a :class:`VertexTree`
+  whose assignment is for a given :class:`~guffin.model.attribute.Attribute`.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
@@ -24,6 +26,7 @@ Public symbols:
 import logging
 from collections import deque
 from collections.abc import Callable, Iterator
+from itertools import chain
 from typing import Annotated, Final
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_call
@@ -31,6 +34,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_cal
 from guffin.common.geometry import ImageSize
 
 logger = logging.getLogger(__name__)
+from guffin.model.attribute import Attribute, AttributeAssignment, is_assignment_for
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -190,6 +194,29 @@ def transcluded_vertices(tree: VertexTree) -> list[Vertex]:
         if isinstance(vertex, BlockEmbedVertex) and vertex.vertex_link.uid in tree.uid_map:
             queue.append(tree.uid_map[vertex.vertex_link.uid])
     return visible
+
+
+@validate_call
+def assignments_for(tree: VertexTree, attribute: Attribute) -> Iterator[tuple[Vertex, AttributeAssignment]]:
+    """Return every ``(vertex, assignment)`` pair in *tree* whose assignment is for *attribute*.
+
+    An assignment matches per :func:`~guffin.model.attribute.is_assignment_for` (identity:
+    name + domain).  Both the tree vertices and the referenced-vertex stubs
+    (:attr:`VertexTree.ref_vertices`) are walked.
+
+    Args:
+        tree: The :class:`VertexTree` to walk.
+        attribute: The attribute whose assignments to return.
+
+    Returns:
+        A lazy iterator of each matching assignment, paired with the vertex it is declared on.
+    """
+    return (
+        (vertex, assignment)
+        for vertex in chain(tree.tree_vertices, tree.ref_vertices)
+        for assignment in vertex.attribute_assignments or ()
+        if is_assignment_for(assignment, attribute)
+    )
 
 
 @validate_call

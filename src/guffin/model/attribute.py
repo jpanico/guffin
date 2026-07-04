@@ -24,15 +24,24 @@ Public symbols:
   reference name); :func:`sole_value` — the single value of an :class:`AttributeAssignment` (raises
   unless it has exactly one); :func:`sole_value_text` — the text of that single value;
   :func:`is_assignment_for` — whether an :class:`AttributeAssignment` assigns a given
-  :class:`Attribute` (identity: name + domain).
+  :class:`Attribute` (identity: name + domain); :func:`verify_assignment_for` — its assertion
+  form, raising when the assignment is for any other attribute; :func:`find_assignment_for` —
+  the first of a collection of assignments that is for a given :class:`Attribute` (warning when
+  more than one matches, since multiple-assignment semantics are undefined);
+  :func:`verified_sole_value_text` — the text of an assignment's single value, after verifying
+  the assignment is for a given :class:`Attribute`.
 """
 
 import enum
+import logging
+from collections.abc import Sequence
 from typing import Annotated, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
 
 from guffin.model.link import VertexLink
+
+logger = logging.getLogger(__name__)
 
 
 class AttributeDomain(enum.StrEnum):
@@ -247,3 +256,83 @@ def is_assignment_for(assignment: AttributeAssignment, attribute: Attribute) -> 
         ``True`` when the assignment's attribute equals *attribute*, else ``False``.
     """
     return assignment.attribute.definition == attribute
+
+
+@validate_call
+def verify_assignment_for(assignment: AttributeAssignment, attribute: Attribute) -> None:
+    """Require *assignment* to be for *attribute*, raising when it is not.
+
+    The assertion form of :func:`is_assignment_for`: passes silently when the assignment's
+    attribute equals *attribute* (identity: name + domain), and raises a descriptive error
+    naming both identities otherwise.
+
+    Args:
+        assignment: The attribute assignment to verify.
+        attribute: The attribute the assignment must be for.
+
+    Raises:
+        ValueError: If *assignment* is not for *attribute*.
+    """
+    if is_assignment_for(assignment, attribute):
+        return
+    assignment_attribute: Final[Attribute] = assignment.attribute.definition
+    raise ValueError(
+        f"expected an assignment of {attribute.name!r} in the {attribute.domain} domain, "
+        f"got {assignment_attribute.name!r} in {assignment_attribute.domain}"
+    )
+
+
+@validate_call
+def find_assignment_for(
+    assignments: Sequence[AttributeAssignment] | None, attribute: Attribute
+) -> AttributeAssignment | None:
+    """Return the first of *assignments* that is for *attribute*, or ``None``.
+
+    An assignment matches per :func:`is_assignment_for` (identity: name + domain).  The semantics
+    of multiple assignments of the same attribute within one collection are undefined (neither
+    Guffin nor Roam defines them), so when more than one matches, a warning is logged and the
+    first wins.
+
+    Args:
+        assignments: The attribute assignments to search; ``None`` is treated as empty.
+        attribute: The attribute to match.
+
+    Returns:
+        The first matching :class:`AttributeAssignment`, or ``None`` when no assignment is for
+        *attribute*.
+    """
+    matches: Final[list[AttributeAssignment]] = [
+        assignment for assignment in assignments or () if is_assignment_for(assignment, attribute)
+    ]
+    if not matches:
+        return None
+    if len(matches) > 1:
+        logger.warning(
+            "%d assignments of %r in the %s domain in one collection; "
+            "multiple-assignment semantics are undefined — using the first",
+            len(matches),
+            attribute.name,
+            attribute.domain,
+        )
+    return matches[0]
+
+
+@validate_call
+def verified_sole_value_text(assignment: AttributeAssignment, attribute: Attribute) -> str:
+    """Return the text of *assignment*'s single value, first verifying the assignment is for *attribute*.
+
+    Composes :func:`verify_assignment_for` (rejecting an assignment of any other attribute) with
+    :func:`sole_value_text` (requiring exactly one value).
+
+    Args:
+        assignment: The attribute assignment to verify and read (one value expected).
+        attribute: The attribute the assignment must be for (identity: name + domain).
+
+    Returns:
+        The text of the assignment's sole value.
+
+    Raises:
+        ValueError: If *assignment* is not for *attribute*, or does not carry exactly one value.
+    """
+    verify_assignment_for(assignment, attribute)
+    return sole_value_text(assignment)

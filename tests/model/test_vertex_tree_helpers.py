@@ -1,10 +1,13 @@
-"""Tests for the guffin.model.vertex_tree helpers: transcluded_vertices, root_vertex."""
+"""Tests for the guffin.model.vertex_tree helpers: transcluded_vertices, assignments_for, root_vertex."""
 
 from conftest import article1_vertex_tree
 
+from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import BlockEmbedVertex, PageVertex, TextVertex
-from guffin.model.vertex_tree import VertexTree, root_vertex, transcluded_vertices
+from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
+
+_REF_LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1")
 
 
 def _page(uid: str = "pageuid01") -> PageVertex:
@@ -17,6 +20,10 @@ def _text(uid: str = "textuid01") -> TextVertex:
 
 def _embed(uid: str, target_uid: str) -> BlockEmbedVertex:
     return BlockEmbedVertex(uid=uid, vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=target_uid))
+
+
+def _assignment_of(name: str) -> AttributeAssignment:
+    return AttributeAssignment(attribute=AttributeInstance(definition=Attribute(name=name), link=_REF_LINK), values=())
 
 
 # ---------------------------------------------------------------------------
@@ -87,6 +94,45 @@ class TestTranscludedVertices:
         """Test Article 1 has no embeds, so the render-visible set equals its tree vertices."""
         tree = article1_vertex_tree()
         assert transcluded_vertices(tree) == list(tree.tree_vertices)
+
+
+# ---------------------------------------------------------------------------
+# TestAssignmentsFor
+# ---------------------------------------------------------------------------
+
+
+class TestAssignmentsFor:
+    """Tests for assignments_for()."""
+
+    def test_pairs_each_matching_assignment_with_its_vertex(self) -> None:
+        """Matching assignments across several vertices come back paired with their hosts."""
+        page = PageVertex(uid="pageuid01", title="Page", attribute_assignments=[_assignment_of("a")])
+        text = TextVertex(uid="textuid01", text="hello", attribute_assignments=[_assignment_of("a")])
+        tree = VertexTree(tree_vertices=[page, text])
+        result = list(assignments_for(tree, Attribute(name="a")))
+        assert [(vertex.uid, assignment.attribute.definition.name) for vertex, assignment in result] == [
+            ("pageuid01", "a"),
+            ("textuid01", "a"),
+        ]
+
+    def test_non_matching_assignments_excluded(self) -> None:
+        """Assignments of other attributes do not appear."""
+        page = PageVertex(uid="pageuid01", title="Page", attribute_assignments=[_assignment_of("b")])
+        tree = VertexTree(tree_vertices=[page])
+        assert list(assignments_for(tree, Attribute(name="a"))) == []
+
+    def test_ref_vertices_are_walked(self) -> None:
+        """An assignment on a referenced-vertex stub is included."""
+        page = PageVertex(uid="pageuid01", title="Page")
+        ref = TextVertex(uid="refuid001", text="stub", attribute_assignments=[_assignment_of("a")])
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[ref])
+        result = list(assignments_for(tree, Attribute(name="a")))
+        assert [vertex.uid for vertex, _assignment in result] == ["refuid001"]
+
+    def test_empty_tree_yields_nothing(self) -> None:
+        """A tree with no assignments yields an empty iterator."""
+        tree = VertexTree(tree_vertices=[_page()])
+        assert list(assignments_for(tree, Attribute(name="a"))) == []
 
 
 # ---------------------------------------------------------------------------

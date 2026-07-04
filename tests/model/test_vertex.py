@@ -5,7 +5,7 @@ from pydantic import ValidationError
 
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue, ReferenceValue
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import BlockEmbedVertex, TextVertex, VertexType, vertex_adapter
+from guffin.model.vertex import BlockEmbedVertex, TextVertex, VertexType, find_attribute_assignment, vertex_adapter
 
 # A representative embed link to a 9-character destination UID.
 _EMBED_LINK = VertexLink(kind=VertexLinkKind.EMBED, uid="tgt000001")
@@ -64,3 +64,32 @@ class TestAttributeAssignmentsField:
         restored = vertex_adapter.validate_python(vertex.model_dump())
         assert isinstance(restored, TextVertex)
         assert restored == vertex
+
+
+class TestFindAttributeAssignment:
+    """find_attribute_assignment() searches a vertex's folded assignments for an Attribute."""
+
+    @staticmethod
+    def _assignment(name: str) -> AttributeAssignment:
+        return AttributeAssignment(
+            attribute=AttributeInstance(definition=Attribute(name=name), link=_REF_LINK), values=()
+        )
+
+    def test_finds_matching_assignment(self) -> None:
+        """The assignment for the sought attribute is returned."""
+        vertex = TextVertex(
+            uid="block0001", text="hello", attribute_assignments=[self._assignment("a"), self._assignment("b")]
+        )
+        result = find_attribute_assignment(vertex, Attribute(name="b"))
+        assert result is not None
+        assert result.attribute.definition.name == "b"
+
+    def test_none_when_no_match(self) -> None:
+        """A vertex without an assignment for the attribute yields None."""
+        vertex = TextVertex(uid="block0001", text="hello", attribute_assignments=[self._assignment("a")])
+        assert find_attribute_assignment(vertex, Attribute(name="b")) is None
+
+    def test_none_when_vertex_has_no_assignments(self) -> None:
+        """A vertex with no folded assignments at all yields None."""
+        vertex = TextVertex(uid="block0001", text="hello")
+        assert find_attribute_assignment(vertex, Attribute(name="a")) is None

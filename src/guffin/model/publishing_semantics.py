@@ -39,16 +39,21 @@ primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
 
 import enum
 import logging
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from itertools import chain
 from typing import Final, Self
 
-from pydantic import Field, field_validator, validate_call
+from pydantic import ConfigDict, Field, field_validator, validate_call
 
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, is_assignment_for, sole_value_text
+from guffin.model.attribute import (
+    Attribute,
+    AttributeAssignment,
+    AttributeDomain,
+    verified_sole_value_text,
+)
 from guffin.model.vertex import HeadingVertex, Vertex, VertexType, find_attribute_assignment
-from guffin.model.vertex_tree import VertexTree, transcluded_vertices
+from guffin.model.vertex_tree import VertexTree, assignments_for, transcluded_vertices
 
 logger = logging.getLogger(__name__)
 
@@ -212,30 +217,6 @@ class StructuralElement(enum.StrEnum):
     COLOPHON = ("colophon", Matter.BACK)
 
 
-def _verified_sole_value(assignment: AttributeAssignment, attribute: PublishingSemantics) -> str:
-    """Verify *assignment* is for the Guffin *attribute* and return its sole value's text.
-
-    Args:
-        assignment: The attribute assignment to verify (one value expected).
-        attribute: The :class:`PublishingSemantics` member the assignment must be for.
-
-    Returns:
-        The text of the assignment's sole value.
-
-    Raises:
-        ValueError: If *assignment* is not for *attribute* (by name and domain), or does not carry
-            exactly one value.
-    """
-    if not is_assignment_for(assignment, attribute.value):
-        expected: Final[PublishingAttribute] = attribute.value
-        assignment_attribute: Final[Attribute] = assignment.attribute.definition
-        raise ValueError(
-            f"expected an assignment of {expected.name!r} in the {expected.domain} domain, "
-            f"got {assignment_attribute.name!r} in {assignment_attribute.domain}"
-        )
-    return sole_value_text(assignment)
-
-
 @validate_call
 def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
     """Return the :class:`StructuralElement` that an ``element-type`` assignment names.
@@ -253,7 +234,7 @@ def element_type_of(assignment: AttributeAssignment) -> StructuralElement:
         ValueError: If *assignment* is not for the ``element-type`` attribute, does not carry exactly
             one value, or its value is not a recognised :class:`StructuralElement`.
     """
-    return StructuralElement(_verified_sole_value(assignment, PublishingSemantics.ELEMENT_TYPE))
+    return StructuralElement(verified_sole_value_text(assignment, PublishingSemantics.ELEMENT_TYPE.value))
 
 
 @validate_call
@@ -273,16 +254,18 @@ def matter_of(assignment: AttributeAssignment) -> Matter:
         ValueError: If *assignment* is not for the ``matter`` attribute, does not carry exactly one
             value, or its value is not a recognised :class:`Matter`.
     """
-    return Matter(_verified_sole_value(assignment, PublishingSemantics.MATTER))
+    return Matter(verified_sole_value_text(assignment, PublishingSemantics.MATTER.value))
 
 
-@validate_call
+@validate_call(config=ConfigDict(strict=True))
 def find_publishing_attribute(vertex: Vertex, attribute: PublishingSemantics) -> AttributeAssignment | None:
     """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
 
     Convenience over :func:`~guffin.model.vertex.find_attribute_assignment` that passes the
     member's :class:`PublishingAttribute`, so callers neither restate nor risk mismatching its
-    identity.
+    identity.  Validated strictly: *attribute* must be an actual :class:`PublishingSemantics`
+    member — a bare :class:`~guffin.model.attribute.Attribute` carrying a member's identity is
+    rejected rather than coerced by value.
 
     Args:
         vertex: The vertex whose folded attribute assignments are searched.
@@ -478,30 +461,6 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     )
 
 
-def _tagged_assignments(
-    tree: VertexTree, attribute: PublishingSemantics
-) -> Iterator[tuple[Vertex, AttributeAssignment]]:
-    """Return every ``(vertex, assignment)`` pair in *tree* whose assignment is for *attribute*.
-
-    An assignment matches when its name and domain equal the member's :class:`PublishingAttribute`.
-    Both the tree vertices and the referenced-vertex stubs
-    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`) are walked.
-
-    Args:
-        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to walk.
-        attribute: The Guffin attribute whose assignments to return.
-
-    Returns:
-        A lazy iterator of each matching assignment, paired with the vertex it is declared on.
-    """
-    return (
-        (vertex, assignment)
-        for vertex in chain(tree.tree_vertices, tree.ref_vertices)
-        for assignment in vertex.attribute_assignments or ()
-        if is_assignment_for(assignment, attribute.value)
-    )
-
-
 def _illegal_value_violations(
     tree: VertexTree,
     attribute: PublishingSemantics,
@@ -520,7 +479,7 @@ def _illegal_value_violations(
         when every assignment coerces.
     """
     violations: Final[list[str]] = []
-    for vertex, assignment in _tagged_assignments(tree, attribute):
+    for vertex, assignment in assignments_for(tree, attribute.value):
         try:
             value_coercer(assignment)
         except ValueError as exc:
@@ -598,7 +557,7 @@ def all_matter_tags_at_section_level(tree: VertexTree) -> ValidationError | None
     shape: Final[str] = "a parts book (sections at level 2)" if parts else "a chapters book (sections at level 1)"
     violations: Final[list[str]] = [
         f"'matter' tag on a level-{vertex.heading_level} heading (uid={vertex.uid!r}); this tree is {shape}"
-        for vertex, _assignment in _tagged_assignments(tree, PublishingSemantics.MATTER)
+        for vertex, _assignment in assignments_for(tree, PublishingSemantics.MATTER.value)
         if isinstance(vertex, HeadingVertex) and vertex.heading_level != section_level
     ]
     if not violations:
