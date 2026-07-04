@@ -36,6 +36,9 @@ Rendering rules:
 - :class:`~guffin.vertex.ImageVertex` — embedded as a :class:`~panflute.Image`
   element pointing at the local path from *image_files*; falls back to a
   :class:`~panflute.Link` when *image_files* has no entry for the vertex.
+- :class:`~guffin.vertex.PdfVertex` — rendered as a :class:`~panflute.Link`
+  labelled with the PDF's filename, pointing at the local path from
+  *image_files* when present, else at the remote Cloud Firestore source URL.
 - :class:`~guffin.vertex.CodeBlockVertex` — rendered as a
   :class:`~panflute.CodeBlock` whose class is the vertex's language, so Pandoc
   applies language-specific syntax highlighting.
@@ -104,6 +107,7 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    PdfVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -165,6 +169,7 @@ def _extract_bg_color(inlines: list[pf.Inline]) -> tuple[str, list[pf.Inline]] |
 # inline-representable and stay on the inline resolution path.
 _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
     ImageVertex,
+    PdfVertex,
     CodeBlockVertex,
     CalloutVertex,
     BlockQuoteVertex,
@@ -702,6 +707,37 @@ def _image_vertex_to_blocks(
         return [pf.Para(link)]
 
 
+def _pdf_vertex_to_blocks(
+    vertex: PdfVertex,
+    image_files: dict[Uid, Path],
+) -> list[pf.Block]:
+    """Render a :class:`~guffin.vertex.PdfVertex` to Pandoc block elements.
+
+    Produces a :class:`~panflute.Para` containing a :class:`~panflute.Link`
+    labelled with the PDF's original filename (Roam's encryption suffix
+    stripped), falling back to the source URL when no filename is known.
+    The link points at the local fetched file when *image_files* has an
+    entry for the vertex, else at the remote Cloud Firestore source URL.
+
+    Args:
+        vertex: The PDF vertex to render.
+        image_files: Mapping from asset vertex UID (image or PDF) to local
+            file path.
+
+    Returns:
+        A single-element list containing the :class:`~panflute.Para`-wrapped link.
+    """
+    # Roam encrypts hosted assets with a trailing .enc extension; strip it for the display label.
+    label_text: Final[str] = (
+        vertex.file_name.removesuffix(".enc") if vertex.file_name is not None else str(vertex.source)
+    )
+    pdf_path: Final[Path | None] = image_files.get(vertex.uid)
+    if pdf_path is None:
+        logger.warning("PDF uid=%r not fetched; rendering as link to its remote source", vertex.uid)
+    url: Final[str] = str(pdf_path) if pdf_path is not None else str(vertex.source)
+    return [pf.Para(pf.Link(pf.Str(label_text), url=url, title=label_text))]
+
+
 def _callout_vertex_to_blocks(
     vertex: CalloutVertex,
     vertex_tree: VertexTree,
@@ -982,6 +1018,8 @@ def _vertex_to_blocks(
             return _text_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
         case ImageVertex():
             return _image_vertex_to_blocks(vertex, image_files, inline_map)
+        case PdfVertex():
+            return _pdf_vertex_to_blocks(vertex, image_files)
         case CalloutVertex():
             return _callout_vertex_to_blocks(vertex, vertex_tree, image_files, inline_map, view_map, depth)
         case CodeBlockVertex():
@@ -1091,11 +1129,12 @@ def vertex_tree_to_pandoc(
 
     Args:
         vertex_tree: The normalized vertex tree to convert.
-        image_files: Mapping from :class:`~guffin.vertex.ImageVertex` UID to
-            the local :class:`~pathlib.Path` of the fetched image file.
+        image_files: Mapping from asset vertex UID (:class:`~guffin.vertex.ImageVertex`
+            or :class:`~guffin.vertex.PdfVertex`) to the local :class:`~pathlib.Path`
+            of the fetched asset file.
             Vertices absent from this mapping fall back to hyperlinks.
             Pass relative :class:`~pathlib.Path` values (e.g.
-            ``Path(filename)``) when the output is Markdown, so that image
+            ``Path(filename)``) when the output is Markdown, so that asset
             references in the rendered document are relative rather than
             absolute.
         view_map: Presentation view map keyed by vertex uid; governs how each
@@ -1169,6 +1208,7 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
       :class:`~guffin.vertex.BlockQuoteVertex` — the destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
       embed, otherwise a :class:`~panflute.Link` to the image source.
+    - :class:`~guffin.vertex.PdfVertex` — a :class:`~panflute.Link` to the PDF source.
     - :class:`~guffin.vertex.CodeBlockVertex` — inline :class:`~panflute.Code` (a
       block-level code reference is handled earlier, in :func:`build_child_blocks`).
     - :class:`~guffin.vertex.CalloutVertex`, :class:`~guffin.vertex.TableVertex` — the
@@ -1196,6 +1236,8 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
             case ImageVertex() if vertex_link.kind == VertexLinkKind.EMBED:
                 return [pf.Image(*display, url=str(vertex.source), title="")]
             case ImageVertex():
+                return [pf.Link(*display, url=str(vertex.source))]
+            case PdfVertex():
                 return [pf.Link(*display, url=str(vertex.source))]
             case CodeBlockVertex():
                 return [pf.Code(vertex.code, classes=[vertex.language.value])]

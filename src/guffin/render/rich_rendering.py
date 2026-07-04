@@ -40,6 +40,7 @@ from guffin.model.vertex import (
     CalloutVertex,
     ImageVertex,
     PageVertex,
+    PdfVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -188,6 +189,8 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
         case NodeType.EMBED_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
+        case NodeType.PDF_BLOCK:
+            title_text = "{{pdf: <firestore_url>}}"
         case NodeType.ATTRIBUTE_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
@@ -341,7 +344,9 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
         case "text":
             return Text(f"text={vertex.text}" if isinstance(vertex, TextVertex | BlockQuoteVertex) else "text=N/A")
         case "file_name":
-            return Text(f"file_name={vertex.file_name}" if isinstance(vertex, ImageVertex) else "file_name=N/A")
+            return Text(
+                f"file_name={vertex.file_name}" if isinstance(vertex, ImageVertex | PdfVertex) else "file_name=N/A"
+            )
         case "media_type":
             return Text(
                 f"media_type={vertex.media_type.value}" if isinstance(vertex, ImageVertex) else "media_type=N/A"
@@ -358,7 +363,7 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
             size: Final[ImageSize | None] = vertex.original_image_size
             return Text(f"original_image_size=({size})" if size is not None else "original_image_size=None")
         case "source":
-            return Text(f"source={vertex.source}" if isinstance(vertex, ImageVertex) else "source=N/A")
+            return Text(f"source={vertex.source}" if isinstance(vertex, ImageVertex | PdfVertex) else "source=N/A")
         case "alt_text":
             return Text(f"alt_text={vertex.alt_text}" if isinstance(vertex, ImageVertex) else "alt_text=N/A")
         case "body":
@@ -463,6 +468,7 @@ def build_vertex_panel(
     - :class:`~guffin.vertex.HeadingVertex` — ``H{n}: <text>``.
     - :class:`~guffin.vertex.TextVertex` — block text as-is.
     - :class:`~guffin.vertex.ImageVertex` — ``IMAGE [<alt>](<firestore_url>)``.
+    - :class:`~guffin.vertex.PdfVertex` — ``PDF <file_name>``.
     - :class:`~guffin.vertex.CalloutVertex` — ``CALLOUT [<type>]: <title>``.
 
     The panel body renders each name in *props* via :func:`_format_vertex_prop`.  When *vertex*
@@ -496,6 +502,11 @@ def build_vertex_panel(
             title_content = (
                 f"[bold orange1]{markup_escape(f'IMAGE [{vertex.alt_text or ""}]')}[/bold orange1]"
                 f"[bold #00aa00](<firestore_url>)[/bold #00aa00]"
+            )
+        case VertexType.PDF:
+            title_content = (
+                f"[bold orange1]{markup_escape('PDF')}[/bold orange1]"
+                f" [bold #00aa00]{markup_escape(vertex.file_name or '<firestore_url>')}[/bold #00aa00]"
             )
         case VertexType.CALLOUT:
             title_content = (

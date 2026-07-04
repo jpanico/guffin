@@ -16,6 +16,7 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    PdfVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -36,6 +37,7 @@ from guffin.transcribe.roam_tree_to_guffin import (
     to_heading_vertex,
     to_image_vertex,
     to_page_vertex,
+    to_pdf_vertex,
     to_render_bundle,
     to_table_vertex,
     to_text_vertex,
@@ -51,6 +53,11 @@ _FIRESTORE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
 )
 _IMAGE_STRING = f"![A flower]({_FIRESTORE_URL})"
+# A real Firestore URL whose path yields file_name = "paper.pdf.enc":
+_FIRESTORE_PDF_URL = (
+    "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/pdfs%2Fpaper.pdf.enc?alt=media&token=abc123"
+)
+_PDF_STRING = f"{{{{pdf: {_FIRESTORE_PDF_URL}}}}}"
 _CALLOUT_STRING: str = "[[>]] [[!NOTE]] This is a note"
 # Raw Roam form: closing fence attached to the final content line (no separating newline).
 _CODE_STRING: str = "```python\ndef f():\n    pass```"
@@ -69,6 +76,17 @@ def _make_page(uid: str = "pageuid01", node_id: int = 100, title: str = "My Page
 
 def _make_image(uid: str = "imageuid1", node_id: int = 101, string: str = _IMAGE_STRING) -> RoamNode:
     """Return a minimal Firestore image-block RoamNode."""
+    return RoamNode(
+        uid=uid,
+        id=node_id,
+        string=string,
+        parents=[IdObject(id=99)],
+        page=IdObject(id=99),
+    )
+
+
+def _make_pdf(uid: str = "pdfuid001", node_id: int = 108, string: str = _PDF_STRING) -> RoamNode:
+    """Return a minimal Firestore PDF-block RoamNode."""
     return RoamNode(
         uid=uid,
         id=node_id,
@@ -192,6 +210,10 @@ class TestVertexType:
     def test_image_node_returns_roam_image(self) -> None:
         """Test that an image block node classifies as IMAGE."""
         assert vertex_type(_make_image()) is VertexType.IMAGE
+
+    def test_pdf_node_returns_guffin_pdf(self) -> None:
+        """Test that a PDF component block node classifies as PDF."""
+        assert vertex_type(_make_pdf()) is VertexType.PDF
 
     def test_native_heading_node_returns_roam_heading(self) -> None:
         """Test that a native heading block node classifies as HEADING."""
@@ -394,6 +416,61 @@ class TestToImageVertex:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
             to_image_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# TestToPdfVertex
+# ---------------------------------------------------------------------------
+
+
+class TestToPdfVertex:
+    """Tests for to_pdf_vertex."""
+
+    def test_returns_guffin_pdf_vertex_type(self) -> None:
+        """Test that to_pdf_vertex produces a vertex with type PDF."""
+        node = _make_pdf()
+        assert to_pdf_vertex(node, _node_tree(node)).vertex_type is VertexType.PDF
+
+    def test_uid_preserved(self) -> None:
+        """Test that the vertex uid matches the source node uid."""
+        node = _make_pdf(uid="pdfuid001")
+        assert to_pdf_vertex(node, _node_tree(node)).uid == "pdfuid001"
+
+    def test_source_host_is_firestore(self) -> None:
+        """Test that the vertex source URL points to the Firestore host."""
+        v = to_pdf_vertex(_make_pdf(), _node_tree(_make_pdf()))
+        assert v.source.host == "firebasestorage.googleapis.com"
+
+    def test_file_name_extracted_from_url(self) -> None:
+        """Test that the filename is percent-decoded from the Firestore URL path."""
+        assert to_pdf_vertex(_make_pdf(), _node_tree(_make_pdf())).file_name == "paper.pdf.enc"
+
+    def test_page_reference_form_accepted(self) -> None:
+        """Test that the {{[[pdf]]: <url>}} page-reference form transcribes identically."""
+        node = _make_pdf(string=f"{{{{[[pdf]]: {_FIRESTORE_PDF_URL}}}}}")
+        assert to_pdf_vertex(node, _node_tree(node)).file_name == "paper.pdf.enc"
+
+    def test_children_none_when_no_children(self) -> None:
+        """Test that children is None when the PDF node has no children."""
+        node = _make_pdf()
+        assert to_pdf_vertex(node, _node_tree(node)).children is None
+
+    def test_missing_string_raises_value_error(self) -> None:
+        """Test that a node without a string raises ValueError."""
+        node = _make_page()
+        with pytest.raises(ValueError, match="no 'string'"):
+            to_pdf_vertex(node, _node_tree(node))
+
+    def test_non_firestore_url_raises_value_error(self) -> None:
+        """Test that a PDF component with a non-Firestore https URL raises ValueError."""
+        node = _make_pdf(string="{{pdf: https://example.com/paper.pdf}}")
+        with pytest.raises(ValueError, match="contains no Firestore PDF component"):
+            to_pdf_vertex(node, _node_tree(node))
+
+    def test_null_node_raises_validation_error(self) -> None:
+        """Test that passing None as node raises a ValidationError."""
+        with pytest.raises(ValidationError):
+            to_pdf_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -739,6 +816,14 @@ class TestTranscribeNode:
         assert v.vertex_type is VertexType.IMAGE
         assert v.file_name == "photo.jpeg"
         assert v.media_type == "image/jpeg"
+
+    def test_transcribes_pdf_node(self) -> None:
+        """Test that a PDF component block node is transcribed to a PDF vertex with correct fields."""
+        node = _make_pdf()
+        v = transcribe_standalone_node(node, _node_tree(node))
+        assert isinstance(v, PdfVertex)
+        assert v.vertex_type is VertexType.PDF
+        assert v.file_name == "paper.pdf.enc"
 
     def test_transcribes_heading_node(self) -> None:
         """Test that a heading block node is transcribed to a HEADING vertex with correct fields."""

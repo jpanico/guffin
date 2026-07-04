@@ -180,8 +180,8 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_exactly_ten_members(self) -> None:
-        """Test that NodeType has exactly ten members."""
+    def test_exactly_eleven_members(self) -> None:
+        """Test that NodeType has exactly eleven members."""
         assert set(NodeType) == {
             NodeType.PAGE,
             NodeType.PLAIN_BLOCK,
@@ -192,6 +192,7 @@ class TestNodeType:
             NodeType.BLOCK_QUOTE,
             NodeType.NATIVE_TABLE,
             NodeType.EMBED_BLOCK,
+            NodeType.PDF_BLOCK,
             NodeType.ATTRIBUTE_BLOCK,
         }
 
@@ -440,6 +441,31 @@ class TestNodeTypeFunction:
     def test_embed_mixed_with_text_is_plain_block(self) -> None:
         """Test that an embed mixed with surrounding text is not a EMBED_BLOCK."""
         node = _make_text(string="see {{embed: ((wjN-kVF3B))}} here")
+        assert node_type(node) is NodeType.PLAIN_BLOCK
+
+    def test_pdf_component_returns_pdf_block(self) -> None:
+        """Test that a block whose entire string is a Firestore PDF component returns PDF_BLOCK."""
+        node = _make_text(string="{{pdf: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf.enc?alt=media}}")
+        assert node_type(node) is NodeType.PDF_BLOCK
+
+    def test_page_ref_pdf_component_returns_pdf_block(self) -> None:
+        """Test that the page-reference form {{[[pdf]]: <url>}} also returns PDF_BLOCK."""
+        node = _make_text(string="{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf?alt=media}}")
+        assert node_type(node) is NodeType.PDF_BLOCK
+
+    def test_pdf_component_with_surrounding_whitespace_returns_pdf_block(self) -> None:
+        """Test that surrounding whitespace around a PDF component is tolerated."""
+        node = _make_text(string="  {{pdf: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf?alt=media}}  ")
+        assert node_type(node) is NodeType.PDF_BLOCK
+
+    def test_pdf_component_mixed_with_text_is_plain_block(self) -> None:
+        """Test that a PDF component mixed with surrounding text is not a PDF_BLOCK."""
+        node = _make_text(string="see {{pdf: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf}} here")
+        assert node_type(node) is NodeType.PLAIN_BLOCK
+
+    def test_non_firestore_pdf_component_is_plain_block(self) -> None:
+        """Test that a PDF component pointing outside Firestore is not a PDF_BLOCK."""
+        node = _make_text(string="{{pdf: https://example.com/paper.pdf}}")
         assert node_type(node) is NodeType.PLAIN_BLOCK
 
     def test_attribute_assignment_returns_attribute_block(self) -> None:

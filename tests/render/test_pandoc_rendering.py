@@ -22,6 +22,7 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    PdfVertex,
     TextVertex,
 )
 from guffin.model.vertex_tree import VertexTree
@@ -35,6 +36,7 @@ from guffin.render.pandoc_rendering import (
 )
 
 _IMAGE_URL: HttpUrl = HttpUrl("https://example.com/imgs/photo.jpeg")
+_PDF_URL: HttpUrl = HttpUrl("https://example.com/pdfs/paper.pdf")
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -510,6 +512,52 @@ class TestVertexTreeToPandocImageVertex:
         inline = list(list(doc.content)[0].content)[0]
         assert isinstance(inline, pf.Link)
         assert _collect_text(inline) == "photo.jpg"
+
+
+# ---------------------------------------------------------------------------
+# TestVertexTreeToPandocPdfVertex
+# ---------------------------------------------------------------------------
+
+
+class TestVertexTreeToPandocPdfVertex:
+    """Tests for vertex_tree_to_pandoc() — PdfVertex rendering."""
+
+    def _tree(self, file_name: str | None = "paper.pdf.enc") -> VertexTree:
+        """Build a page-rooted tree containing a single PdfVertex."""
+        page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name=file_name)
+        return VertexTree(tree_vertices=[page, pdf])
+
+    def test_fetched_pdf_links_to_local_path(self, tmp_path: Path) -> None:
+        """When image_files has an entry for the vertex, the link targets the local path."""
+        fake_pdf = tmp_path / "paper.pdf"
+        fake_pdf.write_bytes(b"")
+        doc, _ = vertex_tree_to_pandoc(self._tree(), {"pdf00001a": fake_pdf}, {})
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.Para)
+        inline = list(blocks[0].content)[0]
+        assert isinstance(inline, pf.Link)
+        assert inline.url == str(fake_pdf)
+
+    def test_unfetched_pdf_falls_back_to_source_url(self) -> None:
+        """When image_files has no entry for the vertex, the link targets the remote source URL."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(), {}, {})
+        inline = list(list(doc.content)[0].content)[0]
+        assert isinstance(inline, pf.Link)
+        assert inline.url == str(_PDF_URL)
+
+    def test_link_label_strips_encryption_suffix(self) -> None:
+        """The link label is the original filename with Roam's .enc suffix stripped."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(file_name="paper.pdf.enc"), {}, {})
+        inline = list(list(doc.content)[0].content)[0]
+        assert _collect_text(inline) == "paper.pdf"
+
+    def test_link_label_falls_back_to_source_url(self) -> None:
+        """When no filename is known, the link label is the source URL."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(file_name=None), {}, {})
+        inline = list(list(doc.content)[0].content)[0]
+        assert _collect_text(inline) == str(_PDF_URL)
 
 
 # ---------------------------------------------------------------------------

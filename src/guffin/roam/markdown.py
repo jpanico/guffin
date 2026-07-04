@@ -3,7 +3,9 @@
 Public symbols:
 
 - **Pattern constants**: :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
-  link whose URL is a Cloud Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
+  link whose URL is a Cloud Firestore storage URL; :data:`PDF_EMBED_RE` — compiled regex matching
+  a Roam PDF component ``{{pdf: <url>}}`` (or ``{{[[pdf]]: <url>}}``) whose URL is a Cloud
+  Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
   a Roam page reference ``[[<page_name>]]``; :data:`TAG_RE` — compiled regex matching a Roam tag
   in either page-reference (``#[[…]]``) or bare-word (``#word``) form; :data:`ATTRIBUTE_ASSIGNMENT_RE`
   — compiled regex matching a line-anchored Roam attribute assignment ``attribute:: value, …``;
@@ -20,6 +22,8 @@ Public symbols:
 - **Image-link accessors**: :func:`image_link_url`, :func:`image_link_alt_text` — extract the Cloud
   Firestore URL and the alt text from the first image link in a block string;
   :func:`firestore_url_file_name` — decode the original filename from a Firestore storage URL.
+- **PDF-embed accessor**: :func:`pdf_embed_url` — extract the Cloud Firestore URL from the first
+  PDF component in a block string.
 - **Table marker**: :data:`ROAM_NATIVE_TABLE_MARKER` — the canonical block string identifying a Roam
   native table block; :data:`ROAM_NATIVE_TABLE_MARKERS` — every recognised spelling of the marker
   (``{{table}}`` and ``{{[[table]]}}``).
@@ -121,6 +125,41 @@ def firestore_url_file_name(firestore_url: str) -> str | None:
     except Exception:
         pass
     return None
+
+
+PDF_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(
+    r"\{\{(?:pdf|\[\[pdf\]\]): (?P<url>https://firebasestorage\.googleapis\.com/[^\}\s]+)\}\}"
+)
+"""Compiled regex matching a Roam PDF component whose URL is a Cloud Firestore storage URL.
+
+Roam writes the component as either the bare form (``{{pdf: <url>}}``) or the page-reference
+form (``{{[[pdf]]: <url>}}``); the two are equivalent.  Exactly one space follows the colon,
+mirroring the block-embed component (:data:`BLOCK_EMBED_RE`).
+
+Named group:
+
+- ``url`` — the Cloud Firestore storage URL between the colon and the closing ``}}``.
+
+Example match on ``{{pdf: https://firebasestorage.googleapis.com/v0/b/...}}``:
+
+- ``match.group(0)`` — the full ``{{pdf: ...}}`` component.
+- ``match.group("url")`` — just the URL.
+"""
+
+
+@validate_call
+def pdf_embed_url(string: str) -> str | None:
+    """Return the Cloud Firestore storage URL from the first PDF component in *string*, or ``None``.
+
+    Args:
+        string: A raw block string that may contain a Roam PDF component
+            (``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}``).
+
+    Returns:
+        The URL string captured from the first Firestore PDF component, or ``None``.
+    """
+    m: Final[regex.Match[str] | None] = PDF_EMBED_RE.search(string)
+    return m.group("url") if m else None
 
 
 _PAGE_REF_BODY: Final[str] = r"(?:[^\[\]\n]++|(?&page_ref))+"

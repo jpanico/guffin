@@ -15,6 +15,8 @@ Public symbols:
   page node.
 - :func:`to_image_vertex` — build an :class:`~guffin.vertex.ImageVertex` from a
   Firestore image block node.
+- :func:`to_pdf_vertex` — build a :class:`~guffin.vertex.PdfVertex` from a
+  Firestore PDF block node.
 - :func:`to_heading_vertex` — build a :class:`~guffin.vertex.HeadingVertex` from
   a heading block node.
 - :func:`to_text_vertex` — build a
@@ -70,6 +72,7 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    PdfVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -87,6 +90,7 @@ from guffin.roam.markdown import (
     firestore_url_file_name,
     image_link_alt_text,
     image_link_url,
+    pdf_embed_url,
 )
 from guffin.roam.node import (
     NodeType,
@@ -352,6 +356,8 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.HEADING
         case NodeType.IMAGE_BLOCK:
             return VertexType.IMAGE
+        case NodeType.PDF_BLOCK:
+            return VertexType.PDF
         case NodeType.CALLOUT_BLOCK:
             return VertexType.CALLOUT
         case NodeType.BLOCK_QUOTE:
@@ -437,6 +443,40 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
         file_name=file_name,
         media_type=media_type,
         scaled_image_size=size,
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
+    )
+
+
+@validate_call
+def to_pdf_vertex(node: RoamNode, tree: NodeTree) -> PdfVertex:
+    """Build a :class:`~guffin.vertex.PdfVertex` from *node*.
+
+    Args:
+        node: A block node whose ``node.string`` is wholly a Roam PDF component
+            (``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}``) with a Firestore URL.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
+
+    Returns:
+        A :class:`~guffin.vertex.PdfVertex`.
+
+    Raises:
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
+        ValueError: If ``node.string`` is ``None`` or contains no Firestore PDF component.
+    """
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    firestore_url: Final[str | None] = pdf_embed_url(node.string)
+    if firestore_url is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firestore PDF component")
+    return PdfVertex(
+        uid=node.uid,
+        source=_url_adapter.validate_python(firestore_url),
+        file_name=firestore_url_file_name(firestore_url),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
@@ -789,6 +829,8 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             return to_page_vertex(node, tree)
         case VertexType.IMAGE:
             return to_image_vertex(node, tree)
+        case VertexType.PDF:
+            return to_pdf_vertex(node, tree)
         case VertexType.HEADING:
             return to_heading_vertex(node, tree, heading_offset)
         case VertexType.TEXT:

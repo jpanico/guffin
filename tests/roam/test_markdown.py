@@ -9,16 +9,23 @@ from guffin.roam.markdown import (
     BLOCK_EMBED_RE,
     BLOCK_REF_RE,
     PAGE_REF_RE,
+    PDF_EMBED_RE,
     TAG_RE,
     firestore_url_file_name,
     image_link_alt_text,
     image_link_url,
+    pdf_embed_url,
 )
 
 _FIRESTORE_URL: Final[str] = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
 )
 _IMAGE_STRING: Final[str] = f"![A flower]({_FIRESTORE_URL})"
+
+_FIRESTORE_PDF_URL: Final[str] = (
+    "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/pdfs%2Fpaper.pdf.enc?alt=media&token=abc123"
+)
+_PDF_STRING: Final[str] = f"{{{{pdf: {_FIRESTORE_PDF_URL}}}}}"
 
 # ---------------------------------------------------------------------------
 # TestPageRefRE
@@ -436,6 +443,79 @@ class TestBlockEmbedRE:
     def test_no_match_uid_too_short(self) -> None:
         """A UID shorter than nine characters does not match."""
         assert BLOCK_EMBED_RE.search("{{embed: ((abc1234))}}") is None
+
+
+# ---------------------------------------------------------------------------
+# TestPdfEmbedRE
+# ---------------------------------------------------------------------------
+
+
+class TestPdfEmbedRE:
+    """Tests for PDF_EMBED_RE — the Roam PDF component {{pdf: <url>}} regex."""
+
+    # --- match cases ---
+
+    def test_bare_form_full_string(self) -> None:
+        """The bare {{pdf: <url>}} form is consumed by a single match."""
+        m = PDF_EMBED_RE.search(_PDF_STRING)
+        assert m is not None
+        assert m.group(0) == _PDF_STRING
+        assert m.group("url") == _FIRESTORE_PDF_URL
+
+    def test_page_reference_form(self) -> None:
+        """The page-reference {{[[pdf]]: <url>}} form is equivalent to the bare form."""
+        m = PDF_EMBED_RE.search(f"{{{{[[pdf]]: {_FIRESTORE_PDF_URL}}}}}")
+        assert m is not None
+        assert m.group("url") == _FIRESTORE_PDF_URL
+
+    def test_inline_component(self) -> None:
+        """A PDF component embedded in surrounding prose is captured."""
+        m = PDF_EMBED_RE.search(f"see {_PDF_STRING} here")
+        assert m is not None
+        assert m.group(0) == _PDF_STRING
+
+    # --- no-match cases ---
+
+    def test_no_match_non_firestore_url(self) -> None:
+        """A PDF component whose URL is not a Firestore URL does not match."""
+        assert PDF_EMBED_RE.search("{{pdf: https://example.com/paper.pdf}}") is None
+
+    def test_no_match_missing_space(self) -> None:
+        """The literal single space after the colon is required."""
+        assert PDF_EMBED_RE.search(f"{{{{pdf:{_FIRESTORE_PDF_URL}}}}}") is None
+
+    def test_no_match_bare_url(self) -> None:
+        """A naked Firestore URL without the {{pdf: }} wrapper does not match."""
+        assert PDF_EMBED_RE.search(_FIRESTORE_PDF_URL) is None
+
+    def test_no_match_other_component(self) -> None:
+        """A different Roam component keyword does not match."""
+        assert PDF_EMBED_RE.search(f"{{{{video: {_FIRESTORE_PDF_URL}}}}}") is None
+
+
+# ---------------------------------------------------------------------------
+# TestPdfEmbedUrl
+# ---------------------------------------------------------------------------
+
+
+class TestPdfEmbedUrl:
+    """Tests for pdf_embed_url."""
+
+    def test_extracts_url_from_component(self) -> None:
+        """The Firestore URL is captured from a block string's PDF component."""
+        assert pdf_embed_url(_PDF_STRING) == _FIRESTORE_PDF_URL
+
+    def test_extracts_url_from_page_reference_form(self) -> None:
+        """The URL is captured from the {{[[pdf]]: <url>}} form."""
+        assert pdf_embed_url(f"{{{{[[pdf]]: {_FIRESTORE_PDF_URL}}}}}") == _FIRESTORE_PDF_URL
+
+    def test_none_when_no_component(self) -> None:
+        """A string with no PDF component yields None."""
+        assert pdf_embed_url("just some plain text") is None
+
+    def test_none_for_non_firestore_url(self) -> None:
+        """A PDF component pointing outside Firestore yields None."""
+        assert pdf_embed_url("{{pdf: https://example.com/paper.pdf}}") is None
 
 
 # ---------------------------------------------------------------------------

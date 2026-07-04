@@ -1,10 +1,10 @@
-"""Image asset fetching for the rendering pipeline — Pandoc-free.
+"""Image and PDF asset fetching for the rendering pipeline — Pandoc-free.
 
 Walks a :class:`~guffin.vertex_tree.VertexTree`, fetches every
-:class:`~guffin.vertex.ImageVertex`'s Cloud Firestore asset to a local
-directory via :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, and
-returns a ``{uid: ImageRef}`` mapping bundling each image's on-disk path and
-native pixel size.
+:class:`~guffin.vertex.ImageVertex`'s (or :class:`~guffin.vertex.PdfVertex`'s)
+Cloud Firestore asset to a local directory via
+:func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, and returns a mapping
+from vertex UID to the fetched asset's on-disk location.
 
 This module deliberately has no Pandoc/Panflute dependency so it can be shared
 by rendering back-ends that must remain Pandoc-free.
@@ -16,6 +16,8 @@ Public symbols:
   :class:`~guffin.vertex_tree.VertexTree` to a local directory; return a ``{uid: ImageRef}`` mapping.
 - :func:`fetch_and_enrich_images` — :func:`fetch_images` plus tree enrichment; returns the
   ``original_image_size``-populated tree together with the ``{uid: ImageRef}`` mapping.
+- :func:`fetch_pdfs` — fetch all :class:`~guffin.vertex.PdfVertex` assets from a
+  :class:`~guffin.vertex_tree.VertexTree` to a local directory; return a ``{uid: Path}`` mapping.
 """
 
 import logging
@@ -25,7 +27,7 @@ from typing import Final, NamedTuple
 from pydantic import validate_call
 
 from guffin.common.geometry import ImageSize
-from guffin.model.vertex import ImageVertex
+from guffin.model.vertex import ImageVertex, PdfVertex
 from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
@@ -102,6 +104,54 @@ def fetch_images(
         except Exception as e:
             logger.warning("Failed to fetch image uid=%r source=%s: %s", vertex.uid, vertex.source, e)
     return image_refs
+
+
+@validate_call
+def fetch_pdfs(
+    vertex_tree: VertexTree,
+    api_endpoint: ApiEndpoint,
+    pdf_dir: Path,
+    cache_dir: Path | None = None,
+) -> dict[Uid, Path]:
+    """Fetch all :class:`~guffin.vertex.PdfVertex` assets to *pdf_dir*.
+
+    Delegates fetching and caching to
+    :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`.  Each fetched
+    asset is written to *pdf_dir* under its deterministic ``<sha256>.pdf``
+    filename.  Vertices that fail to fetch are skipped with a warning and
+    will fall back to a hyperlink in the rendered output.
+
+    Every vertex in :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` is scanned
+    (covering both :attr:`~guffin.model.vertex_tree.VertexTree.tree_vertices` and
+    :attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`, deduplicated by UID),
+    so a PDF referenced from another page is fetched like an in-tree PDF rather than
+    left as a remote hyperlink.
+
+    Args:
+        vertex_tree: The vertex tree whose PDF assets to fetch.
+        api_endpoint: Roam Local API endpoint (URL + bearer token).
+        pdf_dir: Directory where fetched PDF files are written.
+        cache_dir: Optional directory for caching downloaded assets across
+            runs.
+
+    Returns:
+        A mapping from :class:`~guffin.vertex.PdfVertex` UID to the local path
+        of the fetched PDF file.  Vertices that could not be fetched are
+        absent from the mapping.
+    """
+    pdf_files: Final[dict[Uid, Path]] = {}
+    for vertex in vertex_tree.uid_map.values():
+        if not isinstance(vertex, PdfVertex):
+            continue
+        try:
+            asset: RoamAsset = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)
+            pdf_path: Path = pdf_dir / asset.file_name
+            pdf_path.write_bytes(asset.contents)
+            pdf_files[vertex.uid] = pdf_path
+            logger.info("Fetched PDF uid=%r -> %s", vertex.uid, pdf_path.name)
+        except Exception as e:
+            logger.warning("Failed to fetch PDF uid=%r source=%s: %s", vertex.uid, vertex.source, e)
+    return pdf_files
 
 
 @validate_call

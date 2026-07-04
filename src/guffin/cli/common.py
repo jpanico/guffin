@@ -33,6 +33,7 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    PdfVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -149,6 +150,8 @@ def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
             return vertex.text
         case ImageVertex():
             return vertex.alt_text or vertex.file_name or str(vertex.source)
+        case PdfVertex():
+            return vertex.file_name or str(vertex.source)
         case CalloutVertex():
             return vertex.title or vertex.body
         case CodeBlockVertex():

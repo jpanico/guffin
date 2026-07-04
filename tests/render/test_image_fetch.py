@@ -12,14 +12,15 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.model.vertex import ImageVertex, PageVertex, TextVertex
+from guffin.model.vertex import ImageVertex, PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree
-from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images, fetch_images
+from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images, fetch_images, fetch_pdfs
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.primitives import Uid
 
 _IMAGE_URL: HttpUrl = HttpUrl("https://example.com/imgs/photo.jpeg")
+_PDF_URL: HttpUrl = HttpUrl("https://example.com/pdfs/paper.pdf")
 _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint(
     url=ApiEndpointURL(local_api_port=3333, graph_name="test-graph"),
     bearer_token="test-token",
@@ -124,6 +125,71 @@ class TestFetchImages:
         result: Final[dict[Uid, ImageRef]] = fetch_images(tree, _ENDPOINT, tmp_path)
 
         assert list(result) == ["img00001a"]
+
+
+class TestFetchPdfs:
+    """Tests for fetch_pdfs() — fetch_and_cache_asset is mocked; only tmp_path writes touch disk."""
+
+    def test_pdf_asset_yields_path_with_written_bytes(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A PDF RoamAsset produces a path entry holding the fetched bytes."""
+        contents: Final[bytes] = b"%PDF-1.7 body"
+        asset: Final[RoamAsset] = RoamAsset(
+            file_name="paper.pdf",
+            last_modified=_LAST_MODIFIED,
+            media_type=MediaType.PDF,
+            contents=contents,
+        )
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return asset
+
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
+
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        result: Final[dict[Uid, Path]] = fetch_pdfs(tree, _ENDPOINT, tmp_path)
+
+        assert list(result) == ["pdf00001a"]
+        assert result["pdf00001a"] == tmp_path / "paper.pdf"
+        assert result["pdf00001a"].read_bytes() == contents
+
+    def test_fetch_failure_skips_vertex_and_logs_warning(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """When fetch_and_cache_asset raises, the vertex is absent and a warning is logged."""
+
+        def _raising(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            raise RuntimeError("network down")
+
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _raising)
+
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        with caplog.at_level(logging.WARNING, logger="guffin.render.image_fetch"):
+            result: Final[dict[Uid, Path]] = fetch_pdfs(tree, _ENDPOINT, tmp_path)
+
+        assert result == {}
+        assert any("Failed to fetch PDF" in r.message for r in caplog.records)
+
+    def test_non_pdf_vertices_are_skipped(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Only PdfVertex entries are fetched; page, text, and image vertices are ignored."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return RoamAsset(
+                file_name="paper.pdf",
+                last_modified=_LAST_MODIFIED,
+                media_type=MediaType.PDF,
+                contents=b"%PDF-1.7",
+            )
+
+        monkeypatch.setattr("guffin.render.image_fetch.fetch_and_cache_asset", _fake)
+
+        page: Final[PageVertex] = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
+        text: Final[TextVertex] = TextVertex(uid="txt00001a", text="hello")
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[page, text, _image_vertex("img00001a"), PdfVertex(uid="pdf00001a", source=_PDF_URL)]
+        )
+        result: Final[dict[Uid, Path]] = fetch_pdfs(tree, _ENDPOINT, tmp_path)
+
+        assert list(result) == ["pdf00001a"]
 
 
 class TestFetchAndEnrichImages:

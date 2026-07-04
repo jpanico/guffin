@@ -33,13 +33,14 @@ Public symbols:
   node.
 - :class:`ImageVertex` — normalized (transcribed) form of a Roam Firestore image block
   node.
+- :class:`PdfVertex` — normalized (transcribed) form of a Roam Firestore PDF block node.
 - :class:`CalloutVertex` — normalized (transcribed) form of a Roam callout block node.
 - :class:`CodeBlockVertex` — normalized (transcribed) form of a Roam fenced code block
   node.
 - :class:`BlockQuoteVertex` — normalized (transcribed) form of a Roam block-quote block node.
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
 - :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
-- :data:`Vertex` — union of all nine concrete vertex types.
+- :data:`Vertex` — union of all ten concrete vertex types.
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment by name and domain.
@@ -77,6 +78,10 @@ class VertexType(StrEnum):
         IMAGE: Normalized form of a Roam *Block* node whose
             ``:block/string`` embeds a Cloud Firestore URL pointing to a
             Roam-managed image upload.
+        PDF: Normalized form of a Roam *Block* node whose ``:block/string``
+            is wholly a Roam PDF component (``{{pdf: <url>}}`` /
+            ``{{[[pdf]]: <url>}}``) whose URL points to a Roam-managed PDF
+            upload in Cloud Firestore.
         CALLOUT: Normalized form of a Roam *Block* node whose
             ``:block/string`` starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
         CODE_BLOCK: Normalized form of a Roam *Block* node whose
@@ -96,6 +101,7 @@ class VertexType(StrEnum):
     TEXT = "guffin/text"
     HEADING = "guffin/heading"
     IMAGE = "guffin/image"
+    PDF = "guffin/pdf"
     CALLOUT = "guffin/callout"
     CODE_BLOCK = "guffin/code-block"
     BLOCK_QUOTE = "guffin/block-quote"
@@ -119,12 +125,12 @@ strings during transcription.
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
-    """Shared fields inherited by all nine concrete vertex types.
+    """Shared fields inherited by all ten concrete vertex types.
 
     Not instantiated directly — use :class:`PageVertex`, :class:`HeadingVertex`,
-    :class:`TextVertex`, :class:`ImageVertex`, :class:`CalloutVertex`,
-    :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`, or
-    :class:`BlockEmbedVertex`.
+    :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
+    :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`,
+    :class:`TableVertex`, or :class:`BlockEmbedVertex`.
 
     Type Parameters:
         VT: The :class:`VertexType` literal for the concrete subtype (e.g.
@@ -300,6 +306,30 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
         return val
 
 
+class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
+    """Normalized (transcribed) form of a Roam Cloud Firestore PDF block node.
+
+    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
+    ``:block/string`` that is wholly a Roam PDF component (``{{pdf: <url>}}`` /
+    ``{{[[pdf]]: <url>}}``) whose URL is a Cloud Firestore storage URL.
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.PDF`.
+            Serialized as ``'vertex-type'``.
+        source: Cloud Firestore storage URL for the PDF file.
+        file_name: Original filename decoded from *source*. ``None`` if the
+            filename cannot be extracted.
+    """
+
+    vertex_type: Literal[VertexType.PDF] = Field(
+        default=VertexType.PDF,
+        serialization_alias="vertex-type",
+        description="Always VertexType.PDF (serialized as 'vertex-type').",
+    )
+    source: HttpUrl = Field(..., description="Cloud Firestore storage URL for the PDF file.")
+    file_name: str | None = Field(default=None, description="Original filename decoded from source.")
+
+
 class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
     """Normalized (transcribed) form of a Roam callout block node.
 
@@ -449,13 +479,14 @@ type Vertex = (
     | HeadingVertex
     | TextVertex
     | ImageVertex
+    | PdfVertex
     | CalloutVertex
     | CodeBlockVertex
     | BlockQuoteVertex
     | TableVertex
     | BlockEmbedVertex
 )
-"""Union of all nine concrete, normalized vertex types.
+"""Union of all ten concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
@@ -465,8 +496,9 @@ vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discri
 """Pydantic :class:`~pydantic.TypeAdapter` for validating a raw dict into the correct :data:`Vertex` subtype.
 
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
-:class:`HeadingVertex`, :class:`TextVertex`, :class:`ImageVertex`, :class:`CalloutVertex`,
-:class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`, and :class:`BlockEmbedVertex`.
+:class:`HeadingVertex`, :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
+:class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`,
+and :class:`BlockEmbedVertex`.
 
 Example::
 
