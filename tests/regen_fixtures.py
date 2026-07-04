@@ -35,6 +35,7 @@ import argparse
 import enum
 import os
 import pathlib
+import shutil
 import sys
 import tempfile
 from typing import Final
@@ -328,6 +329,9 @@ def main() -> None:
     # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/
     if args.mdbundle:
         FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
+        # The renderer writes into an existing bundle dir without clearing it; start from empty
+        # so files dropped from the page (or renamed assets) don't linger in the baseline.
+        shutil.rmtree(FIXTURES_MDBUNDLE / f"{out_stem}.mdbundle", ignore_errors=True)
         render(
             render_bundle,
             profile=DefaultProfile(),

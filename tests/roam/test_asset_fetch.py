@@ -306,6 +306,7 @@ class TestFetchAndCacheAsset:
         cache_key: str = hashlib.sha256(str(firebase_url).encode()).hexdigest()
         cached_file: Path = tmp_path / f"{cache_key}.jpeg"
         cached_file.write_bytes(b"\xff\xd8\xff\xe0")
+        (tmp_path / f"{cache_key}.meta.json").write_text('{"original_file_name": null}', encoding="utf-8")
 
         endpoint: ApiEndpoint = ApiEndpoint(
             url=ApiEndpointURL(local_api_port=3333, graph_name="test-graph"),
@@ -362,15 +363,44 @@ class TestFetchAndCacheAsset:
         assert asset.original_file_name == "report.pdf"
         assert asset.file_name == f"{cache_key}.pdf"
 
-    def test_cache_hit_without_sidecar_yields_no_original_name(self, tmp_path: Path) -> None:
-        """A cache written before sidecars existed serves the asset with original_file_name None."""
+    def test_cached_file_without_sidecar_is_refetched_and_upgraded(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A cache written before sidecars existed is treated as stale: refetched, rewritten, sidecar added."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint) -> RoamAsset:
+            return RoamAsset(
+                file_name="dummy.pdf",
+                last_modified=datetime(2024, 6, 1, 12, 0, 0),
+                media_type=MediaType.PDF,
+                contents=b"%PDF-1.7 fresh",
+                original_file_name="dummy.pdf",
+            )
+
+        monkeypatch.setattr("guffin.roam.asset_fetch.FetchRoamAsset.fetch", _fake)
         firebase_url: HttpUrl = HttpUrl("https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/c.pdf")
         cache_key: str = hashlib.sha256(str(firebase_url).encode()).hexdigest()
+        (tmp_path / f"{cache_key}.pdf").write_bytes(b"%PDF-1.7 stale")
+
+        asset: RoamAsset = fetch_and_cache_asset(firebase_url, self._endpoint(), cache_dir=tmp_path)
+
+        assert asset.original_file_name == "dummy.pdf"
+        assert asset.contents == b"%PDF-1.7 fresh"
+        assert (tmp_path / f"{cache_key}.pdf").read_bytes() == b"%PDF-1.7 fresh"
+        sidecar: Path = tmp_path / f"{cache_key}.meta.json"
+        assert json.loads(sidecar.read_text(encoding="utf-8")) == {"original_file_name": "dummy.pdf"}
+
+    def test_sidecar_recording_no_original_name_is_a_cache_hit(self, tmp_path: Path) -> None:
+        """A sidecar that records no original filename still marks the entry fresh; the hit yields None."""
+        firebase_url: HttpUrl = HttpUrl("https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/e.pdf")
+        cache_key: str = hashlib.sha256(str(firebase_url).encode()).hexdigest()
         (tmp_path / f"{cache_key}.pdf").write_bytes(b"%PDF-1.7")
+        (tmp_path / f"{cache_key}.meta.json").write_text('{"original_file_name": null}', encoding="utf-8")
 
         asset: RoamAsset = fetch_and_cache_asset(firebase_url, self._endpoint(), cache_dir=tmp_path)
 
         assert asset.original_file_name is None
+        assert asset.contents == b"%PDF-1.7"
 
     def test_sidecar_alone_is_not_a_cache_hit(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """An orphaned sidecar (no cached asset) does not satisfy the cache, and is not misread as one."""

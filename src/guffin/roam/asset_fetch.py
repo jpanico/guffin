@@ -173,6 +173,53 @@ def _read_sidecar_original_file_name(sidecar_path: Path) -> str | None:
     return raw.get("original_file_name")
 
 
+def _cached_asset(cache_dir: Path, cache_key: str, sidecar_path: Path, firebase_url: HttpUrl) -> RoamAsset | None:
+    """Return the cached asset for *cache_key*, or ``None`` when a fresh fetch is required.
+
+    ``None`` on a cache miss, and also when the cached file lacks its sidecar
+    (a cache written before sidecars existed): such an entry cannot say what
+    the asset was originally named, so it is treated as stale and left to be
+    refetched and rewritten in place.
+
+    Args:
+        cache_dir: Directory holding cached asset files and their sidecars.
+        cache_key: The SHA-256 hex digest keying the asset's cache entry.
+        sidecar_path: Path of the entry's metadata sidecar.
+        firebase_url: The asset's Cloud Firestore URL, for logging only.
+
+    Returns:
+        The cached :class:`~guffin.roam.asset.RoamAsset`, or ``None`` when
+        the cache cannot serve the asset.
+
+    Raises:
+        ValueError: If multiple cache files exist for *cache_key*, or the
+            cached file has an unrecognized extension.
+    """
+    cached_files: Final[list[Path]] = [
+        path for path in cache_dir.glob(f"{cache_key}.*") if not path.name.endswith(_SIDECAR_SUFFIX)
+    ]
+    if len(cached_files) > 1:
+        raise ValueError(f"Multiple cache files found for key {cache_key!r}: {cached_files}")
+    if not cached_files:
+        return None
+    cached_path: Final[Path] = cached_files[0]
+    if not sidecar_path.exists():
+        # A pre-sidecar entry cannot say what the asset was originally named; refetch to upgrade it in place.
+        logger.info("Cache entry predates its sidecar; refetching: %s", cached_path.name)
+        return None
+    cached_media_type: Final[MediaType | None] = MediaType.from_file_name(cached_path.name)
+    if cached_media_type is None:
+        raise ValueError(f"Cached file has unrecognized extension: {cached_path.name!r}")
+    logger.info("Cache hit: %s -> %s", firebase_url, cached_path.name)
+    return RoamAsset.create(
+        file_name=cached_path.name,
+        last_modified=datetime.now(),
+        media_type=cached_media_type,
+        contents=cached_path.read_bytes(),
+        original_file_name=_read_sidecar_original_file_name(sidecar_path),
+    )
+
+
 @validate_call
 def fetch_and_cache_asset(
     firebase_url: HttpUrl,
@@ -190,7 +237,11 @@ def fetch_and_cache_asset(
     original upload filename is preserved in a ``<sha256>.meta.json`` sidecar
     next to the cached file, so
     :attr:`~guffin.roam.asset.RoamAsset.original_file_name` is populated on
-    cache hits too (``None`` when the cache predates sidecars).
+    cache hits too.  A cached file without its sidecar (a cache written
+    before sidecars existed) is treated as stale: the asset is refetched and
+    the cache entry rewritten with its sidecar, so
+    ``original_file_name`` never silently degrades to ``None`` on account of
+    cache age.
 
     Args:
         firebase_url: The Cloud Firestore URL of the asset to fetch.
@@ -213,27 +264,10 @@ def fetch_and_cache_asset(
     cache_key: Final[str] = hashlib.sha256(str(firebase_url).encode()).hexdigest()
     sidecar_path: Final[Path | None] = (cache_dir / f"{cache_key}{_SIDECAR_SUFFIX}") if cache_dir is not None else None
 
-    if cache_dir is not None:
-        cached_files: Final[list[Path]] = [
-            path for path in cache_dir.glob(f"{cache_key}.*") if not path.name.endswith(_SIDECAR_SUFFIX)
-        ]
-        if len(cached_files) > 1:
-            raise ValueError(f"Multiple cache files found for key {cache_key!r}: {cached_files}")
-        if cached_files:
-            cached_path: Final[Path] = cached_files[0]
-            cached_media_type: Final[MediaType | None] = MediaType.from_file_name(cached_path.name)
-            if cached_media_type is None:
-                raise ValueError(f"Cached file has unrecognized extension: {cached_path.name!r}")
-            logger.info("Cache hit: %s -> %s", firebase_url, cached_path.name)
-            cached_contents: Final[bytes] = cached_path.read_bytes()
-            assert sidecar_path is not None  # cache_dir is not None on this branch
-            return RoamAsset.create(
-                file_name=cached_path.name,
-                last_modified=datetime.now(),
-                media_type=cached_media_type,
-                contents=cached_contents,
-                original_file_name=_read_sidecar_original_file_name(sidecar_path),
-            )
+    if cache_dir is not None and sidecar_path is not None:
+        cached: Final[RoamAsset | None] = _cached_asset(cache_dir, cache_key, sidecar_path, firebase_url)
+        if cached is not None:
+            return cached
 
     asset: Final[RoamAsset] = FetchRoamAsset.fetch(firebase_url=firebase_url, api_endpoint=api_endpoint)
     ext: Final[str] = asset.media_type.extension

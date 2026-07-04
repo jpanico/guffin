@@ -27,6 +27,7 @@ from typing import Final, NamedTuple
 
 from pydantic import validate_call
 
+from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.model.vertex import ImageVertex, PdfVertex
 from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes, enrich_pdf_original_file_names
@@ -62,6 +63,60 @@ class AssetRef(NamedTuple):
     original_file_name: str | None = None
 
 
+def _preferred_file_name(asset: RoamAsset) -> str:
+    """The filename an asset should be written under, before collision handling.
+
+    Prefers the asset's original upload filename, normalized by
+    :func:`~guffin.common.filenames.shell_safe_filename`.  Falls back to the
+    deterministic ``<sha256>.<ext>`` cache filename when the original is
+    unknown, or when normalization leaves no usable stem (an empty string or
+    a bare-extension dotfile).
+
+    Args:
+        asset: The fetched asset to name.
+
+    Returns:
+        The preferred filename for the asset.
+    """
+    if asset.original_file_name is None:
+        return asset.file_name
+    safe_name: Final[str] = shell_safe_filename(asset.original_file_name)
+    if not safe_name or safe_name.startswith("."):
+        return asset.file_name
+    return safe_name
+
+
+def _claim_file_name(asset: RoamAsset, claimed_names: dict[str, str]) -> str:
+    """Claim a distinct on-disk filename for *asset* within one fetch pass.
+
+    Starts from :func:`_preferred_file_name` and, when that name is already
+    claimed by a *different* asset, appends an increasing numeric suffix to
+    the stem (``paper.pdf`` → ``paper-1.pdf`` → ``paper-2.pdf`` …) until an
+    unclaimed name is found.  The same underlying asset (identified by its
+    ``<sha256>.<ext>`` cache filename) re-claims its existing name, so an
+    asset referenced from several vertices is written once under one name.
+
+    Args:
+        asset: The fetched asset to name.
+        claimed_names: Mapping of already-claimed filename to the cache
+            filename of the asset holding the claim; updated in place with
+            the returned claim.
+
+    Returns:
+        The claimed filename for the asset.
+    """
+    preferred: Final[str] = _preferred_file_name(asset)
+    stem: Final[str] = Path(preferred).stem
+    suffix: Final[str] = Path(preferred).suffix
+    candidate = preferred
+    counter = 1
+    while candidate in claimed_names and claimed_names[candidate] != asset.file_name:
+        candidate = f"{stem}-{counter}{suffix}"
+        counter += 1
+    claimed_names[candidate] = asset.file_name
+    return candidate
+
+
 @validate_call
 def fetch_assets(
     vertex_tree: VertexTree,
@@ -74,8 +129,11 @@ def fetch_assets(
     Scans for :class:`~guffin.vertex.ImageVertex` and
     :class:`~guffin.vertex.PdfVertex` entries, delegating fetching and caching
     to :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`.  Each fetched
-    asset is written to *asset_dir* under its deterministic
-    ``<sha256>.<ext>`` filename.  Vertices that fail to fetch are skipped
+    asset is written to *asset_dir* under its original upload filename
+    (normalized to a POSIX-safe form, with a numeric suffix appended when two
+    distinct assets share a name), falling back to the deterministic
+    ``<sha256>.<ext>`` cache filename when the original is unknown or
+    normalizes to nothing usable.  Vertices that fail to fetch are skipped
     with a warning and will fall back to a hyperlink in the rendered output.
 
     Every vertex in :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` is scanned
@@ -99,12 +157,13 @@ def fetch_assets(
         mapping.
     """
     asset_refs: Final[dict[Uid, AssetRef]] = {}
+    claimed_names: Final[dict[str, str]] = {}
     for vertex in vertex_tree.uid_map.values():
         if not isinstance(vertex, ImageVertex | PdfVertex):
             continue
         try:
             asset: RoamAsset = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)
-            asset_path: Path = asset_dir / asset.file_name
+            asset_path: Path = asset_dir / _claim_file_name(asset, claimed_names)
             asset_path.write_bytes(asset.contents)
             size: ImageSize | None = asset.image_size if isinstance(asset, RoamImageAsset) else None
             asset_refs[vertex.uid] = AssetRef(

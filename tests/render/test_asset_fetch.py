@@ -49,10 +49,12 @@ def _image_asset(size: ImageSize = ImageSize(width=640, height=480), contents: b
     )
 
 
-def _pdf_asset(contents: bytes = b"%PDF-1.7 body", original_file_name: str | None = None) -> RoamAsset:
-    """Build a base (non-image) RoamAsset named paper.pdf with the given contents."""
+def _pdf_asset(
+    contents: bytes = b"%PDF-1.7 body", original_file_name: str | None = None, file_name: str = "paper.pdf"
+) -> RoamAsset:
+    """Build a base (non-image) RoamAsset with the given cache filename and contents."""
     return RoamAsset(
-        file_name="paper.pdf",
+        file_name=file_name,
         last_modified=_LAST_MODIFIED,
         media_type=MediaType.PDF,
         contents=contents,
@@ -135,6 +137,83 @@ class TestFetchAssets:
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
 
         assert result["pdf00001a"].original_file_name == "dummy.pdf"
+
+    def test_asset_written_under_sanitized_original_name(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """An asset with a known original filename is written under its POSIX-safe form, not the cache name."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="My Paper (final).pdf", file_name="0f0f0f.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        ref: Final[AssetRef] = result["pdf00001a"]
+        assert ref.path == tmp_path / "My_Paper_final.pdf"
+        assert ref.path.read_bytes() == b"%PDF-1.7 body"
+
+    def test_unusable_original_name_falls_back_to_cache_name(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """An original filename that sanitizes to a bare extension falls back to the cache name."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="日本語.pdf", file_name="0f0f0f.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        assert result["pdf00001a"].path == tmp_path / "0f0f0f.pdf"
+
+    def test_distinct_assets_sharing_an_original_name_are_disambiguated(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Two different assets uploaded under the same name get numbered apart instead of clobbering."""
+        other_url: Final[HttpUrl] = HttpUrl("https://example.com/pdfs/other.pdf")
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            if firebase_url == _PDF_URL:
+                return _pdf_asset(contents=b"%PDF-1.7 first", original_file_name="paper.pdf", file_name="aaaa.pdf")
+            return _pdf_asset(contents=b"%PDF-1.7 second", original_file_name="paper.pdf", file_name="bbbb.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[
+                PdfVertex(uid="pdf00001a", source=_PDF_URL),
+                PdfVertex(uid="pdf00002a", source=other_url),
+            ]
+        )
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        names: Final[set[str]] = {ref.path.name for ref in result.values()}
+        assert names == {"paper.pdf", "paper-1.pdf"}
+        contents: Final[set[bytes]] = {ref.path.read_bytes() for ref in result.values()}
+        assert contents == {b"%PDF-1.7 first", b"%PDF-1.7 second"}
+
+    def test_same_asset_on_multiple_vertices_reuses_one_name(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """One asset referenced from several vertices keeps a single filename, with no numeric suffix."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="paper.pdf", file_name="aaaa.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[
+                PdfVertex(uid="pdf00001a", source=_PDF_URL),
+                PdfVertex(uid="pdf00002a", source=_PDF_URL),
+            ]
+        )
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        assert result["pdf00001a"].path == tmp_path / "paper.pdf"
+        assert result["pdf00002a"].path == tmp_path / "paper.pdf"
 
     def test_fetch_failure_skips_vertex_and_logs_warning(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
