@@ -114,7 +114,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
     - `node_fetch_result.py` — `NodeFetchAnchor`, `NodeFetchSpec`, `NodeFetchResult`; fetch result model and factory methods (`from_raw`, `from_network`); `anchor_node` helper
     - `node_fetch.py` — fetches `RoamNode` records via Local API; `fetch_roam_nodes` dispatches on page title vs. node UID
     - `schema_fetch.py` — fetches Datomic schema via Local API
-    - `asset_fetch.py` — fetches Firestore assets via Local API; `fetch_and_cache_asset` names cached files `<sha256>.<ext>` and preserves the original upload filename in a `<sha256>.meta.json` sidecar (caches written before sidecars existed yield `original_file_name=None`)
+    - `asset_fetch.py` — fetches Firestore assets via Local API; `fetch_and_cache_asset` names cached files `<sha256>.<ext>` and preserves the original upload filename in a `<sha256>.meta.json` sidecar
 - `scripts/` — shell wrapper scripts (`dump-roam-tree.sh`, `export-roam-tree.sh`)
 - `tests/fixtures/` — sample markdown, images, JSON, YAML, PDF for tests
 - `tests/regen_fixtures.py` — developer script; regenerates all six fixture files for a given Roam page title or node UID (see **Test Fixtures** below)

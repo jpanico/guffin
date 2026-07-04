@@ -164,22 +164,18 @@ _SIDECAR_SUFFIX: Final[str] = ".meta.json"
 def _read_sidecar_original_file_name(sidecar_path: Path) -> str | None:
     """Return the original filename recorded in the sidecar at *sidecar_path*, or ``None``.
 
-    ``None`` when the sidecar does not exist (a cache written before sidecars existed) or does
-    not record an original filename.
+    ``None`` when the sidecar does not record an original filename.
     """
-    if not sidecar_path.exists():
-        return None
     raw: Final[dict[str, str | None]] = json.loads(sidecar_path.read_text(encoding="utf-8"))
     return raw.get("original_file_name")
 
 
 def _cached_asset(cache_dir: Path, cache_key: str, sidecar_path: Path, firebase_url: HttpUrl) -> RoamAsset | None:
-    """Return the cached asset for *cache_key*, or ``None`` when a fresh fetch is required.
+    """Return the cached asset for *cache_key*, or ``None`` on a cache miss.
 
-    ``None`` on a cache miss, and also when the cached file lacks its sidecar
-    (a cache written before sidecars existed): such an entry cannot say what
-    the asset was originally named, so it is treated as stale and left to be
-    refetched and rewritten in place.
+    A cache entry is a ``<cache_key>.<ext>`` file paired with its metadata
+    sidecar; entries are assumed coherent, so a present cached file is always
+    served together with the original filename its sidecar records.
 
     Args:
         cache_dir: Directory holding cached asset files and their sidecars.
@@ -203,10 +199,6 @@ def _cached_asset(cache_dir: Path, cache_key: str, sidecar_path: Path, firebase_
     if not cached_files:
         return None
     cached_path: Final[Path] = cached_files[0]
-    if not sidecar_path.exists():
-        # A pre-sidecar entry cannot say what the asset was originally named; refetch to upgrade it in place.
-        logger.info("Cache entry predates its sidecar; refetching: %s", cached_path.name)
-        return None
     cached_media_type: Final[MediaType | None] = MediaType.from_file_name(cached_path.name)
     if cached_media_type is None:
         raise ValueError(f"Cached file has unrecognized extension: {cached_path.name!r}")
@@ -237,11 +229,7 @@ def fetch_and_cache_asset(
     original upload filename is preserved in a ``<sha256>.meta.json`` sidecar
     next to the cached file, so
     :attr:`~guffin.roam.asset.RoamAsset.original_file_name` is populated on
-    cache hits too.  A cached file without its sidecar (a cache written
-    before sidecars existed) is treated as stale: the asset is refetched and
-    the cache entry rewritten with its sidecar, so
-    ``original_file_name`` never silently degrades to ``None`` on account of
-    cache age.
+    cache hits too.
 
     Args:
         firebase_url: The Cloud Firestore URL of the asset to fetch.

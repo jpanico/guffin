@@ -147,9 +147,9 @@ class TestExportRoamTreeMdbundleFromRaw:
         asset fetch is avoided by pre-seeding the cache directory with the baseline
         bundle's images — their filenames are the ``<sha256(url)>.<ext>`` cache keys, so
         ``fetch_and_cache_asset`` resolves them as cache hits without any network call.
-        Each seeded entry gets a sidecar recording no original filename (an entry without
-        its sidecar counts as stale and would trigger a refetch), so the bundle keeps the
-        cache-key asset names the baseline was recorded with.
+        Each seeded entry gets its metadata sidecar (a cache entry is a file/sidecar pair),
+        recording no original filename so the bundle keeps the cache-key asset names the
+        baseline was recorded with.
         """
         raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_raw_result.yaml").read_text())
         api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
