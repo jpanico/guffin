@@ -13,7 +13,7 @@ Public symbols:
 - :func:`text_vertices` — return all :class:`~guffin.model.vertex.TextVertex` instances in a
   :class:`VertexTree`.
 - :func:`image_vertices` — return all :class:`~guffin.model.vertex.ImageVertex` instances in a :class:`VertexTree`.
-- :func:`image_urls` — return all Cloud Firestore image URLs from a :class:`VertexTree`.
+- :func:`pdf_vertices` — return all :class:`~guffin.model.vertex.PdfVertex` instances in a :class:`VertexTree`.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
@@ -29,7 +29,7 @@ import logging
 from collections.abc import Callable, Iterator
 from typing import Annotated, Final
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator, validate_call
+from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_call
 
 from guffin.common.geometry import ImageSize
 
@@ -39,6 +39,7 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    PdfVertex,
     TextVertex,
     Vertex,
 )
@@ -183,12 +184,9 @@ def image_vertices(tree: VertexTree) -> list[ImageVertex]:
 
 
 @validate_call
-def image_urls(tree: VertexTree) -> list[HttpUrl]:
-    """Return the Cloud Firestore URL of every :class:`~guffin.model.vertex.ImageVertex` in *tree*, in insertion.
-
-    order.
-    """
-    return [v.source for v in image_vertices(tree)]
+def pdf_vertices(tree: VertexTree) -> list[PdfVertex]:
+    """Return all :class:`~guffin.model.vertex.PdfVertex` instances in *tree*, in insertion order."""
+    return [v for v in tree.tree_vertices if isinstance(v, PdfVertex)]
 
 
 @validate_call

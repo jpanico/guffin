@@ -61,7 +61,7 @@ from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
-from guffin.render.image_fetch import fetch_and_enrich_images
+from guffin.render.asset_fetch import fetch_and_enrich_assets
 from guffin.render.rich_rendering import (
     DEFAULT_NODE_PANEL_PROPS,
     DEFAULT_VERTEX_PANEL_PROPS,
@@ -146,10 +146,10 @@ def _dump_vertex_tree(
     """Fetch image sizes, enrich *vertex_tree*, then render and print it as a Rich tree.
 
     Logs a warning and returns early when *vertex_tree* is ``None``.  Otherwise
-    fetches every :class:`~guffin.vertex.ImageVertex` asset (to a temporary
-    directory) via :func:`~guffin.render.image_fetch.fetch_and_enrich_images` so
-    each image's :attr:`~guffin.vertex.ImageVertex.original_image_size` is
-    populated before rendering.
+    fetches every asset-bearing vertex's file (to a temporary directory) via
+    :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets` so each image's
+    :attr:`~guffin.vertex.ImageVertex.original_image_size` is populated before
+    rendering.
 
     Args:
         vertex_tree: Normalized :class:`~guffin.vertex_tree.VertexTree` to render,
@@ -166,7 +166,7 @@ def _dump_vertex_tree(
         logger.warning("show_vertex_tree=True but vertex_tree is None; skipping vertex tree output")
         return
     with tempfile.TemporaryDirectory() as tmp:
-        enriched_tree: Final[VertexTree] = fetch_and_enrich_images(vertex_tree, api_endpoint, Path(tmp))[0]
+        enriched_tree: Final[VertexTree] = fetch_and_enrich_assets(vertex_tree, api_endpoint, Path(tmp))[0]
     effective_props: Final[list[str]] = (
         [p.strip() for p in vertex_props.split(",")] if vertex_props is not None else list(DEFAULT_VERTEX_PANEL_PROPS)
     )

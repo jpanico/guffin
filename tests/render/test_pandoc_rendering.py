@@ -442,7 +442,7 @@ class TestVertexTreeToPandocImageVertex:
     """Tests for vertex_tree_to_pandoc() — ImageVertex rendering."""
 
     def test_fetched_image_is_embedded(self, tmp_path: Path) -> None:
-        """When image_files has an entry for the vertex, a pf.Image is used."""
+        """When asset_files has an entry for the vertex, a pf.Image is used."""
         fake_img = tmp_path / "photo.jpg"
         fake_img.write_bytes(b"")
         page = PageVertex(uid="page00001", title="P", children=["img00001a"])
@@ -463,7 +463,7 @@ class TestVertexTreeToPandocImageVertex:
         assert inline.url == str(fake_img)
 
     def test_unfetched_image_falls_back_to_link(self) -> None:
-        """When image_files has no entry for the vertex, a pf.Link is used."""
+        """When asset_files has no entry for the vertex, a pf.Link is used."""
         page = PageVertex(uid="page00001", title="P", children=["img00001a"])
         image = ImageVertex(
             uid="img00001a",
@@ -529,7 +529,7 @@ class TestVertexTreeToPandocPdfVertex:
         return VertexTree(tree_vertices=[page, pdf])
 
     def test_fetched_pdf_links_to_local_path(self, tmp_path: Path) -> None:
-        """When image_files has an entry for the vertex, the link targets the local path."""
+        """When asset_files has an entry for the vertex, the link targets the local path."""
         fake_pdf = tmp_path / "paper.pdf"
         fake_pdf.write_bytes(b"")
         doc, _ = vertex_tree_to_pandoc(self._tree(), {"pdf00001a": fake_pdf}, {})
@@ -541,7 +541,7 @@ class TestVertexTreeToPandocPdfVertex:
         assert inline.url == str(fake_pdf)
 
     def test_unfetched_pdf_falls_back_to_source_url(self) -> None:
-        """When image_files has no entry for the vertex, the link targets the remote source URL."""
+        """When asset_files has no entry for the vertex, the link targets the remote source URL."""
         doc, _ = vertex_tree_to_pandoc(self._tree(), {}, {})
         inline = list(list(doc.content)[0].content)[0]
         assert isinstance(inline, pf.Link)
@@ -663,8 +663,8 @@ class TestVertexTreeToPandocArticleFixture:
         assert second.level == 1
         assert _collect_text(second) == "Section 1"
 
-    def test_image_renders_as_fallback_link_when_no_image_files(self, doc: pf.Doc) -> None:
-        """The ImageVertex in the fixture renders as a pf.Link when image_files is empty."""
+    def test_image_renders_as_fallback_link_when_no_asset_files(self, doc: pf.Doc) -> None:
+        """The ImageVertex in the fixture renders as a pf.Link when asset_files is empty."""
         blocks = list(doc.content)
         image_para = next(
             (b for b in blocks if isinstance(b, pf.Para) and isinstance(list(b.content)[0], pf.Link)), None

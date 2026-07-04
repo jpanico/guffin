@@ -13,7 +13,7 @@ is filled in automatically by Pandoc.  Top-level headings become the e-book's ch
 Pandoc's default EPUB split level.
 
 Cloud Firestore image assets are fetched via
-:func:`~guffin.render.image_fetch.fetch_and_enrich_images`, written to a temporary directory,
+:func:`~guffin.render.asset_fetch.fetch_and_enrich_assets`, written to a temporary directory,
 and embedded in the EPUB by Pandoc's writer as local-path :class:`~panflute.Image` elements.  An
 optional *cache_dir* avoids re-downloading unchanged assets across runs.
 
@@ -46,9 +46,10 @@ from pydantic import validate_call
 
 from guffin.common.provenance import Provenance
 from guffin.model.render_bundle import RenderBundle
+from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
+from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
 from guffin.render.epub_post_processing import restore_matter_divisions, stamp_titlepage_provenance
-from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     make_resolver,
@@ -121,7 +122,7 @@ def render(
 
     Writes ``<output_dir>/<filename_stem>.epub``.  Fetches all Cloud Firestore image assets into
     a temporary directory and enriches the vertex tree with each image's native pixel size via
-    :func:`~guffin.render.image_fetch.fetch_and_enrich_images`, builds a Panflute
+    :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets`, builds a Panflute
     :class:`~panflute.Doc` via :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`
     (storing the page title as document metadata so it becomes the EPUB ``dc:title`` and title
     page), serializes it to Pandoc JSON, and invokes Pandoc's ``epub3`` writer via :mod:`pypandoc`
@@ -191,18 +192,23 @@ def render(
     os.environ["GUFFIN_CALLOUT_ICONS_DIR"] = str(_callout_icons_dir())
 
     with tempfile.TemporaryDirectory() as tmp:
-        fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(
+        fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(
             content, api_endpoint, Path(tmp), cache_dir
         )
         enriched_tree: Final[VertexTree] = fetched[0]
-        image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
-        image_files: Final[dict[Uid, Path]] = {uid: ref.path for uid, ref in image_refs.items()}
+        asset_refs: Final[dict[Uid, AssetRef]] = fetched[1]
+        # Only image assets feed the document build: a PDF asset cannot be embedded in this
+        # format yet, and a link to its temporary local path would be dead in the output, so
+        # PdfVertex entries are withheld and render as links to their remote source.
+        asset_files: Final[dict[Uid, Path]] = {
+            uid: ref.path for uid, ref in asset_refs.items() if isinstance(enriched_tree.uid_map[uid], ImageVertex)
+        }
         # The provenance rides the title page when one is emitted (stamped after packaging, below);
         # otherwise it renders as an end-of-document colophon block — mirroring the PDF placement.
         provenance: Final[Provenance | None] = render_bundle.provenance if options.emit_colophon else None
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
             enriched_tree,
-            image_files,
+            asset_files,
             render_bundle.view,
             provenance=None if emit_title_page else provenance,
         )

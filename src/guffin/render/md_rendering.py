@@ -37,7 +37,7 @@ from pydantic import validate_call
 
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
-from guffin.render.image_fetch import ImageRef, fetch_and_enrich_images, fetch_pdfs
+from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     make_resolver,
@@ -90,10 +90,9 @@ def render(
     ``options.bundle``:
 
     - ``bundle=True`` (default) — fetches Cloud Firestore image and PDF assets
-      (enriching the vertex tree with each image's native pixel size via
-      :func:`~guffin.render.image_fetch.fetch_and_enrich_images`, and fetching PDFs
-      via :func:`~guffin.render.image_fetch.fetch_pdfs`), places the assets
-      in the bundle directory, and writes a self-contained
+      via :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets` (which also
+      enriches the vertex tree with each image's native pixel size), places the
+      assets in the bundle directory, and writes a self-contained
       ``<filename_stem>.mdbundle/`` directory containing the
       Markdown file and all assets.  Image and PDF links in the Markdown
       reference the local filenames.
@@ -135,22 +134,18 @@ def render(
         bundle_dir.mkdir(parents=True, exist_ok=True)
         logger.info("Created bundle directory: %s", bundle_dir)
 
-        # the Paths in the returned ImageRefs are absolute
-        fetched: Final[tuple[VertexTree, dict[Uid, ImageRef]]] = fetch_and_enrich_images(
+        # the Paths in the returned AssetRefs are absolute
+        fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(
             content, api_endpoint, bundle_dir, cache_dir
         )
         enriched_tree: Final[VertexTree] = fetched[0]
-        image_refs: Final[dict[Uid, ImageRef]] = fetched[1]
-        pdf_files: Final[dict[Uid, Path]] = fetch_pdfs(content, api_endpoint, bundle_dir, cache_dir)
+        asset_refs: Final[dict[Uid, AssetRef]] = fetched[1]
         # Strip to filename-only so Pandoc writes relative asset references in the Markdown output.
-        image_files: Final[dict[Uid, Path]] = {
-            **{uid: Path(ref.path.name) for uid, ref in image_refs.items()},
-            **{uid: Path(path.name) for uid, path in pdf_files.items()},
-        }
+        asset_files: Final[dict[Uid, Path]] = {uid: Path(ref.path.name) for uid, ref in asset_refs.items()}
 
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
             enriched_tree,
-            image_files,
+            asset_files,
             render_bundle.view,
             title_in_header=True,
             provenance=render_bundle.provenance if options.emit_colophon else None,
