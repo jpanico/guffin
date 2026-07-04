@@ -1,4 +1,4 @@
-"""VertexTree — normalized (transcribed) form of a NodeTree; traversal and filter helpers.
+"""VertexTree — normalized (transcribed) form of a NodeTree; traversal and transform helpers.
 
 Public symbols:
 
@@ -8,12 +8,6 @@ Public symbols:
   depth-first traversal.
 - :class:`VertexTreeDFSIterator` — pre-order depth-first iterator over a
   :class:`VertexTree`.
-- :func:`page_vertices` — return all :class:`~guffin.model.vertex.PageVertex` instances in a :class:`VertexTree`.
-- :func:`heading_vertices` — return all :class:`~guffin.model.vertex.HeadingVertex` instances in a :class:`VertexTree`.
-- :func:`text_vertices` — return all :class:`~guffin.model.vertex.TextVertex` instances in a
-  :class:`VertexTree`.
-- :func:`image_vertices` — return all :class:`~guffin.model.vertex.ImageVertex` instances in a :class:`VertexTree`.
-- :func:`pdf_vertices` — return all :class:`~guffin.model.vertex.PdfVertex` instances in a :class:`VertexTree`.
 - :func:`transcluded_vertices` — return every render-visible vertex in a :class:`VertexTree`: the
   tree vertices plus all content transcluded through block embeds.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
@@ -43,8 +37,6 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
-    PdfVertex,
-    TextVertex,
     Vertex,
 )
 
@@ -70,7 +62,8 @@ class VertexTree(BaseModel):
             :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` — nodes referenced
             from the anchor tree but not part of it.  Used only for UID lookup
             (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
-            not traversed by :class:`VertexTreeDFSIterator` or the filter helpers.
+            not traversed by :class:`VertexTreeDFSIterator` (though
+            :func:`transcluded_vertices` reaches those transcluded via block embeds).
         uid_map: Map of :attr:`~guffin.model.vertex._BaseVertex.uid` →
             :data:`~guffin.model.vertex.Vertex` for every vertex in :attr:`tree_vertices` and
             :attr:`ref_vertices`; excluded from serialization.
@@ -161,36 +154,6 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
             children: list[Vertex] = [self._uid_map[uid] for uid in vertex.children if uid in self._uid_map]
             self._stack.extend(reversed(children))
         return vertex
-
-
-@validate_call
-def page_vertices(tree: VertexTree) -> list[PageVertex]:
-    """Return all :class:`~guffin.model.vertex.PageVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.tree_vertices if isinstance(v, PageVertex)]
-
-
-@validate_call
-def heading_vertices(tree: VertexTree) -> list[HeadingVertex]:
-    """Return all :class:`~guffin.model.vertex.HeadingVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.tree_vertices if isinstance(v, HeadingVertex)]
-
-
-@validate_call
-def text_vertices(tree: VertexTree) -> list[TextVertex]:
-    """Return all :class:`~guffin.model.vertex.TextVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.tree_vertices if isinstance(v, TextVertex)]
-
-
-@validate_call
-def image_vertices(tree: VertexTree) -> list[ImageVertex]:
-    """Return all :class:`~guffin.model.vertex.ImageVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.tree_vertices if isinstance(v, ImageVertex)]
-
-
-@validate_call
-def pdf_vertices(tree: VertexTree) -> list[PdfVertex]:
-    """Return all :class:`~guffin.model.vertex.PdfVertex` instances in *tree*, in insertion order."""
-    return [v for v in tree.tree_vertices if isinstance(v, PdfVertex)]
 
 
 @validate_call
