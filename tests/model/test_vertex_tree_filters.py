@@ -1,11 +1,12 @@
-"""Tests for guffin.model.vertex_tree filter helpers: image_vertices, pdf_vertices, root_vertex."""
+"""Tests for the guffin.model.vertex_tree helpers: image_vertices, pdf_vertices, transcluded_vertices, root_vertex."""
 
 from conftest import article1_vertex_tree
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.model.vertex import ImageVertex, PageVertex, PdfVertex, TextVertex
-from guffin.model.vertex_tree import VertexTree, image_vertices, pdf_vertices, root_vertex
+from guffin.model.link import VertexLink, VertexLinkKind
+from guffin.model.vertex import BlockEmbedVertex, ImageVertex, PageVertex, PdfVertex, TextVertex
+from guffin.model.vertex_tree import VertexTree, image_vertices, pdf_vertices, root_vertex, transcluded_vertices
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fa.jpeg?alt=media&token=aaa"
 _URL_B = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fb.jpeg?alt=media&token=bbb"
@@ -27,6 +28,10 @@ def _pdf(uid: str = "pdfuid001", url: str = _PDF_URL_A) -> PdfVertex:
 
 def _text(uid: str = "textuid01") -> TextVertex:
     return TextVertex(uid=uid, text="hello")
+
+
+def _embed(uid: str, target_uid: str) -> BlockEmbedVertex:
+    return BlockEmbedVertex(uid=uid, vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=target_uid))
 
 
 # ---------------------------------------------------------------------------
@@ -93,6 +98,76 @@ class TestPdfVertices:
         result = pdf_vertices(article1_vertex_tree())
         assert [v.uid for v in result] == ["pTvGGeTlB"]
         assert all(isinstance(v, PdfVertex) for v in result)
+
+
+# ---------------------------------------------------------------------------
+# TestTranscludedVertices
+# ---------------------------------------------------------------------------
+
+
+class TestTranscludedVertices:
+    """Tests for transcluded_vertices()."""
+
+    def test_tree_without_embeds_returns_tree_vertices(self) -> None:
+        """With no embeds, the result is exactly the tree vertices in insertion order."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["textuid01"])
+        text = _text("textuid01")
+        tree = VertexTree(tree_vertices=[page, text])
+        assert transcluded_vertices(tree) == [page, text]
+
+    def test_mentioned_ref_vertex_is_not_included(self) -> None:
+        """A referenced vertex that is not embedded renders inline as text and is excluded."""
+        page = PageVertex(uid="pageuid01", title="Page", refs=["refuid001"])
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[_text("refuid001")])
+        assert transcluded_vertices(tree) == [page]
+
+    def test_embed_target_and_subtree_included(self) -> None:
+        """An embed pulls in its ref-vertex target together with the target's descendants."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["embeduid1"])
+        embed = _embed("embeduid1", "refuid001")
+        target = TextVertex(uid="refuid001", text="embedded", children=["refuid002"])
+        target_child = _text("refuid002")
+        tree = VertexTree(tree_vertices=[page, embed], ref_vertices=[target, target_child])
+        result = transcluded_vertices(tree)
+        assert [v.uid for v in result] == ["pageuid01", "embeduid1", "refuid001", "refuid002"]
+
+    def test_nested_embeds_followed(self) -> None:
+        """An embed inside transcluded content is itself followed."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["embeduid1"])
+        outer = _embed("embeduid1", "refuid001")
+        inner = _embed("refuid001", "refuid002")
+        innermost = _text("refuid002")
+        tree = VertexTree(tree_vertices=[page, outer], ref_vertices=[inner, innermost])
+        result = transcluded_vertices(tree)
+        assert [v.uid for v in result] == ["pageuid01", "embeduid1", "refuid001", "refuid002"]
+
+    def test_embed_of_in_tree_vertex_is_not_duplicated(self) -> None:
+        """An embed whose target already lives in the tree adds nothing (deduplicated by uid)."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["textuid01", "embeduid1"])
+        text = _text("textuid01")
+        embed = _embed("embeduid1", "textuid01")
+        tree = VertexTree(tree_vertices=[page, text, embed])
+        assert [v.uid for v in transcluded_vertices(tree)] == ["pageuid01", "textuid01", "embeduid1"]
+
+    def test_missing_embed_target_skipped(self) -> None:
+        """An embed whose target was not fetched contributes nothing."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["embeduid1"])
+        embed = _embed("embeduid1", "absentuid")
+        tree = VertexTree(tree_vertices=[page, embed])
+        assert [v.uid for v in transcluded_vertices(tree)] == ["pageuid01", "embeduid1"]
+
+    def test_embed_cycle_terminates(self) -> None:
+        """Mutually embedding blocks terminate, each vertex appearing once."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["embeduid1"])
+        embed_a = _embed("embeduid1", "refembed1")
+        embed_b = _embed("refembed1", "embeduid1")
+        tree = VertexTree(tree_vertices=[page, embed_a], ref_vertices=[embed_b])
+        assert [v.uid for v in transcluded_vertices(tree)] == ["pageuid01", "embeduid1", "refembed1"]
+
+    def test_article_fixture_has_no_transcluded_content(self) -> None:
+        """Test Article 1 has no embeds, so the render-visible set equals its tree vertices."""
+        tree = article1_vertex_tree()
+        assert transcluded_vertices(tree) == list(tree.tree_vertices)
 
 
 # ---------------------------------------------------------------------------

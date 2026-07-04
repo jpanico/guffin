@@ -14,6 +14,8 @@ Public symbols:
   :class:`VertexTree`.
 - :func:`image_vertices` — return all :class:`~guffin.model.vertex.ImageVertex` instances in a :class:`VertexTree`.
 - :func:`pdf_vertices` — return all :class:`~guffin.model.vertex.PdfVertex` instances in a :class:`VertexTree`.
+- :func:`transcluded_vertices` — return every render-visible vertex in a :class:`VertexTree`: the
+  tree vertices plus all content transcluded through block embeds.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
@@ -26,6 +28,7 @@ Public symbols:
 """
 
 import logging
+from collections import deque
 from collections.abc import Callable, Iterator
 from typing import Annotated, Final
 
@@ -36,6 +39,7 @@ from guffin.common.geometry import ImageSize
 logger = logging.getLogger(__name__)
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
+    BlockEmbedVertex,
     HeadingVertex,
     ImageVertex,
     PageVertex,
@@ -187,6 +191,42 @@ def image_vertices(tree: VertexTree) -> list[ImageVertex]:
 def pdf_vertices(tree: VertexTree) -> list[PdfVertex]:
     """Return all :class:`~guffin.model.vertex.PdfVertex` instances in *tree*, in insertion order."""
     return [v for v in tree.tree_vertices if isinstance(v, PdfVertex)]
+
+
+@validate_call
+def transcluded_vertices(tree: VertexTree) -> list[Vertex]:
+    """Return every render-visible vertex in *tree*: the tree vertices plus all transcluded content.
+
+    A :class:`~guffin.model.vertex.BlockEmbedVertex` transcludes its target — the target vertex and
+    its whole subtree are reproduced at the embed site — so a vertex reachable only through
+    :attr:`VertexTree.ref_vertices` may still contribute content to a rendered document.  This
+    helper returns :attr:`VertexTree.tree_vertices` followed by every additional vertex reachable
+    through a block embed's target subtree, with embeds inside transcluded content followed
+    recursively (cycles terminate).  A referenced vertex that is merely *mentioned* (a page or
+    block reference, which renders inline as text) is not transcluded and is not included.  Embed
+    targets absent from :attr:`VertexTree.uid_map` are skipped.
+
+    Args:
+        tree: The :class:`VertexTree` to walk.
+
+    Returns:
+        The render-visible vertices, each appearing once (deduplicated by UID): the tree vertices
+        first, in insertion order, then the transcluded vertices in first-reached order.
+    """
+    visible: Final[list[Vertex]] = []
+    seen: Final[set[Uid]] = set()
+    queue: Final[deque[Vertex]] = deque(tree.tree_vertices)
+    while queue:
+        vertex: Vertex = queue.popleft()
+        if vertex.uid in seen:
+            continue
+        seen.add(vertex.uid)
+        visible.append(vertex)
+        # Children may live outside tree_vertices when *vertex* was reached through an embed.
+        queue.extend(tree.uid_map[uid] for uid in vertex.children or () if uid in tree.uid_map)
+        if isinstance(vertex, BlockEmbedVertex) and vertex.vertex_link.uid in tree.uid_map:
+            queue.append(tree.uid_map[vertex.vertex_link.uid])
+    return visible
 
 
 @validate_call

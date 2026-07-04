@@ -20,7 +20,8 @@ Public symbols:
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
-  top level as parts (any level-1 heading tagged ``element-type:: part``);
+  top level as parts (any render-visible level-1 heading — block-embed-transcluded headings
+  included — tagged ``element-type:: part``);
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
   (every recognised guffin attribute sits on its :class:`Anchor`'s vertex type),
   :func:`all_element_type_values_legal` (every ``element-type`` value is a
@@ -47,7 +48,7 @@ from pydantic import Field, field_validator, validate_call
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, sole_value_text
 from guffin.model.vertex import HeadingVertex, Vertex, VertexType, find_attribute_assignment
-from guffin.model.vertex_tree import VertexTree, heading_vertices
+from guffin.model.vertex_tree import VertexTree, transcluded_vertices
 
 logger = logging.getLogger(__name__)
 
@@ -405,19 +406,22 @@ def _is_part_heading(heading: HeadingVertex) -> bool:
 def has_parts(tree: VertexTree) -> bool:
     """Return whether *tree* structures its top level as parts.
 
-    ``True`` when any level-1 :class:`~guffin.model.vertex.HeadingVertex` carries an
-    ``element-type`` assignment naming :attr:`StructuralElement.PART` — the content's own
-    declaration that its level-1 headings are parts (so its chapters live at level 2).
-    Assignments whose value is not a recognised :class:`StructuralElement` are ignored with a
-    warning.
+    ``True`` when any render-visible level-1 :class:`~guffin.model.vertex.HeadingVertex` carries
+    an ``element-type`` assignment naming :attr:`StructuralElement.PART` — the content's own
+    declaration that its level-1 headings are parts (so its chapters live at level 2).  The
+    render-visible headings (per :func:`~guffin.model.vertex_tree.transcluded_vertices`) include
+    those transcluded through block embeds, since an embedded part heading structures the rendered
+    document exactly as an in-tree one does; a part heading that is merely *referenced* (rendered
+    inline as text) does not count.  Assignments whose value is not a recognised
+    :class:`StructuralElement` are ignored with a warning.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to inspect.
 
     Returns:
-        ``True`` when a level-1 heading is tagged as a part, else ``False``.
+        ``True`` when a render-visible level-1 heading is tagged as a part, else ``False``.
     """
-    return any(_is_part_heading(heading) for heading in heading_vertices(tree))
+    return any(_is_part_heading(vertex) for vertex in transcluded_vertices(tree) if isinstance(vertex, HeadingVertex))
 
 
 _SEMANTICS_BY_NAME: Final[dict[str, GuffinSemantics]] = {member.value.name: member for member in GuffinSemantics}

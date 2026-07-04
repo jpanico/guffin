@@ -34,7 +34,7 @@ from guffin.model.guffin_semantics import (
     validate_semantics,
 )
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import HeadingVertex, PageVertex, vertex_adapter
+from guffin.model.vertex import BlockEmbedVertex, HeadingVertex, PageVertex, vertex_adapter
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
@@ -290,6 +290,31 @@ class TestHasParts:
             assert has_parts(_tagged_heading_tree(1, "not-an-element")) is False
         assert "ignoring element-type" in caplog.text
 
+    def test_part_heading_transcluded_via_embed_detected(self) -> None:
+        """A part heading pulled in through a block embed structures the rendered document as parts."""
+        page = PageVertex(uid="pageroot1", title="Book", children=["embed0001"])
+        embed = BlockEmbedVertex(uid="embed0001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="parthead1"))
+        part_heading = HeadingVertex(
+            uid="parthead1",
+            text="Part One",
+            heading_level=1,
+            attribute_assignments=[_assignment("element-type", "part")],
+        )
+        tree = VertexTree(tree_vertices=[page, embed], ref_vertices=[part_heading])
+        assert has_parts(tree) is True
+
+    def test_part_heading_merely_referenced_is_not_parts(self) -> None:
+        """A part heading that is only mentioned (rendered inline as text) does not make parts."""
+        page = PageVertex(uid="pageroot1", title="Book", refs=["parthead1"])
+        part_heading = HeadingVertex(
+            uid="parthead1",
+            text="Part One",
+            heading_level=1,
+            attribute_assignments=[_assignment("element-type", "part")],
+        )
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[part_heading])
+        assert has_parts(tree) is False
+
 
 def _attributed_tree(
     page_names: list[str],
@@ -476,6 +501,25 @@ class TestAllMatterTagsAtSectionLevel:
         tree = _attributed_tree(
             [], ["matter"], AttributeDomain.GUFFIN, value="front-matter", heading_level=2, with_part=True
         )
+        assert all_matter_tags_at_section_level(tree) is None
+
+    def test_embed_transcluded_part_makes_level_2_the_section_level(self) -> None:
+        """Parts-ness carried in through a block embed sets the section level to 2 for matter tags."""
+        page = PageVertex(uid="pageroot1", title="Book", children=["embed0001", "head00001"])
+        embed = BlockEmbedVertex(uid="embed0001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="parthead1"))
+        part_heading = HeadingVertex(
+            uid="parthead1",
+            text="Part One",
+            heading_level=1,
+            attribute_assignments=[_assignment("element-type", "part")],
+        )
+        matter_heading = HeadingVertex(
+            uid="head00001",
+            text="Preface",
+            heading_level=2,
+            attribute_assignments=[_assignment("matter", "front-matter")],
+        )
+        tree = VertexTree(tree_vertices=[page, embed, matter_heading], ref_vertices=[part_heading])
         assert all_matter_tags_at_section_level(tree) is None
 
     def test_parts_book_matter_on_level_1_reported(self) -> None:
