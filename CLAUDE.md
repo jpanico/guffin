@@ -155,8 +155,12 @@ python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
 ```
 
 Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `tests/fixtures/pdf/`
-(requires Typst on PATH) for the live PDF export test — e.g.
-`python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --pdf`.
+(requires Typst on PATH) for the live PDF export test, and `--mdbundle` to additionally record a
+baseline `.mdbundle/` directory under `tests/fixtures/mdbundle/` for the live mdbundle export test.
+These optional baselines are only rewritten when their flag is passed, so after changing a live test
+page, regenerate **all** of its recorded fixtures in one run — for `[[Test Article]] 1` (which has
+both baselines) that is:
+`python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --pdf --mdbundle`.
 
 ## Git
 - **Never commit or push without explicit instructions**: do not run `git commit` or `git push` unless the user explicitly asks. This applies even after completing a task — finish the work, then wait for the user to request a commit/push.

@@ -45,3 +45,7 @@
 # Section 3
 
 ## Section 3.1
+
+- the following block contains the canonical w3.org “Dummy” PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+
+[u-F9pv-nvn.pdf](e7ede2175e0f8ab6da57c22adeeab575b5ac262d87596ffc2e1dd5acdb10333e.pdf "u-F9pv-nvn.pdf")
