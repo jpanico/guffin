@@ -48,6 +48,10 @@ class RoamAsset(BaseModel):
     last_modified: datetime = Field(..., description="Last modification timestamp")
     media_type: MediaType = Field(..., description="MIME type (e.g., 'image/jpeg')")
     contents: bytes = Field(..., description="Binary file contents")
+    original_file_name: str | None = Field(
+        default=None,
+        description="The filename the asset was originally uploaded under, when known.",
+    )
 
     @classmethod
     def create(
@@ -56,6 +60,7 @@ class RoamAsset(BaseModel):
         last_modified: datetime,
         media_type: MediaType,
         contents: bytes,
+        original_file_name: str | None = None,
     ) -> RoamAsset:
         """Construct a :class:`RoamAsset` or the appropriate subclass for *media_type*.
 
@@ -68,6 +73,8 @@ class RoamAsset(BaseModel):
             last_modified: Last modification timestamp.
             media_type: IANA media type of the asset.
             contents: Binary file contents.
+            original_file_name: The filename the asset was originally uploaded under,
+                when known.
 
         Returns:
             A :class:`RoamImageAsset` when *media_type* is an image type; a
@@ -84,6 +91,7 @@ class RoamAsset(BaseModel):
                 last_modified=last_modified,
                 media_type=media_type,
                 contents=contents,
+                original_file_name=original_file_name,
                 image_size=image_size,
             )
         return RoamAsset(
@@ -91,6 +99,7 @@ class RoamAsset(BaseModel):
             last_modified=last_modified,
             media_type=media_type,
             contents=contents,
+            original_file_name=original_file_name,
         )
 
 

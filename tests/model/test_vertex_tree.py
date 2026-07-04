@@ -10,12 +10,13 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue
 from guffin.model.link import VertexLink, VertexLinkKind
-from guffin.model.vertex import HeadingVertex, ImageVertex, PageVertex, TextVertex, Vertex
+from guffin.model.vertex import HeadingVertex, ImageVertex, PageVertex, PdfVertex, TextVertex, Vertex
 from guffin.model.vertex_tree import (
     VertexTree,
     drop_attribute_assignments,
     drop_root_preamble,
     enrich_image_original_sizes,
+    enrich_pdf_original_file_names,
     map_vertices,
 )
 
@@ -240,3 +241,33 @@ class TestEnrichImageOriginalSizes:
         assert matched_result.original_image_size == size
         assert unmatched_result.original_image_size is None
         assert isinstance(result_by_uid["aaaaaaaaa"], TextVertex)
+
+
+_PDF_SOURCE: Final[HttpUrl] = HttpUrl("https://example.com/doc.pdf")
+
+
+class TestEnrichPdfOriginalFileNames:
+    """Tests for enrich_pdf_original_file_names()."""
+
+    def test_matched_uid_sets_original_file_name(self) -> None:
+        """PdfVertex whose UID is in names receives original_file_name."""
+        vertex: Final[PdfVertex] = PdfVertex(uid="pdf000001", source=_PDF_SOURCE)
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
+        result: Final[VertexTree] = enrich_pdf_original_file_names(tree, {"pdf000001": "dummy.pdf"})
+        enriched: Final[PdfVertex] = next(v for v in result.tree_vertices if isinstance(v, PdfVertex))
+        assert enriched.original_file_name == "dummy.pdf"
+
+    def test_unmatched_pdf_vertex_passes_through_silently(self) -> None:
+        """A PdfVertex absent from the names map (name unknown) is unchanged, with no warning."""
+        vertex: Final[PdfVertex] = PdfVertex(uid="pdf000002", source=_PDF_SOURCE)
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
+        result: Final[VertexTree] = enrich_pdf_original_file_names(tree, {})
+        unmatched: Final[PdfVertex] = next(v for v in result.tree_vertices if isinstance(v, PdfVertex))
+        assert unmatched.original_file_name is None
+
+    def test_non_pdf_vertices_pass_through(self) -> None:
+        """TextVertex is returned unchanged regardless of the names map."""
+        tree: Final[VertexTree] = _make_text_tree([("aaaaaaaaa", "hello")])
+        result: Final[VertexTree] = enrich_pdf_original_file_names(tree, {"aaaaaaaaa": "irrelevant.pdf"})
+        texts: Final[list[str]] = [v.text for v in result.tree_vertices if isinstance(v, TextVertex)]
+        assert texts == ["hello"]

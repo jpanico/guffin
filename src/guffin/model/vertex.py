@@ -318,8 +318,12 @@ class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
         vertex_type: Always :attr:`~VertexType.PDF`.
             Serialized as ``'vertex-type'``.
         source: Cloud Firestore storage URL for the PDF file.
-        file_name: Original filename decoded from *source*. ``None`` if the
+        file_name: Filename decoded from *source* (an opaque storage key). ``None`` if the
             filename cannot be extracted.
+        original_file_name: The filename the PDF was originally uploaded under. ``None``
+            when unknown (populated by asset fetching, which reads it from the asset
+            metadata rather than the storage URL).
+            Serialized as ``'original-file-name'``.
     """
 
     vertex_type: Literal[VertexType.PDF] = Field(
@@ -328,7 +332,12 @@ class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
         description="Always VertexType.PDF (serialized as 'vertex-type').",
     )
     source: HttpUrl = Field(..., description="Cloud Firestore storage URL for the PDF file.")
-    file_name: str | None = Field(default=None, description="Original filename decoded from source.")
+    file_name: str | None = Field(default=None, description="Filename decoded from source (an opaque storage key).")
+    original_file_name: str | None = Field(
+        default=None,
+        serialization_alias="original-file-name",
+        description="The originally uploaded filename. None when unknown (serialized as 'original-file-name').",
+    )
 
 
 class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):

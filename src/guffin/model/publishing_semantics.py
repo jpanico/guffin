@@ -2,21 +2,26 @@
 
 Public symbols:
 
+- **Constants**: :data:`DEFAULT_PDF_RENDER` — the :class:`PdfRender` placement of an untagged
+  PDF embed.
 - **Enumerations**: :class:`PublishingSemantics` — the attributes Guffin recognizes (document metadata +
-  the ``element-type`` heading tag), each member a :class:`PublishingAttribute` in the
-  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
-  domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading), each
-  carrying its :class:`~guffin.model.vertex.VertexType`; :class:`Matter` —
+  the ``element-type``/``matter`` heading tags + the ``pdf-render`` PDF tag), each member a
+  :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
+  domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading / pdf),
+  each carrying its :class:`~guffin.model.vertex.VertexType`; :class:`Matter` —
   the book division a part belongs to (front / body / back); :class:`StructuralElement` — a book's
-  structural elements by name, each carrying its :class:`Matter` division (its organizational parts).
+  structural elements by name, each carrying its :class:`Matter` division (its organizational parts);
+  :class:`PdfRender` — how an embedded PDF asset is placed in paginated output (inline / link).
 - **Models**: :class:`PublishingAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Anchor`.
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
-  assignment's value as a :class:`Matter`; :func:`find_publishing_attribute` — find a vertex's
+  assignment's value as a :class:`Matter`; :func:`pdf_render_of` — read a ``pdf-render``
+  assignment's value as a :class:`PdfRender`; :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
-  :func:`element_type_of_vertex` / :func:`matter_of_vertex` — resolve a heading's ``element-type``
-  / bare ``matter`` tag to its enum member, tolerating absent or illegal assignments (``None``,
+  :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` —
+  resolve a heading's ``element-type`` / bare ``matter`` tag, or a PDF embed's ``pdf-render`` tag,
+  to its enum member, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
@@ -26,7 +31,8 @@ Public symbols:
   (every recognised guffin attribute sits on its :class:`Anchor`'s vertex type),
   :func:`all_element_type_values_legal` (every ``element-type`` value is a
   :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
-  :class:`Matter`), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
+  :class:`Matter`), :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
+  :class:`PdfRender`), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
   the book's section level — level 1, or level 2 in a parts book);
   :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
@@ -52,7 +58,7 @@ from guffin.model.attribute import (
     AttributeDomain,
     verified_sole_value_text,
 )
-from guffin.model.vertex import HeadingVertex, Vertex, VertexType, find_attribute_assignment
+from guffin.model.vertex import HeadingVertex, PdfVertex, Vertex, VertexType, find_attribute_assignment
 from guffin.model.vertex_tree import VertexTree, assignments_for, transcluded_vertices
 
 logger = logging.getLogger(__name__)
@@ -68,6 +74,7 @@ class Anchor(enum.StrEnum):
         vertex_type: The :class:`~guffin.model.vertex.VertexType` this anchor corresponds to.
         PAGE: The attribute attaches to a page vertex (the whole document).
         HEADING: The attribute attaches to a heading vertex (a section).
+        PDF: The attribute attaches to a PDF vertex (an embedded PDF asset).
     """
 
     def __new__(cls, value: str, vertex_type: VertexType) -> Self:
@@ -81,6 +88,7 @@ class Anchor(enum.StrEnum):
 
     PAGE = ("page", VertexType.PAGE)
     HEADING = ("heading", VertexType.HEADING)
+    PDF = ("pdf", VertexType.PDF)
 
 
 class Matter(enum.StrEnum):
@@ -95,6 +103,23 @@ class Matter(enum.StrEnum):
     FRONT = "front-matter"
     BODY = "body-matter"
     BACK = "back-matter"
+
+
+class PdfRender(enum.StrEnum):
+    """How an embedded PDF asset is placed in paginated output — the values a ``pdf-render`` tag takes.
+
+    Attributes:
+        INLINE: Every page of the PDF renders in the document flow, in place of the embed.
+        LINK: The PDF is represented by a hyperlink (the untagged default,
+            :data:`DEFAULT_PDF_RENDER`).
+    """
+
+    INLINE = "inline"
+    LINK = "link"
+
+
+DEFAULT_PDF_RENDER: Final[PdfRender] = PdfRender.LINK
+"""The :class:`PdfRender` placement of a PDF embed carrying no ``pdf-render`` tag."""
 
 
 class PublishingAttribute(Attribute):
@@ -124,7 +149,7 @@ class PublishingAttribute(Attribute):
 class PublishingSemantics(enum.Enum):
     """The attributes Guffin recognizes, each a :class:`PublishingAttribute`.
 
-    Each member's value is the :class:`PublishingAttribute` for that attribute.  Two kinds:
+    Each member's value is the :class:`PublishingAttribute` for that attribute.  Three kinds:
 
     - **Document metadata** (:attr:`Anchor.PAGE`) — bibliographic facts about the work as a whole:
       :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`PUBLISHER`,
@@ -132,6 +157,8 @@ class PublishingSemantics(enum.Enum):
     - **Heading tags** (:attr:`Anchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
       declares which :class:`StructuralElement` the heading is; :attr:`MATTER` declares its
       :class:`Matter` division directly, for a bespoke section with no specific element type.
+    - **PDF tags** (:attr:`Anchor.PDF`) — applied to an individual embedded PDF asset:
+      :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated output.
 
     Attributes:
         TITLE: The document title.
@@ -143,6 +170,7 @@ class PublishingSemantics(enum.Enum):
         IDENTIFIER: The document identifier.
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
+        PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a link).
     """
 
     _value_: PublishingAttribute
@@ -156,6 +184,7 @@ class PublishingSemantics(enum.Enum):
     IDENTIFIER = PublishingAttribute(name="identifier", anchor=Anchor.PAGE)
     ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=Anchor.HEADING)
     MATTER = PublishingAttribute(name="matter", anchor=Anchor.HEADING)
+    PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=Anchor.PDF)
 
 
 class StructuralElement(enum.StrEnum):
@@ -257,6 +286,26 @@ def matter_of(assignment: AttributeAssignment) -> Matter:
     return Matter(verified_sole_value_text(assignment, PublishingSemantics.MATTER.value))
 
 
+@validate_call
+def pdf_render_of(assignment: AttributeAssignment) -> PdfRender:
+    """Return the :class:`PdfRender` placement that a ``pdf-render`` assignment names.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.PDF_RENDER` attribute, then coerces
+    its sole value to a :class:`PdfRender` (``inline`` / ``link``).
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.PDF_RENDER` attribute assignment (one value expected).
+
+    Returns:
+        The named :class:`PdfRender`.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``pdf-render`` attribute, does not carry exactly
+            one value, or its value is not a recognised :class:`PdfRender`.
+    """
+    return PdfRender(verified_sole_value_text(assignment, PublishingSemantics.PDF_RENDER.value))
+
+
 @validate_call(config=ConfigDict(strict=True))
 def find_publishing_attribute(vertex: Vertex, attribute: PublishingSemantics) -> AttributeAssignment | None:
     """Return *vertex*'s assignment for the Guffin *attribute*, or ``None``.
@@ -321,6 +370,30 @@ def matter_of_vertex(vertex: HeadingVertex) -> Matter | None:
         return matter_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring matter on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def pdf_render_of_vertex(vertex: PdfVertex) -> PdfRender | None:
+    """Resolve *vertex*'s ``pdf-render`` tag to a :class:`PdfRender`, or ``None``.
+
+    ``None`` when *vertex* carries no ``pdf-render`` assignment, or when the assignment does not
+    coerce to a :class:`PdfRender` (ignored with a warning).  An untagged embed's placement is
+    :data:`DEFAULT_PDF_RENDER`.
+
+    Args:
+        vertex: The PDF vertex whose tag to resolve.
+
+    Returns:
+        The named :class:`PdfRender`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.PDF_RENDER)
+    if assignment is None:
+        return None
+    try:
+        return pdf_render_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring pdf-render on vertex uid=%r: %s", vertex.uid, exc)
         return None
 
 
@@ -464,7 +537,7 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
 def _illegal_value_violations(
     tree: VertexTree,
     attribute: PublishingSemantics,
-    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter],
+    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter | PdfRender],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
 
@@ -536,6 +609,30 @@ def all_matter_values_legal(tree: VertexTree) -> ValidationError | None:
 
 
 @validate_call
+def all_pdf_render_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``pdf-render`` values.
+
+    Every :attr:`PublishingSemantics.PDF_RENDER` assignment in *tree* must carry exactly one value,
+    and that value must name a :class:`PdfRender` member — the authoritative set of legal
+    ``pdf-render`` values.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``pdf-render`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.PDF_RENDER, pdf_render_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal pdf-render values: " + "; ".join(violations),
+        validator=all_pdf_render_values_legal,
+    )
+
+
+@validate_call
 def all_matter_tags_at_section_level(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every ``matter`` tag to sit at the section level.
 
@@ -573,7 +670,8 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
     """Return a :class:`~guffin.common.validation.ValidationResult` for the vocabulary invariants on *tree*.
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
-    :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`, and
+    :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
+    :func:`all_pdf_render_values_legal`, and
     :func:`all_matter_tags_at_section_level` — via :func:`~guffin.common.validation.validate_all`.  Every
     validator covers both the tree vertices and the referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`).  All validators run regardless of
@@ -593,6 +691,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_attributes_anchored,
             all_element_type_values_legal,
             all_matter_values_legal,
+            all_pdf_render_values_legal,
             all_matter_tags_at_section_level,
         ],
     )

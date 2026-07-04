@@ -548,10 +548,21 @@ class TestVertexTreeToPandocPdfVertex:
         assert inline.url == str(_PDF_URL)
 
     def test_link_label_strips_encryption_suffix(self) -> None:
-        """The link label is the original filename with Roam's .enc suffix stripped."""
+        """The link label is the storage filename with Roam's .enc suffix stripped."""
         doc, _ = vertex_tree_to_pandoc(self._tree(file_name="paper.pdf.enc"), {}, {})
         inline = list(list(doc.content)[0].content)[0]
         assert _collect_text(inline) == "paper.pdf"
+
+    def test_link_label_prefers_original_file_name(self) -> None:
+        """When the originally uploaded filename is known, it labels the link."""
+        page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
+        pdf = PdfVertex(
+            uid="pdf00001a", source=_PDF_URL, file_name="u-F9pv-nvn.pdf.enc", original_file_name="dummy.pdf"
+        )
+        tree = VertexTree(tree_vertices=[page, pdf])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        inline = list(list(doc.content)[0].content)[0]
+        assert _collect_text(inline) == "dummy.pdf"
 
     def test_link_label_falls_back_to_source_url(self) -> None:
         """When no filename is known, the link label is the source URL."""

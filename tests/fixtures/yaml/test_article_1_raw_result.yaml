@@ -415,7 +415,7 @@
     - id: 3330
     time: 1770568971504
     order: 0
-    open: true
+    open: false
     page:
       id: 3327
 - - string: this image **has been resized** through the Roam UI (width:257, height:None)

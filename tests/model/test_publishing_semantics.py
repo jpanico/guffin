@@ -16,8 +16,10 @@ from guffin.model.attribute import (
 )
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.publishing_semantics import (
+    DEFAULT_PDF_RENDER,
     Anchor,
     Matter,
+    PdfRender,
     PublishingAttribute,
     PublishingSemantics,
     StructuralElement,
@@ -25,16 +27,19 @@ from guffin.model.publishing_semantics import (
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
+    all_pdf_render_values_legal,
     element_type_of,
     element_type_of_vertex,
     find_publishing_attribute,
     has_parts,
     matter_of,
     matter_of_vertex,
+    pdf_render_of,
+    pdf_render_of_vertex,
     resolved_matter,
     validate_semantics,
 )
-from guffin.model.vertex import BlockEmbedVertex, HeadingVertex, PageVertex, vertex_adapter
+from guffin.model.vertex import BlockEmbedVertex, HeadingVertex, PageVertex, PdfVertex, vertex_adapter
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
@@ -79,6 +84,11 @@ class TestPublishingSemanticsMembers:
         """The heading-tag members are heading-anchored."""
         heading_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.HEADING}
         assert heading_members == {"element-type", "matter"}
+
+    def test_pdf_anchored_tag_members(self) -> None:
+        """The PDF-tag members are pdf-anchored."""
+        pdf_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.PDF}
+        assert pdf_members == {"pdf-render"}
 
 
 class TestElementTypeOf:
@@ -193,6 +203,14 @@ def _heading_with(assignments: list[AttributeAssignment] | None) -> HeadingVerte
     return HeadingVertex(uid="head00001", text="A Heading", heading_level=1, attribute_assignments=assignments)
 
 
+_PDF_URL = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fa.pdf?alt=media&token=aaa"
+
+
+def _pdf_with(assignments: list[AttributeAssignment] | None) -> PdfVertex:
+    """A PDF vertex carrying *assignments*."""
+    return PdfVertex(uid="pdfuid001", source=_PDF_URL, attribute_assignments=assignments)  # type: ignore[arg-type]
+
+
 class TestElementTypeOfVertex:
     """element_type_of_vertex() resolves a heading's element-type tag, tolerating absence and junk."""
 
@@ -263,6 +281,70 @@ class TestResolvedMatter:
     def test_untagged_heading_is_none(self) -> None:
         """A heading with neither tag resolves to no division."""
         assert resolved_matter(_heading_with(None)) is None
+
+
+class TestPdfRenderOf:
+    """pdf_render_of validates the attribute identity and coerces the value to a PdfRender."""
+
+    def test_returns_named_pdf_render(self) -> None:
+        """A valid pdf-render assignment yields the named PdfRender."""
+        assert pdf_render_of(_assignment("pdf-render", "inline")) is PdfRender.INLINE
+
+    def test_wrong_attribute_name_rejected(self) -> None:
+        """An assignment for a different attribute raises, even with a valid pdf-render value."""
+        with pytest.raises(ValueError):
+            pdf_render_of(_assignment("matter", "inline"))
+
+    def test_unknown_value_rejected(self) -> None:
+        """A value that is not a recognised PdfRender raises."""
+        with pytest.raises(ValueError):
+            pdf_render_of(_assignment("pdf-render", "thumbnail"))
+
+
+class TestPdfRenderOfVertex:
+    """pdf_render_of_vertex() resolves a PDF embed's pdf-render tag, tolerating absence and junk."""
+
+    def test_inline_tag_resolves(self) -> None:
+        """A pdf-render:: inline tag resolves to INLINE."""
+        assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "inline")])) is PdfRender.INLINE
+
+    def test_link_tag_resolves(self) -> None:
+        """A pdf-render:: link tag resolves to LINK."""
+        assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "link")])) is PdfRender.LINK
+
+    def test_untagged_is_none_and_default_is_link(self) -> None:
+        """An untagged PDF resolves to None; the vocabulary default placement is LINK."""
+        assert pdf_render_of_vertex(_pdf_with(None)) is None
+        assert DEFAULT_PDF_RENDER is PdfRender.LINK
+
+    def test_illegal_value_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A junk pdf-render value is ignored (warned), not raised."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "sideways")])) is None
+        assert "ignoring pdf-render" in caplog.text
+
+
+class TestAllPdfRenderValuesLegal:
+    """all_pdf_render_values_legal() rejects unrecognised pdf-render values across a tree."""
+
+    def test_legal_value_passes(self) -> None:
+        """A tree whose pdf-render values are all recognised produces no error."""
+        tree = VertexTree(tree_vertices=[_pdf_with([_assignment("pdf-render", "inline")])])
+        assert all_pdf_render_values_legal(tree) is None
+
+    def test_illegal_value_reported(self) -> None:
+        """An unrecognised pdf-render value is reported with the vertex uid."""
+        tree = VertexTree(tree_vertices=[_pdf_with([_assignment("pdf-render", "thumbnail")])])
+        error = all_pdf_render_values_legal(tree)
+        assert error is not None
+        assert "pdfuid001" in error.message
+
+    def test_pdf_render_on_heading_reported_by_anchor_validator(self) -> None:
+        """A pdf-render tag on a heading is a misanchoring, caught by all_attributes_anchored."""
+        tree = VertexTree(tree_vertices=[_heading_with([_assignment("pdf-render", "inline")])])
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "pdf-render" in error.message
 
 
 class TestFindPublishingAttribute:

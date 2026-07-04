@@ -11,13 +11,14 @@ by rendering back-ends that must remain Pandoc-free.
 
 Public symbols:
 
-- :class:`AssetRef` — association of an asset vertex's UID, on-disk path, and (for
-  images) native pixel size.
+- :class:`AssetRef` — association of an asset vertex's UID, on-disk path, (for
+  images) native pixel size, and (when known) original upload filename.
 - :func:`fetch_assets` — fetch every asset-bearing vertex's file from a
   :class:`~guffin.vertex_tree.VertexTree` to a local directory; return a
   ``{uid: AssetRef}`` mapping.
 - :func:`fetch_and_enrich_assets` — :func:`fetch_assets` plus tree enrichment; returns the
-  ``original_image_size``-populated tree together with the ``{uid: AssetRef}`` mapping.
+  tree with ``original_image_size`` (images) and ``original_file_name`` (PDFs) populated,
+  together with the ``{uid: AssetRef}`` mapping.
 """
 
 import logging
@@ -28,7 +29,7 @@ from pydantic import validate_call
 
 from guffin.common.geometry import ImageSize
 from guffin.model.vertex import ImageVertex, PdfVertex
-from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes
+from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes, enrich_pdf_original_file_names
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
 from guffin.roam.local_api import ApiEndpoint
@@ -38,7 +39,7 @@ logger = logging.getLogger(__name__)
 
 
 class AssetRef(NamedTuple):
-    """An asset-bearing vertex's fetched asset: its UID, on-disk path, and pixel size.
+    """An asset-bearing vertex's fetched asset: its UID, on-disk path, pixel size, and original name.
 
     The association produced by :func:`fetch_assets` for every asset
     successfully fetched from Cloud Firestore.
@@ -51,11 +52,14 @@ class AssetRef(NamedTuple):
             :class:`~guffin.common.geometry.ImageSize` when they could not be
             determined — or ``None`` for a non-image asset (a PDF has no
             pixel size).
+        original_file_name: The filename the asset was originally uploaded
+            under, or ``None`` when unknown.
     """
 
     uid: Uid
     path: Path
     size: ImageSize | None
+    original_file_name: str | None = None
 
 
 @validate_call
@@ -103,7 +107,9 @@ def fetch_assets(
             asset_path: Path = asset_dir / asset.file_name
             asset_path.write_bytes(asset.contents)
             size: ImageSize | None = asset.image_size if isinstance(asset, RoamImageAsset) else None
-            asset_refs[vertex.uid] = AssetRef(uid=vertex.uid, path=asset_path, size=size)
+            asset_refs[vertex.uid] = AssetRef(
+                uid=vertex.uid, path=asset_path, size=size, original_file_name=asset.original_file_name
+            )
             logger.info("Fetched asset uid=%r -> %s", vertex.uid, asset_path.name)
         except Exception as e:
             logger.warning("Failed to fetch asset uid=%r source=%s: %s", vertex.uid, vertex.source, e)
@@ -117,13 +123,14 @@ def fetch_and_enrich_assets(
     asset_dir: Path,
     cache_dir: Path | None = None,
 ) -> tuple[VertexTree, dict[Uid, AssetRef]]:
-    """Fetch every asset and return the tree enriched with the images' native sizes.
+    """Fetch every asset and return the tree enriched with what fetching alone can know.
 
     Convenience wrapper over :func:`fetch_assets`: after fetching, populates
     :attr:`~guffin.vertex.ImageVertex.original_image_size` on each image vertex
-    from the corresponding :class:`AssetRef` size via
-    :func:`~guffin.vertex_tree.enrich_image_original_sizes`.  Non-image assets
-    carry no pixel size and do not participate in the enrichment.
+    (via :func:`~guffin.vertex_tree.enrich_image_original_sizes`) and
+    :attr:`~guffin.vertex.PdfVertex.original_file_name` on each PDF vertex
+    (via :func:`~guffin.vertex_tree.enrich_pdf_original_file_names`) from the
+    corresponding :class:`AssetRef`.
 
     Args:
         vertex_tree: The vertex tree whose assets to fetch.
@@ -132,14 +139,17 @@ def fetch_and_enrich_assets(
         cache_dir: Optional directory for caching downloaded assets across runs.
 
     Returns:
-        A ``(enriched_tree, asset_refs)`` pair: *enriched_tree* is a copy of
-        *vertex_tree* with every :class:`~guffin.vertex.ImageVertex`'s
-        ``original_image_size`` populated from its fetched image; *asset_refs*
-        is the ``{uid: AssetRef}`` mapping as returned by :func:`fetch_assets`.
+        A ``(enriched_tree, asset_refs)`` pair: *enriched_tree* is the enriched copy of
+        *vertex_tree*; *asset_refs* is the ``{uid: AssetRef}`` mapping as returned by
+        :func:`fetch_assets`.
     """
     asset_refs: Final[dict[Uid, AssetRef]] = fetch_assets(vertex_tree, api_endpoint, asset_dir, cache_dir)
     original_sizes: Final[dict[Uid, ImageSize]] = {
         uid: ref.size for uid, ref in asset_refs.items() if ref.size is not None
     }
-    enriched_tree: Final[VertexTree] = enrich_image_original_sizes(vertex_tree, original_sizes)
+    original_names: Final[dict[Uid, str]] = {
+        uid: ref.original_file_name for uid, ref in asset_refs.items() if ref.original_file_name is not None
+    }
+    sized_tree: Final[VertexTree] = enrich_image_original_sizes(vertex_tree, original_sizes)
+    enriched_tree: Final[VertexTree] = enrich_pdf_original_file_names(sized_tree, original_names)
     return enriched_tree, asset_refs

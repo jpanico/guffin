@@ -49,13 +49,14 @@ def _image_asset(size: ImageSize = ImageSize(width=640, height=480), contents: b
     )
 
 
-def _pdf_asset(contents: bytes = b"%PDF-1.7 body") -> RoamAsset:
+def _pdf_asset(contents: bytes = b"%PDF-1.7 body", original_file_name: str | None = None) -> RoamAsset:
     """Build a base (non-image) RoamAsset named paper.pdf with the given contents."""
     return RoamAsset(
         file_name="paper.pdf",
         last_modified=_LAST_MODIFIED,
         media_type=MediaType.PDF,
         contents=contents,
+        original_file_name=original_file_name,
     )
 
 
@@ -121,6 +122,19 @@ class TestFetchAssets:
         assert sorted(result) == ["img00001a", "pdf00001a"]
         assert result["img00001a"].size == ImageSize(width=640, height=480)
         assert result["pdf00001a"].size is None
+
+    def test_original_file_name_passes_through(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The asset's originally uploaded filename reaches the AssetRef."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="dummy.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        assert result["pdf00001a"].original_file_name == "dummy.pdf"
 
     def test_fetch_failure_skips_vertex_and_logs_warning(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
@@ -189,6 +203,20 @@ class TestFetchAndEnrichAssets:
         fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(tree, _ENDPOINT, tmp_path)
 
         assert list(fetched[1]) == ["pdf00001a"]
+
+    def test_pdf_original_file_name_enriched(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The returned tree carries each PDF vertex's originally uploaded filename."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="dummy.pdf")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(tree, _ENDPOINT, tmp_path)
+
+        enriched_pdf: Final[PdfVertex] = next(v for v in fetched[0].tree_vertices if isinstance(v, PdfVertex))
+        assert enriched_pdf.original_file_name == "dummy.pdf"
 
     def test_input_tree_left_unmodified(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Enrichment returns a copy; the input tree's ImageVertex is left unchanged."""

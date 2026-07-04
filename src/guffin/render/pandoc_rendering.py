@@ -714,9 +714,9 @@ def _pdf_vertex_to_blocks(
     """Render a :class:`~guffin.vertex.PdfVertex` to Pandoc block elements.
 
     Produces a :class:`~panflute.Para` containing a :class:`~panflute.Link`
-    labelled with the PDF's original filename (Roam's encryption suffix
-    stripped), falling back to the source URL when no filename is known.
-    The link points at the local fetched file when *asset_files* has an
+    labelled with the PDF's originally uploaded filename when known, else the
+    storage-key filename (Roam's encryption suffix stripped), else the source
+    URL.  The link points at the local fetched file when *asset_files* has an
     entry for the vertex, else at the remote Cloud Firestore source URL.
 
     Args:
@@ -728,9 +728,10 @@ def _pdf_vertex_to_blocks(
         A single-element list containing the :class:`~panflute.Para`-wrapped link.
     """
     # Roam encrypts hosted assets with a trailing .enc extension; strip it for the display label.
-    label_text: Final[str] = (
+    storage_label: Final[str] = (
         vertex.file_name.removesuffix(".enc") if vertex.file_name is not None else str(vertex.source)
     )
+    label_text: Final[str] = vertex.original_file_name or storage_label
     pdf_path: Final[Path | None] = asset_files.get(vertex.uid)
     if pdf_path is None:
         logger.warning("PDF uid=%r not fetched; rendering as link to its remote source", vertex.uid)

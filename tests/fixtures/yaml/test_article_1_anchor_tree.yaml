@@ -410,7 +410,7 @@ tree_network:
   refs: null
   page:
     id: 3327
-  open: true
+  open: false
   children_view_type: null
   parents:
   - id: 3327
