@@ -26,6 +26,8 @@ from guffin.render.render_options import EpubRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 
+pytestmark = pytest.mark.pandoc
+
 _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 _ARTICLE5_STEM: Final[str] = shell_safe_filename("[[Test Article]] 5")
 
@@ -306,12 +308,17 @@ class TestRenderEpub:
         assert "background-color: #FF851C" not in _chapter_xhtml(article5_suppressed_epub)
 
 
-class TestSplitLevel:
-    """The EPUB ``--split-level`` is derived from the profile's top-level division.
+class TestSplitLevelAndNumbering:
+    """Splitting and numbering both follow the profile's structural policy.
 
-    Verified through the public ``render`` by counting the EPUB's split content files: an article
-    (sections) and a book without parts both keep their top-level unit at heading level 1 and split
-    there (equal chunking), while a book *with* parts puts chapters at level 2 and splits deeper.
+    One class, deliberately: under ``--dist loadscope`` the class is the fixture-sharing
+    boundary, so keeping every consumer of ``multi_level_epubs`` here renders that fixture's
+    five EPUBs once instead of once per worker.
+
+    Split level is verified through the public ``render`` by counting the EPUB's split content
+    files: an article (sections) and a book without parts both keep their top-level unit at
+    heading level 1 and split there (equal chunking), while a book *with* parts puts chapters at
+    level 2 and splits deeper.
     """
 
     def test_split_level_follows_top_level_division(self, multi_level_epubs: dict[str, Path]) -> None:
@@ -321,10 +328,6 @@ class TestSplitLevel:
         parts: Final[int] = _content_file_count(multi_level_epubs["parts"])
         assert article == book  # both split at heading level 1
         assert parts > book  # the parts-based book also splits at level 2
-
-
-class TestNumberSections:
-    """Heading numbering follows the profile's policy and the ``number_sections`` option override."""
 
     def test_book_numbers_headings_default_does_not(self, multi_level_epubs: dict[str, Path]) -> None:
         """A book (number_sections=True) numbers headings; the default article does not."""

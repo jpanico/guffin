@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Final
 
+import pytest
 from conftest import FIXTURES_MD_DIR, article1_node_tree
 
 from guffin.common.filenames import shell_safe_filename
@@ -12,6 +13,8 @@ from guffin.render.project import DefaultProfile
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
+
+pytestmark = pytest.mark.pandoc
 
 
 class TestRenderArticleFixture:

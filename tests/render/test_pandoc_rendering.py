@@ -35,6 +35,8 @@ from guffin.render.pandoc_rendering import (
     vertex_tree_to_pandoc,
 )
 
+pytestmark = pytest.mark.pandoc
+
 _IMAGE_URL: HttpUrl = HttpUrl("https://example.com/imgs/photo.jpeg")
 _PDF_URL: HttpUrl = HttpUrl("https://example.com/pdfs/paper.pdf")
 

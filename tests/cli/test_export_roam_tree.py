@@ -31,6 +31,7 @@ from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, Node
 from guffin.transcribe.roam_tree_to_guffin import transcribe
 
 
+@pytest.mark.pandoc
 class TestExportRoamTreeNoBundle:
     """Tests for export_roam_tree in --no-bundle mode."""
 
@@ -85,6 +86,7 @@ class TestExportRoamTreeNoBundle:
         assert output_file.read_text() == expected
 
 
+@pytest.mark.pandoc
 class TestExportRoamTreeBundle:
     """Smoke tests for export_roam_tree in --bundle mode."""
 
@@ -134,6 +136,7 @@ class TestExportRoamTreeBundle:
         assert (bundle_dir / "Test_Article_1.default.md").exists()
 
 
+@pytest.mark.pandoc
 class TestExportRoamTreeMdbundleFromRaw:
     """End-to-end test of export_roam_tree --bundle for [[Test Article]] 3, from the raw fetch result."""
 

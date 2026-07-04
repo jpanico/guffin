@@ -1,9 +1,12 @@
 """Tests for guffin.render.pandoc_ast."""
 
 import panflute as pf  # type: ignore[import-untyped]
+import pytest
 
 from guffin.model.link import VertexLinkKind, vertex_link_url
 from guffin.render.pandoc_ast import parse_inline_md
+
+pytestmark = pytest.mark.pandoc
 
 
 class TestParseInlineMd:

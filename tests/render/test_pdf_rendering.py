@@ -8,6 +8,7 @@ import shutil
 from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
+import pytest
 from conftest import FIXTURES_PDF_DIR
 
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
@@ -129,6 +130,7 @@ class TestPreparePdfEmbeds:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.pandoc
 class TestApplyPdfEmbeds:
     """_apply_pdf_embeds() rewrites PDF-embed link paragraphs into their Typst form."""
 

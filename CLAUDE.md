@@ -43,7 +43,8 @@ export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <ou
 # a {{[[pdf]]: <url>}} embed is content-tag controlled in the PDF format: untagged it renders as a hyperlink, tagged pdf-render:: inline (a guffin-meta:: child of the embed block) all of its pages render in the document flow; either way the original file rides the output as a pdf.attach attachment (requires typst >= 0.14)
 # --template-dir: directory containing user_cfg.typ overrides for PDF styling (pdf only)
 
-# Run the full check pipeline (format + lint + type check + tests) in one shot:
+# Run the full check pipeline (format + lint + type check + tests) in one shot.
+# The test step is `test-heavy`, so live tests run too — requires Roam Desktop running locally:
 hatch run check
 
 # Individual steps (run in this order):
@@ -53,8 +54,13 @@ ruff check --fix src/ tests/      # lint + fix docstring style (Google conventio
 pyright                           # type check (strict)
 pytest                            # run tests (excludes live tests)
 
-# Live tests — NOT part of the check pipeline; must be explicitly requested:
-GUFFIN_LIVE_TESTS=1 pytest -m live -v  # requires Roam Desktop running locally
+# Test tiers (defined as hatch scripts in pyproject.toml), lightest to heaviest:
+hatch run test-light   # skips pandoc-subprocess-bound integration tests (marked `pandoc`); the fast inner loop (~2.5s)
+hatch run test-medium  # the full offline suite
+hatch run test-heavy   # everything, live tests included; requires Roam Desktop running locally; the tier `check` runs
+
+# Live tests only, directly (requires Roam Desktop running locally):
+GUFFIN_LIVE_TESTS=1 pytest -m live -v
 ```
 
 ## Project Structure

@@ -61,6 +61,7 @@ class TestEpubDivisionForMatter:
         assert epub_division_for_matter(Matter.BACK) is EpubDivision.BACKMATTER
 
 
+@pytest.mark.pandoc
 class TestEpubTypeDivisionMatchesPandoc:
     """Characterization: each ``EpubType.division`` must equal the ``<body>`` division Pandoc emits.
 

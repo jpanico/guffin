@@ -52,10 +52,18 @@ check = [
     "black .",
     "ruff check --fix src/ tests/",
     "pyright",
-    # loadscope groups each test module/class onto one worker, so the module-scoped render fixtures
-    # (which spawn Pandoc/Typst) are built once per module rather than re-run on every worker.
-    "pytest -n auto --dist loadscope",
+    "test-heavy",
 ]
+# Test tiers, lightest to heaviest.  All three parallelize with loadscope: it groups each test
+# module/class onto one worker, so the module-scoped render fixtures (which spawn Pandoc/Typst)
+# are built once per module rather than re-run on every worker.
+#   light  — skips the pandoc-subprocess-bound integration tests (marked `pandoc`); the fast inner loop.
+#   medium — the full offline suite.
+#   heavy  — everything, live tests included (requires the Roam Desktop app running locally);
+#            the tier `check` runs.
+test-light = "pytest -n auto --dist loadscope -m 'not pandoc'"
+test-medium = "pytest -n auto --dist loadscope"
+test-heavy = "GUFFIN_LIVE_TESTS=1 pytest -n auto --dist loadscope"
 
 [tool.black]
 line-length = 120
@@ -114,6 +122,7 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 markers = [
     "live: requires external dependencies (e.g. Roam Desktop app running locally)",
+    "pandoc: invokes the pandoc binary (subprocess-bound; deselect with -m 'not pandoc' for a fast inner loop)",
 ]
 log_cli = true
 log_cli_level = "INFO"
