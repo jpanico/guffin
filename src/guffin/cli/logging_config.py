@@ -26,6 +26,25 @@ _MESSAGE_HIGHLIGHTS: list[tuple[regex.Pattern[str], str]] = [
     (regex.compile(r"\s*id=\d+,"), "\033[1;97m"),  # bold bright white
 ]
 
+_SUPPRESSED_RECORDS: Final[list[tuple[str, regex.Pattern[str]]]] = [
+    # pypdf warns once per malformed cross-reference entry while it recovers by scanning; the
+    # condition is a quirk of a third-party PDF file the user cannot act on, and pypdf reads on.
+    ("pypdf", regex.compile(r"^Ignoring wrong pointing object ")),
+]
+"""Log records to suppress: ``(logger prefix, message pattern)`` pairs, matched per record."""
+
+
+class _RecordSuppressionFilter(logging.Filter):
+    """Drops the log records matched by :data:`_SUPPRESSED_RECORDS`; passes everything else."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Return ``False`` when *record* matches a suppressed (logger prefix, message) pair."""
+        for logger_prefix, message_pattern in _SUPPRESSED_RECORDS:
+            name_matches: bool = record.name == logger_prefix or record.name.startswith(f"{logger_prefix}.")
+            if name_matches and message_pattern.search(record.getMessage()) is not None:
+                return False
+        return True
+
 
 def _highlight_message(message: str) -> str:
     """Return *message* with all :data:`_MESSAGE_HIGHLIGHTS` patterns ANSI-colorized."""
@@ -72,6 +91,9 @@ def configure_logging() -> None:
             datefmt="%H:%M:%S",
         )
     )
+    # The filter sits on the handler (not a logger), so it applies to every record that would
+    # reach the output, whichever library logger emitted it.
+    handler.addFilter(_RecordSuppressionFilter())
     logging.basicConfig(
         level=os.environ.get("LOG_LEVEL", "INFO").upper(),
         handlers=[handler],
