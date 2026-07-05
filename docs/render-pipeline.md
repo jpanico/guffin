@@ -251,7 +251,9 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 
 ## The `PublishingSemantics` vocabulary (model → format mapping)
 
-> **Status.** The vocabulary lives in `model/publishing_semantics.py`; the **EPUB** mapping that consumes
+> **Status.** The vocabulary lives in `model/publishing_semantics.py`, drawing its CMOS-aligned
+> structural taxonomy (`Matter`, `StructuralElement`) from `model/chicago_structure.py`; the
+> **EPUB** mapping that consumes
 > it (`render/epub_semantics.py` + the `pandoc_rendering` header stamping) is **built**, including the
 > `<body>` division post-processing (`render/epub_post_processing.py`) that restores the CMOS placement.
 > Two vocabulary-driven effects are already **format-independent**: the matter-derived `unnumbered`
@@ -261,30 +263,35 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 
 `model/publishing_semantics.py` defines a **format-independent vocabulary aligned with publishing-industry
 standards and conventions** — the semantic identity of the pieces of a document, independent of how
-any output format renders them. It is intentionally *not* modeled on EPUB (or PDF, or GFM).
+any output format renders them. It is intentionally *not* modeled on EPUB (or PDF, or GFM). The
+book-anatomy taxonomy the tags take their values from — `Matter` and `StructuralElement`, whose
+placements are the Chicago Manual of Style's rulings — lives in `model/chicago_structure.py`, a
+pure taxonomy with no other `guffin` dependencies.
 
 ### The pieces
 
-- **`PublishingAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`Anchor`**: the
-  kind of vertex it attaches to, and where in the tree. `Anchor` has `PAGE`, `HEADING`, `PDF`,
+- **`PublishingAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`AttributeAnchor`**: the
+  kind of vertex it attaches to, and where in the tree. The anchoring affordances themselves live
+  in `model/attribute_anchor.py` — what the model *can express* is independent of how this vocabulary uses
+  it. `AttributeAnchor` has `PAGE`, `HEADING`, `PDF`,
   `BLOCK`, `ANY`, and `ROOT`; each member carries two constraint axes a host vertex must satisfy:
-  the `frozenset[VertexType]` it corresponds to (the Anchor↔VertexType correspondence is a single
+  the `frozenset[VertexType]` it corresponds to (the AttributeAnchor↔VertexType correspondence is a single
   source of truth on the enum; `VertexType` is defined in `model/vertex.py`) and its `TreePosition`
   (`anywhere`/`root`). `BLOCK` covers every vertex type except a page and `ANY`/`ROOT` cover them
   all, derived from `VertexType` itself; `ROOT` is the positional anchor — type-independent, but
   its host must be the tree's root vertex (the export target: a page for a page export, a heading
   or block for a subtree export).
 - **`PublishingSemantics`** — the enum of recognized guffin attributes, each a `PublishingAttribute`:
-  - *Root-anchored document metadata* (`Anchor.ROOT`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
+  - *Root-anchored document metadata* (`AttributeAnchor.ROOT`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
     `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts about the work as a whole, folded
     from a `guffin-meta::` block on the export root (a referenced page's metadata can no longer
     masquerade as the work's own).
-  - *Heading-anchored tags* (`Anchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
+  - *Heading-anchored tags* (`AttributeAnchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
     `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
     for a bespoke heading with no specific element type.
-  - *PDF-anchored tags* (`Anchor.PDF`): `PDF_RENDER` (`pdf-render::`) declares an embedded PDF
+  - *PDF-anchored tags* (`AttributeAnchor.PDF`): `PDF_RENDER` (`pdf-render::`) declares an embedded PDF
     asset's `PdfRender` placement in paginated output (`inline` pages vs the default `link`).
-  - *Block-anchored tags* (`Anchor.BLOCK`): `PUBLISH` (`publish::`) declares a block's publication
+  - *Block-anchored tags* (`AttributeAnchor.BLOCK`): `PUBLISH` (`publish::`) declares a block's publication
     state; `publish:: false` omits the block and its entire subtree from every rendered output
     (untagged, `DEFAULT_PUBLISH` — published — applies).
 - **`StructuralElement`** — the legal values of an `element-type` tag: a book's organizational parts
@@ -315,7 +322,7 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   `publish:: false` raises — the export target cannot be omitted from its own output.
 - **`validate_semantics(tree)`** — the vocabulary's validation pass (built on `common/validation`),
   accumulating six validators: `all_attributes_anchored` (every recognized guffin attribute sits
-  on one of the vertex types its `Anchor` names — the `Anchor.vertex_types` correspondence is the
+  on one of the vertex types its `AttributeAnchor` names — the `AttributeAnchor.vertex_types` correspondence is the
   enforced invariant), `all_element_type_values_legal` / `all_matter_values_legal` /
   `all_pdf_render_values_legal` / `all_publish_values_legal` (every `element-type` / `matter` /
   `pdf-render` / `publish` value is a `StructuralElement` / `Matter` / `PdfRender` member / boolean

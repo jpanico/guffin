@@ -39,7 +39,7 @@ from typing import Final, Self
 
 from pydantic import validate_call
 
-from guffin.model.publishing_semantics import Matter, StructuralElement
+from guffin.model.chicago_structure import Matter, StructuralElement
 
 MATTER_DATA_ATTRIBUTE: Final[str] = "data-guffin-matter"
 """Section attribute carrying a heading's CMOS ``<body>`` division (an :class:`EpubDivision` value).

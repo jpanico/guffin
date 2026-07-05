@@ -8,7 +8,7 @@ import pypandoc  # type: ignore[import-untyped]
 import pytest
 import regex
 
-from guffin.model.publishing_semantics import Matter, StructuralElement
+from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.render.epub_semantics import EpubDivision, EpubType, epub_division_for_matter, epub_type_for
 
 _BODY_EPUB_TYPE_RE: Final[regex.Pattern[str]] = regex.compile(r'<body\b[^>]*epub:type="([^"]*)"')

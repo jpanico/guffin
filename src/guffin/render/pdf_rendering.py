@@ -47,10 +47,10 @@ from pypdf import PdfReader
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.provenance import Provenance
+from guffin.model.chicago_structure import StructuralElement
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     PdfRender,
-    StructuralElement,
     drop_unpublished,
     has_element_type,
     pdf_render_of_vertex,

@@ -91,13 +91,12 @@ from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
 )
+from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
-    Matter,
     PdfRender,
     PublishingSemantics,
-    StructuralElement,
     element_type_of_vertex,
     pdf_render_of_vertex,
     resolved_matter,

@@ -14,17 +14,15 @@ from guffin.model.attribute import (
     AttributeInstance,
     LiteralValue,
 )
+from guffin.model.attribute_anchor import AttributeAnchor
+from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     DEFAULT_PUBLISH,
-    Anchor,
-    Matter,
     PdfRender,
     PublishingAttribute,
     PublishingSemantics,
-    StructuralElement,
-    TreePosition,
     _anchor_mismatch,
     all_attributes_anchored,
     all_element_type_values_legal,
@@ -53,7 +51,6 @@ from guffin.model.vertex import (
     PageVertex,
     PdfVertex,
     TextVertex,
-    VertexType,
     vertex_adapter,
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
@@ -74,13 +71,13 @@ class TestPublishingAttribute:
 
     def test_domain_defaults_to_guffin(self) -> None:
         """The domain is the guffin domain without being passed."""
-        attribute = PublishingAttribute(name="title", anchor=Anchor.PAGE)
+        attribute = PublishingAttribute(name="title", anchor=AttributeAnchor.PAGE)
         assert attribute.domain is AttributeDomain.GUFFIN
 
     def test_non_guffin_domain_is_rejected(self) -> None:
         """Constructing with any domain other than GUFFIN raises."""
         with pytest.raises(ValidationError):
-            PublishingAttribute(name="x", anchor=Anchor.PAGE, domain=AttributeDomain.DEFAULT)
+            PublishingAttribute(name="x", anchor=AttributeAnchor.PAGE, domain=AttributeDomain.DEFAULT)
 
     def test_anchor_is_required(self) -> None:
         """Constructing without an anchor raises."""
@@ -93,17 +90,17 @@ class TestPublishingSemanticsMembers:
 
     def test_root_anchored_metadata_members(self) -> None:
         """The document-metadata members are root-anchored and carry their attribute names."""
-        root_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.ROOT}
+        root_members = {m.value.name for m in PublishingSemantics if m.value.anchor is AttributeAnchor.ROOT}
         assert root_members == {"title", "subtitle", "authors", "date", "publisher", "rights", "identifier"}
 
     def test_heading_anchored_tag_members(self) -> None:
         """The heading-tag members are heading-anchored."""
-        heading_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.HEADING}
+        heading_members = {m.value.name for m in PublishingSemantics if m.value.anchor is AttributeAnchor.HEADING}
         assert heading_members == {"element-type", "matter"}
 
     def test_pdf_anchored_tag_members(self) -> None:
         """The PDF-tag members are pdf-anchored."""
-        pdf_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.PDF}
+        pdf_members = {m.value.name for m in PublishingSemantics if m.value.anchor is AttributeAnchor.PDF}
         assert pdf_members == {"pdf-render"}
 
 
@@ -699,54 +696,24 @@ class TestValidateSemantics:
         assert "misplaced matter tags" in messages
 
 
-class TestAnchorVertexTypes:
-    """Anchor members carry the vertex-type sets they attach to."""
-
-    def test_single_type_anchors(self) -> None:
-        """The page, heading, and pdf anchors each cover exactly their one vertex type."""
-        assert Anchor.PAGE.vertex_types == frozenset({VertexType.PAGE})
-        assert Anchor.HEADING.vertex_types == frozenset({VertexType.HEADING})
-        assert Anchor.PDF.vertex_types == frozenset({VertexType.PDF})
-
-    def test_block_anchor_covers_every_type_except_page(self) -> None:
-        """The block anchor covers every vertex type but PAGE."""
-        assert VertexType.PAGE not in Anchor.BLOCK.vertex_types
-        assert Anchor.BLOCK.vertex_types == frozenset(VertexType) - {VertexType.PAGE}
-
-    def test_any_anchor_covers_every_type(self) -> None:
-        """The any anchor covers every vertex type, page included."""
-        assert Anchor.ANY.vertex_types == frozenset(VertexType)
-
-    def test_root_anchor_covers_every_type_at_the_root(self) -> None:
-        """The root anchor is positional: every vertex type, but only at the tree's root."""
-        assert Anchor.ROOT.vertex_types == frozenset(VertexType)
-        assert Anchor.ROOT.tree_position is TreePosition.ROOT
-
-    def test_every_other_anchor_is_positionally_unconstrained(self) -> None:
-        """All anchors except ROOT carry the ANYWHERE tree position."""
-        for member in Anchor:
-            if member is not Anchor.ROOT:
-                assert member.tree_position is TreePosition.ANYWHERE, member
-
-
 class TestAnchorMismatch:
     """_anchor_mismatch() checks both anchor axes: vertex type and tree position."""
 
     def test_root_anchored_on_root_vertex_passes(self) -> None:
         """A root-anchored attribute on the root vertex satisfies the anchor."""
-        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.ROOT)
+        attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.ROOT)
         root = PageVertex(uid="pageroot1", title="Doc")
         assert _anchor_mismatch(attribute, root, "pageroot1") is None
 
     def test_root_anchored_on_non_page_root_passes(self) -> None:
         """The root anchor is type-independent: a heading root (subtree export) also satisfies it."""
-        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.ROOT)
+        attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.ROOT)
         root = HeadingVertex(uid="head00001", text="H", heading_level=1)
         assert _anchor_mismatch(attribute, root, "head00001") is None
 
     def test_root_anchored_on_non_root_vertex_is_reported(self) -> None:
         """A root-anchored attribute anywhere but the root is a positional mismatch."""
-        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.ROOT)
+        attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.ROOT)
         stray = TextVertex(uid="txt00001a", text="hello")
         mismatch = _anchor_mismatch(attribute, stray, "pageroot1")
         assert mismatch is not None
@@ -756,7 +723,7 @@ class TestAnchorMismatch:
 
     def test_type_mismatch_reported_before_position(self) -> None:
         """A vertex failing the type axis reports the type mismatch."""
-        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.HEADING)
+        attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.HEADING)
         stray = TextVertex(uid="txt00001a", text="hello")
         mismatch = _anchor_mismatch(attribute, stray, "pageroot1")
         assert mismatch is not None

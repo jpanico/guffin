@@ -8,15 +8,16 @@ Public symbols:
   the ``element-type``/``matter`` heading tags + the ``pdf-render`` PDF tag + the ``publish``
   block tag), each member a
   :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
-  domain; :class:`Anchor` — where a Guffin attribute attaches (page / heading / pdf / block /
-  any / root), each member carrying its :class:`~guffin.model.vertex.VertexType` set and its
-  :class:`TreePosition`; :class:`TreePosition` — the positional axis of an anchor (anywhere /
-  root); :class:`Matter` —
-  the book division a part belongs to (front / body / back); :class:`StructuralElement` — a book's
-  structural elements by name, each carrying its :class:`Matter` division (its organizational parts);
-  :class:`PdfRender` — how an embedded PDF asset is placed in paginated output (inline / link).
+  domain; :class:`PdfRender` — how an embedded PDF asset is placed in paginated output (inline /
+  link).  The anchoring affordances an attribute declares
+  (:class:`~guffin.model.attribute_anchor.AttributeAnchor`,
+  :class:`~guffin.model.attribute_anchor.TreePosition`) live in
+  :mod:`~guffin.model.attribute_anchor`; the CMOS-aligned structural taxonomy the ``element-type`` and
+  ``matter`` tags take their values from (:class:`~guffin.model.chicago_structure.Matter`,
+  :class:`~guffin.model.chicago_structure.StructuralElement`) lives in
+  :mod:`~guffin.model.chicago_structure`.
 - **Models**: :class:`PublishingAttribute` — an :class:`~guffin.model.attribute.Attribute` pinned to the
-  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`Anchor`.
+  :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`AttributeAnchor`.
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
   assignment's value as a :class:`Matter`; :func:`pdf_render_of` — read a ``pdf-render``
@@ -37,7 +38,7 @@ Public symbols:
   :func:`drop_unpublished` — prune every ``publish:: false`` subtree (block embeds of pruned
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
-  (every recognised guffin attribute satisfies its :class:`Anchor` — one of its vertex types, at
+  (every recognised guffin attribute satisfies its :class:`AttributeAnchor` — one of its vertex types, at
   its tree position),
   :func:`all_element_type_values_legal` (every ``element-type`` value is a
   :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
@@ -51,14 +52,15 @@ Public symbols:
 
 This module sits at the top of the ``model/`` conceptual stack: it may depend on the structural
 primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
-:mod:`~guffin.model.vertex_tree`), and none of them may depend on it.
+:mod:`~guffin.model.vertex_tree`), the :mod:`~guffin.model.attribute_anchor` affordances, and the
+:mod:`~guffin.model.chicago_structure` taxonomy, and none of them may depend on it.
 """
 
 import enum
 import logging
 from collections.abc import Callable
 from itertools import chain
-from typing import Final, Self
+from typing import Final
 
 from pydantic import ConfigDict, Field, field_validator, validate_call
 
@@ -69,89 +71,19 @@ from guffin.model.attribute import (
     AttributeDomain,
     verified_sole_value_text,
 )
+from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
+from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
     BlockEmbedVertex,
     HeadingVertex,
     PdfVertex,
     Vertex,
-    VertexType,
     find_attribute_assignment,
 )
 from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
 
 logger = logging.getLogger(__name__)
-
-
-class TreePosition(enum.StrEnum):
-    """Where in a :class:`~guffin.model.vertex_tree.VertexTree` an attribute's host vertex may sit.
-
-    The positional axis of an :class:`Anchor`, independent of the host's
-    :class:`~guffin.model.vertex.VertexType`.
-
-    Attributes:
-        ANYWHERE: No positional constraint — any vertex in the tree.
-        ROOT: Only the tree's root vertex (the export target itself).
-    """
-
-    ANYWHERE = "anywhere"
-    ROOT = "root"
-
-
-class Anchor(enum.StrEnum):
-    """Where a Guffin attribute attaches: the kind of vertex, and its position in the tree.
-
-    Each member carries two constraint axes, and a host vertex must satisfy both:
-
-    - :attr:`vertex_types` — the set of :class:`~guffin.model.vertex.VertexType` the attribute
-      may be declared on.  The :attr:`BLOCK`, :attr:`ANY`, and :attr:`ROOT` sets are derived
-      from :class:`~guffin.model.vertex.VertexType` itself, so a future vertex type is covered
-      without touching this enum.
-    - :attr:`tree_position` — where in the tree the host may sit, independent of its type.
-
-    Attributes:
-        vertex_types: The :class:`~guffin.model.vertex.VertexType` set this anchor corresponds to.
-        tree_position: The :class:`TreePosition` this anchor requires of its host.
-        PAGE: The attribute attaches to a page vertex (the whole document).
-        HEADING: The attribute attaches to a heading vertex (a section).
-        PDF: The attribute attaches to a PDF vertex (an embedded PDF asset).
-        BLOCK: The attribute attaches to any block vertex — every vertex type except a page.
-        ANY: The attribute attaches to any vertex, of every type, anywhere.
-        ROOT: The attribute attaches to the tree's root vertex, whatever its type — a page for a
-            page export, a heading or text block for a subtree export.
-    """
-
-    def __new__(cls, value: str, vertex_types: frozenset[VertexType], tree_position: TreePosition) -> Self:
-        """Create a member whose string value is *value*, carrying *vertex_types* and *tree_position*."""
-        member = str.__new__(cls, value)
-        member._value_ = value
-        member.vertex_types = vertex_types
-        member.tree_position = tree_position
-        return member
-
-    vertex_types: frozenset[VertexType]
-    tree_position: TreePosition
-
-    PAGE = ("page", frozenset({VertexType.PAGE}), TreePosition.ANYWHERE)
-    HEADING = ("heading", frozenset({VertexType.HEADING}), TreePosition.ANYWHERE)
-    PDF = ("pdf", frozenset({VertexType.PDF}), TreePosition.ANYWHERE)
-    BLOCK = ("block", frozenset(VertexType) - {VertexType.PAGE}, TreePosition.ANYWHERE)
-    ANY = ("any", frozenset(VertexType), TreePosition.ANYWHERE)
-    ROOT = ("root", frozenset(VertexType), TreePosition.ROOT)
-
-
-class Matter(enum.StrEnum):
-    """A top-level division of a book — the publishing-standard grouping its parts belong to.
-
-    Attributes:
-        FRONT: Front matter — material preceding the main text (title page, foreword, preface, …).
-        BODY: Body matter — the main text (parts, chapters).
-        BACK: Back matter — material following the main text (appendices, glossary, colophon, …).
-    """
-
-    FRONT = "front-matter"
-    BODY = "body-matter"
-    BACK = "back-matter"
 
 
 class PdfRender(enum.StrEnum):
@@ -178,7 +110,7 @@ _PUBLISH_LITERALS: Final[dict[str, bool]] = {"true": True, "false": False}
 
 
 class PublishingAttribute(Attribute):
-    """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`Anchor`.
+    """A Guffin-domain :class:`~guffin.model.attribute.Attribute` that also carries a :class:`AttributeAnchor`.
 
     Specializes :class:`~guffin.model.attribute.Attribute` by pinning :attr:`domain` to
     :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` (any other value is rejected) and adding a
@@ -190,7 +122,7 @@ class PublishingAttribute(Attribute):
     """
 
     domain: AttributeDomain = Field(default=AttributeDomain.GUFFIN, description="Always the guffin domain.")
-    anchor: Anchor = Field(..., description="The kind of vertex this attribute attaches to.")
+    anchor: AttributeAnchor = Field(..., description="The kind of vertex this attribute attaches to.")
 
     @field_validator("domain")
     @classmethod
@@ -206,16 +138,16 @@ class PublishingSemantics(enum.Enum):
 
     Each member's value is the :class:`PublishingAttribute` for that attribute.  Three kinds:
 
-    - **Document metadata** (:attr:`Anchor.ROOT`) — bibliographic facts about the work as a
+    - **Document metadata** (:attr:`AttributeAnchor.ROOT`) — bibliographic facts about the work as a
       whole, so they attach only to the tree's root vertex (the export target itself, whatever
       its type): :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`,
       :attr:`PUBLISHER`, :attr:`RIGHTS`, :attr:`IDENTIFIER`.
-    - **Heading tags** (:attr:`Anchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
+    - **Heading tags** (:attr:`AttributeAnchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
       declares which :class:`StructuralElement` the heading is; :attr:`MATTER` declares its
       :class:`Matter` division directly, for a bespoke section with no specific element type.
-    - **PDF tags** (:attr:`Anchor.PDF`) — applied to an individual embedded PDF asset:
+    - **PDF tags** (:attr:`AttributeAnchor.PDF`) — applied to an individual embedded PDF asset:
       :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated output.
-    - **Block tags** (:attr:`Anchor.BLOCK`) — applied to any block vertex: :attr:`PUBLISH`
+    - **Block tags** (:attr:`AttributeAnchor.BLOCK`) — applied to any block vertex: :attr:`PUBLISH`
       declares whether the block, with its entire subtree, appears in rendered output.
 
     Attributes:
@@ -235,76 +167,17 @@ class PublishingSemantics(enum.Enum):
 
     _value_: PublishingAttribute
 
-    TITLE = PublishingAttribute(name="title", anchor=Anchor.ROOT)
-    SUBTITLE = PublishingAttribute(name="subtitle", anchor=Anchor.ROOT)
-    AUTHORS = PublishingAttribute(name="authors", anchor=Anchor.ROOT)
-    DATE = PublishingAttribute(name="date", anchor=Anchor.ROOT)
-    PUBLISHER = PublishingAttribute(name="publisher", anchor=Anchor.ROOT)
-    RIGHTS = PublishingAttribute(name="rights", anchor=Anchor.ROOT)
-    IDENTIFIER = PublishingAttribute(name="identifier", anchor=Anchor.ROOT)
-    ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=Anchor.HEADING)
-    MATTER = PublishingAttribute(name="matter", anchor=Anchor.HEADING)
-    PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=Anchor.PDF)
-    PUBLISH = PublishingAttribute(name="publish", anchor=Anchor.BLOCK)
-
-
-class StructuralElement(enum.StrEnum):
-    """The structural elements of a book — its organizational parts, each in a :class:`Matter` division.
-
-    The reusable section types an author tags a heading with, from :attr:`TITLE_PAGE` through
-    :attr:`COLOPHON` — title page, foreword, preface, parts and chapters, appendices, glossary, index,
-    colophon, and so on.  Member names follow publishing conventions; each member's value is that name,
-    and :attr:`matter` is the front/body/back-matter division it conventionally belongs to.
-
-    :attr:`matter` is aligned with the Chicago Manual of Style (CMOS), the de facto US book-publishing
-    standard — this is the *conventional* placement, independent of any output format.  How a specific
-    format's toolchain happens to divide these parts is a separate, format-specific concern resolved
-    where that format is rendered.
-
-    Only the book's **interior** is classified by matter, so there is no ``cover`` member: per CMOS the
-    cover (and jacket) is the exterior, outside the front/body/back-matter division.  In practice a
-    cover is supplied as document metadata / a cover image, not authored as a tagged content section.
-
-    Attributes:
-        matter: The :class:`Matter` division this element conventionally belongs to, per CMOS.
-    """
-
-    def __new__(cls, value: str, matter: Matter) -> Self:
-        """Create a member whose string value is *value* and that carries *matter*."""
-        member = str.__new__(cls, value)
-        member._value_ = value
-        member.matter = matter
-        return member
-
-    matter: Matter
-
-    TITLE_PAGE = ("title-page", Matter.FRONT)
-    COPYRIGHT_PAGE = ("copyright-page", Matter.FRONT)
-    EPIGRAPH = ("epigraph", Matter.FRONT)
-    ACKNOWLEDGMENTS = ("acknowledgments", Matter.FRONT)
-    FOREWORD = ("foreword", Matter.FRONT)
-    PREFACE = ("preface", Matter.FRONT)
-    INTRODUCTION = ("introduction", Matter.FRONT)
-    TABLE_OF_CONTENTS = ("table-of-contents", Matter.FRONT)
-    LIST_OF_ILLUSTRATIONS = ("list-of-illustrations", Matter.FRONT)
-    PROLOGUE = ("prologue", Matter.BODY)
-    PART = ("part", Matter.BODY)
-    CHAPTER = ("chapter", Matter.BODY)
-    SECTION = ("section", Matter.BODY)
-    SUB_SECTION = ("sub-section", Matter.BODY)
-    SUB_SUB_SECTION = ("sub-sub-section", Matter.BODY)
-    # Conclusion and epilogue close the text proper (per CMOS): end of the body matter, not back
-    # matter.  An afterword, being commentary *about* the text, opens the back matter instead.
-    CONCLUSION = ("conclusion", Matter.BODY)
-    EPILOGUE = ("epilogue", Matter.BODY)
-    AFTERWORD = ("afterword", Matter.BACK)
-    APPENDIX = ("appendix", Matter.BACK)
-    GLOSSARY = ("glossary", Matter.BACK)
-    ENDNOTES = ("endnotes", Matter.BACK)
-    BIBLIOGRAPHY = ("bibliography", Matter.BACK)
-    INDEX = ("index", Matter.BACK)
-    ABOUT_THE_AUTHOR = ("about-the-author", Matter.BACK)
-    COLOPHON = ("colophon", Matter.BACK)
+    TITLE = PublishingAttribute(name="title", anchor=AttributeAnchor.ROOT)
+    SUBTITLE = PublishingAttribute(name="subtitle", anchor=AttributeAnchor.ROOT)
+    AUTHORS = PublishingAttribute(name="authors", anchor=AttributeAnchor.ROOT)
+    DATE = PublishingAttribute(name="date", anchor=AttributeAnchor.ROOT)
+    PUBLISHER = PublishingAttribute(name="publisher", anchor=AttributeAnchor.ROOT)
+    RIGHTS = PublishingAttribute(name="rights", anchor=AttributeAnchor.ROOT)
+    IDENTIFIER = PublishingAttribute(name="identifier", anchor=AttributeAnchor.ROOT)
+    ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=AttributeAnchor.HEADING)
+    MATTER = PublishingAttribute(name="matter", anchor=AttributeAnchor.HEADING)
+    PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=AttributeAnchor.PDF)
+    PUBLISH = PublishingAttribute(name="publish", anchor=AttributeAnchor.BLOCK)
 
 
 @validate_call
@@ -668,8 +541,8 @@ def _anchor_mismatch(attribute: PublishingAttribute, vertex: Vertex, root_uid: U
     """Describe how *vertex* fails *attribute*'s anchor, or ``None`` when it satisfies it.
 
     A host vertex must satisfy both anchor axes: its type must be among the anchor's
-    :attr:`~Anchor.vertex_types`, and its position must match the anchor's
-    :attr:`~Anchor.tree_position` (:attr:`TreePosition.ROOT` requires the vertex to be the
+    :attr:`~AttributeAnchor.vertex_types`, and its position must match the anchor's
+    :attr:`~AttributeAnchor.tree_position` (:attr:`TreePosition.ROOT` requires the vertex to be the
     tree's root, identified by *root_uid*).
 
     Args:
@@ -680,7 +553,7 @@ def _anchor_mismatch(attribute: PublishingAttribute, vertex: Vertex, root_uid: U
     Returns:
         The mismatch description, or ``None`` when *vertex* satisfies the anchor.
     """
-    anchor: Final[Anchor] = attribute.anchor
+    anchor: Final[AttributeAnchor] = attribute.anchor
     if vertex.vertex_type not in anchor.vertex_types:
         return (
             f"{attribute.name!r} is {anchor.value}-anchored but declared on a "
@@ -722,7 +595,7 @@ def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment, root_uid:
 def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every guffin attribute to sit on its anchor.
 
-    Each :class:`PublishingSemantics` member's :class:`PublishingAttribute` carries an :class:`Anchor`
+    Each :class:`PublishingSemantics` member's :class:`PublishingAttribute` carries an :class:`AttributeAnchor`
     naming the :class:`~guffin.model.vertex.VertexType` set and :class:`TreePosition` it attaches
     to; this validator enforces
     that invariant across *tree* — both its tree vertices and its referenced-vertex stubs
