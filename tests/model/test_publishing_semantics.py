@@ -24,6 +24,8 @@ from guffin.model.publishing_semantics import (
     PublishingAttribute,
     PublishingSemantics,
     StructuralElement,
+    TreePosition,
+    _anchor_mismatch,
     all_attributes_anchored,
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
@@ -709,6 +711,55 @@ class TestAnchorVertexTypes:
         """The block anchor covers every vertex type but PAGE."""
         assert VertexType.PAGE not in Anchor.BLOCK.vertex_types
         assert Anchor.BLOCK.vertex_types == frozenset(VertexType) - {VertexType.PAGE}
+
+    def test_any_anchor_covers_every_type(self) -> None:
+        """The any anchor covers every vertex type, page included."""
+        assert Anchor.ANY.vertex_types == frozenset(VertexType)
+
+    def test_root_anchor_covers_every_type_at_the_root(self) -> None:
+        """The root anchor is positional: every vertex type, but only at the tree's root."""
+        assert Anchor.ROOT.vertex_types == frozenset(VertexType)
+        assert Anchor.ROOT.tree_position is TreePosition.ROOT
+
+    def test_every_other_anchor_is_positionally_unconstrained(self) -> None:
+        """All anchors except ROOT carry the ANYWHERE tree position."""
+        for member in Anchor:
+            if member is not Anchor.ROOT:
+                assert member.tree_position is TreePosition.ANYWHERE, member
+
+
+class TestAnchorMismatch:
+    """_anchor_mismatch() checks both anchor axes: vertex type and tree position."""
+
+    def test_root_anchored_on_root_vertex_passes(self) -> None:
+        """A root-anchored attribute on the root vertex satisfies the anchor."""
+        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.ROOT)
+        root = PageVertex(uid="pageroot1", title="Doc")
+        assert _anchor_mismatch(attribute, root, "pageroot1") is None
+
+    def test_root_anchored_on_non_page_root_passes(self) -> None:
+        """The root anchor is type-independent: a heading root (subtree export) also satisfies it."""
+        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.ROOT)
+        root = HeadingVertex(uid="head00001", text="H", heading_level=1)
+        assert _anchor_mismatch(attribute, root, "head00001") is None
+
+    def test_root_anchored_on_non_root_vertex_is_reported(self) -> None:
+        """A root-anchored attribute anywhere but the root is a positional mismatch."""
+        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.ROOT)
+        stray = TextVertex(uid="txt00001a", text="hello")
+        mismatch = _anchor_mismatch(attribute, stray, "pageroot1")
+        assert mismatch is not None
+        assert "root-anchored" in mismatch
+        assert "non-root vertex" in mismatch
+        assert "uid='txt00001a'" in mismatch
+
+    def test_type_mismatch_reported_before_position(self) -> None:
+        """A vertex failing the type axis reports the type mismatch."""
+        attribute = PublishingAttribute(name="test-attr", anchor=Anchor.HEADING)
+        stray = TextVertex(uid="txt00001a", text="hello")
+        mismatch = _anchor_mismatch(attribute, stray, "pageroot1")
+        assert mismatch is not None
+        assert "heading-anchored" in mismatch
 
 
 class TestPublishOf:

@@ -8,8 +8,10 @@ Public symbols:
   the ``element-type``/``matter`` heading tags + the ``pdf-render`` PDF tag + the ``publish``
   block tag), each member a
   :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
-  domain; :class:`Anchor` — the kind of vertex a Guffin attribute attaches to (page / heading /
-  pdf / block), each carrying its :class:`~guffin.model.vertex.VertexType` set; :class:`Matter` —
+  domain; :class:`Anchor` — where a Guffin attribute attaches (page / heading / pdf / block /
+  any / root), each member carrying its :class:`~guffin.model.vertex.VertexType` set and its
+  :class:`TreePosition`; :class:`TreePosition` — the positional axis of an anchor (anywhere /
+  root); :class:`Matter` —
   the book division a part belongs to (front / body / back); :class:`StructuralElement` — a book's
   structural elements by name, each carrying its :class:`Matter` division (its organizational parts);
   :class:`PdfRender` — how an embedded PDF asset is placed in paginated output (inline / link).
@@ -35,7 +37,8 @@ Public symbols:
   :func:`drop_unpublished` — prune every ``publish:: false`` subtree (block embeds of pruned
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
-  (every recognised guffin attribute sits on one of its :class:`Anchor`'s vertex types),
+  (every recognised guffin attribute satisfies its :class:`Anchor` — one of its vertex types, at
+  its tree position),
   :func:`all_element_type_values_legal` (every ``element-type`` value is a
   :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
   :class:`Matter`), :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
@@ -80,35 +83,61 @@ from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, t
 logger = logging.getLogger(__name__)
 
 
-class Anchor(enum.StrEnum):
-    """The kind of vertex a Guffin attribute attaches to.
+class TreePosition(enum.StrEnum):
+    """Where in a :class:`~guffin.model.vertex_tree.VertexTree` an attribute's host vertex may sit.
 
-    Each member carries the set of :class:`~guffin.model.vertex.VertexType` it corresponds to —
-    the types of vertex an attribute with this anchor may be declared on.  :attr:`BLOCK`'s set is
-    derived from :class:`~guffin.model.vertex.VertexType` itself (every type except a page), so a
-    future vertex type is covered without touching this enum.
+    The positional axis of an :class:`Anchor`, independent of the host's
+    :class:`~guffin.model.vertex.VertexType`.
+
+    Attributes:
+        ANYWHERE: No positional constraint — any vertex in the tree.
+        ROOT: Only the tree's root vertex (the export target itself).
+    """
+
+    ANYWHERE = "anywhere"
+    ROOT = "root"
+
+
+class Anchor(enum.StrEnum):
+    """Where a Guffin attribute attaches: the kind of vertex, and its position in the tree.
+
+    Each member carries two constraint axes, and a host vertex must satisfy both:
+
+    - :attr:`vertex_types` — the set of :class:`~guffin.model.vertex.VertexType` the attribute
+      may be declared on.  The :attr:`BLOCK`, :attr:`ANY`, and :attr:`ROOT` sets are derived
+      from :class:`~guffin.model.vertex.VertexType` itself, so a future vertex type is covered
+      without touching this enum.
+    - :attr:`tree_position` — where in the tree the host may sit, independent of its type.
 
     Attributes:
         vertex_types: The :class:`~guffin.model.vertex.VertexType` set this anchor corresponds to.
+        tree_position: The :class:`TreePosition` this anchor requires of its host.
         PAGE: The attribute attaches to a page vertex (the whole document).
         HEADING: The attribute attaches to a heading vertex (a section).
         PDF: The attribute attaches to a PDF vertex (an embedded PDF asset).
         BLOCK: The attribute attaches to any block vertex — every vertex type except a page.
+        ANY: The attribute attaches to any vertex, of every type, anywhere.
+        ROOT: The attribute attaches to the tree's root vertex, whatever its type — a page for a
+            page export, a heading or text block for a subtree export.
     """
 
-    def __new__(cls, value: str, vertex_types: frozenset[VertexType]) -> Self:
-        """Create a member whose string value is *value* and that carries *vertex_types*."""
+    def __new__(cls, value: str, vertex_types: frozenset[VertexType], tree_position: TreePosition) -> Self:
+        """Create a member whose string value is *value*, carrying *vertex_types* and *tree_position*."""
         member = str.__new__(cls, value)
         member._value_ = value
         member.vertex_types = vertex_types
+        member.tree_position = tree_position
         return member
 
     vertex_types: frozenset[VertexType]
+    tree_position: TreePosition
 
-    PAGE = ("page", frozenset({VertexType.PAGE}))
-    HEADING = ("heading", frozenset({VertexType.HEADING}))
-    PDF = ("pdf", frozenset({VertexType.PDF}))
-    BLOCK = ("block", frozenset(VertexType) - {VertexType.PAGE})
+    PAGE = ("page", frozenset({VertexType.PAGE}), TreePosition.ANYWHERE)
+    HEADING = ("heading", frozenset({VertexType.HEADING}), TreePosition.ANYWHERE)
+    PDF = ("pdf", frozenset({VertexType.PDF}), TreePosition.ANYWHERE)
+    BLOCK = ("block", frozenset(VertexType) - {VertexType.PAGE}, TreePosition.ANYWHERE)
+    ANY = ("any", frozenset(VertexType), TreePosition.ANYWHERE)
+    ROOT = ("root", frozenset(VertexType), TreePosition.ROOT)
 
 
 class Matter(enum.StrEnum):
@@ -634,17 +663,47 @@ _SEMANTICS_BY_NAME: Final[dict[str, PublishingSemantics]] = {
 """Maps each recognised guffin attribute name to its :class:`PublishingSemantics` member."""
 
 
-def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment) -> str | None:
+def _anchor_mismatch(attribute: PublishingAttribute, vertex: Vertex, root_uid: Uid) -> str | None:
+    """Describe how *vertex* fails *attribute*'s anchor, or ``None`` when it satisfies it.
+
+    A host vertex must satisfy both anchor axes: its type must be among the anchor's
+    :attr:`~Anchor.vertex_types`, and its position must match the anchor's
+    :attr:`~Anchor.tree_position` (:attr:`TreePosition.ROOT` requires the vertex to be the
+    tree's root, identified by *root_uid*).
+
+    Args:
+        attribute: The publishing attribute whose anchor to check.
+        vertex: The vertex the attribute is declared on.
+        root_uid: The uid of the tree's root vertex.
+
+    Returns:
+        The mismatch description, or ``None`` when *vertex* satisfies the anchor.
+    """
+    anchor: Final[Anchor] = attribute.anchor
+    if vertex.vertex_type not in anchor.vertex_types:
+        return (
+            f"{attribute.name!r} is {anchor.value}-anchored but declared on a "
+            f"{vertex.vertex_type.value!r} vertex (uid={vertex.uid!r})"
+        )
+    if anchor.tree_position is TreePosition.ROOT and vertex.uid != root_uid:
+        return (
+            f"{attribute.name!r} is {anchor.value}-anchored but declared on a " f"non-root vertex (uid={vertex.uid!r})"
+        )
+    return None
+
+
+def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment, root_uid: Uid) -> str | None:
     """Describe how *assignment* violates the anchor invariant on *vertex*, or ``None``.
 
     ``None`` when *assignment* is outside the vocabulary (non-guffin domain, or a name matching no
-    :class:`PublishingSemantics` member) or when it sits on its anchor's vertex type; otherwise a
-    description naming the attribute, its expected anchor, the actual vertex type, and the vertex
-    uid.
+    :class:`PublishingSemantics` member) or when *vertex* satisfies the attribute's anchor (see
+    :func:`_anchor_mismatch`); otherwise a description naming the attribute, its expected anchor,
+    the offending placement, and the vertex uid.
 
     Args:
         vertex: The vertex the assignment is declared on.
         assignment: The attribute assignment to check.
+        root_uid: The uid of the tree's root vertex.
 
     Returns:
         The violation description, or ``None`` when there is no violation.
@@ -655,13 +714,7 @@ def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment) -> str | 
     member: Final[PublishingSemantics | None] = _SEMANTICS_BY_NAME.get(assignment_attribute.name)
     if member is None:
         return None
-    anchor: Final[Anchor] = member.value.anchor
-    if vertex.vertex_type in anchor.vertex_types:
-        return None
-    return (
-        f"{assignment_attribute.name!r} is {anchor.value}-anchored but declared on a "
-        f"{vertex.vertex_type.value!r} vertex (uid={vertex.uid!r})"
-    )
+    return _anchor_mismatch(member.value, vertex, root_uid)
 
 
 @validate_call
@@ -669,10 +722,13 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every guffin attribute to sit on its anchor.
 
     Each :class:`PublishingSemantics` member's :class:`PublishingAttribute` carries an :class:`Anchor`
-    naming the :class:`~guffin.model.vertex.VertexType` set it attaches to; this validator enforces
+    naming the :class:`~guffin.model.vertex.VertexType` set and :class:`TreePosition` it attaches
+    to; this validator enforces
     that invariant across *tree* — both its tree vertices and its referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`): every guffin-domain assignment
-    whose name is a recognised member must be declared on a vertex of one of the anchor's types.
+    whose name is a recognised member must be declared on a vertex of one of the anchor's types,
+    at the anchor's tree position (a root-positioned anchor accepts only the tree's root vertex,
+    so a referenced-vertex stub can never host it).
     Default-domain assignments and unrecognised guffin-domain names are outside the vocabulary and
     pass through unchecked.
 
@@ -684,11 +740,12 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
         :class:`~guffin.common.validation.ValidationError` listing every misanchored assignment
         (attribute name, expected anchor, actual vertex type, and vertex uid) otherwise.
     """
+    root_uid: Final[Uid] = root_vertex(tree).uid
     violations: Final[list[str]] = [
         violation
         for vertex in chain(tree.tree_vertices, tree.ref_vertices)
         for assignment in vertex.attribute_assignments or ()
-        if (violation := _anchor_violation(vertex, assignment)) is not None
+        if (violation := _anchor_violation(vertex, assignment, root_uid)) is not None
     ]
     if not violations:
         return None

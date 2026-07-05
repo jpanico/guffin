@@ -266,10 +266,14 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
 ### The pieces
 
 - **`PublishingAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`Anchor`**: the
-  kind of vertex it attaches to. `Anchor` has `PAGE`, `HEADING`, `PDF`, and `BLOCK`, and each member
-  carries the `frozenset[VertexType]` it corresponds to (the Anchor↔VertexType correspondence is a
-  single source of truth on the enum; `VertexType` is defined in `model/vertex.py`). `BLOCK` covers
-  every vertex type except a page, derived from `VertexType` itself.
+  kind of vertex it attaches to, and where in the tree. `Anchor` has `PAGE`, `HEADING`, `PDF`,
+  `BLOCK`, `ANY`, and `ROOT`; each member carries two constraint axes a host vertex must satisfy:
+  the `frozenset[VertexType]` it corresponds to (the Anchor↔VertexType correspondence is a single
+  source of truth on the enum; `VertexType` is defined in `model/vertex.py`) and its `TreePosition`
+  (`anywhere`/`root`). `BLOCK` covers every vertex type except a page and `ANY`/`ROOT` cover them
+  all, derived from `VertexType` itself; `ROOT` is the positional anchor — type-independent, but
+  its host must be the tree's root vertex (the export target: a page for a page export, a heading
+  or block for a subtree export).
 - **`PublishingSemantics`** — the enum of recognized guffin attributes, each a `PublishingAttribute`:
   - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
     `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts, folded from a `guffin-meta::` block
