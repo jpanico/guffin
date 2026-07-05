@@ -89,12 +89,12 @@ class TestPublishingAttribute:
 
 
 class TestPublishingSemanticsMembers:
-    """The PublishingSemantics vocabulary partitions into page-anchored metadata and heading tags."""
+    """The PublishingSemantics vocabulary partitions into root-anchored metadata and per-vertex tags."""
 
-    def test_page_anchored_metadata_members(self) -> None:
-        """The document-metadata members are page-anchored and carry their attribute names."""
-        page_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.PAGE}
-        assert page_members == {"title", "subtitle", "authors", "date", "publisher", "rights", "identifier"}
+    def test_root_anchored_metadata_members(self) -> None:
+        """The document-metadata members are root-anchored and carry their attribute names."""
+        root_members = {m.value.name for m in PublishingSemantics if m.value.anchor is Anchor.ROOT}
+        assert root_members == {"title", "subtitle", "authors", "date", "publisher", "rights", "identifier"}
 
     def test_heading_anchored_tag_members(self) -> None:
         """The heading-tag members are heading-anchored."""
@@ -498,12 +498,13 @@ class TestAllAttributesAnchored:
         tree = _attributed_tree(["title", "authors"], ["element-type", "matter"], AttributeDomain.GUFFIN)
         assert all_attributes_anchored(tree) is None
 
-    def test_page_attribute_on_heading_is_reported(self) -> None:
-        """A page-anchored guffin attribute declared on a heading is a violation."""
+    def test_metadata_on_non_root_vertex_is_reported(self) -> None:
+        """A root-anchored metadata attribute declared below the root is a positional violation."""
         tree = _attributed_tree([], ["publisher"], AttributeDomain.GUFFIN)
         error = all_attributes_anchored(tree)
         assert error is not None
-        assert "'publisher' is page-anchored" in error.message
+        assert "'publisher' is root-anchored" in error.message
+        assert "non-root vertex" in error.message
         assert "uid='head00001'" in error.message
 
     def test_heading_attribute_on_page_is_reported(self) -> None:

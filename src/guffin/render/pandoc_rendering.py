@@ -1193,11 +1193,13 @@ def vertex_tree_to_pandoc(
     - ``True`` (Markdown path) — title rendered as a level-1
       :class:`~panflute.Header` prepended to the body blocks; no metadata.
 
-    A root :class:`~guffin.vertex.PageVertex`'s metadata-domain attributes (see
-    :func:`_document_metadata`) populate the document metadata: a ``title`` attribute overrides the
-    page title (in both the header and metadata forms) and ``subtitle`` / ``author`` / ``date`` /
-    ``publisher`` / ``rights`` / ``identifier`` are added to the metadata.  Metadata-domain
-    attributes never appear as body pills.
+    The root vertex's metadata-domain attributes (see :func:`_document_metadata`) populate the
+    document metadata, whatever the root's type — a subtree export's root hosts them exactly as a
+    page root does: a ``title`` attribute overrides a page root's Roam title (in both the header
+    and metadata forms) and is the *only* source of a title for a non-page root (whose own text
+    is body content); ``subtitle`` / ``author`` / ``date`` / ``publisher`` / ``rights`` /
+    ``identifier`` are added to the metadata.  Metadata-domain attributes never appear as body
+    pills.
 
     Args:
         vertex_tree: The normalized vertex tree to convert.
@@ -1230,18 +1232,26 @@ def vertex_tree_to_pandoc(
     metadata: dict[str, pf.MetaValue] = {}
     blocks: list[pf.Block] = []
 
-    if isinstance(root, PageVertex):
-        doc_metadata: Final[dict[str, pf.MetaValue]] = _document_metadata(root.attribute_assignments)
+    # The root vertex's metadata-domain attributes populate the document metadata whatever the
+    # root's type — bibliographic metadata is root-anchored, and a subtree export's root hosts it
+    # exactly as a page root does.
+    root_metadata: Final[dict[str, pf.MetaValue]] = _document_metadata(root.attribute_assignments)
+    # A metadata-domain `title` attribute overrides a page root's Roam title; a subtree root's
+    # own text is body content, so only an explicit `title` attribute titles the document.
+    title_meta: pf.MetaValue | None = root_metadata.get("title")
+    if title_meta is None and isinstance(root, PageVertex):
         page_title_inlines: Final[list[pf.Inline]] = strip_links(list(inline_map.get(root.title, [pf.Str(root.title)])))
-        # A metadata-domain `title` attribute overrides the Roam page title.
-        title_meta: Final[pf.MetaValue] = doc_metadata.get("title", pf.MetaInlines(*page_title_inlines))
+        title_meta = pf.MetaInlines(*page_title_inlines)
+    if title_meta is not None:
         if title_in_header:
             blocks.append(pf.Header(*list(title_meta.content), level=1))
         else:
             metadata["title"] = title_meta
-        for meta_key in ("subtitle", "author", "date", "publisher", "rights", "identifier"):
-            if meta_key in doc_metadata:
-                metadata[meta_key] = doc_metadata[meta_key]
+    for meta_key in ("subtitle", "author", "date", "publisher", "rights", "identifier"):
+        if meta_key in root_metadata:
+            metadata[meta_key] = root_metadata[meta_key]
+
+    if isinstance(root, PageVertex):
         blocks.extend(
             build_child_blocks(
                 root.children or [],

@@ -275,9 +275,10 @@ any output format renders them. It is intentionally *not* modeled on EPUB (or PD
   its host must be the tree's root vertex (the export target: a page for a page export, a heading
   or block for a subtree export).
 - **`PublishingSemantics`** — the enum of recognized guffin attributes, each a `PublishingAttribute`:
-  - *Page-anchored document metadata* (`Anchor.PAGE`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
-    `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts, folded from a `guffin-meta::` block
-    on the root page.
+  - *Root-anchored document metadata* (`Anchor.ROOT`): `TITLE`, `SUBTITLE`, `AUTHORS`, `DATE`,
+    `PUBLISHER`, `RIGHTS`, `IDENTIFIER` — bibliographic facts about the work as a whole, folded
+    from a `guffin-meta::` block on the export root (a referenced page's metadata can no longer
+    masquerade as the work's own).
   - *Heading-anchored tags* (`Anchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
     `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
     for a bespoke heading with no specific element type.

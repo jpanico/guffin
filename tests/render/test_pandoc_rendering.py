@@ -140,6 +140,50 @@ class TestVertexTreeToPandocPageVertex:
         assert blocks[1].level == 2
 
 
+class TestVertexTreeToPandocSubtreeRootMetadata:
+    """A non-page export root's metadata-domain attributes are consumed like a page root's."""
+
+    @staticmethod
+    def _meta(name: str, value: str) -> AttributeAssignment:
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
+        return AttributeAssignment(
+            attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+            values=(LiteralValue(value=value),),
+        )
+
+    def _tree(self, assignments: list[AttributeAssignment] | None) -> VertexTree:
+        """Build a heading-rooted subtree carrying *assignments* on its root."""
+        root = HeadingVertex(
+            uid="head00001",
+            text="A Section",
+            heading_level=1,
+            children=["txt00001a"],
+            attribute_assignments=assignments,
+        )
+        return VertexTree(tree_vertices=[root, TextVertex(uid="txt00001a", text="body")])
+
+    def test_subtree_root_metadata_reaches_doc_metadata(self) -> None:
+        """title/authors on a heading root populate the Pandoc metadata."""
+        tree = self._tree([self._meta("title", "A Real Title"), self._meta("authors", "An Author")])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        assert _collect_text(doc.metadata["title"]) == "A Real Title"
+        assert [_collect_text(entry) for entry in doc.metadata["author"].content] == ["An Author"]
+
+    def test_subtree_root_title_renders_as_header_when_requested(self) -> None:
+        """title_in_header=True renders the title attribute as a leading H1."""
+        tree = self._tree([self._meta("title", "A Real Title")])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {}, title_in_header=True)
+        first = list(doc.content)[0]
+        assert isinstance(first, pf.Header)
+        assert first.level == 1
+        assert _collect_text(first) == "A Real Title"
+
+    def test_untagged_subtree_root_has_no_title(self) -> None:
+        """Without a title attribute, a non-page root contributes no document title."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(None), {}, {})
+        assert "title" not in doc.metadata
+
+
 class TestVertexTreeToPandocColophon:
     """vertex_tree_to_pandoc() appends a provenance colophon only when provenance is provided."""
 

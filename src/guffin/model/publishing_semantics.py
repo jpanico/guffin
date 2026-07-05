@@ -206,9 +206,10 @@ class PublishingSemantics(enum.Enum):
 
     Each member's value is the :class:`PublishingAttribute` for that attribute.  Three kinds:
 
-    - **Document metadata** (:attr:`Anchor.PAGE`) — bibliographic facts about the work as a whole:
-      :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`, :attr:`PUBLISHER`,
-      :attr:`RIGHTS`, :attr:`IDENTIFIER`.
+    - **Document metadata** (:attr:`Anchor.ROOT`) — bibliographic facts about the work as a
+      whole, so they attach only to the tree's root vertex (the export target itself, whatever
+      its type): :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`,
+      :attr:`PUBLISHER`, :attr:`RIGHTS`, :attr:`IDENTIFIER`.
     - **Heading tags** (:attr:`Anchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
       declares which :class:`StructuralElement` the heading is; :attr:`MATTER` declares its
       :class:`Matter` division directly, for a bespoke section with no specific element type.
@@ -234,13 +235,13 @@ class PublishingSemantics(enum.Enum):
 
     _value_: PublishingAttribute
 
-    TITLE = PublishingAttribute(name="title", anchor=Anchor.PAGE)
-    SUBTITLE = PublishingAttribute(name="subtitle", anchor=Anchor.PAGE)
-    AUTHORS = PublishingAttribute(name="authors", anchor=Anchor.PAGE)
-    DATE = PublishingAttribute(name="date", anchor=Anchor.PAGE)
-    PUBLISHER = PublishingAttribute(name="publisher", anchor=Anchor.PAGE)
-    RIGHTS = PublishingAttribute(name="rights", anchor=Anchor.PAGE)
-    IDENTIFIER = PublishingAttribute(name="identifier", anchor=Anchor.PAGE)
+    TITLE = PublishingAttribute(name="title", anchor=Anchor.ROOT)
+    SUBTITLE = PublishingAttribute(name="subtitle", anchor=Anchor.ROOT)
+    AUTHORS = PublishingAttribute(name="authors", anchor=Anchor.ROOT)
+    DATE = PublishingAttribute(name="date", anchor=Anchor.ROOT)
+    PUBLISHER = PublishingAttribute(name="publisher", anchor=Anchor.ROOT)
+    RIGHTS = PublishingAttribute(name="rights", anchor=Anchor.ROOT)
+    IDENTIFIER = PublishingAttribute(name="identifier", anchor=Anchor.ROOT)
     ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=Anchor.HEADING)
     MATTER = PublishingAttribute(name="matter", anchor=Anchor.HEADING)
     PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=Anchor.PDF)
