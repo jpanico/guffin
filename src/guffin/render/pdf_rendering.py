@@ -47,7 +47,14 @@ from pypdf import PdfReader
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.provenance import Provenance
-from guffin.model.publishing_semantics import DEFAULT_PDF_RENDER, PdfRender, drop_unpublished, pdf_render_of_vertex
+from guffin.model.publishing_semantics import (
+    DEFAULT_PDF_RENDER,
+    PdfRender,
+    StructuralElement,
+    drop_unpublished,
+    has_element_type,
+    pdf_render_of_vertex,
+)
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex, PdfVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
@@ -99,6 +106,7 @@ def _typst_template_args(
     number_sections: bool,
     top_level_division: TopLevelDivision,
     emit_title_page: bool,
+    emit_toc: bool,
     provenance: Provenance | None,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
@@ -118,6 +126,8 @@ def _typst_template_args(
             ``top-level-division`` variable; ``SECTION`` passes nothing, leaving the default layout.
         emit_title_page: When ``True``, enables the Bergfink ``titlepage`` variable so the template
             renders a title page from the document metadata; ``False`` passes nothing (no title page).
+        emit_toc: When ``True``, enables the Bergfink ``toc`` variable so the template renders a
+            table of contents (a Typst outline) ahead of the body; ``False`` passes nothing.
         provenance: When set, passes its :meth:`~guffin.common.provenance.Provenance.summary` to the
             template — as the Bergfink ``titlepage-provenance`` variable (rendered at the foot of the
             title page) when *emit_title_page* is set, otherwise as ``footer-provenance`` (a line
@@ -145,6 +155,10 @@ def _typst_template_args(
     # Bergfink renders a title page only when the `titlepage` variable is set; pass nothing otherwise.
     if emit_title_page:
         args.extend(["-V", "titlepage=true"])
+    # Bergfink renders a ToC (Typst outline) only when the `toc` variable is set; like
+    # `number-sections`, it is passed explicitly via -V rather than relying on Pandoc's --toc flag.
+    if emit_toc:
+        args.extend(["-V", "toc=true"])
     # In PDF the provenance rides the title page when one is emitted (at its foot), otherwise the
     # running page footer (a line below it) — never an end-of-body block.
     if provenance is not None:
@@ -442,6 +456,13 @@ def render(
     number_sections: Final[bool] = (
         profile.structural_policy.number_sections if options.number_sections is None else options.number_sections
     )
+    # A generated ToC follows the policy, but content wins: an authored table-of-contents section
+    # (element-type:: table-of-contents) suppresses the generated one.
+    emit_toc: Final[bool] = profile.structural_policy.emit_toc and not has_element_type(
+        content, StructuralElement.TABLE_OF_CONTENTS
+    )
+    if profile.structural_policy.emit_toc and not emit_toc:
+        logger.info("authored table-of-contents section found; suppressing the generated ToC")
     template_args: Final[list[str]] = _typst_template_args(
         bundled_dir,
         template_path,
@@ -449,6 +470,7 @@ def render(
         number_sections,
         profile.structural_policy.top_level_division,
         profile.structural_policy.emit_title_page,
+        emit_toc,
         render_bundle.provenance if options.emit_colophon else None,
     )
     # Typst confines file access to its project root, which Pandoc leaves at its own working

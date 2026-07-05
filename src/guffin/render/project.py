@@ -78,9 +78,16 @@ class StructuralPolicy(BaseModel):
     A renderer consumes this rather than branching on :class:`ProjectType` directly, so the
     type-to-structure semantics live in one place.
 
+    Each directive is a statement about the *work* ("a book presents a table of contents"), not a
+    guarantee about any particular output: a consumer maps directives onto the mechanisms its
+    output format offers, and that mapping is deliberately partial — a directive with no
+    counterpart in a format is simply not expressed there.
+
     Attributes:
         top_level_division: What a level-1 heading becomes (section / chapter / part).
-        emit_title_page: Whether to render a standalone title page (and a table of contents).
+        emit_title_page: Whether to render a standalone title page.
+        emit_toc: Whether to render a generated table of contents at the beginning of the
+            document flow (distinct from any navigation affordance a reading system provides).
         number_sections: Whether divisions are numbered.
         emit_abstract: Whether to render an abstract block from the profile.
         drop_preamble: Whether to drop the root page's loose preamble — children preceding its
@@ -90,7 +97,8 @@ class StructuralPolicy(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     top_level_division: TopLevelDivision = Field(..., description="What a level-1 heading becomes.")
-    emit_title_page: bool = Field(..., description="Render a standalone title page (and TOC).")
+    emit_title_page: bool = Field(..., description="Render a standalone title page.")
+    emit_toc: bool = Field(..., description="Render a generated table of contents in the document flow.")
     number_sections: bool = Field(..., description="Number the divisions.")
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
     drop_preamble: bool = Field(..., description="Drop root-page children preceding the first heading.")
@@ -137,10 +145,11 @@ class DefaultProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Sections, no title page, unnumbered, no abstract, preamble kept."""
+        """Sections, no title page, no generated ToC, unnumbered, no abstract, preamble kept."""
         return StructuralPolicy(
             top_level_division=TopLevelDivision.SECTION,
             emit_title_page=False,
+            emit_toc=False,
             number_sections=False,
             emit_abstract=False,
             drop_preamble=False,
@@ -163,7 +172,7 @@ class BookProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Chapters (or parts), a title page + TOC, numbered, no abstract, preamble dropped.
+        """Chapters (or parts), a title page, a generated ToC, numbered, no abstract, preamble dropped.
 
         A book's root page is a container for its divisions: loose preamble ahead of the first
         chapter belongs to no division (and would otherwise surface as a spurious title-bearing
@@ -172,6 +181,7 @@ class BookProfile(ProjectProfile):
         return StructuralPolicy(
             top_level_division=TopLevelDivision.PART if self.with_parts else TopLevelDivision.CHAPTER,
             emit_title_page=True,
+            emit_toc=True,
             number_sections=True,
             emit_abstract=False,
             drop_preamble=True,
@@ -195,10 +205,11 @@ class ManuscriptProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Sections, a title block, unnumbered, with an abstract, preamble kept."""
+        """Sections, a title block, no generated ToC, unnumbered, with an abstract, preamble kept."""
         return StructuralPolicy(
             top_level_division=TopLevelDivision.SECTION,
             emit_title_page=True,
+            emit_toc=False,
             number_sections=False,
             emit_abstract=True,
             drop_preamble=False,

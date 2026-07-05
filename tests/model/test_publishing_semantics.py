@@ -34,6 +34,7 @@ from guffin.model.publishing_semantics import (
     element_type_of,
     element_type_of_vertex,
     find_publishing_attribute,
+    has_element_type,
     has_parts,
     matter_of,
     matter_of_vertex,
@@ -841,3 +842,22 @@ class TestDropUnpublished:
         tree = VertexTree(tree_vertices=[root])
         with pytest.raises(ValueError, match="export target"):
             drop_unpublished(tree)
+
+
+class TestHasElementType:
+    """has_element_type() detects a render-visible heading tagged with a given StructuralElement."""
+
+    def test_tagged_heading_found(self) -> None:
+        """A heading tagged with the sought element is found."""
+        tree = _tagged_heading_tree(1, "table-of-contents")
+        assert has_element_type(tree, StructuralElement.TABLE_OF_CONTENTS)
+
+    def test_other_element_not_matched(self) -> None:
+        """A heading tagged with a different element does not match."""
+        tree = _tagged_heading_tree(1, "chapter")
+        assert not has_element_type(tree, StructuralElement.TABLE_OF_CONTENTS)
+
+    def test_untagged_tree_is_false(self) -> None:
+        """A tree with no element-type tags matches nothing."""
+        tree = _tagged_heading_tree(1, None)
+        assert not has_element_type(tree, StructuralElement.TABLE_OF_CONTENTS)

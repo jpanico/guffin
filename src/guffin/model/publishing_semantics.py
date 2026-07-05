@@ -30,6 +30,8 @@ Public symbols:
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
   top level as parts (any render-visible level-1 heading — block-embed-transcluded headings
   included — tagged ``element-type:: part``);
+  :func:`has_element_type` — return whether any render-visible heading in a
+  :class:`~guffin.model.vertex_tree.VertexTree` is tagged with a given :class:`StructuralElement`;
   :func:`drop_unpublished` — prune every ``publish:: false`` subtree (block embeds of pruned
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
@@ -539,6 +541,29 @@ def has_parts(tree: VertexTree) -> bool:
         ``True`` when a render-visible level-1 heading is tagged as a part, else ``False``.
     """
     return any(_is_part_heading(vertex) for vertex in transcluded_vertices(tree) if isinstance(vertex, HeadingVertex))
+
+
+@validate_call
+def has_element_type(tree: VertexTree, element: StructuralElement) -> bool:
+    """Return whether any render-visible heading in *tree* is tagged ``element-type:: <element>``.
+
+    The render-visible headings (per :func:`~guffin.model.vertex_tree.transcluded_vertices`)
+    include those transcluded through block embeds; a heading that is merely *referenced*
+    (rendered inline as text) does not count.  Assignments whose value is not a recognised
+    :class:`StructuralElement` are ignored with a warning.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to inspect.
+        element: The :class:`StructuralElement` to look for.
+
+    Returns:
+        ``True`` when a render-visible heading declares itself *element*, else ``False``.
+    """
+    return any(
+        element_type_of_vertex(vertex) is element
+        for vertex in transcluded_vertices(tree)
+        if isinstance(vertex, HeadingVertex)
+    )
 
 
 @validate_call

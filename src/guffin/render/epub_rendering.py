@@ -45,7 +45,7 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.provenance import Provenance
-from guffin.model.publishing_semantics import drop_unpublished
+from guffin.model.publishing_semantics import StructuralElement, drop_unpublished, has_element_type
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
@@ -186,6 +186,13 @@ def render(
     # Loose preamble (root-page children ahead of the first heading) is pruned so it cannot
     # surface as a spurious title-bearing chapter ahead of the book's first division.
     content: Final[VertexTree] = drop_root_preamble(stripped) if drop_preamble else stripped
+    # A generated ToC follows the policy, but content wins: an authored table-of-contents section
+    # (element-type:: table-of-contents) suppresses the generated one.
+    emit_toc: Final[bool] = profile.structural_policy.emit_toc and not has_element_type(
+        content, StructuralElement.TABLE_OF_CONTENTS
+    )
+    if profile.structural_policy.emit_toc and not emit_toc:
+        logger.info("authored table-of-contents section found; suppressing the generated ToC")
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.epub"
 
@@ -232,6 +239,11 @@ def render(
         ]
         if number_sections:
             extra_args.append("--number-sections")
+        if emit_toc:
+            # Pandoc always generates the EPUB 3 nav document (the reading system's ToC
+            # affordance); --toc additionally places it in the spine, so a linked ToC page
+            # renders at the beginning of the document flow.
+            extra_args.append("--toc")
         pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str, _EPUB_WRITER, format="json", outputfile=str(output_path), extra_args=extra_args
         )

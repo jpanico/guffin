@@ -259,6 +259,16 @@ def _opf(epub_path: Path) -> str:
         return next(zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".opf"))
 
 
+def _nav_in_spine(epub_path: Path) -> bool:
+    """Return whether the nav document is in the spine — i.e. a ToC page renders in the book flow.
+
+    Pandoc always generates the EPUB 3 nav document (the reading system's ToC affordance); only
+    with ``--toc`` does it also appear in the spine as a content page.
+    """
+    spine: Final[str] = _opf(epub_path).split("<spine", 1)[1]
+    return 'idref="nav"' in spine
+
+
 class TestRenderEpub:
     """Integration tests for the epub_rendering Pandoc output path.
 
@@ -308,8 +318,8 @@ class TestRenderEpub:
         assert "background-color: #FF851C" not in _chapter_xhtml(article5_suppressed_epub)
 
 
-class TestSplitLevelAndNumbering:
-    """Splitting and numbering both follow the profile's structural policy.
+class TestStructuralPolicyDirectives:
+    """Splitting, numbering, and the generated ToC all follow the profile's structural policy.
 
     One class, deliberately: under ``--dist loadscope`` the class is the fixture-sharing
     boundary, so keeping every consumer of ``multi_level_epubs`` here renders that fixture's
@@ -338,6 +348,22 @@ class TestSplitLevelAndNumbering:
         """number_sections=False unnumbers a book; number_sections=True numbers an article."""
         assert not _has_section_numbers(multi_level_epubs["book_unnumbered"])
         assert _has_section_numbers(multi_level_epubs["article_numbered"])
+
+    def test_book_gets_generated_toc_default_does_not(self, multi_level_epubs: dict[str, Path]) -> None:
+        """A book (emit_toc=True) puts the nav ToC page in the spine; the default article does not."""
+        assert _nav_in_spine(multi_level_epubs["book"])
+        assert not _nav_in_spine(multi_level_epubs["article"])
+
+    def test_authored_toc_section_suppresses_generated_toc(self, tmp_path: Path) -> None:
+        """Content wins: a section tagged element-type:: table-of-contents drops the generated ToC."""
+        page: Final[PageVertex] = PageVertex(uid="page00004", title="Toc Doc", children=["tochead01", "chap00001"])
+        toc_heading: Final[HeadingVertex] = _tagged_heading(
+            "tochead01", "Contents", "element-type", "table-of-contents"
+        )
+        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, toc_heading, chap]))
+        epub: Final[Path] = _render_epub(tmp_path, bundle, BookProfile(), "authored_toc")
+        assert not _nav_in_spine(epub)
 
 
 class TestTitlePage:

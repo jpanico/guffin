@@ -9,10 +9,13 @@ This doc goes deep on the *model → output* render layer and the project-type m
 it.
 
 > Status note: the project-type model (`render/project.py`) is defined and **plumbed** — a
-> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. All four
+> `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. All five
 > structural directives are applied in both paginated formats: `top_level_division` (EPUB
 > `--split-level`; PDF book mode — chapter page breaks + level-1 numbering), `number_sections`,
-> `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`), and `drop_preamble` (a
+> `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`), `emit_toc` (a generated,
+> linked table of contents at the start of the document flow — EPUB `--toc` places the
+> always-generated nav document in the spine, PDF sets the Bergfink `toc` variable; an authored
+> `element-type:: table-of-contents` section suppresses the generated ToC), and `drop_preamble` (a
 > model-side prune of the root page's loose preamble, overridable via the CLI
 > `--preamble/--no-preamble`). Bibliographic **metadata** is also applied — sourced from a root
 > page's `guffin`-domain attributes (see Phase 1 — metadata). `abstract` is **deferred indefinitely**. This doc
@@ -120,13 +123,18 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
   `ManuscriptProfile` (`abstract`, `keywords`).
 - `StructuralPolicy` — the format-independent structural directives a profile **resolves to** (via
   `profile.structural_policy`). Renderers consume this rather than branching on `ProjectType`, so the
-  type→structure semantics live in one place.
+  type→structure semantics live in one place. Each directive is a statement about the *work*, not a
+  guarantee about any particular output: a renderer maps directives onto the mechanisms its format
+  offers, and the mapping is deliberately partial (mirroring the partial `StructuralElement →
+  EpubType` map). The two paginated formats express all five directives; the Markdown renderer
+  expresses none of them — an unpaginated interchange document has no title page, page breaks, or
+  generated ToC, and its consumers (GitHub, Typora) provide their own outline affordances.
 
-| `ProjectType` | top-level division | title page | numbered | abstract | loose preamble |
-|---|---|---|---|---|---|
-| `default` (article) | section | no | no | no | kept |
-| `book` | chapter (or part) | yes | yes | no | dropped |
-| `manuscript` | section | yes | no | yes | kept |
+| `ProjectType` | top-level division | title page | generated ToC | numbered | abstract | loose preamble |
+|---|---|---|---|---|---|---|
+| `default` (article) | section | no | no | no | no | kept |
+| `book` | chapter (or part) | yes | yes | yes | no | dropped |
+| `manuscript` | section | yes | no | no | yes | kept |
 
 
 ## Where the profile is consumed
@@ -164,19 +172,23 @@ catalog metadata only (EPUB OPF `dc:identifier`); no format renders it on the ti
 
 ### Phases 0 & 2 (prepare / convert) — structure _(applied)_
 
-Three of the `StructuralPolicy` directives (`top_level_division`, `number_sections`, title page)
-are **not representable in the Pandoc AST** — the AST has only `Header` elements with a level 1–6,
-no "chapter," "numbered," or "title page" node. They are produced by the **writer + template at
-invocation time** (Phase 2), and the mechanism differs per format:
+Four of the `StructuralPolicy` directives (`top_level_division`, `number_sections`, title page,
+generated ToC) are **not representable in the Pandoc AST** — the AST has only `Header` elements
+with a level 1–6, no "chapter," "numbered," or "title page" node. They are produced by the
+**writer + template at invocation time** (Phase 2), and the mechanism differs per format:
 
 | Policy directive | PDF (Typst / Bergfink) | EPUB (Pandoc) |
 |---|---|---|
 | chapters vs. sections | `-V top-level-division` → Bergfink book mode (Typst ignores `--top-level-division`) ✅ | `--split-level` ✅ |
 | numbering | `-V number-sections=true` (Bergfink variable) ✅ | `--number-sections` ✅ |
 | title page | `-V titlepage=true` → Bergfink `titlepage.typ` partial ✅ | `--epub-title-page=true\|false` ✅ |
+| generated ToC | `-V toc=true` → Bergfink `toc.typ` partial (Typst outline) ✅ | `--toc` (nav document into the spine) ✅ |
 | loose preamble | model prune (`drop_root_preamble`), Phase 0 ✅ | same model prune, Phase 0 ✅ |
 
-The fourth, `drop_preamble`, *is* expressible before the AST and is applied in Phase 0 (prepare):
+The generated-ToC directive defers to the content: an authored `element-type:: table-of-contents`
+section suppresses the generated ToC (`has_element_type()`), so a book never carries two.
+
+The fifth, `drop_preamble`, *is* expressible before the AST and is applied in Phase 0 (prepare):
 the root page's loose preamble (children preceding its first heading child, which belong to no
 titled division) is pruned from the `VertexTree` by `model/vertex_tree.py::drop_root_preamble()`
 before `vertex_tree_to_pandoc()` runs, identically in both paginated renderers. Without the prune,
