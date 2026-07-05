@@ -12,10 +12,11 @@ it.
 > `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. All five
 > structural directives are applied in both paginated formats: `top_level_division` (EPUB
 > `--split-level`; PDF book mode — chapter page breaks + level-1 numbering), `number_sections`,
-> `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`), `emit_toc` (a generated,
-> linked table of contents at the start of the document flow — EPUB `--toc` places the
-> always-generated nav document in the spine, PDF sets the Bergfink `toc` variable; an authored
-> `element-type:: table-of-contents` section suppresses the generated ToC), and `drop_preamble` (a
+> `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`), `emit_toc` (the work
+> presents a navigable ToC — PDF renders a Bergfink outline at the start of the flow, suppressed
+> by an authored `element-type:: table-of-contents` section; EPUB deliberately adds nothing, since
+> the always-generated nav document already supplies the reading system's ToC affordance and a
+> spined copy would be a second, redundant ToC), and `drop_preamble` (a
 > model-side prune of the root page's loose preamble, overridable via the CLI
 > `--preamble/--no-preamble`). Bibliographic **metadata** is also applied — sourced from a root
 > page's `guffin`-domain attributes (see Phase 1 — metadata). `abstract` is **deferred indefinitely**. This doc
@@ -182,11 +183,12 @@ with a level 1–6, no "chapter," "numbered," or "title page" node. They are pro
 | chapters vs. sections | `-V top-level-division` → Bergfink book mode (Typst ignores `--top-level-division`) ✅ | `--split-level` ✅ |
 | numbering | `-V number-sections=true` (Bergfink variable) ✅ | `--number-sections` ✅ |
 | title page | `-V titlepage=true` → Bergfink `titlepage.typ` partial ✅ | `--epub-title-page=true\|false` ✅ |
-| generated ToC | `-V toc=true` → Bergfink `toc.typ` partial (Typst outline) ✅ | `--toc` (nav document into the spine) ✅ |
+| generated ToC | `-V toc=true` → Bergfink `toc.typ` partial (Typst outline) ✅ | deliberately unmapped — the always-generated nav document already supplies the reader's ToC affordance; `--toc` would spine a redundant copy ✅ |
 | loose preamble | model prune (`drop_root_preamble`), Phase 0 ✅ | same model prune, Phase 0 ✅ |
 
 The generated-ToC directive defers to the content: an authored `element-type:: table-of-contents`
-section suppresses the generated ToC (`has_element_type()`), so a book never carries two.
+section suppresses the PDF outline (`has_element_type()`), so a book never carries two ToCs in
+any format.
 
 The fifth, `drop_preamble`, *is* expressible before the AST and is applied in Phase 0 (prepare):
 the root page's loose preamble (children preceding its first heading child, which belong to no

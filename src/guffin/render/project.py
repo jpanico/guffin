@@ -86,8 +86,9 @@ class StructuralPolicy(BaseModel):
     Attributes:
         top_level_division: What a level-1 heading becomes (section / chapter / part).
         emit_title_page: Whether to render a standalone title page.
-        emit_toc: Whether to render a generated table of contents at the beginning of the
-            document flow (distinct from any navigation affordance a reading system provides).
+        emit_toc: Whether the work presents a navigable table of contents.  How a format
+            expresses it is the renderer's mapping — an outline rendered into the output, or
+            a navigation structure an output format already carries.
         number_sections: Whether divisions are numbered.
         emit_abstract: Whether to render an abstract block from the profile.
         drop_preamble: Whether to drop the root page's loose preamble — children preceding its
@@ -98,7 +99,7 @@ class StructuralPolicy(BaseModel):
 
     top_level_division: TopLevelDivision = Field(..., description="What a level-1 heading becomes.")
     emit_title_page: bool = Field(..., description="Render a standalone title page.")
-    emit_toc: bool = Field(..., description="Render a generated table of contents in the document flow.")
+    emit_toc: bool = Field(..., description="The work presents a navigable table of contents.")
     number_sections: bool = Field(..., description="Number the divisions.")
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
     drop_preamble: bool = Field(..., description="Drop root-page children preceding the first heading.")

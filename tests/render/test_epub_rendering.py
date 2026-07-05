@@ -319,7 +319,7 @@ class TestRenderEpub:
 
 
 class TestStructuralPolicyDirectives:
-    """Splitting, numbering, and the generated ToC all follow the profile's structural policy.
+    """Splitting and numbering follow the profile's structural policy; emit_toc stays unmapped.
 
     One class, deliberately: under ``--dist loadscope`` the class is the fixture-sharing
     boundary, so keeping every consumer of ``multi_level_epubs`` here renders that fixture's
@@ -349,21 +349,14 @@ class TestStructuralPolicyDirectives:
         assert not _has_section_numbers(multi_level_epubs["book_unnumbered"])
         assert _has_section_numbers(multi_level_epubs["article_numbered"])
 
-    def test_book_gets_generated_toc_default_does_not(self, multi_level_epubs: dict[str, Path]) -> None:
-        """A book (emit_toc=True) puts the nav ToC page in the spine; the default article does not."""
-        assert _nav_in_spine(multi_level_epubs["book"])
-        assert not _nav_in_spine(multi_level_epubs["article"])
+    def test_nav_document_never_enters_the_spine(self, multi_level_epubs: dict[str, Path]) -> None:
+        """No profile spines the nav document — emit_toc is deliberately unmapped in EPUB.
 
-    def test_authored_toc_section_suppresses_generated_toc(self, tmp_path: Path) -> None:
-        """Content wins: a section tagged element-type:: table-of-contents drops the generated ToC."""
-        page: Final[PageVertex] = PageVertex(uid="page00004", title="Toc Doc", children=["tochead01", "chap00001"])
-        toc_heading: Final[HeadingVertex] = _tagged_heading(
-            "tochead01", "Contents", "element-type", "table-of-contents"
-        )
-        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
-        bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, toc_heading, chap]))
-        epub: Final[Path] = _render_epub(tmp_path, bundle, BookProfile(), "authored_toc")
-        assert not _nav_in_spine(epub)
+        The always-generated nav document already feeds the reading system's own ToC affordance;
+        a spined copy would present a second, redundant (and potentially inconsistent) ToC page.
+        """
+        assert not _nav_in_spine(multi_level_epubs["book"])
+        assert not _nav_in_spine(multi_level_epubs["article"])
 
 
 class TestTitlePage:
