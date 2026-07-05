@@ -432,7 +432,7 @@ def render(
     published: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     stripped: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
-    # Loose preamble (root-page children ahead of the first heading) is pruned so it cannot
+    # Loose preamble (root children ahead of the first heading) is pruned so it cannot
     # strand on its own page ahead of the book's first division.
     content: Final[VertexTree] = drop_root_preamble(stripped) if drop_preamble else stripped
     output_dir.mkdir(parents=True, exist_ok=True)

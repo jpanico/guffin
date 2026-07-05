@@ -156,7 +156,7 @@ def render(
             created if absent), ``cache_dir`` (optional cross-run asset cache), ``suppress_attributes``
             (drop Roam attribute assignments before the build), ``dump_pandoc_ast`` (write the
             serialized Panflute Doc to ``<output_dir>/<filename_stem>.pandoc.json`` before invoking
-            Pandoc), ``include_preamble`` (keep or drop the root page's loose preamble; ``None``
+            Pandoc), ``include_preamble`` (keep or drop the export root's loose preamble; ``None``
             defers to the profile policy's ``drop_preamble``), and ``number_sections`` (turn
             heading numbering on or off; ``None`` defers to the profile policy's
             ``number_sections``).
@@ -183,7 +183,7 @@ def render(
     published: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     stripped: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
-    # Loose preamble (root-page children ahead of the first heading) is pruned so it cannot
+    # Loose preamble (root children ahead of the first heading) is pruned so it cannot
     # surface as a spurious title-bearing chapter ahead of the book's first division.
     content: Final[VertexTree] = drop_root_preamble(stripped) if drop_preamble else stripped
     output_dir.mkdir(parents=True, exist_ok=True)

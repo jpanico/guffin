@@ -170,8 +170,20 @@ class TestDropRootPreamble:
         tree: Final[VertexTree] = VertexTree(tree_vertices=[page, chap])
         assert drop_root_preamble(tree) is tree
 
-    def test_noop_for_non_page_root(self) -> None:
-        """A subtree export rooted at a non-page vertex passes through unchanged."""
+    def test_non_page_root_preamble_pruned(self) -> None:
+        """A subtree export's root prunes its loose preamble exactly like a page root."""
+        root: Final[HeadingVertex] = HeadingVertex(
+            uid="root00001", text="Chapter", heading_level=1, children=["pre000001", "sect00001"]
+        )
+        pre: Final[TextVertex] = TextVertex(uid="pre000001", text="loose lead-in")
+        sect: Final[HeadingVertex] = HeadingVertex(uid="sect00001", text="Section", heading_level=2)
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[root, pre, sect])
+        result: Final[VertexTree] = drop_root_preamble(tree)
+        assert sorted(v.uid for v in result.tree_vertices) == ["root00001", "sect00001"]
+        assert result.uid_map["root00001"].children == ["sect00001"]
+
+    def test_non_page_root_without_heading_children_retained(self) -> None:
+        """A block root with no heading children keeps all content (nothing to anchor the prune)."""
         root: Final[TextVertex] = TextVertex(uid="root00001", text="block root", children=["child0001"])
         child: Final[TextVertex] = TextVertex(uid="child0001", text="child")
         tree: Final[VertexTree] = VertexTree(tree_vertices=[root, child])

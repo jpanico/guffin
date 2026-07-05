@@ -91,7 +91,7 @@ class StructuralPolicy(BaseModel):
             a navigation structure an output format already carries.
         number_sections: Whether divisions are numbered.
         emit_abstract: Whether to render an abstract block from the profile.
-        drop_preamble: Whether to drop the root page's loose preamble — children preceding its
+        drop_preamble: Whether to drop the export root's loose preamble — children preceding its
             first heading child, content belonging to no titled division — from paginated output.
     """
 
@@ -102,7 +102,7 @@ class StructuralPolicy(BaseModel):
     emit_toc: bool = Field(..., description="The work presents a navigable table of contents.")
     number_sections: bool = Field(..., description="Number the divisions.")
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
-    drop_preamble: bool = Field(..., description="Drop root-page children preceding the first heading.")
+    drop_preamble: bool = Field(..., description="Drop the root's children preceding its first heading.")
 
 
 class ProjectProfile(BaseModel):
@@ -175,7 +175,7 @@ class BookProfile(ProjectProfile):
     def structural_policy(self) -> StructuralPolicy:
         """Chapters (or parts), a title page, a generated ToC, numbered, no abstract, preamble dropped.
 
-        A book's root page is a container for its divisions: loose preamble ahead of the first
+        A book's root is a container for its divisions: loose preamble ahead of the first
         chapter belongs to no division (and would otherwise surface as a spurious title-bearing
         chapter in paginated output), so it is dropped by default.
         """

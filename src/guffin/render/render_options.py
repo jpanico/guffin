@@ -110,7 +110,7 @@ class RenderOptions(BaseModel):
             suppress_attributes: Omit Roam attribute assignments from the output.
             dump_pandoc_ast: Write the Pandoc JSON AST alongside the output before conversion.
             emit_colophon: Stamp the output with a provenance colophon from the bundle's provenance.
-            include_preamble: PDF/EPUB-only; keep the root page's loose preamble (``True``), drop
+            include_preamble: PDF/EPUB-only; keep the export root's loose preamble (``True``), drop
                 it (``False``), or defer to the project profile's policy (``None``, default).
             number_sections: PDF/EPUB-only; number the headings (``True``), turn all heading
                 numbering off (``False``), or defer to the project profile's policy (``None``,
@@ -179,7 +179,7 @@ class PdfRenderOptions(RenderOptions):
         output_format: Always :attr:`OutputFormat.PDF` (the discriminator).
         template_dir: Optional directory containing a ``user_cfg.typ`` override for the bundled
             Bergfink Typst template styling; ``None`` uses the bundled default.
-        include_preamble: Whether to keep the root page's loose preamble (children preceding its
+        include_preamble: Whether to keep the export root's loose preamble (children preceding its
             first heading child) in the output.  ``None`` (default) defers to the project
             profile's :attr:`~guffin.render.project.StructuralPolicy.drop_preamble` directive;
             ``True`` forces the preamble in, ``False`` forces it out.
@@ -195,7 +195,7 @@ class PdfRenderOptions(RenderOptions):
         default=None, description="Directory holding a user_cfg.typ Typst styling override."
     )
     include_preamble: bool | None = Field(
-        default=None, description="Keep the root page's loose preamble; None defers to the profile's policy."
+        default=None, description="Keep the export root's loose preamble; None defers to the profile's policy."
     )
     number_sections: bool | None = Field(
         default=None, description="Number the headings; None defers to the profile's policy."
@@ -210,7 +210,7 @@ class EpubRenderOptions(RenderOptions):
 
     Attributes:
         output_format: Always :attr:`OutputFormat.EPUB` (the discriminator).
-        include_preamble: Whether to keep the root page's loose preamble (children preceding its
+        include_preamble: Whether to keep the export root's loose preamble (children preceding its
             first heading child) in the output.  ``None`` (default) defers to the project
             profile's :attr:`~guffin.render.project.StructuralPolicy.drop_preamble` directive;
             ``True`` forces the preamble in, ``False`` forces it out.
@@ -223,7 +223,7 @@ class EpubRenderOptions(RenderOptions):
         default=OutputFormat.EPUB, description="Discriminator identifying EPUB options."
     )
     include_preamble: bool | None = Field(
-        default=None, description="Keep the root page's loose preamble; None defers to the profile's policy."
+        default=None, description="Keep the export root's loose preamble; None defers to the profile's policy."
     )
     number_sections: bool | None = Field(
         default=None, description="Number the headings; None defers to the profile's policy."

@@ -183,6 +183,15 @@ class TestVertexTreeToPandocSubtreeRootMetadata:
         doc, _ = vertex_tree_to_pandoc(self._tree(None), {}, {})
         assert "title" not in doc.metadata
 
+    def test_non_page_root_is_a_transparent_container(self) -> None:
+        """The root renders no block of its own; only its children form the document body."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(None), {}, {})
+        blocks = list(doc.content)
+        # The heading root's own Header is absent; the sole block is its child's bullet list.
+        assert not any(isinstance(block, pf.Header) for block in blocks)
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.BulletList)
+
 
 class TestVertexTreeToPandocColophon:
     """vertex_tree_to_pandoc() appends a provenance colophon only when provenance is provided."""

@@ -17,7 +17,7 @@ it.
 > by an authored `element-type:: table-of-contents` section; EPUB deliberately adds nothing, since
 > the always-generated nav document already supplies the reading system's ToC affordance and a
 > spined copy would be a second, redundant ToC), and `drop_preamble` (a
-> model-side prune of the root page's loose preamble, overridable via the CLI
+> model-side prune of the export root's loose preamble, overridable via the CLI
 > `--preamble/--no-preamble`). Bibliographic **metadata** is also applied — sourced from a root
 > page's `guffin`-domain attributes (see Phase 1 — metadata). `abstract` is **deferred indefinitely**. This doc
 > describes both the current shape and the intended design. Sections that describe planned behavior
@@ -191,7 +191,7 @@ section suppresses the PDF outline (`has_element_type()`), so a book never carri
 any format.
 
 The fifth, `drop_preamble`, *is* expressible before the AST and is applied in Phase 0 (prepare):
-the root page's loose preamble (children preceding its first heading child, which belong to no
+the export root's loose preamble (children preceding its first heading child, which belong to no
 titled division) is pruned from the `VertexTree` by `model/vertex_tree.py::drop_root_preamble()`
 before `vertex_tree_to_pandoc()` runs, identically in both paginated renderers. Without the prune,
 a book's preamble surfaces badly: Pandoc's EPUB writer wraps the orphaned blocks in a synthetic

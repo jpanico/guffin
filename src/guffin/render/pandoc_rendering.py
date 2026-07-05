@@ -1193,13 +1193,15 @@ def vertex_tree_to_pandoc(
     - ``True`` (Markdown path) — title rendered as a level-1
       :class:`~panflute.Header` prepended to the body blocks; no metadata.
 
-    The root vertex's metadata-domain attributes (see :func:`_document_metadata`) populate the
-    document metadata, whatever the root's type — a subtree export's root hosts them exactly as a
-    page root does: a ``title`` attribute overrides a page root's Roam title (in both the header
-    and metadata forms) and is the *only* source of a title for a non-page root (whose own text
-    is body content); ``subtitle`` / ``author`` / ``date`` / ``publisher`` / ``rights`` /
-    ``identifier`` are added to the metadata.  Metadata-domain attributes never appear as body
-    pills.
+    The export root is a **transparent container** whatever its type: it contributes the
+    document's identity but renders no body of its own, and its children form the document's
+    top-level run.  Its metadata-domain attributes (see :func:`_document_metadata`) populate the
+    document metadata — a subtree export's root hosts them exactly as a page root does: a
+    ``title`` attribute overrides a page root's Roam title (in both the header and metadata
+    forms) and is the *only* source of a title for a non-page root (whose own text is the export
+    target's name, not content); ``subtitle`` / ``author`` / ``date`` / ``publisher`` /
+    ``rights`` / ``identifier`` are added to the metadata.  Metadata-domain attributes never
+    appear as body pills.
 
     Args:
         vertex_tree: The normalized vertex tree to convert.
@@ -1251,21 +1253,21 @@ def vertex_tree_to_pandoc(
         if meta_key in root_metadata:
             metadata[meta_key] = root_metadata[meta_key]
 
-    if isinstance(root, PageVertex):
-        blocks.extend(
-            build_child_blocks(
-                root.children or [],
-                vertex_tree,
-                asset_files,
-                inline_map,
-                view_map,
-                _children_layout(root.uid, view_map),
-                depth=1,
-                attribute_assignments=root.attribute_assignments,
-            )
+    # The export root is a transparent container whatever its type: it contributes the document's
+    # identity (title, metadata) but no body of its own — a non-page root's own text is the export
+    # target's name, not content — so only its children render, as the document's top-level run.
+    blocks.extend(
+        build_child_blocks(
+            root.children or [],
+            vertex_tree,
+            asset_files,
+            inline_map,
+            view_map,
+            _children_layout(root.uid, view_map),
+            depth=1,
+            attribute_assignments=root.attribute_assignments,
         )
-    else:
-        blocks.extend(_vertex_to_blocks(root, vertex_tree, asset_files, inline_map, view_map, depth=0))
+    )
 
     if provenance is not None:
         blocks.extend(_colophon_blocks(provenance))
