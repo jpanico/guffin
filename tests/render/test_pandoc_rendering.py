@@ -522,7 +522,11 @@ class TestVertexTreeToPandocImageVertex:
 
 
 class TestVertexTreeToPandocPdfVertex:
-    """Tests for vertex_tree_to_pandoc() — PdfVertex rendering."""
+    """Tests for vertex_tree_to_pandoc() — PdfVertex rendering.
+
+    A link-placed PDF embed follows its parent's children layout like a text sibling, so under
+    the default BULLET layout the link paragraph renders inside a bulleted list item.
+    """
 
     def _tree(self, file_name: str | None = "paper.pdf.enc") -> VertexTree:
         """Build a page-rooted tree containing a single PdfVertex."""
@@ -530,30 +534,35 @@ class TestVertexTreeToPandocPdfVertex:
         pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name=file_name)
         return VertexTree(tree_vertices=[page, pdf])
 
+    @staticmethod
+    def _bulleted_link(doc: pf.Doc) -> pf.Link:
+        """Extract the PDF link from the single bulleted list item it renders inside."""
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        bullet = blocks[0]
+        assert isinstance(bullet, pf.BulletList)
+        para = list(list(bullet.content)[0].content)[0]
+        assert isinstance(para, pf.Para)
+        inline = list(para.content)[0]
+        assert isinstance(inline, pf.Link)
+        return inline
+
     def test_fetched_pdf_links_to_local_path(self, tmp_path: Path) -> None:
         """When asset_files has an entry for the vertex, the link targets the local path."""
         fake_pdf = tmp_path / "paper.pdf"
         fake_pdf.write_bytes(b"")
         doc, _ = vertex_tree_to_pandoc(self._tree(), {"pdf00001a": fake_pdf}, {})
-        blocks = list(doc.content)
-        assert len(blocks) == 1
-        assert isinstance(blocks[0], pf.Para)
-        inline = list(blocks[0].content)[0]
-        assert isinstance(inline, pf.Link)
-        assert inline.url == str(fake_pdf)
+        assert self._bulleted_link(doc).url == str(fake_pdf)
 
     def test_unfetched_pdf_falls_back_to_source_url(self) -> None:
         """When asset_files has no entry for the vertex, the link targets the remote source URL."""
         doc, _ = vertex_tree_to_pandoc(self._tree(), {}, {})
-        inline = list(list(doc.content)[0].content)[0]
-        assert isinstance(inline, pf.Link)
-        assert inline.url == str(_PDF_URL)
+        assert self._bulleted_link(doc).url == str(_PDF_URL)
 
     def test_link_label_strips_encryption_suffix(self) -> None:
         """The link label is the storage filename with Roam's .enc suffix stripped."""
         doc, _ = vertex_tree_to_pandoc(self._tree(file_name="paper.pdf.enc"), {}, {})
-        inline = list(list(doc.content)[0].content)[0]
-        assert _collect_text(inline) == "paper.pdf"
+        assert _collect_text(self._bulleted_link(doc)) == "paper.pdf"
 
     def test_link_label_prefers_original_file_name(self) -> None:
         """When the originally uploaded filename is known, it labels the link."""
@@ -563,14 +572,28 @@ class TestVertexTreeToPandocPdfVertex:
         )
         tree = VertexTree(tree_vertices=[page, pdf])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        inline = list(list(doc.content)[0].content)[0]
-        assert _collect_text(inline) == "dummy.pdf"
+        assert _collect_text(self._bulleted_link(doc)) == "dummy.pdf"
 
     def test_link_label_falls_back_to_source_url(self) -> None:
         """When no filename is known, the link label is the source URL."""
         doc, _ = vertex_tree_to_pandoc(self._tree(file_name=None), {}, {})
-        inline = list(list(doc.content)[0].content)[0]
-        assert _collect_text(inline) == str(_PDF_URL)
+        assert _collect_text(self._bulleted_link(doc)) == str(_PDF_URL)
+
+    def test_inline_placed_pdf_stays_structural(self) -> None:
+        """A pdf-render:: inline embed does not join the sibling list; it stays a standalone Para."""
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+        inline_tag = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="pdf-render", domain=AttributeDomain.GUFFIN), link=link
+            ),
+            values=(LiteralValue(value="inline"),),
+        )
+        page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc", attribute_assignments=[inline_tag])
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, pdf]), {}, {})
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.Para)
 
 
 # ---------------------------------------------------------------------------
@@ -579,7 +602,7 @@ class TestVertexTreeToPandocPdfVertex:
 
 
 class TestBuildBlocksCoalescing:
-    """Tests for build_child_blocks() — sibling TextVertex coalescing."""
+    """Tests for build_child_blocks() — sibling TextVertex (and link-placed PDF) coalescing."""
 
     def test_consecutive_text_siblings_coalesced_into_one_bullet_list(self) -> None:
         """Under a BULLET layout, consecutive TextVertex siblings produce a single BulletList."""
@@ -591,6 +614,27 @@ class TestBuildBlocksCoalescing:
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.BulletList)
         assert len(list(blocks[0].content)) == 2
+
+    def test_link_placed_pdf_coalesces_with_text_siblings(self) -> None:
+        """A link-placed PDF embed joins the same BulletList as its text siblings."""
+        text = TextVertex(uid="txt000001", text="the following block is a PDF")
+        pdf = PdfVertex(uid="pdf000001", source=_PDF_URL, file_name="paper.pdf.enc")
+        blocks = build_child_blocks(
+            ["txt000001", "pdf000001"],
+            VertexTree(tree_vertices=[text, pdf]),
+            {},
+            {},
+            {},
+            ChildrenLayout.BULLET,
+            depth=2,
+        )
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.BulletList)
+        items = list(blocks[0].content)
+        assert len(items) == 2
+        pdf_para = list(items[1].content)[0]
+        assert isinstance(pdf_para, pf.Para)
+        assert isinstance(list(pdf_para.content)[0], pf.Link)
 
     def test_numbered_layout_coalesces_into_ordered_list(self) -> None:
         """Under a NUMBERED layout, consecutive TextVertex siblings produce a single OrderedList."""
@@ -666,10 +710,11 @@ class TestVertexTreeToPandocArticleFixture:
 
     def test_block_count(self, doc: pf.Doc) -> None:
         """The fixture produces the expected number of top-level blocks."""
-        # 1 Div(callout) + 3 H1s + 6 H2s + 3 H3s + 1 H4 + 4 Para(Link) + 6 BulletList = 24
-        # (the unpublished Section 3.1_5 is included: this builds straight from the vertex
-        # tree; drop_unpublished is a renderer-level prepare step, not part of the Doc build)
-        assert len(list(doc.content)) == 24
+        # 1 Div(callout) + 3 H1s + 6 H2s + 3 H3s + 1 H4 + 3 Para(Link) + 6 BulletList = 23
+        # (the link-placed Section 3.1 PDF embed lists with its text sibling; the inline-placed
+        # Section 3.2 embed stays a standalone Para.  The unpublished Section 3.1_5 is included:
+        # this builds straight from the vertex tree; drop_unpublished is a renderer prepare step)
+        assert len(list(doc.content)) == 23
 
     def test_first_block_is_section_1_header(self, doc: pf.Doc) -> None:
         """The second block is an H1 Header for 'Section 1' (first block is the callout Para)."""

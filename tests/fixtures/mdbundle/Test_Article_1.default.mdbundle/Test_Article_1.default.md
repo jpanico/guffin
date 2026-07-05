@@ -50,7 +50,7 @@
 
 - the following block contains the canonical w3.org “Dummy” PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
 
-[dummy.pdf](dummy.pdf "dummy.pdf")
+- [dummy.pdf](dummy.pdf "dummy.pdf")
 
 ## Section 3.2
 

@@ -144,16 +144,23 @@ class TestApplyPdfEmbeds:
         return doc, specs, str(vertex.source)
 
     def test_link_mode_attaches_and_keeps_link_paragraph(self, tmp_path: Path) -> None:
-        """A LINK embed gains a pdf.attach raw block ahead of its (unchanged) link paragraph."""
+        """A LINK embed gains a pdf.attach raw block ahead of its (unchanged) link paragraph.
+
+        The link-placed embed follows its parent's BULLET layout, so both blocks live inside
+        the bulleted list item.
+        """
         doc, specs, url = self._doc_and_specs(tmp_path, inline=False)
         _apply_pdf_embeds(doc, specs)  # type: ignore[arg-type]
         blocks = list(doc.content)
-        assert len(blocks) == 2
-        assert isinstance(blocks[0], pf.RawBlock)
-        assert blocks[0].format == "typst"
-        assert '#pdf.attach("/dummy.pdf"' in blocks[0].text
-        assert isinstance(blocks[1], pf.Para)
-        assert list(blocks[1].content)[0].url == url
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.BulletList)
+        item_blocks = list(list(blocks[0].content)[0].content)
+        assert len(item_blocks) == 2
+        assert isinstance(item_blocks[0], pf.RawBlock)
+        assert item_blocks[0].format == "typst"
+        assert '#pdf.attach("/dummy.pdf"' in item_blocks[0].text
+        assert isinstance(item_blocks[1], pf.Para)
+        assert list(item_blocks[1].content)[0].url == url
 
     def test_inline_mode_attaches_and_renders_pages(self, tmp_path: Path) -> None:
         """An INLINE embed is replaced by a pdf.attach raw block and one image call per page."""
@@ -178,7 +185,14 @@ class TestApplyPdfEmbeds:
         specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         _apply_pdf_embeds(doc, specs)
-        raw_blocks = [b for b in doc.content if isinstance(b, pf.RawBlock)]
+
+        raw_blocks: list[pf.RawBlock] = []
+
+        def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
+            if isinstance(elem, pf.RawBlock):
+                raw_blocks.append(elem)
+
+        doc.walk(_collect)
         assert len(raw_blocks) == 1
 
     def test_prose_paragraph_with_link_untouched(self, tmp_path: Path) -> None:

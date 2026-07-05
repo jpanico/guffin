@@ -93,10 +93,13 @@ from guffin.model.attribute import (
 )
 from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.publishing_semantics import (
+    DEFAULT_PDF_RENDER,
     Matter,
+    PdfRender,
     PublishingSemantics,
     StructuralElement,
     element_type_of_vertex,
+    pdf_render_of_vertex,
     resolved_matter,
 )
 from guffin.model.vertex import (
@@ -392,6 +395,69 @@ def _build_list_item(
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def _is_link_placed_pdf(vertex: Vertex) -> bool:
+    """Return whether *vertex* is a PDF embed placed as a link (:attr:`PdfRender.LINK`).
+
+    A link-placed PDF embed reads as a line of its parent's outline — like a text sibling — so
+    it participates in the parent's children layout.  An :attr:`PdfRender.INLINE` embed is a
+    display block (its pages replace it in output that renders them) and stays structural.
+
+    Args:
+        vertex: The vertex to classify.
+
+    Returns:
+        ``True`` when *vertex* is a :class:`~guffin.vertex.PdfVertex` whose resolved
+        ``pdf-render`` placement is :attr:`PdfRender.LINK`, else ``False``.
+    """
+    if not isinstance(vertex, PdfVertex):
+        return False
+    return (pdf_render_of_vertex(vertex) or DEFAULT_PDF_RENDER) is PdfRender.LINK
+
+
+def _pdf_link_list_item(
+    vertex: PdfVertex,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    depth: int,
+) -> pf.ListItem:
+    """Build a Pandoc :class:`~panflute.ListItem` from a link-placed PDF vertex.
+
+    The item body is the vertex's link paragraph (see :func:`_pdf_vertex_to_blocks`).  If the
+    vertex has children (or folded attribute assignments) they are rendered recursively via
+    :func:`build_child_blocks` using the vertex's own children layout, and appended as nested
+    blocks inside the item.
+
+    Args:
+        vertex: The :class:`~guffin.vertex.PdfVertex` to render as a list item.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID (image or PDF) to local
+            asset file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        depth: Tree depth of *vertex* (≥ 2 when this function is called).
+
+    Returns:
+        A :class:`~panflute.ListItem` wrapping the link paragraph and any nested children and
+        attribute pills.
+    """
+    content: Final[list[pf.Block]] = _pdf_vertex_to_blocks(vertex, asset_files)
+    content.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            asset_files,
+            inline_map,
+            view_map,
+            _children_layout(vertex.uid, view_map),
+            depth + 1,
+            vertex.attribute_assignments,
+        )
+    )
+    return pf.ListItem(*content)
+
+
 def build_child_blocks(
     child_uids: VertexChildren,
     vertex_tree: VertexTree,
@@ -415,7 +481,9 @@ def build_child_blocks(
     - :attr:`~guffin.model.view.ChildrenLayout.DOCUMENT` — rendered as flowing blocks
       (paragraphs) via :func:`_vertex_to_blocks`, with no list wrapper.
 
-    Any non-text vertex flushes the pending list and is rendered via
+    A link-placed PDF embed (:func:`_is_link_placed_pdf`) participates in the layout like a
+    text sibling: its link paragraph joins the same list.  Any other non-text vertex flushes
+    the pending list and is rendered via
     :func:`_vertex_to_blocks` regardless of *layout*.  A text vertex that is solely a
     reference to a block-level vertex (see :func:`_block_ref_target`) is likewise flushed
     and rendered as the referenced block, so it appears identically to the block it
@@ -482,6 +550,9 @@ def build_child_blocks(
                 )
         elif isinstance(vertex, TextVertex) and layout is not ChildrenLayout.DOCUMENT:
             pending_items.append(_build_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, depth))
+        elif isinstance(vertex, PdfVertex) and _is_link_placed_pdf(vertex) and layout is not ChildrenLayout.DOCUMENT:
+            # A link-placed PDF embed reads as a line of the outline, so it lists with its siblings.
+            pending_items.append(_pdf_link_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, depth))
         else:
             flush_pending()
             result.extend(_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth))
