@@ -81,7 +81,7 @@ logger = logging.getLogger(__name__)
 app = typer.Typer()
 
 
-def _dump_raw_table(fetch_result: NodeFetchResult, console: Console, truncate: bool) -> None:
+def _dump_raw_table(fetch_result: NodeFetchResult, console: Console, truncate: bool, show_transient: bool) -> None:
     """Print the raw-results Rich table for *fetch_result* to *console*.
 
     Delegates table construction to :func:`build_rich_raw_table`, then prints
@@ -91,8 +91,9 @@ def _dump_raw_table(fetch_result: NodeFetchResult, console: Console, truncate: b
         fetch_result: Fetch result passed through to :func:`build_rich_raw_table`.
         console: Rich :class:`~rich.console.Console` to print to.
         truncate: When ``False``, render full (untruncated) cell values.
+        show_transient: When ``True``, include the transient session/UI attribute columns.
     """
-    raw_table: Final[Table] = build_rich_raw_table(fetch_result, truncate=truncate)
+    raw_table: Final[Table] = build_rich_raw_table(fetch_result, truncate=truncate, show_transient=show_transient)
     console.rule("[bold]Raw Results[/bold]")
     console.print()
     console.print(raw_table)
@@ -188,6 +189,7 @@ def dump_trees(
     show_node_tree: bool,
     show_vertex_tree: bool,
     truncate: bool,
+    show_transient: bool,
 ) -> None:
     """Dispatch to the enabled display functions and print results to the console.
 
@@ -212,10 +214,12 @@ def dump_trees(
         show_node_tree: When ``True``, call :func:`_dump_node_tree`.
         show_vertex_tree: When ``True``, call :func:`_dump_vertex_tree`.
         truncate: When ``False``, render full (untruncated) string values in every view.
+        show_transient: When ``True``, include the transient session/UI attribute columns in the
+            raw-results table.
     """
     console: Final[Console] = Console()
     if show_raw_results:
-        _dump_raw_table(fetch_result, console, truncate)
+        _dump_raw_table(fetch_result, console, truncate, show_transient)
     if show_node_tree:
         _dump_node_tree(fetch_result, node_props, console, truncate)
     if show_vertex_tree:
@@ -296,6 +300,15 @@ def main(
             "shortening long strings with an ellipsis.",
         ),
     ] = True,
+    show_transient: Annotated[
+        bool,
+        typer.Option(
+            "--show-transient/--no-show-transient",
+            help="In the raw-results table (--raw-results), also show the transient session/UI "
+            "attribute columns (open, sidebar, edit/create timestamps and users, nonces, "
+            "word-count) that are hidden by default. No effect without --raw-results.",
+        ),
+    ] = False,
 ) -> None:
     """Dump a Roam Research page or node subtree as a Rich tree to the console.
 
@@ -306,14 +319,17 @@ def main(
 
     Use ``--vertex-tree`` / ``-v/-V`` and ``--node-tree`` / ``-n/-N`` to control which
     trees are printed (vertex tree is shown by default).  Use ``--raw-results`` /
-    ``-r/-R`` to also print the raw Datalog query results.  Use ``--include-refs`` /
-    ``-i/-I`` to additionally fetch nodes referenced via ``:block/refs`` from the
-    target page or its descendants.  Use ``--no-truncate`` to render full string
-    values across every view instead of shortening long strings with an ellipsis.
+    ``-r/-R`` to also print the raw Datalog query results, and ``--show-transient`` to
+    include the transient session/UI attribute columns (hidden by default) in that raw
+    table.  Use ``--include-refs`` / ``-i/-I`` to additionally fetch nodes referenced via
+    ``:block/refs`` from the target page or its descendants.  Use ``--no-truncate`` to
+    render full string values across every view instead of shortening long strings with
+    an ellipsis.
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, api_bearer_token=%r, node_props=%r, vertex_props=%r, "
-        "show_raw_results=%r, show_vertex_tree=%r, show_node_tree=%r, include_refs=%r, truncate=%r",
+        "show_raw_results=%r, show_vertex_tree=%r, show_node_tree=%r, include_refs=%r, truncate=%r, "
+        "show_transient=%r",
         target,
         local_api_port,
         graph_name,
@@ -325,6 +341,7 @@ def main(
         show_node_tree,
         include_refs,
         truncate,
+        show_transient,
     )
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
         local_api_port=local_api_port,
@@ -364,6 +381,7 @@ def main(
         show_node_tree=show_node_tree,
         show_vertex_tree=show_vertex_tree,
         truncate=truncate,
+        show_transient=show_transient,
     )
 
 

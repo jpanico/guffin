@@ -30,7 +30,7 @@ pip install -e ".[dev]"
 
 ## Key Commands
 ```bash
-dump-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> [-v/-V] [-n/-N] [-r/-R] [--node-props <props>]
+dump-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> [-v/-V] [-n/-N] [-r/-R] [--show-transient/--no-show-transient] [--node-props <props>]
 export-roam-tree <page_title_or_node_uid> -p <port> -g <graph> -t <token> -o <output_dir> [--format markdown|pdf|epub] [--type default|book|manuscript] [--bundle|--no-bundle] [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes] [--colophon|--no-colophon] [--preamble|--no-preamble] [--numbering|--no-numbering]
 # output filename stem embeds the project type: <target>.<type>.<ext> (e.g. Foo.default.epub, Foo.book.pdf)
 # --format markdown (default): writes <target>.<type>.mdbundle/ (--bundle) or <target>.<type>.md (--no-bundle)
@@ -66,7 +66,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v
 ## Project Structure
 - `src/guffin/` — main package
   - **`cli/` sub-package** (`src/guffin/cli/`) — CLI entry points and supporting infrastructure
-    - `dump_roam_tree.py` — dumps a Roam page or node subtree as a Rich tree to the terminal; supports `--vertex-tree`/`--node-tree`/`--raw-results` flags (`dump-roam-tree`)
+    - `dump_roam_tree.py` — dumps a Roam page or node subtree as a Rich tree to the terminal; supports `--vertex-tree`/`--node-tree`/`--raw-results` flags, plus `--show-transient` to include the transient session/UI attribute columns (hidden by default) in the raw-results table (`dump-roam-tree`)
     - `export_roam_tree.py` — exports a Roam page or node subtree; `--format markdown` (default) writes a `.mdbundle` or plain `.md`; `--format pdf` writes a PDF via Panflute + Pandoc + Typst; `--format epub` writes an EPUB 3 e-book via Panflute + Pandoc; target is a page title or node UID (`export-roam-tree`)
     - `logging_config.py` — colorized logging (`configure_logging()`); reads `LOG_LEVEL` env var
     - `common.py` — tree-loading pipeline for CLI commands; `fetch_roam_trees` resolves a target, fetches nodes, and returns a `(NodeFetchResult, VertexTree | None)` pair, running `validate_semantics` on the transcribed content (violations warn by default, or raise `SemanticsValidationError` when called with `strict_semantics=True` — export does, dump doesn't); `resolve_profile` builds the `ProjectProfile` for a project type, refined by the content (a book with part-tagged level-1 headings becomes a parts book)

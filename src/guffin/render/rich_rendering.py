@@ -604,13 +604,13 @@ def _is_obj_list(val: object) -> TypeGuard[list[object]]:
     return isinstance(val, list)
 
 
-_RAW_RESULTS_EXCLUDED_ATTRS: Final[frozenset[str]] = TRANSIENT_RAW_KEYS | frozenset({"lookup", "attrs"})
-"""Pull-block attribute keys suppressed from the raw-results Rich table.
+_RAW_RESULTS_BOOKKEEPING_ATTRS: Final[frozenset[str]] = frozenset({"lookup", "attrs"})
+"""Attribute-system keys always hidden from the raw-results table — structural but not table-worthy.
 
-The transient session/UI keys (:data:`~guffin.roam.node.TRANSIENT_RAW_KEYS`) plus two attribute-system
-keys that are structural but not table-worthy: ``lookup`` (Roam's ``:attrs/lookup`` reverse index, a
-list of entity ids) and ``attrs`` (the ``:entity/attrs`` structured assertions, surfaced in the vertex
-view instead).
+``lookup`` (Roam's ``:attrs/lookup`` reverse index, a list of entity ids) and ``attrs`` (the
+``:entity/attrs`` structured assertions, surfaced in the vertex view instead).  Distinct from the
+transient session/UI keys (:data:`~guffin.roam.local_api.TRANSIENT_RAW_KEYS`), which are hidden by
+default but shown when :func:`build_rich_raw_table` is called with ``show_transient=True``.
 """
 
 _RAW_RESULTS_COL_ORDER: Final[tuple[str, ...]] = (
@@ -694,11 +694,14 @@ def _truncate_urls_in_cell(cell: str) -> str:
 
 
 @validate_call
-def build_rich_raw_table(fetch_result: NodeFetchResult, *, truncate: bool = True) -> Table:
+def build_rich_raw_table(
+    fetch_result: NodeFetchResult, *, truncate: bool = True, show_transient: bool = False
+) -> Table:
     """Build and return a Rich :class:`~rich.table.Table` of raw Datalog pull-blocks.
 
     Rows are sorted by ``id``; columns cover every attribute key present across
-    all pull-blocks, excluding those in :data:`_RAW_RESULTS_EXCLUDED_ATTRS`, and
+    all pull-blocks, excluding the :data:`_RAW_RESULTS_BOOKKEEPING_ATTRS` (and, unless
+    *show_transient* is set, the transient :data:`~guffin.roam.local_api.TRANSIENT_RAW_KEYS`),
     ordered according to :data:`_RAW_RESULTS_COL_ORDER` (remaining keys follow
     alphabetically).  :class:`~guffin.roam.primitives.IdObject` values and
     single-entry ``{"id": …}`` ref dicts are rendered as plain integer ids; lists
@@ -714,17 +717,23 @@ def build_rich_raw_table(fetch_result: NodeFetchResult, *, truncate: bool = True
         truncate: When ``True`` (default), per-column length limits in
             :data:`_RAW_RESULTS_COL_TRUNCATE` are applied; when ``False``, cell values
             are rendered in full (URL shortening inside ``props`` still applies).
+        show_transient: When ``True``, also show the transient session/UI attribute columns
+            (:data:`~guffin.roam.local_api.TRANSIENT_RAW_KEYS`); when ``False`` (default), they
+            are hidden.
 
     Returns:
         A fully populated :class:`~rich.table.Table` ready for printing.
     """
+    excluded: Final[frozenset[str]] = (
+        _RAW_RESULTS_BOOKKEEPING_ATTRS if show_transient else _RAW_RESULTS_BOOKKEEPING_ATTRS | TRANSIENT_RAW_KEYS
+    )
     pull_blocks: Final[list[dict[str, object]]] = sorted(
         (row[0] for row in fetch_result.raw_result),
         key=lambda pb: v if isinstance(v := pb.get("id"), int) else 0,
     )
     col_rank: Final[dict[str, int]] = {k: i for i, k in enumerate(_RAW_RESULTS_COL_ORDER)}
     all_keys: Final[list[str]] = sorted(
-        {key for pb in pull_blocks for key in pb} - _RAW_RESULTS_EXCLUDED_ATTRS,
+        {key for pb in pull_blocks for key in pb} - excluded,
         key=lambda k: (col_rank.get(k, len(_RAW_RESULTS_COL_ORDER)), k),
     )
     raw_table: Final[Table] = Table(show_lines=True)
