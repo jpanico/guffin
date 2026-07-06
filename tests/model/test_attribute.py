@@ -22,7 +22,7 @@ from guffin.model.attribute import (
     verified_sole_value_text,
     verify_assignment_for,
 )
-from guffin.model.link import VertexLink, VertexLinkKind
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
 

@@ -17,7 +17,6 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
@@ -25,6 +24,7 @@ from guffin.model.vertex import (
     PdfVertex,
     TextVertex,
 )
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE

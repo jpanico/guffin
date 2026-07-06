@@ -49,7 +49,7 @@ import regex
 from pydantic import validate_call
 
 from guffin.common.markdown import CODE_BLOCK_RE
-from guffin.model.link import VertexLinkKind, vertex_link_url
+from guffin.model.vertex_link import VertexLinkKind, vertex_link_url
 from guffin.roam.markdown import (
     BG_COLOR_LINE_RE,
     BLOCK_REF_RE,

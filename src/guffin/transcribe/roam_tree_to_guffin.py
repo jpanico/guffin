@@ -62,7 +62,6 @@ from guffin.model.attribute import (
     LiteralValue,
     ReferenceValue,
 )
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -80,6 +79,7 @@ from guffin.model.vertex import (
     VertexRefs,
     VertexType,
 )
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
 from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
@@ -159,7 +159,7 @@ def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssi
     """Parse an attribute-block *node*'s string into an :class:`~guffin.model.attribute.AttributeAssignment`.
 
     The attribute name and every tag-valued element are resolved to
-    :class:`~guffin.model.link.VertexLink` references via the tree's
+    :class:`~guffin.model.vertex_link.VertexLink` references via the tree's
     :attr:`~guffin.roam.node_tree.NodeTree.page_name_map`; non-tag values become literals.
 
     Args:
@@ -218,7 +218,7 @@ def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -
 
     This is the Guffin-specific (non-Roam-standard) attribute form: the child's string is
     ``<name>:: <value>, …`` whose values need not satisfy Roam's strict attribute syntax.  The name
-    (text before ``::``) is resolved to its page :class:`~guffin.model.link.VertexLink` and the
+    (text before ``::``) is resolved to its page :class:`~guffin.model.vertex_link.VertexLink` and the
     attribute is tagged with *domain*.  The right-hand side is split on commas; each token is trimmed,
     its surrounding quotes stripped, and rendered as a :class:`~guffin.model.attribute.ReferenceValue`
     when it is a tag (per :data:`~guffin.roam.markdown.TAG_RE`) or a
@@ -668,8 +668,8 @@ def to_block_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
 
     Extracts the embedded block's UID from ``node.string`` — a Roam block embed
     ``{{embed: ((<uid>))}}`` as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE` —
-    and records it as an :attr:`~guffin.model.link.VertexLinkKind.EMBED`-kind
-    :class:`~guffin.model.link.VertexLink` to the transcluded vertex.
+    and records it as an :attr:`~guffin.model.vertex_link.VertexLinkKind.EMBED`-kind
+    :class:`~guffin.model.vertex_link.VertexLink` to the transcluded vertex.
 
     Args:
         node: A block embed node whose ``string`` is wholly ``{{embed: ((<uid>))}}``.
@@ -700,7 +700,7 @@ def to_block_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
 
 
 def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
-    """Return a reference :class:`~guffin.model.link.VertexLink` to the page titled *page_name*.
+    """Return a reference :class:`~guffin.model.vertex_link.VertexLink` to the page titled *page_name*.
 
     Args:
         page_name: The exact title of the referenced Roam page.
@@ -708,7 +708,7 @@ def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
             :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves the title to the page node.
 
     Returns:
-        A :attr:`~guffin.model.link.VertexLinkKind.REFERENCE`-kind link to the page's UID.
+        A :attr:`~guffin.model.vertex_link.VertexLinkKind.REFERENCE`-kind link to the page's UID.
 
     Raises:
         ValueError: When no page titled *page_name* is present in the tree (e.g. the referenced page

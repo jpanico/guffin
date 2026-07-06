@@ -16,7 +16,6 @@ from guffin.model.attribute import (
 )
 from guffin.model.attribute_anchor import AttributeAnchor
 from guffin.model.chicago_structure import Matter, StructuralElement
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     DEFAULT_PUBLISH,
@@ -53,6 +52,7 @@ from guffin.model.vertex import (
     TextVertex,
     vertex_adapter,
 )
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")

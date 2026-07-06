@@ -3,8 +3,8 @@
 from conftest import article1_vertex_tree
 
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import BlockEmbedVertex, PageVertex, TextVertex
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
 
 _REF_LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1")

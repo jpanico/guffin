@@ -92,7 +92,6 @@ from guffin.model.attribute import (
     attribute_value_text,
 )
 from guffin.model.chicago_structure import Matter, StructuralElement
-from guffin.model.link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     PdfRender,
@@ -115,6 +114,7 @@ from guffin.model.vertex import (
     Vertex,
     VertexChildren,
 )
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for

@@ -12,9 +12,9 @@ import pytest
 from conftest import FIXTURES_PDF_DIR
 
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.publishing_semantics import PdfRender
 from guffin.model.vertex import PageVertex, PdfVertex, TextVertex
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.pandoc_rendering import vertex_tree_to_pandoc

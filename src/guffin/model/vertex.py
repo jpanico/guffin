@@ -62,8 +62,8 @@ from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import Attribute, AttributeAssignment, find_assignment_for
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.primitives import Uid
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 
 
 class VertexType(StrEnum):
@@ -469,8 +469,8 @@ class BlockEmbedVertex(_BaseVertex[Literal[VertexType.BLOCK_EMBED]]):
         vertex_type: Always :attr:`~VertexType.BLOCK_EMBED`.
             Serialized as ``'vertex-type'``.
         vertex_link: Link to the embedded (transcluded) vertex; its
-            :attr:`~guffin.model.link.VertexLink.kind` is always
-            :attr:`~guffin.model.link.VertexLinkKind.EMBED`.
+            :attr:`~guffin.model.vertex_link.VertexLink.kind` is always
+            :attr:`~guffin.model.vertex_link.VertexLinkKind.EMBED`.
     """
 
     vertex_type: Literal[VertexType.BLOCK_EMBED] = Field(

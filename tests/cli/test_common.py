@@ -21,7 +21,6 @@ from guffin.model.attribute import (
     AttributeInstance,
     LiteralValue,
 )
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.publishing_semantics import PublishingSemantics
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -35,6 +34,7 @@ from guffin.model.vertex import (
     TextVertex,
     Vertex,
 )
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.project import BookProfile, ProjectType, TopLevelDivision
 from guffin.roam.local_api import ApiEndpoint

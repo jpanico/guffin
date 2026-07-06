@@ -6,7 +6,6 @@ from pydantic import HttpUrl, ValidationError
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue, ReferenceValue
-from guffin.model.link import VertexLink, VertexLinkKind
 from guffin.model.vertex import (
     BlockEmbedVertex,
     ImageVertex,
@@ -18,6 +17,7 @@ from guffin.model.vertex import (
     is_asset_vertex,
     vertex_adapter,
 )
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 
 # A representative embed link to a 9-character destination UID.
 _EMBED_LINK = VertexLink(kind=VertexLinkKind.EMBED, uid="tgt000001")

@@ -3,7 +3,7 @@
 A Roam attribute assignment names an attribute — itself a Roam *Page* — and assigns it an ordered
 list of values, each of which is either a bare literal token or a reference to another page.  This
 module models that construct decoupled from the Roam/parsing layer: page references are captured as
-:class:`~guffin.model.link.VertexLink` pointers rather than raw Roam UIDs or strings.
+:class:`~guffin.model.vertex_link.VertexLink` pointers rather than raw Roam UIDs or strings.
 
 Public symbols:
 
@@ -39,7 +39,7 @@ from typing import Annotated, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
 
-from guffin.model.link import VertexLink
+from guffin.model.vertex_link import VertexLink
 
 logger = logging.getLogger(__name__)
 

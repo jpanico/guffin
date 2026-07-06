@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from guffin.model.link import (
+from guffin.model.vertex_link import (
     GUFFIN_SCHEME,
     VertexLink,
     VertexLinkKind,
