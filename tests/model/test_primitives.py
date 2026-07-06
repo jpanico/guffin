@@ -13,7 +13,6 @@ from guffin.model.primitives import (
     UID_PATTERN,
     UID_RE,
     Uid,
-    is_daily_note_uid,
 )
 
 _VALID_UID: Final[str] = "abc123xyz"
@@ -78,20 +77,3 @@ class TestUidType:
         """Test that a string merely containing a UID is rejected (anchoring is load-bearing)."""
         with pytest.raises(ValidationError):
             _UID_ADAPTER.validate_python("xxabc123xyzyy")
-
-
-# ---------------------------------------------------------------------------
-# TestIsDailyNoteUid
-# ---------------------------------------------------------------------------
-
-
-class TestIsDailyNoteUid:
-    """Tests for the is_daily_note_uid classifier."""
-
-    def test_true_for_daily_note_uid(self) -> None:
-        """Test that an MM-DD-YYYY UID is classified as a daily-note UID."""
-        assert is_daily_note_uid(_VALID_DAILY_NOTE_UID) is True
-
-    def test_false_for_synthetic_uid(self) -> None:
-        """Test that a synthetic nine-character UID is not classified as a daily-note UID."""
-        assert is_daily_note_uid(_VALID_UID) is False

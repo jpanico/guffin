@@ -5,7 +5,6 @@ Public symbols:
 - :class:`Table` — 2D data model for a table with optional row and column headers.
 - :class:`HAlign` — horizontal alignment options for table cell content.
 - :class:`CellStyle` — visual styling for a single table cell.
-- :type:`CellCoord` — zero-based ``(row_index, col_index)`` cell coordinate.
 - :class:`TableStyle` — view/display/styling overlay for a :class:`Table`.
 """
 
@@ -93,10 +92,6 @@ class CellStyle(BaseModel):
     color: str | None = Field(default=None, description="Foreground color string; None means inherit.")
     background: str | None = Field(default=None, description="Background color string; None means inherit.")
     align: HAlign = Field(default=HAlign.LEFT, description="Horizontal alignment of cell content.")
-
-
-type CellCoord = tuple[int, int]
-"""Zero-based ``(row_index, col_index)`` coordinate addressing a single cell in a :class:`Table`."""
 
 
 def _empty_cell_styles() -> dict[tuple[int, int], CellStyle]:

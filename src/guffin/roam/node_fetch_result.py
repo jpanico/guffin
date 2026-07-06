@@ -8,8 +8,6 @@ Public symbols:
 - :class:`NodeFetchResult` — immutable model bundling the fetch specification, its resolved node tree,
   a :data:`~guffin.roam.node.NodesByUid` index of all fetched nodes, and the raw
   Datalog query result before :class:`~guffin.roam.node.RoamNode` parsing.
-- :data:`NodeFetchResult_Placeholder` — flat list of :class:`~guffin.roam.node.RoamNode` records
-  returned by all :class:`~guffin.roam.node_fetch.FetchRoamNodes` fetch methods.
 - :func:`anchor_node` — return the :class:`~guffin.roam.node.RoamNode` in a
   :data:`~guffin.roam.node_network.NodeNetwork` that matches a :class:`NodeFetchAnchor`.
 - :func:`anchor_tree` — return the subtree of a :data:`~guffin.roam.node_network.NodeNetwork`
@@ -282,10 +280,6 @@ class NodeFetchResult(BaseModel):
         return cls.model_construct(
             fetch_spec=fetch_spec, anchor_tree=anchor_tree, nodes_by_uid=by_uid, raw_result=raw_result
         )
-
-
-type NodeFetchResult_Placeholder = NodeNetwork
-"""Flat list of :class:`~guffin.roam.node.RoamNode` records returned by all public fetch methods."""
 
 
 @validate_call

@@ -9,13 +9,12 @@ Public symbols:
 - :data:`ANCHORED_UID_PATTERN` — :data:`UID_PATTERN` anchored at both ends.
 - :data:`ANCHORED_UID_RE` — compiled :data:`ANCHORED_UID_PATTERN`.
 - :data:`Uid` — stable block/page identifier type alias.
-- :func:`is_daily_note_uid` — classify a UID as a daily-note-page UID.
 """
 
 from typing import Annotated, Final
 
 import regex
-from pydantic import Field, validate_call
+from pydantic import Field
 
 SYNTHETIC_UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
 """Regex for a Roam-generated node UID: nine alphanumeric/dash/underscore characters (the common case).
@@ -54,16 +53,3 @@ type Uid = Annotated[str, Field(pattern=ANCHORED_UID_PATTERN)]
 Either a synthetic nine-character UID (:data:`SYNTHETIC_UID_PATTERN`) or a ``MM-DD-YYYY`` Daily Note
 Page UID (:data:`DAILY_NOTE_UID_PATTERN`).
 """
-
-
-@validate_call
-def is_daily_note_uid(uid: Uid) -> bool:
-    """Return ``True`` when *uid* is a Daily Note Page UID (``MM-DD-YYYY``), not a synthetic UID.
-
-    Args:
-        uid: The node UID to classify.
-
-    Returns:
-        ``True`` if *uid* matches :data:`DAILY_NOTE_UID_PATTERN`, ``False`` for a synthetic UID.
-    """
-    return regex.fullmatch(DAILY_NOTE_UID_PATTERN, uid) is not None

@@ -13,14 +13,13 @@ Public symbols are organized into the following groups:
   :data:`DAILY_NOTE_UID_PATTERN` (``MM-DD-YYYY`` daily-note-page UID) compose
   :data:`UID_PATTERN` / :data:`UID_RE` — the unanchored regex matching *any* node UID;
   :data:`ANCHORED_UID_PATTERN` / :data:`ANCHORED_UID_RE` — the whole-string anchored form.
-- **Functions**: :func:`is_daily_note_uid` — classify a UID as a daily-note-page UID.
 """
 
 import enum
 from typing import Annotated, Final, Literal
 
 import regex
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 SYNTHETIC_UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
 """Regex for a Roam-generated node UID: nine alphanumeric/dash/underscore characters (the common case).
@@ -152,16 +151,3 @@ type RawRefs = list[IdObject]
 
 Same shape as :data:`RawChildren` — :class:`IdObject` stubs awaiting normalization.
 """
-
-
-@validate_call
-def is_daily_note_uid(uid: Uid) -> bool:
-    """Return ``True`` when *uid* is a Daily Note Page UID (``MM-DD-YYYY``), not a synthetic UID.
-
-    Args:
-        uid: The node UID to classify.
-
-    Returns:
-        ``True`` if *uid* matches :data:`DAILY_NOTE_UID_PATTERN`, ``False`` for a synthetic UID.
-    """
-    return regex.fullmatch(DAILY_NOTE_UID_PATTERN, uid) is not None

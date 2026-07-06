@@ -9,7 +9,6 @@ from guffin.roam.node_network import (
     all_children_present,
     all_descendants,
     all_parents_present,
-    direct_refs_nodes,
     has_unique_ids,
     is_acyclic,
     min_effective_heading_level,
@@ -880,97 +879,6 @@ class TestRefsIds:
             11933,
             11943,
         }
-
-
-class TestDirectRefsNodes:
-    """Tests for direct_refs_nodes."""
-
-    # ------------------------------------------------------------------
-    # empty / no refs → empty list
-    # ------------------------------------------------------------------
-
-    def test_empty_network_returns_empty_list(self) -> None:
-        """Test that an empty network returns an empty list."""
-        assert direct_refs_nodes([]) == []
-
-    def test_no_refs_in_network_returns_empty_list(self) -> None:
-        """Test that a network where no node has a refs field returns an empty list."""
-        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
-        block = RoamNode(
-            uid="block0001",
-            id=10,
-            string="plain text",
-            parents=[IdObject(id=1)],
-            page=IdObject(id=1),
-        )
-        assert direct_refs_nodes([page, block]) == []
-
-    # ------------------------------------------------------------------
-    # ref target present in network → node returned
-    # ------------------------------------------------------------------
-
-    def test_ref_target_in_network_is_returned(self) -> None:
-        """Test that a node whose id is referenced by another node in the network is returned."""
-        target = RoamNode(uid="page00002", id=99, title="Target", children=[])
-        block = RoamNode(
-            uid="block0001",
-            id=10,
-            string="[[Target]]",
-            parents=[IdObject(id=1)],
-            page=IdObject(id=1),
-            refs=[IdObject(id=99)],
-        )
-        result = direct_refs_nodes([target, block])
-        assert result == [target]
-
-    def test_ref_target_outside_network_is_not_included(self) -> None:
-        """Test that a ref whose target id is absent from the network is not returned."""
-        block = RoamNode(
-            uid="block0001",
-            id=10,
-            string="[[External]]",
-            parents=[IdObject(id=1)],
-            page=IdObject(id=1),
-            refs=[IdObject(id=99)],  # id=99 not in network
-        )
-        assert direct_refs_nodes([block]) == []
-
-    def test_multiple_distinct_ref_targets_all_returned(self) -> None:
-        """Test that all nodes whose ids are referenced are included in the result."""
-        target_a = RoamNode(uid="page00002", id=50, title="A", children=[])
-        target_b = RoamNode(uid="page00003", id=60, title="B", children=[])
-        block = RoamNode(
-            uid="block0001",
-            id=10,
-            string="[[A]] [[B]]",
-            parents=[IdObject(id=1)],
-            page=IdObject(id=1),
-            refs=[IdObject(id=50), IdObject(id=60)],
-        )
-        result = direct_refs_nodes([target_a, target_b, block])
-        assert {n.id for n in result} == {50, 60}
-
-    def test_shared_ref_target_returned_once(self) -> None:
-        """Test that a node referenced by two different nodes appears in the result only once."""
-        target = RoamNode(uid="page00002", id=99, title="Shared", children=[])
-        block_a = RoamNode(
-            uid="block0001",
-            id=10,
-            string="[[Shared]]",
-            parents=[IdObject(id=1)],
-            page=IdObject(id=1),
-            refs=[IdObject(id=99)],
-        )
-        block_b = RoamNode(
-            uid="block0002",
-            id=20,
-            string="[[Shared]] again",
-            parents=[IdObject(id=1)],
-            page=IdObject(id=1),
-            refs=[IdObject(id=99)],
-        )
-        result = direct_refs_nodes([target, block_a, block_b])
-        assert result == [target]
 
 
 class TestMinEffectiveHeadingLevel:
