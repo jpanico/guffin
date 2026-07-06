@@ -1,105 +1,72 @@
 - - string: 'matter:: front-matter'
-    user:
-      id: 3
     id: 11891
     uid: aIPqy4neT
     parents:
     - id: 11850
     - id: 11871
     - id: 11890
-    time: 1782936070230
     order: 0
-    open: false
     page:
       id: 11850
     refs:
     - id: 11892
 - - string: '**Unto the Honorable, Prudent, and Wise Magistrates of the Free Imperial
       City of Nuremberg, and to all curious Christian Readers, grace and peace.**'
-    user:
-      id: 3
     id: 11870
     uid: snXG7pnjI
     parents:
     - id: 11850
     - id: 11861
-    time: 1782931502636
     order: 1
-    open: true
     page:
       id: 11850
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
-    user:
-      id: 3
     id: 4224
     uid: 7MoH-wIQh
     parents:
     - id: 4223
-    time: 1780843750454
     order: 0
-    open: true
     page:
       id: 4223
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1782152316083
-    children:
+- - children:
     - id: 4224
-    user:
-      id: 3
     id: 4223
     uid: LBFKibPIj
-    word-count: 9
-    edit-user:
-      id: 3
-    time: 1773090962400
     title: Test Article
-    edit-nonce: 0iIGJ1buX
-    edit-time: 1780843750454
 - - heading: 3
     string: Intended Audience
     children:
     - id: 4601
     - id: 4602
-    user:
-      id: 3
     id: 4600
     uid: Bl5IgRIYf
     parents:
     - id: 4384
-    time: 1773254181407
     order: 0
-    open: true
     page:
       id: 4384
 - - string: The main thing to avoid is burying it deep inside the introduction, where
       a reader scanning the front matter to decide if the book is right for them might
       miss it entirely.
-    user:
-      id: 3
     id: 4392
     uid: N60tgmwap
     parents:
     - id: 4384
     - id: 4427
-    time: 1773241057701
     order: 3
-    open: true
     page:
       id: 4384
 - - string: 'subtitle:: "Wonders of the World and the Court of the Great Khan"'
-    user:
-      id: 3
     id: 11893
     uid: NS19XW9sL
     parents:
     - id: 11850
     - id: 11855
-    time: 1782990409102
     order: 1
-    open: true
     page:
       id: 11850
     refs:
@@ -124,8 +91,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11916
-    user:
-      id: 3
     id: 11913
     lookup:
     - id: 11876
@@ -135,73 +100,50 @@
     parents:
     - id: 11850
     - id: 11904
-    time: 1782992972171
     order: 0
-    open: true
     page:
       id: 11850
     refs:
     - id: 321
     - id: 11839
 - - string: 'element-type:: introduction'
-    user:
-      id: 3
     id: 11879
     uid: Nt9obFYPS
     parents:
     - id: 11850
     - id: 11878
     - id: 11880
-    time: 1782933042753
     order: 0
-    open: true
     page:
       id: 11850
     refs:
     - id: 11876
 - - string: 'element-type:: part'
-    user:
-      id: 3
     id: 11916
     uid: rysYJi7Fs
     parents:
     - id: 11850
     - id: 11904
     - id: 11913
-    time: 1782992997422
     order: 0
-    open: true
     page:
       id: 11850
     refs:
     - id: 11876
-- - prevent-clean: 1782990182427
-    user:
-      id: 3
-    id: 11845
+- - id: 11845
     uid: ZyUTn2I17
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758625910
     title: date
-    edit-nonce: sesNaxUp-
-    edit-time: 1782758625910
 - - string: '**The Cartographer and Cosmographer:** If you are tasked with updating
       the __mappae mundi__ (world maps), this document will radically expand your
       borders. It provides definitive proof of navigable seas to the east of Asia,
       island nations such as Cipangu (Japan), and detailed distances measured in days
       of travel.'
-    user:
-      id: 3
     id: 11874
     uid: 09l1XWuD3
     parents:
     - id: 11850
     - id: 11871
-    time: 1782932431138
     order: 3
-    open: true
     page:
       id: 11850
 - - string: where does a section on "who this book is for" belong? [[Claude]]
@@ -210,15 +152,11 @@
     - id: 4388
     - id: 4391
     - id: 4392
-    user:
-      id: 3
     id: 4427
     uid: GJKWwLPSj
     parents:
     - id: 4384
-    time: 1773244715327
     order: 2
-    open: false
     page:
       id: 4384
     refs:
@@ -227,16 +165,12 @@
       or seeking alliances against the Saracens. You will find intelligence on the
       locations of Nestorian Christians, the religious tolerance of the Tartars, and
       the various idolaters that populate the Indies.'
-    user:
-      id: 3
     id: 11875
     uid: i8m_qcu2R
     parents:
     - id: 11850
     - id: 11871
-    time: 1782932439058
     order: 4
-    open: true
     page:
       id: 11850
 - - attrs:
@@ -259,8 +193,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11907
-    user:
-      id: 3
     id: 11909
     lookup:
     - id: 11876
@@ -270,25 +202,19 @@
     parents:
     - id: 11850
     - id: 11902
-    time: 1782992852117
     order: 0
-    open: true
     page:
       id: 11850
     refs:
     - id: 321
     - id: 11839
 - - string: 'identifier:: ISTC ip00901000'
-    user:
-      id: 3
     id: 11859
     uid: VUkL4I2fu
     parents:
     - id: 11850
     - id: 11855
-    time: 1782919288603
     order: 6
-    open: true
     page:
       id: 11850
     refs:
@@ -296,30 +222,17 @@
 - - string: 'This is loose matter that is immediately under Part 1 (Book I: Account
       of Regions Visited or Heard of on the Journey from the Lesser Armenia to the
       Court of the Great Kaan), but is not under any Chapter.'
-    user:
-      id: 3
     id: 11920
     uid: bFYi5U_xl
     parents:
     - id: 11850
     - id: 11902
-    time: 1783095623218
     order: 1
-    open: true
     page:
       id: 11850
-- - prevent-clean: 1782758757998
-    user:
-      id: 3
-    id: 11847
+- - id: 11847
     uid: 2_S3ySs7O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758757998
     title: identifier
-    edit-nonce: xbfm4ahh-
-    edit-time: 1782758757997
 - - attrs:
     - - source:
         - uid
@@ -340,8 +253,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11879
-    user:
-      id: 3
     id: 11880
     lookup:
     - id: 11876
@@ -351,9 +262,7 @@
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933031502
     order: 0
-    open: true
     page:
       id: 11850
     refs:
@@ -390,8 +299,6 @@
     - id: 11887
     - id: 11888
     - id: 11889
-    user:
-      id: 3
     id: 11878
     lookup:
     - id: 321
@@ -401,10 +308,8 @@
     uid: Lo-2ftdb7
     parents:
     - id: 11850
-    time: 1782933154792
     order: 4
     view-type: document
-    open: false
     page:
       id: 11850
 - - string: First and foremost, let boundless thanks be rendered unto Almighty God,
@@ -412,73 +317,43 @@
       art of impressing letters by metal without the stroke of a quill, whereby such
       profitable knowledge might be multiplied and spread among the principalities
       of the earth.
-    user:
-      id: 3
     id: 11866
     uid: WM9mjgmUj
     parents:
     - id: 11850
     - id: 11861
-    time: 1782931502636
     order: 3
-    open: true
     page:
       id: 11850
-- - prevent-clean: 1773244715328
-    user:
-      id: 3
-    id: 4428
+- - id: 4428
     uid: TWqtTA-9e
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773244715328
     title: Claude
-    edit-nonce: jHjbmuxUt
-    edit-time: 1773244715328
 - - string: '**As a standalone section between the preface and introduction**, sometimes
       literally titled "Who This Book Is For" — O''Reilly books do this frequently
       and it''s become something of a technical publishing convention'
-    user:
-      id: 3
     id: 4390
     uid: zpV7AGpCS
     parents:
     - id: 4384
     - id: 4388
     - id: 4427
-    time: 1773241057701
     order: 1
-    open: true
     page:
       id: 4384
 - - string: 'rights:: Cum Privilegio'
-    user:
-      id: 3
     id: 11897
     uid: LWP5sl53w
     parents:
     - id: 11850
     - id: 11855
-    time: 1782990555594
     order: 5
-    open: true
     page:
       id: 11850
     refs:
     - id: 11898
-- - prevent-clean: 1781542258419
-    user:
-      id: 3
-    id: 5450
+- - id: 5450
     uid: OexZiLR_O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784559632
     title: '>'
-    edit-nonce: 2POM1zS7j
-    edit-time: 1773784559631
 - - attrs:
     - - source:
         - uid
@@ -503,8 +378,6 @@
       Islands of the Indian Sea**'
     children:
     - id: 11913
-    user:
-      id: 3
     id: 11904
     lookup:
     - id: 321
@@ -514,22 +387,16 @@
     uid: oF7Lczujl
     parents:
     - id: 11850
-    time: 1782992574877
     order: 7
-    open: true
     page:
       id: 11850
 - - string: 'date:: 1477-01-01'
-    user:
-      id: 3
     id: 11858
     uid: uN_MwuWeZ
     parents:
     - id: 11850
     - id: 11855
-    time: 1782919145790
     order: 3
-    open: true
     page:
       id: 11850
     refs:
@@ -553,7 +420,6 @@
         value:
         - uid
         - BxGxeeGk1
-    prevent-clean: 1782918659453
     children:
     - id: 11852
     - id: 11855
@@ -564,9 +430,6 @@
     - id: 11903
     - id: 11904
     - id: 11905
-    user:
-      id: 3
-    sidebar: 19
     id: 11850
     lookup:
     - id: 321
@@ -574,28 +437,17 @@
     - id: 11850
     - id: 11855
     uid: 7o-Klx3P6
-    word-count: 976
-    edit-user:
-      id: 3
-    time: 1782918659454
     title: '[[Test Article]] 6'
-    edit-nonce: WFpsuyzV_
-    edit-time: 1783095825643
-    open: true
     refs:
     - id: 4223
 - - string: 'element-type:: acknowledgments'
-    user:
-      id: 3
     id: 11863
     uid: NLMrjV2AB
     parents:
     - id: 11850
     - id: 11861
     - id: 11862
-    time: 1782943254276
     order: 0
-    open: false
     page:
       id: 11850
     refs:
@@ -606,86 +458,57 @@
       an administrator in the court of the Great Khan. His accounts are laid out not
       for idle entertainment, but as a systematic record of provinces, revenues, and
       trade routes.
-    user:
-      id: 3
     id: 11884
     uid: 24R3MJ1pP
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933174536
     order: 4
-    open: true
     page:
       id: 11850
 - - string: People with no understanding of computer programming, who want to learn
       how to code
-    user:
-      id: 3
     id: 4598
     uid: YESkCZ8tW
     parents:
     - id: 4384
     - id: 4597
-    time: 1773254181407
     order: 0
-    open: true
     page:
       id: 4384
-- - prevent-clean: 1782992851357
-    user:
-      id: 3
-    id: 11876
+- - id: 11876
     uid: asCh2FQQp
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782932532219
     title: element-type
-    edit-nonce: 2EuNFN4Fy
-    edit-time: 1782932532218
 - - string: Therefore, do not attempt to swallow this book whole. Read it measure
       by measure. Allow the structure of his journey—from the deserts of Persia to
       the high plains of the Tartars, and onward to the coastlines of the Indies—to
       build a new map within your thoughts.
-    user:
-      id: 3
     id: 11885
     uid: 4nmDcSocA
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933174536
     order: 5
-    open: true
     page:
       id: 11850
 - - string: 'title:: "The Travels of Marco Polo"'
-    user:
-      id: 3
     id: 11857
     uid: yVoGbTEa3
     parents:
     - id: 11850
     - id: 11855
-    time: 1782919033494
     order: 0
-    open: false
     page:
       id: 11850
     refs:
     - id: 11843
 - - string: 'publisher:: Friedrich Creussner, Nuremberg,'
-    user:
-      id: 3
     id: 11895
     uid: LMf_YBKmS
     parents:
     - id: 11850
     - id: 11855
-    time: 1782990290599
     order: 4
-    open: true
     page:
       id: 11850
     refs:
@@ -696,53 +519,27 @@
       Marco Polo, into our plain German tongue. But the architecture of these Eastern
       realms is exceedingly complex, and to comprehend such vast and foreign territories
       without guidance places a heavy burden upon the mind.
-    user:
-      id: 3
     id: 11882
     uid: xDLdP7phb
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933174536
     order: 2
-    open: true
     page:
       id: 11850
-- - prevent-clean: 1782990143275
-    user:
-      id: 3
-    id: 11894
+- - id: 11894
     uid: MKBTy5omz
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782990143276
     title: subtitle
-    edit-nonce: YGYHATTNI
-    edit-time: 1782990143274
-- - prevent-clean: 1782990193074
-    user:
-      id: 3
-    id: 11896
+- - id: 11896
     uid: HZFZjnFeu
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782990182427
     title: publisher
-    edit-nonce: Q1cGBHvZ_
-    edit-time: 1782990182426
 - - string: __— F.C., Nuremberg.__
-    user:
-      id: 3
     id: 11888
     uid: RoZyY87Nr
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933174536
     order: 8
-    open: true
     page:
       id: 11850
 - - attrs:
@@ -771,8 +568,6 @@
     - id: 11906
     - id: 11909
     - id: 11920
-    user:
-      id: 3
     id: 11902
     lookup:
     - id: 321
@@ -782,10 +577,8 @@
     uid: lSrjeyDaT
     parents:
     - id: 11850
-    time: 1782992534736
     order: 5
     view-type: document
-    open: true
     page:
       id: 11850
 - - attrs:
@@ -807,14 +600,11 @@
         value:
         - uid
         - ExJBKbXY2
-    prevent-clean: 1776106738877
     children:
     - id: 8662
     - id: 8670
     - id: 8676
     - id: 8677
-    user:
-      id: 3
     id: 8657
     lookup:
     - id: 8599
@@ -822,14 +612,7 @@
     - id: 8677
     - id: 8678
     uid: ZsFRjGDDy
-    word-count: 164
-    edit-user:
-      id: 3
-    time: 1775920656302
     title: Programming Language
-    edit-nonce: pCsSC06xR
-    edit-time: 1776074084079
-    open: true
 - - attrs:
     - - source:
         - uid
@@ -850,8 +633,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11915
-    user:
-      id: 3
     id: 11912
     lookup:
     - id: 11876
@@ -861,9 +642,7 @@
     parents:
     - id: 11850
     - id: 11903
-    time: 1782992964518
     order: 0
-    open: true
     page:
       id: 11850
     refs:
@@ -875,16 +654,12 @@
     children:
     - id: 4389
     - id: 4390
-    user:
-      id: 3
     id: 4388
     uid: kPcAk-Bw1
     parents:
     - id: 4384
     - id: 4427
-    time: 1773241057701
     order: 1
-    open: true
     page:
       id: 4384
 - - attrs:
@@ -1009,8 +784,6 @@
     - id: 11893
     - id: 11895
     - id: 11897
-    user:
-      id: 3
     id: 11855
     lookup:
     - id: 11842
@@ -1031,9 +804,7 @@
     uid: shFahtwt3
     parents:
     - id: 11850
-    time: 1782918769100
     order: 1
-    open: false
     page:
       id: 11850
     refs:
@@ -1041,45 +812,33 @@
     - id: 11839
 - - string: 'Programmers, with at least a rudimentary understanding of computer programming,
       in **any** [[Programming Language]] (addressable audience: ~40 million worldwide)'
-    user:
-      id: 3
     id: 4602
     uid: 39_RTkGv-
     parents:
     - id: 4384
     - id: 4600
-    time: 1775920642272
     order: 0
-    open: false
     page:
       id: 4384
     refs:
     - id: 8657
 - - string: God preserve you in your reading.
-    user:
-      id: 3
     id: 11887
     uid: mwRFIaxIs
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933174536
     order: 7
-    open: true
     page:
       id: 11850
 - - string: 'element-type:: part'
-    user:
-      id: 3
     id: 11917
     uid: aAimDzV9X
     parents:
     - id: 11850
     - id: 11905
     - id: 11914
-    time: 1782993004260
     order: 0
-    open: true
     page:
       id: 11850
     refs:
@@ -1103,11 +862,8 @@
         value:
         - uid
         - BxGxeeGk1
-    prevent-clean: 1773228899534
     children:
     - id: 11901
-    user:
-      id: 3
     id: 4338
     lookup:
     - id: 321
@@ -1116,13 +872,7 @@
     - id: 11861
     - id: 11862
     uid: qmplSzgnD
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782992197092
     title: Acknowledgments
-    edit-nonce: -NwPlbAM0
-    edit-time: 1782992197092
 - - attrs:
     - - source:
         - uid
@@ -1143,8 +893,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11891
-    user:
-      id: 3
     id: 11890
     lookup:
     - id: 11890
@@ -1154,9 +902,7 @@
     parents:
     - id: 11850
     - id: 11871
-    time: 1782936052438
     order: 0
-    open: false
     page:
       id: 11850
     refs:
@@ -1166,16 +912,12 @@
       took it upon himself to turn this history from the Latin tongue into our own
       plain German, that the burghers and merchants of this city might read of the
       spices and silks of the Orient without the barrier of a scholar’s language.
-    user:
-      id: 3
     id: 11867
     uid: OPAjTYc1n
     parents:
     - id: 11850
     - id: 11861
-    time: 1782931502636
     order: 4
-    open: true
     page:
       id: 11850
 - - attrs:
@@ -1198,8 +940,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11863
-    user:
-      id: 3
     id: 11862
     lookup:
     - id: 11862
@@ -1209,9 +949,7 @@
     parents:
     - id: 11850
     - id: 11861
-    time: 1782931237956
     order: 0
-    open: false
     page:
       id: 11850
     refs:
@@ -1222,28 +960,20 @@
     children:
     - id: 4598
     - id: 4599
-    user:
-      id: 3
     id: 4597
     uid: Wwn_ElnkO
     parents:
     - id: 4384
-    time: 1773254181407
     order: 1
-    open: true
     page:
       id: 4384
 - - string: To the curious and patient reader, greetings.
-    user:
-      id: 3
     id: 11889
     uid: doB1NIOh9
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933177937
     order: 1
-    open: true
     page:
       id: 11850
 - - attrs:
@@ -1270,8 +1000,6 @@
       Countries**'
     children:
     - id: 11914
-    user:
-      id: 3
     id: 11905
     lookup:
     - id: 321
@@ -1281,14 +1009,10 @@
     uid: MGvH7SY4M
     parents:
     - id: 11850
-    time: 1782992585889
     order: 8
-    open: true
     page:
       id: 11850
 - - string: 'element-type:: chapter'
-    user:
-      id: 3
     id: 11911
     uid: DZwV0sSKU
     parents:
@@ -1296,9 +1020,7 @@
     - id: 11902
     - id: 11906
     - id: 11910
-    time: 1782992950184
     order: 0
-    open: true
     page:
       id: 11850
     refs:
@@ -1308,16 +1030,12 @@
       fine lamp-black ink required to bring this heavy labor to the press. Without
       his patronage, these marvels of India and Persia would have remained locked
       within the dusty scriptoriums of the monasteries.
-    user:
-      id: 3
     id: 11868
     uid: vALZLA1Jn
     parents:
     - id: 11850
     - id: 11861
-    time: 1782931502636
     order: 5
-    open: true
     page:
       id: 11850
 - - attrs:
@@ -1340,8 +1058,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11917
-    user:
-      id: 3
     id: 11914
     lookup:
     - id: 11876
@@ -1351,111 +1067,67 @@
     parents:
     - id: 11850
     - id: 11905
-    time: 1782992977427
     order: 0
-    open: true
     page:
       id: 11850
     refs:
     - id: 321
     - id: 11839
-- - user:
-      id: 3
-    id: 321
+- - id: 321
     uid: BxGxeeGk1
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1681476821748
     title: .rm-g
-    edit-nonce: 0497-MGDf
-    edit-time: 1681476821746
 - - string: If it's **a few sentences**, it fits naturally inside the introduction
       — just fold it into the opening where you're framing the book's purpose.
-    user:
-      id: 3
     id: 4387
     uid: PjkhzuQ8m
     parents:
     - id: 4384
     - id: 4427
-    time: 1773241057701
     order: 0
-    open: true
     page:
       id: 4384
-- - prevent-clean: 1782226716897
-    user:
-      id: 3
-    id: 5462
+- - id: 5462
     uid: ZgUWBRb7j
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788725523
     title: '!INFO'
-    edit-nonce: z3caCCN5O
-    edit-time: 1773788725520
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
       Features:
 
       - StructuralElements for ProjectType:BOOK'
-    user:
-      id: 3
     id: 11852
     uid: rhPsF4zq3
     parents:
     - id: 11850
-    time: 1782931090503
     order: 0
-    open: true
     page:
       id: 11850
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1782758582158
-    user:
-      id: 3
-    id: 11842
+- - id: 11842
     uid: MhnnPhnTB
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758582159
     title: authors
-    edit-nonce: DECoGhfwR
-    edit-time: 1782758582158
 - - string: We have placed this volume before you so that the boundaries of your world
       might be expanded. Bear the weight of its strangeness, and your understanding
       shall be greatly enriched.
-    user:
-      id: 3
     id: 11886
     uid: vK5kBX3Dr
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933174536
     order: 6
-    open: true
     page:
       id: 11850
 - - string: You will find no familiar landmarks here. The author speaks of kingdoms
       that dwarf our own Holy Roman Empire, of cities crisscrossed by bridges of marble,
       of stones that burn like wood, and of paper that commands the value of gold.
-    user:
-      id: 3
     id: 11883
     uid: ROYjinXfM
     parents:
     - id: 11850
     - id: 11878
-    time: 1782933174536
     order: 3
-    open: true
     page:
       id: 11850
 - - heading: 2
@@ -1466,31 +1138,23 @@
     - id: 11874
     - id: 11875
     - id: 11890
-    user:
-      id: 3
     id: 11871
     uid: jqAiDA6IM
     parents:
     - id: 11850
-    time: 1782932288703
     order: 3
     view-type: document
-    open: false
     page:
       id: 11850
     refs:
     - id: 4384
 - - string: Experienced software engineers looking for specific
-    user:
-      id: 3
     id: 4599
     uid: fQV20MHbZ
     parents:
     - id: 4384
     - id: 4597
-    time: 1773254181407
     order: 1
-    open: true
     page:
       id: 4384
 - - heading: 2
@@ -1503,56 +1167,30 @@
     - id: 11868
     - id: 11869
     - id: 11870
-    user:
-      id: 3
     id: 11861
     uid: dpoX6c0Pl
     parents:
     - id: 11850
-    time: 1782992197092
     order: 2
     view-type: document
-    open: false
     page:
       id: 11850
     refs:
     - id: 4338
-- - prevent-clean: 1782990193074
-    user:
-      id: 3
-    id: 11898
+- - id: 11898
     uid: br-LT4oUD
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782990193074
     title: rights
-    edit-nonce: LC-2a0QnP
-    edit-time: 1782990193074
 - - string: ''
-    user:
-      id: 3
     id: 11901
     uid: sDUbCET-K
     parents:
     - id: 4338
-    time: 1782992197088
     order: 0
-    open: true
     page:
       id: 4338
-- - prevent-clean: 1782936070235
-    user:
-      id: 3
-    id: 11892
+- - id: 11892
     uid: eYctDQDaV
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782936070235
     title: matter
-    edit-nonce: uW69frL-Z
-    edit-time: 1782936070234
 - - attrs:
     - - source:
         - uid
@@ -1577,8 +1215,6 @@
       Hermenia.'
     children:
     - id: 11910
-    user:
-      id: 3
     id: 11906
     lookup:
     - id: 321
@@ -1589,38 +1225,28 @@
     parents:
     - id: 11850
     - id: 11902
-    time: 1782992784109
     order: 2
-    open: true
     page:
       id: 11850
 - - string: 'authors:: Marco Polo, Rustichello da Pisa'
-    user:
-      id: 3
     id: 11856
     uid: jYi3QvhTN
     parents:
     - id: 11850
     - id: 11855
-    time: 1782919069748
     order: 2
-    open: true
     page:
       id: 11850
     refs:
     - id: 11842
 - - string: Finally, I commend the diligent journeymen of my workshop, who stood long
       hours at the press to strike these pages clean and true.
-    user:
-      id: 3
     id: 11869
     uid: eiAZVhVrz
     parents:
     - id: 11850
     - id: 11861
-    time: 1782931502636
     order: 6
-    open: true
     page:
       id: 11850
 - - string: '**The Sovereign and the Statesman:** For kings, princes, and dukes who
@@ -1628,30 +1254,22 @@
       This text offers a comprehensive operational overview of the Mongol Empire under
       Kublai Khan, detailing his military structure, courier system, administrative
       laws, and the unfathomable scale of his revenues.'
-    user:
-      id: 3
     id: 11873
     uid: Gn10okg1P
     parents:
     - id: 11850
     - id: 11871
-    time: 1782932425485
     order: 2
-    open: true
     page:
       id: 11850
 - - string: 'element-type:: part'
-    user:
-      id: 3
     id: 11915
     uid: vSGgmBM_w
     parents:
     - id: 11850
     - id: 11903
     - id: 11912
-    time: 1782992991166
     order: 0
-    open: true
     page:
       id: 11850
     refs:
@@ -1659,17 +1277,13 @@
 - - string: '**In the preface** — this is the most common home for it in technical
       books, since "who this is for" is meta-information __about__ the book rather
       than content __of__ the book'
-    user:
-      id: 3
     id: 4389
     uid: TPRmrrxwE
     parents:
     - id: 4384
     - id: 4388
     - id: 4427
-    time: 1773241057701
     order: 0
-    open: true
     page:
       id: 4384
 - - attrs:
@@ -1695,8 +1309,6 @@
     string: '**Book II: The Kaan, His Court and Capital**'
     children:
     - id: 11912
-    user:
-      id: 3
     id: 11903
     lookup:
     - id: 321
@@ -1706,9 +1318,7 @@
     uid: lZKsMSgZX
     parents:
     - id: 11850
-    time: 1782992560189
     order: 6
-    open: true
     page:
       id: 11850
 - - attrs:
@@ -1730,13 +1340,10 @@
         value:
         - uid
         - BxGxeeGk1
-    prevent-clean: 1773275006107
     children:
     - id: 4427
     - id: 4597
     - id: 4600
-    user:
-      id: 3
     id: 4384
     lookup:
     - id: 321
@@ -1745,28 +1352,17 @@
     - id: 11871
     - id: 11890
     uid: GuHqKi9Y_
-    word-count: 256
-    edit-user:
-      id: 3
-    time: 1773240971009
     title: Who is this Book for?
-    edit-nonce: tq-smTBw7
-    edit-time: 1775920642272
-    open: true
 - - string: 'The O''Reilly pattern is worth knowing because it''s so widespread in
       technical publishing: preface → who this book is for → (sometimes) conventions
       used in this book → introduction. Readers have come to expect it in that genre,
       which is itself a reason to follow it.'
-    user:
-      id: 3
     id: 4391
     uid: xLG8Ir4vl
     parents:
     - id: 4384
     - id: 4427
-    time: 1773241057701
     order: 2
-    open: true
     page:
       id: 4384
 - - attrs:
@@ -1789,8 +1385,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11911
-    user:
-      id: 3
     id: 11910
     lookup:
     - id: 11876
@@ -1801,26 +1395,20 @@
     - id: 11850
     - id: 11902
     - id: 11906
-    time: 1782992940260
     order: 0
-    open: true
     page:
       id: 11850
     refs:
     - id: 321
     - id: 11839
 - - string: 'element-type:: part'
-    user:
-      id: 3
     id: 11907
     uid: kRO2pVBCU
     parents:
     - id: 11850
     - id: 11902
     - id: 11909
-    time: 1782992924047
     order: 0
-    open: true
     page:
       id: 11850
     refs:
@@ -1831,67 +1419,37 @@
       from Hormuz to Cathay, including the preferred currencies (such as the Great
       Khan’s paper money), safe routes, and the relative dangers of bandits and deserts
       along the Silk Road.'
-    user:
-      id: 3
     id: 11872
     uid: v_yb2JFwl
     parents:
     - id: 11850
     - id: 11871
-    time: 1782932416405
     order: 1
-    open: true
     page:
       id: 11850
 - - string: 'Software Engineering Managers (addressable audience: ~5 million worldwide)'
-    user:
-      id: 3
     id: 4601
     uid: oaDIyA-Js
     parents:
     - id: 4384
     - id: 4600
-    time: 1773254181407
     order: 1
-    open: false
     page:
       id: 4384
-- - prevent-clean: 1782992852120
-    user:
-      id: 3
-    id: 11839
+- - id: 11839
     uid: 2xY4zCjId
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782757905599
     title: guffin-meta
-    edit-nonce: Wn0wt68Sc
-    edit-time: 1782757905599
-- - prevent-clean: 1782990143276
-    user:
-      id: 3
-    id: 11843
+- - id: 11843
     uid: PZyg8sHJZ
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758586968
     title: title
-    edit-nonce: D_07ml4rh
-    edit-time: 1782758586968
 - - string: Herein is completed the noble and wondrous Book of the magnificent Venetian,
       Messer Marco Polo, which declareth the great marvels of the East, of Cathay,
       and of the mighty Khan of the Tartars.
-    user:
-      id: 3
     id: 11865
     uid: IACS5F7wi
     parents:
     - id: 11850
     - id: 11861
-    time: 1782931502636
     order: 2
-    open: true
     page:
       id: 11850

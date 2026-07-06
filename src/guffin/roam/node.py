@@ -119,8 +119,8 @@ class RoamNode(BaseModel):
     - **Page**: ``title`` set, so ``string`` and ``page`` are ``None``.
     - **Block**: ``title`` ``None``, so ``string`` and ``page`` are set.
 
-    All remaining fields (``parents``, ``children``, ``heading``, ``open``,
-    ``refs``, etc.) are optional and vary by entity type and feature usage.
+    All remaining fields (``parents``, ``children``, ``heading``, ``refs``, etc.)
+    are optional and vary by entity type and feature usage.
 
     Attributes:
         uid: Nine-character stable block/page identifier (BLOCK_UID). Required.
@@ -133,7 +133,6 @@ class RoamNode(BaseModel):
         children: Raw child block stubs (BLOCK_CHILDREN). Present on Blocks and Pages with children.
         refs: Raw page/block reference stubs (BLOCK_REFS).
         page: IdObject stub for the containing page (BLOCK_PAGE). Present only on Blocks.
-        open: Whether the block is expanded (BLOCK_OPEN). Present only on Blocks.
         children_view_type: How this block's children are rendered (CHILDREN_VIEW_TYPE). Present
             only on Blocks.
         parents: IdObject stubs for all ancestor blocks (BLOCK_PARENTS). Present only on Blocks.
@@ -166,9 +165,6 @@ class RoamNode(BaseModel):
     )
     page: IdObject | None = Field(
         default=None, description=f"{SchemaAttribute.BLOCK_PAGE} — containing page stub; present only on Blocks"
-    )
-    open: bool | None = Field(
-        default=None, description=f"{SchemaAttribute.BLOCK_OPEN} — expanded/collapsed state; present only on Blocks"
     )
     children_view_type: ChildrenViewType | None = Field(
         default=None,

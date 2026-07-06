@@ -2,207 +2,125 @@
     children:
     - id: 11653
     - id: 11658
-    user:
-      id: 3
     id: 11657
     uid: Jt4-6SLWM
     parents:
     - id: 11643
-    time: 1781829128224
     order: 2
-    open: true
     page:
       id: 11643
 - - string: '#c:FUCHSIA __This span is underlined fuchsia. __This span is not.'
-    user:
-      id: 3
     id: 11665
     uid: ju0ABeH0Y
     parents:
     - id: 11643
     - id: 11662
-    time: 1781830427625
     order: 1
-    open: true
     page:
       id: 11643
     refs:
     - id: 5844
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
-    user:
-      id: 3
     id: 4224
     uid: 7MoH-wIQh
     parents:
     - id: 4223
-    time: 1780843750454
     order: 0
-    open: true
     page:
       id: 4223
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1781831145391
-    user:
-      id: 3
-    id: 11454
+- - id: 11454
     uid: iF2Ey_unj
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1781525379738
     title: c:ORANGE
-    edit-nonce: sRoBTAin0
-    edit-time: 1781525379737
-- - prevent-clean: 1782152316083
-    children:
+- - children:
     - id: 4224
-    user:
-      id: 3
     id: 4223
     uid: LBFKibPIj
-    word-count: 9
-    edit-user:
-      id: 3
-    time: 1773090962400
     title: Test Article
-    edit-nonce: 0iIGJ1buX
-    edit-time: 1780843750454
-- - prevent-clean: 1781831581335
-    user:
-      id: 3
-    id: 11671
+- - id: 11671
     uid: 1GLhru-f7
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1781831469406
     title: .bg-ORANGE
-    edit-nonce: 83t5KkAzd
-    edit-time: 1781831469405
-- - prevent-clean: 1781820678622
-    children:
+- - children:
     - id: 11647
     - id: 11654
     - id: 11657
     - id: 11662
     - id: 11666
     - id: 11669
-    user:
-      id: 3
-    sidebar: 23
     id: 11643
     uid: mkHZLUn8Q
-    word-count: 165
-    edit-user:
-      id: 3
-    time: 1781820678622
     title: '[[Test Article]] 4'
-    edit-nonce: oAtZokLPo
-    edit-time: 1781831636425
     refs:
     - id: 4223
 - - string: 'This entire line is an orange background box #.bg-FUCHSIA'
-    user:
-      id: 3
     id: 11672
     uid: UlMMEdU3W
     parents:
     - id: 11643
     - id: 11669
-    time: 1781831581331
     order: 1
-    open: true
     page:
       id: 11643
     refs:
     - id: 11673
 - - string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
-    user:
-      id: 3
     id: 11668
     uid: GUiM9K-kR
     parents:
     - id: 11643
     - id: 11666
-    time: 1781831145386
     order: 1
-    open: true
     page:
       id: 11643
     refs:
     - id: 5844
 - - string: 'This entire line is an orange background box #.bg-ORANGE'
-    user:
-      id: 3
     id: 11670
     uid: VastJ7V3A
     parents:
     - id: 11643
     - id: 11669
-    time: 1781831636425
     order: 0
-    open: true
     page:
       id: 11643
     refs:
     - id: 11671
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
       \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
-    user:
-      id: 3
     id: 11647
     uid: yd7MFbFou
     parents:
     - id: 11643
-    time: 1781820920803
     order: 0
-    open: true
     page:
       id: 11643
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1781542258419
-    user:
-      id: 3
-    id: 5450
+- - id: 5450
     uid: OexZiLR_O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784559632
     title: '>'
-    edit-nonce: 2POM1zS7j
-    edit-time: 1773784559631
 - - string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
-    user:
-      id: 3
     id: 11667
     uid: T6cykqu88
     parents:
     - id: 11643
     - id: 11666
-    time: 1781831119492
     order: 0
-    open: true
     page:
       id: 11643
     refs:
     - id: 11454
 - - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
-    user:
-      id: 3
     id: 11664
     uid: _EtYSMJNn
     parents:
     - id: 11643
     - id: 11662
-    time: 1781830370390
     order: 0
-    open: true
     page:
       id: 11643
     refs:
@@ -212,73 +130,53 @@
     children:
     - id: 11664
     - id: 11665
-    user:
-      id: 3
     id: 11662
     uid: ShnYeNIu5
     parents:
     - id: 11643
-    time: 1781830476418
     order: 3
-    open: true
     page:
       id: 11643
 - - string: '**BOLD** text color'
     children:
     - id: 11648
     - id: 11655
-    user:
-      id: 3
     id: 11654
     uid: c9kTivLOo
     parents:
     - id: 11643
-    time: 1781829099712
     order: 1
-    open: true
     page:
       id: 11643
 - - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
-    user:
-      id: 3
     id: 11648
     uid: Rjt1IvrVq
     parents:
     - id: 11643
     - id: 11654
-    time: 1781828921582
     order: 0
-    open: true
     page:
       id: 11643
     refs:
     - id: 11454
 - - string: '#c:FUCHSIA ^^This span is highlighted fuchsia.^^ This span is not.'
-    user:
-      id: 3
     id: 11658
     uid: rArYyVVBS
     parents:
     - id: 11643
     - id: 11657
-    time: 1781829998880
     order: 1
-    open: true
     page:
       id: 11643
     refs:
     - id: 5844
 - - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
-    user:
-      id: 3
     id: 11653
     uid: 9a_6taJAn
     parents:
     - id: 11643
     - id: 11657
-    time: 1781828879037
     order: 0
-    open: true
     page:
       id: 11643
     refs:
@@ -287,80 +185,41 @@
     children:
     - id: 11670
     - id: 11672
-    user:
-      id: 3
     id: 11669
     uid: TH55X8Rc_
     parents:
     - id: 11643
-    time: 1781831563993
     order: 5
-    open: true
     page:
       id: 11643
 - - string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
-    user:
-      id: 3
     id: 11655
     uid: AE3uVp_QL
     parents:
     - id: 11643
     - id: 11654
-    time: 1781829065570
     order: 1
-    open: true
     page:
       id: 11643
     refs:
     - id: 5844
-- - prevent-clean: 1782226716897
-    user:
-      id: 3
-    id: 5462
+- - id: 5462
     uid: ZgUWBRb7j
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788725523
     title: '!INFO'
-    edit-nonce: z3caCCN5O
-    edit-time: 1773788725520
 - - string: box color
     children:
     - id: 11667
     - id: 11668
-    user:
-      id: 3
     id: 11666
     uid: S2yCBxWED
     parents:
     - id: 11643
-    time: 1781831068892
     order: 4
-    open: true
     page:
       id: 11643
-- - prevent-clean: 1781831581334
-    user:
-      id: 3
-    id: 11673
+- - id: 11673
     uid: LnMn9Dq7S
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1781831581335
     title: .bg-FUCHSIA
-    edit-nonce: HyWnfks0O
-    edit-time: 1781831581334
-- - prevent-clean: 1781829523630
-    user:
-      id: 3
-    id: 5844
+- - id: 5844
     uid: lF-qY0Xrs
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773955788224
     title: c:FUCHSIA
-    edit-nonce: WMGpHVOcr
-    edit-time: 1773955788222

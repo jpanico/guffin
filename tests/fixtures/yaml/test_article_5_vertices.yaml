@@ -11,11 +11,12 @@
   - LBFKibPIj
   attribute_assignments:
   - attribute:
-      name: tags
+      definition:
+        name: tags
+        domain: default
       link:
       - vertex
       - RXwAqq0_T
-      domain: default
     values:
     - kind: reference
       name: Guffin
@@ -28,11 +29,12 @@
       - vertex
       - nC88efm_x
   - attribute:
-      name: attribute1
+      definition:
+        name: attribute1
+        domain: default
       link:
       - vertex
       - -gG94Gziw
-      domain: default
     values:
     - kind: literal
       value: '5'
@@ -47,49 +49,54 @@
       - vertex
       - igM26JNa2
   - attribute:
-      name: title
+      definition:
+        name: title
+        domain: guffin
       link:
       - vertex
       - PZyg8sHJZ
-      domain: guffin
     values:
     - kind: literal
       value: Source Code For Humans
   - attribute:
-      name: authors
+      definition:
+        name: authors
+        domain: guffin
       link:
       - vertex
       - MhnnPhnTB
-      domain: guffin
     values:
     - kind: literal
       value: Joe Panico
     - kind: literal
       value: Emi Panico
   - attribute:
-      name: date
+      definition:
+        name: date
+        domain: guffin
       link:
       - vertex
       - ZyUTn2I17
-      domain: guffin
     values:
     - kind: literal
       value: '2027-01-01'
   - attribute:
-      name: identifier
+      definition:
+        name: identifier
+        domain: guffin
       link:
       - vertex
       - 2_S3ySs7O
-      domain: guffin
     values:
     - kind: literal
       value: 978-1788399081
   - attribute:
-      name: tags
+      definition:
+        name: tags
+        domain: guffin
       link:
       - vertex
       - RXwAqq0_T
-      domain: guffin
     values:
     - kind: reference
       name: Guffin

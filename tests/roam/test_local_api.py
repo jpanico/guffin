@@ -8,7 +8,15 @@ import pytest
 import requests
 from pydantic import ValidationError
 
-from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL, Request, Response, invoke_action
+from guffin.roam.local_api import (
+    TRANSIENT_RAW_KEYS,
+    ApiEndpoint,
+    ApiEndpointURL,
+    Request,
+    Response,
+    invoke_action,
+    without_transient_keys,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -390,3 +398,43 @@ class TestMakeRequest:
         with patch("guffin.roam.local_api.requests.post", return_value=mock_response):
             with pytest.raises(requests.exceptions.HTTPError, match="401"):
                 invoke_action(file_get_payload, api_endpoint)
+
+
+class TestWithoutTransientKeys:
+    """Tests for without_transient_keys and the TRANSIENT_RAW_KEYS set."""
+
+    def test_transient_keys_cover_ui_and_metadata_attrs(self) -> None:
+        """The set names the block/page UI state and the edit/create metadata attrs."""
+        assert {"open", "sidebar"} <= TRANSIENT_RAW_KEYS
+        assert {"time", "user", "edit-time", "edit-user", "edit-nonce", "seen-by", "word-count"} <= TRANSIENT_RAW_KEYS
+
+    def test_drops_transient_keys_keeps_structural_content(self) -> None:
+        """Every transient key is dropped from a block while structural fields survive untouched."""
+        block: dict[str, object] = {
+            "uid": "abc123xyz",
+            "id": 1,
+            "string": "hi",
+            "open": True,
+            "edit-time": 1700,
+            "user": {"id": 3},
+        }
+        assert without_transient_keys([[block]]) == [[{"uid": "abc123xyz", "id": 1, "string": "hi"}]]
+
+    def test_strips_every_block_across_rows(self) -> None:
+        """Transient keys are removed from each pull-block in every result row."""
+        raw_result: list[list[dict[str, object]]] = [
+            [{"uid": "p", "open": False}],
+            [{"uid": "b", "string": "x", "sidebar": True}],
+        ]
+        assert without_transient_keys(raw_result) == [[{"uid": "p"}], [{"uid": "b", "string": "x"}]]
+
+    def test_reference_stubs_are_preserved(self) -> None:
+        """Structural ``{id}`` reference stubs (children/parents/page) are left intact."""
+        block: dict[str, object] = {"uid": "b", "children": [{"id": 2}], "page": {"id": 1}, "open": True}
+        assert without_transient_keys([[block]]) == [[{"uid": "b", "children": [{"id": 2}], "page": {"id": 1}}]]
+
+    def test_does_not_mutate_input(self) -> None:
+        """The input structure is left untouched (side-effect-free)."""
+        block: dict[str, object] = {"uid": "abc123xyz", "open": True}
+        without_transient_keys([[block]])
+        assert block == {"uid": "abc123xyz", "open": True}

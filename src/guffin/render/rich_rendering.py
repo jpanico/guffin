@@ -49,6 +49,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
+from guffin.roam.local_api import TRANSIENT_RAW_KEYS
 from guffin.roam.markdown import IMAGE_LINK_RE
 from guffin.roam.node import NodeType, RoamNode, effective_heading_level, node_type
 from guffin.roam.node_fetch_result import NodeFetchResult
@@ -98,8 +99,6 @@ def _format_node_prop(node: RoamNode, prop: str) -> str:
         case "refs":
             val = f"[{', '.join(str(r.id) for r in node.refs)}]" if node.refs else "None"
             return f"refs={val}"
-        case "open":
-            return f"open={node.open}"
         case "children_view_type":
             return f"view-type={node.children_view_type}"
         case "heading":
@@ -605,27 +604,13 @@ def _is_obj_list(val: object) -> TypeGuard[list[object]]:
     return isinstance(val, list)
 
 
-_RAW_RESULTS_EXCLUDED_ATTRS: Final[frozenset[str]] = frozenset(
-    {
-        "open",
-        "prevent-clean",
-        "sidebar",
-        "time",
-        "user",
-        "edit-nonce",
-        "edit-time",
-        "edit-user",
-        "word-count",
-        "lookup",
-        "attrs",
-    }
-)
+_RAW_RESULTS_EXCLUDED_ATTRS: Final[frozenset[str]] = TRANSIENT_RAW_KEYS | frozenset({"lookup", "attrs"})
 """Pull-block attribute keys suppressed from the raw-results Rich table.
 
-Includes the two attribute-system keys ``lookup`` (Roam's ``:attrs/lookup`` reverse index, a list of
-entity ids) and ``attrs`` (the ``:entity/attrs`` structured assertions).  Both are parsed onto
-:class:`~guffin.roam.node.RoamNode` but otherwise unused by the pipeline, so they are internal
-bookkeeping rather than table-worthy content.
+The transient session/UI keys (:data:`~guffin.roam.node.TRANSIENT_RAW_KEYS`) plus two attribute-system
+keys that are structural but not table-worthy: ``lookup`` (Roam's ``:attrs/lookup`` reverse index, a
+list of entity ids) and ``attrs`` (the ``:entity/attrs`` structured assertions, surfaced in the vertex
+view instead).
 """
 
 _RAW_RESULTS_COL_ORDER: Final[tuple[str, ...]] = (

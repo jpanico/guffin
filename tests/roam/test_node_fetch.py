@@ -21,15 +21,6 @@ from guffin.roam.primitives import IdObject
 
 logger = logging.getLogger(__name__)
 
-# Fields excluded from live-test comparisons because they change with normal
-# Roam activity and are not indicative of structural correctness.
-_TRANSIENT_NODE_FIELDS: set[str] = {"open"}
-
-
-def _stable_node_dict(node: RoamNode) -> dict[str, object]:
-    """Return a serialised *node* with all transient fields stripped."""
-    return node.model_dump(exclude=_TRANSIENT_NODE_FIELDS)
-
 
 @pytest.fixture
 def mock_200_response() -> MagicMock:
@@ -440,9 +431,8 @@ class TestFetchRoamNodesFetchByPageTitle:
     def test_fetch_testarticle1(self, live_api_endpoint: ApiEndpoint) -> None:
         """Live test: fetch all descendant blocks of a page and compare with fixture.
 
-        The transient ``open`` field is excluded from the comparison because it
-        changes with normal Roam activity and is not meaningful for structural
-        correctness.
+        Transient session/UI attributes never reach :class:`~guffin.roam.node.RoamNode` (the model
+        drops them), so a plain ``model_dump()`` comparison is already insulated from Roam activity.
         """
         page_title = "[[Test Article]] 1"
 
@@ -454,8 +444,8 @@ class TestFetchRoamNodesFetchByPageTitle:
 
         fixture_nodes = article1_node_tree().tree_network
 
-        assert [_stable_node_dict(n) for n in sorted(result.network, key=lambda n: n.uid)] == [
-            _stable_node_dict(n) for n in sorted(fixture_nodes, key=lambda n: n.uid)
+        assert [n.model_dump() for n in sorted(result.network, key=lambda n: n.uid)] == [
+            n.model_dump() for n in sorted(fixture_nodes, key=lambda n: n.uid)
         ]
 
 
@@ -496,8 +486,8 @@ class TestFetchRoamNodesFetchByNodeUid:
         ``test_article_1_nodes.yaml`` fixture: Section 2.1 (``drtANJYTg``),
         illustration 2.1 (``OaTXPl93p``), its caption (``tWkumkdUE``), its image
         (``zZG-BfWvs``), Section 2.1.1 (``yFUau9Cpg``), Section 2.1.1.1
-        (``bxkcECGwN``), and Section 2.2 (``5f1ahOFdp``).  Transient fields are
-        excluded from the comparison.
+        (``bxkcECGwN``), and Section 2.2 (``5f1ahOFdp``).  Transient session/UI attributes never
+        reach :class:`~guffin.roam.node.RoamNode`, so the comparison is insulated from Roam activity.
         """
         node_uid = "wdMgyBiP9"
         section2_uids: set[str] = {
@@ -521,8 +511,8 @@ class TestFetchRoamNodesFetchByNodeUid:
         logger.debug("result: %s", result)
 
         assert {n.uid for n in result.network} == section2_uids
-        assert [_stable_node_dict(n) for n in sorted(result.network, key=lambda n: n.uid)] == [
-            _stable_node_dict(n) for n in sorted(expected_nodes, key=lambda n: n.uid)
+        assert [n.model_dump() for n in sorted(result.network, key=lambda n: n.uid)] == [
+            n.model_dump() for n in sorted(expected_nodes, key=lambda n: n.uid)
         ]
 
     def test_fetch_by_node_uid_returns_node_and_descendants(self, api_endpoint: ApiEndpoint) -> None:
@@ -565,8 +555,8 @@ class TestFetchRoamNodesFetchByNodeUid:
             )
 
         assert len(result.network) == len(section2_uids)
-        assert [_stable_node_dict(n) for n in sorted(result.network, key=lambda n: n.uid)] == [
-            _stable_node_dict(n) for n in sorted(expected_nodes, key=lambda n: n.uid)
+        assert [n.model_dump() for n in sorted(result.network, key=lambda n: n.uid)] == [
+            n.model_dump() for n in sorted(expected_nodes, key=lambda n: n.uid)
         ]
 
 

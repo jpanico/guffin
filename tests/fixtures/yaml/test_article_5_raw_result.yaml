@@ -1,15 +1,11 @@
 - - string: '[[>]] [[!TIP]] Tip
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5463
     uid: CBLaoUHKI
     parents:
     - id: 5453
-    time: 1773788762742
     order: 6
-    open: true
     page:
       id: 5453
     refs:
@@ -17,81 +13,43 @@
     - id: 5464
 - - string: '> Tip: With “Require a space after marker” ON (default), markers only
       trigger when followed by a visible space/tab/NBSP or end-of-line.'
-    user:
-      id: 3
     id: 5647
     uid: Ajsp3Z_xv
     parents:
     - id: 5618
     - id: 5646
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1773227413486
-    children:
+- - children:
     - id: 4304
     - id: 4305
     - id: 4306
     - id: 4315
-    user:
-      id: 3
-    sidebar: 5
     id: 4239
     uid: cBrKZ4MS4
-    word-count: 660
-    edit-user:
-      id: 3
-    time: 1773227413486
     title: Book Structure
-    edit-nonce: 2ALC9FfX2
-    edit-time: 1776207690212
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
-    user:
-      id: 3
     id: 4224
     uid: 7MoH-wIQh
     parents:
     - id: 4223
-    time: 1780843750454
     order: 0
-    open: true
     page:
       id: 4223
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1775578686108
-    user:
-      id: 3
-    id: 5456
+- - id: 5456
     uid: Q-T5fKOEq
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784822816
     title: '!QUOTE'
-    edit-nonce: 1EZLHH-tr
-    edit-time: 1773784822815
-- - prevent-clean: 1782152316083
-    children:
+- - children:
     - id: 4224
-    user:
-      id: 3
     id: 4223
     uid: LBFKibPIj
-    word-count: 9
-    edit-user:
-      id: 3
-    time: 1773090962400
     title: Test Article
-    edit-nonce: 0iIGJ1buX
-    edit-time: 1780843750454
 - - string: Bullet
-    user:
-      id: 3
     id: 5651
     uid: _BCMCvPhJ
     parents:
@@ -100,43 +58,26 @@
     - id: 5648
     - id: 5649
     - id: 5650
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '[[>]] [[!WARNING]] Warning
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5469
     uid: 2LWLXERWg
     parents:
     - id: 5453
-    time: 1773788829579
     order: 4
-    open: true
     page:
       id: 5453
     refs:
     - id: 5450
     - id: 5470
-- - prevent-clean: 1782433896236
-    user:
-      id: 3
-    id: 11823
+- - id: 11823
     uid: -gG94Gziw
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782433896236
     title: attribute1
-    edit-nonce: f52KqV7mA
-    edit-time: 1782433896235
 - - string: '`↤`'
-    user:
-      id: 3
     id: 5687
     uid: oVtdQG8i6
     parents:
@@ -145,14 +86,10 @@
     - id: 5648
     - id: 5685
     - id: 5686
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`≠`'
-    user:
-      id: 3
     id: 5675
     uid: uE5Cc1dLS
     parents:
@@ -161,13 +98,10 @@
     - id: 5648
     - id: 5673
     - id: 5674
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1773784809015
-    children:
+- - children:
     - id: 5454
     - id: 5460
     - id: 5461
@@ -181,23 +115,12 @@
     - id: 5477
     - id: 5478
     - id: 11236
-    user:
-      id: 3
-    sidebar: 28
     id: 5453
     uid: d87aKN4hh
-    word-count: 94
-    edit-user:
-      id: 3
-    time: 1773784809015
     title: callouts demo
-    edit-nonce: r4xgDG5oa
-    edit-time: 1781439357738
 - - string: '`^`'
     children:
     - id: 5678
-    user:
-      id: 3
     id: 5677
     uid: B4UA05wqF
     parents:
@@ -205,16 +128,12 @@
     - id: 5646
     - id: 5648
     - id: 5676
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`??`'
     children:
     - id: 5684
-    user:
-      id: 3
     id: 5683
     uid: zULz_y5WG
     parents:
@@ -222,34 +141,19 @@
     - id: 5646
     - id: 5648
     - id: 5682
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1781439339635
-    user:
-      id: 3
-    id: 11238
+- - id: 11238
     uid: r-BwcT9SY
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1781439339635
     title: '!Definition'
-    edit-nonce: uOnKJOpMA
-    edit-time: 1781439339634
 - - string: 'title:: "Source Code For Humans"'
-    user:
-      id: 3
     id: 11841
     uid: aVKZ0NyYr
     parents:
     - id: 11494
     - id: 11833
-    time: 1782758594148
     order: 0
-    open: false
     page:
       id: 11494
     refs:
@@ -257,57 +161,36 @@
 - - string: Process / ongoing
     children:
     - id: 5695
-    user:
-      id: 3
     id: 5694
     uid: qdCuaCd_m
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 15
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1782758625910
-    user:
-      id: 3
-    id: 11845
+- - id: 11845
     uid: ZyUTn2I17
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758625910
     title: date
-    edit-nonce: sesNaxUp-
-    edit-time: 1782758625910
 - - string: 'date:: 2027-01-01'
-    user:
-      id: 3
     id: 11844
     uid: 5qQtO7uF3
     parents:
     - id: 11494
     - id: 11833
-    time: 1782758740882
     order: 2
-    open: true
     page:
       id: 11494
     refs:
     - id: 11845
 - - string: 'tags:: #Guffin'
-    user:
-      id: 3
     id: 11848
     uid: ZQ8KWa3iR
     parents:
     - id: 11494
     - id: 11833
-    time: 1782766024683
     order: 4
-    open: true
     page:
       id: 11494
     refs:
@@ -316,8 +199,6 @@
 - - string: '`=`'
     children:
     - id: 5654
-    user:
-      id: 3
     id: 5653
     uid: jDLtdo5HR
     parents:
@@ -325,28 +206,15 @@
     - id: 5646
     - id: 5648
     - id: 5652
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1782758757998
-    user:
-      id: 3
-    id: 11847
+- - id: 11847
     uid: 2_S3ySs7O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758757998
     title: identifier
-    edit-nonce: xbfm4ahh-
-    edit-time: 1782758757997
 - - string: '`=>`'
     children:
     - id: 5660
-    user:
-      id: 3
     id: 5659
     uid: KfjRLh7m6
     parents:
@@ -354,28 +222,15 @@
     - id: 5646
     - id: 5648
     - id: 5658
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1774971833334
-    user:
-      id: 3
-    id: 5455
+- - id: 5455
     uid: GyoWxXiMq
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784812757
     title: '!NOTE'
-    edit-nonce: 27pBJOE2e
-    edit-time: 1773784812756
 - - string: '`->`'
     children:
     - id: 5657
-    user:
-      id: 3
     id: 5656
     uid: WAgi7UK_T
     parents:
@@ -383,23 +238,17 @@
     - id: 5646
     - id: 5648
     - id: 5655
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '[[>]] [[!QUESTION]] Question
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5467
     uid: PZVQH4ZQe
     parents:
     - id: 5453
-    time: 1773788810980
     order: 9
-    open: true
     page:
       id: 5453
     refs:
@@ -476,16 +325,12 @@
         value:
         - uid
         - BxGxeeGk1
-    prevent-clean: 1781541470279
     children:
     - id: 11502
     - id: 11503
     - id: 11504
     - id: 11822
     - id: 11833
-    user:
-      id: 3
-    sidebar: 24
     id: 11494
     lookup:
     - id: 261
@@ -499,40 +344,20 @@
     - id: 11833
     - id: 11839
     uid: dPZqAiKrK
-    word-count: 47
-    edit-user:
-      id: 3
-    time: 1781833303933
     title: '[[Test Article]] 5'
-    edit-nonce: SGSZvjDYm
-    edit-time: 1782766063577
-    open: true
     refs:
     - id: 4223
-- - prevent-clean: 1781439305015
-    user:
-      id: 3
-    id: 5476
+- - id: 5476
     uid: LxvmTECEq
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788887349
     title: '!BUG'
-    edit-nonce: EW9bRaVhj
-    edit-time: 1773788887348
 - - string: '[[>]] [[!FAILURE]] Failure
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5471
     uid: blrJGkQVp
     parents:
     - id: 5453
-    time: 1773788848009
     order: 10
-    open: true
     page:
       id: 5453
     refs:
@@ -541,15 +366,11 @@
 - - string: '[[>]] [[!BUG]] Bug
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5475
     uid: oQ6hWy0y7
     parents:
     - id: 5453
-    time: 1773788892566
     order: 11
-    open: true
     page:
       id: 5453
     refs:
@@ -558,24 +379,18 @@
 - - string: Right-angle arrow
     children:
     - id: 5671
-    user:
-      id: 3
     id: 5670
     uid: oZCTywBkn
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 7
-    open: true
     page:
       id: 5618
 - - string: '`∴` (configurable)'
     children:
     - id: 5681
-    user:
-      id: 3
     id: 5680
     uid: f-Lafbeay
     parents:
@@ -583,14 +398,10 @@
     - id: 5646
     - id: 5648
     - id: 5679
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`↻`'
-    user:
-      id: 3
     id: 5696
     uid: NX0_hsJA_
     parents:
@@ -599,103 +410,65 @@
     - id: 5648
     - id: 5694
     - id: 5695
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: Depends on / prerequisite
     children:
     - id: 5686
-    user:
-      id: 3
     id: 5685
     uid: OWVKyWC3q
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 12
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1781542258419
-    user:
-      id: 3
-    id: 5450
+- - id: 5450
     uid: OexZiLR_O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784559632
     title: '>'
-    edit-nonce: 2POM1zS7j
-    edit-time: 1773784559631
 - - string: 'attribute1:: 5, #[[callouts demo]], #v01'
-    user:
-      id: 3
     id: 11822
     uid: v3WbOVP7U
     parents:
     - id: 11494
-    time: 1782500255031
     order: 3
-    open: true
     page:
       id: 11494
     refs:
     - id: 4381
     - id: 5453
     - id: 11823
-- - prevent-clean: 1774790977399
-    user:
-      id: 3
-    id: 5457
+- - id: 5457
     uid: NdzIKCUiw
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784864945
     title: '!SUMMARY'
-    edit-nonce: JKAYS_nsx
-    edit-time: 1773784864944
 - - string: Decision / choice
     children:
     - id: 5689
-    user:
-      id: 3
     id: 5688
     uid: RFzweTcL1
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 13
-    open: true
     page:
       id: 5618
 - - string: '[[>]] [[!QUOTE]] Quote
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5478
     uid: jJF8rfQXO
     parents:
     - id: 5453
-    time: 1773788932934
     order: 0
-    open: true
     page:
       id: 5453
     refs:
     - id: 5450
     - id: 5456
 - - string: '`∴`'
-    user:
-      id: 3
     id: 5681
     uid: KuIjT9oGp
     parents:
@@ -704,16 +477,12 @@
     - id: 5648
     - id: 5679
     - id: 5680
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`@`'
     children:
     - id: 5693
-    user:
-      id: 3
     id: 5692
     uid: Jw_ZxuVxr
     parents:
@@ -721,31 +490,23 @@
     - id: 5646
     - id: 5648
     - id: 5691
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '[[>]] [[!NOTE]] Note
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5454
     uid: tGPNuZYco
     parents:
     - id: 5453
-    time: 1773788676591
     order: 2
-    open: true
     page:
       id: 5453
     refs:
     - id: 5450
     - id: 5455
 - - string: '`!`'
-    user:
-      id: 3
     id: 5666
     uid: v_8oFrt1s
     parents:
@@ -754,14 +515,10 @@
     - id: 5648
     - id: 5664
     - id: 5665
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`→`'
-    user:
-      id: 3
     id: 5657
     uid: 4YZgl5cYa
     parents:
@@ -770,9 +527,7 @@
     - id: 5648
     - id: 5655
     - id: 5656
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - attrs:
@@ -794,12 +549,8 @@
         value:
         - uid
         - cBrKZ4MS4
-    prevent-clean: 1773834126432
     children:
     - id: 4383
-    user:
-      id: 3
-    sidebar: 9
     id: 4381
     lookup:
     - id: 261
@@ -807,53 +558,17 @@
     - id: 4381
     - id: 4383
     uid: igM26JNa2
-    word-count: 3
-    edit-user:
-      id: 3
-    time: 1776523140434
     title: v01
-    edit-nonce: 7PhDLVVmu
-    edit-time: 1776523140434
-    open: false
-- - prevent-clean: 1773788927048
-    user:
-      id: 3
-    id: 5458
+- - id: 5458
     uid: lS4kg-3mw
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784871352
     title: '!EXAMPLE'
-    edit-nonce: 2BprPZlZC
-    edit-time: 1773784871351
-- - prevent-clean: 1781088375215
-    user:
-      id: 3
-    id: 5470
+- - id: 5470
     uid: Y2mxk0bpD
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788823345
     title: '!WARNING'
-    edit-nonce: y9E9ja7jh
-    edit-time: 1773788823344
-- - prevent-clean: 1776271057182
-    user:
-      id: 3
-    id: 2216
+- - id: 2216
     uid: xFhfCd8lJ
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1758728932895
     title: table
-    edit-nonce: TSwT5h8I1
-    edit-time: 1758728932884
 - - string: '`=`'
-    user:
-      id: 3
     id: 5654
     uid: kPqUpd641
     parents:
@@ -862,14 +577,10 @@
     - id: 5648
     - id: 5652
     - id: 5653
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`↗`'
-    user:
-      id: 3
     id: 5693
     uid: nlN78fCtg
     parents:
@@ -878,26 +589,13 @@
     - id: 5648
     - id: 5691
     - id: 5692
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1773788804819
-    user:
-      id: 3
-    id: 5466
+- - id: 5466
     uid: jH8aemWDv
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788773533
     title: '!SUCCESS'
-    edit-nonce: TAVtO5mkL
-    edit-time: 1773788773533
 - - string: '`◊`'
-    user:
-      id: 3
     id: 5684
     uid: vXoWB-OG_
     parents:
@@ -906,14 +604,10 @@
     - id: 5648
     - id: 5682
     - id: 5683
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`⤷`'
-    user:
-      id: 3
     id: 5672
     uid: 2B28nP0fN
     parents:
@@ -922,44 +616,27 @@
     - id: 5648
     - id: 5670
     - id: 5671
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: Question
     children:
     - id: 5662
-    user:
-      id: 3
     id: 5661
     uid: 8x-Tk-O5b
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 4
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1773788823345
-    user:
-      id: 3
-    id: 5468
+- - id: 5468
     uid: xZC0Q6cvU
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788804819
     title: '!QUESTION'
-    edit-nonce: gq5PQ9i0S
-    edit-time: 1773788804819
 - - string: '`...`'
     children:
     - id: 5696
-    user:
-      id: 3
     id: 5695
     uid: DZhDzcotF
     parents:
@@ -967,51 +644,32 @@
     - id: 5646
     - id: 5648
     - id: 5694
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: Equal / definition
     children:
     - id: 5653
-    user:
-      id: 3
     id: 5652
     uid: dNk4bk1iw
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 1
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1773788871196
-    user:
-      id: 3
-    id: 5472
+- - id: 5472
     uid: rOZQNUic-
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788842047
     title: '!FAILURE'
-    edit-nonce: Is-LuPMfL
-    edit-time: 1773788842046
 - - string: '[[>]] [[!SUCCESS]] Success
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5465
     uid: fYPVSBubU
     parents:
     - id: 5453
-    time: 1773788785649
     order: 8
-    open: true
     page:
       id: 5453
     refs:
@@ -1020,37 +678,27 @@
 - - string: Idea / addition
     children:
     - id: 5668
-    user:
-      id: 3
     id: 5667
     uid: OZba4Vi3o
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 6
-    open: true
     page:
       id: 5618
 - - string: 'authors:: Joe Panico, Emi Panico'
-    user:
-      id: 3
     id: 11834
     uid: hF-KdTW65
     parents:
     - id: 11494
     - id: 11833
-    time: 1782766063577
     order: 1
-    open: true
     page:
       id: 11494
     refs:
     - id: 11842
 - - string: '`⇒`'
-    user:
-      id: 3
     id: 5660
     uid: tjv91T19w
     parents:
@@ -1059,23 +707,17 @@
     - id: 5648
     - id: 5658
     - id: 5659
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '[[>]] [[!Definition]] Definition (not Roam-native)
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 11236
     uid: Zl0dZ-LuU
     parents:
     - id: 5453
-    time: 1781439357738
     order: 12
-    open: true
     page:
       id: 5453
     refs:
@@ -1084,8 +726,6 @@
 - - string: '`~`'
     children:
     - id: 5675
-    user:
-      id: 3
     id: 5674
     uid: EJ5HIvlOy
     parents:
@@ -1093,77 +733,38 @@
     - id: 5646
     - id: 5648
     - id: 5673
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1774306639472
-    user:
-      id: 3
-    id: 5474
+- - id: 5474
     uid: rf9UnDP-P
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788871196
     title: '!DANGER'
-    edit-nonce: MeNDZHmOj
-    edit-time: 1773788871195
 - - heading: 2
     string: Marker → bullet map (default)
     children:
     - id: 5647
     - id: 5648
-    user:
-      id: 3
     id: 5646
     uid: ZcfOxAW8t
     parents:
     - id: 5618
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1781778922143
-    user:
-      id: 3
-    id: 11243
+- - id: 11243
     uid: HGasV4ras
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1781439715084
     title: Guffin
-    edit-nonce: WJjuYNepn
-    edit-time: 1781439715083
-- - prevent-clean: 1773853042252
-    children:
+- - children:
     - id: 5646
-    user:
-      id: 3
-    sidebar: 1
     id: 5618
     uid: nC88efm_x
-    word-count: 65
-    edit-user:
-      id: 3
-    time: 1773852590875
     title: Better Bullets
-    edit-nonce: mBHIs-ssl
-    edit-time: 1773854756434
-    open: true
 - - string: 'tags:: #[[Book Structure]]'
-    user:
-      id: 3
     id: 4383
     uid: tcSQVWaAo
     parents:
     - id: 4381
-    time: 1773242279621
     order: 0
-    open: false
     page:
       id: 4381
     refs:
@@ -1187,16 +788,12 @@
     - id: 5688
     - id: 5691
     - id: 5694
-    user:
-      id: 3
     id: 5648
     uid: 7grZRDfnd
     parents:
     - id: 5618
     - id: 5646
-    time: 1773854756434
     order: 1
-    open: false
     page:
       id: 5618
     refs:
@@ -1204,15 +801,11 @@
 - - string: '[[>]] [[!EXAMPLE]] Example
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5477
     uid: vKtsbai-C
     parents:
     - id: 5453
-    time: 1773788915311
     order: 1
-    open: true
     page:
       id: 5453
     refs:
@@ -1221,36 +814,22 @@
 - - string: '[[>]] [[!SUMMARY]] Summary
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5460
     uid: mt2pJMg-B
     parents:
     - id: 5453
-    time: 1773788710530
     order: 7
-    open: true
     page:
       id: 5453
     refs:
     - id: 5450
     - id: 5457
-- - user:
-      id: 3
-    id: 321
+- - id: 321
     uid: BxGxeeGk1
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1681476821748
     title: .rm-g
-    edit-nonce: 0497-MGDf
-    edit-time: 1681476821746
 - - string: '`|`'
     children:
     - id: 5690
-    user:
-      id: 3
     id: 5689
     uid: eSRf16Kaj
     parents:
@@ -1258,38 +837,16 @@
     - id: 5646
     - id: 5648
     - id: 5688
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1782226716897
-    user:
-      id: 3
-    id: 5462
+- - id: 5462
     uid: ZgUWBRb7j
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788725523
     title: '!INFO'
-    edit-nonce: z3caCCN5O
-    edit-time: 1773788725520
-- - prevent-clean: 1782758582158
-    user:
-      id: 3
-    id: 11842
+- - id: 11842
     uid: MhnnPhnTB
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758582159
     title: authors
-    edit-nonce: DECoGhfwR
-    edit-time: 1782758582158
 - - string: '`?`'
-    user:
-      id: 3
     id: 5663
     uid: UhO5FcuMA
     parents:
@@ -1298,62 +855,34 @@
     - id: 5648
     - id: 5661
     - id: 5662
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1773788773533
-    user:
-      id: 3
-    id: 5464
+- - id: 5464
     uid: o1ZTAD2_S
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788756749
     title: '!TIP'
-    edit-nonce: 1kVhjdFo5
-    edit-time: 1773788756749
 - - string: Leads to
     children:
     - id: 5656
-    user:
-      id: 3
     id: 5655
     uid: DTLR8M_sl
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 2
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1774214987764
-    user:
-      id: 3
-    id: 261
+- - id: 261
     uid: RXwAqq0_T
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1663513397402
     title: tags
-    edit-nonce: 2NuWcfGas
-    edit-time: 1663513397401
 - - string: 'identifier:: 978-1788399081'
-    user:
-      id: 3
     id: 11846
     uid: pYRfjtiHS
     parents:
     - id: 11494
     - id: 11833
-    time: 1782762885142
     order: 3
-    open: true
     page:
       id: 11494
     refs:
@@ -1361,8 +890,6 @@
 - - string: Marker
     children:
     - id: 5651
-    user:
-      id: 3
     id: 5650
     uid: v3GYZq3tO
     parents:
@@ -1370,16 +897,12 @@
     - id: 5646
     - id: 5648
     - id: 5649
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`<-`'
     children:
     - id: 5687
-    user:
-      id: 3
     id: 5686
     uid: TeB_pRnMW
     parents:
@@ -1387,48 +910,36 @@
     - id: 5646
     - id: 5648
     - id: 5685
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: Conclusion / synthesis
     children:
     - id: 5680
-    user:
-      id: 3
     id: 5679
     uid: WVvR1vklx
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 10
-    open: true
     page:
       id: 5618
 - - string: Meaning
     children:
     - id: 5650
-    user:
-      id: 3
     id: 5649
     uid: zplCdLDOV
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`!`'
     children:
     - id: 5666
-    user:
-      id: 3
     id: 5665
     uid: cBp6Inlbg
     parents:
@@ -1436,32 +947,24 @@
     - id: 5646
     - id: 5648
     - id: 5664
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: Important / warning
     children:
     - id: 5665
-    user:
-      id: 3
     id: 5664
     uid: M75pdqK84
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 5
-    open: true
     page:
       id: 5618
 - - string: '`?`'
     children:
     - id: 5663
-    user:
-      id: 3
     id: 5662
     uid: kNK5nidqB
     parents:
@@ -1469,35 +972,25 @@
     - id: 5646
     - id: 5648
     - id: 5661
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: hello world!
-    user:
-      id: 3
     id: 11503
     uid: AKAMsYfSW
     parents:
     - id: 11494
-    time: 1781541630598
     order: 1
-    open: true
     page:
       id: 11494
 - - string: '[[>]] [[!INFO]] Info
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5461
     uid: 4I7bW8Zf_
     parents:
     - id: 5453
-    time: 1773788730698
     order: 3
-    open: true
     page:
       id: 5453
     refs:
@@ -1506,8 +999,6 @@
 - - string: '`+`'
     children:
     - id: 5669
-    user:
-      id: 3
     id: 5668
     uid: uMVC0fvaZ
     parents:
@@ -1515,14 +1006,10 @@
     - id: 5646
     - id: 5648
     - id: 5667
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: '`▸`'
-    user:
-      id: 3
     id: 5678
     uid: GV3tAKsLN
     parents:
@@ -1531,37 +1018,27 @@
     - id: 5648
     - id: 5676
     - id: 5677
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: Reference / related
     children:
     - id: 5692
-    user:
-      id: 3
     id: 5691
     uid: drw6chE89
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 14
-    open: true
     page:
       id: 5618
 - - string: 'tags:: #Guffin,#[[Better Bullets]]'
-    user:
-      id: 3
     id: 11504
     uid: Up9F5BMq9
     parents:
     - id: 11494
-    time: 1782432667577
     order: 2
-    open: true
     page:
       id: 11494
     refs:
@@ -1571,22 +1048,16 @@
 - - string: Evidence / support
     children:
     - id: 5677
-    user:
-      id: 3
     id: 5676
     uid: Am1m9Nk_u
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 9
-    open: true
     page:
       id: 5618
 - - string: '`⎇`'
-    user:
-      id: 3
     id: 5690
     uid: keiYVs1oE
     parents:
@@ -1595,23 +1066,17 @@
     - id: 5648
     - id: 5688
     - id: 5689
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - attrs: []
     string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
       \ – DO NOT REMOVE\nFeatures:\n\n - **attributes**"
-    user:
-      id: 3
     id: 11502
     uid: 2-2g3rmpU
     parents:
     - id: 11494
-    time: 1781541621457
     order: 0
-    open: true
     page:
       id: 11494
     refs:
@@ -1620,47 +1085,35 @@
 - - string: Result
     children:
     - id: 5659
-    user:
-      id: 3
     id: 5658
     uid: -CgA_YrJD
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 3
-    open: true
     page:
       id: 5618
 - - string: Contrast / however
     children:
     - id: 5674
-    user:
-      id: 3
     id: 5673
     uid: f8X4aoVut
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 8
-    open: true
     page:
       id: 5618
 - - string: '[[>]] [[!DANGER]] Danger
 
       Optional body via Shift+Enter'
-    user:
-      id: 3
     id: 5473
     uid: 8Vd5M8RXF
     parents:
     - id: 5453
-    time: 1774306606247
     order: 5
-    open: true
     page:
       id: 5453
     refs:
@@ -1756,8 +1209,6 @@
     - id: 11844
     - id: 11846
     - id: 11848
-    user:
-      id: 3
     id: 11833
     lookup:
     - id: 261
@@ -1775,9 +1226,7 @@
     uid: RjNKPZfjB
     parents:
     - id: 11494
-    time: 1782757905597
     order: 4
-    open: true
     page:
       id: 11494
     refs:
@@ -1786,8 +1235,6 @@
 - - string: '`v>` (configurable)'
     children:
     - id: 5672
-    user:
-      id: 3
     id: 5671
     uid: BY3Wk3SIh
     parents:
@@ -1795,26 +1242,13 @@
     - id: 5646
     - id: 5648
     - id: 5670
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1782757905599
-    user:
-      id: 3
-    id: 11839
+- - id: 11839
     uid: 2xY4zCjId
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782757905599
     title: guffin-meta
-    edit-nonce: Wn0wt68Sc
-    edit-time: 1782757905599
 - - string: '`+`'
-    user:
-      id: 3
     id: 5669
     uid: KQJjAUkzT
     parents:
@@ -1823,36 +1257,21 @@
     - id: 5648
     - id: 5667
     - id: 5668
-    time: 1773854756434
     order: 0
-    open: true
     page:
       id: 5618
 - - string: Hypothesis / tentative
     children:
     - id: 5683
-    user:
-      id: 3
     id: 5682
     uid: JlT4c3ZtZ
     parents:
     - id: 5618
     - id: 5646
     - id: 5648
-    time: 1773854756434
     order: 11
-    open: true
     page:
       id: 5618
-- - prevent-clean: 1782758586968
-    user:
-      id: 3
-    id: 11843
+- - id: 11843
     uid: PZyg8sHJZ
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782758586968
     title: title
-    edit-nonce: D_07ml4rh
-    edit-time: 1782758586968

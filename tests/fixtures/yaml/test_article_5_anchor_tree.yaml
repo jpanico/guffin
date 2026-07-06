@@ -13,7 +13,6 @@ root_node:
   refs:
   - id: 4223
   page: null
-  open: true
   children_view_type: null
   parents: null
   props: null
@@ -100,7 +99,6 @@ tree_network:
   - id: 11843
   page:
     id: 11494
-  open: false
   children_view_type: null
   parents:
   - id: 11494
@@ -118,7 +116,6 @@ tree_network:
   - id: 11845
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -137,7 +134,6 @@ tree_network:
   - id: 11243
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -159,7 +155,6 @@ tree_network:
   refs:
   - id: 4223
   page: null
-  open: true
   children_view_type: null
   parents: null
   props: null
@@ -247,7 +242,6 @@ tree_network:
   - id: 11823
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -264,7 +258,6 @@ tree_network:
   - id: 11842
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -282,7 +275,6 @@ tree_network:
   - id: 11847
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -299,7 +291,6 @@ tree_network:
   refs: null
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -318,7 +309,6 @@ tree_network:
   - id: 11243
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -337,7 +327,6 @@ tree_network:
   - id: 5462
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -360,7 +349,6 @@ tree_network:
   - id: 11839
   page:
     id: 11494
-  open: true
   children_view_type: null
   parents:
   - id: 11494
@@ -460,7 +448,6 @@ refs_by_id:
     - id: 4224
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -475,7 +462,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -503,7 +489,6 @@ refs_by_id:
     - id: 11236
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -518,7 +503,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -533,7 +517,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -548,7 +531,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -564,7 +546,6 @@ refs_by_id:
     - id: 4383
     refs: null
     page: null
-    open: false
     children_view_type: null
     parents: null
     props: null
@@ -597,7 +578,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -613,7 +593,6 @@ refs_by_id:
     - id: 5646
     refs: null
     page: null
-    open: true
     children_view_type: null
     parents: null
     props: null
@@ -628,7 +607,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -643,7 +621,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -658,7 +635,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -673,7 +649,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -688,7 +663,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -703,7 +677,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -721,7 +694,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -739,7 +711,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -774,7 +745,6 @@ refs_by_id:
     - id: 2216
     page:
       id: 5618
-    open: false
     children_view_type: null
     parents:
     - id: 5618
@@ -793,7 +763,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -813,7 +782,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -833,7 +801,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -853,7 +820,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -873,7 +839,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -893,7 +858,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -913,7 +877,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -933,7 +896,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -953,7 +915,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -973,7 +934,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -993,7 +953,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1013,7 +972,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1033,7 +991,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1053,7 +1010,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1073,7 +1029,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1093,7 +1048,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1113,7 +1067,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1133,7 +1086,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1155,7 +1107,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1175,7 +1126,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1197,7 +1147,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1217,7 +1166,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1239,7 +1187,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1259,7 +1206,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1281,7 +1227,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1301,7 +1246,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1323,7 +1267,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1343,7 +1286,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1365,7 +1307,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1385,7 +1326,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1407,7 +1347,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1427,7 +1366,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1449,7 +1387,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1469,7 +1406,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1491,7 +1427,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1511,7 +1446,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1533,7 +1467,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1553,7 +1486,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1575,7 +1507,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1595,7 +1526,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1617,7 +1547,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1637,7 +1566,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1659,7 +1587,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1679,7 +1606,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1701,7 +1627,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1721,7 +1646,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1743,7 +1667,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1763,7 +1686,6 @@ refs_by_id:
     refs: null
     page:
       id: 5618
-    open: true
     children_view_type: null
     parents:
     - id: 5618
@@ -1786,7 +1708,6 @@ refs_by_id:
     - id: 4239
     page:
       id: 4381
-    open: false
     children_view_type: null
     parents:
     - id: 4381
@@ -1807,7 +1728,6 @@ refs_by_id:
     - id: 5455
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1828,7 +1748,6 @@ refs_by_id:
     - id: 5457
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1849,7 +1768,6 @@ refs_by_id:
     - id: 5462
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1870,7 +1788,6 @@ refs_by_id:
     - id: 5464
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1891,7 +1808,6 @@ refs_by_id:
     - id: 5466
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1912,7 +1828,6 @@ refs_by_id:
     - id: 5468
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1933,7 +1848,6 @@ refs_by_id:
     - id: 5470
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1954,7 +1868,6 @@ refs_by_id:
     - id: 5472
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1975,7 +1888,6 @@ refs_by_id:
     - id: 5474
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -1996,7 +1908,6 @@ refs_by_id:
     - id: 5476
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -2017,7 +1928,6 @@ refs_by_id:
     - id: 5458
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -2038,7 +1948,6 @@ refs_by_id:
     - id: 5456
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -2059,7 +1968,6 @@ refs_by_id:
     - id: 11238
     page:
       id: 5453
-    open: true
     children_view_type: null
     parents:
     - id: 5453
@@ -2079,7 +1987,6 @@ refs_by_id:
     - id: 5462
     page:
       id: 4223
-    open: true
     children_view_type: null
     parents:
     - id: 4223
@@ -2095,7 +2002,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2114,7 +2020,6 @@ refs_by_id:
     - id: 4315
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2129,7 +2034,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2144,7 +2048,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2159,7 +2062,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2174,7 +2076,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2189,7 +2090,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2204,7 +2104,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2219,7 +2118,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2234,7 +2132,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2249,7 +2146,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2264,7 +2160,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2279,7 +2174,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null
@@ -2294,7 +2188,6 @@ refs_by_id:
     children: null
     refs: null
     page: null
-    open: null
     children_view_type: null
     parents: null
     props: null

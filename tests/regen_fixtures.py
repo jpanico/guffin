@@ -52,7 +52,7 @@ from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf
 from guffin.render.project import DefaultProfile, ProjectType
 from guffin.render.render_options import MarkdownRenderOptions, PdfRenderOptions
-from guffin.roam.local_api import ApiEndpoint
+from guffin.roam.local_api import ApiEndpoint, without_transient_keys
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult
@@ -277,10 +277,15 @@ def main() -> None:
         else:
             _update_readme_article_features(qualifier, features_text)
 
-    # Fixture 4: raw_result YAML
+    # Fixture 4: raw_result YAML — transient session/UI keys stripped so regens stay stable.
     raw_result_path: Final[pathlib.Path] = FIXTURES_YAML / f"{prefix}_raw_result.yaml"
     raw_result_path.write_text(
-        yaml.dump(result.raw_result, default_flow_style=False, allow_unicode=True, sort_keys=False),
+        yaml.dump(
+            without_transient_keys(result.raw_result),
+            default_flow_style=False,
+            allow_unicode=True,
+            sort_keys=False,
+        ),
         encoding="utf-8",
     )
     print(f"  wrote {raw_result_path}")

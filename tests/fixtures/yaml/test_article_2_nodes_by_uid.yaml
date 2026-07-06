@@ -8,7 +8,6 @@ InqcJLiuz:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -29,7 +28,6 @@ InqcJLiuz:
   - id: 5462
   page:
     id: 4223
-  open: true
   children_view_type: null
   parents:
   - id: 4223
@@ -46,7 +44,6 @@ LBFKibPIj:
   - id: 4224
   refs: null
   page: null
-  open: null
   children_view_type: null
   parents: null
   props: null
@@ -62,7 +59,6 @@ d_3REDRrO:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -83,7 +79,6 @@ sD1C9ifkG:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: bullet
   parents:
   - id: 11674
@@ -99,7 +94,6 @@ OexZiLR_O:
   children: null
   refs: null
   page: null
-  open: null
   children_view_type: null
   parents: null
   props: null
@@ -115,7 +109,6 @@ fv5nh7u81:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -134,7 +127,6 @@ YyeRpjbFD:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -155,7 +147,6 @@ DsogfVzX9:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: document
   parents:
   - id: 11674
@@ -175,7 +166,6 @@ sPZ2xmBBS:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: numbered
   parents:
   - id: 11674
@@ -195,7 +185,6 @@ MmvJZhQNJ:
   - id: 5462
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -216,7 +205,6 @@ lDYWYqYSL:
   refs:
   - id: 4223
   page: null
-  open: null
   children_view_type: document
   parents: null
   props: null
@@ -232,7 +220,6 @@ Bb49MOLyE:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -250,7 +237,6 @@ gmLJbWZYp:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -267,7 +253,6 @@ ZgUWBRb7j:
   children: null
   refs: null
   page: null
-  open: null
   children_view_type: null
   parents: null
   props: null
@@ -283,7 +268,6 @@ KUi_6ooZj:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -302,7 +286,6 @@ KUi_6ooZj:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -320,7 +303,6 @@ UQQwogj1M:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674
@@ -338,7 +320,6 @@ VH0mXM0rw:
   refs: null
   page:
     id: 11674
-  open: true
   children_view_type: null
   parents:
   - id: 11674

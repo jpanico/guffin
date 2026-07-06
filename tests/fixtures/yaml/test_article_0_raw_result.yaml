@@ -3,63 +3,42 @@
     - id: 11226
     - id: 11229
     - id: 11232
-    user:
-      id: 3
     id: 11225
     uid: wjN-kVF3B
     parents:
     - id: 11137
     - id: 11150
-    time: 1781362773659
     order: 1
-    open: false
     page:
       id: 11137
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
-    user:
-      id: 3
     id: 4224
     uid: 7MoH-wIQh
     parents:
     - id: 4223
-    time: 1780843750454
     order: 0
-    open: true
     page:
       id: 4223
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1782152316083
-    children:
+- - children:
     - id: 4224
-    user:
-      id: 3
     id: 4223
     uid: LBFKibPIj
-    word-count: 9
-    edit-user:
-      id: 3
-    time: 1773090962400
     title: Test Article
-    edit-nonce: 0iIGJ1buX
-    edit-time: 1780843750454
 - - string: '[[>]] This is a Roam standard multi-line Block Quote
 
       this is the 2nd line
 
       - this is the 3rd line'
-    user:
-      id: 3
     id: 11193
     uid: r09kXvUg-
     parents:
     - id: 11137
     - id: 11149
-    time: 1781283589466
     order: 10
-    open: false
     page:
       id: 11137
     refs:
@@ -68,29 +47,21 @@
     children:
     - id: 11154
     - id: 11155
-    user:
-      id: 3
     id: 11147
     uid: jVQvHi40O
     parents:
     - id: 11137
-    time: 1780944791082
     order: 3
-    open: false
     page:
       id: 11137
 - - string: 'the next block is a basic Roam-native table: 3x3. No column/row/col resizing
       of any kind'
-    user:
-      id: 3
     id: 11199
     uid: iXrVW8EGw
     parents:
     - id: 11137
     - id: 11150
-    time: 1781362846319
     order: 0
-    open: true
     page:
       id: 11137
 - - string: block 1
@@ -108,29 +79,21 @@
     - id: 11187
     - id: 11188
     - id: 11193
-    user:
-      id: 3
     id: 11149
     uid: MRKYttxrM
     parents:
     - id: 11137
-    time: 1780944762391
     order: 1
-    open: true
     page:
       id: 11137
 - - string: block 3.1.1
-    user:
-      id: 3
     id: 11156
     uid: g9mXrLNQd
     parents:
     - id: 11137
     - id: 11147
     - id: 11154
-    time: 1780944807646
     order: 0
-    open: true
     page:
       id: 11137
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -167,60 +130,44 @@
       - Roam-native table (3x3)
 
       - this INFO `Callout box`, which contains Roam `page references`'
-    user:
-      id: 3
     id: 11148
     uid: qnCiceZgk
     parents:
     - id: 11137
-    time: 1782931132770
     order: 0
-    open: true
     page:
       id: 11137
     refs:
     - id: 5450
     - id: 5462
 - - string: This para features __italics__
-    user:
-      id: 3
     id: 11157
     uid: 2yQYaKIEV
     parents:
     - id: 11137
     - id: 11149
-    time: 1780944909127
     order: 0
-    open: false
     page:
       id: 11137
 - - string: block 1.2
-    user:
-      id: 3
     id: 11153
     uid: WtrddPBAt
     parents:
     - id: 11137
     - id: 11149
-    time: 1780944784665
     order: 12
-    open: false
     page:
       id: 11137
 - - string: Header 1
     children:
     - id: 11227
-    user:
-      id: 3
     id: 11226
     uid: 6NS-Qw4Mm
     parents:
     - id: 11137
     - id: 11150
     - id: 11225
-    time: 1781362855750
     order: 0
-    open: true
     page:
       id: 11137
 - - string: '> This is a Markdown standard multi-line Block Quote
@@ -228,51 +175,37 @@
       this is the 2nd line
 
       - this is the 3rd line'
-    user:
-      id: 3
     id: 11187
     uid: 6bcyfVpL2
     parents:
     - id: 11137
     - id: 11149
-    time: 1781269290009
     order: 8
-    open: false
     page:
       id: 11137
 - - string: block 2
     children:
     - id: 11199
     - id: 11225
-    user:
-      id: 3
     id: 11150
     uid: Odbqghm-D
     parents:
     - id: 11137
-    time: 1780944763258
     order: 2
-    open: true
     page:
       id: 11137
 - - string: '> This is a Markdown standard single line Block Quote'
-    user:
-      id: 3
     id: 11186
     uid: Yz0pqYfBh
     parents:
     - id: 11137
     - id: 11149
-    time: 1781269244509
     order: 7
-    open: false
     page:
       id: 11137
 - - string: Header 2
     children:
     - id: 11228
-    user:
-      id: 3
     id: 11227
     uid: 4BL7hTjHS
     parents:
@@ -280,55 +213,34 @@
     - id: 11150
     - id: 11225
     - id: 11226
-    time: 1781362858883
     order: 0
-    open: true
     page:
       id: 11137
-- - prevent-clean: 1781542258419
-    user:
-      id: 3
-    id: 5450
+- - id: 5450
     uid: OexZiLR_O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784559632
     title: '>'
-    edit-nonce: 2POM1zS7j
-    edit-time: 1773784559631
 - - string: This para features `inline-code`
-    user:
-      id: 3
     id: 11172
     uid: ETesnk4Zi
     parents:
     - id: 11137
     - id: 11149
-    time: 1781221588685
     order: 4
-    open: false
     page:
       id: 11137
 - - string: r2.c1
     children:
     - id: 11233
-    user:
-      id: 3
     id: 11232
     uid: 0hoWxyjNR
     parents:
     - id: 11137
     - id: 11150
     - id: 11225
-    time: 1781362878627
     order: 2
-    open: true
     page:
       id: 11137
 - - string: r1.c3
-    user:
-      id: 3
     id: 11231
     uid: 9XUHIOSY0
     parents:
@@ -337,14 +249,10 @@
     - id: 11225
     - id: 11229
     - id: 11230
-    time: 1781362875854
     order: 0
-    open: true
     page:
       id: 11137
 - - string: r2.c3
-    user:
-      id: 3
     id: 11234
     uid: hD2qvZqjh
     parents:
@@ -353,16 +261,12 @@
     - id: 11225
     - id: 11232
     - id: 11233
-    time: 1781362883933
     order: 0
-    open: true
     page:
       id: 11137
 - - string: r1.c2
     children:
     - id: 11231
-    user:
-      id: 3
     id: 11230
     uid: 5JwQ2Fea-
     parents:
@@ -370,34 +274,19 @@
     - id: 11150
     - id: 11225
     - id: 11229
-    time: 1781362872567
     order: 0
-    open: true
     page:
       id: 11137
-- - prevent-clean: 1773788927048
-    user:
-      id: 3
-    id: 5458
+- - id: 5458
     uid: lS4kg-3mw
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784871352
     title: '!EXAMPLE'
-    edit-nonce: 2BprPZlZC
-    edit-time: 1773784871351
 - - string: '[[>]] This is a Roam standard single line Block Quote'
-    user:
-      id: 3
     id: 11188
     uid: gq_29_H-7
     parents:
     - id: 11137
     - id: 11149
-    time: 1781283482682
     order: 9
-    open: false
     page:
       id: 11137
     refs:
@@ -409,17 +298,13 @@
       This is line 2 of the callout body
 
       '
-    user:
-      id: 3
     id: 11773
     uid: 4SIo9hSEY
     parents:
     - id: 11137
     - id: 11147
     - id: 11155
-    time: 1782227427980
     order: 0
-    open: true
     page:
       id: 11137
     refs:
@@ -428,69 +313,44 @@
 - - string: block 1.1
     children:
     - id: 11152
-    user:
-      id: 3
     id: 11151
     uid: mGk4VnMT3
     parents:
     - id: 11137
     - id: 11149
-    time: 1780944773800
     order: 11
-    open: false
     page:
       id: 11137
 - - string: The child of this block is an isolated fenced code block
     children:
     - id: 11175
-    user:
-      id: 3
     id: 11174
     uid: 8FeLZHNMW
     parents:
     - id: 11137
     - id: 11149
-    time: 1781221807118
     order: 6
-    open: true
     page:
       id: 11137
 - - string: This para features ^^highlight^^
-    user:
-      id: 3
     id: 11171
     uid: VvbwbLchA
     parents:
     - id: 11137
     - id: 11149
-    time: 1781221355217
     order: 3
-    open: false
     page:
       id: 11137
-- - prevent-clean: 1782226716897
-    user:
-      id: 3
-    id: 5462
+- - id: 5462
     uid: ZgUWBRb7j
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788725523
     title: '!INFO'
-    edit-nonce: z3caCCN5O
-    edit-time: 1773788725520
 - - string: This para features **bold**
-    user:
-      id: 3
     id: 11158
     uid: QB8DChDBs
     parents:
     - id: 11137
     - id: 11149
-    time: 1780944927251
     order: 1
-    open: false
     page:
       id: 11137
 - - string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
@@ -498,38 +358,28 @@
       \            print(\"FizzBuzz\")\n        elif i % 3 == 0:\n            print(\"\
       Fizz\")\n        elif i % 5 == 0:\n            print(\"Buzz\")\n        else:\n\
       \            print(i)```"
-    user:
-      id: 3
     id: 11173
     uid: E_Nsc0SmT
     parents:
     - id: 11137
     - id: 11149
-    time: 1781222033423
     order: 5
-    open: false
     page:
       id: 11137
 - - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
       \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
       \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n     \
       \       print(\"Buzz\")\n        else:\n            print(i)```"
-    user:
-      id: 3
     id: 11175
     uid: C6xVTMnsh
     parents:
     - id: 11137
     - id: 11149
     - id: 11174
-    time: 1781222045009
     order: 0
-    open: false
     page:
       id: 11137
 - - string: Header 3
-    user:
-      id: 3
     id: 11228
     uid: iAxwSSBmi
     parents:
@@ -538,82 +388,56 @@
     - id: 11225
     - id: 11226
     - id: 11227
-    time: 1781362862876
     order: 0
-    open: true
     page:
       id: 11137
 - - string: block 3.1
     children:
     - id: 11156
-    user:
-      id: 3
     id: 11154
     uid: d6b4AGFrG
     parents:
     - id: 11137
     - id: 11147
-    time: 1780944798657
     order: 0
-    open: false
     page:
       id: 11137
 - - string: block 3.2
     children:
     - id: 11773
-    user:
-      id: 3
     id: 11155
     uid: 5N_QAEc3C
     parents:
     - id: 11137
     - id: 11147
-    time: 1780944802560
     order: 1
-    open: true
     page:
       id: 11137
-- - prevent-clean: 1780943971663
-    children:
+- - children:
     - id: 11147
     - id: 11148
     - id: 11149
     - id: 11150
-    user:
-      id: 3
-    sidebar: 20
     id: 11137
     uid: L7iQsWlWT
-    word-count: 312
-    edit-user:
-      id: 3
-    time: 1780943981609
     title: '[[Test Article]] 0'
-    edit-nonce: RgJerTO6O
-    edit-time: 1782931132770
     refs:
     - id: 4223
 - - string: r1.c1
     children:
     - id: 11230
-    user:
-      id: 3
     id: 11229
     uid: bwUBoF2ee
     parents:
     - id: 11137
     - id: 11150
     - id: 11225
-    time: 1781362870121
     order: 1
-    open: true
     page:
       id: 11137
 - - string: r2.c2
     children:
     - id: 11234
-    user:
-      id: 3
     id: 11233
     uid: jrIkVSHfA
     parents:
@@ -621,35 +445,25 @@
     - id: 11150
     - id: 11225
     - id: 11232
-    time: 1781362881234
     order: 0
-    open: true
     page:
       id: 11137
 - - string: block 1.1.1
-    user:
-      id: 3
     id: 11152
     uid: 2IDW6tZJ4
     parents:
     - id: 11137
     - id: 11149
     - id: 11151
-    time: 1780944780043
     order: 0
-    open: false
     page:
       id: 11137
 - - string: This para features ~~strikethrough~~
-    user:
-      id: 3
     id: 11170
     uid: 7dBusjzDA
     parents:
     - id: 11137
     - id: 11149
-    time: 1781218309397
     order: 2
-    open: false
     page:
       id: 11137

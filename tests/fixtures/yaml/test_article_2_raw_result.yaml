@@ -1,57 +1,36 @@
 - - string: Numbered block 1.3
-    user:
-      id: 3
     id: 11810
     uid: InqcJLiuz
     parents:
     - id: 11674
     - id: 11807
-    time: 1782319883900
     order: 2
-    open: true
     page:
       id: 11674
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
-    user:
-      id: 3
     id: 4224
     uid: 7MoH-wIQh
     parents:
     - id: 4223
-    time: 1780843750454
     order: 0
-    open: true
     page:
       id: 4223
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1782152316083
-    children:
+- - children:
     - id: 4224
-    user:
-      id: 3
     id: 4223
     uid: LBFKibPIj
-    word-count: 9
-    edit-user:
-      id: 3
-    time: 1773090962400
     title: Test Article
-    edit-nonce: 0iIGJ1buX
-    edit-time: 1780843750454
 - - string: Document block 1.2
-    user:
-      id: 3
     id: 11684
     uid: d_3REDRrO
     parents:
     - id: 11674
     - id: 11682
-    time: 1781833759215
     order: 1
-    open: true
     page:
       id: 11674
 - - string: Bullet block 1
@@ -59,56 +38,35 @@
     - id: 11678
     - id: 11679
     - id: 11681
-    user:
-      id: 3
     id: 11677
     uid: sD1C9ifkG
     parents:
     - id: 11674
-    time: 1781833723814
     order: 1
     view-type: bullet
-    open: true
     page:
       id: 11674
-- - prevent-clean: 1781542258419
-    user:
-      id: 3
-    id: 5450
+- - id: 5450
     uid: OexZiLR_O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784559632
     title: '>'
-    edit-nonce: 2POM1zS7j
-    edit-time: 1773784559631
 - - string: Numbered block 1.2
-    user:
-      id: 3
     id: 11809
     uid: fv5nh7u81
     parents:
     - id: 11674
     - id: 11807
-    time: 1782319880857
     order: 1
-    open: true
     page:
       id: 11674
 - - string: Bullet block 1.2
     children:
     - id: 11680
-    user:
-      id: 3
     id: 11679
     uid: YyeRpjbFD
     parents:
     - id: 11674
     - id: 11677
-    time: 1781833732925
     order: 1
-    open: true
     page:
       id: 11674
 - - string: Document block 1
@@ -116,16 +74,12 @@
     - id: 11683
     - id: 11684
     - id: 11686
-    user:
-      id: 3
     id: 11682
     uid: DsogfVzX9
     parents:
     - id: 11674
-    time: 1781833746080
     order: 2
     view-type: document
-    open: true
     page:
       id: 11674
 - - string: Numbered block 1
@@ -133,143 +87,92 @@
     - id: 11808
     - id: 11809
     - id: 11810
-    user:
-      id: 3
     id: 11807
     uid: sPZ2xmBBS
     parents:
     - id: 11674
-    time: 1782319864881
     order: 3
     view-type: numbered
-    open: true
     page:
       id: 11674
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
       \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
-    user:
-      id: 3
     id: 11675
     uid: MmvJZhQNJ
     parents:
     - id: 11674
-    time: 1781833570842
     order: 0
-    open: true
     page:
       id: 11674
     refs:
     - id: 5450
     - id: 5462
-- - prevent-clean: 1782151663188
-    children:
+- - children:
     - id: 11675
     - id: 11677
     - id: 11682
     - id: 11807
-    user:
-      id: 3
-    sidebar: 21
     id: 11674
     uid: lDYWYqYSL
-    word-count: 55
-    edit-user:
-      id: 3
-    time: 1781833447041
     title: '[[Test Article]] 2'
-    edit-nonce: PwnCOeMf3
     view-type: document
-    edit-time: 1782319894249
     refs:
     - id: 4223
 - - string: Document block 1.3
-    user:
-      id: 3
     id: 11686
     uid: Bb49MOLyE
     parents:
     - id: 11674
     - id: 11682
-    time: 1781833786729
     order: 2
-    open: true
     page:
       id: 11674
 - - string: Bullet block 1.3
-    user:
-      id: 3
     id: 11681
     uid: gmLJbWZYp
     parents:
     - id: 11674
     - id: 11677
-    time: 1781833741666
     order: 2
-    open: true
     page:
       id: 11674
-- - prevent-clean: 1782226716897
-    user:
-      id: 3
-    id: 5462
+- - id: 5462
     uid: ZgUWBRb7j
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788725523
     title: '!INFO'
-    edit-nonce: z3caCCN5O
-    edit-time: 1773788725520
 - - string: Bullet block 1.2.1
-    user:
-      id: 3
     id: 11680
     uid: KUi_6ooZj
     parents:
     - id: 11674
     - id: 11677
     - id: 11679
-    time: 1781833737088
     order: 0
-    open: true
     page:
       id: 11674
 - - string: Document block 1.1
-    user:
-      id: 3
     id: 11683
     uid: 99rZhIPZW
     parents:
     - id: 11674
     - id: 11682
-    time: 1781833751385
     order: 0
-    open: true
     page:
       id: 11674
 - - string: Numbered block 1.1
-    user:
-      id: 3
     id: 11808
     uid: UQQwogj1M
     parents:
     - id: 11674
     - id: 11807
-    time: 1782319875856
     order: 0
-    open: true
     page:
       id: 11674
 - - string: Bullet block 1.1
-    user:
-      id: 3
     id: 11678
     uid: VH0mXM0rw
     parents:
     - id: 11674
     - id: 11677
-    time: 1781833728425
     order: 0
-    open: true
     page:
       id: 11674

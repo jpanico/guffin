@@ -3,17 +3,13 @@
       medieval codex written in an indecipherable language, brimming with bizarre
       drawings of esoteric plants, naked women, and astrological symbols. Known as
       the Voynich manuscript, it defies classification, much less comprehension.'
-    user:
-      id: 3
     id: 11938
     uid: 5baESCL4s
     parents:
     - id: 3327
     - id: 3330
     - id: 11936
-    time: 1783197978884
     order: 1
-    open: true
     page:
       id: 3327
 - - attrs:
@@ -36,8 +32,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11942
-    user:
-      id: 3
     id: 11941
     lookup:
     - id: 11941
@@ -48,9 +42,7 @@
     - id: 3327
     - id: 3330
     - id: 11936
-    time: 1783198031037
     order: 0
-    open: true
     page:
       id: 3327
     refs:
@@ -58,23 +50,17 @@
     - id: 11839
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
-    user:
-      id: 3
     id: 4224
     uid: 7MoH-wIQh
     parents:
     - id: 4223
-    time: 1780843750454
     order: 0
-    open: true
     page:
       id: 4223
     refs:
     - id: 5450
     - id: 5462
 - - string: 'pdf-render:: inline'
-    user:
-      id: 3
     id: 11931
     uid: EWMNZcPZX
     parents:
@@ -83,56 +69,32 @@
     - id: 11927
     - id: 11930
     - id: 11934
-    time: 1783193653621
     order: 0
-    open: false
     page:
       id: 3327
     refs:
     - id: 11933
-- - prevent-clean: 1782152316083
-    children:
+- - children:
     - id: 4224
-    user:
-      id: 3
     id: 4223
     uid: LBFKibPIj
-    word-count: 9
-    edit-user:
-      id: 3
-    time: 1773090962400
     title: Test Article
-    edit-nonce: 0iIGJ1buX
-    edit-time: 1780843750454
 - - heading: 3
     string: Section 2.1.1
     children:
     - id: 4028
-    user:
-      id: 3
     id: 4025
     uid: yFUau9Cpg
     parents:
     - id: 3327
     - id: 3329
     - id: 3332
-    time: 1771515468425
     order: 1
-    open: true
     page:
       id: 3327
-- - prevent-clean: 1783198078497
-    user:
-      id: 3
-    id: 11933
+- - id: 11933
     uid: Jy_Ee6w8E
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1783193648589
     title: pdf-render
-    edit-nonce: aD6s7sefP
-    edit-time: 1783193648588
 - - string: And yet, over the years a steady stream of researchers have stepped up
       with new claims to have cracked its secrets. Just last summer, an anthropologist
       at Foothill College in California declared that the text was a [“vulgar Latin
@@ -141,33 +103,19 @@
       academic at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
       the journal Romance Studies arguing the script is a mix of languages he called
       “proto-Romance.”
-    user:
-      id: 3
     id: 11939
     uid: dR1TZ3P8J
     parents:
     - id: 3327
     - id: 3330
     - id: 11936
-    time: 1783197989412
     order: 2
-    open: true
     page:
       id: 3327
-- - user:
-      id: 3
-    id: 246
+- - id: 246
     uid: q3JUnfC1_
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1660223836199
     title: pdf
-    edit-nonce: 3tY6WtfXy
-    edit-time: 1660223836198
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
-    user:
-      id: 3
     id: 11164
     uid: zZG-BfWvs
     parents:
@@ -175,57 +123,30 @@
     - id: 3329
     - id: 3332
     - id: 11163
-    time: 1781043221592
     props:
       image-size:
         ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
         : width: 257
           height: null
     order: 1
-    seen-by:
-    - id: 3
     page:
       id: 3327
-- - prevent-clean: 1783198078496
-    user:
-      id: 3
-    id: 11943
+- - id: 11943
     uid: Jv502NGK6
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1783198078497
     title: publish
-    edit-nonce: Ly4YGHxfs
-    edit-time: 1783198078495
-- - prevent-clean: 1781542258419
-    user:
-      id: 3
-    id: 5450
+- - id: 5450
     uid: OexZiLR_O
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773784559632
     title: '>'
-    edit-nonce: 2POM1zS7j
-    edit-time: 1773784559631
 - - heading: 1
     string: Section 1
     children:
     - id: 3331
     - id: 4758
-    user:
-      id: 3
     id: 3328
     uid: 0EgPyHSZi
     parents:
     - id: 3327
-    time: 1770568919008
     order: 1
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
 - - heading: 1
@@ -234,17 +155,11 @@
     - id: 3333
     - id: 11927
     - id: 11936
-    user:
-      id: 3
     id: 3330
     uid: 40bvW14UU
     parents:
     - id: 3327
-    time: 1770568926764
     order: 3
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
 - - heading: 3
@@ -252,50 +167,34 @@
     children:
     - id: 11124
     - id: 11165
-    user:
-      id: 3
     id: 3334
     uid: TaN67WqnA
     parents:
     - id: 3327
     - id: 3328
     - id: 3331
-    time: 1771512875819
     order: 0
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
 - - string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
-    user:
-      id: 3
     id: 11922
     uid: pTvGGeTlB
     parents:
     - id: 3327
     - id: 3330
     - id: 3333
-    time: 1783127013369
     order: 1
-    seen-by:
-    - id: 3
     page:
       id: 3327
 - - heading: 0
     string: 'AI assistant (Claude Opus 4.6): '
-    prevent-clean: 1780850098668
-    user:
-      id: 3
     id: 4758
     uid: Ma5KGUH9O
     parents:
     - id: 3327
     - id: 3328
-    time: 1773355356452
     order: 1
     view-type: bullet
-    open: true
     page:
       id: 3327
 - - heading: 1
@@ -303,22 +202,14 @@
     children:
     - id: 3332
     - id: 4026
-    user:
-      id: 3
     id: 3329
     uid: wdMgyBiP9
     parents:
     - id: 3327
-    time: 1770568922821
     order: 2
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
 - - string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
-    user:
-      id: 3
     id: 11124
     uid: uj8YolCoE
     parents:
@@ -326,18 +217,12 @@
     - id: 3328
     - id: 3331
     - id: 3334
-    time: 1780844520106
     order: 1
-    seen-by:
-    - id: 3
     page:
       id: 3327
 - - string: this image **has not been resized** through the Roam UI.
-    prevent-clean: 1782128940704
     children:
     - id: 11806
-    user:
-      id: 3
     id: 11165
     uid: 4_GrZ9su6
     parents:
@@ -345,11 +230,7 @@
     - id: 3328
     - id: 3331
     - id: 3334
-    time: 1781088515943
     order: 0
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
 - - heading: 3
@@ -357,24 +238,16 @@
     children:
     - id: 11164
     - id: 11167
-    user:
-      id: 3
     id: 11163
     uid: OaTXPl93p
     parents:
     - id: 3327
     - id: 3329
     - id: 3332
-    time: 1781043166449
     order: 0
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
 - - string: 'publish:: false'
-    user:
-      id: 3
     id: 11942
     uid: 8zcad3VSa
     parents:
@@ -382,9 +255,7 @@
     - id: 3330
     - id: 11936
     - id: 11941
-    time: 1783198083047
     order: 0
-    open: false
     page:
       id: 3327
     refs:
@@ -393,23 +264,15 @@
     string: Section 1.1
     children:
     - id: 3334
-    user:
-      id: 3
     id: 3331
     uid: 3BX-iWc-p
     parents:
     - id: 3327
     - id: 3328
-    time: 1770568958676
     order: 0
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
 - - string: Section 2.1.1.1
-    user:
-      id: 3
     id: 4028
     uid: bxkcECGwN
     parents:
@@ -417,16 +280,12 @@
     - id: 3329
     - id: 3332
     - id: 4025
-    time: 1780774148272
     props:
       ah-level: h4
     order: 0
-    open: false
     page:
       id: 3327
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
-    user:
-      id: 3
     id: 11806
     uid: pfkKREU_Y
     parents:
@@ -435,49 +294,23 @@
     - id: 3331
     - id: 3334
     - id: 11165
-    time: 1782304880511
     order: 0
-    seen-by:
-    - id: 3
     page:
       id: 3327
-- - user:
-      id: 3
-    id: 321
+- - id: 321
     uid: BxGxeeGk1
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1681476821748
     title: .rm-g
-    edit-nonce: 0497-MGDf
-    edit-time: 1681476821746
-- - prevent-clean: 1782226716897
-    user:
-      id: 3
-    id: 5462
+- - id: 5462
     uid: ZgUWBRb7j
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1773788725523
     title: '!INFO'
-    edit-nonce: z3caCCN5O
-    edit-time: 1773788725520
 - - string: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
-    user:
-      id: 3
     id: 11928
     uid: YCexI8mL4
     parents:
     - id: 3327
     - id: 3330
     - id: 11927
-    time: 1783193635038
     order: 0
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
     refs:
@@ -487,18 +320,12 @@
     children:
     - id: 4025
     - id: 11163
-    user:
-      id: 3
     id: 3332
     uid: drtANJYTg
     parents:
     - id: 3327
     - id: 3329
-    time: 1770568965850
     order: 0
-    seen-by:
-    - id: 3
-    open: false
     page:
       id: 3327
 - - attrs:
@@ -523,8 +350,6 @@
     string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407}}'
     children:
     - id: 11930
-    user:
-      id: 3
     id: 11934
     lookup:
     - id: 321
@@ -536,11 +361,7 @@
     - id: 3327
     - id: 3330
     - id: 11927
-    time: 1783193683175
     order: 1
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
     refs:
@@ -573,46 +394,34 @@
       - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
 
       - this INFO `Callout box`, which contains Roam `page references` '
-    user:
-      id: 3
     id: 11113
     uid: cNW8lmXIM
     parents:
     - id: 3327
-    time: 1783197757774
     order: 0
-    open: true
     page:
       id: 3327
     refs:
     - id: 5450
     - id: 5462
 - - string: 'the following block contains the canonical w3.org "Dummy" PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
-    user:
-      id: 3
     id: 11921
     uid: 4ahwZimtO
     parents:
     - id: 3327
     - id: 3330
     - id: 3333
-    time: 1783127000301
     order: 0
-    open: true
     page:
       id: 3327
 - - heading: 2
     string: Section 2.2
-    user:
-      id: 3
     id: 4026
     uid: 5f1ahOFdp
     parents:
     - id: 3327
     - id: 3329
-    time: 1772563665137
     order: 1
-    open: false
     page:
       id: 3327
 - - attrs:
@@ -637,8 +446,6 @@
     children:
     - id: 11928
     - id: 11934
-    user:
-      id: 3
     id: 11927
     lookup:
     - id: 11927
@@ -648,65 +455,34 @@
     parents:
     - id: 3327
     - id: 3330
-    time: 1783197826443
     order: 2
-    seen-by:
-    - id: 3
-    open: true
     page:
       id: 3327
-- - prevent-clean: 1773356473975
-    children:
+- - children:
     - id: 3328
     - id: 3329
     - id: 3330
     - id: 11113
-    user:
-      id: 3
-    sidebar: 21
     id: 3327
     uid: 6olpFWiw1
-    word-count: 440
-    edit-user:
-      id: 3
-    time: 1780882773773
     title: '[[Test Article]] 1'
-    seen-by:
-    - id: 3
-    edit-nonce: JMQHpjV5Z
     view-type: bullet
-    edit-time: 1783198083047
     refs:
     - id: 4223
-- - prevent-clean: 1783193606904
-    user:
-      id: 3
-    id: 11932
+- - id: 11932
     uid: vuPFRAwZI
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1783193606904
     title: the following block embeds a PDF with guffin-meta
-    edit-nonce: ugFSEY-Me
-    edit-time: 1783193606904
 - - heading: 2
     string: Section 3.1
     children:
     - id: 11921
     - id: 11922
-    user:
-      id: 3
     id: 3333
     uid: JW5PswS6v
     parents:
     - id: 3327
     - id: 3330
-    time: 1770568971504
     order: 0
-    seen-by:
-    - id: 3
-    open: false
     page:
       id: 3327
 - - attrs:
@@ -734,8 +510,6 @@
     - id: 11938
     - id: 11939
     - id: 11941
-    user:
-      id: 3
     id: 11936
     lookup:
     - id: 321
@@ -746,9 +520,7 @@
     parents:
     - id: 3327
     - id: 3330
-    time: 1783197881519
     order: 1
-    open: true
     page:
       id: 3327
 - - attrs:
@@ -771,8 +543,6 @@
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11931
-    user:
-      id: 3
     id: 11930
     lookup:
     - id: 11930
@@ -784,29 +554,16 @@
     - id: 3330
     - id: 11927
     - id: 11934
-    time: 1783193588227
     order: 0
-    open: true
     page:
       id: 3327
     refs:
     - id: 321
     - id: 11839
-- - prevent-clean: 1782992852120
-    user:
-      id: 3
-    id: 11839
+- - id: 11839
     uid: 2xY4zCjId
-    word-count: 0
-    edit-user:
-      id: 3
-    time: 1782757905599
     title: guffin-meta
-    edit-nonce: Wn0wt68Sc
-    edit-time: 1782757905599
 - - string: this image **has been resized** through the Roam UI (width:257, height:None)
-    user:
-      id: 3
     id: 11167
     uid: tWkumkdUE
     parents:
@@ -814,8 +571,6 @@
     - id: 3329
     - id: 3332
     - id: 11163
-    time: 1781089401093
     order: 0
-    open: true
     page:
       id: 3327

@@ -12,6 +12,11 @@ Public symbols:
 - :class:`Response` — namespace for response-related types (:class:`Response.Payload`).
 - :func:`invoke_action` — sends an authenticated POST to the Local API and returns
   the parsed :class:`Response.Payload`.
+- :data:`TRANSIENT_RAW_KEYS` — Local API wire keys carrying transient session/UI state
+  (block open/collapse, page sidebar, edit/create timestamps and users, nonces, word count),
+  irrelevant to a node's structural content.
+- :func:`without_transient_keys` — drop every :data:`TRANSIENT_RAW_KEYS` entry from each pull-block
+  of a raw Datalog result.
 """
 
 import logging
@@ -207,3 +212,49 @@ def invoke_action(request_payload: Request.Payload, api_endpoint: ApiEndpoint) -
         logger.error(error_msg)
         raise requests.exceptions.HTTPError(error_msg)
     return Response.Payload.model_validate_json(response.text)
+
+
+TRANSIENT_RAW_KEYS: Final[frozenset[str]] = frozenset(
+    {
+        "open",  # :block/open — expand/collapse UI state
+        "sidebar",  # :page/sidebar — right-sidebar UI state
+        "time",  # :create/time — creation timestamp
+        "user",  # :create/user — creating-user ref
+        "edit-time",  # :edit/time — last-edit timestamp
+        "edit-user",  # :edit/user — last-editing-user ref
+        "edit-nonce",  # :page/edit-nonce — edit nonce
+        "seen-by",  # :edit/seen-by — seen-by user refs
+        "word-count",  # :page/word-count — page word count
+        "prevent-clean",  # :restrictions/prevent-clean — restriction flag
+    }
+)
+"""Local API wire keys carrying transient session/UI state, not a node's structural content.
+
+These attributes change with ordinary Roam activity (expanding a block, opening the sidebar, editing,
+viewing) without altering the exported document, so they are noise for any content-oriented consumer.
+The wire key is the namespace-stripped attribute name the Local API returns (e.g. ``:block/open`` →
+``open``); the comment on each entry records its source Datomic attribute.
+"""
+
+
+@validate_call
+def without_transient_keys(raw_result: list[list[dict[str, object]]]) -> list[list[dict[str, object]]]:
+    """Return *raw_result* with every :data:`TRANSIENT_RAW_KEYS` entry dropped from each pull-block.
+
+    A raw Datalog result is rows of pulled entities, each a flat pull-block ``dict`` whose transient
+    attributes (block open state, page sidebar, edit/create metadata, …) are top-level keys — nested
+    values are only ``{id}`` reference stubs and property maps, which carry no transient keys.  So
+    dropping the transient keys from each block dict fully removes them.  Side-effect-free: builds and
+    returns a new structure rather than mutating *raw_result*.
+
+    Args:
+        raw_result: The raw Datalog query result, as stored in
+            :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.raw_result`.
+
+    Returns:
+        A copy of *raw_result* with every transient key removed from each pull-block.
+    """
+    return [
+        [{key: value for key, value in block.items() if key not in TRANSIENT_RAW_KEYS} for block in row]
+        for row in raw_result
+    ]
