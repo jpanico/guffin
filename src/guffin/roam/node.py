@@ -18,6 +18,7 @@ Public symbols:
 - :data:`NodesByUid` — ``dict`` mapping each :attr:`~RoamNode.uid` to its :class:`RoamNode`.
 """
 
+import datetime
 import enum
 import logging
 from typing import Final
@@ -54,6 +55,8 @@ from guffin.roam.primitives import (
     RawChildren,
     RawRefs,
     Uid,
+    daily_note_title,
+    parse_daily_note_uid,
 )
 from guffin.roam.schema import SchemaAttribute
 
@@ -119,11 +122,16 @@ class RoamNode(BaseModel):
     - **Page**: ``title`` set, so ``string`` and ``page`` are ``None``.
     - **Block**: ``title`` ``None``, so ``string`` and ``page`` are set.
 
+    A further invariant, enforced by :meth:`_validate_daily_note_title`: a **daily-note page** —
+    one whose ``uid`` is an ``MM-DD-YYYY`` date (:data:`~guffin.roam.primitives.DAILY_NOTE_UID_PATTERN`)
+    — must carry that date's verbose ``title`` (e.g. ``01-01-2026`` → ``January 1st, 2026``).
+
     All remaining fields (``parents``, ``children``, ``heading``, ``refs``, etc.)
     are optional and vary by entity type and feature usage.
 
     Attributes:
-        uid: Nine-character stable block/page identifier (BLOCK_UID). Required.
+        uid: Stable block/page identifier (BLOCK_UID) — a synthetic nine-character UID or an
+            ``MM-DD-YYYY`` daily-note-page UID. Required.
         id: Datomic internal numeric entity id (:db/id). Ephemeral and not stable
             across exports. Required.
         string: Block text content (BLOCK_STRING). Present only on Block entities.
@@ -231,6 +239,30 @@ class RoamNode(BaseModel):
                 f"RoamNode (uid={self.uid!r}) must be a Page (title set) or a Block (string set); "
                 "got title=None, string=None"
             )
+        return self
+
+    @model_validator(mode="after")
+    def _validate_daily_note_title(self) -> RoamNode:
+        """Require a daily-note-UID page's title to be the verbose date the UID encodes.
+
+        A daily-note page's UID is ``MM-DD-YYYY``
+        (:data:`~guffin.roam.primitives.DAILY_NOTE_UID_PATTERN`) and Roam fixes its title to that
+        date's verbose form, e.g. ``01-01-2026`` → ``January 1st, 2026``.  Nodes with a synthetic
+        UID carry no such constraint.
+
+        Returns:
+            The validated instance.
+
+        Raises:
+            ValueError: If *uid* is a daily-note UID whose encoded date is invalid, or whose page
+                title is not that date's verbose form.
+        """
+        note_date: Final[datetime.date | None] = parse_daily_note_uid(self.uid)
+        if note_date is None:
+            return self
+        expected: Final[str] = daily_note_title(note_date)
+        if self.title != expected:
+            raise ValueError(f"daily-note page uid={self.uid!r} must have title {expected!r}, got {self.title!r}")
         return self
 
 

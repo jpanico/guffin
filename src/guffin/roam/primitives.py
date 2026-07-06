@@ -13,13 +13,19 @@ Public symbols are organized into the following groups:
   :data:`DAILY_NOTE_UID_PATTERN` (``MM-DD-YYYY`` daily-note-page UID) compose
   :data:`UID_PATTERN` / :data:`UID_RE` — the unanchored regex matching *any* node UID;
   :data:`ANCHORED_UID_PATTERN` / :data:`ANCHORED_UID_RE` — the whole-string anchored form.
+- **Functions**: :func:`parse_daily_note_uid` — parse a daily-note UID (``MM-DD-YYYY``) into a
+  :class:`datetime.date`, or ``None`` for a synthetic UID; :func:`daily_note_title` — the canonical
+  verbose Roam title (e.g. ``January 1st, 2026``) for a :class:`datetime.date`.
 """
 
+import datetime
 import enum
 from typing import Annotated, Final, Literal
 
 import regex
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
+
+from guffin.common.date import ENGLISH_MONTHS, ordinal_suffix
 
 SYNTHETIC_UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
 """Regex for a Roam-generated node UID: nine alphanumeric/dash/underscore characters (the common case).
@@ -151,3 +157,42 @@ type RawRefs = list[IdObject]
 
 Same shape as :data:`RawChildren` — :class:`IdObject` stubs awaiting normalization.
 """
+
+
+@validate_call
+def parse_daily_note_uid(uid: Uid) -> datetime.date | None:
+    """Parse a daily-note *uid* (``MM-DD-YYYY``) into its calendar date, or ``None`` if synthetic.
+
+    A daily-note UID is ``MM-DD-YYYY`` (:data:`DAILY_NOTE_UID_PATTERN`); a synthetic UID is not a date.
+
+    Args:
+        uid: The page UID to parse.
+
+    Returns:
+        The :class:`datetime.date` a daily-note UID encodes, or ``None`` for a synthetic UID.
+
+    Raises:
+        ValueError: If *uid* matches the daily-note pattern but encodes an impossible calendar date
+            (e.g. ``13-45-2026``) — ``strptime`` rejects it.
+    """
+    if regex.fullmatch(DAILY_NOTE_UID_PATTERN, uid) is None:
+        return None
+    return datetime.datetime.strptime(uid, "%m-%d-%Y").date()
+
+
+@validate_call
+def daily_note_title(note_date: datetime.date) -> str:
+    """Return the canonical Roam daily-note page title for *note_date*, e.g. ``January 1st, 2026``.
+
+    The title is the verbose date Roam fixes a daily-note page's title to: the English month name,
+    the day-of-month with its ordinal suffix, and the year.  Built from the fixed
+    :data:`~guffin.common.date.ENGLISH_MONTHS` and :func:`~guffin.common.date.ordinal_suffix` (not
+    ``strftime``, whose ``%B`` is locale-dependent and which has no ordinal-suffix directive).
+
+    Args:
+        note_date: The calendar date to format.
+
+    Returns:
+        The verbose title, e.g. ``January 1st, 2026``.
+    """
+    return f"{ENGLISH_MONTHS[note_date.month - 1]} {note_date.day}{ordinal_suffix(note_date.day)}, {note_date.year}"

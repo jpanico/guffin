@@ -1,5 +1,6 @@
 """Tests for the guffin.roam.primitives module."""
 
+import datetime
 from typing import Final
 
 import pytest
@@ -13,6 +14,8 @@ from guffin.roam.primitives import (
     UID_PATTERN,
     UID_RE,
     Uid,
+    daily_note_title,
+    parse_daily_note_uid,
 )
 
 _VALID_UID: Final[str] = "abc123xyz"
@@ -123,3 +126,49 @@ class TestUidType:
         """Test that a string merely containing a UID is rejected (anchoring is load-bearing)."""
         with pytest.raises(ValidationError):
             _UID_ADAPTER.validate_python("xxabc123xyzyy")
+
+
+class TestParseDailyNoteUid:
+    """parse_daily_note_uid() parses an MM-DD-YYYY UID into a date, or None for a synthetic UID."""
+
+    def test_synthetic_uid_returns_none(self) -> None:
+        """A synthetic (non-daily-note) UID is not a date."""
+        assert parse_daily_note_uid(_VALID_UID) is None
+
+    def test_daily_note_uid_parses_to_date(self) -> None:
+        """An MM-DD-YYYY UID parses month-first into the encoded calendar date."""
+        assert parse_daily_note_uid("08-24-2026") == datetime.date(2026, 8, 24)
+
+    def test_impossible_date_raises(self) -> None:
+        """A daily-note-shaped UID encoding an impossible calendar date raises."""
+        with pytest.raises(ValueError):
+            parse_daily_note_uid("13-45-2026")
+
+
+class TestDailyNoteTitle:
+    """daily_note_title() renders a date as the canonical verbose Roam daily-note title."""
+
+    @pytest.mark.parametrize(
+        ("note_date", "title"),
+        [
+            (datetime.date(2026, 8, 24), "August 24th, 2026"),
+            (datetime.date(2026, 1, 1), "January 1st, 2026"),
+            (datetime.date(2026, 1, 2), "January 2nd, 2026"),
+            (datetime.date(2026, 1, 3), "January 3rd, 2026"),
+            (datetime.date(2026, 1, 11), "January 11th, 2026"),
+            (datetime.date(2026, 1, 21), "January 21st, 2026"),
+            (datetime.date(2026, 1, 22), "January 22nd, 2026"),
+            (datetime.date(2026, 1, 23), "January 23rd, 2026"),
+            (datetime.date(2026, 1, 31), "January 31st, 2026"),
+            (datetime.date(2025, 12, 25), "December 25th, 2025"),
+        ],
+    )
+    def test_verbose_title(self, note_date: datetime.date, title: str) -> None:
+        """Each ordinal form (st/nd/rd/th, incl. the 11-13 exception) renders correctly."""
+        assert daily_note_title(note_date) == title
+
+    def test_round_trips_with_parse(self) -> None:
+        """A daily-note UID parsed to a date and back to a title yields Roam's page title."""
+        note_date = parse_daily_note_uid("01-01-2026")
+        assert note_date is not None
+        assert daily_note_title(note_date) == "January 1st, 2026"

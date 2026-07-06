@@ -627,3 +627,54 @@ class TestEffectiveChildrenViewType:
             children_view_type=view_type,
         )
         assert effective_children_view_type(node) == view_type
+
+
+class TestDailyNoteTitleValidation:
+    """A daily-note-UID (MM-DD-YYYY) page's title must be the verbose date the UID encodes."""
+
+    def test_matching_title_is_accepted(self) -> None:
+        """A daily-note page whose title is the correct verbose date validates."""
+        node = RoamNode(uid="01-01-2026", id=1, title="January 1st, 2026")
+        assert node.title == "January 1st, 2026"
+
+    @pytest.mark.parametrize(
+        ("uid", "title"),
+        [
+            ("08-24-2026", "August 24th, 2026"),
+            ("01-01-2026", "January 1st, 2026"),
+            ("01-02-2026", "January 2nd, 2026"),
+            ("01-03-2026", "January 3rd, 2026"),
+            ("01-04-2026", "January 4th, 2026"),
+            ("01-11-2026", "January 11th, 2026"),
+            ("01-12-2026", "January 12th, 2026"),
+            ("01-13-2026", "January 13th, 2026"),
+            ("01-21-2026", "January 21st, 2026"),
+            ("01-22-2026", "January 22nd, 2026"),
+            ("01-23-2026", "January 23rd, 2026"),
+            ("01-31-2026", "January 31st, 2026"),
+            ("12-25-2025", "December 25th, 2025"),
+        ],
+    )
+    def test_ordinal_and_month_forms(self, uid: str, title: str) -> None:
+        """The expected title covers each ordinal suffix (st/nd/rd/th, incl. the 11-13 exception)."""
+        assert RoamNode(uid=uid, id=1, title=title).title == title
+
+    def test_wrong_title_is_rejected(self) -> None:
+        """A daily-note page whose title is not the verbose date is rejected."""
+        with pytest.raises(ValidationError, match="must have title 'January 1st, 2026'"):
+            RoamNode(uid="01-01-2026", id=1, title="Jan 1 2026")
+
+    def test_title_for_a_different_date_is_rejected(self) -> None:
+        """A daily-note page titled with a different date than its UID is rejected."""
+        with pytest.raises(ValidationError, match="must have title"):
+            RoamNode(uid="01-01-2026", id=1, title="January 2nd, 2026")
+
+    def test_impossible_date_uid_is_rejected(self) -> None:
+        """A daily-note-shaped UID encoding an impossible calendar date is rejected."""
+        with pytest.raises(ValidationError):
+            RoamNode(uid="13-45-2026", id=1, title="whatever")
+
+    def test_synthetic_uid_title_is_unconstrained(self) -> None:
+        """A page with a synthetic UID may carry any title."""
+        node = RoamNode(uid="abc123xyz", id=1, title="An Arbitrary Page Title")
+        assert node.title == "An Arbitrary Page Title"
