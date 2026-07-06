@@ -8,7 +8,8 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue
+from guffin.model.attribute import Attribute, AttributeInstance, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import HeadingVertex, ImageVertex, PageVertex, PdfVertex, TextVertex, Vertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import (

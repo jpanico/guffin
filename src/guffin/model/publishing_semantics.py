@@ -67,11 +67,10 @@ from pydantic import ConfigDict, Field, field_validator, validate_call
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 from guffin.model.attribute import (
     Attribute,
-    AttributeAssignment,
     AttributeDomain,
-    verified_sole_value_text,
 )
 from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
+from guffin.model.attribute_assignment import AttributeAssignment, verified_sole_value_text
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
@@ -279,7 +278,7 @@ def find_publishing_attribute(vertex: Vertex, attribute: PublishingSemantics) ->
         attribute: The Guffin attribute to look up.
 
     Returns:
-        The matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when *vertex*
+        The matching :class:`~guffin.model.attribute_assignment.AttributeAssignment`, or ``None`` when *vertex*
         has no such Guffin attribute.
     """
     return find_attribute_assignment(vertex, attribute.value)

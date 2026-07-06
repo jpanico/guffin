@@ -61,7 +61,8 @@ from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.table import Table, TableStyle
-from guffin.model.attribute import Attribute, AttributeAssignment, find_assignment_for
+from guffin.model.attribute import Attribute
+from guffin.model.attribute_assignment import AttributeAssignment, find_assignment_for
 from guffin.model.primitives import Uid
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 
@@ -559,7 +560,7 @@ def is_asset_vertex(vertex: Vertex) -> TypeIs[AssetVertex]:
 def find_attribute_assignment(vertex: Vertex, attribute: Attribute) -> AttributeAssignment | None:
     """Return *vertex*'s attribute assignment for *attribute*, or ``None``.
 
-    Convenience over :func:`~guffin.model.attribute.find_assignment_for` that searches the
+    Convenience over :func:`~guffin.model.attribute_assignment.find_assignment_for` that searches the
     vertex's folded attribute assignments (matching by attribute identity: name + domain).
 
     Args:
@@ -567,7 +568,7 @@ def find_attribute_assignment(vertex: Vertex, attribute: Attribute) -> Attribute
         attribute: The attribute to match.
 
     Returns:
-        The first matching :class:`~guffin.model.attribute.AttributeAssignment`, or ``None`` when
+        The first matching :class:`~guffin.model.attribute_assignment.AttributeAssignment`, or ``None`` when
         *vertex* has no assignment for *attribute*.
     """
     return find_assignment_for(vertex.attribute_assignments, attribute)

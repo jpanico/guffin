@@ -11,7 +11,8 @@ import panflute as pf  # type: ignore[import-untyped]
 import pytest
 from conftest import FIXTURES_PDF_DIR
 
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.publishing_semantics import PdfRender
 from guffin.model.vertex import PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind

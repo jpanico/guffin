@@ -16,7 +16,8 @@ from pydantic import HttpUrl
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,

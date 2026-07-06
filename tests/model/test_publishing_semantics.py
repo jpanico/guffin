@@ -9,12 +9,12 @@ from pydantic import ValidationError
 
 from guffin.model.attribute import (
     Attribute,
-    AttributeAssignment,
     AttributeDomain,
     AttributeInstance,
     LiteralValue,
 )
 from guffin.model.attribute_anchor import AttributeAnchor
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,

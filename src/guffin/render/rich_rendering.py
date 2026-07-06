@@ -34,7 +34,8 @@ from rich.tree import Tree as RichTree
 from guffin.common.geometry import ImageSize
 from guffin.common.table import Table as GuffinTable
 from guffin.common.table import TableStyle
-from guffin.model.attribute import AttributeAssignment, AttributeDomain, LiteralValue
+from guffin.model.attribute import AttributeDomain, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,

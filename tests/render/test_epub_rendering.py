@@ -15,7 +15,8 @@ from conftest import article5_node_tree
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.provenance import Provenance
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind

@@ -5,7 +5,8 @@ from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance, LiteralValue, ReferenceValue
+from guffin.model.attribute import Attribute, AttributeInstance, LiteralValue, ReferenceValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
     BlockEmbedVertex,
     ImageVertex,

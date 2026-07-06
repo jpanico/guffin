@@ -86,11 +86,11 @@ from guffin.common.markdown import contains_fenced_code_block
 from guffin.common.provenance import Provenance
 from guffin.common.table import HAlign
 from guffin.model.attribute import (
-    AttributeAssignment,
     AttributeDomain,
     ReferenceValue,
     attribute_value_text,
 )
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
@@ -180,7 +180,7 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
 
 
 def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
-    """Reconstruct the Pandoc-Markdown line for an :class:`~guffin.model.attribute.AttributeAssignment`.
+    """Reconstruct the Pandoc-Markdown line for an :class:`~guffin.model.attribute_assignment.AttributeAssignment`.
 
     Produces ``[***<domain>/<attribute>***]{.underline}: <value>, …`` where each
     :class:`~guffin.model.attribute.ReferenceValue` is rendered as a "pill"-styled hashtag link
@@ -269,7 +269,7 @@ def _attribute_pill_blocks(
 ) -> tuple[list[pf.ListItem], list[pf.Block]]:
     r"""Render a vertex's attribute assignments as trailing pill blocks for the given *layout*.
 
-    Each :class:`~guffin.model.attribute.AttributeAssignment` is reconstructed into its
+    Each :class:`~guffin.model.attribute_assignment.AttributeAssignment` is reconstructed into its
     Pandoc-Markdown pill line (see :func:`_attribute_assignment_text`) and rendered as a single
     flowing block.  Under a list layout the blocks are :class:`~panflute.ListItem`\\ s (so they
     join the parent's bullet/numbered list as trailing items, reproducing their former

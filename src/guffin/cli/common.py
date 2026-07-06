@@ -22,7 +22,7 @@ from pydantic import validate_call
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.common.validation import ValidationResult
-from guffin.model.attribute import AttributeAssignment, sole_value_text
+from guffin.model.attribute_assignment import AttributeAssignment, sole_value_text
 from guffin.model.publishing_semantics import (
     PublishingSemantics,
     find_publishing_attribute,

@@ -16,11 +16,11 @@ from guffin.common.table import Table, TableStyle
 from guffin.common.validation import ValidationError, ValidationResult
 from guffin.model.attribute import (
     Attribute,
-    AttributeAssignment,
     AttributeDomain,
     AttributeInstance,
     LiteralValue,
 )
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.publishing_semantics import PublishingSemantics
 from guffin.model.vertex import (
     BlockEmbedVertex,

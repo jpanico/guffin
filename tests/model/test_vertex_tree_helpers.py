@@ -2,7 +2,8 @@
 
 from conftest import article1_vertex_tree
 
-from guffin.model.attribute import Attribute, AttributeAssignment, AttributeInstance
+from guffin.model.attribute import Attribute, AttributeInstance
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import BlockEmbedVertex, PageVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices

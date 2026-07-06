@@ -36,7 +36,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_cal
 from guffin.common.geometry import ImageSize
 
 logger = logging.getLogger(__name__)
-from guffin.model.attribute import Attribute, AttributeAssignment, is_assignment_for
+from guffin.model.attribute import Attribute
+from guffin.model.attribute_assignment import AttributeAssignment, is_assignment_for
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -202,7 +203,7 @@ def transcluded_vertices(tree: VertexTree) -> list[Vertex]:
 def assignments_for(tree: VertexTree, attribute: Attribute) -> Iterator[tuple[Vertex, AttributeAssignment]]:
     """Return every ``(vertex, assignment)`` pair in *tree* whose assignment is for *attribute*.
 
-    An assignment matches per :func:`~guffin.model.attribute.is_assignment_for` (identity:
+    An assignment matches per :func:`~guffin.model.attribute_assignment.is_assignment_for` (identity:
     name + domain).  Both the tree vertices and the referenced-vertex stubs
     (:attr:`VertexTree.ref_vertices`) are walked.
 

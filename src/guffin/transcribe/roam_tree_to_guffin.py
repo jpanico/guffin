@@ -55,13 +55,13 @@ from guffin.common.media_type import MediaType
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import (
     Attribute,
-    AttributeAssignment,
     AttributeDomain,
     AttributeInstance,
     AttributeValue,
     LiteralValue,
     ReferenceValue,
 )
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -156,7 +156,7 @@ def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChild
 
 
 def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssignment:
-    """Parse an attribute-block *node*'s string into an :class:`~guffin.model.attribute.AttributeAssignment`.
+    """Parse an attribute-block *node*'s string into an :class:`~guffin.model.attribute_assignment.AttributeAssignment`.
 
     The attribute name and every tag-valued element are resolved to
     :class:`~guffin.model.vertex_link.VertexLink` references via the tree's
@@ -167,7 +167,7 @@ def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssi
         tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve referenced page titles.
 
     Returns:
-        The parsed :class:`~guffin.model.attribute.AttributeAssignment`.
+        The parsed :class:`~guffin.model.attribute_assignment.AttributeAssignment`.
 
     Raises:
         ValueError: If ``node.string`` is ``None``, is not wholly an attribute assignment, or
@@ -214,7 +214,7 @@ def _strip_surrounding_quotes(token: str) -> str:
 
 
 def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -> AttributeAssignment:
-    """Parse a ``<domain>-meta`` child *node* into an :class:`~guffin.model.attribute.AttributeAssignment`.
+    """Parse a ``<domain>-meta`` child *node* into an :class:`~guffin.model.attribute_assignment.AttributeAssignment`.
 
     This is the Guffin-specific (non-Roam-standard) attribute form: the child's string is
     ``<name>:: <value>, …`` whose values need not satisfy Roam's strict attribute syntax.  The name
@@ -230,7 +230,7 @@ def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -
         tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve the attribute name's page.
 
     Returns:
-        The parsed :class:`~guffin.model.attribute.AttributeAssignment` with ``attribute.domain`` set.
+        The parsed :class:`~guffin.model.attribute_assignment.AttributeAssignment` with ``attribute.domain`` set.
 
     Raises:
         ValueError: If ``node.string`` is ``None``, lacks a ``::`` separator, or names a page absent
