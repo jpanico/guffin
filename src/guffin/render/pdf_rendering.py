@@ -9,12 +9,11 @@ invoking Pandoc via :mod:`pypandoc`.
 Cloud Firestore image assets are fetched via
 :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets`, written to a temporary
 directory, and embedded in the PDF as local-path
-:class:`~panflute.Image` elements.  Cloud Firestore PDF assets are fetched the same
-way and attached to the output via Typst ``pdf.attach`` under their originally uploaded
-filename; an embed tagged ``pdf-render:: inline`` additionally renders every page of
-the asset in the document flow (one full-width Typst ``image`` per page), while the
-untagged default keeps a hyperlink to the asset's source.  An optional *cache_dir*
-avoids re-downloading unchanged assets across runs.
+:class:`~panflute.Image` elements.  Cloud Firestore PDF assets are *not* embedded in the
+output (matching the EPUB format): an embed tagged ``pdf-render:: inline`` renders every
+page of the asset in the document flow (one full-width Typst ``image`` per page), while
+the untagged default renders as the PDF's original filename in plain text, with no link.
+An optional *cache_dir* avoids re-downloading unchanged assets across runs.
 
 The Bergfink Pandoc/Typst template (bundled as package data under
 ``guffin/render/typst_resources/``, alongside the ``typst_*.lua`` Pandoc filters) is used by
@@ -45,7 +44,6 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 from pypdf import PdfReader
 
-from guffin.common.filenames import shell_safe_filename
 from guffin.common.provenance import Provenance
 from guffin.model.chicago_structure import StructuralElement
 from guffin.model.publishing_semantics import (
@@ -216,17 +214,15 @@ def _dump_typst_sources(
 
 
 class _PdfEmbedSpec(NamedTuple):
-    """Everything the Typst emission needs for one embedded PDF asset.
+    """What the Typst emission needs for one PDF-embed vertex.
 
     Attributes:
-        source_path: Local path of the fetched PDF file.
-        attachment_name: Display-worthy filename the attachment carries in the produced PDF.
+        source_path: Local path of the fetched PDF file (read per page for inline rendering).
         pages: Number of pages in the PDF.
         render: The embed's :class:`~guffin.model.publishing_semantics.PdfRender` placement.
     """
 
     source_path: Path
-    attachment_name: str
     pages: int
     render: PdfRender
 
@@ -253,12 +249,9 @@ def _typst_raw_block(text: str) -> pf.RawBlock:
 def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[str, _PdfEmbedSpec]:
     """Prepare an embed spec for every fetched PDF asset in *tree*.
 
-    Each spec carries the fetched file's path, its page count, its
+    Each spec carries the fetched file's path, its page count, and its
     :class:`~guffin.model.publishing_semantics.PdfRender` placement (the vertex's ``pdf-render``
-    tag, defaulting per :data:`~guffin.model.publishing_semantics.DEFAULT_PDF_RENDER`), and a
-    display-worthy attachment name — the originally uploaded filename when known (sanitized),
-    else the deterministic storage name.  Colliding attachment names are disambiguated with the
-    vertex UID; sanitized names that do not end in ``.pdf`` fall back to the storage name.
+    tag, defaulting per :data:`~guffin.model.publishing_semantics.DEFAULT_PDF_RENDER`).
 
     The returned specs are keyed by the vertex's source URL — the URL its rendered link carries —
     so the Pandoc document can be matched against them.  When several PDF vertices share one
@@ -274,30 +267,21 @@ def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> di
         A mapping from source URL to the :class:`_PdfEmbedSpec` for that PDF.
     """
     specs: Final[dict[str, _PdfEmbedSpec]] = {}
-    used_names: Final[set[str]] = set()
     for vertex in tree.uid_map.values():
         if not isinstance(vertex, PdfVertex) or str(vertex.source) in specs:
             continue
         ref: AssetRef | None = asset_refs.get(vertex.uid)
         if ref is None:
             continue
-        attachment_name: str = shell_safe_filename(vertex.original_file_name or "")
-        if not attachment_name.lower().endswith(".pdf"):
-            attachment_name = ref.path.name
-        if attachment_name in used_names:
-            attachment_name = f"{vertex.uid}-{attachment_name}"
-        used_names.add(attachment_name)
         page_count: int = len(PdfReader(str(ref.path)).pages)
         specs[str(vertex.source)] = _PdfEmbedSpec(
             source_path=ref.path,
-            attachment_name=attachment_name,
             pages=page_count,
             render=pdf_render_of_vertex(vertex) or DEFAULT_PDF_RENDER,
         )
         logger.info(
-            "prepared PDF embed uid=%r -> %s (%d page(s), %s)",
+            "prepared PDF embed uid=%r (%d page(s), %s)",
             vertex.uid,
-            attachment_name,
             page_count,
             specs[str(vertex.source)].render.value,
         )
@@ -305,17 +289,17 @@ def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> di
 
 
 def _apply_pdf_embeds(doc: pf.Doc, specs: dict[str, _PdfEmbedSpec]) -> None:
-    """Rewrite *doc*'s PDF-embed link paragraphs into their Typst form, in place.
+    """Rewrite *doc*'s PDF-embed link paragraphs in place; the asset is never embedded.
 
     A PDF embed reaches the document as a paragraph containing a single link whose URL is the
     asset's source URL (see the :class:`~guffin.model.vertex.PdfVertex` rendering rules).  For
     each such paragraph with a spec in *specs*:
 
-    - the original PDF is attached to the output once per asset via Typst ``pdf.attach``, under
-      the spec's attachment name (a raw block emitted at the asset's first occurrence), and
-    - a :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE` embed replaces the paragraph
-      with one full-width Typst ``image`` per page, while a
-      :attr:`~guffin.model.publishing_semantics.PdfRender.LINK` embed keeps its link paragraph.
+    - a :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE` embed is replaced by one
+      full-width Typst ``image`` per page, and
+    - a :attr:`~guffin.model.publishing_semantics.PdfRender.LINK` embed is replaced by its bare
+      label text — the PDF's original filename with no hyperlink (the source file is not carried
+      into the output, matching the EPUB format).
 
     Inline mentions of a PDF (a link inside surrounding prose) are left untouched.
 
@@ -324,7 +308,6 @@ def _apply_pdf_embeds(doc: pf.Doc, specs: dict[str, _PdfEmbedSpec]) -> None:
         specs: Mapping from source URL to :class:`_PdfEmbedSpec`, as built by
             :func:`_prepare_pdf_embeds`.
     """
-    attached: Final[set[str]] = set()
 
     def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Block] | None:
         if not isinstance(elem, pf.Para) or len(list(elem.content)) != 1:
@@ -335,26 +318,14 @@ def _apply_pdf_embeds(doc: pf.Doc, specs: dict[str, _PdfEmbedSpec]) -> None:
         spec: Final[_PdfEmbedSpec | None] = specs.get(inline.url)
         if spec is None:
             return None
-        blocks: Final[list[pf.Block]] = []
-        if inline.url not in attached:
-            attached.add(inline.url)
-            # Typst resolves the name as a root-relative path, so anchoring it at the root ("/")
-            # makes the attachment display as the bare filename; the bytes come from read().
-            blocks.append(
-                _typst_raw_block(
-                    f"#pdf.attach({_typst_str('/' + spec.attachment_name)}, "
-                    f"read({_typst_str(str(spec.source_path))}, encoding: none))"
-                )
-            )
         if spec.render is PdfRender.INLINE:
             pages_markup: Final[str] = "\n".join(
                 f"#image({_typst_str(str(spec.source_path))}, page: {page}, width: 100%)"
                 for page in range(1, spec.pages + 1)
             )
-            blocks.append(_typst_raw_block(pages_markup))
-        else:
-            blocks.append(elem)
-        return blocks
+            return [_typst_raw_block(pages_markup)]
+        # LINK: drop the hyperlink, keeping only the label text (the PDF's filename).
+        return [pf.Para(*list(inline.content))]
 
     doc.walk(_action)
 
@@ -492,7 +463,8 @@ def render(
         enriched_tree: Final[VertexTree] = fetched[0]
         asset_refs: Final[dict[Uid, AssetRef]] = fetched[1]
         # Only image assets feed the document build: PDF vertices render as links to their
-        # remote source, and _apply_pdf_embeds rewrites those into the Typst embedding below.
+        # remote source, which _apply_pdf_embeds rewrites below into inline pages or bare filename
+        # text (the PDF file itself is never embedded).
         asset_files: Final[dict[Uid, Path]] = {
             uid: ref.path for uid, ref in asset_refs.items() if isinstance(enriched_tree.uid_map[uid], ImageVertex)
         }

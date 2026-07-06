@@ -22,7 +22,6 @@ from guffin.render.pandoc_rendering import vertex_tree_to_pandoc
 from guffin.render.pdf_rendering import _apply_pdf_embeds, _prepare_pdf_embeds, _typst_str
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fa.pdf.enc?alt=media&token=aaa"
-_URL_B = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fb.pdf.enc?alt=media&token=bbb"
 
 _INLINE_TAG = AttributeAssignment(
     attribute=AttributeInstance(
@@ -81,13 +80,14 @@ class TestTypstStr:
 class TestPreparePdfEmbeds:
     """_prepare_pdf_embeds() builds one spec per fetched PDF asset, keyed by source URL."""
 
-    def test_spec_carries_name_pages_and_default_render(self, tmp_path: Path) -> None:
-        """An untagged PDF yields a LINK spec with the original attachment name and page count."""
+    def test_spec_carries_path_pages_and_default_render(self, tmp_path: Path) -> None:
+        """An untagged PDF yields a LINK spec carrying the fetched path and page count."""
         vertex = _pdf("pdfuid001")
         tree = VertexTree(tree_vertices=[vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        ref = _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")
+        specs = _prepare_pdf_embeds(tree, {"pdfuid001": ref})
         spec = specs[str(vertex.source)]
-        assert spec.attachment_name == "dummy.pdf"
+        assert spec.source_path == ref.path
         assert spec.pages == 1
         assert spec.render is PdfRender.LINK
 
@@ -97,28 +97,6 @@ class TestPreparePdfEmbeds:
         tree = VertexTree(tree_vertices=[vertex])
         specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         assert specs[str(vertex.source)].render is PdfRender.INLINE
-
-    def test_unknown_original_name_falls_back_to_storage_name(self, tmp_path: Path) -> None:
-        """Without an original filename, the attachment carries the deterministic storage name."""
-        vertex = _pdf("pdfuid001", original_file_name=None)
-        tree = VertexTree(tree_vertices=[vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf", None)})
-        assert specs[str(vertex.source)].attachment_name == "sha1.pdf"
-
-    def test_colliding_names_disambiguated_by_uid(self, tmp_path: Path) -> None:
-        """Two different PDFs with the same original name get distinct attachment names."""
-        first = _pdf("pdfuid001", url=_URL_A)
-        second = _pdf("pdfuid002", url=_URL_B)
-        tree = VertexTree(tree_vertices=[first, second])
-        specs = _prepare_pdf_embeds(
-            tree,
-            {
-                "pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf"),
-                "pdfuid002": _dummy_ref("pdfuid002", tmp_path, "sha2.pdf"),
-            },
-        )
-        assert specs[str(first.source)].attachment_name == "dummy.pdf"
-        assert specs[str(second.source)].attachment_name == "pdfuid002-dummy.pdf"
 
     def test_unfetched_pdf_is_skipped(self, tmp_path: Path) -> None:
         """A PDF vertex with no fetched asset contributes no spec."""
@@ -144,57 +122,36 @@ class TestApplyPdfEmbeds:
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         return doc, specs, str(vertex.source)
 
-    def test_link_mode_attaches_and_keeps_link_paragraph(self, tmp_path: Path) -> None:
-        """A LINK embed gains a pdf.attach raw block ahead of its (unchanged) link paragraph.
+    def test_link_mode_drops_link_keeping_filename_text(self, tmp_path: Path) -> None:
+        """A LINK embed is replaced by bare filename text — no attachment, no hyperlink.
 
-        The link-placed embed follows its parent's BULLET layout, so both blocks live inside
+        The link-placed embed follows its parent's BULLET layout, so the paragraph lives inside
         the bulleted list item.
         """
-        doc, specs, url = self._doc_and_specs(tmp_path, inline=False)
+        doc, specs, _url = self._doc_and_specs(tmp_path, inline=False)
         _apply_pdf_embeds(doc, specs)  # type: ignore[arg-type]
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.BulletList)
         item_blocks = list(list(blocks[0].content)[0].content)
-        assert len(item_blocks) == 2
-        assert isinstance(item_blocks[0], pf.RawBlock)
-        assert item_blocks[0].format == "typst"
-        assert '#pdf.attach("/dummy.pdf"' in item_blocks[0].text
-        assert isinstance(item_blocks[1], pf.Para)
-        assert list(item_blocks[1].content)[0].url == url
+        assert len(item_blocks) == 1
+        assert isinstance(item_blocks[0], pf.Para)
+        assert not any(isinstance(inline, pf.Link) for inline in item_blocks[0].content)
+        assert pf.stringify(item_blocks[0]).strip() == "dummy.pdf"
+        assert not any(isinstance(block, pf.RawBlock) for block in doc.content)
 
-    def test_inline_mode_attaches_and_renders_pages(self, tmp_path: Path) -> None:
-        """An INLINE embed is replaced by a pdf.attach raw block and one image call per page."""
+    def test_inline_mode_renders_pages_without_attachment(self, tmp_path: Path) -> None:
+        """An INLINE embed is replaced by one image call per page and no attachment."""
         doc, specs, _url = self._doc_and_specs(tmp_path, inline=True)
         _apply_pdf_embeds(doc, specs)  # type: ignore[arg-type]
         blocks = list(doc.content)
-        assert len(blocks) == 2
+        assert len(blocks) == 1
         assert isinstance(blocks[0], pf.RawBlock)
-        assert "#pdf.attach" in blocks[0].text
-        assert isinstance(blocks[1], pf.RawBlock)
-        assert blocks[1].format == "typst"
-        assert blocks[1].text.count("#image(") == 1
-        assert "page: 1" in blocks[1].text
-        assert "width: 100%" in blocks[1].text
-
-    def test_attachment_emitted_once_per_asset(self, tmp_path: Path) -> None:
-        """The same PDF embedded twice is attached once; both occurrences keep their treatment."""
-        page = PageVertex(uid="page00001", title="Doc", children=["pdfuid001", "pdfuid002"])
-        first = _pdf("pdfuid001")
-        second = _pdf("pdfuid002")  # same source URL as first
-        tree = VertexTree(tree_vertices=[page, first, second])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
-        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        _apply_pdf_embeds(doc, specs)
-
-        raw_blocks: list[pf.RawBlock] = []
-
-        def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
-            if isinstance(elem, pf.RawBlock):
-                raw_blocks.append(elem)
-
-        doc.walk(_collect)
-        assert len(raw_blocks) == 1
+        assert blocks[0].format == "typst"
+        assert "#pdf.attach" not in blocks[0].text
+        assert blocks[0].text.count("#image(") == 1
+        assert "page: 1" in blocks[0].text
+        assert "width: 100%" in blocks[0].text
 
     def test_prose_paragraph_with_link_untouched(self, tmp_path: Path) -> None:
         """A link inside surrounding prose is not a PDF embed and is left alone."""

@@ -90,8 +90,9 @@ class PdfRender(enum.StrEnum):
 
     Attributes:
         INLINE: Every page of the PDF renders in the document flow, in place of the embed.
-        LINK: The PDF is represented by a hyperlink (the untagged default,
-            :data:`DEFAULT_PDF_RENDER`).
+        LINK: The PDF is represented as a reference rather than its rendered pages (the untagged
+            default, :data:`DEFAULT_PDF_RENDER`); how that reference is presented is format-specific
+            (e.g. a bundled-file link in Markdown, plain filename text in PDF).
     """
 
     INLINE = "inline"
