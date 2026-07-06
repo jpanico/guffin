@@ -325,8 +325,8 @@ def fetch_render_bundle(api_endpoint: ApiEndpoint, target: TargetArgument, stric
     try:
         trees: Final[tuple[NodeFetchResult, RenderBundle | None]] = fetch_roam_trees(
             NodeFetchSpec(anchor=NodeFetchAnchor(qualifier=target), include_refs=True),
-            True,
-            api_endpoint,
+            include_vertex_tree=True,
+            api_endpoint=api_endpoint,
             strict_semantics=strict_semantics,
         )
     except RoamNodeNotFoundError as exc:
