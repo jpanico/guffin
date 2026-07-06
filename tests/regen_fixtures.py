@@ -257,7 +257,7 @@ def main() -> None:
             profile=DefaultProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
-            options=MarkdownRenderOptions(output_dir=pathlib.Path(tmp_dir), bundle=False),
+            options=MarkdownRenderOptions(output_dir=pathlib.Path(tmp_dir), should_bundle=False),
         )
         rendered: Final[str] = (pathlib.Path(tmp_dir) / f"{out_stem}.md").read_text(encoding="utf-8")
     md_path.write_text(rendered, encoding="utf-8")
@@ -337,7 +337,7 @@ def main() -> None:
             profile=DefaultProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
-            options=MarkdownRenderOptions(output_dir=FIXTURES_MDBUNDLE, bundle=True),
+            options=MarkdownRenderOptions(output_dir=FIXTURES_MDBUNDLE, should_bundle=True),
         )
         mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{out_stem}.mdbundle"
         print(f"  wrote {mdbundle_path}")

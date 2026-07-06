@@ -24,9 +24,9 @@ class TestRenderArticleFixture:
         """Rendering article1 to a plain ``.md`` file matches the expected fixture.
 
         Exercises the full :func:`~guffin.render.md_rendering.render` path with
-        ``bundle=False`` — the same path used by ``tests/regen_fixtures.py`` to
+        ``should_bundle=False`` — the same path used by ``tests/regen_fixtures.py`` to
         produce the expected fixture — so the production resolver and every GFM
-        Lua filter are covered.  ``bundle=False`` never fetches images, so the
+        Lua filter are covered.  ``should_bundle=False`` never fetches images, so the
         supplied :class:`~guffin.roam.local_api.ApiEndpoint` is unused.
         """
         # render no longer normalizes; callers pass an already-safe stem.
@@ -41,7 +41,7 @@ class TestRenderArticleFixture:
             profile=DefaultProfile(),
             filename_stem=stem,
             api_endpoint=endpoint,
-            options=MarkdownRenderOptions(output_dir=tmp_path, bundle=False),
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
         )
         result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
         expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()

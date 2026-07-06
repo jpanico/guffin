@@ -88,16 +88,16 @@ def render(
     :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc` (with the page
     title rendered as an H1 header), then invokes Pandoc to produce
     GFM output.  Writes the result in one of two modes controlled by
-    ``options.bundle``:
+    ``options.should_bundle``:
 
-    - ``bundle=True`` (default) — fetches Cloud Firestore image and PDF assets
+    - ``should_bundle=True`` (default) — fetches Cloud Firestore image and PDF assets
       via :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets` (which also
       enriches the vertex tree with each image's native pixel size), places the
       assets in the bundle directory, and writes a self-contained
       ``<filename_stem>.mdbundle/`` directory containing the
       Markdown file and all assets.  Image and PDF links in the Markdown
       reference the local filenames.
-    - ``bundle=False`` — writes the GFM text directly to
+    - ``should_bundle=False`` — writes the GFM text directly to
       ``<output_dir>/<filename_stem>.md`` without fetching
       assets.  :class:`~guffin.vertex.ImageVertex` and
       :class:`~guffin.vertex.PdfVertex` nodes fall back to
@@ -112,18 +112,18 @@ def render(
         filename_stem: Output filename stem, used verbatim to derive the output
             path; the caller is responsible for POSIX-safety.
         api_endpoint: Roam Local API endpoint used to fetch image assets
-            (bundle mode only; not called when ``options.bundle`` is ``False``).
+            (bundle mode only; not called when ``options.should_bundle`` is ``False``).
         options: The Markdown rendering options.  Reads ``output_dir`` (where the
-            output file or bundle is written; created if absent), ``bundle``
+            output file or bundle is written; created if absent), ``should_bundle``
             (``.mdbundle`` directory with embedded images vs. a plain ``.md`` file),
-            ``cache_dir`` (optional cross-run asset cache, ignored when ``bundle`` is
+            ``cache_dir`` (optional cross-run asset cache, ignored when ``should_bundle`` is
             ``False``), and ``dump_pandoc_ast`` (write the serialized Panflute Doc to
             ``<output_dir>/<filename_stem>.pandoc.json`` before invoking Pandoc).
     """
     logger.debug("rendering Markdown; structural_policy=%s", profile.structural_policy)
     output_dir: Final[Path] = options.output_dir
     cache_dir: Final[Path | None] = options.cache_dir
-    bundle: Final[bool] = options.bundle
+    should_bundle: Final[bool] = options.should_bundle
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
     # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
     # fetch nor the rendered output.
@@ -131,7 +131,7 @@ def render(
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     content: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     gfm_dir: Final[Path] = _gfm_resources_dir()
-    if bundle:
+    if should_bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"
         bundle_dir.mkdir(parents=True, exist_ok=True)
         logger.info("Created bundle directory: %s", bundle_dir)

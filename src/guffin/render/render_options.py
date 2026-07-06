@@ -5,7 +5,7 @@ end so the options can be constructed and passed without pulling in CLI dependen
 
 :class:`RenderOptions` holds the settings common to every output format (destination directory,
 asset cache, AST dump).  Each format then has its own subclass carrying only the switches that
-apply to it — :class:`MarkdownRenderOptions` (the ``bundle`` mode), :class:`PdfRenderOptions`
+apply to it — :class:`MarkdownRenderOptions` (the ``should_bundle`` mode), :class:`PdfRenderOptions`
 (the Typst ``template_dir`` override and the ``include_preamble`` policy override), and
 :class:`EpubRenderOptions` (the ``include_preamble`` policy override) — tagged by an
 ``output_format`` discriminator.  A renderer accepts its own subclass, so every field
@@ -87,7 +87,7 @@ class RenderOptions(BaseModel):
         output_dir: Path,
         cache_dir: Path | None = None,
         template_dir: Path | None = None,
-        bundle: bool = True,
+        should_bundle: bool = True,
         suppress_attributes: bool = False,
         dump_pandoc_ast: bool = False,
         emit_colophon: bool = False,
@@ -98,7 +98,7 @@ class RenderOptions(BaseModel):
 
         The single place that assembles per-format options, so callers thread one object rather than a
         long parameter list.  Format-specific knobs apply only to the format that uses them
-        (``template_dir`` to PDF, ``bundle`` to Markdown, ``include_preamble`` and
+        (``template_dir`` to PDF, ``should_bundle`` to Markdown, ``include_preamble`` and
         ``number_sections`` to PDF and EPUB); the rest are common to every format.
 
         Args:
@@ -106,7 +106,7 @@ class RenderOptions(BaseModel):
             output_dir: Directory the exported document is written into.
             cache_dir: Directory for caching downloaded Cloud Firestore assets; ``None`` disables it.
             template_dir: PDF-only ``user_cfg.typ`` override directory; ``None`` uses the bundled template.
-            bundle: Markdown-only; write a ``.mdbundle`` directory (``True``) or a plain ``.md``.
+            should_bundle: Markdown-only; write a ``.mdbundle`` directory (``True``) or a plain ``.md``.
             suppress_attributes: Omit Roam attribute assignments from the output.
             dump_pandoc_ast: Write the Pandoc JSON AST alongside the output before conversion.
             emit_colophon: Stamp the output with a provenance colophon from the bundle's provenance.
@@ -145,7 +145,7 @@ class RenderOptions(BaseModel):
                 return MarkdownRenderOptions(
                     output_dir=output_dir,
                     cache_dir=cache_dir,
-                    bundle=bundle,
+                    should_bundle=should_bundle,
                     suppress_attributes=suppress_attributes,
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
@@ -159,7 +159,7 @@ class MarkdownRenderOptions(RenderOptions):
 
     Attributes:
         output_format: Always :attr:`OutputFormat.MARKDOWN` (the discriminator).
-        bundle: When ``True`` (default), fetch Cloud Firestore images and write a self-contained
+        should_bundle: When ``True`` (default), fetch Cloud Firestore images and write a self-contained
             ``.mdbundle`` directory; when ``False``, write a plain ``.md`` file with image
             references left as hyperlinks.
     """
@@ -167,7 +167,7 @@ class MarkdownRenderOptions(RenderOptions):
     output_format: Literal[OutputFormat.MARKDOWN] = Field(
         default=OutputFormat.MARKDOWN, description="Discriminator identifying Markdown options."
     )
-    bundle: bool = Field(
+    should_bundle: bool = Field(
         default=True, description="Write a .mdbundle directory with embedded images (True) or plain .md."
     )
 

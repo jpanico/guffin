@@ -51,6 +51,8 @@ configurable via the ``LOG_LEVEL`` environment variable (default: ``INFO``).
 Public symbols:
 
 - :data:`app` — the :class:`~typer.Typer` application instance.
+- :func:`fetch_render_bundle` — fetch a target's transcribed
+  :class:`~guffin.model.render_bundle.RenderBundle` from a Roam graph.
 - :func:`main` — the CLI entry point; registered as the ``export-roam-tree``
   console script.
 
@@ -70,6 +72,7 @@ import pathlib
 from typing import Annotated, Final
 
 import typer
+from pydantic import validate_call
 
 from guffin.cli.common import SemanticsValidationError, deduce_out_file_stem, fetch_roam_trees, resolve_profile
 from guffin.cli.logging_config import configure_logging
@@ -140,7 +143,7 @@ def main(
             ),
         ),
     ] = ProjectType.DEFAULT,
-    bundle: Annotated[
+    should_bundle: Annotated[
         bool,
         typer.Option(
             "--bundle/--no-bundle",
@@ -266,14 +269,65 @@ def main(
 
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port, graph_name, api_bearer_token)
 
+    # An export must not publish content that violates the guffin vocabulary, so semantics
+    # validation is strict here (dump-roam-tree keeps it advisory).
+    fetched_bundle: Final[RenderBundle] = fetch_render_bundle(api_endpoint, target, strict_semantics=True)
+
+    # The colophon's data (provenance) is stamped onto the bundle as origin metadata; whether to
+    # render it is the separate emit_colophon option carried on the render options.
+    provenance: Final[Provenance | None] = gather_provenance(extra={"type": project_type.value}) if colophon else None
+    if provenance is not None:
+        logger.info("provenance: %s", provenance.summary())
+    render_bundle: Final[RenderBundle] = fetched_bundle.with_provenance(provenance)
+
+    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
+    # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
+    # parts book; the content itself, not a CLI switch, is the source of that structure.
+    profile: Final[ProjectProfile] = resolve_profile(project_type, render_bundle.content)
+    options: Final[RenderOptions] = RenderOptions.for_format(
+        output_format,
+        output_dir=output_dir,
+        cache_dir=cache_dir,
+        template_dir=template_dir,
+        should_bundle=should_bundle,
+        suppress_attributes=suppress_attributes,
+        dump_pandoc_ast=dump_pandoc_ast,
+        emit_colophon=colophon,
+        include_preamble=preamble,
+        number_sections=numbering,
+    )
+
+    _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)
+
+
+@validate_call
+def fetch_render_bundle(api_endpoint: ApiEndpoint, target: TargetArgument, strict_semantics: bool) -> RenderBundle:
+    """Fetch *target* from a Roam graph and return its transcribed render bundle.
+
+    Resolves *target* against *api_endpoint* (following references), runs guffin-semantics
+    validation at the requested strictness, and unwraps the :class:`~guffin.model.render_bundle.RenderBundle`
+    from the fetch result.
+
+    Args:
+        api_endpoint: The Roam Local API endpoint identifying the graph and bearer token.
+        target: The page title, node UID, or ``((uid))`` block reference to fetch.
+        strict_semantics: When ``True``, a guffin-vocabulary violation aborts the fetch; when
+            ``False``, violations are advisory (logged, not fatal).
+
+    Returns:
+        The :class:`~guffin.model.render_bundle.RenderBundle` transcribed from *target*'s subtree.
+
+    Raises:
+        typer.Exit: With code 1 when the target is not found, the content fails strict semantics
+            validation, any other fetch error occurs, or no render bundle is produced.
+    """
+    graph_name: Final[str] = api_endpoint.url.graph_name
     try:
-        # An export must not publish content that violates the guffin vocabulary, so semantics
-        # validation is strict here (dump-roam-tree keeps it advisory).
         trees: Final[tuple[NodeFetchResult, RenderBundle | None]] = fetch_roam_trees(
             NodeFetchSpec(anchor=NodeFetchAnchor(qualifier=target), include_refs=True),
             True,
             api_endpoint,
-            strict_semantics=True,
+            strict_semantics=strict_semantics,
         )
     except RoamNodeNotFoundError as exc:
         kind_label: Final[str] = "Page" if exc.fetch_spec.anchor.kind == QueryAnchorKind.PAGE_TITLE else "Node"
@@ -296,32 +350,7 @@ def main(
     if fetched_bundle is None:
         logger.error("render_bundle is None; cannot export without a render bundle")
         raise typer.Exit(code=1)
-
-    # The colophon's data (provenance) is stamped onto the bundle as origin metadata; whether to
-    # render it is the separate emit_colophon option carried on the render options.
-    provenance: Final[Provenance | None] = gather_provenance(extra={"type": project_type.value}) if colophon else None
-    if provenance is not None:
-        logger.info("provenance: %s", provenance.summary())
-    render_bundle: Final[RenderBundle] = fetched_bundle.with_provenance(provenance)
-
-    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
-    # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
-    # parts book; the content itself, not a CLI switch, is the source of that structure.
-    profile: Final[ProjectProfile] = resolve_profile(project_type, render_bundle.content)
-    options: Final[RenderOptions] = RenderOptions.for_format(
-        output_format,
-        output_dir=output_dir,
-        cache_dir=cache_dir,
-        template_dir=template_dir,
-        bundle=bundle,
-        suppress_attributes=suppress_attributes,
-        dump_pandoc_ast=dump_pandoc_ast,
-        emit_colophon=colophon,
-        include_preamble=preamble,
-        number_sections=numbering,
-    )
-
-    _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)
+    return fetched_bundle
 
 
 def _render(
