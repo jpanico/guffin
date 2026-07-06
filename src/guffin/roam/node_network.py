@@ -19,9 +19,9 @@ Public symbols:
   nodes in a :data:`NodeNetwork`, or ``None`` if no node is a heading.
 """
 
-from typing import Final
+from typing import Annotated, Final
 
-from pydantic import validate_call
+from pydantic import SkipValidation, validate_call
 
 from guffin.common.markdown import HeadingLevel
 from guffin.common.validation import ValidationError
@@ -37,9 +37,18 @@ Relationships between nodes are encoded via :attr:`~guffin.roam.node.RoamNode.ch
 values within the collection.
 """
 
+# These functions receive already-validated, frozen RoamNodes on hot graph-traversal paths.  Without
+# SkipValidation, @validate_call re-validates every node in the passed NodeNetwork on *every* call
+# (running each node's model validators), which compounds to hundreds of thousands of pointless
+# re-validations while building/validating a single tree.  SkipValidation elides that.  A plain
+# assignment (not a PEP 695 ``type`` alias) so @validate_call reads the ``SkipValidation`` marker off
+# the annotation.
+_TrustedNetwork = Annotated[NodeNetwork, SkipValidation]
+_TrustedNode = Annotated[RoamNode, SkipValidation]
+
 
 @validate_call
-def all_children_present(network: NodeNetwork) -> ValidationError | None:
+def all_children_present(network: _TrustedNetwork) -> ValidationError | None:
     """Return ``None`` when every child id referenced in *network* resolves to a node in *network*.
 
     Iterates every node in *network* and checks that each :attr:`~guffin.roam.node.RoamNode.id`
@@ -72,7 +81,7 @@ def all_children_present(network: NodeNetwork) -> ValidationError | None:
 
 
 @validate_call
-def all_parents_present(network: NodeNetwork, root_node: RoamNode) -> ValidationError | None:
+def all_parents_present(network: _TrustedNetwork, root_node: _TrustedNode) -> ValidationError | None:
     """Return ``None`` when every parent id referenced in *network* resolves to a node in *network*.
 
     Iterates every node in *network* and checks that each :attr:`~guffin.roam.node.RoamNode.id`
@@ -113,7 +122,7 @@ def all_parents_present(network: NodeNetwork, root_node: RoamNode) -> Validation
 
 
 @validate_call
-def has_unique_ids(network: NodeNetwork) -> ValidationError | None:
+def has_unique_ids(network: _TrustedNetwork) -> ValidationError | None:
     """Return ``None`` when every :attr:`~guffin.roam.node.RoamNode.id` in *network* is unique.
 
     Checks that no two nodes in *network* share the same :attr:`~guffin.roam.node.RoamNode.id`
@@ -141,7 +150,7 @@ def has_unique_ids(network: NodeNetwork) -> ValidationError | None:
 
 
 @validate_call
-def is_acyclic(network: NodeNetwork) -> ValidationError | None:
+def is_acyclic(network: _TrustedNetwork) -> ValidationError | None:
     """Return ``None`` when the child-edge graph of *network* contains no directed cycles.
 
     Performs a depth-first search over the :attr:`~guffin.roam.node.RoamNode.children` edges of
@@ -199,7 +208,7 @@ def is_acyclic(network: NodeNetwork) -> ValidationError | None:
 
 
 @validate_call
-def all_descendants(ancestor: RoamNode, network: NodeNetwork) -> NodeNetwork:
+def all_descendants(ancestor: _TrustedNode, network: _TrustedNetwork) -> NodeNetwork:
     """Collect all descendant nodes of *ancestor* reachable via child edges in *network*.
 
     Performs an iterative depth-first traversal starting from *ancestor*, following each
@@ -249,7 +258,7 @@ def all_descendants(ancestor: RoamNode, network: NodeNetwork) -> NodeNetwork:
 
 
 @validate_call
-def refs_ids(network: NodeNetwork) -> set[Id]:
+def refs_ids(network: _TrustedNetwork) -> set[Id]:
     """Return the set of all :attr:`~guffin.roam.node.RoamNode.refs` ids across every node in *network*.
 
     Collects every :attr:`~guffin.roam.primitives.IdObject.id` found in the
@@ -267,7 +276,7 @@ def refs_ids(network: NodeNetwork) -> set[Id]:
 
 
 @validate_call
-def min_effective_heading_level(network: NodeNetwork) -> HeadingLevel | None:
+def min_effective_heading_level(network: _TrustedNetwork) -> HeadingLevel | None:
     """Return the minimum effective heading level across all nodes in *network*.
 
     Applies :func:`~guffin.roam.node.effective_heading_level` to every node,

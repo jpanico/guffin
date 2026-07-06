@@ -21,9 +21,9 @@ Public symbols:
 
 import logging
 from collections.abc import Iterator
-from typing import ClassVar, Final
+from typing import Annotated, ClassVar, Final
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_call
+from pydantic import BaseModel, ConfigDict, Field, SkipValidation, model_validator, validate_call
 
 from guffin.common.table import Table
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
@@ -83,9 +83,15 @@ class NodeTree(BaseModel):
 
     _creating: ClassVar[bool] = False
 
-    root_node: RoamNode = Field(..., description="The single root node of this tree.")
-    tree_network: NodeNetwork = Field(..., description="All constituent nodes of this tree, including root_node.")
-    refs_by_id: dict[Id, RoamNode] = Field(
+    # Every field below holds already-validated, frozen RoamNodes assembled by build() from a
+    # super_network that was validated on fetch.  SkipValidation stops the Pydantic constructor from
+    # re-validating each node (and it appears in several maps, so it would be re-validated several
+    # times over) on every NodeTree construction; the structural _validate_is_tree check still runs.
+    root_node: Annotated[RoamNode, SkipValidation] = Field(..., description="The single root node of this tree.")
+    tree_network: Annotated[NodeNetwork, SkipValidation] = Field(
+        ..., description="All constituent nodes of this tree, including root_node."
+    )
+    refs_by_id: Annotated[dict[Id, RoamNode], SkipValidation] = Field(
         ...,
         description=(
             "Map of id → RoamNode for every node in super_network that is either directly referenced via "
@@ -93,17 +99,17 @@ class NodeTree(BaseModel):
             "available in super_network; may be empty."
         ),
     )
-    id_map: dict[Id, RoamNode] = Field(
+    id_map: Annotated[dict[Id, RoamNode], SkipValidation] = Field(
         ...,
         exclude=True,
         description="Map of id → RoamNode for every node in tree_network or refs_by_id.",
     )
-    uid_map: dict[Uid, RoamNode] = Field(
+    uid_map: Annotated[dict[Uid, RoamNode], SkipValidation] = Field(
         ...,
         exclude=True,
         description="Map of uid → RoamNode for every node in tree_network or refs_by_id.",
     )
-    page_name_map: dict[str, RoamNode] = Field(
+    page_name_map: Annotated[dict[str, RoamNode], SkipValidation] = Field(
         ...,
         exclude=True,
         description="Map of title → RoamNode for every PAGE node in tree_network or refs_by_id.",
