@@ -147,23 +147,18 @@ class TestExportRoamTreeMdbundleFromRaw:
         ``invoke_action`` (the Local API node fetch) returns the recorded
         ``test_article_3_raw_result.yaml`` wire response, so the real RoamNode parsing,
         tree build, transcription, and bundle rendering all run.  The Cloud Firestore
-        asset fetch is avoided by pre-seeding the cache directory with the baseline
-        bundle's images — their filenames are the ``<sha256(url)>.<ext>`` cache keys, so
-        ``fetch_and_cache_asset`` resolves them as cache hits without any network call.
-        Each seeded entry gets its metadata sidecar (a cache entry is a file/sidecar pair),
-        recording no original filename so the bundle keeps the cache-key asset names the
-        baseline was recorded with.
+        asset fetch is avoided by seeding the cache directory from the recorded
+        ``Test_Article_3.default.cache`` fixture — its ``<sha256(url)>.<ext>`` files and
+        ``.meta.json`` sidecars are exactly what ``fetch_and_cache_asset`` looks up, so every
+        asset resolves as a cache hit without a network call and the bundle reproduces the
+        baseline's original-filename assets.
         """
         raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_raw_result.yaml").read_text())
         api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
 
         baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.default.mdbundle"
         cache_dir: Final[pathlib.Path] = tmp_path / "cache"
-        cache_dir.mkdir()
-        for asset in baseline.iterdir():
-            if asset.suffix != ".md":
-                shutil.copy(asset, cache_dir / asset.name)
-                (cache_dir / f"{asset.stem}.meta.json").write_text('{"original_file_name": null}', encoding="utf-8")
+        shutil.copytree(FIXTURES_MDBUNDLE_DIR / "Test_Article_3.default.cache", cache_dir)
 
         output_dir: Final[pathlib.Path] = tmp_path / "out"
         runner: CliRunner = CliRunner()

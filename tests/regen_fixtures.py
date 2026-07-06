@@ -331,21 +331,27 @@ def main() -> None:
         pdf_path: Final[pathlib.Path] = FIXTURES_PDF / f"{out_stem}.pdf"
         print(f"  wrote {pdf_path}")
 
-    # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/
+    # Fixture 8 (optional, --mdbundle): baseline .mdbundle under tests/fixtures/mdbundle/, plus the
+    # asset cache it was rendered through (``<stem>.cache`` — ``<sha256(url)>.<ext>`` files and their
+    # ``.meta.json`` sidecars) so an offline test can seed the cache and reproduce the bundle without
+    # any network fetch.
     if args.mdbundle:
         FIXTURES_MDBUNDLE.mkdir(parents=True, exist_ok=True)
-        # The renderer writes into an existing bundle dir without clearing it; start from empty
+        cache_fixture: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{out_stem}.cache"
+        # The renderer writes into an existing bundle/cache dir without clearing it; start from empty
         # so files dropped from the page (or renamed assets) don't linger in the baseline.
         shutil.rmtree(FIXTURES_MDBUNDLE / f"{out_stem}.mdbundle", ignore_errors=True)
+        shutil.rmtree(cache_fixture, ignore_errors=True)
         render(
             render_bundle,
             profile=DefaultProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
-            options=MarkdownRenderOptions(output_dir=FIXTURES_MDBUNDLE, should_bundle=True),
+            options=MarkdownRenderOptions(output_dir=FIXTURES_MDBUNDLE, should_bundle=True, cache_dir=cache_fixture),
         )
         mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{out_stem}.mdbundle"
         print(f"  wrote {mdbundle_path}")
+        print(f"  wrote {cache_fixture}")
 
     print("Done.")
 

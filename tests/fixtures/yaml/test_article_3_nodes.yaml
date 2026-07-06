@@ -46,6 +46,24 @@
   props: null
   title: null
   attrs: null
+- uid: ljzh6p2pP
+  id: 11950
+  string: '[[January 1st, 2026]]'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11947
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 11949
+  props: null
+  title: null
+  attrs: null
 - uid: yvlvNZwPC
   id: 11792
   string: '{{table}}'
@@ -117,7 +135,7 @@
 - uid: QnqMI7-2J
   id: 11771
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-  order: 18
+  order: 20
   heading: null
   children:
   - id: 11772
@@ -242,7 +260,7 @@
 - uid: LKHCU5I3z
   id: 11755
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
-  order: 10
+  order: 11
   heading: null
   children: null
   refs:
@@ -350,7 +368,7 @@
 - uid: chSSa7hfQ
   id: 11753
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((Rjt1IvrVq))'
-  order: 8
+  order: 9
   heading: null
   children: null
   refs:
@@ -368,7 +386,7 @@
 - uid: xkmJLzW3G
   id: 11804
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-  order: 19
+  order: 21
   heading: null
   children:
   - id: 11805
@@ -442,7 +460,7 @@
 - uid: SYAWArc3S
   id: 11756
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((T6cykqu88))'
-  order: 11
+  order: 12
   heading: null
   children: null
   refs:
@@ -485,6 +503,8 @@
     - This page is primarily a demonstration of different kinds of refs:
 
     -- inline page ref
+
+    -- ref to Daily Notes Page
 
     -- internal block ref (to block on this page)
 
@@ -652,7 +672,7 @@
 - uid: t62Kwufzm
   id: 11749
   string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((7dBusjzDA))'
-  order: 4
+  order: 5
   heading: null
   children: null
   refs:
@@ -796,7 +816,7 @@
 - uid: wta7y8AlI
   id: 11774
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-  order: 16
+  order: 18
   heading: null
   children:
   - id: 11775
@@ -832,7 +852,7 @@
 - uid: DZsnC1-jM
   id: 11748
   string: '#c:FUCHSIA **inline BOLD ref ⟶** ((QB8DChDBs))'
-  order: 3
+  order: 4
   heading: null
   children: null
   refs:
@@ -900,7 +920,7 @@
 - uid: SCzzQaVai
   id: 11752
   string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
-  order: 7
+  order: 8
   heading: null
   children: null
   refs:
@@ -934,7 +954,7 @@
 - uid: vLxyRJcr2
   id: 11712
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
-  order: 13
+  order: 15
   heading: null
   children:
   - id: 11713
@@ -952,7 +972,7 @@
 - uid: ipvsMyx77
   id: 11776
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-  order: 17
+  order: 19
   heading: null
   children:
   - id: 11777
@@ -970,7 +990,7 @@
 - uid: 88ny0VOH4
   id: 11750
   string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((VvbwbLchA))'
-  order: 5
+  order: 6
   heading: null
   children: null
   refs:
@@ -1005,7 +1025,7 @@
 - uid: 8n19o7ito
   id: 11751
   string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((ETesnk4Zi))'
-  order: 6
+  order: 7
   heading: null
   children: null
   refs:
@@ -1108,6 +1128,24 @@
   - id: 11716
   - id: 11790
   - id: 11792
+  props: null
+  title: null
+  attrs: null
+- uid: J185WLn64
+  id: 11946
+  string: '#c:FUCHSIA **inline DAILY NOTES PAGE ref ⟶** [[January 1st, 2026]]'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 11947
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -1226,7 +1264,7 @@
 - uid: HB9MEj5W8
   id: 11754
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((9a_6taJAn))'
-  order: 9
+  order: 10
   heading: null
   children: null
   refs:
@@ -1244,7 +1282,7 @@
 - uid: AaB6F4c0F
   id: 11747
   string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((2yQYaKIEV))'
-  order: 2
+  order: 3
   heading: null
   children: null
   refs:
@@ -1353,7 +1391,7 @@
 - uid: GQSLJp92S
   id: 11764
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
-  order: 14
+  order: 16
   heading: null
   children:
   - id: 11765
@@ -1389,7 +1427,7 @@
 - uid: n528kYv5_
   id: 11710
   string: '#c:FUCHSIA **inline BLOCK ref ⟶** ((tWkumkdUE))'
-  order: 1
+  order: 2
   heading: null
   children: null
   refs:
@@ -1516,7 +1554,7 @@
 - uid: 8jkmASa1c
   id: 4233
   string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
-  order: 15
+  order: 17
   heading: null
   children:
   - id: 4234
@@ -1640,6 +1678,24 @@
   props: null
   title: null
   attrs: null
+- uid: sjk6dh9FX
+  id: 11949
+  string: '#c:FUCHSIA **standalone DAILY NOTES PAGE ref ↓** '
+  order: 14
+  heading: null
+  children:
+  - id: 11950
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
 - uid: JpKqqwnAJ
   id: 11708
   string: ((LfaVt18Iw))
@@ -1684,6 +1740,8 @@
   - id: 11774
   - id: 11776
   - id: 11804
+  - id: 11946
+  - id: 11949
   refs: null
   page:
     id: 4225
@@ -1769,7 +1827,7 @@
 - uid: Dt8evi7AW
   id: 11714
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
-  order: 12
+  order: 13
   heading: null
   children:
   - id: 11715

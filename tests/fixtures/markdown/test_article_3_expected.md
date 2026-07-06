@@ -9,6 +9,8 @@
 >
 > – inline page ref
 >
+> – ref to Daily Notes Page
+>
 > – internal block ref (to block on this page)
 >
 > – external block ref (to block on a *different page*)
@@ -121,6 +123,7 @@ def fizz_buzz(limit: int = 100):
 ## External (out-of-page) links:
 
 - <span style="color: fuchsia">**inline PAGE ref ⟶**</span> Test Article 2
+- <span style="color: fuchsia">**inline DAILY NOTES PAGE ref ⟶**</span> January 1st, 2026
 - <span style="color: fuchsia">**inline BLOCK ref ⟶**</span> this image **has been resized** through the Roam UI (width:257, height:None)
 - <span style="color: fuchsia">**inline ITALICS ref ⟶**</span> This para features *italics*
 - <span style="color: fuchsia">**inline BOLD ref ⟶**</span> This para features **bold**
@@ -134,6 +137,8 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**inline BOXED ORANGE ref ⟶**</span> <span style="border: 1px solid orange; padding: 2px 4px">This span has box color orange.</span> This span does not.
 - <span style="color: fuchsia">**standalone PAGE ref ↓**</span>
   - Test Article 2
+- <span style="color: fuchsia">**standalone DAILY NOTES PAGE ref ↓**</span>
+  - January 1st, 2026
 - <span style="color: fuchsia">**standalone BLOCK ref ↓**</span>
   - this image **has been resized** through the Roam UI (width:257, height:None)
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>

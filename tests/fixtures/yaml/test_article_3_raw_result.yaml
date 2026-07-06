@@ -98,6 +98,18 @@
     refs:
     - id: 5450
     - id: 5458
+- - string: '[[January 1st, 2026]]'
+    id: 11950
+    uid: ljzh6p2pP
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 11949
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11947
 - - string: '{{table}}'
     children:
     - id: 11793
@@ -167,7 +179,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 18
+    order: 20
     page:
       id: 4225
     refs:
@@ -313,7 +325,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 10
+    order: 11
     page:
       id: 4225
     refs:
@@ -415,7 +427,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 8
+    order: 9
     page:
       id: 4225
     refs:
@@ -432,7 +444,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 19
+    order: 21
     page:
       id: 4225
     refs:
@@ -501,7 +513,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 11
+    order: 12
     page:
       id: 4225
     refs:
@@ -527,6 +539,8 @@
       - This page is primarily a demonstration of different kinds of refs:
 
       -- inline page ref
+
+      -- ref to Daily Notes Page
 
       -- internal block ref (to block on this page)
 
@@ -658,6 +672,9 @@
     order: 0
     page:
       id: 4225
+- - id: 11947
+    uid: 01-01-2026
+    title: January 1st, 2026
 - - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     id: 11664
     uid: _EtYSMJNn
@@ -717,7 +734,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 4
+    order: 5
     page:
       id: 4225
     refs:
@@ -923,7 +940,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 16
+    order: 18
     page:
       id: 4225
     refs:
@@ -947,7 +964,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 3
+    order: 4
     page:
       id: 4225
     refs:
@@ -1001,7 +1018,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 7
+    order: 8
     page:
       id: 4225
     refs:
@@ -1066,7 +1083,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 13
+    order: 15
     page:
       id: 4225
     refs:
@@ -1092,7 +1109,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 17
+    order: 19
     page:
       id: 4225
     refs:
@@ -1103,7 +1120,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 5
+    order: 6
     page:
       id: 4225
     refs:
@@ -1126,7 +1143,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 6
+    order: 7
     page:
       id: 4225
     refs:
@@ -1237,6 +1254,18 @@
     order: 2
     page:
       id: 4225
+- - string: '#c:FUCHSIA **inline DAILY NOTES PAGE ref ⟶** [[January 1st, 2026]]'
+    id: 11946
+    uid: J185WLn64
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 1
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 11947
 - - heading: 3
     string: illustration 2.1
     children:
@@ -1423,7 +1452,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 9
+    order: 10
     page:
       id: 4225
     refs:
@@ -1450,7 +1479,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 2
+    order: 3
     page:
       id: 4225
     refs:
@@ -1726,7 +1755,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 14
+    order: 16
     page:
       id: 4225
     refs:
@@ -1765,7 +1794,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 1
+    order: 2
     page:
       id: 4225
     refs:
@@ -1863,7 +1892,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 15
+    order: 17
     page:
       id: 4225
     refs:
@@ -1982,6 +2011,19 @@
     order: 0
     page:
       id: 11137
+- - string: '#c:FUCHSIA **standalone DAILY NOTES PAGE ref ↓** '
+    children:
+    - id: 11950
+    id: 11949
+    uid: sjk6dh9FX
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 14
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: ((LfaVt18Iw))
     id: 11708
     uid: JpKqqwnAJ
@@ -2064,6 +2106,8 @@
     - id: 11774
     - id: 11776
     - id: 11804
+    - id: 11946
+    - id: 11949
     id: 4227
     uid: d3T1YpYig
     parents:
@@ -2191,7 +2235,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 12
+    order: 13
     page:
       id: 4225
     refs:

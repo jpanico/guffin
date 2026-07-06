@@ -72,6 +72,7 @@ Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 
 - This page is primarily a demonstration of different kinds of refs:
   - inline page ref
+  - ref to Daily Notes Page
   - internal block ref (to block on this page)
   - external block ref (to block on a __different page__)
   - internal embed (of block from this page)

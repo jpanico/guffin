@@ -27,6 +27,8 @@
 
     -- inline page ref
 
+    -- ref to Daily Notes Page
+
     -- internal block ref (to block on this page)
 
     -- external block ref (to block on a *different page*)
@@ -386,6 +388,7 @@
   uid: d3T1YpYig
   children:
   - ot5dpySxp
+  - J185WLn64
   - n528kYv5_
   - AaB6F4c0F
   - DZsnC1-jM
@@ -398,6 +401,7 @@
   - LKHCU5I3z
   - SYAWArc3S
   - Dt8evi7AW
+  - sjk6dh9FX
   - vLxyRJcr2
   - GQSLJp92S
   - 8jkmASa1c
@@ -414,6 +418,12 @@
   - lF-qY0Xrs
   - lDYWYqYSL
   text: '[**inline PAGE ref ⟶**]{color="fuchsia"} [Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+- vertex_type: guffin/text
+  uid: J185WLn64
+  refs:
+  - lF-qY0Xrs
+  - 01-01-2026
+  text: '[**inline DAILY NOTES PAGE ref ⟶**]{color="fuchsia"} [January 1st, 2026](x-guffin:vertex/01-01-2026)'
 - vertex_type: guffin/text
   uid: n528kYv5_
   refs:
@@ -498,6 +508,18 @@
   - LBFKibPIj
   - lDYWYqYSL
   text: '[Test Article 2](x-guffin:vertex/lDYWYqYSL)'
+- vertex_type: guffin/text
+  uid: sjk6dh9FX
+  children:
+  - ljzh6p2pP
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone DAILY NOTES PAGE ref ↓**]{color="fuchsia"} '
+- vertex_type: guffin/text
+  uid: ljzh6p2pP
+  refs:
+  - 01-01-2026
+  text: '[January 1st, 2026](x-guffin:vertex/01-01-2026)'
 - vertex_type: guffin/text
   uid: vLxyRJcr2
   children:

@@ -167,7 +167,9 @@ python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
 
 Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `tests/fixtures/pdf/`
 (requires Typst on PATH) for the live PDF export test, and `--mdbundle` to additionally record a
-baseline `.mdbundle/` directory under `tests/fixtures/mdbundle/` for the live mdbundle export test.
+baseline `.mdbundle/` directory under `tests/fixtures/mdbundle/` (plus a sibling `<target>.<type>.cache/`
+holding the `<sha256(url)>.<ext>` asset files and `.meta.json` sidecars the bundle was rendered through,
+so an offline test can seed the cache and reproduce the bundle without any Firestore fetch).
 These optional baselines are only rewritten when their flag is passed, so after changing a live test
 page, regenerate **all** of its recorded fixtures in one run — for `[[Test Article]] 1` (which has
 both baselines) that is:
