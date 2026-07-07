@@ -20,57 +20,80 @@
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
-  body: "Features:\n\n - **View as** block styling"
+  body: "Features:\n\n - **View as** block styling\n - The Page has children_layout=document"
 - vertex_type: guffin/text
   uid: sD1C9ifkG
   children:
   - VH0mXM0rw
   - YyeRpjbFD
   - gmLJbWZYp
-  text: Bullet block 1
+  text: Block 1 (children_layout=bullet)
 - vertex_type: guffin/text
   uid: VH0mXM0rw
-  text: Bullet block 1.1
+  text: Block 1.1
 - vertex_type: guffin/text
   uid: YyeRpjbFD
   children:
   - KUi_6ooZj
-  text: Bullet block 1.2
+  text: Block 1.2
 - vertex_type: guffin/text
   uid: KUi_6ooZj
-  text: Bullet block 1.2.1
+  text: Block 1.2.1
 - vertex_type: guffin/text
   uid: gmLJbWZYp
-  text: Bullet block 1.3
+  text: Block 1.3
 - vertex_type: guffin/text
   uid: DsogfVzX9
   children:
   - 99rZhIPZW
   - d_3REDRrO
   - Bb49MOLyE
-  text: Document block 1
+  text: Block 2 (children_layout=document)
 - vertex_type: guffin/text
   uid: 99rZhIPZW
-  text: Document block 1.1
+  text: Block 2.1
 - vertex_type: guffin/text
   uid: d_3REDRrO
-  text: Document block 1.2
+  children:
+  - cxJA2xr-u
+  - D7gYVJoVj
+  text: Block 2.2 (children_layout=bullet)
+- vertex_type: guffin/text
+  uid: cxJA2xr-u
+  text: Block 2.2.1
+- vertex_type: guffin/text
+  uid: D7gYVJoVj
+  text: Block 2.2.2
 - vertex_type: guffin/text
   uid: Bb49MOLyE
-  text: Document block 1.3
+  children:
+  - 1O4yGV-Tq
+  - FVou-DBMP
+  text: Block 2.3 (children_layout=bullet)
+- vertex_type: guffin/text
+  uid: 1O4yGV-Tq
+  text: Block 2.3.1
+- vertex_type: guffin/text
+  uid: FVou-DBMP
+  text: Block 2.3.2
 - vertex_type: guffin/text
   uid: sPZ2xmBBS
   children:
   - UQQwogj1M
   - fv5nh7u81
   - InqcJLiuz
-  text: Numbered block 1
+  text: Block 3 (children_layout=numbered)
 - vertex_type: guffin/text
   uid: UQQwogj1M
-  text: Numbered block 1.1
+  children:
+  - 2jjY8-fQz
+  text: Block 3.1 (children_layout=document)
+- vertex_type: guffin/text
+  uid: 2jjY8-fQz
+  text: Block 3.1.1
 - vertex_type: guffin/text
   uid: fv5nh7u81
-  text: Numbered block 1.2
+  text: Block 3.2
 - vertex_type: guffin/text
   uid: InqcJLiuz
-  text: Numbered block 1.3
+  text: Block 3.3

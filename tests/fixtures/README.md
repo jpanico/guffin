@@ -67,6 +67,7 @@ Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 #### `[[Test Article]] 2`
 
 - **View as** block styling
+ - The Page has children_layout=document
 
 #### `[[Test Article]] 3`
 

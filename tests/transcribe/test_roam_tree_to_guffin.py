@@ -1166,10 +1166,11 @@ class TestToTableVertex:
 class TestBuildViewMap:
     """Tests for build_view_map."""
 
-    def test_records_only_non_default_layouts(self) -> None:
-        """Build_view_map records non-default children-view-types and omits default (bullet) ones."""
+    def test_records_every_explicit_view_type_including_bullet(self) -> None:
+        """Build_view_map records an entry for every explicit children-view-type, bullet included."""
+        # The root has no explicit children_view_type (None), so it is absent from the sparse map.
         root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2), IdObject(id=3), IdObject(id=4)])
-        # BULLET equals the default, so this node is omitted from the sparse map.
+        # BULLET equals the default, but it is explicitly set, so it is recorded distinctly from unset.
         bullet = RoamNode(
             uid="bullet001",
             id=2,
@@ -1196,18 +1197,19 @@ class TestBuildViewMap:
         )
         view_map = build_view_map(_node_tree(root, bullet, numbered, document))
         assert view_map == {
+            "bullet001": VertexView(children_layout=ChildrenLayout.BULLET),
             "numberd01": VertexView(children_layout=ChildrenLayout.NUMBERED),
             "documnt01": VertexView(children_layout=ChildrenLayout.DOCUMENT),
         }
 
-    def test_empty_when_all_default(self) -> None:
-        """A tree whose nodes all carry the default (bullet) view-type yields an empty map."""
+    def test_omits_nodes_without_explicit_view_type(self) -> None:
+        """A tree whose nodes carry no explicit children-view-type (None) yields an empty map."""
         root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
         child = RoamNode(
             uid="child0001",
             id=2,
             string="child",
-            children_view_type=ChildrenViewType.BULLET,
+            children_view_type=None,
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
         )

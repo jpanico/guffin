@@ -95,14 +95,13 @@ from guffin.roam.markdown import (
 from guffin.roam.node import (
     NodeType,
     RoamNode,
-    effective_children_view_type,
     effective_heading_level,
     image_size,
     node_type,
 )
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
-from guffin.roam.primitives import DEFAULT_CHILDREN_VIEW_TYPE, Id, parse_daily_note_uid
+from guffin.roam.primitives import Id, parse_daily_note_uid
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -952,23 +951,27 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
 def build_view_map(node_tree: NodeTree) -> ViewMap:
     """Derive the presentation :data:`~guffin.model.vertex_view.ViewMap` for *node_tree*.
 
-    This is the presentation counterpart to :func:`transcribe` (which derives content): it
-    records, for each node whose effective children-view-type differs from
-    :data:`~guffin.roam.primitives.DEFAULT_CHILDREN_VIEW_TYPE`, a
-    :class:`~guffin.model.vertex_view.VertexView` keyed by the node's uid.  The map is sparse — a uid
-    absent from it takes :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT`.
+    This is the presentation counterpart to :func:`transcribe` (which derives content): it records a
+    :class:`~guffin.model.vertex_view.VertexView` keyed by uid for every node that carries an
+    *explicit* children-view-type (:attr:`~guffin.roam.node.RoamNode.children_view_type` is not
+    ``None``), mapping it straight to the matching
+    :class:`~guffin.model.vertex_view.ChildrenLayout` — an explicit ``BULLET`` included, so it is
+    recorded distinctly from an unset node rather than being conflated with the default.  The map
+    is sparse: a node with no explicit children-view-type is absent, and at render time inherits its
+    nearest ancestor's layout (the layout-inheritance policy), falling back to
+    :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` only when no ancestor sets one.
 
     Args:
         node_tree: A validated tree of raw Roam nodes.
 
     Returns:
-        A :data:`~guffin.model.vertex_view.ViewMap` covering the tree's nodes that carry a
-        non-default children-view-type.
+        A :data:`~guffin.model.vertex_view.ViewMap` covering exactly the tree's nodes that carry an
+        explicit children-view-type.
     """
     return {
-        node.uid: VertexView(children_layout=ChildrenLayout(view_type))
+        node.uid: VertexView(children_layout=ChildrenLayout(node.children_view_type))
         for node in node_tree.dfs()
-        if (view_type := effective_children_view_type(node)) is not DEFAULT_CHILDREN_VIEW_TYPE
+        if node.children_view_type is not None
     }
 
 

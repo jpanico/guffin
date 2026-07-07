@@ -1,4 +1,4 @@
-- - string: Numbered block 1.3
+- - string: Block 3.3
     id: 11810
     uid: InqcJLiuz
     parents:
@@ -24,16 +24,20 @@
     id: 4223
     uid: LBFKibPIj
     title: Test Article
-- - string: Document block 1.2
+- - string: Block 2.2 (children_layout=bullet)
+    children:
+    - id: 11966
+    - id: 11967
     id: 11684
     uid: d_3REDRrO
     parents:
     - id: 11674
     - id: 11682
     order: 1
+    view-type: bullet
     page:
       id: 11674
-- - string: Bullet block 1
+- - string: Block 1 (children_layout=bullet)
     children:
     - id: 11678
     - id: 11679
@@ -49,7 +53,7 @@
 - - id: 5450
     uid: OexZiLR_O
     title: '>'
-- - string: Numbered block 1.2
+- - string: Block 3.2
     id: 11809
     uid: fv5nh7u81
     parents:
@@ -58,7 +62,7 @@
     order: 1
     page:
       id: 11674
-- - string: Bullet block 1.2
+- - string: Block 1.2
     children:
     - id: 11680
     id: 11679
@@ -69,7 +73,7 @@
     order: 1
     page:
       id: 11674
-- - string: Document block 1
+- - string: Block 2 (children_layout=document)
     children:
     - id: 11683
     - id: 11684
@@ -82,7 +86,17 @@
     view-type: document
     page:
       id: 11674
-- - string: Numbered block 1
+- - string: Block 2.3.2
+    id: 11969
+    uid: FVou-DBMP
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11686
+    order: 1
+    page:
+      id: 11674
+- - string: Block 3 (children_layout=numbered)
     children:
     - id: 11808
     - id: 11809
@@ -96,7 +110,8 @@
     page:
       id: 11674
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
+      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling\n - The Page has\
+      \ children_layout=document"
     id: 11675
     uid: MmvJZhQNJ
     parents:
@@ -118,16 +133,20 @@
     view-type: document
     refs:
     - id: 4223
-- - string: Document block 1.3
+- - string: Block 2.3 (children_layout=bullet)
+    children:
+    - id: 11968
+    - id: 11969
     id: 11686
     uid: Bb49MOLyE
     parents:
     - id: 11674
     - id: 11682
     order: 2
+    view-type: bullet
     page:
       id: 11674
-- - string: Bullet block 1.3
+- - string: Block 1.3
     id: 11681
     uid: gmLJbWZYp
     parents:
@@ -139,7 +158,7 @@
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
-- - string: Bullet block 1.2.1
+- - string: Block 1.2.1
     id: 11680
     uid: KUi_6ooZj
     parents:
@@ -149,7 +168,27 @@
     order: 0
     page:
       id: 11674
-- - string: Document block 1.1
+- - string: Block 2.2.1
+    id: 11966
+    uid: cxJA2xr-u
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    order: 0
+    page:
+      id: 11674
+- - string: Block 2.2.2
+    id: 11967
+    uid: D7gYVJoVj
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    order: 1
+    page:
+      id: 11674
+- - string: Block 2.1
     id: 11683
     uid: 99rZhIPZW
     parents:
@@ -158,21 +197,44 @@
     order: 0
     page:
       id: 11674
-- - string: Numbered block 1.1
+- - string: Block 3.1 (children_layout=document)
+    children:
+    - id: 11970
     id: 11808
     uid: UQQwogj1M
     parents:
     - id: 11674
     - id: 11807
     order: 0
+    view-type: document
     page:
       id: 11674
-- - string: Bullet block 1.1
+- - string: Block 1.1
     id: 11678
     uid: VH0mXM0rw
     parents:
     - id: 11674
     - id: 11677
+    order: 0
+    page:
+      id: 11674
+- - string: Block 2.3.1
+    id: 11968
+    uid: 1O4yGV-Tq
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11686
+    order: 0
+    page:
+      id: 11674
+- - string: Block 3.1.1
+    id: 11970
+    uid: 2jjY8-fQz
+    parents:
+    - id: 11674
+    - id: 11807
+    - id: 11808
     order: 0
     page:
       id: 11674
