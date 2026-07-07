@@ -49,14 +49,19 @@ God preserve you in your reading.
 
 *— F.C., Nuremberg.*
 
-# Book I: Account of Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court of the Great Kaan
+# **Book I**: Account of Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court of the Great Kaan
 
 This is loose matter that is immediately under Part 1 (Book I: Account of Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court of the Great Kaan), but is not under any Chapter.
 
-## **Chapter 1:** Here the Book Begins; and First it Speaks of the Lesser Hermenia.
+## Chapter 1: Here the Book Begins; and First it Speaks of the Lesser Hermenia.
 
-# **Book II: The Kaan, His Court and Capital**
+[wuE3pTmy3-.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FwuE3pTmy3-.jpeg.enc?alt=media&token=69b53a2b-6b16-42b6-a787-300b58e404d8)
 
-# **Book III: Japan, the Archipelago, Southern India, and the Coasts and Islands of the Indian Sea**
+- There are two Hermenias, the Greater and the Less. The Lesser Hermenia is governed by a certain King, who maintains a just rule in his dominions, but is himself subject to the Tartar. The country contains numerous towns and villages, and has everything in plenty; moreover, it is a great country for sport in the chase of all manner of beasts and birds.
+- It is, however, by no means a healthy region, but grievously the reverse. In days of old the nobles there were valiant men, and did doughty deeds of arms; but nowadays they are poor creatures, and good at nought, unless it be at boozing; they are great at that. Howbeit, they have a city upon the sea, which is called Layas, at which there is a great trade. For you must know that all the spicery, and the cloths of silk and gold, and the other valuable wares that come from the interior, are brought to that city. And the merchants of Venice and Genoa, and other countries, come thither to sell their goods, and to buy what they lack. And whatsoever persons would travel to the interior (of the East), merchants or others, they take their way by this city of Layas.
 
-# **Book IV: Wars Among the Tartar Princes and Some Account of the Northern Countries**
+# **Book II**: The Kaan, His Court and Capital
+
+# **Book III**: Japan, the Archipelago, Southern India, and the Coasts and Islands of the Indian Sea
+
+# **Book IV**: Wars Among the Tartar Princes and Some Account of the Northern Countries
