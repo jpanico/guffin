@@ -3,6 +3,9 @@
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false, reportArgumentType=false
 # Rationale: panflute has no type stubs; all six rules are triggered entirely by
 # Unknown propagation from that import — suppressing them here avoids false positives.
+# pyright: reportPrivateUsage=false
+# Rationale: these unit tests deliberately exercise module-private helpers (e.g.
+# _prepare_pdf_embeds, _apply_pdf_embeds, _typst_str) directly.
 
 import shutil
 from pathlib import Path

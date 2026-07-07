@@ -31,8 +31,12 @@ Rendering rules:
   :class:`~guffin.model.vertex_view.ChildrenLayout`: ``BULLET`` coalesces consecutive
   text siblings into a :class:`~panflute.BulletList`, ``NUMBERED`` into a
   :class:`~panflute.OrderedList`, and ``DOCUMENT`` renders them as flowing
-  :class:`~panflute.Para` blocks.  Text containing a fenced code block is parsed
-  at block level so the fence becomes a :class:`~panflute.CodeBlock`.
+  :class:`~panflute.Para` blocks.  A vertex without an explicit layout inherits the
+  ``children_layout`` of its nearest ancestor that has one (the rendering-layer
+  layout-inheritance policy; see :func:`_resolve_children_layouts`), falling back to
+  :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` only when no ancestor sets one.  Text
+  containing a fenced code block is parsed at block level so the fence becomes a
+  :class:`~panflute.CodeBlock`.
 - :class:`~guffin.vertex.ImageVertex` — embedded as a :class:`~panflute.Image`
   element pointing at the local path from *asset_files*; falls back to a
   :class:`~panflute.Link` when *asset_files* has no entry for the vertex.
@@ -74,6 +78,7 @@ import html
 import logging
 from collections.abc import Callable
 from io import StringIO
+from itertools import chain
 from pathlib import Path
 from typing import Final
 
@@ -131,6 +136,44 @@ _DEFAULT_VIEW: Final[VertexView] = VertexView()
 def _children_layout(uid: Uid, view_map: ViewMap) -> ChildrenLayout:
     """Return the :class:`~guffin.model.vertex_view.ChildrenLayout` governing *uid*'s children."""
     return view_map.get(uid, _DEFAULT_VIEW).children_layout
+
+
+def _resolve_children_layouts(vertex_tree: VertexTree, view_map: ViewMap) -> ViewMap:
+    """Return *view_map* densified so every vertex inherits a ``children_layout`` down the tree.
+
+    The rendering-layer layout-inheritance policy, applied to a whole tree at once and independent
+    of where the tree came from: a vertex without an explicit
+    :class:`~guffin.model.vertex_view.VertexView` entry adopts the
+    :attr:`~guffin.model.vertex_view.VertexView.children_layout` of its nearest ancestor that has an
+    explicit entry.  A vertex with its own entry keeps it unchanged; a vertex with no explicit
+    ancestor is left absent (so :func:`_children_layout` still resolves it to
+    :data:`_DEFAULT_VIEW`).  Only ``children_layout`` is inherited — an inherited entry carries no
+    other view state.
+
+    Args:
+        vertex_tree: The tree supplying the parent/child structure (tree and ref vertices alike).
+        view_map: The sparse authored view map, holding only explicitly-set entries.
+
+    Returns:
+        A view map with an entry for every vertex reachable from an explicit entry (itself or an
+        ancestor), each carrying the inherited (or own) ``children_layout``.
+    """
+    child_to_parent: Final[dict[Uid, Uid]] = {
+        child_uid: vertex.uid
+        for vertex in chain(vertex_tree.tree_vertices, vertex_tree.ref_vertices)
+        if vertex.children
+        for child_uid in vertex.children
+    }
+    resolved: dict[Uid, VertexView] = {}
+    for vertex in chain(vertex_tree.tree_vertices, vertex_tree.ref_vertices):
+        cursor: Uid | None = vertex.uid
+        while cursor is not None and cursor not in view_map:
+            cursor = child_to_parent.get(cursor)
+        if cursor is None:
+            continue
+        source: VertexView = view_map[cursor]
+        resolved[vertex.uid] = source if cursor == vertex.uid else VertexView(children_layout=source.children_layout)
+    return resolved
 
 
 type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
@@ -1214,7 +1257,9 @@ def vertex_tree_to_pandoc(
             references in the rendered document are relative rather than
             absolute.
         view_map: Presentation view map keyed by vertex uid; governs how each
-            vertex's children are laid out (bulleted/numbered/document).
+            vertex's children are laid out (bulleted/numbered/document).  Applied through the
+            layout-inheritance policy (:func:`_resolve_children_layouts`), so a vertex with no
+            explicit entry inherits its nearest ancestor's ``children_layout``.
         title_in_header: When ``True``, render a root
             :class:`~guffin.vertex.PageVertex` title as an H1 header instead
             of storing it in document metadata.  Defaults to ``False``.
@@ -1230,6 +1275,9 @@ def vertex_tree_to_pandoc(
     """
     root: Final[Vertex] = root_vertex(vertex_tree)
     inline_map: Final[InlineMap] = build_inline_map(vertex_tree)
+    # Apply the layout-inheritance policy once, up front: descendants of a vertex with an explicit
+    # children_layout inherit it, so every downstream _children_layout lookup sees the resolved map.
+    resolved_view_map: Final[ViewMap] = _resolve_children_layouts(vertex_tree, view_map)
 
     metadata: dict[str, pf.MetaValue] = {}
     blocks: list[pf.Block] = []
@@ -1262,8 +1310,8 @@ def vertex_tree_to_pandoc(
             vertex_tree,
             asset_files,
             inline_map,
-            view_map,
-            _children_layout(root.uid, view_map),
+            resolved_view_map,
+            _children_layout(root.uid, resolved_view_map),
             depth=1,
             attribute_assignments=root.attribute_assignments,
         )

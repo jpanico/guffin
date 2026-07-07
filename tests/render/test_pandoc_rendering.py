@@ -3,6 +3,9 @@
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false, reportArgumentType=false
 # Rationale: panflute has no type stubs; all six rules are triggered entirely by
 # Unknown propagation from that import — suppressing them here avoids false positives.
+# pyright: reportPrivateUsage=false
+# Rationale: these unit tests deliberately exercise module-private helpers (e.g.
+# _resolve_children_layouts, _attribute_assignment_text) directly.
 
 import logging
 from datetime import UTC, date, datetime
@@ -33,6 +36,7 @@ from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import parse_inline_md
 from guffin.render.pandoc_rendering import (
     _attribute_assignment_text,
+    _resolve_children_layouts,
     build_child_blocks,
     make_resolver,
     vertex_tree_to_pandoc,
@@ -854,3 +858,81 @@ class TestAttributeAssignmentText:
         emph = list(strong.content)[0]
         assert isinstance(emph, pf.Emph)
         assert _collect_text(emph) == "default/attribute1"
+
+
+class TestResolveChildrenLayouts:
+    """_resolve_children_layouts applies the render-layer layout-inheritance policy."""
+
+    @staticmethod
+    def _tree() -> VertexTree:
+        """A page whose subtree exercises inheritance, override, and no-ancestor cases.
+
+        Structure (uid — explicit layout)::
+
+            pageroot1 (page, none)
+            ├── aaaaaaaaa (H — DOCUMENT)
+            │   ├── bbbbbbbbb (text, none)      ← inherits DOCUMENT from aaaaaaaaa
+            │   └── ccccccccc (H — NUMBERED)    ← own override
+            │       └── ddddddddd (text, none)  ← inherits NUMBERED from ccccccccc (nearer than aaaaaaaaa)
+            └── eeeeeeeee (text, none)          ← no explicit ancestor
+        """
+        page = PageVertex(uid="pageroot1", title="Doc", children=["aaaaaaaaa", "eeeeeeeee"])
+        head_a = HeadingVertex(uid="aaaaaaaaa", text="A", heading_level=1, children=["bbbbbbbbb", "ccccccccc"])
+        text_b = TextVertex(uid="bbbbbbbbb", text="b")
+        head_c = HeadingVertex(uid="ccccccccc", text="C", heading_level=2, children=["ddddddddd"])
+        text_d = TextVertex(uid="ddddddddd", text="d")
+        text_e = TextVertex(uid="eeeeeeeee", text="e")
+        return VertexTree(tree_vertices=[page, head_a, text_b, head_c, text_d, text_e])
+
+    _VIEW_MAP: dict[str, VertexView] = {
+        "aaaaaaaaa": VertexView(children_layout=ChildrenLayout.DOCUMENT),
+        "ccccccccc": VertexView(children_layout=ChildrenLayout.NUMBERED),
+    }
+
+    def test_explicit_entry_is_kept(self) -> None:
+        """A vertex with its own explicit entry keeps that layout."""
+        resolved = _resolve_children_layouts(self._tree(), self._VIEW_MAP)
+        assert resolved["aaaaaaaaa"].children_layout is ChildrenLayout.DOCUMENT
+        assert resolved["ccccccccc"].children_layout is ChildrenLayout.NUMBERED
+
+    def test_descendant_inherits_nearest_ancestor(self) -> None:
+        """A vertex with no entry inherits the layout of its nearest ancestor that has one."""
+        resolved = _resolve_children_layouts(self._tree(), self._VIEW_MAP)
+        assert resolved["bbbbbbbbb"].children_layout is ChildrenLayout.DOCUMENT  # from aaaaaaaaa
+        assert resolved["ddddddddd"].children_layout is ChildrenLayout.NUMBERED  # from ccccccccc, not aaaaaaaaa
+
+    def test_vertex_without_explicit_ancestor_is_absent(self) -> None:
+        """Vertices with no explicit self-or-ancestor entry stay absent (falling back to the default)."""
+        resolved = _resolve_children_layouts(self._tree(), self._VIEW_MAP)
+        assert "eeeeeeeee" not in resolved
+        assert "pageroot1" not in resolved
+
+    def test_empty_view_map_resolves_to_empty(self) -> None:
+        """With no explicit entries, nothing is resolved (every vertex takes the default)."""
+        assert _resolve_children_layouts(self._tree(), {}) == {}
+
+    def test_inheritance_applies_within_ref_subtrees(self) -> None:
+        """A ref (transcluded) subtree inherits within itself from an explicit ref-root entry."""
+        ref_root = TextVertex(uid="refroot01", text="ref root", children=["refchild1"])
+        ref_child = TextVertex(uid="refchild1", text="ref child")
+        page = PageVertex(uid="pageroot1", title="Doc", children=[])
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[ref_root, ref_child])
+        view_map = {"refroot01": VertexView(children_layout=ChildrenLayout.DOCUMENT)}
+        resolved = _resolve_children_layouts(tree, view_map)
+        assert resolved["refchild1"].children_layout is ChildrenLayout.DOCUMENT
+
+    def test_inherited_layout_flows_descendant_children_in_rendered_doc(self) -> None:
+        """End-to-end: a heading inheriting DOCUMENT lays its text children out as flowing Paras."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["sect00001"])
+        sect = HeadingVertex(uid="sect00001", text="Part", heading_level=1, children=["sub000001"])
+        sub = HeadingVertex(uid="sub000001", text="Chapter", heading_level=2, children=["texta0001", "textb0001"])
+        text_a = TextVertex(uid="texta0001", text="para a")
+        text_b = TextVertex(uid="textb0001", text="para b")
+        tree = VertexTree(tree_vertices=[page, sect, sub, text_a, text_b])
+        # Only the ancestor (sect00001) is DOCUMENT; sub000001 inherits it.
+        view_map = {"sect00001": VertexView(children_layout=ChildrenLayout.DOCUMENT)}
+        doc, _ = vertex_tree_to_pandoc(tree, {}, view_map)
+        blocks = list(doc.content)
+        assert not any(isinstance(block, pf.BulletList) for block in blocks)  # would bullet without inheritance
+        paras = [block for block in blocks if isinstance(block, pf.Para)]
+        assert [_collect_text(para) for para in paras] == ["para a", "para b"]
