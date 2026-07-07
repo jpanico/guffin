@@ -245,8 +245,8 @@ def main(
             envvar="GUFFIN_DAILY_NOTE_FORMAT",
             help=(
                 "How a reference/link to a Roam daily-note page renders its date: 'roam-long' "
-                "(default; the page's own title, e.g. 'January 1st, 2026') or 'iso' (e.g. "
-                "'2026-01-01'). Applies to all formats."
+                "(default; the page's own title, e.g. 'January 1st, 2026'), 'iso' (e.g. "
+                "'2026-01-01'), or 'abbrev-month-day' (e.g. 'Jan 1'). Applies to all formats."
             ),
         ),
     ] = DateFormat.ROAM_LONG,

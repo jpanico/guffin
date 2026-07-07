@@ -2,7 +2,7 @@
 
 import pytest
 
-from guffin.common.date import ENGLISH_MONTHS, ordinal_suffix
+from guffin.common.date import ENGLISH_MONTH_ABBREVIATIONS, ENGLISH_MONTHS, ordinal_suffix
 
 
 class TestEnglishMonths:
@@ -17,6 +17,21 @@ class TestEnglishMonths:
     def test_month_number_indexing(self) -> None:
         """ENGLISH_MONTHS[month - 1] names the given 1-based month number."""
         assert ENGLISH_MONTHS[8 - 1] == "August"
+
+
+class TestEnglishMonthAbbreviations:
+    """ENGLISH_MONTH_ABBREVIATIONS is the twelve month abbreviations in calendar order."""
+
+    def test_has_twelve_three_letter_abbreviations_january_first(self) -> None:
+        """There are twelve three-letter abbreviations, Jan at index 0 and Dec at index 11."""
+        assert len(ENGLISH_MONTH_ABBREVIATIONS) == 12
+        assert all(len(abbreviation) == 3 for abbreviation in ENGLISH_MONTH_ABBREVIATIONS)
+        assert ENGLISH_MONTH_ABBREVIATIONS[0] == "Jan"
+        assert ENGLISH_MONTH_ABBREVIATIONS[11] == "Dec"
+
+    def test_month_number_indexing(self) -> None:
+        """ENGLISH_MONTH_ABBREVIATIONS[month - 1] abbreviates the given 1-based month number."""
+        assert ENGLISH_MONTH_ABBREVIATIONS[9 - 1] == "Sep"
 
 
 class TestOrdinalSuffix:

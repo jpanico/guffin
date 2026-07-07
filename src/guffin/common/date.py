@@ -3,6 +3,7 @@
 Public symbols:
 
 - :data:`ENGLISH_MONTHS` — the twelve English month names in calendar order.
+- :data:`ENGLISH_MONTH_ABBREVIATIONS` — the twelve English month abbreviations in calendar order.
 - :func:`ordinal_suffix` — the English ordinal suffix (``st``/``nd``/``rd``/``th``) for an
   integer such as a day-of-month.
 """
@@ -29,6 +30,27 @@ ENGLISH_MONTHS: Final[tuple[str, ...]] = (
 
 A fixed constant rather than :data:`calendar.month_name`, which is locale-dependent (it would yield
 localized names under a non-English ``LC_TIME``).
+"""
+
+ENGLISH_MONTH_ABBREVIATIONS: Final[tuple[str, ...]] = (
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+)
+"""The twelve three-letter English month abbreviations in calendar order.
+
+``ENGLISH_MONTH_ABBREVIATIONS[month - 1]`` abbreviates month *month* (1-12).  A fixed constant
+rather than :data:`calendar.month_abbr`, which is locale-dependent (it would yield localized
+abbreviations under a non-English ``LC_TIME``).
 """
 
 
