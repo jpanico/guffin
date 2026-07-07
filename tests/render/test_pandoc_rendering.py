@@ -5,7 +5,7 @@
 # Unknown propagation from that import — suppressing them here avoids false positives.
 
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
@@ -28,15 +28,42 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.view import ChildrenLayout, VertexView
+from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import parse_inline_md
 from guffin.render.pandoc_rendering import (
     _attribute_assignment_text,
     build_child_blocks,
+    make_resolver,
     vertex_tree_to_pandoc,
 )
 
 pytestmark = pytest.mark.pandoc
+
+
+class TestMakeResolverDailyNote:
+    """make_resolver formats a daily-note-page reference's date per the chosen DateFormat."""
+
+    _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="01-01-2026")
+    _DAILY = PageVertex(uid="01-01-2026", title="January 1st, 2026", daily_note_date=date(2026, 1, 1))
+
+    def test_iso_format_reformats_the_reference(self) -> None:
+        """With ISO, a daily-note reference renders as the ISO date, not the Roam title."""
+        result = make_resolver({}, DateFormat.ISO)(self._LINK, self._DAILY, [pf.Str("January 1st, 2026")])
+        assert pf.stringify(pf.Para(*result)).strip() == "2026-01-01"
+
+    def test_roam_long_keeps_the_title(self) -> None:
+        """ROAM_LONG (default) leaves the reference as the page's own title."""
+        result = make_resolver({}, DateFormat.ROAM_LONG)(self._LINK, self._DAILY, [pf.Str("January 1st, 2026")])
+        assert pf.stringify(pf.Para(*result)).strip() == "January 1st, 2026"
+
+    def test_synthetic_page_unaffected_by_format(self) -> None:
+        """A non-daily-note page reference is unaffected even under a date format."""
+        page = PageVertex(uid="pageuid01", title="Some Page")
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageuid01")
+        result = make_resolver({}, DateFormat.ISO)(link, page, [pf.Str("Some Page")])
+        assert pf.stringify(pf.Para(*result)).strip() == "Some Page"
+
 
 _IMAGE_URL: HttpUrl = HttpUrl("https://example.com/imgs/photo.jpeg")
 _PDF_URL: HttpUrl = HttpUrl("https://example.com/pdfs/paper.pdf")

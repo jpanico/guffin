@@ -216,7 +216,7 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map))
+        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 

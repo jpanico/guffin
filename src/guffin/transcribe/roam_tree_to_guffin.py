@@ -102,7 +102,7 @@ from guffin.roam.node import (
 )
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
-from guffin.roam.primitives import DEFAULT_CHILDREN_VIEW_TYPE, Id
+from guffin.roam.primitives import DEFAULT_CHILDREN_VIEW_TYPE, Id, parse_daily_note_uid
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -395,6 +395,7 @@ def to_page_vertex(node: RoamNode, tree: NodeTree) -> PageVertex:
     return PageVertex(
         uid=node.uid,
         title=to_pandoc_md(node.title, tree),
+        daily_note_date=parse_daily_note_uid(node.uid),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),

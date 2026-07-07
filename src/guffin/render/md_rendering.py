@@ -154,7 +154,7 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map))
+        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         md_text: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             bundle_json_str,
@@ -183,7 +183,7 @@ def render(
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
-        resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map))
+        resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map, options.daily_note_format))
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)
         no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str,

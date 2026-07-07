@@ -117,6 +117,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.model.view import ChildrenLayout, VertexView, ViewMap
+from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
 from guffin.roam.primitives import Uid
@@ -1274,7 +1275,7 @@ def vertex_tree_to_pandoc(
     return pf.Doc(*blocks, metadata=metadata), inline_map
 
 
-def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
+def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> VertexLinkResolver:
     """Build a :data:`VertexLinkResolver` that renders each link as its destination's content.
 
     The returned resolver maps an ``x-guffin`` link's destination vertex to replacement
@@ -1286,7 +1287,10 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
     Per destination type:
 
     - :class:`~guffin.vertex.PageVertex` — the page title, with any nested reference
-      flattened to plain text via :func:`strip_links`.
+      flattened to plain text via :func:`strip_links`.  A **daily-note page** whose
+      *daily_note_format* is not
+      :attr:`~guffin.render.date_format.DateFormat.ROAM_LONG` renders its date in that
+      format instead of the title (``ROAM_LONG`` *is* the title, so it falls through unchanged).
     - :class:`~guffin.vertex.HeadingVertex`, :class:`~guffin.vertex.TextVertex`,
       :class:`~guffin.vertex.BlockQuoteVertex` — the destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
@@ -1300,6 +1304,7 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
     Args:
         inline_map: Mapping from text string to parsed panflute inline elements, used to
             look up a destination vertex's converted content.
+        daily_note_format: How a reference to a daily-note page renders its date.
 
     Returns:
         A resolver callable suitable for :func:`resolve_vertex_links`.
@@ -1308,6 +1313,10 @@ def make_resolver(inline_map: InlineMap) -> VertexLinkResolver:
     def _resolve(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
         match vertex:
             case PageVertex():
+                # A daily-note page reference renders its date in the chosen format; ROAM_LONG is the
+                # page's own title, so it falls through to the default title handling below.
+                if vertex.daily_note_date is not None and daily_note_format is not DateFormat.ROAM_LONG:
+                    return [pf.Str(format_date(vertex.daily_note_date, daily_note_format))]
                 # The title is raw Pandoc Markdown that may itself contain a nested
                 # reference (an x-guffin link); parse it and flatten any such link to
                 # plain display text so the page reference renders as its bare title.

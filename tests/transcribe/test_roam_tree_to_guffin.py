@@ -1,5 +1,6 @@
 """Tests for the roam_tree_to_guffin module."""
 
+import datetime
 import json
 
 import pytest
@@ -281,6 +282,16 @@ class TestToPageVertex:
         """Test that the vertex title equals the source node's title."""
         node = _make_page(title="Section 1")
         assert to_page_vertex(node, _node_tree(node)).title == "Section 1"
+
+    def test_daily_note_page_carries_its_date(self) -> None:
+        """A daily-note page (MM-DD-YYYY uid) gets its calendar date on the vertex."""
+        node = _make_page(uid="01-01-2026", title="January 1st, 2026")
+        assert to_page_vertex(node, _node_tree(node)).daily_note_date == datetime.date(2026, 1, 1)
+
+    def test_synthetic_page_has_no_daily_note_date(self) -> None:
+        """A synthetic-uid page carries no daily-note date."""
+        node = _make_page(uid="pageuid01", title="Some Page")
+        assert to_page_vertex(node, _node_tree(node)).daily_note_date is None
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""

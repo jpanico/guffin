@@ -51,6 +51,7 @@ Public symbols:
   :class:`~guffin.model.attribute.Attribute`.
 """
 
+import datetime
 from enum import StrEnum
 from typing import Annotated, Final, Literal, TypeIs, get_args
 
@@ -186,6 +187,10 @@ class PageVertex(_BaseVertex[Literal[VertexType.PAGE]]):
         vertex_type: Always :attr:`~VertexType.PAGE`.
             Serialized as ``'vertex-type'``.
         title: Page title from the source node's ``title`` field.
+        daily_note_date: The calendar date this page represents when it is a Roam daily-note page
+            (its ``uid`` is an ``MM-DD-YYYY`` date), else ``None``.  Lets a renderer format
+            references to daily notes by date instead of relying on the Roam-authored ``title``.
+            Serialized as ``'daily-note-date'``.
     """
 
     vertex_type: Literal[VertexType.PAGE] = Field(
@@ -194,6 +199,11 @@ class PageVertex(_BaseVertex[Literal[VertexType.PAGE]]):
         description="Always VertexType.PAGE (serialized as 'vertex-type').",
     )
     title: str = Field(..., description="Page title from the source node's title field.")
+    daily_note_date: datetime.date | None = Field(
+        default=None,
+        serialization_alias="daily-note-date",
+        description="Calendar date of a daily-note page (uid is MM-DD-YYYY), else None.",
+    )
 
 
 class HeadingVertex(_BaseVertex[Literal[VertexType.HEADING]]):

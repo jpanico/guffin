@@ -30,6 +30,8 @@ from typing import Literal, assert_never
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from guffin.render.date_format import DateFormat
+
 
 class OutputFormat(enum.StrEnum):
     """Output format for an exported document, used as the discriminator of the options subclasses.
@@ -64,6 +66,8 @@ class RenderOptions(BaseModel):
         emit_colophon: When ``True``, stamp the rendered output with a provenance colophon built from
             the render bundle's :attr:`~guffin.model.render_bundle.RenderBundle.provenance`; ``False``
             (default) emits none.  Has no effect when the bundle carries no provenance.
+        daily_note_format: How a reference/link to a Roam daily-note page renders its date; defaults
+            to :attr:`~guffin.render.date_format.DateFormat.ROAM_LONG` (the page's own title).
     """
 
     model_config = ConfigDict(frozen=True)
@@ -79,6 +83,9 @@ class RenderOptions(BaseModel):
     emit_colophon: bool = Field(
         default=False, description="Stamp the output with a colophon from the bundle's provenance."
     )
+    daily_note_format: DateFormat = Field(
+        default=DateFormat.ROAM_LONG, description="How a daily-note-page reference renders its date."
+    )
 
     @staticmethod
     def for_format(
@@ -93,6 +100,7 @@ class RenderOptions(BaseModel):
         emit_colophon: bool = False,
         include_preamble: bool | None = None,
         number_sections: bool | None = None,
+        daily_note_format: DateFormat = DateFormat.ROAM_LONG,
     ) -> RenderOptions:
         """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
 
@@ -115,6 +123,7 @@ class RenderOptions(BaseModel):
             number_sections: PDF/EPUB-only; number the headings (``True``), turn all heading
                 numbering off (``False``), or defer to the project profile's policy (``None``,
                 default).
+            daily_note_format: How a daily-note-page reference renders its date.
 
         Returns:
             The :class:`RenderOptions` subclass matching *output_format*.
@@ -128,6 +137,7 @@ class RenderOptions(BaseModel):
                     suppress_attributes=suppress_attributes,
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
+                    daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
                 )
@@ -138,6 +148,7 @@ class RenderOptions(BaseModel):
                     suppress_attributes=suppress_attributes,
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
+                    daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
                 )
@@ -149,6 +160,7 @@ class RenderOptions(BaseModel):
                     suppress_attributes=suppress_attributes,
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
+                    daily_note_format=daily_note_format,
                 )
             case _ as unreachable:
                 assert_never(unreachable)

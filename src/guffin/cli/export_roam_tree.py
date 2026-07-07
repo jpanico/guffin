@@ -79,6 +79,7 @@ from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.common.provenance import Provenance, gather_provenance
 from guffin.model.render_bundle import RenderBundle
+from guffin.render.date_format import DateFormat
 from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render as render_md
 from guffin.render.pdf_rendering import render as render_pdf
@@ -237,6 +238,18 @@ def main(
             ),
         ),
     ] = None,
+    daily_note_format: Annotated[
+        DateFormat,
+        typer.Option(
+            "--daily-note-format",
+            envvar="GUFFIN_DAILY_NOTE_FORMAT",
+            help=(
+                "How a reference/link to a Roam daily-note page renders its date: 'roam-long' "
+                "(default; the page's own title, e.g. 'January 1st, 2026') or 'iso' (e.g. "
+                "'2026-01-01'). Applies to all formats."
+            ),
+        ),
+    ] = DateFormat.ROAM_LONG,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
 
@@ -295,6 +308,7 @@ def main(
         emit_colophon=colophon,
         include_preamble=preamble,
         number_sections=numbering,
+        daily_note_format=daily_note_format,
     )
 
     _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)
