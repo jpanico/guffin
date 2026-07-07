@@ -15,9 +15,9 @@ Public symbols:
 - :func:`build_rich_vertex_tree` — build a Rich :class:`~rich.tree.Tree` from a
   :class:`~guffin.vertex_tree.VertexTree` using a depth-first traversal.
 - :func:`build_view_panel` — render a :data:`~guffin.vertex.Vertex`'s
-  :class:`~guffin.model.view.VertexView` as a Rich :class:`~rich.panel.Panel`.
+  :class:`~guffin.model.vertex_view.VertexView` as a Rich :class:`~rich.panel.Panel`.
 - :func:`build_rich_view_map_tree` — build a Rich :class:`~rich.tree.Tree` of the
-  :data:`~guffin.model.view.ViewMap` entries in a :class:`~guffin.vertex_tree.VertexTree`.
+  :data:`~guffin.model.vertex_view.ViewMap` entries in a :class:`~guffin.vertex_tree.VertexTree`.
 - :func:`build_rich_raw_table` — build a Rich :class:`~rich.table.Table` of raw
   Datalog pull-blocks from a :class:`~guffin.roam.node_fetch_result.NodeFetchResult`.
 """
@@ -52,7 +52,7 @@ from guffin.model.vertex import (
     is_asset_vertex,
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
-from guffin.model.view import VertexView, ViewMap
+from guffin.model.vertex_view import VertexView, ViewMap
 from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
 from guffin.roam.local_api import TRANSIENT_RAW_KEYS
 from guffin.roam.markdown import IMAGE_LINK_RE
@@ -615,11 +615,11 @@ def _view_panel_body(view: VertexView | None) -> Text:
 
     Args:
         view: The vertex's presentation view, or ``None`` when the vertex has no
-            :data:`~guffin.model.view.ViewMap` entry (a connector node needed only to reach an
+            :data:`~guffin.model.vertex_view.ViewMap` entry (a connector node needed only to reach an
             entry-bearing descendant).
 
     Returns:
-        A :class:`~rich.text.Text` with one ``name=value`` line per :class:`~guffin.model.view.VertexView`
+        A :class:`~rich.text.Text` with one ``name=value`` line per :class:`~guffin.model.vertex_view.VertexView`
         field, or a dim placeholder when *view* is ``None``.
     """
     if view is None:
@@ -635,17 +635,17 @@ def _view_panel_body(view: VertexView | None) -> Text:
 
 @validate_call
 def build_view_panel(vertex: Vertex, view: VertexView | None, *, truncate: bool = True) -> Panel:
-    """Render *vertex*'s :class:`~guffin.model.view.VertexView` as a Rich Panel for a terminal tree.
+    """Render *vertex*'s :class:`~guffin.model.vertex_view.VertexView` as a Rich Panel for a terminal tree.
 
     The panel title is the same as *vertex*'s content panel (:func:`_vertex_panel_title`), so a
     vertex reads identically across the vertex tree and the view-map tree.  The body lists every
-    :class:`~guffin.model.view.VertexView` field via :func:`_view_panel_body`; when *view* is
+    :class:`~guffin.model.vertex_view.VertexView` field via :func:`_view_panel_body`; when *view* is
     ``None`` (a connector node with no entry) a dim placeholder is shown instead.
 
     Args:
         vertex: The :data:`~guffin.vertex.Vertex` whose title labels the panel.
-        view: The vertex's :class:`~guffin.model.view.VertexView`, or ``None`` when it has no
-            :data:`~guffin.model.view.ViewMap` entry.
+        view: The vertex's :class:`~guffin.model.vertex_view.VertexView`, or ``None`` when it has no
+            :data:`~guffin.model.vertex_view.ViewMap` entry.
         truncate: When ``True`` (default), long title strings are shortened with an ellipsis;
             when ``False``, they are rendered in full.
 
@@ -669,7 +669,7 @@ def build_rich_view_map_tree(vertex_tree: VertexTree, view_map: ViewMap, *, trun
 
     Args:
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` supplying tree structure and titles.
-        view_map: The :data:`~guffin.model.view.ViewMap` whose entries select which vertices to show.
+        view_map: The :data:`~guffin.model.vertex_view.ViewMap` whose entries select which vertices to show.
         truncate: When ``True`` (default), long panel titles are shortened with an ellipsis; when
             ``False``, they are rendered in full.
 

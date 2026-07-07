@@ -10,7 +10,7 @@ hierarchy:
   :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`, rendered as an outer panel over
   two sub-panels: the content :class:`~guffin.vertex_tree.VertexTree` (image vertices enriched with
   their native pixel size, fetched via the Local API, before display) and the presentation
-  :data:`~guffin.model.view.ViewMap` (as a tree of the vertices carrying a view entry, plus the
+  :data:`~guffin.model.vertex_view.ViewMap` (as a tree of the vertices carrying a view entry, plus the
   ancestors connecting them to the root).
 - **Node tree** (``--node-tree`` / ``-n/-N``) — raw :class:`~guffin.roam.node_tree.NodeTree`
   as returned by the Roam Local API; each panel body lists selected
@@ -64,7 +64,7 @@ from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.view import ViewMap
+from guffin.model.vertex_view import ViewMap
 from guffin.render.asset_fetch import fetch_and_enrich_assets
 from guffin.render.rich_rendering import (
     DEFAULT_NODE_PANEL_PROPS,
@@ -218,7 +218,7 @@ def dump_trees(
             by the fetch pipeline, carrying the raw node tree and Datalog results.
         render_bundle: The :class:`~guffin.model.render_bundle.RenderBundle` (content
             :class:`~guffin.vertex_tree.VertexTree` plus presentation
-            :data:`~guffin.model.view.ViewMap`) produced by
+            :data:`~guffin.model.vertex_view.ViewMap`) produced by
             :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`, or ``None`` when
             render-bundle computation was skipped.
         node_props: Comma-separated list of :class:`~guffin.roam.node.RoamNode`

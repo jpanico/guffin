@@ -81,7 +81,7 @@ def fetch_roam_trees(
     *api_endpoint*, constructs a :class:`~guffin.roam.node_tree.NodeTree`, and optionally
     transcribes it into a :class:`~guffin.model.render_bundle.RenderBundle` (its
     :class:`~guffin.model.vertex_tree.VertexTree` content paired with the presentation
-    :data:`~guffin.model.view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
+    :data:`~guffin.model.vertex_view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
 
     The transcribed content is checked against the guffin vocabulary invariants
     (:func:`~guffin.model.publishing_semantics.validate_semantics`); how violations — e.g. a guffin

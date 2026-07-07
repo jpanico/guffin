@@ -28,7 +28,7 @@ Rendering rules:
 - :class:`~guffin.vertex.HeadingVertex` — rendered as a
   :class:`~panflute.Header` at the vertex's recorded heading level.
 - :class:`~guffin.vertex.TextVertex` — laid out per the parent's
-  :class:`~guffin.model.view.ChildrenLayout`: ``BULLET`` coalesces consecutive
+  :class:`~guffin.model.vertex_view.ChildrenLayout`: ``BULLET`` coalesces consecutive
   text siblings into a :class:`~panflute.BulletList`, ``NUMBERED`` into a
   :class:`~panflute.OrderedList`, and ``DOCUMENT`` renders them as flowing
   :class:`~panflute.Para` blocks.  Text containing a fenced code block is parsed
@@ -116,7 +116,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex_tree import VertexTree, root_vertex
-from guffin.model.view import ChildrenLayout, VertexView, ViewMap
+from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
@@ -125,11 +125,11 @@ from guffin.roam.primitives import Uid
 logger = logging.getLogger(__name__)
 
 _DEFAULT_VIEW: Final[VertexView] = VertexView()
-"""Fallback :class:`~guffin.model.view.VertexView` for a vertex absent from the view map."""
+"""Fallback :class:`~guffin.model.vertex_view.VertexView` for a vertex absent from the view map."""
 
 
 def _children_layout(uid: Uid, view_map: ViewMap) -> ChildrenLayout:
-    """Return the :class:`~guffin.model.view.ChildrenLayout` governing *uid*'s children."""
+    """Return the :class:`~guffin.model.vertex_view.ChildrenLayout` governing *uid*'s children."""
     return view_map.get(uid, _DEFAULT_VIEW).children_layout
 
 
@@ -471,14 +471,14 @@ def build_child_blocks(
     """Build a list of Pandoc block elements from an ordered list of child UIDs.
 
     The children's parent supplies *layout* (its
-    :class:`~guffin.model.view.ChildrenLayout`), which governs how consecutive
+    :class:`~guffin.model.vertex_view.ChildrenLayout`), which governs how consecutive
     :class:`~guffin.vertex.TextVertex` siblings are wrapped:
 
-    - :attr:`~guffin.model.view.ChildrenLayout.BULLET` — coalesced into a single
+    - :attr:`~guffin.model.vertex_view.ChildrenLayout.BULLET` — coalesced into a single
       :class:`~panflute.BulletList`.
-    - :attr:`~guffin.model.view.ChildrenLayout.NUMBERED` — coalesced into a single
+    - :attr:`~guffin.model.vertex_view.ChildrenLayout.NUMBERED` — coalesced into a single
       :class:`~panflute.OrderedList`.
-    - :attr:`~guffin.model.view.ChildrenLayout.DOCUMENT` — rendered as flowing blocks
+    - :attr:`~guffin.model.vertex_view.ChildrenLayout.DOCUMENT` — rendered as flowing blocks
       (paragraphs) via :func:`_vertex_to_blocks`, with no list wrapper.
 
     A link-placed PDF embed (:func:`_is_link_placed_pdf`) participates in the layout like a

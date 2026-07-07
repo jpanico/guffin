@@ -27,7 +27,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.view import ChildrenLayout, VertexView
+from guffin.model.vertex_view import ChildrenLayout, VertexView
 from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import parse_inline_md

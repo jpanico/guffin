@@ -24,7 +24,7 @@ from guffin.model.vertex import (
     VertexType,
     vertex_adapter,
 )
-from guffin.model.view import ChildrenLayout, VertexView
+from guffin.model.vertex_view import ChildrenLayout, VertexView
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import min_effective_heading_level

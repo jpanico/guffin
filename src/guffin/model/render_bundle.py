@@ -3,7 +3,7 @@
 Public symbols:
 
 - :class:`RenderBundle` — bundles a :class:`~guffin.model.vertex_tree.VertexTree` (content) with
-  its :data:`~guffin.model.view.ViewMap` (presentation), plus optional
+  its :data:`~guffin.model.vertex_view.ViewMap` (presentation), plus optional
   :class:`~guffin.common.provenance.Provenance` recording the software that produced the bundle's
   data.  Content and presentation are held as separate fields so they stay decoupled while
   travelling together as one bundle.  :meth:`RenderBundle.with_provenance` returns a copy stamped
@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from guffin.common.provenance import Provenance
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.view import ViewMap
+from guffin.model.vertex_view import ViewMap
 
 
 class RenderBundle(BaseModel):

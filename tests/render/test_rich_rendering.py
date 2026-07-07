@@ -7,7 +7,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.model.vertex import HeadingVertex, PageVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.view import ChildrenLayout, VertexView, ViewMap
+from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
 from guffin.render.rich_rendering import (
     build_rich_raw_table,
     build_rich_view_map_tree,

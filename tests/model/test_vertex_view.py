@@ -1,8 +1,8 @@
-"""Tests for guffin.model.view."""
+"""Tests for guffin.model.vertex_view."""
 
 import pytest
 
-from guffin.model.view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexView
+from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexView
 
 
 class TestChildrenLayout:

@@ -175,7 +175,7 @@ guffin/
 │       │   │                              #   VertexTreeDFSIterator, root_vertex(), map_vertices(),
 │       │   │                              #   drop_attribute_assignments(); filter helpers
 │       │   │                              #   (page_vertices, image_vertices, …)
-│       │   ├── view.py                    # Presentation overlay: ChildrenLayout, VertexView, ViewMap,
+│       │   ├── vertex_view.py             # Presentation overlay: ChildrenLayout, VertexView, ViewMap,
 │       │   │                              #   DEFAULT_CHILDREN_LAYOUT
 │       │   ├── render_bundle.py           # RenderBundle: VertexTree content + ViewMap presentation
 │       │   ├── link.py                    # x-guffin inter-vertex link scheme; VertexLinkKind,

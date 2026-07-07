@@ -3,7 +3,7 @@
 The two `NodeTree`-rooted transformations here are the content and presentation facets of a
 :class:`~guffin.model.render_bundle.RenderBundle`: :func:`transcribe` derives the
 :class:`~guffin.model.vertex_tree.VertexTree` content, and :func:`build_view_map` derives the
-:data:`~guffin.model.view.ViewMap` presentation overlay; :func:`to_render_bundle` bundles both.
+:data:`~guffin.model.vertex_view.ViewMap` presentation overlay; :func:`to_render_bundle` bundles both.
 
 Public symbols:
 
@@ -36,7 +36,7 @@ Public symbols:
   the appropriate :data:`~guffin.vertex.Vertex` subtype.
 - :func:`transcribe` — transcribe all nodes in a :class:`~guffin.roam.node_tree.NodeTree`
   into a :class:`~guffin.vertex_tree.VertexTree`.
-- :func:`build_view_map` — derive the presentation :data:`~guffin.model.view.ViewMap` for a
+- :func:`build_view_map` — derive the presentation :data:`~guffin.model.vertex_view.ViewMap` for a
   :class:`~guffin.roam.node_tree.NodeTree`.
 - :func:`to_render_bundle` — bundle :func:`transcribe` and :func:`build_view_map` into a
   :class:`~guffin.model.render_bundle.RenderBundle`.
@@ -81,7 +81,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.view import ChildrenLayout, VertexView, ViewMap
+from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
 from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
@@ -950,19 +950,19 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
 
 @validate_call
 def build_view_map(node_tree: NodeTree) -> ViewMap:
-    """Derive the presentation :data:`~guffin.model.view.ViewMap` for *node_tree*.
+    """Derive the presentation :data:`~guffin.model.vertex_view.ViewMap` for *node_tree*.
 
     This is the presentation counterpart to :func:`transcribe` (which derives content): it
     records, for each node whose effective children-view-type differs from
     :data:`~guffin.roam.primitives.DEFAULT_CHILDREN_VIEW_TYPE`, a
-    :class:`~guffin.model.view.VertexView` keyed by the node's uid.  The map is sparse — a uid
-    absent from it takes :data:`~guffin.model.view.DEFAULT_CHILDREN_LAYOUT`.
+    :class:`~guffin.model.vertex_view.VertexView` keyed by the node's uid.  The map is sparse — a uid
+    absent from it takes :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT`.
 
     Args:
         node_tree: A validated tree of raw Roam nodes.
 
     Returns:
-        A :data:`~guffin.model.view.ViewMap` covering the tree's nodes that carry a
+        A :data:`~guffin.model.vertex_view.ViewMap` covering the tree's nodes that carry a
         non-default children-view-type.
     """
     return {
@@ -978,7 +978,7 @@ def to_render_bundle(node_tree: NodeTree) -> RenderBundle:
 
     Bundles the two :class:`~guffin.roam.node_tree.NodeTree`-rooted transformations: the
     :class:`~guffin.model.vertex_tree.VertexTree` content from :func:`transcribe` and the
-    presentation :data:`~guffin.model.view.ViewMap` from :func:`build_view_map`.
+    presentation :data:`~guffin.model.vertex_view.ViewMap` from :func:`build_view_map`.
 
     Args:
         node_tree: A validated tree of raw Roam nodes.
