@@ -114,9 +114,18 @@ class TestBuildRichViewMapTree:
 
 
 class TestBuildViewPanel:
-    """build_view_panel titles a vertex identically to its content panel."""
+    """build_view_panel titles a vertex like its content panel and dims connector-only panels."""
 
-    def test_title_matches_vertex_panel(self) -> None:
-        """A view panel reuses the same title string as the vertex's content panel."""
+    def test_entry_title_matches_vertex_panel(self) -> None:
+        """An entry-bearing view panel reuses the same title string as the vertex's content panel."""
         vertex = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
-        assert build_view_panel(vertex, None).title == build_vertex_panel(vertex).title
+        entry = build_view_panel(vertex, VertexView(children_layout=ChildrenLayout.DOCUMENT))
+        assert entry.title == build_vertex_panel(vertex).title
+        assert entry.border_style == "none"
+
+    def test_connector_panel_is_dimmed(self) -> None:
+        """A connector panel (no view entry) dims its border and wraps the content title in ``[dim]``."""
+        vertex = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        connector = build_view_panel(vertex, None)
+        assert connector.border_style == "dim"
+        assert connector.title == f"[dim]{build_vertex_panel(vertex).title}[/dim]"

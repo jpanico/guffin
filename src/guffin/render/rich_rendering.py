@@ -640,7 +640,8 @@ def build_view_panel(vertex: Vertex, view: VertexView | None, *, truncate: bool 
     The panel title is the same as *vertex*'s content panel (:func:`_vertex_panel_title`), so a
     vertex reads identically across the vertex tree and the view-map tree.  The body lists every
     :class:`~guffin.model.vertex_view.VertexView` field via :func:`_view_panel_body`; when *view* is
-    ``None`` (a connector node with no entry) a dim placeholder is shown instead.
+    ``None`` (a connector node with no entry) a dim placeholder is shown instead, and the panel's
+    title and border are dimmed to set connector nodes apart from entry-bearing ones.
 
     Args:
         vertex: The :data:`~guffin.vertex.Vertex` whose title labels the panel.
@@ -650,10 +651,13 @@ def build_view_panel(vertex: Vertex, view: VertexView | None, *, truncate: bool 
             when ``False``, they are rendered in full.
 
     Returns:
-        A :class:`~rich.panel.Panel` titled like the vertex's content panel, bodying its view state.
+        A :class:`~rich.panel.Panel` titled like the vertex's content panel, bodying its view state;
+        dimmed (title and border) when *view* is ``None``.
     """
     logger.debug("vertex=%r, view=%r", vertex, view)
     title: Final[str] = _vertex_panel_title(vertex, truncate=truncate)
+    if view is None:
+        return Panel(_view_panel_body(view), title=f"[dim]{title}[/dim]", border_style="dim", expand=False)
     return Panel(_view_panel_body(view), title=title, expand=False)
 
 
