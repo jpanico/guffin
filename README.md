@@ -362,7 +362,7 @@ Fetches a Roam `Page` or `Node` subtree via the Local API, and renders it as a c
 
 ```bash
 dump-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token <token> \
-  [--vertex-tree] [--node-tree] [--raw-results] [--include-refs] \
+  [--render-bundle] [--node-tree] [--raw-results] [--include-refs] \
   [--node-props <props>] [--vertex-props <props>]
 ```
 
@@ -370,10 +370,12 @@ Flags (all are boolean toggles with a `--no-*` / uppercase-letter inverse):
 
 | Flag | Short | Default | Effect |
 |---|---|---|---|
-| `--vertex-tree` | `-v/-V` | **on** | Render the normalized vertex tree |
+| `--render-bundle` | `-b/-B` | **on** | Render the render bundle: the normalized vertex tree and its view map |
 | `--node-tree` | `-n/-N` | off | Render the raw node tree |
 | `--raw-results` | `-r/-R` | off | Print the raw Datalog query results |
 | `--include-refs` | `-i/-I` | **on** | Also fetch nodes referenced via `:block/refs` and their descendants |
+
+The `--render-bundle` output is an outer **Render Bundle** panel wrapping two sub-panels: a **Vertex Tree** (the content `VertexTree`) followed by a **View Map** (the presentation `ViewMap`). The view-map tree always shows the root and, below it, only the vertices that carry a view entry plus the ancestors needed to connect them to the root; each panel is titled like its vertex-tree counterpart and its body lists the vertex's `VertexView` fields.
 
 `--node-props heading,parents` selects which `RoamNode` fields appear for each node in the node-tree output (defaults to `heading,order,children,parents,page`).
 
@@ -381,14 +383,14 @@ Flags (all are boolean toggles with a `--no-*` / uppercase-letter inverse):
 
 Examples:
 ```bash
-# Default: vertex tree + refs included
+# Default: render bundle (vertex tree + view map) + refs included
 dump-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token
 
-# Node tree + vertex tree, with custom node props
-dump-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token --node-tree --vertex-tree --node-props heading,parents
+# Node tree + render bundle, with custom node props
+dump-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token --node-tree --render-bundle --node-props heading,parents
 
-# Raw Datalog results only, no refs
-dump-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token --raw-results --no-vertex-tree --no-include-refs
+# Raw Datalog results only, no render bundle, no refs
+dump-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token --raw-results --no-render-bundle --no-include-refs
 
 # Fetch by node UID
 dump-roam-tree wdMgyBiP9 --port 3333 --graph SCFH --token your-bearer-token

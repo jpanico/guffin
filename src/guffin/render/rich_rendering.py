@@ -14,6 +14,10 @@ Public symbols:
   :class:`~rich.panel.Panel`.
 - :func:`build_rich_vertex_tree` — build a Rich :class:`~rich.tree.Tree` from a
   :class:`~guffin.vertex_tree.VertexTree` using a depth-first traversal.
+- :func:`build_view_panel` — render a :data:`~guffin.vertex.Vertex`'s
+  :class:`~guffin.model.view.VertexView` as a Rich :class:`~rich.panel.Panel`.
+- :func:`build_rich_view_map_tree` — build a Rich :class:`~rich.tree.Tree` of the
+  :data:`~guffin.model.view.ViewMap` entries in a :class:`~guffin.vertex_tree.VertexTree`.
 - :func:`build_rich_raw_table` — build a Rich :class:`~rich.table.Table` of raw
   Datalog pull-blocks from a :class:`~guffin.roam.node_fetch_result.NodeFetchResult`.
 """
@@ -48,6 +52,7 @@ from guffin.model.vertex import (
     is_asset_vertex,
 )
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
+from guffin.model.view import VertexView, ViewMap
 from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
 from guffin.roam.local_api import TRANSIENT_RAW_KEYS
 from guffin.roam.markdown import IMAGE_LINK_RE
@@ -453,14 +458,10 @@ def _attribute_panels(assignments: list[AttributeAssignment]) -> list[Panel]:
     return [_attributes_panel(domain, by_domain[domain]) for domain in ordered_domains]
 
 
-@validate_call
-def build_vertex_panel(
-    vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_PROPS, *, truncate: bool = True
-) -> Panel:
-    """Render *vertex* as a Rich Panel for display in a terminal tree.
+def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
+    """Return the Rich-markup title string for *vertex*'s panel.
 
-    The panel title shows a type-specific summary with the vertex ``uid`` in
-    parentheses:
+    The title shows a type-specific summary with the vertex ``uid`` in parentheses:
 
     - :class:`~guffin.vertex.PageVertex` — page title.
     - :class:`~guffin.vertex.HeadingVertex` — ``H{n}: <text>``.
@@ -469,22 +470,14 @@ def build_vertex_panel(
     - :class:`~guffin.vertex.PdfVertex` — ``PDF <file_name>``.
     - :class:`~guffin.vertex.CalloutVertex` — ``CALLOUT [<type>]: <title>``.
 
-    The panel body renders each name in *props* via :func:`_format_vertex_prop`.  When *vertex*
-    carries folded attribute assignments, a light-blue ``Attributes (<domain>)`` sub-panel is
-    appended below the metadata for each distinct attribute domain (:func:`_attribute_panels`),
-    with the default-domain panel last.
-
     Args:
-        vertex: The :data:`~guffin.vertex.Vertex` to render.
-        props: Vertex property names to include in the panel body.  Defaults to
-            :data:`DEFAULT_VERTEX_PANEL_PROPS`.
+        vertex: The :data:`~guffin.vertex.Vertex` to title.
         truncate: When ``True`` (default), long title strings are shortened with an
             ellipsis; when ``False``, they are rendered in full.
 
     Returns:
-        A :class:`~rich.panel.Panel` with a labelled title and metadata body.
+        The Rich console-markup title string, ending in a dim ``(uid)`` suffix.
     """
-    logger.debug("vertex=%r", vertex)
     title_content: str
     match vertex.vertex_type:
         case VertexType.PAGE:
@@ -533,7 +526,33 @@ def build_vertex_panel(
             )
         case _ as unreachable:
             assert_never(unreachable)
-    title: Final[str] = f"{title_content} [dim]({vertex.uid})[/dim]"
+    return f"{title_content} [dim]({vertex.uid})[/dim]"
+
+
+@validate_call
+def build_vertex_panel(
+    vertex: Vertex, props: list[str] = DEFAULT_VERTEX_PANEL_PROPS, *, truncate: bool = True
+) -> Panel:
+    """Render *vertex* as a Rich Panel for display in a terminal tree.
+
+    The panel title is built by :func:`_vertex_panel_title` (a type-specific summary with the
+    vertex ``uid`` in parentheses).  The panel body renders each name in *props* via
+    :func:`_format_vertex_prop`.  When *vertex* carries folded attribute assignments, a light-blue
+    ``Attributes (<domain>)`` sub-panel is appended below the metadata for each distinct attribute
+    domain (:func:`_attribute_panels`), with the default-domain panel last.
+
+    Args:
+        vertex: The :data:`~guffin.vertex.Vertex` to render.
+        props: Vertex property names to include in the panel body.  Defaults to
+            :data:`DEFAULT_VERTEX_PANEL_PROPS`.
+        truncate: When ``True`` (default), long title strings are shortened with an
+            ellipsis; when ``False``, they are rendered in full.
+
+    Returns:
+        A :class:`~rich.panel.Panel` with a labelled title and metadata body.
+    """
+    logger.debug("vertex=%r", vertex)
+    title: Final[str] = _vertex_panel_title(vertex, truncate=truncate)
     effective_props: Final[list[str]] = (
         [*props, "table"] if isinstance(vertex, TableVertex) and "table" not in props else props
     )
@@ -584,6 +603,101 @@ def build_rich_vertex_tree(
     for vertex in dfs_iter:
         parent_rich: RichTree = rich_map[child_to_parent[vertex.uid]]
         rich_map[vertex.uid] = parent_rich.add(build_vertex_panel(vertex, props, truncate=truncate))
+    return root_rich
+
+
+_VIEW_PANEL_KEY_STYLE: Final[str] = "#1e90ff"
+"""Blue Rich style for a VertexView field name in a view panel body, to set it apart from its value."""
+
+
+def _view_panel_body(view: VertexView | None) -> Text:
+    """Return the panel body listing every field of *view* as ``name=value`` lines.
+
+    Args:
+        view: The vertex's presentation view, or ``None`` when the vertex has no
+            :data:`~guffin.model.view.ViewMap` entry (a connector node needed only to reach an
+            entry-bearing descendant).
+
+    Returns:
+        A :class:`~rich.text.Text` with one ``name=value`` line per :class:`~guffin.model.view.VertexView`
+        field, or a dim placeholder when *view* is ``None``.
+    """
+    if view is None:
+        return Text("(no view entry)", style="dim")
+    body: Final[Text] = Text()
+    for index, name in enumerate(type(view).model_fields):
+        if index > 0:
+            body.append("\n")
+        body.append(f"{name}=", style=_VIEW_PANEL_KEY_STYLE)
+        body.append(str(getattr(view, name)))
+    return body
+
+
+@validate_call
+def build_view_panel(vertex: Vertex, view: VertexView | None, *, truncate: bool = True) -> Panel:
+    """Render *vertex*'s :class:`~guffin.model.view.VertexView` as a Rich Panel for a terminal tree.
+
+    The panel title is the same as *vertex*'s content panel (:func:`_vertex_panel_title`), so a
+    vertex reads identically across the vertex tree and the view-map tree.  The body lists every
+    :class:`~guffin.model.view.VertexView` field via :func:`_view_panel_body`; when *view* is
+    ``None`` (a connector node with no entry) a dim placeholder is shown instead.
+
+    Args:
+        vertex: The :data:`~guffin.vertex.Vertex` whose title labels the panel.
+        view: The vertex's :class:`~guffin.model.view.VertexView`, or ``None`` when it has no
+            :data:`~guffin.model.view.ViewMap` entry.
+        truncate: When ``True`` (default), long title strings are shortened with an ellipsis;
+            when ``False``, they are rendered in full.
+
+    Returns:
+        A :class:`~rich.panel.Panel` titled like the vertex's content panel, bodying its view state.
+    """
+    logger.debug("vertex=%r, view=%r", vertex, view)
+    title: Final[str] = _vertex_panel_title(vertex, truncate=truncate)
+    return Panel(_view_panel_body(view), title=title, expand=False)
+
+
+@validate_call
+def build_rich_view_map_tree(vertex_tree: VertexTree, view_map: ViewMap, *, truncate: bool = True) -> RichTree:
+    """Build a Rich tree of *view_map*'s entries within *vertex_tree*'s structure.
+
+    The root vertex is always shown.  Below it, only vertices carrying a *view_map* entry are
+    rendered, together with whatever ancestors are needed to connect each such vertex back to the
+    root; all other vertices are omitted.  Each rendered vertex uses :func:`build_view_panel`, so its
+    title matches the vertex tree and its body lists the vertex's view state (or a placeholder for a
+    connector-only ancestor).
+
+    Args:
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` supplying tree structure and titles.
+        view_map: The :data:`~guffin.model.view.ViewMap` whose entries select which vertices to show.
+        truncate: When ``True`` (default), long panel titles are shortened with an ellipsis; when
+            ``False``, they are rendered in full.
+
+    Returns:
+        A :class:`~rich.tree.Tree` rooted at the single root vertex of *vertex_tree*, pruned to the
+        view-map entries and their connecting ancestors.
+    """
+    logger.debug("vertex_tree=%r, view_map=%r", vertex_tree, view_map)
+    child_to_parent: Final[dict[Uid, Uid]] = {
+        child_uid: v.uid for v in vertex_tree.tree_vertices if v.children for child_uid in v.children
+    }
+    tree_uids: Final[set[Uid]] = {v.uid for v in vertex_tree.tree_vertices}
+    root: Final[Vertex] = next(vertex_tree.dfs())
+    included: Final[set[Uid]] = {root.uid}
+    for entry_uid in view_map:
+        cursor: Uid | None = entry_uid if entry_uid in tree_uids else None
+        while cursor is not None and cursor not in included:
+            included.add(cursor)
+            cursor = child_to_parent.get(cursor)
+    dfs_iter: Final[VertexTreeDFSIterator] = vertex_tree.dfs()
+    next(dfs_iter)
+    root_rich: Final[RichTree] = RichTree(build_view_panel(root, view_map.get(root.uid), truncate=truncate))
+    rich_map: Final[dict[Uid, RichTree]] = {root.uid: root_rich}
+    for vertex in dfs_iter:
+        if vertex.uid not in included:
+            continue
+        parent_rich: RichTree = rich_map[child_to_parent[vertex.uid]]
+        rich_map[vertex.uid] = parent_rich.add(build_view_panel(vertex, view_map.get(vertex.uid), truncate=truncate))
     return root_rich
 
 

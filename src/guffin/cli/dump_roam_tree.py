@@ -5,10 +5,13 @@ Fetches Roam nodes identified by ``TARGET`` via the Roam Local API and renders
 one or more of the following as a colorized :class:`~rich.tree.Tree` panel
 hierarchy:
 
-- **Vertex tree** (default, ``--vertex-tree`` / ``-v/-V``) — normalized
-  :class:`~guffin.vertex_tree.VertexTree` produced by
-  :func:`~guffin.transcribe.roam_tree_to_guffin.transcribe`; image vertices are
-  enriched with their native pixel size (fetched via the Local API) before display.
+- **Render bundle** (default, ``--render-bundle`` / ``-b/-B``) — the
+  :class:`~guffin.model.render_bundle.RenderBundle` produced by
+  :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`, rendered as an outer panel over
+  two sub-panels: the content :class:`~guffin.vertex_tree.VertexTree` (image vertices enriched with
+  their native pixel size, fetched via the Local API, before display) and the presentation
+  :data:`~guffin.model.view.ViewMap` (as a tree of the vertices carrying a view entry, plus the
+  ancestors connecting them to the root).
 - **Node tree** (``--node-tree`` / ``-n/-N``) — raw :class:`~guffin.roam.node_tree.NodeTree`
   as returned by the Roam Local API; each panel body lists selected
   :class:`~guffin.roam.node.RoamNode` fields, configurable via
@@ -42,7 +45,7 @@ Example::
     dump-roam-tree "Test Article" -p 3333 -g SCFH -t your-bearer-token
     dump-roam-tree wdMgyBiP9 -p 3333 -g SCFH -t tok
     dump-roam-tree "Test Article" -p 3333 -g SCFH -t tok -n --node-props heading,parents
-    dump-roam-tree "Test Article" -p 3333 -g SCFH -t tok -i -r -n -v
+    dump-roam-tree "Test Article" -p 3333 -g SCFH -t tok -i -r -n -b
 """
 
 import logging
@@ -51,7 +54,7 @@ from pathlib import Path
 from typing import Annotated, Final
 
 import typer
-from rich.console import Console
+from rich.console import Console, Group
 from rich.panel import Panel
 from rich.table import Table
 from rich.tree import Tree as RichTree
@@ -61,6 +64,7 @@ from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
+from guffin.model.view import ViewMap
 from guffin.render.asset_fetch import fetch_and_enrich_assets
 from guffin.render.rich_rendering import (
     DEFAULT_NODE_PANEL_PROPS,
@@ -69,6 +73,7 @@ from guffin.render.rich_rendering import (
     build_rich_raw_table,
     build_rich_refs_box,
     build_rich_vertex_tree,
+    build_rich_view_map_tree,
 )
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import RoamNodeNotFoundError
@@ -137,71 +142,85 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     )
 
 
-def _dump_vertex_tree(
-    vertex_tree: VertexTree | None,
+def _dump_render_bundle(
+    render_bundle: RenderBundle | None,
     vertex_props: str | None,
     api_endpoint: ApiEndpoint,
     console: Console,
     truncate: bool,
 ) -> None:
-    """Fetch image sizes, enrich *vertex_tree*, then render and print it as a Rich tree.
+    """Enrich the bundle's content, then render it as a nested Rich panel of both its parts.
 
-    Logs a warning and returns early when *vertex_tree* is ``None``.  Otherwise
-    fetches every asset-bearing vertex's file (to a temporary directory) via
+    Logs a warning and returns early when *render_bundle* is ``None``.  Otherwise fetches every
+    asset-bearing vertex's file (to a temporary directory) via
     :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets` so each image's
-    :attr:`~guffin.vertex.ImageVertex.original_image_size` is populated before
-    rendering.
+    :attr:`~guffin.vertex.ImageVertex.original_image_size` is populated before rendering, then prints
+    an outer ``Render Bundle`` :class:`~rich.panel.Panel` holding two sub-panels: the content
+    ``Vertex Tree`` (:func:`~guffin.render.rich_rendering.build_rich_vertex_tree`) followed by the
+    presentation ``View Map`` (:func:`~guffin.render.rich_rendering.build_rich_view_map_tree`).
 
     Args:
-        vertex_tree: Normalized :class:`~guffin.vertex_tree.VertexTree` to render,
-            or ``None`` when vertex tree computation was skipped.
+        render_bundle: The :class:`~guffin.model.render_bundle.RenderBundle` to render, or ``None``
+            when render-bundle computation was skipped.
         vertex_props: Comma-separated :class:`~guffin.vertex.Vertex` field names
-            to include in each panel body, or ``None`` to use
+            to include in each vertex panel body, or ``None`` to use
             :data:`~guffin.render.rich_rendering.DEFAULT_VERTEX_PANEL_PROPS`.
         api_endpoint: Roam Local API endpoint used to fetch image assets for
             original-size enrichment.
         console: Rich :class:`~rich.console.Console` to print to.
         truncate: When ``False``, render full (untruncated) panel strings.
     """
-    if vertex_tree is None:
-        logger.warning("show_vertex_tree=True but vertex_tree is None; skipping vertex tree output")
+    if render_bundle is None:
+        logger.warning("show_render_bundle=True but render_bundle is None; skipping render bundle output")
         return
     with tempfile.TemporaryDirectory() as tmp:
-        enriched_tree: Final[VertexTree] = fetch_and_enrich_assets(vertex_tree, api_endpoint, Path(tmp))[0]
+        enriched_tree: Final[VertexTree] = fetch_and_enrich_assets(render_bundle.content, api_endpoint, Path(tmp))[0]
+    view_map: Final[ViewMap] = render_bundle.view
     effective_props: Final[list[str]] = (
         [p.strip() for p in vertex_props.split(",")] if vertex_props is not None else list(DEFAULT_VERTEX_PANEL_PROPS)
     )
     vertex_rich_tree: Final[RichTree] = build_rich_vertex_tree(enriched_tree, effective_props, truncate=truncate)
-    logger.debug("vertex_rich_tree=%r", vertex_rich_tree)
-    console.rule("[bold]Vertex Tree[/bold]")
+    view_rich_tree: Final[RichTree] = build_rich_view_map_tree(enriched_tree, view_map, truncate=truncate)
+    logger.debug("vertex_rich_tree=%r, view_rich_tree=%r", vertex_rich_tree, view_rich_tree)
+    bundle_panel: Final[Panel] = Panel(
+        Group(
+            Panel(vertex_rich_tree, title="[bold]Vertex Tree[/bold]", expand=False),
+            Panel(view_rich_tree, title="[bold]View Map[/bold]", expand=False),
+        ),
+        title="[bold]Render Bundle[/bold]",
+        expand=False,
+    )
+    console.rule("[bold]Render Bundle[/bold]")
     console.print()
-    console.print(vertex_rich_tree)
-    console.print(f"{len(enriched_tree.tree_vertices)} vertices in vertex tree")
+    console.print(bundle_panel)
+    console.print(f"{len(enriched_tree.tree_vertices)} vertices in vertex tree, {len(view_map)} entries in view map")
 
 
 def dump_trees(
     fetch_result: NodeFetchResult,
-    vertex_tree: VertexTree | None,
+    render_bundle: RenderBundle | None,
     node_props: str | None,
     vertex_props: str | None,
     api_endpoint: ApiEndpoint,
     show_raw_results: bool,
     show_node_tree: bool,
-    show_vertex_tree: bool,
+    show_render_bundle: bool,
     truncate: bool,
     show_transient: bool,
 ) -> None:
     """Dispatch to the enabled display functions and print results to the console.
 
     Calls :func:`_dump_raw_table`, :func:`_dump_node_tree`, and/or
-    :func:`_dump_vertex_tree` based on the corresponding flags.
+    :func:`_dump_render_bundle` based on the corresponding flags.
 
     Args:
         fetch_result: The :class:`~guffin.roam.node_fetch_result.NodeFetchResult` returned
             by the fetch pipeline, carrying the raw node tree and Datalog results.
-        vertex_tree: Normalized :class:`~guffin.vertex_tree.VertexTree` produced
-            by :func:`~guffin.transcribe.roam_tree_to_guffin.transcribe`, or ``None`` when
-            vertex tree computation was skipped.
+        render_bundle: The :class:`~guffin.model.render_bundle.RenderBundle` (content
+            :class:`~guffin.vertex_tree.VertexTree` plus presentation
+            :data:`~guffin.model.view.ViewMap`) produced by
+            :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`, or ``None`` when
+            render-bundle computation was skipped.
         node_props: Comma-separated list of :class:`~guffin.roam.node.RoamNode`
             field names to include in each node panel body, or ``None`` to use
             :data:`~guffin.render.rich_rendering.DEFAULT_NODE_PANEL_PROPS`.
@@ -209,10 +228,10 @@ def dump_trees(
             field names to include in each vertex panel body, or ``None`` to use
             :data:`~guffin.render.rich_rendering.DEFAULT_VERTEX_PANEL_PROPS`.
         api_endpoint: Roam Local API endpoint (URL + bearer token), forwarded
-            to :func:`_dump_vertex_tree`.
+            to :func:`_dump_render_bundle`.
         show_raw_results: When ``True``, call :func:`_dump_raw_table`.
         show_node_tree: When ``True``, call :func:`_dump_node_tree`.
-        show_vertex_tree: When ``True``, call :func:`_dump_vertex_tree`.
+        show_render_bundle: When ``True``, call :func:`_dump_render_bundle`.
         truncate: When ``False``, render full (untruncated) string values in every view.
         show_transient: When ``True``, include the transient session/UI attribute columns in the
             raw-results table.
@@ -222,8 +241,8 @@ def dump_trees(
         _dump_raw_table(fetch_result, console, truncate, show_transient)
     if show_node_tree:
         _dump_node_tree(fetch_result, node_props, console, truncate)
-    if show_vertex_tree:
-        _dump_vertex_tree(vertex_tree, vertex_props, api_endpoint, console, truncate)
+    if show_render_bundle:
+        _dump_render_bundle(render_bundle, vertex_props, api_endpoint, console, truncate)
 
 
 @app.command()
@@ -284,12 +303,12 @@ def main(
             help="When enabled, render and print the node tree.",
         ),
     ] = False,
-    show_vertex_tree: Annotated[
+    show_render_bundle: Annotated[
         bool,
         typer.Option(
-            "--vertex-tree/--no-vertex-tree",
-            "-v/-V",
-            help="When enabled, render and print the vertex tree.",
+            "--render-bundle/--no-render-bundle",
+            "-b/-B",
+            help="When enabled, render and print the render bundle (vertex tree plus view map).",
         ),
     ] = True,
     truncate: Annotated[
@@ -317,9 +336,9 @@ def main(
     pattern, it fetches the subtree rooted at that node; otherwise it is treated as a
     page title and fetches all blocks on that page.
 
-    Use ``--vertex-tree`` / ``-v/-V`` and ``--node-tree`` / ``-n/-N`` to control which
-    trees are printed (vertex tree is shown by default).  Use ``--raw-results`` /
-    ``-r/-R`` to also print the raw Datalog query results, and ``--show-transient`` to
+    Use ``--render-bundle`` / ``-b/-B`` and ``--node-tree`` / ``-n/-N`` to control which
+    trees are printed (the render bundle — vertex tree plus view map — is shown by default).  Use
+    ``--raw-results`` / ``-r/-R`` to also print the raw Datalog query results, and ``--show-transient`` to
     include the transient session/UI attribute columns (hidden by default) in that raw
     table.  Use ``--include-refs`` / ``-i/-I`` to additionally fetch nodes referenced via
     ``:block/refs`` from the target page or its descendants.  Use ``--no-truncate`` to
@@ -328,7 +347,7 @@ def main(
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, api_bearer_token=%r, node_props=%r, vertex_props=%r, "
-        "show_raw_results=%r, show_vertex_tree=%r, show_node_tree=%r, include_refs=%r, truncate=%r, "
+        "show_raw_results=%r, show_render_bundle=%r, show_node_tree=%r, include_refs=%r, truncate=%r, "
         "show_transient=%r",
         target,
         local_api_port,
@@ -337,7 +356,7 @@ def main(
         node_props,
         vertex_props,
         show_raw_results,
-        show_vertex_tree,
+        show_render_bundle,
         show_node_tree,
         include_refs,
         truncate,
@@ -354,7 +373,7 @@ def main(
     )
     try:
         trees: Final[tuple[NodeFetchResult, RenderBundle | None]] = fetch_roam_trees(
-            fetch_spec, show_vertex_tree, api_endpoint
+            fetch_spec, show_render_bundle, api_endpoint
         )
     except RoamNodeNotFoundError as exc:
         kind_label: Final[str] = "Page" if exc.fetch_spec.anchor.kind == QueryAnchorKind.PAGE_TITLE else "Node"
@@ -370,16 +389,15 @@ def main(
         raise typer.Exit(code=1)
     fetch_result: Final[NodeFetchResult] = trees[0]
     render_bundle: Final[RenderBundle | None] = trees[1]
-    vertex_tree: Final[VertexTree | None] = render_bundle.content if render_bundle is not None else None
     dump_trees(
         fetch_result=fetch_result,
-        vertex_tree=vertex_tree,
+        render_bundle=render_bundle,
         node_props=node_props,
         vertex_props=vertex_props,
         api_endpoint=api_endpoint,
         show_raw_results=show_raw_results,
         show_node_tree=show_node_tree,
-        show_vertex_tree=show_vertex_tree,
+        show_render_bundle=show_render_bundle,
         truncate=truncate,
         show_transient=show_transient,
     )
