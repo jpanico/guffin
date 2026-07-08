@@ -50,6 +50,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
+from guffin.render.callout_theme import callout_accent, callout_title_tint
 from guffin.render.epub_post_processing import restore_matter_divisions, stamp_titlepage_provenance
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -59,6 +60,7 @@ from guffin.render.pandoc_rendering import (
 )
 from guffin.render.project import ProjectProfile, TopLevelDivision
 from guffin.render.render_options import EpubRenderOptions
+from guffin.roam.blockquote import CalloutType
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
@@ -92,6 +94,26 @@ def _callout_icons_dir() -> Path:
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
         return resources_path
+
+
+def _callout_colors_css() -> str:
+    """Return the per-type callout colour CSS, generated from the canonical palette.
+
+    One left-accent-bar rule and one title-band tint rule per
+    :class:`~guffin.roam.blockquote.CalloutType`, derived from the single-source palette
+    (:func:`~guffin.render.callout_theme.callout_accent` /
+    :func:`~guffin.render.callout_theme.callout_title_tint`).  Loaded after ``epub.css`` so these
+    per-type colours win over its structural defaults; this is why ``epub.css`` no longer hardcodes
+    them.
+    """
+    rules: Final[list[str]] = []
+    for callout_type in CalloutType:
+        suffix: str = callout_type.value.lower()
+        rules.append(f"div.callout-{suffix} {{ border-left-color: {callout_accent(callout_type)}; }}")
+        rules.append(
+            f"div.callout-{suffix} > div.callout-title {{ background-color: {callout_title_tint(callout_type)}; }}"
+        )
+    return "\n".join(rules) + "\n"
 
 
 def _split_level_for(division: TopLevelDivision) -> int:
@@ -220,12 +242,18 @@ def render(
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 
+        # The per-type callout colours are generated from the canonical palette into a second
+        # stylesheet, loaded after epub.css so they win over its structural defaults.
+        callout_colors_css: Final[Path] = Path(tmp) / "callout_colors.css"
+        callout_colors_css.write_text(_callout_colors_css(), encoding="utf-8")
+
         extra_args: list[str] = [
             f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
             f"--css={epub_dir / _EPUB_STYLESHEET}",
+            f"--css={callout_colors_css}",
             f"--split-level={split_level}",
             # Pandoc generates an EPUB title page from the metadata by default; gate it on the policy.
             f"--epub-title-page={'true' if emit_title_page else 'false'}",

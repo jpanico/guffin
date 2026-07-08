@@ -30,6 +30,11 @@
   heading-font: "noto sans",
   code-font: "noto sans mono",
   header-footer-font: "noto sans",
+  // Contrasting body face for callout boxes: a serif set against the sans body so callout
+  // content reads as a distinct register at a glance.  Libertinus Serif ships embedded with
+  // Typst, so it renders without a system-font dependency.  (Only the callout body uses this;
+  // the callout title keeps the ambient `font`.)
+  callout-font: "libertinus serif",
   fontsize: 11pt,
   leading: 0.65em,
   spacing: 1.2em,

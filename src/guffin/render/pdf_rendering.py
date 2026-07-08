@@ -57,6 +57,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex, PdfVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
+from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     make_resolver,
@@ -95,6 +96,16 @@ def _callout_icons_dir() -> Path:
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
         return resources_path
+
+
+def _callout_colors_env() -> str:
+    """Serialize the canonical callout palette as ``type=hex;…`` for the ``GUFFIN_CALLOUT_COLORS`` env var.
+
+    ``typst_callout.lua`` parses this to set each gentle-clues callout's ``accent-color`` from the
+    single-source palette (:data:`~guffin.render.callout_theme.CALLOUT_ACCENT`), keyed by the callout
+    class suffix (the lowercased :class:`~guffin.roam.blockquote.CalloutType` value).
+    """
+    return ";".join(f"{callout_type.value.lower()}={color}" for callout_type, color in CALLOUT_ACCENT.items())
 
 
 def _typst_template_args(
@@ -414,6 +425,9 @@ def render(
 
     # typst_callout.lua reads this to inline the shared callout icons into gentle-clues.
     os.environ["GUFFIN_CALLOUT_ICONS_DIR"] = str(_callout_icons_dir())
+    # typst_callout.lua reads this to set each callout's gentle-clues accent-color from the
+    # canonical palette, so PDF callout colours match every other format.
+    os.environ["GUFFIN_CALLOUT_COLORS"] = _callout_colors_env()
 
     # Validate the optional user-config override up front (the -V arg itself is added by
     # _typst_template_args).

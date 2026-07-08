@@ -40,6 +40,8 @@ The `.typ` and `.typst` files in this directory are the **Bergfink** Pandoc/Typs
 
 The default configuration in `base_cfg.typ` uses **Noto Sans** (body, headings, headers/footers) and **Noto Sans Mono** (code blocks). Both must be installed on the system as **static** fonts (not variable fonts — Typst does not currently support variable fonts).
 
+Callout boxes set their **body** in a contrasting serif via the `callout-font` key (default **Libertinus Serif**, which ships embedded with Typst and so needs no installation), so callout content reads as a distinct register against the sans body. The callout *title* keeps the ambient `font`. Override `callout-font` in `user_cfg.typ` to change (or, to disable the contrast, set it to the same value as `font`).
+
 On macOS, download the static variants from Google Fonts: open the family page, click *Download family*, and install only the files from the `static/` subfolder via Font Book. Variable font files are identifiable by `[wght]` or `[wdth]` in their filename — do not install those.
 
 To avoid this requirement entirely, override the font keys in `user_cfg.typ` with fonts already present on the system (e.g. `Helvetica Neue` and `Menlo` on macOS).
@@ -195,5 +197,5 @@ These filters apply only to the PDF/Typst path. The Markdown/GFM path uses a par
 
 A couple of details worth noting:
 
-- **`typst_callout.lua`** maps each Guffin callout type to a gentle-clues function (e.g. `note` / `quote` → `memo`, `summary` → `conclusion`, `failure` / `bug` → `error`). It wraps the call in a Typst code scope `#{ … }` with a local `set par(first-line-indent: 0pt, justify: false)`, so the template's global paragraph rules do not leak into the callout, and passes the title as a Typst string literal.
+- **`typst_callout.lua`** maps each Guffin callout type to a gentle-clues function (e.g. `note` / `quote` → `memo`, `summary` → `conclusion`, `failure` / `bug` → `error`). It wraps the call in a Typst code scope `#{ … }` with a local `set par(first-line-indent: 0pt, justify: false)`, so the template's global paragraph rules do not leak into the callout, and passes the title as a Typst string literal. It also emits `#set text(font: cfg.callout-font)` at the head of the callout's content block, giving the callout **body** its contrasting serif face while the title keeps the ambient `font`. Each callout's `accent-color` is set from the canonical per-type palette (`guffin/render/callout_theme.py`, passed in via the `GUFFIN_CALLOUT_COLORS` env var), overriding gentle-clues' own theme colours so PDF callout colours match every other output format; gentle-clues derives the title band (`accent.lighten(85%)`) and box border from that one accent.
 - **`typst_list_para.lua`** leaves nested lists untouched — a sublist already starts its own block and never merges, so only a non-list following block needs the paragraph break.

@@ -21,7 +21,12 @@ Notes on two GFM-pipeline filters that are handled differently here:
 - **callout** — the GFM filter emits GitHub blockquote-alert syntax, which is not valid XHTML, so it
   is not reused. The callout `<div class="callout callout-TYPE">` is styled by `epub.css` as a tinted
   header band over a white body, and `epub_callout.lua` (above) prepends the shared icon into the
-  header.
+  header. The callout **body** is set in a contrasting serif (`div.callout` `font-family`, mirroring
+  the PDF's `callout-font`) so its content reads as a distinct register against the sans body; the
+  title is reset to the sans body face (`div.callout-title` `font-family`). The per-type callout
+  **colours** (left accent bar + header-band tint) are **not** in `epub.css`: they are generated
+  from the canonical single-source palette (`guffin/render/callout_theme.py`) by `epub_rendering.py`
+  into a second stylesheet loaded after `epub.css`, so the same colour drives every output format.
 - **image** — the GFM image filter is not applied: Pandoc's EPUB writer natively embeds local-path
   images into the package, so content images must reach the writer as Pandoc `Image` elements rather
   than raw `<img>` HTML.
