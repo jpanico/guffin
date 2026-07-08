@@ -8,6 +8,12 @@ div.sourceCode {
   padding: 0.5em 1em;
   margin: 1em 0;
   color: #f8f8f2;
+  /* Skylighting's default stylesheet sets `@media screen { div.sourceCode { overflow: auto } }`,
+     which makes the code box a scroll container — and a scroll container is atomic for pagination,
+     so paginated reading systems (Apple Books, Calibre) cannot break a tall code listing across
+     pages and clip it to one page instead. Force `overflow: visible` so the block fragments and the
+     whole listing is reachable. */
+  overflow: visible;
 }
 
 pre, code,
@@ -123,6 +129,21 @@ div.sourceCode pre.numberSource code > span > a:first-child::before {
 }
 div.sourceCode pre.numberSource code > span > a {
   text-decoration: none;
+}
+
+/*
+ * Wrap long code lines so a listing never overflows the page width in reflowable readers (which,
+ * unlike the PDF, have no horizontal scroll). This mirrors skylighting's own @media print rule,
+ * applied on screen: `white-space: pre-wrap` on the code, with a hanging indent (negative
+ * text-indent cancelled by matching padding-left) so a wrapped continuation aligns under the code
+ * rather than back under the line-number gutter.
+ */
+div.sourceCode pre > code.sourceCode {
+  white-space: pre-wrap;
+}
+div.sourceCode pre.numberSource code > span {
+  padding-left: 2.6em;
+  text-indent: -2.6em;
 }
 
 /*
