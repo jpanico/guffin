@@ -17,6 +17,28 @@ aIPqy4neT:
   props: null
   title: null
   attrs: null
+4PUfPgyEm:
+  uid: 4PUfPgyEm
+  id: 12000
+  string: '**The Oath of the Assassin:** The Old Man would interrogate the youths
+    before his court, and they would eagerly testify that they had seen Paradise.
+    He would then promise them that if they assassinated his enemies, his angels would
+    carry them straight back to the garden—whether they survived the mission or were
+    killed in the attempt.'
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
+  props: null
+  title: null
+  attrs: null
 snXG7pnjI:
   uid: snXG7pnjI
   id: 11870
@@ -32,6 +54,24 @@ snXG7pnjI:
   parents:
   - id: 11850
   - id: 11861
+  props: null
+  title: null
+  attrs: null
+osKoQyNgk:
+  uid: osKoQyNgk
+  id: 11987
+  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F115xlSDz4L.jpeg.enc?alt=media&token=8ea7df26-e5be-450b-9ac4-2b9715eb8fbe)'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
   props: null
   title: null
   attrs: null
@@ -68,6 +108,26 @@ LBFKibPIj:
   parents: null
   props: null
   title: Test Article
+  attrs: null
+3TO924yvu:
+  uid: 3TO924yvu
+  id: 11974
+  string: 'element-type:: chapter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  - id: 11973
+  props: null
+  title: null
   attrs: null
 Bl5IgRIYf:
   uid: Bl5IgRIYf
@@ -195,6 +255,27 @@ rysYJi7Fs:
   - id: 11850
   - id: 11904
   - id: 11913
+  props: null
+  title: null
+  attrs: null
+icYzlHriz:
+  uid: icYzlHriz
+  id: 12017
+  string: '**Tartar Encampments:** Polo mentions that during the summer months, the
+    region is highly favored by the Tartar (Mongol) armies because of its excellent
+    pastures for their livestock. However, they abandon the area in the winter when
+    heavy snows make the cold intolerable.'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
   props: null
   title: null
   attrs: null
@@ -360,6 +441,49 @@ bFYi5U_xl:
   props: null
   title: identifier
   attrs: null
+ybQyyVAso:
+  uid: ybQyyVAso
+  id: 12031
+  string: '**Zaiton (Quanzhou):** A massive Chinese port city, described as one of
+    the busiest havens in the world, from which the Polos eventually sailed on their
+    journey back to Europe.'
+  order: 9
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
+GW0a1qLts:
+  uid: GW0a1qLts
+  id: 11998
+  string: '**The Awakening:** When the young men awoke, they found themselves surrounded
+    by magnificent palaces, flowing runnels of milk and wine, and beautiful women
+    singing and dancing. Believing the stories they had been told, the young men were
+    fully convinced they had awakened in Paradise.'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
+  props: null
+  title: null
+  attrs: null
 oUtEaVgwV:
   uid: oUtEaVgwV
   id: 11880
@@ -396,6 +520,61 @@ oUtEaVgwV:
       - uid
       - Nt9obFYPS
       value: ' introduction'
+BtFxR9Vwh:
+  uid: BtFxR9Vwh
+  id: 11986
+  string: ''
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  props: null
+  title: null
+  attrs: null
+N-SyzJ3ai:
+  uid: N-SyzJ3ai
+  id: 12039
+  string: 'Chapter 4: Code Listing'
+  order: 5
+  heading: 2
+  children:
+  - id: 12040
+  - id: 12061
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - N-SyzJ3ai
+      value:
+      - uid
+      - N-SyzJ3ai
+    - source:
+      - uid
+      - RWty-q5wD
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - RWty-q5wD
+      value:
+      - uid
+      - BxGxeeGk1
 Lo-2ftdb7:
   uid: Lo-2ftdb7
   id: 11878
@@ -490,6 +669,46 @@ zpV7AGpCS:
   - id: 4384
   - id: 4388
   - id: 4427
+  props: null
+  title: null
+  attrs: null
+UU52OcnaE:
+  uid: UU52OcnaE
+  id: 12024
+  string: '**Kaisariah (Kayseri):** Another prominent trade and craftsmanship city
+    in Turkomania.'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
+qLnEJdFA5:
+  uid: qLnEJdFA5
+  id: 12035
+  string: This para features ^^highlight^^
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12018
   props: null
   title: null
   attrs: null
@@ -621,6 +840,48 @@ uN_MwuWeZ:
       value:
       - uid
       - BxGxeeGk1
+kBmKYNQdA:
+  uid: kBmKYNQdA
+  id: 12022
+  string: '**Layas (Ayas):** The bustling port city on the Mediterranean coast of
+    Lesser Hermenia where the Polos began their overland journey.'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
+CnG6fOf_E:
+  uid: CnG6fOf_E
+  id: 12029
+  string: '**Baudas (Baghdad):** The ancient city whose siege, capture, and destruction
+    by the Mongols Polo recounts in detail.'
+  order: 7
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
 NLMrjV2AB:
   uid: NLMrjV2AB
   id: 11863
@@ -637,6 +898,46 @@ NLMrjV2AB:
   - id: 11850
   - id: 11861
   - id: 11862
+  props: null
+  title: null
+  attrs: null
+wUeKNObXg:
+  uid: wUeKNObXg
+  id: 12025
+  string: '**Kinsay (Hangzhou):** Described by Polo as the most splendid and magnificent
+    city in the world, located in eastern China.'
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
+MQo4ub4XQ:
+  uid: MQo4ub4XQ
+  id: 12036
+  string: This para features `inline-code`
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12018
   props: null
   title: null
   attrs: null
@@ -679,6 +980,26 @@ YESkCZ8tW:
   props: null
   title: null
   attrs: null
+dWZysFvt5:
+  uid: dWZysFvt5
+  id: 12009
+  string: 'element-type:: chapter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12008
+  props: null
+  title: null
+  attrs: null
 asCh2FQQp:
   uid: asCh2FQQp
   id: 11876
@@ -693,6 +1014,43 @@ asCh2FQQp:
   props: null
   title: element-type
   attrs: null
+7-9IKKibh:
+  uid: 7-9IKKibh
+  id: 11990
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11991
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 7-9IKKibh
+      value:
+      - uid
+      - 7-9IKKibh
+    - source:
+      - uid
+      - y2gMBU71D
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - y2gMBU71D
+      value: ' chapter'
 4nmDcSocA:
   uid: 4nmDcSocA
   id: 11885
@@ -785,6 +1143,45 @@ MKBTy5omz:
   props: null
   title: subtitle
   attrs: null
+a2cA9YFVP:
+  uid: a2cA9YFVP
+  id: 12007
+  string: 'Chapter 3: Of the Greater Hermenia, with what it Containeth.'
+  order: 4
+  heading: 2
+  children:
+  - id: 12008
+  - id: 12017
+  - id: 12018
+  - id: 12019
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - a2cA9YFVP
+      value:
+      - uid
+      - a2cA9YFVP
+    - source:
+      - uid
+      - o_TNcm-9o
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - o_TNcm-9o
+      value:
+      - uid
+      - BxGxeeGk1
 HZFZjnFeu:
   uid: HZFZjnFeu
   id: 11896
@@ -816,6 +1213,28 @@ RoZyY87Nr:
   props: null
   title: null
   attrs: null
+RLZWs0m0N:
+  uid: RLZWs0m0N
+  id: 11975
+  string: In Turkomania there are three classes of people. First, there are the Turkomans;
+    these are worshippers of Mahommet, a rude people with an uncouth language of their
+    own. They dwell among mountains and downs where they find good pasture, for their
+    occupation is cattle-keeping. Excellent horses, known as Turquans, are reared
+    in their country, and also very valuable mules.
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  props: null
+  title: null
+  attrs: null
 lSrjeyDaT:
   uid: lSrjeyDaT
   id: 11902
@@ -827,6 +1246,10 @@ lSrjeyDaT:
   - id: 11906
   - id: 11909
   - id: 11920
+  - id: 11972
+  - id: 11989
+  - id: 12007
+  - id: 12039
   refs: null
   page:
     id: 11850
@@ -890,6 +1313,43 @@ ZsFRjGDDy:
       value:
       - uid
       - ExJBKbXY2
+vGvlpmqcc:
+  uid: vGvlpmqcc
+  id: 11973
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 11974
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - vGvlpmqcc
+      value:
+      - uid
+      - vGvlpmqcc
+    - source:
+      - uid
+      - 3TO924yvu
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - 3TO924yvu
+      value: ' chapter'
 RbM-trDdE:
   uid: RbM-trDdE
   id: 11912
@@ -1084,6 +1544,26 @@ shFahtwt3:
       - uid
       - LWP5sl53w
       value: ' Cum Privilegio'
+AyYZmSD81:
+  uid: AyYZmSD81
+  id: 12019
+  string: '**A Vast Land:** He describes Greater Hermenia as an enormous country,
+    noting that it contains many cities and villages.'
+  order: 1
+  heading: null
+  children:
+  - id: 12021
+  refs: null
+  page:
+    id: 11850
+  children_view_type: document
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  props: null
+  title: null
+  attrs: null
 39_RTkGv-:
   uid: 39_RTkGv-
   id: 4602
@@ -1139,6 +1619,46 @@ aAimDzV9X:
   props: null
   title: null
   attrs: null
+HNGnXbA3_:
+  uid: HNGnXbA3_
+  id: 12033
+  string: This para features **bold**
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12018
+  props: null
+  title: null
+  attrs: null
+DDP39vx_z:
+  uid: DDP39vx_z
+  id: 12027
+  string: '**Ciandu / Shangtu (Xanadu):** The famous summer capital of Kublai Khan''s
+    empire, noted for its magnificent marble palace.'
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
 qmplSzgnD:
   uid: qmplSzgnD
   id: 4338
@@ -1172,6 +1692,27 @@ qmplSzgnD:
       value:
       - uid
       - BxGxeeGk1
+SaO7N17e6:
+  uid: SaO7N17e6
+  id: 12026
+  string: '**Cambaluc (Beijing):** The grand winter capital of Kublai Khan''s vast
+    Mongol Empire.'
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
 YGoODHoSM:
   uid: YGoODHoSM
   id: 11890
@@ -1208,6 +1749,30 @@ YGoODHoSM:
       - uid
       - aIPqy4neT
       value: ' front-matter'
+ChlIfjFoZ:
+  uid: ChlIfjFoZ
+  id: 12003
+  string: '[[>]] Go thou and slay So and So; and when thou returnest my Angels shall
+    bear thee into Paradise. And shouldst thou die, natheless even so will I send
+    my Angels to carry thee back into Paradise.
+
+
+    – The Old Man'
+  order: 6
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
+  props: null
+  title: null
+  attrs: null
 OPAjTYc1n:
   uid: OPAjTYc1n
   id: 11867
@@ -1225,6 +1790,46 @@ OPAjTYc1n:
   parents:
   - id: 11850
   - id: 11861
+  props: null
+  title: null
+  attrs: null
+_Aea4kPt1:
+  uid: _Aea4kPt1
+  id: 12034
+  string: This para features ~~strikethrough~~
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12018
+  props: null
+  title: null
+  attrs: null
+tBcm3XuC9:
+  uid: tBcm3XuC9
+  id: 11983
+  string: Their chief cities are Kogni, Kaisariah, and Sevasta, of which last Saint
+    Blaise was Bishop. They are all subject to the Great Kaan, who chooses a king
+    to rule over them. And now we will leave this province, and speak of the Greater
+    Hermenia.
+  order: 6
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
   props: null
   title: null
   attrs: null
@@ -1282,6 +1887,43 @@ Wwn_ElnkO:
   props: null
   title: null
   attrs: null
+o_TNcm-9o:
+  uid: o_TNcm-9o
+  id: 12008
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 12009
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - o_TNcm-9o
+      value:
+      - uid
+      - o_TNcm-9o
+    - source:
+      - uid
+      - dWZysFvt5
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - dWZysFvt5
+      value: ' chapter'
 doB1NIOh9:
   uid: doB1NIOh9
   id: 11889
@@ -1373,6 +2015,46 @@ DZwV0sSKU:
   props: null
   title: null
   attrs: null
+lnnmSQv8m:
+  uid: lnnmSQv8m
+  id: 12030
+  string: '**Samarcan (Samarkand):** A major, heavily populated trade hub along the
+    Silk Road in Central Asia.'
+  order: 8
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
+R2Vp_85ad:
+  uid: R2Vp_85ad
+  id: 12037
+  string: This para features __italics__
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12018
+  props: null
+  title: null
+  attrs: null
 vALZLA1Jn:
   uid: vALZLA1Jn
   id: 11868
@@ -1430,6 +2112,43 @@ Zmj8N0TYR:
       - uid
       - aAimDzV9X
       value: ' part'
+RWty-q5wD:
+  uid: RWty-q5wD
+  id: 12040
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 12041
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12039
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - RWty-q5wD
+      value:
+      - uid
+      - RWty-q5wD
+    - source:
+      - uid
+      - FO2_-TXJR
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - FO2_-TXJR
+      value: ' chapter'
 BxGxeeGk1:
   uid: BxGxeeGk1
   id: 321
@@ -1590,6 +2309,27 @@ fQV20MHbZ:
   props: null
   title: null
   attrs: null
+XTruep-9v:
+  uid: XTruep-9v
+  id: 11999
+  string: '**The Return to Court:** After a few days of indulging in the garden''s
+    pleasures, the Old Man would have them drugged again and returned to his standard
+    court. When they awoke, they were deeply disappointed to find themselves back
+    in the mortal world.'
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
+  props: null
+  title: null
+  attrs: null
 dpoX6c0Pl:
   uid: dpoX6c0Pl
   id: 11861
@@ -1614,6 +2354,69 @@ dpoX6c0Pl:
   props: null
   title: null
   attrs: null
+NJvMlfH-t:
+  uid: NJvMlfH-t
+  id: 11976
+  string: The other two classes are the Armenians and the Greeks, who live mixt with
+    the former in the towns and villages, occupying themselves with trade and handicrafts.
+    They weave the finest and handsomest carpets in the world, and also a great quantity
+    of fine and rich silks of cramoisy and other colours, and plenty of other stuffs.
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  props: null
+  title: null
+  attrs: null
+L0xspxsKt:
+  uid: L0xspxsKt
+  id: 11989
+  string: 'Chapter 24: How the Old Man Used to Train His Assassins.'
+  order: 6
+  heading: 2
+  children:
+  - id: 11990
+  - id: 11998
+  - id: 11999
+  - id: 12000
+  - id: 12001
+  - id: 12002
+  - id: 12003
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - L0xspxsKt
+      value:
+      - uid
+      - L0xspxsKt
+    - source:
+      - uid
+      - 7-9IKKibh
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - 7-9IKKibh
+      value:
+      - uid
+      - BxGxeeGk1
 br-LT4oUD:
   uid: br-LT4oUD
   id: 11898
@@ -1657,6 +2460,81 @@ eYctDQDaV:
   parents: null
   props: null
   title: matter
+  attrs: null
+2eBv9J8n5:
+  uid: 2eBv9J8n5
+  id: 12061
+  string: "```python\n@validate_call\ndef transcribe(node_tree: NodeTree) -> VertexTree:\n\
+    \    \"\"\"Transcribe every node in *node_tree* into a :class:`~guffin.vertex_tree.VertexTree`.\n\
+    \n    Traverses *node_tree* in pre-order DFS order.  Most nodes are transcribed\n\
+    \    one-to-one via :func:`transcribe_standalone_node`.  Exception: a\n    :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE`\
+    \ node and all of its\n    descendants are consumed together into a single\n \
+    \   :class:`~guffin.vertex.TableVertex` via :func:`to_table_vertex`; those\n \
+    \   descendants are skipped when the DFS iterator later yields them.\n\n    When\
+    \ :data:`SHOULD_NORMALIZE_HEADING_LEVELS` is ``True``, computes a\n    *heading_offset*\
+    \ equal to ``1 − min effective heading level`` across all\n    nodes in the tree,\
+    \ so that the shallowest heading maps to level 1; when no\n    heading nodes are\
+    \ present, or when :data:`SHOULD_NORMALIZE_HEADING_LEVELS`\n    is ``False``,\
+    \ *heading_offset* is 0.\n\n    Args:\n        node_tree: A validated tree of\
+    \ raw Roam nodes.\n\n    Returns:\n        A :class:`~guffin.vertex_tree.VertexTree`\
+    \ in document (DFS) order, with\n        :attr:`~guffin.vertex_tree.VertexTree.ref_vertices`\
+    \ populated from\n        :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`.\
+    \  Referenced native-table\n        nodes are consumed into a single :class:`~guffin.vertex.TableVertex`\
+    \ (with their\n        row/cell descendants) just as in-tree tables are, so a\
+    \ cross-page table reference\n        resolves to a complete table.\n\n    Raises:\n\
+    \        ValueError: If any anchor node has neither a ``title`` nor a ``string``\
+    \ field set.\n    \"\"\"\n    min_level: Final[HeadingLevel | None] = (\n    \
+    \    min_effective_heading_level(node_tree.tree_network) if SHOULD_NORMALIZE_HEADING_LEVELS\
+    \ else None\n    )\n    heading_offset: Final[int] = (1 - min_level) if min_level\
+    \ is not None else 0\n    logger.debug(\"heading_offset=%d\", heading_offset)\n\
+    \    consumed: Final[set[Id]] = set()\n    vertices: Final[list[Vertex]] = []\n\
+    \    for node in node_tree.dfs():\n        if node.id in consumed:\n         \
+    \   continue\n        # A <domain>-meta:: container and its whole subtree are\
+    \ folded onto the parent vertex's\n        # attribute_assignments (see _resolve_attribute_assignments);\
+    \ consume them so they are not\n        # transcribed as standalone vertices.\
+    \  Checked before the attribute-block guard so a meta\n        # block whose value\
+    \ happens to parse as an attribute is still consumed (not folded twice).\n   \
+    \     if _is_meta_block(node):\n            _consume_subtree(node, node_tree,\
+    \ consumed)\n            continue\n        # Attribute blocks are folded into\
+    \ their parent vertex's attribute_assignments field\n        # (see _resolve_attribute_assignments),\
+    \ not transcribed as standalone vertices.\n        if node_type(node) is NodeType.ATTRIBUTE_BLOCK:\n\
+    \            continue\n        if node_type(node) == NodeType.NATIVE_TABLE:\n\
+    \            table_vertex, nodes_consumed = to_table_vertex(node, node_tree)\n\
+    \            consumed.update(nodes_consumed)\n            vertices.append(table_vertex)\n\
+    \        else:\n            vertices.append(transcribe_standalone_node(node, node_tree,\
+    \ heading_offset))\n    ref_vertices: Final[list[Vertex]] = []\n    ref_consumed:\
+    \ Final[set[Id]] = set()\n    # Native tables are multi-node constructs: consume\
+    \ each referenced table together with its\n    # row/cell descendants first, so\
+    \ those descendants are not also transcribed as standalone\n    # ref vertices.\
+    \  refs_by_id is not in DFS order, so a single-pass consumed-set guard could\n\
+    \    # encounter a cell before its table; a dedicated table pass avoids that.\n\
+    \    for ref_node in node_tree.refs_by_id.values():\n        if node_type(ref_node)\
+    \ != NodeType.NATIVE_TABLE:\n            continue\n        try:\n            ref_table_vertex,\
+    \ ref_nodes_consumed = to_table_vertex(ref_node, node_tree)\n        except (NotImplementedError,\
+    \ ValueError) as exc:\n            logger.debug(\"skipping ref table node uid=%r:\
+    \ %s\", ref_node.uid, exc)\n            continue\n        ref_consumed.update(ref_nodes_consumed)\n\
+    \        ref_vertices.append(ref_table_vertex)\n    for ref_node in node_tree.refs_by_id.values():\n\
+    \        # Native tables are consumed above; attribute blocks and meta containers\
+    \ are not vertices.\n        if (\n            ref_node.id in ref_consumed\n \
+    \           or node_type(ref_node) in (NodeType.NATIVE_TABLE, NodeType.ATTRIBUTE_BLOCK)\n\
+    \            or _is_meta_block(ref_node)\n        ):\n            continue\n \
+    \       try:\n            ref_vertices.append(transcribe_standalone_node(ref_node,\
+    \ node_tree))\n        except (NotImplementedError, ValueError) as exc:\n    \
+    \        logger.debug(\"skipping ref node uid=%r: %s\", ref_node.uid, exc)\n \
+    \   return VertexTree(tree_vertices=vertices, ref_vertices=ref_vertices)```"
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12039
+  props: null
+  title: null
   attrs: null
 tljWl5ZoV:
   uid: tljWl5ZoV
@@ -1773,6 +2651,76 @@ vSGgmBM_w:
   props: null
   title: null
   attrs: null
+LZJSmETBX:
+  uid: LZJSmETBX
+  id: 11972
+  string: 'Chapter 2: Of the Province called Turkomania, where are the Cities of Kogni,
+    Kaisariah, and Sevasta, and of its Commerce.'
+  order: 3
+  heading: 2
+  children:
+  - id: 11973
+  - id: 11975
+  - id: 11976
+  - id: 11983
+  - id: 11984
+  - id: 11986
+  - id: 11987
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - LZJSmETBX
+      value:
+      - uid
+      - LZJSmETBX
+    - source:
+      - uid
+      - vGvlpmqcc
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - vGvlpmqcc
+      value:
+      - uid
+      - BxGxeeGk1
+y6pLmW1tO:
+  uid: y6pLmW1tO
+  id: 11984
+  string: '[[>]] [[!INFO]] Lesser Hermenia (Cilician Armenia) vs. Turkomania (Anatolia)
+
+    When Marco Polo traveled, he didn''t view these as overlapping regions. He landed
+    his ship at the busy port city of **Layas (Ayas)** on the coast of Lesser Hermenia.
+    To get to Turkomania, his caravan had to travel north from the coast, climb through
+    the treacherous mountain passes of the Taurus Mountains (such as the famous Cilician
+    Gates), and emerge onto the high inland plateau of Turkomania to continue their
+    journey east toward the Mongol Empire.'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  props: null
+  title: null
+  attrs: null
 HPJ92coF7:
   uid: HPJ92coF7
   id: 11964
@@ -1797,6 +2745,88 @@ HPJ92coF7:
   - id: 11850
   - id: 11902
   - id: 11906
+  props: null
+  title: null
+  attrs: null
+FO2_-TXJR:
+  uid: FO2_-TXJR
+  id: 12041
+  string: 'element-type:: chapter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12039
+  - id: 12040
+  props: null
+  title: null
+  attrs: null
+NpUnOxvu-:
+  uid: NpUnOxvu-
+  id: 12023
+  string: '**Kogni (Konya):** A major inland city on the Anatolian plateau (Turkomania)
+    noted for its urban commerce and fine carpets.'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
+  props: null
+  title: null
+  attrs: null
+SGPVZag6N:
+  uid: SGPVZag6N
+  id: 12001
+  string: '**The Resulting Terror:** Believing wholeheartedly in this promise, the
+    assassins became fearless, willing to undertake any murder requested by the Old
+    Man. Consequently, he became feared by kings and princes throughout the region.'
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
+  props: null
+  title: null
+  attrs: null
+vf0E7bSFT:
+  uid: vf0E7bSFT
+  id: 12028
+  string: '**Ormuz (Hormuz):** A wealthy, strategically important port city on the
+    Persian Gulf, crucial for the maritime spice trade.'
+  order: 6
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  - id: 12021
   props: null
   title: null
   attrs: null
@@ -1910,6 +2940,32 @@ xLG8Ir4vl:
   props: null
   title: null
   attrs: null
+zO6VlUygf:
+  uid: zO6VlUygf
+  id: 12018
+  string: '**Mount Ararat and Noah''s Ark:** The most famous detail in this chapter
+    is Polo''s reference to a massive, snow-capped mountain shaped like a cube. He
+    notes that the mountain is so huge and the snow never melts, making it impossible
+    to climb, and explicitly identifies it as the resting place of Noah''s Ark.'
+  order: 3
+  heading: null
+  children:
+  - id: 12033
+  - id: 12034
+  - id: 12035
+  - id: 12036
+  - id: 12037
+  refs: null
+  page:
+    id: 11850
+  children_view_type: bullet
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  props: null
+  title: null
+  attrs: null
 o0VN-NN3k:
   uid: o0VN-NN3k
   id: 11910
@@ -1988,6 +3044,56 @@ v_yb2JFwl:
   props: null
   title: null
   attrs: null
+y2gMBU71D:
+  uid: y2gMBU71D
+  id: 11991
+  string: 'element-type:: chapter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
+  - id: 11990
+  props: null
+  title: null
+  attrs: null
+87HpA1p5c:
+  uid: 87HpA1p5c
+  id: 12021
+  string: 'Here is a list of 10 cities mentioned by Marco Polo in __The Travels__,
+    along with their modern-day equivalents and brief context:'
+  order: 0
+  heading: null
+  children:
+  - id: 12022
+  - id: 12023
+  - id: 12024
+  - id: 12025
+  - id: 12026
+  - id: 12027
+  - id: 12028
+  - id: 12029
+  - id: 12030
+  - id: 12031
+  refs: null
+  page:
+    id: 11850
+  children_view_type: numbered
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 12019
+  props: null
+  title: null
+  attrs: null
 PI66v7qPU:
   uid: PI66v7qPU
   id: 11963
@@ -2024,6 +3130,27 @@ oaDIyA-Js:
   parents:
   - id: 4384
   - id: 4600
+  props: null
+  title: null
+  attrs: null
+NKu0uhm6E:
+  uid: NKu0uhm6E
+  id: 12002
+  string: '**The Deception:** The Old Man of the Mountain maintained a beautiful,
+    secret garden modeled after the Islamic concept of Paradise. He would gather young
+    men from the region and secretly dose them with a powerful sleeping potion. While
+    they were unconscious, his servants would carry the youths into this hidden valley.'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11989
   props: null
   title: null
   attrs: null
