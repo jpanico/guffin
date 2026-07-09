@@ -279,6 +279,10 @@
   - LZJSmETBX
   - a2cA9YFVP
   - N-SyzJ3ai
+  - XEToYEzri
+  - 4GZFNJcwy
+  - z26IaDo-5
+  - QUB_je_gL
   - L0xspxsKt
   attribute_assignments:
   - attribute:
@@ -302,8 +306,15 @@
 - vertex_type: guffin/heading
   uid: tljWl5ZoV
   children:
-  - oI-Av6bm1
+  - ZVvaN-_mA
   - PI66v7qPU
+  - kaAeCSe5W
+  - P6Lcv_vzo
+  - _hwL2TbA5
+  - XisRqeSsL
+  - 3IDssqxjS
+  - ZRPRdLa9U
+  - I6j98rVJw
   - HPJ92coF7
   attribute_assignments:
   - attribute:
@@ -316,42 +327,106 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 1: Here the Book Begins; and First it Speaks of the Lesser Hermenia.'
+  text: 'Chapter 1: How the Two Brothers Polo set forth from Constantinople to traverse
+    the world.'
   heading_level: 2
 - vertex_type: guffin/image
-  uid: oI-Av6bm1
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FwuE3pTmy3-.jpeg.enc?alt=media&token=69b53a2b-6b16-42b6-a787-300b58e404d8
-  file_name: wuE3pTmy3-.jpeg.enc
+  uid: ZVvaN-_mA
+  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FDbVuSC4qn6.jpeg.enc?alt=media&token=e87ba4b9-8faf-4243-99d6-4757d99116d6
+  file_name: DbVuSC4qn6.jpeg.enc
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text
   uid: PI66v7qPU
-  text: There are two Hermenias, the Greater and the Less. The Lesser Hermenia is
-    governed by a certain King, who maintains a just rule in his dominions, but is
-    himself subject to the Tartar. The country contains numerous towns and villages,
-    and has everything in plenty; moreover, it is a great country for sport in the
-    chase of all manner of beasts and birds.
+  text: It came to pass in the year of Christ 1260, when Baldwin was reigning at Constantinople,{1}
+    that Messer Nicolas Polo, the father of my lord Mark, and Messer Maffeo Polo,
+    the brother of Messer Nicolas, were at the said city of Constantinople, whither
+    they had gone from Venice with their merchants’ wares. Now these two Brethren,
+    men singularly noble, wise, and provident, took counsel together to cross the
+    Greater Sea on a venture of trade; so they laid in a store of jewels and set forth
+    from Constantinople, crossing the Sea to Soldaia.{2} 3
+- vertex_type: guffin/text
+  uid: kaAeCSe5W
+  text: Note 1.—Baldwin II. (de Courtenay), the last Latin Emperor of Constantinople,
+    reigned from 1237 to 1261, when he was expelled by Michael Palaeologus. The date
+    in the text is, as we see, that of the Brothers’ voyage across the Black Sea.
+    It stands 1250 in all the chief texts. But the figure is certainly wrong. We shall
+    see that, when the Brothers return to Venice in 1269, they find Mark, who, according
+    to Ramusio’s version, was born after their departure, a lad of fifteen. Hence,
+    if we rely on Ramusio, they must have left Venice about 1253–54. And we shall
+    see also that they reached the Volga in 1261. Hence their start from Constantinople
+    may well have occurred in 1260, and this I have adopted as the most probable correction.
+    Where they spent the interval between 1254 (if they really left Venice so early)
+    and 1260, nowhere appears. But as their brother, Mark the Elder, in his Will styles
+    himself “whilom of Constantinople,” their headquarters were probably there.
+- vertex_type: guffin/text
+  uid: P6Lcv_vzo
+  text: Castle of Soldaia or Sudak.
+- vertex_type: guffin/text
+  uid: _hwL2TbA5
+  text: Note 2.—In the Middle Ages the Euxine was frequently called Mare Magnum or
+    Majus. Thus Chaucer:— “In the Grete See, At many a noble Armee hadde he be.”
+- vertex_type: guffin/text
+  uid: XisRqeSsL
+  text: The term Black Sea (Mare Maurum v. Nigrum) was, however, in use, and Abulfeda
+    says it was general in his day. That name has been alleged to appear as early
+    as the 10th century, in the form Σκοτεινή, “The Dark Sea”; but an examination
+    of the passage cited, from Constantine
+- vertex_type: guffin/text
+  uid: 3IDssqxjS
+  text: Porphyrogenitus, shows that it refers rather to the Baltic, whilst that author
+    elsewhere calls the Euxine simply Pontus. (Reinaud’s Abulf. I. 38, Const. Porph.
+    De Adm. Imp. c. 31, c. 42.)
+- vertex_type: guffin/text
+  uid: ZRPRdLa9U
+  text: ✛ Sodaya, Soldaia, or Soldachia, called by Orientals Súdák, stands on the
+    S.E. coast of the Crimea, west of Kaffa. It had belonged to the Greek Empire,
+    and had a considerable Greek population. After the Frank conquest of 1204 it apparently
+    fell to Trebizond. It was taken by the Mongols in 1223 for the first time, and
+    a second time in 1239, and during that century was the great port of intercourse
+    with what is now Russia. At an uncertain date, but about the middle of the century,
+    the Venetians established a factory there, which in 1287 became the seat of a
+    consul. In 1323 we find Pope John XXII. complaining to Uzbek Khan of Sarai that
+    the Christians had been ejected from Soldaia and their churches turned into mosques.
+    Ibn Batuta, who alludes to this strife, counts Sudak as one of the four great
+    ports of the World. The Genoese got Soldaia in 1365 and built strong defences,
+    still to be seen. Kaffa, with a good anchorage, in the 14th century, and later
+    on Tana, took the place of Soldaia as chief emporium in South Russia. Some of
+    the Arab Geographers call the Sea of Azov the Sea of Sudak.
+- vertex_type: guffin/text
+  uid: I6j98rVJw
+  text: The Elder Marco Polo in his Will (1280) bequeaths to the Franciscan Friars
+    of the place a house of his in Soldachia, reserving life occupation to his own
+    son and daughter, then residing in it. Probably this establishment already existed
+    when the two Brothers went thither. (Elie de Laprimaudaie, passim; Gold. Horde,
+    87; Mosheim, App. 148; Ibn Bat. I. 28, II. 414; Cathay, 231– 33; Heyd, II. passim.)
 - vertex_type: guffin/text
   uid: HPJ92coF7
-  text: It is, however, by no means a healthy region, but grievously the reverse.
-    In days of old the nobles there were valiant men, and did doughty deeds of arms;
-    but nowadays they are poor creatures, and good at nought, unless it be at boozing;
-    they are great at that. Howbeit, they have a city upon the sea, which is called
-    Layas, at which there is a great trade. For you must know that all the spicery,
-    and the cloths of silk and gold, and the other valuable wares that come from the
-    interior, are brought to that city. And the merchants of Venice and Genoa, and
-    other countries, come thither to sell their goods, and to buy what they lack.
-    And whatsoever persons would travel to the interior (of the East), merchants or
-    others, they take their way by this city of Layas.
+  text: '
+
+    '
 - vertex_type: guffin/heading
   uid: LZJSmETBX
   children:
-  - BtFxR9Vwh
-  - osKoQyNgk
+  - GJ-Y_OXdC
   - y6pLmW1tO
-  - RLZWs0m0N
-  - NJvMlfH-t
-  - tBcm3XuC9
+  - qA3qSVISz
+  - 0CiFrZbxC
+  - j0PKWKZiT
+  - oag3DZjNS
+  - A660uW2U-
+  - xR2SkX0dj
+  - zz4cSSKHy
+  - JUsffnSbz
+  - S7EU7O92J
+  - zOGZPKXuS
+  - k7uEUMoYr
+  - nMlnFSLg3
+  - ZXKzZIDeL
+  - rFMXsFeR7
+  - YACmNpmW1
+  - pYixFClXS
+  - nRcJlKqf4
   attribute_assignments:
   - attribute:
       definition:
@@ -363,16 +438,12 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 2: Of the Province called Turkomania, where are the Cities of Kogni,
-    Kaisariah, and Sevasta, and of its Commerce.'
+  text: 'Chapter 2: How the Two Brothers went on beyond Soldaia.'
   heading_level: 2
-- vertex_type: guffin/text
-  uid: BtFxR9Vwh
-  text: ''
 - vertex_type: guffin/image
-  uid: osKoQyNgk
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F115xlSDz4L.jpeg.enc?alt=media&token=8ea7df26-e5be-450b-9ac4-2b9715eb8fbe
-  file_name: 115xlSDz4L.jpeg.enc
+  uid: GJ-Y_OXdC
+  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FU73wJbltGF.jpeg.enc?alt=media&token=f7203ec3-c64d-4e35-a5d9-49f8fc4288ff
+  file_name: U73wJbltGF.jpeg.enc
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/callout
@@ -389,30 +460,284 @@
     the famous Cilician Gates), and emerge onto the high inland plateau of Turkomania
     to continue their journey east toward the Mongol Empire.
 - vertex_type: guffin/text
-  uid: RLZWs0m0N
-  text: In Turkomania there are three classes of people. First, there are the Turkomans;
-    these are worshippers of Mahommet, a rude people with an uncouth language of their
-    own. They dwell among mountains and downs where they find good pasture, for their
-    occupation is cattle-keeping. Excellent horses, known as Turquans, are reared
-    in their country, and also very valuable mules.
+  uid: qA3qSVISz
+  text: Having stayed a while at Soldaia, they considered the matter, and thought
+    it well to extend their journey further. So they set forth from Soldaia and travelled
+    till they came to the Court of a certain Tartar Prince, Barca Kaan by name, whose
+    residences were at Sara{1} and at Bolgara [and who was esteemed one of the most
+    liberal and courteous Princes that ever was among the Tartars.]{2} This Barca
+    was delighted at the arrival of the Two Brothers, and treated them with great
+    honour; so they presented to him the whole of the jewels that they had brought
+    with them. The Prince was highly pleased with these, and accepted the offering
+    most graciously, causing the Brothers to receive at least twice its value. After
+    they had spent a twelvemonth at the court of this Prince there broke out a great
+    war between Barca and Aláu, the Lord of the Tartars of the Levant, and great hosts
+    were mustered on either side.{3}
 - vertex_type: guffin/text
-  uid: NJvMlfH-t
-  text: The other two classes are the Armenians and the Greeks, who live mixt with
-    the former in the towns and villages, occupying themselves with trade and handicrafts.
-    They weave the finest and handsomest carpets in the world, and also a great quantity
-    of fine and rich silks of cramoisy and other colours, and plenty of other stuffs.
+  uid: 0CiFrZbxC
+  text: Map to illustrate the Geographical Position of the City of Sarai
 - vertex_type: guffin/text
-  uid: tBcm3XuC9
-  text: Their chief cities are Kogni, Kaisariah, and Sevasta, of which last Saint
-    Blaise was Bishop. They are all subject to the Great Kaan, who chooses a king
-    to rule over them. And now we will leave this province, and speak of the Greater
-    Hermenia.
+  uid: j0PKWKZiT
+  text: Part of the Remains of the CITY of SARAI near TZAREV North of the AKHTUBA
+    Branch of the VOLGA
+- vertex_type: guffin/text
+  uid: oag3DZjNS
+  text: Lit. Frauenfelder, Palermo
+- vertex_type: guffin/text
+  uid: A660uW2U-
+  text: But in the end Barca, the Lord of the Tartars of the Ponent, was defeated,
+    though on both sides there was great slaughter. And by reason of this war no one
+    could travel without peril of being taken; thus it was at least on the road by
+    which the Brothers had come, though there was no obstacle to their travelling
+    forward. So the Brothers, finding they could not retrace their steps, determined
+    to go forward. Quitting Bolgara, therefore, they proceeded to a city called Ucaca,
+    which was at the extremity of the kingdom of the Lord of the Ponent;{4} and thence
+    departing again, and passing the great River Tigris, they travelled across a Desert
+    which extended for seventeen days’ journey, and wherein they found neither town
+    nor village, falling in only with the tents of Tartars occupied with their cattle
+    at pasture.{5} Note 1.—✛ Barka Khan, third son of Jújí, the first-born of Chinghiz,
+    ruled the Ulús of Juji and Empire of Kipchak (Southern Russia) from 1257 to 1265.
+    He was the first Musulman sovereign of his race. His chief residence was at Sarai
+    (Sara of the text), a city founded by his brother and predecessor Bátú, on the
+    banks of the Akhtuba branch of the Volga. In the next century Ibn Batuta describes
+    Sarai as a very handsome and populous city, so large that it made half a day’s
+    journey to ride through it. The inhabitants were Mongols, Aás (or Alans), Kipchaks,
+    Circassians, Russians, and Greeks, besides the foreign Moslem merchants, who had
+    a walled quarter. Another Mahomedan traveller of the same century says the city
+    itself was not walled, but, “The Khan’s Palace was a great edifice surmounted
+    by a golden crescent weighing two kantars of Egypt, and encompassed by a wall
+    flanked with towers,” etc. Pope John XXII., on the 26th February 1322, defined
+    the limits of the new Bishopric of Kaffa, which were Sarai to the east and Varna
+    to the west. Sarai became the seat of both a Latin and a Russian metropolitan,
+    and of more than one Franciscan convent. It was destroyed by Timur on his second
+    invasion of Kipchak (1395–6), and extinguished by the Russians a century later.
+    It is the scene of Chaucer’s half-told tale of Cambuscan:— “At Sarra, in the Londe
+    of Tartarie, There dwelt a King that werriëd Russie.”
+- vertex_type: guffin/text
+  uid: xR2SkX0dj
+  text: '[“Mesalek-al-absar (285, 287), says Sarai, meaning ‘the Palace,’ was founded
+    by Bereké, brother of Batu. It stood in a salty plain, and was without walls,
+    though the palace had walls flanked by towers. The town was large, had markets,
+    madrasas—and baths. It is usually identified with Selitrennoyé Gorodok, about
+    70 miles above Astrakhan.” (Rockhill, Rubruck, p. 260, note.)— H. C.] Several
+    sites exhibiting extensive ruins near the banks of the Akhtuba have been identified
+    with Sarai; two in particular. One of these is not far from the great elbow of
+    the Volga at Tzaritzyn: the other much lower down, at Selitrennoyé Gorodok or
+    Saltpetre-Town, not far above Astrakhan.'
+- vertex_type: guffin/text
+  uid: zz4cSSKHy
+  text: The upper site exhibits by far the most extensive traces of former population,
+    and is declared unhesitatingly to be the sole site of Sarai by M. Gregorieff,
+    who carried on excavations among the remains for four years, though with what
+    precise results I have not been able to learn. The most dense part of the remains,
+    consisting of mounds and earth-works, traces of walls, buildings, cisterns, dams,
+    and innumerable canals, extends for about 7½ miles in the vicinity of the town
+    of Tzarev, but a tract of 66 miles in length and 300 miles in circuit, commencing
+    from near the head of the Akhtuba, presents remains of like character, though
+    of less density, marking the ground occupied by the villages which encircled the
+    capital. About 2½ miles to the N.W. of Tzarev a vast mass of such remains, surrounded
+    by the traces of a brick rampart, points out the presumable position of the Imperial
+    Palace. M. Gregorieff appears to admit no alternative. Yet it seems certain that
+    the indications of Abulfeda, Pegolotti, and others, with regard to the position
+    of the capital in the early part of the 14th century, are not consistent with
+    a site so far from the Caspian. Moreover, F. H. Müller states that the site near
+    Tzarev is known to the Tartars as the “Sarai of Janibek Khan” (1341–1357). Now
+    it is worthy of note that in the coinage of Janibek we repeatedly find as the
+    place of mintage, New Sarai. Arabsháh in his History of Timur states that 63 years
+    had elapsed from the foundation to the destruction of Sarai. But it must have
+    been at least 140 years since the foundation of Batu’s city. Is it not possible,
+    therefore, that both the sites which we have mentioned were successively occupied
+    by the Mongol capital; that the original Sarai of Batu was at Selitrennoyé Gorodok,
+    and that the New Sarai of Janibek was established by him, or by his father Uzbeg
+    in his latter days, on the upper Akhtuba? Pegolotti having carried his merchant
+    from Tana (Azov) to Gittarchan (Astrakhan), takes him one day by river to Sara,
+    and from Sara to Saracanco, also by river, eight days more. (Cathay, p. 287.)
+    In the work quoted I have taken Saracanco for Saraichik, on the Yaik. But it was
+    possibly the Upper or New Sarai on the Akhtuba. Ibn Batuta, marching on the frozen
+    river, reached Sarai in three days from Astrakhan. This could not have been at
+    Tzarev, 200 miles off. In corroboration (quantum valeat) of my suggestion that
+    there must have been two Sarais near the Volga, Professor Bruun of Odessa points
+    to the fact that Fra Mauro’s map presents two cities of Sarai on the Akhtuba;
+    only the Sarai of Janibeg is with him no longer New Sarai, but Great Sarai. The
+    use of the latter name suggests the possibility that in the Saracanco of Pegolotti
+    the latter half of the name may be the Mongol Kúnḳ “Great.” (See Pavet de Courteille,
+    p. 439.) Professor Bruun also draws attention to the impossibility of Ibn Batuta’s
+    travelling from Astrakhan to Tzarev in three days, an argument which had already
+    occurred to me and been inserted above. [The Empire of Kipchak founded after the
+    Mongol Conquest of 1224, included also parts of Siberia and Khwarizm; it survived
+    nominally until 1502.—H. C.] (Four Years of Archæological Researches among the
+    Ruins of Sarai [in Russian] by M. Gregorieff [who appears to have also published
+    a pamphlet specially on the site, but this has not been available]; Historisch-geographische
+    Darstellung des Stromsystems der Wolga, von Ferd. Heinr. Müller, Berlin, 1839,
+    568–577; Ibn. Bat. II. 447; Not. et Extraits, XIII. i. 286; Pallas, Voyages; Cathay,
+    231, etc.; Erdmann, Numi Asiatici, pp. 362 seqq.; Arabs. I. p. 381.)
+- vertex_type: guffin/text
+  uid: JUsffnSbz
+  text: Note 2.—Bolghar, our author’s Bolgara, was the capital of the region sometimes
+    called Great Bulgaria, by Abulfeda Inner Bulgaria, and stood a few miles from
+    the left bank of the Volga, in latitude about 54° 54′, and 90 miles below Kazan.
+    The old Arab writers regarded it as nearly the limit of the habitable world, and
+    told wonders of the cold, the brief summer nights, and the fossil ivory that was
+    found in its vicinity. This was exported, and with peltry, wax, honey, hazel-nuts,
+    and Russia leather, formed the staple articles of trade. The last item derived
+    from Bolghar the name which it still bears all over Asia. (See Bk. II. ch. xvi.,
+    and Note.) Bolghar seems to have been the northern limit of Arab travel, and was
+    visited by the curious (by Ibn Batuta among others) in order to witness the phenomena
+    of the short summer night, as tourists now visit Hammerfest to witness its entire
+    absence.
+- vertex_type: guffin/text
+  uid: S7EU7O92J
+  text: Russian chroniclers speak of an earlier capital of the Bulgarian kingdom,
+    Brakhimof, near the mouth of the Kama, destroyed by Andrew, Grand Duke of Rostof
+    and Susdal, about 1160; and this may have been the city referred to in the earlier
+    Arabic accounts. The fullest of these is by Ibn Fozlán, who accompanied an embassy
+    from the Court of Baghdad to Bolghar, in a.d. 921. The King and people had about
+    this time been converted to Islam, having previously, as it would seem, professed
+    Christianity. Nevertheless, a Mahomedan writer of the 14th century says the people
+    had then long renounced Islam for the worship of the Cross. (Not. et Extr. XIII.
+    i. 270.)
+- vertex_type: guffin/text
+  uid: zOGZPKXuS
+  text: Ruins of Bolghar.
+- vertex_type: guffin/text
+  uid: k7uEUMoYr
+  text: Bolghar was first captured by the Mongols in 1225. It seems to have perished
+    early in the 15th century, after which Kazan practically took its place. Its position
+    is still marked by a village called Bolgari, where ruins of Mahomedan character
+    remain, and where coins and inscriptions have been found. Coins of the Kings of
+    Bolghar, struck in the 10th century, have been described by Fraehn, as well as
+    coins of the Mongol period struck at Bolghar. Its latest known coin is of a.h.
+    818 (a.d. 1415–16). A history of Bolghar was written in the first half of the
+    12th century by Yakub Ibn Noman, Kadhi of the city, but this is not known to be
+    extant. Fraehn shows ground for believing the people to have been a mixture of
+    Fins, Slavs, and Turks. Nicephorus Gregoras supposes that they took their name
+    from the great river on which they dwelt (Βούλγα). [“The ruins [of Bolghar],”
+    says Bretschneider, in his Mediæval Researches, published in 1888, vol. ii. p.
+    82, “still exist, and have been the subject of learned investigation by several
+    Russian scholars. These remains are found on the spot where now the village Uspenskoye,
+    called also Bolgarskoye (Bolgari), stands, in the district of Spask, province
+    of Kazan. This village is about 4 English miles distant from the Volga, east of
+    it, and 83 miles from Kazan.” Part of the Bulgars removed to the Balkans; others
+    remained in their native country on the shores of the Azov Sea, and were subjugated
+    by the Khazars. At the beginning of the 9th century, they marched northwards to
+    the Volga and the Kama, and established the kingdom of Great Bulgaria. Their chief
+    city, Bolghar, was on the bank of the Volga, but the river runs now to the west;
+    as the Kama also underwent a change in its course, it is possible that formerly
+    Bolghar was built at the junction of the two rivers. (Cf. Reclus, Europe russe,
+    p. 761.) The Bulgars were converted to Islam in 922. Their country was first invaded
+    by the Mongols under Subutai in 1223; this General conquered it in 1236, the capital
+    was destroyed the following year, and the country annexed to the kingdom of Kipchak.
+    Bolghar was again destroyed in 1391 by Tamerlan. In 1438, Ulugh Mohammed, cousin
+    of Toka Timur, younger son of Juji, transformed this country into the khanate
+    of Kazan, which survived till 1552. It had probably been the capital of the Golden
+    Horde before Sarai.
+- vertex_type: guffin/text
+  uid: nMlnFSLg3
+  text: 'With reference to the early Christianity of the Bulgarians, to which Yule
+    refers in his note, the Laurentian Chronicle (a.d. 1229), quoted by Shpilevsky,
+    adduces evidence to show that in the Great City, i.e. Bulgar, there were Russian
+    Christians and a Christian cemetery, and the death of a Bulgarian Christian martyr
+    is related in the same chronicle as well as in the Nikon, Tver, and Tatischef
+    annals in which his name is given. (Cf. Shpilevsky, Anc. towns and other Bulgaro-Tartar
+    monuments, Kazan, 1877, p. 158 seq.; Rockhill’s Rubruck, Hakl. Soc. p. 121, note.)—H.
+    C.] The severe and lasting winter is spoken of by Ibn Fozlán and other old writers
+    in terms that seem to point to a modern mitigation of climate. It is remarkable,
+    too, that Ibn Fozlán speaks of the aurora as of very frequent occurrence, which
+    is not now the case in that latitude. We may suspect this frequency to have been
+    connected with the greater cold indicated, and perhaps with a different position
+    of the magnetic pole. Ibn Fozlán’s account of the aurora is very striking: —“Shortly
+    before sunset the horizon became all very ruddy, and at the same time I heard
+    sounds in the upper air, with a dull rustling. I looked up and beheld sweeping
+    over me a fire-red cloud, from which these sounds issued, and in it movements,
+    as it were, of men and horses; the men grasping bows, lances, and swords. This
+    I saw, or thought I saw. Then there appeared a white cloud of like aspect; in
+    it also I beheld armed horsemen, and these rushed against the former as one squadron
+    of horse charges another. We were so terrified at this that we turned with humble
+    prayer to the Almighty, whereupon the natives about us wondered and broke into
+    loud laughter. We, however, continued to gaze, seeing how one cloud charged the
+    other, remained confused with it a while, and then sundered again. These movements
+    lasted deep into the night, and then all vanished.” (Fraehn, Ueber die Wolga Bulgaren,
+    Petersb. 1832; Gold. Horde, 8, 9, 423–424; Not. et Extr. II. 541; Ibn Bat. II.
+    398; Büschings Mag. V. 492; Erdmann, Numi Asiat. I. 315–318, 333–334, 520– 535;
+    Niceph. Gregoras, II. 2, 2.)'
+- vertex_type: guffin/text
+  uid: ZXKzZIDeL
+  text: Note 3.—Alau is Polo’s representation of the name of Hulákú, brother of the
+    Great Kaans Mangu and Kublai and founder of the Mongol dynasty in Persia. In the
+    Mongol pronunciation guttural and palatal consonants are apt to be elided, hence
+    this spelling. The same name is written by Pope Alexander IV., in addressing the
+    Khan, Olao, by Pachymeres and Gregoras Χαλαὺ and Χαλαοῦ, by Hayton Haolon, by
+    Ibn Batuta Huláún, as well as in a letter of Hulaku’s own, as given by Makrizi.
+    The war in question is related in Rashíduddín’s history, and by Polo himself towards
+    the end of the work. It began in the summer of 1262, and ended about eight months
+    later. Hence the Polos must have reached Barka’s Court in 1261. Marco always applies
+    to the Mongol Khans of Persia the title of “Lords of the East” (Levant), and to
+    the Khans of Kipchak that of “Lords of the West” (Ponent). We use the term Levant
+    still with a similar specific application, and in another form Anatolia. I think
+    it best to preserve the terms Levant and Ponent when used in this way. [Robert
+    Parke in his translation out of Spanish of Mendoza, The Historie of the great
+    and mightie kingdome of China ... London, printed by I. Wolfe for Edward White,
+    1588, uses the word
+- vertex_type: guffin/text
+  uid: rFMXsFeR7
+  text: 'Ponent: “You shall understande that this mightie kingdome is the Orientalest
+    part of all Asia, and his next neighbour towards the Ponent is the kingdome of
+    Quachinchina ... (p. 2).”—H. C.]'
+- vertex_type: guffin/text
+  uid: YACmNpmW1
+  text: Note 4.—Ucaca or Ukek was a town on the right bank of the Volga, nearly equidistant
+    between Sarai and Bolghar, and about six miles south of the modern Saratov, where
+    a village called Uwek still exists. Ukek is not mentioned before the Mongol domination,
+    and is supposed to have been of Mongol foundation, as the name Ukek is said in
+    Mongol to signify a dam of hurdles. The city is mentioned by Abulfeda as marking
+    the extremity of “the empire of the Barka Tartars,” and Ibn Batuta speaks of it
+    as “one day distant from the hills of the Russians.” Polo therefore means that
+    it was the frontier of the Ponent towards Russia. Ukek was the site of a Franciscan
+    convent in the 14th century; it is mentioned several times in the campaigns of
+    Timur, and was destroyed by his army. It is not mentioned under the form Ukek
+    after this, but appears as Uwek and Uwesh in Russian documents of the 16th century.
+    Perhaps this was always the Slavonic form, for it already is written Uguech (=
+    Uwek) in Wadding’s 14th century catalogue of convents. Anthony Jenkinson, in Hakluyt,
+    gives an observation of its latitude, as Oweke (51° 40′), and Christopher Burrough,
+    in the same collection, gives a description of it as Oueak, and the latitude as
+    51° 30′ (some 7′ too much). In his time (1579) there were the remains of a “very
+    faire stone castle” and city, with old tombs exhibiting sculptures and inscriptions.
+    All these have long vanished. Burrough was told by the Russians that the town
+    “was swallowed into the earth by the justice of God, for the wickednesse of the
+    people that inhabited the same.” Lepechin in 1769 found nothing remaining but
+    part of an earthen rampart and some underground vaults of larger bricks, which
+    the people dug out for use. He speaks of coins and other relics as frequent, and
+    the like have been found more recently. Coins with Mongol-Arab inscriptions, struck
+    at Ukek by Tuktugai Khan in 1306, have been described by Fraehn and Erdmann.
+- vertex_type: guffin/text
+  uid: pYixFClXS
+  text: (Fraehn, Ueber die ehemalige Mong. Stadt Ukek, etc., Petersb. 1835; Gold.
+    Horde; Ibn Bat. II. 414; Abulfeda, in Büsching, V. 365; Ann. Minorum, sub anno
+    1400; Pétis de la Croix, II. 355, 383, 388; Hakluyt, ed. 1809, I. 375 and 472;
+    Lepechin, Tagebuch der Reise, etc., I. 235–237; Rockhill, Rubruck, 120–121, note
+    2.)
+- vertex_type: guffin/text
+  uid: nRcJlKqf4
+  text: Note 5.—The great River Tigeri or Tigris is the Volga, as Pauthier rightly
+    shows. It receives the same name from the Monk Pascal of Vittoria in 1338. (Cathay,
+    p. 234.) Perhaps this arose out of some legend that the Tigris was a reappearance
+    of the same river. The ecclesiastical historian, Nicephorus Callistus, appears
+    to imply that the Tigris coming from Paradise flows under the Caspian to emerge
+    in Kurdistan. (See IX. 19.) The “17 days” applies to one stretch of desert. The
+    whole journey from Ukek Bokhara would take some 60 days at least. Ibn Batuta is
+    58 days from Sarai to Bokhara, and of the last section he says, “we entered the
+    desert which extends between Khwarizm and Bokhara, and which has an extent of
+    18 days’ journey.” (III. 19.)
 - vertex_type: guffin/heading
   uid: a2cA9YFVP
   children:
+  - -cStchkqq
   - AyYZmSD81
   - icYzlHriz
   - zO6VlUygf
+  - HG-eNczlj
+  - -fUy43LIL
+  - uVXLy10u8
   attribute_assignments:
   - attribute:
       definition:
@@ -424,8 +749,15 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 3: Of the Greater Hermenia, with what it Containeth.'
+  text: 'Chapter 3: How the Two Brothers, after crossing a desert, came to the City
+    of Bocara, and fell in with certain Envoys there.'
   heading_level: 2
+- vertex_type: guffin/image
+  uid: -cStchkqq
+  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FYT8W1P6jTQ.jpeg.enc?alt=media&token=24628986-cdbd-452e-a434-ab236c054db3
+  file_name: YT8W1P6jTQ.jpeg.enc
+  media_type: image/jpeg
+  scaled_image_size: {}
 - vertex_type: guffin/text
   uid: AyYZmSD81
   children:
@@ -521,10 +853,73 @@
 - vertex_type: guffin/text
   uid: MQo4ub4XQ
   text: This para features `inline-code`
+- vertex_type: guffin/text
+  uid: HG-eNczlj
+  text: 'After they had passed the desert, they arrived at a very great and noble
+    city called Bocara, the territory of which belonged to a king whose name was Barac,
+    and is also called Bocara. The city is the best in all Persia.{1} And when they
+    had got thither, they found they could neither proceed further forward nor yet
+    turn back again; wherefore they abode in that city of Bocara for three years.
+    And whilst they were sojourning in that city, there came from Alau, Lord of the
+    Levant, Envoys on their way to the Court of the Great Kaan, the Lord of all the
+    Tartars in the world. And when the Envoys beheld the Two Brothers they were amazed,
+    for they had never before seen Latins in that part of the world. And they said
+    to the Brothers: “Gentlemen, if ye will take our counsel, ye will find great honour
+    and profit shall come'
+- vertex_type: guffin/text
+  uid: -fUy43LIL
+  text: 10 thereof.” So they replied that they would be right glad to learn how. “In
+    truth,” said the Envoys, “the Great Kaan hath never seen any Latins, and he hath
+    a great desire so to do. Wherefore, if ye will keep us company to his Court, ye
+    may depend upon it that he will be right glad to see you, and will treat you with
+    great honour and liberality; whilst in our company ye shall travel with perfect
+    security, and need fear to be molested by nobody.”{2} Note 1.—Hayton also calls
+    Bokhara a city of Persia, and I see Vámbéry says that, up till the conquest by
+    Chinghiz, Bokhara, Samarkand, Balkh, etc., were considered to belong to Persia.
+    (Travels, p. 377.) The first Mongolian governor of Bokhara was Buka Bosha. King
+    Barac is Borrak Khan, great-grandson of Chagatai, and sovereign of the Ulús of
+    Chagatai, from 1264 to 1270. The Polos, no doubt, reached Bokhara before 1264,
+    but Borrak must have been sovereign some time before they left it.
+- vertex_type: guffin/text
+  uid: uVXLy10u8
+  text: Note 2.—The language of the envoys seems rather to imply that they were the
+    Great Kaan’s own people returning from the Court of Hulaku. And Rashid mentions
+    that Sartak, the Kaan’s ambassador to Hulaku, returned from Persia in the year
+    that the latter prince died. It may have been his party that the Venetians joined,
+    for the year almost certainly was the same, viz. 1265. If so, another of the party
+    was Bayan, afterwards the greatest of Kublai’s captains, and much celebrated in
+    the sequel of this book. (See Erdmann’s Temudschin, p. 214.) Marsden justly notes
+    that Marco habitually speaks of Latins, never of Franks. Yet I suspect his own
+    mental expression was Farangi. 11
 - vertex_type: guffin/heading
   uid: N-SyzJ3ai
   children:
   - 2eBv9J8n5
+  - AvsdnVMvS
+  - bSmLs9TR2
+  - YFE0iG-1T
+  - yJzrsNJog
+  - CMgZLSHqM
+  - 5ejVDmAxL
+  - kf7g_JrMB
+  - EiTwSpY9z
+  - VEk5Kb5DM
+  - IL2MlFT1d
+  - FHM7PM1Wq
+  - xk9a5a8bM
+  - AMbc4pNsu
+  - LNLrKUqgP
+  - qIIkDOB-x
+  - -YnOCfmzO
+  - EF6nyb1vF
+  - 1UJc1G_8D
+  - ApcbPG6t7
+  - 3ZlryH8kY
+  - k6Zws1oot
+  - IioymiceP
+  - tONBeCHIv
+  - G3pZzZ1Wa
+  - d6qCF4DeD
   attribute_assignments:
   - attribute:
       definition:
@@ -599,6 +994,1116 @@
     \        logger.debug(\"skipping ref node uid=%r: %s\", ref_node.uid, exc)\n \
     \   return VertexTree(tree_vertices=vertices, ref_vertices=ref_vertices)"
   language: python
+- vertex_type: guffin/text
+  uid: AvsdnVMvS
+  text: So when the Two Brothers had made their arrangements, they set out on their
+    travels, in company with the Envoys, and journeyed for a whole year, going northward
+    and northeastward, before they reached the Court of that Prince. And on their
+    journey they saw many marvels of divers and sundry kinds, but of these we shall
+    say nothing at present, because Messer Mark, who has likewise seen them all, will
+    give you a full account of them in the Book which follows.
+- vertex_type: guffin/text
+  uid: bSmLs9TR2
+  text: In Georgiania there is a King called David Melic, which is as much as to say
+    “David King”; he is subject to the Tartar.{1} In old times all the kings were
+    born with the figure of an eagle upon the right shoulder. The people are very
+    handsome, capital archers, and most valiant soldiers. They are Christians of the
+    Greek Rite, and have a fashion of wearing their hair cropped, like Churchmen.{2}
+    This is the country beyond which Alexander could not pass when he wished to penetrate
+    to the region of the Ponent, because that the defile was so narrow and perilous,
+    the sea lying on the one hand, and on the other lofty mountains impassable to
+    horsemen. The strait extends like this for four leagues, and a handful of people
+    might hold it against all the world. Alexander caused a very strong tower to be
+    built there, to prevent the people beyond from passing to attack him, and this
+    got the name of the Iron Gate. This is the place that the Book of Alexander speaks
+    of, when it tells us how he shut up the Tartars between two mountains; not that
+    they were really Tartars, however, for there were no Tartars in those days, but
+    they consisted of a race of people called Comanians and many besides.{3} [In this
+    province all the forests are of box-wood.{4}] There are numerous towns and villages,
+    and silk is produced in great abundance. They also weave cloths of gold, and all
+    kinds of very fine silk stuffs. The country produces the best goshawks in the
+    world [which are called Avigi].{5} It has indeed no lack of anything, and the
+    people live by trade and handicrafts. ’Tis a very mountainous region, and full
+    of strait defiles and of fortresses, insomuch that the Tartars have never been
+    able to subdue it out and out.
+- vertex_type: guffin/text
+  uid: YFE0iG-1T
+  text: Mediæval Georgian Fortress, from a drawing dated 1634. “La provence est toute
+    plene de grant montagne et d’estroit pas et de fort.”
+- vertex_type: guffin/text
+  uid: yJzrsNJog
+  text: There is in this country a certain Convent of Nuns called St. Leonard’s, about
+    which I have to tell you a very wonderful circumstance. Near the church in question
+    there is a great lake at the foot of a mountain, and in this lake are found no
+    fish, great or small, throughout the year till Lent come. On the first day of
+    Lent they find in it the finest fish in the world, and great store too thereof;
+    and these continue to be found till Easter Eve. After that they are found no more
+    till Lent come round again; and so ’tis every year. ’Tis really a passing great
+    miracle!{6}
+- vertex_type: guffin/text
+  uid: CMgZLSHqM
+  text: 'That sea whereof I spoke as coming so near the mountains is called the Sea
+    of Ghel or Ghelan, and extends about 700 miles.{7} It is twelve days’ journey
+    distant from any other sea, and into it flows the great River Euphrates and many
+    others, whilst it is surrounded by mountains. Of late the merchants of Genoa have
+    begun to navigate this sea, carrying ships across and launching them thereon.
+    It is from the country on this sea also that the silk called Ghellé is brought.{8}
+    [The said sea produces quantities of fish, especially sturgeon, at the river-mouths
+    salmon, and other big kinds of fish.]{9} Note 1.—Ramusio has: “One part of the
+    said province is subject to the Tartar, and the other part, owing to its fortresses,
+    remains subject to the King David.” We give an illustration of one of these mediæval
+    Georgian fortresses, from a curious collection of MS. notices and drawings of
+    Georgian subjects in the Municipal Library at Palermo, executed by a certain P.
+    Cristoforo di Castelli of that city, who was a Theatine missionary in Georgia,
+    in the first half of the 17th century. The G. T. says the King was always called
+    David. The Georgian Kings of the family of Bagratidae claimed descent from King
+    David through a prince Shampath, said to have been sent north by Nebuchadnezzar;
+    a descent which was usually asserted in their public documents. Timur in his Institutes
+    mentions a suit of armour given him by the King of Georgia as forged by the hand
+    of the Psalmist King. David is a very frequent name in their royal lists. [The
+    dynasty of the Bagratidae, which was founded in 786 by Ashod, and lasted until
+    the annexation of Georgia by Russia on the 18th January, 1801, had nine reigning
+    princes named David. During the second half of the 12th century the princes were:
+    Dawith (David) IV. Narin (1247–1259), Dawith V. (1243– 1272), Dimitri II. Thawdadebuli
+    (1272–1289), Wakhtang II. (1289–1292), Dawith VI. (1292–'
+- vertex_type: guffin/text
+  uid: 5ejVDmAxL
+  text: '1308).—H. C.] There were two princes of that name, David, who shared Georgia
+    between them under the decision of the Great Kaan in 1246, and one of them, who
+    survived to 1269, is probably meant here. The name of David was borne by the last
+    titular King of Georgia, who ceded his rights to Russia in 1801. It is probable,
+    however, as Marsden has suggested, that the statement about the King always being
+    called David arose in part out of some confusion with the title of Dadian, which,
+    according to Chardin (and also to P. di Castelli), was always assumed by the Princes
+    of Mingrelia, or Colchis as the latter calls it. Chardin refers this title to
+    the Persian Dád, “equity.” To a portrait of “Alexander, King of Iberia,” or Georgia
+    Proper, Castelli attaches the following inscription, giving apparently his official
+    style: “With the sceptre of David, Crowned by Heaven, First King of the Orient
+    and of the World, King of Israel,” adding, “They say that he has on his shoulder
+    a small mark of a cross, ‘Factus est principatus super humerum ejus,’ and they
+    add that he has all his ribs in one piece, and not divided.” In another place
+    he notes that when attending the King in illness his curiosity moved him strongly
+    to ask if these things were true, but he thought better of it! (Khanikoff; Jour.
+    As. IX. 370, XI. 291, etc.; Tim. Instit. p. 143; Castelli MSS.) [A descendant
+    of these Princes was in St. Petersburg about 1870. He wore the Russian uniform,
+    and bore the title of Prince Bagration-Mukransky.]'
+- vertex_type: guffin/text
+  uid: kf7g_JrMB
+  text: Note 2.—This fashion of tonsure is mentioned by Barbaro and Chardin. The latter
+    speaks strongly of the beauty of both sexes, as does Della Valle, and most modern
+    travellers concur. Note 3.—This refers to the Pass of Derbend, apparently the
+    Sarmatic Gates of Ptolemy, and Claustra Caspiorum of Tacitus, known to the Arab
+    geographers as the “Gate of Gates” (Báb-ulabwáb), but which is still called in
+    Turkish Demír-Kápi, or the Iron Gate, and to the ancient Wall that runs from the
+    Castle of Derbend along the ridges of Caucasus, called in the East Sadd-iIskandar,
+    the Rampart of Alexander. Bayer thinks the wall was probably built originally
+    by one of the Antiochi, and renewed by the Sassanian Kobad or his son Naoshirwan.
+    It is ascribed to the latter by Abulfeda; and according to Klaproth’s extracts
+    from the Derbend Námah, Naoshirwan completed the fortress of Derbend in a.d. 542,
+    whilst he and his father together had erected 360 towers upon the Caucasian Wall
+    which extended to the Gate of the Alans (i.e. the Pass of Dariel). Mas’udi says
+    that the wall extended for 40 parasangs over the steepest summits and deepest
+    gorges. The Russians must have gained some knowledge as to the actual existence
+    and extent of the remains of this great work, but I have not been able to meet
+    with any modern information of a very precise kind. According to a quotation from
+    Reinegg’s Kaukasus (I. 120, a work which I have not been able to consult), the
+    remains of defences can be traced for many miles, and are in some places as much
+    as 120 feet high. M. Moynet indeed, in the Tour du Monde (I. 122), states that
+    he traced the wall to a distance of 27 versts (18 miles) from Derbend, but unfortunately,
+    instead of describing remains of such high interest from his own observation,
+    he cites a description written by Alex. Dumas, which he says is quite accurate.
+    [“To the west of Narin-Kaleh, a fortress which from the top of a promontory rises
+    above the city, the wall, strengthened from distance to distance by large towers,
+    follows the ridge of the mountains, descends into the ravines, and ascends the
+    slopes to take root on some remote peak. If the natives were to be believed, this
+    wall, which, however, no longer has any strategetical importance, had formerly
+    its towers bristling upon the Caucasus chain from one sea to another; at least,
+    this rampart did protect all the plains at the foot of the eastern Caucasus, since
+    vestiges were found up to 30 kilometres from Derbend.” (Reclus, Asie russe, p.
+    160.) It has belonged to Russia since 1813. The first European traveller who mentions
+    it is Benjamin of Tudela.
+- vertex_type: guffin/text
+  uid: EiTwSpY9z
+  text: 'Bretschneider (II. p. 117) observes: “Yule complains that he was not able
+    to find any modern information regarding the famous Caucasian Wall which begins
+    at Derbend. I may therefore observe that interesting details on the subject are
+    found in Legkobytov’s Survey of the Russian Dominions beyond the Caucasus (in
+    Russian), 1836, vol. iv. pp. 158–161, and in Dubois de Montpéreux’s Voyage autour
+    du Caucase, 1840, vol. iv. pp. 291–298, from which I shall give here an abstract.”
+    (He then proceeds to give an abstract, of which the following is a part:) “The
+    famous Dagh bary (mountain wall) now begins at the village of Djelgan, 4 versts
+    southwest of Derbend, but we know that as late as the beginning of the last century
+    it could be traced down to the southern gate of the city. This ancient wall then
+    stretches westward to the high mountains of Tabasseran (it seems the Tabarestan
+    of Mas’udi).... Dubois de Montpéreux enumerates the following sites of remains
+    of the wall:—In the famous defile of Dariel, north-east of Kazbek. In the valley
+    of the Assai river, near Wapila, about 35 versts north-east of Dariel. In the
+    valley of the Kizil river, about 15 versts north-west of Kazbek. Farther west,
+    in the valley of the Fiag or Pog river, between Lacz and Khilak. From this place
+    farther west about 25 versts, in the valley of the Arredon river, in the district
+    of Valaghir. Finally, the westernmost section of the Caucasian Wall has been preserved,
+    which was evidently intended to shut up the maritime defile of Gagry, on the Black
+    Sea.”—H. C.] There is another wall claiming the title of Sadd-i-Iskandar at the
+    S.E. angle of the Caspian. This has been particularly spoken of by Vámbéry, who
+    followed its traces from S.W. to N.E. for upwards of 40 miles. (See his Travels
+    in C. Asia, 54 seqq., and Julius Braun in the Ausland, No. 22, of 1869.) Yule
+    (II. pp. 537–538) says, “To the same friendly correspondent [Professor Braun]
+    I owe the following additional particulars on this interesting subject, extracted
+    from Eichwald, Periplus des Kasp. M. I. 128. “‘At the point on the mountain, at
+    the extremity of the fortress (of Derbend), where the double wall terminates,
+    there begins a single wall constructed in the same style, only this no longer
+    runs in a straight line, but accommodates itself to the contour of the hill, turning
+    now to the north and now to the south. At first it is quite destroyed, and showed
+    the most scanty vestiges, a few small heaps of stones or traces of towers, but
+    all extending in a general bearing from east to west.... It is not till you get
+    4 versts from Derbend, in traversing the mountains, that you come upon a continuous
+    wall. Thenceforward you can follow it over the successive ridges ... and through
+    several villages chiefly occupied by the Tartar hill-people. The wall ... makes
+    many windings, and every ¾ verst it exhibits substantial towers like those of
+    the city-wall, crested with loop-holes. Some of these are still in tolerably good
+    condition; others have fallen, and with the wall itself have left but slight vestiges.’
+    “Eichwald altogether followed it up about 18 versts (12 miles) not venturing to
+    proceed further. In later days this cannot have been difficult, but my kind correspondent
+    had not been able to lay his hand on information. “A letter from Mr. Eugene Schuyler
+    communicates some notes regarding inscriptions that have been found at and near
+    Derbend, embracing Cufic of a.d. 465, Pehlvi, and even Cuneiform. Alluding to
+    the fact that the other Iron-gate, south of Shahrsabz, was called also Kalugah,
+    or Kohlugah he adds: ‘I don’t know what that means, nor do I know if the Russian
+    Kaluga, southwest of Moscow, has anything to do with it, but I am told there is
+    a Russian popular song, of which two lines run: ‘“Ah Derbend, Derbend Kaluga,
+    Derbend my little Treasure!”’ 55'
+- vertex_type: guffin/text
+  uid: VEk5Kb5DM
+  text: View of Derbend. “Alexandre ne poit paser quand il vost aler au Ponent ...
+    car de l’un les est la mer, et de l’autre est gran montagne que ne se poent cavaucher.
+    La vie est mout estroit entre la montagne et la mer.”
+- vertex_type: guffin/text
+  uid: IL2MlFT1d
+  text: “I may observe that I have seen it lately pointed out that Koluga is a Mongol
+    word signifying a barrier; and I see that Timkowski (I. 288) gives the same explanation
+    of Kalgan, the name applied by Mongols and Russians to the gate in the Great Wall,
+    called Chang-kia-Kau by the Chinese, leading to Kiakhta.”
+- vertex_type: guffin/text
+  uid: FHM7PM1Wq
+  text: The story alluded to by Polo is found in the mediæval romances of Alexander,
+    and in the Pseudo-Callisthenes on which they are founded. The hero chases a number
+    of impure cannibal nations within a mountain barrier, and prays that they may
+    be shut up therein. The mountains draw together within a few cubits, and Alexander
+    then builds up the gorge and closes it with gates of brass or iron. There were
+    in all twenty-two nations with their kings, and the names of the nations were
+    Gōth, Magōth, Anugi, Egēs, Exenach, etc. Godfrey of Viterbo speaks of them in
+    his rhyming verses:— “Finibus Indorum species fuit una virorum; Goth erat atque
+    Magoth dictum cognomen eorum * * * * * Narrat Esias, Isidorus et Apocalypsis,
+    Tangit et in titulis Magna Sibylla suis. Patribus ipsorum tumulus fuit venter
+    eorum,” etc.
+- vertex_type: guffin/text
+  uid: xk9a5a8bM
+  text: 'Among the questions that the Jews are said to have put, in order to test
+    Mahommed’s prophetic character, was one series: “Who are Gog and Magog? Where
+    do they dwell? What sort of rampart did Zu’lḳarnain build between them and men?”
+    And in the Koran we find (ch. xviii. The Cavern): “They will question thee, O
+    Mahommed, regarding Zu’lḳarnain. Reply: I will tell you his history”—and then
+    follows the story of the erection of the Rampart of Yájúj and Májúj. In ch. xxi.
+    again there is an allusion to their expected issue at the latter day. This last
+    expectation was one of very old date. Thus the Cosmography of Aethicus, a work
+    long believed (though erroneously) to have been abridged by St. Jerome, and therefore
+    to be as old at least as the 4th century, says that the Turks of the race of Gog
+    and Magog, a polluted nation, eating human flesh and feeding on all abominations,
+    never washing, and never using wine, salt, nor wheat, shall come forth in the
+    Day of Antichrist from where they lie shut up behind the Caspian Gates, and make
+    horrid devastation. No wonder that the irruption of the Tartars into Europe, heard
+    of at first with almost as much astonishment as such an event would produce now,
+    was connected with this prophetic legend![1] The Emperor Frederic II., writing
+    to Henry III. of England, says of the Tartars: “’Tis said they are descended from
+    the Ten Tribes who abandoned the Law of Moses, and worshipped the Golden Calf.
+    They are the people whom Alexander Magnus shut up in the Caspian Mountains.” [See
+    the chapter Gog et Magog dans le roman en alexandrins, in Paul Meyer’s Alexandre
+    le Grand dans la Littérature française, Paris, 1886, II. pp. 386–389.—H. C.]:
+    “Gos et Margos i vienent de la tiere des Turs Et .cccc. m. hommes amenerent u
+    plus, Il en jurent la mer dont sire est Neptunus Et le porte d’infier que garde
+    Cerberus Que l’orguel d’Alixandre torneront a reüs Por çou les enclot puis es
+    estres desus. Dusc’ al tans Antecrist n’en istera mais nus.”'
+- vertex_type: guffin/text
+  uid: AMbc4pNsu
+  text: According to some chroniclers, the Emperor Heraclius had already let loose
+    the Shut-up Nations to aid him against the Persians, but it brought him no good,
+    for he was beaten in spite of their aid, and died of grief. The theory that the
+    Tartars were Gog and Magog led to the Rampart of Alexander being confounded with
+    the Wall of China (see infra, Bk. I. ch. lix.), or being relegated to the extreme
+    N.E. of Asia, as we find it in the Carta Catalana.
+- vertex_type: guffin/text
+  uid: LNLrKUqgP
+  text: These legends are referred to by Rabbi Benjamin, Hayton, Rubruquis, Ricold,
+    Matthew Paris, and many more. Josephus indeed speaks of the Pass which Alexander
+    fortified with gates of steel. But his saying that the King of Hyrcania was Lord
+    of this Pass points to the Hyrcanian Gates of Northern Persia, or perhaps to the
+    Wall of Gomushtapah, described by Vámbéry. Ricold of Montecroce allows two arguments
+    to connect the Tartars with the Jews who were shut up by Alexander; one that the
+    Tartars hated the very name of Alexander, and could not bear to hear it; the other,
+    that their manner of writing was very like the Chaldean, meaning apparently the
+    Syriac (anté, p. 29). But he points out that they had no resemblance to Jews,
+    and no knowledge of the law. Edrisi relates how the Khalif Wathek sent one Salem
+    the Dragoman to explore the Rampart of Gog and Magog. His route lay by Tiflis,
+    the Alan country, and that of the Bashkirds, to the far north or north-east, and
+    back by Samarkand. But the report of what he saw is pure fable. In 1857, Dr. Bellew
+    seems to have found the ancient belief in the legend still held by Afghan gentlemen
+    at Kandahar. At Gelath in Imeretia there still exists one valve of a large iron
+    gate, traditionally said to be the relic of a pair brought as a trophy from Derbend
+    by David, King of Georgia, called the Restorer (1089–1130). M. Brosset, however,
+    has shown it to be the gate of Ganja, carried off in 1139. (Bayer in Comment.
+    Petropol. I. 401 seqq.; Pseudo-Callisth. by Müller, p. 138; Gott. Viterb. in Pistorii
+    Nidani Script. Germ. II. 228; Alexandriade, pp. 310–311; Pereg. IV. p. 118; Acad.
+    des Insc. Divers Savans, II. 483; Edrisi, II. 416–420, etc.)
+- vertex_type: guffin/text
+  uid: qIIkDOB-x
+  text: Note 4.—The box-wood of the Abkhasian forests was so abundant, and formed
+    so important an article of Genoese trade, as to give the name of Chao de Bux (Cavo
+    di Bussi) to the bay of Bambor, N.W. of Sukum Kala’, where the traffic was carried
+    on. (See Elie de Laprim. 243.) Abulfeda also speaks of the Forest of Box (Shará’
+    ul-buḳs) on the shores of the Black Sea, from which box-wood was exported to all
+    parts of the world; but his indication of the exact locality is confused. (Reinaud’s
+    Abulf. I. 289.) At the present time “Boxwood abounds on the southern coast of
+    the Caspian, and large quantities are exported from near Resht to England and
+    Russia. It is sent up the Volga to Tsaritzin, from thence by rail to the Don,
+    and down that river to the Black Sea, from whence it is shipped to England.” (MS.
+    Note, H. Y.) [Cf. V. Helm’s Cultivated Plants, edited by J. S. Stallybrass, Lond.,
+    1891, The Box Tree, pp. 176–179.—H. C.]
+- vertex_type: guffin/text
+  uid: -YnOCfmzO
+  text: Note 5.—Jerome Cardan notices that “the best and biggest goshawks come from
+    Armenia,” a term often including Georgia and Caucasus. The name of the bird is
+    perhaps the same as ’Afçi, “Falco montanus.” (See Casiri, I. 320.) Major St. John
+    tells me that the Terlán, or goshawk, much used in Persia, is still generally
+    brought from Caucasus. (Cardan, de Rer. Varietate, VII. 35.) Note 6.—A letter
+    of Warren Hastings, written shortly before his death, and after reading Marsden’s
+    Marco Polo, tells how a fish-breeder of Banbury warned him against putting pike
+    into his fish-pond, saying, “If you should leave them where they are till Shrove
+    Tuesday they will be sure to spawn, and then you will never get any other fish
+    to breed in it.” (Romance of Travel, I. 255.) Edward Webbe in his Travels (1590,
+    reprinted 1868) tells us that in the “Land of Siria there is a River having great
+    store of fish like unto Salmon-trouts, but no Jew can catch them, though either
+    Christian and Turk shall catch them in abundance with great ease.” The circumstance
+    of fish being got only for a limited time in spring is noticed with reference
+    to Lake Van both by Tavernier and Mr. Brant. But the exact legend here reported
+    is related (as M. Pauthier has already noticed) by Wilibrand of Oldenburg of a
+    stream under the Castle of Adamodana, belonging to the Hospitallers, near Naversa
+    (the ancient Anazarbus), in Cilicia under Taurus. And Khanikoff was told the same
+    story of a lake in the district of Akhaltziké in Western Georgia, in regard to
+    which he explains the substance of the phenomenon as a result of the rise of the
+    lake’s level by the melting of the snows, which often coincides with Lent. I may
+    add that Moorcroft was told respecting a sacred pond near Sir-i-Chashma, on the
+    road from Kabul to Bamian, that the fish in the pond were not allowed to be touched,
+    but that they were accustomed to desert it for the rivulet that ran through the
+    valley regularly every year on the day of the vernal equinox, and it was then
+    lawful to catch them.
+- vertex_type: guffin/text
+  uid: EF6nyb1vF
+  text: 'Like circumstances would produce the same effect in a variety of lakes, and
+    I have not been able to identify the convent of St. Leonard’s. Indeed Leonard
+    (Sant Lienard, G. T.) seems no likely name for an Armenian Saint; and the patroness
+    of the convent (as she is of many others in that country) was perhaps Saint Nina,
+    an eminent personage in the Armenian Church, whose tomb is still a place of pilgrimage;
+    or possibly St. Helena, for I see that the Russian maps show a place called Elenovka
+    on the shores of Lake Sevan, N.E. of Erivan. Ramusio’s text, moreover, says that
+    the lake was four days in compass, and this description will apply, I believe,
+    to none but the lake just named. This is, according to Monteith, 47 miles in length
+    and 21 miles in breadth, and as far as I can make out he travelled round it in
+    three very long marches. Convents and churches on its shores are numerous, and
+    a very ancient one occupies an island on the lake. The lake is noted for its fish,
+    especially magnificent trout. (Tavern. Bk. III. ch. iii.; J. R. G. S. X. 897;
+    Pereg. Quat. p. 179; Khanikoff, 15; Moorcroft, II. 382; J. R. G. S. III. 40 seqq.)
+    Ramusio has: “In this province there is a fine city called Tiflis, and round about
+    it are many castles and walled villages. It is inhabited by Christians, Armenians,
+    Georgians, and some Saracens and Jews, but not many.”'
+- vertex_type: guffin/text
+  uid: 1UJc1G_8D
+  text: Note 7.—The name assigned by Marco to the Caspian, “Mer de Gheluchelan” or
+    “Ghelachelan,” has puzzled commentators. I have no doubt that the interpretation
+    adopted above is the correct one. I suppose that Marco said that the sea was called
+    “La Mer de Ghel ou (de) Ghelan,” a name taken from the districts of the ancient
+    Gelae on its south-western shores, called indifferently Gíl or Gílán, just as
+    many other regions of Asia have like duplicate titles (singular and plural), arising,
+    I suppose, from the change of a gentile into a local name. Such are Lár, Lárán,
+    Khutl, Khutlán, etc., a class to which Badakhshán, Wakhán, Shaghnán, Mungán, Chaghánián,
+    possibly Bámián, and many others have formerly belonged, as the adjectives in
+    some cases surviving, Badakhshi, Shaghni, Wákhi, etc., show.[2] The change exemplified
+    in the induration of these gentile plurals into local singulars is everywhere
+    traced in the passage from earlier to later geography. The old Indian geographical
+    lists, such as are preserved in the Puránas, and in Pliny’s extracts from Megasthenes,
+    are, in the main, lists of peoples, not of provinces, and even where the real
+    name seems to be local a gentile form is often given. So also Tochari and Sogdi
+    are replaced by Tokháristán and Sughd; the Veneti and Taurini by Venice and Turin;
+    the Remi and the Parisii, by Rheims and Paris; East-Saxons and South-Saxons by
+    Essex and Sussex; not to mention the countless -ings that mark the tribal settlement
+    of the Saxons in Britain. Abulfeda, speaking of this territory, uses exactly Polo’s
+    phrase, saying that the districts in question are properly called Kíl-o-Kílán,
+    but by the Arabs Jíl-o-Jílán. Teixeira gives the Persian name of the sea as Darya
+    Ghiláni. (See Abulf. in Büsching, v. 329.) [The province of Gíl (Gílán), which
+    is situated between the mountains and the Caspian Sea, and between the provinces
+    of Azerbaíján and Mázanderán (H. C.)], gave name to the silk for which it was
+    and is still famous, mentioned as Ghelle (Gílí) at the end of this chapter. This
+    Seta Ghella is mentioned also by Pegolotti (pp. 212, 238, 301), and by Uzzano,
+    with an odd transposition, as Seta Leggi, along with Seta Masandroni, i.e. from
+    the adjoining province of Mázanderán (p. 192). May not the Spanish Geliz, “a silk-dealer,”
+    which seems to have been a puzzle to etymologists, be connected with this? (See
+    Dozy and Engelmann, 2nd ed. p. 275.) [Prof. F. de Filippi (Viaggo in Persia nel
+    1862, ... Milan, 1865, 8vo) speaks of the silk industry of Ghílán (pp. 295–296)
+    as the principal product of the entire province.—H. C.]
+- vertex_type: guffin/text
+  uid: ApcbPG6t7
+  text: The dimensions assigned to the Caspian in the text would be very correct if
+    length were meant, but the Geog. Text with the same figure specifies circuit (zire).
+    Ramusio again has “a circuit of 2800 miles.” Possibly the original reading was
+    2700; but this would be in excess.
+- vertex_type: guffin/text
+  uid: 3ZlryH8kY
+  text: Note 8.—The Caspian is termed by Vincent of Beauvais Mare Seruanicum, the
+    Sea of Shirwan, another of its numerous Oriental names, rendered by Marino Sanuto
+    as Mare Salvanicum. (III. xi. ch. ix.) But it was generally known to the Franks
+    in the Middle Ages as the Sea of Bacu. Thus Berni:— “Fuor del deserto la diritta
+    strada Lungo il Mar di Bacu miglior pareva.” (Orl. Innam. xvii. 60.)
+- vertex_type: guffin/text
+  uid: k6Zws1oot
+  text: And in the Sfera of Lionardo Dati (circa 1390):— “Da Tramontana di quest’Asia
+    Grande Tartari son sotto la fredda Zona, Gente bestial di bestie e vivande, Fin
+    dove l’Onda di Baccù risuona,” etc. (p. 10.)
+- vertex_type: guffin/text
+  uid: IioymiceP
+  text: This name is introduced in Ramusio, but probably by interpolation, as well
+    as the correction of the statement regarding Euphrates, which is perhaps a branch
+    of the notion alluded to in Prologue, ch. ii. note 5. In a later chapter Marco
+    calls it the Sea of Sarai, a title also given in the Carta Catalana. [Odorico
+    calls it Sea of Bacuc (Cathay) and Sea of Bascon (Cordier). The latter name is
+    a corruption of Abeskun, a small town and island in the S.E. corner of the Caspian
+    Sea, not far from Ashurada.—H. C.] We have little information as to the Genoese
+    navigation of the Caspian, but the great number of names exhibited along its shores
+    in the map just named (1375) shows how familiar such navigation had become by
+    that date. See also Cathay, p. 50, where an account is given of a remarkable enterprise
+    by Genoese buccaneers on the Caspian about that time. Mas’udi relates an earlier
+    history of how about the beginning of the 9th century a fleet of 500 Russian vessels
+    came out of the Volga, and ravaged all the populous southern and western shores
+    of the Caspian. The unhappy population was struck with astonishment and horror
+    at this unlooked-for visitation from a sea that had hitherto been only frequented
+    by peaceful traders or fishermen. (II. 18–24.)
+- vertex_type: guffin/text
+  uid: tONBeCHIv
+  text: Note 9.—[The enormous quantity of fish found in the Caspian Sea is ascribed
+    to the mass of vegetable food to be found in the shallower waters of the North
+    and the mouth of the Volga.
+- vertex_type: guffin/text
+  uid: G3pZzZ1Wa
+  text: According to Reclus, the Caspian fisheries bring in fish to the annual value
+    of between three and four millions sterling.—H. C.]
+- vertex_type: guffin/text
+  uid: d6qCF4DeD
+  text: '[1] See Letter of Frederic to the Roman Senate, of 20th June, 1241, in Bréholles.
+    Mahommedan writers, contemporary with the Mongol invasions, regarded these as
+    a manifest sign of the approaching end of the world. (See Elliot’s Historians,
+    II. p. 265.) [2] When the first edition was published, I was not aware of remarks
+    to like effect regarding names of this character by Sir H. Rawlinson in the J.
+    R. As. Soc. vol. xi. pp. 64 and 103.'
+- vertex_type: guffin/heading
+  uid: XEToYEzri
+  children:
+  - IqRghC0ch
+  - emxLujzkH
+  - kf2mWxo36
+  - PH5mz7cnp
+  - S7JAsjnfd
+  - Zc197Ll6d
+  - Xgly0LOgl
+  - UYcjqzssQ
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: chapter
+  text: 'Chapter 5: Of the Kingdom of Mausul.'
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: IqRghC0ch
+  text: When the Two Brothers got to the Great Kaan, he received them with great honour
+    and hospitality, and showed much pleasure at their visit, asking them a great
+    number of questions. First, he asked about the emperors, how they maintained their
+    dignity, and administered justice in their dominions; and how they went forth
+    to battle, and so forth. And then he asked the like questions about the kings
+    and princes and other potentates.
+- vertex_type: guffin/text
+  uid: emxLujzkH
+  text: On the frontier of Armenia towards the south-east is the kingdom of Mausul.
+    It is a very great kingdom, and inhabited{1} by several different kinds of people
+    whom we shall now describe. First there is a kind of people called Arabi, and
+    these worship Mahommet. Then there is another description of people who are Nestorian
+    and Jacobite Christians. These have a Patriarch, whom they call the Jatolic, and
+    this Patriarch creates Archbishops, and Abbots, and Prelates of all other degrees,
+    and sends them into every quarter, as to India, to Baudas, or to Cathay, just
+    as the Pope of Rome does in the Latin countries. For you must know that though
+    there is a very great number of Christians in those countries, they are all Jacobites
+    and Nestorians; Christians indeed, but not in the fashion enjoined by the Pope
+    of Rome, for they come short in several points of the Faith.{2} All the cloths
+    of gold and silk that are called Mosolins are made in this country; and those
+    great Merchants called Mosolins, who carry for sale such quantities of spicery
+    and pearls and cloths of silk and gold, are also from this kingdom.{3} There is
+    yet another race of people who inhabit the mountains in that quarter, and are
+    called Curds. Some of them are Christians, and some of them are Saracens; but
+    they are an evil generation, whose delight it is to plunder merchants.{4} [Near
+    this province is another called Mus and Merdin, producing an immense quantity
+    of cotton, from which they make a great deal of buckram{5} and other cloth. The
+    people are craftsmen and traders, and all are subject to the Tartar King.] Note
+    1.—Polo could scarcely have been justified in calling Mosul a very great kingdom.
+    This is a bad habit of his, as we shall have to notice again. Badruddín Lúlú,
+    the last Atabeg of Mosul of the race of Zenghi had at the age of 96 taken sides
+    with Hulaku, and stood high in his favour. His son Malik Sálih, having revolted,
+    surrendered to the Mongols in 1261 on promise of life; which promise they kept
+    in Mongol fashion by torturing him to death. Since then the kingdom had ceased
+    to exist as such. Coins of Badruddín remain with the name and titles of Mangku
+    Kaan on their reverse, and some of his and of other atabegs exhibit curious imitations
+    of Greek art. (Quat. Rash. p. 389; Jour. As. IV. VI. 141.). —H. Y. and H. C. [Mosul
+    was pillaged by Timur at the end of the
+- vertex_type: guffin/text
+  uid: kf2mWxo36
+  text: Coin of Badruddín of Mausul.
+- vertex_type: guffin/text
+  uid: PH5mz7cnp
+  text: 14th century; during the 15th it fell into the hands of the Turkomans, and
+    during the 16th, of Ismail, Shah of Persia.—H. C.] [The population of Mosul is
+    to-day 61,000 inhabitants—(48,000 Musulmans, 10,000 Christians belonging to various
+    churches, and 3000 Jews).—H. C.]
+- vertex_type: guffin/text
+  uid: S7JAsjnfd
+  text: 'Note 2.—The Nestorian Church was at this time and in the preceding centuries
+    diffused over Asia to an extent of which little conception is generally entertained,
+    having a chain of Bishops and Metropolitans from Jerusalem to Peking. The Church
+    derived its name from Nestorius, Patriarch of Constantinople, who was deposed
+    by the Council of Ephesus in 431. The chief “point of the Faith” wherein it came
+    short, was (at least in its most tangible form) the doctrine that in Our Lord
+    there were two Persons, one of the Divine Word, the other of the Man Jesus; the
+    former dwelling in the latter as in a Temple, or uniting with the latter “as fire
+    with iron.” Nestorin, the term used by Polo, is almost a literal transcript of
+    the Arab form Nastúri. A notice of the Metropolitan sees, with a map, will be
+    found in Cathay, p. ccxliv. Játhalík, written in our text (from G. T.) Jatolic,
+    by Fr. Burchard and Ricold Jaselic, stands for Καθολικóς. No doubt it was originally
+    Gáthalík, but altered in pronunciation by the Arabs. The term was applied by Nestorians
+    to their Patriarch; among the Jacobites to the Mafrián or Metropolitan. The Nestorian
+    Patriarch at this time resided at Baghdad. (Assemani, vol. iii. pt. 2; Per. Quat.
+    91, 127.) The Jacobites, or Jacobins, as they are called by writers of that age
+    (Ar. Ya’úbkíy), received their name from Jacob Baradaeus or James Zanzale, Bishop
+    of Edessa (so called, Mas’udi says, because he was a maker of barda’at or saddle-cloths),
+    who gave a great impulse to their doctrine in the 6th century. [At some time between
+    the years 541 and 578, he separated from the Church and became a follower of the
+    doctrine of Eutyches.—H. C.] The Jacobites then formed an independent Church,
+    which at one time spread over the East at least as far as Sístán, where they had
+    a see under the Sassanian Kings. Their distinguishing tenet was Monophysitism,
+    viz., that Our Lord had but one Nature, the Divine. It was in fact a rebound from
+    Nestorian doctrine, but, as might be expected in such a case, there was a vast
+    number of shades of opinion among both bodies. The chief locality of the Jacobites
+    was in the districts of Mosul, Tekrit, and Jazírah, and their Patriarch was at
+    this time settled at the Monastery of St. Matthew, near Mosul, but afterwards,
+    and to the present day, at or near Mardin. [They have at present two patriarchates:
+    the Monastery of Zapharan near Baghdad and Etchmiadzin.—H. C.] The Armenian, Coptic,
+    Abyssinian, and Malabar Churches all hold some shade of the Jacobite doctrine,
+    though the first two at least have Patriarchs apart.'
+- vertex_type: guffin/text
+  uid: Zc197Ll6d
+  text: (Assemani, vol. ii.; Le Quien, II. 1596; Mas’udi, II. 329–330; Per. Quat.
+    124–129.)
+- vertex_type: guffin/text
+  uid: Xgly0LOgl
+  text: Note 3.—We see here that mosolin or muslin had a very different meaning from
+    what it has now. A quotation from Ives by Marsden shows it to have been applied
+    in the middle of last century to a strong cotton cloth made at Mosul. Dozy says
+    the Arabs use Mauçili in the sense of muslin, and refers to passages in ‘The Arabian
+    Nights.’ [Bretschneider (Med. Res. II. p. 122) observes “that in the narrative
+    of Ch’ang Ch’un’s travels to the west in 1221, it is stated that in Samarkand
+    the men of the lower classes and the priests wrap their heads about with a piece
+    of white mo-sze. There can be no doubt that mo-sze here denotes ‘muslin,’ and
+    the Chinese author seems to understand by this term the same material which we
+    are now used to call muslin.”—H. C.] I have found no elucidation of Polo’s application
+    of mosolini to a class of merchants. But, in a letter of Pope Innocent IV. (1244)
+    to the Dominicans in Palestine, we find classed as different bodies of Oriental
+    Christians, “Jacobitae, Nestoritae, Georgiani, Graeci, Armeni, Maronitae, et Mosolini.”
+    (Le Quien, III. 1342.) Note 4.—“The Curds,” says Ricold, “exceed in malignant
+    ferocity all the barbarous nations that I have seen.... They are called Curti,
+    not because they are curt in stature, but from the Persian word for Wolves....
+    They have three principal vices, viz., Murder, Robbery, and Treachery.” Some say
+    they have not mended since, but his etymology is doubtful. Kúrt is Turkish for
+    a wolf, not Persian, which is Gurg; but the name (Karduchi, Kordiaei, etc.) is
+    older, I imagine, than the Turkish language in that part of Asia. Quatremère refers
+    it to the Persian gurd, “strong, valiant, hero.” As regards the statement that
+    some of the Kurds were Christians, Mas’udi states that the Jacobites and certain
+    other Christians in the territory of Mosul and Mount Judi were reckoned among
+    the Kurds. (Not. et Ext. XIII. i. 304.) [The Kurds of Mosul are in part nomadic
+    and are called Kotcheres, but the greater number are sedentary and cultivate cereals,
+    cotton, tobacco, and fruits. (Cuinet.) Old Kurdistan had Shehrizor (Kerkuk, in
+    the sanjak of that name) as its capital.— H. C.]
+- vertex_type: guffin/text
+  uid: UYcjqzssQ
+  text: Note 5.—Ramusio here, as in all passages where other texts have Bucherami
+    and the like, puts Boccassini, a word which has become obsolete in its turn. I
+    see both Bochayrani and Bochasini coupled, in a Genoese fiscal statute of 1339,
+    quoted by Pardessus. (Lois Maritimes, IV. 456.) Mush and Mardin are in very different
+    regions, but as their actual interval is only about 120 miles, they may have been
+    under one provincial government. Mush is essentially Armenian, and, though the
+    seat of a Pashalik, is now a wretched place. Mardin, on the verge of the Mesopotamian
+    Plain, rises in terraces on a lofty hill, and there, says Hammer, “Sunnis and
+    Shias, Catholic and Schismatic Armenians, Jacobites, Nestorians, Chaldæans, Sun-,
+    Fire-, Calf-, and Devilworshippers dwell one over the head of the other.” (Ilchan.
+    I. 191.)
+- vertex_type: guffin/heading
+  uid: 4GZFNJcwy
+  children:
+  - aDIkVUQdu
+  - gMhyk9tMl
+  - YgVtn14fW
+  - pP2SoMp2M
+  - 08HJProcI
+  - mZJ6qXSlY
+  - J9J6AIJ_P
+  - JTYREHPDa
+  - r2dpLG9oZ
+  - 2n4fwDbsN
+  - BhkxYuvuD
+  - TnIQ-fsxe
+  - qqnt1TH5A
+  - GVyI2I8fM
+  - OHNvkW7pD
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: chapter
+  text: 'Chapter 6: How the Great Kaan asked all about the manners of the Christians,
+    and particularly about the Pope of Rome.'
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: aDIkVUQdu
+  text: And then he inquired about the Pope and the Church, and about all that is
+    done at Rome, and all the customs of the Latins. And the Two Brothers told him
+    the truth in all its particulars, with order and good sense, like sensible men
+    as they were; and this they were able to do as they knew the Tartar language well.{1}
+    Note 1.—The word generally used for Pope in the original is Apostoille (Apostolicus),
+    the usual French expression of that age. It is remarkable that for the most part
+    the text edited by Pauthier has the correcter Oriental form Tatar, instead of
+    the usual Tartar. Tattar is the word used by Yvo of Narbonne, in the curious letter
+    given by Matthew Paris under 1243. We are often told that Tartar is a vulgar European
+    error. It is in any case a very old one; nor does it seem to be of European origin,
+    but rather Armenian;[1] though the suggestion of Tartarus may have given it readier
+    currency in Europe. Russian writers, or rather writers who have been in Russia,
+    sometimes try to force on us a specific limitation of the word Tartar to a certain
+    class of Oriental Turkish race, to whom the Russians appropriate the name. But
+    there is no just ground for this. Tátár is used by Oriental writers of Polo’s
+    age exactly as Tartar was then, and is still, used in Western Europe, as a generic
+    title for the Turanian hosts who followed Chinghiz and his successors. But I believe
+    the name in this sense was unknown to Western Asia before the time of Chinghiz.
+    And General Cunningham must overlook this when he connects the Ṭáṭaríya coins,
+    mentioned by Arab geographers of the 9th century, with “the Scythic or Tátár princes
+    who ruled in Kabul” in the beginning of our era. Tartars on the Indian frontier
+    in those centuries are surely to be classed with the Frenchmen whom Brennus led
+    to Rome, or the Scotchmen who fought against Agricola.
+- vertex_type: guffin/text
+  uid: gMhyk9tMl
+  text: 'Baudas is a great city, which used to be the seat of the Calif of all the
+    Saracens in the world, just as Rome is the seat of the Pope of all the Christians.{1}
+    A very great river flows through the city, and by this you can descend to the
+    Sea of India. There is a great traffic of merchants with their goods this way;
+    they descend some eighteen days from Baudas, and then come to a certain city called
+    Kisi, where they enter the Sea of India.{2} There is also on the river, as you
+    go from Baudas to Kisi, a great city called Bastra, surrounded by woods, in which
+    grow the best dates in the world.{3} In Baudas they weave many different kinds
+    of silk stuffs and gold brocades, such as nasich, and nac, and cramoisy, and many
+    another beautiful tissue richly wrought with figures of beasts and birds. It is
+    the noblest and greatest city in all those regions.{4} Now it came to pass on
+    a day in the year of Christ 1255, that the Lord of the Tartars of the Levant,
+    whose name was Alaü, brother to the Great Kaan now reigning, gathered a mighty
+    host and came up against Baudas and took it by storm.{5} It was a great enterprise!
+    for in Baudas there were more than 100,000 horse, besides foot soldiers. And when
+    Alaü had taken the place he found therein a tower of the Califs, which was full
+    of gold and silver and other treasure; in fact the greatest accumulation of treasure
+    in one spot that ever was known.{6} When he beheld that great heap of treasure
+    he was astonished, and, summoning the Calif to his presence, he said to him: “Calif,
+    tell me now why thou hast gathered such a huge treasure? What didst thou mean
+    to do therewith? Knewest thou not that I was thine enemy, and that I was coming
+    against thee with so great an host to cast thee forth of thine heritage? Wherefore
+    didst thou not take of thy gear and employ it in paying knights and soldiers to
+    defend thee and thy city?”'
+- vertex_type: guffin/text
+  uid: YgVtn14fW
+  text: The Calif wist not what to answer, and said never a word. So the Prince continued,
+    “Now then, Calif, since I see what a love thou hast borne thy treasure, I will
+    e’en give it thee to eat!” So he shut the Calif up in the Treasure Tower, and
+    bade that neither meat nor drink should be given him, saying, “Now, Calif, eat
+    of thy treasure as much as thou wilt, since thou art so fond of it; for never
+    shalt thou have aught else to eat!” So the Calif lingered in the tower four days,
+    and then died like a dog. Truly his treasure would have been of more service to
+    him had he bestowed it upon men who would have defended his kingdom and his people,
+    rather than let himself be taken and deposed and put
+- vertex_type: guffin/text
+  uid: pP2SoMp2M
+  text: '{7} to death as he was. Howbeit, since that time, there has been never another
+    Calif, either at Baudas or anywhere else.{8} Now I will tell you of a great miracle
+    that befell at Baudas, wrought by God on behalf of the Christians. Note 1.—This
+    form of the Mediæval Frank name of Baghdad, Baudas [the Chinese traveller, Ch’ang
+    Te, Si Shi Ki, XIII. cent., says, “the kingdom of Bao-da,” H. C.], is curiously
+    like that used by the Chinese historians, Paota (Pauthier; Gaubil), and both are
+    probably due to the Mongol habit of slurring gutturals. (See Prologue, ch. ii.
+    note 3.) [Baghdad was taken on the 5th of February, 1258, and the Khalif surrendered
+    to Hulaku on the 10th of February.—H. C.] Note 2.—Polo is here either speaking
+    without personal knowledge, or is so brief as to convey an erroneous impression
+    that the Tigris flows to Kisi, whereas three-fourths of the length of the Persian
+    Gulf intervene between the river mouth and Kisi. The latter is the island and
+    city of Kish or Kais, about 200 miles from the mouth of the Gulf, and for a long
+    time one of the chief ports of trade with India and the East. The island, the
+    Cataea of Arrian, now called Ghes or Kenn, is singular among the islands of the
+    Gulf as being wooded and well supplied with fresh water. The ruins of a city [called
+    Harira, according to Lord Curzon,] exist on the north side. According to Wassáf,
+    the island derived its name from one Kais, the son of a poor widow of Síráf (then
+    a great port of Indian trade on the northern shore of the Gulf), who on a voyage
+    to India, about the 10th century, made a fortune precisely as Dick Whittington
+    did. The proceeds of the cat were invested in an establishment on this island.
+    Modern attempts to nationalise Whittington may surely be given up! It is one of
+    the tales which, like Tell’s shot, the dog Gellert, and many others, are common
+    to many regions. (Hammer’s Ilch. I. 239; Ouseley’s Travels, I. 170; Notes and
+    Queries, 2nd s. XI. 372.)'
+- vertex_type: guffin/text
+  uid: 08HJProcI
+  text: Mr. Badger, in a postscript to his translation of the History of Omán (Hak.
+    Soc. 1871), maintains that Kish or Kais was at this time a city on the mainland,
+    and identical from Síráf. He refers to Ibn Batuta (II. 244), who certainly does
+    speak of visiting “the city of Kais, called also Síráf.” And Polo, neither here
+    nor in Bk. III. ch. xl., speaks of Kisi as an island. I am inclined, however,
+    to think that this was from not having visited it. Ibn Batuta says nothing of
+    Síráf as a seat of trade; but the historian Wassáf, who had been in the service
+    of Jamáluddín al-Thaibi, the Lord of Kais, in speaking of the export of horses
+    thence to India, calls it “the Island of Kais.” (Elliot, III. 34.) Compare allusions
+    to this horse trade in ch. xv. and in Bk. III. ch. xvii. Wassáf was precisely
+    a contemporary of Polo.
+- vertex_type: guffin/text
+  uid: mZJ6qXSlY
+  text: 'Note 3.—The name is Bascra in the MSS., but this is almost certainly the
+    common error of c for t. Basra is still noted for its vast date-groves. “The whole
+    country from the confluence of the Euphrates and Tigris to the sea, a distance
+    of 30 leagues, is covered with these trees.” (Tav. Bk. II. ch. iii.) Note 4.—From
+    Baudas, or Baldac, i.e. Baghdad, certain of these rich silk and gold brocades
+    were called Baldachini, or in English Baudekins. From their use in the state canopies
+    and umbrellas of Italian dignitaries, the word Baldacchino has come to mean a
+    canopy, even when architectural. [Baldekino, baldacchino, was at first entirely
+    made of silk, but afterwards silk was mixed (sericum mixtum) with cotton or thread.
+    When Hulaku conquered Baghdad part of the tribute was to be paid with that kind
+    of stuff. Later on, says Heyd (II. p. 697), it was also manufactured in the province
+    of Ahwaz, at Damas and at Cyprus; it was carried as far as France and England.
+    Among the articles sent from Baghdad to Okkodai Khan, mentioned in the Yüan ch’ao
+    pi shi (made in the 14th century), quoted by Bretschneider (Med. Res. II. p. 124),
+    we note: Nakhut (a kind of gold brocade), Nachidut (a silk stuff interwoven with
+    gold), Dardas (a stuff embroidered in gold). Bretschneider (p. 125) adds: “With
+    respect to nakhut and nachidut, I may observe that these words represent the Mongol
+    plural form of nakh and nachetti.... I may finally mention that in the Yüan shi,
+    ch. lxxviii. (on official dresses), a stuff, na-shi-shi, is repeatedly named,
+    and the term is explained there by kin kin (gold brocade).”—H. C.] The stuffs
+    called Nasich and Nac are again mentioned by our traveller below (ch. lix.). We
+    only know that they were of silk and gold, as he implies here, and as Ibn Batuta
+    tells us, who mentions Nakh several times and Nasíj once. The latter is also mentioned
+    by Rubruquis (Nasic) as a present made to him at the Kaan’s court. And Pegolotti
+    speaks of both nacchi and nacchetti of silk and gold, the latter apparently answering
+    to Nasich. Nac, Nacques, Nachiz, Nacíz, Nasís, appear in accounts and inventories
+    of the 14th century, French and English. (See Dictionnaire des Tissus, II. 199,
+    and Douet d’Arcq, Comptes de l’Argenterie des Rois de France, etc., 334.) We find
+    no mention of Nakh or Nasíj among the stuffs detailed in the Aín Akbari, so they
+    must have been obsolete in the 16th century. [Cf. Heyd, Com. du Levant, II. p.
+    698; Nacco, nachetto, comes from the Arabic nakh (nekh); nassit (nasith) from
+    the Arabic nécidj.—H. C.] Quermesis or Cramoisy derived its name from the Kermes
+    insect (Ar. Kirmiz) found on Quercus coccifera, now supplanted by cochineal. The
+    stuff so called is believed to have been originally a crimson velvet, but apparently,
+    like the mediæval Purpura, if not identical with it, it came to indicate a tissue
+    rather than a colour. Thus Fr.-Michel quotes velvet of vermeil cramoisy, of violet,
+    and of blue cramoisy, and pourpres of a variety of colours, though he says he
+    has never met with pourpre blanche. I may, however, point to Plano Carpini (p.
+    755), who describes the courtiers at Karakorum as clad in white purpura.'
+- vertex_type: guffin/text
+  uid: J9J6AIJ_P
+  text: 'The London prices of Chermisi and Baldacchini in the early part of the 15th
+    century will be found in Uzzano’s work, but they are hard to elucidate. Babylon,
+    of which Baghdad was the representative, was famous for its variegated textures
+    in very early days. We do not know the nature of the goodly Babylonish garment
+    which tempted Achan in Jericho, but Josephus speaks of the affluence of rich stuffs
+    carried in the triumph of Titus, “gorgeous with life-like designs from the Babylonian
+    loom,” and he also describes the memorable Veil of the Temple as a πέπλος Βαβυλώνιος
+    of varied colours marvellously wrought. Pliny says King Attalus invented the intertexture
+    of cloth with gold; but the weaving of damasks of a variety of colours was perfected
+    at Babylon, and thence they were called Babylonian. The brocades wrought with
+    figures of animals in gold, of which Marco speaks, are still a spécialité at Benares,
+    where they are known by the name of Shikárgáh or hunting-grounds, which is nearly
+    a translation of the name Thard-wahsh “beast-hunts,” by which they were known
+    to the mediæval Saracens. (See Q. Makrizi, IV. 69–70.) Plautus speaks of such
+    patterns in carpets, the produce of Alexandria—“Alexandrina belluata conchyliata
+    tapetia.” Athenaeus speaks of Persian carpets of like description at an extravagant
+    entertainment given by Antiochus Epiphanes; and the same author cites a banquet
+    given in Persia by Alexander, at which there figured costly curtains embroidered
+    with animals. In the 4th century Asterius, Bishop of Amasia in Pontus, rebukes
+    the Christians who indulge in such attire: “You find upon them lions, panthers,
+    bears, huntsmen, woods, and rocks; whilst the more devout display Christ and His
+    disciples, with the stories of His miracles,” etc. And Sidonius alludes to upholstery
+    of like character: “Peregrina det supellex * * * * Ubi torvus, et per artem Resupina
+    flexus ora, It equo reditque telo Simulacra bestiarum Fugiens fugansque Parthus.”
+    (Epist. ix. 13.)'
+- vertex_type: guffin/text
+  uid: JTYREHPDa
+  text: A modern Kashmír example of such work is shown under ch. xvii. (D’Avezac,
+    p. 524; Pegolotti, in Cathay, 295, 306; I. B. II. 309, 388, 422; III. 81; Della
+    Decima, IV. 125–126; Fr.-Michel, Recherches, etc., II. 10–16, 204–206; Joseph.
+    Bell. Jud. VII. 5, 5, and V. 5, 4; Pliny, VIII. 74 (or 48); Plautus, Pseudolus,
+    I. 2; Yonge’s Athenaeus, V. 26 and XII. 54; Mongez in Mém. Acad. IV. 275–276.)
+- vertex_type: guffin/text
+  uid: r2dpLG9oZ
+  text: 'Note 5.—[Bretschneider (Med. Res. I. p. 114) says: “Hulagu left Karakorum,
+    the residence of his brother, on the 2nd May, 1253, and returned to his ordo,
+    in order to organize his army. On the 19th October of the same year, all being
+    ready, he started for the west.” He arrived at Samarkand in September, 1255. For
+    this chapter and the following of Polo, see: Hulagu’s Expedition to Western Asia,
+    after the Mohammedan Authors, pp. 112–122, and the Translation of the Si Shi Ki
+    (Ch’ang Te), pp. 122–156, in Bretschneider’s Mediæval Researches, I.—H. C.] Note
+    6.—[“Hulagu proceeded to the lake of Ormia (Urmia), when he ordered a castle to
+    be built on the island of Tala, in the middle of the lake, for the purpose of
+    depositing here the immense treasures captured at Baghdad. A great part of the
+    booty, however, had been sent to Mangu Khan.” (Hulagu’s Exp., Bretschneider, Med.
+    Res. I. p. 120.) Ch’ang Te says (Si Shi Ki, p. 139): “The palace of the Ha-li-fa
+    was built of fragrant and precious woods. The walls of it were constructed of
+    black and white jade. It is impossible to imagine the quantity of gold and precious
+    stones found there.”—H. C.]'
+- vertex_type: guffin/text
+  uid: 2n4fwDbsN
+  text: Note 7.—
+- vertex_type: guffin/text
+  uid: BhkxYuvuD
+  text: '“I said to the Kalif: ‘Thou art old, Thou hast no need of so much gold. Thou
+    shouldst not have heaped and hidden it here, Till the breath of Battle was hot
+    and near, But have sown through the land these useless hoards To spring into shining
+    blades of swords, And keep thine honour sweet and clear. * * * * * Then into his
+    dungeon I locked the drone, And left him to feed there all alone In the honey-cells
+    of his golden hive: Never a prayer, nor a cry, nor a groan Was heard from those
+    massive walls of stone, Nor again was the Kalif seen alive.’ This is the story,
+    strange and true, That the great Captain Alaü Told to his brother, the Tartar
+    Khan, When he rode that day into Cambalu, By the road that leadeth to Ispahan.”
+    (Longfellow.)[1]'
+- vertex_type: guffin/text
+  uid: TnIQ-fsxe
+  text: 'The story of the death of Mosta’sim Billah, the last of the Abbaside Khalifs,
+    is told in much the same way by Hayton, Ricold, Pachymeres, and Joinville. The
+    memory of the last glorious old man must have failed him, when he says the facts
+    were related by some merchants who came to King Lewis, when before Saiette (or
+    Sidon), viz. in 1253, for the capture of Baghdad occurred five years later. Mar.
+    Sanuto says melted gold was poured down the Khalif’s throat—a transfer, no doubt,
+    from the old story of Crassus and the Parthians. Contemporary Armenian historians
+    assert that Hulaku slew him with his own hand. All that Rashiduddin says is: “The
+    evening of Wednesday, the 14th of Safar, 656 (20th February, 1258), the Khalif
+    was put to death in the village of Wakf, with his eldest son and five eunuchs
+    who had never quitted him.” Later writers say that he was wrapt in a carpet and
+    trodden to death by horses. [Cf. The Story of the Death of the last Abbaside Caliph,
+    from the Vatican MS. of Ibn-al-Furāt, by G. le Strange (Jour. R. As. Soc., April,
+    1900, pp. 293–300). This is the story of the death of the Khalif told by Ibn-al-Furāt
+    (born in Cairo, 1335 a.d.): “Then Hūlagū gave command, and the Caliph was left
+    a-hungering, until his case was that of very great hunger, so that he called asking
+    that somewhat might be given him to eat. And the accursed Hūlagū sent for a dish
+    with gold therein, and a dish with silver therein, and a dish with gems, and ordered
+    these all to be set before the Caliph al Musta’sim, saying to him, ‘Eat these.’
+    But the Caliph made answer, ‘These be not fit for eating.’ Then said Hūlagū: ‘Since
+    thou didst so well know that these be not fit for eating, why didst thou make
+    a store thereof? With part thereof thou mightest have sent gifts to propitiate
+    us, and with part thou shouldst have raised an army to serve thee and defend thyself
+    against us! And Hūlagū commanded them to take forth the Caliph and his son to
+    a place without the camp, and they were here bound and put into two great sacks,
+    being afterwards trampled under foot till they both died—the mercy of Allah be
+    upon them.”— H. C.] The foundation of the story, so widely received among the
+    Christians, is to be found also in the narrative of Nikbi (and Mirkhond), which
+    is cited by D’Ohsson. When the Khalif surrendered, Hulaku put before him a plateful
+    of gold, and told him to eat it. “But one does not eat gold,” said the prisoner.
+    “Why, then,” replied the Tartar, “did you hoard it, instead of expending it in
+    keeping up an army? Why did you not meet me at the Oxus?” The Khalif could only
+    say, “Such was God’s will!” “And that which has befallen you was also God’s will,”
+    said Hulaku.'
+- vertex_type: guffin/text
+  uid: qqnt1TH5A
+  text: 'Wassáf’s narrative is interesting:—“Two days after his capture the Khalif
+    was at his morning prayer, and began with the verse (Koran, III. 25), ‘Say God
+    is the Possessor of Dominion! It shall be given to whom He will; it shall be taken
+    from whom He will: whom He will He raiseth to honour; whom He will He casteth
+    to the ground.’ Having finished the regular office he continued still in prayer
+    with tears and importunity. Bystanders reported to the Ilkhan the deep humiliation
+    of the Khalif’s prayers, and the text which seemed to have so striking an application
+    to those two princes. Regarding what followed there are different stories. Some
+    say that the Ilkhan ordered food to be withheld from the Khalif, and that when
+    he asked for food the former bade a dish of gold be placed before him, etc. Eventually,
+    after taking counsel with his chiefs, the Padishah ordered the execution of the
+    Khalif. It was represented that the blood-drinking sword ought not to be stained
+    with the gore of Mosta’sim. He was therefore rolled in a carpet, just as carpets
+    are usually rolled up, insomuch that his limbs were crushed.” The avarice of the
+    Khalif was proverbial. When the Mongol army was investing Miafaraḳain, the chief,
+    Malik Kamál, told his people that everything he had should be at the service of
+    those in need: “Thank God, I am not like Mosta’sim, a worshipper of silver and
+    gold!” (Hayton in Ram. ch. xxvi.; Per. Quat. 121; Pachym. Mic. Palaeol. II. 24;
+    Joinville, p. 182; Sanuto, p. 238; J. As. sér. V. tom. xi. 490, and xvi. 291;
+    D’Ohsson, III. 243; Hammer’s Wassáf, 75– 76; Quat. Rashid. 305.)'
+- vertex_type: guffin/text
+  uid: GVyI2I8fM
+  text: Note 8.—Nevertheless Froissart brings the Khalif to life again one hundred
+    and twenty years later, as “Le Galifre de Baudas.” (Bk. III. ch. xxiv.)
+- vertex_type: guffin/text
+  uid: OHNvkW7pD
+  text: '[1] Not that Alaü (pace Mr. Longfellow) ever did see Cambalu.'
+- vertex_type: guffin/heading
+  uid: z26IaDo-5
+  children:
+  - x5yAlBdXL
+  - -EG-YIteh
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: chapter
+  text: 'Chapter 7: How the Great Kaan sent the Two Brothers as his Envoys to the
+    Pope.'
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: x5yAlBdXL
+  text: 'When that Prince, whose name was Cublay Kaan, Lord of the Tartars all over
+    the earth, and of all the kingdoms and provinces and territories of that vast
+    quarter of the world, had heard all that the Brothers had to tell him about the
+    ways of the Latins, he was greatly pleased, and he took it into his head that
+    he would send them on an Embassy to the Pope. So he urgently desired them to undertake
+    this mission along with one of his Barons; and they replied that they would gladly
+    execute all his commands as those of their Sovereign Lord. Then the Prince sent
+    to summon to his presence one of his Barons whose name was Cogatal, and desired
+    him to get ready, for it was proposed to send him to the Pope along with the Two
+    Brothers. The Baron replied that he would execute the Lord’s commands to the best
+    of his ability. After this the Prince caused letters from himself to the Pope
+    to be indited in the Tartar tongue,{1} and committed them to the Two Brothers
+    and to that Baron of his own, and charged them with what he wished them to say
+    to the Pope. Now the contents of the letter were to this purport: He begged that
+    the Pope would send as many as an hundred persons of our Christian faith; intelligent
+    men, acquainted with the Seven Arts,{2} well qualified to enter into controversy,
+    and able clearly to prove by force of argument to idolaters and other kinds of
+    folk, that the Law of Christ was best, and that all other religions were false
+    and naught; and that if they would prove this, he and all under him would become
+    Christians and the Church’s liegemen. Finally he charged his Envoys to bring back
+    to him some Oil of the Lamp which burns on the Sepulchre of our Lord at Jerusalem.{3}'
+- vertex_type: guffin/text
+  uid: -EG-YIteh
+  text: Note 1.—✛ The appearance of the Great Kaan’s letter may be illustrated by
+    two letters on socalled Corean paper preserved in the French archives; one from
+    Arghún Khan of Persia (1289), brought by Buscarel, and the other from his son
+    Oljaitu (May, 1305), to Philip the Fair. These are both in the Mongol language,
+    and according to Abel Rémusat and other authorities, in the Uighúr character,
+    the parent of the present Mongol writing. Facsimiles of the letters are given
+    in Rémusat’s paper on intercourse with Mongol Princes, in Mém. de l’Acad. des
+    Inscript. vols. vii. and viii., reproductions in J. B. Chabot’s Hist. de Mar Jabalaha
+    III., Paris, 1895, and preferably in Prince Roland Bonaparte’s beautiful Documents
+    Mongols, Pl. XIV., and we give samples of the two in vol. ii.[1] Note 2.—“The
+    Seven Arts,” from a date reaching back nearly to classical times, and down through
+    the Middle Ages, expressed the whole circle of a liberal education, and it is
+    to these Seven Arts that the degrees in arts were understood to apply. They were
+    divided into the Trivium of Rhetoric, Logic, and Grammar, and the Quadrivium of
+    Arithmetic, Astronomy, Music, and Geometry. The 38th epistle of Seneca was in
+    many MSS. (according to Lipsius) entitled “L. Annaei Senecae Liber de Septem Artibus
+    liberalibus.” I do not find, however, that Seneca there mentions categorically
+    more than five, viz., Grammar, Geometry, Music, Astronomy, and Arithmetic. In
+    the 5th century we find the Seven Arts to form the successive subjects of the
+    last seven books of the work of Martianus Capella, much used in the schools during
+    the early Middle Ages. The Seven Arts will be found enumerated in the verses of
+    Tzetzes (Chil. XI. 525), and allusions to them in the mediæval romances are endless.
+    Thus, in one of the “Gestes d’Alexandre,” a chapter is headed “Comment Aristotle
+    aprent à Alixandre les Sept Arts.” In the tale of the Seven Wise Masters, Diocletian
+    selects that number of tutors for his son, each to instruct him in one of the
+    Seven Arts. In the romance of Erec and Eneide we have a dress on which the fairies
+    had portrayed the Seven Arts (Franc. Michel, Recherches, etc. II. 82); in the
+    Roman de Mahommet the young impostor is master of all the seven. There is one
+    mediæval poem called the Marriage of the Seven Arts, and another called the Battle
+    of the Seven Arts. (See also Dante, Convito, Trat. II. c. 14; Not. et Ex. V.,
+    491 seqq.) Note 3.—The Chinghizide Princes were eminently liberal—or indifferent—in
+    religion; and even after they became Mahomedan, which, however, the Eastern branch
+    never did, they were rarely and only by brief fits persecutors. Hence there was
+    scarcely one of the non-Mahomedan Khans of whose conversion to Christianity there
+    were not stories spread. The first rumours of Chinghiz in the West were as of
+    a Christian conqueror; tales may be found of the Christianity of Chagatai, Hulaku,
+    Abaka, Arghun, Baidu, Ghazan, Sartak, Kuyuk, Mangu, Kublai, and one or two of
+    the latter’s successors in China, all probably false, with one or two doubtful
+    exceptions.
+- vertex_type: guffin/heading
+  uid: QUB_je_gL
+  children:
+  - E5I_NXV5d
+  - ubMxLSS9I
+  - 7mJqjVSRj
+  - 3Q5V8i0DV
+  - EFunhgOlO
+  - ZhksZPWkK
+  - xYVisfcbr
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: chapter
+  text: 'Chapter 15: How the Emperor sent Mark on an Embassy of his.'
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: E5I_NXV5d
+  text: 'Now it came to pass that Marco, the son of Messer Nicolo, sped wondrously
+    in learning the customs of the Tartars, as well as their language, their manner
+    of writing, and their practice of war; in fact he came in brief space to know
+    several languages, and four sundry written characters. And he was discreet and
+    prudent in every way, insomuch that the Emperor held him in great esteem.{1} And
+    so when he discerned Mark to have so much sense, and to conduct himself so well
+    and beseemingly, he sent him on an ambassage of his, to a country which was a
+    good six months’ journey distant.{2} The young gallant executed his commission
+    well and with discretion. Now he had taken note on several occasions that when
+    the Prince’s ambassadors returned from different parts of the world, they were
+    able to tell him about nothing except the business on which they had gone, and
+    that the Prince in consequence held them for no better than fools and dolts, and
+    would say: “I had far liever hearken about the strange things, and the manners
+    of the different countries you have seen, than merely be told of the business
+    you went upon;”—for he took great delight in hearing of the affairs of strange
+    countries. Mark therefore, as he went and returned, took great pains to'
+- vertex_type: guffin/text
+  uid: ubMxLSS9I
+  text: '28 learn about all kinds of different matters in the countries which he visited,
+    in order to be able to tell about them to the Great Kaan.{3} Note 1.—The word
+    Emperor stands here for Seigneur. What the four characters acquired by Marco were
+    is open to discussion. The Chronicle of the Mongol Emperors rendered by Gaubil
+    mentions, as characters used in their Empire, the Uíghúr, the Persian and Arabic,
+    that of the Lamas (Tibetan), that of the Niuché, introduced by the Kin Dynasty,
+    the Khitán, and the Báshpah character, a syllabic alphabet arranged, on the basis
+    of the Tibetan and Sanskrit letters chiefly, by a learned chief Lama socalled,
+    under the orders of Kublai, and established by edict in 1269 as the official character.
+    Coins bearing this character, and dating from 1308 to 1354, are extant. The forms
+    of the Niuché and Khitán were devised in imitation of Chinese writing, but are
+    supposed to be syllabic. Of the Khitán but one inscription was known, and no key.
+    “The Khitan had two national scripts, the ‘small characters’ (hsiao tzŭ) and the
+    ‘large characters’ (ta tzŭ).” S. W. Bushell, Insc. in the Juchen and Allied Scripts,
+    Cong. des Orientalistes, Paris, 1897.—Die Sprache und Schrift der Juchen von Dr.
+    W. Grube, Leipzig, 1896, from a polyglot MS. dictionary, discovered by Dr. F.
+    Hirth and now kept in the Royal Library, Berlin.—H. Y. and H. C. Chinghiz and
+    his first successors used the Uíghúr, and sometimes the Chinese character. Of
+    the Uíghúr character we give a specimen in Bk. IV. It is of Syriac origin, undoubtedly
+    introduced into Eastern Turkestan by the early Nestorian missions, probably in
+    the 8th or 9th century. The oldest known example of this character so applied,
+    the Kudatku Bilik, a didactic poem in Uíghúr (a branch of Oriental Turkish), dating
+    from a.d. 1069, was published by Prof. Vámbéry in 1870. A new edition of the Kudatku
+    Bilik was published at St. Petersburg, in 1891, by Dr. W. Radloff. Vámbéry had
+    a pleasing illustration of the origin of the Uíghúr character, when he received
+    a visit at Pesth from certain Nestorians of Urumia on a begging tour. On being
+    shown the original MS. of the Kudatku Bilik, they read the character easily, whilst
+    much to their astonishment they could not understand a word of what was written.
+    This Uíghúr is the basis of the modern Mongol and Manchu characters. (Cf. E. Bretschneider,
+    Mediæval Researches, I. pp. 236, 263.)—H. Y. and H. C. [At the village of Keuyung
+    Kwan, 40 miles north of Peking, in the sub-prefecture of Ch’ang Ping, in the Chih-li
+    province, the road from Peking to Kalgan runs beyond the pass of Nankau, under
+    an archway, a view of which will be found at the end of this volume, on which
+    were engraved, in 1345, two large inscriptions in six different languages: Sanskrit,
+    Tibetan, Mongol, Báshpah, Uíghúr, Chinese, and a language unknown till recently.
+    Mr. Wylie’s kindness enabled Sir Henry Yule to present a specimen of this. (A
+    much better facsimile of these inscriptions than Wylie’s having since been published
+    by Prince Roland Bonaparte in his valuable Recueil des Documents de l’Époque Mongole,
+    this latter is, by permission, here reproduced.) The Chinese and Mongol inscriptions
+    have been translated by M. Ed. Chavannes; the Tibetan by M. Sylvain Lévi (Jour.
+    Asiat., Sept.–Oct. 1894, pp. 354–373); the Uíghúr, by Prof. W. Radloff (Ibid.
+    Nov.–Dec. 1894, pp. 546, 550); the Mongol by Prof. G. Huth. (Ibid. Mars–Avril
+    1895, pp. 351–360.) The sixth language was supposed by A. Wylie (J. R. A. S. vol.
+    xvii. p. 331, and N.S., vol. v. p. 14) to be Neuchih, Niuché, Niuchen or Juchen.
+    M. Devéria has shown that the inscription is written in Si Hia, or the language
+    of Tangut, and gave a facsimile of a stone stèle (pei) in this language kept in
+    the great Monastery of the Clouds (Ta Yun Ssŭ) at Liangchau in Kansuh, together
+    with a translation of the Chinese text, engraved on the reverse side of the slab.
+    M. Devéria thinks that this writing was borrowed by the Kings of Tangut from the
+    one derived in 920 by the Khitans from the Chinese. (Stèle Si-Hia de Leang-tcheou
+    ... J. As., 1898; L’écriture du royaume de Si-Hia ou Tangout, par M. Devéria....
+    Ext. des Mém.... présentés à l’Ac. des Ins. et B. Let. 1ère Sér. XI., 1898.) Dr.
+    S. W. Bushell in two papers (Inscriptions in the Juchen and Allied Scripts, Actes
+    du XI. Congrès des Orientalistes, Paris, 1897, 2nd. sect., pp. 11, 35, and the
+    Hsi Hsia Dynasty of Tangut, their Money and their peculiar Script, J. China Br.
+    R. A. S., xxx. N.S. No. 2, pp. 142, 160) has also made a special study of the
+    same subject. The Si Hia writing was adopted by Yuan Ho in 1036, on which occasion
+    he changed the title of his reign to Ta Ch’ing, i.e. “Great Good Fortune.”'
+- vertex_type: guffin/text
+  uid: 7mJqjVSRj
+  text: Unfortunately, both the late M. Devéria and Dr. S. W. Bushell have deciphered
+    but few of the Si Hia characters.—H. C.]
+- vertex_type: guffin/text
+  uid: 3Q5V8i0DV
+  text: Hexaglot Inscription on the East side of the Kiu-Yong Kwan.
+- vertex_type: guffin/text
+  uid: EFunhgOlO
+  text: Hexaglot Inscription on the West side of the Kiu-Yong Kwan.
+- vertex_type: guffin/text
+  uid: ZhksZPWkK
+  text: 'The orders of the Great Kaan are stated to have been published habitually
+    in six languages, viz., Mongol, Uíghúr, Arabic, Persian, Tangutan (Si-Hia), and
+    Chinese.—H. Y. and H. C. Gházán Khan of Persia is said to have understood Mongol,
+    Arabic, Persian, something of Kashmiri, of Tibetan, of Chinese, and a little of
+    the Frank tongue (probably French). The annals of the Ming Dynasty, which succeeded
+    the Mongols in China, mention the establishment in the 11th moon of the 5th year
+    Yong-lo (1407) of the Sse yi kwan, a linguistic office for diplomatic purposes.
+    The languages to be studied were Niuché, Mongol, Tibetan, Sanskrit, Bokharan (Persian?),
+    Uíghúr, Burmese, and Siamese. To these were added by the Manchu Dynasty two languages
+    called Papeh and Pehyih, both dialects of the S.W. frontier. (See infra, Bk. II.
+    ch. lvi.–lvii., and notes.) Since 1382, however, official interpreters had to
+    translate Mongol texts; they were selected among the Academicians, and their service
+    (which was independent of the Sse yi kwan when this was created) was under the
+    control of the Han-lin-yuen. There may have been similar institutions under the
+    Yuen, but we have no proof of it. At all events, such an office could not then
+    be called Sse yi kwan (Sse yi, Barbarians from four sides); Niuché (Niuchen) was
+    taught in Yong-lo’s office, but not Manchu. The Sse yi kwan must not be confounded
+    with the Hui t’ong kwan, the office for the reception of tributary envoys, to
+    which it was annexed in 1748. (Gaubil, p. 148; Gold. Horde, 184; Ilchan. II. 147;
+    Lockhart in J. R. G. S. XXXVI. 152; Koeppen, II. 99; G. Devéria, Hist. du Collège
+    des Interprètes de Peking in Mélanges Charles de Harlez, pp. 94–102; MS. Note
+    of Prof. A. Vissière; The Tangut Script in the Nan-K’ou Pass, by Dr. S. W. Bushell,
+    China Review, xxiv. II. pp. 65–68.)—H. Y. and H. C. Pauthier supposes Mark’s four
+    acquisitions to have been Báshpah-Mongol, Arabic, Uighúr, and Chinese. I entirely
+    reject the Chinese. Sir H. Yule adds: “We shall see no reason to believe that
+    he knew either language or character” [Chinese]. The blunders Polo made in saying
+    that the name of the city, Suju, signifies in our tongue “Earth” and Kinsay “Heaven”
+    show he did not know the Chinese characters, but we read in Bk. II. ch. lxviii.:
+    “And Messer Marco Polo himself, of whom this Book speaks, did govern this city
+    (Yanju) for three full years, by the order of the Great Kaan.” It seems to me
+    [H. C.] hardly possible that Marco could have for three years been governor of
+    so important and so Chinese a city as Yangchau, in the heart of the Empire, without
+    acquiring a knowledge of the spoken language.—H. C. The other three languages
+    seem highly probable. The fourth may have been Tibetan. But it is more likely
+    that he counted separately two varieties of the same character (e.g. of the Arabic
+    and Persian) as two “lettres de leur escriptures.”—H. Y. and H. C.'
+- vertex_type: guffin/text
+  uid: xYVisfcbr
+  text: 'Note 2.—[Ramusio here adds: “Ad und città, detta Carazan,” which, as we shall
+    see, refers to the Yun-nan Province.]—H. C. Note 3.—From the context no doubt
+    Marco’s employments were honourable and confidential; but Commissioner would perhaps
+    better express them than Ambassador in the modern sense. The word Ilchi, which
+    was probably in his mind, was applied to a large variety of classes employed on
+    the commissions of Government, as we may see from a passage of Rashiduddin in
+    D’Ohsson, which says that “there were always to be found in every city from one
+    to two hundred Ilchis, who forced the citizens to furnish them with free quarters,”
+    etc., III. 404. (See also 485.)'
 - vertex_type: guffin/heading
   uid: L0xspxsKt
   children:
