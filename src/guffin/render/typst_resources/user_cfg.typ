@@ -1,6 +1,7 @@
 // these values override base values if provided
 
 #let user_cfg = (
+  justify: false, // ragged-right body text; also disables Typst's auto-hyphenation of justified lines
   toc: false,
   number-sections: false,
   section-numbering: "1.", // (top level only)
