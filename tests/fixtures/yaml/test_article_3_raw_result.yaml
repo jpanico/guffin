@@ -20,7 +20,7 @@
     uid: CwYpKBCiQ
     parents:
     - id: 12803
-    order: 1
+    order: 0
     page:
       id: 12803
 - - string: Block 3.3
@@ -329,7 +329,7 @@
     uid: d9f4W5Rfl
     parents:
     - id: 12803
-    order: 5
+    order: 4
     page:
       id: 12803
 - - string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
@@ -363,7 +363,7 @@
     uid: iohUB9lvw
     parents:
     - id: 12803
-    order: 2
+    order: 1
     page:
       id: 12803
 - - string: the child block contains a Roam native callout
@@ -383,7 +383,7 @@
     uid: lLFPOPmLr
     parents:
     - id: 12803
-    order: 3
+    order: 2
     page:
       id: 12803
 - - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
@@ -790,7 +790,7 @@
     uid: LFOf7Pdvc
     parents:
     - id: 12803
-    order: 6
+    order: 5
     page:
       id: 12803
 - - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
@@ -928,9 +928,6 @@
     order: 0
     page:
       id: 11137
-- - id: 11876
-    uid: asCh2FQQp
-    title: element-type
 - - string: Block 1.2
     children:
     - id: 11680
@@ -1110,25 +1107,8 @@
     order: 2
     page:
       id: 4225
-- - attrs:
-    - - source:
-        - uid
-        - TXGdKldN6
-        value:
-        - uid
-        - TXGdKldN6
-      - source:
-        - uid
-        - 4s4mTbNht
-        value:
-        - uid
-        - asCh2FQQp
-      - source:
-        - uid
-        - 4s4mTbNht
-        value: ' chapter'
+- - attrs: []
     children:
-    - id: 12804
     - id: 12806
     - id: 12807
     - id: 12808
@@ -1136,22 +1116,8 @@
     - id: 12810
     - id: 12811
     id: 12803
-    lookup:
-    - id: 11876
-    - id: 12803
-    - id: 12804
     uid: TXGdKldN6
     title: CHAPTER XXXVI. Account of the City of Juju.
-- - string: 'element-type:: chapter'
-    id: 12804
-    uid: 4s4mTbNht
-    parents:
-    - id: 12803
-    order: 0
-    page:
-      id: 12803
-    refs:
-    - id: 11876
 - - string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
     id: 11752
     uid: SCzzQaVai
@@ -2181,7 +2147,7 @@
     uid: noRek_x_o
     parents:
     - id: 12803
-    order: 4
+    order: 3
     page:
       id: 12803
 - - string: '#c:FUCHSIA **inline PLAIN TEXT ref ⟶** ((riLVzfX-6))'

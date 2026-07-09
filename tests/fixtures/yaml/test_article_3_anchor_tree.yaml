@@ -2374,7 +2374,6 @@ refs_by_id:
     order: null
     heading: null
     children:
-    - id: 12804
     - id: 12806
     - id: 12807
     - id: 12808
@@ -2387,23 +2386,7 @@ refs_by_id:
     parents: null
     props: null
     title: CHAPTER XXXVI. Account of the City of Juju.
-    attrs:
-    - - source:
-        - uid
-        - TXGdKldN6
-        value:
-        - uid
-        - TXGdKldN6
-      - source:
-        - uid
-        - 4s4mTbNht
-        value:
-        - uid
-        - asCh2FQQp
-      - source:
-        - uid
-        - 4s4mTbNht
-        value: ' chapter'
+    attrs: []
   '11773':
     uid: 4SIo9hSEY
     id: 11773
@@ -4197,30 +4180,13 @@ refs_by_id:
     props: null
     title: null
     attrs: null
-  '12804':
-    uid: 4s4mTbNht
-    id: 12804
-    string: 'element-type:: chapter'
-    order: 0
-    heading: null
-    children: null
-    refs:
-    - id: 11876
-    page:
-      id: 12803
-    children_view_type: null
-    parents:
-    - id: 12803
-    props: null
-    title: null
-    attrs: null
   '12806':
     uid: iohUB9lvw
     id: 12806
     string: and also pavilions of sendel; and in the Anglo-French ballad of the death
       of William Earl of Salisbury in St. Lewis’s battle on the Nile— “Le Meister
       du Temple brace les chivaux Et le Count Long-Espée depli les sandaux.”
-    order: 2
+    order: 1
     heading: null
     children: null
     refs: null
@@ -4237,7 +4203,7 @@ refs_by_id:
     id: 12807
     string: The oriflamme of France was made of cendal. Chaucer couples taffetas and
       sendal. His “Doctor of Physic”
-    order: 3
+    order: 2
     heading: null
     children: null
     refs: null
@@ -4253,7 +4219,7 @@ refs_by_id:
     uid: noRek_x_o
     id: 12808
     string: “In sanguin and in persë clad was allë, Linëd with taffata and with sendallë.”
-    order: 4
+    order: 3
     heading: null
     children: null
     refs: null
@@ -4280,7 +4246,7 @@ refs_by_id:
       I. 261).” “J’ay de toilles de mainte guise, De sidonnes et de cendaulx. Soyes,
       satins blancs et vermaulx.” —Greban, Mist. de la Pass., 26826, G. Paris.—H.
       C.]'
-    order: 5
+    order: 4
     heading: null
     children: null
     refs: null
@@ -4303,7 +4269,7 @@ refs_by_id:
       and the other forms are modifications of the ancient Sindon, and this is Mr.
       Marsh’s view. (See also Fr.-Michel, Recherches, etc. I. 212; Dict. des Tissus,
       II. 171 seqq.)
-    order: 6
+    order: 5
     heading: null
     children: null
     refs: null
@@ -4336,7 +4302,7 @@ refs_by_id:
       of it, and linings for richer stuffs, it appears to have been a light material,
       and is generally rendered taffetas. In Richard Cœur de Lion we find “Many a
       pencel of sykelatoun And of sendel of grene and broun,”
-    order: 1
+    order: 0
     heading: null
     children: null
     refs: null
@@ -5669,20 +5635,6 @@ refs_by_id:
     parents: null
     props: null
     title: .rm-g
-    attrs: null
-  '11876':
-    uid: asCh2FQQp
-    id: 11876
-    string: null
-    order: null
-    heading: null
-    children: null
-    refs: null
-    page: null
-    children_view_type: null
-    parents: null
-    props: null
-    title: element-type
     attrs: null
   '11943':
     uid: Jv502NGK6
