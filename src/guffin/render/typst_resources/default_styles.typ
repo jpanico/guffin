@@ -216,6 +216,10 @@
 // Left-align tables with the rest of the page; Pandoc emits tables inside a centered
 // figure (align(center)[#table(...)]), which this overrides.
 #show figure.where(kind: table): set align(left)
+// Let a table taller than the page break across page boundaries. Typst figures are
+// breakable: false by default, so an over-tall table would otherwise overflow the page
+// and render its overflow rows on top of one another.
+#show figure.where(kind: table): set block(breakable: true)
 
 #show figure.where(kind: image): set figure.caption(position: bottom)
 #show figure.where(kind: image): set figure(supplement: cfg.figure-prefix)

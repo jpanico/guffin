@@ -159,6 +159,14 @@ Pandoc variable — `titlepage-provenance` when a title page is emitted, else `f
 `footer-provenance` inside the page-footer rule. Both default to `none`, so documents rendered
 without a colophon are unaffected.
 
+#### Breakable tables (`default_styles.typ`)
+
+Pandoc wraps every table in a Typst `figure` (`#figure(align(center)[#table(...)])`), and Typst
+figures are `breakable: false` by default — so a table taller than the page would overflow and
+render its overflow rows on top of one another. `default_styles.typ` adds
+`#show figure.where(kind: table): set block(breakable: true)` so tall tables break across page
+boundaries instead (Typst repeats the `table.header` row on each continuation page).
+
 ### Updating
 
 To update to a newer upstream commit, re-copy the files from the repository above, update the commit reference in this README, and re-apply the modifications described above.
