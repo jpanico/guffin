@@ -135,7 +135,7 @@
 - uid: QnqMI7-2J
   id: 11771
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-  order: 20
+  order: 21
   heading: null
   children:
   - id: 11772
@@ -386,7 +386,7 @@
 - uid: xkmJLzW3G
   id: 11804
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-  order: 21
+  order: 22
   heading: null
   children:
   - id: 11805
@@ -597,6 +597,24 @@
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: 2yzYmXmgB
+  id: 12818
+  string: '#c:FUCHSIA **standalone PAGE EMBED ↓**'
+  order: 18
+  heading: null
+  children:
+  - id: 12819
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -816,7 +834,7 @@
 - uid: wta7y8AlI
   id: 11774
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-  order: 18
+  order: 19
   heading: null
   children:
   - id: 11775
@@ -972,7 +990,7 @@
 - uid: ipvsMyx77
   id: 11776
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-  order: 19
+  order: 20
   heading: null
   children:
   - id: 11777
@@ -1055,6 +1073,24 @@
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: -w_qPso7p
+  id: 12819
+  string: '{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 12803
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 12818
   props: null
   title: null
   attrs: null
@@ -1742,6 +1778,7 @@
   - id: 11804
   - id: 11946
   - id: 11949
+  - id: 12818
   refs: null
   page:
     id: 4225

@@ -405,6 +405,7 @@
   - vLxyRJcr2
   - GQSLJp92S
   - 8jkmASa1c
+  - 2yzYmXmgB
   - wta7y8AlI
   - ipvsMyx77
   - QnqMI7-2J
@@ -560,6 +561,18 @@
   vertex_link:
   - vertex-embed
   - drtANJYTg
+- vertex_type: guffin/text
+  uid: 2yzYmXmgB
+  children:
+  - -w_qPso7p
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone PAGE EMBED ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: -w_qPso7p
+  refs:
+  - TXGdKldN6
+  text: '{{embed: [CHAPTER XXXVI. Account of the City of Juju.](x-guffin:vertex/TXGdKldN6)}}'
 - vertex_type: guffin/text
   uid: wta7y8AlI
   children:

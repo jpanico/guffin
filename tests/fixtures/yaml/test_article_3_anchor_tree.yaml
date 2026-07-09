@@ -149,7 +149,7 @@ tree_network:
 - uid: QnqMI7-2J
   id: 11771
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-  order: 20
+  order: 21
   heading: null
   children:
   - id: 11772
@@ -400,7 +400,7 @@ tree_network:
 - uid: xkmJLzW3G
   id: 11804
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-  order: 21
+  order: 22
   heading: null
   children:
   - id: 11805
@@ -611,6 +611,24 @@ tree_network:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: 2yzYmXmgB
+  id: 12818
+  string: '#c:FUCHSIA **standalone PAGE EMBED ↓**'
+  order: 18
+  heading: null
+  children:
+  - id: 12819
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -830,7 +848,7 @@ tree_network:
 - uid: wta7y8AlI
   id: 11774
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-  order: 18
+  order: 19
   heading: null
   children:
   - id: 11775
@@ -986,7 +1004,7 @@ tree_network:
 - uid: ipvsMyx77
   id: 11776
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-  order: 19
+  order: 20
   heading: null
   children:
   - id: 11777
@@ -1069,6 +1087,24 @@ tree_network:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+- uid: -w_qPso7p
+  id: 12819
+  string: '{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 12803
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 12818
   props: null
   title: null
   attrs: null
@@ -1756,6 +1792,7 @@ tree_network:
   - id: 11804
   - id: 11946
   - id: 11949
+  - id: 12818
   refs: null
   page:
     id: 4225
@@ -2330,6 +2367,43 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+  '12803':
+    uid: TXGdKldN6
+    id: 12803
+    string: null
+    order: null
+    heading: null
+    children:
+    - id: 12804
+    - id: 12806
+    - id: 12807
+    - id: 12808
+    - id: 12809
+    - id: 12810
+    - id: 12811
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: CHAPTER XXXVI. Account of the City of Juju.
+    attrs:
+    - - source:
+        - uid
+        - TXGdKldN6
+        value:
+        - uid
+        - TXGdKldN6
+      - source:
+        - uid
+        - 4s4mTbNht
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - 4s4mTbNht
+        value: ' chapter'
   '11773':
     uid: 4SIo9hSEY
     id: 11773
@@ -3192,7 +3266,8 @@ refs_by_id:
     uid: MmvJZhQNJ
     id: 11675
     string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
+      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling\n - The Page has\
+      \ children_layout=document"
     order: 0
     heading: null
     children: null
@@ -3210,7 +3285,7 @@ refs_by_id:
   '11677':
     uid: sD1C9ifkG
     id: 11677
-    string: Bullet block 1
+    string: Block 1 (children_layout=bullet)
     order: 1
     heading: null
     children:
@@ -3229,7 +3304,7 @@ refs_by_id:
   '11682':
     uid: DsogfVzX9
     id: 11682
-    string: Document block 1
+    string: Block 2 (children_layout=document)
     order: 2
     heading: null
     children:
@@ -3248,7 +3323,7 @@ refs_by_id:
   '11807':
     uid: sPZ2xmBBS
     id: 11807
-    string: Numbered block 1
+    string: Block 3 (children_layout=numbered)
     order: 3
     heading: null
     children:
@@ -3267,14 +3342,15 @@ refs_by_id:
   '11808':
     uid: UQQwogj1M
     id: 11808
-    string: Numbered block 1.1
+    string: Block 3.1 (children_layout=document)
     order: 0
     heading: null
-    children: null
+    children:
+    - id: 11970
     refs: null
     page:
       id: 11674
-    children_view_type: null
+    children_view_type: document
     parents:
     - id: 11674
     - id: 11807
@@ -3284,7 +3360,7 @@ refs_by_id:
   '11809':
     uid: fv5nh7u81
     id: 11809
-    string: Numbered block 1.2
+    string: Block 3.2
     order: 1
     heading: null
     children: null
@@ -3301,7 +3377,7 @@ refs_by_id:
   '11810':
     uid: InqcJLiuz
     id: 11810
-    string: Numbered block 1.3
+    string: Block 3.3
     order: 2
     heading: null
     children: null
@@ -3315,10 +3391,28 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+  '11970':
+    uid: 2jjY8-fQz
+    id: 11970
+    string: Block 3.1.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    children_view_type: null
+    parents:
+    - id: 11674
+    - id: 11807
+    - id: 11808
+    props: null
+    title: null
+    attrs: null
   '11683':
     uid: 99rZhIPZW
     id: 11683
-    string: Document block 1.1
+    string: Block 2.1
     order: 0
     heading: null
     children: null
@@ -3335,7 +3429,63 @@ refs_by_id:
   '11684':
     uid: d_3REDRrO
     id: 11684
-    string: Document block 1.2
+    string: Block 2.2 (children_layout=bullet)
+    order: 1
+    heading: null
+    children:
+    - id: 11966
+    - id: 11967
+    refs: null
+    page:
+      id: 11674
+    children_view_type: bullet
+    parents:
+    - id: 11674
+    - id: 11682
+    props: null
+    title: null
+    attrs: null
+  '11686':
+    uid: Bb49MOLyE
+    id: 11686
+    string: Block 2.3 (children_layout=bullet)
+    order: 2
+    heading: null
+    children:
+    - id: 11968
+    - id: 11969
+    refs: null
+    page:
+      id: 11674
+    children_view_type: bullet
+    parents:
+    - id: 11674
+    - id: 11682
+    props: null
+    title: null
+    attrs: null
+  '11968':
+    uid: 1O4yGV-Tq
+    id: 11968
+    string: Block 2.3.1
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    children_view_type: null
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11686
+    props: null
+    title: null
+    attrs: null
+  '11969':
+    uid: FVou-DBMP
+    id: 11969
+    string: Block 2.3.2
     order: 1
     heading: null
     children: null
@@ -3346,14 +3496,15 @@ refs_by_id:
     parents:
     - id: 11674
     - id: 11682
+    - id: 11686
     props: null
     title: null
     attrs: null
-  '11686':
-    uid: Bb49MOLyE
-    id: 11686
-    string: Document block 1.3
-    order: 2
+  '11966':
+    uid: cxJA2xr-u
+    id: 11966
+    string: Block 2.2.1
+    order: 0
     heading: null
     children: null
     refs: null
@@ -3363,13 +3514,32 @@ refs_by_id:
     parents:
     - id: 11674
     - id: 11682
+    - id: 11684
+    props: null
+    title: null
+    attrs: null
+  '11967':
+    uid: D7gYVJoVj
+    id: 11967
+    string: Block 2.2.2
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 11674
+    children_view_type: null
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
     props: null
     title: null
     attrs: null
   '11678':
     uid: VH0mXM0rw
     id: 11678
-    string: Bullet block 1.1
+    string: Block 1.1
     order: 0
     heading: null
     children: null
@@ -3386,7 +3556,7 @@ refs_by_id:
   '11679':
     uid: YyeRpjbFD
     id: 11679
-    string: Bullet block 1.2
+    string: Block 1.2
     order: 1
     heading: null
     children:
@@ -3404,7 +3574,7 @@ refs_by_id:
   '11681':
     uid: gmLJbWZYp
     id: 11681
-    string: Bullet block 1.3
+    string: Block 1.3
     order: 2
     heading: null
     children: null
@@ -3421,7 +3591,7 @@ refs_by_id:
   '11680':
     uid: KUi_6ooZj
     id: 11680
-    string: Bullet block 1.2.1
+    string: Block 1.2.1
     order: 0
     heading: null
     children: null
@@ -4027,6 +4197,157 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+  '12804':
+    uid: 4s4mTbNht
+    id: 12804
+    string: 'element-type:: chapter'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11876
+    page:
+      id: 12803
+    children_view_type: null
+    parents:
+    - id: 12803
+    props: null
+    title: null
+    attrs: null
+  '12806':
+    uid: iohUB9lvw
+    id: 12806
+    string: and also pavilions of sendel; and in the Anglo-French ballad of the death
+      of William Earl of Salisbury in St. Lewis’s battle on the Nile— “Le Meister
+      du Temple brace les chivaux Et le Count Long-Espée depli les sandaux.”
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12803
+    children_view_type: null
+    parents:
+    - id: 12803
+    props: null
+    title: null
+    attrs: null
+  '12807':
+    uid: lLFPOPmLr
+    id: 12807
+    string: The oriflamme of France was made of cendal. Chaucer couples taffetas and
+      sendal. His “Doctor of Physic”
+    order: 3
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12803
+    children_view_type: null
+    parents:
+    - id: 12803
+    props: null
+    title: null
+    attrs: null
+  '12808':
+    uid: noRek_x_o
+    id: 12808
+    string: “In sanguin and in persë clad was allë, Linëd with taffata and with sendallë.”
+    order: 4
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12803
+    children_view_type: null
+    parents:
+    - id: 12803
+    props: null
+    title: null
+    attrs: null
+  '12809':
+    uid: d9f4W5Rfl
+    id: 12809
+    string: '[La Curne, Dict., s.v. Sendaus has: Silk stuff: “Somme de la delivrance
+      des sendaus.” (Nouv. Compt. de l’Arg. p. 19).—Godefroy, Dict., gives: “Sendain,
+      adj., made with the stuff called cendal: Drap d’or sendains (1392, Test. de
+      Blanche, duch d’Orl., Ste-Croix, Arch. Loiret).” He says s.v. Cendal, “cendau,
+      cendral, cendel, ... sendail, ... étoffe légère de soie unie qui paraît avoir
+      été analogue au taffetas.” “‘On faisait des cendaux forts ou faibles, et on
+      leur donnait toute sorte de couleurs. On s’en servait surtout pour vêtements
+      et corsets, pour doublures de draps, de fourrures et d’autres étoffes de soie
+      plus précieuses, enfin pour tenture d’appartements.’ (Bourquelot, Foir. de Champ.
+      I. 261).” “J’ay de toilles de mainte guise, De sidonnes et de cendaulx. Soyes,
+      satins blancs et vermaulx.” —Greban, Mist. de la Pass., 26826, G. Paris.—H.
+      C.]'
+    order: 5
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12803
+    children_view_type: null
+    parents:
+    - id: 12803
+    props: null
+    title: null
+    attrs: null
+  '12810':
+    uid: LFOf7Pdvc
+    id: 12810
+    string: The origin of the word seems also somewhat doubtful. The word Σενδἑς occurs
+      in Constant. Porphyrog. de Ceremoniis (Bonn, ed. I. 468), and this looks like
+      a transfer of the Arabic Săndăs or Sundus, which is applied by Bakui to the
+      silk fabrics of Yezd. (Not. et Ext. II. 469.) Reiske thinks this is the origin
+      of the Frank word, and connects its etymology with Sind. Others think that sendal
+      and the other forms are modifications of the ancient Sindon, and this is Mr.
+      Marsh’s view. (See also Fr.-Michel, Recherches, etc. I. 212; Dict. des Tissus,
+      II. 171 seqq.)
+    order: 6
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12803
+    children_view_type: null
+    parents:
+    - id: 12803
+    props: null
+    title: null
+    attrs: null
+  '12811':
+    uid: CwYpKBCiQ
+    id: 12811
+    string: When you leave the Bridge, and ride towards the west, finding all the
+      way excellent hostelries for travellers, with fine vineyards, fields, and gardens,
+      and springs of water, you come after 30 miles to a fine large city called Juju,
+      where there are many abbeys of idolaters, and the people live by trade and manufactures.
+      They weave cloths of silk and gold, and very fine taffetas.{1} Here too there
+      are many hostelries for travellers.{2} After riding a mile beyond this city
+      you find two roads, one of which goes west and the other south-east. The westerly
+      road is that through Cathay, and the south-easterly one goes towards the province
+      of Manzi.{3} Taking the westerly one through Cathay, and travelling by it for
+      ten days, you find a constant succession of cities and boroughs, with numerous
+      thriving villages, all abounding with trade and manufactures, besides the fine
+      fields and vineyards and dwellings of civilized people; but nothing occurs worthy
+      of special mention; and so I will only speak of a kingdom called Taianfu. Note
+      1.—The word is sendaus (Pauthier), pl. of sendal, and in G. T. sandal. It does
+      not seem perfectly known what this silk texture was, but as banners were made
+      of it, and linings for richer stuffs, it appears to have been a light material,
+      and is generally rendered taffetas. In Richard Cœur de Lion we find “Many a
+      pencel of sykelatoun And of sendel of grene and broun,”
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12803
+    children_view_type: null
+    parents:
+    - id: 12803
+    props: null
+    title: null
+    attrs: null
   '4230':
     uid: l7f2Qf90W
     id: 4230
@@ -4294,6 +4615,7 @@ refs_by_id:
     - id: 11804
     - id: 11946
     - id: 11949
+    - id: 12818
     refs: null
     page:
       id: 4225
@@ -4651,7 +4973,7 @@ refs_by_id:
     uid: QnqMI7-2J
     id: 11771
     string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-    order: 20
+    order: 21
     heading: null
     children:
     - id: 11772
@@ -4670,7 +4992,7 @@ refs_by_id:
     uid: wta7y8AlI
     id: 11774
     string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-    order: 18
+    order: 19
     heading: null
     children:
     - id: 11775
@@ -4689,7 +5011,7 @@ refs_by_id:
     uid: ipvsMyx77
     id: 11776
     string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-    order: 19
+    order: 20
     heading: null
     children:
     - id: 11777
@@ -4708,7 +5030,7 @@ refs_by_id:
     uid: xkmJLzW3G
     id: 11804
     string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-    order: 21
+    order: 22
     heading: null
     children:
     - id: 11805
@@ -4758,6 +5080,44 @@ refs_by_id:
     parents:
     - id: 4225
     - id: 4227
+    props: null
+    title: null
+    attrs: null
+  '12818':
+    uid: 2yzYmXmgB
+    id: 12818
+    string: '#c:FUCHSIA **standalone PAGE EMBED ↓**'
+    order: 18
+    heading: null
+    children:
+    - id: 12819
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    attrs: null
+  '12819':
+    uid: -w_qPso7p
+    id: 12819
+    string: '{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 12803
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 12818
     props: null
     title: null
     attrs: null
@@ -5309,6 +5669,20 @@ refs_by_id:
     parents: null
     props: null
     title: .rm-g
+    attrs: null
+  '11876':
+    uid: asCh2FQQp
+    id: 11876
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: element-type
     attrs: null
   '11943':
     uid: Jv502NGK6

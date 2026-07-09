@@ -1,4 +1,29 @@
-- - string: Numbered block 1.3
+- - string: When you leave the Bridge, and ride towards the west, finding all the
+      way excellent hostelries for travellers, with fine vineyards, fields, and gardens,
+      and springs of water, you come after 30 miles to a fine large city called Juju,
+      where there are many abbeys of idolaters, and the people live by trade and manufactures.
+      They weave cloths of silk and gold, and very fine taffetas.{1} Here too there
+      are many hostelries for travellers.{2} After riding a mile beyond this city
+      you find two roads, one of which goes west and the other south-east. The westerly
+      road is that through Cathay, and the south-easterly one goes towards the province
+      of Manzi.{3} Taking the westerly one through Cathay, and travelling by it for
+      ten days, you find a constant succession of cities and boroughs, with numerous
+      thriving villages, all abounding with trade and manufactures, besides the fine
+      fields and vineyards and dwellings of civilized people; but nothing occurs worthy
+      of special mention; and so I will only speak of a kingdom called Taianfu. Note
+      1.—The word is sendaus (Pauthier), pl. of sendal, and in G. T. sandal. It does
+      not seem perfectly known what this silk texture was, but as banners were made
+      of it, and linings for richer stuffs, it appears to have been a light material,
+      and is generally rendered taffetas. In Richard Cœur de Lion we find “Many a
+      pencel of sykelatoun And of sendel of grene and broun,”
+    id: 12811
+    uid: CwYpKBCiQ
+    parents:
+    - id: 12803
+    order: 1
+    page:
+      id: 12803
+- - string: Block 3.3
     id: 11810
     uid: InqcJLiuz
     parents:
@@ -179,7 +204,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 20
+    order: 21
     page:
       id: 4225
     refs:
@@ -246,13 +271,17 @@
       id: 4225
     refs:
     - id: 11758
-- - string: Document block 1.2
+- - string: Block 2.2 (children_layout=bullet)
+    children:
+    - id: 11966
+    - id: 11967
     id: 11684
     uid: d_3REDRrO
     parents:
     - id: 11674
     - id: 11682
     order: 1
+    view-type: bullet
     page:
       id: 11674
 - - string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((JRU5IhUB-))'
@@ -284,6 +313,25 @@
     order: 2
     page:
       id: 3327
+- - string: '[La Curne, Dict., s.v. Sendaus has: Silk stuff: “Somme de la delivrance
+      des sendaus.” (Nouv. Compt. de l’Arg. p. 19).—Godefroy, Dict., gives: “Sendain,
+      adj., made with the stuff called cendal: Drap d’or sendains (1392, Test. de
+      Blanche, duch d’Orl., Ste-Croix, Arch. Loiret).” He says s.v. Cendal, “cendau,
+      cendral, cendel, ... sendail, ... étoffe légère de soie unie qui paraît avoir
+      été analogue au taffetas.” “‘On faisait des cendaux forts ou faibles, et on
+      leur donnait toute sorte de couleurs. On s’en servait surtout pour vêtements
+      et corsets, pour doublures de draps, de fourrures et d’autres étoffes de soie
+      plus précieuses, enfin pour tenture d’appartements.’ (Bourquelot, Foir. de Champ.
+      I. 261).” “J’ay de toilles de mainte guise, De sidonnes et de cendaulx. Soyes,
+      satins blancs et vermaulx.” —Greban, Mist. de la Pass., 26826, G. Paris.—H.
+      C.]'
+    id: 12809
+    uid: d9f4W5Rfl
+    parents:
+    - id: 12803
+    order: 5
+    page:
+      id: 12803
 - - string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
     id: 11742
     uid: JCyO1oiVt
@@ -308,6 +356,16 @@
     refs:
     - id: 5844
     - id: 11718
+- - string: and also pavilions of sendel; and in the Anglo-French ballad of the death
+      of William Earl of Salisbury in St. Lewis’s battle on the Nile— “Le Meister
+      du Temple brace les chivaux Et le Count Long-Espée depli les sandaux.”
+    id: 12806
+    uid: iohUB9lvw
+    parents:
+    - id: 12803
+    order: 2
+    page:
+      id: 12803
 - - string: the child block contains a Roam native callout
     children:
     - id: 11767
@@ -319,6 +377,15 @@
     order: 12
     page:
       id: 4225
+- - string: The oriflamme of France was made of cendal. Chaucer couples taffetas and
+      sendal. His “Doctor of Physic”
+    id: 12807
+    uid: lLFPOPmLr
+    parents:
+    - id: 12803
+    order: 3
+    page:
+      id: 12803
 - - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
     id: 11755
     uid: LKHCU5I3z
@@ -381,7 +448,7 @@
       id: 4225
     refs:
     - id: 11167
-- - string: Bullet block 1
+- - string: Block 1 (children_layout=bullet)
     children:
     - id: 11678
     - id: 11679
@@ -444,7 +511,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 21
+    order: 22
     page:
       id: 4225
     refs:
@@ -609,6 +676,19 @@
       id: 4225
     refs:
     - id: 5844
+- - string: '#c:FUCHSIA **standalone PAGE EMBED ↓**'
+    children:
+    - id: 12819
+    id: 12818
+    uid: 2yzYmXmgB
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 18
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: Header 2
     children:
     - id: 11228
@@ -698,6 +778,21 @@
     order: 4
     page:
       id: 4225
+- - string: The origin of the word seems also somewhat doubtful. The word Σενδἑς occurs
+      in Constant. Porphyrog. de Ceremoniis (Bonn, ed. I. 468), and this looks like
+      a transfer of the Arabic Săndăs or Sundus, which is applied by Bakui to the
+      silk fabrics of Yezd. (Not. et Ext. II. 469.) Reiske thinks this is the origin
+      of the Frank word, and connects its etymology with Sind. Others think that sendal
+      and the other forms are modifications of the ancient Sindon, and this is Mr.
+      Marsh’s view. (See also Fr.-Michel, Recherches, etc. I. 212; Dict. des Tissus,
+      II. 171 seqq.)
+    id: 12810
+    uid: LFOf7Pdvc
+    parents:
+    - id: 12803
+    order: 6
+    page:
+      id: 12803
 - - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
     id: 11744
     uid: 7AR6910sJ
@@ -710,7 +805,7 @@
     refs:
     - id: 5844
     - id: 11743
-- - string: Numbered block 1.2
+- - string: Block 3.2
     id: 11809
     uid: fv5nh7u81
     parents:
@@ -833,7 +928,10 @@
     order: 0
     page:
       id: 11137
-- - string: Bullet block 1.2
+- - id: 11876
+    uid: asCh2FQQp
+    title: element-type
+- - string: Block 1.2
     children:
     - id: 11680
     id: 11679
@@ -940,7 +1038,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 18
+    order: 19
     page:
       id: 4225
     refs:
@@ -1012,6 +1110,48 @@
     order: 2
     page:
       id: 4225
+- - attrs:
+    - - source:
+        - uid
+        - TXGdKldN6
+        value:
+        - uid
+        - TXGdKldN6
+      - source:
+        - uid
+        - 4s4mTbNht
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - 4s4mTbNht
+        value: ' chapter'
+    children:
+    - id: 12804
+    - id: 12806
+    - id: 12807
+    - id: 12808
+    - id: 12809
+    - id: 12810
+    - id: 12811
+    id: 12803
+    lookup:
+    - id: 11876
+    - id: 12803
+    - id: 12804
+    uid: TXGdKldN6
+    title: CHAPTER XXXVI. Account of the City of Juju.
+- - string: 'element-type:: chapter'
+    id: 12804
+    uid: 4s4mTbNht
+    parents:
+    - id: 12803
+    order: 0
+    page:
+      id: 12803
+    refs:
+    - id: 11876
 - - string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
     id: 11752
     uid: SCzzQaVai
@@ -1088,7 +1228,7 @@
       id: 4225
     refs:
     - id: 5844
-- - string: Document block 1
+- - string: Block 2 (children_layout=document)
     children:
     - id: 11683
     - id: 11684
@@ -1109,7 +1249,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 19
+    order: 20
     page:
       id: 4225
     refs:
@@ -1137,6 +1277,16 @@
       id: 4225
     refs:
     - id: 11454
+- - string: Block 2.3.2
+    id: 11969
+    uid: FVou-DBMP
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11686
+    order: 1
+    page:
+      id: 11674
 - - string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((ETesnk4Zi))'
     id: 11751
     uid: 8n19o7ito
@@ -1149,7 +1299,7 @@
     refs:
     - id: 5844
     - id: 11172
-- - string: Numbered block 1
+- - string: Block 3 (children_layout=numbered)
     children:
     - id: 11808
     - id: 11809
@@ -1199,6 +1349,18 @@
     order: 0
     page:
       id: 3327
+- - string: '{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}'
+    id: 12819
+    uid: -w_qPso7p
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 12818
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 12803
 - - heading: 2
     string: 'Internal (in-page) links:'
     children:
@@ -1320,7 +1482,8 @@
     refs:
     - id: 11175
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling"
+      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling\n - The Page has\
+      \ children_layout=document"
     id: 11675
     uid: MmvJZhQNJ
     parents:
@@ -1354,13 +1517,17 @@
       id: 4225
     refs:
     - id: 11725
-- - string: Document block 1.3
+- - string: Block 2.3 (children_layout=bullet)
+    children:
+    - id: 11968
+    - id: 11969
     id: 11686
     uid: Bb49MOLyE
     parents:
     - id: 11674
     - id: 11682
     order: 2
+    view-type: bullet
     page:
       id: 11674
 - - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
@@ -1401,7 +1568,7 @@
     order: 0
     page:
       id: 4225
-- - string: Bullet block 1.3
+- - string: Block 1.3
     id: 11681
     uid: gmLJbWZYp
     parents:
@@ -1701,7 +1868,7 @@
     order: 2
     page:
       id: 3327
-- - string: Bullet block 1.2.1
+- - string: Block 1.2.1
     id: 11680
     uid: KUi_6ooZj
     parents:
@@ -1763,6 +1930,16 @@
 - - id: 11932
     uid: vuPFRAwZI
     title: the following block embeds a PDF with guffin-meta
+- - string: Block 2.2.1
+    id: 11966
+    uid: cxJA2xr-u
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    order: 0
+    page:
+      id: 11674
 - - string: Header 3
     id: 11228
     uid: iAxwSSBmi
@@ -1836,6 +2013,16 @@
     refs:
     - id: 5844
     - id: 11745
+- - string: Block 2.2.2
+    id: 11967
+    uid: D7gYVJoVj
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    order: 1
+    page:
+      id: 11674
 - - string: ((4SIo9hSEY))
     id: 11772
     uid: Wq2dXafRn
@@ -1899,7 +2086,7 @@
     - id: 3327
     - id: 4223
     - id: 5844
-- - string: Document block 1.1
+- - string: Block 2.1
     id: 11683
     uid: 99rZhIPZW
     parents:
@@ -1953,13 +2140,16 @@
     order: 1
     page:
       id: 4225
-- - string: Numbered block 1.1
+- - string: Block 3.1 (children_layout=document)
+    children:
+    - id: 11970
     id: 11808
     uid: UQQwogj1M
     parents:
     - id: 11674
     - id: 11807
     order: 0
+    view-type: document
     page:
       id: 11674
 - - string: r1.c1
@@ -1986,6 +2176,14 @@
       id: 4225
     refs:
     - id: 11124
+- - string: “In sanguin and in persë clad was allë, Linëd with taffata and with sendallë.”
+    id: 12808
+    uid: noRek_x_o
+    parents:
+    - id: 12803
+    order: 4
+    page:
+      id: 12803
 - - string: '#c:FUCHSIA **inline PLAIN TEXT ref ⟶** ((riLVzfX-6))'
     id: 11135
     uid: gxcUrCGPT
@@ -2074,7 +2272,7 @@
     order: 1
     page:
       id: 3327
-- - string: Bullet block 1.1
+- - string: Block 1.1
     id: 11678
     uid: VH0mXM0rw
     parents:
@@ -2108,6 +2306,7 @@
     - id: 11804
     - id: 11946
     - id: 11949
+    - id: 12818
     id: 4227
     uid: d3T1YpYig
     parents:
@@ -2200,9 +2399,29 @@
     refs:
     - id: 321
     - id: 11839
+- - string: Block 2.3.1
+    id: 11968
+    uid: 1O4yGV-Tq
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11686
+    order: 0
+    page:
+      id: 11674
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
+- - string: Block 3.1.1
+    id: 11970
+    uid: 2jjY8-fQz
+    parents:
+    - id: 11674
+    - id: 11807
+    - id: 11808
+    order: 0
+    page:
+      id: 11674
 - - string: this image **has been resized** through the Roam UI (width:257, height:None)
     id: 11167
     uid: tWkumkdUE

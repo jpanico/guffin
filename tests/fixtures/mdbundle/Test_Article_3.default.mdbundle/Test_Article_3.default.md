@@ -155,6 +155,8 @@ def fizz_buzz(limit: int = 100):
   ### Section 2.1.1
 
   #### Section 2.1.1.1
+- <span style="color: fuchsia">**standalone PAGE EMBED ↓**</span>
+  - {{embed: CHAPTER XXXVI. Account of the City of Juju.}}
 - <span style="color: fuchsia">**standalone HEADER ref ↓**</span>
   - Section 1
 - <span style="color: fuchsia">**standalone FENCED-CODE ref ↓**</span>
