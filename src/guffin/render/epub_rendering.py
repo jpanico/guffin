@@ -264,6 +264,14 @@ def render(
         # the EPUB 3 nav document, which reading systems surface as their own ToC affordance —
         # that alone expresses "the work presents a navigable ToC".  Passing --toc would place the
         # nav document in the spine as well, presenting a second, redundant ToC page.
+        #
+        # Deliberately NO --toc-depth cap either: Pandoc emits a spec-correct, full-depth nav.
+        # Apple Books has a long-standing bug (reported since 2016, still unfixed) rendering
+        # 3-level-deep nav ToCs — when the ToC returns one level from its deepest item (e.g. a
+        # part > chapter > section run, then the next chapter), Apple Books floats that sibling to
+        # the top level instead of one level back, so a chapter reads as a part.  This is Apple's
+        # bug, not ours: the nav is correct EPUB 3, and Calibre and the Kindle app both render it
+        # correctly.  We keep the correct nav rather than flatten the ToC to compensate.
         pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str, _EPUB_WRITER, format="json", outputfile=str(output_path), extra_args=extra_args
         )
