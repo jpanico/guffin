@@ -8,6 +8,7 @@ from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     BLOCK_REF_RE,
+    PAGE_EMBED_RE,
     PAGE_REF_RE,
     PDF_EMBED_RE,
     TAG_RE,
@@ -443,6 +444,51 @@ class TestBlockEmbedRE:
     def test_no_match_uid_too_short(self) -> None:
         """A UID shorter than nine characters does not match."""
         assert BLOCK_EMBED_RE.search("{{embed: ((abc1234))}}") is None
+
+
+class TestPageEmbedRE:
+    """Tests for PAGE_EMBED_RE — the Roam page embed {{embed: [[<page_name>]]}} regex."""
+
+    # --- match cases ---
+
+    def test_basic_match_full_string(self) -> None:
+        """Full page-embed string is consumed by a single match."""
+        m = PAGE_EMBED_RE.search("{{embed: [[Some Page]]}}")
+        assert m is not None
+        assert m.group(0) == "{{embed: [[Some Page]]}}"
+
+    def test_page_name_group(self) -> None:
+        """Named group 'page_name' captures the embedded page's title (carried through from PAGE_REF_RE)."""
+        m = PAGE_EMBED_RE.search("{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}")
+        assert m is not None
+        assert m.group("page_name") == "CHAPTER XXXVI. Account of the City of Juju."
+
+    def test_nested_page_reference_in_name(self) -> None:
+        """A page name containing a nested [[...]] reference is captured whole (recursive match)."""
+        m = PAGE_EMBED_RE.fullmatch("{{embed: [[A [[nested]] page]]}}")
+        assert m is not None
+        assert m.group("page_name") == "A [[nested]] page"
+
+    def test_inline_embed(self) -> None:
+        """A page embed surrounded by other text is captured."""
+        m = PAGE_EMBED_RE.search("see {{embed: [[Some Page]]}} here")
+        assert m is not None
+        assert m.group(0) == "{{embed: [[Some Page]]}}"
+        assert m.group("page_name") == "Some Page"
+
+    # --- no-match cases ---
+
+    def test_no_match_bare_page_ref(self) -> None:
+        """A bare page reference without the {{embed: }} wrapper does not match."""
+        assert PAGE_EMBED_RE.search("[[Some Page]]") is None
+
+    def test_no_match_missing_space(self) -> None:
+        """The literal single space after 'embed:' is required."""
+        assert PAGE_EMBED_RE.search("{{embed:[[Some Page]]}}") is None
+
+    def test_no_match_block_embed(self) -> None:
+        """A block embed ({{embed: ((uid))}}) is not a page embed."""
+        assert PAGE_EMBED_RE.search("{{embed: ((wdMgyBiP9))}}") is None
 
 
 # ---------------------------------------------------------------------------

@@ -191,7 +191,7 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
         case NodeType.NATIVE_TABLE:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
-        case NodeType.EMBED_BLOCK:
+        case NodeType.EMBED_BLOCK | NodeType.EMBED_PAGE:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
         case NodeType.PDF_BLOCK:

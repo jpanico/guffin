@@ -4,7 +4,7 @@ Public symbols:
 
 - :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``PLAIN_BLOCK``,
   ``IMAGE_BLOCK``, ``HEADING_BLOCK``, ``CALLOUT_BLOCK``,
-  ``CODE_BLOCK``, ``BLOCK_QUOTE``, ``NATIVE_TABLE``, ``EMBED_BLOCK``, ``PDF_BLOCK``,
+  ``CODE_BLOCK``, ``BLOCK_QUOTE``, ``NATIVE_TABLE``, ``EMBED_BLOCK``, ``EMBED_PAGE``, ``PDF_BLOCK``,
   ``ATTRIBUTE_BLOCK``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
@@ -40,6 +40,7 @@ from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     IMAGE_LINK_RE,
+    PAGE_EMBED_RE,
     PDF_EMBED_RE,
     ROAM_NATIVE_TABLE_MARKERS,
 )
@@ -88,6 +89,9 @@ class NodeType(enum.StrEnum):
     - **EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
       trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` (matched by
       :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
+    - **EMBED_PAGE**: ``title`` is ``None`` and ``string``, with surrounding whitespace
+      trimmed, is wholly a Roam page embed ``{{embed: [[<page_name>]]}}`` (matched by
+      :data:`~guffin.roam.markdown.PAGE_EMBED_RE`) — the page-reference sibling of EMBED_BLOCK.
     - **PDF_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam PDF
       component ``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}`` whose URL is a Cloud Firestore
       storage URL (matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`).
@@ -105,6 +109,7 @@ class NodeType(enum.StrEnum):
     BLOCK_QUOTE = "roam/quote-block"
     NATIVE_TABLE = "roam/table"
     EMBED_BLOCK = "roam/embed-block"
+    EMBED_PAGE = "roam/embed-page"
     PDF_BLOCK = "roam/pdf-block"
     ATTRIBUTE_BLOCK = "roam/attribute-block"
 
@@ -365,6 +370,8 @@ def node_type(node: RoamNode) -> NodeType:
     :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`,
     :attr:`NodeType.EMBED_BLOCK` when the trimmed ``string`` is wholly a Roam block embed
     (as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`),
+    :attr:`NodeType.EMBED_PAGE` when the trimmed ``string`` is wholly a Roam page embed
+    (as matched by :data:`~guffin.roam.markdown.PAGE_EMBED_RE`),
     :attr:`NodeType.PDF_BLOCK` when the trimmed ``string`` is wholly a Roam PDF component
     (as matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`),
     :attr:`NodeType.ATTRIBUTE_BLOCK` when the trimmed ``string`` is wholly a Roam attribute
@@ -384,6 +391,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` is one of
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`;
         :attr:`NodeType.EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
+        :attr:`NodeType.EMBED_PAGE` if the trimmed ``string`` is wholly a Roam page embed;
         :attr:`NodeType.PDF_BLOCK` if the trimmed ``string`` is wholly a Roam PDF component;
         :attr:`NodeType.ATTRIBUTE_BLOCK` if the trimmed ``string`` is wholly a Roam attribute assignment;
         :attr:`NodeType.PLAIN_BLOCK` otherwise.
@@ -407,6 +415,8 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.NATIVE_TABLE
     if BLOCK_EMBED_RE.fullmatch(string.strip()):
         return NodeType.EMBED_BLOCK
+    if PAGE_EMBED_RE.fullmatch(string.strip()):
+        return NodeType.EMBED_PAGE
     if PDF_EMBED_RE.fullmatch(string.strip()):
         return NodeType.PDF_BLOCK
     if ATTRIBUTE_ASSIGNMENT_RE.fullmatch(string.strip()):

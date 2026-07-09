@@ -29,6 +29,8 @@ Public symbols:
   block-quote node.
 - :func:`to_block_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
   block embed node.
+- :func:`to_page_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
+  page embed node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node
   (via :func:`~guffin.roam.node_tree.to_table` + Markdown normalization), returning it together
   with the IDs of all consumed descendant nodes.
@@ -86,6 +88,7 @@ from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
+    PAGE_EMBED_RE,
     TAG_RE,
     firestore_url_file_name,
     image_link_alt_text,
@@ -101,7 +104,7 @@ from guffin.roam.node import (
 )
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
-from guffin.roam.primitives import Id, parse_daily_note_uid
+from guffin.roam.primitives import Id, Uid, parse_daily_note_uid
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -363,7 +366,9 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.BLOCK_QUOTE
         case NodeType.NATIVE_TABLE:
             return VertexType.TABLE
-        case NodeType.EMBED_BLOCK:
+        case NodeType.EMBED_BLOCK | NodeType.EMBED_PAGE:
+            # A page embed transcludes a page by name, a block embed a block by uid; both normalize
+            # to a BlockEmbedVertex carrying an EMBED-kind link to the resolved target uid.
             return VertexType.BLOCK_EMBED
         case NodeType.ATTRIBUTE_BLOCK:
             # Attribute blocks are not transcribed as standalone vertices; they are folded into
@@ -699,13 +704,71 @@ def to_block_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
     )
 
 
-def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
-    """Return a reference :class:`~guffin.model.vertex_link.VertexLink` to the page titled *page_name*.
+def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
+    """Build a :class:`~guffin.vertex.BlockEmbedVertex` from a page embed *node*.
+
+    The page-reference sibling of :func:`to_block_embed_vertex`: extracts the embedded page's title
+    from ``node.string`` — a Roam page embed ``{{embed: [[<page_name>]]}}`` as matched by
+    :data:`~guffin.roam.markdown.PAGE_EMBED_RE` — resolves it to the page's UID via the tree's
+    :attr:`~guffin.roam.node_tree.NodeTree.page_name_map`, and records it as an
+    :attr:`~guffin.model.vertex_link.VertexLinkKind.EMBED`-kind
+    :class:`~guffin.model.vertex_link.VertexLink` to the transcluded page.
+
+    Args:
+        node: A page embed node whose ``string`` is wholly ``{{embed: [[<page_name>]]}}``.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to; its
+            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves the page title to its UID
+            and its :attr:`~guffin.roam.node_tree.NodeTree.id_map` resolves child and ref stubs.
+
+    Returns:
+        A :class:`~guffin.vertex.BlockEmbedVertex` whose embed link targets the referenced page.
+
+    Raises:
+        ValueError: If ``node.string`` is ``None``, is not wholly a page embed, or names a page not
+            present in the tree (e.g. the referenced page was not fetched).
+    """
+    logger.debug("node=%r", node)
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    embed_match: Final[regex.Match[str] | None] = PAGE_EMBED_RE.fullmatch(node.string.strip())
+    if embed_match is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} string is not a page embed: {node.string!r}")
+    return BlockEmbedVertex(
+        uid=node.uid,
+        vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=_page_uid(embed_match.group("page_name"), tree)),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
+    )
+
+
+def _page_uid(page_name: str, tree: NodeTree) -> Uid:
+    """Resolve a Roam page title to its UID via the tree's page-name map.
 
     Args:
         page_name: The exact title of the referenced Roam page.
         tree: The :class:`~guffin.roam.node_tree.NodeTree`; its
             :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves the title to the page node.
+
+    Returns:
+        The referenced page's UID.
+
+    Raises:
+        ValueError: When no page titled *page_name* is present in the tree (e.g. the referenced page
+            was not fetched).
+    """
+    page: Final[RoamNode | None] = tree.page_name_map.get(page_name)
+    if page is None:
+        raise ValueError(f"reference to unknown page {page_name!r}")
+    return page.uid
+
+
+def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
+    """Return a reference :class:`~guffin.model.vertex_link.VertexLink` to the page titled *page_name*.
+
+    Args:
+        page_name: The exact title of the referenced Roam page.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve the title (via :func:`_page_uid`).
 
     Returns:
         A :attr:`~guffin.model.vertex_link.VertexLinkKind.REFERENCE`-kind link to the page's UID.
@@ -714,10 +777,7 @@ def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
         ValueError: When no page titled *page_name* is present in the tree (e.g. the referenced page
             was not fetched).
     """
-    page: Final[RoamNode | None] = tree.page_name_map.get(page_name)
-    if page is None:
-        raise ValueError(f"attribute assignment references unknown page {page_name!r}")
-    return VertexLink(kind=VertexLinkKind.REFERENCE, uid=page.uid)
+    return VertexLink(kind=VertexLinkKind.REFERENCE, uid=_page_uid(page_name, tree))
 
 
 def _to_attribute_value(raw_value: str, tree: NodeTree) -> AttributeValue:
@@ -844,6 +904,10 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
         case VertexType.TABLE:
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
         case VertexType.BLOCK_EMBED:
+            # Both embed NodeTypes normalize to BLOCK_EMBED; branch on the node kind to resolve the
+            # target — a page by name ({{embed: [[Page]]}}) or a block by uid ({{embed: ((uid))}}).
+            if node_type(node) is NodeType.EMBED_PAGE:
+                return to_page_embed_vertex(node, tree)
             return to_block_embed_vertex(node, tree)
         case _ as unreachable:
             assert_never(unreachable)

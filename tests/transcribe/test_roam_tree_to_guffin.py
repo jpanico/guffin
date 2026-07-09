@@ -11,6 +11,7 @@ from guffin.common.code_language import CodeLanguage
 from guffin.model.attribute import AttributeDomain, LiteralValue, ReferenceValue
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
+    BlockEmbedVertex,
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -24,6 +25,7 @@ from guffin.model.vertex import (
     VertexType,
     vertex_adapter,
 )
+from guffin.model.vertex_link import VertexLinkKind
 from guffin.model.vertex_view import ChildrenLayout, VertexView
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
@@ -33,11 +35,13 @@ from guffin.roam.primitives import ChildrenViewType, IdObject
 from guffin.transcribe.roam_tree_to_guffin import (
     _is_meta_block,
     build_view_map,
+    to_block_embed_vertex,
     to_block_quote_vertex,
     to_callout_vertex,
     to_code_block_vertex,
     to_heading_vertex,
     to_image_vertex,
+    to_page_embed_vertex,
     to_page_vertex,
     to_pdf_vertex,
     to_render_bundle,
@@ -1156,6 +1160,72 @@ class TestToTableVertex:
         )
         with pytest.raises(ValueError, match="no children"):
             to_table_vertex(root, _node_tree(root))
+
+
+# ---------------------------------------------------------------------------
+# TestToPageEmbedVertex
+# ---------------------------------------------------------------------------
+
+
+class TestToPageEmbedVertex:
+    """to_page_embed_vertex builds a BlockEmbedVertex whose EMBED link targets the referenced page."""
+
+    @staticmethod
+    def _embed_and_tree() -> tuple[RoamNode, NodeTree]:
+        """A page-embed block referencing a target page (present as a ref, so page_name_map resolves it)."""
+        root = RoamNode(uid="rootpage1", id=1, title="Root", children=[IdObject(id=2)])
+        embed = RoamNode(
+            uid="embednode",
+            id=2,
+            string="{{embed: [[Target Page]]}}",
+            page=IdObject(id=1),
+            parents=[IdObject(id=1)],
+            refs=[IdObject(id=3)],
+        )
+        target = RoamNode(uid="targetpag", id=3, title="Target Page")
+        return embed, _node_tree(root, embed, target)
+
+    def test_builds_a_block_embed_vertex(self) -> None:
+        """A page embed transcribes to a BlockEmbedVertex (same vertex type as a block embed)."""
+        embed, tree = self._embed_and_tree()
+        vertex = to_page_embed_vertex(embed, tree)
+        assert isinstance(vertex, BlockEmbedVertex)
+        assert vertex.uid == "embednode"
+
+    def test_embed_link_targets_the_page_uid(self) -> None:
+        """The vertex_link is an EMBED-kind link resolved to the referenced page's UID."""
+        embed, tree = self._embed_and_tree()
+        vertex = to_page_embed_vertex(embed, tree)
+        assert vertex.vertex_link.kind is VertexLinkKind.EMBED
+        assert vertex.vertex_link.uid == "targetpag"
+
+    def test_dispatched_through_transcribe_standalone_node(self) -> None:
+        """transcribe_standalone_node routes a page-embed node to the page-embed builder."""
+        embed, tree = self._embed_and_tree()
+        vertex = transcribe_standalone_node(embed, tree)
+        assert isinstance(vertex, BlockEmbedVertex)
+        assert vertex.vertex_link.uid == "targetpag"
+
+    def test_matches_block_embed_shape(self) -> None:
+        """A page embed and a block embed produce the same BlockEmbedVertex type and EMBED kind."""
+        block_root = RoamNode(uid="rootpage2", id=1, title="Root", children=[IdObject(id=2)])
+        block_embed = RoamNode(
+            uid="blockemb1", id=2, string="{{embed: ((wdMgyBiP9))}}", page=IdObject(id=1), parents=[IdObject(id=1)]
+        )
+        block_vertex = to_block_embed_vertex(block_embed, _node_tree(block_root, block_embed))
+        embed, tree = self._embed_and_tree()
+        page_vertex = to_page_embed_vertex(embed, tree)
+        assert type(block_vertex) is type(page_vertex)
+        assert block_vertex.vertex_link.kind is page_vertex.vertex_link.kind is VertexLinkKind.EMBED
+
+    def test_unknown_page_raises(self) -> None:
+        """A page embed naming a page not present in the tree raises."""
+        root = RoamNode(uid="rootpage3", id=1, title="Root", children=[IdObject(id=2)])
+        embed = RoamNode(
+            uid="embednode", id=2, string="{{embed: [[Missing Page]]}}", page=IdObject(id=1), parents=[IdObject(id=1)]
+        )
+        with pytest.raises(ValueError, match="unknown page"):
+            to_page_embed_vertex(embed, _node_tree(root, embed))
 
 
 # ---------------------------------------------------------------------------

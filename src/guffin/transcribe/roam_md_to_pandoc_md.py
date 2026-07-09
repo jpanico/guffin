@@ -13,6 +13,7 @@ stable order.
 Constructs intentionally left verbatim for future expansion:
 
 - Block embeds — ``{{embed: ((block-uid))}}``
+- Page embeds — ``{{embed: [[<page_name>]]}}``
 - Other Roam components — ``{{TODO}}``, ``{{DONE}}``, ``{{query: ...}}``, etc.
 
 Public symbols:

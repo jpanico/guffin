@@ -11,7 +11,8 @@ Public symbols:
   — compiled regex matching a line-anchored Roam attribute assignment ``attribute:: value, …``;
   :data:`BLOCK_REF_RE` — compiled regex matching a
   Roam block reference ``((<uid>))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
-  block embed ``{{embed: ((<uid>))}}``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
+  block embed ``{{embed: ((<uid>))}}``; :data:`PAGE_EMBED_RE` — compiled regex matching a Roam
+  page embed ``{{embed: [[<page_name>]]}}``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
   Roam aliased page link ``[display]([[Page Name]])``; :data:`ITALIC_RE` — compiled regex
   matching Roam italic syntax ``__text__``; :data:`HIGHLIGHT_RE` — compiled regex matching Roam
   highlight syntax ``^^text^^``; :data:`COLOR_BOLD_RE`, :data:`COLOR_HIGHLIGHT_RE`,
@@ -331,6 +332,25 @@ Example match on ``{{embed: ((LfXmNr-tV))}}``:
 
 - ``match.group(0)`` — the full ``{{embed: ((LfXmNr-tV))}}`` string.
 - ``match.group("uid")`` — just ``LfXmNr-tV``.
+"""
+
+PAGE_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(rf"\{{\{{embed: {PAGE_REF_RE.pattern}\}}\}}")
+"""Compiled regex matching a Roam page embed ``{{embed: [[<page_name>]]}}``.
+
+The page-embed sibling of :data:`BLOCK_EMBED_RE`: it wraps a :data:`PAGE_REF_RE` page reference in
+the literal ``{{embed: `` and ``}}`` delimiters (note the single space after ``embed:``) instead of a
+block reference.  The embedded reference's ``page_name`` named group is carried through, so the
+referenced page title is available on a match (including nested ``[[…]]`` inside the name, via the
+recursion in :data:`PAGE_REF_RE`).
+
+Named group:
+
+- ``page_name`` — the title of the embedded page.
+
+Example match on ``{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}``:
+
+- ``match.group(0)`` — the full ``{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}`` string.
+- ``match.group("page_name")`` — just ``CHAPTER XXXVI. Account of the City of Juju.``.
 """
 
 PAGE_LINK_ALIAS_RE: Final[regex.Pattern[str]] = regex.compile(r"\[([^\[\]]+)\]\(\[\[([^\[\]]*)\]\]\)")

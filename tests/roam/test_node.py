@@ -180,8 +180,8 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_exactly_eleven_members(self) -> None:
-        """Test that NodeType has exactly eleven members."""
+    def test_exactly_twelve_members(self) -> None:
+        """Test that NodeType has exactly twelve members."""
         assert set(NodeType) == {
             NodeType.PAGE,
             NodeType.PLAIN_BLOCK,
@@ -192,6 +192,7 @@ class TestNodeType:
             NodeType.BLOCK_QUOTE,
             NodeType.NATIVE_TABLE,
             NodeType.EMBED_BLOCK,
+            NodeType.EMBED_PAGE,
             NodeType.PDF_BLOCK,
             NodeType.ATTRIBUTE_BLOCK,
         }
@@ -441,6 +442,21 @@ class TestNodeTypeFunction:
     def test_embed_mixed_with_text_is_plain_block(self) -> None:
         """Test that an embed mixed with surrounding text is not a EMBED_BLOCK."""
         node = _make_text(string="see {{embed: ((wjN-kVF3B))}} here")
+        assert node_type(node) is NodeType.PLAIN_BLOCK
+
+    def test_page_embed_returns_embed_page(self) -> None:
+        """Test that a block whose entire string is a page embed returns EMBED_PAGE."""
+        node = _make_text(string="{{embed: [[Some Page]]}}")
+        assert node_type(node) is NodeType.EMBED_PAGE
+
+    def test_page_embed_with_surrounding_whitespace_returns_embed_page(self) -> None:
+        """Test that surrounding whitespace around a page embed is tolerated."""
+        node = _make_text(string="  {{embed: [[Some Page]]}}  ")
+        assert node_type(node) is NodeType.EMBED_PAGE
+
+    def test_page_embed_mixed_with_text_is_plain_block(self) -> None:
+        """Test that a page embed mixed with surrounding text is not an EMBED_PAGE."""
+        node = _make_text(string="see {{embed: [[Some Page]]}} here")
         assert node_type(node) is NodeType.PLAIN_BLOCK
 
     def test_pdf_component_returns_pdf_block(self) -> None:
