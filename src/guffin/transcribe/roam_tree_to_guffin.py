@@ -892,13 +892,15 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             assert_never(unreachable)
 
 
-def _consume_subtree(node: RoamNode, tree: NodeTree, consumed: set[Id]) -> None:
-    """Add *node* and every descendant id (resolved via *tree*'s ``id_map``) to *consumed*."""
+def _subtree_ids(node: RoamNode, tree: NodeTree) -> frozenset[Id]:
+    """Return the ids of *node* and every descendant (resolved via *tree*'s ``id_map``)."""
+    ids: Final[set[Id]] = set()
     stack: Final[list[RoamNode]] = [node]
     while stack:
         current: RoamNode = stack.pop()
-        consumed.add(current.id)
+        ids.add(current.id)
         stack.extend(tree.id_map[c.id] for c in (current.children or []) if c.id in tree.id_map)
+    return frozenset(ids)
 
 
 @validate_call
@@ -947,7 +949,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         # transcribed as standalone vertices.  Checked before the attribute-block guard so a meta
         # block whose value happens to parse as an attribute is still consumed (not folded twice).
         if _is_meta_block(node):
-            _consume_subtree(node, node_tree, consumed)
+            consumed.update(_subtree_ids(node, node_tree))
             continue
         # Attribute blocks are folded into their parent vertex's attribute_assignments field
         # (see _resolve_attribute_assignments), not transcribed as standalone vertices.
