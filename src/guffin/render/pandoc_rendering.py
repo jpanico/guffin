@@ -31,10 +31,12 @@ Rendering rules:
   :class:`~guffin.model.vertex_view.ChildrenLayout`: ``BULLET`` coalesces consecutive
   text siblings into a :class:`~panflute.BulletList`, ``NUMBERED`` into a
   :class:`~panflute.OrderedList`, and ``DOCUMENT`` renders them as flowing
-  :class:`~panflute.Para` blocks.  A vertex without an explicit layout inherits the
-  ``children_layout`` of its nearest ancestor that has one (the rendering-layer
-  layout-inheritance policy; see :func:`_resolve_children_layouts`), falling back to
-  :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` only when no ancestor sets one.  Text
+  :class:`~panflute.Para` blocks.  A vertex without an explicit layout inherits its parent's
+  *effective* layout, threaded down the render recursion per transclusion site — the parent of an
+  embed's target is the embed vertex itself, not the target's original host-page parent (the
+  tri-state effective-layout rules; see :func:`_effective_layout` and ``docs/render-pipeline.md``)
+  — falling back to :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` at the parentless
+  recursion root.  Text
   containing a fenced code block is parsed at block level so the fence becomes a
   :class:`~panflute.CodeBlock`.
 - :class:`~guffin.vertex.ImageVertex` — embedded as a :class:`~panflute.Image`
@@ -78,7 +80,6 @@ import html
 import logging
 from collections.abc import Callable
 from io import StringIO
-from itertools import chain
 from pathlib import Path
 from typing import Final
 
@@ -123,7 +124,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex_tree import VertexTree, root_vertex
-from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
+from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexView, ViewMap
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
@@ -131,51 +132,26 @@ from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_VIEW: Final[VertexView] = VertexView()
-"""Fallback :class:`~guffin.model.vertex_view.VertexView` for a vertex absent from the view map."""
 
+def _effective_layout(uid: Uid, view_map: ViewMap, inherited_layout: ChildrenLayout) -> ChildrenLayout:
+    """Return *uid*'s effective :class:`~guffin.model.vertex_view.ChildrenLayout`.
 
-def _children_layout(uid: Uid, view_map: ViewMap) -> ChildrenLayout:
-    """Return the :class:`~guffin.model.vertex_view.ChildrenLayout` governing *uid*'s children."""
-    return view_map.get(uid, _DEFAULT_VIEW).children_layout
-
-
-def _resolve_children_layouts(vertex_tree: VertexTree, view_map: ViewMap) -> ViewMap:
-    """Return *view_map* densified so every vertex inherits a ``children_layout`` down the tree.
-
-    The rendering-layer layout-inheritance policy, applied to a whole tree at once and independent
-    of where the tree came from: a vertex without an explicit
-    :class:`~guffin.model.vertex_view.VertexView` entry adopts the
-    :attr:`~guffin.model.vertex_view.VertexView.children_layout` of its nearest ancestor that has an
-    explicit entry.  A vertex with its own entry keeps it unchanged; a vertex with no explicit
-    ancestor is left absent (so :func:`_children_layout` still resolves it to
-    :data:`_DEFAULT_VIEW`).  Only ``children_layout`` is inherited — an inherited entry carries no
-    other view state.
+    The tri-state effective-layout rule (see ``docs/render-pipeline.md``, *Children layout*): the
+    layout explicitly assigned to the vertex in *view_map* wins; absent one, the vertex adopts
+    *inherited_layout* — its parent's effective layout, threaded down the render recursion, with
+    the recursion's entry point passing :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT`
+    for the parentless root.
 
     Args:
-        vertex_tree: The tree supplying the parent/child structure (tree and ref vertices alike).
+        uid: The vertex whose effective layout to resolve.
         view_map: The sparse authored view map, holding only explicitly-set entries.
+        inherited_layout: The parent's effective layout (or the default at the recursion root).
 
     Returns:
-        A view map with an entry for every vertex reachable from an explicit entry (itself or an
-        ancestor), each carrying the inherited (or own) ``children_layout``.
+        The layout governing the vertex's children.
     """
-    child_to_parent: Final[dict[Uid, Uid]] = {
-        child_uid: vertex.uid
-        for vertex in chain(vertex_tree.tree_vertices, vertex_tree.ref_vertices)
-        if vertex.children
-        for child_uid in vertex.children
-    }
-    resolved: dict[Uid, VertexView] = {}
-    for vertex in chain(vertex_tree.tree_vertices, vertex_tree.ref_vertices):
-        cursor: Uid | None = vertex.uid
-        while cursor is not None and cursor not in view_map:
-            cursor = child_to_parent.get(cursor)
-        if cursor is None:
-            continue
-        source: VertexView = view_map[cursor]
-        resolved[vertex.uid] = source if cursor == vertex.uid else VertexView(children_layout=source.children_layout)
-    return resolved
+    entry: Final[VertexView | None] = view_map.get(uid)
+    return entry.children_layout if entry is not None else inherited_layout
 
 
 type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
@@ -388,6 +364,7 @@ def _build_list_item(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> pf.ListItem:
     """Build a Pandoc :class:`~panflute.ListItem` from a text vertex.
@@ -396,8 +373,8 @@ def _build_list_item(
     vertex text contains a fenced code block — the block elements produced by a
     full block-level parse via :func:`parse_block_md`.  If the vertex has
     children (or folded attribute assignments) they are rendered recursively via
-    :func:`build_child_blocks` using the vertex's own children layout, and appended as nested
-    blocks inside the item.
+    :func:`build_child_blocks` using the vertex's effective children layout, and appended as
+    nested blocks inside the item.
 
     Args:
         vertex: The :class:`~guffin.vertex.TextVertex` to render as a list item.
@@ -406,6 +383,7 @@ def _build_list_item(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
         depth: Tree depth of *vertex* (≥ 2 when this function is called).
 
     Returns:
@@ -431,7 +409,7 @@ def _build_list_item(
             asset_files,
             inline_map,
             view_map,
-            _children_layout(vertex.uid, view_map),
+            _effective_layout(vertex.uid, view_map, inherited_layout),
             depth + 1,
             vertex.attribute_assignments,
         )
@@ -465,14 +443,15 @@ def _pdf_link_list_item(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> pf.ListItem:
     """Build a Pandoc :class:`~panflute.ListItem` from a link-placed PDF vertex.
 
     The item body is the vertex's link paragraph (see :func:`_pdf_vertex_to_blocks`).  If the
     vertex has children (or folded attribute assignments) they are rendered recursively via
-    :func:`build_child_blocks` using the vertex's own children layout, and appended as nested
-    blocks inside the item.
+    :func:`build_child_blocks` using the vertex's effective children layout, and appended as
+    nested blocks inside the item.
 
     Args:
         vertex: The :class:`~guffin.vertex.PdfVertex` to render as a list item.
@@ -481,6 +460,7 @@ def _pdf_link_list_item(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
         depth: Tree depth of *vertex* (≥ 2 when this function is called).
 
     Returns:
@@ -495,7 +475,7 @@ def _pdf_link_list_item(
             asset_files,
             inline_map,
             view_map,
-            _children_layout(vertex.uid, view_map),
+            _effective_layout(vertex.uid, view_map, inherited_layout),
             depth + 1,
             vertex.attribute_assignments,
         )
@@ -532,8 +512,9 @@ def build_child_blocks(
     :func:`_vertex_to_blocks` regardless of *layout*.  A text vertex that is solely a
     reference to a block-level vertex (see :func:`_block_ref_target`) is likewise flushed
     and rendered as the referenced block, so it appears identically to the block it
-    references.  Each vertex's own children are rendered using *its* layout (looked up in
-    *view_map*).
+    references.  Each vertex's own children are rendered using *its* effective layout — its
+    explicit *view_map* entry, else *layout* inherited from the parent (see
+    :func:`_effective_layout`).
 
     Unknown UIDs (absent from *vertex_tree*) are skipped with a warning.
 
@@ -579,7 +560,7 @@ def build_child_blocks(
             # A block whose entire content references a block-level vertex renders as that
             # referenced block — never wrapped in a list item.
             flush_pending()
-            result.extend(_vertex_to_blocks(ref_target, vertex_tree, asset_files, inline_map, view_map, depth))
+            result.extend(_vertex_to_blocks(ref_target, vertex_tree, asset_files, inline_map, view_map, layout, depth))
             if isinstance(vertex, TextVertex) and (vertex.children or vertex.attribute_assignments):
                 result.extend(
                     build_child_blocks(
@@ -588,19 +569,23 @@ def build_child_blocks(
                         asset_files,
                         inline_map,
                         view_map,
-                        _children_layout(vertex.uid, view_map),
+                        _effective_layout(vertex.uid, view_map, layout),
                         depth + 1,
                         vertex.attribute_assignments,
                     )
                 )
         elif isinstance(vertex, TextVertex) and layout is not ChildrenLayout.DOCUMENT:
-            pending_items.append(_build_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, depth))
+            pending_items.append(
+                _build_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, layout, depth)
+            )
         elif isinstance(vertex, PdfVertex) and _is_link_placed_pdf(vertex) and layout is not ChildrenLayout.DOCUMENT:
             # A link-placed PDF embed reads as a line of the outline, so it lists with its siblings.
-            pending_items.append(_pdf_link_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, depth))
+            pending_items.append(
+                _pdf_link_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, layout, depth)
+            )
         else:
             flush_pending()
-            result.extend(_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth))
+            result.extend(_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, layout, depth))
 
     # Trailing attribute pills folded onto the parent render as items in the same layout, after the
     # real children — reproducing their former representation as trailing child blocks.
@@ -617,10 +602,11 @@ def _page_vertex_to_blocks(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.PageVertex` to Pandoc block elements.
 
-    Delegates to :func:`build_child_blocks` at depth 1 using the page's own children
+    Delegates to :func:`build_child_blocks` at depth 1 using the page's effective children
     layout, so a page with a ``BULLET`` layout renders its top-level children as a
     bulleted outline.  The page title is handled separately by :func:`vertex_tree_to_pandoc`.
 
@@ -631,6 +617,8 @@ def _page_vertex_to_blocks(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`);
+            for a page reached through an embed, the embed vertex's effective layout.
 
     Returns:
         Block elements for the page's children, rendered at depth 1.
@@ -641,7 +629,7 @@ def _page_vertex_to_blocks(
         asset_files,
         inline_map,
         view_map,
-        _children_layout(vertex.uid, view_map),
+        _effective_layout(vertex.uid, view_map, inherited_layout),
         1,
         vertex.attribute_assignments,
     )
@@ -684,13 +672,14 @@ def _heading_vertex_to_blocks(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.HeadingVertex` to Pandoc block elements.
 
     Produces one :class:`~panflute.Header` at the vertex's heading level,
     followed by the recursively rendered children (laid out per the heading's
-    own children layout).
+    effective children layout).
 
     Args:
         vertex: The heading vertex to render.
@@ -699,6 +688,7 @@ def _heading_vertex_to_blocks(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -714,7 +704,7 @@ def _heading_vertex_to_blocks(
             asset_files,
             inline_map,
             view_map,
-            _children_layout(vertex.uid, view_map),
+            _effective_layout(vertex.uid, view_map, inherited_layout),
             depth + 1,
             vertex.attribute_assignments,
         )
@@ -728,6 +718,7 @@ def _text_vertex_to_blocks(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
     """Render a text vertex to flowing (document) block elements.
@@ -735,7 +726,7 @@ def _text_vertex_to_blocks(
     Produces one :class:`~panflute.Para` — or the block elements from a full block-level
     parse via :func:`parse_block_md` when the text contains a fenced code block — followed
     by the recursively rendered children (and trailing attribute pills) laid out per the vertex's
-    own children layout.
+    effective children layout.
 
     This always renders the bare, document-flow form; whether the vertex is *itself* wrapped
     in a bullet/numbered list item is decided by :func:`build_child_blocks` from the parent's
@@ -749,6 +740,7 @@ def _text_vertex_to_blocks(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
         depth: Tree depth of *vertex* (1 = direct page child).
 
     Returns:
@@ -773,7 +765,7 @@ def _text_vertex_to_blocks(
             asset_files,
             inline_map,
             view_map,
-            _children_layout(vertex.uid, view_map),
+            _effective_layout(vertex.uid, view_map, inherited_layout),
             depth + 1,
             vertex.attribute_assignments,
         )
@@ -861,6 +853,7 @@ def _callout_vertex_to_blocks(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.CalloutVertex` to Pandoc block elements.
@@ -888,6 +881,7 @@ def _callout_vertex_to_blocks(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -922,7 +916,7 @@ def _callout_vertex_to_blocks(
             asset_files,
             inline_map,
             view_map,
-            _children_layout(vertex.uid, view_map),
+            _effective_layout(vertex.uid, view_map, inherited_layout),
             depth + 1,
             vertex.attribute_assignments,
         )
@@ -952,6 +946,7 @@ def _block_quote_vertex_to_blocks(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.BlockQuoteVertex` to a Pandoc :class:`~panflute.BlockQuote`.
@@ -968,6 +963,7 @@ def _block_quote_vertex_to_blocks(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -981,7 +977,7 @@ def _block_quote_vertex_to_blocks(
             asset_files,
             inline_map,
             view_map,
-            _children_layout(vertex.uid, view_map),
+            _effective_layout(vertex.uid, view_map, inherited_layout),
             depth + 1,
             vertex.attribute_assignments,
         )
@@ -1056,6 +1052,7 @@ def _embed_vertex_to_blocks(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
     """Render an embed by transcluding the embedded vertex's blocks in place.
@@ -1063,9 +1060,12 @@ def _embed_vertex_to_blocks(
     Looks up the embed target (:attr:`~guffin.vertex._BaseEmbedVertex.vertex_link`'s UID) in
     *vertex_tree* and renders its full subtree via :func:`_vertex_to_blocks`, so a
     ``{{embed: ((<uid>))}}`` block reproduces the referenced block and its descendants, and a
-    ``{{embed: [[<page_name>]]}}`` block the referenced page and its descendants.  Any
-    children of the embed block itself are rendered after the transcluded content.  When the
-    target is absent from *vertex_tree*, the embed renders nothing and a warning is logged.
+    ``{{embed: [[<page_name>]]}}`` block the referenced page and its descendants.  For layout
+    purposes the embed vertex is the transcluded tree's *parent* (the transclusion-parent rule,
+    ``docs/render-pipeline.md``): the target inherits the embed's effective children layout, not
+    the layout of its original host page.  Any children of the embed block itself are rendered
+    after the transcluded content.  When the target is absent from *vertex_tree*, the embed
+    renders nothing and a warning is logged.
 
     Args:
         vertex: The embed vertex to render.
@@ -1073,6 +1073,7 @@ def _embed_vertex_to_blocks(
         asset_files: Mapping from asset vertex UID (image or PDF) to local asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
         depth: Tree depth of *vertex*.
 
     Returns:
@@ -1086,8 +1087,9 @@ def _embed_vertex_to_blocks(
             vertex.vertex_link.uid,
         )
         return []
+    embed_layout: Final[ChildrenLayout] = _effective_layout(vertex.uid, view_map, inherited_layout)
     blocks: Final[list[pf.Block]] = list(
-        _vertex_to_blocks(target, vertex_tree, asset_files, inline_map, view_map, depth)
+        _vertex_to_blocks(target, vertex_tree, asset_files, inline_map, view_map, embed_layout, depth)
     )
     blocks.extend(
         build_child_blocks(
@@ -1096,7 +1098,7 @@ def _embed_vertex_to_blocks(
             asset_files,
             inline_map,
             view_map,
-            _children_layout(vertex.uid, view_map),
+            embed_layout,
             depth + 1,
             vertex.attribute_assignments,
         )
@@ -1110,6 +1112,7 @@ def _vertex_to_blocks(
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
     """Dispatch a single :data:`~guffin.vertex.Vertex` to its type-specific rendering function.
@@ -1121,6 +1124,8 @@ def _vertex_to_blocks(
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`);
+            for a transcluded vertex, the transcluding embed's effective layout.
         depth: Tree depth of *vertex* (0 = root, 1 = direct page child, …).
 
     Returns:
@@ -1129,25 +1134,35 @@ def _vertex_to_blocks(
     """
     match vertex:
         case PageVertex():
-            return _page_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map)
+            return _page_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout)
         case HeadingVertex():
-            return _heading_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
+            return _heading_vertex_to_blocks(
+                vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
+            )
         case TextVertex():
-            return _text_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
+            return _text_vertex_to_blocks(
+                vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
+            )
         case ImageVertex():
             return _image_vertex_to_blocks(vertex, asset_files, inline_map)
         case PdfVertex():
             return _pdf_vertex_to_blocks(vertex, asset_files)
         case CalloutVertex():
-            return _callout_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
+            return _callout_vertex_to_blocks(
+                vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
+            )
         case CodeBlockVertex():
             return _code_block_vertex_to_blocks(vertex)
         case BlockQuoteVertex():
-            return _block_quote_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
+            return _block_quote_vertex_to_blocks(
+                vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
+            )
         case TableVertex():
             return _table_vertex_to_blocks(vertex, inline_map)
         case BlockEmbedVertex() | PageEmbedVertex():
-            return _embed_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
+            return _embed_vertex_to_blocks(
+                vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
+            )
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -1261,8 +1276,9 @@ def vertex_tree_to_pandoc(
             absolute.
         view_map: Presentation view map keyed by vertex uid; governs how each
             vertex's children are laid out (bulleted/numbered/document).  Applied through the
-            layout-inheritance policy (:func:`_resolve_children_layouts`), so a vertex with no
-            explicit entry inherits its nearest ancestor's ``children_layout``.
+            tri-state effective-layout rules (:func:`_effective_layout`), so a vertex with no
+            explicit entry adopts its parent's effective ``children_layout``, resolved per
+            transclusion site.
         title_in_header: When ``True``, render a root
             :class:`~guffin.vertex.PageVertex` title as an H1 header instead
             of storing it in document metadata.  Defaults to ``False``.
@@ -1278,9 +1294,6 @@ def vertex_tree_to_pandoc(
     """
     root: Final[Vertex] = root_vertex(vertex_tree)
     inline_map: Final[InlineMap] = build_inline_map(vertex_tree)
-    # Apply the layout-inheritance policy once, up front: descendants of a vertex with an explicit
-    # children_layout inherit it, so every downstream _children_layout lookup sees the resolved map.
-    resolved_view_map: Final[ViewMap] = _resolve_children_layouts(vertex_tree, view_map)
 
     metadata: dict[str, pf.MetaValue] = {}
     blocks: list[pf.Block] = []
@@ -1307,14 +1320,17 @@ def vertex_tree_to_pandoc(
     # The export root is a transparent container whatever its type: it contributes the document's
     # identity (title, metadata) but no body of its own — a non-page root's own text is the export
     # target's name, not content — so only its children render, as the document's top-level run.
+    # The recursion entry point: the parentless root's effective layout is its explicit view-map
+    # entry or the default; every descendant's is resolved per-site on the way down
+    # (the tri-state rule, docs/render-pipeline.md).
     blocks.extend(
         build_child_blocks(
             root.children or [],
             vertex_tree,
             asset_files,
             inline_map,
-            resolved_view_map,
-            _children_layout(root.uid, resolved_view_map),
+            view_map,
+            _effective_layout(root.uid, view_map, DEFAULT_CHILDREN_LAYOUT),
             depth=1,
             attribute_assignments=root.attribute_assignments,
         )

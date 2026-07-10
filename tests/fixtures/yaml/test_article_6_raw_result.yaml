@@ -21,7 +21,7 @@
     - id: 12846
     - id: 12848
     - id: 12857
-    - id: 12871
+    - id: 12900
     id: 12842
     lookup:
     - id: 321
@@ -33,6 +33,41 @@
     view-type: document
     refs:
     - id: 4223
+- - attrs:
+    - - source:
+        - uid
+        - 050miQy0i
+        value:
+        - uid
+        - 050miQy0i
+      - source:
+        - uid
+        - Aa-q7QL7i
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - Aa-q7QL7i
+        value: ' copyright-page'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 12903
+    id: 12902
+    lookup:
+    - id: 11876
+    - id: 12902
+    - id: 12903
+    uid: 050miQy0i
+    parents:
+    - id: 12842
+    - id: 12900
+    order: 0
+    page:
+      id: 12842
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'identifier:: OCLC 53071567'
     id: 12852
     uid: 4rMMdHXiL
@@ -44,20 +79,6 @@
       id: 12842
     refs:
     - id: 11847
-- - string: Copyright laws are different all over the world, and the source text or
-      artwork in this ebook may still be copyrighted in other countries. If you’re
-      not located in the United States, you must check your local laws before using
-      this ebook. Standard Ebooks makes no representations regarding the copyright
-      status of the source text or artwork in this ebook in any country other than
-      the United States.
-    id: 12889
-    uid: 2Ak3LKidd
-    parents:
-    - id: 12842
-    - id: 12871
-    order: 4
-    page:
-      id: 12842
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
     id: 4224
@@ -98,6 +119,64 @@
 - - id: 11845
     uid: ZyUTn2I17
     title: date
+- - children:
+    - id: 12895
+    - id: 12896
+    - id: 12897
+    - id: 12898
+    id: 12892
+    uid: V0ilimaj0
+    title: Uncopyright
+    view-type: document
+- - string: Copyright laws are different all over the world, and the source text or
+      artwork in this ebook may still be copyrighted in other countries. If you’re
+      not located in the United States, you must check your local laws before using
+      this ebook. Standard Ebooks makes no representations regarding the copyright
+      status of the source text or artwork in this ebook in any country other than
+      the United States.
+    id: 12896
+    uid: i-AMJMXPO
+    parents:
+    - id: 12892
+    order: 2
+    page:
+      id: 12892
+- - attrs:
+    - - source:
+        - uid
+        - a9LW1J8BT
+        value:
+        - uid
+        - a9LW1J8BT
+      - source:
+        - uid
+        - 050miQy0i
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 050miQy0i
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: Uncopyright
+    children:
+    - id: 12899
+    - id: 12902
+    id: 12900
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 12900
+    - id: 12902
+    uid: a9LW1J8BT
+    parents:
+    - id: 12842
+    order: 2
+    page:
+      id: 12842
 - - string: The artist is the creator of beautiful things. To reveal art and conceal
       the artist is art’s aim. The critic is he who can translate into another manner
       or a new material his impression of beautiful things.
@@ -179,15 +258,20 @@
 - - id: 5450
     uid: OexZiLR_O
     title: '>'
-- - string: ''
-    id: 12886
-    uid: ud2gMZ616
+- - string: Copyright pages exist to tell you that you __can’t__ do something. Unlike
+      them, this Uncopyright page exists to tell you that the writing and artwork
+      in this ebook are believed to be in the United States public domain; that is,
+      they are believed to be free of copyright restrictions in the United States.
+      The United States public domain represents our collective cultural heritage,
+      and items in it are free for anyone in the United States to do almost anything
+      at all with, without having to get permission.
+    id: 12895
+    uid: hBR6d7R4h
     parents:
-    - id: 12842
-    - id: 12871
+    - id: 12892
     order: 1
     page:
-      id: 12842
+      id: 12892
 - - attrs:
     - - source:
         - uid
@@ -321,12 +405,12 @@
     uid: asCh2FQQp
     title: element-type
 - - string: 'element-type:: copyright-page'
-    id: 12873
-    uid: jkNa9WNm2
+    id: 12903
+    uid: Aa-q7QL7i
     parents:
     - id: 12842
-    - id: 12871
-    - id: 12872
+    - id: 12900
+    - id: 12902
     order: 0
     page:
       id: 12842
@@ -346,46 +430,6 @@
 - - id: 11896
     uid: HZFZjnFeu
     title: publisher
-- - attrs:
-    - - source:
-        - uid
-        - AOh0C29y2
-        value:
-        - uid
-        - AOh0C29y2
-      - source:
-        - uid
-        - VfxDJ_3ub
-        value:
-        - uid
-        - 2xY4zCjId
-      - source:
-        - uid
-        - VfxDJ_3ub
-        value:
-        - uid
-        - BxGxeeGk1
-    heading: 2
-    string: Uncopyright
-    children:
-    - id: 12872
-    - id: 12886
-    - id: 12887
-    - id: 12889
-    - id: 12890
-    - id: 12891
-    id: 12871
-    lookup:
-    - id: 321
-    - id: 11839
-    - id: 12871
-    - id: 12872
-    uid: AOh0C29y2
-    parents:
-    - id: 12842
-    order: 2
-    page:
-      id: 12842
 - - attrs:
     - - source:
         - uid
@@ -421,41 +465,17 @@
     refs:
     - id: 321
     - id: 11839
-- - attrs:
-    - - source:
-        - uid
-        - VfxDJ_3ub
-        value:
-        - uid
-        - VfxDJ_3ub
-      - source:
-        - uid
-        - jkNa9WNm2
-        value:
-        - uid
-        - asCh2FQQp
-      - source:
-        - uid
-        - jkNa9WNm2
-        value: ' copyright-page'
-    string: 'guffin-meta:: #.rm-g'
-    children:
-    - id: 12873
-    id: 12872
-    lookup:
-    - id: 11876
-    - id: 12872
-    - id: 12873
-    uid: VfxDJ_3ub
+- - string: '{{embed: [[Uncopyright]]}}'
+    id: 12899
+    uid: xPlIk1L3D
     parents:
     - id: 12842
-    - id: 12871
-    order: 0
+    - id: 12900
+    order: 1
     page:
       id: 12842
     refs:
-    - id: 321
-    - id: 11839
+    - id: 12892
 - - string: The highest as the lowest form of criticism is a mode of autobiography.
       Those who find ugly meanings in beautiful things are corrupt without being charming.
       This is a fault.
@@ -478,43 +498,6 @@
       id: 12842
     refs:
     - id: 11898
-- - string: Copyright pages exist to tell you that you __can’t__ do something. Unlike
-      them, this Uncopyright page exists to tell you that the writing and artwork
-      in this ebook are believed to be in the United States public domain; that is,
-      they are believed to be free of copyright restrictions in the United States.
-      The United States public domain represents our collective cultural heritage,
-      and items in it are free for anyone in the United States to do almost anything
-      at all with, without having to get permission.
-    id: 12891
-    uid: TOexNt20H
-    parents:
-    - id: 12842
-    - id: 12871
-    order: 3
-    page:
-      id: 12842
-- - string: Non-authorship activities performed on items that are in the public domain⁠—so-called
-      “sweat of the brow” work⁠—don’t create a new copyright. That means that nobody
-      can claim a new copyright on an item that is in the public domain for, among
-      other things, work like digitization, markup, or typography. Regardless, the
-      contributors to this ebook release their contributions under the terms in the [CC0
-      1.0 Universal Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/),
-      thus dedicating to the worldwide public domain all of the work they’ve done
-      on this ebook, including but not limited to metadata, the titlepage, imprint,
-      colophon, this Uncopyright, and any changes or enhancements to, or markup on,
-      the original text and artwork. This dedication doesn’t change the copyright
-      status of the source text or artwork. We make this dedication in the interest
-      of enriching our global cultural heritage, to promote free and libre culture
-      around the world, and to give back to the unrestricted culture that has given
-      all of us so much.
-    id: 12890
-    uid: LxQhA7sWX
-    parents:
-    - id: 12842
-    - id: 12871
-    order: 5
-    page:
-      id: 12842
 - - string: There is no such thing as a moral or an immoral book. Books are well written,
       or badly written. That is all.
     id: 12865
@@ -525,6 +508,20 @@
     order: 4
     page:
       id: 12842
+- - string: '[[>]] __May you do good and not evil.__
+
+      __May you find forgiveness for yourself and forgive others.__
+
+      __May you share freely, never taking more than you give.__'
+    id: 12898
+    uid: 3AW4QMPFO
+    parents:
+    - id: 12892
+    order: 0
+    page:
+      id: 12892
+    refs:
+    - id: 5450
 - - string: 'title:: "The Picture of Dorian Gray"'
     id: 12850
     uid: 8F1npXph5
@@ -559,6 +556,27 @@
 - - id: 321
     uid: BxGxeeGk1
     title: .rm-g
+- - string: Non-authorship activities performed on items that are in the public domain⁠—so-called
+      “sweat of the brow” work⁠—don’t create a new copyright. That means that nobody
+      can claim a new copyright on an item that is in the public domain for, among
+      other things, work like digitization, markup, or typography. Regardless, the
+      contributors to this ebook release their contributions under the terms in the [CC0
+      1.0 Universal Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/),
+      thus dedicating to the worldwide public domain all of the work they’ve done
+      on this ebook, including but not limited to metadata, the titlepage, imprint,
+      colophon, this Uncopyright, and any changes or enhancements to, or markup on,
+      the original text and artwork. This dedication doesn’t change the copyright
+      status of the source text or artwork. We make this dedication in the interest
+      of enriching our global cultural heritage, to promote free and libre culture
+      around the world, and to give back to the unrestricted culture that has given
+      all of us so much.
+    id: 12897
+    uid: hD0Fmc0Vp
+    parents:
+    - id: 12892
+    order: 3
+    page:
+      id: 12892
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
@@ -615,21 +633,6 @@
     order: 6
     page:
       id: 12842
-- - string: '[[>]] __May you do good and not evil.__
-
-      __May you find forgiveness for yourself and forgive others.__
-
-      __May you share freely, never taking more than you give.__'
-    id: 12887
-    uid: Fc0umw_zJ
-    parents:
-    - id: 12842
-    - id: 12871
-    order: 2
-    page:
-      id: 12842
-    refs:
-    - id: 5450
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta

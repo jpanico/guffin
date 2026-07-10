@@ -45,6 +45,7 @@ Public symbols:
 """
 
 import logging
+from itertools import chain
 from typing import Final, assert_never
 
 import regex
@@ -996,26 +997,30 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
 def build_view_map(node_tree: NodeTree) -> ViewMap:
     """Derive the presentation :data:`~guffin.model.vertex_view.ViewMap` for *node_tree*.
 
-    This is the presentation counterpart to :func:`transcribe` (which derives content): it records a
+    This is the presentation counterpart to :func:`transcribe` (which derives content), covering
+    the same node population — the anchor subtree *and* the referenced nodes
+    (:attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`), so a transcluded page or block carries
+    its authored presentation with it.  It records a
     :class:`~guffin.model.vertex_view.VertexView` keyed by uid for every node that carries an
     *explicit* children-view-type (:attr:`~guffin.roam.node.RoamNode.children_view_type` is not
     ``None``), mapping it straight to the matching
     :class:`~guffin.model.vertex_view.ChildrenLayout` — an explicit ``BULLET`` included, so it is
     recorded distinctly from an unset node rather than being conflated with the default.  The map
-    is sparse: a node with no explicit children-view-type is absent, and at render time inherits its
-    nearest ancestor's layout (the layout-inheritance policy), falling back to
-    :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` only when no ancestor sets one.
+    is sparse: a node with no explicit children-view-type is absent, and at render time adopts its
+    parent's effective layout (the tri-state effective-layout rules; see
+    ``docs/render-pipeline.md``), falling back to
+    :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` only at a parentless root.
 
     Args:
         node_tree: A validated tree of raw Roam nodes.
 
     Returns:
-        A :data:`~guffin.model.vertex_view.ViewMap` covering exactly the tree's nodes that carry an
-        explicit children-view-type.
+        A :data:`~guffin.model.vertex_view.ViewMap` covering exactly the fetched nodes — anchor
+        subtree and referenced nodes alike — that carry an explicit children-view-type.
     """
     return {
         node.uid: VertexView(children_layout=ChildrenLayout(node.children_view_type))
-        for node in node_tree.dfs()
+        for node in chain(node_tree.dfs(), node_tree.refs_by_id.values())
         if node.children_view_type is not None
     }
 

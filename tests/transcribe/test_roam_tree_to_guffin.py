@@ -1296,6 +1296,30 @@ class TestBuildViewMap:
         )
         assert build_view_map(_node_tree(root, child)) == {}
 
+    def test_records_referenced_nodes_explicit_view_type(self) -> None:
+        """A referenced node's explicit view-type is recorded, so transclusion carries presentation.
+
+        The map covers the same node population as transcribe(): anchor subtree plus refs — an
+        embedded page's authored layout must survive into the ViewMap.
+        """
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        embed = RoamNode(
+            uid="embednode",
+            id=2,
+            string="{{embed: [[Embedded Page]]}}",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=3)],
+        )
+        ref_page = RoamNode(
+            uid="refpage01",
+            id=3,
+            title="Embedded Page",
+            children_view_type=ChildrenViewType.DOCUMENT,
+        )
+        view_map = build_view_map(_node_tree(root, embed, ref_page))
+        assert view_map == {"refpage01": VertexView(children_layout=ChildrenLayout.DOCUMENT)}
+
 
 # ---------------------------------------------------------------------------
 # TestToRenderBundle

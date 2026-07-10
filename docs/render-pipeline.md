@@ -107,6 +107,34 @@ independently — a 3×3 space. Folding the profile into `RenderOptions` would e
 Keeping them separate gives the correct cardinality: **one** `ProjectProfile`, **N** format options.
 
 
+## Children layout: how `children_view_type` is interpreted
+
+Roam records a per-block presentation choice in the `:children/view-type` prop (bullet / document /
+numbered). Transcription carries it into the presentation half of the `RenderBundle`: the sparse
+`ViewMap` holds a `VertexView` for **every fetched node with an explicit value** — anchor-subtree
+nodes and referenced nodes alike, and an explicit `bullet` is recorded distinctly from an unset
+node. At render time the rules below turn that sparse map into each vertex's **effective**
+`children_view_type`. They are simple, and they apply **uniformly** — to children of the tree root
+and to children transcluded through embeds; the tri-state logic is always in play:
+
+- All children are rendered according to the *effective* `children_view_type` of their **parent**.
+- The *effective* `children_view_type` of any vertex is:
+  1. the value **explicitly assigned** to that vertex in the `ViewMap`;
+  2. **OR**, if there is no explicit assignment, the value **inherited from its parent**;
+  3. **OR**, if there is no explicit assignment and it has no parent, the **default**
+     (`DEFAULT_CHILDREN_LAYOUT`, i.e. `bullet` — Roam's own default rendering).
+- The parent of a tree transcluded via an embed (**block or page**) is the **embed vertex that
+  transcludes it** — the `VertexLink` container — *not* the parent the transcluded tree has on its
+  original host page. Inheritance flows through the embed site: an embed under a
+  `document`-layout section carries `document` into the transcluded content unless the transcluded
+  vertices declare their own explicit values.
+
+The resolution is a render-layer policy (`pandoc_rendering._effective_layout`, applied per vertex
+as the render recursion descends — per transclusion *site*, so the same target embedded from two
+places can inherit two different layouts), independent of the data source; the `ViewMap` stays
+sparse and authored-only so that *explicit* and *inherited* never get conflated in the model.
+
+
 ## Project types
 
 `render/project.py` models the *kind of work*, adopting the **concept** from Quarto's

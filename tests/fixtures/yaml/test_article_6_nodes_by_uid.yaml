@@ -8,7 +8,7 @@ HY7HhHrci:
   - id: 12846
   - id: 12848
   - id: 12857
-  - id: 12871
+  - id: 12900
   refs:
   - id: 4223
   page: null
@@ -35,6 +35,42 @@ HY7HhHrci:
       value:
       - uid
       - BxGxeeGk1
+050miQy0i:
+  uid: 050miQy0i
+  id: 12902
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 12903
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12900
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 050miQy0i
+      value:
+      - uid
+      - 050miQy0i
+    - source:
+      - uid
+      - Aa-q7QL7i
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - Aa-q7QL7i
+      value: ' copyright-page'
 4rMMdHXiL:
   uid: 4rMMdHXiL
   id: 12852
@@ -50,28 +86,6 @@ HY7HhHrci:
   parents:
   - id: 12842
   - id: 12848
-  props: null
-  title: null
-  attrs: null
-2Ak3LKidd:
-  uid: 2Ak3LKidd
-  id: 12889
-  string: Copyright laws are different all over the world, and the source text or
-    artwork in this ebook may still be copyrighted in other countries. If you’re not
-    located in the United States, you must check your local laws before using this
-    ebook. Standard Ebooks makes no representations regarding the copyright status
-    of the source text or artwork in this ebook in any country other than the United
-    States.
-  order: 4
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12871
   props: null
   title: null
   attrs: null
@@ -150,6 +164,81 @@ ZyUTn2I17:
   props: null
   title: date
   attrs: null
+V0ilimaj0:
+  uid: V0ilimaj0
+  id: 12892
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 12895
+  - id: 12896
+  - id: 12897
+  - id: 12898
+  refs: null
+  page: null
+  children_view_type: document
+  parents: null
+  props: null
+  title: Uncopyright
+  attrs: null
+i-AMJMXPO:
+  uid: i-AMJMXPO
+  id: 12896
+  string: Copyright laws are different all over the world, and the source text or
+    artwork in this ebook may still be copyrighted in other countries. If you’re not
+    located in the United States, you must check your local laws before using this
+    ebook. Standard Ebooks makes no representations regarding the copyright status
+    of the source text or artwork in this ebook in any country other than the United
+    States.
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 12892
+  children_view_type: null
+  parents:
+  - id: 12892
+  props: null
+  title: null
+  attrs: null
+a9LW1J8BT:
+  uid: a9LW1J8BT
+  id: 12900
+  string: Uncopyright
+  order: 2
+  heading: 2
+  children:
+  - id: 12899
+  - id: 12902
+  refs: null
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - a9LW1J8BT
+      value:
+      - uid
+      - a9LW1J8BT
+    - source:
+      - uid
+      - 050miQy0i
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - 050miQy0i
+      value:
+      - uid
+      - BxGxeeGk1
 2CRdgs-X4:
   uid: 2CRdgs-X4
   id: 12869
@@ -276,20 +365,25 @@ OexZiLR_O:
   props: null
   title: '>'
   attrs: null
-ud2gMZ616:
-  uid: ud2gMZ616
-  id: 12886
-  string: ''
+hBR6d7R4h:
+  uid: hBR6d7R4h
+  id: 12895
+  string: Copyright pages exist to tell you that you __can’t__ do something. Unlike
+    them, this Uncopyright page exists to tell you that the writing and artwork in
+    this ebook are believed to be in the United States public domain; that is, they
+    are believed to be free of copyright restrictions in the United States. The United
+    States public domain represents our collective cultural heritage, and items in
+    it are free for anyone in the United States to do almost anything at all with,
+    without having to get permission.
   order: 1
   heading: null
   children: null
   refs: null
   page:
-    id: 12842
+    id: 12892
   children_view_type: null
   parents:
-  - id: 12842
-  - id: 12871
+  - id: 12892
   props: null
   title: null
   attrs: null
@@ -427,9 +521,9 @@ asCh2FQQp:
   props: null
   title: element-type
   attrs: null
-jkNa9WNm2:
-  uid: jkNa9WNm2
-  id: 12873
+Aa-q7QL7i:
+  uid: Aa-q7QL7i
+  id: 12903
   string: 'element-type:: copyright-page'
   order: 0
   heading: null
@@ -441,8 +535,8 @@ jkNa9WNm2:
   children_view_type: null
   parents:
   - id: 12842
-  - id: 12871
-  - id: 12872
+  - id: 12900
+  - id: 12902
   props: null
   title: null
   attrs: null
@@ -478,46 +572,6 @@ HZFZjnFeu:
   props: null
   title: publisher
   attrs: null
-AOh0C29y2:
-  uid: AOh0C29y2
-  id: 12871
-  string: Uncopyright
-  order: 2
-  heading: 2
-  children:
-  - id: 12872
-  - id: 12886
-  - id: 12887
-  - id: 12889
-  - id: 12890
-  - id: 12891
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  props: null
-  title: null
-  attrs:
-  - - source:
-      - uid
-      - AOh0C29y2
-      value:
-      - uid
-      - AOh0C29y2
-    - source:
-      - uid
-      - VfxDJ_3ub
-      value:
-      - uid
-      - 2xY4zCjId
-    - source:
-      - uid
-      - VfxDJ_3ub
-      value:
-      - uid
-      - BxGxeeGk1
 YIaDjPPUe:
   uid: YIaDjPPUe
   id: 12859
@@ -554,42 +608,24 @@ YIaDjPPUe:
       - uid
       - gu4ybgVUx
       value: ' preface'
-VfxDJ_3ub:
-  uid: VfxDJ_3ub
-  id: 12872
-  string: 'guffin-meta:: #.rm-g'
-  order: 0
+xPlIk1L3D:
+  uid: xPlIk1L3D
+  id: 12899
+  string: '{{embed: [[Uncopyright]]}}'
+  order: 1
   heading: null
-  children:
-  - id: 12873
+  children: null
   refs:
-  - id: 321
-  - id: 11839
+  - id: 12892
   page:
     id: 12842
   children_view_type: null
   parents:
   - id: 12842
-  - id: 12871
+  - id: 12900
   props: null
   title: null
-  attrs:
-  - - source:
-      - uid
-      - VfxDJ_3ub
-      value:
-      - uid
-      - VfxDJ_3ub
-    - source:
-      - uid
-      - jkNa9WNm2
-      value:
-      - uid
-      - asCh2FQQp
-    - source:
-      - uid
-      - jkNa9WNm2
-      value: ' copyright-page'
+  attrs: null
 4LLq-95BT:
   uid: 4LLq-95BT
   id: 12863
@@ -627,58 +663,6 @@ uEYS1oQeC:
   props: null
   title: null
   attrs: null
-TOexNt20H:
-  uid: TOexNt20H
-  id: 12891
-  string: Copyright pages exist to tell you that you __can’t__ do something. Unlike
-    them, this Uncopyright page exists to tell you that the writing and artwork in
-    this ebook are believed to be in the United States public domain; that is, they
-    are believed to be free of copyright restrictions in the United States. The United
-    States public domain represents our collective cultural heritage, and items in
-    it are free for anyone in the United States to do almost anything at all with,
-    without having to get permission.
-  order: 3
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12871
-  props: null
-  title: null
-  attrs: null
-LxQhA7sWX:
-  uid: LxQhA7sWX
-  id: 12890
-  string: Non-authorship activities performed on items that are in the public domain⁠—so-called
-    “sweat of the brow” work⁠—don’t create a new copyright. That means that nobody
-    can claim a new copyright on an item that is in the public domain for, among other
-    things, work like digitization, markup, or typography. Regardless, the contributors
-    to this ebook release their contributions under the terms in the [CC0 1.0 Universal
-    Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/),
-    thus dedicating to the worldwide public domain all of the work they’ve done on
-    this ebook, including but not limited to metadata, the titlepage, imprint, colophon,
-    this Uncopyright, and any changes or enhancements to, or markup on, the original
-    text and artwork. This dedication doesn’t change the copyright status of the source
-    text or artwork. We make this dedication in the interest of enriching our global
-    cultural heritage, to promote free and libre culture around the world, and to
-    give back to the unrestricted culture that has given all of us so much.
-  order: 5
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12871
-  props: null
-  title: null
-  attrs: null
 GHGaHfSEk:
   uid: GHGaHfSEk
   id: 12865
@@ -694,6 +678,27 @@ GHGaHfSEk:
   parents:
   - id: 12842
   - id: 12857
+  props: null
+  title: null
+  attrs: null
+3AW4QMPFO:
+  uid: 3AW4QMPFO
+  id: 12898
+  string: '[[>]] __May you do good and not evil.__
+
+    __May you find forgiveness for yourself and forgive others.__
+
+    __May you share freely, never taking more than you give.__'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  page:
+    id: 12892
+  children_view_type: null
+  parents:
+  - id: 12892
   props: null
   title: null
   attrs: null
@@ -763,6 +768,34 @@ BxGxeeGk1:
   parents: null
   props: null
   title: .rm-g
+  attrs: null
+hD0Fmc0Vp:
+  uid: hD0Fmc0Vp
+  id: 12897
+  string: Non-authorship activities performed on items that are in the public domain⁠—so-called
+    “sweat of the brow” work⁠—don’t create a new copyright. That means that nobody
+    can claim a new copyright on an item that is in the public domain for, among other
+    things, work like digitization, markup, or typography. Regardless, the contributors
+    to this ebook release their contributions under the terms in the [CC0 1.0 Universal
+    Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/),
+    thus dedicating to the worldwide public domain all of the work they’ve done on
+    this ebook, including but not limited to metadata, the titlepage, imprint, colophon,
+    this Uncopyright, and any changes or enhancements to, or markup on, the original
+    text and artwork. This dedication doesn’t change the copyright status of the source
+    text or artwork. We make this dedication in the interest of enriching our global
+    cultural heritage, to promote free and libre culture around the world, and to
+    give back to the unrestricted culture that has given all of us so much.
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 12892
+  children_view_type: null
+  parents:
+  - id: 12892
+  props: null
+  title: null
   attrs: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
@@ -872,28 +905,6 @@ o2r7a0YRn:
   parents:
   - id: 12842
   - id: 12857
-  props: null
-  title: null
-  attrs: null
-Fc0umw_zJ:
-  uid: Fc0umw_zJ
-  id: 12887
-  string: '[[>]] __May you do good and not evil.__
-
-    __May you find forgiveness for yourself and forgive others.__
-
-    __May you share freely, never taking more than you give.__'
-  order: 2
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12871
   props: null
   title: null
   attrs: null
