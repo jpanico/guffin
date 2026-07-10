@@ -42,8 +42,10 @@ UIDs of every other node.
 """
 
 _DAILY_NOTE_UID_RE: Final[regex.Pattern[str]] = regex.compile(DAILY_NOTE_UID_PATTERN)
-"""Compiled :data:`DAILY_NOTE_UID_PATTERN`; precompiled because :func:`parse_daily_note_uid` runs it
-against every node's UID during validation, where a per-call string-pattern lookup is ~19x slower.
+"""Compiled :data:`DAILY_NOTE_UID_PATTERN`, precompiled for the hot validation path.
+
+:func:`parse_daily_note_uid` runs it against every node's UID during validation, where a per-call
+string-pattern lookup is ~19x slower.
 """
 
 UID_PATTERN: Final[str] = rf"(?:{DAILY_NOTE_UID_PATTERN}|{SYNTHETIC_UID_PATTERN})"
