@@ -547,6 +547,39 @@ class TestNodeTreePageNameMap:
         assert "page_name_map" not in tree.model_dump()
 
 
+class TestNodeTreePageUid:
+    """Tests for NodeTree.page_uid — page title → UID resolution."""
+
+    def test_resolves_root_page_title(self) -> None:
+        """Test that the root page's title resolves to its UID."""
+        root = RoamNode(uid="page00001", id=1, title="My Page", children=[])
+        tree = NodeTree.build(super_network=[root], root_node=root)
+        assert tree.page_uid("My Page") == "page00001"
+
+    def test_resolves_ref_page_title(self) -> None:
+        """Test that a referenced page's title resolves to its UID."""
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            string="[[Ref Page]]",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=99)],
+        )
+        ref_page = RoamNode(uid="refpage01", id=99, title="Ref Page", children=[])
+        tree = NodeTree.build(super_network=[root, block, ref_page], root_node=root)
+        assert tree.page_uid("Ref Page") == "refpage01"
+
+    def test_unknown_title_raises(self) -> None:
+        """Test that a title with no page in the tree raises ValueError."""
+        root = RoamNode(uid="page00001", id=1, title="My Page", children=[])
+        tree = NodeTree.build(super_network=[root], root_node=root)
+        with pytest.raises(ValueError, match="unknown page"):
+            tree.page_uid("Missing Page")
+
+
 # ---------------------------------------------------------------------------
 # TestNodeTreeDFSIterator
 # ---------------------------------------------------------------------------

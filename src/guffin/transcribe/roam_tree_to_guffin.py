@@ -105,7 +105,7 @@ from guffin.roam.node import (
 )
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
-from guffin.roam.primitives import Id, Uid, parse_daily_note_uid
+from guffin.roam.primitives import Id, parse_daily_note_uid
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -710,15 +710,15 @@ def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> PageEmbedVertex:
 
     The page-reference sibling of :func:`to_block_embed_vertex`: extracts the embedded page's title
     from ``node.string`` — a Roam page embed ``{{embed: [[<page_name>]]}}`` as matched by
-    :data:`~guffin.roam.markdown.PAGE_EMBED_RE` — resolves it to the page's UID via the tree's
-    :attr:`~guffin.roam.node_tree.NodeTree.page_name_map`, and records it as an
+    :data:`~guffin.roam.markdown.PAGE_EMBED_RE` — resolves it to the page's UID via
+    :meth:`~guffin.roam.node_tree.NodeTree.page_uid`, and records it as an
     :attr:`~guffin.model.vertex_link.VertexLinkKind.EMBED`-kind
     :class:`~guffin.model.vertex_link.VertexLink` to the transcluded page.
 
     Args:
         node: A page embed node whose ``string`` is wholly ``{{embed: [[<page_name>]]}}``.
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to; its
-            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves the page title to its UID
+            :meth:`~guffin.roam.node_tree.NodeTree.page_uid` resolves the page title to its UID
             and its :attr:`~guffin.roam.node_tree.NodeTree.id_map` resolves child and ref stubs.
 
     Returns:
@@ -736,32 +736,11 @@ def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> PageEmbedVertex:
         raise ValueError(f"RoamNode uid={node.uid!r} string is not a page embed: {node.string!r}")
     return PageEmbedVertex(
         uid=node.uid,
-        vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=_page_uid(embed_match.group("page_name"), tree)),
+        vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=tree.page_uid(embed_match.group("page_name"))),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
-
-
-def _page_uid(page_name: str, tree: NodeTree) -> Uid:
-    """Resolve a Roam page title to its UID via the tree's page-name map.
-
-    Args:
-        page_name: The exact title of the referenced Roam page.
-        tree: The :class:`~guffin.roam.node_tree.NodeTree`; its
-            :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` resolves the title to the page node.
-
-    Returns:
-        The referenced page's UID.
-
-    Raises:
-        ValueError: When no page titled *page_name* is present in the tree (e.g. the referenced page
-            was not fetched).
-    """
-    page: Final[RoamNode | None] = tree.page_name_map.get(page_name)
-    if page is None:
-        raise ValueError(f"reference to unknown page {page_name!r}")
-    return page.uid
 
 
 def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
@@ -769,7 +748,8 @@ def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
 
     Args:
         page_name: The exact title of the referenced Roam page.
-        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve the title (via :func:`_page_uid`).
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve the title (via
+            :meth:`~guffin.roam.node_tree.NodeTree.page_uid`).
 
     Returns:
         A :attr:`~guffin.model.vertex_link.VertexLinkKind.REFERENCE`-kind link to the page's UID.
@@ -778,7 +758,7 @@ def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
         ValueError: When no page titled *page_name* is present in the tree (e.g. the referenced page
             was not fetched).
     """
-    return VertexLink(kind=VertexLinkKind.REFERENCE, uid=_page_uid(page_name, tree))
+    return VertexLink(kind=VertexLinkKind.REFERENCE, uid=tree.page_uid(page_name))
 
 
 def _to_attribute_value(raw_value: str, tree: NodeTree) -> AttributeValue:

@@ -11,6 +11,8 @@ Public symbols:
   this tree.
 - :meth:`NodeTree.external_refs_ids` — return the subset of :meth:`NodeTree.node_refs_ids` ids that fall outside
   :meth:`NodeTree.node_ids`.
+- :meth:`NodeTree.page_uid` — return the UID of the page with a given title, resolved via
+  :attr:`NodeTree.page_name_map`.
 - :class:`NodeTreeDFSIterator` — pre-order depth-first iterator over a :class:`NodeTree`.
 - :func:`is_tree` — validate all tree invariants for a :class:`~guffin.roam.node.RoamNode` root
   and its :data:`~guffin.roam.node_network.NodeNetwork`; returns a
@@ -77,6 +79,8 @@ class NodeTree(BaseModel):
             across :attr:`tree_network`.
         external_refs_ids: Return the subset of :meth:`node_refs_ids` ids that are not members
             of :meth:`node_ids` — i.e. refs that resolve to nodes outside this tree.
+        page_uid: Return the UID of the page with a given title, resolved via
+            :attr:`page_name_map`.
     """
 
     model_config = ConfigDict(frozen=True, validate_by_name=True)
@@ -293,6 +297,25 @@ class NodeTree(BaseModel):
             resolves to a node already in :attr:`network`.
         """
         return self.node_refs_ids() - self.node_ids()
+
+    @validate_call
+    def page_uid(self, page_name: str) -> Uid:
+        """Return the UID of the page titled *page_name*, resolved via :attr:`page_name_map`.
+
+        Args:
+            page_name: The exact title of a Roam page in this tree.
+
+        Returns:
+            The :attr:`~guffin.roam.node.RoamNode.uid` of the page node titled *page_name*.
+
+        Raises:
+            ValueError: When no page titled *page_name* is present in this tree (e.g. the
+                referenced page was not fetched).
+        """
+        page: Final[RoamNode | None] = self.page_name_map.get(page_name)
+        if page is None:
+            raise ValueError(f"reference to unknown page {page_name!r}")
+        return page.uid
 
 
 class NodeTreeDFSIterator(Iterator[RoamNode]):
