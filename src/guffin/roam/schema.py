@@ -6,11 +6,14 @@ Public symbols:
   in the Roam graph schema.
 - :class:`SchemaAttribute` — enumeration of all ``(namespace, attr_name)`` pairs
   in the Roam Datomic schema.
+- :data:`INTERMITTENT_ATTRIBUTES` — the :class:`SchemaAttribute` members that are fully
+  retracted when inactive, so they may legitimately be absent from a live schema fetch.
 - :data:`RoamSchema` — a list of :class:`SchemaAttribute` members representing the
   full schema of a live Roam graph.
 """
 
 from enum import Enum, StrEnum
+from typing import Final
 
 
 class SchemaNamespace(StrEnum):
@@ -100,6 +103,7 @@ class SchemaAttribute(Enum):
 
     # page/
     PAGE_SIDEBAR = (SchemaNamespace.PAGE, "sidebar")
+    PAGE_DIRTY = (SchemaNamespace.PAGE, "dirty?")
     PAGE_EDIT_USER = (SchemaNamespace.PAGE, "edit-user")
     PAGE_EDIT_NONCE = (SchemaNamespace.PAGE, "edit-nonce")
     PAGE_EDIT_TIME = (SchemaNamespace.PAGE, "edit-time")
@@ -143,6 +147,17 @@ class SchemaAttribute(Enum):
     def __str__(self) -> str:
         """Return the Datomic attribute key, e.g. ``:block/uid``."""
         return f":{self.namespace}/{self.attr_name}"
+
+
+INTERMITTENT_ATTRIBUTES: Final[frozenset[SchemaAttribute]] = frozenset({SchemaAttribute.PAGE_DIRTY})
+"""The :class:`SchemaAttribute` members that may legitimately be absent from a live schema fetch.
+
+Roam's schema introspection query reports only attributes with at least one currently asserted
+datom.  Most attributes are always asserted on some entity, but an *intermittent* attribute is
+asserted only while its condition holds and fully retracted afterwards, so it flickers in and out
+of the live schema depending on graph state at fetch time — e.g. ``:page/dirty?`` marks a page
+with pending unsynced changes and disappears once the page syncs clean.
+"""
 
 
 type RoamSchema = list[SchemaAttribute]

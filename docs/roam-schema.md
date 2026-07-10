@@ -3,6 +3,12 @@
 Kept in sync with the `SchemaAttribute` enum in `src/guffin/roam/schema.py`.
 Namespaces and attr_names are sorted alphabetically.
 
+Roam's schema introspection reports only attributes with at least one currently
+asserted datom, and `page/dirty?` is *intermittent*: asserted while a page has
+pending unsynced changes and fully retracted once it syncs clean, so it may be
+absent from any given live schema fetch (see `INTERMITTENT_ATTRIBUTES` in
+`src/guffin/roam/schema.py`).
+
 | namespace      | attr_name         |
 | -------------- | ----------------- |
 | annotation     | origin            |
@@ -27,6 +33,7 @@ Namespaces and attr_names are sorted alphabetically.
 | graph          | settings          |
 | log            | id                |
 | node           | title             |
+| page           | dirty?            |
 | page           | edit-nonce        |
 | page           | edit-time         |
 | page           | edit-user         |

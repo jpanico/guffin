@@ -218,6 +218,7 @@ TRANSIENT_RAW_KEYS: Final[frozenset[str]] = frozenset(
     {
         "open",  # :block/open — expand/collapse UI state
         "sidebar",  # :page/sidebar — right-sidebar UI state
+        "dirty?",  # :page/dirty? — pending-unsynced-changes sync flag
         "time",  # :create/time — creation timestamp
         "user",  # :create/user — creating-user ref
         "edit-time",  # :edit/time — last-edit timestamp

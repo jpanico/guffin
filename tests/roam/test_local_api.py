@@ -404,8 +404,8 @@ class TestWithoutTransientKeys:
     """Tests for without_transient_keys and the TRANSIENT_RAW_KEYS set."""
 
     def test_transient_keys_cover_ui_and_metadata_attrs(self) -> None:
-        """The set names the block/page UI state and the edit/create metadata attrs."""
-        assert {"open", "sidebar"} <= TRANSIENT_RAW_KEYS
+        """The set names the block/page UI state, sync flags, and the edit/create metadata attrs."""
+        assert {"open", "sidebar", "dirty?"} <= TRANSIENT_RAW_KEYS
         assert {"time", "user", "edit-time", "edit-user", "edit-nonce", "seen-by", "word-count"} <= TRANSIENT_RAW_KEYS
 
     def test_drops_transient_keys_keeps_structural_content(self) -> None:

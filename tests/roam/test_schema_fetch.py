@@ -11,7 +11,7 @@ import requests
 from pydantic import ValidationError
 
 from guffin.roam.local_api import ApiEndpoint
-from guffin.roam.schema import RoamSchema, SchemaAttribute, SchemaNamespace
+from guffin.roam.schema import INTERMITTENT_ATTRIBUTES, RoamSchema, SchemaAttribute, SchemaNamespace
 from guffin.roam.schema_fetch import FetchRoamSchema
 
 logger = logging.getLogger(__name__)
@@ -181,6 +181,10 @@ class TestFetchRoamSchemaFetch:
           (fetch raises ``ValueError`` — enum needs new members added), or
         - :class:`SchemaAttribute` has stale members absent from the live graph
           (enum needs old members removed).
+
+        :data:`~guffin.roam.schema.INTERMITTENT_ATTRIBUTES` members are exempt from the
+        second direction only: they are retracted when inactive, so their absence from a
+        live fetch reflects graph state at fetch time, not enum staleness.
         """
         try:
             fetched: RoamSchema = FetchRoamSchema.fetch(live_api_endpoint)
@@ -190,7 +194,7 @@ class TestFetchRoamSchemaFetch:
         fetched_set: set[SchemaAttribute] = set(fetched)
         expected_set: set[SchemaAttribute] = set(SchemaAttribute)
 
-        in_enum_not_fetched: set[SchemaAttribute] = expected_set - fetched_set
+        in_enum_not_fetched: set[SchemaAttribute] = expected_set - fetched_set - INTERMITTENT_ATTRIBUTES
         in_fetched_not_enum: set[SchemaAttribute] = fetched_set - expected_set
 
         diffs: list[str] = []
