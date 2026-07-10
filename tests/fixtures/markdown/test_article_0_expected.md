@@ -61,21 +61,21 @@
                 print(i)
     ```
 
-  > This is a Markdown standard single line Block Quote
+  > This is a *Markdown standard* single line **Block Quote**
 
   > This is a Markdown standard multi-line Block Quote
   >
-  > this is the 2nd line
+  > this is the *2nd line*
   >
-  > - this is the 3rd line
+  > - this is the **3rd line**
 
-  > This is a Roam standard single line Block Quote
+  > This is a *Roam standard* single line **Block Quote**
 
   > This is a Roam standard multi-line Block Quote
   >
-  > this is the 2nd line
+  > this is the *2nd line*
   >
-  > - this is the 3rd line
+  > - this is the **3rd line**
 
   - block 1.1
     - block 1.1.1

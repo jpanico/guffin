@@ -28,9 +28,9 @@
   id: 11193
   string: '[[>]] This is a Roam standard multi-line Block Quote
 
-    this is the 2nd line
+    this is the __2nd line__
 
-    - this is the 3rd line'
+    - this is the **3rd line**'
   order: 10
   heading: null
   children: null
@@ -228,9 +228,9 @@
   id: 11187
   string: '> This is a Markdown standard multi-line Block Quote
 
-    this is the 2nd line
+    this is the __2nd line__
 
-    - this is the 3rd line'
+    - this is the **3rd line**'
   order: 8
   heading: null
   children: null
@@ -263,7 +263,7 @@
   attrs: null
 - uid: Yz0pqYfBh
   id: 11186
-  string: '> This is a Markdown standard single line Block Quote'
+  string: '> This is a __Markdown standard__ single line **Block Quote**'
   order: 7
   heading: null
   children: null
@@ -389,7 +389,7 @@
   attrs: null
 - uid: gq_29_H-7
   id: 11188
-  string: '[[>]] This is a Roam standard single line Block Quote'
+  string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
   order: 9
   heading: null
   children: null

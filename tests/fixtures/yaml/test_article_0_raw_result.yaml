@@ -30,9 +30,9 @@
     title: Test Article
 - - string: '[[>]] This is a Roam standard multi-line Block Quote
 
-      this is the 2nd line
+      this is the __2nd line__
 
-      - this is the 3rd line'
+      - this is the **3rd line**'
     id: 11193
     uid: r09kXvUg-
     parents:
@@ -172,9 +172,9 @@
       id: 11137
 - - string: '> This is a Markdown standard multi-line Block Quote
 
-      this is the 2nd line
+      this is the __2nd line__
 
-      - this is the 3rd line'
+      - this is the **3rd line**'
     id: 11187
     uid: 6bcyfVpL2
     parents:
@@ -194,7 +194,7 @@
     order: 2
     page:
       id: 11137
-- - string: '> This is a Markdown standard single line Block Quote'
+- - string: '> This is a __Markdown standard__ single line **Block Quote**'
     id: 11186
     uid: Yz0pqYfBh
     parents:
@@ -280,7 +280,7 @@
 - - id: 5458
     uid: lS4kg-3mw
     title: '!EXAMPLE'
-- - string: '[[>]] This is a Roam standard single line Block Quote'
+- - string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
     id: 11188
     uid: gq_29_H-7
     parents:
