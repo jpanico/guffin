@@ -31,11 +31,11 @@ Public symbols:
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
   :func:`has_parts` — return whether a :class:`~guffin.model.vertex_tree.VertexTree` structures its
-  top level as parts (any render-visible level-1 heading — block-embed-transcluded headings
+  top level as parts (any render-visible level-1 heading — embed-transcluded headings
   included — tagged ``element-type:: part``);
   :func:`has_element_type` — return whether any render-visible heading in a
   :class:`~guffin.model.vertex_tree.VertexTree` is tagged with a given :class:`StructuralElement`;
-  :func:`drop_unpublished` — prune every ``publish:: false`` subtree (block embeds of pruned
+  :func:`drop_unpublished` — prune every ``publish:: false`` subtree (embeds of pruned
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
   (every recognised guffin attribute satisfies its :class:`AttributeAnchor` — one of its vertex types, at
@@ -74,11 +74,11 @@ from guffin.model.attribute_assignment import AttributeAssignment, verified_sole
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
-    BlockEmbedVertex,
     HeadingVertex,
     PdfVertex,
     Vertex,
     find_attribute_assignment,
+    is_embed_vertex,
 )
 from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
 
@@ -432,7 +432,7 @@ def has_parts(tree: VertexTree) -> bool:
     an ``element-type`` assignment naming :attr:`StructuralElement.PART` — the content's own
     declaration that its level-1 headings are parts (so its chapters live at level 2).  The
     render-visible headings (per :func:`~guffin.model.vertex_tree.transcluded_vertices`) include
-    those transcluded through block embeds, since an embedded part heading structures the rendered
+    those transcluded through embeds, since an embedded part heading structures the rendered
     document exactly as an in-tree one does; a part heading that is merely *referenced* (rendered
     inline as text) does not count.  Assignments whose value is not a recognised
     :class:`StructuralElement` are ignored with a warning.
@@ -451,7 +451,7 @@ def has_element_type(tree: VertexTree, element: StructuralElement) -> bool:
     """Return whether any render-visible heading in *tree* is tagged ``element-type:: <element>``.
 
     The render-visible headings (per :func:`~guffin.model.vertex_tree.transcluded_vertices`)
-    include those transcluded through block embeds; a heading that is merely *referenced*
+    include those transcluded through embeds; a heading that is merely *referenced*
     (rendered inline as text) does not count.  Assignments whose value is not a recognised
     :class:`StructuralElement` are ignored with a warning.
 
@@ -476,10 +476,10 @@ def drop_unpublished(tree: VertexTree) -> VertexTree:
     A vertex tagged ``publish:: false`` is unpublished: it is removed — together with every
     descendant — from both :attr:`~guffin.model.vertex_tree.VertexTree.tree_vertices` and
     :attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`, and its uid is stripped from every
-    surviving vertex's children list.  The tag travels with the content: a
-    :class:`~guffin.model.vertex.BlockEmbedVertex` whose transclusion target was removed is
-    removed as well (applied to a fixpoint, so an embed of an embed of unpublished content also
-    vanishes).  Assignments that do not coerce to a boolean are ignored with a warning (the
+    surviving vertex's children list.  The tag travels with the content: an
+    :data:`~guffin.model.vertex.EmbedVertex` (block or page embed) whose transclusion target was
+    removed is removed as well (applied to a fixpoint, so an embed of an embed of unpublished
+    content also vanishes).  Assignments that do not coerce to a boolean are ignored with a warning (the
     vertex stays published).  The original *tree* is not modified; it passes through unchanged
     when nothing is tagged unpublished.
 
@@ -511,7 +511,7 @@ def drop_unpublished(tree: VertexTree) -> VertexTree:
         pending = [
             vertex.uid
             for vertex in tree.uid_map.values()
-            if vertex.uid not in removed and isinstance(vertex, BlockEmbedVertex) and vertex.vertex_link.uid in removed
+            if vertex.uid not in removed and is_embed_vertex(vertex) and vertex.vertex_link.uid in removed
         ]
     root_uid: Final[Uid] = root_vertex(tree).uid
     if root_uid in removed:

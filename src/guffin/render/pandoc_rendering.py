@@ -110,8 +110,10 @@ from guffin.model.vertex import (
     BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
+    EmbedVertex,
     HeadingVertex,
     ImageVertex,
+    PageEmbedVertex,
     PageVertex,
     PdfVertex,
     TableVertex,
@@ -1048,24 +1050,25 @@ def _table_vertex_to_blocks(
     return [pf.Table(body, head=head, foot=pf.TableFoot(), colspec=colspec)]
 
 
-def _block_embed_vertex_to_blocks(
-    vertex: BlockEmbedVertex,
+def _embed_vertex_to_blocks(
+    vertex: EmbedVertex,
     vertex_tree: VertexTree,
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
     view_map: ViewMap,
     depth: int,
 ) -> list[pf.Block]:
-    """Render a block embed by transcluding the embedded vertex's blocks in place.
+    """Render an embed by transcluding the embedded vertex's blocks in place.
 
-    Looks up the embed target (:attr:`~guffin.vertex.BlockEmbedVertex.vertex_link`'s UID) in
+    Looks up the embed target (:attr:`~guffin.vertex._BaseEmbedVertex.vertex_link`'s UID) in
     *vertex_tree* and renders its full subtree via :func:`_vertex_to_blocks`, so a
-    ``{{embed: ((<uid>))}}`` block reproduces the referenced block and its descendants.  Any
+    ``{{embed: ((<uid>))}}`` block reproduces the referenced block and its descendants, and a
+    ``{{embed: [[<page_name>]]}}`` block the referenced page and its descendants.  Any
     children of the embed block itself are rendered after the transcluded content.  When the
     target is absent from *vertex_tree*, the embed renders nothing and a warning is logged.
 
     Args:
-        vertex: The block-embed vertex to render.
+        vertex: The embed vertex to render.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         asset_files: Mapping from asset vertex UID (image or PDF) to local asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
@@ -1078,7 +1081,7 @@ def _block_embed_vertex_to_blocks(
     target: Final[Vertex | None] = vertex_tree.uid_map.get(vertex.vertex_link.uid)
     if target is None:
         logger.warning(
-            "block embed uid=%r target uid=%r not found in vertex_tree; rendering nothing",
+            "embed uid=%r target uid=%r not found in vertex_tree; rendering nothing",
             vertex.uid,
             vertex.vertex_link.uid,
         )
@@ -1143,8 +1146,8 @@ def _vertex_to_blocks(
             return _block_quote_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
         case TableVertex():
             return _table_vertex_to_blocks(vertex, inline_map)
-        case BlockEmbedVertex():
-            return _block_embed_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
+        case BlockEmbedVertex() | PageEmbedVertex():
+            return _embed_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -1387,7 +1390,7 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TableVertex():
                 return display
-            case BlockEmbedVertex():
+            case BlockEmbedVertex() | PageEmbedVertex():
                 return display
 
     return _resolve

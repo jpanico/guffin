@@ -47,6 +47,7 @@ from guffin.model.publishing_semantics import (
 from guffin.model.vertex import (
     BlockEmbedVertex,
     HeadingVertex,
+    PageEmbedVertex,
     PageVertex,
     PdfVertex,
     TextVertex,
@@ -867,6 +868,17 @@ class TestDropUnpublished:
         root = PageVertex(uid="pageroot1", title="Doc", children=["keep00001", "embd00001"])
         embed = BlockEmbedVertex(uid="embd00001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="reftgt001"))
         target = _text_vertex("reftgt001", publish="false")
+        tree = VertexTree(tree_vertices=[root, _text_vertex("keep00001"), embed], ref_vertices=[target])
+        pruned = drop_unpublished(tree)
+        assert [vtx.uid for vtx in pruned.tree_vertices] == ["pageroot1", "keep00001"]
+        assert pruned.ref_vertices == []
+        assert pruned.uid_map["pageroot1"].children == ["keep00001"]
+
+    def test_page_embed_of_unpublished_target_vanishes(self) -> None:
+        """A page embed whose transcluded page is unpublished is pruned with it."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["keep00001", "embd00001"])
+        embed = PageEmbedVertex(uid="embd00001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="refpage01"))
+        target = PageVertex(uid="refpage01", title="Hidden", attribute_assignments=[_assignment("publish", "false")])
         tree = VertexTree(tree_vertices=[root, _text_vertex("keep00001"), embed], ref_vertices=[target])
         pruned = drop_unpublished(tree)
         assert [vtx.uid for vtx in pruned.tree_vertices] == ["pageroot1", "keep00001"]

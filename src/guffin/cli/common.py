@@ -37,6 +37,7 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    PageEmbedVertex,
     PageVertex,
     PdfVertex,
     TableVertex,
@@ -142,8 +143,8 @@ def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
 
     A :data:`~guffin.model.publishing_semantics.PublishingSemantics.TITLE` attribute on *vertex* takes precedence:
     when present, its sole value's text is the basis.  Otherwise the basis comes from the vertex's
-    type — page title, block text, etc.  For a :class:`~guffin.model.vertex.BlockEmbedVertex`, recurses
-    into the embedded vertex resolved through *vertex_tree*'s ``uid_map``.
+    type — page title, block text, etc.  For an :data:`~guffin.model.vertex.EmbedVertex` (block or
+    page embed), recurses into the embedded vertex resolved through *vertex_tree*'s ``uid_map``.
     """
     title_assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.TITLE)
     if title_assignment is not None:
@@ -163,7 +164,7 @@ def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
             return vertex.code
         case TableVertex():
             return "_".join(vertex.table.rows[0])
-        case BlockEmbedVertex():
+        case BlockEmbedVertex() | PageEmbedVertex():
             return _stem_basis(vertex_tree.uid_map[vertex.vertex_link.uid], vertex_tree)
 
 

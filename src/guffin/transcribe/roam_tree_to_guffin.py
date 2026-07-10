@@ -29,7 +29,7 @@ Public symbols:
   block-quote node.
 - :func:`to_block_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
   block embed node.
-- :func:`to_page_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
+- :func:`to_page_embed_vertex` — build a :class:`~guffin.vertex.PageEmbedVertex` from a
   page embed node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node
   (via :func:`~guffin.roam.node_tree.to_table` + Markdown normalization), returning it together
@@ -72,6 +72,7 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    PageEmbedVertex,
     PageVertex,
     PdfVertex,
     TableVertex,
@@ -366,10 +367,10 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.BLOCK_QUOTE
         case NodeType.NATIVE_TABLE:
             return VertexType.TABLE
-        case NodeType.EMBED_BLOCK | NodeType.EMBED_PAGE:
-            # A page embed transcludes a page by name, a block embed a block by uid; both normalize
-            # to a BlockEmbedVertex carrying an EMBED-kind link to the resolved target uid.
+        case NodeType.EMBED_BLOCK:
             return VertexType.BLOCK_EMBED
+        case NodeType.EMBED_PAGE:
+            return VertexType.PAGE_EMBED
         case NodeType.ATTRIBUTE_BLOCK:
             # Attribute blocks are not transcribed as standalone vertices; they are folded into
             # their parent vertex's attribute_assignments field (see _resolve_attribute_assignments).
@@ -704,8 +705,8 @@ def to_block_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
     )
 
 
-def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
-    """Build a :class:`~guffin.vertex.BlockEmbedVertex` from a page embed *node*.
+def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> PageEmbedVertex:
+    """Build a :class:`~guffin.vertex.PageEmbedVertex` from a page embed *node*.
 
     The page-reference sibling of :func:`to_block_embed_vertex`: extracts the embedded page's title
     from ``node.string`` — a Roam page embed ``{{embed: [[<page_name>]]}}`` as matched by
@@ -721,7 +722,7 @@ def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
             and its :attr:`~guffin.roam.node_tree.NodeTree.id_map` resolves child and ref stubs.
 
     Returns:
-        A :class:`~guffin.vertex.BlockEmbedVertex` whose embed link targets the referenced page.
+        A :class:`~guffin.vertex.PageEmbedVertex` whose embed link targets the referenced page.
 
     Raises:
         ValueError: If ``node.string`` is ``None``, is not wholly a page embed, or names a page not
@@ -733,7 +734,7 @@ def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> BlockEmbedVertex:
     embed_match: Final[regex.Match[str] | None] = PAGE_EMBED_RE.fullmatch(node.string.strip())
     if embed_match is None:
         raise ValueError(f"RoamNode uid={node.uid!r} string is not a page embed: {node.string!r}")
-    return BlockEmbedVertex(
+    return PageEmbedVertex(
         uid=node.uid,
         vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=_page_uid(embed_match.group("page_name"), tree)),
         children=_resolve_children(node, tree.id_map),
@@ -904,11 +905,9 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
         case VertexType.TABLE:
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
         case VertexType.BLOCK_EMBED:
-            # Both embed NodeTypes normalize to BLOCK_EMBED; branch on the node kind to resolve the
-            # target — a page by name ({{embed: [[Page]]}}) or a block by uid ({{embed: ((uid))}}).
-            if node_type(node) is NodeType.EMBED_PAGE:
-                return to_page_embed_vertex(node, tree)
             return to_block_embed_vertex(node, tree)
+        case VertexType.PAGE_EMBED:
+            return to_page_embed_vertex(node, tree)
         case _ as unreachable:
             assert_never(unreachable)
 

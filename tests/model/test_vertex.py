@@ -10,12 +10,14 @@ from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
     BlockEmbedVertex,
     ImageVertex,
+    PageEmbedVertex,
     PageVertex,
     PdfVertex,
     TextVertex,
     VertexType,
     find_attribute_assignment,
     is_asset_vertex,
+    is_embed_vertex,
     vertex_adapter,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
@@ -47,6 +49,30 @@ class TestBlockEmbedVertex:
         vertex = BlockEmbedVertex(uid="block0001", vertex_link=_EMBED_LINK)
         restored = vertex_adapter.validate_python(vertex.model_dump())
         assert isinstance(restored, BlockEmbedVertex)
+        assert restored == vertex
+
+
+class TestPageEmbedVertex:
+    """Tests for the PageEmbedVertex concrete vertex type."""
+
+    def test_valid_construction(self) -> None:
+        """A PageEmbedVertex with an EMBED-kind link has the expected fields."""
+        vertex = PageEmbedVertex(uid="block0001", vertex_link=_EMBED_LINK)
+        assert vertex.vertex_type is VertexType.PAGE_EMBED
+        assert vertex.uid == "block0001"
+        assert vertex.vertex_link == _EMBED_LINK
+        assert vertex.vertex_link.kind is VertexLinkKind.EMBED
+
+    def test_rejects_reference_kind(self) -> None:
+        """A vertex_link whose kind is REFERENCE (not EMBED) is rejected."""
+        with pytest.raises(ValidationError):
+            PageEmbedVertex(uid="block0001", vertex_link=_REF_LINK)
+
+    def test_adapter_round_trips_via_discriminator(self) -> None:
+        """Vertex_adapter selects PageEmbedVertex from a dumped dict via its vertex_type discriminator."""
+        vertex = PageEmbedVertex(uid="block0001", vertex_link=_EMBED_LINK)
+        restored = vertex_adapter.validate_python(vertex.model_dump())
+        assert isinstance(restored, PageEmbedVertex)
         assert restored == vertex
 
 
@@ -130,3 +156,20 @@ class TestIsAssetVertex:
         """Page and text vertices are not asset-bearing."""
         assert not is_asset_vertex(PageVertex(uid="page00001", title="P"))
         assert not is_asset_vertex(TextVertex(uid="txt00001a", text="hello"))
+
+
+class TestIsEmbedVertex:
+    """Tests for the is_embed_vertex() transcluding classification predicate."""
+
+    def test_block_embed_vertex_is_embed(self) -> None:
+        """A BlockEmbedVertex is transcluding."""
+        assert is_embed_vertex(BlockEmbedVertex(uid="block0001", vertex_link=_EMBED_LINK))
+
+    def test_page_embed_vertex_is_embed(self) -> None:
+        """A PageEmbedVertex is transcluding."""
+        assert is_embed_vertex(PageEmbedVertex(uid="block0001", vertex_link=_EMBED_LINK))
+
+    def test_non_embed_vertices_are_not_embeds(self) -> None:
+        """Page and text vertices are not transcluding."""
+        assert not is_embed_vertex(PageVertex(uid="page00001", title="P"))
+        assert not is_embed_vertex(TextVertex(uid="txt00001a", text="hello"))

@@ -317,7 +317,7 @@ pure taxonomy with no other `guffin` dependencies.
   pagination in both paginated formats.
 - **`drop_unpublished(tree)`** — the vocabulary's pruning transformer, applied first in every
   renderer's prepare phase: each `publish:: false` vertex is removed with its entire subtree
-  (before asset fetching, so omitted assets are never downloaded), and a block embed whose
+  (before asset fetching, so omitted assets are never downloaded), and an embed (block or page) whose
   transclusion target was removed vanishes with it, to a fixpoint. An export root tagged
   `publish:: false` raises — the export target cannot be omitted from its own output.
 - **`validate_semantics(tree)`** — the vocabulary's validation pass (built on `common/validation`),

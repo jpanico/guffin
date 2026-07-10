@@ -17,6 +17,7 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    PageEmbedVertex,
     PageVertex,
     PdfVertex,
     TableVertex,
@@ -252,6 +253,14 @@ class TestVertexType:
     def test_page_ref_table_marker_returns_guffin_table(self) -> None:
         """Test that the page-reference marker form {{[[table]]}} classifies as TABLE."""
         assert vertex_type(_make_text(string="{{[[table]]}}")) is VertexType.TABLE
+
+    def test_block_embed_returns_guffin_block_embed(self) -> None:
+        """Test that a block-embed node classifies as BLOCK_EMBED."""
+        assert vertex_type(_make_text(string="{{embed: ((wdMgyBiP9))}}")) is VertexType.BLOCK_EMBED
+
+    def test_page_embed_returns_guffin_page_embed(self) -> None:
+        """Test that a page-embed node classifies as PAGE_EMBED."""
+        assert vertex_type(_make_text(string="{{embed: [[Some Page]]}}")) is VertexType.PAGE_EMBED
 
     def test_node_with_neither_title_nor_string_raises_validation_error(self) -> None:
         """Test that constructing a node missing both title and string raises ValidationError."""
@@ -1168,7 +1177,7 @@ class TestToTableVertex:
 
 
 class TestToPageEmbedVertex:
-    """to_page_embed_vertex builds a BlockEmbedVertex whose EMBED link targets the referenced page."""
+    """to_page_embed_vertex builds a PageEmbedVertex whose EMBED link targets the referenced page."""
 
     @staticmethod
     def _embed_and_tree() -> tuple[RoamNode, NodeTree]:
@@ -1185,11 +1194,12 @@ class TestToPageEmbedVertex:
         target = RoamNode(uid="targetpag", id=3, title="Target Page")
         return embed, _node_tree(root, embed, target)
 
-    def test_builds_a_block_embed_vertex(self) -> None:
-        """A page embed transcribes to a BlockEmbedVertex (same vertex type as a block embed)."""
+    def test_builds_a_page_embed_vertex(self) -> None:
+        """A page embed transcribes to a PageEmbedVertex."""
         embed, tree = self._embed_and_tree()
         vertex = to_page_embed_vertex(embed, tree)
-        assert isinstance(vertex, BlockEmbedVertex)
+        assert isinstance(vertex, PageEmbedVertex)
+        assert vertex.vertex_type is VertexType.PAGE_EMBED
         assert vertex.uid == "embednode"
 
     def test_embed_link_targets_the_page_uid(self) -> None:
@@ -1203,11 +1213,11 @@ class TestToPageEmbedVertex:
         """transcribe_standalone_node routes a page-embed node to the page-embed builder."""
         embed, tree = self._embed_and_tree()
         vertex = transcribe_standalone_node(embed, tree)
-        assert isinstance(vertex, BlockEmbedVertex)
+        assert isinstance(vertex, PageEmbedVertex)
         assert vertex.vertex_link.uid == "targetpag"
 
-    def test_matches_block_embed_shape(self) -> None:
-        """A page embed and a block embed produce the same BlockEmbedVertex type and EMBED kind."""
+    def test_distinct_type_from_block_embed(self) -> None:
+        """A page embed and a block embed produce distinct vertex types sharing the EMBED link kind."""
         block_root = RoamNode(uid="rootpage2", id=1, title="Root", children=[IdObject(id=2)])
         block_embed = RoamNode(
             uid="blockemb1", id=2, string="{{embed: ((wdMgyBiP9))}}", page=IdObject(id=1), parents=[IdObject(id=1)]
@@ -1215,7 +1225,8 @@ class TestToPageEmbedVertex:
         block_vertex = to_block_embed_vertex(block_embed, _node_tree(block_root, block_embed))
         embed, tree = self._embed_and_tree()
         page_vertex = to_page_embed_vertex(embed, tree)
-        assert type(block_vertex) is type(page_vertex)
+        assert isinstance(block_vertex, BlockEmbedVertex)
+        assert isinstance(page_vertex, PageEmbedVertex)
         assert block_vertex.vertex_link.kind is page_vertex.vertex_link.kind is VertexLinkKind.EMBED
 
     def test_unknown_page_raises(self) -> None:

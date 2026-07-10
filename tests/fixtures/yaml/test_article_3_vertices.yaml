@@ -568,7 +568,7 @@
   refs:
   - lF-qY0Xrs
   text: '[**standalone PAGE EMBED ↓**]{color="fuchsia"}'
-- vertex_type: guffin/block-embed
+- vertex_type: guffin/page-embed
   uid: -w_qPso7p
   refs:
   - TXGdKldN6

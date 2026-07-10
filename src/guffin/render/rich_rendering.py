@@ -524,6 +524,11 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
                 f"[bold orange1]{markup_escape('EMBED:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(vertex.vertex_link.uid)}[/bold #00aa00]"
             )
+        case VertexType.PAGE_EMBED:
+            title_content = (
+                f"[bold orange1]{markup_escape('PAGE EMBED:')}[/bold orange1]"
+                f" [bold #00aa00]{markup_escape(vertex.vertex_link.uid)}[/bold #00aa00]"
+            )
         case _ as unreachable:
             assert_never(unreachable)
     return f"{title_content} [dim]({vertex.uid})[/dim]"

@@ -40,13 +40,18 @@ Public symbols:
 - :class:`BlockQuoteVertex` — normalized (transcribed) form of a Roam block-quote block node.
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
 - :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
-- :data:`Vertex` — union of all ten concrete vertex types.
+- :class:`PageEmbedVertex` — normalized (transcribed) form of a Roam page embed node.
+- :data:`Vertex` — union of all eleven concrete vertex types.
 - :data:`AssetVertex` — union of the asset-bearing vertex types
   (:class:`ImageVertex` | :class:`PdfVertex`).
+- :data:`EmbedVertex` — union of the transcluding vertex types
+  (:class:`BlockEmbedVertex` | :class:`PageEmbedVertex`).
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
 - :func:`is_asset_vertex` — whether a vertex is asset-bearing, narrowing it to
   :data:`AssetVertex`.
+- :func:`is_embed_vertex` — whether a vertex is transcluding, narrowing it to
+  :data:`EmbedVertex`.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment for an
   :class:`~guffin.model.attribute.Attribute`.
 """
@@ -102,6 +107,9 @@ class VertexType(StrEnum):
         BLOCK_EMBED: Normalized form of a Roam *Block* node whose
             ``:block/string`` is wholly a block embed (``{{embed: ((<uid>))}}``),
             transcluding the referenced block.
+        PAGE_EMBED: Normalized form of a Roam *Block* node whose
+            ``:block/string`` is wholly a page embed (``{{embed: [[<page_name>]]}}``),
+            transcluding the referenced page.
     """
 
     PAGE = "guffin/page"
@@ -114,6 +122,7 @@ class VertexType(StrEnum):
     BLOCK_QUOTE = "guffin/block-quote"
     TABLE = "guffin/table"
     BLOCK_EMBED = "guffin/block-embed"
+    PAGE_EMBED = "guffin/page-embed"
 
 
 type VertexChildren = list[Uid]
@@ -132,12 +141,12 @@ strings during transcription.
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
-    """Shared fields inherited by all ten concrete vertex types.
+    """Shared fields inherited by all eleven concrete vertex types.
 
     Not instantiated directly — use :class:`PageVertex`, :class:`HeadingVertex`,
     :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
     :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`,
-    :class:`TableVertex`, or :class:`BlockEmbedVertex`.
+    :class:`TableVertex`, :class:`BlockEmbedVertex`, or :class:`PageEmbedVertex`.
 
     Type Parameters:
         VT: The :class:`VertexType` literal for the concrete subtype (e.g.
@@ -469,7 +478,30 @@ class TableVertex(_BaseVertex[Literal[VertexType.TABLE]]):
     table_style: TableStyle = Field(..., description="View/styling overlay for the table.")
 
 
-class BlockEmbedVertex(_BaseVertex[Literal[VertexType.BLOCK_EMBED]]):
+class _BaseEmbedVertex[VT: VertexType](_BaseVertex[VT]):
+    """Shared shape of the transcluding (embed) vertex types.
+
+    Not instantiated directly — use :class:`BlockEmbedVertex` or :class:`PageEmbedVertex`.
+    An embed vertex carries no content of its own; its content is the target of its
+    :attr:`vertex_link`, reproduced (transcluded) at the embed site.
+
+    Attributes:
+        vertex_link: Link to the embedded (transcluded) vertex; its
+            :attr:`~guffin.model.vertex_link.VertexLink.kind` is always
+            :attr:`~guffin.model.vertex_link.VertexLinkKind.EMBED`.
+    """
+
+    vertex_link: VertexLink = Field(..., description="Embed link to the transcluded vertex (kind is always EMBED).")
+
+    @field_validator("vertex_link")
+    @classmethod
+    def _validate_embed_kind(cls, value: VertexLink) -> VertexLink:
+        if value.kind is not VertexLinkKind.EMBED:
+            raise ValueError(f"vertex_link.kind must be VertexLinkKind.EMBED; got {value.kind!r}")
+        return value
+
+
+class BlockEmbedVertex(_BaseEmbedVertex[Literal[VertexType.BLOCK_EMBED]]):
     """Normalized (transcribed) form of a Roam block embed node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
@@ -479,9 +511,6 @@ class BlockEmbedVertex(_BaseVertex[Literal[VertexType.BLOCK_EMBED]]):
     Attributes:
         vertex_type: Always :attr:`~VertexType.BLOCK_EMBED`.
             Serialized as ``'vertex-type'``.
-        vertex_link: Link to the embedded (transcluded) vertex; its
-            :attr:`~guffin.model.vertex_link.VertexLink.kind` is always
-            :attr:`~guffin.model.vertex_link.VertexLinkKind.EMBED`.
     """
 
     vertex_type: Literal[VertexType.BLOCK_EMBED] = Field(
@@ -489,14 +518,27 @@ class BlockEmbedVertex(_BaseVertex[Literal[VertexType.BLOCK_EMBED]]):
         serialization_alias="vertex-type",
         description="Always VertexType.BLOCK_EMBED (serialized as 'vertex-type').",
     )
-    vertex_link: VertexLink = Field(..., description="Embed link to the transcluded vertex (kind is always EMBED).")
 
-    @field_validator("vertex_link")
-    @classmethod
-    def _validate_embed_kind(cls, value: VertexLink) -> VertexLink:
-        if value.kind is not VertexLinkKind.EMBED:
-            raise ValueError(f"vertex_link.kind must be VertexLinkKind.EMBED; got {value.kind!r}")
-        return value
+
+class PageEmbedVertex(_BaseEmbedVertex[Literal[VertexType.PAGE_EMBED]]):
+    """Normalized (transcribed) form of a Roam page embed node.
+
+    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
+    ``:block/string`` that is wholly a page embed (``{{embed: [[<page_name>]]}}``),
+    transcluding the referenced page.  The embedded page's title is resolved to the
+    page's UID at transcription, so :attr:`~_BaseEmbedVertex.vertex_link` targets the
+    page vertex directly.
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.PAGE_EMBED`.
+            Serialized as ``'vertex-type'``.
+    """
+
+    vertex_type: Literal[VertexType.PAGE_EMBED] = Field(
+        default=VertexType.PAGE_EMBED,
+        serialization_alias="vertex-type",
+        description="Always VertexType.PAGE_EMBED (serialized as 'vertex-type').",
+    )
 
 
 type Vertex = (
@@ -510,8 +552,9 @@ type Vertex = (
     | BlockQuoteVertex
     | TableVertex
     | BlockEmbedVertex
+    | PageEmbedVertex
 )
-"""Union of all ten concrete, normalized vertex types.
+"""Union of all eleven concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
@@ -532,13 +575,31 @@ classification is derived mechanically from it.
 _ASSET_VERTEX_CLASSES: Final[tuple[type[ImageVertex] | type[PdfVertex], ...]] = get_args(AssetVertex.__value__)
 """The :data:`AssetVertex` union members as a runtime tuple, derived from the union itself."""
 
+type EmbedVertex = BlockEmbedVertex | PageEmbedVertex
+"""Union of the transcluding (embed) vertex types.
+
+An embed vertex carries no content of its own: it holds an EMBED-kind
+:class:`~guffin.model.vertex_link.VertexLink` whose target vertex — a block for
+:class:`BlockEmbedVertex`, a page for :class:`PageEmbedVertex` — is reproduced
+(transcluded) at the embed site.  Use :func:`is_embed_vertex` to classify (and
+statically narrow) a :data:`Vertex`.
+
+This union is the single source of truth for embed-ness; the runtime
+classification is derived mechanically from it.
+"""
+
+_EMBED_VERTEX_CLASSES: Final[tuple[type[BlockEmbedVertex] | type[PageEmbedVertex], ...]] = get_args(
+    EmbedVertex.__value__
+)
+"""The :data:`EmbedVertex` union members as a runtime tuple, derived from the union itself."""
+
 vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discriminator="vertex_type")])
 """Pydantic :class:`~pydantic.TypeAdapter` for validating a raw dict into the correct :data:`Vertex` subtype.
 
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
 :class:`HeadingVertex`, :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
 :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`,
-and :class:`BlockEmbedVertex`.
+:class:`BlockEmbedVertex`, and :class:`PageEmbedVertex`.
 
 Example::
 
@@ -564,6 +625,26 @@ def is_asset_vertex(vertex: Vertex) -> TypeIs[AssetVertex]:
         types, narrowing it to :data:`AssetVertex`.
     """
     return isinstance(vertex, _ASSET_VERTEX_CLASSES)
+
+
+@validate_call
+def is_embed_vertex(vertex: Vertex) -> TypeIs[EmbedVertex]:
+    """Whether *vertex* is transcluding.
+
+    Being transcluding is an inherent property of the vertex type: the vertex's
+    content is the target of its EMBED-kind link, reproduced at the embed site,
+    rather than anything the vertex carries itself.  Membership is declared
+    solely by the :data:`EmbedVertex` union; the check runs against the runtime
+    tuple derived from it.
+
+    Args:
+        vertex: The vertex to classify.
+
+    Returns:
+        ``True`` when *vertex* is one of the :data:`EmbedVertex` member types,
+        narrowing it to :data:`EmbedVertex`.
+    """
+    return isinstance(vertex, _EMBED_VERTEX_CLASSES)
 
 
 @validate_call

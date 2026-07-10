@@ -9,7 +9,7 @@ Public symbols:
 - :class:`VertexTreeDFSIterator` — pre-order depth-first iterator over a
   :class:`VertexTree`.
 - :func:`transcluded_vertices` — return every render-visible vertex in a :class:`VertexTree`: the
-  tree vertices plus all content transcluded through block embeds.
+  tree vertices plus all content transcluded through block and page embeds.
 - :func:`assignments_for` — return every ``(vertex, assignment)`` pair in a :class:`VertexTree`
   whose assignment is for a given :class:`~guffin.model.attribute.Attribute`.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
@@ -40,11 +40,11 @@ from guffin.model.attribute import Attribute
 from guffin.model.attribute_assignment import AttributeAssignment, is_assignment_for
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
-    BlockEmbedVertex,
     HeadingVertex,
     ImageVertex,
     PdfVertex,
     Vertex,
+    is_embed_vertex,
 )
 
 
@@ -70,7 +70,7 @@ class VertexTree(BaseModel):
             from the anchor tree but not part of it.  Used only for UID lookup
             (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
             not traversed by :class:`VertexTreeDFSIterator` (though
-            :func:`transcluded_vertices` reaches those transcluded via block embeds).
+            :func:`transcluded_vertices` reaches those transcluded via embeds).
         uid_map: Map of :attr:`~guffin.model.vertex._BaseVertex.uid` →
             :data:`~guffin.model.vertex.Vertex` for every vertex in :attr:`tree_vertices` and
             :attr:`ref_vertices`; excluded from serialization.
@@ -167,12 +167,12 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
 def transcluded_vertices(tree: VertexTree) -> list[Vertex]:
     """Return every render-visible vertex in *tree*: the tree vertices plus all transcluded content.
 
-    A :class:`~guffin.model.vertex.BlockEmbedVertex` transcludes its target — the target vertex and
-    its whole subtree are reproduced at the embed site — so a vertex reachable only through
-    :attr:`VertexTree.ref_vertices` may still contribute content to a rendered document.  This
-    helper returns :attr:`VertexTree.tree_vertices` followed by every additional vertex reachable
-    through a block embed's target subtree, with embeds inside transcluded content followed
-    recursively (cycles terminate).  A referenced vertex that is merely *mentioned* (a page or
+    An :data:`~guffin.model.vertex.EmbedVertex` (block or page embed) transcludes its target — the
+    target vertex and its whole subtree are reproduced at the embed site — so a vertex reachable
+    only through :attr:`VertexTree.ref_vertices` may still contribute content to a rendered
+    document.  This helper returns :attr:`VertexTree.tree_vertices` followed by every additional
+    vertex reachable through an embed's target subtree, with embeds inside transcluded content
+    followed recursively (cycles terminate).  A referenced vertex that is merely *mentioned* (a page or
     block reference, which renders inline as text) is not transcluded and is not included.  Embed
     targets absent from :attr:`VertexTree.uid_map` are skipped.
 
@@ -194,7 +194,7 @@ def transcluded_vertices(tree: VertexTree) -> list[Vertex]:
         visible.append(vertex)
         # Children may live outside tree_vertices when *vertex* was reached through an embed.
         queue.extend(tree.uid_map[uid] for uid in vertex.children or () if uid in tree.uid_map)
-        if isinstance(vertex, BlockEmbedVertex) and vertex.vertex_link.uid in tree.uid_map:
+        if is_embed_vertex(vertex) and vertex.vertex_link.uid in tree.uid_map:
             queue.append(tree.uid_map[vertex.vertex_link.uid])
     return visible
 

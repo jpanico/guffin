@@ -4,7 +4,7 @@ from conftest import article1_vertex_tree
 
 from guffin.model.attribute import Attribute, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.vertex import BlockEmbedVertex, PageVertex, TextVertex
+from guffin.model.vertex import BlockEmbedVertex, PageEmbedVertex, PageVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
 
@@ -21,6 +21,10 @@ def _text(uid: str = "textuid01") -> TextVertex:
 
 def _embed(uid: str, target_uid: str) -> BlockEmbedVertex:
     return BlockEmbedVertex(uid=uid, vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=target_uid))
+
+
+def _page_embed(uid: str, target_uid: str) -> PageEmbedVertex:
+    return PageEmbedVertex(uid=uid, vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=target_uid))
 
 
 def _assignment_of(name: str) -> AttributeAssignment:
@@ -57,6 +61,16 @@ class TestTranscludedVertices:
         tree = VertexTree(tree_vertices=[page, embed], ref_vertices=[target, target_child])
         result = transcluded_vertices(tree)
         assert [v.uid for v in result] == ["pageuid01", "embeduid1", "refuid001", "refuid002"]
+
+    def test_page_embed_target_and_subtree_included(self) -> None:
+        """A page embed pulls in its target page together with the page's descendants."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["embeduid1"])
+        embed = _page_embed("embeduid1", "refpage01")
+        target = PageVertex(uid="refpage01", title="Embedded Page", children=["refuid002"])
+        target_child = _text("refuid002")
+        tree = VertexTree(tree_vertices=[page, embed], ref_vertices=[target, target_child])
+        result = transcluded_vertices(tree)
+        assert [v.uid for v in result] == ["pageuid01", "embeduid1", "refpage01", "refuid002"]
 
     def test_nested_embeds_followed(self) -> None:
         """An embed inside transcluded content is itself followed."""
