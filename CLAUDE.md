@@ -134,9 +134,8 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v
 
 ## Test Fixtures
 
-Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`
-through `[[Test Article]] 5`, plus `[[Test Article]] 7` (there is currently no
-`6`; the page was renamed).  Each article exercises a distinct feature set —
+Eight live Roam pages serve as the primary test sources: `[[Test Article]] 0`
+through `[[Test Article]] 7`.  Each article exercises a distinct feature set —
 see `tests/fixtures/README.md` for the per-article feature lists, which
 `tests/regen_fixtures.py` keeps in sync from a callout on each live page.  For
 each source, `tests/regen_fixtures.py` generates six fixture files that capture
@@ -173,6 +172,7 @@ python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
 python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
 python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
 python tests/regen_fixtures.py "[[Test Article]] 5" --prefix test_article_5
+python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6
 python tests/regen_fixtures.py "[[Test Article]] 7" --prefix test_article_7
 ```
 

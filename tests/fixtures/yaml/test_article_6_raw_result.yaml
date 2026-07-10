@@ -1,0 +1,638 @@
+- - attrs:
+    - - source:
+        - uid
+        - HY7HhHrci
+        value:
+        - uid
+        - HY7HhHrci
+      - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - BxGxeeGk1
+    children:
+    - id: 12846
+    - id: 12848
+    - id: 12857
+    - id: 12871
+    id: 12842
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 12842
+    - id: 12848
+    uid: HY7HhHrci
+    title: '[[Test Article]] 6'
+    view-type: document
+    refs:
+    - id: 4223
+- - string: 'identifier:: OCLC 53071567'
+    id: 12852
+    uid: 4rMMdHXiL
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 5
+    page:
+      id: 12842
+    refs:
+    - id: 11847
+- - string: Copyright laws are different all over the world, and the source text or
+      artwork in this ebook may still be copyrighted in other countries. If you’re
+      not located in the United States, you must check your local laws before using
+      this ebook. Standard Ebooks makes no representations regarding the copyright
+      status of the source text or artwork in this ebook in any country other than
+      the United States.
+    id: 12889
+    uid: 2Ak3LKidd
+    parents:
+    - id: 12842
+    - id: 12871
+    order: 4
+    page:
+      id: 12842
+- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
+      \ TEST DATA – DO NOT REMOVE\n "
+    id: 4224
+    uid: 7MoH-wIQh
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462
+- - children:
+    - id: 4224
+    id: 4223
+    uid: LBFKibPIj
+    title: Test Article
+- - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+      – DO NOT REMOVE
+
+      Features:
+
+      - structuring a Book for PDF/ePub
+
+      - exercise effect of PublishingSemantics on structuring/formatting of export
+
+      - interaction of PublishingSemantics with transclusion through: `VertexLink`/`BLOCK_EMBED`/`PAGE_EMBED` '
+    id: 12846
+    uid: UBFOf9XVN
+    parents:
+    - id: 12842
+    order: 0
+    page:
+      id: 12842
+    refs:
+    - id: 5450
+    - id: 5462
+- - id: 11845
+    uid: ZyUTn2I17
+    title: date
+- - string: The artist is the creator of beautiful things. To reveal art and conceal
+      the artist is art’s aim. The critic is he who can translate into another manner
+      or a new material his impression of beautiful things.
+    id: 12869
+    uid: 2CRdgs-X4
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 1
+    page:
+      id: 12842
+- - string: Those who find beautiful meanings in beautiful things are the cultivated.
+      For these there is hope. They are the elect to whom beautiful things mean only
+      beauty.
+    id: 12864
+    uid: n6XwTJlHd
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 3
+    page:
+      id: 12842
+- - id: 11847
+    uid: 2_S3ySs7O
+    title: identifier
+- - string: 'date:: 1890'
+    id: 12851
+    uid: tLgD4E9KV
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 2
+    page:
+      id: 12842
+    refs:
+    - id: 11845
+- - attrs:
+    - - source:
+        - uid
+        - WLRZ6sK1M
+        value:
+        - uid
+        - WLRZ6sK1M
+      - source:
+        - uid
+        - YIaDjPPUe
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - YIaDjPPUe
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: Preface
+    children:
+    - id: 12859
+    - id: 12863
+    - id: 12864
+    - id: 12865
+    - id: 12866
+    - id: 12867
+    - id: 12868
+    - id: 12869
+    id: 12857
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 12857
+    - id: 12859
+    uid: WLRZ6sK1M
+    parents:
+    - id: 12842
+    order: 3
+    page:
+      id: 12842
+- - id: 5450
+    uid: OexZiLR_O
+    title: '>'
+- - string: ''
+    id: 12886
+    uid: ud2gMZ616
+    parents:
+    - id: 12842
+    - id: 12871
+    order: 1
+    page:
+      id: 12842
+- - attrs:
+    - - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - hHUE8oD5s
+      - source:
+        - uid
+        - 8F1npXph5
+        value:
+        - uid
+        - PZyg8sHJZ
+      - source:
+        - uid
+        - 8F1npXph5
+        value: ' "The Picture of Dorian Gray"'
+    - - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - hHUE8oD5s
+      - source:
+        - uid
+        - sbPcWffJo
+        value:
+        - uid
+        - MhnnPhnTB
+      - source:
+        - uid
+        - sbPcWffJo
+        value: ' Oscar Wilde'
+    - - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - hHUE8oD5s
+      - source:
+        - uid
+        - t2DXK-Slp
+        value:
+        - uid
+        - HZFZjnFeu
+      - source:
+        - uid
+        - t2DXK-Slp
+        value: ' Lippincott''s Monthly Magazine'
+    - - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - hHUE8oD5s
+      - source:
+        - uid
+        - uEYS1oQeC
+        value:
+        - uid
+        - br-LT4oUD
+      - source:
+        - uid
+        - uEYS1oQeC
+        value: ' Copyright J. B. Lippincott Company'
+    - - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - hHUE8oD5s
+      - source:
+        - uid
+        - 4rMMdHXiL
+        value:
+        - uid
+        - 2_S3ySs7O
+      - source:
+        - uid
+        - 4rMMdHXiL
+        value: ' OCLC 53071567'
+    - - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - hHUE8oD5s
+      - source:
+        - uid
+        - tLgD4E9KV
+        value:
+        - uid
+        - ZyUTn2I17
+      - source:
+        - uid
+        - tLgD4E9KV
+        value: ' 1890'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 12849
+    - id: 12850
+    - id: 12851
+    - id: 12852
+    - id: 12854
+    - id: 12855
+    id: 12848
+    lookup:
+    - id: 11842
+    - id: 11843
+    - id: 11845
+    - id: 11847
+    - id: 11896
+    - id: 11898
+    - id: 12848
+    - id: 12849
+    - id: 12850
+    - id: 12851
+    - id: 12852
+    - id: 12854
+    - id: 12855
+    uid: hHUE8oD5s
+    parents:
+    - id: 12842
+    order: 1
+    page:
+      id: 12842
+    refs:
+    - id: 321
+    - id: 11839
+- - id: 11876
+    uid: asCh2FQQp
+    title: element-type
+- - string: 'element-type:: copyright-page'
+    id: 12873
+    uid: jkNa9WNm2
+    parents:
+    - id: 12842
+    - id: 12871
+    - id: 12872
+    order: 0
+    page:
+      id: 12842
+    refs:
+    - id: 11876
+- - string: 'publisher:: Lippincott''s Monthly Magazine'
+    id: 12854
+    uid: t2DXK-Slp
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 3
+    page:
+      id: 12842
+    refs:
+    - id: 11896
+- - id: 11896
+    uid: HZFZjnFeu
+    title: publisher
+- - attrs:
+    - - source:
+        - uid
+        - AOh0C29y2
+        value:
+        - uid
+        - AOh0C29y2
+      - source:
+        - uid
+        - VfxDJ_3ub
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - VfxDJ_3ub
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: Uncopyright
+    children:
+    - id: 12872
+    - id: 12886
+    - id: 12887
+    - id: 12889
+    - id: 12890
+    - id: 12891
+    id: 12871
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 12871
+    - id: 12872
+    uid: AOh0C29y2
+    parents:
+    - id: 12842
+    order: 2
+    page:
+      id: 12842
+- - attrs:
+    - - source:
+        - uid
+        - YIaDjPPUe
+        value:
+        - uid
+        - YIaDjPPUe
+      - source:
+        - uid
+        - gu4ybgVUx
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - gu4ybgVUx
+        value: ' preface'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 12860
+    id: 12859
+    lookup:
+    - id: 11876
+    - id: 12859
+    - id: 12860
+    uid: YIaDjPPUe
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 0
+    page:
+      id: 12842
+    refs:
+    - id: 321
+    - id: 11839
+- - attrs:
+    - - source:
+        - uid
+        - VfxDJ_3ub
+        value:
+        - uid
+        - VfxDJ_3ub
+      - source:
+        - uid
+        - jkNa9WNm2
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - jkNa9WNm2
+        value: ' copyright-page'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 12873
+    id: 12872
+    lookup:
+    - id: 11876
+    - id: 12872
+    - id: 12873
+    uid: VfxDJ_3ub
+    parents:
+    - id: 12842
+    - id: 12871
+    order: 0
+    page:
+      id: 12842
+    refs:
+    - id: 321
+    - id: 11839
+- - string: The highest as the lowest form of criticism is a mode of autobiography.
+      Those who find ugly meanings in beautiful things are corrupt without being charming.
+      This is a fault.
+    id: 12863
+    uid: 4LLq-95BT
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 2
+    page:
+      id: 12842
+- - string: 'rights:: Copyright J. B. Lippincott Company'
+    id: 12855
+    uid: uEYS1oQeC
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 4
+    page:
+      id: 12842
+    refs:
+    - id: 11898
+- - string: Copyright pages exist to tell you that you __can’t__ do something. Unlike
+      them, this Uncopyright page exists to tell you that the writing and artwork
+      in this ebook are believed to be in the United States public domain; that is,
+      they are believed to be free of copyright restrictions in the United States.
+      The United States public domain represents our collective cultural heritage,
+      and items in it are free for anyone in the United States to do almost anything
+      at all with, without having to get permission.
+    id: 12891
+    uid: TOexNt20H
+    parents:
+    - id: 12842
+    - id: 12871
+    order: 3
+    page:
+      id: 12842
+- - string: Non-authorship activities performed on items that are in the public domain⁠—so-called
+      “sweat of the brow” work⁠—don’t create a new copyright. That means that nobody
+      can claim a new copyright on an item that is in the public domain for, among
+      other things, work like digitization, markup, or typography. Regardless, the
+      contributors to this ebook release their contributions under the terms in the [CC0
+      1.0 Universal Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/),
+      thus dedicating to the worldwide public domain all of the work they’ve done
+      on this ebook, including but not limited to metadata, the titlepage, imprint,
+      colophon, this Uncopyright, and any changes or enhancements to, or markup on,
+      the original text and artwork. This dedication doesn’t change the copyright
+      status of the source text or artwork. We make this dedication in the interest
+      of enriching our global cultural heritage, to promote free and libre culture
+      around the world, and to give back to the unrestricted culture that has given
+      all of us so much.
+    id: 12890
+    uid: LxQhA7sWX
+    parents:
+    - id: 12842
+    - id: 12871
+    order: 5
+    page:
+      id: 12842
+- - string: There is no such thing as a moral or an immoral book. Books are well written,
+      or badly written. That is all.
+    id: 12865
+    uid: GHGaHfSEk
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 4
+    page:
+      id: 12842
+- - string: 'title:: "The Picture of Dorian Gray"'
+    id: 12850
+    uid: 8F1npXph5
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 0
+    page:
+      id: 12842
+    refs:
+    - id: 11843
+- - string: 'authors:: Oscar Wilde'
+    id: 12849
+    uid: sbPcWffJo
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 1
+    page:
+      id: 12842
+    refs:
+    - id: 11842
+- - string: All art is quite useless.
+    id: 12868
+    uid: -zvFCYXWb
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 7
+    page:
+      id: 12842
+- - id: 321
+    uid: BxGxeeGk1
+    title: .rm-g
+- - id: 5462
+    uid: ZgUWBRb7j
+    title: '!INFO'
+- - id: 11842
+    uid: MhnnPhnTB
+    title: authors
+- - id: 11898
+    uid: br-LT4oUD
+    title: rights
+- - string: The nineteenth century dislike of realism is the rage of Caliban seeing
+      his own face in a glass.
+    id: 12866
+    uid: 3V5ULoeKO
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 5
+    page:
+      id: 12842
+- - string: 'element-type:: preface'
+    id: 12860
+    uid: gu4ybgVUx
+    parents:
+    - id: 12842
+    - id: 12857
+    - id: 12859
+    order: 0
+    page:
+      id: 12842
+    refs:
+    - id: 11876
+- - string: The nineteenth century dislike of romanticism is the rage of Caliban not
+      seeing his own face in a glass. The moral life of man forms part of the subject-matter
+      of the artist, but the morality of art consists in the perfect use of an imperfect
+      medium. No artist desires to prove anything. Even things that are true can be
+      proved. No artist has ethical sympathies. An ethical sympathy in an artist is
+      an unpardonable mannerism of style. No artist is ever morbid. The artist can
+      express everything. Thought and language are to the artist instruments of an
+      art. Vice and virtue are to the artist materials for an art. From the point
+      of view of form, the type of all the arts is the art of the musician. From the
+      point of view of feeling, the actor’s craft is the type. All art is at once
+      surface and symbol. Those who go beneath the surface do so at their peril. Those
+      who read the symbol do so at their peril. It is the spectator, and not life,
+      that art really mirrors. Diversity of opinion about a work of art shows that
+      the work is new, complex, and vital. When critics disagree, the artist is in
+      accord with himself. We can forgive a man for making a useful thing as long
+      as he does not admire it. The only excuse for making a useless thing is that
+      one admires it intensely.
+    id: 12867
+    uid: o2r7a0YRn
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 6
+    page:
+      id: 12842
+- - string: '[[>]] __May you do good and not evil.__
+
+      __May you find forgiveness for yourself and forgive others.__
+
+      __May you share freely, never taking more than you give.__'
+    id: 12887
+    uid: Fc0umw_zJ
+    parents:
+    - id: 12842
+    - id: 12871
+    order: 2
+    page:
+      id: 12842
+    refs:
+    - id: 5450
+- - id: 11839
+    uid: 2xY4zCjId
+    title: guffin-meta
+- - id: 11843
+    uid: PZyg8sHJZ
+    title: title

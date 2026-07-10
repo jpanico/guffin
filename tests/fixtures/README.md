@@ -28,9 +28,10 @@ This directory contains test data used by the guffin test suite.
 
 ## Test Articles
 
-Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
+Eight live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 `[[Test Article]] 1`, `[[Test Article]] 2`, `[[Test Article]] 3`,
-`[[Test Article]] 4`, `[[Test Article]] 5`, and `[[Test Article]] 7`.
+`[[Test Article]] 4`, `[[Test Article]] 5`, `[[Test Article]] 6`, and
+`[[Test Article]] 7`.
 
 ### Article Features
 
@@ -88,6 +89,12 @@ Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 
 - **attributes**
 
+#### `[[Test Article]] 6`
+
+- structuring a Book for PDF/ePub
+- exercise effect of PublishingSemantics on structuring/formatting of export
+- interaction of PublishingSemantics with transclusion through: `VertexLink`/`BLOCK_EMBED`/`PAGE_EMBED`
+
 #### `[[Test Article]] 7`
 
 - a very large Book structured document intended for testing scalability and performance
@@ -140,5 +147,6 @@ python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
 python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
 python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
 python tests/regen_fixtures.py "[[Test Article]] 5" --prefix test_article_5
+python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6
 python tests/regen_fixtures.py "[[Test Article]] 7" --prefix test_article_7
 ```
