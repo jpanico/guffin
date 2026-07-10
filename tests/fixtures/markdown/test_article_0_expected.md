@@ -63,16 +63,14 @@
 
   > This is a *Markdown standard* single line **Block Quote**
 
-  > This is a Markdown standard multi-line Block Quote
-  >
+  > This is a Markdown standard multi-line Block Quote  
   > this is the *2nd line*
   >
   > - this is the **3rd line**
 
   > This is a *Roam standard* single line **Block Quote**
 
-  > This is a Roam standard multi-line Block Quote
-  >
+  > This is a Roam standard multi-line Block Quote  
   > this is the *2nd line*
   >
   > - this is the **3rd line**
@@ -94,6 +92,5 @@
     > [!NOTE]
     > **This is the callout title**
     >
-    > This is line 1 of the callout body
-    >
+    > This is line 1 of the callout body  
     > This is line 2 of the callout body

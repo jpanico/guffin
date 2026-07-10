@@ -4,6 +4,7 @@ import pytest
 
 from guffin.common.markdown import (
     contains_fenced_code_block,
+    hard_broken_markdown,
     is_fenced_code_block,
     parse_fenced_code_block,
     unwrap_links,
@@ -145,3 +146,35 @@ class TestUnwrapLinks:
     def test_empty_link_text(self) -> None:
         """A link with empty display text unwraps to the empty string."""
         assert unwrap_links("x[](u)y") == "xy"
+
+
+class TestHardBrokenMarkdown:
+    """hard_broken_markdown() rejoins lines so each survives a Markdown parse as its own line."""
+
+    def test_plain_lines_join_with_hard_breaks(self) -> None:
+        """Consecutive plain lines join into one hard-broken paragraph."""
+        assert hard_broken_markdown("line one\nline two\nline three") == "line one\\\nline two\\\nline three"
+
+    def test_single_line_is_unchanged(self) -> None:
+        """A single line passes through untouched."""
+        assert hard_broken_markdown("just one line") == "just one line"
+
+    def test_empty_string_is_unchanged(self) -> None:
+        """An empty string passes through untouched."""
+        assert hard_broken_markdown("") == ""
+
+    def test_plain_to_list_boundary_becomes_blank_line(self) -> None:
+        """A plain line followed by a bullet line gets a blank-line block boundary."""
+        assert hard_broken_markdown("intro\n- item") == "intro\n\n- item"
+
+    def test_list_to_plain_boundary_becomes_blank_line(self) -> None:
+        """A bullet line followed by a plain line gets a blank-line block boundary."""
+        assert hard_broken_markdown("- item\noutro") == "- item\n\noutro"
+
+    def test_consecutive_list_lines_stay_tight(self) -> None:
+        """Consecutive bullet lines keep a single newline (a tight list)."""
+        assert hard_broken_markdown("- one\n- two\n* three") == "- one\n- two\n* three"
+
+    def test_blank_line_stays_a_paragraph_boundary(self) -> None:
+        """An authored blank line remains a paragraph boundary, not a hard break."""
+        assert hard_broken_markdown("para one\n\npara two") == "para one\n\npara two"

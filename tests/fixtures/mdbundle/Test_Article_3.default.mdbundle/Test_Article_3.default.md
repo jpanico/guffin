@@ -7,16 +7,11 @@
 >
 > - This page is primarily a demonstration of different kinds of refs:
 >
-> – inline page ref
->
-> – ref to Daily Notes Page
->
-> – internal block ref (to block on this page)
->
-> – external block ref (to block on a *different page*)
->
-> – internal embed (of block from this page)
->
+> – inline page ref  
+> – ref to Daily Notes Page  
+> – internal block ref (to block on this page)  
+> – external block ref (to block on a *different page*)  
+> – internal embed (of block from this page)  
 > – external embed (of block from *different page*)
 >
 > - this INFO `Callout box`, which contains Roam `page references`
@@ -53,8 +48,7 @@ def fizz_buzz(limit: int = 100):
   > [!NOTE]
   > **This is the callout title**
   >
-  > This is line 1 of the callout body
-  >
+  > This is line 1 of the callout body  
   > This is line 2 of the callout body
 - the child block contains a Roam native table
   | Header 1 | Header 2 | Header 3 |
@@ -111,8 +105,7 @@ def fizz_buzz(limit: int = 100):
   > [!NOTE]
   > **This is the callout title**
   >
-  > This is line 1 of the callout body
-  >
+  > This is line 1 of the callout body  
   > This is line 2 of the callout body
 - <span style="color: fuchsia">**standalone ROAM NATIVE TABLE ref ↓**</span>
   | Header 1 | Header 2 | Header 3 |
@@ -181,8 +174,7 @@ def fizz_buzz(limit: int = 100):
   > [!NOTE]
   > **This is the callout title**
   >
-  > This is line 1 of the callout body
-  >
+  > This is line 1 of the callout body  
   > This is line 2 of the callout body
 - <span style="color: fuchsia">**standalone ROAM NATIVE TABLE ref ↓**</span>
   | Header 1 | Header 2 | Header 3 |

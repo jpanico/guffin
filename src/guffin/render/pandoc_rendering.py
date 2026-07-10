@@ -79,16 +79,14 @@ alias — live in :mod:`guffin.render.pandoc_ast`.
 import html
 import logging
 from collections.abc import Callable
-from io import StringIO
 from pathlib import Path
 from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
-import pypandoc  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
-from guffin.common.markdown import contains_fenced_code_block
+from guffin.common.markdown import contains_fenced_code_block, hard_broken_markdown
 from guffin.common.provenance import Provenance
 from guffin.common.table import HAlign
 from guffin.model.attribute import (
@@ -893,22 +891,9 @@ def _callout_vertex_to_blocks(
         title_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.title, [pf.Str(vertex.title)])
         callout_blocks.append(pf.Div(pf.Para(*title_inlines), classes=["callout-title"]))
     if vertex.body:
-        # Insert blank lines at block-type boundaries except between consecutive
-        # list items (which would create a loose list with unwanted inter-item spacing).
-        body_lines: Final[list[str]] = vertex.body.splitlines()
-        joined_lines: list[str] = []
-        for i, line in enumerate(body_lines):
-            if i > 0:
-                prev_is_list: bool = body_lines[i - 1].startswith(("- ", "* ", "+ "))
-                curr_is_list: bool = line.startswith(("- ", "* ", "+ "))
-                if not (prev_is_list and curr_is_list):
-                    joined_lines.append("")
-            joined_lines.append(line)
-        body_json: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
-            "\n".join(joined_lines), "json", format="markdown"
-        )
-        body_doc: Final[pf.Doc] = pf.load(StringIO(body_json))
-        callout_blocks.extend(list(body_doc.content))
+        # Rejoin Roam's soft line-breaks as hard breaks (consecutive plain lines stay one
+        # paragraph, embedded lists stay real lists) before the block-level parse.
+        callout_blocks.extend(parse_block_md(hard_broken_markdown(vertex.body)))
     callout_blocks.extend(
         build_child_blocks(
             vertex.children or [],
@@ -951,10 +936,13 @@ def _block_quote_vertex_to_blocks(
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.BlockQuoteVertex` to a Pandoc :class:`~panflute.BlockQuote`.
 
-    The vertex text is parsed at block level via :func:`parse_block_md` so that
-    multi-paragraph content and embedded list items are preserved as distinct block
-    elements inside the :class:`~panflute.BlockQuote`.  Child vertices are rendered
-    recursively and appended inside the same :class:`~panflute.BlockQuote`.
+    The vertex text is rejoined via :func:`~guffin.common.markdown.hard_broken_markdown` —
+    consecutive plain lines
+    become one paragraph with hard line breaks (matching Roam's shift-enter semantics), while
+    embedded list items and blank-line paragraph boundaries stay distinct blocks — then parsed
+    at block level via :func:`parse_block_md` inside the :class:`~panflute.BlockQuote`.  Child
+    vertices are rendered recursively and appended inside the same
+    :class:`~panflute.BlockQuote`.
 
     Args:
         vertex: The block-quote vertex to render.
@@ -969,7 +957,7 @@ def _block_quote_vertex_to_blocks(
     Returns:
         A single-element list containing the :class:`~panflute.BlockQuote`.
     """
-    inner_blocks: list[pf.Block] = parse_block_md(vertex.text.replace("\n", "\n\n"))
+    inner_blocks: list[pf.Block] = parse_block_md(hard_broken_markdown(vertex.text))
     inner_blocks.extend(
         build_child_blocks(
             vertex.children or [],

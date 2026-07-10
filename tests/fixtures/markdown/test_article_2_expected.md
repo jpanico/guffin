@@ -5,8 +5,7 @@
 >
 > Features:
 >
-> - **View as** block styling
->
+> - **View as** block styling  
 > - The Page has children_layout=document
 
 Block 1 (children_layout=bullet)

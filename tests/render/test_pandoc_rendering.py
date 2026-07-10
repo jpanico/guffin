@@ -23,6 +23,7 @@ from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
     BlockEmbedVertex,
+    BlockQuoteVertex,
     HeadingVertex,
     ImageVertex,
     PageEmbedVertex,
@@ -860,6 +861,45 @@ class TestAttributeAssignmentText:
         emph = list(strong.content)[0]
         assert isinstance(emph, pf.Emph)
         assert _collect_text(emph) == "default/attribute1"
+
+
+class TestBlockQuoteRendering:
+    """A block quote's soft line-breaks render as hard breaks inside a single paragraph."""
+
+    @staticmethod
+    def _quote_blocks(text: str) -> list[pf.Block]:
+        """Render a one-quote tree and return the blocks inside its BlockQuote."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
+        quote = BlockQuoteVertex(uid="quote0001", text=text)
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, quote]), {}, {})
+        quotes = [block for block in doc.content if isinstance(block, pf.BlockQuote)]
+        assert len(quotes) == 1
+        return list(quotes[0].content)
+
+    def test_single_line_is_one_paragraph(self) -> None:
+        """A single-line quote is one Para with no line breaks."""
+        blocks = self._quote_blocks("just one line")
+        assert [type(block) for block in blocks] == [pf.Para]
+        assert not any(isinstance(inline, pf.LineBreak) for inline in blocks[0].content)
+
+    def test_soft_breaks_become_hard_breaks_in_one_paragraph(self) -> None:
+        """Consecutive plain lines stay one Para, separated by LineBreak elements."""
+        blocks = self._quote_blocks("May you do good.\nMay you forgive.\nMay you share.")
+        assert [type(block) for block in blocks] == [pf.Para]
+        line_breaks = [inline for inline in blocks[0].content if isinstance(inline, pf.LineBreak)]
+        assert len(line_breaks) == 2
+
+    def test_embedded_list_line_stays_a_list(self) -> None:
+        """A bullet line inside the quote parses as a BulletList, not a paragraph continuation."""
+        blocks = self._quote_blocks("first line\nsecond line\n- a list item")
+        assert [type(block) for block in blocks] == [pf.Para, pf.BulletList]
+        line_breaks = [inline for inline in blocks[0].content if isinstance(inline, pf.LineBreak)]
+        assert len(line_breaks) == 1  # between the two plain lines only
+
+    def test_blank_source_line_stays_a_paragraph_boundary(self) -> None:
+        """An authored blank line still splits the quote into two paragraphs."""
+        blocks = self._quote_blocks("first paragraph\n\nsecond paragraph")
+        assert [type(block) for block in blocks] == [pf.Para, pf.Para]
 
 
 class TestEffectiveLayout:

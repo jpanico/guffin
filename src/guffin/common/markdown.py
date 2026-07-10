@@ -1,9 +1,10 @@
-"""Markdown types and structural predicates.
+"""Markdown types, structural predicates, and text transformations.
 
 Public symbols:
 
 - :data:`HeadingLevel` — integer type alias for a Markdown heading depth, constrained to 1–6.
 - :data:`MD_BLOCK_QUOTE_PREFIX` — string prefix for a standard CommonMark blockquote line.
+- :data:`LIST_LINE_PREFIXES` — the CommonMark bullet-list markers a list-item line starts with.
 - :data:`CODE_BLOCK_RE` — compiled regex matching a backtick-fenced code block where fences
   may share a line with adjacent content.
 - :data:`MD_LINK_RE` — compiled regex matching a CommonMark inline link ``[text](url)``.
@@ -12,8 +13,11 @@ Public symbols:
 - :class:`FencedCodeBlock` — the info string and code content extracted from a fenced code block.
 - :func:`parse_fenced_code_block` — extract the info string and code content from a fenced code block.
 - :func:`unwrap_links` — replace each CommonMark inline link with its display text.
+- :func:`hard_broken_markdown` — rejoin a multi-line string so each line survives a Markdown
+  parse: plain runs become one hard-broken paragraph, bullet lines stay list blocks.
 """
 
+from itertools import pairwise
 from typing import Annotated, Final, NamedTuple
 
 import regex
@@ -41,6 +45,9 @@ Numbered groups (no named groups):
 - Group 2 — the code body between the opening and closing fences; spans newlines
   (:data:`regex.DOTALL` is set).
 """
+
+LIST_LINE_PREFIXES: Final[tuple[str, ...]] = ("- ", "* ", "+ ")
+"""The CommonMark bullet-list markers: a line starting with one of these is a list-item line."""
 
 MD_LINK_RE: Final[regex.Pattern[str]] = regex.compile(r"\[([^\]]*)\]\([^)]*\)")
 """Compiled regex matching a CommonMark inline link ``[text](url)``.
@@ -196,3 +203,44 @@ def parse_fenced_code_block(text: str) -> FencedCodeBlock:
             tail: Final[list[str]] = [stripped_last] if stripped_last else []
             return FencedCodeBlock(info=info, code="\n".join(body_lines[:-1] + tail))
     return FencedCodeBlock(info=info, code="\n".join(body_lines))
+
+
+@validate_call
+def hard_broken_markdown(text: str) -> str:
+    r"""Return *text* rejoined so each of its lines survives a Markdown parse as its own line.
+
+    A Markdown parser treats a plain newline as a soft break, which rendered output collapses
+    to a space.  This transformation preserves the line structure of a multi-line string:
+
+    - consecutive plain lines join with a Markdown hard line break (trailing backslash), so a
+      run of plain lines parses as a *single* paragraph with each line kept;
+    - a boundary where exactly one side is a bullet-list line (:data:`LIST_LINE_PREFIXES`)
+      becomes a blank line, so the list parses as a real list block rather than a lazy
+      paragraph continuation;
+    - consecutive list lines keep a single newline (a tight list);
+    - blank source lines remain paragraph boundaries.
+
+    Args:
+        text: The multi-line Markdown text to rejoin.
+
+    Returns:
+        The rejoined Markdown, ready for a block-level parse.
+    """
+    lines: Final[list[str]] = text.splitlines()
+    if not lines:
+        return text
+    parts: Final[list[str]] = [lines[0]]
+    for previous_line, current_line in pairwise(lines):
+        prev_is_list: bool = previous_line.startswith(LIST_LINE_PREFIXES)
+        curr_is_list: bool = current_line.startswith(LIST_LINE_PREFIXES)
+        if not previous_line or not current_line:
+            separator = "\n"
+        elif prev_is_list and curr_is_list:
+            separator = "\n"
+        elif prev_is_list or curr_is_list:
+            separator = "\n\n"
+        else:
+            separator = "\\\n"
+        parts.append(separator)
+        parts.append(current_line)
+    return "".join(parts)
