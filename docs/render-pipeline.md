@@ -321,12 +321,15 @@ pure taxonomy with no other `guffin` dependencies.
   transclusion target was removed vanishes with it, to a fixpoint. An export root tagged
   `publish:: false` raises — the export target cannot be omitted from its own output.
 - **`validate_semantics(tree)`** — the vocabulary's validation pass (built on `common/validation`),
-  accumulating six validators: `all_attributes_anchored` (every recognized guffin attribute sits
+  accumulating seven validators: `all_attributes_anchored` (every recognized guffin attribute sits
   on one of the vertex types its `AttributeAnchor` names — the `AttributeAnchor.vertex_types` correspondence is the
   enforced invariant), `all_element_type_values_legal` / `all_matter_values_legal` /
   `all_pdf_render_values_legal` / `all_publish_values_legal` (every `element-type` / `matter` /
   `pdf-render` / `publish` value is a `StructuralElement` / `Matter` / `PdfRender` member / boolean
-  literal), and `all_matter_tags_at_section_level`
+  literal), `all_date_values_legal` (every `date` value is a W3CDTF reduced-precision date —
+  `YYYY`, `YYYY-MM`, or `YYYY-MM-DD` — the year-first ISO 8601 profile EPUB's `dc:date` takes, of
+  which CMOS's bare-year publication date is the shortest form; the Bergfink PDF template renders
+  the reduced-precision forms verbatim), and `all_matter_tags_at_section_level`
   (a `matter` tag sits at the book's section level — level 1, or level 2 in a parts book, since
   that is where chapter-shaped sections live). Run by `cli/common.fetch_roam_trees` on the
   transcribed content (tree and ref vertices). Consequences differ per command: `dump-roam-tree`

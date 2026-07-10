@@ -52,7 +52,7 @@
   #v(0.2em)
 ]
 
-#cfg.date.display(cfg.dateformat)
+#display_date(cfg.date, cfg.dateformat)
 #h(1fr)
 #logo
 

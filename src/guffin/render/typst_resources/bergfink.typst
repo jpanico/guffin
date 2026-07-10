@@ -16,12 +16,16 @@ $endif$
 $if(date)$
 #let parsedDate = "$date$"
 #if type(parsedDate) == str {
+  // A W3CDTF reduced-precision date (YYYY or YYYY-MM) has no datetime representation;
+  // it stays a string and renders verbatim (see display_date).
   let dateArray = parsedDate.split("-")
-  parsedDate = datetime(
-    year: int(dateArray.at(0)),
-    month: int(dateArray.at(1)),
-    day: int(dateArray.at(2)),
-  )
+  if dateArray.len() >= 3 {
+    parsedDate = datetime(
+      year: int(dateArray.at(0)),
+      month: int(dateArray.at(1)),
+      day: int(dateArray.at(2)),
+    )
+  }
 }
 #(cfg.date = parsedDate)
 $endif$
@@ -29,6 +33,12 @@ $endif$
 // replace date placeholder
 #if cfg.date == "%today%" {
   (cfg.date = datetime.today())
+}
+
+// cfg.date is a datetime for a full Y-M-D date, or a plain string for a W3CDTF
+// reduced-precision date; only a datetime can be formatted through cfg.dateformat.
+#let display_date(date, dateformat) = {
+  if type(date) == datetime { date.display(dateformat) } else { str(date) }
 }
 
 $if(dateformat)$

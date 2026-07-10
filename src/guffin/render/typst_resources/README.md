@@ -167,6 +167,22 @@ render its overflow rows on top of one another. `default_styles.typ` adds
 `#show figure.where(kind: table): set block(breakable: true)` so tall tables break across page
 boundaries instead (Typst repeats the `table.header` row on each continuation page).
 
+#### W3CDTF reduced-precision dates (`bergfink.typst`, `default_styles.typ`, `titlepage.typ`)
+
+Upstream parses the Pandoc `date` variable by splitting on `-` and blindly indexing parts 0/1/2
+into a Typst `datetime`, so any value that is not a full `YYYY-MM-DD` panics the compile
+(`array index out of bounds`). Publishing metadata legitimately uses the W3CDTF reduced-precision
+forms — `YYYY` (the CMOS-canonical publication date) and `YYYY-MM` — so the parse block in
+`bergfink.typst` now builds a `datetime` only when three parts are present and otherwise leaves
+`cfg.date` as the original string. A `display_date(date, dateformat)` helper (defined in
+`bergfink.typst`, used by the header/footer `%date%` replacement in `default_styles.typ` and the
+title-page foot in `titlepage.typ`) formats a `datetime` through `cfg.dateformat` and renders a
+reduced-precision string verbatim. The PDF metadata (`#set document(date:)` in
+`default_styles.typ`) takes only `datetime | auto | none`, so a reduced-precision date is omitted
+there rather than fabricated. Guffin validates the `guffin-meta:: date:` value to the same W3CDTF
+forms at export time (`publishing_semantics.all_date_values_legal`), so the template's fallback
+path only ever sees `YYYY` or `YYYY-MM`.
+
 ### Updating
 
 To update to a newer upstream commit, re-copy the files from the repository above, update the commit reference in this README, and re-apply the modifications described above.

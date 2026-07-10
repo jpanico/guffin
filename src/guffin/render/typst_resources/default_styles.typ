@@ -71,7 +71,7 @@
 
     return content
       .replace("%title%", cfg.title)
-      .replace("%date%", cfg.date.display(cfg.dateformat))
+      .replace("%date%", display_date(cfg.date, cfg.dateformat))
       .replace("%author%", authors_oneline)
   }
 }
@@ -138,10 +138,12 @@
 }
 
 // setting pdf meta data
+// document(date:) takes datetime | auto | none; a reduced-precision date string has no
+// datetime representation, so the PDF metadata date is omitted rather than fabricated.
 #set document(
   title: cfg.title,
   keywords: cfg.keywords,
-  date: cfg.date,
+  date: if type(cfg.date) == datetime { cfg.date } else { none },
   author: authors_name_array,
 )
 

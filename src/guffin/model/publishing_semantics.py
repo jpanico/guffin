@@ -22,7 +22,9 @@ Public symbols:
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
   assignment's value as a :class:`Matter`; :func:`pdf_render_of` — read a ``pdf-render``
   assignment's value as a :class:`PdfRender`; :func:`publish_of` — read a ``publish``
-  assignment's value as a boolean; :func:`find_publishing_attribute` — find a vertex's
+  assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
+  :data:`~guffin.common.date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
+  :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
   :func:`publish_of_vertex` —
@@ -44,7 +46,8 @@ Public symbols:
   :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
   :class:`Matter`), :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
   :class:`PdfRender`), :func:`all_publish_values_legal` (every ``publish`` value is a boolean
-  literal), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
+  literal), :func:`all_date_values_legal` (every ``date`` value is a W3CDTF
+  reduced-precision date), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
   the book's section level — level 1, or level 2 in a parts book);
   :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
@@ -64,6 +67,7 @@ from typing import Final
 
 from pydantic import ConfigDict, Field, field_validator, validate_call
 
+from guffin.common.date import W3cdtfDate, verified_w3cdtf_date
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 from guffin.model.attribute import (
     Attribute,
@@ -262,6 +266,29 @@ def publish_of(assignment: AttributeAssignment) -> bool:
     if published is None:
         raise ValueError(f"'publish' value must be 'true' or 'false'; got {literal!r}")
     return published
+
+
+@validate_call
+def date_of(assignment: AttributeAssignment) -> W3cdtfDate:
+    """Return the :data:`~guffin.common.date.W3cdtfDate` that a ``date`` assignment carries.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.DATE` attribute, then checks its
+    sole value is a W3CDTF reduced-precision date — ``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``
+    (year first), with a real calendar month and day when present — via
+    :func:`~guffin.common.date.verified_w3cdtf_date`.
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.DATE` attribute assignment (one value expected).
+
+    Returns:
+        The assignment's value as a :data:`~guffin.common.date.W3cdtfDate`, unchanged.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``date`` attribute, does not carry exactly one
+            value, or its value is not a W3CDTF reduced-precision date (wrong shape, month outside
+            1–12, or a day invalid for its month).
+    """
+    return verified_w3cdtf_date(verified_sole_value_text(assignment, PublishingSemantics.DATE.value))
 
 
 @validate_call(config=ConfigDict(strict=True))
@@ -632,7 +659,7 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
 def _illegal_value_violations(
     tree: VertexTree,
     attribute: PublishingSemantics,
-    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter | PdfRender | bool],
+    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter | PdfRender | bool | W3cdtfDate],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
 
@@ -752,6 +779,30 @@ def all_publish_values_legal(tree: VertexTree) -> ValidationError | None:
 
 
 @validate_call
+def all_date_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``date`` values.
+
+    Every :attr:`PublishingSemantics.DATE` assignment in *tree* must carry exactly one value, and
+    that value must be a W3CDTF reduced-precision date — ``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``
+    — the year-first ISO 8601 profile that publishing metadata conventions build on.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``date`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.DATE, date_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal date values: " + "; ".join(violations),
+        validator=all_date_values_legal,
+    )
+
+
+@validate_call
 def all_matter_tags_at_section_level(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every ``matter`` tag to sit at the section level.
 
@@ -790,7 +841,8 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
-    :func:`all_pdf_render_values_legal`, :func:`all_publish_values_legal`, and
+    :func:`all_pdf_render_values_legal`, :func:`all_publish_values_legal`,
+    :func:`all_date_values_legal`, and
     :func:`all_matter_tags_at_section_level` — via :func:`~guffin.common.validation.validate_all`.  Every
     validator covers both the tree vertices and the referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`).  All validators run regardless of
@@ -812,6 +864,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_matter_values_legal,
             all_pdf_render_values_legal,
             all_publish_values_legal,
+            all_date_values_legal,
             all_matter_tags_at_section_level,
         ],
     )

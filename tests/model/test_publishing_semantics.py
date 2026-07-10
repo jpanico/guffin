@@ -24,11 +24,13 @@ from guffin.model.publishing_semantics import (
     PublishingSemantics,
     _anchor_mismatch,
     all_attributes_anchored,
+    all_date_values_legal,
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
     all_pdf_render_values_legal,
     all_publish_values_legal,
+    date_of,
     drop_unpublished,
     element_type_of,
     element_type_of_vertex,
@@ -827,6 +829,55 @@ class TestAllPublishValuesLegal:
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "'publish' is block-anchored" in error.message
+
+
+class TestDateOf:
+    """date_of() reads a date assignment's sole value as a W3CDTF reduced-precision date string.
+
+    Format-level cases live with the delegate (``tests/common/test_date.py``); these tests cover
+    the vocabulary layer: attribute verification and the delegation itself.
+    """
+
+    def test_year_only(self) -> None:
+        """A bare year (the CMOS-canonical publication date) is legal."""
+        assert date_of(_assignment("date", "1298")) == "1298"
+
+    def test_full_date(self) -> None:
+        """A full year-month-day date is legal."""
+        assert date_of(_assignment("date", "1298-07-10")) == "1298-07-10"
+
+    def test_rejects_wrong_attribute(self) -> None:
+        """An assignment for a different attribute is rejected."""
+        with pytest.raises(ValueError, match="date"):
+            date_of(_assignment("matter", "1298"))
+
+    def test_rejects_non_w3cdtf_value(self) -> None:
+        """A non-W3CDTF value is rejected (via the common verifier)."""
+        with pytest.raises(ValueError, match="W3CDTF"):
+            date_of(_assignment("date", "July 10, 1298"))
+
+
+class TestAllDateValuesLegal:
+    """all_date_values_legal() requires every date value to be a W3CDTF reduced-precision date."""
+
+    def test_legal_value_passes(self) -> None:
+        """A year-only date produces no error."""
+        tree = _attributed_tree(["date"], [], AttributeDomain.GUFFIN, value="1298")
+        assert all_date_values_legal(tree) is None
+
+    def test_illegal_value_is_reported(self) -> None:
+        """A prose date is a violation."""
+        tree = _attributed_tree(["date"], [], AttributeDomain.GUFFIN, value="July 10, 1298")
+        error = all_date_values_legal(tree)
+        assert error is not None
+        assert "illegal date values" in error.message
+        assert "uid='pageroot1'" in error.message
+
+    def test_surfaces_through_validate_semantics(self) -> None:
+        """An illegal date value fails validate_semantics."""
+        result = validate_semantics(_attributed_tree(["date"], [], AttributeDomain.GUFFIN, value="July 10, 1298"))
+        assert not result.is_valid
+        assert any("illegal date values" in error.message for error in result.errors)
 
 
 def _text_vertex(uid: str, children: list[str] | None = None, publish: str | None = None) -> TextVertex:
