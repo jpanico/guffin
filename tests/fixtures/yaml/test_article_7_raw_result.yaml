@@ -47,6 +47,31 @@
     order: 9
     page:
       id: 11850
+- - string: When you leave the Bridge, and ride towards the west, finding all the
+      way excellent hostelries for travellers, with fine vineyards, fields, and gardens,
+      and springs of water, you come after 30 miles to a fine large city called Juju,
+      where there are many abbeys of idolaters, and the people live by trade and manufactures.
+      They weave cloths of silk and gold, and very fine taffetas.{1} Here too there
+      are many hostelries for travellers.{2} After riding a mile beyond this city
+      you find two roads, one of which goes west and the other south-east. The westerly
+      road is that through Cathay, and the south-easterly one goes towards the province
+      of Manzi.{3} Taking the westerly one through Cathay, and travelling by it for
+      ten days, you find a constant succession of cities and boroughs, with numerous
+      thriving villages, all abounding with trade and manufactures, besides the fine
+      fields and vineyards and dwellings of civilized people; but nothing occurs worthy
+      of special mention; and so I will only speak of a kingdom called Taianfu. Note
+      1.—The word is sendaus (Pauthier), pl. of sendal, and in G. T. sandal. It does
+      not seem perfectly known what this silk texture was, but as banners were made
+      of it, and linings for richer stuffs, it appears to have been a light material,
+      and is generally rendered taffetas. In Richard Cœur de Lion we find “Many a
+      pencel of sykelatoun And of sendel of grene and broun,”
+    id: 12811
+    uid: CwYpKBCiQ
+    parents:
+    - id: 12803
+    order: 0
+    page:
+      id: 12803
 - - string: 'Now am I come to that part of our Book in which I shall tell you of the
       great and wonderful magnificence of the Great Kaan now reigning, by name Cublay
       Kaan; Kaan being a title which signifyeth “The Great Lord of Lords,” or Emperor.
@@ -105,6 +130,15 @@
       id: 11850
     refs:
     - id: 11892
+- - string: Block 3.3
+    id: 11810
+    uid: InqcJLiuz
+    parents:
+    - id: 11674
+    - id: 11807
+    order: 2
+    page:
+      id: 11674
 - - string: '**Description & Function in The Travels**'
     id: 12736
     uid: vEdP4FH4H
@@ -1597,6 +1631,19 @@
     order: 2
     page:
       id: 11850
+- - string: Block 2.2 (children_layout=bullet)
+    children:
+    - id: 11966
+    - id: 11967
+    id: 11684
+    uid: d_3REDRrO
+    parents:
+    - id: 11674
+    - id: 11682
+    order: 1
+    view-type: bullet
+    page:
+      id: 11674
 - - string: The main thing to avoid is burying it deep inside the introduction, where
       a reader scanning the front matter to decide if the book is right for them might
       miss it entirely.
@@ -2122,6 +2169,35 @@
     order: 19
     page:
       id: 11850
+- - string: '[La Curne, Dict., s.v. Sendaus has: Silk stuff: “Somme de la delivrance
+      des sendaus.” (Nouv. Compt. de l’Arg. p. 19).—Godefroy, Dict., gives: “Sendain,
+      adj., made with the stuff called cendal: Drap d’or sendains (1392, Test. de
+      Blanche, duch d’Orl., Ste-Croix, Arch. Loiret).” He says s.v. Cendal, “cendau,
+      cendral, cendel, ... sendail, ... étoffe légère de soie unie qui paraît avoir
+      été analogue au taffetas.” “‘On faisait des cendaux forts ou faibles, et on
+      leur donnait toute sorte de couleurs. On s’en servait surtout pour vêtements
+      et corsets, pour doublures de draps, de fourrures et d’autres étoffes de soie
+      plus précieuses, enfin pour tenture d’appartements.’ (Bourquelot, Foir. de Champ.
+      I. 261).” “J’ay de toilles de mainte guise, De sidonnes et de cendaulx. Soyes,
+      satins blancs et vermaulx.” —Greban, Mist. de la Pass., 26826, G. Paris.—H.
+      C.]'
+    id: 12809
+    uid: d9f4W5Rfl
+    parents:
+    - id: 12803
+    order: 4
+    page:
+      id: 12803
+- - string: and also pavilions of sendel; and in the Anglo-French ballad of the death
+      of William Earl of Salisbury in St. Lewis’s battle on the Nile— “Le Meister
+      du Temple brace les chivaux Et le Count Long-Espée depli les sandaux.”
+    id: 12806
+    uid: iohUB9lvw
+    parents:
+    - id: 12803
+    order: 1
+    page:
+      id: 12803
 - - string: Baron de Bode have visited other parts, but the country is still very
       imperfectly known. Little Lúristán lay west of the R. Dizfúl, extending nearly
       to the Plain of Babylonia. Its Dynasty, called Kurshid, [was founded in 1184
@@ -2299,6 +2375,15 @@
     refs:
     - id: 321
     - id: 11839
+- - string: The oriflamme of France was made of cendal. Chaucer couples taffetas and
+      sendal. His “Doctor of Physic”
+    id: 12807
+    uid: lLFPOPmLr
+    parents:
+    - id: 12803
+    order: 2
+    page:
+      id: 12803
 - - string: '**Tartar Encampments:** Polo mentions that during the summer months,
       the region is highly favored by the Tartar (Mongol) armies because of its excellent
       pastures for their livestock. However, they abandon the area in the winter when
@@ -2734,6 +2819,19 @@
     order: 10
     page:
       id: 11850
+- - string: Block 1 (children_layout=bullet)
+    children:
+    - id: 11678
+    - id: 11679
+    - id: 11681
+    id: 11677
+    uid: sD1C9ifkG
+    parents:
+    - id: 11674
+    order: 1
+    view-type: bullet
+    page:
+      id: 11674
 - - string: 'identifier:: ISTC ip00901000'
     id: 11859
     uid: VUkL4I2fu
@@ -2849,6 +2947,19 @@
     order: 2
     page:
       id: 11850
+- - string: 'element-type:: chapter'
+    id: 12797
+    uid: VWsK-BjSl
+    parents:
+    - id: 11850
+    - id: 12792
+    - id: 12794
+    - id: 12796
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - string: Note 2.—The Kashmirian conjurers had made a great impression on Marco,
       who had seen them at the Court of the Great Kaan, and he recurs in a later chapter
       to their weather sorceries and other enchantments, when we shall make some remarks.
@@ -3376,6 +3487,19 @@
     order: 0
     page:
       id: 11850
+- - string: ((uj8YolCoE))
+    id: 12802
+    uid: JB1kKyzGo
+    parents:
+    - id: 11850
+    - id: 12792
+    - id: 12794
+    - id: 12801
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 11124
 - - attrs:
     - - source:
         - uid
@@ -5022,6 +5146,7 @@
     - id: 11902
     - id: 11903
     - id: 11905
+    - id: 12792
     id: 11850
     lookup:
     - id: 321
@@ -5029,7 +5154,7 @@
     - id: 11850
     - id: 11855
     uid: 7o-Klx3P6
-    title: '[[Test Article]] 6'
+    title: '[[Test Article]] 7'
     refs:
     - id: 4223
 - - string: '**Layas (Ayas):** The bustling port city on the Mediterranean coast of
@@ -5072,6 +5197,17 @@
     order: 0
     page:
       id: 11850
+- - string: '{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}'
+    id: 12812
+    uid: CYiGVCEok
+    parents:
+    - id: 11850
+    - id: 12792
+    order: 2
+    page:
+      id: 11850
+    refs:
+    - id: 12803
 - - string: 5 1 2 — 17
     id: 12330
     uid: V27vVj9s0
@@ -5082,6 +5218,19 @@
     order: 8
     page:
       id: 11850
+- - string: this is a reference to an external page ->  [[[[Test Article]] 2]]
+    id: 12799
+    uid: rirMPOzRr
+    parents:
+    - id: 11850
+    - id: 12792
+    - id: 12794
+    order: 2
+    page:
+      id: 11850
+    refs:
+    - id: 4223
+    - id: 11674
 - - string: '**Salt Money**'
     children:
     - id: 12768
@@ -5224,6 +5373,21 @@
     order: 17
     page:
       id: 11850
+- - string: The origin of the word seems also somewhat doubtful. The word Σενδἑς occurs
+      in Constant. Porphyrog. de Ceremoniis (Bonn, ed. I. 468), and this looks like
+      a transfer of the Arabic Săndăs or Sundus, which is applied by Bakui to the
+      silk fabrics of Yezd. (Not. et Ext. II. 469.) Reiske thinks this is the origin
+      of the Frank word, and connects its etymology with Sind. Others think that sendal
+      and the other forms are modifications of the ancient Sindon, and this is Mr.
+      Marsh’s view. (See also Fr.-Michel, Recherches, etc. I. 212; Dict. des Tissus,
+      II. 171 seqq.)
+    id: 12810
+    uid: LFOf7Pdvc
+    parents:
+    - id: 12803
+    order: 5
+    page:
+      id: 12803
 - - string: Weight
     children:
     - id: 12751
@@ -5433,6 +5597,15 @@
     order: 8
     page:
       id: 11850
+- - string: Block 3.2
+    id: 11809
+    uid: fv5nh7u81
+    parents:
+    - id: 11674
+    - id: 11807
+    order: 1
+    page:
+      id: 11674
 - - string: 'element-type:: chapter'
     id: 12531
     uid: ntMDtY4Q-
@@ -5446,6 +5619,47 @@
       id: 11850
     refs:
     - id: 11876
+- - attrs:
+    - - source:
+        - uid
+        - y4yvyS7Cp
+        value:
+        - uid
+        - y4yvyS7Cp
+      - source:
+        - uid
+        - a1fa2sufZ
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - a1fa2sufZ
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: CHAPTER XXXV. Here begins the Description of the Interior of Cathay, and
+      first of the River Pulisanghin.
+    children:
+    - id: 12796
+    - id: 12798
+    - id: 12799
+    - id: 12800
+    - id: 12801
+    id: 12794
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 12794
+    - id: 12796
+    uid: y4yvyS7Cp
+    parents:
+    - id: 11850
+    - id: 12792
+    order: 1
+    page:
+      id: 11850
 - - string: 'Joinville also speaks of the Nakkara as the signal for action: “So he
       was setting his host in array till noon, and then he made those drums of theirs
       to sound that they call Nacaires, and then they set upon us horse and foot.”
@@ -5860,6 +6074,42 @@
     order: 0
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - a1fa2sufZ
+        value:
+        - uid
+        - a1fa2sufZ
+      - source:
+        - uid
+        - VWsK-BjSl
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - VWsK-BjSl
+        value: ' chapter'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 12797
+    id: 12796
+    lookup:
+    - id: 11876
+    - id: 12796
+    - id: 12797
+    uid: a1fa2sufZ
+    parents:
+    - id: 11850
+    - id: 12792
+    - id: 12794
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: It is natural for the mind to rebel against such claims, to assume them
       to be the fictions of a romancer. Yet I urge you to approach this topography
       with a clear and open judgment. Marco Polo was not a poet, but a merchant and
@@ -6074,6 +6324,17 @@
     order: 10
     page:
       id: 11850
+- - string: Block 1.2
+    children:
+    - id: 11680
+    id: 11679
+    uid: YyeRpjbFD
+    parents:
+    - id: 11674
+    - id: 11677
+    order: 1
+    page:
+      id: 11674
 - - string: And after the Great Kaan had defeated Nayan in the way you have heard,
       he went back to his capital city of Cambaluc and abode there, taking his ease
       and making festivity. And the other Tartar Lord called Caydu was greatly troubled
@@ -6218,6 +6479,18 @@
     order: 5
     page:
       id: 11850
+- - string: this is a reference to -> ((lSrjeyDaT))
+    id: 12798
+    uid: BJpwNOZXi
+    parents:
+    - id: 11850
+    - id: 12792
+    - id: 12794
+    order: 1
+    page:
+      id: 11850
+    refs:
+    - id: 11902
 - - string: The date and dry-fish diet of the Gulf people is noticed by most travellers,
       and P. della Valle repeats the opinion about its being the only wholesome one.
       Ibn Batuta says the people of Hormuz had a saying, “Khormá wa máhí lút-i-Pádshahi,”
@@ -6577,9 +6850,36 @@
     order: 1
     page:
       id: 11850
+- - string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
+    children:
+    - id: 12802
+    id: 12801
+    uid: g_Bs-RuqF
+    parents:
+    - id: 11850
+    - id: 12792
+    - id: 12794
+    order: 4
+    page:
+      id: 11850
+    refs:
+    - id: 5844
 - - id: 11896
     uid: HZFZjnFeu
     title: publisher
+- - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
+    id: 11709
+    uid: ot5dpySxp
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 4223
+    - id: 5844
+    - id: 11674
 - - string: __— F.C., Nuremberg.__
     id: 11888
     uid: RoZyY87Nr
@@ -7155,6 +7455,41 @@
 - - id: 2216
     uid: xFhfCd8lJ
     title: table
+- - attrs:
+    - - source:
+        - uid
+        - s1SmW50RL
+        value:
+        - uid
+        - s1SmW50RL
+      - source:
+        - uid
+        - 2zNvexiSo
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - 2zNvexiSo
+        value: ' part'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 12791
+    id: 12790
+    lookup:
+    - id: 11876
+    - id: 12790
+    - id: 12791
+    uid: s1SmW50RL
+    parents:
+    - id: 11850
+    - id: 12792
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: Note 2.—This circumstance is mentioned in the extract below from Gaubil.
       He may have taken it from Polo, as it is not in Pauthier’s Chinese extracts;
       but Gaubil has other facts not noticed in these. [Elephants came from the Indo-Chinese
@@ -7577,6 +7912,17 @@
     order: 4
     page:
       id: 11850
+- - attrs: []
+    children:
+    - id: 12806
+    - id: 12807
+    - id: 12808
+    - id: 12809
+    - id: 12810
+    - id: 12811
+    id: 12803
+    uid: TXGdKldN6
+    title: CHAPTER XXXVI. Account of the City of Juju.
 - - string: Mei Shan.
     id: 12665
     uid: YOpkUGkoq
@@ -8274,6 +8620,19 @@
     order: 8
     page:
       id: 11850
+- - string: Block 2 (children_layout=document)
+    children:
+    - id: 11683
+    - id: 11684
+    - id: 11686
+    id: 11682
+    uid: DsogfVzX9
+    parents:
+    - id: 11674
+    order: 2
+    view-type: document
+    page:
+      id: 11674
 - - string: '[1] This story has been transferred to Peter the Great, who is alleged
       to have exhibited the docility of his subjects in the same way to the King of
       Denmark, by ordering a Cossack to jump from the Round Tower at Copenhagen, on
@@ -8544,6 +8903,16 @@
       id: 11850
     refs:
     - id: 5450
+- - string: Block 2.3.2
+    id: 11969
+    uid: FVou-DBMP
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11686
+    order: 1
+    page:
+      id: 11674
 - - string: '[Rabelais says (Bk. I. ch. xvi.): “Si de ce vous efmerveillez, efmerveillez
       vous d’advantage de la queue des béliers de la Scythie, qui pesait plus de trente
       livres; et des moutons de Surie, esquels fault (si Tenaud, dict vray) affuster
@@ -8645,6 +9014,19 @@
     order: 7
     page:
       id: 11850
+- - string: Block 3 (children_layout=numbered)
+    children:
+    - id: 11808
+    - id: 11809
+    - id: 11810
+    id: 11807
+    uid: sPZ2xmBBS
+    parents:
+    - id: 11674
+    order: 3
+    view-type: numbered
+    page:
+      id: 11674
 - - string: Their ships are wretched affairs, and many of them get lost; for they
       have no iron fastenings, and are only stitched together with twine made from
       the husk of the Indian nut. They beat this husk until it becomes like horse-hair,
@@ -8733,6 +9115,17 @@
     refs:
     - id: 321
     - id: 11839
+- - string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
+    id: 11124
+    uid: uj8YolCoE
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 3331
+    - id: 3334
+    order: 1
+    page:
+      id: 3327
 - - attrs:
     - - source:
         - uid
@@ -9159,7 +9552,7 @@
     uid: MGvH7SY4M
     parents:
     - id: 11850
-    order: 7
+    order: 8
     page:
       id: 11850
 - - string: Note 9.—[The enormous quantity of fish found in the Caspian Sea is ascribed
@@ -9746,6 +10139,19 @@
     order: 4
     page:
       id: 11850
+- - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
+      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling\n - The Page has\
+      \ children_layout=document"
+    id: 11675
+    uid: MmvJZhQNJ
+    parents:
+    - id: 11674
+    order: 0
+    page:
+      id: 11674
+    refs:
+    - id: 5450
+    - id: 5462
 - - string: No European traveller, so far as I know, has described the most direct
       road from Kermán to Hormuz, or rather to its nearest modern representative Bander
       Abbási,—I mean the road by Báft. But a line to the eastward of this, and leading
@@ -9766,6 +10172,17 @@
     order: 9
     page:
       id: 11850
+- - children:
+    - id: 11675
+    - id: 11677
+    - id: 11682
+    - id: 11807
+    id: 11674
+    uid: lDYWYqYSL
+    title: '[[Test Article]] 2'
+    view-type: document
+    refs:
+    - id: 4223
 - - string: Adyrmachidae, the Libyan tribe next Egypt. Old Eden too relates it of
       the “Princes of Moscovia.” (Middle Km. I. 318; Herod. IV. 168, Rawl.; Notes
       on Russia, Hak. Soc. II. 253.)
@@ -10122,6 +10539,56 @@
     order: 5
     page:
       id: 11850
+- - string: Block 2.3 (children_layout=bullet)
+    children:
+    - id: 11968
+    - id: 11969
+    id: 11686
+    uid: Bb49MOLyE
+    parents:
+    - id: 11674
+    - id: 11682
+    order: 2
+    view-type: bullet
+    page:
+      id: 11674
+- - attrs:
+    - - source:
+        - uid
+        - 09KMheZHg
+        value:
+        - uid
+        - 09KMheZHg
+      - source:
+        - uid
+        - s1SmW50RL
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - s1SmW50RL
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 1
+    string: '**Book III**: Journey to the West and South-West of Cathay.'
+    children:
+    - id: 12790
+    - id: 12794
+    - id: 12812
+    id: 12792
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 12790
+    - id: 12792
+    uid: 09KMheZHg
+    parents:
+    - id: 11850
+    order: 7
+    page:
+      id: 11850
 - - string: The first kingdom is that at the beginning of Persia, and it is called
       Casvin; the second is further to the south, and is called Curdistan; the third
       is Lor; the fourth [Suolstan]; the fifth Istanit; the sixth Serazy; the seventh
@@ -10324,6 +10791,15 @@
     order: 3
     page:
       id: 11850
+- - string: Block 1.3
+    id: 11681
+    uid: gmLJbWZYp
+    parents:
+    - id: 11674
+    - id: 11677
+    order: 2
+    page:
+      id: 11674
 - - attrs:
     - - source:
         - uid
@@ -10676,6 +11152,18 @@
 - - id: 321
     uid: BxGxeeGk1
     title: .rm-g
+- - string: 'element-type:: part'
+    id: 12791
+    uid: 2zNvexiSo
+    parents:
+    - id: 11850
+    - id: 12790
+    - id: 12792
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - string: 'element-type:: chapter'
     id: 12316
     uid: tY1X3vZsE
@@ -10799,7 +11287,8 @@
 
       Features:
 
-      - StructuralElements for ProjectType:BOOK'
+      - a very large Book structured document intended for testing scalability and
+      performance'
     id: 11852
     uid: rhPsF4zq3
     parents:
@@ -11360,6 +11849,9 @@
     order: 9
     page:
       id: 11850
+- - id: 5844
+    uid: lF-qY0Xrs
+    title: c:FUCHSIA
 - - string: 'And when the appointed day was come, all the Christians got up early,
       men and women, small and great, more than 100,000 persons, and went to church,
       and heard the Holy Mass. And after Mass had been sung, they all went forth together
@@ -11560,6 +12052,18 @@
     order: 10
     page:
       id: 11850
+- - string: this is a reference to an external block -> ((ot5dpySxp))
+    id: 12800
+    uid: Q_O-Rwxjt
+    parents:
+    - id: 11850
+    - id: 12792
+    - id: 12794
+    order: 3
+    page:
+      id: 11850
+    refs:
+    - id: 11709
 - - string: '**Tebet (Tibet)**'
     children:
     - id: 12766
@@ -11631,6 +12135,16 @@
     order: 2
     page:
       id: 11850
+- - string: Block 1.2.1
+    id: 11680
+    uid: KUi_6ooZj
+    parents:
+    - id: 11674
+    - id: 11677
+    - id: 11679
+    order: 0
+    page:
+      id: 11674
 - - string: The men are brown and lean, but the women, taking them as brunettes, are
       very beautiful. The food of the people is flesh, and milk, and rice. The clime
       is finely tempered, being neither very hot nor very cold. There are numbers
@@ -11702,6 +12216,16 @@
     order: 4
     page:
       id: 11850
+- - string: Block 2.2.1
+    id: 11966
+    uid: cxJA2xr-u
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    order: 0
+    page:
+      id: 11674
 - - string: "```python\n@validate_call\ndef transcribe(node_tree: NodeTree) -> VertexTree:\n\
       \    \"\"\"Transcribe every node in *node_tree* into a :class:`~guffin.vertex_tree.VertexTree`.\n\
       \n    Traverses *node_tree* in pre-order DFS order.  Most nodes are transcribed\n\
@@ -12383,6 +12907,16 @@
       id: 11850
     refs:
     - id: 11876
+- - string: Block 2.2.2
+    id: 11967
+    uid: D7gYVJoVj
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11684
+    order: 1
+    page:
+      id: 11674
 - - string: Polo notes that red coral imported from the Mediterranean was highly prized
       and used as a medium of exchange and adornment around the necks of women and
       idols.
@@ -12772,6 +13306,15 @@
     order: 10
     page:
       id: 11850
+- - string: Block 2.1
+    id: 11683
+    uid: 99rZhIPZW
+    parents:
+    - id: 11674
+    - id: 11682
+    order: 0
+    page:
+      id: 11674
 - - string: 12th Century Illumination. (After Pertz.)
     id: 12354
     uid: AonYk0x--
@@ -13309,6 +13852,18 @@
     order: 5
     page:
       id: 11850
+- - string: Block 3.1 (children_layout=document)
+    children:
+    - id: 11970
+    id: 11808
+    uid: UQQwogj1M
+    parents:
+    - id: 11674
+    - id: 11807
+    order: 0
+    view-type: document
+    page:
+      id: 11674
 - - string: Map to illustrate the Geographical Position of the City of Sarai
     id: 12079
     uid: 0CiFrZbxC
@@ -13530,6 +14085,14 @@
     order: 1
     page:
       id: 11850
+- - string: “In sanguin and in persë clad was allë, Linëd with taffata and with sendallë.”
+    id: 12808
+    uid: noRek_x_o
+    parents:
+    - id: 12803
+    order: 3
+    page:
+      id: 12803
 - - string: 'The O''Reilly pattern is worth knowing because it''s so widespread in
       technical publishing: preface → who this book is for → (sometimes) conventions
       used in this book → introduction. Readers have come to expect it in that genre,
@@ -13880,6 +14443,15 @@
     order: 6
     page:
       id: 11850
+- - string: Block 1.1
+    id: 11678
+    uid: VH0mXM0rw
+    parents:
+    - id: 11674
+    - id: 11677
+    order: 0
+    page:
+      id: 11674
 - - string: Winter Palace at Peking.
     id: 12660
     uid: 6e3m16kSg
@@ -14205,6 +14777,16 @@
     order: 1
     page:
       id: 11850
+- - string: Block 2.3.1
+    id: 11968
+    uid: 1O4yGV-Tq
+    parents:
+    - id: 11674
+    - id: 11682
+    - id: 11686
+    order: 0
+    page:
+      id: 11674
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
@@ -14258,6 +14840,16 @@
     order: 2
     page:
       id: 11850
+- - string: Block 3.1.1
+    id: 11970
+    uid: 2jjY8-fQz
+    parents:
+    - id: 11674
+    - id: 11807
+    - id: 11808
+    order: 0
+    page:
+      id: 11674
 - - string: Ancient Buddhist Temple at Pandrethan in Káshmir.
     id: 12445
     uid: kvnvvH3Zd

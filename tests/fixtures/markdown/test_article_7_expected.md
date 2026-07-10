@@ -5,7 +5,7 @@
 >
 > Features:
 >
-> - StructuralElements for ProjectType:BOOK
+> - a very large Book structured document intended for testing scalability and performance
 
 ## Acknowledgments
 
@@ -1018,5 +1018,22 @@ Now that I have told you in detail of the splendour of this City of the Emperor�
 |  | Weight / Revenue | **Ting** (or *Ding*) | A high-value measure of account for imperial revenue and taxation, equal to 10 Chinese *taels* (ounces) of silver or gold. |
 | **India & The Spice Islands** | Weight | **Bahar** | A regional spice weight. Polo describes the taxation and weighing of pepper and spices measured out in bulk quantities for shipping. |
 |  | Currency | **Grosso** (Groat) | A Venetian silver coin Polo frequently used as a comparative baseline to explain the value of Indian goods and local silver coinage. |
+
+# **Book III**: Journey to the West and South-West of Cathay.
+
+## CHAPTER XXXV. Here begins the Description of the Interior of Cathay, and first of the River Pulisanghin.
+
+- this is a reference to -\> **Book I**: Account of Regions Visited or Heard of on the Journey from the Lesser Armenia to the Court of the Great Kaan
+- this is a reference to an external page -\> Test Article 2
+- this is a reference to an external block -\> <span style="color: fuchsia">**inline PAGE ref ⟶**</span> [Test Article 2](x-guffin:vertex/lDYWYqYSL)
+- <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
+  [A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)
+
+- When you leave the Bridge, and ride towards the west, finding all the way excellent hostelries for travellers, with fine vineyards, fields, and gardens, and springs of water, you come after 30 miles to a fine large city called Juju, where there are many abbeys of idolaters, and the people live by trade and manufactures. They weave cloths of silk and gold, and very fine taffetas.{1} Here too there are many hostelries for travellers.{2} After riding a mile beyond this city you find two roads, one of which goes west and the other south-east. The westerly road is that through Cathay, and the south-easterly one goes towards the province of Manzi.{3} Taking the westerly one through Cathay, and travelling by it for ten days, you find a constant succession of cities and boroughs, with numerous thriving villages, all abounding with trade and manufactures, besides the fine fields and vineyards and dwellings of civilized people; but nothing occurs worthy of special mention; and so I will only speak of a kingdom called Taianfu. Note 1.—The word is sendaus (Pauthier), pl. of sendal, and in G. T. sandal. It does not seem perfectly known what this silk texture was, but as banners were made of it, and linings for richer stuffs, it appears to have been a light material, and is generally rendered taffetas. In Richard Cœur de Lion we find “Many a pencel of sykelatoun And of sendel of grene and broun,”
+- and also pavilions of sendel; and in the Anglo-French ballad of the death of William Earl of Salisbury in St. Lewis’s battle on the Nile— “Le Meister du Temple brace les chivaux Et le Count Long-Espée depli les sandaux.”
+- The oriflamme of France was made of cendal. Chaucer couples taffetas and sendal. His “Doctor of Physic”
+- “In sanguin and in persë clad was allë, Linëd with taffata and with sendallë.”
+- \[La Curne, Dict., s.v. Sendaus has: Silk stuff: “Somme de la delivrance des sendaus.” (Nouv. Compt. de l’Arg. p. 19).—Godefroy, Dict., gives: “Sendain, adj., made with the stuff called cendal: Drap d’or sendains (1392, Test. de Blanche, duch d’Orl., Ste-Croix, Arch. Loiret).” He says s.v. Cendal, “cendau, cendral, cendel, … sendail, … étoffe légère de soie unie qui paraît avoir été analogue au taffetas.” “‘On faisait des cendaux forts ou faibles, et on leur donnait toute sorte de couleurs. On s’en servait surtout pour vêtements et corsets, pour doublures de draps, de fourrures et d’autres étoffes de soie plus précieuses, enfin pour tenture d’appartements.’ (Bourquelot, Foir. de Champ. I. 261).” “J’ay de toilles de mainte guise, De sidonnes et de cendaulx. Soyes, satins blancs et vermaulx.” —Greban, Mist. de la Pass., 26826, G. Paris.—H. C.\]
+- The origin of the word seems also somewhat doubtful. The word Σενδἑς occurs in Constant. Porphyrog. de Ceremoniis (Bonn, ed. I. 468), and this looks like a transfer of the Arabic Săndăs or Sundus, which is applied by Bakui to the silk fabrics of Yezd. (Not. et Ext. II. 469.) Reiske thinks this is the origin of the Frank word, and connects its etymology with Sind. Others think that sendal and the other forms are modifications of the ancient Sindon, and this is Mr. Marsh’s view. (See also Fr.-Michel, Recherches, etc. I. 212; Dict. des Tissus, II. 171 seqq.)
 
 # **Book IV**: Wars Among the Tartar Princes and Some Account of the Northern Countries

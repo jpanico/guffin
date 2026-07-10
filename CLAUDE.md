@@ -133,9 +133,13 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v
 
 ## Test Fixtures
 
-Four live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
-`[[Test Article]] 1`, `[[Test Article]] 2`, and `[[Test Article]] 3`.  For each source, `tests/regen_fixtures.py` generates six
-fixture files that capture different stages and views of the data pipeline.
+Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`
+through `[[Test Article]] 5`, plus `[[Test Article]] 7` (there is currently no
+`6`; the page was renamed).  Each article exercises a distinct feature set —
+see `tests/fixtures/README.md` for the per-article feature lists, which
+`tests/regen_fixtures.py` keeps in sync from a callout on each live page.  For
+each source, `tests/regen_fixtures.py` generates six fixture files that capture
+different stages and views of the data pipeline.
 
 ### No-refs fixture set (`include_refs=False`) — a linear pipeline
 
@@ -166,6 +170,9 @@ python tests/regen_fixtures.py "[[Test Article]] 0" --prefix test_article_0
 python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1
 python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
 python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
+python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
+python tests/regen_fixtures.py "[[Test Article]] 5" --prefix test_article_5
+python tests/regen_fixtures.py "[[Test Article]] 7" --prefix test_article_7
 ```
 
 Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `tests/fixtures/pdf/`

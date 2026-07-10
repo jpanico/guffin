@@ -146,18 +146,18 @@ class TestMatterOf:
             matter_of(_assignment("matter", "middle-matter"))
 
 
-def _article6_vertex_tree() -> VertexTree:
-    """Load the [[Test Article]] 6 VertexTree from its YAML fixture."""
-    raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_6_vertices.yaml").read_text())
+def _article7_vertex_tree() -> VertexTree:
+    """Load the [[Test Article]] 7 VertexTree from its YAML fixture."""
+    raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_7_vertices.yaml").read_text())
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
 
 
-class TestElementTypeOfArticle6Fixture:
-    """element_type_of resolves the real element-type tags in the [[Test Article]] 6 fixture."""
+class TestElementTypeOfArticle7Fixture:
+    """element_type_of resolves the real element-type tags in the [[Test Article]] 7 fixture."""
 
     def test_resolves_all_tagged_headings(self) -> None:
         """Every element-type-tagged heading resolves to the StructuralElement its tag names."""
-        tree = _article6_vertex_tree()
+        tree = _article7_vertex_tree()
         resolved = {
             vertex.uid: element_type_of(assignment)
             for vertex in VertexTreeDFSIterator(tree)
@@ -199,23 +199,25 @@ class TestElementTypeOfArticle6Fixture:
             "yoDIZS8Cq": StructuralElement.CHAPTER,
             "2GuxTiNnf": StructuralElement.CHAPTER,
             "zXhYsKp5A": StructuralElement.CHAPTER,
+            "09KMheZHg": StructuralElement.PART,
+            "y4yvyS7Cp": StructuralElement.CHAPTER,
             "MGvH7SY4M": StructuralElement.PART,
         }
 
     def test_acknowledgments_heading_resolves(self) -> None:
         """The Acknowledgements heading's element-type tag resolves to ACKNOWLEDGMENTS via find + coerce."""
-        heading = next(v for v in VertexTreeDFSIterator(_article6_vertex_tree()) if v.uid == "dpoX6c0Pl")
+        heading = next(v for v in VertexTreeDFSIterator(_article7_vertex_tree()) if v.uid == "dpoX6c0Pl")
         assignment = find_publishing_attribute(heading, PublishingSemantics.ELEMENT_TYPE)
         assert assignment is not None
         assert element_type_of(assignment) is StructuralElement.ACKNOWLEDGMENTS
 
 
-class TestValidateSemanticsArticle6Fixture:
-    """validate_semantics passes the real, tag-rich [[Test Article]] 6 fixture."""
+class TestValidateSemanticsArticle7Fixture:
+    """validate_semantics passes the real, tag-rich [[Test Article]] 7 fixture."""
 
     def test_fixture_is_semantically_valid(self) -> None:
         """The fixture's guffin-meta metadata, element-type tags, and matter tag all validate cleanly."""
-        tree = _article6_vertex_tree()
+        tree = _article7_vertex_tree()
         # Precondition: the fixture actually exercises the vocabulary, so a pass is not vacuous.
         tagged = [
             vertex
@@ -223,7 +225,7 @@ class TestValidateSemanticsArticle6Fixture:
             if find_publishing_attribute(vertex, PublishingSemantics.ELEMENT_TYPE) is not None
             or find_publishing_attribute(vertex, PublishingSemantics.MATTER) is not None
         ]
-        assert tagged, "fixture carries no vocabulary tags; regenerate it from [[Test Article]] 6"
+        assert tagged, "fixture carries no vocabulary tags; regenerate it from [[Test Article]] 7"
         result = validate_semantics(tree)
         assert result.errors == ()
         assert result.is_valid

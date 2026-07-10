@@ -30,7 +30,7 @@ This directory contains test data used by the guffin test suite.
 
 Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 `[[Test Article]] 1`, `[[Test Article]] 2`, `[[Test Article]] 3`,
-`[[Test Article]] 4`, `[[Test Article]] 5`, and `[[Test Article]] 6`.
+`[[Test Article]] 4`, `[[Test Article]] 5`, and `[[Test Article]] 7`.
 
 ### Article Features
 
@@ -88,9 +88,9 @@ Seven live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 
 - **attributes**
 
-#### `[[Test Article]] 6`
+#### `[[Test Article]] 7`
 
-- StructuralElements for ProjectType:BOOK
+- a very large Book structured document intended for testing scalability and performance
 
 ### Fixtures
 
@@ -140,5 +140,5 @@ python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
 python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
 python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
 python tests/regen_fixtures.py "[[Test Article]] 5" --prefix test_article_5
-python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6
+python tests/regen_fixtures.py "[[Test Article]] 7" --prefix test_article_7
 ```
