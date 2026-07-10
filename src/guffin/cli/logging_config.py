@@ -62,18 +62,25 @@ class _ColorLevelFormatter(logging.Formatter):
         original_levelname = record.levelname
         original_msg = record.msg
         original_args = record.args
-        record.levelname = f"{color}[{record.levelname}]{_COLOR_RESET}"
-        setattr(
-            record, "location", f"{_LOCATION_COLOR}({record.module}::{record.funcName}:{record.lineno}){_COLOR_RESET}"
-        )
-        record.msg = _highlight_message(record.getMessage())
-        record.args = None
-        result = super().format(record)
-        record.levelname = original_levelname
-        record.msg = original_msg
-        record.args = original_args
-        delattr(record, "location")
-        return result
+        # The Formatter contract only reads values off the record, so the colorized fields must be
+        # written onto it; the finally guarantees the shared record is restored even when the
+        # super().format() call raises, so the mutation never escapes to other handlers.
+        try:
+            record.levelname = f"{color}[{record.levelname}]{_COLOR_RESET}"
+            setattr(
+                record,
+                "location",
+                f"{_LOCATION_COLOR}({record.module}::{record.funcName}:{record.lineno}){_COLOR_RESET}",
+            )
+            record.msg = _highlight_message(record.getMessage())
+            record.args = None
+            return super().format(record)
+        finally:
+            record.levelname = original_levelname
+            record.msg = original_msg
+            record.args = original_args
+            if hasattr(record, "location"):
+                delattr(record, "location")
 
 
 def configure_logging() -> None:
