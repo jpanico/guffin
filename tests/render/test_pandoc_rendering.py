@@ -150,6 +150,24 @@ class TestVertexTreeToPandocPageVertex:
         assert _collect_text(doc.metadata["identifier"]) == "urn:isbn:1"
         assert [_collect_text(entry) for entry in doc.metadata["author"].content] == ["An Author"]
 
+    def test_metadata_values_are_smart_parsed(self) -> None:
+        """Metadata gets the same inline parse as body text — smart punctuation included.
+
+        A straight apostrophe left raw in the metadata inlines is escaped by the Typst
+        writer (backslash-apostrophe), which Bergfink's string-literal context then shows
+        verbatim in the PDF; the smart parse turns it into its curly form up front.
+        """
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
+        publisher = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="publisher", domain=AttributeDomain.GUFFIN), link=link
+            ),
+            values=(LiteralValue(value="Lippincott's Monthly Magazine"),),
+        )
+        page = PageVertex(uid="page00001", title="Doc", attribute_assignments=[publisher])
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page]), {}, {})
+        assert _collect_text(doc.metadata["publisher"]) == "Lippincott’s Monthly Magazine"
+
     def test_title_in_header_renders_h1_not_metadata(self) -> None:
         """title_in_header=True renders page title as H1 body block, not metadata."""
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="My Page")])

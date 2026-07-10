@@ -252,12 +252,16 @@ _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
 
 
 def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) -> dict[str, pf.MetaValue]:
-    """Build the Pandoc document metadata from a root vertex's metadata-domain attributes.
+    r"""Build the Pandoc document metadata from a root vertex's metadata-domain attributes.
 
     Only attributes in :data:`_METADATA_DOMAIN` whose name is recognised by
     :data:`_METADATA_KEY_BY_NAME` contribute; each maps to its Pandoc key.  ``author`` becomes a
     :class:`~panflute.MetaList` (one entry per value — e.g. one per author); every other key becomes a
     :class:`~panflute.MetaInlines` of the comma-joined values.  Attributes with no values are skipped.
+    Each value string is parsed as inline Pandoc Markdown (one batched :func:`parse_inline_md`
+    call), so metadata gets the same treatment as body text — in particular smart punctuation,
+    without which a straight apostrophe reaches a format writer raw and gets escaped into the
+    output (e.g. Typst ``\'``).
 
     Args:
         attribute_assignments: The root vertex's attribute assignments, or ``None``.
@@ -265,7 +269,7 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
     Returns:
         A ``{pandoc-key: MetaValue}`` mapping (possibly empty).
     """
-    metadata: dict[str, pf.MetaValue] = {}
+    texts_by_key: dict[str, list[str]] = {}
     for assignment in attribute_assignments or ():
         if assignment.attribute.definition.domain != _METADATA_DOMAIN:
             continue
@@ -275,11 +279,22 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
         value_strings: list[str] = [attribute_value_text(value) for value in assignment.values]
         if not value_strings:
             continue
-        if key == "author":
-            metadata[key] = pf.MetaList(*[pf.MetaInlines(pf.Str(text)) for text in value_strings])
-        else:
-            metadata[key] = pf.MetaInlines(pf.Str(", ".join(value_strings)))
-    return metadata
+        texts_by_key[key] = value_strings if key == "author" else [", ".join(value_strings)]
+    if not texts_by_key:
+        return {}
+    inline_map: Final[InlineMap] = parse_inline_md([text for texts in texts_by_key.values() for text in texts])
+
+    def _inlines(text: str) -> list[pf.Inline]:
+        return list(inline_map.get(text, [pf.Str(text)]))
+
+    return {
+        key: (
+            pf.MetaList(*[pf.MetaInlines(*_inlines(text)) for text in texts])
+            if key == "author"
+            else pf.MetaInlines(*_inlines(texts[0]))
+        )
+        for key, texts in texts_by_key.items()
+    }
 
 
 def _attribute_pill_blocks(
