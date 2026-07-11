@@ -12,9 +12,12 @@ from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import ImageVertex, PageVertex, PdfVertex, TextVertex
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
-from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets, fetch_asset, fetch_assets
+from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, fetch_asset, fetch_assets
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
 from guffin.roam.primitives import Uid
@@ -393,3 +396,39 @@ class TestFetchAndEnrichAssets:
         assert images
         for image in images:
             assert image.original_image_size == ImageSize(width=500, height=477)
+
+
+class TestCoverImagePath:
+    """cover_image_path() is a pure lookup: the cover's fetched location from an existing fetch result."""
+
+    @staticmethod
+    def _covered_tree() -> VertexTree:
+        """A page root whose cover-image block ref names an image vertex among the refs."""
+        cover = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="cover-image", domain=AttributeDomain.GUFFIN),
+                link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1"),
+            ),
+            values=(LiteralValue(value="((imgcover1))"),),
+        )
+        page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[cover])
+        image = ImageVertex(
+            uid="imgcover1", source=_IMAGE_URL, media_type=MediaType.JPEG, scaled_image_size=ImageSize()
+        )
+        return VertexTree(tree_vertices=[page], ref_vertices=[image])
+
+    def test_returns_the_fetched_path(self) -> None:
+        """The cover vertex's AssetRef path is returned from the mapping."""
+        refs = {"imgcover1": AssetRef(uid="imgcover1", path=Path("/tmp/assets/cover.jpg"), size=ImageSize())}
+        assert cover_image_path(self._covered_tree(), refs) == Path("/tmp/assets/cover.jpg")
+
+    def test_none_when_no_cover_declared(self) -> None:
+        """A tree whose root declares no cover resolves to None."""
+        tree = VertexTree(tree_vertices=[PageVertex(uid="pageroot1", title="Doc")])
+        assert cover_image_path(tree, {}) is None
+
+    def test_none_with_warning_when_cover_not_fetched(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A resolvable cover whose asset is absent from the fetch result yields None with a warning."""
+        with caplog.at_level(logging.WARNING, logger="guffin.render.asset_fetch"):
+            assert cover_image_path(self._covered_tree(), {}) is None
+        assert any("was not fetched" in record.message for record in caplog.records)

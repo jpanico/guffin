@@ -49,7 +49,7 @@ from guffin.model.publishing_semantics import drop_unpublished
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
-from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets, fetch_cover_image
+from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
 from guffin.render.callout_theme import callout_accent, callout_title_tint
 from guffin.render.epub_post_processing import restore_matter_divisions, stamp_titlepage_provenance
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
@@ -229,7 +229,7 @@ def render(
         }
         # A root-declared cover-image attribute supplies the package cover (content-driven,
         # whatever the profile): Pandoc generates the cover document and manifest entry from it.
-        cover_path: Final[Path | None] = fetch_cover_image(content, api_endpoint, Path(tmp), cache_dir)
+        cover_path: Final[Path | None] = cover_image_path(content, asset_refs)
         # The provenance rides the title page when one is emitted (stamped after packaging, below);
         # otherwise it renders as an end-of-document colophon block — mirroring the PDF placement.
         provenance: Final[Provenance | None] = render_bundle.provenance if options.emit_colophon else None

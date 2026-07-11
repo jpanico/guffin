@@ -56,7 +56,7 @@ from guffin.model.publishing_semantics import (
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex, PdfVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
-from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets, fetch_cover_image
+from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
 from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -471,10 +471,13 @@ def render(
         fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(
             content, api_endpoint, Path(tmp), cache_dir
         )
+        enriched_tree: Final[VertexTree] = fetched[0]
+        asset_refs: Final[dict[Uid, AssetRef]] = fetched[1]
         # A root-declared cover-image attribute renders as a full-bleed cover page ahead of the
-        # title page (content-driven, whatever the profile); the fetched file lives in the same
-        # temporary directory as the content assets, so the template args are built here.
-        cover_path: Final[Path | None] = fetch_cover_image(content, api_endpoint, Path(tmp), cache_dir)
+        # title page (content-driven, whatever the profile); the cover was fetched with the rest
+        # of the assets above, so this is a lookup — and its file lives in the same temporary
+        # directory, which is why the template args are built here.
+        cover_path: Final[Path | None] = cover_image_path(content, asset_refs)
         template_args: Final[list[str]] = _typst_template_args(
             bundled_dir,
             template_path,
@@ -487,8 +490,6 @@ def render(
             cover_path,
         )
         extra_args: list[str] = [*engine_args, *template_args]
-        enriched_tree: Final[VertexTree] = fetched[0]
-        asset_refs: Final[dict[Uid, AssetRef]] = fetched[1]
         # Only image assets feed the document build: PDF vertices render as links to their
         # remote source, which _apply_pdf_embeds rewrites below into inline pages or bare filename
         # text (the PDF file itself is never embedded).

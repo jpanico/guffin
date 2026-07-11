@@ -21,8 +21,8 @@ Public symbols:
 - :func:`fetch_and_enrich_assets` — :func:`fetch_assets` plus tree enrichment; returns the
   tree with ``original_image_size`` (images) and ``original_file_name`` (PDFs) populated,
   together with the ``{uid: AssetRef}`` mapping.
-- :func:`fetch_cover_image` — fetch the cover image a tree's root vertex references
-  (its ``cover-image`` block reference) to a local directory; return its path, or ``None``
+- :func:`cover_image_path` — pure lookup: the fetched local path of the cover image a
+  tree's root vertex references, resolved against a :func:`fetch_assets` result; ``None``
   when no cover is declared.
 """
 
@@ -257,33 +257,30 @@ def fetch_and_enrich_assets(
 
 
 @validate_call
-def fetch_cover_image(
-    vertex_tree: VertexTree,
-    api_endpoint: ApiEndpoint,
-    asset_dir: Path,
-    cache_dir: Path | None = None,
-) -> Path | None:
-    """Fetch the cover image referenced by *vertex_tree*'s root vertex, or return ``None``.
+def cover_image_path(vertex_tree: VertexTree, asset_refs: Mapping[Uid, AssetRef]) -> Path | None:
+    """Return the fetched local path of the cover image *vertex_tree*'s root references, or ``None``.
 
-    Resolves the root vertex's ``cover-image`` block reference to the
-    :class:`~guffin.model.vertex.ImageVertex` it points at
-    (:func:`~guffin.model.publishing_semantics.cover_image_vertex`), then fetches that vertex's
-    asset through the ordinary single-asset path (:func:`fetch_asset`), writing it into
-    *asset_dir*.
+    A pure lookup over already-fetched assets: resolves the root vertex's ``cover-image`` block
+    reference to the :class:`~guffin.model.vertex.ImageVertex` it names
+    (:func:`~guffin.model.publishing_semantics.cover_image_vertex`) and returns that vertex's
+    fetched location from *asset_refs* — the mapping produced by :func:`fetch_assets`, whose
+    scan already covers referenced vertices, so the cover is fetched exactly once, under the
+    tree-wide filename-claim coordination.
 
     Args:
         vertex_tree: The vertex tree whose root may reference a cover image block.
-        api_endpoint: Roam Local API endpoint (URL + bearer token).
-        asset_dir: Directory where the fetched cover file is written.
-        cache_dir: Optional directory for caching downloaded assets across runs.
+        asset_refs: The ``{uid: AssetRef}`` mapping of the tree's fetched assets.
 
     Returns:
-        The local path of the written cover file, or ``None`` when the root declares no
-        (resolvable) ``cover-image`` attribute.
+        The cover file's local path; ``None`` when the root references no (resolvable) cover,
+        or — with a warning — when the cover's asset is absent from *asset_refs* (its fetch
+        failed and was already warned about by :func:`fetch_assets`).
     """
     cover_vertex: Final[ImageVertex | None] = cover_image_vertex(vertex_tree)
     if cover_vertex is None:
         return None
-    cover_ref: Final[AssetRef] = fetch_asset(cover_vertex, api_endpoint, asset_dir, cache_dir)
-    logger.info("Fetched cover image to %s", cover_ref.path)
+    cover_ref: Final[AssetRef | None] = asset_refs.get(cover_vertex.uid)
+    if cover_ref is None:
+        logger.warning("cover image uid=%r was not fetched; rendering without a cover", cover_vertex.uid)
+        return None
     return cover_ref.path
