@@ -4,6 +4,8 @@ Each distinct EPUB is rendered once via a module-scoped fixture and shared acros
 tests, so the (slow) Pandoc subprocess is spawned per artifact rather than per assertion.
 """
 
+import hashlib
+import json
 import zipfile
 from pathlib import Path
 from typing import Final
@@ -11,6 +13,7 @@ from typing import Final
 import pytest
 import regex
 from conftest import article5_node_tree
+from pydantic import HttpUrl
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
@@ -506,3 +509,51 @@ class TestBodyDivisionRestoration:
     def test_scaffold_attribute_is_stripped(self, tagged_book_epub: Path) -> None:
         """The data-guffin-matter scaffold never reaches the packaged e-book."""
         assert "data-guffin-matter" not in _all_text(tagged_book_epub)
+
+
+_COVER_URL: Final[str] = (
+    "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fcover.jpeg?alt=media&token=cov1"
+)
+
+
+def _cover_bundle() -> RenderBundle:
+    """A one-paragraph page whose root declares a cover-image attribute (image-markdown wrapped)."""
+    link: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
+    cover: Final[AttributeAssignment] = AttributeAssignment(
+        attribute=AttributeInstance(definition=Attribute(name="cover-image", domain=AttributeDomain.GUFFIN), link=link),
+        values=(LiteralValue(value=f"![cover]({_COVER_URL})"),),
+    )
+    page: Final[PageVertex] = PageVertex(
+        uid="page00004", title="Covered Doc", children=["text00001"], attribute_assignments=[cover]
+    )
+    text: Final[TextVertex] = TextVertex(uid="text00001", text="Some prose.")
+    return RenderBundle(content=VertexTree(tree_vertices=[page, text]))
+
+
+class TestCoverImage:
+    """A root-declared cover-image attribute supplies the EPUB package cover."""
+
+    def test_cover_lands_in_package(self, tmp_path: Path) -> None:
+        """The cover is fetched (via the seeded cache) and manifested with properties=cover-image."""
+        cache_dir: Final[Path] = tmp_path / "cache"
+        cache_dir.mkdir()
+        # Seed the asset cache under the URL's SHA key so the render needs no live Roam API.
+        cache_key: Final[str] = hashlib.sha256(str(HttpUrl(_COVER_URL)).encode()).hexdigest()
+        flower: Final[Path] = Path(__file__).parent.parent / "fixtures" / "images" / "flower.jpeg"
+        (cache_dir / f"{cache_key}.jpg").write_bytes(flower.read_bytes())
+        (cache_dir / f"{cache_key}.meta.json").write_text(
+            json.dumps({"original_file_name": "cover.jpeg"}), encoding="utf-8"
+        )
+        render(
+            _cover_bundle(),
+            profile=BookProfile(),
+            filename_stem="covered",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path, cache_dir=cache_dir),
+        )
+        opf: Final[str] = _opf(tmp_path / "covered.epub")
+        assert 'properties="cover-image"' in opf
+
+    def test_no_cover_no_manifest_entry(self, article5_book_epub: Path) -> None:
+        """A coverless book manifests no cover-image entry."""
+        assert 'properties="cover-image"' not in _opf(article5_book_epub)

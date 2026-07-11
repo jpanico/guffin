@@ -315,6 +315,14 @@ $for(include-before)$
 $include-before$
 $endfor$
 
+$if(cover-image)$
+// Cover: a full-bleed page ahead of the title page — the cover is exterior to the book
+// interior, so it carries no header, footer, or page chrome.
+#page(margin: 0pt, header: none, footer: none)[
+  #image("$cover-image$", width: 100%, height: 100%, fit: "cover")
+]
+$endif$
+
 $if(titlepage)$
 $titlepage.typ()$
 $endif$

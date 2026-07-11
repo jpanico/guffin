@@ -167,6 +167,17 @@ render its overflow rows on top of one another. `default_styles.typ` adds
 `#show figure.where(kind: table): set block(breakable: true)` so tall tables break across page
 boundaries instead (Typst repeats the `table.header` row on each continuation page).
 
+#### Full-bleed cover page (`bergfink.typst`)
+
+A new `cover-image` Pandoc variable (a local image path, passed by `pdf_rendering.py` from the
+export root's `cover-image::` guffin attribute) renders a full-bleed cover page ahead of the
+title page: `#page(margin: 0pt, header: none, footer: none)` wrapping an
+`image(width: 100%, height: 100%, fit: "cover")`. The cover is exterior to the book interior
+(per the CMOS framing in `model/chicago_structure.py`), so it carries no page chrome; `fit:
+"cover"` fills the page while preserving aspect ratio, so cover art should be produced at the
+page's aspect ratio (ebook-retail convention: 1:1.5 portrait, e.g. 1600×2400). Unset, nothing
+is emitted.
+
 #### W3CDTF reduced-precision dates (`bergfink.typst`, `default_styles.typ`, `titlepage.typ`)
 
 Upstream parses the Pandoc `date` variable by splitting on `-` and blindly indexing parts 0/1/2

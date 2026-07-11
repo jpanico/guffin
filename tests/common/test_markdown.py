@@ -3,6 +3,7 @@
 import pytest
 
 from guffin.common.markdown import (
+    MD_IMAGE_RE,
     contains_fenced_code_block,
     hard_broken_markdown,
     is_fenced_code_block,
@@ -178,3 +179,24 @@ class TestHardBrokenMarkdown:
     def test_blank_line_stays_a_paragraph_boundary(self) -> None:
         """An authored blank line remains a paragraph boundary, not a hard break."""
         assert hard_broken_markdown("para one\n\npara two") == "para one\n\npara two"
+
+
+class TestMdImageRe:
+    """MD_IMAGE_RE matches a CommonMark inline image and captures its alt text and destination."""
+
+    def test_matches_image_with_alt(self) -> None:
+        """A standard image match captures both named groups."""
+        match = MD_IMAGE_RE.fullmatch("![the cover](https://example.com/cover.jpeg)")
+        assert match is not None
+        assert match.group("alt") == "the cover"
+        assert match.group("url") == "https://example.com/cover.jpeg"
+
+    def test_matches_empty_alt(self) -> None:
+        """An empty alt text still matches (the form Roam stores for a pasted image)."""
+        match = MD_IMAGE_RE.fullmatch("![](https://example.com/cover.jpeg)")
+        assert match is not None
+        assert match.group("alt") == ""
+
+    def test_plain_link_is_not_an_image(self) -> None:
+        """A CommonMark link without the leading bang does not fullmatch."""
+        assert MD_IMAGE_RE.fullmatch("[text](https://example.com/)") is None

@@ -22,7 +22,8 @@ from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.pandoc_rendering import vertex_tree_to_pandoc
-from guffin.render.pdf_rendering import _apply_pdf_embeds, _prepare_pdf_embeds, _typst_str
+from guffin.render.pdf_rendering import _apply_pdf_embeds, _prepare_pdf_embeds, _typst_str, _typst_template_args
+from guffin.render.project import TopLevelDivision
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fa.pdf.enc?alt=media&token=aaa"
 
@@ -168,3 +169,31 @@ class TestApplyPdfEmbeds:
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         _apply_pdf_embeds(doc, specs)
         assert not any(isinstance(b, pf.RawBlock) for b in doc.content)
+
+
+class TestTypstTemplateArgs:
+    """_typst_template_args maps the cover image onto the Bergfink cover-image variable."""
+
+    @staticmethod
+    def _args(cover_image: Path | None) -> list[str]:
+        return _typst_template_args(
+            bundled_dir=Path("/bundled"),
+            template_path=Path("/bundled/bergfink.typst"),
+            template_dir=None,
+            number_sections=False,
+            top_level_division=TopLevelDivision.SECTION,
+            emit_title_page=True,
+            emit_toc=False,
+            provenance=None,
+            cover_image=cover_image,
+        )
+
+    def test_cover_image_variable_passed(self) -> None:
+        """A cover path becomes a -V cover-image=<path> pair."""
+        args = self._args(Path("/tmp/assets/cover.jpg"))
+        assert "cover-image=/tmp/assets/cover.jpg" in args
+        assert args[args.index("cover-image=/tmp/assets/cover.jpg") - 1] == "-V"
+
+    def test_no_cover_no_variable(self) -> None:
+        """Without a cover path, no cover-image variable is passed."""
+        assert not any(arg.startswith("cover-image=") for arg in self._args(None))

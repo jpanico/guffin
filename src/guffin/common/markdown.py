@@ -7,6 +7,7 @@ Public symbols:
 - :data:`LIST_LINE_PREFIXES` — the CommonMark bullet-list markers a list-item line starts with.
 - :data:`CODE_BLOCK_RE` — compiled regex matching a backtick-fenced code block where fences
   may share a line with adjacent content.
+- :data:`MD_IMAGE_RE` — compiled regex matching a CommonMark inline image ``![alt](url)``.
 - :data:`MD_LINK_RE` — compiled regex matching a CommonMark inline link ``[text](url)``.
 - :func:`is_fenced_code_block` — whether a string is a single CommonMark fenced code block.
 - :func:`contains_fenced_code_block` — whether any line of a string opens a fenced code block.
@@ -48,6 +49,15 @@ Numbered groups (no named groups):
 
 LIST_LINE_PREFIXES: Final[tuple[str, ...]] = ("- ", "* ", "+ ")
 """The CommonMark bullet-list markers: a line starting with one of these is a list-item line."""
+
+MD_IMAGE_RE: Final[regex.Pattern[str]] = regex.compile(r"!\[(?P<alt>[^\]]*)\]\((?P<url>[^)]+)\)")
+"""Compiled regex matching a CommonMark inline image ``![alt](url)``.
+
+Named groups:
+
+- ``alt`` — the image's alt text; may be empty.
+- ``url`` — the image destination.
+"""
 
 MD_LINK_RE: Final[regex.Pattern[str]] = regex.compile(r"\[([^\]]*)\]\([^)]*\)")
 """Compiled regex matching a CommonMark inline link ``[text](url)``.

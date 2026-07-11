@@ -15,6 +15,7 @@
   - id: 12848
   - id: 12857
   - id: 12900
+  - id: 12972
   refs:
   - id: 4223
   page: null
@@ -93,6 +94,42 @@
   props: null
   title: null
   attrs: null
+- uid: kmhD9g62Q
+  id: 12972
+  string: I
+  order: 4
+  heading: 2
+  children:
+  - id: 12973
+  - id: 12975
+  - id: 12976
+  refs: null
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - kmhD9g62Q
+      value:
+      - uid
+      - kmhD9g62Q
+    - source:
+      - uid
+      - GCcHuJCUc
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - GCcHuJCUc
+      value:
+      - uid
+      - BxGxeeGk1
 - uid: UBFOf9XVN
   id: 12846
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -155,42 +192,6 @@
       value:
       - uid
       - BxGxeeGk1
-- uid: 2CRdgs-X4
-  id: 12869
-  string: The artist is the creator of beautiful things. To reveal art and conceal
-    the artist is art’s aim. The critic is he who can translate into another manner
-    or a new material his impression of beautiful things.
-  order: 2
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12857
-  props: null
-  title: null
-  attrs: null
-- uid: n6XwTJlHd
-  id: 12864
-  string: Those who find beautiful meanings in beautiful things are the cultivated.
-    For these there is hope. They are the elect to whom beautiful things mean only
-    beauty.
-  order: 4
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12857
-  props: null
-  title: null
-  attrs: null
 - uid: tLgD4E9KV
   id: 12851
   string: 'date:: 1890'
@@ -215,13 +216,7 @@
   heading: 2
   children:
   - id: 12859
-  - id: 12863
-  - id: 12864
-  - id: 12865
-  - id: 12866
-  - id: 12867
   - id: 12868
-  - id: 12869
   - id: 12970
   refs: null
   page:
@@ -250,6 +245,24 @@
       value:
       - uid
       - BxGxeeGk1
+- uid: JyBL3GL_G
+  id: 12974
+  string: 'element-type:: chapter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12972
+  - id: 12973
+  props: null
+  title: null
+  attrs: null
 - uid: hHUE8oD5s
   id: 12848
   string: 'guffin-meta:: #.rm-g'
@@ -262,6 +275,7 @@
   - id: 12852
   - id: 12854
   - id: 12855
+  - id: 13099
   refs:
   - id: 321
   - id: 11839
@@ -369,6 +383,22 @@
       - uid
       - tLgD4E9KV
       value: ' 1890'
+  - - source:
+      - uid
+      - hHUE8oD5s
+      value:
+      - uid
+      - hHUE8oD5s
+    - source:
+      - uid
+      - zhL1WaqhF
+      value:
+      - uid
+      - Qae94M2_3
+    - source:
+      - uid
+      - zhL1WaqhF
+      value: ' ![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
 - uid: Aa-q7QL7i
   id: 12903
   string: 'element-type:: copyright-page'
@@ -456,24 +486,6 @@
   props: null
   title: null
   attrs: null
-- uid: 4LLq-95BT
-  id: 12863
-  string: The highest as the lowest form of criticism is a mode of autobiography.
-    Those who find ugly meanings in beautiful things are corrupt without being charming.
-    This is a fault.
-  order: 3
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12857
-  props: null
-  title: null
-  attrs: null
 - uid: uEYS1oQeC
   id: 12855
   string: 'rights:: Copyright J. B. Lippincott Company'
@@ -491,26 +503,9 @@
   props: null
   title: null
   attrs: null
-- uid: GHGaHfSEk
-  id: 12865
-  string: There is no such thing as a moral or an immoral book. Books are well written,
-    or badly written. That is all.
-  order: 5
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12857
-  props: null
-  title: null
-  attrs: null
 - uid: QvjDgd-ZA
   id: 12970
-  string: '[[>]] [[!INFO]] The Uncopyright Page embedded here has no `children_layout`
+  string: '[[>]] [[!INFO]] The Preface Page embedded here has no `children_layout`
     explicitly set '
   order: 1
   heading: null
@@ -524,6 +519,25 @@
   parents:
   - id: 12842
   - id: 12857
+  props: null
+  title: null
+  attrs: null
+- uid: XX2yV89Xk
+  id: 12976
+  string: '[[>]] [[!INFO]] The `chapter I` Page embedded here has `children_layout`
+    explicitly set to number'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12972
   props: null
   title: null
   attrs: null
@@ -563,11 +577,12 @@
   attrs: null
 - uid: -zvFCYXWb
   id: 12868
-  string: All art is quite useless.
-  order: 8
+  string: '{{embed: [[Dorian Preface]]}}'
+  order: 2
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 12961
   page:
     id: 12842
   children_view_type: null
@@ -577,21 +592,42 @@
   props: null
   title: null
   attrs: null
-- uid: 3V5ULoeKO
-  id: 12866
-  string: The nineteenth century dislike of realism is the rage of Caliban seeing
-    his own face in a glass.
-  order: 6
+- uid: 83g00A144
+  id: 12975
+  string: '{{embed: [[Dorian chapter I]]}}'
+  order: 2
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 12977
   page:
     id: 12842
   children_view_type: null
   parents:
   - id: 12842
-  - id: 12857
+  - id: 12972
   props: null
+  title: null
+  attrs: null
+- uid: zhL1WaqhF
+  id: 13099
+  string: 'cover-image:: ![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
+  order: 6
+  heading: null
+  children: null
+  refs:
+  - id: 13100
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12848
+  props:
+    image-size:
+      ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33
+      : width: 273
+        height: null
   title: null
   attrs: null
 - uid: QE6k_NSRx
@@ -631,34 +667,38 @@
   props: null
   title: null
   attrs: null
-- uid: o2r7a0YRn
-  id: 12867
-  string: The nineteenth century dislike of romanticism is the rage of Caliban not
-    seeing his own face in a glass. The moral life of man forms part of the subject-matter
-    of the artist, but the morality of art consists in the perfect use of an imperfect
-    medium. No artist desires to prove anything. Even things that are true can be
-    proved. No artist has ethical sympathies. An ethical sympathy in an artist is
-    an unpardonable mannerism of style. No artist is ever morbid. The artist can express
-    everything. Thought and language are to the artist instruments of an art. Vice
-    and virtue are to the artist materials for an art. From the point of view of form,
-    the type of all the arts is the art of the musician. From the point of view of
-    feeling, the actor’s craft is the type. All art is at once surface and symbol.
-    Those who go beneath the surface do so at their peril. Those who read the symbol
-    do so at their peril. It is the spectator, and not life, that art really mirrors.
-    Diversity of opinion about a work of art shows that the work is new, complex,
-    and vital. When critics disagree, the artist is in accord with himself. We can
-    forgive a man for making a useful thing as long as he does not admire it. The
-    only excuse for making a useless thing is that one admires it intensely.
-  order: 7
+- uid: GCcHuJCUc
+  id: 12973
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
   heading: null
-  children: null
-  refs: null
+  children:
+  - id: 12974
+  refs:
+  - id: 321
+  - id: 11839
   page:
     id: 12842
   children_view_type: null
   parents:
   - id: 12842
-  - id: 12857
+  - id: 12972
   props: null
   title: null
-  attrs: null
+  attrs:
+  - - source:
+      - uid
+      - GCcHuJCUc
+      value:
+      - uid
+      - GCcHuJCUc
+    - source:
+      - uid
+      - JyBL3GL_G
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - JyBL3GL_G
+      value: ' chapter'

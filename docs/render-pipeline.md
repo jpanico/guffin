@@ -209,6 +209,16 @@ generated title page, while on the PDF side the bundled Bergfink template was ex
 `titlepage.typ` (upstream Bergfink renders only title, subtitle, authors, date). `identifier` is
 catalog metadata only (EPUB OPF `dc:identifier`); no format renders it on the title page.
 
+The **cover** is also root metadata — `cover-image::`, whose value is a Roam-hosted image (the
+bare Cloud Firestore URL, or the `![alt](url)` form Roam stores for a pasted image) — never a
+`StructuralElement`, since per CMOS the cover is exterior to the matter-classified interior. It
+is content-driven (whatever the profile): the renderers fetch it through the shared asset cache
+(`render/asset_fetch.fetch_cover_image`) and map it per format — EPUB `--epub-cover-image` (the
+package cover reading systems display), PDF a full-bleed cover page *preceding* the title page
+(the Bergfink `cover-image` variable), Markdown nothing. Cover art should be produced at the
+target page's aspect ratio (ebook-retail convention: 1:1.5 portrait, e.g. 1600×2400); the PDF
+cover uses Typst `fit: "cover"`, which fills the page cropping any aspect mismatch.
+
 ### Phases 0 & 2 (prepare / convert) — structure _(applied)_
 
 Four of the `StructuralPolicy` directives (`top_level_division`, `number_sections`, title page,
@@ -359,7 +369,7 @@ pure taxonomy with no other `guffin` dependencies.
   transclusion target was removed vanishes with it, to a fixpoint. An export root tagged
   `publish:: false` raises — the export target cannot be omitted from its own output.
 - **`validate_semantics(tree)`** — the vocabulary's validation pass (built on `common/validation`),
-  accumulating seven validators: `all_attributes_anchored` (every recognized guffin attribute sits
+  accumulating eight validators: `all_attributes_anchored` (every recognized guffin attribute sits
   on one of the vertex types its `AttributeAnchor` names — the `AttributeAnchor.vertex_types` correspondence is the
   enforced invariant), `all_element_type_values_legal` / `all_matter_values_legal` /
   `all_pdf_render_values_legal` / `all_publish_values_legal` (every `element-type` / `matter` /
@@ -367,7 +377,8 @@ pure taxonomy with no other `guffin` dependencies.
   literal), `all_date_values_legal` (every `date` value is a W3CDTF reduced-precision date —
   `YYYY`, `YYYY-MM`, or `YYYY-MM-DD` — the year-first ISO 8601 profile EPUB's `dc:date` takes, of
   which CMOS's bare-year publication date is the shortest form; the Bergfink PDF template renders
-  the reduced-precision forms verbatim), and `all_matter_tags_at_section_level`
+  the reduced-precision forms verbatim), `all_cover_image_values_legal` (every `cover-image` value
+  carries an http(s) image URL), and `all_matter_tags_at_section_level`
   (a `matter` tag sits at the book's section level — level 1, or level 2 in a parts book, since
   that is where chapter-shaped sections live). Run by `cli/common.fetch_roam_trees` on the
   transcribed content (tree and ref vertices). Consequences differ per command: `dump-roam-tree`

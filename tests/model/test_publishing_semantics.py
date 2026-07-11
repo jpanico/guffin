@@ -24,12 +24,15 @@ from guffin.model.publishing_semantics import (
     PublishingSemantics,
     _anchor_mismatch,
     all_attributes_anchored,
+    all_cover_image_values_legal,
     all_date_values_legal,
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
     all_pdf_render_values_legal,
     all_publish_values_legal,
+    cover_image_of,
+    cover_image_of_vertex,
     date_of,
     drop_unpublished,
     element_type_of,
@@ -94,7 +97,16 @@ class TestPublishingSemanticsMembers:
     def test_root_anchored_metadata_members(self) -> None:
         """The document-metadata members are root-anchored and carry their attribute names."""
         root_members = {m.value.name for m in PublishingSemantics if m.value.anchor is AttributeAnchor.ROOT}
-        assert root_members == {"title", "subtitle", "authors", "date", "publisher", "rights", "identifier"}
+        assert root_members == {
+            "title",
+            "subtitle",
+            "authors",
+            "date",
+            "publisher",
+            "rights",
+            "identifier",
+            "cover-image",
+        }
 
     def test_heading_anchored_tag_members(self) -> None:
         """The heading-tag members are heading-anchored."""
@@ -855,6 +867,74 @@ class TestDateOf:
         """A non-W3CDTF value is rejected (via the common verifier)."""
         with pytest.raises(ValueError, match="W3CDTF"):
             date_of(_assignment("date", "July 10, 1298"))
+
+
+_COVER_URL = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fcover.jpeg?alt=media&token=cov1"
+
+
+class TestCoverImageOf:
+    """cover_image_of() reads a cover-image assignment's sole value as the image's URL."""
+
+    def test_bare_url(self) -> None:
+        """A bare http(s) URL is accepted."""
+        assert str(cover_image_of(_assignment("cover-image", _COVER_URL))) == _COVER_URL
+
+    def test_image_markdown_is_unwrapped(self) -> None:
+        """A CommonMark image ![alt](url) yields its destination URL."""
+        assert str(cover_image_of(_assignment("cover-image", f"![cover]({_COVER_URL})"))) == _COVER_URL
+
+    def test_rejects_wrong_attribute(self) -> None:
+        """An assignment for a different attribute is rejected."""
+        with pytest.raises(ValueError, match="cover-image"):
+            cover_image_of(_assignment("matter", _COVER_URL))
+
+    def test_rejects_non_url_value(self) -> None:
+        """A value that is not an http(s) URL is rejected."""
+        with pytest.raises(ValueError, match="http"):
+            cover_image_of(_assignment("cover-image", "a lovely painting"))
+
+
+class TestCoverImageOfVertex:
+    """cover_image_of_vertex() resolves a vertex's cover-image attribute, tolerating absence and bad values."""
+
+    def test_attributed_vertex_resolves(self) -> None:
+        """A page carrying the attribute resolves to its URL."""
+        page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[_assignment("cover-image", _COVER_URL)])
+        assert str(cover_image_of_vertex(page)) == _COVER_URL
+
+    def test_unattributed_vertex_is_none(self) -> None:
+        """A vertex with no cover-image attribute resolves to None."""
+        assert cover_image_of_vertex(PageVertex(uid="pageroot1", title="Doc")) is None
+
+    def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A non-URL value is ignored with a warning."""
+        page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[_assignment("cover-image", "not a url")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert cover_image_of_vertex(page) is None
+        assert any("ignoring cover-image" in record.message for record in caplog.records)
+
+
+class TestAllCoverImageValuesLegal:
+    """all_cover_image_values_legal() requires every cover-image value to carry an http(s) URL."""
+
+    def test_legal_value_passes(self) -> None:
+        """A URL-bearing value produces no error."""
+        tree = _attributed_tree(["cover-image"], [], AttributeDomain.GUFFIN, value=_COVER_URL)
+        assert all_cover_image_values_legal(tree) is None
+
+    def test_illegal_value_is_reported(self) -> None:
+        """A non-URL value is a violation."""
+        tree = _attributed_tree(["cover-image"], [], AttributeDomain.GUFFIN, value="a lovely painting")
+        error = all_cover_image_values_legal(tree)
+        assert error is not None
+        assert "illegal cover-image values" in error.message
+
+    def test_cover_image_on_heading_is_misanchored(self) -> None:
+        """A cover-image attribute on a non-root heading is reported by the anchor validator."""
+        tree = _attributed_tree([], ["cover-image"], AttributeDomain.GUFFIN, value=_COVER_URL)
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "cover-image" in error.message
 
 
 class TestAllDateValuesLegal:

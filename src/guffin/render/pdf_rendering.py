@@ -56,7 +56,7 @@ from guffin.model.publishing_semantics import (
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex, PdfVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
-from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
+from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets, fetch_cover_image
 from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -117,6 +117,7 @@ def _typst_template_args(
     emit_title_page: bool,
     emit_toc: bool,
     provenance: Provenance | None,
+    cover_image: Path | None,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
 
@@ -141,6 +142,9 @@ def _typst_template_args(
             template — as the Bergfink ``titlepage-provenance`` variable (rendered at the foot of the
             title page) when *emit_title_page* is set, otherwise as ``footer-provenance`` (a line
             below the running page footer); ``None`` passes nothing.
+        cover_image: When set, passes the local image path as the template's ``cover-image``
+            variable, so it renders as a full-bleed cover page ahead of the title page (the cover
+            is exterior to the book interior); ``None`` passes nothing (no cover page).
 
     Returns:
         The Pandoc ``extra_args`` that apply the template (filters, resource path, and variables).
@@ -173,6 +177,9 @@ def _typst_template_args(
     if provenance is not None:
         provenance_var: Final[str] = "titlepage-provenance" if emit_title_page else "footer-provenance"
         args.extend(["-V", f"{provenance_var}={provenance.summary()}"])
+    # The cover page renders only when the `cover-image` variable is set; pass nothing otherwise.
+    if cover_image is not None:
+        args.extend(["-V", f"cover-image={cover_image}"])
     if template_dir is not None:
         args.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
     return args
@@ -448,32 +455,38 @@ def render(
     )
     if profile.structural_policy.emit_toc and not emit_toc:
         logger.info("authored table-of-contents section found; suppressing the generated ToC")
-    template_args: Final[list[str]] = _typst_template_args(
-        bundled_dir,
-        template_path,
-        template_dir,
-        number_sections,
-        profile.structural_policy.top_level_division,
-        profile.structural_policy.emit_title_page,
-        emit_toc,
-        render_bundle.provenance if options.emit_colophon else None,
-    )
     # Typst confines file access to its project root, which Pandoc leaves at its own working
-    # directory; the raw PDF-embed blocks (see _apply_pdf_embeds) read assets by absolute path
-    # from a temporary directory, so the root is widened to the filesystem root.
-    extra_args: list[str] = ["--pdf-engine=typst", "--pdf-engine-opt=--root=/", *template_args]
+    # directory; the raw PDF-embed blocks (see _apply_pdf_embeds) and the cover image read assets
+    # by absolute path from a temporary directory, so the root is widened to the filesystem root.
+    engine_args: Final[list[str]] = ["--pdf-engine=typst", "--pdf-engine-opt=--root=/"]
 
     # Reproducible builds: when GUFFIN_PDF_CREATION_TIMESTAMP is set, pin Typst's PDF creation
     # date (a UNIX timestamp) so the output is byte-identical across runs.  Used by fixture tests.
     creation_timestamp: Final[str | None] = os.environ.get("GUFFIN_PDF_CREATION_TIMESTAMP")
     if creation_timestamp:
-        extra_args.append(f"--pdf-engine-opt=--creation-timestamp={creation_timestamp}")
+        engine_args.append(f"--pdf-engine-opt=--creation-timestamp={creation_timestamp}")
         logger.debug("pinning Typst creation timestamp to %s", creation_timestamp)
 
     with tempfile.TemporaryDirectory() as tmp:
         fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(
             content, api_endpoint, Path(tmp), cache_dir
         )
+        # A root-declared cover-image attribute renders as a full-bleed cover page ahead of the
+        # title page (content-driven, whatever the profile); the fetched file lives in the same
+        # temporary directory as the content assets, so the template args are built here.
+        cover_path: Final[Path | None] = fetch_cover_image(content, api_endpoint, Path(tmp), cache_dir)
+        template_args: Final[list[str]] = _typst_template_args(
+            bundled_dir,
+            template_path,
+            template_dir,
+            number_sections,
+            profile.structural_policy.top_level_division,
+            profile.structural_policy.emit_title_page,
+            emit_toc,
+            render_bundle.provenance if options.emit_colophon else None,
+            cover_path,
+        )
+        extra_args: list[str] = [*engine_args, *template_args]
         enriched_tree: Final[VertexTree] = fetched[0]
         asset_refs: Final[dict[Uid, AssetRef]] = fetched[1]
         # Only image assets feed the document build: PDF vertices render as links to their
