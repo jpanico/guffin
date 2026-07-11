@@ -5,8 +5,10 @@ import logging
 import pytest
 import yaml
 from conftest import FIXTURES_YAML_DIR
-from pydantic import ValidationError
+from pydantic import HttpUrl, ValidationError
 
+from guffin.common.geometry import ImageSize
+from guffin.common.media_type import MediaType
 from guffin.model.attribute import (
     Attribute,
     AttributeDomain,
@@ -32,7 +34,7 @@ from guffin.model.publishing_semantics import (
     all_pdf_render_values_legal,
     all_publish_values_legal,
     cover_image_of,
-    cover_image_of_vertex,
+    cover_image_vertex,
     date_of,
     drop_unpublished,
     element_type_of,
@@ -52,6 +54,7 @@ from guffin.model.publishing_semantics import (
 from guffin.model.vertex import (
     BlockEmbedVertex,
     HeadingVertex,
+    ImageVertex,
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
@@ -869,69 +872,121 @@ class TestDateOf:
             date_of(_assignment("date", "July 10, 1298"))
 
 
-_COVER_URL = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fcover.jpeg?alt=media&token=cov1"
-
-
 class TestCoverImageOf:
-    """cover_image_of() reads a cover-image assignment's sole value as the image's URL."""
+    """cover_image_of() reads a cover-image assignment's sole value as the referenced block's UID."""
 
-    def test_bare_url(self) -> None:
-        """A bare http(s) URL is accepted."""
-        assert str(cover_image_of(_assignment("cover-image", _COVER_URL))) == _COVER_URL
-
-    def test_image_markdown_is_unwrapped(self) -> None:
-        """A CommonMark image ![alt](url) yields its destination URL."""
-        assert str(cover_image_of(_assignment("cover-image", f"![cover]({_COVER_URL})"))) == _COVER_URL
+    def test_block_ref_yields_uid(self) -> None:
+        """A block reference ((uid)) yields the referenced UID."""
+        assert cover_image_of(_assignment("cover-image", "((imgcover1))")) == "imgcover1"
 
     def test_rejects_wrong_attribute(self) -> None:
         """An assignment for a different attribute is rejected."""
         with pytest.raises(ValueError, match="cover-image"):
-            cover_image_of(_assignment("matter", _COVER_URL))
+            cover_image_of(_assignment("matter", "((imgcover1))"))
 
-    def test_rejects_non_url_value(self) -> None:
-        """A value that is not an http(s) URL is rejected."""
-        with pytest.raises(ValueError, match="http"):
-            cover_image_of(_assignment("cover-image", "a lovely painting"))
+    def test_rejects_bare_url(self) -> None:
+        """A raw image URL is rejected — the value must be a block reference."""
+        with pytest.raises(ValueError, match="block reference"):
+            cover_image_of(_assignment("cover-image", "https://example.com/cover.jpeg"))
+
+    def test_rejects_image_markdown(self) -> None:
+        """CommonMark image syntax is rejected — the value must be a block reference."""
+        with pytest.raises(ValueError, match="block reference"):
+            cover_image_of(_assignment("cover-image", "![](https://example.com/cover.jpeg)"))
+
+    def test_rejects_malformed_uid(self) -> None:
+        """A block reference whose UID is not a legal Roam UID is rejected."""
+        with pytest.raises(ValueError, match="block reference"):
+            cover_image_of(_assignment("cover-image", "((not a uid))"))
 
 
-class TestCoverImageOfVertex:
-    """cover_image_of_vertex() resolves a vertex's cover-image attribute, tolerating absence and bad values."""
+def _cover_image_vertex_fixture(target_uid: str = "imgcover1") -> ImageVertex:
+    """An ImageVertex standing in for a referenced cover image block."""
+    return ImageVertex(
+        uid=target_uid,
+        source=HttpUrl("https://firebasestorage.googleapis.com/v0/b/t/o/imgs%2Fcover.jpeg?alt=media&token=cov1"),
+        media_type=MediaType.JPEG,
+        scaled_image_size=ImageSize(),
+    )
 
-    def test_attributed_vertex_resolves(self) -> None:
-        """A page carrying the attribute resolves to its URL."""
-        page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[_assignment("cover-image", _COVER_URL)])
-        assert str(cover_image_of_vertex(page)) == _COVER_URL
 
-    def test_unattributed_vertex_is_none(self) -> None:
-        """A vertex with no cover-image attribute resolves to None."""
-        assert cover_image_of_vertex(PageVertex(uid="pageroot1", title="Doc")) is None
+def _covered_tree(value: str = "((imgcover1))", with_image: bool = True) -> VertexTree:
+    """A page root carrying a cover-image assignment, with the referenced image among the refs."""
+    page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[_assignment("cover-image", value)])
+    refs = [_cover_image_vertex_fixture()] if with_image else []
+    return VertexTree(tree_vertices=[page], ref_vertices=refs)
+
+
+class TestCoverImageVertex:
+    """cover_image_vertex() follows the root's cover-image block ref to the ImageVertex it names."""
+
+    def test_resolves_to_the_referenced_image(self) -> None:
+        """The referenced ImageVertex is returned."""
+        resolved = cover_image_vertex(_covered_tree())
+        assert isinstance(resolved, ImageVertex)
+        assert resolved.uid == "imgcover1"
+
+    def test_unattributed_root_is_none(self) -> None:
+        """A tree whose root carries no cover-image attribute resolves to None."""
+        tree = VertexTree(tree_vertices=[PageVertex(uid="pageroot1", title="Doc")])
+        assert cover_image_vertex(tree) is None
 
     def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
-        """A non-URL value is ignored with a warning."""
-        page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[_assignment("cover-image", "not a url")])
+        """A non-block-ref value is ignored with a warning."""
         with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
-            assert cover_image_of_vertex(page) is None
+            assert cover_image_vertex(_covered_tree(value="not a block ref")) is None
         assert any("ignoring cover-image" in record.message for record in caplog.records)
+
+    def test_unresolvable_target_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A reference to a UID absent from the tree is ignored with a warning."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert cover_image_vertex(_covered_tree(with_image=False)) is None
+        assert any("absent from the tree" in record.message for record in caplog.records)
+
+    def test_non_image_target_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A reference to a non-image vertex is ignored with a warning."""
+        page = PageVertex(
+            uid="pageroot1", title="Doc", attribute_assignments=[_assignment("cover-image", "((textblok1))")]
+        )
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[TextVertex(uid="textblok1", text="not an image")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert cover_image_vertex(tree) is None
+        assert any("not an image" in record.message for record in caplog.records)
 
 
 class TestAllCoverImageValuesLegal:
-    """all_cover_image_values_legal() requires every cover-image value to carry an http(s) URL."""
+    """all_cover_image_values_legal() requires a block ref resolving to an image vertex in the tree."""
 
-    def test_legal_value_passes(self) -> None:
-        """A URL-bearing value produces no error."""
-        tree = _attributed_tree(["cover-image"], [], AttributeDomain.GUFFIN, value=_COVER_URL)
-        assert all_cover_image_values_legal(tree) is None
+    def test_resolvable_image_ref_passes(self) -> None:
+        """A block ref to an in-tree ImageVertex produces no error."""
+        assert all_cover_image_values_legal(_covered_tree()) is None
 
-    def test_illegal_value_is_reported(self) -> None:
-        """A non-URL value is a violation."""
-        tree = _attributed_tree(["cover-image"], [], AttributeDomain.GUFFIN, value="a lovely painting")
-        error = all_cover_image_values_legal(tree)
+    def test_non_block_ref_value_is_reported(self) -> None:
+        """A value that is not a block reference is a violation."""
+        error = all_cover_image_values_legal(_covered_tree(value="![](https://example.com/c.jpg)"))
         assert error is not None
         assert "illegal cover-image values" in error.message
+        assert "block reference" in error.message
+
+    def test_unresolvable_target_is_reported(self) -> None:
+        """A reference to a UID absent from the tree is a violation."""
+        error = all_cover_image_values_legal(_covered_tree(with_image=False))
+        assert error is not None
+        assert "absent from the tree" in error.message
+
+    def test_non_image_target_is_reported(self) -> None:
+        """A reference to a non-image vertex is a violation."""
+        page = PageVertex(
+            uid="pageroot1", title="Doc", attribute_assignments=[_assignment("cover-image", "((textblok1))")]
+        )
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[TextVertex(uid="textblok1", text="not an image")])
+        error = all_cover_image_values_legal(tree)
+        assert error is not None
+        assert "not an image" in error.message
 
     def test_cover_image_on_heading_is_misanchored(self) -> None:
         """A cover-image attribute on a non-root heading is reported by the anchor validator."""
-        tree = _attributed_tree([], ["cover-image"], AttributeDomain.GUFFIN, value=_COVER_URL)
+        tree = _attributed_tree([], ["cover-image"], AttributeDomain.GUFFIN, value="((imgcover1))")
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "cover-image" in error.message

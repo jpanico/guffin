@@ -17,11 +17,13 @@ from pydantic import HttpUrl
 
 from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
+from guffin.common.geometry import ImageSize
+from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex, TextVertex
+from guffin.model.vertex import CodeBlockVertex, HeadingVertex, ImageVertex, PageVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
@@ -517,17 +519,23 @@ _COVER_URL: Final[str] = (
 
 
 def _cover_bundle() -> RenderBundle:
-    """A one-paragraph page whose root declares a cover-image attribute (image-markdown wrapped)."""
+    """A one-paragraph page whose root's cover-image block ref names an in-tree image vertex."""
     link: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
     cover: Final[AttributeAssignment] = AttributeAssignment(
         attribute=AttributeInstance(definition=Attribute(name="cover-image", domain=AttributeDomain.GUFFIN), link=link),
-        values=(LiteralValue(value=f"![cover]({_COVER_URL})"),),
+        values=(LiteralValue(value="((imgcover1))"),),
     )
     page: Final[PageVertex] = PageVertex(
         uid="page00004", title="Covered Doc", children=["text00001"], attribute_assignments=[cover]
     )
     text: Final[TextVertex] = TextVertex(uid="text00001", text="Some prose.")
-    return RenderBundle(content=VertexTree(tree_vertices=[page, text]))
+    cover_image: Final[ImageVertex] = ImageVertex(
+        uid="imgcover1",
+        source=HttpUrl(_COVER_URL),
+        media_type=MediaType.JPEG,
+        scaled_image_size=ImageSize(),
+    )
+    return RenderBundle(content=VertexTree(tree_vertices=[page, text], ref_vertices=[cover_image]))
 
 
 class TestCoverImage:

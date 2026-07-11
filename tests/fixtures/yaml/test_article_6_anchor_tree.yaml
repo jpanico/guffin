@@ -188,6 +188,24 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: l35EHvZ3Z
+  id: 13103
+  string: 'cover-image:: ((-IHBfYM7I))'
+  order: 6
+  heading: null
+  children: null
+  refs:
+  - id: 13100
+  - id: 13102
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12848
+  props: null
+  title: null
+  attrs: null
 - uid: a9LW1J8BT
   id: 12900
   string: Uncopyright
@@ -307,7 +325,7 @@ tree_network:
   - id: 12852
   - id: 12854
   - id: 12855
-  - id: 13099
+  - id: 13103
   refs:
   - id: 321
   - id: 11839
@@ -423,14 +441,16 @@ tree_network:
       - hHUE8oD5s
     - source:
       - uid
-      - zhL1WaqhF
+      - l35EHvZ3Z
       value:
       - uid
       - Qae94M2_3
     - source:
       - uid
-      - zhL1WaqhF
-      value: ' ![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
+      - l35EHvZ3Z
+      value:
+      - uid
+      - -IHBfYM7I
 - uid: Aa-q7QL7i
   id: 12903
   string: 'element-type:: copyright-page'
@@ -639,27 +659,6 @@ tree_network:
   - id: 12842
   - id: 12972
   props: null
-  title: null
-  attrs: null
-- uid: zhL1WaqhF
-  id: 13099
-  string: 'cover-image:: ![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
-  order: 6
-  heading: null
-  children: null
-  refs:
-  - id: 13100
-  page:
-    id: 12842
-  children_view_type: null
-  parents:
-  - id: 12842
-  - id: 12848
-  props:
-    image-size:
-      ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33
-      : width: 273
-        height: null
   title: null
   attrs: null
 - uid: QE6k_NSRx
@@ -1009,6 +1008,26 @@ refs_by_id:
     parents: null
     props: null
     title: rights
+    attrs: null
+  '13102':
+    uid: -IHBfYM7I
+    id: 13102
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 13101
+    children_view_type: null
+    parents:
+    - id: 13101
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33
+        : width: 273
+          height: null
+    title: null
     attrs: null
   '13100':
     uid: Qae94M2_3

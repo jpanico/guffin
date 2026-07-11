@@ -24,10 +24,11 @@ Public symbols:
   assignment's value as a :class:`PdfRender`; :func:`publish_of` — read a ``publish``
   assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
   :data:`~guffin.common.date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
-  :func:`cover_image_of` — read a ``cover-image`` assignment's value as the image's
-  :class:`~pydantic.HttpUrl` (bare, or unwrapped from CommonMark image syntax);
-  :func:`cover_image_of_vertex` — resolve a vertex's ``cover-image`` attribute, tolerating
-  absent or illegal assignments (``None``, warning);
+  :func:`cover_image_of` — read a ``cover-image`` assignment's value as the referenced image
+  block's :data:`~guffin.model.primitives.Uid` (the value is a Roam block reference
+  ``((<uid>))``); :func:`cover_image_vertex` — resolve a tree's cover to the
+  :class:`~guffin.model.vertex.ImageVertex` its root references, tolerating absent or
+  unresolvable assignments (``None``, warning);
   :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
@@ -52,7 +53,8 @@ Public symbols:
   :class:`PdfRender`), :func:`all_publish_values_legal` (every ``publish`` value is a boolean
   literal), :func:`all_date_values_legal` (every ``date`` value is a W3CDTF
   reduced-precision date), :func:`all_cover_image_values_legal` (every ``cover-image`` value
-  carries an http(s) image URL), and :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
+  is a block reference resolving to an image vertex in the tree), and
+  :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
   the book's section level — level 1, or level 2 in a parts book);
   :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
@@ -71,10 +73,9 @@ from itertools import chain
 from typing import Final
 
 import regex
-from pydantic import ConfigDict, Field, HttpUrl, field_validator, validate_call
+from pydantic import ConfigDict, Field, field_validator, validate_call
 
 from guffin.common.date import W3cdtfDate, verified_w3cdtf_date
-from guffin.common.markdown import MD_IMAGE_RE
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 from guffin.model.attribute import (
     Attribute,
@@ -83,9 +84,10 @@ from guffin.model.attribute import (
 from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
 from guffin.model.attribute_assignment import AttributeAssignment, verified_sole_value_text
 from guffin.model.chicago_structure import Matter, StructuralElement
-from guffin.model.primitives import Uid
+from guffin.model.primitives import UID_PATTERN, Uid
 from guffin.model.vertex import (
     HeadingVertex,
+    ImageVertex,
     PdfVertex,
     Vertex,
     find_attribute_assignment,
@@ -171,8 +173,8 @@ class PublishingSemantics(enum.Enum):
         PUBLISHER: The publisher of the work.
         RIGHTS: The rights statement for the work (e.g. a copyright line).
         IDENTIFIER: The document identifier.
-        COVER_IMAGE: The work's cover image — the value is the image's URL (a Roam-hosted
-            Cloud Firestore upload), bare or wrapped in CommonMark image syntax ``![alt](url)``.
+        COVER_IMAGE: The work's cover image — the value is a Roam block reference
+            ``((<uid>))`` to an image block, keeping the cover ordinary, reusable Roam content.
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
         PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a link).
@@ -303,34 +305,42 @@ def date_of(assignment: AttributeAssignment) -> W3cdtfDate:
     return verified_w3cdtf_date(verified_sole_value_text(assignment, PublishingSemantics.DATE.value))
 
 
+_BLOCK_REF_VALUE_RE: Final[regex.Pattern[str]] = regex.compile(rf"\(\((?P<uid>{UID_PATTERN})\)\)")
+"""A Roam block reference ``((<uid>))`` as an attribute-value token (fullmatch-anchored at use).
+
+Built from the model's own :data:`~guffin.model.primitives.UID_PATTERN`, so the vocabulary stays
+free of any ``roam/`` dependency.
+"""
+
+
 @validate_call
-def cover_image_of(assignment: AttributeAssignment) -> HttpUrl:
-    """Return the cover-image URL that a ``cover-image`` assignment carries.
+def cover_image_of(assignment: AttributeAssignment) -> Uid:
+    """Return the UID of the image block that a ``cover-image`` assignment references.
 
     Verifies *assignment* is for the :attr:`PublishingSemantics.COVER_IMAGE` attribute, then
-    coerces its sole value to the image's URL: the value may be the bare URL or a CommonMark
-    image ``![alt](url)`` (the form Roam stores for a pasted image), whose destination is
-    extracted.
+    coerces its sole value to the referenced block's UID: the value must be wholly a Roam block
+    reference ``((<uid>))`` pointing at an image block.  Referencing a block (rather than
+    carrying a raw image URL) keeps the cover an ordinary piece of Roam content — reusable,
+    and editable in place.
 
     Args:
         assignment: A :attr:`PublishingSemantics.COVER_IMAGE` attribute assignment (one value
             expected).
 
     Returns:
-        The cover image's URL.
+        The referenced block's UID.  Whether that block is actually an image vertex present in
+        the tree is a tree-level question (see :func:`cover_image_vertex` and
+        :func:`all_cover_image_values_legal`).
 
     Raises:
         ValueError: If *assignment* is not for the ``cover-image`` attribute, does not carry
-            exactly one value, or its value is neither an http(s) URL nor a CommonMark image
-            wrapping one.
+            exactly one value, or its value is not wholly a Roam block reference.
     """
     text: Final[str] = verified_sole_value_text(assignment, PublishingSemantics.COVER_IMAGE.value)
-    image_match: Final[regex.Match[str] | None] = MD_IMAGE_RE.fullmatch(text)
-    url_text: Final[str] = image_match.group("url") if image_match is not None else text
-    try:
-        return HttpUrl(url_text)
-    except ValueError as exc:
-        raise ValueError(f"'cover-image' value {text!r} does not carry an http(s) image URL: {exc}") from exc
+    ref_match: Final[regex.Match[str] | None] = _BLOCK_REF_VALUE_RE.fullmatch(text)
+    if ref_match is None:
+        raise ValueError(f"'cover-image' value must be a block reference ((<uid>)); got {text!r}")
+    return ref_match.group("uid")
 
 
 @validate_call(config=ConfigDict(strict=True))
@@ -449,26 +459,39 @@ def publish_of_vertex(vertex: Vertex) -> bool | None:
 
 
 @validate_call
-def cover_image_of_vertex(vertex: Vertex) -> HttpUrl | None:
-    """Resolve *vertex*'s ``cover-image`` attribute to the image's URL, or ``None``.
+def cover_image_vertex(tree: VertexTree) -> ImageVertex | None:
+    """Resolve *tree*'s cover image to the :class:`~guffin.model.vertex.ImageVertex` it references, or ``None``.
 
-    ``None`` when *vertex* carries no ``cover-image`` assignment, or when the assignment does
-    not coerce to an http(s) URL (ignored with a warning).
+    Reads the ``cover-image`` block reference off *tree*'s root vertex and follows it to the
+    referenced vertex.  ``None`` when the root carries no ``cover-image`` assignment (silent),
+    or — with a warning — when the assignment does not coerce to a block reference, the
+    referenced UID is absent from the tree, or the referenced vertex is not an image.
 
     Args:
-        vertex: The vertex whose attribute to resolve.
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` whose cover to resolve.
 
     Returns:
-        The cover image's URL, or ``None``.
+        The referenced :class:`~guffin.model.vertex.ImageVertex`, or ``None``.
     """
-    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.COVER_IMAGE)
+    root: Final[Vertex] = root_vertex(tree)
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(root, PublishingSemantics.COVER_IMAGE)
     if assignment is None:
         return None
     try:
-        return cover_image_of(assignment)
+        target_uid: Final[Uid] = cover_image_of(assignment)
     except ValueError as exc:
-        logger.warning("ignoring cover-image on vertex uid=%r: %s", vertex.uid, exc)
+        logger.warning("ignoring cover-image on root vertex uid=%r: %s", root.uid, exc)
         return None
+    target: Final[Vertex | None] = tree.uid_map.get(target_uid)
+    if target is None:
+        logger.warning("cover-image references uid=%r, which is absent from the tree", target_uid)
+        return None
+    if not isinstance(target, ImageVertex):
+        logger.warning(
+            "cover-image references uid=%r, which is not an image (vertex_type=%s)", target_uid, target.vertex_type
+        )
+        return None
+    return target
 
 
 @validate_call
@@ -724,9 +747,7 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
 def _illegal_value_violations(
     tree: VertexTree,
     attribute: PublishingSemantics,
-    value_coercer: Callable[
-        [AttributeAssignment], StructuralElement | Matter | PdfRender | bool | W3cdtfDate | HttpUrl
-    ],
+    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter | PdfRender | bool | W3cdtfDate],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
 
@@ -871,20 +892,35 @@ def all_date_values_legal(tree: VertexTree) -> ValidationError | None:
 
 @validate_call
 def all_cover_image_values_legal(tree: VertexTree) -> ValidationError | None:
-    """:data:`~guffin.common.validation.Validator` requiring legal ``cover-image`` values.
+    """:data:`~guffin.common.validation.Validator` requiring legal, resolvable ``cover-image`` values.
 
     Every :attr:`PublishingSemantics.COVER_IMAGE` assignment in *tree* must carry exactly one
-    value, and that value must be an http(s) image URL — bare, or wrapped in CommonMark image
-    syntax ``![alt](url)``.
+    value; that value must be wholly a Roam block reference ``((<uid>))``; the referenced UID
+    must be present in *tree*; and the referenced vertex must be an
+    :class:`~guffin.model.vertex.ImageVertex` — the cover must resolve to an actual image.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
 
     Returns:
-        ``None`` when every ``cover-image`` value is legal; a
+        ``None`` when every ``cover-image`` value resolves to an image vertex; a
         :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
     """
-    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.COVER_IMAGE, cover_image_of)
+    violations: Final[list[str]] = []
+    for vertex, assignment in assignments_for(tree, PublishingSemantics.COVER_IMAGE.value):
+        try:
+            target_uid: Uid = cover_image_of(assignment)
+        except ValueError as exc:
+            violations.append(f"on vertex uid={vertex.uid!r}: {exc}")
+            continue
+        target: Vertex | None = tree.uid_map.get(target_uid)
+        if target is None:
+            violations.append(f"on vertex uid={vertex.uid!r}: references uid={target_uid!r}, absent from the tree")
+        elif not isinstance(target, ImageVertex):
+            violations.append(
+                f"on vertex uid={vertex.uid!r}: references uid={target_uid!r}, "
+                f"which is not an image (vertex_type={target.vertex_type})"
+            )
     if not violations:
         return None
     return ValidationError(

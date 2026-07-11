@@ -21,9 +21,9 @@ Public symbols:
 - :func:`fetch_and_enrich_assets` — :func:`fetch_assets` plus tree enrichment; returns the
   tree with ``original_image_size`` (images) and ``original_file_name`` (PDFs) populated,
   together with the ``{uid: AssetRef}`` mapping.
-- :func:`fetch_cover_image` — fetch the cover image declared on a tree's root vertex
-  (``cover-image`` attribute) to a local directory; return its path, or ``None`` when
-  no cover is declared.
+- :func:`fetch_cover_image` — fetch the cover image a tree's root vertex references
+  (its ``cover-image`` block reference) to a local directory; return its path, or ``None``
+  when no cover is declared.
 """
 
 import logging
@@ -31,18 +31,13 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Final, NamedTuple
 
-from pydantic import HttpUrl, validate_call
+from pydantic import validate_call
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
-from guffin.model.publishing_semantics import cover_image_of_vertex
-from guffin.model.vertex import AssetVertex, is_asset_vertex
-from guffin.model.vertex_tree import (
-    VertexTree,
-    enrich_image_original_sizes,
-    enrich_pdf_original_file_names,
-    root_vertex,
-)
+from guffin.model.publishing_semantics import cover_image_vertex
+from guffin.model.vertex import AssetVertex, ImageVertex, is_asset_vertex
+from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes, enrich_pdf_original_file_names
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
 from guffin.roam.local_api import ApiEndpoint
@@ -268,28 +263,27 @@ def fetch_cover_image(
     asset_dir: Path,
     cache_dir: Path | None = None,
 ) -> Path | None:
-    """Fetch the cover image declared on *vertex_tree*'s root vertex, or return ``None``.
+    """Fetch the cover image referenced by *vertex_tree*'s root vertex, or return ``None``.
 
-    Resolves the root vertex's ``cover-image`` attribute
-    (:func:`~guffin.model.publishing_semantics.cover_image_of_vertex`) to the image's Cloud
-    Firestore URL, fetches it via :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, and
-    writes it into *asset_dir* under its deterministic cache filename (``<sha256>.<ext>``).
+    Resolves the root vertex's ``cover-image`` block reference to the
+    :class:`~guffin.model.vertex.ImageVertex` it points at
+    (:func:`~guffin.model.publishing_semantics.cover_image_vertex`), then fetches that vertex's
+    asset through the ordinary single-asset path (:func:`fetch_asset`), writing it into
+    *asset_dir*.
 
     Args:
-        vertex_tree: The vertex tree whose root may declare a cover image.
+        vertex_tree: The vertex tree whose root may reference a cover image block.
         api_endpoint: Roam Local API endpoint (URL + bearer token).
         asset_dir: Directory where the fetched cover file is written.
         cache_dir: Optional directory for caching downloaded assets across runs.
 
     Returns:
         The local path of the written cover file, or ``None`` when the root declares no
-        (legal) ``cover-image`` attribute.
+        (resolvable) ``cover-image`` attribute.
     """
-    cover_url: Final[HttpUrl | None] = cover_image_of_vertex(root_vertex(vertex_tree))
-    if cover_url is None:
+    cover_vertex: Final[ImageVertex | None] = cover_image_vertex(vertex_tree)
+    if cover_vertex is None:
         return None
-    asset: Final[RoamAsset] = fetch_and_cache_asset(cover_url, api_endpoint, cache_dir)
-    cover_path: Final[Path] = asset_dir / asset.file_name
-    cover_path.write_bytes(asset.contents)
-    logger.info("Fetched cover image to %s", cover_path)
-    return cover_path
+    cover_ref: Final[AssetRef] = fetch_asset(cover_vertex, api_endpoint, asset_dir, cache_dir)
+    logger.info("Fetched cover image to %s", cover_ref.path)
+    return cover_ref.path

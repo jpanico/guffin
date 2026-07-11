@@ -209,11 +209,14 @@ generated title page, while on the PDF side the bundled Bergfink template was ex
 `titlepage.typ` (upstream Bergfink renders only title, subtitle, authors, date). `identifier` is
 catalog metadata only (EPUB OPF `dc:identifier`); no format renders it on the title page.
 
-The **cover** is also root metadata — `cover-image::`, whose value is a Roam-hosted image (the
-bare Cloud Firestore URL, or the `![alt](url)` form Roam stores for a pasted image) — never a
-`StructuralElement`, since per CMOS the cover is exterior to the matter-classified interior. It
-is content-driven (whatever the profile): the renderers fetch it through the shared asset cache
-(`render/asset_fetch.fetch_cover_image`) and map it per format — EPUB `--epub-cover-image` (the
+The **cover** is also root metadata — `cover-image::`, whose value is a Roam **block reference**
+`((<uid>))` to an image block (paste the cover into any block, reference that block) — never a
+`StructuralElement`, since per CMOS the cover is exterior to the matter-classified interior. The
+block-ref form keeps the cover ordinary, reusable Roam content, and `validate_semantics` requires
+it to resolve: the referenced UID must be in the fetched tree and must be an `ImageVertex`. It
+is content-driven (whatever the profile): the renderers resolve it via
+`publishing_semantics.cover_image_vertex` and fetch it through the ordinary single-asset path
+(`render/asset_fetch.fetch_cover_image` → `fetch_asset`) and map it per format — EPUB `--epub-cover-image` (the
 package cover reading systems display), PDF a full-bleed cover page *preceding* the title page
 (the Bergfink `cover-image` variable), Markdown nothing. Cover art should be produced at the
 target page's aspect ratio (ebook-retail convention: 1:1.5 portrait, e.g. 1600×2400); the PDF

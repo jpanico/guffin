@@ -397,6 +397,18 @@
     order: 7
     page:
       id: 12977
+- - string: 'cover-image:: ((-IHBfYM7I))'
+    id: 13103
+    uid: l35EHvZ3Z
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 6
+    page:
+      id: 12842
+    refs:
+    - id: 13100
+    - id: 13102
 - - string: Hallward shook his head. “You don’t understand what friendship is, Harry,”
       he murmured⁠—“or what enmity is, for that matter. You like everyone; that is
       to say, you are indifferent to everyone.”
@@ -902,14 +914,16 @@
         - hHUE8oD5s
       - source:
         - uid
-        - zhL1WaqhF
+        - l35EHvZ3Z
         value:
         - uid
         - Qae94M2_3
       - source:
         - uid
-        - zhL1WaqhF
-        value: ' ![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
+        - l35EHvZ3Z
+        value:
+        - uid
+        - -IHBfYM7I
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 12849
@@ -918,7 +932,7 @@
     - id: 12852
     - id: 12854
     - id: 12855
-    - id: 13099
+    - id: 13103
     id: 12848
     lookup:
     - id: 11842
@@ -934,8 +948,9 @@
     - id: 12852
     - id: 12854
     - id: 12855
-    - id: 13099
     - id: 13100
+    - id: 13102
+    - id: 13103
     uid: hHUE8oD5s
     parents:
     - id: 12842
@@ -1649,6 +1664,19 @@
     order: 37
     page:
       id: 12977
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
+    id: 13102
+    uid: -IHBfYM7I
+    parents:
+    - id: 13101
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33
+        : width: 273
+          height: null
+    order: 0
+    page:
+      id: 13101
 - - string: “You don’t want me to meet him?”
     id: 13052
     uid: LiXIomT2F
@@ -1692,22 +1720,6 @@
 - - id: 13100
     uid: Qae94M2_3
     title: cover-image
-- - string: 'cover-image:: ![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33)'
-    id: 13099
-    uid: zhL1WaqhF
-    parents:
-    - id: 12842
-    - id: 12848
-    props:
-      image-size:
-        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F49r46AnDvJ.jpeg.enc?alt=media&token=02ea32c3-87d9-4559-868a-20d6f9ee3b33
-        : width: 273
-          height: null
-    order: 6
-    page:
-      id: 12842
-    refs:
-    - id: 13100
 - - string: '[[>]] [[!INFO]] The Uncopyright Page embedded here has `children_layout`
       explicitly set to `document` '
     id: 12957
