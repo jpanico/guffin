@@ -1282,9 +1282,10 @@ def vertex_tree_to_pandoc(
             tri-state effective-layout rules (:func:`_effective_layout`), so a vertex with no
             explicit entry adopts its parent's effective ``children_layout``, resolved per
             transclusion site.
-        title_in_header: When ``True``, render a root
-            :class:`~guffin.vertex.PageVertex` title as an H1 header instead
-            of storing it in document metadata.  Defaults to ``False``.
+        title_in_header: When ``True``, render the document title as a leading H1 body
+            block in addition to storing it in the document metadata (the visible title
+            for formats whose writer drops or only optionally emits metadata).
+            Defaults to ``False`` (metadata only).
         provenance: When set, append an end-of-document provenance colophon (a horizontal rule and
             an emphasized line of :meth:`~guffin.common.provenance.Provenance.summary` text); ``None``
             (default) appends nothing.
@@ -1312,10 +1313,12 @@ def vertex_tree_to_pandoc(
         page_title_inlines: Final[list[pf.Inline]] = strip_links(list(inline_map.get(root.title, [pf.Str(root.title)])))
         title_meta = pf.MetaInlines(*page_title_inlines)
     if title_meta is not None:
+        # The title always lands in the document metadata; title_in_header *additionally* renders
+        # it as a leading H1 body block (the visible title for formats whose writer drops or
+        # only optionally emits metadata, e.g. GFM).
         if title_in_header:
             blocks.append(pf.Header(*list(title_meta.content), level=1))
-        else:
-            metadata["title"] = title_meta
+        metadata["title"] = title_meta
     for meta_key in ("subtitle", "author", "date", "publisher", "rights", "identifier"):
         if meta_key in root_metadata:
             metadata[meta_key] = root_metadata[meta_key]

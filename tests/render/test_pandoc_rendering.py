@@ -168,11 +168,11 @@ class TestVertexTreeToPandocPageVertex:
         doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page]), {}, {})
         assert _collect_text(doc.metadata["publisher"]) == "Lippincott’s Monthly Magazine"
 
-    def test_title_in_header_renders_h1_not_metadata(self) -> None:
-        """title_in_header=True renders page title as H1 body block, not metadata."""
+    def test_title_in_header_renders_h1_and_metadata(self) -> None:
+        """title_in_header=True renders the title as an H1 body block and in the metadata."""
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="My Page")])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {}, title_in_header=True)
-        assert "title" not in doc.metadata
+        assert _collect_text(doc.metadata["title"]) == "My Page"
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Header)

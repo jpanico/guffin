@@ -7,9 +7,14 @@ import pytest
 from conftest import FIXTURES_MD_DIR, article1_node_tree
 
 from guffin.common.filenames import shell_safe_filename
+from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
+from guffin.model.vertex import HeadingVertex, PageVertex, TextVertex
+from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex_tree import VertexTree
 from guffin.render.md_rendering import render
-from guffin.render.project import DefaultProfile
+from guffin.render.project import BookProfile, DefaultProfile
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
@@ -46,3 +51,61 @@ class TestRenderArticleFixture:
         result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
         expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert result == expected
+
+
+def _book_bundle() -> RenderBundle:
+    """A minimal book: a metadata-bearing page root with one chapter heading and one paragraph."""
+    link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
+
+    def _meta(name: str, value: str) -> AttributeAssignment:
+        return AttributeAssignment(
+            attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+            values=(LiteralValue(value=value),),
+        )
+
+    page = PageVertex(
+        uid="page00001",
+        title="Dorian Gray",
+        children=["chap00001"],
+        attribute_assignments=[_meta("authors", "Oscar Wilde"), _meta("publisher", "Lippincott's Monthly Magazine")],
+    )
+    chapter = HeadingVertex(uid="chap00001", text="Chapter I", heading_level=1, children=["text00001"])
+    text = TextVertex(uid="text00001", text="The studio was filled with the rich odour of roses.")
+    return RenderBundle(content=VertexTree(tree_vertices=[page, chapter, text]), view={})
+
+
+class TestFrontMatter:
+    """A title-page-emitting profile serializes document metadata as YAML front matter in GFM."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, profile: BookProfile | DefaultProfile) -> str:
+        render(
+            _book_bundle(),
+            profile=profile,
+            filename_stem="book",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        return (tmp_path / "book.md").read_text(encoding="utf-8")
+
+    def test_book_emits_yaml_front_matter(self, tmp_path: Path) -> None:
+        """A book render opens with a YAML block carrying the bibliographic metadata."""
+        result = self._render(tmp_path, BookProfile())
+        assert result.startswith("---\n")
+        front_matter = result.split("---", 2)[1]
+        assert "author:\n- Oscar Wilde" in front_matter  # MetaList: one YAML list entry per author
+        assert "publisher: Lippincott’s Monthly Magazine" in front_matter
+        assert "title: Dorian Gray" in front_matter
+
+    def test_book_title_renders_both_in_front_matter_and_h1(self, tmp_path: Path) -> None:
+        """The title appears in the YAML block and as the leading H1."""
+        result = self._render(tmp_path, BookProfile())
+        body = result.split("---", 2)[2]
+        assert "# Dorian Gray" in body
+
+    def test_default_profile_emits_no_front_matter(self, tmp_path: Path) -> None:
+        """A default (article) render carries no YAML block; the H1 title opens the document."""
+        result = self._render(tmp_path, DefaultProfile())
+        assert result.startswith("# Dorian Gray")
+        assert "publisher:" not in result

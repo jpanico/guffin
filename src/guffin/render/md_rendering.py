@@ -87,7 +87,11 @@ def render(
     Converts *render_bundle*'s content tree to a Panflute :class:`~panflute.Doc` via
     :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc` (with the page
     title rendered as an H1 header), then invokes Pandoc to produce
-    GFM output.  Writes the result in one of two modes controlled by
+    GFM output.  When the profile's structural policy sets ``emit_title_page``, the GFM
+    conversion runs standalone, so the document metadata (title, authors, publisher, …) is
+    serialized as a YAML front-matter block ahead of the body — the format's expression of
+    the directive, since an unpaginated document has no title *page*; the title renders both
+    there and as the leading H1.  Writes the result in one of two modes controlled by
     ``options.should_bundle``:
 
     - ``should_bundle=True`` (default) — fetches Cloud Firestore image and PDF assets
@@ -125,6 +129,10 @@ def render(
     cache_dir: Final[Path | None] = options.cache_dir
     should_bundle: Final[bool] = options.should_bundle
     dump_pandoc_ast: Final[bool] = options.dump_pandoc_ast
+    # GFM's expression of the emit_title_page directive: no page model means no title page, but
+    # --standalone engages Pandoc's GFM template, which serializes the document metadata (title,
+    # authors, publisher, ...) as a YAML front-matter block — the format's bibliographic record.
+    standalone_args: Final[list[str]] = ["--standalone"] if profile.structural_policy.emit_title_page else []
     # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
     # fetch nor the rendered output.
     published: Final[VertexTree] = drop_unpublished(render_bundle.content)
@@ -162,6 +170,7 @@ def render(
             format="json",
             extra_args=[
                 "--wrap=none",
+                *standalone_args,
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
@@ -191,6 +200,7 @@ def render(
             format="json",
             extra_args=[
                 "--wrap=none",
+                *standalone_args,
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",

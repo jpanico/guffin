@@ -12,7 +12,9 @@ it.
 > `ProjectProfile` is threaded from the CLI `--type` flag through each render entry point. All five
 > structural directives are applied in both paginated formats: `top_level_division` (EPUB
 > `--split-level`; PDF book mode — chapter page breaks + level-1 numbering), `number_sections`,
-> `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`), `emit_toc` (the work
+> `emit_title_page` (PDF Bergfink `titlepage`; EPUB `--epub-title-page`; Markdown — the one
+> directive that format expresses — a YAML front-matter block carrying the document metadata,
+> via a standalone GFM conversion), `emit_toc` (the work
 > presents a navigable ToC — PDF renders a Bergfink outline at the start of the flow, suppressed
 > by an authored `element-type:: table-of-contents` section; EPUB deliberately adds nothing, since
 > the always-generated nav document already supplies the reading system's ToC affordance and a
@@ -156,8 +158,12 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
   guarantee about any particular output: a renderer maps directives onto the mechanisms its format
   offers, and the mapping is deliberately partial (mirroring the partial `StructuralElement →
   EpubType` map). The two paginated formats express all five directives; the Markdown renderer
-  expresses none of them — an unpaginated interchange document has no title page, page breaks, or
-  generated ToC, and its consumers (GitHub, Typora) provide their own outline affordances.
+  expresses only `emit_title_page` — an unpaginated interchange document has no title *page*, page
+  breaks, or generated ToC (its consumers — GitHub, Typora — provide their own outline
+  affordances), so the directive maps to the format's bibliographic record instead: the GFM
+  conversion runs standalone and Pandoc serializes the document metadata (title, authors,
+  publisher, …) as a YAML front-matter block ahead of the body, with the title also rendered as
+  the leading H1.
 
 | `ProjectType` | top-level division | title page | generated ToC | numbered | abstract | loose preamble |
 |---|---|---|---|---|---|---|
