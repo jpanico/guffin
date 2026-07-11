@@ -416,7 +416,11 @@ def to_table(table_tree: NodeTree) -> Table:
     children are the first-column cells, sorted by :attr:`~guffin.roam.node.RoamNode.order` to
     establish row sequence.  For each first-column cell, the algorithm follows the single-child
     chain — each cell's sole child is the next-column cell in the same row — collecting cell
-    strings until the chain ends.
+    strings until the chain ends.  Roam does not force the chains to equal length (a row simply
+    stops when its author stops filling cells, and the Roam UI shows the missing cells blank), so
+    short rows are padded with empty-string cells to the widest row — reproducing the Roam
+    rendering while satisfying the uniform column count the normalized
+    :class:`~guffin.common.table.Table` requires.
 
     Cell strings are stored verbatim (the raw Roam :attr:`~guffin.roam.node.RoamNode.string`); any
     Markdown normalization is the caller's concern.
@@ -455,4 +459,6 @@ def to_table(table_tree: NodeTree) -> Table:
             )
             cell = next_cells[0] if next_cells else None
         rows.append(tuple(row))
-    return Table(rows=tuple(rows), has_row_header=True)
+    num_cols: Final[int] = max(len(row) for row in rows)
+    padded: Final[tuple[tuple[str, ...], ...]] = tuple(row + ("",) * (num_cols - len(row)) for row in rows)
+    return Table(rows=padded, has_row_header=True)

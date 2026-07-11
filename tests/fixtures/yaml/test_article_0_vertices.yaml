@@ -142,6 +142,8 @@
   children:
   - iXrVW8EGw
   - wjN-kVF3B
+  - qXV6E7HV8
+  - 9M36YWLn7
   text: block 2
 - vertex_type: guffin/text
   uid: iXrVW8EGw
@@ -160,6 +162,28 @@
     - - r2.c1
       - r2.c2
       - r2.c3
+    has_row_header: true
+    has_col_header: false
+  table_style:
+    cell_styles: {}
+    column_widths: []
+- vertex_type: guffin/text
+  uid: qXV6E7HV8
+  text: 'the next block is a basic Roam-native table: 3x3, but has no values in some
+    cells'
+- vertex_type: guffin/table
+  uid: 9M36YWLn7
+  table:
+    rows:
+    - - Header 1
+      - Header 2
+      - Header 3
+    - - r1.c1
+      - ''
+      - r1.c3
+    - - r2.c1
+      - r2.c2
+      - ''
     has_row_header: true
     has_col_header: false
   table_style:

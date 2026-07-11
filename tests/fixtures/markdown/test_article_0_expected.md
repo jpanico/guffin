@@ -85,6 +85,13 @@
   |----------|----------|----------|
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
+
+  - the next block is a basic Roam-native table: 3x3, but has no values in some cells
+
+  | Header 1 | Header 2 | Header 3 |
+  |----------|----------|----------|
+  | r1.c1    |          | r1.c3    |
+  | r2.c1    | r2.c2    |          |
 - block 3
   - block 3.1
     - block 3.1.1

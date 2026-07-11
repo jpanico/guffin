@@ -64,6 +64,18 @@
     order: 0
     page:
       id: 11137
+- - string: r1.c1
+    children:
+    - id: 13094
+    id: 13093
+    uid: vLs9O1JFB
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
+    order: 1
+    page:
+      id: 11137
 - - string: block 1
     children:
     - id: 11151
@@ -93,6 +105,18 @@
     - id: 11137
     - id: 11147
     - id: 11154
+    order: 0
+    page:
+      id: 11137
+- - string: Header 1
+    children:
+    - id: 13091
+    id: 13090
+    uid: u8XjAL7_K
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
     order: 0
     page:
       id: 11137
@@ -187,6 +211,8 @@
     children:
     - id: 11199
     - id: 11225
+    - id: 13086
+    - id: 13089
     id: 11150
     uid: Odbqghm-D
     parents:
@@ -237,6 +263,16 @@
     - id: 11137
     - id: 11150
     - id: 11225
+    order: 2
+    page:
+      id: 11137
+- - string: 'the next block is a basic Roam-native table: 3x3, but has no values in
+      some cells'
+    id: 13086
+    uid: qXV6E7HV8
+    parents:
+    - id: 11137
+    - id: 11150
     order: 2
     page:
       id: 11137
@@ -291,6 +327,18 @@
       id: 11137
     refs:
     - id: 5450
+- - string: Header 3
+    id: 13092
+    uid: TfYw_AaIH
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
+    - id: 13090
+    - id: 13091
+    order: 0
+    page:
+      id: 11137
 - - string: '[[>]] [[!EXAMPLE]] This is the callout title
 
       This is line 1 of the callout body
@@ -321,6 +369,31 @@
     order: 11
     page:
       id: 11137
+- - string: r2.c1
+    children:
+    - id: 13097
+    id: 13096
+    uid: S3NNepskY
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
+    order: 2
+    page:
+      id: 11137
+- - string: Header 2
+    children:
+    - id: 13092
+    id: 13091
+    uid: 0mRpQNEC-
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
+    - id: 13090
+    order: 0
+    page:
+      id: 11137
 - - string: The child of this block is an isolated fenced code block
     children:
     - id: 11175
@@ -330,6 +403,18 @@
     - id: 11137
     - id: 11149
     order: 6
+    page:
+      id: 11137
+- - string: r1.c3
+    id: 13095
+    uid: 5aBgeXBbU
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
+    - id: 13093
+    - id: 13094
+    order: 0
     page:
       id: 11137
 - - string: This para features ^^highlight^^
@@ -353,6 +438,19 @@
     order: 1
     page:
       id: 11137
+- - string: ''
+    children:
+    - id: 13095
+    id: 13094
+    uid: tzwIznt_u
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
+    - id: 13093
+    order: 0
+    page:
+      id: 11137
 - - string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
       \ int = 100):\n    for i in range(1, limit + 1):\n        if i % 15 == 0:\n\
       \            print(\"FizzBuzz\")\n        elif i % 3 == 0:\n            print(\"\
@@ -364,6 +462,19 @@
     - id: 11137
     - id: 11149
     order: 5
+    page:
+      id: 11137
+- - string: '{{table}}'
+    children:
+    - id: 13090
+    - id: 13093
+    - id: 13096
+    id: 13089
+    uid: 9M36YWLn7
+    parents:
+    - id: 11137
+    - id: 11150
+    order: 3
     page:
       id: 11137
 - - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
@@ -465,5 +576,16 @@
     - id: 11137
     - id: 11149
     order: 2
+    page:
+      id: 11137
+- - string: r2.c2
+    id: 13097
+    uid: fY4nP4RUv
+    parents:
+    - id: 11137
+    - id: 11150
+    - id: 13089
+    - id: 13096
+    order: 0
     page:
       id: 11137

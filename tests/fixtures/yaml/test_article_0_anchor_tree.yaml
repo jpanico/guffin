@@ -92,6 +92,24 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: vLs9O1JFB
+  id: 13093
+  string: r1.c1
+  order: 1
+  heading: null
+  children:
+  - id: 13094
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
+  props: null
+  title: null
+  attrs: null
 - uid: MRKYttxrM
   id: 11149
   string: block 1
@@ -134,6 +152,24 @@ tree_network:
   - id: 11137
   - id: 11147
   - id: 11154
+  props: null
+  title: null
+  attrs: null
+- uid: u8XjAL7_K
+  id: 13090
+  string: Header 1
+  order: 0
+  heading: null
+  children:
+  - id: 13091
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
   props: null
   title: null
   attrs: null
@@ -265,6 +301,8 @@ tree_network:
   children:
   - id: 11199
   - id: 11225
+  - id: 13086
+  - id: 13089
   refs: null
   page:
     id: 11137
@@ -343,6 +381,23 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: qXV6E7HV8
+  id: 13086
+  string: 'the next block is a basic Roam-native table: 3x3, but has no values in
+    some cells'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  props: null
+  title: null
+  attrs: null
 - uid: 9XUHIOSY0
   id: 11231
   string: r1.c3
@@ -417,6 +472,25 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: TfYw_AaIH
+  id: 13092
+  string: Header 3
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
+  - id: 13090
+  - id: 13091
+  props: null
+  title: null
+  attrs: null
 - uid: 4SIo9hSEY
   id: 11773
   string: '[[>]] [[!EXAMPLE]] This is the callout title
@@ -459,6 +533,43 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: S3NNepskY
+  id: 13096
+  string: r2.c1
+  order: 2
+  heading: null
+  children:
+  - id: 13097
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
+  props: null
+  title: null
+  attrs: null
+- uid: 0mRpQNEC-
+  id: 13091
+  string: Header 2
+  order: 0
+  heading: null
+  children:
+  - id: 13092
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
+  - id: 13090
+  props: null
+  title: null
+  attrs: null
 - uid: 8FeLZHNMW
   id: 11174
   string: The child of this block is an isolated fenced code block
@@ -473,6 +584,25 @@ tree_network:
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  attrs: null
+- uid: 5aBgeXBbU
+  id: 13095
+  string: r1.c3
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
+  - id: 13093
+  - id: 13094
   props: null
   title: null
   attrs: null
@@ -508,6 +638,25 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: tzwIznt_u
+  id: 13094
+  string: ''
+  order: 0
+  heading: null
+  children:
+  - id: 13095
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
+  - id: 13093
+  props: null
+  title: null
+  attrs: null
 - uid: E_Nsc0SmT
   id: 11173
   string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
@@ -525,6 +674,25 @@ tree_network:
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  attrs: null
+- uid: 9M36YWLn7
+  id: 13089
+  string: '{{table}}'
+  order: 3
+  heading: null
+  children:
+  - id: 13090
+  - id: 13093
+  - id: 13096
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
   props: null
   title: null
   attrs: null
@@ -686,6 +854,24 @@ tree_network:
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  attrs: null
+- uid: fY4nP4RUv
+  id: 13097
+  string: r2.c2
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11150
+  - id: 13089
+  - id: 13096
   props: null
   title: null
   attrs: null

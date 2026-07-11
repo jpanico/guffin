@@ -886,6 +886,29 @@ class TestToTable:
         table = to_table(tree)
         assert table.rows[0] == ("X", "Y", "Z")
 
+    def test_short_rows_are_padded_to_widest(self) -> None:
+        """A row whose cell chain ends early is padded with empty cells to the widest row.
+
+        Roam does not force the per-row chains to equal length; a short row displays with
+        blank trailing cells in the Roam UI, and the reconstruction reproduces that.
+        """
+        root = _make_table_root("tabluid01", 10, [11, 14, 16])
+        # Row 0: full 3-column chain (the header row).
+        hdr1 = _make_cell_node("hdr1uid01", 11, 10, "Header 1", order=0, child_id=12)
+        hdr2 = _make_cell_node("hdr2uid01", 12, 11, "Header 2", order=0, child_id=13)
+        hdr3 = _make_cell_node("hdr3uid01", 13, 12, "Header 3", order=0)
+        # Row 1: chain ends after two cells.
+        r1c1 = _make_cell_node("r1c1uid01", 14, 10, "r1.c1", order=1, child_id=15)
+        r1c2 = _make_cell_node("r1c2uid01", 15, 14, "r1.c2", order=0)
+        # Row 2: a single cell.
+        r2c1 = _make_cell_node("r2c1uid01", 16, 10, "r2.c1", order=2)
+        tree = NodeTree.build(root, [root, hdr1, hdr2, hdr3, r1c1, r1c2, r2c1])
+        table = to_table(tree)
+        assert table.num_cols == 3
+        assert table.rows[0] == ("Header 1", "Header 2", "Header 3")
+        assert table.rows[1] == ("r1.c1", "r1.c2", "")
+        assert table.rows[2] == ("r2.c1", "", "")
+
     def test_empty_table_raises(self) -> None:
         """A table root with no children raises ValueError."""
         root = RoamNode(
