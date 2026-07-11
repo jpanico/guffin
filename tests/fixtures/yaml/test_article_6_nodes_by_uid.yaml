@@ -212,6 +212,7 @@ a9LW1J8BT:
   children:
   - id: 12899
   - id: 12902
+  - id: 12957
   refs: null
   page:
     id: 12842
@@ -245,7 +246,7 @@ a9LW1J8BT:
   string: The artist is the creator of beautiful things. To reveal art and conceal
     the artist is art’s aim. The critic is he who can translate into another manner
     or a new material his impression of beautiful things.
-  order: 1
+  order: 2
   heading: null
   children: null
   refs: null
@@ -264,7 +265,7 @@ n6XwTJlHd:
   string: Those who find beautiful meanings in beautiful things are the cultivated.
     For these there is hope. They are the elect to whom beautiful things mean only
     beauty.
-  order: 3
+  order: 4
   heading: null
   children: null
   refs: null
@@ -324,6 +325,7 @@ WLRZ6sK1M:
   - id: 12867
   - id: 12868
   - id: 12869
+  - id: 12970
   refs: null
   page:
     id: 12842
@@ -612,7 +614,7 @@ xPlIk1L3D:
   uid: xPlIk1L3D
   id: 12899
   string: '{{embed: [[Uncopyright]]}}'
-  order: 1
+  order: 2
   heading: null
   children: null
   refs:
@@ -632,7 +634,7 @@ xPlIk1L3D:
   string: The highest as the lowest form of criticism is a mode of autobiography.
     Those who find ugly meanings in beautiful things are corrupt without being charming.
     This is a fault.
-  order: 2
+  order: 3
   heading: null
   children: null
   refs: null
@@ -668,10 +670,30 @@ GHGaHfSEk:
   id: 12865
   string: There is no such thing as a moral or an immoral book. Books are well written,
     or badly written. That is all.
-  order: 4
+  order: 5
   heading: null
   children: null
   refs: null
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12857
+  props: null
+  title: null
+  attrs: null
+QvjDgd-ZA:
+  uid: QvjDgd-ZA
+  id: 12970
+  string: '[[>]] [[!INFO]] The Uncopyright Page embedded here has no `children_layout`
+    explicitly set '
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
   page:
     id: 12842
   children_view_type: null
@@ -742,7 +764,7 @@ sbPcWffJo:
   uid: -zvFCYXWb
   id: 12868
   string: All art is quite useless.
-  order: 7
+  order: 8
   heading: null
   children: null
   refs: null
@@ -844,7 +866,7 @@ br-LT4oUD:
   id: 12866
   string: The nineteenth century dislike of realism is the rage of Caliban seeing
     his own face in a glass.
-  order: 5
+  order: 6
   heading: null
   children: null
   refs: null
@@ -854,6 +876,26 @@ br-LT4oUD:
   parents:
   - id: 12842
   - id: 12857
+  props: null
+  title: null
+  attrs: null
+QE6k_NSRx:
+  uid: QE6k_NSRx
+  id: 12957
+  string: '[[>]] [[!INFO]] The Uncopyright Page embedded here has `children_layout`
+    explicitly set to `document` '
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12900
   props: null
   title: null
   attrs: null
@@ -895,7 +937,7 @@ o2r7a0YRn:
     and vital. When critics disagree, the artist is in accord with himself. We can
     forgive a man for making a useful thing as long as he does not admire it. The
     only excuse for making a useless thing is that one admires it intensely.
-  order: 6
+  order: 7
   heading: null
   children: null
   refs: null

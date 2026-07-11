@@ -15,11 +15,11 @@
 > - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
 > - this INFO `Callout box`, which contains Roam `page references`
 
-# Section 1
+## Section 1
 
-## Section 1.1
+### Section 1.1
 
-### illustration 1.1
+#### illustration 1.1
 
 - this image **has not been resized** through the Roam UI.
   <img src="flower.jpeg" style="margin: 0;">
@@ -28,31 +28,31 @@
 
 - AI assistant (Claude Opus 4.6):
 
-# Section 2
+## Section 2
 
-## Section 2.1
+### Section 2.1
 
-### illustration 2.1
+#### illustration 2.1
 
 - this image **has been resized** through the Roam UI (width:257, height:None)
 
 <img src="flower-2.jpeg" width="257" style="margin: 0;">
 
-### Section 2.1.1
+#### Section 2.1.1
 
-#### Section 2.1.1.1
+##### Section 2.1.1.1
 
-## Section 2.2
+### Section 2.2
 
-# Section 3
+## Section 3
 
-## Section 3.1
+### Section 3.1
 
 - the following block contains the canonical w3.org “Dummy” PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
 
 - [dummy.pdf](dummy.pdf "dummy.pdf")
 
-## Section 3.2
+### Section 3.2
 
 - the following block embeds a PDF with guffin-meta:: pdf-render: “inline”
 

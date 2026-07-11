@@ -9,7 +9,10 @@
 > - exercise effect of PublishingSemantics on structuring/formatting of export
 > - interaction of PublishingSemantics with transclusion through: `VertexLink`/`BLOCK_EMBED`/`PAGE_EMBED`
 
-# Uncopyright
+## Uncopyright
+
+> [!NOTE]
+> **The Uncopyright Page embedded here has `children_layout` explicitly set to `document`**
 
 > *May you do good and not evil.*  
 > *May you find forgiveness for yourself and forgive others.*  
@@ -21,7 +24,10 @@ Copyright laws are different all over the world, and the source text or artwork 
 
 Non-authorship activities performed on items that are in the public domain⁠—so-called “sweat of the brow” work⁠—don’t create a new copyright. That means that nobody can claim a new copyright on an item that is in the public domain for, among other things, work like digitization, markup, or typography. Regardless, the contributors to this ebook release their contributions under the terms in the [CC0 1.0 Universal Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/), thus dedicating to the worldwide public domain all of the work they’ve done on this ebook, including but not limited to metadata, the titlepage, imprint, colophon, this Uncopyright, and any changes or enhancements to, or markup on, the original text and artwork. This dedication doesn’t change the copyright status of the source text or artwork. We make this dedication in the interest of enriching our global cultural heritage, to promote free and libre culture around the world, and to give back to the unrestricted culture that has given all of us so much.
 
-# Preface
+## Preface
+
+> [!NOTE]
+> **The Uncopyright Page embedded here has no `children_layout` explicitly set**
 
 The artist is the creator of beautiful things. To reveal art and conceal the artist is art’s aim. The critic is he who can translate into another manner or a new material his impression of beautiful things.
 

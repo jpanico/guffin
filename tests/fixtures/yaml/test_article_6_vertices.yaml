@@ -90,6 +90,7 @@
 - vertex_type: guffin/heading
   uid: a9LW1J8BT
   children:
+  - QE6k_NSRx
   - xPlIk1L3D
   attribute_assignments:
   - attribute:
@@ -104,6 +105,15 @@
       value: copyright-page
   text: Uncopyright
   heading_level: 1
+- vertex_type: guffin/callout
+  uid: QE6k_NSRx
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
+  callout_type: info
+  title: The Uncopyright Page embedded here has `children_layout` explicitly set to
+    `document`
+  body: ''
 - vertex_type: guffin/page-embed
   uid: xPlIk1L3D
   refs:
@@ -114,6 +124,7 @@
 - vertex_type: guffin/heading
   uid: WLRZ6sK1M
   children:
+  - QvjDgd-ZA
   - 2CRdgs-X4
   - 4LLq-95BT
   - n6XwTJlHd
@@ -134,6 +145,14 @@
       value: preface
   text: Preface
   heading_level: 1
+- vertex_type: guffin/callout
+  uid: QvjDgd-ZA
+  refs:
+  - OexZiLR_O
+  - ZgUWBRb7j
+  callout_type: info
+  title: The Uncopyright Page embedded here has no `children_layout` explicitly set
+  body: ''
 - vertex_type: guffin/text
   uid: 2CRdgs-X4
   text: The artist is the creator of beautiful things. To reveal art and conceal the

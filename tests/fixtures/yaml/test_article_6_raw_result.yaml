@@ -165,6 +165,7 @@
     children:
     - id: 12899
     - id: 12902
+    - id: 12957
     id: 12900
     lookup:
     - id: 321
@@ -185,7 +186,7 @@
     parents:
     - id: 12842
     - id: 12857
-    order: 1
+    order: 2
     page:
       id: 12842
 - - string: Those who find beautiful meanings in beautiful things are the cultivated.
@@ -196,7 +197,7 @@
     parents:
     - id: 12842
     - id: 12857
-    order: 3
+    order: 4
     page:
       id: 12842
 - - id: 11847
@@ -243,6 +244,7 @@
     - id: 12867
     - id: 12868
     - id: 12869
+    - id: 12970
     id: 12857
     lookup:
     - id: 321
@@ -471,7 +473,7 @@
     parents:
     - id: 12842
     - id: 12900
-    order: 1
+    order: 2
     page:
       id: 12842
     refs:
@@ -484,7 +486,7 @@
     parents:
     - id: 12842
     - id: 12857
-    order: 2
+    order: 3
     page:
       id: 12842
 - - string: 'rights:: Copyright J. B. Lippincott Company'
@@ -505,9 +507,22 @@
     parents:
     - id: 12842
     - id: 12857
-    order: 4
+    order: 5
     page:
       id: 12842
+- - string: '[[>]] [[!INFO]] The Uncopyright Page embedded here has no `children_layout`
+      explicitly set '
+    id: 12970
+    uid: QvjDgd-ZA
+    parents:
+    - id: 12842
+    - id: 12857
+    order: 1
+    page:
+      id: 12842
+    refs:
+    - id: 5450
+    - id: 5462
 - - string: '[[>]] __May you do good and not evil.__
 
       __May you find forgiveness for yourself and forgive others.__
@@ -550,7 +565,7 @@
     parents:
     - id: 12842
     - id: 12857
-    order: 7
+    order: 8
     page:
       id: 12842
 - - id: 321
@@ -593,9 +608,22 @@
     parents:
     - id: 12842
     - id: 12857
-    order: 5
+    order: 6
     page:
       id: 12842
+- - string: '[[>]] [[!INFO]] The Uncopyright Page embedded here has `children_layout`
+      explicitly set to `document` '
+    id: 12957
+    uid: QE6k_NSRx
+    parents:
+    - id: 12842
+    - id: 12900
+    order: 1
+    page:
+      id: 12842
+    refs:
+    - id: 5450
+    - id: 5462
 - - string: 'element-type:: preface'
     id: 12860
     uid: gu4ybgVUx
@@ -630,7 +658,7 @@
     parents:
     - id: 12842
     - id: 12857
-    order: 6
+    order: 7
     page:
       id: 12842
 - - id: 11839

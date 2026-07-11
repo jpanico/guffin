@@ -109,3 +109,39 @@ class TestFrontMatter:
         result = self._render(tmp_path, DefaultProfile())
         assert result.startswith("# Dorian Gray")
         assert "publisher:" not in result
+
+
+class TestHeadingDemotion:
+    """With a title H1 emitted, content headings demote one level so the title contains them."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render_bundle(self, tmp_path: Path, bundle: RenderBundle) -> str:
+        render(
+            bundle,
+            profile=DefaultProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_titled_document_demotes_content_headings(self, tmp_path: Path) -> None:
+        """A page root's level-1 chapter renders as H2 under the H1 title."""
+        result = self._render_bundle(tmp_path, _book_bundle())
+        assert "\n## Chapter I\n" in result
+        assert "\n# Chapter I\n" not in result
+
+    def test_title_h1_itself_is_not_demoted(self, tmp_path: Path) -> None:
+        """The leading title H1 stays H1."""
+        result = self._render_bundle(tmp_path, _book_bundle())
+        assert result.startswith("# Dorian Gray\n")
+
+    def test_titleless_document_keeps_heading_levels(self, tmp_path: Path) -> None:
+        """A subtree export with no document title leaves its level-1 headings at H1."""
+        root = HeadingVertex(uid="root00001", text="Notes", heading_level=1, children=["chap00001"])
+        chapter = HeadingVertex(uid="chap00001", text="Chapter I", heading_level=1, children=["text00001"])
+        text = TextVertex(uid="text00001", text="Some prose.")
+        bundle = RenderBundle(content=VertexTree(tree_vertices=[root, chapter, text]), view={})
+        result = self._render_bundle(tmp_path, bundle)
+        assert result.startswith("# Chapter I\n")

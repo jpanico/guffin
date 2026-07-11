@@ -163,7 +163,11 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
   affordances), so the directive maps to the format's bibliographic record instead: the GFM
   conversion runs standalone and Pandoc serializes the document metadata (title, authors,
   publisher, …) as a YAML front-matter block ahead of the body, with the title also rendered as
-  the leading H1.
+  the leading H1. Markdown is also the one format whose title shares a namespace with the content
+  headings, so whenever a title H1 is emitted (every profile, not just title-page-emitting ones)
+  the content headings are demoted one level — `# Title`, `## Chapter` — clamped at H6; the
+  model's normalized levels (shallowest heading = 1) are untouched, so the paginated formats and
+  the semantics vocabulary are unaffected.
 
 | `ProjectType` | top-level division | title page | generated ToC | numbered | abstract | loose preamble |
 |---|---|---|---|---|---|---|

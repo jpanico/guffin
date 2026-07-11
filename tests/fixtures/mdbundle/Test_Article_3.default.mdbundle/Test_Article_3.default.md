@@ -16,7 +16,7 @@
 >
 > - this INFO `Callout box`, which contains Roam `page references`
 
-## Feature Content
+### Feature Content
 
 - This para features plain text
 - This para features *italics*
@@ -56,7 +56,7 @@ def fizz_buzz(limit: int = 100):
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
 
-## Internal (in-page) links:
+### Internal (in-page) links:
 
 - <span style="color: fuchsia">**inline PAGE ref ⟶**</span> Test Article 3
 - <span style="color: fuchsia">**inline PLAIN TEXT ref ⟶**</span> This para features plain text
@@ -113,7 +113,7 @@ def fizz_buzz(limit: int = 100):
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
 
-## External (out-of-page) links:
+### External (out-of-page) links:
 
 - <span style="color: fuchsia">**inline PAGE ref ⟶**</span> Test Article 2
 - <span style="color: fuchsia">**inline DAILY NOTES PAGE ref ⟶**</span> January 1st, 2026
@@ -137,17 +137,17 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   <img src="flower-1.jpeg" alt="A flower" style="margin: 0;">
 - <span style="color: fuchsia">**standalone BLOCK EMBED (from Test Article 1) ↓**</span>
-  ## Section 2.1
+  ### Section 2.1
 
-  ### illustration 2.1
+  #### illustration 2.1
 
   - this image **has been resized** through the Roam UI (width:257, height:None)
 
   <img src="flower-2.jpeg" width="257" style="margin: 0;">
 
-  ### Section 2.1.1
+  #### Section 2.1.1
 
-  #### Section 2.1.1.1
+  ##### Section 2.1.1.1
 - <span style="color: fuchsia">**standalone PAGE EMBED ↓**</span>
   - When you leave the Bridge, and ride towards the west, finding all the way excellent hostelries for travellers, with fine vineyards, fields, and gardens, and springs of water, you come after 30 miles to a fine large city called Juju, where there are many abbeys of idolaters, and the people live by trade and manufactures. They weave cloths of silk and gold, and very fine taffetas.{1} Here too there are many hostelries for travellers.{2} After riding a mile beyond this city you find two roads, one of which goes west and the other south-east. The westerly road is that through Cathay, and the south-easterly one goes towards the province of Manzi.{3} Taking the westerly one through Cathay, and travelling by it for ten days, you find a constant succession of cities and boroughs, with numerous thriving villages, all abounding with trade and manufactures, besides the fine fields and vineyards and dwellings of civilized people; but nothing occurs worthy of special mention; and so I will only speak of a kingdom called Taianfu. Note 1.—The word is sendaus (Pauthier), pl. of sendal, and in G. T. sandal. It does not seem perfectly known what this silk texture was, but as banners were made of it, and linings for richer stuffs, it appears to have been a light material, and is generally rendered taffetas. In Richard Cœur de Lion we find “Many a pencel of sykelatoun And of sendel of grene and broun,”
   - and also pavilions of sendel; and in the Anglo-French ballad of the death of William Earl of Salisbury in St. Lewis’s battle on the Nile— “Le Meister du Temple brace les chivaux Et le Count Long-Espée depli les sandaux.”
