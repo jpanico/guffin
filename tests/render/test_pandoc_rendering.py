@@ -307,7 +307,10 @@ class TestColophonSummary:
 
     def test_both_halves(self) -> None:
         """Provenance leads, revision follows, dot-joined."""
-        assert colophon_summary(self._PROVENANCE, self._REVISION) == "guffin · abc123d · snapshot d8666f090982"
+        assert (
+            colophon_summary(self._PROVENANCE, self._REVISION)
+            == "guffin · abc123d · revision — (snapshot d8666f090982)"
+        )
 
     def test_provenance_only(self) -> None:
         """A missing revision leaves the provenance summary alone."""
@@ -315,7 +318,7 @@ class TestColophonSummary:
 
     def test_revision_only(self) -> None:
         """A missing provenance leaves the revision summary alone."""
-        assert colophon_summary(None, self._REVISION) == "snapshot d8666f090982"
+        assert colophon_summary(None, self._REVISION) == "revision — (snapshot d8666f090982)"
 
     def test_neither_is_empty(self) -> None:
         """Both absent yields the empty string."""

@@ -23,11 +23,11 @@ class TestRevisionSummary:
     """summary() renders the revision as one compact line."""
 
     def test_snapshot_only(self) -> None:
-        """A minimal revision renders the shortened snapshot hash alone."""
-        assert Revision(snapshot=_HASH).summary() == "snapshot d8666f090982"
+        """Without an authored name, an em-dash placeholder leads the parenthesized snapshot."""
+        assert Revision(snapshot=_HASH).summary() == "revision — (snapshot d8666f090982)"
 
     def test_all_facts(self) -> None:
-        """Revision name and timestamps follow the snapshot, dot-separated."""
+        """The revision name leads; the snapshot and timestamps follow in one parenthesized group."""
         revision = Revision(
             snapshot=_HASH,
             revision="draft-3",
@@ -36,5 +36,5 @@ class TestRevisionSummary:
         )
         assert (
             revision.summary()
-            == "snapshot d8666f090982 · revision draft-3 · edited 2026-07-11T18:22Z · fetched 2026-07-12T09:30Z"
+            == "revision draft-3 (snapshot d8666f090982, edited 2026-07-11T18:22Z, fetched 2026-07-12T09:30Z)"
         )

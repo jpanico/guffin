@@ -1,5 +1,6 @@
 """Unit tests for guffin.render.md_rendering."""
 
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final
 
@@ -7,6 +8,7 @@ import pytest
 from conftest import FIXTURES_MD_DIR, article1_node_tree
 
 from guffin.common.filenames import shell_safe_filename
+from guffin.common.revision import Revision
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
@@ -109,6 +111,63 @@ class TestFrontMatter:
         result = self._render(tmp_path, DefaultProfile())
         assert result.startswith("# Dorian Gray")
         assert "publisher:" not in result
+
+
+class TestRevisionLine:
+    """A non-front-matter profile renders the authored revision name directly below the title H1."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, bundle: RenderBundle, profile: BookProfile | DefaultProfile) -> str:
+        render(
+            bundle,
+            profile=profile,
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_default_profile_renders_revision_below_title(self, tmp_path: Path) -> None:
+        """With an authored revision name, an emphasized revision line follows the H1 title."""
+        bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
+        result = self._render(tmp_path, bundle, DefaultProfile())
+        assert result.startswith("# Dorian Gray\n\n*revision draft-3*\n")
+
+    def test_no_authored_name_no_revision_line(self, tmp_path: Path) -> None:
+        """A revision without an authored name inserts nothing."""
+        bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982"))
+        result = self._render(tmp_path, bundle, DefaultProfile())
+        assert "revision" not in result
+
+    def test_no_revision_no_revision_line(self, tmp_path: Path) -> None:
+        """A bundle with no captured revision inserts nothing."""
+        result = self._render(tmp_path, _book_bundle(), DefaultProfile())
+        assert "revision" not in result
+
+    def test_front_matter_profile_omits_revision_line(self, tmp_path: Path) -> None:
+        """A title-page-emitting profile keeps the body free of the revision line."""
+        bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
+        result = self._render(tmp_path, bundle, BookProfile())
+        assert "*revision draft-3*" not in result
+
+    def test_front_matter_profile_carries_summary_in_metadata(self, tmp_path: Path) -> None:
+        """A title-page-emitting profile records the entire revision summary in the YAML block."""
+        revision = Revision(
+            snapshot="d8666f090982" + "0" * 52,
+            revision="draft-3",
+            last_edited_at=datetime(2026, 7, 11, 18, 22, tzinfo=UTC),
+            fetched_at=datetime(2026, 7, 12, 9, 30, tzinfo=UTC),
+        )
+        result = self._render(tmp_path, _book_bundle().with_revision(revision), BookProfile())
+        front_matter = result.split("---", 2)[1]
+        assert revision.summary() in front_matter
+
+    def test_default_profile_carries_no_revision_metadata(self, tmp_path: Path) -> None:
+        """A profile without front matter serializes no revision metadata entry."""
+        bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
+        result = self._render(tmp_path, bundle, DefaultProfile())
+        assert "snapshot d8666f090982" not in result
 
 
 class TestHeadingDemotion:

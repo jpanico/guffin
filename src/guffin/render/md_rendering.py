@@ -35,6 +35,7 @@ import pypandoc  # type: ignore[import-untyped]
 import regex
 from pydantic import validate_call
 
+from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import drop_unpublished
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
@@ -96,6 +97,51 @@ def _demote_content_headings(doc: pf.Doc) -> None:
     doc.walk(_demote)
 
 
+def _stamp_revision_metadata(doc: pf.Doc, revision: Revision | None) -> None:
+    """Stamp *revision*'s one-line summary into *doc*'s ``revision`` metadata entry, in place.
+
+    The entry carries the entire :meth:`~guffin.common.revision.Revision.summary` line —
+    authored name, snapshot hash, and timestamps — so a document whose metadata is serialized
+    (e.g. as YAML front matter) records exactly which content snapshot produced it.  A ``None``
+    *revision* leaves *doc* untouched.
+
+    Mutates *doc* in place; does not return a value.
+
+    Args:
+        doc: The document to rewrite.
+        revision: The content revision to stamp, or ``None`` to stamp nothing.
+    """
+    if revision is None:
+        return
+    doc.metadata["revision"] = pf.MetaString(revision.summary())
+
+
+def _insert_revision_line(doc: pf.Doc, revision_name: str | None) -> None:
+    """Insert *revision_name* directly below *doc*'s leading title header, in place.
+
+    The line renders as an emphasized ``revision <name>`` paragraph — the document's
+    author-declared revision name, presented where a reader looks for edition facts: right under
+    the title.  A ``None`` *revision_name*, or a *doc* that does not open with a title header,
+    leaves *doc* untouched.
+
+    Mutates *doc* in place; does not return a value.
+
+    Args:
+        doc: The document to rewrite.
+        revision_name: The author-declared revision name, or ``None`` to insert nothing.
+    """
+    if revision_name is None:
+        return
+    blocks: Final[list[pf.Block]] = list(doc.content)
+    if not blocks or not isinstance(blocks[0], pf.Header):
+        return
+    words: Final[list[str]] = f"revision {revision_name}".split()
+    inlines: Final[list[pf.Inline]] = [pf.Str(words[0])]
+    for word in words[1:]:
+        inlines.extend((pf.Space(), pf.Str(word)))
+    doc.content.insert(1, pf.Para(pf.Emph(*inlines)))
+
+
 def _gfm_resources_dir() -> Path:
     """Return the absolute path to the bundled ``guffin/render/gfm_resources/`` directory."""
     pkg_files = importlib.resources.files(_GFM_RESOURCES_PACKAGE)
@@ -123,7 +169,12 @@ def render(
     the directive, since an unpaginated document has no title *page*; the title renders both
     there and as the leading H1.  Whenever a title H1 is emitted, the content headings are
     demoted one level (clamped at H6) so the title contains them rather than sitting beside
-    them (see :func:`_demote_content_headings`).  Writes the result in one of two modes
+    them (see :func:`_demote_content_headings`).  The bundle's content revision follows the
+    same split: a front-matter-emitting profile records the entire revision summary as a
+    ``revision`` metadata entry in the YAML block (see :func:`_stamp_revision_metadata`),
+    while a profile without front matter renders just the author-declared revision name as an
+    emphasized line directly below the title H1 (see :func:`_insert_revision_line`).  Writes
+    the result in one of two modes
     controlled by ``options.should_bundle``:
 
     - ``should_bundle=True`` (default) — fetches Cloud Firestore image and PDF assets
@@ -165,6 +216,21 @@ def render(
     # --standalone engages Pandoc's GFM template, which serializes the document metadata (title,
     # authors, publisher, ...) as a YAML front-matter block — the format's bibliographic record.
     standalone_args: Final[list[str]] = ["--standalone"] if profile.structural_policy.emit_title_page else []
+    # The authored revision name (the root's revision:: value) is bibliographic content, not
+    # origin bookkeeping (that's the colophon's job): when the profile emits no front-matter
+    # record to carry it (emit_title_page unset — the default profile), it renders as an
+    # emphasized line directly below the title H1 instead.
+    revision_name: Final[str | None] = (
+        render_bundle.revision.revision
+        if render_bundle.revision is not None and not profile.structural_policy.emit_title_page
+        else None
+    )
+    # A front-matter-emitting profile records the content revision there instead: the whole
+    # summary line (name + snapshot + timestamps) joins the bibliographic metadata the
+    # standalone conversion serializes.
+    title_page_revision: Final[Revision | None] = (
+        render_bundle.revision if profile.structural_policy.emit_title_page else None
+    )
     # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
     # fetch nor the rendered output.
     published: Final[VertexTree] = drop_unpublished(render_bundle.content)
@@ -197,6 +263,8 @@ def render(
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         _demote_content_headings(doc)
+        _insert_revision_line(doc, revision_name)
+        _stamp_revision_metadata(doc, title_page_revision)
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         md_text: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             bundle_json_str,
@@ -229,6 +297,8 @@ def render(
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
         resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map, options.daily_note_format))
         _demote_content_headings(no_bundle_doc)
+        _insert_revision_line(no_bundle_doc, revision_name)
+        _stamp_revision_metadata(no_bundle_doc, title_page_revision)
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)
         no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
             json_str,
