@@ -191,6 +191,7 @@ def render(
             render_bundle.view,
             title_in_header=True,
             provenance=render_bundle.provenance if options.emit_colophon else None,
+            revision=render_bundle.revision if options.emit_colophon else None,
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
@@ -222,6 +223,7 @@ def render(
             render_bundle.view,
             title_in_header=True,
             provenance=render_bundle.provenance if options.emit_colophon else None,
+            revision=render_bundle.revision if options.emit_colophon else None,
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]

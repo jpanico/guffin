@@ -49,6 +49,8 @@ from guffin.model.publishing_semantics import (
     publish_of,
     publish_of_vertex,
     resolved_matter,
+    revision_of,
+    revision_of_vertex,
     validate_semantics,
 )
 from guffin.model.vertex import (
@@ -108,6 +110,7 @@ class TestPublishingSemanticsMembers:
             "publisher",
             "rights",
             "identifier",
+            "revision",
             "cover-image",
         }
 
@@ -952,6 +955,32 @@ class TestCoverImageVertex:
         with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert cover_image_vertex(tree) is None
         assert any("not an image" in record.message for record in caplog.records)
+
+
+class TestRevisionOf:
+    """revision_of() reads a revision assignment's sole free-text value verbatim."""
+
+    def test_returns_the_label(self) -> None:
+        """The sole value is returned unchanged."""
+        assert revision_of(_assignment("revision", "draft-3")) == "draft-3"
+
+    def test_rejects_wrong_attribute(self) -> None:
+        """An assignment for a different attribute is rejected."""
+        with pytest.raises(ValueError, match="revision"):
+            revision_of(_assignment("title", "draft-3"))
+
+
+class TestRevisionOfVertex:
+    """revision_of_vertex() resolves a vertex's revision attribute, tolerating absence."""
+
+    def test_attributed_vertex_resolves(self) -> None:
+        """A page carrying the attribute resolves to its label."""
+        page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[_assignment("revision", "draft-3")])
+        assert revision_of_vertex(page) == "draft-3"
+
+    def test_unattributed_vertex_is_none(self) -> None:
+        """A vertex with no revision attribute resolves to None."""
+        assert revision_of_vertex(PageVertex(uid="pageroot1", title="Doc")) is None
 
 
 class TestAllCoverImageValuesLegal:

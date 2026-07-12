@@ -27,6 +27,7 @@ from guffin.model.publishing_semantics import (
     PublishingSemantics,
     find_publishing_attribute,
     has_parts,
+    revision_of_vertex,
     validate_semantics,
 )
 from guffin.model.render_bundle import RenderBundle
@@ -50,6 +51,7 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchResult, NodeFetchSpec
 from guffin.roam.node_tree import NodeTree
+from guffin.roam.revision import gather_revision
 from guffin.transcribe.roam_tree_to_guffin import to_render_bundle
 
 logger = logging.getLogger(__name__)
@@ -126,14 +128,19 @@ def fetch_roam_trees(
         result.anchor_tree is not None
     ), "anchor_tree is None; fetch_spec has include_node_tree=False, which is unsupported here"
     anchor_tree: Final[NodeTree] = result.anchor_tree
-    render_bundle: Final[RenderBundle] = to_render_bundle(anchor_tree)
-    validation_result: Final[ValidationResult] = validate_semantics(render_bundle.content)
+    transcribed: Final[RenderBundle] = to_render_bundle(anchor_tree)
+    validation_result: Final[ValidationResult] = validate_semantics(transcribed.content)
     if strict_semantics and not validation_result.is_valid:
         raise SemanticsValidationError(validation_result)
     # Without strict_semantics, vocabulary violations are advisory: surfaced loudly but never
     # failing the fetch — a misplaced tag simply has no effect.
     for validation_error in validation_result.errors:
         logger.warning("guffin semantics validation: %s", validation_error)
+    # The content revision is captured on every fetch: the content-addressed hash and edit
+    # bookkeeping come from the raw wire response, the optional label from the root vertex's
+    # authored revision:: attribute.  Emission stays a renderer decision (the colophon).
+    label: Final[str | None] = revision_of_vertex(root_vertex(transcribed.content))
+    render_bundle: Final[RenderBundle] = transcribed.with_revision(gather_revision(result.raw_result, label))
     logger.debug("node_tree=%r\n\nrender_bundle=%r", anchor_tree, render_bundle)
     return result, render_bundle
 

@@ -45,6 +45,7 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.provenance import Provenance
+from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import drop_unpublished
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
@@ -54,6 +55,7 @@ from guffin.render.callout_theme import callout_accent, callout_title_tint
 from guffin.render.epub_post_processing import restore_matter_divisions, stamp_titlepage_provenance
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
+    colophon_summary,
     make_resolver,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
@@ -230,14 +232,17 @@ def render(
         # A root-declared cover-image attribute supplies the package cover (content-driven,
         # whatever the profile): Pandoc generates the cover document and manifest entry from it.
         cover_path: Final[Path | None] = cover_image_path(content, asset_refs)
-        # The provenance rides the title page when one is emitted (stamped after packaging, below);
-        # otherwise it renders as an end-of-document colophon block — mirroring the PDF placement.
+        # The colophon (software provenance + content revision) rides the title page when one is
+        # emitted (stamped after packaging, below); otherwise it renders as an end-of-document
+        # colophon block — mirroring the PDF placement.
         provenance: Final[Provenance | None] = render_bundle.provenance if options.emit_colophon else None
+        revision: Final[Revision | None] = render_bundle.revision if options.emit_colophon else None
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
             enriched_tree,
             asset_files,
             render_bundle.view,
             provenance=None if emit_title_page else provenance,
+            revision=None if emit_title_page else revision,
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
@@ -282,6 +287,6 @@ def render(
         )
 
     restore_matter_divisions(output_path)
-    if emit_title_page and provenance is not None:
-        stamp_titlepage_provenance(output_path, provenance.summary())
+    if emit_title_page and (provenance is not None or revision is not None):
+        stamp_titlepage_provenance(output_path, colophon_summary(provenance, revision))
     logger.info("Wrote EPUB to %s", output_path)

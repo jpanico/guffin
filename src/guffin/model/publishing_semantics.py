@@ -154,7 +154,8 @@ class PublishingSemantics(enum.Enum):
     - **Document metadata** (:attr:`AttributeAnchor.ROOT`) — bibliographic facts about the work as a
       whole, so they attach only to the tree's root vertex (the export target itself, whatever
       its type): :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`,
-      :attr:`PUBLISHER`, :attr:`RIGHTS`, :attr:`IDENTIFIER`, :attr:`COVER_IMAGE`.  The cover is
+      :attr:`PUBLISHER`, :attr:`RIGHTS`, :attr:`IDENTIFIER`, :attr:`REVISION`,
+      :attr:`COVER_IMAGE`.  The cover is
       metadata rather than an :class:`~guffin.model.chicago_structure.StructuralElement` because
       per CMOS only the book *interior* is matter-classified — the cover is exterior.
     - **Heading tags** (:attr:`AttributeAnchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
@@ -173,6 +174,9 @@ class PublishingSemantics(enum.Enum):
         PUBLISHER: The publisher of the work.
         RIGHTS: The rights statement for the work (e.g. a copyright line).
         IDENTIFIER: The document identifier.
+        REVISION: An author-declared revision label for the content (free text — e.g. a draft
+            name or version string), carried into the export's content
+            :class:`~guffin.common.revision.Revision` record.
         COVER_IMAGE: The work's cover image — the value is a Roam block reference
             ``((<uid>))`` to an image block, keeping the cover ordinary, reusable Roam content.
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
@@ -191,6 +195,7 @@ class PublishingSemantics(enum.Enum):
     PUBLISHER = PublishingAttribute(name="publisher", anchor=AttributeAnchor.ROOT)
     RIGHTS = PublishingAttribute(name="rights", anchor=AttributeAnchor.ROOT)
     IDENTIFIER = PublishingAttribute(name="identifier", anchor=AttributeAnchor.ROOT)
+    REVISION = PublishingAttribute(name="revision", anchor=AttributeAnchor.ROOT)
     COVER_IMAGE = PublishingAttribute(name="cover-image", anchor=AttributeAnchor.ROOT)
     ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=AttributeAnchor.HEADING)
     MATTER = PublishingAttribute(name="matter", anchor=AttributeAnchor.HEADING)
@@ -492,6 +497,50 @@ def cover_image_vertex(tree: VertexTree) -> ImageVertex | None:
         )
         return None
     return target
+
+
+@validate_call
+def revision_of(assignment: AttributeAssignment) -> str:
+    """Return the revision label that a ``revision`` assignment carries.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.REVISION` attribute, then returns
+    its sole value verbatim — the label is free text (a draft name, a version string, …).
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.REVISION` attribute assignment (one value
+            expected).
+
+    Returns:
+        The revision label.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``revision`` attribute or does not carry
+            exactly one value.
+    """
+    return verified_sole_value_text(assignment, PublishingSemantics.REVISION.value)
+
+
+@validate_call
+def revision_of_vertex(vertex: Vertex) -> str | None:
+    """Resolve *vertex*'s ``revision`` attribute to its label, or ``None``.
+
+    ``None`` when *vertex* carries no ``revision`` assignment, or when the assignment does not
+    carry exactly one value (ignored with a warning).
+
+    Args:
+        vertex: The vertex whose attribute to resolve.
+
+    Returns:
+        The revision label, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.REVISION)
+    if assignment is None:
+        return None
+    try:
+        return revision_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring revision on vertex uid=%r: %s", vertex.uid, exc)
+        return None
 
 
 @validate_call

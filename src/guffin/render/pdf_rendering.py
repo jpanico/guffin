@@ -45,6 +45,7 @@ from pydantic import validate_call
 from pypdf import PdfReader
 
 from guffin.common.provenance import Provenance
+from guffin.common.revision import Revision
 from guffin.model.chicago_structure import StructuralElement
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
@@ -60,6 +61,7 @@ from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enri
 from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
+    colophon_summary,
     make_resolver,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
@@ -117,6 +119,7 @@ def _typst_template_args(
     emit_title_page: bool,
     emit_toc: bool,
     provenance: Provenance | None,
+    revision: Revision | None,
     cover_image: Path | None,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
@@ -138,10 +141,12 @@ def _typst_template_args(
             renders a title page from the document metadata; ``False`` passes nothing (no title page).
         emit_toc: When ``True``, enables the Bergfink ``toc`` variable so the template renders a
             table of contents (a Typst outline) ahead of the body; ``False`` passes nothing.
-        provenance: When set, passes its :meth:`~guffin.common.provenance.Provenance.summary` to the
-            template — as the Bergfink ``titlepage-provenance`` variable (rendered at the foot of the
-            title page) when *emit_title_page* is set, otherwise as ``footer-provenance`` (a line
-            below the running page footer); ``None`` passes nothing.
+        provenance: When set, contributes the software half of the colophon line passed to the
+            template — as the Bergfink ``titlepage-provenance`` variable (rendered at the foot of
+            the title page) when *emit_title_page* is set, otherwise as ``footer-provenance`` (a
+            line below the running page footer); ``None`` contributes nothing.
+        revision: When set, contributes the content-revision half of the same colophon line;
+            ``None`` contributes nothing.  The variable is passed when either record is present.
         cover_image: When set, passes the local image path as the template's ``cover-image``
             variable, so it renders as a full-bleed cover page ahead of the title page (the cover
             is exterior to the book interior); ``None`` passes nothing (no cover page).
@@ -172,11 +177,12 @@ def _typst_template_args(
     # `number-sections`, it is passed explicitly via -V rather than relying on Pandoc's --toc flag.
     if emit_toc:
         args.extend(["-V", "toc=true"])
-    # In PDF the provenance rides the title page when one is emitted (at its foot), otherwise the
-    # running page footer (a line below it) — never an end-of-body block.
-    if provenance is not None:
+    # In PDF the colophon (software provenance + content revision) rides the title page when one
+    # is emitted (at its foot), otherwise the running page footer (a line below it) — never an
+    # end-of-body block.
+    if provenance is not None or revision is not None:
         provenance_var: Final[str] = "titlepage-provenance" if emit_title_page else "footer-provenance"
-        args.extend(["-V", f"{provenance_var}={provenance.summary()}"])
+        args.extend(["-V", f"{provenance_var}={colophon_summary(provenance, revision)}"])
     # The cover page renders only when the `cover-image` variable is set; pass nothing otherwise.
     if cover_image is not None:
         args.extend(["-V", f"cover-image={cover_image}"])
@@ -487,6 +493,7 @@ def render(
             profile.structural_policy.emit_title_page,
             emit_toc,
             render_bundle.provenance if options.emit_colophon else None,
+            render_bundle.revision if options.emit_colophon else None,
             cover_path,
         )
         extra_args: list[str] = [*engine_args, *template_args]

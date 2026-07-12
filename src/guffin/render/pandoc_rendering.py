@@ -88,6 +88,7 @@ from pydantic import ConfigDict, validate_call
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import contains_fenced_code_block, hard_broken_markdown
 from guffin.common.provenance import Provenance
+from guffin.common.revision import Revision
 from guffin.common.table import HAlign
 from guffin.model.attribute import (
     AttributeDomain,
@@ -1219,17 +1220,35 @@ _COLOPHON_FONT_SIZE: Final[str] = "0.7em"
 """Colophon text size relative to body, matching the PDF footer's text-size-to-body ratio."""
 
 
-def _colophon_blocks(provenance: Provenance) -> list[pf.Block]:
-    """Return the end-of-document provenance colophon blocks for *provenance*.
+@validate_call
+def colophon_summary(provenance: Provenance | None, revision: Revision | None) -> str:
+    """Return the one-line colophon text for *provenance* and/or *revision*.
 
-    A :class:`~panflute.HorizontalRule` followed by the
-    :meth:`~guffin.common.provenance.Provenance.summary` text (verbatim, so it matches the PDF footer
-    exactly) rendered as an inline-styled HTML paragraph at :data:`_COLOPHON_FONT_SIZE` — the same
-    text-size-to-body ratio as the PDF footer.  Emitted as a raw-HTML block because only HTML-based
-    writers (GFM, EPUB) consume the body colophon; the PDF routes provenance to its page footer
-    instead.
+    The software half (:meth:`~guffin.common.provenance.Provenance.summary`) followed by the
+    content half (:meth:`~guffin.common.revision.Revision.summary`), joined into the single line
+    every format's colophon placement renders; either half may be absent.
+
+    Args:
+        provenance: The software provenance to include, or ``None``.
+        revision: The content revision to include, or ``None``.
+
+    Returns:
+        The combined colophon line; the empty string when both are ``None``.
     """
-    summary: Final[str] = html.escape(provenance.summary())
+    parts: Final[list[str]] = [record.summary() for record in (provenance, revision) if record is not None]
+    return " · ".join(parts)
+
+
+def _colophon_blocks(provenance: Provenance | None, revision: Revision | None) -> list[pf.Block]:
+    """Return the end-of-document colophon blocks for *provenance* and/or *revision*.
+
+    A :class:`~panflute.HorizontalRule` followed by the :func:`colophon_summary` text (verbatim,
+    so it matches the PDF footer exactly) rendered as an inline-styled HTML paragraph at
+    :data:`_COLOPHON_FONT_SIZE` — the same text-size-to-body ratio as the PDF footer.  Emitted as
+    a raw-HTML block because only HTML-based writers (GFM, EPUB) consume the body colophon; the
+    PDF routes the colophon to its page footer instead.
+    """
+    summary: Final[str] = html.escape(colophon_summary(provenance, revision))
     paragraph: Final[str] = f'<p style="font-size: {_COLOPHON_FONT_SIZE}"><em>{summary}</em></p>'
     return [pf.HorizontalRule(), pf.RawBlock(paragraph, format="html")]
 
@@ -1242,6 +1261,7 @@ def vertex_tree_to_pandoc(
     *,
     title_in_header: bool = False,
     provenance: Provenance | None = None,
+    revision: Revision | None = None,
 ) -> tuple[pf.Doc, InlineMap]:
     """Convert a :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
 
@@ -1286,9 +1306,12 @@ def vertex_tree_to_pandoc(
             block in addition to storing it in the document metadata (the visible title
             for formats whose writer drops or only optionally emits metadata).
             Defaults to ``False`` (metadata only).
-        provenance: When set, append an end-of-document provenance colophon (a horizontal rule and
-            an emphasized line of :meth:`~guffin.common.provenance.Provenance.summary` text); ``None``
-            (default) appends nothing.
+        provenance: When set, contribute the software half of the end-of-document colophon (a
+            horizontal rule and an emphasized :func:`colophon_summary` line); ``None`` (default)
+            contributes nothing.
+        revision: When set, contribute the content-revision half of the same colophon line;
+            ``None`` (default) contributes nothing.  The colophon is appended when either record
+            is present.
 
     Returns:
         A two-tuple of the :class:`~panflute.Doc` ready for serialization via
@@ -1342,8 +1365,8 @@ def vertex_tree_to_pandoc(
         )
     )
 
-    if provenance is not None:
-        blocks.extend(_colophon_blocks(provenance))
+    if provenance is not None or revision is not None:
+        blocks.extend(_colophon_blocks(provenance, revision))
 
     return pf.Doc(*blocks, metadata=metadata), inline_map
 

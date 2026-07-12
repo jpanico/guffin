@@ -13,6 +13,8 @@ Public symbols:
   integer such as a day-of-month.
 - :func:`verified_w3cdtf_date` — return a string after verifying it is a W3CDTF
   reduced-precision date, calendar validity included.
+- :func:`utc_timestamp` — format a datetime as a compact minute-precision UTC timestamp
+  with an explicit ``Z`` suffix.
 """
 
 import datetime
@@ -158,3 +160,20 @@ def verified_w3cdtf_date(date_text: str) -> W3cdtfDate:
             outside 1–12, or a day invalid for its month).
     """
     return _checked_w3cdtf_date(date_text)
+
+
+@validate_call
+def utc_timestamp(moment: datetime.datetime) -> str:
+    """Return *moment* as a compact minute-precision UTC timestamp with an explicit ``Z`` suffix.
+
+    Normalizes to UTC before formatting, so timestamps captured from different clocks (system
+    time, git commit offsets, source-system epochs) render in one zone and read unambiguously —
+    e.g. ``2026-07-12T01:12Z``.  A naive *moment* is interpreted as local time.
+
+    Args:
+        moment: The instant to format.
+
+    Returns:
+        The ``YYYY-MM-DDTHH:MMZ`` UTC rendering of *moment*.
+    """
+    return moment.astimezone(datetime.UTC).strftime("%Y-%m-%dT%H:%MZ")

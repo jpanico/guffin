@@ -21,6 +21,8 @@ from typing import Final
 
 from pydantic import BaseModel, ConfigDict, Field, validate_call
 
+from guffin.common.date import utc_timestamp
+
 logger = logging.getLogger(__name__)
 
 UNKNOWN_COMMIT: Final[str] = "unknown"
@@ -28,9 +30,6 @@ UNKNOWN_COMMIT: Final[str] = "unknown"
 
 _SHORT_COMMIT_LENGTH: Final[int] = 7
 """Leading commit-hash characters shown by :meth:`Provenance.summary` (git's / GitHub's short-SHA length)."""
-
-_TIMESTAMP_FORMAT: Final[str] = "%Y-%m-%dT%H:%M"
-"""Strftime format for :meth:`Provenance.summary` timestamps: date and time to the minute, no timezone."""
 
 
 class Provenance(BaseModel):
@@ -71,10 +70,11 @@ class Provenance(BaseModel):
         Each :attr:`extra` ``key value`` pair follows the leading ``guffin`` segment, in insertion
         order; then the commit hash — shortened to its first :data:`_SHORT_COMMIT_LENGTH` characters,
         with a ``-dirty`` suffix when :attr:`dirty` is set — and the commit and export timestamps
-        (date and time to the minute, no timezone — see :data:`_TIMESTAMP_FORMAT`) when present.
-        Example::
+        (minute-precision UTC with an explicit ``Z`` — see
+        :func:`~guffin.common.date.utc_timestamp`; timestamps captured with other offsets, such
+        as git's local-time commit stamps, are normalized) when present.  Example::
 
-            guffin · type book · 1ce1966-dirty · committed 2026-06-29T14:02 · exported 2026-06-29T22:40
+            guffin · type book · 1ce1966-dirty · committed 2026-06-29T14:02Z · exported 2026-06-29T22:40Z
 
         Returns:
             The provenance as one compact, human- and machine-readable line.
@@ -83,9 +83,9 @@ class Provenance(BaseModel):
         commit: Final[str] = f"{short_commit}-dirty" if self.dirty else short_commit
         parts: Final[list[str]] = ["guffin", *(f"{key} {value}" for key, value in self.extra.items()), commit]
         if self.committed_at is not None:
-            parts.append(f"committed {self.committed_at.strftime(_TIMESTAMP_FORMAT)}")
+            parts.append(f"committed {utc_timestamp(self.committed_at)}")
         if self.exported_at is not None:
-            parts.append(f"exported {self.exported_at.strftime(_TIMESTAMP_FORMAT)}")
+            parts.append(f"exported {utc_timestamp(self.exported_at)}")
         return " · ".join(parts)
 
 

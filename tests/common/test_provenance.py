@@ -22,7 +22,7 @@ class TestProvenanceSummary:
             exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
         )
         summary: Final[str] = provenance.summary()
-        assert summary == "guffin · abc123d-dirty · committed 2026-06-29T14:02 · exported 2026-06-29T22:40"
+        assert summary == "guffin · abc123d-dirty · committed 2026-06-29T14:02Z · exported 2026-06-29T22:40Z"
 
     def test_clean_commit_omits_dirty_marker(self) -> None:
         """A clean commit carries no -dirty suffix."""
@@ -41,7 +41,7 @@ class TestProvenanceSummary:
             exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
             extra={"type": "book", "edition": "2"},
         )
-        assert provenance.summary() == "guffin · type book · edition 2 · abc123 · exported 2026-06-29T22:40"
+        assert provenance.summary() == "guffin · type book · edition 2 · abc123 · exported 2026-06-29T22:40Z"
 
 
 class TestGatherProvenance:

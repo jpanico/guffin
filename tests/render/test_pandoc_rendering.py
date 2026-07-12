@@ -19,6 +19,7 @@ from pydantic import HttpUrl
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
+from guffin.common.revision import Revision
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
@@ -41,6 +42,7 @@ from guffin.render.pandoc_rendering import (
     _attribute_assignment_text,
     _effective_layout,
     build_child_blocks,
+    colophon_summary,
     make_resolver,
     vertex_tree_to_pandoc,
 )
@@ -284,6 +286,40 @@ class TestVertexTreeToPandocColophon:
         assert colophon.format == "html"
         assert "font-size: 0.7em" in colophon.text
         assert provenance.summary() in colophon.text
+
+    def test_colophon_appended_with_revision_alone(self) -> None:
+        """A content revision without software provenance still produces the colophon."""
+        revision = Revision(content_hash="d8666f090982" + "0" * 52, label="draft-3")
+        tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc")])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {}, revision=revision)
+        blocks = list(doc.content)
+        assert isinstance(blocks[-2], pf.HorizontalRule)
+        assert isinstance(blocks[-1], pf.RawBlock)
+        assert "rev d8666f090982" in blocks[-1].text
+        assert "label draft-3" in blocks[-1].text
+
+
+class TestColophonSummary:
+    """colophon_summary() joins the software and content halves into one line."""
+
+    _PROVENANCE = Provenance(commit="abc123def456")
+    _REVISION = Revision(content_hash="d8666f090982" + "0" * 52)
+
+    def test_both_halves(self) -> None:
+        """Provenance leads, revision follows, dot-joined."""
+        assert colophon_summary(self._PROVENANCE, self._REVISION) == "guffin · abc123d · rev d8666f090982"
+
+    def test_provenance_only(self) -> None:
+        """A missing revision leaves the provenance summary alone."""
+        assert colophon_summary(self._PROVENANCE, None) == "guffin · abc123d"
+
+    def test_revision_only(self) -> None:
+        """A missing provenance leaves the revision summary alone."""
+        assert colophon_summary(None, self._REVISION) == "rev d8666f090982"
+
+    def test_neither_is_empty(self) -> None:
+        """Both absent yields the empty string."""
+        assert colophon_summary(None, None) == ""
 
 
 # ---------------------------------------------------------------------------

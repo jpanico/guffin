@@ -185,6 +185,7 @@ class TestTypstTemplateArgs:
             emit_title_page=True,
             emit_toc=False,
             provenance=None,
+            revision=None,
             cover_image=cover_image,
         )
 
