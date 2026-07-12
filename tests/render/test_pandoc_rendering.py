@@ -289,25 +289,25 @@ class TestVertexTreeToPandocColophon:
 
     def test_colophon_appended_with_revision_alone(self) -> None:
         """A content revision without software provenance still produces the colophon."""
-        revision = Revision(content_hash="d8666f090982" + "0" * 52, label="draft-3")
+        revision = Revision(snapshot="d8666f090982" + "0" * 52, revision="draft-3")
         tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc")])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {}, revision=revision)
         blocks = list(doc.content)
         assert isinstance(blocks[-2], pf.HorizontalRule)
         assert isinstance(blocks[-1], pf.RawBlock)
-        assert "rev d8666f090982" in blocks[-1].text
-        assert "label draft-3" in blocks[-1].text
+        assert "snapshot d8666f090982" in blocks[-1].text
+        assert "revision draft-3" in blocks[-1].text
 
 
 class TestColophonSummary:
     """colophon_summary() joins the software and content halves into one line."""
 
     _PROVENANCE = Provenance(commit="abc123def456")
-    _REVISION = Revision(content_hash="d8666f090982" + "0" * 52)
+    _REVISION = Revision(snapshot="d8666f090982" + "0" * 52)
 
     def test_both_halves(self) -> None:
         """Provenance leads, revision follows, dot-joined."""
-        assert colophon_summary(self._PROVENANCE, self._REVISION) == "guffin · abc123d · rev d8666f090982"
+        assert colophon_summary(self._PROVENANCE, self._REVISION) == "guffin · abc123d · snapshot d8666f090982"
 
     def test_provenance_only(self) -> None:
         """A missing revision leaves the provenance summary alone."""
@@ -315,7 +315,7 @@ class TestColophonSummary:
 
     def test_revision_only(self) -> None:
         """A missing provenance leaves the revision summary alone."""
-        assert colophon_summary(None, self._REVISION) == "rev d8666f090982"
+        assert colophon_summary(None, self._REVISION) == "snapshot d8666f090982"
 
     def test_neither_is_empty(self) -> None:
         """Both absent yields the empty string."""

@@ -29,8 +29,8 @@ class RenderBundle(BaseModel):
             bundle's data; ``None`` when not captured.  Carried as origin metadata so a renderer can
             stamp it as a colophon when asked (see
             :attr:`~guffin.render.render_options.RenderOptions.emit_colophon`).
-        revision: Optional record of the content snapshot (content hash + timestamps + authored
-            label) this bundle was produced from; ``None`` when not captured.  Carried as origin
+        revision: Optional record of the content snapshot (snapshot hash + timestamps + authored
+            revision name) this bundle was produced from; ``None`` when not captured.  Carried as origin
             metadata alongside :attr:`provenance` and stamped into the same colophon.
     """
 
@@ -42,7 +42,7 @@ class RenderBundle(BaseModel):
         default=None, description="Software (commit + timestamps) that produced this bundle's data."
     )
     revision: Revision | None = Field(
-        default=None, description="Content snapshot (hash + timestamps + label) this bundle was produced from."
+        default=None, description="Content snapshot (hash + timestamps + revision name) this bundle was produced from."
     )
 
     def with_provenance(self, provenance: Provenance | None) -> RenderBundle:

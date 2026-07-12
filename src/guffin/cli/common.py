@@ -136,11 +136,11 @@ def fetch_roam_trees(
     # failing the fetch — a misplaced tag simply has no effect.
     for validation_error in validation_result.errors:
         logger.warning("guffin semantics validation: %s", validation_error)
-    # The content revision is captured on every fetch: the content-addressed hash and edit
-    # bookkeeping come from the raw wire response, the optional label from the root vertex's
+    # The content revision is captured on every fetch: the snapshot hash and edit bookkeeping
+    # come from the raw wire response, the optional revision name from the root vertex's
     # authored revision:: attribute.  Emission stays a renderer decision (the colophon).
-    label: Final[str | None] = revision_of_vertex(root_vertex(transcribed.content))
-    render_bundle: Final[RenderBundle] = transcribed.with_revision(gather_revision(result.raw_result, label))
+    revision_name: Final[str | None] = revision_of_vertex(root_vertex(transcribed.content))
+    render_bundle: Final[RenderBundle] = transcribed.with_revision(gather_revision(result.raw_result, revision_name))
     logger.debug("node_tree=%r\n\nrender_bundle=%r", anchor_tree, render_bundle)
     return result, render_bundle
 

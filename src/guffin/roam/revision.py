@@ -13,9 +13,9 @@ prop, which is hashed.
 
 Public symbols:
 
-- **Functions**: :func:`content_hash` — SHA-256 hex digest of a raw fetch result's canonical
-  form; :func:`gather_revision` — capture a full :class:`~guffin.common.revision.Revision` from
-  a raw fetch result.
+- **Functions**: :func:`snapshot` — SHA-256 hex digest of a raw fetch result's canonical
+  form, the snapshot's identity; :func:`gather_revision` — capture a full
+  :class:`~guffin.common.revision.Revision` from a raw fetch result.
 """
 
 import hashlib
@@ -77,8 +77,8 @@ def _canonical_json(raw_result: list[list[dict[str, object]]]) -> str:
 
 
 @validate_call
-def content_hash(raw_result: list[list[dict[str, object]]]) -> str:
-    """Return the SHA-256 hex digest of *raw_result*'s canonical form.
+def snapshot(raw_result: list[list[dict[str, object]]]) -> str:
+    """Return the SHA-256 hex digest of *raw_result*'s canonical form — the snapshot's identity.
 
     Content-addressed: any substantive change to any fetched node changes the digest, while
     transient session/UI state and wire-ordering variation do not.
@@ -108,24 +108,24 @@ def _last_edited_at(raw_result: list[list[dict[str, object]]]) -> datetime | Non
 
 
 @validate_call
-def gather_revision(raw_result: list[list[dict[str, object]]], label: str | None = None) -> Revision:
+def gather_revision(raw_result: list[list[dict[str, object]]], revision: str | None = None) -> Revision:
     """Capture a :class:`~guffin.common.revision.Revision` from a raw fetch result.
 
-    Computes the content-addressed :func:`content_hash` and the latest edit-bookkeeping
-    timestamp from *raw_result*, stamps the capture moment, and carries the caller-supplied
-    *label* (an author-declared revision name resolved by the caller's own vocabulary).
+    Computes the content-addressed :func:`snapshot` and the latest edit-bookkeeping timestamp
+    from *raw_result*, stamps the capture moment, and carries the caller-supplied *revision*
+    (an author-declared revision name resolved by the caller's own vocabulary).
 
     Args:
         raw_result: The raw Datalog query result, as stored in
             :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.raw_result`.
-        label: An author-declared revision label, or ``None`` when the content declares none.
+        revision: An author-declared revision name, or ``None`` when the content declares none.
 
     Returns:
         The captured :class:`~guffin.common.revision.Revision`.
     """
     return Revision(
-        content_hash=content_hash(raw_result),
+        snapshot=snapshot(raw_result),
         last_edited_at=_last_edited_at(raw_result),
-        label=label,
+        revision=revision,
         fetched_at=datetime.now(tz=UTC),
     )

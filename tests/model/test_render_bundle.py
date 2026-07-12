@@ -40,7 +40,7 @@ class TestWithRevision:
     def test_stamps_revision_on_a_new_copy(self) -> None:
         """A non-None revision is recorded on a new bundle; content carries over; original unchanged."""
         base: Final[RenderBundle] = _bundle()
-        revision: Final[Revision] = Revision(content_hash="d8666f090982", label="draft-3")
+        revision: Final[Revision] = Revision(snapshot="d8666f090982", revision="draft-3")
         stamped: Final[RenderBundle] = base.with_revision(revision)
         assert stamped is not base
         assert stamped.revision == revision
