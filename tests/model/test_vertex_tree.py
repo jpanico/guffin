@@ -8,7 +8,7 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
-from guffin.model.attribute import Attribute, AttributeInstance, LiteralValue
+from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import HeadingVertex, ImageVertex, PageVertex, PdfVertex, TextVertex, Vertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
@@ -88,10 +88,11 @@ class TestMapVertices:
         assert texts == ["changed", "world"]
 
 
-def _assignment() -> AttributeAssignment:
+def _assignment(name: str = "tags", domain: AttributeDomain = AttributeDomain.DEFAULT) -> AttributeAssignment:
     return AttributeAssignment(
         attribute=AttributeInstance(
-            definition=Attribute(name="tags"), link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageaaaaa")
+            definition=Attribute(name=name, domain=domain),
+            link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageaaaaa"),
         ),
         values=(LiteralValue(value="x"),),
     )
@@ -100,8 +101,22 @@ def _assignment() -> AttributeAssignment:
 class TestDropAttributeAssignments:
     """Tests for drop_attribute_assignments()."""
 
+    def test_guffin_system_assignments_survive(self) -> None:
+        """A Guffin-system assignment is retained while end-user siblings drop."""
+        root: Final[TextVertex] = TextVertex(
+            uid="root00001",
+            text="root",
+            attribute_assignments=[_assignment(), _assignment(name="title", domain=AttributeDomain.GUFFIN)],
+        )
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[root])
+        result: Final[VertexTree] = drop_attribute_assignments(tree)
+        kept = result.uid_map["root00001"].attribute_assignments
+        assert kept is not None and len(kept) == 1
+        assert kept[0].attribute.definition.name == "title"
+        assert kept[0].attribute.definition.domain is AttributeDomain.GUFFIN
+
     def test_clears_attribute_assignments_and_preserves_other_fields(self) -> None:
-        """A vertex's attribute_assignments are cleared to None; its other fields are untouched."""
+        """A vertex's end-user assignments are cleared to None; its other fields are untouched."""
         root: Final[TextVertex] = TextVertex(
             uid="root00001", text="root", children=["keep00001"], attribute_assignments=[_assignment()]
         )

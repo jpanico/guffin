@@ -42,6 +42,18 @@ class AttributeDomain(enum.StrEnum):
     DEFAULT = "default"
     GUFFIN = "guffin"
 
+    @property
+    def is_guffin(self) -> bool:
+        """Whether this domain belongs to the Guffin system rather than to the end-user.
+
+        Every attribute is metadata by nature; what sets the Guffin system's domain apart is
+        ownership: its attributes carry semantics for the Guffin system alone (bibliographic
+        fields, structural tags, render directives) and never appear directly within the output
+        content, whereas an end-user domain's assignments are part of the authored document
+        itself.
+        """
+        return self is AttributeDomain.GUFFIN
+
 
 class AttributeValueKind(enum.StrEnum):
     """The kind of an attribute-assignment value, used as the discriminator of :data:`AttributeValue`.

@@ -264,21 +264,31 @@ def map_vertices(tree: VertexTree, func: Callable[[Vertex], Vertex]) -> VertexTr
 
 @validate_call
 def drop_attribute_assignments(tree: VertexTree) -> VertexTree:
-    """Return a new :class:`VertexTree` with every vertex's attribute assignments cleared.
+    """Return a new :class:`VertexTree` with every vertex's end-user attribute assignments cleared.
 
-    Each vertex's :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` is set to ``None``,
-    so the rendered output omits the Roam attribute pills.  All other fields are preserved and the
-    original *tree* is not modified.
+    Each vertex's :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` keeps only its
+    Guffin-system assignments (:attr:`~guffin.model.attribute.AttributeDomain.is_guffin`), so the
+    rendered output omits the Roam attribute pills while the assignments carrying Guffin-system
+    semantics — bibliographic metadata, structural tags, render directives, which never appear
+    directly in output content anyway — stay in force.  A vertex left with no assignments gets
+    ``None``.  All other fields are preserved and the original *tree* is not modified.
 
     Args:
         tree: The source :class:`VertexTree`.
 
     Returns:
-        A new :class:`VertexTree` whose vertices all have ``attribute_assignments=None``.
+        A new :class:`VertexTree` whose vertices carry only Guffin-system assignments.
     """
 
     def _clear(vtx: Vertex) -> Vertex:
-        return vtx.model_copy(update={"attribute_assignments": None}) if vtx.attribute_assignments else vtx
+        if not vtx.attribute_assignments:
+            return vtx
+        kept: Final[list[AttributeAssignment]] = [
+            a for a in vtx.attribute_assignments if a.attribute.definition.domain.is_guffin
+        ]
+        if len(kept) == len(vtx.attribute_assignments):
+            return vtx
+        return vtx.model_copy(update={"attribute_assignments": kept or None})
 
     return map_vertices(tree, _clear)
 

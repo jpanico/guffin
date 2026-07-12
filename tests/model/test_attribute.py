@@ -161,3 +161,15 @@ class TestAttributeEquality:
     def test_non_attribute_is_not_equal(self) -> None:
         """Comparison against a non-Attribute object is False, not an error."""
         assert Attribute(name="a") != "a"
+
+
+class TestAttributeDomainIsGuffin:
+    """is_guffin marks the domain owned by the Guffin system, as opposed to the end-user."""
+
+    def test_guffin_domain_is_guffin(self) -> None:
+        """The guffin domain belongs to the Guffin system."""
+        assert AttributeDomain.GUFFIN.is_guffin
+
+    def test_default_domain_is_end_user(self) -> None:
+        """The default domain belongs to the end-user's authored content."""
+        assert not AttributeDomain.DEFAULT.is_guffin

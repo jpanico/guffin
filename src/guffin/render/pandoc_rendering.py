@@ -93,7 +93,6 @@ from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.common.table import HAlign
 from guffin.model.attribute import (
-    AttributeDomain,
     ReferenceValue,
     attribute_value_text,
 )
@@ -234,14 +233,6 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
     return f"{attribute_markup}: {', '.join(parts)}"
 
 
-_METADATA_DOMAIN: Final[AttributeDomain] = AttributeDomain.GUFFIN
-"""The attribute domain whose assignments carry document-level metadata rather than body content.
-
-Attributes in this domain are never rendered as inline pills: those with a name recognised by
-:data:`_METADATA_KEY_BY_NAME` populate the Pandoc document metadata (see :func:`_document_metadata`);
-any others are dropped from the output entirely.
-"""
-
 _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
     PublishingSemantics.TITLE.value.name: "title",
     PublishingSemantics.SUBTITLE.value.name: "subtitle",
@@ -257,7 +248,8 @@ _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
 def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) -> dict[str, pf.MetaValue]:
     r"""Build the Pandoc document metadata from a root vertex's metadata-domain attributes.
 
-    Only attributes in :data:`_METADATA_DOMAIN` whose name is recognised by
+    Only Guffin-system attributes
+    (:attr:`~guffin.model.attribute.AttributeDomain.is_guffin`) whose name is recognised by
     :data:`_METADATA_KEY_BY_NAME` contribute; each maps to its Pandoc key.  ``author`` becomes a
     :class:`~panflute.MetaList` (one entry per value — e.g. one per author); every other key becomes a
     :class:`~panflute.MetaInlines` of the comma-joined values.  Attributes with no values are skipped.
@@ -274,7 +266,7 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
     """
     texts_by_key: dict[str, list[str]] = {}
     for assignment in attribute_assignments or ():
-        if assignment.attribute.definition.domain != _METADATA_DOMAIN:
+        if not assignment.attribute.definition.domain.is_guffin:
             continue
         key: str | None = _METADATA_KEY_BY_NAME.get(assignment.attribute.definition.name)
         if key is None:
@@ -312,9 +304,10 @@ def _attribute_pill_blocks(
     flowing block.  Under a list layout the blocks are :class:`~panflute.ListItem`\\ s (so they
     join the parent's bullet/numbered list as trailing items, reproducing their former
     representation as trailing child blocks); under ``DOCUMENT`` layout they are
-    :class:`~panflute.Para`\\ s.  Assignments in :data:`_METADATA_DOMAIN` are excluded entirely (they
-    are document metadata, not body content — see :func:`_document_metadata`); the rest render in
-    source order.
+    :class:`~panflute.Para`\\ s.  Guffin-system assignments
+    (:attr:`~guffin.model.attribute.AttributeDomain.is_guffin`) are excluded entirely (their
+    semantics belong to the Guffin system, never to output content — see
+    :func:`_document_metadata`); the rest render in source order.
 
     Args:
         attribute_assignments: The parent vertex's attribute assignments, or ``None``.
@@ -328,7 +321,7 @@ def _attribute_pill_blocks(
     list_items: list[pf.ListItem] = []
     paragraphs: list[pf.Block] = []
     renderable: Final[list[AttributeAssignment]] = [
-        a for a in (attribute_assignments or []) if a.attribute.definition.domain != _METADATA_DOMAIN
+        a for a in (attribute_assignments or []) if not a.attribute.definition.domain.is_guffin
     ]
     for assignment in renderable:
         pill_text: str = _attribute_assignment_text(assignment)
@@ -1211,9 +1204,9 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
             case _:
                 pass
         # Attribute pills (folded onto any vertex) contribute their reconstructed inline text;
-        # metadata-domain attributes are document metadata, not pills, so they are skipped.
+        # Guffin-system attributes never appear in output content, so they are skipped.
         for assignment in vertex.attribute_assignments or ():
-            if assignment.attribute.definition.domain != _METADATA_DOMAIN:
+            if not assignment.attribute.definition.domain.is_guffin:
                 texts.append(_attribute_assignment_text(assignment))
     return parse_inline_md(texts)
 

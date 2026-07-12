@@ -112,6 +112,20 @@ class TestFrontMatter:
         assert result.startswith("# Dorian Gray")
         assert "publisher:" not in result
 
+    def test_suppress_attributes_keeps_the_bibliographic_metadata(self, tmp_path: Path) -> None:
+        """--suppress-attributes hides content-attribute pills but leaves guffin metadata in force."""
+        render(
+            _book_bundle(),
+            profile=BookProfile(),
+            filename_stem="book",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False, suppress_attributes=True),
+        )
+        result = (tmp_path / "book.md").read_text(encoding="utf-8")
+        front_matter = result.split("---", 2)[1]
+        assert "author:\n- Oscar Wilde" in front_matter
+        assert "publisher: Lippincott’s Monthly Magazine" in front_matter
+
 
 class TestRevisionLine:
     """A non-front-matter profile renders the authored revision name directly below the title H1."""
