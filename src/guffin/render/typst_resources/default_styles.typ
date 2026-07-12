@@ -84,6 +84,16 @@
 #(cfg.footer-right = replace_header_content(cfg.footer-right))
 
 
+// The right header cell: the authored revision name (when set) replaces the configured right
+// content (the publication date by default) — the more version-specific fact wins the slot.
+#let header-right-cell() = {
+  if cfg.revision != none [
+    #text(style: "italic")[revision: #cfg.revision]
+  ] else {
+    cfg.header-right
+  }
+}
+
 // Define a helper for the header
 #let make-header() = context {
   if disable-header != true [
@@ -91,7 +101,7 @@
     #grid(
       columns: (auto, 1fr, auto),
       align: (left, center, right),
-      cfg.header-left, cfg.header-center, cfg.header-right,
+      cfg.header-left, cfg.header-center, header-right-cell(),
     )
     #v(-par.spacing + 0.5em)
     #line(length: 100%, stroke: cfg.header-footer-stroke)

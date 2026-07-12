@@ -172,20 +172,21 @@ class TestApplyPdfEmbeds:
 
 
 class TestTypstTemplateArgs:
-    """_typst_template_args maps the cover image onto the Bergfink cover-image variable."""
+    """_typst_template_args maps the cover image and revision name onto their Bergfink variables."""
 
     @staticmethod
-    def _args(cover_image: Path | None) -> list[str]:
+    def _args(cover_image: Path | None, revision_name: str | None = None, emit_title_page: bool = True) -> list[str]:
         return _typst_template_args(
             bundled_dir=Path("/bundled"),
             template_path=Path("/bundled/bergfink.typst"),
             template_dir=None,
             number_sections=False,
             top_level_division=TopLevelDivision.SECTION,
-            emit_title_page=True,
+            emit_title_page=emit_title_page,
             emit_toc=False,
             provenance=None,
             revision=None,
+            revision_name=revision_name,
             cover_image=cover_image,
         )
 
@@ -198,3 +199,18 @@ class TestTypstTemplateArgs:
     def test_no_cover_no_variable(self) -> None:
         """Without a cover path, no cover-image variable is passed."""
         assert not any(arg.startswith("cover-image=") for arg in self._args(None))
+
+    def test_revision_variable_passed(self) -> None:
+        """A revision name becomes a -V revision=<name> pair."""
+        args = self._args(None, revision_name="draft-3")
+        assert "revision=draft-3" in args
+        assert args[args.index("revision=draft-3") - 1] == "-V"
+
+    def test_no_revision_name_no_variable(self) -> None:
+        """Without an authored revision name, no revision variable is passed."""
+        assert not any(arg.startswith("revision=") for arg in self._args(None))
+
+    def test_revision_variable_passed_without_title_page(self) -> None:
+        """The running page header renders the name on every profile; no title page still passes it."""
+        args = self._args(None, revision_name="draft-3", emit_title_page=False)
+        assert "revision=draft-3" in args

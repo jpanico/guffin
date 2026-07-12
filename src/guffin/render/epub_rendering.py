@@ -52,12 +52,17 @@ from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
 from guffin.render.callout_theme import callout_accent, callout_title_tint
-from guffin.render.epub_post_processing import restore_matter_divisions, stamp_titlepage_provenance
+from guffin.render.epub_post_processing import (
+    restore_matter_divisions,
+    stamp_titlepage_provenance,
+    stamp_titlepage_revision,
+)
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     colophon_summary,
     make_resolver,
     resolve_vertex_links,
+    revision_line,
     vertex_tree_to_pandoc,
 )
 from guffin.render.project import ProjectProfile, TopLevelDivision
@@ -164,7 +169,12 @@ def render(
     When ``options.emit_colophon`` is set and the bundle carries provenance, its summary rides the
     foot of the generated title page when one is emitted (stamped after packaging via
     :func:`~guffin.render.epub_post_processing.stamp_titlepage_provenance`), otherwise it is
-    appended as an end-of-document colophon block — mirroring the PDF placement rules.
+    appended as an end-of-document colophon block — mirroring the PDF placement rules.  When the
+    bundle's revision carries an author-declared revision name, it renders independent of the
+    colophon: stamped directly below the title on the generated title page when one is emitted
+    (via :func:`~guffin.render.epub_post_processing.stamp_titlepage_revision`, mirroring the PDF
+    title page), otherwise inserted as the emphasized first block of the reading flow — the
+    first thing a reader sees on opening the book, since the body carries no title of its own.
 
     Pandoc must be installed and on ``PATH``.
 
@@ -247,6 +257,11 @@ def render(
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
+        # Without a title page to stamp, the authored revision name leads the reading flow
+        # instead — the first block a reader sees on opening the book (the EPUB body carries no
+        # title of its own; dc:title lives in the package metadata).
+        if not emit_title_page and render_bundle.revision is not None and render_bundle.revision.revision is not None:
+            doc.content.insert(0, revision_line(render_bundle.revision.revision))
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 
@@ -289,4 +304,8 @@ def render(
     restore_matter_divisions(output_path)
     if emit_title_page and (provenance is not None or revision is not None):
         stamp_titlepage_provenance(output_path, colophon_summary(provenance, revision))
+    # The authored revision name rides the title page directly below the title — content, not
+    # origin bookkeeping, so independent of the colophon above (mirroring the PDF title page).
+    if emit_title_page and render_bundle.revision is not None and render_bundle.revision.revision is not None:
+        stamp_titlepage_revision(output_path, render_bundle.revision.revision)
     logger.info("Wrote EPUB to %s", output_path)

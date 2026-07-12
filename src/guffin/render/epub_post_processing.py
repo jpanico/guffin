@@ -1,6 +1,6 @@
 """EPUB post-processing: content rewrites applied to the packaged e-book.
 
-Two passes operate on the finished ``.epub`` (both preserve entry order, timestamps, and per-entry
+Three passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
 compression, so the ``mimetype`` entry stays first and uncompressed):
 
 - **CMOS division restoration.**  Pandoc assigns each content document's ``<body epub:type>``
@@ -16,12 +16,17 @@ compression, so the ``mimetype`` entry stays first and uncompressed):
   alone and cannot carry arbitrary extra content; :func:`stamp_titlepage_provenance` injects a
   provenance line at the foot of the generated title page after packaging.
 
+- **Title-page revision.**  For the same reason, :func:`stamp_titlepage_revision` injects the
+  author-declared revision name directly below the title (below the subtitle when one is
+  present) on the generated title page.
+
 Public symbols:
 
 - **Functions**: :func:`restore_matter_divisions` — rewrite an ``.epub`` in place so each content
   document's ``<body>`` division matches its stamped CMOS matter;
   :func:`stamp_titlepage_provenance` — inject a provenance line at the foot of the generated
-  title page.
+  title page; :func:`stamp_titlepage_revision` — inject the authored revision name directly
+  below the title on the generated title page.
 """
 
 import logging
@@ -43,6 +48,10 @@ _MATTER_ATTRIBUTE_RE: Final[regex.Pattern[str]] = regex.compile(rf'\s*{regex.esc
 _BODY_DIVISION_RE: Final[regex.Pattern[str]] = regex.compile(r'(<body\b[^>]*\bepub:type=")[^"]*(")')
 _TITLE_PAGE_SUFFIX: Final[str] = "title_page.xhtml"
 _SECTION_CLOSE: Final[str] = "</section>"
+_TITLE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(
+    r'<h1 class="title">.*?</h1>(?:\s*<p class="subtitle">.*?</p>)?', regex.DOTALL
+)
+"""Matches the generated title page's title block: the title heading plus any subtitle paragraph."""
 
 
 def _rewrite_xhtml_entries(epub_path: Path, transform: Callable[[str, str], str]) -> None:
@@ -143,3 +152,37 @@ def stamp_titlepage_provenance(epub_path: Path, summary: str) -> None:
         logger.info("Stamped title-page provenance in %s", epub_path)
     else:
         logger.warning("No title-page document found in %s; provenance not stamped", epub_path)
+
+
+@validate_call
+def stamp_titlepage_revision(epub_path: Path, revision_name: str) -> None:
+    """Inject *revision_name* directly below the title on the EPUB's generated title page.
+
+    Rewrites the EPUB at *epub_path* in place: a ``<p class="revision">`` paragraph holding
+    ``revision: <name>`` (XML-escaped) is inserted directly after the title-page document's title
+    block — the title heading plus any subtitle paragraph — so the author-declared revision name
+    reads as part of the title unit.  Entry order, timestamps, and per-entry compression are
+    preserved, so the ``mimetype`` entry stays first and uncompressed.
+
+    When the package contains no generated title-page document (``title_page.xhtml``) or its
+    title heading cannot be found, a warning is logged and the EPUB is left unchanged.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+        revision_name: The author-declared revision name to inject (plain text; escaped for XML
+            here).
+    """
+    revision_para: Final[str] = f'\n  <p class="revision">revision: {escape(revision_name)}</p>'
+    stamped_names: Final[list[str]] = []
+
+    def _stamp(filename: str, xhtml: str) -> str:
+        if not filename.endswith(_TITLE_PAGE_SUFFIX) or _TITLE_BLOCK_RE.search(xhtml) is None:
+            return xhtml
+        stamped_names.append(filename)
+        return _TITLE_BLOCK_RE.sub(lambda match: f"{match.group(0)}{revision_para}", xhtml, count=1)
+
+    _rewrite_xhtml_entries(epub_path, _stamp)
+    if stamped_names:
+        logger.info("Stamped title-page revision in %s", epub_path)
+    else:
+        logger.warning("No title-page title block found in %s; revision not stamped", epub_path)

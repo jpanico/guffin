@@ -20,6 +20,7 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
+from guffin.common.revision import Revision
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
@@ -198,6 +199,20 @@ def colophon_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
     return {
         "book": _render_epub(out, bundle, BookProfile(), "book", emit_colophon=True),
         "article": _render_epub(out, bundle, DefaultProfile(), "article", emit_colophon=True),
+    }
+
+
+_REVISION: Final[Revision] = Revision(snapshot="d8666f090982", revision="draft-3")
+
+
+@pytest.fixture(scope="module")
+def revision_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
+    """A named-revision bundle rendered with the colophon off, keyed ``book`` / ``article``."""
+    out: Final[Path] = tmp_path_factory.mktemp("revision")
+    bundle: Final[RenderBundle] = _multi_level_bundle().with_revision(_REVISION)
+    return {
+        "book": _render_epub(out, bundle, BookProfile(), "book"),
+        "article": _render_epub(out, bundle, DefaultProfile(), "article"),
     }
 
 
@@ -410,6 +425,31 @@ class TestColophonPlacement:
         """Without a title page, the provenance falls back to the end-of-document block."""
         assert not _has_title_page(colophon_epubs["article"])
         assert _PROVENANCE_SUMMARY in _all_text(colophon_epubs["article"])
+
+
+class TestRevisionPlacement:
+    """The authored revision name rides the title page when one is emitted, else leads the reading flow."""
+
+    def test_book_revision_stamped_below_title(self, revision_epubs: dict[str, Path]) -> None:
+        """A book's revision name is stamped directly below the title on the title page."""
+        title_page: Final[str] = _title_page_xhtml(revision_epubs["book"])
+        assert '<p class="revision">revision: draft-3</p>' in title_page
+
+    def test_book_body_carries_no_revision_line(self, revision_epubs: dict[str, Path]) -> None:
+        """With the name on the title page, no revision block leads the body content."""
+        assert _all_text(revision_epubs["book"]).count("revision: draft-3") == 1  # title page only
+
+    def test_article_revision_leads_the_reading_flow(self, revision_epubs: dict[str, Path]) -> None:
+        """Without a title page, the emphasized revision line is the first body block."""
+        assert not _has_title_page(revision_epubs["article"])
+        assert "<em>revision: draft-3</em>" in _all_text(revision_epubs["article"])
+
+    def test_article_revision_sits_below_the_leading_title(self, revision_epubs: dict[str, Path]) -> None:
+        """The revision line opens the first content document, directly below its leading title H1."""
+        first_chunk: Final[str] = _chapter_xhtml(revision_epubs["article"])
+        title_at: Final[int] = first_chunk.index("</h1>")
+        assert first_chunk.index("<em>revision: draft-3</em>") > title_at
+        assert "Chapter One" not in first_chunk[: first_chunk.index("<em>revision: draft-3</em>")]
 
 
 class TestPreambleDrop:

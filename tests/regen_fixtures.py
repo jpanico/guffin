@@ -48,9 +48,10 @@ from conftest import EPUB_SOURCE_DATE_EPOCH, PDF_CREATION_TIMESTAMP
 
 from guffin.cli.common import deduce_out_file_stem, resolve_profile
 from guffin.cli.logging_config import configure_logging
+from guffin.model.publishing_semantics import revision_of_vertex
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import vertex_adapter
-from guffin.model.vertex_tree import VertexTree
+from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf
@@ -61,6 +62,7 @@ from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult
 from guffin.roam.node_tree import NodeTree
+from guffin.roam.revision import gather_revision
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 
 configure_logging()
@@ -219,7 +221,12 @@ def main() -> None:
     anchor_tree: Final[NodeTree] = result.anchor_tree
     nodes: Final[list[RoamNode]] = list(anchor_tree.tree_network)
     vertex_tree: Final[VertexTree] = transcribe(anchor_tree)
-    render_bundle: Final[RenderBundle] = RenderBundle(content=vertex_tree, view=build_view_map(anchor_tree))
+    # Mirror cli/common.fetch_roam_trees: the content revision rides every bundle, so recorded
+    # baselines carry the same authored revision name a real CLI export renders.
+    revision_name: Final[str | None] = revision_of_vertex(root_vertex(vertex_tree))
+    render_bundle: Final[RenderBundle] = RenderBundle(
+        content=vertex_tree, view=build_view_map(anchor_tree)
+    ).with_revision(gather_revision(result.raw_result, revision_name))
     out_stem: Final[str] = deduce_out_file_stem(vertex_tree, ProjectType.DEFAULT)
     print(f"  fetched {len(result.network)} node(s) total, {len(nodes)} anchor node(s)")
     print(f"  transcribed {len(vertex_tree.tree_vertices)} vertex/vertices")

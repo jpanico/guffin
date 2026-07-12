@@ -68,6 +68,9 @@ $endif$
 $if(subtitle)$
 #(cfg.subtitle = "$subtitle$")
 $endif$
+$if(revision)$
+#(cfg.revision = "$revision$")
+$endif$
 $if(publisher)$
 #(cfg.publisher = "$publisher$")
 $endif$

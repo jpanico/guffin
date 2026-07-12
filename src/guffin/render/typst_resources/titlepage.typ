@@ -18,6 +18,11 @@
   #text(size: 1.1em)[#cfg.subtitle]
 ]
 
+#if cfg.revision != none [
+  #v(0.65em)
+  #text(size: 0.9em, style: "italic")[revision: #cfg.revision]
+]
+
 #if cfg.titlepage-supervisor != none [
   #v(2em)
   #cfg.titlepage-supervisor

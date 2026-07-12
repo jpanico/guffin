@@ -34,6 +34,16 @@
       value: Oscar Wilde
   - attribute:
       definition:
+        name: revision
+        domain: guffin
+      link:
+      - vertex
+      - Dfe1hQedK
+    values:
+    - kind: literal
+      value: draft-1
+  - attribute:
+      definition:
         name: date
         domain: guffin
       link:

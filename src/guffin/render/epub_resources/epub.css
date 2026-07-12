@@ -175,3 +175,13 @@ p.provenance {
   color: #808080;
   margin-top: 2em;
 }
+
+/*
+ * Authored revision name. Injected directly below the title on the generated title page by
+ * epub_post_processing.stamp_titlepage_revision; italic, matching the PDF title-page
+ * revision line (Bergfink revision).
+ */
+p.revision {
+  font-style: italic;
+  font-size: 0.9em;
+}

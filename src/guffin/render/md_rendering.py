@@ -44,6 +44,7 @@ from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     make_resolver,
     resolve_vertex_links,
+    revision_line,
     vertex_tree_to_pandoc,
 )
 from guffin.render.project import ProjectProfile
@@ -119,7 +120,7 @@ def _stamp_revision_metadata(doc: pf.Doc, revision: Revision | None) -> None:
 def _insert_revision_line(doc: pf.Doc, revision_name: str | None) -> None:
     """Insert *revision_name* directly below *doc*'s leading title header, in place.
 
-    The line renders as an emphasized ``revision <name>`` paragraph — the document's
+    The line renders as an emphasized ``revision: <name>`` paragraph — the document's
     author-declared revision name, presented where a reader looks for edition facts: right under
     the title.  A ``None`` *revision_name*, or a *doc* that does not open with a title header,
     leaves *doc* untouched.
@@ -135,11 +136,7 @@ def _insert_revision_line(doc: pf.Doc, revision_name: str | None) -> None:
     blocks: Final[list[pf.Block]] = list(doc.content)
     if not blocks or not isinstance(blocks[0], pf.Header):
         return
-    words: Final[list[str]] = f"revision {revision_name}".split()
-    inlines: Final[list[pf.Inline]] = [pf.Str(words[0])]
-    for word in words[1:]:
-        inlines.extend((pf.Space(), pf.Str(word)))
-    doc.content.insert(1, pf.Para(pf.Emph(*inlines)))
+    doc.content.insert(1, revision_line(revision_name))
 
 
 def _gfm_resources_dir() -> Path:

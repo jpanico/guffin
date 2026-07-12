@@ -56,22 +56,22 @@ class Revision(BaseModel):
     def summary(self) -> str:
         """Return a single-line identifier encoding the revision name, snapshot, and timestamps.
 
-        The author-declared revision name leads — an em-dash placeholder stands in when the
-        content declares none — followed by a parenthesized group holding the snapshot hash
-        (shortened to its first :data:`_SHORT_SNAPSHOT_LENGTH` characters) and the edit/fetch
-        timestamps (minute-precision UTC with an explicit ``Z`` — see
-        :func:`~guffin.common.date.utc_timestamp`).  Examples::
+        Every field renders as a ``key: value`` segment.  The author-declared revision name leads
+        — an em-dash placeholder stands in when the content declares none — followed by a
+        parenthesized, comma-separated group holding the snapshot hash (shortened to its first
+        :data:`_SHORT_SNAPSHOT_LENGTH` characters) and the edit/fetch timestamps (minute-precision
+        UTC with an explicit ``Z`` — see :func:`~guffin.common.date.utc_timestamp`).  Examples::
 
-            revision draft-3 (snapshot d8666f090982, edited 2026-07-11T18:22Z, fetched 2026-07-12T09:30Z)
-            revision — (snapshot d8666f090982, edited 2026-07-11T18:22Z, fetched 2026-07-12T09:30Z)
+            revision: draft-3 (snapshot: d8666f090982, edited: 2026-07-11T18:22Z, fetched: 2026-07-12T09:30Z)
+            revision: — (snapshot: d8666f090982, edited: 2026-07-11T18:22Z, fetched: 2026-07-12T09:30Z)
 
         Returns:
             The revision as one compact, human- and machine-readable line.
         """
-        details: Final[list[str]] = [f"snapshot {self.snapshot[:_SHORT_SNAPSHOT_LENGTH]}"]
+        details: Final[list[str]] = [f"snapshot: {self.snapshot[:_SHORT_SNAPSHOT_LENGTH]}"]
         if self.last_edited_at is not None:
-            details.append(f"edited {utc_timestamp(self.last_edited_at)}")
+            details.append(f"edited: {utc_timestamp(self.last_edited_at)}")
         if self.fetched_at is not None:
-            details.append(f"fetched {utc_timestamp(self.fetched_at)}")
+            details.append(f"fetched: {utc_timestamp(self.fetched_at)}")
         name: Final[str] = self.revision if self.revision is not None else "—"
-        return f"revision {name} ({', '.join(details)})"
+        return f"revision: {name} ({', '.join(details)})"

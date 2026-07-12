@@ -24,7 +24,7 @@ class TestRevisionSummary:
 
     def test_snapshot_only(self) -> None:
         """Without an authored name, an em-dash placeholder leads the parenthesized snapshot."""
-        assert Revision(snapshot=_HASH).summary() == "revision — (snapshot d8666f090982)"
+        assert Revision(snapshot=_HASH).summary() == "revision: — (snapshot: d8666f090982)"
 
     def test_all_facts(self) -> None:
         """The revision name leads; the snapshot and timestamps follow in one parenthesized group."""
@@ -36,5 +36,5 @@ class TestRevisionSummary:
         )
         assert (
             revision.summary()
-            == "revision draft-3 (snapshot d8666f090982, edited 2026-07-11T18:22Z, fetched 2026-07-12T09:30Z)"
+            == "revision: draft-3 (snapshot: d8666f090982, edited: 2026-07-11T18:22Z, fetched: 2026-07-12T09:30Z)"
         )

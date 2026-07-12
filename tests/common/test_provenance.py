@@ -22,17 +22,17 @@ class TestProvenanceSummary:
             exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
         )
         summary: Final[str] = provenance.summary()
-        assert summary == "guffin · abc123d-dirty · committed 2026-06-29T14:02Z · exported 2026-06-29T22:40Z"
+        assert summary == "guffin, commit: abc123d-dirty, committed: 2026-06-29T14:02Z, exported: 2026-06-29T22:40Z"
 
     def test_clean_commit_omits_dirty_marker(self) -> None:
         """A clean commit carries no -dirty suffix."""
         provenance: Final[Provenance] = Provenance(commit="abc123", dirty=False)
-        assert provenance.summary() == "guffin · abc123"
+        assert provenance.summary() == "guffin, commit: abc123"
 
     def test_missing_timestamps_are_omitted(self) -> None:
         """Absent commit/export timestamps drop their segments rather than rendering None."""
         provenance: Final[Provenance] = Provenance(commit=UNKNOWN_COMMIT)
-        assert provenance.summary() == "guffin · unknown"
+        assert provenance.summary() == "guffin, commit: unknown"
 
     def test_extra_fields_render_after_guffin_in_order(self) -> None:
         """Extra key→value facts render as 'key value' segments right after 'guffin', in order."""
@@ -41,7 +41,7 @@ class TestProvenanceSummary:
             exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
             extra={"type": "book", "edition": "2"},
         )
-        assert provenance.summary() == "guffin · type book · edition 2 · abc123 · exported 2026-06-29T22:40Z"
+        assert provenance.summary() == "guffin, type: book, edition: 2, commit: abc123, exported: 2026-06-29T22:40Z"
 
 
 class TestGatherProvenance:

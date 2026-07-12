@@ -58,6 +58,8 @@ Public symbols:
   block elements.
 - :func:`vertex_tree_to_pandoc` — convert a
   :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
+- :func:`revision_line` — the emphasized ``revision: <name>`` paragraph presenting a document's
+  author-declared revision name.
 - :data:`VertexLinkResolver` — type alias for the resolver callable accepted by
   :func:`resolve_vertex_links`.
 - :func:`make_resolver` — build a :data:`VertexLinkResolver` that renders each
@@ -1224,9 +1226,9 @@ _COLOPHON_FONT_SIZE: Final[str] = "0.7em"
 def colophon_summary(provenance: Provenance | None, revision: Revision | None) -> str:
     """Return the one-line colophon text for *provenance* and/or *revision*.
 
-    The software half (:meth:`~guffin.common.provenance.Provenance.summary`) followed by the
-    content half (:meth:`~guffin.common.revision.Revision.summary`), joined into the single line
-    every format's colophon placement renders; either half may be absent.
+    The content half (:meth:`~guffin.common.revision.Revision.summary`) followed by the software
+    half (:meth:`~guffin.common.provenance.Provenance.summary`), joined by ``|`` into the single
+    line every format's colophon placement renders; either half may be absent.
 
     Args:
         provenance: The software provenance to include, or ``None``.
@@ -1235,8 +1237,29 @@ def colophon_summary(provenance: Provenance | None, revision: Revision | None) -
     Returns:
         The combined colophon line; the empty string when both are ``None``.
     """
-    parts: Final[list[str]] = [record.summary() for record in (provenance, revision) if record is not None]
-    return " · ".join(parts)
+    parts: Final[list[str]] = [record.summary() for record in (revision, provenance) if record is not None]
+    return " | ".join(parts)
+
+
+@validate_call
+def revision_line(revision_name: str) -> pf.Para:
+    """Return the emphasized ``revision <name>`` paragraph presenting a document's revision name.
+
+    The one-block rendering of an author-declared revision name, for placement wherever a format
+    presents the document's identity (typically adjacent to its title): a paragraph holding
+    ``revision: <revision_name>``, wholly emphasized.
+
+    Args:
+        revision_name: The author-declared revision name.
+
+    Returns:
+        The emphasized paragraph.
+    """
+    words: Final[list[str]] = f"revision: {revision_name}".split()
+    inlines: Final[list[pf.Inline]] = [pf.Str(words[0])]
+    for word in words[1:]:
+        inlines.extend((pf.Space(), pf.Str(word)))
+    return pf.Para(pf.Emph(*inlines))
 
 
 def _colophon_blocks(provenance: Provenance | None, revision: Revision | None) -> list[pf.Block]:

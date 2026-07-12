@@ -83,7 +83,7 @@
     parents:
     - id: 12842
     - id: 12848
-    order: 5
+    order: 6
     page:
       id: 12842
     refs:
@@ -403,7 +403,7 @@
     parents:
     - id: 12842
     - id: 12848
-    order: 6
+    order: 7
     page:
       id: 12842
     refs:
@@ -597,7 +597,7 @@
     parents:
     - id: 12842
     - id: 12848
-    order: 2
+    order: 3
     page:
       id: 12842
     refs:
@@ -924,6 +924,22 @@
         value:
         - uid
         - -IHBfYM7I
+    - - source:
+        - uid
+        - hHUE8oD5s
+        value:
+        - uid
+        - hHUE8oD5s
+      - source:
+        - uid
+        - EaBvMP-Ps
+        value:
+        - uid
+        - Dfe1hQedK
+      - source:
+        - uid
+        - EaBvMP-Ps
+        value: ' draft-1'
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 12849
@@ -933,6 +949,7 @@
     - id: 12854
     - id: 12855
     - id: 13103
+    - id: 13104
     id: 12848
     lookup:
     - id: 11842
@@ -951,6 +968,8 @@
     - id: 13100
     - id: 13102
     - id: 13103
+    - id: 13104
+    - id: 13105
     uid: hHUE8oD5s
     parents:
     - id: 12842
@@ -1004,7 +1023,7 @@
     parents:
     - id: 12842
     - id: 12848
-    order: 3
+    order: 4
     page:
       id: 12842
     refs:
@@ -1175,11 +1194,22 @@
     parents:
     - id: 12842
     - id: 12848
-    order: 4
+    order: 5
     page:
       id: 12842
     refs:
     - id: 11898
+- - string: 'revision:: draft-1'
+    id: 13104
+    uid: EaBvMP-Ps
+    parents:
+    - id: 12842
+    - id: 12848
+    order: 2
+    page:
+      id: 12842
+    refs:
+    - id: 13105
 - - string: '[[>]] [[!INFO]] The Preface Page embedded here has no `children_layout`
       explicitly set '
     id: 12970
@@ -1866,3 +1896,6 @@
     order: 67
     page:
       id: 12977
+- - id: 13105
+    uid: Dfe1hQedK
+    title: revision

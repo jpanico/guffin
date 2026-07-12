@@ -49,7 +49,7 @@ class Provenance(BaseModel):
         committed_at: The commit's own timestamp, or ``None`` when unknown.
         exported_at: The moment the export ran, or ``None`` when not recorded.
         extra: Arbitrary caller-supplied ``key → value`` facts, rendered by :meth:`summary` right
-            after the leading ``guffin`` segment, in insertion order, as ``key value`` segments; lets
+            after the leading ``guffin`` segment, in insertion order, as ``key: value`` segments; lets
             front ends record context (such as the project type) without this layer depending on theirs.
     """
 
@@ -67,26 +67,31 @@ class Provenance(BaseModel):
     def summary(self) -> str:
         """Return a single-line identifier encoding the commit and timestamps.
 
-        Each :attr:`extra` ``key value`` pair follows the leading ``guffin`` segment, in insertion
-        order; then the commit hash — shortened to its first :data:`_SHORT_COMMIT_LENGTH` characters,
-        with a ``-dirty`` suffix when :attr:`dirty` is set — and the commit and export timestamps
-        (minute-precision UTC with an explicit ``Z`` — see
-        :func:`~guffin.common.date.utc_timestamp`; timestamps captured with other offsets, such
-        as git's local-time commit stamps, are normalized) when present.  Example::
+        Every field renders as a ``key: value`` segment, comma-separated: each :attr:`extra` pair
+        follows the leading ``guffin`` segment, in insertion order; then the commit hash —
+        shortened to its first :data:`_SHORT_COMMIT_LENGTH` characters, with a ``-dirty`` suffix
+        when :attr:`dirty` is set — and the commit and export timestamps (minute-precision UTC
+        with an explicit ``Z`` — see :func:`~guffin.common.date.utc_timestamp`; timestamps
+        captured with other offsets, such as git's local-time commit stamps, are normalized) when
+        present.  Example::
 
-            guffin · type book · 1ce1966-dirty · committed 2026-06-29T14:02Z · exported 2026-06-29T22:40Z
+            guffin, type: book, commit: 1ce1966-dirty, committed: 2026-06-29T14:02Z, exported: 2026-06-29T22:40Z
 
         Returns:
             The provenance as one compact, human- and machine-readable line.
         """
         short_commit: Final[str] = self.commit[:_SHORT_COMMIT_LENGTH]
         commit: Final[str] = f"{short_commit}-dirty" if self.dirty else short_commit
-        parts: Final[list[str]] = ["guffin", *(f"{key} {value}" for key, value in self.extra.items()), commit]
+        parts: Final[list[str]] = [
+            "guffin",
+            *(f"{key}: {value}" for key, value in self.extra.items()),
+            f"commit: {commit}",
+        ]
         if self.committed_at is not None:
-            parts.append(f"committed {utc_timestamp(self.committed_at)}")
+            parts.append(f"committed: {utc_timestamp(self.committed_at)}")
         if self.exported_at is not None:
-            parts.append(f"exported {utc_timestamp(self.exported_at)}")
-        return " · ".join(parts)
+            parts.append(f"exported: {utc_timestamp(self.exported_at)}")
+        return ", ".join(parts)
 
 
 def _git(repo_dir: Path, *args: str) -> str:

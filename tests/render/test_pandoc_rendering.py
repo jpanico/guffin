@@ -295,8 +295,8 @@ class TestVertexTreeToPandocColophon:
         blocks = list(doc.content)
         assert isinstance(blocks[-2], pf.HorizontalRule)
         assert isinstance(blocks[-1], pf.RawBlock)
-        assert "snapshot d8666f090982" in blocks[-1].text
-        assert "revision draft-3" in blocks[-1].text
+        assert "snapshot: d8666f090982" in blocks[-1].text
+        assert "revision: draft-3" in blocks[-1].text
 
 
 class TestColophonSummary:
@@ -306,19 +306,19 @@ class TestColophonSummary:
     _REVISION = Revision(snapshot="d8666f090982" + "0" * 52)
 
     def test_both_halves(self) -> None:
-        """Provenance leads, revision follows, dot-joined."""
+        """Revision leads, provenance follows, pipe-joined."""
         assert (
             colophon_summary(self._PROVENANCE, self._REVISION)
-            == "guffin · abc123d · revision — (snapshot d8666f090982)"
+            == "revision: — (snapshot: d8666f090982) | guffin, commit: abc123d"
         )
 
     def test_provenance_only(self) -> None:
         """A missing revision leaves the provenance summary alone."""
-        assert colophon_summary(self._PROVENANCE, None) == "guffin · abc123d"
+        assert colophon_summary(self._PROVENANCE, None) == "guffin, commit: abc123d"
 
     def test_revision_only(self) -> None:
         """A missing provenance leaves the revision summary alone."""
-        assert colophon_summary(None, self._REVISION) == "revision — (snapshot d8666f090982)"
+        assert colophon_summary(None, self._REVISION) == "revision: — (snapshot: d8666f090982)"
 
     def test_neither_is_empty(self) -> None:
         """Both absent yields the empty string."""

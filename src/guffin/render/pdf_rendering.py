@@ -120,6 +120,7 @@ def _typst_template_args(
     emit_toc: bool,
     provenance: Provenance | None,
     revision: Revision | None,
+    revision_name: str | None,
     cover_image: Path | None,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
@@ -147,6 +148,10 @@ def _typst_template_args(
             line below the running page footer); ``None`` contributes nothing.
         revision: When set, contributes the content-revision half of the same colophon line;
             ``None`` contributes nothing.  The variable is passed when either record is present.
+        revision_name: The author-declared revision name; when set, passed as the Bergfink
+            ``revision`` variable, rendered directly below the title on the title page (when one
+            is emitted) and directly left of the date in the running page header.  ``None``
+            passes nothing.
         cover_image: When set, passes the local image path as the template's ``cover-image``
             variable, so it renders as a full-bleed cover page ahead of the title page (the cover
             is exterior to the book interior); ``None`` passes nothing (no cover page).
@@ -183,6 +188,11 @@ def _typst_template_args(
     if provenance is not None or revision is not None:
         provenance_var: Final[str] = "titlepage-provenance" if emit_title_page else "footer-provenance"
         args.extend(["-V", f"{provenance_var}={colophon_summary(provenance, revision)}"])
+    # The authored revision name rides the title page directly below the title and the running
+    # page header directly left of the date — content, not origin bookkeeping, so independent of
+    # the colophon records above.
+    if revision_name is not None:
+        args.extend(["-V", f"revision={revision_name}"])
     # The cover page renders only when the `cover-image` variable is set; pass nothing otherwise.
     if cover_image is not None:
         args.extend(["-V", f"cover-image={cover_image}"])
@@ -494,6 +504,7 @@ def render(
             emit_toc,
             render_bundle.provenance if options.emit_colophon else None,
             render_bundle.revision if options.emit_colophon else None,
+            render_bundle.revision.revision if render_bundle.revision is not None else None,
             cover_path,
         )
         extra_args: list[str] = [*engine_args, *template_args]

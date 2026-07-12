@@ -132,7 +132,7 @@ class TestRevisionLine:
         """With an authored revision name, an emphasized revision line follows the H1 title."""
         bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
         result = self._render(tmp_path, bundle, DefaultProfile())
-        assert result.startswith("# Dorian Gray\n\n*revision draft-3*\n")
+        assert result.startswith("# Dorian Gray\n\n*revision: draft-3*\n")
 
     def test_no_authored_name_no_revision_line(self, tmp_path: Path) -> None:
         """A revision without an authored name inserts nothing."""
@@ -149,7 +149,7 @@ class TestRevisionLine:
         """A title-page-emitting profile keeps the body free of the revision line."""
         bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
         result = self._render(tmp_path, bundle, BookProfile())
-        assert "*revision draft-3*" not in result
+        assert "*revision: draft-3*" not in result
 
     def test_front_matter_profile_carries_summary_in_metadata(self, tmp_path: Path) -> None:
         """A title-page-emitting profile records the entire revision summary in the YAML block."""
@@ -167,7 +167,7 @@ class TestRevisionLine:
         """A profile without front matter serializes no revision metadata entry."""
         bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
         result = self._render(tmp_path, bundle, DefaultProfile())
-        assert "snapshot d8666f090982" not in result
+        assert "snapshot: d8666f090982" not in result
 
 
 class TestHeadingDemotion:

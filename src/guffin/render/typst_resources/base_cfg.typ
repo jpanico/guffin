@@ -8,6 +8,7 @@
   authors: (),
   title: "",
   subtitle: "",
+  revision: none, // author-declared revision name, rendered below the title on the title page
   publisher: none,
   rights: none,
   keywords: "",

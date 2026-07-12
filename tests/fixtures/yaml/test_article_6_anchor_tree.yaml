@@ -112,7 +112,7 @@ tree_network:
 - uid: 4rMMdHXiL
   id: 12852
   string: 'identifier:: OCLC 53071567'
-  order: 5
+  order: 6
   heading: null
   children: null
   refs:
@@ -191,7 +191,7 @@ tree_network:
 - uid: l35EHvZ3Z
   id: 13103
   string: 'cover-image:: ((-IHBfYM7I))'
-  order: 6
+  order: 7
   heading: null
   children: null
   refs:
@@ -245,7 +245,7 @@ tree_network:
 - uid: tLgD4E9KV
   id: 12851
   string: 'date:: 1890'
-  order: 2
+  order: 3
   heading: null
   children: null
   refs:
@@ -326,6 +326,7 @@ tree_network:
   - id: 12854
   - id: 12855
   - id: 13103
+  - id: 13104
   refs:
   - id: 321
   - id: 11839
@@ -451,6 +452,22 @@ tree_network:
       value:
       - uid
       - -IHBfYM7I
+  - - source:
+      - uid
+      - hHUE8oD5s
+      value:
+      - uid
+      - hHUE8oD5s
+    - source:
+      - uid
+      - EaBvMP-Ps
+      value:
+      - uid
+      - Dfe1hQedK
+    - source:
+      - uid
+      - EaBvMP-Ps
+      value: ' draft-1'
 - uid: Aa-q7QL7i
   id: 12903
   string: 'element-type:: copyright-page'
@@ -472,7 +489,7 @@ tree_network:
 - uid: t2DXK-Slp
   id: 12854
   string: 'publisher:: Lippincott''s Monthly Magazine'
-  order: 3
+  order: 4
   heading: null
   children: null
   refs:
@@ -541,11 +558,28 @@ tree_network:
 - uid: uEYS1oQeC
   id: 12855
   string: 'rights:: Copyright J. B. Lippincott Company'
-  order: 4
+  order: 5
   heading: null
   children: null
   refs:
   - id: 11898
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 12848
+  props: null
+  title: null
+  attrs: null
+- uid: EaBvMP-Ps
+  id: 13104
+  string: 'revision:: draft-1'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 13105
   page:
     id: 12842
   children_view_type: null
@@ -1070,6 +1104,20 @@ refs_by_id:
     parents: null
     props: null
     title: title
+    attrs: null
+  '13105':
+    uid: Dfe1hQedK
+    id: 13105
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: revision
     attrs: null
   '12963':
     uid: vKgDBcrbP
