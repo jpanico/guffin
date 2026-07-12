@@ -78,7 +78,7 @@
   header-left: "%title%",
   header-center: none,
   header-right: "%date%",
-  footer-left: "%author%",
+  footer-left: "none", // the string "none" empties the slot (see footer-left() in default_styles.typ)
   footer-center: none,
   footer-right: "%page%",
   footer-provenance: none,
