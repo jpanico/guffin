@@ -10,6 +10,8 @@ from unittest.mock import patch
 import pytest
 import yaml
 from conftest import (
+    EPUB_SOURCE_DATE_EPOCH,
+    FIXTURES_EPUB_DIR,
     FIXTURES_MD_DIR,
     FIXTURES_MDBUNDLE_DIR,
     FIXTURES_PDF_DIR,
@@ -316,6 +318,41 @@ class TestExportRoamTreePdfLive:
 
         assert result.exit_code == 0, result.output
         actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.default.pdf"
+        assert actual.exists()
+        assert actual.read_bytes() == baseline.read_bytes()
+
+
+class TestExportRoamTreeEpubLive:
+    """Live end-to-end EPUB export against the recorded byte-reproducible baseline."""
+
+    @pytest.mark.live
+    @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
+    def test_live_epub_matches_fixture(self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Exporting [[Test Article]] 6 as a book EPUB matches the recorded baseline byte-for-byte.
+
+        Pins SOURCE_DATE_EPOCH so Pandoc's dcterms:modified and the package's zip entry
+        timestamps are reproducible; Roam credentials (GUFFIN_ROAM_*) are read from the
+        environment by the CLI.
+        """
+        baseline: Final[pathlib.Path] = FIXTURES_EPUB_DIR / "The_Picture_of_Dorian_Gray.book.epub"
+        assert baseline.exists(), (
+            f"baseline EPUB missing: {baseline}. Record it with: "
+            'python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6 --epub'
+        )
+        monkeypatch.setenv("SOURCE_DATE_EPOCH", str(EPUB_SOURCE_DATE_EPOCH))
+        runner: CliRunner = CliRunner()
+        saved_handlers = logging.root.handlers[:]
+        logging.root.handlers.clear()
+        try:
+            result = runner.invoke(
+                app,
+                ["[[Test Article]] 6", "--output-dir", str(tmp_path), "--format", "epub", "--type", "book"],
+            )
+        finally:
+            logging.root.handlers = saved_handlers
+
+        assert result.exit_code == 0, result.output
+        actual: Final[pathlib.Path] = tmp_path / "The_Picture_of_Dorian_Gray.book.epub"
         assert actual.exists()
         assert actual.read_bytes() == baseline.read_bytes()
 

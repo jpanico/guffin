@@ -20,6 +20,9 @@ Writes to tests/fixtures/yaml/ and tests/fixtures/markdown/:
   Optional (--mdbundle), to tests/fixtures/mdbundle/:
     <shell-safe-title>.mdbundle/  — baseline mdbundle directory
 
+  Optional (--epub), to tests/fixtures/epub/:
+    <shell-safe-title>.book.epub  — byte-reproducible baseline book-profile EPUB
+
 Run from the project root with the venv active, one invocation per TestArticle
 member (qualifier → --prefix):
 
@@ -41,17 +44,18 @@ import tempfile
 from typing import Final
 
 import yaml
-from conftest import PDF_CREATION_TIMESTAMP
+from conftest import EPUB_SOURCE_DATE_EPOCH, PDF_CREATION_TIMESTAMP
 
-from guffin.cli.common import deduce_out_file_stem
+from guffin.cli.common import deduce_out_file_stem, resolve_profile
 from guffin.cli.logging_config import configure_logging
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import vertex_adapter
 from guffin.model.vertex_tree import VertexTree
+from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf
 from guffin.render.project import DefaultProfile, ProjectType
-from guffin.render.render_options import MarkdownRenderOptions, PdfRenderOptions
+from guffin.render.render_options import EpubRenderOptions, MarkdownRenderOptions, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint, without_transient_keys
 from guffin.roam.node import RoamNode
 from guffin.roam.node_fetch import FetchRoamNodes
@@ -85,6 +89,7 @@ FIXTURES_YAML: Final[pathlib.Path] = pathlib.Path("tests/fixtures/yaml")
 FIXTURES_MD: Final[pathlib.Path] = pathlib.Path("tests/fixtures/markdown")
 FIXTURES_PDF: Final[pathlib.Path] = pathlib.Path("tests/fixtures/pdf")
 FIXTURES_MDBUNDLE: Final[pathlib.Path] = pathlib.Path("tests/fixtures/mdbundle")
+FIXTURES_EPUB: Final[pathlib.Path] = pathlib.Path("tests/fixtures/epub")
 README_PATH: Final[pathlib.Path] = pathlib.Path("tests/fixtures/README.md")
 
 _TRANSIENT_FIELDS: Final[frozenset[str]] = frozenset({"open"})
@@ -185,6 +190,14 @@ def main() -> None:
         "--mdbundle",
         action="store_true",
         help="Also render a baseline .mdbundle to tests/fixtures/mdbundle/.",
+    )
+    parser.add_argument(
+        "--epub",
+        action="store_true",
+        help=(
+            "Also render a byte-reproducible baseline book-profile EPUB to tests/fixtures/epub/ "
+            "(the book profile is where the EPUB structural machinery engages)."
+        ),
     )
     args = parser.parse_args()
 
@@ -352,6 +365,24 @@ def main() -> None:
         mdbundle_path: Final[pathlib.Path] = FIXTURES_MDBUNDLE / f"{out_stem}.mdbundle"
         print(f"  wrote {mdbundle_path}")
         print(f"  wrote {cache_fixture}")
+
+    # Fixture 9 (optional, --epub): byte-reproducible baseline book EPUB under tests/fixtures/epub/.
+    # Rendered under the book profile (resolved from the content, so a parts book stays a parts
+    # book), with SOURCE_DATE_EPOCH pinned — Pandoc derives the EPUB's dcterms:modified and zip
+    # entry timestamps from it, making the package byte-reproducible.
+    if args.epub:
+        FIXTURES_EPUB.mkdir(parents=True, exist_ok=True)
+        os.environ["SOURCE_DATE_EPOCH"] = str(EPUB_SOURCE_DATE_EPOCH)
+        book_stem: Final[str] = deduce_out_file_stem(vertex_tree, ProjectType.BOOK)
+        render_epub(
+            render_bundle,
+            profile=resolve_profile(ProjectType.BOOK, vertex_tree),
+            filename_stem=book_stem,
+            api_endpoint=endpoint,
+            options=EpubRenderOptions(output_dir=FIXTURES_EPUB),
+        )
+        epub_path: Final[pathlib.Path] = FIXTURES_EPUB / f"{book_stem}.epub"
+        print(f"  wrote {epub_path}")
 
     print("Done.")
 

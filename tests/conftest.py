@@ -31,10 +31,20 @@ FIXTURES_PDF_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures" / "p
 FIXTURES_MDBUNDLE_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures" / "mdbundle"
 """Absolute path to the ``tests/fixtures/mdbundle/`` directory."""
 
+FIXTURES_EPUB_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures" / "epub"
+"""Absolute path to the ``tests/fixtures/epub/`` directory."""
+
 PDF_CREATION_TIMESTAMP: int = 1704067200
 """Fixed UNIX timestamp (2024-01-01T00:00:00Z) pinned via ``GUFFIN_PDF_CREATION_TIMESTAMP`` so PDF.
 
 export is byte-reproducible; shared by the live PDF fixture test and ``regen_fixtures.py --pdf``.
+"""
+
+EPUB_SOURCE_DATE_EPOCH: int = PDF_CREATION_TIMESTAMP
+"""The same fixed instant, pinned via ``SOURCE_DATE_EPOCH`` so EPUB export is byte-reproducible.
+
+Pandoc honors ``SOURCE_DATE_EPOCH`` for the EPUB ``dcterms:modified`` timestamp and the package's
+zip entry timestamps; shared by the live EPUB fixture test and ``regen_fixtures.py --epub``.
 """
 
 

@@ -177,14 +177,19 @@ python tests/regen_fixtures.py "[[Test Article]] 7" --prefix test_article_7
 ```
 
 Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `tests/fixtures/pdf/`
-(requires Typst on PATH) for the live PDF export test, and `--mdbundle` to additionally record a
+(requires Typst on PATH) for the live PDF export test, `--mdbundle` to additionally record a
 baseline `.mdbundle/` directory under `tests/fixtures/mdbundle/` (plus a sibling `<target>.<type>.cache/`
 holding the `<sha256(url)>.<ext>` asset files and `.meta.json` sidecars the bundle was rendered through,
-so an offline test can seed the cache and reproduce the bundle without any Firestore fetch).
+so an offline test can seed the cache and reproduce the bundle without any Firestore fetch), and
+`--epub` to additionally record a byte-reproducible baseline **book-profile** EPUB under
+`tests/fixtures/epub/` for the live EPUB export test (`SOURCE_DATE_EPOCH` pins Pandoc's
+`dcterms:modified` and the package's zip timestamps).
 These optional baselines are only rewritten when their flag is passed, so after changing a live test
-page, regenerate **all** of its recorded fixtures in one run — for `[[Test Article]] 1` (which has
-both baselines) that is:
-`python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --pdf --mdbundle`.
+page, regenerate **all** of its recorded fixtures in one run — for `[[Test Article]] 1` (pdf +
+mdbundle baselines):
+`python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --pdf --mdbundle`;
+for `[[Test Article]] 6` (epub baseline):
+`python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6 --epub`.
 
 ## Git
 - **Never commit or push without explicit instructions**: do not run `git commit` or `git push` unless the user explicitly asks. This applies even after completing a task — finish the work, then wait for the user to request a commit/push.

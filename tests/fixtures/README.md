@@ -147,6 +147,6 @@ python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2
 python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3
 python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
 python tests/regen_fixtures.py "[[Test Article]] 5" --prefix test_article_5
-python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6
+python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6 --epub
 python tests/regen_fixtures.py "[[Test Article]] 7" --prefix test_article_7
 ```
