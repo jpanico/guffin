@@ -175,6 +175,9 @@ def _meta_bundle() -> RenderBundle:
             _meta("publisher", "Henry Colburn"),
             _meta("rights", "Public domain"),
             _meta("identifier", "urn:isbn:9780"),
+            _meta("language", "en-GB"),
+            _meta("description", "A study of coastal fauna."),
+            _meta("illustrators", "Conrad Martens"),
         ],
     )
     chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
@@ -407,6 +410,28 @@ class TestTitlePageFields:
         opf: Final[str] = _opf(meta_book_epub)
         assert "<dc:publisher>Henry Colburn</dc:publisher>" in opf
         assert "<dc:rights>Public domain</dc:rights>" in opf
+
+    def test_illustrator_is_a_contributor_with_marc_role(self, meta_book_epub: Path) -> None:
+        """An illustrators value emits dc:contributor refined with the MARC relator ill."""
+        opf: Final[str] = _opf(meta_book_epub)
+        contributor_at: Final[int] = opf.index("<dc:contributor")
+        assert ">Conrad Martens</dc:contributor>" in opf
+        assert 'scheme="marc:relators">ill</meta>' in opf[contributor_at:]
+
+    def test_illustration_credit_stamped_below_authors(self, meta_book_epub: Path) -> None:
+        """The title page credits the illustrator directly below the author paragraphs."""
+        title_page: Final[str] = _title_page_xhtml(meta_book_epub)
+        author_at: Final[int] = title_page.index('<p class="author">')
+        credit_at: Final[int] = title_page.index('<p class="illustrators">Illustrations by Conrad Martens</p>')
+        assert author_at < credit_at
+
+    def test_language_and_description_reach_package_metadata(self, meta_book_epub: Path) -> None:
+        """Language and description are catalog metadata: OPF dc:* entries, not title-page fields."""
+        opf: Final[str] = _opf(meta_book_epub)
+        assert "<dc:language>en-GB</dc:language>" in opf
+        assert "<dc:description>A study of coastal fauna.</dc:description>" in opf
+        title_page: Final[str] = _title_page_xhtml(meta_book_epub)
+        assert "coastal fauna" not in title_page
 
 
 class TestColophonPlacement:

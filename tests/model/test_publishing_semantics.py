@@ -42,6 +42,7 @@ from guffin.model.publishing_semantics import (
     find_publishing_attribute,
     has_element_type,
     has_parts,
+    illustrators_of_vertex,
     matter_of,
     matter_of_vertex,
     pdf_render_of,
@@ -106,10 +107,13 @@ class TestPublishingSemanticsMembers:
             "title",
             "subtitle",
             "authors",
+            "illustrators",
             "date",
             "publisher",
             "rights",
             "identifier",
+            "language",
+            "description",
             "revision",
             "cover-image",
         }
@@ -1138,3 +1142,22 @@ class TestHasElementType:
         """A tree with no element-type tags matches nothing."""
         tree = _tagged_heading_tree(1, None)
         assert not has_element_type(tree, StructuralElement.TABLE_OF_CONTENTS)
+
+
+class TestIllustratorsOfVertex:
+    """illustrators_of_vertex reads a vertex's declared illustrator names, tolerating absence."""
+
+    def test_names_in_source_order(self) -> None:
+        """Each value contributes its text, in source order."""
+        assignment = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="illustrators", domain=AttributeDomain.GUFFIN), link=_LINK
+            ),
+            values=(LiteralValue(value="Emi Panico"), LiteralValue(value="Ada Lovelace")),
+        )
+        vertex = PageVertex(uid="page00001", title="Doc", attribute_assignments=[assignment])
+        assert illustrators_of_vertex(vertex) == ("Emi Panico", "Ada Lovelace")
+
+    def test_absent_assignment_yields_empty(self) -> None:
+        """A vertex with no illustrators assignment yields the empty tuple."""
+        assert illustrators_of_vertex(PageVertex(uid="page00001", title="Doc")) == ()

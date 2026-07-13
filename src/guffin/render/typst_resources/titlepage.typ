@@ -42,6 +42,11 @@
   ]),
 )
 
+#if cfg.illustrators.len() > 0 [
+  #v(1.5em)
+  #text(size: 0.9em)[Illustrations by #cfg.illustrators.join(", ")]
+]
+
 
 #let logo = none
 

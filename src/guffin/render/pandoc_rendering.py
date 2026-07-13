@@ -237,10 +237,18 @@ _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
     PublishingSemantics.TITLE.value.name: "title",
     PublishingSemantics.SUBTITLE.value.name: "subtitle",
     PublishingSemantics.AUTHORS.value.name: "author",
+    # Illustrators are supportive contributors, not co-creators: they map to Pandoc's structured
+    # `contributor` entries (role: illustrator), which the EPUB writer emits as dc:contributor
+    # refined with the MARC relator `ill`.
+    PublishingSemantics.ILLUSTRATORS.value.name: "contributor",
     PublishingSemantics.DATE.value.name: "date",
     PublishingSemantics.PUBLISHER.value.name: "publisher",
     PublishingSemantics.RIGHTS.value.name: "rights",
     PublishingSemantics.IDENTIFIER.value.name: "identifier",
+    # Pandoc's canonical language variable is `lang` (IETF BCP 47), consumed by every writer;
+    # the EPUB writer maps it to dc:language and the package xml:lang.
+    PublishingSemantics.LANGUAGE.value.name: "lang",
+    PublishingSemantics.DESCRIPTION.value.name: "description",
 }
 """Maps a recognised :class:`~guffin.model.publishing_semantics.PublishingSemantics` to its Pandoc metadata key."""
 
@@ -251,7 +259,9 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
     Only Guffin-system attributes
     (:attr:`~guffin.model.attribute.AttributeDomain.is_guffin`) whose name is recognised by
     :data:`_METADATA_KEY_BY_NAME` contribute; each maps to its Pandoc key.  ``author`` becomes a
-    :class:`~panflute.MetaList` (one entry per value — e.g. one per author); every other key becomes a
+    :class:`~panflute.MetaList` (one entry per value — e.g. one per author); ``contributor``
+    becomes a :class:`~panflute.MetaList` of structured ``{role, text}`` :class:`~panflute.MetaMap`
+    entries (role ``illustrator``, one per value); every other key becomes a
     :class:`~panflute.MetaInlines` of the comma-joined values.  Attributes with no values are skipped.
     Each value string is parsed as inline Pandoc Markdown (one batched :func:`parse_inline_md`
     call), so metadata gets the same treatment as body text — in particular smart punctuation,
@@ -274,7 +284,7 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
         value_strings: list[str] = [attribute_value_text(value) for value in assignment.values]
         if not value_strings:
             continue
-        texts_by_key[key] = value_strings if key == "author" else [", ".join(value_strings)]
+        texts_by_key[key] = value_strings if key in ("author", "contributor") else [", ".join(value_strings)]
     if not texts_by_key:
         return {}
     inline_map: Final[InlineMap] = parse_inline_md([text for texts in texts_by_key.values() for text in texts])
@@ -282,14 +292,16 @@ def _document_metadata(attribute_assignments: list[AttributeAssignment] | None) 
     def _inlines(text: str) -> list[pf.Inline]:
         return list(inline_map.get(text, [pf.Str(text)]))
 
-    return {
-        key: (
-            pf.MetaList(*[pf.MetaInlines(*_inlines(text)) for text in texts])
-            if key == "author"
-            else pf.MetaInlines(*_inlines(texts[0]))
-        )
-        for key, texts in texts_by_key.items()
-    }
+    def _meta_value(key: str, texts: list[str]) -> pf.MetaValue:
+        if key == "author":
+            return pf.MetaList(*[pf.MetaInlines(*_inlines(text)) for text in texts])
+        if key == "contributor":
+            return pf.MetaList(
+                *[pf.MetaMap(role=pf.MetaString("illustrator"), text=pf.MetaInlines(*_inlines(text))) for text in texts]
+            )
+        return pf.MetaInlines(*_inlines(texts[0]))
+
+    return {key: _meta_value(key, texts) for key, texts in texts_by_key.items()}
 
 
 def _attribute_pill_blocks(
@@ -1358,8 +1370,10 @@ def vertex_tree_to_pandoc(
         if title_in_header:
             blocks.append(pf.Header(*list(title_meta.content), level=1))
         metadata["title"] = title_meta
-    for meta_key in ("subtitle", "author", "date", "publisher", "rights", "identifier"):
-        if meta_key in root_metadata:
+    # Every other recognised metadata key copies straight over; only `title` needs the special
+    # handling above (the page-title fallback and the optional H1 body rendering).
+    for meta_key in _METADATA_KEY_BY_NAME.values():
+        if meta_key != "title" and meta_key in root_metadata:
             metadata[meta_key] = root_metadata[meta_key]
 
     # The export root is a transparent container whatever its type: it contributes the document's

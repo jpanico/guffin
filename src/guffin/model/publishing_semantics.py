@@ -29,6 +29,8 @@ Public symbols:
   ``((<uid>))``); :func:`cover_image_vertex` — resolve a tree's cover to the
   :class:`~guffin.model.vertex.ImageVertex` its root references, tolerating absent or
   unresolvable assignments (``None``, warning);
+  :func:`illustrators_of_vertex` — a vertex's declared illustrator names, in source order
+  (empty tuple when none);
   :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
@@ -80,6 +82,7 @@ from guffin.common.validation import ValidationError, ValidationResult, validate
 from guffin.model.attribute import (
     Attribute,
     AttributeDomain,
+    attribute_value_text,
 )
 from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
 from guffin.model.attribute_assignment import AttributeAssignment, verified_sole_value_text
@@ -153,9 +156,9 @@ class PublishingSemantics(enum.Enum):
 
     - **Document metadata** (:attr:`AttributeAnchor.ROOT`) — bibliographic facts about the work as a
       whole, so they attach only to the tree's root vertex (the export target itself, whatever
-      its type): :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`DATE`,
-      :attr:`PUBLISHER`, :attr:`RIGHTS`, :attr:`IDENTIFIER`, :attr:`REVISION`,
-      :attr:`COVER_IMAGE`.  The cover is
+      its type): :attr:`TITLE`, :attr:`SUBTITLE`, :attr:`AUTHORS`, :attr:`ILLUSTRATORS`,
+      :attr:`DATE`, :attr:`PUBLISHER`, :attr:`RIGHTS`, :attr:`IDENTIFIER`, :attr:`LANGUAGE`,
+      :attr:`DESCRIPTION`, :attr:`REVISION`, :attr:`COVER_IMAGE`.  The cover is
       metadata rather than an :class:`~guffin.model.chicago_structure.StructuralElement` because
       per CMOS only the book *interior* is matter-classified — the cover is exterior.
     - **Heading tags** (:attr:`AttributeAnchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
@@ -169,11 +172,15 @@ class PublishingSemantics(enum.Enum):
     Attributes:
         TITLE: The document title.
         SUBTITLE: The document subtitle.
-        AUTHORS: The document author(s).
+        AUTHORS: The document author(s) — the work's primary creators.
+        ILLUSTRATORS: The work's illustrator(s) — supportive contributors, not co-creators
+            (bibliographically secondary to :attr:`AUTHORS`).
         DATE: The document date.
         PUBLISHER: The publisher of the work.
         RIGHTS: The rights statement for the work (e.g. a copyright line).
         IDENTIFIER: The document identifier.
+        LANGUAGE: The main language of the work, as an IETF BCP 47 language tag (e.g. ``en-US``).
+        DESCRIPTION: A prose description of the work (e.g. a catalog blurb or abstract).
         REVISION: An author-declared revision label for the content (free text — e.g. a draft
             name or version string), carried into the export's content
             :class:`~guffin.common.revision.Revision` record.
@@ -191,10 +198,13 @@ class PublishingSemantics(enum.Enum):
     TITLE = PublishingAttribute(name="title", anchor=AttributeAnchor.ROOT)
     SUBTITLE = PublishingAttribute(name="subtitle", anchor=AttributeAnchor.ROOT)
     AUTHORS = PublishingAttribute(name="authors", anchor=AttributeAnchor.ROOT)
+    ILLUSTRATORS = PublishingAttribute(name="illustrators", anchor=AttributeAnchor.ROOT)
     DATE = PublishingAttribute(name="date", anchor=AttributeAnchor.ROOT)
     PUBLISHER = PublishingAttribute(name="publisher", anchor=AttributeAnchor.ROOT)
     RIGHTS = PublishingAttribute(name="rights", anchor=AttributeAnchor.ROOT)
     IDENTIFIER = PublishingAttribute(name="identifier", anchor=AttributeAnchor.ROOT)
+    LANGUAGE = PublishingAttribute(name="language", anchor=AttributeAnchor.ROOT)
+    DESCRIPTION = PublishingAttribute(name="description", anchor=AttributeAnchor.ROOT)
     REVISION = PublishingAttribute(name="revision", anchor=AttributeAnchor.ROOT)
     COVER_IMAGE = PublishingAttribute(name="cover-image", anchor=AttributeAnchor.ROOT)
     ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=AttributeAnchor.HEADING)
@@ -541,6 +551,26 @@ def revision_of_vertex(vertex: Vertex) -> str | None:
     except ValueError as exc:
         logger.warning("ignoring revision on vertex uid=%r: %s", vertex.uid, exc)
         return None
+
+
+@validate_call
+def illustrators_of_vertex(vertex: Vertex) -> tuple[str, ...]:
+    """Return the illustrator names *vertex*'s ``illustrators`` assignment declares, or ``()``.
+
+    The tolerant per-vertex reader: each of the assignment's values contributes its text (a
+    literal token or a referenced page name), in source order; a vertex with no ``illustrators``
+    assignment yields the empty tuple.
+
+    Args:
+        vertex: The vertex whose attribute to resolve.
+
+    Returns:
+        The illustrator names, in source order; empty when none are declared.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.ILLUSTRATORS)
+    if assignment is None:
+        return ()
+    return tuple(attribute_value_text(value) for value in assignment.values)
 
 
 @validate_call

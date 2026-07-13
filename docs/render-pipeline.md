@@ -196,18 +196,26 @@ folded from a `guffin-meta::` container block (the Guffin metadata convention). 
 `vertex_tree_to_pandoc()`, `_document_metadata()` reads them and maps recognised names to
 `doc.metadata`: `title` → title (**overriding** the Roam page title), `subtitle` → subtitle,
 `authors` → `author` (one entry per value, so comma-separated authors become multiple), `date` →
-date, `publisher` → publisher, `rights` → rights, `identifier` → identifier. Every Pandoc writer
+date, `publisher` → publisher, `rights` → rights, `identifier` → identifier, `language` → `lang`
+(Pandoc's canonical IETF BCP 47 language variable), `description` → description, `illustrators` →
+`contributor` (structured `{role: illustrator, text}` entries — supportive contributors, not
+co-creators; the EPUB writer emits `dc:contributor` refined with the MARC relator `ill`). Every Pandoc writer
 then maps the metadata to its format natively (Typst title block; EPUB `dc:title` / `dc:creator` /
-`dc:date` / `dc:publisher` / `dc:rights` / `dc:identifier`) — **the format renderers do not change
-for this half.** Metadata-domain attributes never render as body pills, and any unrecognised
+`dc:date` / `dc:publisher` / `dc:rights` / `dc:identifier` / `dc:language` / `dc:description`) —
+**the format renderers do not change for this half.** Metadata-domain attributes never render as body pills, and any unrecognised
 `guffin`-domain attribute is dropped from the output entirely. (`abstract` is deferred indefinitely.)
 
 The **title page** shows the same fields in both paginated formats, in the same order (title,
 subtitle, authors, publisher, date, rights): Pandoc's EPUB writer renders them natively on its
 generated title page, while on the PDF side the bundled Bergfink template was extended to match —
 `publisher` and `rights` are Guffin-authored additions to `base_cfg.typ` / `bergfink.typst` /
-`titlepage.typ` (upstream Bergfink renders only title, subtitle, authors, date). `identifier` is
-catalog metadata only (EPUB OPF `dc:identifier`); no format renders it on the title page.
+`titlepage.typ` (upstream Bergfink renders only title, subtitle, authors, date). `illustrators`
+render as an "Illustrations by …" credit directly below the authors — a Guffin-authored Bergfink
+extension on the PDF side, and a post-packaging title-page stamp on the EPUB side
+(`epub_post_processing.stamp_titlepage_illustrators`), since Pandoc's generated title page renders
+creators but not contributors. `identifier`, `language`, and
+`description` are catalog metadata only (EPUB OPF `dc:identifier` / `dc:language` /
+`dc:description`); no format renders them on the title page.
 
 The **cover** is also root metadata — `cover-image::`, whose value is a Roam **block reference**
 `((<uid>))` to an image block (paste the cover into any block, reference that block) — never a

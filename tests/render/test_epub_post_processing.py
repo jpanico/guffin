@@ -4,7 +4,11 @@ import zipfile
 from pathlib import Path
 from typing import Final
 
-from guffin.render.epub_post_processing import restore_matter_divisions, stamp_titlepage_revision
+from guffin.render.epub_post_processing import (
+    restore_matter_divisions,
+    stamp_titlepage_illustrators,
+    stamp_titlepage_revision,
+)
 
 _MIMETYPE: Final[str] = "application/epub+zip"
 
@@ -135,3 +139,38 @@ class TestStampTitlepageRevision:
             infos: Final[list[zipfile.ZipInfo]] = archive.infolist()
         assert infos[0].filename == "mimetype"
         assert infos[0].compress_type == zipfile.ZIP_STORED
+
+
+class TestStampTitlepageIllustrators:
+    """stamp_titlepage_illustrators injects the credit line directly below the author paragraphs."""
+
+    def test_credit_follows_the_authors(self, tmp_path: Path) -> None:
+        """The credit paragraph lands directly after the author run."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(epub, {"EPUB/text/title_page.xhtml": _title_page_doc()})
+        stamp_titlepage_illustrators(epub, "Illustrations by Emi Panico")
+        with zipfile.ZipFile(epub) as archive:
+            xhtml: Final[str] = archive.read("EPUB/text/title_page.xhtml").decode("utf-8")
+        author_at: Final[int] = xhtml.index('<p class="author">')
+        credit_at: Final[int] = xhtml.index('<p class="illustrators">Illustrations by Emi Panico</p>')
+        assert author_at < credit_at
+
+    def test_without_authors_credit_follows_the_title_block(self, tmp_path: Path) -> None:
+        """With no author paragraphs, the credit lands after the title block."""
+        authorless: Final[str] = _title_page_doc().replace('  <p class="author">Oscar Wilde</p>\n', "")
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(epub, {"EPUB/text/title_page.xhtml": authorless})
+        stamp_titlepage_illustrators(epub, "Illustrations by Emi Panico")
+        with zipfile.ZipFile(epub) as archive:
+            xhtml: Final[str] = archive.read("EPUB/text/title_page.xhtml").decode("utf-8")
+        title_end: Final[int] = xhtml.index("</h1>")
+        assert xhtml.index('<p class="illustrators">') > title_end
+
+    def test_non_title_page_documents_are_untouched(self, tmp_path: Path) -> None:
+        """Content documents other than the title page are never stamped."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(epub, {"EPUB/text/ch001.xhtml": _PLAIN_DOC})
+        stamp_titlepage_illustrators(epub, "Illustrations by Emi Panico")
+        with zipfile.ZipFile(epub) as archive:
+            xhtml: Final[str] = archive.read("EPUB/text/ch001.xhtml").decode("utf-8")
+        assert "illustrators" not in xhtml

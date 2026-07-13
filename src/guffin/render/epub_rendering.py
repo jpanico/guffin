@@ -46,14 +46,15 @@ from pydantic import validate_call
 
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
-from guffin.model.publishing_semantics import drop_unpublished
+from guffin.model.publishing_semantics import drop_unpublished, illustrators_of_vertex
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
-from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
+from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble, root_vertex
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
 from guffin.render.callout_theme import callout_accent, callout_title_tint
 from guffin.render.epub_post_processing import (
     restore_matter_divisions,
+    stamp_titlepage_illustrators,
     stamp_titlepage_provenance,
     stamp_titlepage_revision,
 )
@@ -175,6 +176,10 @@ def render(
     (via :func:`~guffin.render.epub_post_processing.stamp_titlepage_revision`, mirroring the PDF
     title page), otherwise inserted as the emphasized first block of the reading flow — the
     first thing a reader sees on opening the book, since the body carries no title of its own.
+    When the root declares ``illustrators`` and a title page is emitted, an illustration credit
+    line is stamped directly below the authors (via
+    :func:`~guffin.render.epub_post_processing.stamp_titlepage_illustrators`), since Pandoc's
+    generated title page renders creators but not contributors.
 
     Pandoc must be installed and on ``PATH``.
 
@@ -308,4 +313,9 @@ def render(
     # origin bookkeeping, so independent of the colophon above (mirroring the PDF title page).
     if emit_title_page and render_bundle.revision is not None and render_bundle.revision.revision is not None:
         stamp_titlepage_revision(output_path, render_bundle.revision.revision)
+    # Pandoc's generated title page renders creators but not contributors, so the illustration
+    # credit is stamped below the authors — mirroring the PDF title page.
+    illustrator_names: Final[tuple[str, ...]] = illustrators_of_vertex(root_vertex(content))
+    if emit_title_page and illustrator_names:
+        stamp_titlepage_illustrators(output_path, f"Illustrations by {', '.join(illustrator_names)}")
     logger.info("Wrote EPUB to %s", output_path)

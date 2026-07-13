@@ -1,6 +1,6 @@
 """EPUB post-processing: content rewrites applied to the packaged e-book.
 
-Three passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
+Four passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
 compression, so the ``mimetype`` entry stays first and uncompressed):
 
 - **CMOS division restoration.**  Pandoc assigns each content document's ``<body epub:type>``
@@ -20,13 +20,18 @@ compression, so the ``mimetype`` entry stays first and uncompressed):
   author-declared revision name directly below the title (below the subtitle when one is
   present) on the generated title page.
 
+- **Title-page illustration credit.**  Likewise, :func:`stamp_titlepage_illustrators` injects an
+  illustration credit line directly below the author paragraphs (below the title block when
+  there are none) on the generated title page, which renders creators but not contributors.
+
 Public symbols:
 
 - **Functions**: :func:`restore_matter_divisions` — rewrite an ``.epub`` in place so each content
   document's ``<body>`` division matches its stamped CMOS matter;
   :func:`stamp_titlepage_provenance` — inject a provenance line at the foot of the generated
   title page; :func:`stamp_titlepage_revision` — inject the authored revision name directly
-  below the title on the generated title page.
+  below the title on the generated title page; :func:`stamp_titlepage_illustrators` — inject an
+  illustration credit line directly below the authors on the generated title page.
 """
 
 import logging
@@ -52,6 +57,8 @@ _TITLE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(
     r'<h1 class="title">.*?</h1>(?:\s*<p class="subtitle">.*?</p>)?', regex.DOTALL
 )
 """Matches the generated title page's title block: the title heading plus any subtitle paragraph."""
+_AUTHOR_RUN_RE: Final[regex.Pattern[str]] = regex.compile(r'(?:\s*<p class="author">.*?</p>)+', regex.DOTALL)
+"""Matches the generated title page's run of author paragraphs (one ``<p class="author">`` each)."""
 
 
 def _rewrite_xhtml_entries(epub_path: Path, transform: Callable[[str, str], str]) -> None:
@@ -186,3 +193,40 @@ def stamp_titlepage_revision(epub_path: Path, revision_name: str) -> None:
         logger.info("Stamped title-page revision in %s", epub_path)
     else:
         logger.warning("No title-page title block found in %s; revision not stamped", epub_path)
+
+
+@validate_call
+def stamp_titlepage_illustrators(epub_path: Path, credit: str) -> None:
+    """Inject *credit* as an illustration credit line on the EPUB's generated title page.
+
+    Rewrites the EPUB at *epub_path* in place: a ``<p class="illustrators">`` paragraph holding
+    the (XML-escaped) *credit* text is inserted directly after the title-page document's run of
+    author paragraphs — or after the title block (title heading plus any subtitle) when the page
+    names no authors — so the credit reads with the creator credits.  Entry order, timestamps,
+    and per-entry compression are preserved, so the ``mimetype`` entry stays first and
+    uncompressed.
+
+    When the package contains no generated title-page document (``title_page.xhtml``) or no
+    insertion anchor can be found, a warning is logged and the EPUB is left unchanged.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+        credit: The illustration credit line to inject (plain text; escaped for XML here).
+    """
+    credit_para: Final[str] = f'\n  <p class="illustrators">{escape(credit)}</p>'
+    stamped_names: Final[list[str]] = []
+
+    def _stamp(filename: str, xhtml: str) -> str:
+        if not filename.endswith(_TITLE_PAGE_SUFFIX):
+            return xhtml
+        anchor: Final[regex.Match[str] | None] = _AUTHOR_RUN_RE.search(xhtml) or _TITLE_BLOCK_RE.search(xhtml)
+        if anchor is None:
+            return xhtml
+        stamped_names.append(filename)
+        return f"{xhtml[: anchor.end()]}{credit_para}{xhtml[anchor.end() :]}"
+
+    _rewrite_xhtml_entries(epub_path, _stamp)
+    if stamped_names:
+        logger.info("Stamped title-page illustration credit in %s", epub_path)
+    else:
+        logger.warning("No title-page anchor found in %s; illustration credit not stamped", epub_path)

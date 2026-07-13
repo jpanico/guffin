@@ -62,6 +62,9 @@ $endif$
 $endfor$
   ))
 $endif$
+$if(contributor)$
+#(cfg.illustrators = ($for(contributor)$"$contributor.text$",$endfor$))
+$endif$
 $if(title)$
 #(cfg.title = "$title$")
 $endif$
