@@ -42,7 +42,11 @@ absent from any given live schema fetch (see `INTERMITTENT_ATTRIBUTES` in
 | pdf            | fingerprints      |
 | pdf            | url               |
 | restrictions   | prevent-clean     |
+| token          | ai                |
+| token          | created-by-uid    |
 | token          | description       |
+| token          | device-name       |
+| token          | type              |
 | user           | display-name      |
 | user           | display-page      |
 | user           | photo-url         |

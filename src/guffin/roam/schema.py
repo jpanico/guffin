@@ -117,7 +117,11 @@ class SchemaAttribute(Enum):
     RESTRICTIONS_PREVENT_CLEAN = (SchemaNamespace.RESTRICTIONS, "prevent-clean")
 
     # token/
+    TOKEN_AI = (SchemaNamespace.TOKEN, "ai")
+    TOKEN_CREATED_BY_UID = (SchemaNamespace.TOKEN, "created-by-uid")
     TOKEN_DESCRIPTION = (SchemaNamespace.TOKEN, "description")
+    TOKEN_DEVICE_NAME = (SchemaNamespace.TOKEN, "device-name")
+    TOKEN_TYPE = (SchemaNamespace.TOKEN, "type")
 
     # user/
     USER_DISPLAY_NAME = (SchemaNamespace.USER, "display-name")
