@@ -124,7 +124,7 @@
     values:
     - kind: literal
       value: acknowledgments
-  text: '[Acknowledgments](x-guffin:vertex/qmplSzgnD)'
+  text: '[0.1] [Acknowledgments](x-guffin:vertex/qmplSzgnD)'
   heading_level: 2
 - vertex_type: guffin/text
   uid: snXG7pnjI
@@ -178,7 +178,7 @@
     values:
     - kind: literal
       value: front-matter
-  text: '[Who is this Book for?](x-guffin:vertex/GuHqKi9Y_)'
+  text: '[0.2] [Who is this Book for?](x-guffin:vertex/GuHqKi9Y_)'
   heading_level: 2
 - vertex_type: guffin/text
   uid: v_yb2JFwl
@@ -229,7 +229,7 @@
     values:
     - kind: literal
       value: introduction
-  text: An Epistle to the Reader, from the Printer
+  text: '[0.3] An Epistle to the Reader, from the Printer'
   heading_level: 2
 - vertex_type: guffin/text
   uid: doB1NIOh9
@@ -303,8 +303,8 @@
     values:
     - kind: literal
       value: part
-  text: '**Book I**: Account of Regions Visited or Heard of on the Journey from the
-    Lesser Armenia to the Court of the Great Kaan'
+  text: '[1.1] **Book I**: Account of Regions Visited or Heard of on the Journey from
+    the Lesser Armenia to the Court of the Great Kaan'
   heading_level: 1
 - vertex_type: guffin/text
   uid: bFYi5U_xl
@@ -327,7 +327,8 @@
     values:
     - kind: literal
       value: chapter
-  text: CHAPTER I. Here the Book begins; and first it speaks of the Lesser Hermenia.
+  text: '[1.1.1] CHAPTER I. Here the Book begins; and first it speaks of the Lesser
+    Hermenia.'
   heading_level: 2
 - vertex_type: guffin/image
   uid: ZVvaN-_mA
@@ -385,7 +386,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 2: How the Two Brothers went on beyond Soldaia.'
+  text: '[1.1.2] Chapter 2: How the Two Brothers went on beyond Soldaia.'
   heading_level: 2
 - vertex_type: guffin/image
   uid: GJ-Y_OXdC
@@ -696,8 +697,8 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 3: How the Two Brothers, after crossing a desert, came to the City
-    of Bocara, and fell in with certain Envoys there.'
+  text: '[1.1.3] Chapter 3: How the Two Brothers, after crossing a desert, came to
+    the City of Bocara, and fell in with certain Envoys there.'
   heading_level: 2
 - vertex_type: guffin/image
   uid: -cStchkqq
@@ -878,7 +879,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 4: Code Listing'
+  text: '[1.1.4] Chapter 4: Code Listing'
   heading_level: 2
 - vertex_type: guffin/code-block
   uid: 2eBv9J8n5
@@ -1371,7 +1372,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 5: Of the Kingdom of Mausul.'
+  text: '[1.1.5] Chapter 5: Of the Kingdom of Mausul.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: IqRghC0ch
@@ -1531,8 +1532,8 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 6: How the Great Kaan asked all about the manners of the Christians,
-    and particularly about the Pope of Rome.'
+  text: '[1.1.6] Chapter 6: How the Great Kaan asked all about the manners of the
+    Christians, and particularly about the Pope of Rome.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: aDIkVUQdu
@@ -1824,8 +1825,8 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 7: How the Great Kaan sent the Two Brothers as his Envoys to the
-    Pope.'
+  text: '[1.1.7] Chapter 7: How the Great Kaan sent the Two Brothers as his Envoys
+    to the Pope.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: x5yAlBdXL
@@ -1915,8 +1916,8 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 10: How the Prayer of the One-eyed Cobler caused the Mountain to
-    move.'
+  text: '[1.1.10] Chapter 10: How the Prayer of the One-eyed Cobler caused the Mountain
+    to move.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: TbcQ8_-Pp
@@ -2075,8 +2076,8 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 13: Of the Great Country of Persia; with some account of the Three
-    Kings.'
+  text: '[1.1.13] Chapter 13: Of the Great Country of Persia; with some account of
+    the Three Kings.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: -aN9Kuehn
@@ -2412,7 +2413,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 15: Of the Eight Kingdoms of Persia, and how they are named.'
+  text: '[1.1.15] Chapter 15: Of the Eight Kingdoms of Persia, and how they are named.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: E5I_NXV5d
@@ -2671,7 +2672,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 17: Concerning the Kingdom of Kerman.'
+  text: '[1.1.17] Chapter 17: Concerning the Kingdom of Kerman.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: g9CM7k81s
@@ -3009,8 +3010,8 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 18: Of the City of Camadi and its Ruins; also touching the Carauna
-    Robbers.'
+  text: '[1.1.18] Chapter 18: Of the City of Camadi and its Ruins; also touching the
+    Carauna Robbers.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: X1Rp-LLc6
@@ -3515,7 +3516,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 24: Of the Descent to the City of Hormos.'
+  text: '[1.1.24] Chapter 24: Of the Descent to the City of Hormos.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: X6mc9AhMW
@@ -4043,7 +4044,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 24: How the Old Man Used to Train His Assassins.'
+  text: '[1.1.25] Chapter 25: How the Old Man Used to Train His Assassins.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: NKu0uhm6E
@@ -4247,7 +4248,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 29: Of the Province of Badashan.'
+  text: '[1.1.29] Chapter 29: Of the Province of Badashan.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: y6Sb4knJU
@@ -4545,7 +4546,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 31: Of the Province of Keshimur.'
+  text: '[1.1.31] Chapter 31: Of the Province of Keshimur.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: BejZVxBcX
@@ -4776,7 +4777,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 32: Of the Great River of Badashan.'
+  text: '[1.1.32] Chapter 32: Of the Great River of Badashan.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: iA9v_0ZbK
@@ -5246,7 +5247,7 @@
     values:
     - kind: literal
       value: part
-  text: '**Book II**: The Kaan, His Court and Capital'
+  text: '[1.2] **Book II**: The Kaan, His Court and Capital'
   heading_level: 1
 - vertex_type: guffin/heading
   uid: 6yQMbdz2s
@@ -5270,8 +5271,8 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 1: Of Cublay Kaan, the Great Kaan now Reigning, and of his Great
-    Puissance.'
+  text: '[1.2.1] Chapter 1: Of Cublay Kaan, the Great Kaan now Reigning, and of his
+    Great Puissance.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: EwJ_S--R4
@@ -5424,7 +5425,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 3: How the Great Kaan marched against Nayan.'
+  text: '[1.2.3] Chapter 3: How the Great Kaan marched against Nayan.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: ufcFVSn5-
@@ -5542,7 +5543,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'Chapter 4: Of the Battle that the Great Kaan fought with Nayan.'
+  text: '[1.2.4] Chapter 4: Of the Battle that the Great Kaan fought with Nayan.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: K-LnFnNio
@@ -5790,7 +5791,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'CHAPTER V: How the Great Kaan caused Nayan to be put to death.'
+  text: '[1.2.5] CHAPTER V: How the Great Kaan caused Nayan to be put to death.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: P70zMrRa1
@@ -6034,7 +6035,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'CHAPTER VI.: How the Great Kaan went back to the City of Cambaluc.'
+  text: '[1.2.6] CHAPTER VI.: How the Great Kaan went back to the City of Cambaluc.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: MYh8tSij3
@@ -6073,7 +6074,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'CHAPTER VII.: How the Kaan rewarded the Valour of his Captains.'
+  text: '[1.2.7] CHAPTER VII.: How the Kaan rewarded the Valour of his Captains.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: 7AzRFFeEC
@@ -6391,7 +6392,7 @@
     values:
     - kind: literal
       value: chapter
-  text: 'CHAPTER VIII.: Concerning the Person of the Great Kaan.'
+  text: '[1.2.8] CHAPTER VIII.: Concerning the Person of the Great Kaan.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: 2Lhm2gBqv
@@ -6542,7 +6543,7 @@
     values:
     - kind: literal
       value: chapter
-  text: CHAPTER IX. Concerning the Great Kaan’s Sons.
+  text: '[1.2.9] CHAPTER IX. Concerning the Great Kaan’s Sons.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: lwB1NmQHY
@@ -6698,7 +6699,7 @@
     values:
     - kind: literal
       value: chapter
-  text: CHAPTER X. Concerning the Palace of the Great Kaan.
+  text: '[1.2.10] CHAPTER X. Concerning the Palace of the Great Kaan.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: eJw3wMeFK
@@ -7073,7 +7074,7 @@
     values:
     - kind: literal
       value: chapter
-  text: CHAPTER XI. Concerning the City of Cambaluc.
+  text: '[1.2.11] CHAPTER XI. Concerning the City of Cambaluc.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: 7jR4UgJfE
@@ -7339,8 +7340,8 @@
     values:
     - kind: literal
       value: chapter
-  text: CHAPTER XII. How the Great Kaan Maintains a Guard of Twelve Thousand Horse,
-    which are called Keshican.
+  text: '[1.2.12] CHAPTER XII. How the Great Kaan Maintains a Guard of Twelve Thousand
+    Horse, which are called Keshican.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: zKeRylwWT
@@ -7537,8 +7538,8 @@
     values:
     - kind: literal
       value: chapter
-  text: CHAPTER XIV. Concerning the Great Feast held by the Grand Kaan every Year
-    on his Birthday.
+  text: '[1.2.14] CHAPTER XIV. Concerning the Great Feast held by the Grand Kaan every
+    Year on his Birthday.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: 1LGsSe98X
@@ -7691,8 +7692,8 @@
     values:
     - kind: literal
       value: chapter
-  text: CHAPTER XXIV. How the Great Kaan causeth the Bark of Trees, made into something
-    like Paper, to pass for Money over all his Country.
+  text: '[1.2.24] CHAPTER XXIV. How the Great Kaan causeth the Bark of Trees, made
+    into something like Paper, to pass for Money over all his Country.'
   heading_level: 2
 - vertex_type: guffin/text
   uid: vJM7ZDLAX
@@ -7813,7 +7814,6 @@
   uid: 09KMheZHg
   children:
   - y4yvyS7Cp
-  - CYiGVCEok
   attribute_assignments:
   - attribute:
       definition:
@@ -7825,66 +7825,13 @@
     values:
     - kind: literal
       value: part
-  text: '**Book III**: Journey to the West and South-West of Cathay.'
+  text: '[1.3] **Book III**: Journey to the West and South-West of Cathay.'
   heading_level: 1
 - vertex_type: guffin/heading
   uid: y4yvyS7Cp
-  children:
-  - BJpwNOZXi
-  - rirMPOzRr
-  - Q_O-Rwxjt
-  - g_Bs-RuqF
-  attribute_assignments:
-  - attribute:
-      definition:
-        name: element-type
-        domain: guffin
-      link:
-      - vertex
-      - asCh2FQQp
-    values:
-    - kind: literal
-      value: chapter
-  text: CHAPTER XXXV. Here begins the Description of the Interior of Cathay, and first
-    of the River Pulisanghin.
+  text: '[1.3.35] CHAPTER XXXV. Here begins the Description of the Interior of Cathay,
+    and first of the River Pulisanghin.'
   heading_level: 2
-- vertex_type: guffin/text
-  uid: BJpwNOZXi
-  refs:
-  - lSrjeyDaT
-  text: 'this is a reference to -> [**Book I**: Account of Regions Visited or Heard
-    of on the Journey from the Lesser Armenia to the Court of the Great Kaan](x-guffin:vertex/lSrjeyDaT)'
-- vertex_type: guffin/text
-  uid: rirMPOzRr
-  refs:
-  - LBFKibPIj
-  - lDYWYqYSL
-  text: this is a reference to an external page ->  [Test Article 2](x-guffin:vertex/lDYWYqYSL)
-- vertex_type: guffin/text
-  uid: Q_O-Rwxjt
-  refs:
-  - ot5dpySxp
-  text: this is a reference to an external block -> [#c:FUCHSIA **inline PAGE ref
-    ⟶** [[[[Test Article]] 2]]](x-guffin:vertex/ot5dpySxp)
-- vertex_type: guffin/text
-  uid: g_Bs-RuqF
-  children:
-  - JB1kKyzGo
-  refs:
-  - lF-qY0Xrs
-  text: '[**standalone IMAGE BLOCK ref ↓**]{color="fuchsia"} '
-- vertex_type: guffin/text
-  uid: JB1kKyzGo
-  refs:
-  - uj8YolCoE
-  text: '[![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)](x-guffin:vertex/uj8YolCoE)'
-- vertex_type: guffin/page-embed
-  uid: CYiGVCEok
-  refs:
-  - TXGdKldN6
-  vertex_link:
-  - vertex-embed
-  - TXGdKldN6
 - vertex_type: guffin/heading
   uid: MGvH7SY4M
   attribute_assignments:
@@ -7898,6 +7845,6 @@
     values:
     - kind: literal
       value: part
-  text: '**Book IV**: Wars Among the Tartar Princes and Some Account of the Northern
-    Countries'
+  text: '[1.4] **Book IV**: Wars Among the Tartar Princes and Some Account of the
+    Northern Countries'
   heading_level: 1

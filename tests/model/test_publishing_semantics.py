@@ -224,7 +224,6 @@ class TestElementTypeOfArticle7Fixture:
             "2GuxTiNnf": StructuralElement.CHAPTER,
             "zXhYsKp5A": StructuralElement.CHAPTER,
             "09KMheZHg": StructuralElement.PART,
-            "y4yvyS7Cp": StructuralElement.CHAPTER,
             "MGvH7SY4M": StructuralElement.PART,
         }
 
