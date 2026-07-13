@@ -6138,7 +6138,7 @@
   children_view_type: null
   parents: null
   props:
-    toc_open: false
+    toc_open: true
   title: '[[Test Article]] 7'
   attrs:
   - - source:

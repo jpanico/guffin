@@ -241,3 +241,40 @@ class TestHeadingDemotion:
         bundle = RenderBundle(content=VertexTree(tree_vertices=[root, chapter, text]), view={})
         result = self._render_bundle(tmp_path, bundle)
         assert result.startswith("# Chapter I\n")
+
+
+def _numbered_bundle() -> RenderBundle:
+    """A page with one element-numbered chapter heading and one paragraph."""
+    page = PageVertex(uid="page00001", title="Numbered Doc", children=["chap00001"])
+    chapter = HeadingVertex(uid="chap00001", text="[1.1] Chapter I", heading_level=1, children=["text00001"])
+    text = TextVertex(uid="text00001", text="Body text.")
+    return RenderBundle(content=VertexTree(tree_vertices=[page, chapter, text]), view={})
+
+
+class TestElementNumberRendering:
+    """Internal element numbers render only on explicit request."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, emit_element_numbers: bool) -> str:
+        render(
+            _numbered_bundle(),
+            profile=DefaultProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(
+                output_dir=tmp_path, should_bundle=False, emit_element_numbers=emit_element_numbers
+            ),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_default_strips_element_numbers(self, tmp_path: Path) -> None:
+        """By default a heading's marker is absent from the output."""
+        result = self._render(tmp_path, emit_element_numbers=False)
+        assert "Chapter I" in result
+        assert "1.1" not in result
+
+    def test_emit_option_keeps_element_numbers(self, tmp_path: Path) -> None:
+        """With emit_element_numbers the marker renders (brackets entity-encoded for Typora)."""
+        result = self._render(tmp_path, emit_element_numbers=True)
+        assert "&#91;1.1&#93; Chapter I" in result

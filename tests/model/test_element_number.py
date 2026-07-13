@@ -10,6 +10,7 @@ from guffin.model.element_number import (
     leads_with_dotted_element_number_shape,
     leads_with_element_number_shape,
     parse_element_number,
+    stripped_element_number,
 )
 
 
@@ -216,3 +217,31 @@ class TestIsPrefixOf:
     def test_diverging_number_is_not_prefix(self) -> None:
         """A number does not prefix a sibling branch."""
         assert ElementNumber(segments=(1, 2)).is_prefix_of(ElementNumber(segments=(1, 3, 1))) is False
+
+
+class TestStrippedElementNumber:
+    """stripped_element_number() removes a well-formed leading marker and nothing else."""
+
+    def test_marker_is_stripped(self) -> None:
+        """A well-formed marker and its separating whitespace are removed."""
+        assert stripped_element_number("[1.2] Chapter Two") == "Chapter Two"
+
+    def test_leading_whitespace_before_marker_is_stripped(self) -> None:
+        """Whitespace around the marker goes with it."""
+        assert stripped_element_number("  [0.3] An Epistle") == "An Epistle"
+
+    def test_plain_text_is_unchanged(self) -> None:
+        """Text with no marker passes through unchanged."""
+        assert stripped_element_number("A.D. 1290.") == "A.D. 1290."
+
+    def test_malformed_lead_is_unchanged(self) -> None:
+        """A malformed number-shaped lead is not stripped (validation reports it instead)."""
+        assert stripped_element_number("[1] Book I") == "[1] Book I"
+
+    def test_markdown_link_lead_is_unchanged(self) -> None:
+        """A Markdown link lead is not a marker."""
+        assert stripped_element_number("[1.2](https://example.com) linked") == "[1.2](https://example.com) linked"
+
+    def test_marker_only_text_strips_to_empty(self) -> None:
+        """A heading that is nothing but its marker strips to the empty string."""
+        assert stripped_element_number("[1.2]") == ""

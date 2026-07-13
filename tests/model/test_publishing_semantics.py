@@ -59,6 +59,7 @@ from guffin.model.publishing_semantics import (
     resolved_matter,
     revision_of,
     revision_of_vertex,
+    strip_element_numbers,
     validate_semantics,
 )
 from guffin.model.vertex import (
@@ -1353,3 +1354,58 @@ class TestAllElementNumbersNested:
         error = all_element_numbers_nested(tree)
         assert error is not None
         assert "chaphead1" in error.message
+
+
+class TestStripElementNumbers:
+    """strip_element_numbers removes well-formed markers from headings and touches nothing else."""
+
+    def test_numbered_heading_is_stripped(self) -> None:
+        """A heading's well-formed marker is removed from its text."""
+        tree = _flat_headed_tree(("head0000a", "[1.1] Book I"))
+        stripped = strip_element_numbers(tree)
+        heading = stripped.uid_map["head0000a"]
+        assert isinstance(heading, HeadingVertex)
+        assert heading.text == "Book I"
+
+    def test_unnumbered_heading_is_unchanged(self) -> None:
+        """A heading with no marker passes through unchanged."""
+        tree = _flat_headed_tree(("head0000a", "A.D. 1290."))
+        stripped = strip_element_numbers(tree)
+        heading = stripped.uid_map["head0000a"]
+        assert isinstance(heading, HeadingVertex)
+        assert heading.text == "A.D. 1290."
+
+    def test_malformed_lead_is_unchanged(self) -> None:
+        """A malformed number-shaped lead is left in place (validation reports it instead)."""
+        tree = _flat_headed_tree(("head0000a", "[1] Book I"))
+        stripped = strip_element_numbers(tree)
+        heading = stripped.uid_map["head0000a"]
+        assert isinstance(heading, HeadingVertex)
+        assert heading.text == "[1] Book I"
+
+    def test_text_vertex_is_unchanged(self) -> None:
+        """A text vertex keeps its bracketed lead — only headings carry element numbers."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["text0000a"])
+        footnote = TextVertex(uid="text0000a", text="[1] See Letter of Fr. Odoric.")
+        stripped = strip_element_numbers(VertexTree(tree_vertices=[page, footnote]))
+        text = stripped.uid_map["text0000a"]
+        assert isinstance(text, TextVertex)
+        assert text.text == "[1] See Letter of Fr. Odoric."
+
+    def test_referenced_heading_is_stripped(self) -> None:
+        """A heading reachable only through ref_vertices (an embed target) is stripped too."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["embed0001"])
+        embed = BlockEmbedVertex(uid="embed0001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="chaphead1"))
+        target = HeadingVertex(uid="chaphead1", text="[1.2.5] Transcluded Chapter", heading_level=2)
+        stripped = strip_element_numbers(VertexTree(tree_vertices=[page, embed], ref_vertices=[target]))
+        heading = stripped.uid_map["chaphead1"]
+        assert isinstance(heading, HeadingVertex)
+        assert heading.text == "Transcluded Chapter"
+
+    def test_original_tree_is_not_modified(self) -> None:
+        """The source tree keeps its markers; the transformer returns a new tree."""
+        tree = _flat_headed_tree(("head0000a", "[1.1] Book I"))
+        strip_element_numbers(tree)
+        original = tree.uid_map["head0000a"]
+        assert isinstance(original, HeadingVertex)
+        assert original.text == "[1.1] Book I"

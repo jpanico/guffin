@@ -46,6 +46,8 @@ Public symbols:
   :class:`~guffin.model.vertex_tree.VertexTree` is tagged with a given :class:`StructuralElement`;
   :func:`drop_unpublished` — prune every ``publish:: false`` subtree (embeds of pruned
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
+  :func:`strip_element_numbers` — remove every heading's internal element number (the
+  well-formed leading marker) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
   (every recognised guffin attribute satisfies its :class:`AttributeAnchor` — one of its vertex types, at
   its tree position),
@@ -104,6 +106,7 @@ from guffin.model.element_number import (
     leads_with_dotted_element_number_shape,
     leads_with_element_number_shape,
     parse_element_number,
+    stripped_element_number,
 )
 from guffin.model.primitives import UID_PATTERN, Uid
 from guffin.model.vertex import (
@@ -115,7 +118,7 @@ from guffin.model.vertex import (
     find_attribute_assignment,
     is_embed_vertex,
 )
-from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
+from guffin.model.vertex_tree import VertexTree, assignments_for, map_vertices, root_vertex, transcluded_vertices
 
 logger = logging.getLogger(__name__)
 
@@ -742,6 +745,35 @@ def drop_unpublished(tree: VertexTree) -> VertexTree:
         tree_vertices=[_strip_children(v) for v in tree.tree_vertices if v.uid not in removed],
         ref_vertices=[_strip_children(v) for v in tree.ref_vertices if v.uid not in removed],
     )
+
+
+@validate_call
+def strip_element_numbers(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`VertexTree` with every heading's internal element number removed.
+
+    Each :class:`~guffin.model.vertex.HeadingVertex` — tree and referenced vertices alike, so
+    embed-transcluded headings are covered — has a well-formed leading marker stripped from its
+    text (per :func:`~guffin.model.element_number.stripped_element_number`); the numbers are
+    internal authoring bookkeeping, not content.  Headings with no marker, malformed leads, and
+    every other vertex type pass through unchanged, and the original *tree* is not modified.
+
+    Args:
+        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
+
+    Returns:
+        A new :class:`~guffin.model.vertex_tree.VertexTree` whose headings carry no element
+        numbers.
+    """
+
+    def _strip(vertex: Vertex) -> Vertex:
+        if not isinstance(vertex, HeadingVertex):
+            return vertex
+        stripped_text: Final[str] = stripped_element_number(vertex.text)
+        if stripped_text == vertex.text:
+            return vertex
+        return vertex.model_copy(update={"text": stripped_text})
+
+    return map_vertices(tree, _strip)
 
 
 _SEMANTICS_BY_NAME: Final[dict[str, PublishingSemantics]] = {

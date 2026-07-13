@@ -25,7 +25,8 @@ Public symbols:
   :class:`ElementNumber` (``None`` when the text does not lead with a well-formed marker);
   :func:`leads_with_element_number_shape` / :func:`leads_with_dotted_element_number_shape` —
   whether a text leads with a number-shaped (respectively dotted number-shaped) marker,
-  well-formed or not.
+  well-formed or not; :func:`stripped_element_number` — a text without its well-formed leading
+  marker (unchanged when it leads with none).
 
 Both patterns exempt non-marker bracket syntax: a ``[[page reference]]`` lead never matches
 (its second character is ``[``), and a Markdown link lead such as ``[1](url)`` is excluded by a
@@ -188,3 +189,23 @@ def leads_with_dotted_element_number_shape(text: str) -> bool:
         ``True`` when *text* leads with a dotted number-shaped marker.
     """
     return ELEMENT_NUMBER_DOTTED_SHAPE_RE.match(text) is not None
+
+
+@validate_call
+def stripped_element_number(text: str) -> str:
+    """Return *text* without its leading element-number marker.
+
+    Removes a well-formed marker (per :data:`ELEMENT_NUMBER_RE`) together with the whitespace
+    separating it from the rest of the text.  Text with no well-formed marker — including a
+    malformed number-shaped lead — passes through unchanged.
+
+    Args:
+        text: The text whose lead to strip (typically a heading's text).
+
+    Returns:
+        *text* with the marker removed, or *text* itself when it leads with none.
+    """
+    match: Final[regex.Match[str] | None] = ELEMENT_NUMBER_RE.match(text)
+    if match is None:
+        return text
+    return text[match.end() :].lstrip()

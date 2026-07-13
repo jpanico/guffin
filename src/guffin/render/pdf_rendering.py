@@ -53,6 +53,7 @@ from guffin.model.publishing_semantics import (
     drop_unpublished,
     has_element_type,
     pdf_render_of_vertex,
+    strip_element_numbers,
 )
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex, PdfVertex
@@ -437,9 +438,11 @@ def render(
     published: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     stripped: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
+    # Internal element numbers are authoring bookkeeping; they render only on explicit request.
+    numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
     # Loose preamble (root children ahead of the first heading) is pruned so it cannot
     # strand on its own page ahead of the book's first division.
-    content: Final[VertexTree] = drop_root_preamble(stripped) if drop_preamble else stripped
+    content: Final[VertexTree] = drop_root_preamble(numbered) if drop_preamble else numbered
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.pdf"
 

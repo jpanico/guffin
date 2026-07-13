@@ -37,7 +37,7 @@ import regex
 from pydantic import validate_call
 
 from guffin.common.revision import Revision
-from guffin.model.publishing_semantics import drop_unpublished
+from guffin.model.publishing_semantics import drop_unpublished, strip_element_numbers
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
@@ -233,7 +233,9 @@ def render(
     # fetch nor the rendered output.
     published: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
-    content: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
+    attributed: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
+    # Internal element numbers are authoring bookkeeping; they render only on explicit request.
+    content: Final[VertexTree] = attributed if options.emit_element_numbers else strip_element_numbers(attributed)
     gfm_dir: Final[Path] = _gfm_resources_dir()
     if should_bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"

@@ -238,6 +238,18 @@ def main(
             ),
         ),
     ] = None,
+    element_numbers: Annotated[
+        bool,
+        typer.Option(
+            "--element-numbers/--no-element-numbers",
+            envvar="GUFFIN_ELEMENT_NUMBERS",
+            help=(
+                "When enabled, keeps internal element numbers (a heading's bracketed dotted "
+                "lead, e.g. '[1.2.3]') in the exported document. Disabled by default: the "
+                "numbers are authoring bookkeeping, stripped from every format's output."
+            ),
+        ),
+    ] = False,
     daily_note_format: Annotated[
         DateFormat,
         typer.Option(
@@ -306,6 +318,7 @@ def main(
         suppress_attributes=suppress_attributes,
         dump_pandoc_ast=dump_pandoc_ast,
         emit_colophon=colophon,
+        emit_element_numbers=element_numbers,
         include_preamble=preamble,
         number_sections=numbering,
         daily_note_format=daily_note_format,
