@@ -28,6 +28,13 @@ from guffin.model.publishing_semantics import (
     all_attributes_anchored,
     all_cover_image_values_legal,
     all_date_values_legal,
+    all_element_number_matters_agree,
+    all_element_number_matters_legal,
+    all_element_numbers_in_headings_only,
+    all_element_numbers_nested,
+    all_element_numbers_ordered,
+    all_element_numbers_unique,
+    all_element_numbers_well_formed,
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
@@ -1160,3 +1167,189 @@ class TestIllustratorsOfVertex:
     def test_absent_assignment_yields_empty(self) -> None:
         """A vertex with no illustrators assignment yields the empty tuple."""
         assert illustrators_of_vertex(PageVertex(uid="page00001", title="Doc")) == ()
+
+
+def _flat_headed_tree(*headings: tuple[str, str]) -> VertexTree:
+    """A page whose children are level-1 headings, given as (uid, text) pairs in document order."""
+    page = PageVertex(uid="pageroot1", title="Doc", children=[uid for uid, _text in headings])
+    vertices = [HeadingVertex(uid=uid, text=text, heading_level=1) for uid, text in headings]
+    return VertexTree(tree_vertices=[page, *vertices])
+
+
+class TestAllElementNumbersWellFormed:
+    """all_element_numbers_well_formed flags number-shaped heading leads that do not parse."""
+
+    def test_well_formed_numbers_pass(self) -> None:
+        """Dotted, unpadded markers are well-formed."""
+        tree = _flat_headed_tree(("head0000a", "[0.1] Acknowledgments"), ("head0000b", "[1.1] Book I"))
+        assert all_element_numbers_well_formed(tree) is None
+
+    def test_unnumbered_heading_passes(self) -> None:
+        """A heading with no marker is ordinary text, not an attempt."""
+        tree = _flat_headed_tree(("head0000a", "A.D. 1290."))
+        assert all_element_numbers_well_formed(tree) is None
+
+    def test_bare_single_segment_fails(self) -> None:
+        """A bare bracketed integer on a heading is a malformed element number."""
+        tree = _flat_headed_tree(("head0000a", "[1] Book I"))
+        error = all_element_numbers_well_formed(tree)
+        assert error is not None
+        assert "head0000a" in error.message
+
+    def test_padded_segment_fails(self) -> None:
+        """A padded segment on a heading is a malformed element number."""
+        tree = _flat_headed_tree(("head0000a", "[01.2] Chapter"))
+        error = all_element_numbers_well_formed(tree)
+        assert error is not None
+        assert "head0000a" in error.message
+
+
+class TestAllElementNumbersInHeadingsOnly:
+    """all_element_numbers_in_headings_only flags dotted markers leading non-heading text."""
+
+    def test_dotted_marker_on_text_vertex_fails(self) -> None:
+        """A dotted number-shaped lead on a plain text block is a violation."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["text0000a"])
+        stray = TextVertex(uid="text0000a", text="[1.2] should have been a heading")
+        error = all_element_numbers_in_headings_only(VertexTree(tree_vertices=[page, stray]))
+        assert error is not None
+        assert "text0000a" in error.message
+
+    def test_footnote_label_on_text_vertex_passes(self) -> None:
+        """A bare bracketed integer in prose is a footnote/citation label, not an element number."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["text0000a"])
+        footnote = TextVertex(uid="text0000a", text="[1] See Letter of Fr. Odoric.")
+        assert all_element_numbers_in_headings_only(VertexTree(tree_vertices=[page, footnote])) is None
+
+    def test_numbered_heading_passes(self) -> None:
+        """A numbered heading is the legal host."""
+        tree = _flat_headed_tree(("head0000a", "[1.1] Book I"))
+        assert all_element_numbers_in_headings_only(tree) is None
+
+
+class TestAllElementNumberMattersLegal:
+    """all_element_number_matters_legal flags leading segments outside the matter convention."""
+
+    def test_conventional_segments_pass(self) -> None:
+        """Leading 0, 1, and 2 name the three matter divisions."""
+        tree = _flat_headed_tree(
+            ("head0000a", "[0.1] Preface"), ("head0000b", "[1.1] Body"), ("head0000c", "[2.1] Appendix")
+        )
+        assert all_element_number_matters_legal(tree) is None
+
+    def test_leading_three_fails(self) -> None:
+        """A leading segment outside 0-2 has no matter."""
+        tree = _flat_headed_tree(("head0000a", "[3.1] Nowhere"))
+        error = all_element_number_matters_legal(tree)
+        assert error is not None
+        assert "head0000a" in error.message
+
+
+class TestAllElementNumberMattersAgree:
+    """all_element_number_matters_agree flags number-vs-tag matter disagreement."""
+
+    def test_agreeing_number_and_tag_pass(self) -> None:
+        """A body-matter number on an element-type chapter (body matter) agrees."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["head0000a"])
+        heading = HeadingVertex(
+            uid="head0000a",
+            text="[1.1] Chapter One",
+            heading_level=1,
+            attribute_assignments=[_assignment("element-type", "chapter")],
+        )
+        assert all_element_number_matters_agree(VertexTree(tree_vertices=[page, heading])) is None
+
+    def test_untagged_numbered_heading_passes(self) -> None:
+        """With no tags there is nothing to disagree with."""
+        tree = _flat_headed_tree(("head0000a", "[0.1] Preface"))
+        assert all_element_number_matters_agree(tree) is None
+
+    def test_disagreeing_number_and_tag_fail(self) -> None:
+        """A front-matter number on an element-type chapter (body matter) is a violation."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["head0000a"])
+        heading = HeadingVertex(
+            uid="head0000a",
+            text="[0.1] Chapter One",
+            heading_level=1,
+            attribute_assignments=[_assignment("element-type", "chapter")],
+        )
+        error = all_element_number_matters_agree(VertexTree(tree_vertices=[page, heading]))
+        assert error is not None
+        assert "head0000a" in error.message
+        assert "front-matter" in error.message
+        assert "body-matter" in error.message
+
+
+class TestAllElementNumbersUnique:
+    """all_element_numbers_unique flags a number appearing on more than one heading."""
+
+    def test_distinct_numbers_pass(self) -> None:
+        """Distinct numbers are unique."""
+        tree = _flat_headed_tree(("head0000a", "[1.1] One"), ("head0000b", "[1.2] Two"))
+        assert all_element_numbers_unique(tree) is None
+
+    def test_duplicate_numbers_fail(self) -> None:
+        """The same number on two headings is a violation naming both."""
+        tree = _flat_headed_tree(("head0000a", "[1.1] One"), ("head0000b", "[1.1] Other One"))
+        error = all_element_numbers_unique(tree)
+        assert error is not None
+        assert "head0000a" in error.message
+        assert "head0000b" in error.message
+
+
+class TestAllElementNumbersOrdered:
+    """all_element_numbers_ordered flags document order that breaks number order."""
+
+    def test_increasing_order_passes(self) -> None:
+        """Numbers rendering in increasing order pass."""
+        tree = _flat_headed_tree(("head0000a", "[0.1] Preface"), ("head0000b", "[1.1] Body"))
+        assert all_element_numbers_ordered(tree) is None
+
+    def test_unnumbered_heading_does_not_participate(self) -> None:
+        """An unnumbered heading between numbered ones does not break the chain."""
+        tree = _flat_headed_tree(("head0000a", "[1.1] One"), ("head0000b", "A.D. 1290."), ("head0000c", "[1.2] Two"))
+        assert all_element_numbers_ordered(tree) is None
+
+    def test_decreasing_order_fails(self) -> None:
+        """A lower number rendering after a higher one is placement drift."""
+        tree = _flat_headed_tree(("head0000a", "[1.2] Two"), ("head0000b", "[1.1] One"))
+        error = all_element_numbers_ordered(tree)
+        assert error is not None
+        assert "head0000b" in error.message
+        assert "head0000a" in error.message
+
+
+class TestAllElementNumbersNested:
+    """all_element_numbers_nested flags nesting that breaks element-number prefixes."""
+
+    def test_prefix_nesting_passes(self) -> None:
+        """A chapter number extending its part's number nests legally."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["parthead1"])
+        part = HeadingVertex(uid="parthead1", text="[1.1] Part One", heading_level=1, children=["chaphead1"])
+        chapter = HeadingVertex(uid="chaphead1", text="[1.1.1] Chapter One", heading_level=2)
+        assert all_element_numbers_nested(VertexTree(tree_vertices=[page, part, chapter])) is None
+
+    def test_foreign_number_nested_fails(self) -> None:
+        """A number nested under a numbered ancestor that is not its prefix is a violation."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["parthead1"])
+        part = HeadingVertex(uid="parthead1", text="[1.1] Part One", heading_level=1, children=["chaphead1"])
+        chapter = HeadingVertex(uid="chaphead1", text="[1.2.1] Foreign Chapter", heading_level=2)
+        error = all_element_numbers_nested(VertexTree(tree_vertices=[page, part, chapter]))
+        assert error is not None
+        assert "chaphead1" in error.message
+
+    def test_sibling_numbers_are_unconstrained(self) -> None:
+        """Numbered siblings have no numbered ancestor and are not nesting-constrained."""
+        tree = _flat_headed_tree(("head0000a", "[1.1] One"), ("head0000b", "[1.2] Two"))
+        assert all_element_numbers_nested(tree) is None
+
+    def test_ancestor_context_threads_through_embed(self) -> None:
+        """A transcluded heading nests under the embed site's numbered ancestor."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["parthead1"])
+        part = HeadingVertex(uid="parthead1", text="[1.1] Part One", heading_level=1, children=["embed0001"])
+        embed = BlockEmbedVertex(uid="embed0001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="chaphead1"))
+        foreign = HeadingVertex(uid="chaphead1", text="[1.2.5] Transcluded Foreign", heading_level=2)
+        tree = VertexTree(tree_vertices=[page, part, embed], ref_vertices=[foreign])
+        error = all_element_numbers_nested(tree)
+        assert error is not None
+        assert "chaphead1" in error.message

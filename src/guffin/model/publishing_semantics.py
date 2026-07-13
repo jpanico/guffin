@@ -58,14 +58,26 @@ Public symbols:
   is a block reference resolving to an image vertex in the tree), and
   :func:`all_matter_tags_at_section_level` (every ``matter`` tag sits at
   the book's section level — level 1, or level 2 in a parts book);
+  the internal-element-numbering :data:`~guffin.common.validation.Validator` functions over the
+  render-visible headings (see :mod:`~guffin.model.element_number` — the numbers are the author's
+  source of truth for the elements' logical order, and validation detects placement drift):
+  :func:`all_element_numbers_well_formed` (a number-shaped heading lead must parse as a
+  well-formed element number), :func:`all_element_numbers_in_headings_only` (no number-shaped
+  lead on a text vertex), :func:`all_element_number_matters_legal` (every leading segment names a
+  :class:`Matter`), :func:`all_element_number_matters_agree` (a number's matter agrees with the
+  heading's resolved tags), :func:`all_element_numbers_unique` (no duplicates),
+  :func:`all_element_numbers_ordered` (document order is strictly increasing number order), and
+  :func:`all_element_numbers_nested` (a number under a numbered ancestor extends it as a strict
+  prefix);
   :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
   :class:`~guffin.common.validation.ValidationResult`.
 
 This module sits at the top of the ``model/`` conceptual stack: it may depend on the structural
 primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
-:mod:`~guffin.model.vertex_tree`), the :mod:`~guffin.model.attribute_anchor` affordances, and the
-:mod:`~guffin.model.chicago_structure` taxonomy, and none of them may depend on it.
+:mod:`~guffin.model.vertex_tree`), the :mod:`~guffin.model.attribute_anchor` affordances, the
+:mod:`~guffin.model.chicago_structure` taxonomy, and the :mod:`~guffin.model.element_number`
+numbering primitive, and none of them may depend on it.
 """
 
 import enum
@@ -87,11 +99,18 @@ from guffin.model.attribute import (
 from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
 from guffin.model.attribute_assignment import AttributeAssignment, verified_sole_value_text
 from guffin.model.chicago_structure import Matter, StructuralElement
+from guffin.model.element_number import (
+    ElementNumber,
+    leads_with_dotted_element_number_shape,
+    leads_with_element_number_shape,
+    parse_element_number,
+)
 from guffin.model.primitives import UID_PATTERN, Uid
 from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PdfVertex,
+    TextVertex,
     Vertex,
     find_attribute_assignment,
     is_embed_vertex,
@@ -1041,6 +1060,267 @@ def all_matter_tags_at_section_level(tree: VertexTree) -> ValidationError | None
     )
 
 
+type _NumberedHeading = tuple[HeadingVertex, ElementNumber, ElementNumber | None]
+"""One numbered render-visible heading: the vertex, its number, and its nearest numbered ancestor's number."""
+
+
+def _numbered_headings(tree: VertexTree) -> list[_NumberedHeading]:
+    """Return every numbered render-visible heading in document order, with its numbered-ancestor context.
+
+    Walks the rendered document pre-order: each vertex's children in order, with an embed's target
+    subtree descending at the embed site — so a transcluded heading appears where it renders, and
+    the nearest-numbered-ancestor context threads from the embed into the transclusion.  Each
+    vertex is visited once (cycles terminate); embed targets absent from
+    :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` are skipped.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to walk.
+
+    Returns:
+        One :data:`_NumberedHeading` per numbered heading, in document order.
+    """
+    records: Final[list[_NumberedHeading]] = []
+    seen: Final[set[Uid]] = set()
+    stack: Final[list[tuple[Vertex, ElementNumber | None]]] = [(root_vertex(tree), None)]
+    while stack:
+        vertex, ancestor = stack.pop()
+        if vertex.uid in seen:
+            continue
+        seen.add(vertex.uid)
+        context: ElementNumber | None = ancestor
+        if isinstance(vertex, HeadingVertex) and (number := parse_element_number(vertex.text)) is not None:
+            records.append((vertex, number, ancestor))
+            context = number
+        frames: list[tuple[Vertex, ElementNumber | None]] = [
+            (tree.uid_map[uid], context) for uid in vertex.children or () if uid in tree.uid_map
+        ]
+        if is_embed_vertex(vertex) and vertex.vertex_link.uid in tree.uid_map:
+            frames.insert(0, (tree.uid_map[vertex.vertex_link.uid], context))
+        stack.extend(reversed(frames))
+    return records
+
+
+@validate_call
+def all_element_numbers_well_formed(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every number-shaped heading lead to parse.
+
+    A render-visible heading whose text leads with a number-shaped marker (per
+    :func:`~guffin.model.element_number.leads_with_element_number_shape`) must lead with a
+    well-formed :class:`~guffin.model.element_number.ElementNumber` — two or more dot-separated
+    integers with no leading zeros.  A malformed attempt (``[1]``, ``[1..2]``, ``[01.2]``) is a
+    violation rather than silently passing as ordinary text.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every number-shaped heading lead parses; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"heading uid={vertex.uid!r} leads with {vertex.text.strip()[:40]!r}, "
+        "which is number-shaped but not a well-formed element number"
+        for vertex in transcluded_vertices(tree)
+        if isinstance(vertex, HeadingVertex)
+        and leads_with_element_number_shape(vertex.text)
+        and parse_element_number(vertex.text) is None
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="malformed element numbers: " + "; ".join(violations),
+        validator=all_element_numbers_well_formed,
+    )
+
+
+@validate_call
+def all_element_numbers_in_headings_only(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring element numbers to appear only on headings.
+
+    An internal element number is legal only as a heading's lead.  A render-visible
+    :class:`~guffin.model.vertex.TextVertex` whose text leads with a *dotted* number-shaped marker
+    (per :func:`~guffin.model.element_number.leads_with_dotted_element_number_shape`) is a
+    violation — the probable authoring mistake of numbering a plain block that should be a
+    heading.  The dotted restriction exempts running prose that leads with a bare bracketed
+    integer, an ordinary footnote or citation label (``[1] See Letter of …``).  Other vertex
+    types carry opaque or quoted content (code, block quotes, callouts) and are not this
+    validator's concern.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when no text vertex leads with a dotted number-shaped marker; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"text vertex uid={vertex.uid!r} leads with the element-number marker {vertex.text.strip()[:40]!r}"
+        for vertex in transcluded_vertices(tree)
+        if isinstance(vertex, TextVertex) and leads_with_dotted_element_number_shape(vertex.text)
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="element numbers outside headings: " + "; ".join(violations),
+        validator=all_element_numbers_in_headings_only,
+    )
+
+
+@validate_call
+def all_element_number_matters_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every element number's leading segment to name a matter.
+
+    The leading segment classifies the element's :class:`Matter` division per
+    :data:`~guffin.model.element_number.MATTER_BY_LEADING_SEGMENT`: 0 front-matter, 1 body-matter,
+    2 back-matter.  Any other leading segment is a violation.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every element number's matter is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"heading uid={vertex.uid!r}: element number [{number}] has illegal leading segment "
+        f"{number.segments[0]}; legal segments are 0 (front-matter), 1 (body-matter), 2 (back-matter)"
+        for vertex, number, _ancestor in _numbered_headings(tree)
+        if number.matter is None
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal element-number matters: " + "; ".join(violations),
+        validator=all_element_number_matters_legal,
+    )
+
+
+@validate_call
+def all_element_number_matters_agree(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring a number's matter to agree with the heading's tags.
+
+    When a numbered heading also resolves a :class:`Matter` division from its
+    ``element-type``/``matter`` tags (per :func:`resolved_matter`), the two classifications must
+    agree; disagreement is a violation with no silent winner — the author reconciles the number or
+    the tags.  A heading carrying only one of the two classifications has nothing to disagree
+    with and passes.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every numbered, tagged heading's classifications agree; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"heading uid={vertex.uid!r}: element number [{number}] declares {number.matter} "
+        f"but its tags resolve to {tag_matter}"
+        for vertex, number, _ancestor in _numbered_headings(tree)
+        if number.matter is not None
+        and (tag_matter := resolved_matter(vertex)) is not None
+        and tag_matter is not number.matter
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="element-number matter disagreements: " + "; ".join(violations),
+        validator=all_element_number_matters_agree,
+    )
+
+
+@validate_call
+def all_element_numbers_unique(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every element number to appear at most once.
+
+    Each internal element number denotes one document element, so two render-visible headings
+    carrying the same number are a violation.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every element number is unique; a
+        :class:`~guffin.common.validation.ValidationError` listing every duplicate otherwise.
+    """
+    by_number: Final[dict[ElementNumber, list[HeadingVertex]]] = {}
+    for vertex, number, _ancestor in _numbered_headings(tree):
+        by_number.setdefault(number, []).append(vertex)
+    violations: Final[list[str]] = [
+        f"element number [{number}] appears on {len(vertices)} headings: "
+        + ", ".join(f"uid={vertex.uid!r}" for vertex in vertices)
+        for number, vertices in by_number.items()
+        if len(vertices) > 1
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="duplicate element numbers: " + "; ".join(violations),
+        validator=all_element_numbers_unique,
+    )
+
+
+@validate_call
+def all_element_numbers_ordered(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring document order to follow element-number order.
+
+    The numbers are the author's source of truth for the elements' logical order; this validator
+    detects *placement drift* — a numbered heading rendering before a lower-numbered one.  Every
+    consecutive pair of numbered render-visible headings, in document order (embeds where they
+    render), must be strictly increasing.  Unnumbered headings do not participate.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when the numbered headings render in strictly increasing number order; a
+        :class:`~guffin.common.validation.ValidationError` listing every out-of-order pair otherwise.
+    """
+    records: Final[list[_NumberedHeading]] = _numbered_headings(tree)
+    violations: Final[list[str]] = [
+        f"heading uid={vertex.uid!r} [{number}] renders after uid={prev_vertex.uid!r} [{prev_number}]"
+        for (prev_vertex, prev_number, _pa), (vertex, number, _a) in zip(records, records[1:], strict=False)
+        if not prev_number < number
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="element numbers out of document order: " + "; ".join(violations),
+        validator=all_element_numbers_ordered,
+    )
+
+
+@validate_call
+def all_element_numbers_nested(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring nesting to follow element-number prefixes.
+
+    A numbered heading rendering beneath a numbered ancestor heading must carry the ancestor's
+    number as a strict prefix (``[1.2.3]`` under ``[1.2]``) — anything else is placement drift, a
+    logically foreign element nested inside the ancestor.  For transcluded content the ancestor
+    context threads through the embed site.  A numbered heading with no numbered ancestor is
+    unconstrained; heading levels and segment counts are deliberately not compared (the numbering
+    is placement-independent).
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every nested number extends its numbered ancestor; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"heading uid={vertex.uid!r} [{number}] sits under the numbered ancestor [{ancestor}], "
+        "which is not a prefix of it"
+        for vertex, number, ancestor in _numbered_headings(tree)
+        if ancestor is not None and not ancestor.is_prefix_of(number)
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="element numbers that break their ancestor nesting: " + "; ".join(violations),
+        validator=all_element_numbers_nested,
+    )
+
+
 @validate_call
 def validate_semantics(tree: VertexTree) -> ValidationResult:
     """Return a :class:`~guffin.common.validation.ValidationResult` for the vocabulary invariants on *tree*.
@@ -1049,9 +1329,14 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
     :func:`all_pdf_render_values_legal`, :func:`all_publish_values_legal`,
     :func:`all_date_values_legal`, :func:`all_cover_image_values_legal`, and
-    :func:`all_matter_tags_at_section_level` — via :func:`~guffin.common.validation.validate_all`.  Every
-    validator covers both the tree vertices and the referenced-vertex stubs
-    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`).  All validators run regardless of
+    :func:`all_matter_tags_at_section_level` — and every internal-element-numbering validator —
+    :func:`all_element_numbers_well_formed`, :func:`all_element_numbers_in_headings_only`,
+    :func:`all_element_number_matters_legal`, :func:`all_element_number_matters_agree`,
+    :func:`all_element_numbers_unique`, :func:`all_element_numbers_ordered`, and
+    :func:`all_element_numbers_nested` — via :func:`~guffin.common.validation.validate_all`.  Every
+    attribute validator covers both the tree vertices and the referenced-vertex stubs
+    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`); the numbering validators cover the
+    render-visible vertices (embed-transcluded content included).  All validators run regardless of
     prior failures; the result accumulates every error found.
 
     Args:
@@ -1073,5 +1358,12 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_date_values_legal,
             all_cover_image_values_legal,
             all_matter_tags_at_section_level,
+            all_element_numbers_well_formed,
+            all_element_numbers_in_headings_only,
+            all_element_number_matters_legal,
+            all_element_number_matters_agree,
+            all_element_numbers_unique,
+            all_element_numbers_ordered,
+            all_element_numbers_nested,
         ],
     )
