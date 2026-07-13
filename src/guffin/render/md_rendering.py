@@ -69,36 +69,6 @@ def _strip_list_separator_comments(gfm: str) -> str:
     return _LIST_SEPARATOR_COMMENT_RE.sub("\n\n", gfm)
 
 
-def _demote_content_headings(doc: pf.Doc) -> None:
-    """Shift *doc*'s content headings one level deeper, in place, so the leading title H1 contains them.
-
-    Markdown is the one format whose document title lives in the same namespace as the content
-    headings (an H1 body block, unlike the PDF/EPUB title page and metadata), so without a shift
-    the title and the model's level-1 sections render as sibling H1s — misrepresenting the
-    hierarchy in any outline view.  When *doc* opens with a title header (its first block, emitted
-    together with the ``title`` metadata entry), every other header is demoted one level, clamped
-    at Markdown's H6 ceiling.  A doc without a title header is left untouched — its level-1
-    headings are legitimately top-level.
-
-    Mutates *doc* in place; does not return a value.
-
-    Args:
-        doc: The document to rewrite.
-    """
-    if "title" not in doc.metadata:
-        return
-    blocks: Final[list[pf.Block]] = list(doc.content)
-    if not blocks or not isinstance(blocks[0], pf.Header):
-        return
-    title_header: Final[pf.Header] = blocks[0]
-
-    def _demote(element: pf.Element, _doc: pf.Doc) -> None:
-        if isinstance(element, pf.Header) and element is not title_header:
-            element.level = min(element.level + 1, 6)
-
-    doc.walk(_demote)
-
-
 def _stamp_revision_metadata(doc: pf.Doc, revision: Revision | None) -> None:
     """Stamp *revision*'s one-line summary into *doc*'s ``revision`` metadata entry, in place.
 
@@ -167,7 +137,7 @@ def render(
     the directive, since an unpaginated document has no title *page*; the title renders both
     there and as the leading H1.  Whenever a title H1 is emitted, the content headings are
     demoted one level (clamped at H6) so the title contains them rather than sitting beside
-    them (see :func:`_demote_content_headings`).  The bundle's content revision follows the
+    them (the ``title_in_header`` contract of ``vertex_tree_to_pandoc``).  The bundle's content revision follows the
     same split: a front-matter-emitting profile records the entire revision summary as a
     ``revision`` metadata entry in the YAML block (see :func:`_stamp_revision_metadata`),
     while a profile without front matter renders just the author-declared revision name as an
@@ -262,7 +232,6 @@ def render(
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
-        _demote_content_headings(doc)
         _insert_revision_line(doc, revision_name)
         _stamp_revision_metadata(doc, title_page_revision)
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
@@ -297,7 +266,6 @@ def render(
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
         resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map, options.daily_note_format))
-        _demote_content_headings(no_bundle_doc)
         _insert_revision_line(no_bundle_doc, revision_name)
         _stamp_revision_metadata(no_bundle_doc, title_page_revision)
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)

@@ -53,6 +53,10 @@
   h2-style: "normal",
   h3-style: "normal",
   // Titlepage
+  // Whether the document renders a standalone title page (set from the pandoc `titlepage`
+  // variable); without one the title opens the document flow as a heading, and a title-bearing
+  // header slot stays empty on the first page so the running title does not double it.
+  has-titlepage: false,
   titlepage-rule: 3pt + black,
   titlepage-bg: white,
   titlepage-fg: black,

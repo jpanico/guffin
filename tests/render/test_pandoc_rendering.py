@@ -182,7 +182,7 @@ class TestVertexTreeToPandocPageVertex:
         assert _collect_text(blocks[0]) == "My Page"
 
     def test_title_in_header_includes_children_after_h1(self) -> None:
-        """title_in_header=True: H1 is followed by rendered children."""
+        """title_in_header=True: H1 is followed by rendered children, demoted one level."""
         page = PageVertex(uid="page00001", title="Doc", children=["head0001a"])
         heading = HeadingVertex(uid="head0001a", text="Section", heading_level=2)
         tree = VertexTree(tree_vertices=[page, heading])
@@ -192,7 +192,33 @@ class TestVertexTreeToPandocPageVertex:
         assert isinstance(blocks[0], pf.Header)
         assert blocks[0].level == 1
         assert isinstance(blocks[1], pf.Header)
+        assert blocks[1].level == 3
+
+    def test_title_in_header_demotes_content_headings(self) -> None:
+        """title_in_header=True: a level-1 content heading no longer sits beside the title H1."""
+        page = PageVertex(uid="page00001", title="Doc", children=["head0001a"])
+        heading = HeadingVertex(uid="head0001a", text="Section", heading_level=1)
+        tree = VertexTree(tree_vertices=[page, heading])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {}, title_in_header=True)
+        blocks = list(doc.content)
+        assert blocks[0].level == 1
         assert blocks[1].level == 2
+
+    def test_title_in_header_demotion_clamps_at_h6(self) -> None:
+        """title_in_header=True: a level-6 content heading stays at Pandoc's H6 ceiling."""
+        page = PageVertex(uid="page00001", title="Doc", children=["head0001a"])
+        heading = HeadingVertex(uid="head0001a", text="Deep Section", heading_level=6)
+        tree = VertexTree(tree_vertices=[page, heading])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {}, title_in_header=True)
+        assert list(doc.content)[1].level == 6
+
+    def test_no_title_header_leaves_heading_levels_untouched(self) -> None:
+        """title_in_header=False: content heading levels pass through unchanged."""
+        page = PageVertex(uid="page00001", title="Doc", children=["head0001a"])
+        heading = HeadingVertex(uid="head0001a", text="Section", heading_level=1)
+        tree = VertexTree(tree_vertices=[page, heading])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        assert list(doc.content)[0].level == 1
 
 
 class TestVertexTreeToPandocSubtreeRootMetadata:

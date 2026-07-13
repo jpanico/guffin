@@ -21,10 +21,10 @@ while correctly handling all Pandoc Markdown inline syntax.
 
 Rendering rules:
 
-- :class:`~guffin.vertex.PageVertex` — when *title_in_header* is ``True``,
-  title rendered as an H1 :class:`~panflute.Header` in the document body;
-  when ``False``, title stored as the Pandoc document metadata ``title``.
-  Children rendered at depth 1 in both cases.
+- :class:`~guffin.vertex.PageVertex` — title always stored as the Pandoc document metadata
+  ``title``; when *title_in_header* is ``True`` it is additionally rendered as a leading H1
+  :class:`~panflute.Header` in the document body, with every content heading demoted one level
+  (clamped at H6) so the title contains them.  Children rendered at depth 1 in both cases.
 - :class:`~guffin.vertex.HeadingVertex` — rendered as a
   :class:`~panflute.Header` at the vertex's recorded heading level.
 - :class:`~guffin.vertex.TextVertex` — laid out per the parent's
@@ -1281,6 +1281,35 @@ def _colophon_blocks(provenance: Provenance | None, revision: Revision | None) -
     return [pf.HorizontalRule(), pf.RawBlock(paragraph, format="html")]
 
 
+def _demote_content_headings(doc: pf.Doc) -> None:
+    """Shift *doc*'s content headings one level deeper, in place, so the leading title H1 contains them.
+
+    A document whose title renders as an H1 body block shares the heading namespace between the
+    title and the content, so without a shift the title and the model's level-1 sections render
+    as sibling H1s — misrepresenting the hierarchy in any outline view.  When *doc* opens with a
+    title header (its first block, emitted together with the ``title`` metadata entry), every
+    other header is demoted one level, clamped at Pandoc's H6 ceiling.  A doc without a title
+    header is left untouched — its level-1 headings are legitimately top-level.
+
+    Mutates *doc* in place; does not return a value.
+
+    Args:
+        doc: The document to rewrite.
+    """
+    if "title" not in doc.metadata:
+        return
+    blocks: Final[list[pf.Block]] = list(doc.content)
+    if not blocks or not isinstance(blocks[0], pf.Header):
+        return
+    title_header: Final[pf.Header] = blocks[0]
+
+    def _demote(element: pf.Element, _doc: pf.Doc) -> None:
+        if isinstance(element, pf.Header) and element is not title_header:
+            element.level = min(element.level + 1, 6)
+
+    doc.walk(_demote)
+
+
 @validate_call
 def vertex_tree_to_pandoc(
     vertex_tree: VertexTree,
@@ -1297,13 +1326,13 @@ def vertex_tree_to_pandoc(
     in a single Pandoc call, then walks the tree to build Pandoc block
     elements.
 
-    The *title_in_header* flag controls how a root
-    :class:`~guffin.vertex.PageVertex` title is rendered:
-
-    - ``False`` (default, PDF path) — title stored as the Pandoc metadata
-      ``title`` field; children rendered as body blocks.
-    - ``True`` (Markdown path) — title rendered as a level-1
-      :class:`~panflute.Header` prepended to the body blocks; no metadata.
+    The document title always lands in the Pandoc metadata ``title`` field; the
+    *title_in_header* flag additionally renders it as a level-1 :class:`~panflute.Header`
+    prepended to the body blocks — the visible in-flow title for a document with no other
+    home for it (a format whose writer drops metadata, or a render with no title page) —
+    and demotes every content heading one level (clamped at H6, see
+    :func:`_demote_content_headings`) so the title contains them rather than sitting
+    beside its own level-1 sections.
 
     The export root is a **transparent container** whatever its type: it contributes the
     document's identity but renders no body of its own, and its children form the document's
@@ -1332,8 +1361,9 @@ def vertex_tree_to_pandoc(
             transclusion site.
         title_in_header: When ``True``, render the document title as a leading H1 body
             block in addition to storing it in the document metadata (the visible title
-            for formats whose writer drops or only optionally emits metadata).
-            Defaults to ``False`` (metadata only).
+            for formats whose writer drops or only optionally emits metadata), demoting
+            every content heading one level so the title contains them.
+            Defaults to ``False`` (metadata only, content heading levels untouched).
         provenance: When set, contribute the software half of the end-of-document colophon (a
             horizontal rule and an emphasized :func:`colophon_summary` line); ``None`` (default)
             contributes nothing.
@@ -1398,7 +1428,10 @@ def vertex_tree_to_pandoc(
     if provenance is not None or revision is not None:
         blocks.extend(_colophon_blocks(provenance, revision))
 
-    return pf.Doc(*blocks, metadata=metadata), inline_map
+    doc: Final[pf.Doc] = pf.Doc(*blocks, metadata=metadata)
+    if title_in_header:
+        _demote_content_headings(doc)
+    return doc, inline_map
 
 
 def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> VertexLinkResolver:

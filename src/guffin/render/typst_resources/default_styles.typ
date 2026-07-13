@@ -76,6 +76,14 @@
   }
 }
 
+// Which header slots reference the document title, recorded from the raw config strings before
+// the placeholder replacement below rewrites them.
+#let header-slot-has-title = (
+  left: type(cfg.header-left) == str and cfg.header-left.contains("%title%"),
+  center: type(cfg.header-center) == str and cfg.header-center.contains("%title%"),
+  right: type(cfg.header-right) == str and cfg.header-right.contains("%title%"),
+)
+
 #(cfg.header-left = replace_header_content(cfg.header-left))
 #(cfg.header-center = replace_header_content(cfg.header-center))
 #(cfg.header-right = replace_header_content(cfg.header-right))
@@ -96,12 +104,18 @@
 
 // Define a helper for the header
 #let make-header() = context {
+  // Without a title page the title opens the document flow as a heading, so on the first page a
+  // title-bearing slot stays empty — the running title would double it, one directly below the
+  // other.  Later pages run the full header, and a document with a title page is unaffected.
+  let suppress-title = cfg.has-titlepage != true and counter(page).get().first() == 1
   if disable-header != true [
     #set text(font: header-footer-font)
     #grid(
       columns: (auto, 1fr, auto),
       align: (left, center, right),
-      cfg.header-left, cfg.header-center, header-right-cell(),
+      if suppress-title and header-slot-has-title.left { none } else { cfg.header-left },
+      if suppress-title and header-slot-has-title.center { none } else { cfg.header-center },
+      if suppress-title and header-slot-has-title.right { none } else { header-right-cell() },
     )
     #v(-par.spacing + 0.5em)
     #line(length: 100%, stroke: cfg.header-footer-stroke)

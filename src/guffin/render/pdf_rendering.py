@@ -520,8 +520,14 @@ def render(
         pdf_specs: Final[dict[str, _PdfEmbedSpec]] = _prepare_pdf_embeds(enriched_tree, asset_refs)
         # The PDF provenance rides the page footer (see _typst_template_args), not an end-of-body
         # colophon, so it is deliberately not passed to vertex_tree_to_pandoc here.
+        # Without a title page the document title has no visible home, so it opens the flow as a
+        # level-1 heading (the metadata title stays either way, feeding the running header and
+        # the PDF document info).
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
-            enriched_tree, asset_files, render_bundle.view
+            enriched_tree,
+            asset_files,
+            render_bundle.view,
+            title_in_header=not profile.structural_policy.emit_title_page,
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
