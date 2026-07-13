@@ -15,6 +15,7 @@ pypandoc.convert_text(json_str, "gfm", format="json", extra_args=[
     f"--lua-filter={gfm_dir / 'gfm_color_span.lua'}",
     f"--lua-filter={gfm_dir / 'gfm_image.lua'}",    # bundle mode only
     f"--lua-filter={gfm_dir / 'gfm_mark.lua'}",
+    f"--lua-filter={gfm_dir / 'gfm_bracket.lua'}",
 ])
 ```
 
@@ -30,6 +31,7 @@ The input (`json_str`) is the Pandoc JSON AST (a serialized Panflute `Doc`). Pan
 | `gfm_color_span.lua` | a color `Span` / `Div` carrying a `color`, `highlight-color` (with class `mark`), `underline-color`, `box-color`, or `bg-color` attribute | inline HTML: `<span style="color: …">`, `<mark style="background-color: …">`, an underline or bordered `<span>`, or a `<span style="background-color: …">`, with inner content preserved |
 | `gfm_image.lua` | an `Image` (bundle mode) | `<img src="…" [alt] [width] [height] style="margin: 0;">`, with width/height read from the Pandoc attributes set by the rendering layer |
 | `gfm_mark.lua` | a `Span` with class `mark` (and no `highlight-color`) | `<mark>…</mark>` |
+| `gfm_bracket.lua` | a `Str` containing a literal `[` or `]` | the surrounding text as `Str` pieces with each bracket as a raw-HTML character entity (`&#91;` / `&#93;`) |
 
 A few details worth noting:
 
@@ -38,3 +40,4 @@ A few details worth noting:
 - **`gfm_callout.lua`** collapses Guffin's callout types onto GitHub's five alert types (e.g. `info` / `note` / `quote` / `example` / `summary` / `question` → `NOTE`, `tip` / `success` → `TIP`, `warning` → `WARNING`, `danger` / `failure` / `bug` → `CAUTION`).
 - **`gfm_image.lua`** always emits `style="margin: 0;"` to keep a standalone image left-justified: some previewers (Typora) center an image that is the only child of its paragraph via `p > img:only-child { margin: auto }`, and the inline style overrides that.
 - **`gfm_color_span.lua`** renders a `bg-color` `Div` as an inline `<span>` rather than a block element, because Typora does not render block-level HTML inside list items.
+- **`gfm_bracket.lua`** exists for Typora too: Pandoc's GFM writer backslash-escapes literal brackets (`\[ … \]`), which is correct CommonMark, but Typora's MathJax layer misreads that sequence as LaTeX display-math delimiters and renders the content as math (italic, with Markdown left unparsed). The character entities render as plain brackets in every HTML-based previewer and can never be sniffed as math. Structural brackets — links, spans, code — are untouched, since they are not `Str` text.

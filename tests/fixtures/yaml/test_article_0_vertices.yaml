@@ -70,7 +70,7 @@
   text: block 1
 - vertex_type: guffin/text
   uid: 2yQYaKIEV
-  text: This para features *italics*
+  text: This [para] features [*italics*]
 - vertex_type: guffin/text
   uid: QB8DChDBs
   text: This para features **bold**

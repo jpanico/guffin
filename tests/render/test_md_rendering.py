@@ -184,6 +184,29 @@ class TestRevisionLine:
         assert "snapshot: d8666f090982" not in result
 
 
+class TestBracketEntities:
+    """Literal square brackets render as HTML character entities, never as backslash escapes."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def test_literal_brackets_become_entities(self, tmp_path: Path) -> None:
+        r"""Bare bracketed text emits &#91;/&#93; — Typora's MathJax misreads \[…\] as display math."""
+        page = PageVertex(uid="page00001", title="Doc", children=["text00001"])
+        text = TextVertex(uid="text00001", text="This \\[para\\] features \\[*italics*\\]")
+        bundle = RenderBundle(content=VertexTree(tree_vertices=[page, text]), view={})
+        render(
+            bundle,
+            profile=DefaultProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result = (tmp_path / "doc.md").read_text(encoding="utf-8")
+        assert "&#91;para&#93;" in result
+        assert "&#91;*italics*&#93;" in result
+        assert "\\[" not in result
+
+
 class TestHeadingDemotion:
     """With a title H1 emitted, content headings demote one level so the title contains them."""
 

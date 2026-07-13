@@ -225,7 +225,7 @@ tree_network:
   attrs: null
 - uid: 2yQYaKIEV
   id: 11157
-  string: This para features __italics__
+  string: This [para] features [__italics__]
   order: 0
   heading: null
   children: null

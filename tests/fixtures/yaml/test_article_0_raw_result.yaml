@@ -164,7 +164,7 @@
     refs:
     - id: 5450
     - id: 5462
-- - string: This para features __italics__
+- - string: This [para] features [__italics__]
     id: 11157
     uid: 2yQYaKIEV
     parents:

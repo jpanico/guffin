@@ -25,6 +25,7 @@ from typing import Final
 
 _GFM_RESOURCES_PACKAGE: Final[str] = "guffin.render.gfm_resources"
 # Lua-filter filenames, resolved against the bundled gfm_resources directory at render time.
+_GFM_BRACKET_FILTER: Final[str] = "gfm_bracket.lua"
 _GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
 _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
@@ -274,6 +275,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
             ],
         )
         output_file: Final[Path] = bundle_dir / f"{filename_stem}.md"
@@ -307,6 +309,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
             ],
         )
         output_path: Final[Path] = output_dir / f"{filename_stem}.md"

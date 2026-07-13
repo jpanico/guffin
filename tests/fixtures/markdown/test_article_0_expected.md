@@ -22,7 +22,7 @@
 > - this INFO `Callout box`, which contains Roam `page references`
 
 - block 1
-  - This para features *italics*
+  - This &#91;para&#93; features &#91;*italics*&#93;
 
   - This para features **bold**
 

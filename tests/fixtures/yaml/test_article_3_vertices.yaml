@@ -437,7 +437,7 @@
   refs:
   - lF-qY0Xrs
   - 2yQYaKIEV
-  text: '[**inline ITALICS ref ⟶**]{color="fuchsia"} [This para features *italics*](x-guffin:vertex/2yQYaKIEV)'
+  text: '[**inline ITALICS ref ⟶**]{color="fuchsia"} [This [para] features [*italics*]](x-guffin:vertex/2yQYaKIEV)'
 - vertex_type: guffin/text
   uid: DZsnC1-jM
   refs:
