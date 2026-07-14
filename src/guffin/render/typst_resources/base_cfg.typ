@@ -7,7 +7,8 @@
   dateformat: "[year]-[month]-[day]",
   authors: (),
   illustrators: (), // supportive contributors, credited "Illustrations by ..." on the title page
-  title: "",
+  title: "", // plain-text title: PDF /Title metadata and the running-header %title% string machinery
+  title-display: none, // rich title content (may carry emphasis), rendered as markup in the running header
   subtitle: "",
   revision: none, // author-declared revision name, rendered below the title on the title page
   publisher: none,

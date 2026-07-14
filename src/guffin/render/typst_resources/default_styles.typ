@@ -69,10 +69,18 @@
       return context counter(page).display(page.numbering)
     }
 
-    return content
-      .replace("%title%", cfg.title)
+    let replaced = content
       .replace("%date%", display_date(cfg.date, cfg.dateformat))
       .replace("%author%", authors_oneline)
+    // The title renders as content so a portion carrying emphasis (e.g. a bold word in the page
+    // name) shows as real markup rather than plain text.  Split on the %title% placeholder and
+    // interleave the rich title content; slots without %title% stay plain strings.  A document with
+    // no rich title (title-display unset) falls back to the plain title string.
+    if replaced.contains("%title%") {
+      let title-content = if cfg.title-display != none { cfg.title-display } else { cfg.title }
+      return replaced.split("%title%").map(part => [#part]).join(title-content)
+    }
+    return replaced
   }
 }
 

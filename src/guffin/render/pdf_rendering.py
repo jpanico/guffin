@@ -365,6 +365,33 @@ def _apply_pdf_embeds(doc: pf.Doc, specs: dict[str, _PdfEmbedSpec]) -> None:
     doc.walk(_action)
 
 
+def _prepare_title_metadata(doc: pf.Doc) -> None:
+    """Split the document metadata title into a plain string and a rich display copy, in place.
+
+    The Bergfink template consumes the title in two ways that need different forms:
+
+    - the PDF ``/Title`` document-info field and the running-header ``%title%`` string machinery
+      need a *plain* string — inline markup there surfaces as literal Typst source (e.g.
+      ``#strong[...]`` for a bold span); while
+    - the running header renders the title as Typst content, so a portion carrying emphasis (a
+      ``**bold**`` word in the page name) shows as real markup.
+
+    So the rich inlines are copied to a ``title-display`` metadata key (the template renders it as
+    content, spliced into the header) and ``title`` is flattened to a plain
+    :class:`~panflute.MetaString` (feeding ``/Title`` and the ``%title%`` replacement).  The visible
+    in-flow title is a separate body heading built by
+    :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`, and is unaffected.
+
+    Args:
+        doc: The Panflute document whose title metadata is split in place.
+    """
+    if "title" not in doc.metadata.content:
+        return
+    rich = doc.metadata.content["title"]
+    doc.metadata["title-display"] = rich
+    doc.metadata["title"] = pf.MetaString(pf.stringify(rich))
+
+
 @validate_call
 def render(
     render_bundle: RenderBundle,
@@ -533,6 +560,10 @@ def render(
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         _apply_pdf_embeds(doc, pdf_specs)
+        # Split the title into a plain string (PDF /Title + the running-header %title% string
+        # machinery) and a rich `title-display` copy the header renders as content, so a bold
+        # portion of the title shows as markup rather than leaking literal Typst source.
+        _prepare_title_metadata(doc)
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 

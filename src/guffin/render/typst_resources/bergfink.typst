@@ -68,6 +68,9 @@ $endif$
 $if(title)$
 #(cfg.title = "$title$")
 $endif$
+$if(title-display)$
+#(cfg.title-display = [$title-display$])
+$endif$
 $if(subtitle)$
 #(cfg.subtitle = "$subtitle$")
 $endif$

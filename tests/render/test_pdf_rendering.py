@@ -22,7 +22,13 @@ from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.pandoc_rendering import vertex_tree_to_pandoc
-from guffin.render.pdf_rendering import _apply_pdf_embeds, _prepare_pdf_embeds, _typst_str, _typst_template_args
+from guffin.render.pdf_rendering import (
+    _apply_pdf_embeds,
+    _prepare_pdf_embeds,
+    _prepare_title_metadata,
+    _typst_str,
+    _typst_template_args,
+)
 from guffin.render.project import TopLevelDivision
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fa.pdf.enc?alt=media&token=aaa"
@@ -169,6 +175,57 @@ class TestApplyPdfEmbeds:
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         _apply_pdf_embeds(doc, specs)
         assert not any(isinstance(b, pf.RawBlock) for b in doc.content)
+
+
+class TestPrepareTitleMetadata:
+    """_prepare_title_metadata() splits the title into a plain string and a rich display copy.
+
+    ``title`` flattens to a plain string (the PDF ``/Title`` field and the running-header ``%title%``
+    string machinery), while ``title-display`` keeps the rich inlines the template renders as content
+    so a bold portion of the page name shows as markup in the running header.  The visible in-flow
+    title is a separate body heading and keeps its emphasis regardless.
+    """
+
+    @staticmethod
+    def _title_inlines() -> list[pf.Inline]:
+        return [pf.Str("Doc"), pf.Space, pf.Strong(pf.Str("bold")), pf.Space, pf.Str("word")]
+
+    @classmethod
+    def _doc_with_bold_title(cls) -> pf.Doc:
+        return pf.Doc(
+            pf.Header(*cls._title_inlines(), level=1),
+            metadata={"title": pf.MetaInlines(*cls._title_inlines())},
+        )
+
+    def test_plain_title_is_a_markup_free_string(self) -> None:
+        """The `title` key flattens to a markup-free MetaString for /Title and %title% replacement."""
+        doc = self._doc_with_bold_title()
+        _prepare_title_metadata(doc)
+        title = doc.metadata.content["title"]
+        assert isinstance(title, pf.MetaString)
+        assert title.text == "Doc bold word"
+
+    def test_display_title_keeps_the_emphasis(self) -> None:
+        """The `title-display` key keeps the rich inlines (a Strong) for content rendering."""
+        doc = self._doc_with_bold_title()
+        _prepare_title_metadata(doc)
+        display = doc.metadata.content["title-display"]
+        assert isinstance(display, pf.MetaInlines)
+        assert any(isinstance(inline, pf.Strong) for inline in display.content)
+
+    def test_body_heading_keeps_its_emphasis(self) -> None:
+        """The visible in-flow title (a body Header) still carries its Strong."""
+        doc = self._doc_with_bold_title()
+        _prepare_title_metadata(doc)
+        header = next(block for block in doc.content if isinstance(block, pf.Header))
+        assert any(isinstance(inline, pf.Strong) for inline in header.content)
+
+    def test_absent_title_is_a_noop(self) -> None:
+        """A document with no title metadata key gains neither a plain nor a display title."""
+        doc = pf.Doc(pf.Para(pf.Str("body")))
+        _prepare_title_metadata(doc)
+        assert "title" not in doc.metadata.content
+        assert "title-display" not in doc.metadata.content
 
 
 class TestTypstTemplateArgs:
