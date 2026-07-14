@@ -174,7 +174,8 @@ def fizz_buzz(limit: int = 100):
   > [!NOTE]
   > **This is the callout title**
   >
-  > This is line 1 of the callout body  
+  > This is line 1 of the callout body
+  >
   > This is line 2 of the callout body
 - <span style="color: fuchsia">**standalone ROAM NATIVE TABLE ref ↓**</span>
   | Header 1 | Header 2 | Header 3 |
@@ -185,7 +186,8 @@ def fizz_buzz(limit: int = 100):
   > [!NOTE]
   > **This is the callout title**
   >
-  > This is line 1 of the callout body  
+  > This is line 1 of the callout body
+  >
   > This is line 2 of the callout body
 
 - Section 3

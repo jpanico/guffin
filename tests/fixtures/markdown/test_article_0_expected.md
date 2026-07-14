@@ -99,5 +99,6 @@
     > [!NOTE]
     > **This is the callout title**
     >
-    > This is line 1 of the callout body  
+    > This is line 1 of the callout body
+    >
     > This is line 2 of the callout body

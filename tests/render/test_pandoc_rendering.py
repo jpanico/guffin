@@ -25,6 +25,7 @@ from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
     BlockEmbedVertex,
     BlockQuoteVertex,
+    CalloutVertex,
     HeadingVertex,
     ImageVertex,
     PageEmbedVertex,
@@ -32,7 +33,7 @@ from guffin.model.vertex import (
     PdfVertex,
     TextVertex,
 )
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView
 from guffin.render.date_format import DateFormat
@@ -40,6 +41,7 @@ from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import parse_inline_md
 from guffin.render.pandoc_rendering import (
     _attribute_assignment_text,
+    _block_ref_target,
     _effective_layout,
     build_child_blocks,
     colophon_summary,
@@ -983,6 +985,80 @@ class TestBlockQuoteRendering:
         """An authored blank line still splits the quote into two paragraphs."""
         blocks = self._quote_blocks("first paragraph\n\nsecond paragraph")
         assert [type(block) for block in blocks] == [pf.Para, pf.Para]
+
+
+class TestBlockRefToBlockLevelVertex:
+    """A text vertex that is solely a reference to a block-level vertex renders as that block.
+
+    Regression: the reference target is recognised *structurally* from the ``[display](url)`` shape
+    of the vertex text, not by re-parsing it into a single Pandoc ``Link``.  A reference to a
+    multi-paragraph block-level vertex reproduces the target's whole raw string as the link display,
+    and Pandoc cannot parse an inline link whose display spans a paragraph break — so a parse-based
+    check dropped exactly those references to raw inline text (the leaked ``[[>]] [[!INFO]]`` markers).
+    """
+
+    _CALLOUT_UID = "cal000001"
+
+    @classmethod
+    def _ref_text(cls, display: str) -> str:
+        """The Pandoc-Markdown a solo ``((uid))`` reference to the callout transcribes to."""
+        return f"[{display}]({vertex_link_url(cls._CALLOUT_UID, VertexLinkKind.REFERENCE)})"
+
+    @classmethod
+    def _tree(cls, display: str, body: str) -> VertexTree:
+        """A root page whose sole child is a text vertex referencing an off-tree callout."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["reftext01"])
+        ref = TextVertex(uid="reftext01", text=cls._ref_text(display), refs=[cls._CALLOUT_UID])
+        callout = CalloutVertex(
+            uid=cls._CALLOUT_UID, callout_type=CalloutVertex.CalloutType.INFO, title="Definition", body=body
+        )
+        return VertexTree(tree_vertices=[page, ref], ref_vertices=[callout])
+
+    def test_multi_paragraph_callout_reference_renders_as_callout_div(self) -> None:
+        """A reference to a multi-paragraph callout renders as the callout Div, not raw inline text."""
+        tree = self._tree("[[>]] [[!INFO]] Definition\nfirst paragraph\n\nsecond paragraph", "first\n\nsecond")
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        divs = [block for block in doc.content if isinstance(block, pf.Div) and "callout" in block.classes]
+        assert len(divs) == 1
+        assert "[[>]]" not in pf.stringify(doc)  # the raw callout marker never leaks into the output
+
+    def test_block_ref_target_resolves_multi_paragraph_reference(self) -> None:
+        """_block_ref_target returns the callout even though its display spans a paragraph break."""
+        tree = self._tree("[[>]] [[!INFO]] Definition\nfirst paragraph\n\nsecond paragraph", "first\n\nsecond")
+        ref = next(vertex for vertex in tree.tree_vertices if vertex.uid == "reftext01")
+        target = _block_ref_target(ref, tree)
+        assert isinstance(target, CalloutVertex)
+        assert target.uid == self._CALLOUT_UID
+
+    def test_single_paragraph_reference_still_resolves(self) -> None:
+        """The single-paragraph case (which did round-trip as one Link) keeps resolving."""
+        tree = self._tree("[[>]] [[!INFO]] Definition\nonly one paragraph", "only one paragraph")
+        ref = next(vertex for vertex in tree.tree_vertices if vertex.uid == "reftext01")
+        assert isinstance(_block_ref_target(ref, tree), CalloutVertex)
+
+    def test_reference_mixed_with_surrounding_text_is_not_a_block_ref(self) -> None:
+        """A reference embedded in surrounding prose stays inline rather than becoming the block."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["reftext01"])
+        ref = TextVertex(
+            uid="reftext01", text=f"see {self._ref_text('[[>]] [[!INFO]] Definition')} here", refs=[self._CALLOUT_UID]
+        )
+        callout = CalloutVertex(
+            uid=self._CALLOUT_UID, callout_type=CalloutVertex.CalloutType.INFO, title="Definition", body="body"
+        )
+        tree = VertexTree(tree_vertices=[page, ref], ref_vertices=[callout])
+        assert _block_ref_target(ref, tree) is None
+
+    def test_reference_to_inline_representable_vertex_is_not_a_block_ref(self) -> None:
+        """A solo reference to an inline-representable vertex (a page) stays on the inline path."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["reftext01"])
+        ref = TextVertex(
+            uid="reftext01",
+            text=f"[Some Page]({vertex_link_url('targpage1', VertexLinkKind.REFERENCE)})",
+            refs=["targpage1"],
+        )
+        target_page = PageVertex(uid="targpage1", title="Some Page")
+        tree = VertexTree(tree_vertices=[page, ref], ref_vertices=[target_page])
+        assert _block_ref_target(ref, tree) is None
 
 
 class TestEffectiveLayout:

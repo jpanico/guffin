@@ -20,7 +20,7 @@ root_node:
   children_view_type: null
   parents: null
   props:
-    toc_open: true
+    toc_open: false
   title: '[[Test Article]] 7'
   attrs:
   - - source:
@@ -6175,7 +6175,7 @@ tree_network:
   children_view_type: null
   parents: null
   props:
-    toc_open: true
+    toc_open: false
   title: '[[Test Article]] 7'
   attrs:
   - - source:

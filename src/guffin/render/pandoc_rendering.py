@@ -85,6 +85,7 @@ from pathlib import Path
 from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
+import regex
 from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
@@ -198,6 +199,19 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
     CalloutVertex,
     BlockQuoteVertex,
     TableVertex,
+)
+
+
+# A text vertex whose entire content is a single ``x-guffin`` reference — the Pandoc Markdown
+# ``[<display>](<x-guffin-url>)`` a solo Roam ``((uid))`` / ``[[Page]]`` reference transcribes to.
+# The display is matched with DOTALL because a reference to a block-level vertex reproduces that
+# vertex's whole raw string (which may span paragraphs) as the link text; the URL is anchored at
+# the very end, the sole place link conversion emits it (the display carries no nested x-guffin URL,
+# so the greedy display never swallows the real one).  Matching structurally — rather than requiring
+# the text to round-trip through Pandoc as one ``pf.Link`` — is what lets a multi-paragraph target be
+# recognised: Pandoc cannot parse an inline link whose display text contains a paragraph break.
+_SOLE_VERTEX_REFERENCE_RE: Final[regex.Pattern[str]] = regex.compile(
+    r"\[(?P<display>.*)\]\((?P<url>x-guffin:[^()\s]+)\)", regex.DOTALL
 )
 
 
@@ -348,31 +362,36 @@ def _attribute_pill_blocks(
 def _block_ref_target(
     vertex: TextVertex,
     vertex_tree: VertexTree,
-    inline_map: InlineMap,
 ) -> Vertex | None:
     """Return the destination vertex when *vertex* is solely a reference to a block-level one.
 
     Block-level vertices (see :data:`_BLOCK_LEVEL_VERTEX_TYPES` — e.g. code blocks,
-    images, tables) render as Pandoc Blocks and cannot be represented as the inline
-    content of a list item or paragraph.  When a text vertex's entire parsed content is
-    a single ``x-guffin`` link whose destination is such a vertex, that destination is
+    images, tables, callouts) render as Pandoc Blocks and cannot be represented as the
+    inline content of a list item or paragraph.  When a text vertex's entire content is a
+    single ``x-guffin`` reference whose destination is such a vertex, that destination is
     returned so the reference can be rendered identically to the referenced block rather
     than degraded to an inline link.
+
+    The reference is recognised **structurally**, from the ``[<display>](<x-guffin-url>)``
+    shape of the vertex text (see :data:`_SOLE_VERTEX_REFERENCE_RE`), not by re-parsing that
+    text into Pandoc inlines: a reference to a multi-paragraph block-level vertex reproduces
+    the target's whole raw string as the link display, and Pandoc cannot parse an inline link
+    whose display text spans a paragraph break — so a parse-based check would miss exactly the
+    references that most need the block-level rendering path.
 
     Args:
         vertex: The text-content vertex to inspect.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
-        inline_map: Mapping from text string to parsed panflute inline elements.
 
     Returns:
         The referenced block-level :data:`~guffin.vertex.Vertex`, or ``None`` in every
         other case — including a reference to an inline-representable vertex, or one
         mixed with surrounding text, both of which are resolved inline instead.
     """
-    inlines: Final[list[pf.Inline] | None] = inline_map.get(vertex.text)
-    if inlines is None or len(inlines) != 1 or not isinstance(inlines[0], pf.Link):
+    match: Final[regex.Match[str] | None] = _SOLE_VERTEX_REFERENCE_RE.fullmatch(vertex.text)
+    if match is None or "x-guffin:" in match.group("display"):
         return None
-    vertex_link: Final[VertexLink | None] = parse_vertex_link(inlines[0].url)
+    vertex_link: Final[VertexLink | None] = parse_vertex_link(match.group("url"))
     if vertex_link is None:
         return None
     dest: Final[Vertex | None] = vertex_tree.uid_map.get(vertex_link.uid)
@@ -574,9 +593,7 @@ def build_child_blocks(
             logger.warning("child uid=%r not found in vertex_tree; skipping", uid)
             continue
         vertex: Vertex = vertex_tree.uid_map[uid]
-        ref_target: Vertex | None = (
-            _block_ref_target(vertex, vertex_tree, inline_map) if isinstance(vertex, TextVertex) else None
-        )
+        ref_target: Vertex | None = _block_ref_target(vertex, vertex_tree) if isinstance(vertex, TextVertex) else None
         if ref_target is not None:
             # A block whose entire content references a block-level vertex renders as that
             # referenced block — never wrapped in a list item.

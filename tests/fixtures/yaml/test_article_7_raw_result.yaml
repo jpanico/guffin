@@ -5031,7 +5031,7 @@
     - id: 11855
     uid: 7o-Klx3P6
     props:
-      toc_open: true
+      toc_open: false
     title: '[[Test Article]] 7'
     refs:
     - id: 4223
