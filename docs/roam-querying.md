@@ -166,6 +166,8 @@ A rule definition takes the following form:
 ```
 
 Rules are passed as an additional element of the `args` array and referenced in the
-`:where` clause by name. They are the mechanism used for recursive graph traversal
-(corresponding to `FetchRoamNodes.FollowLinksDirective.DEEP` in `roam_node_fetch.py`).
+`:where` clause by name. They are the mechanism used for recursive graph traversal: the
+`descendant` rule (transitive `:block/children` closure) and the `page-ref` rule
+(`:block/refs` targets of a node or any of its descendants) that back the with-refs fetch
+in [`roam/node_fetch.py`](../src/guffin/roam/node_fetch.py).
 
