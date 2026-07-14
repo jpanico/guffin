@@ -10,8 +10,9 @@ Public symbols:
   :class:`VertexTree`.
 - :func:`transcluded_vertices` — return every render-visible vertex in a :class:`VertexTree`: the
   tree vertices plus all content transcluded through block and page embeds.
-- :func:`assignments_for` — return every ``(vertex, assignment)`` pair in a :class:`VertexTree`
-  whose assignment is for a given :class:`~guffin.model.attribute.Attribute`.
+- :func:`assignments_for` — return every ``(vertex, assignment)`` pair in a :class:`VertexTree`'s
+  render-visible document (per :func:`transcluded_vertices`) whose assignment is for a given
+  :class:`~guffin.model.attribute.Attribute`.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
@@ -28,7 +29,6 @@ Public symbols:
 import logging
 from collections import deque
 from collections.abc import Callable, Iterator
-from itertools import chain
 from typing import Annotated, Final
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator, validate_call
@@ -204,8 +204,11 @@ def assignments_for(tree: VertexTree, attribute: Attribute) -> Iterator[tuple[Ve
     """Return every ``(vertex, assignment)`` pair in *tree* whose assignment is for *attribute*.
 
     An assignment matches per :func:`~guffin.model.attribute_assignment.is_assignment_for` (identity:
-    name + domain).  Both the tree vertices and the referenced-vertex stubs
-    (:attr:`VertexTree.ref_vertices`) are walked.
+    name + domain).  The walk is scoped to the render-visible document — the vertices returned by
+    :func:`transcluded_vertices` (the tree vertices plus embed-transcluded content) — so an assignment
+    carried by a vertex that is merely *mentioned* (a page or block reference rendered inline as text,
+    reachable only through :attr:`VertexTree.ref_vertices`) is excluded: it belongs to that foreign
+    page's own document, not to this one.
 
     Args:
         tree: The :class:`VertexTree` to walk.
@@ -216,7 +219,7 @@ def assignments_for(tree: VertexTree, attribute: Attribute) -> Iterator[tuple[Ve
     """
     return (
         (vertex, assignment)
-        for vertex in chain(tree.tree_vertices, tree.ref_vertices)
+        for vertex in transcluded_vertices(tree)
         for assignment in vertex.attribute_assignments or ()
         if is_assignment_for(assignment, attribute)
     )

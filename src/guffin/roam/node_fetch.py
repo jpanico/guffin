@@ -156,6 +156,14 @@ class FetchRoamNodes:
                      (page-ref ?via ?node))"""),
             "   ",
         )
+        _REF2_DESCENDANT_OR_JOIN_BRANCH: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                (and [?anchor :node/title ?title]
+                     (page-ref ?anchor ?via)
+                     (page-ref ?via ?ref)
+                     (descendant ?ref ?node))"""),
+            "   ",
+        )
         BY_PAGE_TITLE_QUERY: Final[str] = f"{_BY_PAGE_TITLE_QUERY_BASE})]"
         """Datalog query fetching a page and all its descendant blocks by page title.
 
@@ -181,7 +189,8 @@ class FetchRoamNodes:
 
         BY_PAGE_TITLE_WITH_REFS_QUERY: Final[str] = (
             f"{_BY_PAGE_TITLE_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH}\n"
-            f"{_REF_DESCENDANT_OR_JOIN_BRANCH}\n{_REF2_OR_JOIN_BRANCH})]"
+            f"{_REF_DESCENDANT_OR_JOIN_BRANCH}\n{_REF2_OR_JOIN_BRANCH}\n"
+            f"{_REF2_DESCENDANT_OR_JOIN_BRANCH})]"
         )
         """Datalog query fetching a page, all its descendants, all ``:block/refs`` targets, and their descendants.
 
@@ -190,7 +199,7 @@ class FetchRoamNodes:
         :attr:`DESCENDANT_AND_PAGE_REF_RULES` (not :attr:`DESCENDANT_RULE` alone) because the
         ``page-ref`` rule calls ``(descendant ...)`` internally.
 
-        The ``or-join`` has four branches:
+        The ``or-join`` has six branches:
 
         1. The anchor node itself (``?node = ?anchor``).
         2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth
@@ -208,6 +217,11 @@ class FetchRoamNodes:
            ``tags::`` attribute on a referenced page).  These arrive as bare nodes (no subtree pull),
            bounding fan-out to two ref hops while still letting a referenced node's attributes resolve
            their own page references.
+        6. Every block reachable through ``:block/children`` from any second-hop ``page-ref`` target
+           (branch 5) — i.e. the full subtree of each two-hop referenced node.  This upgrades the
+           branch-5 bare nodes to complete subtrees so that a multi-block construct referenced from
+           within a first-hop ref (e.g. a ``{{table}}`` referenced from inside an embedded page)
+           arrives with its cells and can be transcribed.  Fan-out stays bounded at two ref hops.
         """
 
         _BY_NODE_UID_QUERY_BASE: Final[str] = textwrap.dedent("""\
@@ -240,6 +254,14 @@ class FetchRoamNodes:
                      (page-ref ?via ?node))"""),
             "   ",
         )
+        _REF2_DESCENDANT_OR_JOIN_BRANCH_UID: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                (and [?anchor :block/uid ?uid]
+                     (page-ref ?anchor ?via)
+                     (page-ref ?via ?ref)
+                     (descendant ?ref ?node))"""),
+            "   ",
+        )
         BY_NODE_UID_QUERY: Final[str] = f"{_BY_NODE_UID_QUERY_BASE})]"
         """Datalog query fetching a node and all its descendant blocks by ``:block/uid``.
 
@@ -265,7 +287,8 @@ class FetchRoamNodes:
 
         BY_NODE_UID_WITH_REFS_QUERY: Final[str] = (
             f"{_BY_NODE_UID_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH_UID}\n"
-            f"{_REF_DESCENDANT_OR_JOIN_BRANCH_UID}\n{_REF2_OR_JOIN_BRANCH_UID})]"
+            f"{_REF_DESCENDANT_OR_JOIN_BRANCH_UID}\n{_REF2_OR_JOIN_BRANCH_UID}\n"
+            f"{_REF2_DESCENDANT_OR_JOIN_BRANCH_UID})]"
         )
         """Datalog query fetching a node, all its descendants, all ``:block/refs`` targets, and their descendants.
 
@@ -274,7 +297,7 @@ class FetchRoamNodes:
         :attr:`DESCENDANT_AND_PAGE_REF_RULES` (not :attr:`DESCENDANT_RULE` alone) because the
         ``page-ref`` rule calls ``(descendant ...)`` internally.
 
-        The ``or-join`` has four branches:
+        The ``or-join`` has six branches:
 
         1. The anchor node itself (``?node = ?anchor``).
         2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth
@@ -292,6 +315,11 @@ class FetchRoamNodes:
            ``tags::`` attribute on a referenced page).  These arrive as bare nodes (no subtree pull),
            bounding fan-out to two ref hops while still letting a referenced node's attributes resolve
            their own page references.
+        6. Every block reachable through ``:block/children`` from any second-hop ``page-ref`` target
+           (branch 5) — i.e. the full subtree of each two-hop referenced node.  This upgrades the
+           branch-5 bare nodes to complete subtrees so that a multi-block construct referenced from
+           within a first-hop ref (e.g. a ``{{table}}`` referenced from inside an embedded page)
+           arrives with its cells and can be transcribed.  Fan-out stays bounded at two ref hops.
         """
 
         @staticmethod

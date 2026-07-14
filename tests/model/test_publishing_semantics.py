@@ -510,14 +510,15 @@ def _attributed_tree(
     """A page + heading at *heading_level*, each carrying single-*value* assignments for the given names.
 
     When *ref_heading_names* is given, a stub heading (also at *heading_level*) carrying those
-    assignments is added to ``ref_vertices``.  When *with_part* is set, a level-1 heading tagged
-    ``element-type:: part`` is added, making the tree a parts book.
+    assignments is added to ``ref_vertices`` and transcluded into the document through a block embed
+    (so it is part of the render-visible document that the guffin validators check).  When *with_part*
+    is set, a level-1 heading tagged ``element-type:: part`` is added, making the tree a parts book.
     """
 
     def _assignments(names: list[str]) -> list[AttributeAssignment] | None:
         return [_assignment(name, value, domain) for name in names] or None
 
-    children = ["head00001"] + (["parthead1"] if with_part else [])
+    children = ["head00001"] + (["parthead1"] if with_part else []) + (["refembed1"] if ref_heading_names else [])
     page = PageVertex(uid="pageroot1", title="Doc", children=children, attribute_assignments=_assignments(page_names))
     heading = HeadingVertex(
         uid="head00001",
@@ -525,7 +526,7 @@ def _attributed_tree(
         heading_level=heading_level,
         attribute_assignments=_assignments(heading_names),
     )
-    tree_vertices: list[HeadingVertex | PageVertex] = [page, heading]
+    tree_vertices: list[HeadingVertex | PageVertex | BlockEmbedVertex] = [page, heading]
     if with_part:
         tree_vertices.append(
             HeadingVertex(
@@ -534,6 +535,10 @@ def _attributed_tree(
                 heading_level=1,
                 attribute_assignments=[_assignment("element-type", "part")],
             )
+        )
+    if ref_heading_names:
+        tree_vertices.append(
+            BlockEmbedVertex(uid="refembed1", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="refhead01"))
         )
     ref_vertices = (
         [
@@ -594,12 +599,24 @@ class TestAllAttributesAnchored:
         tree = _attributed_tree([], ["not-a-member"], AttributeDomain.GUFFIN)
         assert all_attributes_anchored(tree) is None
 
-    def test_ref_vertices_are_checked(self) -> None:
-        """A misanchored attribute on a referenced-vertex stub is also a violation."""
+    def test_embed_transcluded_ref_vertices_are_checked(self) -> None:
+        """A misanchored attribute on an embed-transcluded referenced vertex is also a violation."""
         tree = _attributed_tree([], [], AttributeDomain.GUFFIN, ref_heading_names=["publisher"])
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "uid='refhead01'" in error.message
+
+    def test_mention_only_ref_vertices_are_not_checked(self) -> None:
+        """A misanchored attribute on a merely-mentioned ref vertex (not transcluded) is not checked."""
+        heading = HeadingVertex(
+            uid="refhead01",
+            text="Ref Heading",
+            heading_level=1,
+            attribute_assignments=[_assignment("publisher", "some value", AttributeDomain.GUFFIN)],
+        )
+        page = PageVertex(uid="pageroot1", title="Doc", refs=["refhead01"])
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[heading])
+        assert all_attributes_anchored(tree) is None
 
 
 class TestAllElementTypeValuesLegal:
@@ -623,8 +640,8 @@ class TestAllElementTypeValuesLegal:
         tree = _attributed_tree([], ["matter"], AttributeDomain.GUFFIN, value="bogus")
         assert all_element_type_values_legal(tree) is None
 
-    def test_ref_vertices_are_checked(self) -> None:
-        """An illegal element-type value on a referenced-vertex stub is also a violation."""
+    def test_embed_transcluded_ref_vertices_are_checked(self) -> None:
+        """An illegal element-type value on an embed-transcluded referenced vertex is also a violation."""
         tree = _attributed_tree(
             [], [], AttributeDomain.GUFFIN, value="not-an-element", ref_heading_names=["element-type"]
         )
@@ -654,8 +671,8 @@ class TestAllMatterValuesLegal:
         tree = _attributed_tree([], ["element-type"], AttributeDomain.GUFFIN, value="bogus")
         assert all_matter_values_legal(tree) is None
 
-    def test_ref_vertices_are_checked(self) -> None:
-        """An illegal matter value on a referenced-vertex stub is also a violation."""
+    def test_embed_transcluded_ref_vertices_are_checked(self) -> None:
+        """An illegal matter value on an embed-transcluded referenced vertex is also a violation."""
         tree = _attributed_tree([], [], AttributeDomain.GUFFIN, value="middle-matter", ref_heading_names=["matter"])
         error = all_matter_values_legal(tree)
         assert error is not None
@@ -721,8 +738,8 @@ class TestAllMatterTagsAtSectionLevel:
         tree = _attributed_tree(["matter"], [], AttributeDomain.GUFFIN, value="front-matter")
         assert all_matter_tags_at_section_level(tree) is None
 
-    def test_ref_vertices_are_checked(self) -> None:
-        """A matter tag on a misleveled referenced-stub heading is also a violation."""
+    def test_embed_transcluded_ref_vertices_are_checked(self) -> None:
+        """A matter tag on a misleveled embed-transcluded referenced heading is also a violation."""
         tree = _attributed_tree(
             [], [], AttributeDomain.GUFFIN, value="front-matter", heading_level=2, ref_heading_names=["matter"]
         )

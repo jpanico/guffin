@@ -13,6 +13,8 @@ Public symbols:
   :meth:`NodeTree.node_ids`.
 - :meth:`NodeTree.page_uid` — return the UID of the page with a given title, resolved via
   :attr:`NodeTree.page_name_map`.
+- :meth:`NodeTree.page_uid_or_none` — the non-raising counterpart of :meth:`NodeTree.page_uid`,
+  returning ``None`` when the page is absent from the tree.
 - :class:`NodeTreeDFSIterator` — pre-order depth-first iterator over a :class:`NodeTree`.
 - :func:`is_tree` — validate all tree invariants for a :class:`~guffin.roam.node.RoamNode` root
   and its :data:`~guffin.roam.node_network.NodeNetwork`; returns a
@@ -22,7 +24,7 @@ Public symbols:
 """
 
 import logging
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator, Mapping, Set
 from typing import Annotated, ClassVar, Final
 
 from pydantic import BaseModel, ConfigDict, Field, SkipValidation, model_validator, validate_call
@@ -81,6 +83,8 @@ class NodeTree(BaseModel):
             of :meth:`node_ids` — i.e. refs that resolve to nodes outside this tree.
         page_uid: Return the UID of the page with a given title, resolved via
             :attr:`page_name_map`.
+        page_uid_or_none: The non-raising counterpart of :meth:`page_uid`, returning ``None``
+            when the page is absent from the tree.
     """
 
     model_config = ConfigDict(frozen=True, validate_by_name=True)
@@ -126,7 +130,8 @@ class NodeTree(BaseModel):
         Uses :func:`~guffin.roam.node_network.all_descendants` to extract the subtree rooted
         at *root_node* from *super_network*, builds :attr:`refs_by_id` from the direct ref
         targets of :attr:`tree_network` plus all their transitive descendants and the second-hop
-        ref targets of those (bare nodes) available in *super_network*, derives :attr:`id_map`,
+        ref targets of those (each with its transitive descendants) available in *super_network*,
+        derives :attr:`id_map`,
         :attr:`uid_map`, and :attr:`page_name_map`
         from the combined node pool, then delegates to the Pydantic constructor (which runs
         all validators including :meth:`_validate_is_tree`).
@@ -181,11 +186,13 @@ class NodeTree(BaseModel):
         Collects all direct ``:block/refs`` targets of *tree_network* nodes, validates that each
         resolves within *super_network*, then expands with all transitive descendants of those ref
         nodes available in *super_network*.  Finally adds the second-hop ref targets — the
-        ``:block/refs`` of the gathered (first-hop) ref nodes and their descendants — as bare nodes,
-        so a referenced node's own attributes (e.g. a ``tags::`` attribute on a referenced page) can
-        resolve their page references.  Matches the two-hop reach of the with-refs fetch query.
-        Missing child ids are skipped silently — the fetch query intentionally omits subtrees of
-        non-embed refs (and of second-hop refs).
+        ``:block/refs`` of the gathered (first-hop) ref nodes and their descendants — each together
+        with its own transitive descendants available in *super_network*, so both a referenced node's
+        attributes (e.g. a ``tags::`` attribute on a referenced page) resolve their page references
+        *and* a multi-block construct referenced from within a first-hop ref (e.g. a ``{{table}}``
+        referenced inside an embedded page) arrives complete.  Matches the two-hop reach of the
+        with-refs fetch query.  Missing child ids are skipped silently — the fetch query
+        intentionally omits subtrees beyond the second ref hop.
 
         Args:
             tree_network: The constituent nodes of the tree.
@@ -208,30 +215,57 @@ class NodeTree(BaseModel):
                 sorted(unresolvable_refs),
             )
         refs_by_id: Final[dict[Id, RoamNode]] = dict(direct_refs)
-        stack: Final[list[RoamNode]] = list(direct_refs.values())
+        # Expand first-hop ref subtrees: every transitive descendant available in the pool, so a
+        # referenced multi-block construct (e.g. a `{{table}}`) arrives with its row/cell descendants.
+        refs_by_id.update(cls._descendants_in_pool(direct_refs.values(), super_by_id, refs_by_id.keys()))
+        # Second ref hop: the ref targets of everything gathered so far (the first-hop ref targets and
+        # their descendants), each with its subtree, matching the two-hop reach of the with-refs fetch
+        # query.  Pulling the subtrees (not just bare nodes) lets a multi-block construct referenced
+        # from within a first-hop ref (e.g. a `{{table}}` referenced inside an embedded page) also
+        # arrive complete, while a referenced node's own attributes still resolve their page references.
+        second_hop_ids: Final[set[Id]] = refs_ids(list(refs_by_id.values())) - refs_by_id.keys()
+        second_hop_refs: Final[dict[Id, RoamNode]] = {
+            ref_id: super_by_id[ref_id] for ref_id in second_hop_ids if ref_id in super_by_id
+        }
+        refs_by_id.update(second_hop_refs)
+        refs_by_id.update(cls._descendants_in_pool(second_hop_refs.values(), super_by_id, refs_by_id.keys()))
+        return refs_by_id
+
+    @staticmethod
+    def _descendants_in_pool(
+        seed_nodes: Iterable[RoamNode],
+        super_by_id: Mapping[Id, RoamNode],
+        known_ids: Set[Id],
+    ) -> dict[Id, RoamNode]:
+        """Return every transitive ``:block/children`` descendant of *seed_nodes* found in *super_by_id*.
+
+        Walks child stubs depth-first from each seed, collecting the nodes present in
+        *super_by_id* and skipping any id already in *known_ids* (or already collected).  Child
+        ids absent from *super_by_id* are skipped silently — the fetch query intentionally omits
+        some ref subtrees.  Does not mutate its arguments.
+
+        Args:
+            seed_nodes: The nodes whose descendants to gather.
+            super_by_id: The id-keyed source pool searched for descendants.
+            known_ids: Ids already accounted for; excluded from the returned map.
+
+        Returns:
+            A ``dict[Id, RoamNode]`` of the newly reached descendant nodes.
+        """
+        collected: Final[dict[Id, RoamNode]] = {}
+        stack: Final[list[RoamNode]] = list(seed_nodes)
         while stack:
-            ref_node: RoamNode = stack.pop()
-            if not ref_node.children:
-                continue
-            for child_ref in ref_node.children:
-                if child_ref.id in refs_by_id:
+            node: RoamNode = stack.pop()
+            for child_ref in node.children or ():
+                child_id: Id = child_ref.id
+                if child_id in known_ids or child_id in collected:
                     continue
-                child: RoamNode | None = super_by_id.get(child_ref.id)
+                child: RoamNode | None = super_by_id.get(child_id)
                 if child is None:
                     continue
-                refs_by_id[child_ref.id] = child
+                collected[child_id] = child
                 stack.append(child)
-        # Second ref hop: include the ref targets of everything gathered so far (the first-hop ref
-        # targets and their descendants) as bare nodes, matching the two-hop fetch query, so a
-        # referenced node's own attributes (e.g. a `tags::` attribute on a referenced page) can
-        # resolve their page references.  Their subtrees are intentionally not expanded — child stubs
-        # absent from super_network are skipped, bounding the pool to two ref hops.
-        second_hop_ids: Final[set[Id]] = refs_ids(list(refs_by_id.values())) - refs_by_id.keys()
-        for second_hop_id in second_hop_ids:
-            second_hop_node: RoamNode | None = super_by_id.get(second_hop_id)
-            if second_hop_node is not None:
-                refs_by_id[second_hop_id] = second_hop_node
-        return refs_by_id
+        return collected
 
     @model_validator(mode="before")
     @classmethod
@@ -299,6 +333,25 @@ class NodeTree(BaseModel):
         return self.node_refs_ids() - self.node_ids()
 
     @validate_call
+    def page_uid_or_none(self, page_name: str) -> Uid | None:
+        """Return the UID of the page titled *page_name*, or ``None`` when no such page is in this tree.
+
+        The non-raising counterpart of :meth:`page_uid`, resolved via :attr:`page_name_map`.
+        A page beyond the fetch horizon — one never fetched, so absent from
+        :attr:`page_name_map` — yields ``None`` rather than an error, letting callers degrade a
+        dangling page reference gracefully instead of failing.
+
+        Args:
+            page_name: The exact title of a Roam page.
+
+        Returns:
+            The :attr:`~guffin.roam.node.RoamNode.uid` of the page node titled *page_name*, or
+            ``None`` when no such page is present in this tree.
+        """
+        page: Final[RoamNode | None] = self.page_name_map.get(page_name)
+        return page.uid if page is not None else None
+
+    @validate_call
     def page_uid(self, page_name: str) -> Uid:
         """Return the UID of the page titled *page_name*, resolved via :attr:`page_name_map`.
 
@@ -312,10 +365,10 @@ class NodeTree(BaseModel):
             ValueError: When no page titled *page_name* is present in this tree (e.g. the
                 referenced page was not fetched).
         """
-        page: Final[RoamNode | None] = self.page_name_map.get(page_name)
-        if page is None:
+        uid: Final[Uid | None] = self.page_uid_or_none(page_name)
+        if uid is None:
             raise ValueError(f"reference to unknown page {page_name!r}")
-        return page.uid
+        return uid
 
 
 class NodeTreeDFSIterator(Iterator[RoamNode]):

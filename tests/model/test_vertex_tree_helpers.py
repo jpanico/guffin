@@ -136,11 +136,19 @@ class TestAssignmentsFor:
         tree = VertexTree(tree_vertices=[page])
         assert list(assignments_for(tree, Attribute(name="a"))) == []
 
-    def test_ref_vertices_are_walked(self) -> None:
-        """An assignment on a referenced-vertex stub is included."""
-        page = PageVertex(uid="pageuid01", title="Page")
+    def test_mention_only_ref_vertices_are_excluded(self) -> None:
+        """An assignment on a merely-mentioned ref vertex (not transcluded) is excluded."""
+        page = PageVertex(uid="pageuid01", title="Page", refs=["refuid001"])
         ref = TextVertex(uid="refuid001", text="stub", attribute_assignments=[_assignment_of("a")])
         tree = VertexTree(tree_vertices=[page], ref_vertices=[ref])
+        assert list(assignments_for(tree, Attribute(name="a"))) == []
+
+    def test_embed_transcluded_ref_vertices_are_walked(self) -> None:
+        """An assignment on a ref vertex reached through an embed (part of the document) is included."""
+        page = PageVertex(uid="pageuid01", title="Page", children=["embeduid1"])
+        embed = _embed("embeduid1", "refuid001")
+        target = TextVertex(uid="refuid001", text="embedded", attribute_assignments=[_assignment_of("a")])
+        tree = VertexTree(tree_vertices=[page, embed], ref_vertices=[target])
         result = list(assignments_for(tree, Attribute(name="a")))
         assert [vertex.uid for vertex, _assignment in result] == ["refuid001"]
 

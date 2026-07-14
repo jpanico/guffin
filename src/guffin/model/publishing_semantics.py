@@ -85,7 +85,6 @@ numbering primitive, and none of them may depend on it.
 import enum
 import logging
 from collections.abc import Callable
-from itertools import chain
 from typing import Final
 
 import regex
@@ -842,12 +841,13 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
 
     Each :class:`PublishingSemantics` member's :class:`PublishingAttribute` carries an :class:`AttributeAnchor`
     naming the :class:`~guffin.model.vertex.VertexType` set and :class:`TreePosition` it attaches
-    to; this validator enforces
-    that invariant across *tree* — both its tree vertices and its referenced-vertex stubs
-    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`): every guffin-domain assignment
-    whose name is a recognised member must be declared on a vertex of one of the anchor's types,
-    at the anchor's tree position (a root-positioned anchor accepts only the tree's root vertex,
-    so a referenced-vertex stub can never host it).
+    to; this validator enforces that invariant across *tree*'s render-visible document — the vertices
+    returned by :func:`~guffin.model.vertex_tree.transcluded_vertices` (the tree vertices plus
+    embed-transcluded content): every guffin-domain assignment whose name is a recognised member must
+    be declared on a vertex of one of the anchor's types, at the anchor's tree position (a
+    root-positioned anchor accepts only the tree's root vertex).  A vertex reached only by *mention*
+    (a page or block reference rendered inline as text) is not part of this document — it carries its
+    own foreign page's guffin metadata — and is not checked.
     Default-domain assignments and unrecognised guffin-domain names are outside the vocabulary and
     pass through unchecked.
 
@@ -862,7 +862,7 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     root_uid: Final[Uid] = root_vertex(tree).uid
     violations: Final[list[str]] = [
         violation
-        for vertex in chain(tree.tree_vertices, tree.ref_vertices)
+        for vertex in transcluded_vertices(tree)
         for assignment in vertex.attribute_assignments or ()
         if (violation := _anchor_violation(vertex, assignment, root_uid)) is not None
     ]

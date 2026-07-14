@@ -123,6 +123,10 @@ class TestFetchRoamNodesRequest:
             # Second ref hop: ref targets of ref targets (bare nodes).
             assert "(page-ref ?anchor ?via)" in query
             assert "(page-ref ?via ?node)" in query
+            # Second-hop ref subtrees: the full subtree of each two-hop ref target, so a
+            # multi-block construct referenced from within a first-hop ref (e.g. a table
+            # referenced inside an embedded page) arrives with its children.
+            assert "(page-ref ?via ?ref)" in query
 
 
 class TestFetchRoamNodesResponsePayload:

@@ -106,7 +106,7 @@ from guffin.roam.node import (
 )
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
-from guffin.roam.primitives import Id, parse_daily_note_uid
+from guffin.roam.primitives import Id, Uid, parse_daily_note_uid
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -159,7 +159,7 @@ def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChild
     return uids if uids else None
 
 
-def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssignment:
+def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssignment | None:
     """Parse an attribute-block *node*'s string into an :class:`~guffin.model.attribute_assignment.AttributeAssignment`.
 
     The attribute name and every tag-valued element are resolved to
@@ -171,11 +171,13 @@ def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssi
         tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve referenced page titles.
 
     Returns:
-        The parsed :class:`~guffin.model.attribute_assignment.AttributeAssignment`.
+        The parsed :class:`~guffin.model.attribute_assignment.AttributeAssignment`, or ``None`` when
+        the attribute's own name resolves to a page beyond the fetch horizon (absent from *tree*) —
+        the assignment is skipped rather than raising, so a boundary ref vertex carrying such an
+        assignment is still transcribed instead of being dropped.
 
     Raises:
-        ValueError: If ``node.string`` is ``None``, is not wholly an attribute assignment, or
-            references a page absent from *tree*.
+        ValueError: If ``node.string`` is ``None`` or is not wholly an attribute assignment.
     """
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
@@ -183,10 +185,12 @@ def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssi
     if match is None:
         raise ValueError(f"RoamNode uid={node.uid!r} string is not an attribute assignment: {node.string!r}")
     attribute_name: Final[str] = match.group("attribute")
+    link: Final[VertexLink | None] = _page_reference_link(attribute_name, tree)
+    if link is None:
+        logger.debug("attribute %r on uid=%r references a page absent from tree; skipping", attribute_name, node.uid)
+        return None
     return AttributeAssignment(
-        attribute=AttributeInstance(
-            definition=Attribute(name=attribute_name), link=_page_reference_link(attribute_name, tree)
-        ),
+        attribute=AttributeInstance(definition=Attribute(name=attribute_name), link=link),
         values=tuple(_to_attribute_value(raw, tree) for raw in match.captures("value")),
     )
 
@@ -217,7 +221,7 @@ def _strip_surrounding_quotes(token: str) -> str:
     return token
 
 
-def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -> AttributeAssignment:
+def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -> AttributeAssignment | None:
     """Parse a ``<domain>-meta`` child *node* into an :class:`~guffin.model.attribute_assignment.AttributeAssignment`.
 
     This is the Guffin-specific (non-Roam-standard) attribute form: the child's string is
@@ -234,11 +238,13 @@ def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -
         tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve the attribute name's page.
 
     Returns:
-        The parsed :class:`~guffin.model.attribute_assignment.AttributeAssignment` with ``attribute.domain`` set.
+        The parsed :class:`~guffin.model.attribute_assignment.AttributeAssignment` with
+        ``attribute.domain`` set, or ``None`` when the attribute's own name resolves to a page beyond
+        the fetch horizon (absent from *tree*) — the assignment is skipped rather than raising, so a
+        boundary ref vertex carrying such an assignment is still transcribed instead of being dropped.
 
     Raises:
-        ValueError: If ``node.string`` is ``None``, lacks a ``::`` separator, or names a page absent
-            from *tree*.
+        ValueError: If ``node.string`` is ``None`` or lacks a ``::`` separator.
     """
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
@@ -246,15 +252,17 @@ def _parse_meta_child(node: RoamNode, domain: AttributeDomain, tree: NodeTree) -
     if not separator:
         raise ValueError(f"RoamNode uid={node.uid!r} meta child is not an attribute assignment: {node.string!r}")
     name: Final[str] = name_part.strip()
+    link: Final[VertexLink | None] = _page_reference_link(name, tree)
+    if link is None:
+        logger.debug("meta attribute %r on uid=%r references a page absent from tree; skipping", name, node.uid)
+        return None
     values: Final[tuple[AttributeValue, ...]] = tuple(
         _to_attribute_value(_strip_surrounding_quotes(token.strip()), tree)
         for token in value_part.split(",")
         if token.strip()
     )
     return AttributeAssignment(
-        attribute=AttributeInstance(
-            definition=Attribute(name=name, domain=domain), link=_page_reference_link(name, tree)
-        ),
+        attribute=AttributeInstance(definition=Attribute(name=name, domain=domain), link=link),
         values=values,
     )
 
@@ -263,7 +271,8 @@ def _meta_child_assignments(meta_block: RoamNode, tree: NodeTree) -> list[Attrib
     """Return the attribute assignments folded from a ``<domain>-meta::`` *meta_block*'s children.
 
     Every child of *meta_block* (sorted by :attr:`~guffin.roam.node.RoamNode.order`) is parsed via
-    :func:`_parse_meta_child` with the block's captured domain.
+    :func:`_parse_meta_child` with the block's captured domain.  A child whose attribute name resolves
+    to a page beyond the fetch horizon is skipped (see :func:`_parse_meta_child`).
 
     Args:
         meta_block: A node for which :func:`_is_meta_block` is ``True``.
@@ -277,7 +286,10 @@ def _meta_child_assignments(meta_block: RoamNode, tree: NodeTree) -> list[Attrib
         [tree.id_map[gc.id] for gc in (meta_block.children or []) if gc.id in tree.id_map],
         key=lambda n: n.order if n.order is not None else 0,
     )
-    return [_parse_meta_child(child, domain, tree) for child in meta_children]
+    parsed: Final[list[AttributeAssignment | None]] = [
+        _parse_meta_child(child, domain, tree) for child in meta_children
+    ]
+    return [assignment for assignment in parsed if assignment is not None]
 
 
 def _resolve_attribute_assignments(node: RoamNode, tree: NodeTree) -> list[AttributeAssignment] | None:
@@ -309,7 +321,9 @@ def _resolve_attribute_assignments(node: RoamNode, tree: NodeTree) -> list[Attri
         if _is_meta_block(child):
             assignments.extend(_meta_child_assignments(child, tree))
         elif node_type(child) is NodeType.ATTRIBUTE_BLOCK:
-            assignments.append(_parse_attribute_assignment(child, tree))
+            assignment: AttributeAssignment | None = _parse_attribute_assignment(child, tree)
+            if assignment is not None:
+                assignments.append(assignment)
     return assignments if assignments else None
 
 
@@ -744,22 +758,25 @@ def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> PageEmbedVertex:
     )
 
 
-def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink:
+def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink | None:
     """Return a reference :class:`~guffin.model.vertex_link.VertexLink` to the page titled *page_name*.
 
     Args:
         page_name: The exact title of the referenced Roam page.
         tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve the title (via
-            :meth:`~guffin.roam.node_tree.NodeTree.page_uid`).
+            :meth:`~guffin.roam.node_tree.NodeTree.page_uid_or_none`).
 
     Returns:
-        A :attr:`~guffin.model.vertex_link.VertexLinkKind.REFERENCE`-kind link to the page's UID.
-
-    Raises:
-        ValueError: When no page titled *page_name* is present in the tree (e.g. the referenced page
-            was not fetched).
+        A :attr:`~guffin.model.vertex_link.VertexLinkKind.REFERENCE`-kind link to the page's UID, or
+        ``None`` when no page titled *page_name* is present in *tree* — e.g. a reference to a page
+        beyond the fetch horizon.  Callers degrade such a dangling reference (a value becomes a
+        literal; an attribute whose own name is dangling is skipped) rather than dropping the whole
+        host vertex.
     """
-    return VertexLink(kind=VertexLinkKind.REFERENCE, uid=tree.page_uid(page_name))
+    page_uid: Final[Uid | None] = tree.page_uid_or_none(page_name)
+    if page_uid is None:
+        return None
+    return VertexLink(kind=VertexLinkKind.REFERENCE, uid=page_uid)
 
 
 def _to_attribute_value(raw_value: str, tree: NodeTree) -> AttributeValue:
@@ -774,18 +791,24 @@ def _to_attribute_value(raw_value: str, tree: NodeTree) -> AttributeValue:
             ``#[[callouts demo]]``).
         tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve a referenced page.
 
+    A tag whose referenced page lies beyond the fetch horizon (absent from *tree*) degrades to a
+    :class:`~guffin.model.attribute.LiteralValue` carrying the raw token, rather than raising — so a
+    boundary ref vertex whose ``tags::`` value points at an unfetched page is still transcribed
+    instead of being dropped.
+
     Returns:
         A :class:`~guffin.model.attribute.LiteralValue` or :class:`~guffin.model.attribute.ReferenceValue`.
-
-    Raises:
-        ValueError: When a referenced page is not present in the tree.
     """
     tag_match: Final[regex.Match[str] | None] = TAG_RE.fullmatch(raw_value)
     if tag_match is None:
         return LiteralValue(value=raw_value)
     page_name: Final[str | None] = tag_match.group("page_name") or tag_match.group("bare_page_name")
     assert page_name is not None  # exactly one of the tag's name groups matches
-    return ReferenceValue(name=page_name, link=_page_reference_link(page_name, tree))
+    link: Final[VertexLink | None] = _page_reference_link(page_name, tree)
+    if link is None:
+        logger.debug("attribute value references page %r absent from tree; keeping as literal", page_name)
+        return LiteralValue(value=raw_value)
+    return ReferenceValue(name=page_name, link=link)
 
 
 @validate_call
