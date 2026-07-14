@@ -1505,6 +1505,20 @@ YyeRpjbFD:
   props: null
   title: null
   attrs: null
+o2hTH3dbf:
+  uid: o2hTH3dbf
+  id: 867
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: embed
+  attrs: null
 aM4rXqHLf:
   uid: aM4rXqHLf
   id: 11793
@@ -1522,6 +1536,25 @@ aM4rXqHLf:
   - id: 11716
   - id: 11790
   - id: 11792
+  props: null
+  title: null
+  attrs: null
+1HipLqaCb:
+  uid: 1HipLqaCb
+  id: 13263
+  string: '#c:FUCHSIA **standalone CALLOUT EMBED ↓**'
+  order: 23
+  heading: null
+  children:
+  - id: 13264
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -3475,6 +3508,26 @@ sjk6dh9FX:
   props: null
   title: null
   attrs: null
+aGe-4YuyS:
+  uid: aGe-4YuyS
+  id: 13264
+  string: '{{[[embed]]: ((4SIo9hSEY))}}'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 867
+  - id: 11773
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 13263
+  props: null
+  title: null
+  attrs: null
 JpKqqwnAJ:
   uid: JpKqqwnAJ
   id: 11708
@@ -3579,6 +3632,7 @@ d3T1YpYig:
   - id: 11946
   - id: 11949
   - id: 12818
+  - id: 13263
   refs: null
   page:
     id: 4225

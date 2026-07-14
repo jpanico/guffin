@@ -410,6 +410,7 @@
   - ipvsMyx77
   - QnqMI7-2J
   - xkmJLzW3G
+  - 1HipLqaCb
   text: 'External (out-of-page) links:'
   heading_level: 1
 - vertex_type: guffin/text
@@ -632,6 +633,21 @@
   refs:
   - wjN-kVF3B
   text: '[{{table}}](x-guffin:vertex/wjN-kVF3B)'
+- vertex_type: guffin/text
+  uid: 1HipLqaCb
+  children:
+  - aGe-4YuyS
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone CALLOUT EMBED ↓**]{color="fuchsia"}'
+- vertex_type: guffin/block-embed
+  uid: aGe-4YuyS
+  refs:
+  - o2hTH3dbf
+  - 4SIo9hSEY
+  vertex_link:
+  - vertex-embed
+  - 4SIo9hSEY
 - vertex_type: guffin/text
   uid: LfXmNr-tV
   children:

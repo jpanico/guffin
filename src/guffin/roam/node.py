@@ -87,11 +87,12 @@ class NodeType(enum.StrEnum):
       :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS` (``"{{table}}"`` /
       ``"{{[[table]]}}"``); its child blocks form the table rows.
     - **EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
-      trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` (matched by
-      :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
+      trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` /
+      ``{{[[embed]]: ((<uid>))}}`` (matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
     - **EMBED_PAGE**: ``title`` is ``None`` and ``string``, with surrounding whitespace
-      trimmed, is wholly a Roam page embed ``{{embed: [[<page_name>]]}}`` (matched by
-      :data:`~guffin.roam.markdown.PAGE_EMBED_RE`) — the page-reference sibling of EMBED_BLOCK.
+      trimmed, is wholly a Roam page embed ``{{embed: [[<page_name>]]}}`` /
+      ``{{[[embed]]: [[<page_name>]]}}`` (matched by :data:`~guffin.roam.markdown.PAGE_EMBED_RE`)
+      — the page-reference sibling of EMBED_BLOCK.
     - **PDF_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam PDF
       component ``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}`` whose URL is a Cloud Firestore
       storage URL (matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`).

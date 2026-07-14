@@ -427,6 +427,13 @@ class TestBlockEmbedRE:
         assert m.group(0) == "{{embed: ((wdMgyBiP9))}}"
         assert m.group("uid") == "wdMgyBiP9"
 
+    def test_page_reference_form_match(self) -> None:
+        """The {{[[embed]]: ((<uid>))}} page-reference spelling is equivalent to the bare form."""
+        m = BLOCK_EMBED_RE.search("{{[[embed]]: ((4SIo9hSEY))}}")
+        assert m is not None
+        assert m.group(0) == "{{[[embed]]: ((4SIo9hSEY))}}"
+        assert m.group("uid") == "4SIo9hSEY"
+
     # --- no-match cases ---
 
     def test_no_match_bare_block_ref(self) -> None:
@@ -474,6 +481,13 @@ class TestPageEmbedRE:
         m = PAGE_EMBED_RE.search("see {{embed: [[Some Page]]}} here")
         assert m is not None
         assert m.group(0) == "{{embed: [[Some Page]]}}"
+        assert m.group("page_name") == "Some Page"
+
+    def test_page_reference_form_match(self) -> None:
+        """The {{[[embed]]: [[<page_name>]]}} page-reference spelling is equivalent to the bare form."""
+        m = PAGE_EMBED_RE.search("{{[[embed]]: [[Some Page]]}}")
+        assert m is not None
+        assert m.group(0) == "{{[[embed]]: [[Some Page]]}}"
         assert m.group("page_name") == "Some Page"
 
     # --- no-match cases ---

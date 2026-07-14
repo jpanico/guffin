@@ -939,6 +939,9 @@
     order: 1
     page:
       id: 11674
+- - id: 867
+    uid: o2hTH3dbf
+    title: embed
 - - string: Header 1
     children:
     - id: 11794
@@ -952,6 +955,19 @@
     order: 0
     page:
       id: 4225
+- - string: '#c:FUCHSIA **standalone CALLOUT EMBED ↓**'
+    children:
+    - id: 13264
+    id: 13263
+    uid: 1HipLqaCb
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 23
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '{{embed: ((LfXmNr-tV))}}'
     id: 4232
     uid: XkSI5xwe5
@@ -2188,6 +2204,19 @@
       id: 4225
     refs:
     - id: 5844
+- - string: '{{[[embed]]: ((4SIo9hSEY))}}'
+    id: 13264
+    uid: aGe-4YuyS
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 13263
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 867
+    - id: 11773
 - - string: ((LfaVt18Iw))
     id: 11708
     uid: JpKqqwnAJ
@@ -2273,6 +2302,7 @@
     - id: 11946
     - id: 11949
     - id: 12818
+    - id: 13263
     id: 4227
     uid: d3T1YpYig
     parents:

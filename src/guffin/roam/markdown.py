@@ -11,8 +11,9 @@ Public symbols:
   — compiled regex matching a line-anchored Roam attribute assignment ``attribute:: value, …``;
   :data:`BLOCK_REF_RE` — compiled regex matching a
   Roam block reference ``((<uid>))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
-  block embed ``{{embed: ((<uid>))}}``; :data:`PAGE_EMBED_RE` — compiled regex matching a Roam
-  page embed ``{{embed: [[<page_name>]]}}``; :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
+  block embed ``{{embed: ((<uid>))}}`` (or ``{{[[embed]]: ((<uid>))}}``); :data:`PAGE_EMBED_RE` —
+  compiled regex matching a Roam page embed ``{{embed: [[<page_name>]]}}`` (or
+  ``{{[[embed]]: [[<page_name>]]}}``); :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
   Roam aliased page link ``[display]([[Page Name]])``; :data:`ITALIC_RE` — compiled regex
   matching Roam italic syntax ``__text__``; :data:`HIGHLIGHT_RE` — compiled regex matching Roam
   highlight syntax ``^^text^^``; :data:`COLOR_BOLD_RE`, :data:`COLOR_HIGHLIGHT_RE`,
@@ -317,11 +318,15 @@ Example match on ``((wdMgyBiP9))``:
 - ``match.group("uid")`` — just ``wdMgyBiP9``.
 """
 
-BLOCK_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(rf"\{{\{{embed: {BLOCK_REF_RE.pattern}\}}\}}")
+BLOCK_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"\{{\{{(?:embed|\[\[embed\]\]): {BLOCK_REF_RE.pattern}\}}\}}"
+)
 """Compiled regex matching a Roam block embed ``{{embed: ((<uid>))}}``.
 
 Wraps a :data:`BLOCK_REF_RE` block reference in the literal ``{{embed: `` and ``}}``
-delimiters (note the single space after ``embed:``).  The embedded reference's ``uid``
+delimiters (note the single space after ``embed:``).  Roam writes the component as either
+the bare form (``{{embed: ((<uid>))}}``) or the page-reference form
+(``{{[[embed]]: ((<uid>))}}``); the two are equivalent.  The embedded reference's ``uid``
 named group is carried through, so the referenced node UID is available on a match.
 
 Named group:
@@ -334,14 +339,16 @@ Example match on ``{{embed: ((LfXmNr-tV))}}``:
 - ``match.group("uid")`` — just ``LfXmNr-tV``.
 """
 
-PAGE_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(rf"\{{\{{embed: {PAGE_REF_RE.pattern}\}}\}}")
+PAGE_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(rf"\{{\{{(?:embed|\[\[embed\]\]): {PAGE_REF_RE.pattern}\}}\}}")
 """Compiled regex matching a Roam page embed ``{{embed: [[<page_name>]]}}``.
 
 The page-embed sibling of :data:`BLOCK_EMBED_RE`: it wraps a :data:`PAGE_REF_RE` page reference in
 the literal ``{{embed: `` and ``}}`` delimiters (note the single space after ``embed:``) instead of a
-block reference.  The embedded reference's ``page_name`` named group is carried through, so the
-referenced page title is available on a match (including nested ``[[…]]`` inside the name, via the
-recursion in :data:`PAGE_REF_RE`).
+block reference.  Roam writes the component as either the bare form (``{{embed: [[<page_name>]]}}``)
+or the page-reference form (``{{[[embed]]: [[<page_name>]]}}``); the two are equivalent.  The
+embedded reference's ``page_name`` named group is carried through, so the referenced page title is
+available on a match (including nested ``[[…]]`` inside the name, via the recursion in
+:data:`PAGE_REF_RE`).
 
 Named group:
 

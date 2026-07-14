@@ -181,6 +181,12 @@ def fizz_buzz(limit: int = 100):
   |----------|----------|----------|
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
+- <span style="color: fuchsia">**standalone CALLOUT EMBED ↓**</span>
+  > [!NOTE]
+  > **This is the callout title**
+  >
+  > This is line 1 of the callout body  
+  > This is line 2 of the callout body
 
 - Section 3
   - section 3.1
