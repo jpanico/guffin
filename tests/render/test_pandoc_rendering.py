@@ -13,7 +13,7 @@ from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
 import pytest
-from conftest import article1_vertex_tree
+from conftest import article1_vertex_tree, article8_vertex_tree
 from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
@@ -912,6 +912,36 @@ class TestVertexTreeToPandocArticleFixture:
         items = list(bullet_lists[1].content)
         assert len(items) == 1
         assert _collect_text(list(items[0].content)[0]) == "AI assistant (Claude Opus 4.6):"
+
+
+class TestVertexTreeToPandocTitleEmphasisFixture:
+    """Emphasis on a portion of the page title (Test Article 8) renders as inline markup.
+
+    The page name ``[[Test Article]] 8 has a **bold** word`` carries ``**bold**`` on one portion, so
+    the rendered document title must carry a real :class:`~panflute.Strong` around ``bold`` — both as
+    the leading H1 (``title_in_header``, the markdown export contract) and in the document metadata.
+    """
+
+    @staticmethod
+    def _strong_words(element: pf.Element) -> list[str]:
+        """The stringified content of every Strong descendant of *element*."""
+        found: list[str] = []
+        element.walk(lambda elem, _doc: found.append(pf.stringify(elem)) if isinstance(elem, pf.Strong) else None)
+        return found
+
+    def test_title_header_bolds_only_the_bold_word(self) -> None:
+        """The leading H1 title is a Header whose sole Strong wraps exactly 'bold'."""
+        doc, _ = vertex_tree_to_pandoc(article8_vertex_tree(), {}, {}, title_in_header=True)
+        header = next(block for block in doc.content if isinstance(block, pf.Header) and block.level == 1)
+        assert _collect_text(header).startswith("Test Article 8 has a")
+        assert self._strong_words(header) == ["bold"]
+
+    def test_metadata_title_carries_the_emphasis(self) -> None:
+        """The document metadata title also carries the Strong (not a flattened '**bold**' literal)."""
+        doc, _ = vertex_tree_to_pandoc(article8_vertex_tree(), {}, {}, title_in_header=True)
+        title = doc.metadata["title"]
+        assert self._strong_words(title) == ["bold"]
+        assert "**bold**" not in pf.stringify(title)
 
 
 # ---------------------------------------------------------------------------

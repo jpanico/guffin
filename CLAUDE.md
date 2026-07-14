@@ -138,10 +138,14 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v
 
 ## Test Fixtures
 
-Eight live Roam pages serve as the primary test sources: `[[Test Article]] 0`
-through `[[Test Article]] 7`.  Each article exercises a distinct feature set —
-see `tests/fixtures/README.md` for the per-article feature lists, which
-`tests/regen_fixtures.py` keeps in sync from a callout on each live page.  For
+Nine live Roam pages serve as the primary test sources: `[[Test Article]] 0`
+through `[[Test Article]] 7`, plus `[[Test Article]] 8 has a **bold** word`.  Each
+article exercises a distinct feature set — see `tests/fixtures/README.md` for the
+per-article feature lists, which `tests/regen_fixtures.py` keeps in sync from a
+callout on each live page.  A source page's title is normally exactly
+`[[Test Article]] N`; article 8 relaxes this to a *prefix* because its feature —
+`**bold**` emphasis on one portion of the page name — is a property of the title
+itself.  For
 each source, `tests/regen_fixtures.py` generates six fixture files that capture
 different stages and views of the data pipeline.
 
@@ -178,6 +182,7 @@ python tests/regen_fixtures.py "[[Test Article]] 4" --prefix test_article_4
 python tests/regen_fixtures.py "[[Test Article]] 5" --prefix test_article_5
 python tests/regen_fixtures.py "[[Test Article]] 6" --prefix test_article_6
 python tests/regen_fixtures.py "[[Test Article]] 7" --prefix test_article_7
+python tests/regen_fixtures.py "[[Test Article]] 8 has a **bold** word" --prefix test_article_8
 ```
 
 Pass `--pdf` to additionally record a byte-reproducible baseline PDF under `tests/fixtures/pdf/`

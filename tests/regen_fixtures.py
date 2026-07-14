@@ -80,6 +80,9 @@ class TestArticle(enum.Enum):
     ARTICLE_3 = ("[[Test Article]] 3", "test_article_3")
     ARTICLE_4 = ("[[Test Article]] 4", "test_article_4")
     ARTICLE_5 = ("[[Test Article]] 5", "test_article_5")
+    ARTICLE_6 = ("[[Test Article]] 6", "test_article_6")
+    ARTICLE_7 = ("[[Test Article]] 7", "test_article_7")
+    ARTICLE_8 = ("[[Test Article]] 8 has a **bold** word", "test_article_8")
 
     def __init__(self, qualifier: str, prefix: str) -> None:
         """Set qualifier and prefix from the tuple member value."""

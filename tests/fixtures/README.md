@@ -28,10 +28,15 @@ This directory contains test data used by the guffin test suite.
 
 ## Test Articles
 
-Eight live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
+Nine live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 `[[Test Article]] 1`, `[[Test Article]] 2`, `[[Test Article]] 3`,
-`[[Test Article]] 4`, `[[Test Article]] 5`, `[[Test Article]] 6`, and
-`[[Test Article]] 7`.
+`[[Test Article]] 4`, `[[Test Article]] 5`, `[[Test Article]] 6`,
+`[[Test Article]] 7`, and `[[Test Article]] 8 has a **bold** word`.
+
+The convention is that a source page's title is `[[Test Article]] N`.  Article 8
+relaxes it: when the feature under test is a property of the *title itself*, the
+`[[Test Article]] N` form is kept as a prefix and the feature demonstration
+follows (here, `**bold**` emphasis on one portion of the page name).
 
 ### Article Features
 
@@ -98,6 +103,10 @@ Eight live Roam pages serve as the primary test sources: `[[Test Article]] 0`,
 #### `[[Test Article]] 7`
 
 - a very large Book structured document intended for testing scalability and performance
+
+#### `[[Test Article]] 8 has a **bold** word`
+
+- The Page title/name has Markdown markup in it
 
 ### Fixtures
 

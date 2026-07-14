@@ -140,3 +140,15 @@ def article5_node_tree() -> NodeTree:
         n for n in all_nodes if node_type(n) == NodeType.PAGE and n.title == "[[Test Article]] 5"
     )
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
+
+
+def article8_vertex_tree() -> VertexTree:
+    """Load and return the ``[[Test Article]] 8`` :class:`~guffin.vertex_tree.VertexTree` from its YAML fixture.
+
+    Article 8's page title carries ``**bold**`` emphasis on one portion of the name, so its
+    transcribed :class:`~guffin.model.vertex.PageVertex` title exercises inline markup in the title.
+    """
+    raw: Final[list[dict[str, object]]] = yaml.safe_load(
+        (FIXTURES_YAML_DIR / "test_article_8_vertices.yaml").read_text()
+    )
+    return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
