@@ -11,8 +11,9 @@ Public symbols:
 - **Enumerations**: :class:`CalloutType` — the twelve Roam callout type keywords.
 - **Callout model**: :class:`RoamCallout` — parsed decomposition of a callout block string.
 - **Callout parser**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`.
-- **Block-quote predicate**: :func:`is_roam_block_quote` — return ``True`` when a string is a
-  Roam or standard Markdown block quote.
+- **Block-quote predicates**: :func:`is_roam_block_quote` — return ``True`` when a string is a
+  Roam or standard Markdown block quote; :func:`is_roam_native_block_quote` — the Roam-specific
+  subset (a ``[[>]]`` block quote that is not a callout).
 - **Block-quote marker stripper**: :func:`strip_block_quote_marker` — strip the leading block-quote
   marker from a block-quote string and return the remaining content.
 """
@@ -154,6 +155,25 @@ def is_roam_block_quote(block_string: str) -> bool:
     if block_string.startswith(ROAM_BLOCK_QUOTE_PREFIX):
         return not CALLOUT_RE.match(block_string)
     return block_string.startswith(MD_BLOCK_QUOTE_PREFIX)
+
+
+@validate_call
+def is_roam_native_block_quote(block_string: str) -> bool:
+    """Return ``True`` if *block_string* is a Roam-native block quote (``[[>]]``, not a callout).
+
+    The Roam-specific subset of :func:`is_roam_block_quote`: *block_string* starts with
+    :data:`ROAM_BLOCK_QUOTE_PREFIX` (``[[>]]``) but does not match :data:`CALLOUT_RE`.  A standard
+    Markdown (``>``) block quote returns ``False``.
+
+    Args:
+        block_string: The string to test.
+
+    Returns:
+        ``True`` when *block_string* is a plain ``[[>]]``-prefixed Roam block quote.
+    """
+    if not block_string.startswith(ROAM_BLOCK_QUOTE_PREFIX):
+        return False
+    return not CALLOUT_RE.match(block_string)
 
 
 @validate_call

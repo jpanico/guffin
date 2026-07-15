@@ -30,6 +30,7 @@ _GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
 _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
+_GFM_QUOTE_FILTER: Final[str] = "gfm_quote.lua"
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
@@ -243,6 +244,7 @@ def render(
                 "--wrap=none",
                 *standalone_args,
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
@@ -277,6 +279,7 @@ def render(
                 "--wrap=none",
                 *standalone_args,
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",

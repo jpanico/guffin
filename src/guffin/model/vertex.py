@@ -445,6 +445,11 @@ class BlockQuoteVertex(_BaseVertex[Literal[VertexType.BLOCK_QUOTE]]):
         vertex_type: Always :attr:`~VertexType.BLOCK_QUOTE`.
             Serialized as ``'vertex-type'``.
         text: Block string with the leading block-quote marker stripped.
+        fancy: Whether to render with the decorated quote/attribution treatment — an
+            oversize opening quotation mark, the first body line as a bold quotation, and
+            any following lines as an italic attribution — instead of a plain block quote.
+            Names the rendering *intent* rather than any source syntax, keeping the model
+            agnostic of where the distinction came from.
     """
 
     vertex_type: Literal[VertexType.BLOCK_QUOTE] = Field(
@@ -453,6 +458,10 @@ class BlockQuoteVertex(_BaseVertex[Literal[VertexType.BLOCK_QUOTE]]):
         description="Always VertexType.BLOCK_QUOTE (serialized as 'vertex-type').",
     )
     text: str = Field(..., description="Block string with the leading block-quote marker stripped.")
+    fancy: bool = Field(
+        default=False,
+        description="Whether to render the decorated quote/attribution treatment rather than a plain block quote.",
+    )
 
 
 class TableVertex(_BaseVertex[Literal[VertexType.TABLE]]):

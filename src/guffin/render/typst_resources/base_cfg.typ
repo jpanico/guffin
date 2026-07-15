@@ -38,6 +38,11 @@
   // Typst, so it renders without a system-font dependency.  (Only the callout body uses this;
   // the callout title keeps the ambient `font`.)
   callout-font: "libertinus serif",
+  // Fancy block quote (Roam-native [[>]] quotes): the quotation line and the attribution line(s)
+  // each get an assignable face, set as a serif register against the sans body (like the callout
+  // font).  Libertinus Serif ships embedded with Typst, so it needs no system font.
+  quote-font: "libertinus serif",
+  attribution-font: "libertinus serif",
   fontsize: 11pt,
   leading: 0.65em,
   spacing: 1.2em,

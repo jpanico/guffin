@@ -12,7 +12,7 @@ from guffin.common.revision import Revision
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import HeadingVertex, PageVertex, TextVertex
+from guffin.model.vertex import BlockQuoteVertex, HeadingVertex, PageVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.md_rendering import render
@@ -205,6 +205,41 @@ class TestBracketEntities:
         assert "&#91;para&#93;" in result
         assert "&#91;*italics*&#93;" in result
         assert "\\[" not in result
+
+
+class TestFancyQuoteRendering:
+    """A fancy (Roam-native) block quote renders best-effort GFM: bold “-led quote, italic attribution."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, text: str, *, fancy: bool) -> str:
+        page = PageVertex(uid="page00001", title="Doc", children=["quote0001"])
+        quote = BlockQuoteVertex(uid="quote0001", text=text, fancy=fancy)
+        bundle = RenderBundle(content=VertexTree(tree_vertices=[page, quote]), view={})
+        render(
+            bundle,
+            profile=DefaultProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_fancy_quote_bolds_quotation_with_leading_glyph(self, tmp_path: Path) -> None:
+        """The quotation renders as a bold block-quote line led by the ❝ (U+275D) ornament."""
+        result = self._render(tmp_path, "In the long run every program becomes rococo.\n— Alan Perlis", fancy=True)
+        assert "> **❝ In the long run every program becomes rococo.**" in result
+
+    def test_fancy_quote_italicizes_attribution(self, tmp_path: Path) -> None:
+        """The attribution renders as an italic block-quote line."""
+        result = self._render(tmp_path, "The quotation.\nThe attribution.", fancy=True)
+        assert "> *The attribution.*" in result
+
+    def test_plain_quote_is_unchanged(self, tmp_path: Path) -> None:
+        """A standard (non-fancy) block quote gets no glyph, bold, or forced italic."""
+        result = self._render(tmp_path, "Just a plain quote.", fancy=False)
+        assert "> Just a plain quote." in result
+        assert "❝" not in result
 
 
 class TestHeadingDemotion:

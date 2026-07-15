@@ -974,15 +974,24 @@ def _block_quote_vertex_to_blocks(
     inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
-    """Render a :class:`~guffin.vertex.BlockQuoteVertex` to a Pandoc :class:`~panflute.BlockQuote`.
+    """Render a :class:`~guffin.vertex.BlockQuoteVertex` to Pandoc block elements.
 
-    The vertex text is rejoined via :func:`~guffin.common.markdown.hard_broken_markdown` —
-    consecutive plain lines
-    become one paragraph with hard line breaks (matching Roam's shift-enter semantics), while
-    embedded list items and blank-line paragraph boundaries stay distinct blocks — then parsed
-    at block level via :func:`parse_block_md` inside the :class:`~panflute.BlockQuote`.  Child
-    vertices are rendered recursively and appended inside the same
-    :class:`~panflute.BlockQuote`.
+    A plain block quote (:attr:`~guffin.vertex.BlockQuoteVertex.fancy` is ``False``) renders to a
+    :class:`~panflute.BlockQuote`.  The vertex text is rejoined via
+    :func:`~guffin.common.markdown.hard_broken_markdown` — consecutive plain lines become one
+    paragraph with hard line breaks (matching Roam's shift-enter semantics), while embedded list
+    items and blank-line paragraph boundaries stay distinct blocks — then parsed at block level via
+    :func:`parse_block_md` inside the :class:`~panflute.BlockQuote`.  Child vertices are rendered
+    recursively and appended inside the same :class:`~panflute.BlockQuote`.
+
+    A *fancy* block quote (:attr:`~guffin.vertex.BlockQuoteVertex.fancy` is ``True``) instead
+    produces a class-tagged :class:`~panflute.Div` for the decorated quote/attribution treatment:
+    the vertex text is split on its first line break into the **quotation** (first line) and the
+    **attribution** (any following lines), wrapped as a ``fancy-quote-text`` sub-:class:`~panflute.Div`
+    and, when present, a ``fancy-quote-attribution`` sub-:class:`~panflute.Div` inside an outer
+    ``fancy-quote`` :class:`~panflute.Div`.  The Div carries no emphasis or glyph of its own —
+    each output format applies its own styling (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``,
+    or EPUB CSS on ``div.fancy-quote``).  Child vertices follow at the end, as for the plain form.
 
     Args:
         vertex: The block-quote vertex to render.
@@ -995,21 +1004,32 @@ def _block_quote_vertex_to_blocks(
         depth: Tree depth of *vertex*.
 
     Returns:
-        A single-element list containing the :class:`~panflute.BlockQuote`.
+        A single-element list containing the :class:`~panflute.BlockQuote` (plain) or the
+        ``fancy-quote`` :class:`~panflute.Div` (fancy).
     """
-    inner_blocks: list[pf.Block] = parse_block_md(hard_broken_markdown(vertex.text))
-    inner_blocks.extend(
-        build_child_blocks(
-            vertex.children or [],
-            vertex_tree,
-            asset_files,
-            inline_map,
-            view_map,
-            _effective_layout(vertex.uid, view_map, inherited_layout),
-            depth + 1,
-            vertex.attribute_assignments,
-        )
+    child_blocks: Final[list[pf.Block]] = build_child_blocks(
+        vertex.children or [],
+        vertex_tree,
+        asset_files,
+        inline_map,
+        view_map,
+        _effective_layout(vertex.uid, view_map, inherited_layout),
+        depth + 1,
+        vertex.attribute_assignments,
     )
+    if vertex.fancy:
+        quote_part, _, attribution_part = vertex.text.partition("\n")
+        fancy_blocks: list[pf.Block] = [
+            pf.Div(*parse_block_md(hard_broken_markdown(quote_part)), classes=["fancy-quote-text"])
+        ]
+        if attribution_part.strip():
+            fancy_blocks.append(
+                pf.Div(*parse_block_md(hard_broken_markdown(attribution_part)), classes=["fancy-quote-attribution"])
+            )
+        fancy_blocks.extend(child_blocks)
+        return [pf.Div(*fancy_blocks, classes=["fancy-quote"])]
+    inner_blocks: list[pf.Block] = parse_block_md(hard_broken_markdown(vertex.text))
+    inner_blocks.extend(child_blocks)
     return [pf.BlockQuote(*inner_blocks)]
 
 

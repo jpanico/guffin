@@ -325,3 +325,33 @@
     width: 100%,
   )[#it.body]
 }
+
+// Fancy block quote (Roam-native [[>]] quotes): a pull-quote treatment — the quotation reads bold at
+// 1.5x body size in the quote-font, led by an oversize opening quotation mark, and the attribution
+// line(s) are set italic in the attribution-font.  Deliberately carries NO left bar (unlike a plain
+// block quote): the oversize mark and large type carry the "quote" signal on their own, which also
+// keeps it visually distinct from the plain block quote.  The mark HANGS in a left gutter (placed
+// out of flow), and the quotation and attribution share a left edge just to its right — so both
+// text lines are left-justified in a column that begins past the mark.  typst_quote.lua marshals
+// the quotation and attribution content into a call to this helper.
+#let fancy-quote(quote: [], attribution: none) = context {
+  // The opening mark: 2.4x the 1.5x quotation text = 3.6x body.  Measured so the text column can be
+  // indented by exactly the mark's width plus one space, giving the hanging-mark layout.
+  let mark = text(font: cfg.quote-font, weight: "bold", size: 3.6em)[\u{201C}]
+  let gutter = measure(mark).width + 0.25em
+  block(inset: (left: gutter, top: 0.4em, bottom: 0.4em), width: 100%)[
+    // Place the mark in the left gutter, out of the text flow (so short quotes don't inherit its
+    // height); dy nudges it down so its ink sits centred-erring-high against the first line.
+    #place(left, dx: -gutter, dy: 0.34em)[#mark]
+    #block(below: if attribution == none { 0em } else { 0.5em })[
+      #set text(font: cfg.quote-font, weight: "bold", size: 1.5em)
+      #quote
+    ]
+    #if attribution != none {
+      block[
+        #set text(font: cfg.attribution-font, style: "italic")
+        #attribution
+      ]
+    }
+  ]
+}

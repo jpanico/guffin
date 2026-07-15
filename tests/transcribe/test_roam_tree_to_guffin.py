@@ -789,6 +789,16 @@ class TestToBlockQuoteVertex:
         node = _make_block_quote(string="[[>]] Hello, world!")
         assert to_block_quote_vertex(node, _node_tree(node)).text == "Hello, world!"
 
+    def test_standard_markdown_quote_is_not_fancy(self) -> None:
+        """Test that a standard Markdown > block quote is not fancy."""
+        node = _make_block_quote(string="> Hello, world!")
+        assert to_block_quote_vertex(node, _node_tree(node)).fancy is False
+
+    def test_roam_native_quote_is_fancy(self) -> None:
+        """Test that a Roam-native [[>]] block quote is fancy."""
+        node = _make_block_quote(string="[[>]] Hello, world!")
+        assert to_block_quote_vertex(node, _node_tree(node)).fancy is True
+
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""
         node = _make_block_quote()

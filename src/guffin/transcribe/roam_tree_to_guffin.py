@@ -86,7 +86,12 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
-from guffin.roam.blockquote import RoamCallout, parse_callout, strip_block_quote_marker
+from guffin.roam.blockquote import (
+    RoamCallout,
+    is_roam_native_block_quote,
+    parse_callout,
+    strip_block_quote_marker,
+)
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
@@ -655,7 +660,10 @@ def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
 
     Strips the leading block-quote marker (``>`` or ``[[>]]``) from ``node.string``
     via :func:`~guffin.roam.blockquote.strip_block_quote_marker` before storing the
-    remaining content as :attr:`~guffin.vertex.BlockQuoteVertex.text`.
+    remaining content as :attr:`~guffin.vertex.BlockQuoteVertex.text`.  Sets
+    :attr:`~guffin.vertex.BlockQuoteVertex.fancy` from
+    :func:`~guffin.roam.blockquote.is_roam_native_block_quote` — a Roam-native ``[[>]]`` quote
+    renders with the decorated quote/attribution treatment, a standard ``>`` quote stays plain.
 
     Args:
         node: A block-quote node whose ``string`` starts with a recognised block-quote
@@ -674,9 +682,14 @@ def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    # Source→intent boundary: a Roam-native [[>]] block quote renders with the fancy
+    # quote/attribution treatment; a standard Markdown > block quote stays plain.  Detect
+    # before the marker is stripped.  This is the only place that maps the Roam syntax to
+    # the source-agnostic BlockQuoteVertex.fancy flag.
     return BlockQuoteVertex(
         uid=node.uid,
         text=to_pandoc_md(strip_block_quote_marker(node.string), tree),
+        fancy=is_roam_native_block_quote(node.string),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),

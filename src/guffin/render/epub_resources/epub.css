@@ -51,6 +51,47 @@ blockquote {
 }
 
 /*
+ * Fancy block quote (Roam-native [[>]] quotes). guffin emits
+ * <div class="fancy-quote"> with an inner <div class="fancy-quote-text"> (the quotation) and,
+ * when present, <div class="fancy-quote-attribution"> (the attribution). A pull-quote treatment
+ * (mirroring the PDF): the quotation is bold at 1.5x body size in a serif register (matching the
+ * callout body), led by an oversize opening quotation mark; the attribution stays at body size,
+ * italic, in the same serif. Deliberately carries NO left bar (unlike a plain block quote) — the
+ * oversize mark and large type carry the "quote" signal and keep it distinct from the plain block
+ * quote. The serif font-family is the customization point (matches the callout body stack).
+ */
+/* padding-left is the text-column gutter; the opening mark hangs into it (positioned absolutely
+   against this relatively-positioned container), so the quotation and attribution below share one
+   left edge just to the right of the mark. */
+div.fancy-quote {
+  position: relative;
+  margin: 1em 0;
+  padding-left: 2.1em;
+  font-family: "Palatino", "Palatino Linotype", "Iowan Old Style", Georgia, serif;
+}
+
+div.fancy-quote-text {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+/* Oversize opening quotation mark (2.4x the already-1.5x quotation text), hung in the left gutter
+   and nudged down so its ink sits centred-erring-high against the first line. */
+div.fancy-quote-text > p:first-child::before {
+  content: "\201C";
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  font-size: 2.4em;
+  line-height: 1;
+}
+
+div.fancy-quote-attribution {
+  font-style: italic;
+  margin-top: 0.4em;
+}
+
+/*
  * Callouts. guffin emits <div class="callout callout-TYPE"> with an inner
  * <div class="callout-title">, where TYPE is one of the twelve Roam callout keywords.
  * Mirroring the gentle-clues callout in the PDF output, the title is a tinted header

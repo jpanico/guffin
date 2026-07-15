@@ -5,7 +5,13 @@ from typing import Final
 import pytest
 from pydantic import ValidationError
 
-from guffin.roam.blockquote import CALLOUT_RE, CalloutType, RoamCallout, parse_callout
+from guffin.roam.blockquote import (
+    CALLOUT_RE,
+    CalloutType,
+    RoamCallout,
+    is_roam_native_block_quote,
+    parse_callout,
+)
 
 _FIRESTORE_URL: Final[str] = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
@@ -220,3 +226,32 @@ class TestCallout:
         """Raises ValidationError when None is passed."""
         with pytest.raises(ValidationError):
             parse_callout(None)  # type: ignore[arg-type]
+
+
+class TestIsRoamNativeBlockQuote:
+    """Tests for is_roam_native_block_quote()."""
+
+    def test_true_for_roam_native_quote(self) -> None:
+        """A plain [[>]]-prefixed block quote is Roam-native."""
+        assert is_roam_native_block_quote("[[>]] a quotation") is True
+
+    def test_true_for_roam_native_quote_without_space(self) -> None:
+        """The prefix need not be followed by a space."""
+        assert is_roam_native_block_quote("[[>]]a quotation") is True
+
+    def test_false_for_standard_markdown_quote(self) -> None:
+        """A standard Markdown > block quote is not Roam-native."""
+        assert is_roam_native_block_quote("> a quotation") is False
+
+    def test_false_for_callout(self) -> None:
+        """A [[>]] [[!TYPE]] callout is not a plain Roam-native block quote."""
+        assert is_roam_native_block_quote("[[>]] [[!INFO]] a callout") is False
+
+    def test_false_for_plain_text(self) -> None:
+        """Text with no block-quote marker is not Roam-native."""
+        assert is_roam_native_block_quote("just some text") is False
+
+    def test_raises_validation_error_for_null_input(self) -> None:
+        """Raises ValidationError when None is passed."""
+        with pytest.raises(ValidationError):
+            is_roam_native_block_quote(None)  # type: ignore[arg-type]

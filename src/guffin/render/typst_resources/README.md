@@ -214,6 +214,7 @@ pypandoc.convert_text(json_str, "typst", format="json", extra_args=[
     f"--lua-filter={bundled_dir / 'typst_callout.lua'}",
     f"--lua-filter={bundled_dir / 'typst_color_span.lua'}",
     f"--lua-filter={bundled_dir / 'typst_list_para.lua'}",
+    f"--lua-filter={bundled_dir / 'typst_quote.lua'}",
     # …
 ])
 ```
@@ -229,8 +230,10 @@ These filters apply only to the PDF/Typst path. The Markdown/GFM path uses a par
 | `typst_callout.lua` | a `Div` with a `callout-<type>` class (plus an optional `callout-title` sub-`Div`) | a [gentle-clues](https://typst.app/universe/package/gentle-clues) callout call (`info[…]`, `warning[…]`, `tip[…]`, …) — `bergfink.typst` imports the gentle-clues package |
 | `typst_color_span.lua` | a color `Span` / `Div` carrying a `color`, `highlight-color` (with class `mark`), `underline-color`, `box-color`, or `bg-color` attribute | `#text(fill: …)`, `#highlight(fill: …)`, `#underline[…]`, `#box(stroke: …)`, or a full-width `#block(fill: …)`, with inner content preserved |
 | `typst_list_para.lua` | a list item whose leading `Plain` block is immediately followed by a non-list block | promotes that `Plain` to a `Para`, keeping the leading text and the following block (e.g. an image) as separate Typst paragraphs |
+| `typst_quote.lua` | a `Div` with a `fancy-quote` class (its `fancy-quote-text` and optional `fancy-quote-attribution` sub-`Div`s) | a call to the template's `#fancy-quote(quote: […], attribution: […])` helper (`default_styles.typ`) — a barless pull-quote whose quotation line is bold at 1.5x body size in `cfg.quote-font` led by an oversize `“` and whose attribution is italic in `cfg.attribution-font` |
 
 A couple of details worth noting:
 
 - **`typst_callout.lua`** maps each Guffin callout type to a gentle-clues function (e.g. `note` / `quote` → `memo`, `summary` → `conclusion`, `failure` / `bug` → `error`). It wraps the call in a Typst code scope `#{ … }` with a local `set par(first-line-indent: 0pt, justify: false)`, so the template's global paragraph rules do not leak into the callout, and passes the title as a Typst string literal. It also emits `#set text(font: cfg.callout-font)` at the head of the callout's content block, giving the callout **body** its contrasting serif face while the title keeps the ambient `font`. Each callout's `accent-color` is set from the canonical per-type palette (`guffin/render/callout_theme.py`, passed in via the `GUFFIN_CALLOUT_COLORS` env var), overriding gentle-clues' own theme colours so PDF callout colours match every other output format; gentle-clues derives the title band (`accent.lighten(85%)`) and box border from that one accent.
 - **`typst_list_para.lua`** leaves nested lists untouched — a sublist already starts its own block and never merges, so only a non-list following block needs the paragraph break.
+- **`typst_quote.lua`** is registered **last** so any inline transforms (e.g. `typst_color_span.lua`) have already rewritten the quotation/attribution content before it is serialized to Typst (via `pandoc.write`) and marshaled into the `#fancy-quote` helper call. The helper (`default_styles.typ`) reads `cfg.quote-font` / `cfg.attribution-font`, so the fonts are set in `base_cfg.typ` and overridable via `user_cfg.typ`.

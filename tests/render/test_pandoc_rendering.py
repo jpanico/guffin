@@ -1017,6 +1017,61 @@ class TestBlockQuoteRendering:
         assert [type(block) for block in blocks] == [pf.Para, pf.Para]
 
 
+class TestFancyBlockQuoteRendering:
+    """A fancy block quote renders to a class-tagged Div; a plain one stays a BlockQuote."""
+
+    @staticmethod
+    def _render(text: str, *, fancy: bool) -> pf.Doc:
+        """Render a one-quote tree with the given fancy flag."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
+        quote = BlockQuoteVertex(uid="quote0001", text=text, fancy=fancy)
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, quote]), {}, {})
+        return doc
+
+    @staticmethod
+    def _first_div(doc: pf.Doc, cls: str) -> pf.Div:
+        """Return the first Div in *doc* carrying class *cls* (searching recursively)."""
+        found: list[pf.Div] = []
+
+        def _visit(elem: pf.Element, _doc: pf.Doc) -> None:
+            if isinstance(elem, pf.Div) and cls in elem.classes:
+                found.append(elem)
+
+        doc.walk(_visit)
+        assert found, f"no Div with class {cls!r}"
+        return found[0]
+
+    def test_plain_quote_is_a_block_quote_not_a_div(self) -> None:
+        """A non-fancy quote renders to a pf.BlockQuote and emits no fancy-quote Div."""
+        doc = self._render("just a quote", fancy=False)
+        assert any(isinstance(block, pf.BlockQuote) for block in doc.content)
+        divs: list[pf.Div] = []
+        doc.walk(lambda elem, _doc: divs.append(elem) if isinstance(elem, pf.Div) else None)
+        assert not any("fancy-quote" in div.classes for div in divs)
+
+    def test_fancy_quote_emits_fancy_quote_div(self) -> None:
+        """A fancy quote renders to a fancy-quote Div rather than a BlockQuote."""
+        doc = self._render("In the long run every program becomes rococo.\n— Alan Perlis", fancy=True)
+        assert not any(isinstance(block, pf.BlockQuote) for block in doc.content)
+        assert self._first_div(doc, "fancy-quote") is not None
+
+    def test_fancy_quote_splits_quote_and_attribution(self) -> None:
+        """The first line becomes fancy-quote-text; the remaining lines become fancy-quote-attribution."""
+        doc = self._render("The quotation itself.\nThe attribution line.", fancy=True)
+        quote_div = self._first_div(doc, "fancy-quote-text")
+        attribution_div = self._first_div(doc, "fancy-quote-attribution")
+        assert "quotation itself" in pf.stringify(quote_div)
+        assert "attribution line" in pf.stringify(attribution_div)
+
+    def test_fancy_quote_without_attribution_omits_attribution_div(self) -> None:
+        """A single-line fancy quote emits only the quotation sub-Div."""
+        doc = self._render("only the quotation", fancy=True)
+        assert self._first_div(doc, "fancy-quote-text") is not None
+        divs: list[pf.Div] = []
+        doc.walk(lambda elem, _doc: divs.append(elem) if isinstance(elem, pf.Div) else None)
+        assert not any("fancy-quote-attribution" in div.classes for div in divs)
+
+
 class TestBlockRefToBlockLevelVertex:
     """A text vertex that is solely a reference to a block-level vertex renders as that block.
 

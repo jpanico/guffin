@@ -83,6 +83,7 @@ _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
 _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
 _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
+_TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
 
 
 def _typst_resources_dir() -> Path:
@@ -166,6 +167,9 @@ def _typst_template_args(
         f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+        # Registered after the inline transforms so their rewrites are captured when the
+        # fancy-quote content is serialized to Typst.
+        f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
         "-V",
         "listings=true",
     ]
@@ -235,6 +239,7 @@ def _dump_typst_sources(
             f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+            f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
         ],
     )
     typst_body_path: Final[Path] = output_dir / f"{stem}.body.typ"
