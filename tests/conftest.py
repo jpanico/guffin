@@ -4,6 +4,13 @@ import os
 import pathlib
 from typing import Final
 
+# Accelerate the many small Markdown→Pandoc-JSON parses the suite performs by routing them through a
+# persistent per-worker ``pandoc-server`` instead of spawning a fresh Pandoc process (~87 ms each)
+# per render.  Opt-in and test-only: production keeps the Pandoc CLI path.  ``setdefault`` lets a
+# developer force the CLI path with ``GUFFIN_PANDOC_SERVER=0``.  The server falls back to the CLI if
+# unavailable, so this never changes output — only speed.
+os.environ.setdefault("GUFFIN_PANDOC_SERVER", "1")
+
 import pytest
 import yaml
 

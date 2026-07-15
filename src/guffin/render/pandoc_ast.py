@@ -28,7 +28,30 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
+from guffin.render import pandoc_server
+
 logger = logging.getLogger(__name__)
+
+
+def _markdown_to_pandoc_json(text: str) -> str:
+    """Convert a Pandoc Markdown string to the Pandoc JSON AST string.
+
+    Prefers the persistent ``pandoc-server`` acceleration (:func:`pandoc_server.markdown_to_json`,
+    active only when opted in via ``GUFFIN_PANDOC_SERVER``); when that path declines — not opted in,
+    unavailable, or errored — converts via the Pandoc CLI (:func:`pypandoc.convert_text`), which is
+    the default everywhere else.
+
+    Args:
+        text: The Pandoc Markdown text to parse.
+
+    Returns:
+        The Pandoc JSON AST representation of *text*.
+    """
+    served: Final[str | None] = pandoc_server.markdown_to_json(text)
+    if served is not None:
+        return served
+    cli_json: Final[str] = pypandoc.convert_text(text, "json", format="markdown")  # type: ignore[no-untyped-call]
+    return cli_json
 
 
 type InlineMap = dict[str, list[pf.Inline]]
@@ -94,7 +117,7 @@ def parse_inline_md(texts: list[str]) -> InlineMap:
     sep: Final[str] = f"GUFFIN_SEP_{uuid.uuid4().hex}"
     combined: Final[str] = f"\n\n{sep}\n\n".join(unique)
 
-    json_str: Final[str] = pypandoc.convert_text(combined, "json", format="markdown")
+    json_str: Final[str] = _markdown_to_pandoc_json(combined)
     doc: Final[pf.Doc] = pf.load(StringIO(json_str))
 
     result: Final[InlineMap] = {}
@@ -136,7 +159,7 @@ def parse_block_md(text: str) -> list[pf.Block]:
         The list of :class:`~panflute.Block` elements produced by parsing
         *text*.
     """
-    json_str: Final[str] = pypandoc.convert_text(text, "json", format="markdown")
+    json_str: Final[str] = _markdown_to_pandoc_json(text)
     doc: Final[pf.Doc] = pf.load(StringIO(json_str))
     return list(doc.content)
 
