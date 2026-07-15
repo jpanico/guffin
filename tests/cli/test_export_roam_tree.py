@@ -3,7 +3,6 @@
 import logging
 import os
 import pathlib
-import shutil
 from typing import Final
 from unittest.mock import patch
 
@@ -140,27 +139,24 @@ class TestExportRoamTreeBundle:
 
 @pytest.mark.pandoc
 class TestExportRoamTreeMdbundleFromRaw:
-    """End-to-end test of export_roam_tree --bundle for [[Test Article]] 3, from the raw fetch result."""
+    """End-to-end test of export_roam_tree --bundle for [[Test Article]] 2, from the raw fetch result."""
 
     def test_mdbundle_from_raw_result_matches_fixture(self, tmp_path: pathlib.Path) -> None:
         """Exporting the bundle from the recorded raw Datalog response matches the baseline mdbundle.
 
-        Drives the full pipeline offline: the only external boundaries are stubbed.
+        Drives the full pipeline offline: the only external boundary is stubbed.
         ``invoke_action`` (the Local API node fetch) returns the recorded
-        ``test_article_3_raw_result.yaml`` wire response, so the real RoamNode parsing,
-        tree build, transcription, and bundle rendering all run.  The Cloud Firestore
-        asset fetch is avoided by seeding the cache directory from the recorded
-        ``Test_Article_3.default.cache`` fixture — its ``<sha256(url)>.<ext>`` files and
-        ``.meta.json`` sidecars are exactly what ``fetch_and_cache_asset`` looks up, so every
-        asset resolves as a cache hit without a network call and the bundle reproduces the
-        baseline's original-filename assets.
+        ``test_article_2_raw_result.yaml`` wire response, so the real RoamNode parsing,
+        tree build, transcription, and bundle rendering all run.  [[Test Article]] 2 has no
+        Cloud Firestore assets, so no asset fetch (hence no cache seeding) is needed — the
+        empty ``--cache-dir`` keeps the run hermetic against a shell ``GUFFIN_CACHE_DIR``.
         """
-        raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_raw_result.yaml").read_text())
+        raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_2_raw_result.yaml").read_text())
         api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
 
-        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.default.mdbundle"
+        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_2.default.mdbundle"
         cache_dir: Final[pathlib.Path] = tmp_path / "cache"
-        shutil.copytree(FIXTURES_MDBUNDLE_DIR / "Test_Article_3.default.cache", cache_dir)
+        cache_dir.mkdir()
 
         output_dir: Final[pathlib.Path] = tmp_path / "out"
         runner: CliRunner = CliRunner()
@@ -174,7 +170,7 @@ class TestExportRoamTreeMdbundleFromRaw:
                 result = runner.invoke(
                     app,
                     [
-                        "[[Test Article]] 3",
+                        "[[Test Article]] 2",
                         "--port",
                         "3333",
                         "--graph",
@@ -194,7 +190,7 @@ class TestExportRoamTreeMdbundleFromRaw:
                 logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = output_dir / "Test_Article_3.default.mdbundle"
+        actual: Final[pathlib.Path] = output_dir / "Test_Article_2.default.mdbundle"
         assert actual.is_dir()
         expected_names: Final[list[str]] = sorted(f.name for f in baseline.iterdir())
         actual_names: Final[list[str]] = sorted(f.name for f in actual.iterdir())
@@ -253,14 +249,14 @@ class TestExportRoamTreeMdbundleLive:
     @pytest.mark.live
     @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
     def test_live_mdbundle_matches_fixture(self, tmp_path: pathlib.Path) -> None:
-        """Exporting [[Test Article]] 1 as a markdown bundle matches the recorded baseline file-for-file.
+        """Exporting [[Test Article]] 3 as a markdown bundle matches the recorded baseline file-for-file.
 
         Roam credentials (GUFFIN_ROAM_*) are read from the environment by the CLI.
         """
-        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_1.default.mdbundle"
+        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.default.mdbundle"
         assert baseline.exists(), (
             f"baseline mdbundle missing: {baseline}. Record it with: "
-            'python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --mdbundle'
+            'python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3 --mdbundle'
         )
         runner: CliRunner = CliRunner()
         saved_handlers = logging.root.handlers[:]
@@ -268,13 +264,13 @@ class TestExportRoamTreeMdbundleLive:
         try:
             result = runner.invoke(
                 app,
-                ["[[Test Article]] 1", "--output-dir", str(tmp_path), "--format", "markdown", "--bundle"],
+                ["[[Test Article]] 3", "--output-dir", str(tmp_path), "--format", "markdown", "--bundle"],
             )
         finally:
             logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.default.mdbundle"
+        actual: Final[pathlib.Path] = tmp_path / "Test_Article_3.default.mdbundle"
         assert actual.exists()
         expected_names: Final[list[str]] = sorted(f.name for f in baseline.iterdir())
         actual_names: Final[list[str]] = sorted(f.name for f in actual.iterdir())
