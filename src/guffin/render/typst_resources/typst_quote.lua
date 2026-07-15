@@ -1,9 +1,9 @@
 -- typst_quote.lua
 -- Lua filter for the Typst/PDF output path.
--- Transforms the Div.fancy-quote produced by pandoc_rendering.py (a decorated Roam-native
--- block quote) into a call to the template's #fancy-quote helper (default_styles.typ), which
--- draws the left bar and styles the quotation line (bold, quote-font, oversize opening quote)
--- and the attribution line(s) (italic, attribution-font).
+-- Transforms the Div.fancy-quote produced by pandoc_rendering.py (a pull quote, from a Roam
+-- [[>]] [[!QUOTE]] block) into a call to the template's #fancy-quote helper (default_styles.typ),
+-- which hangs the oversize opening mark in a left gutter and styles the quotation line (bold,
+-- quote-font) and the attribution line(s) (italic, attribution-font).
 --
 -- Registered LAST among the Typst filters so that any inline transforms (e.g. color spans) have
 -- already rewritten the quote/attribution content before it is serialized to Typst here.

@@ -7,7 +7,6 @@
 local GFM_TYPES = {
   ["callout-info"]      = "NOTE",
   ["callout-note"]      = "NOTE",
-  ["callout-quote"]     = "NOTE",
   ["callout-example"]   = "NOTE",
   ["callout-summary"]   = "NOTE",
   ["callout-question"]  = "NOTE",

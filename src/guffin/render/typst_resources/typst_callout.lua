@@ -11,7 +11,6 @@
 local TYPST_FNS = {
   ["callout-info"]      = "info",
   ["callout-note"]      = "memo",
-  ["callout-quote"]     = "memo",
   ["callout-example"]   = "example",
   ["callout-summary"]   = "conclusion",
   ["callout-question"]  = "question",

@@ -41,10 +41,10 @@ from guffin.common.table import TableStyle
 from guffin.model.attribute import AttributeDomain, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
-    BlockQuoteVertex,
     CalloutVertex,
     ImageVertex,
     PageVertex,
+    QuoteBlockVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -185,7 +185,7 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
         case NodeType.CODE_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
-        case NodeType.BLOCK_QUOTE:
+        case NodeType.QUOTE_BLOCK:
             assert node.string is not None
             title_text = _trunc(strip_block_quote_marker(node.string), truncate=truncate)
         case NodeType.NATIVE_TABLE:
@@ -347,7 +347,11 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
         case "title":
             return Text(f"title={vertex.title}" if isinstance(vertex, PageVertex) else "title=N/A")
         case "text":
-            return Text(f"text={vertex.text}" if isinstance(vertex, TextVertex | BlockQuoteVertex) else "text=N/A")
+            if isinstance(vertex, TextVertex):
+                return Text(f"text={vertex.text}")
+            if isinstance(vertex, QuoteBlockVertex):
+                return Text(f"text={vertex.quote}")
+            return Text("text=N/A")
         case "file_name":
             return Text(f"file_name={vertex.file_name}" if is_asset_vertex(vertex) else "file_name=N/A")
         case "media_type":
@@ -509,10 +513,10 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
                 f"[bold orange1]{markup_escape(f'CODE [{vertex.language.value}]:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(_trunc(vertex.code, truncate=truncate))}[/bold #00aa00]"
             )
-        case VertexType.BLOCK_QUOTE:
+        case VertexType.QUOTE_BLOCK:
             title_content = (
-                f"[bold orange1]{markup_escape('QUOTE:')}[/bold orange1]"
-                f" [bold #00aa00]{markup_escape(_trunc(vertex.text, truncate=truncate))}[/bold #00aa00]"
+                f"[bold orange1]{markup_escape(f'QUOTE [{vertex.quote_type.value}]:')}[/bold orange1]"
+                f" [bold #00aa00]{markup_escape(_trunc(vertex.quote, truncate=truncate))}[/bold #00aa00]"
             )
         case VertexType.TABLE:
             title_content = (

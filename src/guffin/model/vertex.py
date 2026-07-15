@@ -37,7 +37,9 @@ Public symbols:
 - :class:`CalloutVertex` — normalized (transcribed) form of a Roam callout block node.
 - :class:`CodeBlockVertex` — normalized (transcribed) form of a Roam fenced code block
   node.
-- :class:`BlockQuoteVertex` — normalized (transcribed) form of a Roam block-quote block node.
+- :class:`QuoteType` — how a quote block is presented (``BLOCK`` vs ``PULL``).
+- :class:`QuoteBlockVertex` — normalized (transcribed) form of a Roam quote-block node (any of the
+  three quote forms: ``>``, ``[[>]]``, ``[[>]] [[!QUOTE]]``).
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
 - :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
 - :class:`PageEmbedVertex` — normalized (transcribed) form of a Roam page embed node.
@@ -98,9 +100,9 @@ class VertexType(StrEnum):
             ``:block/string`` starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
         CODE_BLOCK: Normalized form of a Roam *Block* node whose
             ``:block/string`` is a CommonMark fenced code block.
-        BLOCK_QUOTE: Normalized form of a Roam *Block* node whose
-            ``:block/string`` is a standard Markdown block quote (``> text``) or a
-            Roam-specific block quote (``[[>]] text``).
+        QUOTE_BLOCK: Normalized form of a Roam *Block* node that is any of the three quote
+            forms — a standard Markdown block quote (``> text``), a Roam-native block quote
+            (``[[>]] text``), or a Roam pull quote (``[[>]] [[!QUOTE]] text``).
         TABLE: Normalized form of a Roam native table node — a block whose
             ``:block/string`` equals ``{{table}}``, with its child blocks forming the
             rows and each child's children forming the cells.
@@ -119,7 +121,7 @@ class VertexType(StrEnum):
     PDF = "guffin/pdf"
     CALLOUT = "guffin/callout"
     CODE_BLOCK = "guffin/code-block"
-    BLOCK_QUOTE = "guffin/block-quote"
+    QUOTE_BLOCK = "guffin/quote-block"
     TABLE = "guffin/table"
     BLOCK_EMBED = "guffin/block-embed"
     PAGE_EMBED = "guffin/page-embed"
@@ -145,7 +147,7 @@ class _BaseVertex[VT: VertexType](BaseModel):
 
     Not instantiated directly — use :class:`PageVertex`, :class:`HeadingVertex`,
     :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
-    :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`,
+    :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`QuoteBlockVertex`,
     :class:`TableVertex`, :class:`BlockEmbedVertex`, or :class:`PageEmbedVertex`.
 
     Type Parameters:
@@ -381,10 +383,13 @@ class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
     """
 
     class CalloutType(StrEnum):
-        """Callout category keyword, matching the twelve types in the Roam callout marker."""
+        """Callout category keyword, matching the eleven callout types in the Roam callout marker.
+
+        Note ``quote`` is deliberately absent: a Roam ``[[>]] [[!QUOTE]]`` block is a pull quote,
+        transcribed to a :class:`QuoteBlockVertex` (see :class:`QuoteType`), not a callout.
+        """
 
         INFO = "info"
-        QUOTE = "quote"
         EXAMPLE = "example"
         NOTE = "note"
         WARNING = "warning"
@@ -434,33 +439,51 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
     language: CodeLanguage = Field(..., description="Programming language of the fenced code block.")
 
 
-class BlockQuoteVertex(_BaseVertex[Literal[VertexType.BLOCK_QUOTE]]):
-    """Normalized (transcribed) form of a Roam block-quote node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that is a standard Markdown block quote (``> text``) or a
-    Roam-specific block quote (``[[>]] text``).
+class QuoteType(StrEnum):
+    """How a quote block is presented — the source-agnostic rendering intent.
 
     Attributes:
-        vertex_type: Always :attr:`~VertexType.BLOCK_QUOTE`.
-            Serialized as ``'vertex-type'``.
-        text: Block string with the leading block-quote marker stripped.
-        fancy: Whether to render with the decorated quote/attribution treatment — an
-            oversize opening quotation mark, the first body line as a bold quotation, and
-            any following lines as an italic attribution — instead of a plain block quote.
-            Names the rendering *intent* rather than any source syntax, keeping the model
-            agnostic of where the distinction came from.
+        BLOCK: A plain block quote (a standard Markdown ``> text`` or a Roam-native ``[[>]] text``
+            quote), rendered with the conventional left rule.
+        PULL: A pull quote (a Roam ``[[>]] [[!QUOTE]] text`` block), rendered with the decorated
+            treatment — an oversize opening quotation mark, a bold quotation, and an optional italic
+            attribution.
     """
 
-    vertex_type: Literal[VertexType.BLOCK_QUOTE] = Field(
-        default=VertexType.BLOCK_QUOTE,
+    BLOCK = "block"
+    PULL = "pull"
+
+
+class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
+    """Normalized (transcribed) form of a Roam quote-block node.
+
+    Produced from any of the three Roam quote forms: a standard Markdown block quote (``> text``),
+    a Roam-native block quote (``[[>]] text``), or a Roam pull quote (``[[>]] [[!QUOTE]] text``).
+    :attr:`quote_type` records which presentation applies.
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.QUOTE_BLOCK`.
+            Serialized as ``'vertex-type'``.
+        quote_type: :attr:`QuoteType.BLOCK` for a plain block quote, :attr:`QuoteType.PULL` for a
+            pull quote (the decorated treatment).
+        quote: The quotation text, with the leading quote marker stripped.
+        attribution: The attribution text — a pull quote's body lines after the first — or ``None``;
+            always ``None`` for a plain block quote.
+    """
+
+    vertex_type: Literal[VertexType.QUOTE_BLOCK] = Field(
+        default=VertexType.QUOTE_BLOCK,
         serialization_alias="vertex-type",
-        description="Always VertexType.BLOCK_QUOTE (serialized as 'vertex-type').",
+        description="Always VertexType.QUOTE_BLOCK (serialized as 'vertex-type').",
     )
-    text: str = Field(..., description="Block string with the leading block-quote marker stripped.")
-    fancy: bool = Field(
-        default=False,
-        description="Whether to render the decorated quote/attribution treatment rather than a plain block quote.",
+    quote_type: QuoteType = Field(
+        default=QuoteType.BLOCK,
+        description="Whether this is a plain block quote (BLOCK) or a pull quote (PULL).",
+    )
+    quote: str = Field(..., description="The quotation text, with the leading quote marker stripped.")
+    attribution: str | None = Field(
+        default=None,
+        description="The attribution text (pull quotes only), or None.",
     )
 
 
@@ -558,7 +581,7 @@ type Vertex = (
     | PdfVertex
     | CalloutVertex
     | CodeBlockVertex
-    | BlockQuoteVertex
+    | QuoteBlockVertex
     | TableVertex
     | BlockEmbedVertex
     | PageEmbedVertex
@@ -607,7 +630,7 @@ vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discri
 
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
 :class:`HeadingVertex`, :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
-:class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`BlockQuoteVertex`, :class:`TableVertex`,
+:class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`QuoteBlockVertex`, :class:`TableVertex`,
 :class:`BlockEmbedVertex`, and :class:`PageEmbedVertex`.
 
 Example::

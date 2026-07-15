@@ -33,7 +33,6 @@ from guffin.model.publishing_semantics import (
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
-    BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
@@ -41,6 +40,7 @@ from guffin.model.vertex import (
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -159,8 +159,10 @@ def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
     match vertex:
         case PageVertex():
             return vertex.title
-        case HeadingVertex() | TextVertex() | BlockQuoteVertex():
+        case HeadingVertex() | TextVertex():
             return vertex.text
+        case QuoteBlockVertex():
+            return vertex.quote
         case ImageVertex():
             return vertex.alt_text or vertex.file_name or str(vertex.source)
         case PdfVertex():

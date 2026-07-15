@@ -4,9 +4,8 @@ A callout type's colour is declared once here as an *accent* per
 :class:`~guffin.roam.blockquote.CalloutType`.  Every output format derives its whole callout chrome
 from that single accent, so a given type looks the same everywhere: the PDF passes the accent to
 gentle-clues (which lightens it for the title band and box border), and the EPUB generates CSS that
-uses the accent for the left bar and the same :func:`lighten` for the title band.  ``note`` and
-``quote`` are neutral greys (a note is not an alarm); red is reserved for ``danger``/``failure``/
-``bug``.
+uses the accent for the left bar and the same :func:`lighten` for the title band.  ``note`` is a
+neutral grey (a note is not an alarm); red is reserved for ``danger``/``failure``/``bug``.
 
 Public symbols:
 
@@ -27,7 +26,6 @@ from guffin.roam.blockquote import CalloutType
 CALLOUT_ACCENT: Final[dict[CalloutType, str]] = {
     CalloutType.INFO: "#4a90d9",
     CalloutType.NOTE: "#888888",
-    CalloutType.QUOTE: "#9e9e9e",
     CalloutType.EXAMPLE: "#7e57c2",
     CalloutType.SUMMARY: "#00acc1",
     CalloutType.QUESTION: "#f9a825",

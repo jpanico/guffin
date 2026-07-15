@@ -51,7 +51,7 @@ blockquote {
 }
 
 /*
- * Fancy block quote (Roam-native [[>]] quotes). guffin emits
+ * Pull quote (Roam [[>]] [[!QUOTE]]). guffin emits
  * <div class="fancy-quote"> with an inner <div class="fancy-quote-text"> (the quotation) and,
  * when present, <div class="fancy-quote-attribution"> (the attribution). A pull-quote treatment
  * (mirroring the PDF): the quotation is bold at 1.5x body size in a serif register (matching the

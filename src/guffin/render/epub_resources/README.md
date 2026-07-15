@@ -30,7 +30,7 @@ Notes on GFM-pipeline constructs that are handled differently here:
 - **image** — the GFM image filter is not applied: Pandoc's EPUB writer natively embeds local-path
   images into the package, so content images must reach the writer as Pandoc `Image` elements rather
   than raw `<img>` HTML.
-- **fancy quote** — the decorated Roam-native block quote needs **no filter** at all: Pandoc's EPUB
+- **fancy quote** — the pull quote ([[>]] [[!QUOTE]]) needs **no filter** at all: Pandoc's EPUB
   writer renders the `<div class="fancy-quote">` (with its `fancy-quote-text` / `fancy-quote-attribution`
   sub-`div`s) natively, and `epub.css` supplies the whole pull-quote treatment (mirroring the PDF) — the
   serif register, the bold 1.5x quotation with an oversize opening quote (a `::before` glyph on the first

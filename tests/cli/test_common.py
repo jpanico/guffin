@@ -24,12 +24,12 @@ from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.publishing_semantics import PublishingSemantics
 from guffin.model.vertex import (
     BlockEmbedVertex,
-    BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    QuoteBlockVertex,
     TableVertex,
     TextVertex,
     Vertex,
@@ -68,9 +68,9 @@ class TestDeduceOutFileStem:
         tree = _tree(TextVertex(uid="text00001", text="Some plain text"))
         assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "Some_plain_text.default"
 
-    def test_block_quote_uses_text(self) -> None:
-        """A block-quote root derives its stem from the block text."""
-        tree = _tree(BlockQuoteVertex(uid="quote0001", text="A quoted line"))
+    def test_quote_block_uses_quote(self) -> None:
+        """A quote-block root derives its stem from the quotation text."""
+        tree = _tree(QuoteBlockVertex(uid="quote0001", quote="A quoted line"))
         assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "A_quoted_line.default"
 
     def test_code_block_uses_code(self) -> None:

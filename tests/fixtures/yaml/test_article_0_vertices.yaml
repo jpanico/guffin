@@ -102,34 +102,34 @@
     \ 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n            print(\"\
     Buzz\")\n        else:\n            print(i)"
   language: python
-- vertex_type: guffin/block-quote
+- vertex_type: guffin/quote-block
   uid: Yz0pqYfBh
-  text: This is a *Markdown standard* single line **Block Quote**
-  fancy: false
-- vertex_type: guffin/block-quote
+  quote_type: block
+  quote: This is a *Markdown standard* single line **Block Quote**
+- vertex_type: guffin/quote-block
   uid: 6bcyfVpL2
-  text: 'This is a Markdown standard multi-line Block Quote
+  quote_type: block
+  quote: 'This is a Markdown standard multi-line Block Quote
 
     this is the *2nd line*
 
     - this is the **3rd line**'
-  fancy: false
-- vertex_type: guffin/block-quote
+- vertex_type: guffin/quote-block
   uid: gq_29_H-7
   refs:
   - OexZiLR_O
-  text: This is a *Roam standard* single line **Block Quote**
-  fancy: true
-- vertex_type: guffin/block-quote
+  quote_type: block
+  quote: This is a *Roam standard* single line **Block Quote**
+- vertex_type: guffin/quote-block
   uid: r09kXvUg-
   refs:
   - OexZiLR_O
-  text: 'This is a Roam standard multi-line Block Quote
+  quote_type: block
+  quote: 'This is a Roam standard multi-line Block Quote
 
     this is the *2nd line*
 
     - this is the **3rd line**'
-  fancy: true
 - vertex_type: guffin/text
   uid: mGk4VnMT3
   children:

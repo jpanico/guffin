@@ -2034,11 +2034,12 @@
   text: '**The Resulting Terror:** Believing wholeheartedly in this promise, the assassins
     became fearless, willing to undertake any murder requested by the Old Man. Consequently,
     he became feared by kings and princes throughout the region.'
-- vertex_type: guffin/block-quote
+- vertex_type: guffin/quote-block
   uid: 1c-n1cPA_
   refs:
   - OexZiLR_O
-  text: 'Go thou and slay So and So; and when thou returnest my Angels shall bear
+  quote_type: block
+  quote: 'Go thou and slay So and So; and when thou returnest my Angels shall bear
     thee into Paradise. And shouldst thou die, natheless even so will I send my Angels
     to carry thee back into Paradise.
 
@@ -4076,11 +4077,12 @@
   text: '**The Resulting Terror:** Believing wholeheartedly in this promise, the assassins
     became fearless, willing to undertake any murder requested by the Old Man. Consequently,
     he became feared by kings and princes throughout the region.'
-- vertex_type: guffin/block-quote
+- vertex_type: guffin/quote-block
   uid: ChlIfjFoZ
   refs:
   - OexZiLR_O
-  text: 'Go thou and slay So and So; and when thou returnest my Angels shall bear
+  quote_type: block
+  quote: 'Go thou and slay So and So; and when thou returnest my Angels shall bear
     thee into Paradise. And shouldst thou die, natheless even so will I send my Angels
     to carry thee back into Paradise.
 

@@ -109,7 +109,6 @@ from guffin.model.publishing_semantics import (
 )
 from guffin.model.vertex import (
     BlockEmbedVertex,
-    BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
     EmbedVertex,
@@ -118,6 +117,8 @@ from guffin.model.vertex import (
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
     TableVertex,
     TextVertex,
     Vertex,
@@ -197,7 +198,7 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
     PdfVertex,
     CodeBlockVertex,
     CalloutVertex,
-    BlockQuoteVertex,
+    QuoteBlockVertex,
     TableVertex,
 )
 
@@ -965,8 +966,8 @@ def _code_block_vertex_to_blocks(vertex: CodeBlockVertex) -> list[pf.Block]:
     return [pf.CodeBlock(vertex.code, classes=[vertex.language.value])]
 
 
-def _block_quote_vertex_to_blocks(
-    vertex: BlockQuoteVertex,
+def _quote_block_vertex_to_blocks(
+    vertex: QuoteBlockVertex,
     vertex_tree: VertexTree,
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
@@ -974,27 +975,26 @@ def _block_quote_vertex_to_blocks(
     inherited_layout: ChildrenLayout,
     depth: int,
 ) -> list[pf.Block]:
-    """Render a :class:`~guffin.vertex.BlockQuoteVertex` to Pandoc block elements.
+    """Render a :class:`~guffin.vertex.QuoteBlockVertex` to Pandoc block elements.
 
-    A plain block quote (:attr:`~guffin.vertex.BlockQuoteVertex.fancy` is ``False``) renders to a
-    :class:`~panflute.BlockQuote`.  The vertex text is rejoined via
-    :func:`~guffin.common.markdown.hard_broken_markdown` — consecutive plain lines become one
-    paragraph with hard line breaks (matching Roam's shift-enter semantics), while embedded list
-    items and blank-line paragraph boundaries stay distinct blocks — then parsed at block level via
-    :func:`parse_block_md` inside the :class:`~panflute.BlockQuote`.  Child vertices are rendered
-    recursively and appended inside the same :class:`~panflute.BlockQuote`.
+    A plain block quote (:attr:`~guffin.vertex.QuoteBlockVertex.quote_type` is
+    :attr:`~guffin.vertex.QuoteType.BLOCK`) renders to a :class:`~panflute.BlockQuote`.  The
+    vertex's ``quote`` is rejoined via :func:`~guffin.common.markdown.hard_broken_markdown` —
+    consecutive plain lines become one paragraph with hard line breaks (matching Roam's shift-enter
+    semantics), while embedded list items and blank-line paragraph boundaries stay distinct blocks —
+    then parsed at block level via :func:`parse_block_md` inside the :class:`~panflute.BlockQuote`.
+    Child vertices are rendered recursively and appended inside the same :class:`~panflute.BlockQuote`.
 
-    A *fancy* block quote (:attr:`~guffin.vertex.BlockQuoteVertex.fancy` is ``True``) instead
-    produces a class-tagged :class:`~panflute.Div` for the decorated quote/attribution treatment:
-    the vertex text is split on its first line break into the **quotation** (first line) and the
-    **attribution** (any following lines), wrapped as a ``fancy-quote-text`` sub-:class:`~panflute.Div`
-    and, when present, a ``fancy-quote-attribution`` sub-:class:`~panflute.Div` inside an outer
-    ``fancy-quote`` :class:`~panflute.Div`.  The Div carries no emphasis or glyph of its own —
-    each output format applies its own styling (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``,
-    or EPUB CSS on ``div.fancy-quote``).  Child vertices follow at the end, as for the plain form.
+    A pull quote (:attr:`~guffin.vertex.QuoteType.PULL`) instead produces a class-tagged
+    :class:`~panflute.Div` for the decorated treatment: the vertex's ``quote`` becomes a
+    ``fancy-quote-text`` sub-:class:`~panflute.Div` and its ``attribution`` (when present) a
+    ``fancy-quote-attribution`` sub-:class:`~panflute.Div`, inside an outer ``fancy-quote``
+    :class:`~panflute.Div`.  The Div carries no emphasis or glyph of its own — each output format
+    applies its own styling (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``, or EPUB CSS on
+    ``div.fancy-quote``).  Child vertices follow at the end, as for the plain form.
 
     Args:
-        vertex: The block-quote vertex to render.
+        vertex: The quote-block vertex to render.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         asset_files: Mapping from asset vertex UID (image or PDF) to local
             asset file path.
@@ -1004,8 +1004,8 @@ def _block_quote_vertex_to_blocks(
         depth: Tree depth of *vertex*.
 
     Returns:
-        A single-element list containing the :class:`~panflute.BlockQuote` (plain) or the
-        ``fancy-quote`` :class:`~panflute.Div` (fancy).
+        A single-element list containing the :class:`~panflute.BlockQuote` (BLOCK) or the
+        ``fancy-quote`` :class:`~panflute.Div` (PULL).
     """
     child_blocks: Final[list[pf.Block]] = build_child_blocks(
         vertex.children or [],
@@ -1017,18 +1017,17 @@ def _block_quote_vertex_to_blocks(
         depth + 1,
         vertex.attribute_assignments,
     )
-    if vertex.fancy:
-        quote_part, _, attribution_part = vertex.text.partition("\n")
+    if vertex.quote_type is QuoteType.PULL:
         fancy_blocks: list[pf.Block] = [
-            pf.Div(*parse_block_md(hard_broken_markdown(quote_part)), classes=["fancy-quote-text"])
+            pf.Div(*parse_block_md(hard_broken_markdown(vertex.quote)), classes=["fancy-quote-text"])
         ]
-        if attribution_part.strip():
+        if vertex.attribution is not None:
             fancy_blocks.append(
-                pf.Div(*parse_block_md(hard_broken_markdown(attribution_part)), classes=["fancy-quote-attribution"])
+                pf.Div(*parse_block_md(hard_broken_markdown(vertex.attribution)), classes=["fancy-quote-attribution"])
             )
         fancy_blocks.extend(child_blocks)
         return [pf.Div(*fancy_blocks, classes=["fancy-quote"])]
-    inner_blocks: list[pf.Block] = parse_block_md(hard_broken_markdown(vertex.text))
+    inner_blocks: list[pf.Block] = parse_block_md(hard_broken_markdown(vertex.quote))
     inner_blocks.extend(child_blocks)
     return [pf.BlockQuote(*inner_blocks)]
 
@@ -1201,8 +1200,8 @@ def _vertex_to_blocks(
             )
         case CodeBlockVertex():
             return _code_block_vertex_to_blocks(vertex)
-        case BlockQuoteVertex():
-            return _block_quote_vertex_to_blocks(
+        case QuoteBlockVertex():
+            return _quote_block_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
         case TableVertex():
@@ -1488,7 +1487,7 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
       :attr:`~guffin.render.date_format.DateFormat.ROAM_LONG` renders its date in that
       format instead of the title (``ROAM_LONG`` *is* the title, so it falls through unchanged).
     - :class:`~guffin.vertex.HeadingVertex`, :class:`~guffin.vertex.TextVertex`,
-      :class:`~guffin.vertex.BlockQuoteVertex` — the destination's converted text inlines.
+      :class:`~guffin.vertex.QuoteBlockVertex` — the destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
       embed, otherwise a :class:`~panflute.Link` to the image source.
     - :class:`~guffin.vertex.PdfVertex` — a :class:`~panflute.Link` to the PDF source.
@@ -1531,8 +1530,8 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
                 return [pf.Code(vertex.code, classes=[vertex.language.value])]
             case CalloutVertex():
                 return display
-            case BlockQuoteVertex():
-                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
+            case QuoteBlockVertex():
+                return inline_map.get(vertex.quote, [pf.Str(vertex.quote)])
             case TableVertex():
                 return display
             case BlockEmbedVertex() | PageEmbedVertex():

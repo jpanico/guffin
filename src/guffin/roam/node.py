@@ -4,7 +4,7 @@ Public symbols:
 
 - :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``PLAIN_BLOCK``,
   ``IMAGE_BLOCK``, ``HEADING_BLOCK``, ``CALLOUT_BLOCK``,
-  ``CODE_BLOCK``, ``BLOCK_QUOTE``, ``NATIVE_TABLE``, ``EMBED_BLOCK``, ``EMBED_PAGE``, ``PDF_BLOCK``,
+  ``CODE_BLOCK``, ``QUOTE_BLOCK``, ``NATIVE_TABLE``, ``EMBED_BLOCK``, ``EMBED_PAGE``, ``PDF_BLOCK``,
   ``ATTRIBUTE_BLOCK``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
@@ -35,7 +35,7 @@ from pydantic import (
 
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel, is_fenced_code_block
-from guffin.roam.blockquote import CALLOUT_RE, is_roam_block_quote
+from guffin.roam.blockquote import CALLOUT_RE, is_quote_block
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
@@ -76,13 +76,14 @@ class NodeType(enum.StrEnum):
       block content is the heading text.
     - **IMAGE_BLOCK**: ``string`` consists solely of a single Markdown image link to a Cloud Firestore URL.
       Produced by drag-and-drop into the Roam UI; supports image-resize properties via ``props``.
-    - **CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the twelve
-      recognised callout type keywords (``INFO``, ``QUOTE``, ``EXAMPLE``, ``NOTE``, ``WARNING``, ``DANGER``,
+    - **CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the eleven
+      recognised callout type keywords (``INFO``, ``EXAMPLE``, ``NOTE``, ``WARNING``, ``DANGER``,
       ``TIP``, ``SUMMARY``, ``SUCCESS``, ``QUESTION``, ``FAILURE``, ``BUG``).
     - **CODE_BLOCK**: ``string``, with surrounding whitespace trimmed, is a CommonMark fenced code
       block (opened by a ```` ``` ```` or ``~~~`` fence).
-    - **BLOCK_QUOTE**: ``string`` starts with ``[[>]]`` but does *not* match the callout marker
-      pattern ``[[>]] [[!<TYPE>]]`` — i.e. a plain ``[[>]]``-prefixed blockquote.
+    - **QUOTE_BLOCK**: any quote block — ``string`` starts with ``>`` or ``[[>]]`` but does *not* match
+      the callout marker ``[[>]] [[!<TYPE>]]``.  This includes the pull quote ``[[>]] [[!QUOTE]]`` (``QUOTE``
+      is not a callout type), which the transcriber distinguishes from a plain block quote.
     - **NATIVE_TABLE**: ``string``, with surrounding whitespace trimmed, is one of
       :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS` (``"{{table}}"`` /
       ``"{{[[table]]}}"``); its child blocks form the table rows.
@@ -107,7 +108,7 @@ class NodeType(enum.StrEnum):
     IMAGE_BLOCK = "roam/image-block"
     CALLOUT_BLOCK = "roam/callout-block"
     CODE_BLOCK = "roam/code-block"
-    BLOCK_QUOTE = "roam/quote-block"
+    QUOTE_BLOCK = "roam/quote-block"
     NATIVE_TABLE = "roam/table"
     EMBED_BLOCK = "roam/embed-block"
     EMBED_PAGE = "roam/embed-page"
@@ -362,7 +363,7 @@ def node_type(node: RoamNode) -> NodeType:
     :attr:`NodeType.HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
     :attr:`NodeType.CALLOUT_BLOCK` when ``string`` matches the full callout marker pattern
     (as matched by :data:`~guffin.roam.blockquote.CALLOUT_RE`),
-    :attr:`NodeType.BLOCK_QUOTE` when :func:`~guffin.roam.blockquote.is_roam_block_quote`
+    :attr:`NodeType.QUOTE_BLOCK` when :func:`~guffin.roam.blockquote.is_quote_block`
     returns ``True`` for ``string`` — i.e. a Roam ``[[>]]``-prefixed blockquote or a standard
     Markdown ``>``-prefixed blockquote,
     :attr:`NodeType.CODE_BLOCK` when the trimmed ``string`` is a fenced code block
@@ -387,7 +388,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.IMAGE_BLOCK` if ``string`` is solely a single Markdown image link;
         :attr:`NodeType.HEADING_BLOCK` if ``heading`` or ``props['ah-level']`` is set;
         :attr:`NodeType.CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
-        :attr:`NodeType.BLOCK_QUOTE` if :func:`~guffin.roam.blockquote.is_roam_block_quote` is ``True``;
+        :attr:`NodeType.QUOTE_BLOCK` if :func:`~guffin.roam.blockquote.is_quote_block` is ``True``;
         :attr:`NodeType.CODE_BLOCK` if the trimmed ``string`` is a CommonMark fenced code block;
         :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` is one of
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`;
@@ -408,8 +409,8 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.HEADING_BLOCK
     if CALLOUT_RE.match(string):
         return NodeType.CALLOUT_BLOCK
-    if is_roam_block_quote(string):
-        return NodeType.BLOCK_QUOTE
+    if is_quote_block(string):
+        return NodeType.QUOTE_BLOCK
     if is_fenced_code_block(string.strip()):
         return NodeType.CODE_BLOCK
     if string.strip() in ROAM_NATIVE_TABLE_MARKERS:

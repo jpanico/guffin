@@ -9,8 +9,8 @@ from guffin.roam.blockquote import (
     CALLOUT_RE,
     CalloutType,
     RoamCallout,
-    is_roam_native_block_quote,
     parse_callout,
+    parse_pull_quote,
 )
 
 _FIRESTORE_URL: Final[str] = (
@@ -45,8 +45,8 @@ class TestCalloutRE:
         assert CALLOUT_RE.match("[[>]] [[!INFO]] Title\nLine 1\nLine 2\nLine 3") is not None
 
     @pytest.mark.parametrize("callout_type", list(CalloutType))
-    def test_matches_all_twelve_types(self, callout_type: CalloutType) -> None:
-        """Test that each of the twelve recognised callout type keywords matches."""
+    def test_matches_all_eleven_types(self, callout_type: CalloutType) -> None:
+        """Test that each of the eleven recognised callout type keywords matches."""
         assert CALLOUT_RE.match(f"[[>]] [[!{callout_type}]] Title") is not None
 
     def test_no_match_plain_string(self) -> None:
@@ -88,8 +88,8 @@ class TestCalloutRE:
         assert m.group("callout_type") == "WARNING"
 
     @pytest.mark.parametrize("callout_type", list(CalloutType))
-    def test_callout_type_group_all_twelve(self, callout_type: CalloutType) -> None:
-        """Test that callout_type captures each of the twelve recognised type keywords."""
+    def test_callout_type_group_all_eleven(self, callout_type: CalloutType) -> None:
+        """Test that callout_type captures each of the eleven recognised type keywords."""
         m = CALLOUT_RE.match(f"[[>]] [[!{callout_type}]] Title")
         assert m is not None
         assert m.group("callout_type") == callout_type
@@ -179,8 +179,8 @@ class TestCallout:
         assert result.callout_type is CalloutType.WARNING
 
     @pytest.mark.parametrize("callout_type", list(CalloutType))
-    def test_all_twelve_callout_types(self, callout_type: CalloutType) -> None:
-        """All twelve callout type keywords are parsed to the correct CalloutType member."""
+    def test_all_eleven_callout_types(self, callout_type: CalloutType) -> None:
+        """All eleven callout type keywords are parsed to the correct CalloutType member."""
         result = parse_callout(f"[[>]] [[!{callout_type}]]")
         assert result is not None
         assert result.callout_type is CalloutType(callout_type)
@@ -228,30 +228,34 @@ class TestCallout:
             parse_callout(None)  # type: ignore[arg-type]
 
 
-class TestIsRoamNativeBlockQuote:
-    """Tests for is_roam_native_block_quote()."""
+class TestParsePullQuote:
+    """Tests for parse_pull_quote()."""
 
-    def test_true_for_roam_native_quote(self) -> None:
-        """A plain [[>]]-prefixed block quote is Roam-native."""
-        assert is_roam_native_block_quote("[[>]] a quotation") is True
+    def test_quote_only(self) -> None:
+        """A single-line pull quote returns the quote with no attribution."""
+        assert parse_pull_quote("[[>]] [[!QUOTE]] The quotation") == ("The quotation", None)
 
-    def test_true_for_roam_native_quote_without_space(self) -> None:
-        """The prefix need not be followed by a space."""
-        assert is_roam_native_block_quote("[[>]]a quotation") is True
+    def test_quote_and_attribution(self) -> None:
+        """A pull quote's first line is the quote; the rest is the attribution."""
+        assert parse_pull_quote("[[>]] [[!QUOTE]] The quotation\n— Someone") == ("The quotation", "— Someone")
 
-    def test_false_for_standard_markdown_quote(self) -> None:
-        """A standard Markdown > block quote is not Roam-native."""
-        assert is_roam_native_block_quote("> a quotation") is False
+    def test_multiline_attribution(self) -> None:
+        """Attribution captures every line after the first, embedded newlines preserved."""
+        assert parse_pull_quote("[[>]] [[!QUOTE]] Q\nline 1\nline 2") == ("Q", "line 1\nline 2")
 
-    def test_false_for_callout(self) -> None:
-        """A [[>]] [[!TYPE]] callout is not a plain Roam-native block quote."""
-        assert is_roam_native_block_quote("[[>]] [[!INFO]] a callout") is False
+    def test_none_for_plain_roam_block_quote(self) -> None:
+        """A plain [[>]] block quote is not a pull quote."""
+        assert parse_pull_quote("[[>]] a quotation") is None
 
-    def test_false_for_plain_text(self) -> None:
-        """Text with no block-quote marker is not Roam-native."""
-        assert is_roam_native_block_quote("just some text") is False
+    def test_none_for_standard_markdown_quote(self) -> None:
+        """A standard Markdown > block quote is not a pull quote."""
+        assert parse_pull_quote("> a quotation") is None
+
+    def test_none_for_other_callout(self) -> None:
+        """A non-QUOTE callout is not a pull quote."""
+        assert parse_pull_quote("[[>]] [[!INFO]] a callout") is None
 
     def test_raises_validation_error_for_null_input(self) -> None:
         """Raises ValidationError when None is passed."""
         with pytest.raises(ValidationError):
-            is_roam_native_block_quote(None)  # type: ignore[arg-type]
+            parse_pull_quote(None)  # type: ignore[arg-type]

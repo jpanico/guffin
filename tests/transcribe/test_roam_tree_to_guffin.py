@@ -12,7 +12,6 @@ from guffin.model.attribute import AttributeDomain, LiteralValue, ReferenceValue
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
-    BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
@@ -20,6 +19,8 @@ from guffin.model.vertex import (
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
     TableVertex,
     TextVertex,
     Vertex,
@@ -37,7 +38,6 @@ from guffin.transcribe.roam_tree_to_guffin import (
     _is_meta_block,
     build_view_map,
     to_block_embed_vertex,
-    to_block_quote_vertex,
     to_callout_vertex,
     to_code_block_vertex,
     to_heading_vertex,
@@ -45,6 +45,7 @@ from guffin.transcribe.roam_tree_to_guffin import (
     to_page_embed_vertex,
     to_page_vertex,
     to_pdf_vertex,
+    to_quote_block_vertex,
     to_render_bundle,
     to_table_vertex,
     to_text_vertex,
@@ -240,11 +241,11 @@ class TestVertexType:
 
     def test_md_block_quote_returns_guffin_block_quote(self) -> None:
         """Test that a standard Markdown block-quote node classifies as BLOCK_QUOTE."""
-        assert vertex_type(_make_block_quote(string="> quoted text")) is VertexType.BLOCK_QUOTE
+        assert vertex_type(_make_block_quote(string="> quoted text")) is VertexType.QUOTE_BLOCK
 
     def test_roam_block_quote_returns_guffin_block_quote(self) -> None:
         """Test that a Roam-style block-quote node classifies as BLOCK_QUOTE."""
-        assert vertex_type(_make_block_quote(string="[[>]] quoted text")) is VertexType.BLOCK_QUOTE
+        assert vertex_type(_make_block_quote(string="[[>]] quoted text")) is VertexType.QUOTE_BLOCK
 
     def test_bare_table_marker_returns_guffin_table(self) -> None:
         """Test that a bare {{table}} marker node classifies as TABLE."""
@@ -757,74 +758,92 @@ class TestToCodeBlockVertex:
 
 
 # ---------------------------------------------------------------------------
-# TestToBlockQuoteVertex
+# TestToQuoteBlockVertex
 # ---------------------------------------------------------------------------
 
 
-class TestToBlockQuoteVertex:
-    """Tests for to_block_quote_vertex."""
+class TestToQuoteBlockVertex:
+    """Tests for to_quote_block_vertex."""
 
     def test_returns_block_quote_vertex(self) -> None:
-        """Test that a block-quote node builds a BlockQuoteVertex."""
+        """Test that a block-quote node builds a QuoteBlockVertex."""
         node = _make_block_quote()
-        assert isinstance(to_block_quote_vertex(node, _node_tree(node)), BlockQuoteVertex)
+        assert isinstance(to_quote_block_vertex(node, _node_tree(node)), QuoteBlockVertex)
 
-    def test_vertex_type_is_guffin_block_quote(self) -> None:
-        """Test that the vertex_type is BLOCK_QUOTE."""
+    def test_vertex_type_is_guffin_quote_block(self) -> None:
+        """Test that the vertex_type is QUOTE_BLOCK."""
         node = _make_block_quote()
-        assert to_block_quote_vertex(node, _node_tree(node)).vertex_type is VertexType.BLOCK_QUOTE
+        assert to_quote_block_vertex(node, _node_tree(node)).vertex_type is VertexType.QUOTE_BLOCK
 
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_block_quote(uid="bquid0002")
-        assert to_block_quote_vertex(node, _node_tree(node)).uid == "bquid0002"
+        assert to_quote_block_vertex(node, _node_tree(node)).uid == "bquid0002"
 
-    def test_md_marker_stripped_from_text(self) -> None:
-        """Test that the standard Markdown > marker is stripped, leaving only the content."""
+    def test_md_marker_stripped_into_quote(self) -> None:
+        """Test that the standard Markdown > marker is stripped, leaving only the quotation."""
         node = _make_block_quote(string="> Hello, world!")
-        assert to_block_quote_vertex(node, _node_tree(node)).text == "Hello, world!"
+        vtx = to_quote_block_vertex(node, _node_tree(node))
+        assert vtx.quote == "Hello, world!"
+        assert vtx.attribution is None
 
-    def test_roam_marker_stripped_from_text(self) -> None:
-        """Test that the Roam [[>]] marker is stripped, leaving only the content."""
+    def test_roam_marker_stripped_into_quote(self) -> None:
+        """Test that the Roam [[>]] marker is stripped, leaving only the quotation."""
         node = _make_block_quote(string="[[>]] Hello, world!")
-        assert to_block_quote_vertex(node, _node_tree(node)).text == "Hello, world!"
+        assert to_quote_block_vertex(node, _node_tree(node)).quote == "Hello, world!"
 
-    def test_standard_markdown_quote_is_not_fancy(self) -> None:
-        """Test that a standard Markdown > block quote is not fancy."""
+    def test_standard_markdown_quote_is_block(self) -> None:
+        """Test that a standard Markdown > block quote is QuoteType.BLOCK."""
         node = _make_block_quote(string="> Hello, world!")
-        assert to_block_quote_vertex(node, _node_tree(node)).fancy is False
+        assert to_quote_block_vertex(node, _node_tree(node)).quote_type is QuoteType.BLOCK
 
-    def test_roam_native_quote_is_fancy(self) -> None:
-        """Test that a Roam-native [[>]] block quote is fancy."""
+    def test_roam_native_quote_is_block(self) -> None:
+        """Test that a Roam-native [[>]] block quote is QuoteType.BLOCK (not a pull quote)."""
         node = _make_block_quote(string="[[>]] Hello, world!")
-        assert to_block_quote_vertex(node, _node_tree(node)).fancy is True
+        assert to_quote_block_vertex(node, _node_tree(node)).quote_type is QuoteType.BLOCK
+
+    def test_pull_quote_is_pull_with_quote_and_attribution(self) -> None:
+        """Test that a [[>]] [[!QUOTE]] block is QuoteType.PULL with split quote/attribution."""
+        node = _make_block_quote(string="[[>]] [[!QUOTE]] The quotation\n— Someone")
+        vtx = to_quote_block_vertex(node, _node_tree(node))
+        assert vtx.quote_type is QuoteType.PULL
+        assert vtx.quote == "The quotation"
+        assert vtx.attribution == "— Someone"
+
+    def test_pull_quote_without_attribution(self) -> None:
+        """Test that a single-line pull quote has no attribution."""
+        node = _make_block_quote(string="[[>]] [[!QUOTE]] Just the quote")
+        vtx = to_quote_block_vertex(node, _node_tree(node))
+        assert vtx.quote_type is QuoteType.PULL
+        assert vtx.quote == "Just the quote"
+        assert vtx.attribution is None
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""
         node = _make_block_quote()
-        assert to_block_quote_vertex(node, _node_tree(node)).children is None
+        assert to_quote_block_vertex(node, _node_tree(node)).children is None
 
     def test_refs_none_when_no_refs(self) -> None:
         """Test that refs is None when the node has no refs."""
         node = _make_block_quote()
-        assert to_block_quote_vertex(node, _node_tree(node)).refs is None
+        assert to_quote_block_vertex(node, _node_tree(node)).refs is None
 
     def test_missing_string_raises_value_error(self) -> None:
         """Test that a node without a string raises ValueError."""
         node = _make_page()
         with pytest.raises(ValueError, match="no 'string'"):
-            to_block_quote_vertex(node, _node_tree(node))
+            to_quote_block_vertex(node, _node_tree(node))
 
     def test_non_quote_string_raises_value_error(self) -> None:
         """Test that a plain string that is not a block quote raises ValueError."""
         node = _make_block_quote(string="Just plain text")
         with pytest.raises(ValueError):
-            to_block_quote_vertex(node, _node_tree(node))
+            to_quote_block_vertex(node, _node_tree(node))
 
     def test_null_node_raises_validation_error(self) -> None:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
-            to_block_quote_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
+            to_quote_block_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------
@@ -877,13 +896,13 @@ class TestTranscribeNode:
         assert v.vertex_type is VertexType.TEXT
         assert v.text == "Body text"
 
-    def test_transcribes_block_quote_node(self) -> None:
-        """Test that a block-quote node is transcribed to a BLOCK_QUOTE vertex."""
+    def test_transcribes_quote_block_node(self) -> None:
+        """Test that a quote-block node is transcribed to a QUOTE_BLOCK vertex."""
         node = _make_block_quote(string="> Quoted content")
         v = transcribe_standalone_node(node, _node_tree(node))
-        assert isinstance(v, BlockQuoteVertex)
-        assert v.vertex_type is VertexType.BLOCK_QUOTE
-        assert v.text == "Quoted content"
+        assert isinstance(v, QuoteBlockVertex)
+        assert v.vertex_type is VertexType.QUOTE_BLOCK
+        assert v.quote == "Quoted content"
 
     def test_children_resolved_via_id_map(self) -> None:
         """Test that transcribe_standalone_node resolves children through the id_map."""

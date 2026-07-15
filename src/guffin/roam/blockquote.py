@@ -1,19 +1,22 @@
-"""Roam Research block-quote constructs: the ``[[>]]`` marker, its callout subtype, and helpers.
+"""Roam Research quote-block constructs: the ``[[>]]`` marker, its callout and pull-quote subtypes.
 
-In Roam's Markdown model ``[[>]]`` is the block-quote marker; a callout is a styled
-subtype of block quote whose marker is ``[[>]] [[!<TYPE>]]``.
+In Roam's Markdown model ``[[>]]`` is the block-quote marker.  A **callout** is a styled subtype
+whose marker is ``[[>]] [[!<TYPE>]]`` (``<TYPE>`` one of the eleven callout keywords).  The
+``[[>]] [[!QUOTE]]`` marker is treated separately, as a **pull quote** (quotation + attribution),
+not a callout.
 
 Public symbols:
 
 - **Pattern constants**: :data:`ROAM_BLOCK_QUOTE_PREFIX` — string prefix for a Roam block
-  quote (and callout); :data:`CALLOUT_RE` — compiled regex that matches and decomposes a full
-  callout block string.
-- **Enumerations**: :class:`CalloutType` — the twelve Roam callout type keywords.
+  quote (and callout / pull quote); :data:`CALLOUT_RE` — compiled regex that matches and decomposes
+  a full callout block string; :data:`PULL_QUOTE_RE` — compiled regex that matches and decomposes a
+  ``[[>]] [[!QUOTE]]`` pull-quote block string.
+- **Enumerations**: :class:`CalloutType` — the eleven Roam callout type keywords.
 - **Callout model**: :class:`RoamCallout` — parsed decomposition of a callout block string.
-- **Callout parser**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`.
-- **Block-quote predicates**: :func:`is_roam_block_quote` — return ``True`` when a string is a
-  Roam or standard Markdown block quote; :func:`is_roam_native_block_quote` — the Roam-specific
-  subset (a ``[[>]]`` block quote that is not a callout).
+- **Parsers**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`;
+  :func:`parse_pull_quote` — parse a ``[[>]] [[!QUOTE]]`` block string into its ``(quote, attribution)``.
+- **Quote-block predicate**: :func:`is_quote_block` — return ``True`` when a string is any of the
+  three quote-block forms (standard ``>``, Roam-native ``[[>]]``, or ``[[>]] [[!QUOTE]]`` pull quote).
 - **Block-quote marker stripper**: :func:`strip_block_quote_marker` — strip the leading block-quote
   marker from a block-quote string and return the remaining content.
 """
@@ -32,22 +35,24 @@ ROAM_BLOCK_QUOTE_PREFIX: Final[str] = "[[>]]"
 In Roam's Markdown model ``[[>]]`` is the block-quote marker; callouts are a
 styled subtype of block quote whose marker is ``[[>]] [[!<TYPE>]]``.  Used as
 a fast pre-filter before applying :data:`CALLOUT_RE` and by
-:func:`is_roam_block_quote`.
+:func:`is_quote_block`.
 """
 
 
 class CalloutType(enum.StrEnum):
-    """The twelve Roam callout type keywords as they appear in the raw block string marker.
+    """The eleven Roam callout type keywords as they appear in the raw block string marker.
 
     The marker format is ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of these values
     (always uppercase in the Roam source).
 
     These map one-to-one to the lowercase :class:`~guffin.vertex.CalloutVertex.CalloutType`
     values in the export model; convert with ``CalloutVertex.CalloutType(member.lower())``.
+
+    Note ``QUOTE`` is deliberately absent: ``[[>]] [[!QUOTE]]`` is a pull quote (see
+    :data:`PULL_QUOTE_RE`), not a callout.
     """
 
     INFO = "INFO"
-    QUOTE = "QUOTE"
     EXAMPLE = "EXAMPLE"
     NOTE = "NOTE"
     WARNING = "WARNING"
@@ -71,13 +76,28 @@ CALLOUT_RE: Final[regex.Pattern[str]] = regex.compile(
 Named groups:
 
 - ``prefix`` — the literal ``[[>]]`` opener.
-- ``callout_type`` — one of the twelve recognised type keywords (``INFO``, ``QUOTE``,
-  ``EXAMPLE``, ``NOTE``, ``WARNING``, ``DANGER``, ``TIP``, ``SUMMARY``, ``SUCCESS``,
-  ``QUESTION``, ``FAILURE``, ``BUG``).
+- ``callout_type`` — one of the eleven recognised type keywords (``INFO``, ``EXAMPLE``,
+  ``NOTE``, ``WARNING``, ``DANGER``, ``TIP``, ``SUMMARY``, ``SUCCESS``, ``QUESTION``,
+  ``FAILURE``, ``BUG``).
 - ``title`` — the remainder of the first line after the marker and any intervening
   whitespace; may be an empty string when no title text is present.
 - ``body`` — everything after the first newline; ``None`` when the string contains no
   newline.  ``regex.DOTALL`` is set so ``.`` matches embedded newlines within the body.
+"""
+
+
+PULL_QUOTE_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"{regex.escape(ROAM_BLOCK_QUOTE_PREFIX)} \[\[!QUOTE\]\]" r"\s*(?P<quote>[^\n]*)(?:\n(?P<attribution>.*))?",
+    regex.DOTALL,
+)
+"""Compiled regex matching and decomposing a Roam ``[[>]] [[!QUOTE]]`` pull-quote block string.
+
+Structurally the same as :data:`CALLOUT_RE` (marker + first line + rest), but keyed to the
+``QUOTE`` marker and named for its pull-quote roles.  Named groups:
+
+- ``quote`` — the quotation: the remainder of the first line after the marker (may be empty).
+- ``attribution`` — everything after the first newline (the attribution line(s)); ``None`` when the
+  string contains no newline.  ``regex.DOTALL`` is set so ``.`` matches embedded newlines.
 """
 
 
@@ -136,44 +156,53 @@ def parse_callout(block_string: str) -> RoamCallout | None:
 
 
 @validate_call
-def is_roam_block_quote(block_string: str) -> bool:
-    """Return ``True`` if *block_string* is a Roam or standard Markdown block quote.
+def parse_pull_quote(block_string: str) -> tuple[str, str | None] | None:
+    """Parse a ``[[>]] [[!QUOTE]]`` pull quote into its ``(quote, attribution)``, or ``None``.
 
-    Recognises two forms:
+    Returns ``None`` when *block_string* is not a ``[[>]] [[!QUOTE]]`` block (see
+    :data:`PULL_QUOTE_RE`).  The quotation is the first line after the marker; the attribution is
+    everything after the first newline, or ``None`` when the block has no further lines.
 
-    - **Standard Markdown**: *block_string* starts with :data:`MD_BLOCK_QUOTE_PREFIX` (``>``).
-    - **Roam-specific**: *block_string* starts with :data:`ROAM_BLOCK_QUOTE_PREFIX` (``[[>]]``) but does
-      not match :data:`CALLOUT_RE` — i.e. a plain ``[[>]]``-prefixed blockquote rather
-      than a typed callout.
+    Args:
+        block_string: The raw block string to parse.
+
+    Returns:
+        A ``(quote, attribution)`` tuple when *block_string* is a pull quote — ``attribution`` is
+        ``None`` when absent — or ``None`` when it is not a pull quote.
+    """
+    match: Final[regex.Match[str] | None] = PULL_QUOTE_RE.match(block_string)
+    if match is None:
+        return None
+    attribution: Final[str | None] = match.group("attribution")
+    return (match.group("quote"), attribution if attribution else None)
+
+
+@validate_call
+def is_quote_block(block_string: str) -> bool:
+    """Return ``True`` if *block_string* is any of the three Roam quote-block forms.
+
+    Recognises:
+
+    - **Standard Markdown block quote**: *block_string* starts with :data:`MD_BLOCK_QUOTE_PREFIX`
+      (``>``).
+    - **Roam-native block quote**: *block_string* starts with :data:`ROAM_BLOCK_QUOTE_PREFIX`
+      (``[[>]]``) and is not a typed callout (does not match :data:`CALLOUT_RE`).
+    - **Pull quote**: ``[[>]] [[!QUOTE]]`` — included by the same test, since ``QUOTE`` is not a
+      :class:`CalloutType` and so does not match :data:`CALLOUT_RE`.
+
+    A typed callout (``[[>]] [[!INFO]]`` …) returns ``False``.  The three quote forms all map to a
+    single ``QUOTE_BLOCK`` node type; the pull quote is distinguished later via
+    :func:`parse_pull_quote`.
 
     Args:
         block_string: The string to test.
 
     Returns:
-        ``True`` when *block_string* matches either the standard or Roam blockquote form.
+        ``True`` when *block_string* is a standard, Roam-native, or pull quote block.
     """
     if block_string.startswith(ROAM_BLOCK_QUOTE_PREFIX):
         return not CALLOUT_RE.match(block_string)
     return block_string.startswith(MD_BLOCK_QUOTE_PREFIX)
-
-
-@validate_call
-def is_roam_native_block_quote(block_string: str) -> bool:
-    """Return ``True`` if *block_string* is a Roam-native block quote (``[[>]]``, not a callout).
-
-    The Roam-specific subset of :func:`is_roam_block_quote`: *block_string* starts with
-    :data:`ROAM_BLOCK_QUOTE_PREFIX` (``[[>]]``) but does not match :data:`CALLOUT_RE`.  A standard
-    Markdown (``>``) block quote returns ``False``.
-
-    Args:
-        block_string: The string to test.
-
-    Returns:
-        ``True`` when *block_string* is a plain ``[[>]]``-prefixed Roam block quote.
-    """
-    if not block_string.startswith(ROAM_BLOCK_QUOTE_PREFIX):
-        return False
-    return not CALLOUT_RE.match(block_string)
 
 
 @validate_call
@@ -185,7 +214,7 @@ def strip_block_quote_marker(block_string: str) -> str:
     strips any leading whitespace from the remainder.
 
     Args:
-        block_string: A block-quote string as recognised by :func:`is_roam_block_quote`.
+        block_string: A block-quote string as recognised by :func:`is_quote_block`.
 
     Returns:
         The content of the block quote with the leading marker and any intervening
@@ -193,9 +222,9 @@ def strip_block_quote_marker(block_string: str) -> str:
 
     Raises:
         ValueError: If *block_string* is not a block quote according to
-            :func:`is_roam_block_quote`.
+            :func:`is_quote_block`.
     """
-    if not is_roam_block_quote(block_string):
+    if not is_quote_block(block_string):
         raise ValueError(f"string is not a block quote: {block_string!r}")
     prefix: Final[str] = (
         ROAM_BLOCK_QUOTE_PREFIX if block_string.startswith(ROAM_BLOCK_QUOTE_PREFIX) else MD_BLOCK_QUOTE_PREFIX

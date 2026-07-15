@@ -16,10 +16,9 @@
 > [!NOTE]
 > **The Uncopyright Page embedded here has `children_layout` explicitly set to `document`**
 
-> **❝ *May you do good and not evil.***
->
-> *May you find forgiveness for yourself and forgive others.  
-> May you share freely, never taking more than you give.*
+> *May you do good and not evil.*  
+> *May you find forgiveness for yourself and forgive others.*  
+> *May you share freely, never taking more than you give.*
 
 Copyright pages exist to tell you that you *can’t* do something. Unlike them, this Uncopyright page exists to tell you that the writing and artwork in this ebook are believed to be in the United States public domain; that is, they are believed to be free of copyright restrictions in the United States. The United States public domain represents our collective cultural heritage, and items in it are free for anyone in the United States to do almost anything at all with, without having to get permission.
 

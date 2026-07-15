@@ -189,7 +189,7 @@ class TestNodeType:
             NodeType.HEADING_BLOCK,
             NodeType.CALLOUT_BLOCK,
             NodeType.CODE_BLOCK,
-            NodeType.BLOCK_QUOTE,
+            NodeType.QUOTE_BLOCK,
             NodeType.NATIVE_TABLE,
             NodeType.EMBED_BLOCK,
             NodeType.EMBED_PAGE,
@@ -349,10 +349,9 @@ class TestNodeTypeFunction:
         assert node_type(_make_callout(suffix=" some callout body")) is NodeType.CALLOUT_BLOCK
 
     def test_all_callout_types_return_callout(self) -> None:
-        """Test that each of the twelve valid callout types returns NodeType.CALLOUT_BLOCK."""
+        """Test that each of the eleven valid callout types returns NodeType.CALLOUT_BLOCK."""
         valid_types = [
             "INFO",
-            "QUOTE",
             "EXAMPLE",
             "NOTE",
             "WARNING",
@@ -366,6 +365,10 @@ class TestNodeTypeFunction:
         ]
         for callout_type in valid_types:
             assert node_type(_make_callout(callout_type=callout_type)) is NodeType.CALLOUT_BLOCK
+
+    def test_quote_callout_marker_is_a_quote_block(self) -> None:
+        """[[>]] [[!QUOTE]] is a pull quote (QUOTE_BLOCK), not a callout."""
+        assert node_type(_make_callout(callout_type="QUOTE")) is NodeType.QUOTE_BLOCK
 
     def test_fenced_code_block_returns_code_block(self) -> None:
         """Test that a string fenced with ``` at both ends returns NodeType.CODE_BLOCK."""
@@ -392,22 +395,22 @@ class TestNodeTypeFunction:
         assert node_type(_make_code(string="`inline`")) is NodeType.PLAIN_BLOCK
 
     def test_block_quote_node_returns_block_quote(self) -> None:
-        """Test that a [[>]]-prefixed block without a callout type returns BLOCK_QUOTE."""
-        assert node_type(_make_block_quote()) is NodeType.BLOCK_QUOTE
+        """Test that a [[>]]-prefixed block without a callout type returns QUOTE_BLOCK."""
+        assert node_type(_make_block_quote()) is NodeType.QUOTE_BLOCK
 
     def test_block_quote_is_not_plain_block(self) -> None:
         """Test that a block quote node does not return PLAIN_BLOCK."""
         assert node_type(_make_block_quote()) is not NodeType.PLAIN_BLOCK
 
     def test_bare_block_quote_prefix_returns_block_quote(self) -> None:
-        """Test that bare '[[>]]' with no following text returns BLOCK_QUOTE."""
+        """Test that bare '[[>]]' with no following text returns QUOTE_BLOCK."""
         node = _make_text(string="[[>]]")
-        assert node_type(node) is NodeType.BLOCK_QUOTE
+        assert node_type(node) is NodeType.QUOTE_BLOCK
 
     def test_invalid_callout_type_classified_as_block_quote(self) -> None:
-        """Test that [[>]] with an unrecognised type keyword is classified as BLOCK_QUOTE."""
+        """Test that [[>]] with an unrecognised type keyword is classified as QUOTE_BLOCK."""
         node = _make_text(string="[[>]] [[!INVALID]] text")
-        assert node_type(node) is NodeType.BLOCK_QUOTE
+        assert node_type(node) is NodeType.QUOTE_BLOCK
 
     def test_bare_table_marker_returns_native_table(self) -> None:
         """Test that a block whose string is the bare {{table}} marker returns NATIVE_TABLE."""
@@ -535,27 +538,27 @@ class TestRoamNodeCalloutValidation:
         assert node.string == "[[>]] [[!WARNING]] Watch out!"
 
     def test_invalid_callout_type_accepted_as_block_quote(self) -> None:
-        """Test that an unrecognised callout type is accepted (classified as BLOCK_QUOTE)."""
+        """Test that an unrecognised callout type is accepted (classified as QUOTE_BLOCK)."""
         node = self._make_block("[[>]] [[!INVALID]]")
         assert node.string == "[[>]] [[!INVALID]]"
 
     def test_missing_type_accepted_as_block_quote(self) -> None:
-        """Test that bare '[[>]]' is accepted (classified as BLOCK_QUOTE)."""
+        """Test that bare '[[>]]' is accepted (classified as QUOTE_BLOCK)."""
         node = self._make_block("[[>]]")
         assert node.string == "[[>]]"
 
     def test_bare_prefix_with_text_accepted_as_block_quote(self) -> None:
-        """Test that '[[>]] text' with no type block is accepted (classified as BLOCK_QUOTE)."""
+        """Test that '[[>]] text' with no type block is accepted (classified as QUOTE_BLOCK)."""
         node = self._make_block("[[>]] some text without type")
         assert node.string == "[[>]] some text without type"
 
     def test_lowercase_callout_type_accepted_as_block_quote(self) -> None:
-        """Test that a lowercase callout type is accepted (classified as BLOCK_QUOTE)."""
+        """Test that a lowercase callout type is accepted (classified as QUOTE_BLOCK)."""
         node = self._make_block("[[>]] [[!info]]")
         assert node.string == "[[>]] [[!info]]"
 
     def test_partial_type_block_accepted_as_block_quote(self) -> None:
-        """Test that a malformed type block like '[[!INFO' is accepted (classified as BLOCK_QUOTE)."""
+        """Test that a malformed type block like '[[!INFO' is accepted (classified as QUOTE_BLOCK)."""
         node = self._make_block("[[>]] [[!INFO")
         assert node.string == "[[>]] [[!INFO"
 

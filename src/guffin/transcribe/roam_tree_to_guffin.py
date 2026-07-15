@@ -25,7 +25,7 @@ Public symbols:
   callout block node.
 - :func:`to_code_block_vertex` — build a :class:`~guffin.vertex.CodeBlockVertex` from a
   fenced code block node.
-- :func:`to_block_quote_vertex` — build a :class:`~guffin.vertex.BlockQuoteVertex` from a
+- :func:`to_quote_block_vertex` — build a :class:`~guffin.vertex.QuoteBlockVertex` from a
   block-quote node.
 - :func:`to_block_embed_vertex` — build a :class:`~guffin.vertex.BlockEmbedVertex` from a
   block embed node.
@@ -68,7 +68,6 @@ from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
-    BlockQuoteVertex,
     CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
@@ -76,6 +75,8 @@ from guffin.model.vertex import (
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
     TableVertex,
     TextVertex,
     Vertex,
@@ -88,8 +89,8 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
 from guffin.roam.blockquote import (
     RoamCallout,
-    is_roam_native_block_quote,
     parse_callout,
+    parse_pull_quote,
     strip_block_quote_marker,
 )
 from guffin.roam.markdown import (
@@ -383,8 +384,8 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.PDF
         case NodeType.CALLOUT_BLOCK:
             return VertexType.CALLOUT
-        case NodeType.BLOCK_QUOTE:
-            return VertexType.BLOCK_QUOTE
+        case NodeType.QUOTE_BLOCK:
+            return VertexType.QUOTE_BLOCK
         case NodeType.NATIVE_TABLE:
             return VertexType.TABLE
         case NodeType.EMBED_BLOCK:
@@ -655,41 +656,50 @@ def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
 
 
 @validate_call
-def to_block_quote_vertex(node: RoamNode, tree: NodeTree) -> BlockQuoteVertex:
-    """Build a :class:`~guffin.vertex.BlockQuoteVertex` from a block-quote *node*.
+def to_quote_block_vertex(node: RoamNode, tree: NodeTree) -> QuoteBlockVertex:
+    """Build a :class:`~guffin.vertex.QuoteBlockVertex` from a quote-block *node*.
 
-    Strips the leading block-quote marker (``>`` or ``[[>]]``) from ``node.string``
-    via :func:`~guffin.roam.blockquote.strip_block_quote_marker` before storing the
-    remaining content as :attr:`~guffin.vertex.BlockQuoteVertex.text`.  Sets
-    :attr:`~guffin.vertex.BlockQuoteVertex.fancy` from
-    :func:`~guffin.roam.blockquote.is_roam_native_block_quote` — a Roam-native ``[[>]]`` quote
-    renders with the decorated quote/attribution treatment, a standard ``>`` quote stays plain.
+    Maps the Roam source form to the source-agnostic :class:`~guffin.vertex.QuoteType` at this
+    boundary:
+
+    - a Roam pull quote (``[[>]] [[!QUOTE]]``, per :func:`~guffin.roam.blockquote.parse_pull_quote`)
+      becomes :attr:`~guffin.vertex.QuoteType.PULL`, its first line the ``quote`` and any following
+      lines the ``attribution`` (the decorated pull-quote treatment);
+    - a standard ``>`` or Roam-native ``[[>]]`` block quote becomes
+      :attr:`~guffin.vertex.QuoteType.BLOCK`, the marker-stripped content the ``quote`` and
+      ``attribution`` ``None`` (a plain block quote).
+
+    Each text part is normalized to Pandoc Markdown via :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md`.
 
     Args:
-        node: A block-quote node whose ``string`` starts with a recognised block-quote
-            marker (standard Markdown ``>`` or Roam-specific ``[[>]]``).
+        node: A quote-block node whose ``string`` starts with a recognised quote marker
+            (``>``, ``[[>]]``, or ``[[>]] [[!QUOTE]]``).
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
             its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
 
     Returns:
-        A :class:`~guffin.vertex.BlockQuoteVertex`.
+        A :class:`~guffin.vertex.QuoteBlockVertex`.
 
     Raises:
         ValidationError: If *node* or *tree* is ``None`` or invalid.
-        ValueError: If ``node.string`` is ``None`` or is not a recognised block quote.
+        ValueError: If ``node.string`` is ``None`` or is not a recognised quote block.
     """
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
-    # Source→intent boundary: a Roam-native [[>]] block quote renders with the fancy
-    # quote/attribution treatment; a standard Markdown > block quote stays plain.  Detect
-    # before the marker is stripped.  This is the only place that maps the Roam syntax to
-    # the source-agnostic BlockQuoteVertex.fancy flag.
-    return BlockQuoteVertex(
+    pull: Final[tuple[str, str | None] | None] = parse_pull_quote(node.string)
+    if pull is not None:
+        quote_type: QuoteType = QuoteType.PULL
+        quote_raw, attribution_raw = pull
+    else:
+        quote_type = QuoteType.BLOCK
+        quote_raw, attribution_raw = strip_block_quote_marker(node.string), None
+    return QuoteBlockVertex(
         uid=node.uid,
-        text=to_pandoc_md(strip_block_quote_marker(node.string), tree),
-        fancy=is_roam_native_block_quote(node.string),
+        quote_type=quote_type,
+        quote=to_pandoc_md(quote_raw, tree),
+        attribution=to_pandoc_md(attribution_raw, tree) if attribution_raw is not None else None,
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
@@ -917,8 +927,8 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             return to_callout_vertex(node, tree)
         case VertexType.CODE_BLOCK:
             return to_code_block_vertex(node, tree)
-        case VertexType.BLOCK_QUOTE:
-            return to_block_quote_vertex(node, tree)
+        case VertexType.QUOTE_BLOCK:
+            return to_quote_block_vertex(node, tree)
         case VertexType.TABLE:
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
         case VertexType.BLOCK_EMBED:

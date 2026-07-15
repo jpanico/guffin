@@ -68,11 +68,10 @@
   >
   > - this is the **3rd line**
 
-  > **❝ This is a *Roam standard* single line Block Quote**
+  > This is a *Roam standard* single line **Block Quote**
 
-  > **❝ This is a Roam standard multi-line Block Quote**
-  >
-  > *this is the 2nd line*
+  > This is a Roam standard multi-line Block Quote  
+  > this is the *2nd line*
   >
   > - this is the **3rd line**
 

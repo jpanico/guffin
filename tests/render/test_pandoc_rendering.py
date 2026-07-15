@@ -24,13 +24,14 @@ from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
     BlockEmbedVertex,
-    BlockQuoteVertex,
     CalloutVertex,
     HeadingVertex,
     ImageVertex,
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
     TextVertex,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
@@ -985,7 +986,7 @@ class TestBlockQuoteRendering:
     def _quote_blocks(text: str) -> list[pf.Block]:
         """Render a one-quote tree and return the blocks inside its BlockQuote."""
         page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
-        quote = BlockQuoteVertex(uid="quote0001", text=text)
+        quote = QuoteBlockVertex(uid="quote0001", quote=text)
         doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, quote]), {}, {})
         quotes = [block for block in doc.content if isinstance(block, pf.BlockQuote)]
         assert len(quotes) == 1
@@ -1017,15 +1018,23 @@ class TestBlockQuoteRendering:
         assert [type(block) for block in blocks] == [pf.Para, pf.Para]
 
 
-class TestFancyBlockQuoteRendering:
-    """A fancy block quote renders to a class-tagged Div; a plain one stays a BlockQuote."""
+class TestPullQuoteRendering:
+    """A pull quote renders to a class-tagged fancy-quote Div; a plain block quote stays a BlockQuote."""
 
     @staticmethod
-    def _render(text: str, *, fancy: bool) -> pf.Doc:
-        """Render a one-quote tree with the given fancy flag."""
+    def _render_pull(quote: str, attribution: str | None) -> pf.Doc:
+        """Render a one-quote tree with a PULL quote block."""
         page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
-        quote = BlockQuoteVertex(uid="quote0001", text=text, fancy=fancy)
-        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, quote]), {}, {})
+        vtx = QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.PULL, quote=quote, attribution=attribution)
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, vtx]), {}, {})
+        return doc
+
+    @staticmethod
+    def _render_block(quote: str) -> pf.Doc:
+        """Render a one-quote tree with a plain BLOCK quote block."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
+        vtx = QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.BLOCK, quote=quote)
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, vtx]), {}, {})
         return doc
 
     @staticmethod
@@ -1041,31 +1050,31 @@ class TestFancyBlockQuoteRendering:
         assert found, f"no Div with class {cls!r}"
         return found[0]
 
-    def test_plain_quote_is_a_block_quote_not_a_div(self) -> None:
-        """A non-fancy quote renders to a pf.BlockQuote and emits no fancy-quote Div."""
-        doc = self._render("just a quote", fancy=False)
+    def test_block_quote_is_a_block_quote_not_a_div(self) -> None:
+        """A BLOCK quote renders to a pf.BlockQuote and emits no fancy-quote Div."""
+        doc = self._render_block("just a quote")
         assert any(isinstance(block, pf.BlockQuote) for block in doc.content)
         divs: list[pf.Div] = []
         doc.walk(lambda elem, _doc: divs.append(elem) if isinstance(elem, pf.Div) else None)
         assert not any("fancy-quote" in div.classes for div in divs)
 
-    def test_fancy_quote_emits_fancy_quote_div(self) -> None:
-        """A fancy quote renders to a fancy-quote Div rather than a BlockQuote."""
-        doc = self._render("In the long run every program becomes rococo.\n— Alan Perlis", fancy=True)
+    def test_pull_quote_emits_fancy_quote_div(self) -> None:
+        """A PULL quote renders to a fancy-quote Div rather than a BlockQuote."""
+        doc = self._render_pull("In the long run every program becomes rococo.", "— Alan Perlis")
         assert not any(isinstance(block, pf.BlockQuote) for block in doc.content)
         assert self._first_div(doc, "fancy-quote") is not None
 
-    def test_fancy_quote_splits_quote_and_attribution(self) -> None:
-        """The first line becomes fancy-quote-text; the remaining lines become fancy-quote-attribution."""
-        doc = self._render("The quotation itself.\nThe attribution line.", fancy=True)
+    def test_pull_quote_has_quote_and_attribution_divs(self) -> None:
+        """The quote becomes fancy-quote-text; the attribution becomes fancy-quote-attribution."""
+        doc = self._render_pull("The quotation itself.", "The attribution line.")
         quote_div = self._first_div(doc, "fancy-quote-text")
         attribution_div = self._first_div(doc, "fancy-quote-attribution")
         assert "quotation itself" in pf.stringify(quote_div)
         assert "attribution line" in pf.stringify(attribution_div)
 
-    def test_fancy_quote_without_attribution_omits_attribution_div(self) -> None:
-        """A single-line fancy quote emits only the quotation sub-Div."""
-        doc = self._render("only the quotation", fancy=True)
+    def test_pull_quote_without_attribution_omits_attribution_div(self) -> None:
+        """A pull quote with no attribution emits only the quotation sub-Div."""
+        doc = self._render_pull("only the quotation", None)
         assert self._first_div(doc, "fancy-quote-text") is not None
         divs: list[pf.Div] = []
         doc.walk(lambda elem, _doc: divs.append(elem) if isinstance(elem, pf.Div) else None)

@@ -326,7 +326,7 @@
   )[#it.body]
 }
 
-// Fancy block quote (Roam-native [[>]] quotes): a pull-quote treatment — the quotation reads bold at
+// Pull quote (Roam [[>]] [[!QUOTE]]): a pull-quote treatment — the quotation reads bold at
 // 1.5x body size in the quote-font, led by an oversize opening quotation mark, and the attribution
 // line(s) are set italic in the attribution-font.  Deliberately carries NO left bar (unlike a plain
 // block quote): the oversize mark and large type carry the "quote" signal on their own, which also

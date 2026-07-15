@@ -24,11 +24,10 @@ class TestPalette:
             assert color[0] == "#"
             int(color[1:], 16)  # raises if not hex
 
-    def test_note_and_quote_are_neutral(self) -> None:
-        """Note and quote are neutral greys (red is reserved for danger/failure/bug)."""
-        for neutral in (CalloutType.NOTE, CalloutType.QUOTE):
-            red, green, blue = (int(CALLOUT_ACCENT[neutral][i : i + 2], 16) for i in (1, 3, 5))
-            assert red == green == blue  # grey: equal channels
+    def test_note_is_neutral(self) -> None:
+        """Note is a neutral grey (red is reserved for danger/failure/bug)."""
+        red, green, blue = (int(CALLOUT_ACCENT[CalloutType.NOTE][i : i + 2], 16) for i in (1, 3, 5))
+        assert red == green == blue  # grey: equal channels
 
 
 class TestLighten:

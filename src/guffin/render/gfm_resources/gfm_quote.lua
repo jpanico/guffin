@@ -1,7 +1,7 @@
 -- gfm_quote.lua
 -- Lua filter for the GFM Markdown output path.
--- Transforms the Div.fancy-quote produced by pandoc_rendering.py (a decorated Roam-native
--- block quote) into a best-effort GFM block quote: a bold quotation line led by an opening
+-- Transforms the Div.fancy-quote produced by pandoc_rendering.py (a pull quote, from a Roam
+-- [[>]] [[!QUOTE]] block) into a best-effort GFM block quote: a bold quotation line led by an opening
 -- quotation-mark ornament, followed by an italic attribution line.  Plain Markdown cannot assign
 -- fonts or scale a glyph, so the lead uses U+275D (❝) — a Dingbats ornament whose largeness is
 -- baked into the font's glyph — rather than the plain U+201C the PDF/EPUB paths scale up themselves.
