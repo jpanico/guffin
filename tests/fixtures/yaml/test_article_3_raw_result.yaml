@@ -177,6 +177,12 @@
     - id: 11757
     - id: 11766
     - id: 11790
+    - id: 13456
+    - id: 13458
+    - id: 13463
+    - id: 13464
+    - id: 13467
+    - id: 13468
     id: 11716
     uid: 7XdTiY_ZF
     parents:
@@ -204,7 +210,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 21
+    order: 27
     page:
       id: 4225
     refs:
@@ -212,6 +218,9 @@
 - - id: 11454
     uid: iF2Ey_unj
     title: c:ORANGE
+- - id: 5456
+    uid: Q-T5fKOEq
+    title: '!QUOTE'
 - - string: 'pdf-render:: inline'
     id: 11931
     uid: EWMNZcPZX
@@ -256,6 +265,33 @@
     order: 1
     page:
       id: 3327
+- - string: ((kwybAuoGM))
+    id: 13485
+    uid: BlXTE6Z3J
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 13484
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13462
+- - string: '[[>]] This is a Roam standard multi-line Block Quote
+
+      this is the __2nd line__
+
+      - this is the **3rd line**'
+    id: 11193
+    uid: r09kXvUg-
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 10
+    page:
+      id: 11137
+    refs:
+    - id: 5450
 - - id: 11933
     uid: Jy_Ee6w8E
     title: pdf-render
@@ -284,6 +320,18 @@
     view-type: bullet
     page:
       id: 11674
+- - string: ((GeE5zPJOv))
+    id: 13482
+    uid: PhA5dB4h0
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 13481
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13454
 - - string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((JRU5IhUB-))'
     id: 11729
     uid: cKCA_EwGZ
@@ -436,6 +484,18 @@
     order: 6
     page:
       id: 4225
+- - string: ((Yz0pqYfBh))
+    id: 13472
+    uid: NE6Bd_bdv
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 13471
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11186
 - - string: ((tWkumkdUE))
     id: 11713
     uid: nmFudOFkf
@@ -448,6 +508,18 @@
       id: 4225
     refs:
     - id: 11167
+- - string: ((GVQMV2rff))
+    id: 13491
+    uid: 3N6vwGYd7
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 13490
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13469
 - - string: Block 1 (children_layout=bullet)
     children:
     - id: 11678
@@ -511,7 +583,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 22
+    order: 28
     page:
       id: 4225
     refs:
@@ -562,6 +634,19 @@
     order: 0
     page:
       id: 4225
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
+    children:
+    - id: 13493
+    id: 13492
+    uid: 6cWeACALe
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 25
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((BuP4ifx3v))'
     id: 11731
     uid: FWULkh5nm
@@ -586,6 +671,30 @@
     refs:
     - id: 5844
     - id: 11667
+- - string: the child block contains a Roam native single-line block quote
+    children:
+    - id: 13465
+    id: 13463
+    uid: 1AL7o_fUs
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 16
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
+    children:
+    - id: 13480
+    id: 13479
+    uid: 8VCtZe0gi
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 25
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: ((LfXmNr-tV))
     id: 11705
     uid: 2Zo0HNy5o
@@ -598,6 +707,30 @@
       id: 4225
     refs:
     - id: 4228
+- - string: the child block contains a Roam native multiline Pull Quote
+    children:
+    - id: 13470
+    id: 13468
+    uid: OegKTVVNv
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 19
+    page:
+      id: 4225
+- - string: '> This is a Markdown standard multi-line Block Quote
+
+      this is the __2nd line__
+
+      - this is the **3rd line**'
+    id: 11187
+    uid: 6bcyfVpL2
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 8
+    page:
+      id: 11137
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
@@ -639,6 +772,19 @@
     order: 13
     page:
       id: 4225
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
+    children:
+    - id: 13482
+    id: 13481
+    uid: BXNgBxGq1
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 26
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: ((zpSBqgxe4))
     id: 11770
     uid: 3PA_Y7Osp
@@ -663,6 +809,20 @@
       id: 4225
     refs:
     - id: 11792
+- - string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref
+      ↓**'
+    children:
+    - id: 13474
+    id: 13473
+    uid: kTP7bM3mT
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 22
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
     children:
     - id: 4232
@@ -689,6 +849,15 @@
       id: 4225
     refs:
     - id: 5844
+- - string: '> This is a __Markdown standard__ single line **Block Quote**'
+    id: 11186
+    uid: Yz0pqYfBh
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 7
+    page:
+      id: 11137
 - - string: Header 2
     children:
     - id: 11228
@@ -752,9 +921,35 @@
     order: 0
     page:
       id: 4225
+- - string: ((ooVLwinzV))
+    id: 13480
+    uid: FvK1_5iaO
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 13479
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13455
 - - id: 11947
     uid: 01-01-2026
     title: January 1st, 2026
+- - string: '> This is a Markdown standard multi-line Block Quote
+
+      this is the __2nd line__
+
+      - this is the **3rd line**'
+    id: 13462
+    uid: kwybAuoGM
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 13458
+    order: 0
+    page:
+      id: 4225
 - - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     id: 11664
     uid: _EtYSMJNn
@@ -778,6 +973,19 @@
     order: 4
     page:
       id: 4225
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
+    children:
+    - id: 13489
+    id: 13488
+    uid: bwfQEnrOi
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 23
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: The origin of the word seems also somewhat doubtful. The word Σενδἑς occurs
       in Constant. Porphyrog. de Ceremoniis (Bonn, ed. I. 468), and this looks like
       a transfer of the Arabic Săndăs or Sundus, which is applied by Bakui to the
@@ -814,6 +1022,53 @@
     order: 1
     page:
       id: 11674
+- - string: the child block contains a Roam native single line Pull Quote
+    children:
+    - id: 13469
+    id: 13467
+    uid: 9uT8Z9xNJ
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 18
+    page:
+      id: 4225
+- - string: the child block contains a standard markdown single-line block quote
+    children:
+    - id: 13457
+    id: 13456
+    uid: QB2Ym3btB
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 14
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
+    children:
+    - id: 13491
+    id: 13490
+    uid: -K5d4a_ew
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 24
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
+    id: 13455
+    uid: ooVLwinzV
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 11
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 5456
 - - string: This para features ^^highlight^^
     id: 11721
     uid: Q-nJAf9KK
@@ -857,7 +1112,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 21
+    order: 27
     page:
       id: 4225
     refs:
@@ -871,6 +1126,18 @@
     order: 4
     page:
       id: 11137
+- - string: ((EOXU_iAwJ))
+    id: 13495
+    uid: j1_LH6NTQ
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 13494
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13457
 - - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
     id: 11648
     uid: Rjt1IvrVq
@@ -963,7 +1230,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 23
+    order: 29
     page:
       id: 4225
     refs:
@@ -992,6 +1259,19 @@
     order: 0
     page:
       id: 11137
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
+    children:
+    - id: 13478
+    id: 13477
+    uid: 8YtNUz59e
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 24
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: r1.c2
     children:
     - id: 11231
@@ -1005,6 +1285,23 @@
     order: 0
     page:
       id: 11137
+- - string: '[[>]] [[!QUOTE]] This is a Roam multi-line Pull Quote
+
+      this is the 2nd line
+
+
+      '
+    id: 13454
+    uid: GeE5zPJOv
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 12
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 5456
 - - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
     id: 11709
     uid: ot5dpySxp
@@ -1056,6 +1353,17 @@
       id: 4225
     refs:
     - id: 5844
+- - string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
+    id: 11188
+    uid: gq_29_H-7
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 9
+    page:
+      id: 11137
+    refs:
+    - id: 5450
 - - string: '#c:FUCHSIA **standalone PAGE ref ↓** '
     children:
     - id: 11702
@@ -1134,6 +1442,31 @@
     id: 12803
     uid: TXGdKldN6
     title: CHAPTER XXXVI. Account of the City of Juju.
+- - string: the child block contains a standard markdown multi-line block quote
+    children:
+    - id: 13462
+    id: 13458
+    uid: U_3KjJyqe
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 15
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref
+      ↓**'
+    children:
+    - id: 13472
+    id: 13471
+    uid: ZP4r7M_bw
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 21
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
     id: 11752
     uid: SCzzQaVai
@@ -1146,6 +1479,18 @@
     refs:
     - id: 3328
     - id: 5844
+- - string: ((r09kXvUg-))
+    id: 13478
+    uid: xGhF9KiwL
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 13477
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11193
 - - string: '[[>]] [[!EXAMPLE]] This is the callout title
 
       This is line 1 of the callout body
@@ -1237,6 +1582,17 @@
       id: 4225
     refs:
     - id: 5844
+- - string: the child block contains a Roam native multi-line block quote
+    children:
+    - id: 13466
+    id: 13464
+    uid: kfm7Kk_B3
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 17
+    page:
+      id: 4225
 - - string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((VvbwbLchA))'
     id: 11750
     uid: 88ny0VOH4
@@ -1249,6 +1605,18 @@
     refs:
     - id: 5844
     - id: 11171
+- - string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
+    id: 13465
+    uid: F9TXbzC0K
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 13463
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 5450
 - - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     id: 11743
     uid: GK_iI79mV
@@ -1369,6 +1737,12 @@
     - id: 11759
     - id: 11769
     - id: 11802
+    - id: 13484
+    - id: 13486
+    - id: 13488
+    - id: 13490
+    - id: 13492
+    - id: 13494
     id: 4226
     uid: LfaVt18Iw
     parents:
@@ -1560,6 +1934,18 @@
     order: 2
     page:
       id: 11674
+- - string: ((kyagWLAKA))
+    id: 13489
+    uid: oQP-qdCN_
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 13488
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13466
 - - string: Section 2.1.1.1
     id: 4028
     uid: bxkcECGwN
@@ -1584,6 +1970,20 @@
     order: 11
     page:
       id: 4225
+- - string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref
+      ↓**'
+    children:
+    - id: 13495
+    id: 13494
+    uid: nVv4pq7Fd
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 20
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
     id: 11806
     uid: pfkKREU_Y
@@ -1611,6 +2011,21 @@
 - - id: 321
     uid: BxGxeeGk1
     title: .rm-g
+- - string: '[[>]] [[!QUOTE]] This is a Roam multi-line Pull Quote
+
+      this is the 2nd line'
+    id: 13470
+    uid: TlfIEaYF3
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 13468
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 5450
+    - id: 5456
 - - string: This para features ^^highlight^^
     id: 11171
     uid: VvbwbLchA
@@ -1680,6 +2095,19 @@
       id: 3327
     refs:
     - id: 11932
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
+    children:
+    - id: 13487
+    id: 13486
+    uid: yTLZTltae
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 22
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - heading: 2
     string: Section 2.1
     children:
@@ -1923,6 +2351,18 @@
     order: 0
     page:
       id: 11674
+- - string: ((6bcyfVpL2))
+    id: 13474
+    uid: 8g2Zv1RjH
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 13473
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11187
 - - string: Header 3
     id: 11228
     uid: iAxwSSBmi
@@ -1984,6 +2424,18 @@
       id: 4225
     refs:
     - id: 11716
+- - string: ((F9TXbzC0K))
+    id: 13487
+    uid: MYwGv0l_h
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 13486
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13465
 - - string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
     id: 11746
     uid: 2IaJFXDZT
@@ -2031,6 +2483,19 @@
     order: 0
     page:
       id: 4225
+- - string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
+    id: 13469
+    uid: GVQMV2rff
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 13467
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 5450
+    - id: 5456
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
     id: 11758
     uid: J_Vt5_C6p
@@ -2041,6 +2506,22 @@
     order: 0
     page:
       id: 4225
+- - string: '[[>]] This is a Roam standard multi-line Block Quote
+
+      this is the __2nd line__
+
+      - this is the **3rd line**'
+    id: 13466
+    uid: kyagWLAKA
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 13464
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 5450
 - - heading: 2
     string: Section 3.1
     children:
@@ -2179,6 +2660,16 @@
     refs:
     - id: 5844
     - id: 11717
+- - string: '> This is a __Markdown standard__ single line **Block Quote**'
+    id: 13457
+    uid: EOXU_iAwJ
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 13456
+    order: 0
+    page:
+      id: 4225
 - - string: r2.c2
     children:
     - id: 11234
@@ -2277,6 +2768,19 @@
     order: 0
     page:
       id: 11674
+- - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
+    children:
+    - id: 13476
+    id: 13475
+    uid: 9ixJaPK7A
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 23
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - heading: 2
     string: 'External (out-of-page) links:'
     children:
@@ -2304,6 +2808,12 @@
     - id: 11949
     - id: 12818
     - id: 13263
+    - id: 13471
+    - id: 13473
+    - id: 13475
+    - id: 13477
+    - id: 13479
+    - id: 13481
     id: 4227
     uid: d3T1YpYig
     parents:
@@ -2341,11 +2851,37 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 20
+    order: 26
     page:
       id: 4225
     refs:
     - id: 5844
+- - string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref
+      ↓**'
+    children:
+    - id: 13485
+    id: 13484
+    uid: J1jloW5z0
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 21
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: ((TlfIEaYF3))
+    id: 13493
+    uid: sRZrRot81
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 13492
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 13470
 - - string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
     children:
     - id: 11736
@@ -2443,6 +2979,18 @@
       id: 4225
     refs:
     - id: 5844
+- - string: ((gq_29_H-7))
+    id: 13476
+    uid: l4BV03n4W
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 13475
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11188
 - - string: '#c:FUCHSIA **standalone PAGE ref ↓** '
     children:
     - id: 11715

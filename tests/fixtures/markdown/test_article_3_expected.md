@@ -55,6 +55,26 @@ def fizz_buzz(limit: int = 100):
   |----------|----------|----------|
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
+- the child block contains a standard markdown single-line block quote
+  > This is a *Markdown standard* single line **Block Quote**
+- the child block contains a standard markdown multi-line block quote
+  > This is a Markdown standard multi-line Block Quote  
+  > this is the *2nd line*
+  >
+  > - this is the **3rd line**
+- the child block contains a Roam native single-line block quote
+  > This is a *Roam standard* single line **Block Quote**
+- the child block contains a Roam native multi-line block quote
+  > This is a Roam standard multi-line Block Quote  
+  > this is the *2nd line*
+  >
+  > - this is the **3rd line**
+- the child block contains a Roam native single line Pull Quote
+  > **❝ This is a Roam single line Pull Quote**
+- the child block contains a Roam native multiline Pull Quote
+  > **❝ This is a Roam multi-line Pull Quote**
+  >
+  > *this is the 2nd line*
 
 ### Internal (in-page) links:
 
@@ -101,6 +121,26 @@ def fizz_buzz(limit: int = 100):
           else:
               print(i)
   ```
+- <span style="color: fuchsia">**standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a *Markdown standard* single line **Block Quote**
+- <span style="color: fuchsia">**standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a Markdown standard multi-line Block Quote  
+  > this is the *2nd line*
+  >
+  > - this is the **3rd line**
+- <span style="color: fuchsia">**standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a *Roam standard* single line **Block Quote**
+- <span style="color: fuchsia">**standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a Roam standard multi-line Block Quote  
+  > this is the *2nd line*
+  >
+  > - this is the **3rd line**
+- <span style="color: fuchsia">**standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**</span>
+  > **❝ This is a Roam single line Pull Quote**
+- <span style="color: fuchsia">**standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**</span>
+  > **❝ This is a Roam multi-line Pull Quote**
+  >
+  > *this is the 2nd line*
 - <span style="color: fuchsia">**standalone CALLOUT ref ↓**</span>
   > [!NOTE]
   > **This is the callout title**
@@ -170,6 +210,26 @@ def fizz_buzz(limit: int = 100):
           else:
               print(i)
   ```
+- <span style="color: fuchsia">**standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a *Markdown standard* single line **Block Quote**
+- <span style="color: fuchsia">**standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a Markdown standard multi-line Block Quote  
+  > this is the *2nd line*
+  >
+  > - this is the **3rd line**
+- <span style="color: fuchsia">**standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a *Roam standard* single line **Block Quote**
+- <span style="color: fuchsia">**standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**</span>
+  > This is a Roam standard multi-line Block Quote  
+  > this is the *2nd line*
+  >
+  > - this is the **3rd line**
+- <span style="color: fuchsia">**standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**</span>
+  > **❝ This is a Roam single line Pull Quote**
+- <span style="color: fuchsia">**standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**</span>
+  > **❝ This is a Roam multi-line Pull Quote**
+  >
+  > *this is the 2nd line*
 - <span style="color: fuchsia">**standalone CALLOUT ref ↓**</span>
   > [!NOTE]
   > **This is the callout title**

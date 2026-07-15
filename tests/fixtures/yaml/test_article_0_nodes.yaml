@@ -116,6 +116,8 @@
   - id: 11187
   - id: 11188
   - id: 11193
+  - id: 13454
+  - id: 13455
   refs: null
   page:
     id: 11137
@@ -193,6 +195,10 @@
 
     - Roam-native multi-line block quote
 
+    - Roam-native single line pull quote
+
+    - Roam-native multi-line pull quote
+
     - Roam-native table (3x3)
 
     - this INFO `Callout box`, which contains Roam `page references`'
@@ -229,7 +235,7 @@
 - uid: WtrddPBAt
   id: 11153
   string: block 1.2
-  order: 12
+  order: 14
   heading: null
   children: null
   refs: null
@@ -331,6 +337,24 @@
   - id: 11150
   - id: 11225
   - id: 11226
+  props: null
+  title: null
+  attrs: null
+- uid: ooVLwinzV
+  id: 13455
+  string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
+  order: 11
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5456
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
   props: null
   title: null
   attrs: null
@@ -442,6 +466,29 @@
   props: null
   title: null
   attrs: null
+- uid: GeE5zPJOv
+  id: 13454
+  string: '[[>]] [[!QUOTE]] This is a Roam multi-line Pull Quote
+
+    this is the 2nd line
+
+
+    '
+  order: 12
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5456
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  props: null
+  title: null
+  attrs: null
 - uid: gq_29_H-7
   id: 11188
   string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
@@ -507,7 +554,7 @@
 - uid: mGk4VnMT3
   id: 11151
   string: block 1.1
-  order: 11
+  order: 13
   heading: null
   children:
   - id: 11152

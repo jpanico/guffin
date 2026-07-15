@@ -711,6 +711,8 @@ class TestToCalloutVertex:
             "- Markdown multi-line block quote\n"
             "- Roam-native single line block quote\n"
             "- Roam-native multi-line block quote\n"
+            "- Roam-native single line pull quote\n"
+            "- Roam-native multi-line pull quote\n"
             "- Roam-native table (3x3)\n"
             "- this INFO `Callout box`, which contains Roam `page references`"
         )

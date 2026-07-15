@@ -23,6 +23,9 @@
     refs:
     - id: 5450
     - id: 5462
+- - id: 5456
+    uid: Q-T5fKOEq
+    title: '!QUOTE'
 - - children:
     - id: 4224
     id: 4223
@@ -91,6 +94,8 @@
     - id: 11187
     - id: 11188
     - id: 11193
+    - id: 13454
+    - id: 13455
     id: 11149
     uid: MRKYttxrM
     parents:
@@ -151,6 +156,10 @@
 
       - Roam-native multi-line block quote
 
+      - Roam-native single line pull quote
+
+      - Roam-native multi-line pull quote
+
       - Roam-native table (3x3)
 
       - this INFO `Callout box`, which contains Roam `page references`'
@@ -179,7 +188,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 12
+    order: 14
     page:
       id: 11137
 - - string: Header 1
@@ -245,6 +254,18 @@
 - - id: 5450
     uid: OexZiLR_O
     title: '>'
+- - string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
+    id: 13455
+    uid: ooVLwinzV
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 11
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 5456
 - - string: This para features `inline-code`
     id: 11172
     uid: ETesnk4Zi
@@ -313,6 +334,23 @@
     order: 0
     page:
       id: 11137
+- - string: '[[>]] [[!QUOTE]] This is a Roam multi-line Pull Quote
+
+      this is the 2nd line
+
+
+      '
+    id: 13454
+    uid: GeE5zPJOv
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 12
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 5456
 - - id: 5458
     uid: lS4kg-3mw
     title: '!EXAMPLE'
@@ -367,7 +405,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 11
+    order: 13
     page:
       id: 11137
 - - string: r2.c1

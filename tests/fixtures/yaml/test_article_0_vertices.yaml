@@ -48,6 +48,10 @@
 
     - Roam-native multi-line block quote
 
+    - Roam-native single line pull quote
+
+    - Roam-native multi-line pull quote
+
     - Roam-native table (3x3)
 
     - this INFO `Callout box`, which contains Roam `page references`'
@@ -65,6 +69,8 @@
   - 6bcyfVpL2
   - gq_29_H-7
   - r09kXvUg-
+  - ooVLwinzV
+  - GeE5zPJOv
   - mGk4VnMT3
   - WtrddPBAt
   text: block 1
@@ -130,6 +136,24 @@
     this is the *2nd line*
 
     - this is the **3rd line**'
+- vertex_type: guffin/quote-block
+  uid: ooVLwinzV
+  refs:
+  - OexZiLR_O
+  - Q-T5fKOEq
+  quote_type: pull
+  quote: This is a Roam single line Pull Quote
+- vertex_type: guffin/quote-block
+  uid: GeE5zPJOv
+  refs:
+  - OexZiLR_O
+  - Q-T5fKOEq
+  quote_type: pull
+  quote: This is a Roam multi-line Pull Quote
+  attribution: 'this is the 2nd line
+
+
+    '
 - vertex_type: guffin/text
   uid: mGk4VnMT3
   children:
