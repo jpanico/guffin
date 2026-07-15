@@ -137,6 +137,43 @@ places can inherit two different layouts), independent of the data source; the `
 sparse and authored-only so that *explicit* and *inherited* never get conflated in the model.
 
 
+## REFERENCE vs. EMBED: the transclusion line
+
+The two `VertexLinkKind`s (`model/vertex_link.py`) draw a hard line that every render path
+must respect:
+
+- **REFERENCE** (`x-guffin:vertex/<uid>`) includes **only the target vertex** — the `Vertex`
+  at the end of the `VertexLink` — plus whatever the target needs to render as itself:
+  content already folded into the vertex's own fields (a `TableVertex`'s rows, a
+  `CalloutVertex`'s body, a `QuoteBlockVertex`'s attribution) and, for an `AssetVertex`, its
+  fetched file. A reference **never transcludes the target's descendants** — neither its
+  `children` subtree nor its folded `attribute_assignments` (which originate as child
+  vertices).
+- **EMBED** (`x-guffin:vertex-embed/<uid>`) does **full transclusion**: the target and its
+  whole descendant subtree are reproduced at the embed site, embeds inside transcluded
+  content followed recursively (cycles terminate). Transclusion reaches only vertices
+  present in the `VertexTree` — tree and referenced vertices alike — so it is bounded by
+  the tree's content horizon: an embed whose target is absent from the tree degrades
+  rather than transcludes.
+
+The line holds across both rendering shapes a reference can take:
+
+- **Inline path** (`make_resolver`): a reference to an inline-representable target
+  (`PageVertex`, `HeadingVertex`, `TextVertex`) renders the target's own converted text —
+  title, heading text, body text — never its children.
+- **Block-level path** (`_block_ref_target` / `build_child_blocks`): a `TextVertex` that is
+  *solely* a reference to a block-level target (`ImageVertex`, `PdfVertex`,
+  `CodeBlockVertex`, `CalloutVertex`, `QuoteBlockVertex`, `TableVertex`) renders as the
+  referenced block itself — a fidelity accommodation for targets that have no faithful
+  inline form, **not** a transclusion. The target is rendered stripped of its `children`
+  and folded `attribute_assignments`.
+
+The same line scopes semantics: `transcluded_vertices()` (the render-visible set that
+`assignments_for`, `has_parts`, and the element-number validators walk) includes
+embed-transcluded content and excludes merely-referenced vertices — consistent with what each
+kind renders.
+
+
 ## Project types
 
 `render/project.py` models the *kind of work*, adopting the **concept** from Quarto's

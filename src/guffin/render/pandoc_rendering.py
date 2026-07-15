@@ -370,8 +370,12 @@ def _block_ref_target(
     images, tables, callouts) render as Pandoc Blocks and cannot be represented as the
     inline content of a list item or paragraph.  When a text vertex's entire content is a
     single ``x-guffin`` reference whose destination is such a vertex, that destination is
-    returned so the reference can be rendered identically to the referenced block rather
-    than degraded to an inline link.
+    returned so the reference can be rendered as the referenced block itself rather
+    than degraded to an inline link.  This is a rendering-fidelity accommodation, not a
+    transclusion: per :class:`~guffin.model.vertex_link.VertexLinkKind` semantics, a
+    ``REFERENCE`` includes only the target vertex (and content folded into it at
+    transcription, e.g. a table's rows or a callout's body) — never its descendant
+    subtree, which only an ``EMBED`` transcludes.
 
     The reference is recognised **structurally**, from the ``[<display>](<x-guffin-url>)``
     shape of the vertex text (see :data:`_SOLE_VERTEX_REFERENCE_RE`), not by re-parsing that
@@ -552,8 +556,9 @@ def build_child_blocks(
     the pending list and is rendered via
     :func:`_vertex_to_blocks` regardless of *layout*.  A text vertex that is solely a
     reference to a block-level vertex (see :func:`_block_ref_target`) is likewise flushed
-    and rendered as the referenced block, so it appears identically to the block it
-    references.  Each vertex's own children are rendered using *its* effective layout — its
+    and rendered as the referenced block *itself* — stripped of its descendants (children
+    and folded attribute assignments), since a ``REFERENCE`` never transcludes the target's
+    subtree (that is ``EMBED`` semantics).  Each vertex's own children are rendered using *its* effective layout — its
     explicit *view_map* entry, else *layout* inherited from the parent (see
     :func:`_effective_layout`).
 
@@ -597,9 +602,12 @@ def build_child_blocks(
         ref_target: Vertex | None = _block_ref_target(vertex, vertex_tree) if isinstance(vertex, TextVertex) else None
         if ref_target is not None:
             # A block whose entire content references a block-level vertex renders as that
-            # referenced block — never wrapped in a list item.
+            # referenced block — never wrapped in a list item.  A REFERENCE includes only the
+            # target vertex itself: its descendants (children, and the attribute assignments
+            # folded from child blocks) are not transcluded — full transclusion is EMBED's job.
+            referenced: Vertex = ref_target.model_copy(update={"children": None, "attribute_assignments": None})
             flush_pending()
-            result.extend(_vertex_to_blocks(ref_target, vertex_tree, asset_files, inline_map, view_map, layout, depth))
+            result.extend(_vertex_to_blocks(referenced, vertex_tree, asset_files, inline_map, view_map, layout, depth))
             if isinstance(vertex, TextVertex) and (vertex.children or vertex.attribute_assignments):
                 result.extend(
                     build_child_blocks(
@@ -983,7 +991,6 @@ def _quote_block_vertex_to_blocks(
     consecutive plain lines become one paragraph with hard line breaks (matching Roam's shift-enter
     semantics), while embedded list items and blank-line paragraph boundaries stay distinct blocks —
     then parsed at block level via :func:`parse_block_md` inside the :class:`~panflute.BlockQuote`.
-    Child vertices are rendered recursively and appended inside the same :class:`~panflute.BlockQuote`.
 
     A pull quote (:attr:`~guffin.vertex.QuoteType.PULL`) instead produces a class-tagged
     :class:`~panflute.Div` for the decorated treatment: the vertex's ``quote`` becomes a
@@ -991,7 +998,13 @@ def _quote_block_vertex_to_blocks(
     ``fancy-quote-attribution`` sub-:class:`~panflute.Div`, inside an outer ``fancy-quote``
     :class:`~panflute.Div`.  The Div carries no emphasis or glyph of its own — each output format
     applies its own styling (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``, or EPUB CSS on
-    ``div.fancy-quote``).  Child vertices follow at the end, as for the plain form.
+    ``div.fancy-quote``).
+
+    In both forms the quotation contains only the vertex's own ``quote`` (and ``attribution``)
+    content.  Child vertices are outline descendants, not quotation content: they render
+    recursively *after* the :class:`~panflute.BlockQuote` / ``fancy-quote``
+    :class:`~panflute.Div`, outside the quotation, so the quote never absorbs material the
+    quoted source did not say.
 
     Args:
         vertex: The quote-block vertex to render.
@@ -1004,8 +1017,8 @@ def _quote_block_vertex_to_blocks(
         depth: Tree depth of *vertex*.
 
     Returns:
-        A single-element list containing the :class:`~panflute.BlockQuote` (BLOCK) or the
-        ``fancy-quote`` :class:`~panflute.Div` (PULL).
+        The :class:`~panflute.BlockQuote` (BLOCK) or ``fancy-quote`` :class:`~panflute.Div`
+        (PULL), followed by the blocks of any child vertices.
     """
     child_blocks: Final[list[pf.Block]] = build_child_blocks(
         vertex.children or [],
@@ -1025,11 +1038,9 @@ def _quote_block_vertex_to_blocks(
             fancy_blocks.append(
                 pf.Div(*parse_block_md(hard_broken_markdown(vertex.attribution)), classes=["fancy-quote-attribution"])
             )
-        fancy_blocks.extend(child_blocks)
-        return [pf.Div(*fancy_blocks, classes=["fancy-quote"])]
-    inner_blocks: list[pf.Block] = parse_block_md(hard_broken_markdown(vertex.quote))
-    inner_blocks.extend(child_blocks)
-    return [pf.BlockQuote(*inner_blocks)]
+        return [pf.Div(*fancy_blocks, classes=["fancy-quote"]), *child_blocks]
+    inner_blocks: Final[list[pf.Block]] = parse_block_md(hard_broken_markdown(vertex.quote))
+    return [pf.BlockQuote(*inner_blocks), *child_blocks]
 
 
 def _halign_to_pandoc_str(align: HAlign) -> str:

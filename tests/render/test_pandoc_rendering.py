@@ -33,6 +33,7 @@ from guffin.model.vertex import (
     QuoteBlockVertex,
     QuoteType,
     TextVertex,
+    Vertex,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
@@ -1080,6 +1081,37 @@ class TestPullQuoteRendering:
         doc.walk(lambda elem, _doc: divs.append(elem) if isinstance(elem, pf.Div) else None)
         assert not any("fancy-quote-attribution" in div.classes for div in divs)
 
+    @staticmethod
+    def _render_with_child(quote_type: QuoteType) -> pf.Doc:
+        """Render a tree whose quote block carries one child text vertex."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
+        vtx = QuoteBlockVertex(
+            uid="quote0001", quote_type=quote_type, quote="the quotation line", children=["quochild1"]
+        )
+        child = TextVertex(uid="quochild1", text="a child block of the quote")
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, vtx, child]), {}, {})
+        return doc
+
+    def test_block_quote_child_renders_outside_the_quotation(self) -> None:
+        """A quote block's outline child renders after the BlockQuote, never inside it.
+
+        Children are outline descendants, not quotation content — folding them into the
+        quotation would attribute the author's own material to the quoted source.
+        """
+        doc = self._render_with_child(QuoteType.BLOCK)
+        quotes: list[pf.BlockQuote] = []
+        doc.walk(lambda elem, _doc: quotes.append(elem) if isinstance(elem, pf.BlockQuote) else None)
+        assert len(quotes) == 1
+        assert "child block" not in pf.stringify(quotes[0])
+        assert "child block" in pf.stringify(doc)  # the child still renders, outside the quote
+
+    def test_pull_quote_child_renders_outside_the_fancy_quote_div(self) -> None:
+        """A pull quote's outline child renders after the fancy-quote Div, never inside it."""
+        doc = self._render_with_child(QuoteType.PULL)
+        fancy = self._first_div(doc, "fancy-quote")
+        assert "child block" not in pf.stringify(fancy)
+        assert "child block" in pf.stringify(doc)  # the child still renders, outside the decoration
+
 
 class TestBlockRefToBlockLevelVertex:
     """A text vertex that is solely a reference to a block-level vertex renders as that block.
@@ -1153,6 +1185,89 @@ class TestBlockRefToBlockLevelVertex:
         target_page = PageVertex(uid="targpage1", title="Some Page")
         tree = VertexTree(tree_vertices=[page, ref], ref_vertices=[target_page])
         assert _block_ref_target(ref, tree) is None
+
+
+class TestReferenceDoesNotTranscludeDescendants:
+    """A REFERENCE includes only the target vertex; only an EMBED transcludes its subtree.
+
+    The block-level reference path (`_block_ref_target` / `build_child_blocks`) renders the
+    referenced block itself as a fidelity accommodation — the target's descendant subtree
+    (children, and the attribute assignments folded from child blocks) must not come along.
+    """
+
+    _QUOTE_UID = "quo000001"
+    _CHILD_TEXT = "a child block of the quote"
+
+    @classmethod
+    def _quote_and_child(cls) -> list[Vertex]:
+        """A quote block carrying one child text vertex."""
+        quote = QuoteBlockVertex(
+            uid=cls._QUOTE_UID,
+            quote="the quotation line",
+            children=["quochild1"],
+        )
+        child = TextVertex(uid="quochild1", text=cls._CHILD_TEXT)
+        return [quote, child]
+
+    def _render(self, tree: VertexTree) -> pf.Doc:
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        return doc
+
+    def test_sole_reference_renders_the_quote_block(self) -> None:
+        """The reference still renders as a BlockQuote (the fidelity accommodation stands)."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["reftext01"])
+        ref = TextVertex(
+            uid="reftext01",
+            text=f"[> the quotation line]({vertex_link_url(self._QUOTE_UID, VertexLinkKind.REFERENCE)})",
+            refs=[self._QUOTE_UID],
+        )
+        tree = VertexTree(tree_vertices=[page, ref], ref_vertices=self._quote_and_child())
+        doc = self._render(tree)
+        assert any(isinstance(block, pf.BlockQuote) for block in doc.content)
+
+    def test_sole_reference_strips_the_target_subtree(self) -> None:
+        """The referenced quote block renders without its child vertex."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["reftext01"])
+        ref = TextVertex(
+            uid="reftext01",
+            text=f"[> the quotation line]({vertex_link_url(self._QUOTE_UID, VertexLinkKind.REFERENCE)})",
+            refs=[self._QUOTE_UID],
+        )
+        tree = VertexTree(tree_vertices=[page, ref], ref_vertices=self._quote_and_child())
+        assert self._CHILD_TEXT not in pf.stringify(self._render(tree))
+
+    def test_sole_reference_strips_the_target_attribute_pills(self) -> None:
+        """The referenced block's folded attribute assignments do not render at the ref site."""
+        assignment = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="mood", domain=AttributeDomain.DEFAULT),
+                link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1"),
+            ),
+            values=[LiteralValue(value="wistful")],
+        )
+        quote = QuoteBlockVertex(
+            uid=self._QUOTE_UID,
+            quote="the quotation line",
+            attribute_assignments=[assignment],
+        )
+        page = PageVertex(uid="pageroot1", title="Doc", children=["reftext01"])
+        ref = TextVertex(
+            uid="reftext01",
+            text=f"[> the quotation line]({vertex_link_url(self._QUOTE_UID, VertexLinkKind.REFERENCE)})",
+            refs=[self._QUOTE_UID],
+        )
+        tree = VertexTree(tree_vertices=[page, ref], ref_vertices=[quote])
+        assert "wistful" not in pf.stringify(self._render(tree))
+
+    def test_embed_transcludes_the_target_subtree(self) -> None:
+        """The contrast case: an EMBED of the same quote block reproduces its child."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["embed0001"])
+        embed = BlockEmbedVertex(
+            uid="embed0001",
+            vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid=self._QUOTE_UID),
+        )
+        tree = VertexTree(tree_vertices=[page, embed], ref_vertices=self._quote_and_child())
+        assert self._CHILD_TEXT in pf.stringify(self._render(tree))
 
 
 class TestEffectiveLayout:

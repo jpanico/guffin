@@ -166,8 +166,13 @@
   text: the child block contains a standard markdown single-line block quote
 - vertex_type: guffin/quote-block
   uid: EOXU_iAwJ
+  children:
+  - nUhQLzz5a
   quote_type: block
   quote: This is a *Markdown standard* single line **Block Quote**
+- vertex_type: guffin/text
+  uid: nUhQLzz5a
+  text: this is a child block of Block Quote
 - vertex_type: guffin/text
   uid: U_3KjJyqe
   children:
@@ -175,6 +180,8 @@
   text: the child block contains a standard markdown multi-line block quote
 - vertex_type: guffin/quote-block
   uid: kwybAuoGM
+  children:
+  - 5Zw9xiCRu
   quote_type: block
   quote: 'This is a Markdown standard multi-line Block Quote
 
@@ -182,16 +189,24 @@
 
     - this is the **3rd line**'
 - vertex_type: guffin/text
+  uid: 5Zw9xiCRu
+  text: this is a child block of Block Quote
+- vertex_type: guffin/text
   uid: 1AL7o_fUs
   children:
   - F9TXbzC0K
   text: the child block contains a Roam native single-line block quote
 - vertex_type: guffin/quote-block
   uid: F9TXbzC0K
+  children:
+  - 49jaaCtfI
   refs:
   - OexZiLR_O
   quote_type: block
   quote: This is a *Roam standard* single line **Block Quote**
+- vertex_type: guffin/text
+  uid: 49jaaCtfI
+  text: this is a child block of Block Quote
 - vertex_type: guffin/text
   uid: kfm7Kk_B3
   children:
@@ -199,6 +214,8 @@
   text: the child block contains a Roam native multi-line block quote
 - vertex_type: guffin/quote-block
   uid: kyagWLAKA
+  children:
+  - f9sFZsg4A
   refs:
   - OexZiLR_O
   quote_type: block
@@ -208,17 +225,25 @@
 
     - this is the **3rd line**'
 - vertex_type: guffin/text
+  uid: f9sFZsg4A
+  text: this is a child block of Block Quote
+- vertex_type: guffin/text
   uid: 9uT8Z9xNJ
   children:
   - GVQMV2rff
   text: the child block contains a Roam native single line Pull Quote
 - vertex_type: guffin/quote-block
   uid: GVQMV2rff
+  children:
+  - AS_i0QDod
   refs:
   - OexZiLR_O
   - Q-T5fKOEq
   quote_type: pull
   quote: This is a Roam single line Pull Quote
+- vertex_type: guffin/text
+  uid: AS_i0QDod
+  text: this is a child block of Pull Quote
 - vertex_type: guffin/text
   uid: OegKTVVNv
   children:
@@ -226,12 +251,17 @@
   text: the child block contains a Roam native multiline Pull Quote
 - vertex_type: guffin/quote-block
   uid: TlfIEaYF3
+  children:
+  - A7r0inxrX
   refs:
   - OexZiLR_O
   - Q-T5fKOEq
   quote_type: pull
   quote: This is a Roam multi-line Pull Quote
   attribution: this is the 2nd line
+- vertex_type: guffin/text
+  uid: A7r0inxrX
+  text: this is a child block of Pull Quote
 - vertex_type: guffin/heading
   uid: LfaVt18Iw
   children:
