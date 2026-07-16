@@ -63,7 +63,9 @@
       "Bash(GUFFIN_LIVE_TESTS=1 .venv/bin/python tests/regen_fixtures.py \"[[Test Article]] 0\" --prefix test_article_0)",
       "Bash(GUFFIN_LIVE_TESTS=1 GUFFIN_DUMP_PANDOC_AST=1 .venv/bin/export-roam-tree \"[[Test Article]] 0\" --output-dir /tmp/guffin_cb_test --format pdf)",
       "Bash(ls ~/.ssh/*.pub 2>/dev/null)",
-      "Bash(GUFFIN_LIVE_TESTS=1 pytest -m live -v)"
+      "Bash(GUFFIN_LIVE_TESTS=1 pytest -m live -v)",
+      "mcp__roam-mcp__create_block",
+      "mcp__roam-mcp__update_block"
     ]
   }
 }
