@@ -886,11 +886,11 @@ class TestVertexTreeToPandocArticleFixture:
 
     def test_block_count(self, doc: pf.Doc) -> None:
         """The fixture produces the expected number of top-level blocks."""
-        # 1 Div(callout) + 3 H1s + 6 H2s + 3 H3s + 1 H4 + 3 Para(Link) + 6 BulletList = 23
+        # 1 Div(callout) + 3 H1s + 6 H2s + 3 H3s + 1 H4 + 3 Para(Link) + 6 BulletList + 1 Table = 24
         # (the link-placed Section 3.1 PDF embed lists with its text sibling; the inline-placed
         # Section 3.2 embed stays a standalone Para.  The unpublished Section 3.1_5 is included:
         # this builds straight from the vertex tree; drop_unpublished is a renderer prepare step)
-        assert len(list(doc.content)) == 23
+        assert len(list(doc.content)) == 24
 
     def test_first_block_is_section_1_header(self, doc: pf.Doc) -> None:
         """The second block is an H1 Header for 'Section 1' (first block is the callout Para)."""

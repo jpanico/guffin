@@ -123,6 +123,46 @@
   props: null
   title: null
   attrs: null
+- uid: mfYCtWH-T
+  id: 14459
+  string: ((VxYhmVTG3))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 12920
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  - id: 14458
+  props: null
+  title: null
+  attrs: null
+- uid: 8VPJRGOt4
+  id: 14460
+  string: ((jN4ClkAEl))
+  order: 1
+  heading: null
+  children:
+  - id: 14461
+  refs:
+  - id: 12919
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  props: null
+  title: null
+  attrs: null
 - uid: zZG-BfWvs
   id: 11164
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
@@ -180,6 +220,26 @@
   props: null
   title: null
   attrs: null
+- uid: BeDkLXjgQ
+  id: 14458
+  string: ((DaltU9ClP))
+  order: 0
+  heading: null
+  children:
+  - id: 14459
+  refs:
+  - id: 12916
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  props: null
+  title: null
+  attrs: null
 - uid: TaN67WqnA
   id: 3334
   string: illustration 1.1
@@ -196,6 +256,26 @@
   - id: 3327
   - id: 3328
   - id: 3331
+  props: null
+  title: null
+  attrs: null
+- uid: 1NasQjcTQ
+  id: 14461
+  string: ((DPW-zEDaU))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 12925
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  - id: 14460
   props: null
   title: null
   attrs: null
@@ -339,6 +419,31 @@
   - id: 3327
   - id: 3328
   props: null
+  title: null
+  attrs: null
+- uid: nhX6sTxSE
+  id: 14457
+  string: '{{table}}'
+  order: 0
+  heading: null
+  children:
+  - id: 14458
+  - id: 14460
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  props:
+    table:
+      columns:
+        '0':
+          width: 336
+        '1':
+          width: 349
   title: null
   attrs: null
 - uid: bxkcECGwN
@@ -518,7 +623,8 @@
   string: Section 2.2
   order: 1
   heading: 2
-  children: null
+  children:
+  - id: 14457
   refs: null
   page:
     id: 3327

@@ -486,12 +486,15 @@ class TestFetchRoamNodesFetchByNodeUid:
     def test_live_fetch_by_node_uid(self, live_api_endpoint: ApiEndpoint) -> None:
         """Live test: fetch the wdMgyBiP9 subtree and compare with the fixture hierarchy.
 
-        The ``wdMgyBiP9`` node (Section 2) has seven descendants in the
+        The ``wdMgyBiP9`` node (Section 2) has twelve descendants in the
         ``test_article_1_nodes.yaml`` fixture: Section 2.1 (``drtANJYTg``),
         illustration 2.1 (``OaTXPl93p``), its caption (``tWkumkdUE``), its image
         (``zZG-BfWvs``), Section 2.1.1 (``yFUau9Cpg``), Section 2.1.1.1
-        (``bxkcECGwN``), and Section 2.2 (``5f1ahOFdp``).  Transient session/UI attributes never
-        reach :class:`~guffin.roam.node.RoamNode`, so the comparison is insulated from Roam activity.
+        (``bxkcECGwN``), Section 2.2 (``5f1ahOFdp``), its ``{{table}}`` block
+        (``nhX6sTxSE``), and the table's four image-referencing cells
+        (``BeDkLXjgQ``, ``mfYCtWH-T``, ``8VPJRGOt4``, ``1NasQjcTQ``).  Transient
+        session/UI attributes never reach :class:`~guffin.roam.node.RoamNode`, so the
+        comparison is insulated from Roam activity.
         """
         node_uid = "wdMgyBiP9"
         section2_uids: set[str] = {
@@ -503,6 +506,11 @@ class TestFetchRoamNodesFetchByNodeUid:
             "OaTXPl93p",
             "tWkumkdUE",
             "zZG-BfWvs",
+            "nhX6sTxSE",
+            "BeDkLXjgQ",
+            "mfYCtWH-T",
+            "8VPJRGOt4",
+            "1NasQjcTQ",
         }
 
         all_fixture_nodes = article1_node_tree().tree_network
@@ -523,10 +531,12 @@ class TestFetchRoamNodesFetchByNodeUid:
         """Test that fetch_by_node_uid returns the root node and all its descendants.
 
         Uses the test_article_1_nodes.yaml fixture, fetching for node_uid ``'wdMgyBiP9'``
-        (Section 2).  Expects the root node plus its seven descendant blocks: Section 2.1
+        (Section 2).  Expects the root node plus its twelve descendant blocks: Section 2.1
         (``drtANJYTg``), illustration 2.1 (``OaTXPl93p``), its caption (``tWkumkdUE``),
         its image (``zZG-BfWvs``), Section 2.1.1 (``yFUau9Cpg``),
-        Section 2.1.1.1 (``bxkcECGwN``), and Section 2.2 (``5f1ahOFdp``).
+        Section 2.1.1.1 (``bxkcECGwN``), Section 2.2 (``5f1ahOFdp``), its ``{{table}}``
+        block (``nhX6sTxSE``), and the table's four image-referencing cells
+        (``BeDkLXjgQ``, ``mfYCtWH-T``, ``8VPJRGOt4``, ``1NasQjcTQ``).
         """
         # UIDs in the Section 2 subtree: root + all descendants
         section2_uids: set[str] = {
@@ -538,6 +548,11 @@ class TestFetchRoamNodesFetchByNodeUid:
             "OaTXPl93p",
             "tWkumkdUE",
             "zZG-BfWvs",
+            "nhX6sTxSE",
+            "BeDkLXjgQ",
+            "mfYCtWH-T",
+            "8VPJRGOt4",
+            "1NasQjcTQ",
         }
 
         all_fixture_nodes = article1_node_tree().tree_network

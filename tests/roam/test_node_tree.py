@@ -749,6 +749,11 @@ class TestNodeTreeDFSIterator:
           4025  — Section 2.1.1        (order=1, child of 3332)
           4028  — Section 2.1.1.1      (order=0, child of 4025)
           4026  — Section 2.2          (order=1, child of 3329)
+          14457 — {{table}} block      (order=0, child of 4026)
+          14458 — cell ((DaltU9ClP))   (order=0, child of 14457; row 1, col 1)
+          14459 — cell ((VxYhmVTG3))   (order=0, child of 14458; row 1, col 2)
+          14460 — cell ((jN4ClkAEl))   (order=1, child of 14457; row 2, col 1)
+          14461 — cell ((DPW-zEDaU))   (order=0, child of 14460; row 2, col 2)
           3330  — Section 3            (order=3, child of root)
           3333  — Section 3.1          (order=0, child of 3330)
           11921 — text block           (order=0, child of 3333)
@@ -783,6 +788,11 @@ class TestNodeTreeDFSIterator:
             4025,
             4028,
             4026,
+            14457,
+            14458,
+            14459,
+            14460,
+            14461,
             3330,
             3333,
             11921,

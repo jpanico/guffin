@@ -155,6 +155,7 @@ class TestVertexTreeDFSIterator:
           yFUau9Cpg  — Section 2.1.1        (children[1] of Section 2.1)
           bxkcECGwN  — Section 2.1.1.1      (children[0] of Section 2.1.1)
           5f1ahOFdp  — Section 2.2          (children[1] of Section 2)
+          nhX6sTxSE  — native table         (children[0] of Section 2.2)
           40bvW14UU  — Section 3            (children[3] of root)
           JW5PswS6v  — Section 3.1          (children[0] of Section 3)
           4ahwZimtO  — text block           (children[0] of Section 3.1)
@@ -185,6 +186,7 @@ class TestVertexTreeDFSIterator:
             "yFUau9Cpg",
             "bxkcECGwN",
             "5f1ahOFdp",
+            "nhX6sTxSE",
             "40bvW14UU",
             "JW5PswS6v",
             "4ahwZimtO",

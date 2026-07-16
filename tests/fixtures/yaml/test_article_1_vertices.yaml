@@ -129,8 +129,23 @@
   heading_level: 4
 - vertex_type: guffin/heading
   uid: 5f1ahOFdp
+  children:
+  - nhX6sTxSE
   text: Section 2.2
   heading_level: 2
+- vertex_type: guffin/table
+  uid: nhX6sTxSE
+  table:
+    rows:
+    - - '[![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1)](x-guffin:vertex/DaltU9ClP)'
+      - '[![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)](x-guffin:vertex/VxYhmVTG3)'
+    - - '[![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)](x-guffin:vertex/jN4ClkAEl)'
+      - '[![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)](x-guffin:vertex/DPW-zEDaU)'
+    has_row_header: true
+    has_col_header: false
+  table_style:
+    cell_styles: {}
+    column_widths: []
 - vertex_type: guffin/heading
   uid: 40bvW14UU
   children:

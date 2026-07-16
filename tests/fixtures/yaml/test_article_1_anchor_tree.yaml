@@ -136,6 +136,46 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: mfYCtWH-T
+  id: 14459
+  string: ((VxYhmVTG3))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 12920
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  - id: 14458
+  props: null
+  title: null
+  attrs: null
+- uid: 8VPJRGOt4
+  id: 14460
+  string: ((jN4ClkAEl))
+  order: 1
+  heading: null
+  children:
+  - id: 14461
+  refs:
+  - id: 12919
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  props: null
+  title: null
+  attrs: null
 - uid: zZG-BfWvs
   id: 11164
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
@@ -193,6 +233,26 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: BeDkLXjgQ
+  id: 14458
+  string: ((DaltU9ClP))
+  order: 0
+  heading: null
+  children:
+  - id: 14459
+  refs:
+  - id: 12916
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  props: null
+  title: null
+  attrs: null
 - uid: TaN67WqnA
   id: 3334
   string: illustration 1.1
@@ -209,6 +269,26 @@ tree_network:
   - id: 3327
   - id: 3328
   - id: 3331
+  props: null
+  title: null
+  attrs: null
+- uid: 1NasQjcTQ
+  id: 14461
+  string: ((DPW-zEDaU))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 12925
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  - id: 14457
+  - id: 14460
   props: null
   title: null
   attrs: null
@@ -352,6 +432,31 @@ tree_network:
   - id: 3327
   - id: 3328
   props: null
+  title: null
+  attrs: null
+- uid: nhX6sTxSE
+  id: 14457
+  string: '{{table}}'
+  order: 0
+  heading: null
+  children:
+  - id: 14458
+  - id: 14460
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 4026
+  props:
+    table:
+      columns:
+        '0':
+          width: 336
+        '1':
+          width: 349
   title: null
   attrs: null
 - uid: bxkcECGwN
@@ -531,7 +636,8 @@ tree_network:
   string: Section 2.2
   order: 1
   heading: 2
-  children: null
+  children:
+  - id: 14457
   refs: null
   page:
     id: 3327
@@ -776,6 +882,28 @@ refs_by_id:
     props: null
     title: '>'
     attrs: null
+  '12920':
+    uid: VxYhmVTG3
+    id: 12920
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12910
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7
+        : width: 320
+          height: null
+    title: null
+    attrs: null
   '321':
     uid: BxGxeeGk1
     id: 321
@@ -804,6 +932,28 @@ refs_by_id:
     props: null
     title: '!INFO'
     attrs: null
+  '12916':
+    uid: DaltU9ClP
+    id: 12916
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12906
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1
+        : width: 316
+          height: null
+    title: null
+    attrs: null
   '11932':
     uid: vuPFRAwZI
     id: 11932
@@ -817,6 +967,50 @@ refs_by_id:
     parents: null
     props: null
     title: the following block embeds a PDF with guffin-meta
+    attrs: null
+  '12919':
+    uid: jN4ClkAEl
+    id: 12919
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12909
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4
+        : width: 300
+          height: null
+    title: null
+    attrs: null
+  '12925':
+    uid: DPW-zEDaU
+    id: 12925
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12914
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e
+        : width: 270
+          height: null
+    title: null
     attrs: null
   '11839':
     uid: 2xY4zCjId

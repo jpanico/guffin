@@ -32,8 +32,8 @@ from guffin.model.vertex_view import ChildrenLayout, VertexView
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import min_effective_heading_level
-from guffin.roam.node_tree import NodeTree
-from guffin.roam.primitives import ChildrenViewType, IdObject
+from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator
+from guffin.roam.primitives import ChildrenViewType, Id, IdObject
 from guffin.transcribe.roam_tree_to_guffin import (
     _is_meta_block,
     build_view_map,
@@ -1047,16 +1047,25 @@ class TestTranscribeArticleFixture:
         Attribute blocks and ``<domain>-meta::`` container blocks are skipped: full
         transcription folds them onto their parent vertex's ``attribute_assignments``
         rather than transcribing them standalone, so they have no counterpart in the
-        vertices fixture.
+        vertices fixture.  A ``NATIVE_TABLE`` node and its row/cell descendants are
+        consumed together into a single ``TableVertex`` via ``to_table_vertex``,
+        mirroring ``transcribe()``.
         """
         node_tree = article1_node_tree()
-        nodes = [
-            n for n in node_tree.tree_network if node_type(n) is not NodeType.ATTRIBUTE_BLOCK and not _is_meta_block(n)
-        ]
         min_level = min_effective_heading_level(node_tree.tree_network)
         heading_offset: int = (1 - min_level) if min_level is not None else 0
 
-        actual_vertices: list[Vertex] = [transcribe_standalone_node(n, node_tree, heading_offset) for n in nodes]
+        consumed: set[Id] = set()
+        actual_vertices: list[Vertex] = []
+        for node in NodeTreeDFSIterator(node_tree):
+            if node.id in consumed or node_type(node) is NodeType.ATTRIBUTE_BLOCK or _is_meta_block(node):
+                continue
+            if node_type(node) is NodeType.NATIVE_TABLE:
+                table_vertex, nodes_consumed = to_table_vertex(node, node_tree)
+                consumed.update(nodes_consumed)
+                actual_vertices.append(table_vertex)
+            else:
+                actual_vertices.append(transcribe_standalone_node(node, node_tree, heading_offset))
 
         raw_vertices: list[dict[str, object]] = yaml.safe_load(
             (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
