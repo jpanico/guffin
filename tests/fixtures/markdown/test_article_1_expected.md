@@ -11,6 +11,7 @@
 > - a node, (Ma5KGUH9O) “AI assistant (Claude Opus 4.6):” that has property: BLOCK_HEADING = 0, which is not a valid Markdown level. It seems that this can happen when first a valid level value (1-6) is assigned, and then the heading level is removed altogether through the Roam UI.
 > - a pair of JPEG `image`s that **have not** been resized through the Roam UI (illustration 1.1)
 > - a single JPEG `image` that **has** been resized through the Roam UI (illustration 2.1)
+> - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block reference` to a JPEG `image` block, so each cell displays its referenced image
 > - an embedded PDF document that has no special PublishingSemantics Attributes attached
 > - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
 > - this INFO `Callout box`, which contains Roam `page references`

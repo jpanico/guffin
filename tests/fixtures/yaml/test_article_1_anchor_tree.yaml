@@ -594,6 +594,9 @@ tree_network:
     - a single JPEG `image` that **has** been resized through the Roam UI (illustration
     2.1)
 
+    - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
+    reference` to a JPEG `image` block, so each cell displays its referenced image
+
     - an embedded PDF document that has no special PublishingSemantics Attributes
     attached
 
