@@ -48,6 +48,7 @@ from guffin.render.pandoc_rendering import (
     build_child_blocks,
     colophon_summary,
     make_resolver,
+    resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
 
@@ -1362,3 +1363,74 @@ class TestLayoutInheritanceRendering:
         doc, _ = vertex_tree_to_pandoc(tree, {}, view_map)
         # The embed site's DOCUMENT governs: no list of any kind in the output.
         assert not any(isinstance(block, (pf.BulletList, pf.OrderedList)) for block in doc.content)
+
+
+# ---------------------------------------------------------------------------
+# TestResolveVertexLinksNested
+# ---------------------------------------------------------------------------
+
+
+def _surviving_x_guffin_urls(doc: pf.Doc) -> list[str]:
+    """Collect the URLs of every x-guffin Link remaining anywhere in *doc*."""
+    survivors: list[str] = []
+
+    def _find(elem: pf.Element, doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Link) and elem.url.startswith("x-guffin"):
+            survivors.append(elem.url)
+
+    doc.walk(_find)
+    return survivors
+
+
+def _resolved_doc(tree: VertexTree) -> pf.Doc:
+    """Build *tree*'s Doc and run vertex-link resolution on it."""
+    doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
+    resolve_vertex_links(doc, tree, make_resolver(inline_map, DateFormat.ROAM_LONG))
+    return doc
+
+
+class TestResolveVertexLinksNested:
+    """resolve_vertex_links resolves x-guffin links nested inside resolver-substituted inlines.
+
+    A referenced vertex's text can itself contain a reference; a single walk never revisits
+    the inlines it substituted, so resolution must iterate — and no x-guffin URL may ever
+    survive into the resolved Doc.
+    """
+
+    def test_nested_link_to_absent_vertex_unwraps_to_display_text(self) -> None:
+        """A nested reference whose destination is beyond the fetch horizon leaves only its display text."""
+        caption_url = vertex_link_url("caption01", VertexLinkKind.REFERENCE)
+        absent_url = vertex_link_url("absentuid", VertexLinkKind.REFERENCE)
+        page = PageVertex(uid="pageroot1", title="Doc", children=["txt000001"])
+        txt = TextVertex(uid="txt000001", text=f"See [caption]({caption_url}) for details.")
+        caption = HeadingVertex(uid="caption01", text=f"[C]({absent_url}), for PDP-11", heading_level=5)
+        tree = VertexTree(tree_vertices=[page, txt], ref_vertices=[caption])
+        doc = _resolved_doc(tree)
+        assert _surviving_x_guffin_urls(doc) == []
+        text = pf.stringify(doc)
+        assert "C, for PDP-11" in text
+        assert "x-guffin" not in text
+
+    def test_nested_link_to_present_vertex_resolves_to_its_content(self) -> None:
+        """A nested reference whose destination is in the tree resolves to that destination's content."""
+        caption_url = vertex_link_url("caption01", VertexLinkKind.REFERENCE)
+        inner_url = vertex_link_url("innerpg01", VertexLinkKind.REFERENCE)
+        page = PageVertex(uid="pageroot1", title="Doc", children=["txt000001"])
+        txt = TextVertex(uid="txt000001", text=f"See [caption]({caption_url}) for details.")
+        caption = HeadingVertex(uid="caption01", text=f"[C]({inner_url}), for PDP-11", heading_level=5)
+        inner = PageVertex(uid="innerpg01", title="C Language")
+        tree = VertexTree(tree_vertices=[page, txt], ref_vertices=[caption, inner])
+        doc = _resolved_doc(tree)
+        assert _surviving_x_guffin_urls(doc) == []
+        assert "C Language, for PDP-11" in pf.stringify(doc)
+
+    def test_reference_cycle_terminates_without_surviving_links(self) -> None:
+        """Mutually referencing blocks terminate at the pass cap with every x-guffin link unwrapped."""
+        alpha_url = vertex_link_url("alphauid1", VertexLinkKind.REFERENCE)
+        beta_url = vertex_link_url("betauid01", VertexLinkKind.REFERENCE)
+        page = PageVertex(uid="pageroot1", title="Doc", children=["alphauid1"])
+        alpha = TextVertex(uid="alphauid1", text=f"alpha sees [beta]({beta_url})")
+        beta = TextVertex(uid="betauid01", text=f"beta sees [alpha]({alpha_url})")
+        tree = VertexTree(tree_vertices=[page, alpha], ref_vertices=[beta])
+        doc = _resolved_doc(tree)
+        assert _surviving_x_guffin_urls(doc) == []

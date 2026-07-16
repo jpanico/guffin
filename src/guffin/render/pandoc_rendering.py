@@ -1551,6 +1551,10 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
     return _resolve
 
 
+_MAX_LINK_RESOLUTION_PASSES: Final[int] = 10
+"""Upper bound on :func:`resolve_vertex_links` resolution passes; guards against reference cycles."""
+
+
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
 def resolve_vertex_links(
     doc: pf.Doc,
@@ -1565,6 +1569,13 @@ def resolve_vertex_links(
     the destination :class:`~guffin.vertex.Vertex`, and the original link's
     display-text inlines.  The inlines returned by *resolver* replace the Link
     in the document tree.
+
+    Resolution runs to a **fixpoint**: resolver-produced inlines may themselves contain
+    ``x-guffin`` links (a referenced vertex's text can hold a nested reference), and a
+    :meth:`~panflute.Element.walk` never revisits the inlines a pass substituted — so
+    passes repeat until one substitutes nothing.  After :data:`_MAX_LINK_RESOLUTION_PASSES`
+    passes (a reference cycle), any surviving ``x-guffin`` Link is unwrapped to its
+    display-text inlines with a warning, so an internal URL never reaches the output.
 
     When a destination UID is absent from *vertex_tree* — e.g. a reference to a block
     whose own vertex could not be transcribed and was dropped, such as an external
@@ -1582,17 +1593,40 @@ def resolve_vertex_links(
             the original display-text inlines; returns replacement inline elements.
     """
 
-    def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Inline] | None:
-        if not isinstance(elem, pf.Link):
-            return None
-        vertex_link: Final[VertexLink | None] = parse_vertex_link(elem.url)
-        if vertex_link is None:
-            return None
-        display: Final[list[pf.Inline]] = list(elem.content)
-        if vertex_link.uid not in vertex_tree.uid_map:
-            logger.warning("x-guffin link uid=%r not found in vertex_tree; leaving display text", vertex_link.uid)
-            return display
-        dest: Final[Vertex] = vertex_tree.uid_map[vertex_link.uid]
-        return resolver(vertex_link, dest, display)
+    def _resolution_pass() -> bool:
+        """Run one substitution walk over *doc*; return whether any Link was replaced."""
+        replaced: bool = False
 
-    doc.walk(_action)
+        def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Inline] | None:
+            nonlocal replaced
+            if not isinstance(elem, pf.Link):
+                return None
+            vertex_link: VertexLink | None = parse_vertex_link(elem.url)
+            if vertex_link is None:
+                return None
+            replaced = True
+            display: list[pf.Inline] = list(elem.content)
+            if vertex_link.uid not in vertex_tree.uid_map:
+                logger.warning("x-guffin link uid=%r not found in vertex_tree; leaving display text", vertex_link.uid)
+                return display
+            dest: Vertex = vertex_tree.uid_map[vertex_link.uid]
+            return resolver(vertex_link, dest, display)
+
+        doc.walk(_action)
+        return replaced
+
+    for _ in range(_MAX_LINK_RESOLUTION_PASSES):
+        if not _resolution_pass():
+            return
+
+    def _unwrap_survivor(elem: pf.Element, doc: pf.Doc) -> list[pf.Inline] | None:
+        if not isinstance(elem, pf.Link) or parse_vertex_link(elem.url) is None:
+            return None
+        logger.warning(
+            "x-guffin link url=%r unresolved after %d passes; leaving display text",
+            elem.url,
+            _MAX_LINK_RESOLUTION_PASSES,
+        )
+        return list(elem.content)
+
+    doc.walk(_unwrap_survivor)
