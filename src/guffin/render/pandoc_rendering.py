@@ -85,7 +85,6 @@ from pathlib import Path
 from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
-import regex
 from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
@@ -125,7 +124,7 @@ from guffin.model.vertex import (
     VertexChildren,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
-from guffin.model.vertex_tree import VertexTree, root_vertex
+from guffin.model.vertex_tree import VertexTree, root_vertex, sole_link_target
 from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexView, ViewMap
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
@@ -200,19 +199,6 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
     CalloutVertex,
     QuoteBlockVertex,
     TableVertex,
-)
-
-
-# A text vertex whose entire content is a single ``x-guffin`` reference — the Pandoc Markdown
-# ``[<display>](<x-guffin-url>)`` a solo Roam ``((uid))`` / ``[[Page]]`` reference transcribes to.
-# The display is matched with DOTALL because a reference to a block-level vertex reproduces that
-# vertex's whole raw string (which may span paragraphs) as the link text; the URL is anchored at
-# the very end, the sole place link conversion emits it (the display carries no nested x-guffin URL,
-# so the greedy display never swallows the real one).  Matching structurally — rather than requiring
-# the text to round-trip through Pandoc as one ``pf.Link`` — is what lets a multi-paragraph target be
-# recognised: Pandoc cannot parse an inline link whose display text contains a paragraph break.
-_SOLE_VERTEX_REFERENCE_RE: Final[regex.Pattern[str]] = regex.compile(
-    r"\[(?P<display>.*)\]\((?P<url>x-guffin:[^()\s]+)\)", regex.DOTALL
 )
 
 
@@ -377,12 +363,10 @@ def _block_ref_target(
     transcription, e.g. a table's rows or a callout's body) — never its descendant
     subtree, which only an ``EMBED`` transcludes.
 
-    The reference is recognised **structurally**, from the ``[<display>](<x-guffin-url>)``
-    shape of the vertex text (see :data:`_SOLE_VERTEX_REFERENCE_RE`), not by re-parsing that
-    text into Pandoc inlines: a reference to a multi-paragraph block-level vertex reproduces
-    the target's whole raw string as the link display, and Pandoc cannot parse an inline link
-    whose display text spans a paragraph break — so a parse-based check would miss exactly the
-    references that most need the block-level rendering path.
+    Sole-reference recognition and destination resolution are the model's
+    (:func:`~guffin.model.vertex_tree.sole_link_target`); this helper adds only the
+    Pandoc-specific policy of *which* destinations take the block-level rendering path
+    (:data:`_BLOCK_LEVEL_VERTEX_TYPES`).
 
     Args:
         vertex: The text-content vertex to inspect.
@@ -393,13 +377,7 @@ def _block_ref_target(
         other case — including a reference to an inline-representable vertex, or one
         mixed with surrounding text, both of which are resolved inline instead.
     """
-    match: Final[regex.Match[str] | None] = _SOLE_VERTEX_REFERENCE_RE.fullmatch(vertex.text)
-    if match is None or "x-guffin:" in match.group("display"):
-        return None
-    vertex_link: Final[VertexLink | None] = parse_vertex_link(match.group("url"))
-    if vertex_link is None:
-        return None
-    dest: Final[Vertex | None] = vertex_tree.uid_map.get(vertex_link.uid)
+    dest: Final[Vertex | None] = sole_link_target(vertex, vertex_tree)
     return dest if isinstance(dest, _BLOCK_LEVEL_VERTEX_TYPES) else None
 
 

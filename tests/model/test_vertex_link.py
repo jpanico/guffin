@@ -8,6 +8,7 @@ from guffin.model.vertex_link import (
     VertexLink,
     VertexLinkKind,
     is_vertex_link,
+    parse_sole_vertex_link,
     parse_vertex_link,
     vertex_link_url,
 )
@@ -165,3 +166,59 @@ class TestRoundTrip:
     def test_round_trip(self, kind: VertexLinkKind) -> None:
         """Test that parsing a built URL recovers the original kind and UID."""
         assert parse_vertex_link(vertex_link_url(_UID, kind)) == VertexLink(kind, _UID)
+
+
+class TestParseSoleVertexLink:
+    """Tests for parse_sole_vertex_link()."""
+
+    def test_sole_reference_parses(self) -> None:
+        """A text that is exactly one reference-form link parses to its VertexLink."""
+        text = f"[display text](x-guffin:vertex/{_UID})"
+        assert parse_sole_vertex_link(text) == VertexLink(VertexLinkKind.REFERENCE, _UID)
+
+    def test_sole_embed_parses(self) -> None:
+        """A text that is exactly one embed-form link parses to its VertexLink."""
+        text = f"[display text](x-guffin:vertex-embed/{_UID})"
+        assert parse_sole_vertex_link(text) == VertexLink(VertexLinkKind.EMBED, _UID)
+
+    def test_multi_paragraph_display_parses(self) -> None:
+        """A display reproducing a multi-paragraph destination still parses (DOTALL)."""
+        text = f"[first paragraph\n\nsecond paragraph](x-guffin:vertex/{_UID})"
+        assert parse_sole_vertex_link(text) == VertexLink(VertexLinkKind.REFERENCE, _UID)
+
+    def test_empty_display_parses(self) -> None:
+        """An empty display is still a sole link."""
+        assert parse_sole_vertex_link(f"[](x-guffin:vertex/{_UID})") == VertexLink(VertexLinkKind.REFERENCE, _UID)
+
+    def test_leading_text_is_none(self) -> None:
+        """A link preceded by other text is not sole."""
+        assert parse_sole_vertex_link(f"see [display](x-guffin:vertex/{_UID})") is None
+
+    def test_trailing_text_is_none(self) -> None:
+        """A link followed by other text is not sole."""
+        assert parse_sole_vertex_link(f"[display](x-guffin:vertex/{_UID}) indeed") is None
+
+    def test_nested_guffin_url_in_display_is_none(self) -> None:
+        """A display carrying its own x-guffin URL is rejected."""
+        text = f"[[inner](x-guffin:vertex/{_UID_DASH_UNDERSCORE})](x-guffin:vertex/{_UID})"
+        assert parse_sole_vertex_link(text) is None
+
+    def test_non_guffin_url_is_none(self) -> None:
+        """A plain markdown link to an HTTP URL is not a vertex link."""
+        assert parse_sole_vertex_link("[display](https://example.com)") is None
+
+    def test_invalid_uid_is_none(self) -> None:
+        """A structurally sole link whose URL fails vertex-link parsing is rejected."""
+        assert parse_sole_vertex_link("[display](x-guffin:vertex/bad)") is None
+
+    def test_unknown_path_stem_is_none(self) -> None:
+        """A structurally sole link with an unknown path stem is rejected."""
+        assert parse_sole_vertex_link(f"[display](x-guffin:vertex-unknown/{_UID})") is None
+
+    def test_plain_text_is_none(self) -> None:
+        """Ordinary prose is not a sole link."""
+        assert parse_sole_vertex_link("just some text") is None
+
+    def test_empty_string_is_none(self) -> None:
+        """The empty string is not a sole link."""
+        assert parse_sole_vertex_link("") is None

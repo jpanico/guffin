@@ -1,12 +1,25 @@
-"""Tests for the guffin.model.vertex_tree helpers: transcluded_vertices, assignments_for, root_vertex."""
+"""Tests for the guffin.model.vertex_tree helpers.
+
+Covers transcluded_vertices, assignments_for, sole_link_target, visible_asset_vertices, and root_vertex.
+"""
 
 from conftest import article1_vertex_tree
+from pydantic import HttpUrl
 
+from guffin.common.geometry import ImageSize
+from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.vertex import BlockEmbedVertex, PageEmbedVertex, PageVertex, TextVertex
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
-from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
+from guffin.model.vertex import BlockEmbedVertex, HeadingVertex, ImageVertex, PageEmbedVertex, PageVertex, TextVertex
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
+from guffin.model.vertex_tree import (
+    VertexTree,
+    assignments_for,
+    root_vertex,
+    sole_link_target,
+    transcluded_vertices,
+    visible_asset_vertices,
+)
 
 _REF_LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1")
 
@@ -29,6 +42,20 @@ def _page_embed(uid: str, target_uid: str) -> PageEmbedVertex:
 
 def _assignment_of(name: str) -> AttributeAssignment:
     return AttributeAssignment(attribute=AttributeInstance(definition=Attribute(name=name), link=_REF_LINK), values=())
+
+
+def _image(uid: str = "imguid001") -> ImageVertex:
+    return ImageVertex(
+        uid=uid,
+        source=HttpUrl("https://example.com/imgs/photo.jpeg"),
+        media_type=MediaType.JPEG,
+        scaled_image_size=ImageSize(),
+    )
+
+
+def _sole_ref_text(uid: str, target_uid: str) -> TextVertex:
+    """A text vertex whose entire content is one reference-form vertex link to *target_uid*."""
+    return TextVertex(uid=uid, text=f"[display]({vertex_link_url(target_uid, VertexLinkKind.REFERENCE)})")
 
 
 # ---------------------------------------------------------------------------
@@ -156,6 +183,114 @@ class TestAssignmentsFor:
         """A tree with no assignments yields an empty iterator."""
         tree = VertexTree(tree_vertices=[_page()])
         assert list(assignments_for(tree, Attribute(name="a"))) == []
+
+
+# ---------------------------------------------------------------------------
+# TestSoleLinkTarget
+# ---------------------------------------------------------------------------
+
+
+class TestSoleLinkTarget:
+    """Tests for sole_link_target()."""
+
+    def test_sole_reference_resolves_to_target(self) -> None:
+        """A text vertex whose whole content is one reference link resolves to the destination."""
+        target = _image("imguid001")
+        referrer = _sole_ref_text("textuid01", "imguid001")
+        tree = VertexTree(tree_vertices=[referrer], ref_vertices=[target])
+        assert sole_link_target(referrer, tree) == target
+
+    def test_heading_sole_reference_resolves_to_target(self) -> None:
+        """A heading vertex whose whole text is one reference link resolves to the destination."""
+        target = _text("textuid02")
+        heading = HeadingVertex(
+            uid="headuid01",
+            text=f"[display]({vertex_link_url('textuid02', VertexLinkKind.REFERENCE)})",
+            heading_level=1,
+        )
+        tree = VertexTree(tree_vertices=[heading], ref_vertices=[target])
+        assert sole_link_target(heading, tree) == target
+
+    def test_link_amid_text_is_none(self) -> None:
+        """A reference mixed with surrounding text is not sole."""
+        referrer = TextVertex(
+            uid="textuid01", text=f"see [display]({vertex_link_url('imguid001', VertexLinkKind.REFERENCE)})"
+        )
+        tree = VertexTree(tree_vertices=[referrer], ref_vertices=[_image("imguid001")])
+        assert sole_link_target(referrer, tree) is None
+
+    def test_non_text_bearing_vertex_is_none(self) -> None:
+        """A vertex without a text field (e.g. an image) has no sole link."""
+        image = _image("imguid001")
+        tree = VertexTree(tree_vertices=[image])
+        assert sole_link_target(image, tree) is None
+
+    def test_missing_destination_is_none(self) -> None:
+        """A sole link to a UID absent from the tree resolves to None."""
+        referrer = _sole_ref_text("textuid01", "absentuid")
+        tree = VertexTree(tree_vertices=[referrer])
+        assert sole_link_target(referrer, tree) is None
+
+
+# ---------------------------------------------------------------------------
+# TestVisibleAssetVertices
+# ---------------------------------------------------------------------------
+
+
+class TestVisibleAssetVertices:
+    """Tests for visible_asset_vertices()."""
+
+    def test_in_tree_asset_included(self) -> None:
+        """An asset vertex in the tree is displayed."""
+        image = _image("imguid001")
+        page = PageVertex(uid="pageuid01", title="Page", children=["imguid001"])
+        tree = VertexTree(tree_vertices=[page, image])
+        assert visible_asset_vertices(tree) == [image]
+
+    def test_mentioned_ref_asset_excluded(self) -> None:
+        """A ref-side asset merely linked inline amid text renders as a link and is not displayed."""
+        referrer = TextVertex(
+            uid="textuid01", text=f"see [photo]({vertex_link_url('imguid001', VertexLinkKind.REFERENCE)}) here"
+        )
+        page = PageVertex(uid="pageuid01", title="Page", children=["textuid01"])
+        tree = VertexTree(tree_vertices=[page, referrer], ref_vertices=[_image("imguid001")])
+        assert visible_asset_vertices(tree) == []
+
+    def test_unreferenced_ref_asset_excluded(self) -> None:
+        """A ref-side asset nothing visible points at (e.g. deep in a mentioned page) is not displayed."""
+        page = PageVertex(uid="pageuid01", title="Page", refs=["imguid001"])
+        tree = VertexTree(tree_vertices=[page], ref_vertices=[_image("imguid001")])
+        assert visible_asset_vertices(tree) == []
+
+    def test_sole_ref_target_asset_included(self) -> None:
+        """A ref-side asset targeted by a vertex that is solely its reference is displayed."""
+        image = _image("imguid001")
+        referrer = _sole_ref_text("textuid01", "imguid001")
+        page = PageVertex(uid="pageuid01", title="Page", children=["textuid01"])
+        tree = VertexTree(tree_vertices=[page, referrer], ref_vertices=[image])
+        assert visible_asset_vertices(tree) == [image]
+
+    def test_embed_transcluded_asset_included(self) -> None:
+        """A ref-side asset inside an embed-transcluded subtree is displayed."""
+        image = _image("imguid001")
+        embed = _embed("embeduid1", "refuid001")
+        target = TextVertex(uid="refuid001", text="host", children=["imguid001"])
+        page = PageVertex(uid="pageuid01", title="Page", children=["embeduid1"])
+        tree = VertexTree(tree_vertices=[page, embed], ref_vertices=[target, image])
+        assert visible_asset_vertices(tree) == [image]
+
+    def test_asset_referenced_twice_deduplicated(self) -> None:
+        """An asset both in the tree and sole-referenced appears once."""
+        image = _image("imguid001")
+        referrer = _sole_ref_text("textuid01", "imguid001")
+        page = PageVertex(uid="pageuid01", title="Page", children=["imguid001", "textuid01"])
+        tree = VertexTree(tree_vertices=[page, image, referrer])
+        assert visible_asset_vertices(tree) == [image]
+
+    def test_no_assets_yields_empty(self) -> None:
+        """A tree without asset vertices yields an empty list."""
+        tree = VertexTree(tree_vertices=[_page()])
+        assert visible_asset_vertices(tree) == []
 
 
 # ---------------------------------------------------------------------------

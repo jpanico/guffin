@@ -1,7 +1,8 @@
 """Image and PDF asset fetching for the rendering pipeline — Pandoc-free.
 
-Walks a :class:`~guffin.vertex_tree.VertexTree`, fetches every asset-bearing
-vertex's (:data:`~guffin.model.vertex.AssetVertex`)
+Walks a :class:`~guffin.vertex_tree.VertexTree`, fetches every *displayed*
+asset-bearing vertex's (:data:`~guffin.model.vertex.AssetVertex`, scoped per
+:func:`~guffin.model.vertex_tree.visible_asset_vertices` plus the root's cover image)
 Cloud Firestore asset to a local directory via
 :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, and returns a
 ``{uid: AssetRef}`` mapping bundling each asset's on-disk location.
@@ -15,7 +16,7 @@ Public symbols:
   images) native pixel size, and (when known) original upload filename.
 - :func:`fetch_asset` — fetch a single asset-bearing vertex's file to a local
   directory; return its :class:`AssetRef`.
-- :func:`fetch_assets` — fetch every asset-bearing vertex's file from a
+- :func:`fetch_assets` — fetch every displayed asset-bearing vertex's file from a
   :class:`~guffin.vertex_tree.VertexTree` to a local directory; return a
   ``{uid: AssetRef}`` mapping.
 - :func:`fetch_and_enrich_assets` — :func:`fetch_assets` plus tree enrichment; returns the
@@ -36,8 +37,13 @@ from pydantic import validate_call
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.model.publishing_semantics import cover_image_vertex
-from guffin.model.vertex import AssetVertex, ImageVertex, is_asset_vertex
-from guffin.model.vertex_tree import VertexTree, enrich_image_original_sizes, enrich_pdf_original_file_names
+from guffin.model.vertex import AssetVertex, ImageVertex
+from guffin.model.vertex_tree import (
+    VertexTree,
+    enrich_image_original_sizes,
+    enrich_pdf_original_file_names,
+    visible_asset_vertices,
+)
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
 from guffin.roam.local_api import ApiEndpoint
@@ -172,21 +178,25 @@ def fetch_assets(
     asset_dir: Path,
     cache_dir: Path | None = None,
 ) -> dict[Uid, AssetRef]:
-    """Fetch every asset-bearing vertex's file to *asset_dir*.
+    """Fetch every displayed asset-bearing vertex's file to *asset_dir*.
 
-    Scans for asset-bearing vertices (:data:`~guffin.model.vertex.AssetVertex`),
-    fetching each one via :func:`fetch_asset` and coordinating the filename
-    claims across the whole tree, so two distinct assets sharing an upload
+    Fetches each asset via :func:`fetch_asset`, coordinating the filename
+    claims across the whole fetch, so two distinct assets sharing an upload
     name land under distinct (numeric-suffixed) filenames.  Vertices that
     fail to fetch are skipped with a warning and will fall back to a
     hyperlink in the rendered output.
 
-    Every vertex in :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` is scanned
-    (covering both :attr:`~guffin.model.vertex_tree.VertexTree.tree_vertices` and
-    :attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`, deduplicated by UID),
-    so an asset referenced from another page (a block reference whose destination is
-    an asset vertex outside the anchor tree) is fetched like an in-tree asset,
-    rather than left as a remote hyperlink.
+    The fetch is scoped to the assets the rendered document actually places from
+    local files: the *displayed* assets (per
+    :func:`~guffin.model.vertex_tree.visible_asset_vertices` — render-visible asset
+    vertices, plus assets a render-visible vertex solely references, which covers an
+    asset referenced from another page whose reference is the block's whole content),
+    together with the root's ``cover-image`` (per
+    :func:`~guffin.model.publishing_semantics.cover_image_vertex`), whose vertex is
+    typically reachable only through
+    :attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`.  An asset merely
+    *mentioned* inline amid surrounding text renders as a remote hyperlink and is not
+    fetched.
 
     Args:
         vertex_tree: The vertex tree whose assets to fetch.
@@ -201,11 +211,14 @@ def fetch_assets(
         size.  Vertices that could not be fetched are absent from the
         mapping.
     """
+    displayed: Final[list[AssetVertex]] = visible_asset_vertices(vertex_tree)
+    cover: Final[ImageVertex | None] = cover_image_vertex(vertex_tree)
+    fetchable: Final[list[AssetVertex]] = (
+        [*displayed, cover] if cover is not None and all(cover.uid != vertex.uid for vertex in displayed) else displayed
+    )
     asset_refs: Final[dict[Uid, AssetRef]] = {}
     claimed_names: Final[dict[str, str]] = {}
-    for vertex in vertex_tree.uid_map.values():
-        if not is_asset_vertex(vertex):
-            continue
+    for vertex in fetchable:
         try:
             ref: AssetRef = fetch_asset(vertex, api_endpoint, asset_dir, cache_dir, claimed_names=claimed_names)
         except Exception as e:
@@ -224,7 +237,7 @@ def fetch_and_enrich_assets(
     asset_dir: Path,
     cache_dir: Path | None = None,
 ) -> tuple[VertexTree, dict[Uid, AssetRef]]:
-    """Fetch every asset and return the tree enriched with what fetching alone can know.
+    """Fetch every displayed asset and return the tree enriched with what fetching alone can know.
 
     Convenience wrapper over :func:`fetch_assets`: after fetching, populates
     :attr:`~guffin.vertex.ImageVertex.original_image_size` on each image vertex
@@ -264,8 +277,8 @@ def cover_image_path(vertex_tree: VertexTree, asset_refs: Mapping[Uid, AssetRef]
     reference to the :class:`~guffin.model.vertex.ImageVertex` it names
     (:func:`~guffin.model.publishing_semantics.cover_image_vertex`) and returns that vertex's
     fetched location from *asset_refs* — the mapping produced by :func:`fetch_assets`, whose
-    scan already covers referenced vertices, so the cover is fetched exactly once, under the
-    tree-wide filename-claim coordination.
+    scope explicitly includes the root's cover image, so the cover is fetched exactly once,
+    under the fetch-wide filename-claim coordination.
 
     Args:
         vertex_tree: The vertex tree whose root may reference a cover image block.

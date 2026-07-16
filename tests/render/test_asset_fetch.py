@@ -15,7 +15,7 @@ from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import ImageVertex, PageVertex, PdfVertex, TextVertex
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, fetch_asset, fetch_assets
 from guffin.roam.asset import RoamAsset, RoamImageAsset
@@ -313,6 +313,60 @@ class TestFetchAssets:
         page: Final[PageVertex] = PageVertex(uid="page00001", title="P", children=["img00001a"])
         text: Final[TextVertex] = TextVertex(uid="txt00001a", text="hello")
         tree: Final[VertexTree] = VertexTree(tree_vertices=[page, text, _image_vertex("img00001a")])
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        assert list(result) == ["img00001a"]
+
+    def test_undisplayed_ref_asset_is_not_fetched(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A ref-side asset the rendered document never displays (inline mention only) is not fetched."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _image_asset()
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        mention_url: Final[str] = vertex_link_url("img00001a", VertexLinkKind.REFERENCE)
+        text: Final[TextVertex] = TextVertex(uid="txt00001a", text=f"see [photo]({mention_url}) here")
+        page: Final[PageVertex] = PageVertex(uid="page00001", title="P", children=["txt00001a"])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page, text], ref_vertices=[_image_vertex("img00001a")])
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        assert result == {}
+        assert list(tmp_path.iterdir()) == []
+
+    def test_sole_referenced_ref_asset_is_fetched(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A ref-side asset displayed through a sole block reference is fetched like an in-tree asset."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _image_asset()
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        sole_ref_url: Final[str] = vertex_link_url("img00001a", VertexLinkKind.REFERENCE)
+        text: Final[TextVertex] = TextVertex(uid="txt00001a", text=f"[photo]({sole_ref_url})")
+        page: Final[PageVertex] = PageVertex(uid="page00001", title="P", children=["txt00001a"])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page, text], ref_vertices=[_image_vertex("img00001a")])
+        result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
+
+        assert list(result) == ["img00001a"]
+
+    def test_cover_image_ref_asset_is_fetched(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The root's cover-image asset is fetched even when reachable only through ref_vertices."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _image_asset()
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+
+        cover_assignment: Final[AttributeAssignment] = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="cover-image", domain=AttributeDomain.GUFFIN),
+                link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1"),
+            ),
+            values=(LiteralValue(value="((img00001a))"),),
+        )
+        page: Final[PageVertex] = PageVertex(uid="page00001", title="P", attribute_assignments=[cover_assignment])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page], ref_vertices=[_image_vertex("img00001a")])
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
 
         assert list(result) == ["img00001a"]

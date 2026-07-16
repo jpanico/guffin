@@ -173,6 +173,14 @@ The same line scopes semantics: `transcluded_vertices()` (the render-visible set
 embed-transcluded content and excludes merely-referenced vertices — consistent with what each
 kind renders.
 
+It also scopes **asset fetching**: `render/asset_fetch.fetch_assets` fetches exactly the assets
+the rendered document places from local files — `model/vertex_tree.visible_asset_vertices()`
+(render-visible asset vertices, plus targets of the block-level sole-reference path, recognized
+by `model/vertex_link.parse_sole_vertex_link`) together with the root's cover image. An asset
+merely *mentioned* — linked inline amid surrounding text — renders as a remote hyperlink and is
+never downloaded, so a `.mdbundle` carries no orphan files for content that only mentions
+foreign pages.
+
 
 ## Project types
 
@@ -261,8 +269,8 @@ block-ref form keeps the cover ordinary, reusable Roam content, and `validate_se
 it to resolve: the referenced UID must be in the fetched tree and must be an `ImageVertex`. It
 is content-driven (whatever the profile): the renderers resolve it via
 `publishing_semantics.cover_image_vertex` against the already-fetched asset set — `fetch_assets`
-covers referenced vertices, so the cover is fetched once, under the tree-wide filename-claim
-coordination (`render/asset_fetch.cover_image_path` is a pure lookup) — and map it per format — EPUB `--epub-cover-image` (the
+explicitly includes the root's cover image in its scope, so the cover is fetched once, under the
+fetch-wide filename-claim coordination (`render/asset_fetch.cover_image_path` is a pure lookup) — and map it per format — EPUB `--epub-cover-image` (the
 package cover reading systems display), PDF a full-bleed cover page *preceding* the title page
 (the Bergfink `cover-image` variable), Markdown nothing. Cover art should be produced at the
 target page's aspect ratio (ebook-retail convention: 1:1.5 portrait, e.g. 1600×2400); the PDF

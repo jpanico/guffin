@@ -22,6 +22,9 @@ Public symbols:
 - :func:`parse_vertex_link` — parse an ``x-guffin`` URL into a
   :class:`VertexLink`, or ``None`` when the string is not such a URL.
 - :func:`is_vertex_link` — whether a string is an ``x-guffin`` vertex-link URL.
+- :func:`parse_sole_vertex_link` — parse a text whose *entire* content is one
+  Pandoc-Markdown-form vertex link (``[<display>](<x-guffin-url>)``) into its
+  :class:`VertexLink`, or ``None`` when the text is anything else.
 """
 
 import enum
@@ -138,3 +141,39 @@ def is_vertex_link(url: str) -> bool:
         :func:`parse_vertex_link`); ``False`` otherwise.
     """
     return parse_vertex_link(url) is not None
+
+
+# A text whose entire content is a single Pandoc-Markdown vertex link — the
+# ``[<display>](<x-guffin-url>)`` a solo Roam ``((uid))`` / ``[[Page]]`` reference transcribes to.
+# The display is matched with DOTALL because a reference's display reproduces the destination's
+# whole raw string, which may span paragraphs; the URL is anchored at the very end, the sole place
+# link conversion emits it (a well-formed display carries no nested x-guffin URL, so the greedy
+# display never swallows the real one — texts where it does are rejected by the parse function).
+_SOLE_VERTEX_LINK_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"\[(?P<display>.*)\]\((?P<url>{regex.escape(GUFFIN_SCHEME)}:[^()\s]+)\)", regex.DOTALL
+)
+
+
+@validate_call
+def parse_sole_vertex_link(text: str) -> VertexLink | None:
+    """Parse a text whose entire content is one Pandoc-Markdown-form vertex link.
+
+    The Pandoc-Markdown link form ``[<display>](<x-guffin-url>)`` is the canonical text
+    encoding of a :class:`VertexLink` — the form a Roam reference or embed transcribes to.
+    Recognition is **structural**, from that shape, rather than by a Markdown inline parse:
+    a link whose display reproduces a multi-paragraph destination cannot be parsed as a
+    single Markdown inline, but is still exactly one vertex link.
+
+    Args:
+        text: The text to parse.
+
+    Returns:
+        The :class:`VertexLink` when *text* is exactly one well-formed vertex link — nothing
+        before or after it, a valid ``x-guffin`` URL (per :func:`parse_vertex_link`), and no
+        further ``x-guffin`` URL inside the display text; ``None`` in every other case,
+        including a link mixed with surrounding text.
+    """
+    match: Final[regex.Match[str] | None] = _SOLE_VERTEX_LINK_RE.fullmatch(text)
+    if match is None or f"{GUFFIN_SCHEME}:" in match.group("display"):
+        return None
+    return parse_vertex_link(match.group("url"))
