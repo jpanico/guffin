@@ -189,7 +189,7 @@ def fetch_assets(
     The fetch is scoped to the assets the rendered document actually places from
     local files: the *displayed* assets (per
     :func:`~guffin.model.vertex_tree.visible_asset_vertices` — render-visible asset
-    vertices, plus assets a render-visible vertex solely references, which covers an
+    vertices, plus assets a render-visible vertex references standalone, which covers an
     asset referenced from another page whose reference is the block's whole content),
     together with the root's ``cover-image`` (per
     :func:`~guffin.model.publishing_semantics.cover_image_vertex`), whose vertex is

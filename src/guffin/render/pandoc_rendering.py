@@ -124,7 +124,7 @@ from guffin.model.vertex import (
     VertexChildren,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
-from guffin.model.vertex_tree import VertexTree, root_vertex, sole_link_target
+from guffin.model.vertex_tree import VertexTree, root_vertex, standalone_link_target
 from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexView, ViewMap
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
@@ -350,7 +350,7 @@ def _block_ref_target(
     vertex: TextVertex,
     vertex_tree: VertexTree,
 ) -> Vertex | None:
-    """Return the destination vertex when *vertex* is solely a reference to a block-level one.
+    """Return the destination vertex when *vertex* is a standalone reference to a block-level one.
 
     Block-level vertices (see :data:`_BLOCK_LEVEL_VERTEX_TYPES` — e.g. code blocks,
     images, tables, callouts) render as Pandoc Blocks and cannot be represented as the
@@ -363,8 +363,8 @@ def _block_ref_target(
     transcription, e.g. a table's rows or a callout's body) — never its descendant
     subtree, which only an ``EMBED`` transcludes.
 
-    Sole-reference recognition and destination resolution are the model's
-    (:func:`~guffin.model.vertex_tree.sole_link_target`); this helper adds only the
+    Standalone-reference recognition and destination resolution are the model's
+    (:func:`~guffin.model.vertex_tree.standalone_link_target`); this helper adds only the
     Pandoc-specific policy of *which* destinations take the block-level rendering path
     (:data:`_BLOCK_LEVEL_VERTEX_TYPES`).
 
@@ -377,7 +377,7 @@ def _block_ref_target(
         other case — including a reference to an inline-representable vertex, or one
         mixed with surrounding text, both of which are resolved inline instead.
     """
-    dest: Final[Vertex | None] = sole_link_target(vertex, vertex_tree)
+    dest: Final[Vertex | None] = standalone_link_target(vertex, vertex_tree)
     return dest if isinstance(dest, _BLOCK_LEVEL_VERTEX_TYPES) else None
 
 
@@ -532,7 +532,7 @@ def build_child_blocks(
     A link-placed PDF embed (:func:`_is_link_placed_pdf`) participates in the layout like a
     text sibling: its link paragraph joins the same list.  Any other non-text vertex flushes
     the pending list and is rendered via
-    :func:`_vertex_to_blocks` regardless of *layout*.  A text vertex that is solely a
+    :func:`_vertex_to_blocks` regardless of *layout*.  A text vertex that is a standalone
     reference to a block-level vertex (see :func:`_block_ref_target`) is likewise flushed
     and rendered as the referenced block *itself* — stripped of its descendants (children
     and folded attribute assignments), since a ``REFERENCE`` never transcludes the target's

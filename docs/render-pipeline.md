@@ -162,7 +162,7 @@ The line holds across both rendering shapes a reference can take:
   (`PageVertex`, `HeadingVertex`, `TextVertex`) renders the target's own converted text —
   title, heading text, body text — never its children.
 - **Block-level path** (`_block_ref_target` / `build_child_blocks`): a `TextVertex` that is
-  *solely* a reference to a block-level target (`ImageVertex`, `PdfVertex`,
+  a *standalone* reference to a block-level target (`ImageVertex`, `PdfVertex`,
   `CodeBlockVertex`, `CalloutVertex`, `QuoteBlockVertex`, `TableVertex`) renders as the
   referenced block itself — a fidelity accommodation for targets that have no faithful
   inline form, **not** a transclusion. The target is rendered stripped of its `children`
@@ -175,8 +175,9 @@ kind renders.
 
 It also scopes **asset fetching**: `render/asset_fetch.fetch_assets` fetches exactly the assets
 the rendered document places from local files — `model/vertex_tree.visible_asset_vertices()`
-(render-visible asset vertices, plus targets of the block-level sole-reference path, recognized
-by `model/vertex_link.parse_sole_vertex_link`) together with the root's cover image. An asset
+(render-visible asset vertices, plus targets of the block-level standalone-reference path,
+recognized by `model/vertex_link.parse_standalone_vertex_link`) together with the root's cover
+image. An asset
 merely *mentioned* — linked inline amid surrounding text — renders as a remote hyperlink and is
 never downloaded, so a `.mdbundle` carries no orphan files for content that only mentions
 foreign pages.

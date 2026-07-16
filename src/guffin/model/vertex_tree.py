@@ -13,11 +13,11 @@ Public symbols:
 - :func:`assignments_for` — return every ``(vertex, assignment)`` pair in a :class:`VertexTree`'s
   render-visible document (per :func:`transcluded_vertices`) whose assignment is for a given
   :class:`~guffin.model.attribute.Attribute`.
-- :func:`sole_link_target` — return the vertex a text-bearing vertex's *sole* vertex link points
-  at (its entire text is one Pandoc-Markdown-form link), or ``None``.
+- :func:`standalone_link_target` — return the vertex a text-bearing vertex's *standalone* vertex
+  link points at (its entire text is one Pandoc-Markdown-form link), or ``None``.
 - :func:`visible_asset_vertices` — return every :data:`~guffin.model.vertex.AssetVertex` the
   render-visible document displays: assets among :func:`transcluded_vertices` plus assets targeted
-  by a render-visible vertex's sole vertex link.
+  by a render-visible vertex's standalone vertex link.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
@@ -54,7 +54,7 @@ from guffin.model.vertex import (
     is_asset_vertex,
     is_embed_vertex,
 )
-from guffin.model.vertex_link import VertexLink, parse_sole_vertex_link
+from guffin.model.vertex_link import VertexLink, parse_standalone_vertex_link
 
 
 def _default_ref_vertices() -> list[Annotated[Vertex, Field(discriminator="vertex_type")]]:
@@ -235,13 +235,13 @@ def assignments_for(tree: VertexTree, attribute: Attribute) -> Iterator[tuple[Ve
 
 
 @validate_call
-def sole_link_target(vertex: Vertex, tree: VertexTree) -> Vertex | None:
-    """Return the vertex that *vertex*'s sole vertex link points at, or ``None``.
+def standalone_link_target(vertex: Vertex, tree: VertexTree) -> Vertex | None:
+    """Return the vertex that *vertex*'s standalone vertex link points at, or ``None``.
 
     A text-bearing vertex (:class:`~guffin.model.vertex.TextVertex` or
     :class:`~guffin.model.vertex.HeadingVertex`) whose entire text is one
     Pandoc-Markdown-form vertex link (per
-    :func:`~guffin.model.vertex_link.parse_sole_vertex_link`) *is* that link: the vertex
+    :func:`~guffin.model.vertex_link.parse_standalone_vertex_link`) *is* that link: the vertex
     displays nothing but its destination.  This resolves such a vertex to the destination.
 
     Args:
@@ -255,7 +255,7 @@ def sole_link_target(vertex: Vertex, tree: VertexTree) -> Vertex | None:
     """
     if not isinstance(vertex, (TextVertex, HeadingVertex)):
         return None
-    link: Final[VertexLink | None] = parse_sole_vertex_link(vertex.text)
+    link: Final[VertexLink | None] = parse_standalone_vertex_link(vertex.text)
     if link is None:
         return None
     return tree.uid_map.get(link.uid)
@@ -269,8 +269,8 @@ def visible_asset_vertices(tree: VertexTree) -> list[AssetVertex]:
 
     - the asset vertex is itself render-visible (per :func:`transcluded_vertices` — a tree
       vertex, or transcluded through an embed), or
-    - a render-visible vertex is *solely* a link to it (per :func:`sole_link_target`): the
-      referencing vertex displays nothing but the asset.
+    - a render-visible vertex is a *standalone* link to it (per :func:`standalone_link_target`):
+      the referencing vertex displays nothing but the asset.
 
     An asset that is merely *mentioned* — linked inline amid surrounding text — is not
     displayed (the mention renders as a link) and is not included.
@@ -280,12 +280,12 @@ def visible_asset_vertices(tree: VertexTree) -> list[AssetVertex]:
 
     Returns:
         The displayed asset vertices, each appearing once (deduplicated by UID), in
-        render-visible walk order with each sole-link destination following its referrer.
+        render-visible walk order with each standalone-link destination following its referrer.
     """
     displayed: Final[list[AssetVertex]] = []
     seen: Final[set[Uid]] = set()
     for vertex in transcluded_vertices(tree):
-        target: Vertex | None = sole_link_target(vertex, tree)
+        target: Vertex | None = standalone_link_target(vertex, tree)
         for candidate in (vertex, target):
             if candidate is None or not is_asset_vertex(candidate) or candidate.uid in seen:
                 continue

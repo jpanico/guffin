@@ -1,6 +1,6 @@
 """Tests for the guffin.model.vertex_tree helpers.
 
-Covers transcluded_vertices, assignments_for, sole_link_target, visible_asset_vertices, and root_vertex.
+Covers transcluded_vertices, assignments_for, standalone_link_target, visible_asset_vertices, and root_vertex.
 """
 
 from conftest import article1_vertex_tree
@@ -16,7 +16,7 @@ from guffin.model.vertex_tree import (
     VertexTree,
     assignments_for,
     root_vertex,
-    sole_link_target,
+    standalone_link_target,
     transcluded_vertices,
     visible_asset_vertices,
 )
@@ -186,19 +186,19 @@ class TestAssignmentsFor:
 
 
 # ---------------------------------------------------------------------------
-# TestSoleLinkTarget
+# TestStandaloneLinkTarget
 # ---------------------------------------------------------------------------
 
 
-class TestSoleLinkTarget:
-    """Tests for sole_link_target()."""
+class TestStandaloneLinkTarget:
+    """Tests for standalone_link_target()."""
 
     def test_sole_reference_resolves_to_target(self) -> None:
         """A text vertex whose whole content is one reference link resolves to the destination."""
         target = _image("imguid001")
         referrer = _sole_ref_text("textuid01", "imguid001")
         tree = VertexTree(tree_vertices=[referrer], ref_vertices=[target])
-        assert sole_link_target(referrer, tree) == target
+        assert standalone_link_target(referrer, tree) == target
 
     def test_heading_sole_reference_resolves_to_target(self) -> None:
         """A heading vertex whose whole text is one reference link resolves to the destination."""
@@ -209,7 +209,7 @@ class TestSoleLinkTarget:
             heading_level=1,
         )
         tree = VertexTree(tree_vertices=[heading], ref_vertices=[target])
-        assert sole_link_target(heading, tree) == target
+        assert standalone_link_target(heading, tree) == target
 
     def test_link_amid_text_is_none(self) -> None:
         """A reference mixed with surrounding text is not sole."""
@@ -217,19 +217,19 @@ class TestSoleLinkTarget:
             uid="textuid01", text=f"see [display]({vertex_link_url('imguid001', VertexLinkKind.REFERENCE)})"
         )
         tree = VertexTree(tree_vertices=[referrer], ref_vertices=[_image("imguid001")])
-        assert sole_link_target(referrer, tree) is None
+        assert standalone_link_target(referrer, tree) is None
 
     def test_non_text_bearing_vertex_is_none(self) -> None:
         """A vertex without a text field (e.g. an image) has no sole link."""
         image = _image("imguid001")
         tree = VertexTree(tree_vertices=[image])
-        assert sole_link_target(image, tree) is None
+        assert standalone_link_target(image, tree) is None
 
     def test_missing_destination_is_none(self) -> None:
         """A sole link to a UID absent from the tree resolves to None."""
         referrer = _sole_ref_text("textuid01", "absentuid")
         tree = VertexTree(tree_vertices=[referrer])
-        assert sole_link_target(referrer, tree) is None
+        assert standalone_link_target(referrer, tree) is None
 
 
 # ---------------------------------------------------------------------------

@@ -74,7 +74,8 @@ class NodeType(enum.StrEnum):
     - **PLAIN_BLOCK**: ``string`` is set, ``title`` is ``None``, no special Roam properties.
     - **HEADING_BLOCK**: ``heading`` (levels 1–3) or ``props['ah-level']`` (levels 4–6) is set; the entire
       block content is the heading text.
-    - **IMAGE_BLOCK**: ``string`` consists solely of a single Markdown image link to a Cloud Firestore URL.
+    - **IMAGE_BLOCK**: ``string`` is a standalone Markdown image link to a Cloud Firestore URL
+      (the link is the string's entire content).
       Produced by drag-and-drop into the Roam UI; supports image-resize properties via ``props``.
     - **CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the eleven
       recognised callout type keywords (``INFO``, ``EXAMPLE``, ``NOTE``, ``WARNING``, ``DANGER``,
@@ -358,8 +359,8 @@ def node_type(node: RoamNode) -> NodeType:
 
     Discriminates first on :attr:`~RoamNode.title`: returns :attr:`NodeType.PAGE` when
     ``title`` is a non-``None`` string.  For title-less nodes (blocks), returns
-    :attr:`NodeType.IMAGE_BLOCK` when ``string`` consists solely of a single Markdown image
-    link (as matched by :data:`~guffin.roam.markdown.IMAGE_LINK_RE`),
+    :attr:`NodeType.IMAGE_BLOCK` when ``string`` is a standalone Markdown image link — the
+    link as the string's entire content (as matched by :data:`~guffin.roam.markdown.IMAGE_LINK_RE`),
     :attr:`NodeType.HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
     :attr:`NodeType.CALLOUT_BLOCK` when ``string`` matches the full callout marker pattern
     (as matched by :data:`~guffin.roam.blockquote.CALLOUT_RE`),
@@ -385,7 +386,7 @@ def node_type(node: RoamNode) -> NodeType:
 
     Returns:
         :attr:`NodeType.PAGE` if ``title`` is set;
-        :attr:`NodeType.IMAGE_BLOCK` if ``string`` is solely a single Markdown image link;
+        :attr:`NodeType.IMAGE_BLOCK` if ``string`` is a standalone Markdown image link;
         :attr:`NodeType.HEADING_BLOCK` if ``heading`` or ``props['ah-level']`` is set;
         :attr:`NodeType.CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
         :attr:`NodeType.QUOTE_BLOCK` if :func:`~guffin.roam.blockquote.is_quote_block` is ``True``;
