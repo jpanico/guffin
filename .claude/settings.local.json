@@ -65,7 +65,9 @@
       "Bash(ls ~/.ssh/*.pub 2>/dev/null)",
       "Bash(GUFFIN_LIVE_TESTS=1 pytest -m live -v)",
       "mcp__roam-mcp__create_block",
-      "mcp__roam-mcp__update_block"
+      "mcp__roam-mcp__update_block",
+      "mcp__roam-mcp__update_page",
+      "mcp__roam-mcp__move_block"
     ]
   }
 }
