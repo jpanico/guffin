@@ -90,23 +90,37 @@ class TestTypstStr:
 class TestPreparePdfEmbeds:
     """_prepare_pdf_embeds() builds one spec per fetched PDF asset, keyed by source URL."""
 
-    def test_spec_carries_path_pages_and_default_render(self, tmp_path: Path) -> None:
-        """An untagged PDF yields a LINK spec carrying the fetched path and page count."""
+    def test_spec_carries_path_and_default_render_without_page_count(self, tmp_path: Path) -> None:
+        """An untagged PDF yields a LINK spec carrying the fetched path and no page count."""
         vertex = _pdf("pdfuid001")
         tree = VertexTree(tree_vertices=[vertex])
         ref = _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")
         specs = _prepare_pdf_embeds(tree, {"pdfuid001": ref})
         spec = specs[str(vertex.source)]
         assert spec.source_path == ref.path
-        assert spec.pages == 1
+        assert spec.pages is None
         assert spec.render is PdfRender.LINK
 
-    def test_inline_tag_selects_inline_render(self, tmp_path: Path) -> None:
-        """A pdf-render:: inline tag yields an INLINE spec."""
+    def test_inline_tag_selects_inline_render_with_page_count(self, tmp_path: Path) -> None:
+        """A pdf-render:: inline tag yields an INLINE spec carrying the page count."""
         vertex = _pdf("pdfuid001", inline=True)
         tree = VertexTree(tree_vertices=[vertex])
         specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
-        assert specs[str(vertex.source)].render is PdfRender.INLINE
+        spec = specs[str(vertex.source)]
+        assert spec.render is PdfRender.INLINE
+        assert spec.pages == 1
+
+    def test_link_placement_never_parses_the_pdf(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A LINK-placed PDF is never opened for a page count — the parse is INLINE's cost alone."""
+
+        def _boom(path: str) -> None:
+            raise AssertionError(f"PdfReader must not be invoked for a LINK placement (got {path!r})")
+
+        monkeypatch.setattr("guffin.render.pdf_rendering.PdfReader", _boom)
+        vertex = _pdf("pdfuid001")
+        tree = VertexTree(tree_vertices=[vertex])
+        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        assert specs[str(vertex.source)].pages is None
 
     def test_unfetched_pdf_is_skipped(self, tmp_path: Path) -> None:
         """A PDF vertex with no fetched asset contributes no spec."""

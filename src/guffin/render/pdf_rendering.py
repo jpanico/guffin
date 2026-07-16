@@ -258,12 +258,15 @@ class _PdfEmbedSpec(NamedTuple):
 
     Attributes:
         source_path: Local path of the fetched PDF file (read per page for inline rendering).
-        pages: Number of pages in the PDF.
+        pages: Number of pages in the PDF for an
+            :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE` placement, which renders
+            each page; ``None`` for a :attr:`~guffin.model.publishing_semantics.PdfRender.LINK`
+            placement, which never uses the count (the file is not parsed for it).
         render: The embed's :class:`~guffin.model.publishing_semantics.PdfRender` placement.
     """
 
     source_path: Path
-    pages: int
+    pages: int | None
     render: PdfRender
 
 
@@ -289,9 +292,12 @@ def _typst_raw_block(text: str) -> pf.RawBlock:
 def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[str, _PdfEmbedSpec]:
     """Prepare an embed spec for every fetched PDF asset in *tree*.
 
-    Each spec carries the fetched file's path, its page count, and its
+    Each spec carries the fetched file's path and its
     :class:`~guffin.model.publishing_semantics.PdfRender` placement (the vertex's ``pdf-render``
-    tag, defaulting per :data:`~guffin.model.publishing_semantics.DEFAULT_PDF_RENDER`).
+    tag, defaulting per :data:`~guffin.model.publishing_semantics.DEFAULT_PDF_RENDER`).  Only an
+    :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE` placement — which renders each
+    page — pays for a page count; a :attr:`~guffin.model.publishing_semantics.PdfRender.LINK`
+    placement never uses one, so its PDF file is not parsed at all.
 
     The returned specs are keyed by the vertex's source URL — the URL its rendered link carries —
     so the Pandoc document can be matched against them.  When several PDF vertices share one
@@ -313,18 +319,13 @@ def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> di
         ref: AssetRef | None = asset_refs.get(vertex.uid)
         if ref is None:
             continue
-        page_count: int = len(PdfReader(str(ref.path)).pages)
-        specs[str(vertex.source)] = _PdfEmbedSpec(
-            source_path=ref.path,
-            pages=page_count,
-            render=pdf_render_of_vertex(vertex) or DEFAULT_PDF_RENDER,
-        )
-        logger.info(
-            "prepared PDF embed uid=%r (%d page(s), %s)",
-            vertex.uid,
-            page_count,
-            specs[str(vertex.source)].render.value,
-        )
+        render: PdfRender = pdf_render_of_vertex(vertex) or DEFAULT_PDF_RENDER
+        page_count: int | None = len(PdfReader(str(ref.path)).pages) if render is PdfRender.INLINE else None
+        specs[str(vertex.source)] = _PdfEmbedSpec(source_path=ref.path, pages=page_count, render=render)
+        if render is PdfRender.INLINE:
+            logger.info("prepared PDF embed uid=%r (%d page(s), inline)", vertex.uid, page_count)
+        else:
+            logger.info("prepared PDF embed uid=%r (link)", vertex.uid)
     return specs
 
 
@@ -359,6 +360,7 @@ def _apply_pdf_embeds(doc: pf.Doc, specs: dict[str, _PdfEmbedSpec]) -> None:
         if spec is None:
             return None
         if spec.render is PdfRender.INLINE:
+            assert spec.pages is not None  # counted at preparation for every INLINE spec
             pages_markup: Final[str] = "\n".join(
                 f"#image({_typst_str(str(spec.source_path))}, page: {page}, width: 100%)"
                 for page in range(1, spec.pages + 1)
