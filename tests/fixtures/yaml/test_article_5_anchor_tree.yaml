@@ -317,8 +317,26 @@ tree_network:
   attrs: null
 - uid: 2-2g3rmpU
   id: 11502
-  string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-    \ – DO NOT REMOVE\nFeatures:\n\n - **attributes**"
+  string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+    – DO NOT REMOVE
+
+    Features:
+
+    - **attributes**, in both Roam forms: attribute blocks and `:entity/attrs` structured
+    assertions
+
+    - end-user attribute blocks that fold onto their parent and render as `pills`:
+    a `tags::` with reference values and an `attribute1::` mixing a literal value
+    with references
+
+    - a `guffin-meta::` block carrying guffin-domain document metadata: `title::`
+    (overrides the page title in every export — this page renders as "Source Code
+    For Humans"), `date::`, `authors::` (two), and `identifier::`
+
+    - a guffin-domain `tags::` inside the guffin-meta block that is **not** a recognized
+    PublishingSemantics attribute (folded, never rendered)
+
+    - this INFO `Callout box`'
   order: 0
   heading: null
   children: null
@@ -2192,4 +2210,1687 @@ refs_by_id:
     parents: null
     props: null
     title: table
+    attrs: null
+  '4304':
+    uid: l-mPr1MsE
+    id: 4304
+    string: '[[Front Matter]]'
+    order: 0
+    heading: 2
+    children:
+    - id: 4307
+    - id: 4308
+    - id: 4309
+    - id: 4310
+    - id: 4311
+    - id: 4313
+    - id: 4314
+    - id: 4334
+    - id: 4369
+    - id: 4385
+    refs:
+    - id: 4331
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    props: null
+    title: null
+    attrs: null
+  '4305':
+    uid: X_YREzXxf
+    id: 4305
+    string: '[[Body matter]]'
+    order: 1
+    heading: 2
+    children:
+    - id: 4316
+    - id: 4317
+    - id: 4318
+    - id: 4319
+    refs:
+    - id: 4342
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    props: null
+    title: null
+    attrs: null
+  '4306':
+    uid: K3Q8mo67o
+    id: 4306
+    string: '[[Back Matter]]'
+    order: 2
+    heading: 2
+    children:
+    - id: 4322
+    - id: 4323
+    - id: 4324
+    - id: 4327
+    - id: 4328
+    - id: 4329
+    - id: 4330
+    - id: 4429
+    - id: 4430
+    - id: 4533
+    - id: 4587
+    refs:
+    - id: 4346
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    props: null
+    title: null
+    attrs: null
+  '4315':
+    uid: HCOUV-MA_
+    id: 4315
+    string: reference
+    order: 3
+    heading: null
+    children:
+    - id: 4271
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    props: null
+    title: null
+    attrs: null
+  '4271':
+    uid: 2o9mNvV-b
+    id: 4271
+    string: from [[Gemini]]
+    order: 0
+    heading: null
+    children:
+    - id: 4274
+    - id: 4280
+    - id: 4293
+    - id: 4303
+    refs:
+    - id: 4272
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4274':
+    uid: THzm_HWRU
+    id: 4274
+    string: 1. The Front Matter (The Entryway)
+    order: 1
+    heading: 2
+    children:
+    - id: 4275
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4280':
+    uid: S0ZhPKnF2
+    id: 4280
+    string: 2. The Body (The Framework)
+    order: 2
+    heading: 2
+    children:
+    - id: 4281
+    - id: 4282
+    - id: 4287
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4293':
+    uid: QrYCfPOkF
+    id: 4293
+    string: 3. The Back Matter (The Foundation)
+    order: 3
+    heading: 2
+    children:
+    - id: 4294
+    - id: 4300
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4303':
+    uid: L5N_49Nqn
+    id: 4303
+    string: 'A typical non-fiction book is built like a well-engineered building:
+      it needs a solid foundation (the intro), a logical framework (the chapters),
+      and a clear exit strategy (the conclusion). While the specific content varies
+      depending on whether you are writing a memoir, a technical manual, or a business
+      book, most follow a standard structural blueprint.'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4294':
+    uid: 9W5Gcu5Nc
+    id: 4294
+    string: This is where you provide the "receipts" and further resources.
+    order: 0
+    heading: null
+    children:
+    - id: 4295
+    - id: 4296
+    - id: 4297
+    - id: 4298
+    - id: 4299
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4300':
+    uid: MN9nNo8ph
+    id: 4300
+    string: 'Pro-Tip: The "Table of Contents" Test'
+    order: 1
+    heading: 3
+    children:
+    - id: 4301
+    - id: 4302
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4301':
+    uid: qQiKx_Jqb
+    id: 4301
+    string: If you can read just your Table of Contents and understand the logical
+      "argument" or "journey" of the book, your structure is solid. If the chapters
+      feel like a random list of topics, you might need to reorganize them into a
+      more linear path.
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4300
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4302':
+    uid: i76QO2gJn
+    id: 4302
+    string: Since you're working on a book project, would you like me to help you
+      draft a sample Table of Contents for one of your chapters?
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4300
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4295':
+    uid: MXDjGZd07
+    id: 4295
+    string: '**Conclusion/Epilogue:** A final call to action or a summary of the journey.'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4296':
+    uid: PDWQHkY5L
+    id: 4296
+    string: '**Appendices:** Extra material that is too "heavy" for the main chapters
+      (e.g., detailed charts, technical specs, or worksheets).'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4297':
+    uid: _IQQcdpX9
+    id: 4297
+    string: '**Glossary:** Definitions for specialized terminology.'
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4298':
+    uid: FtV9x0HrE
+    id: 4298
+    string: '**Notes & Bibliography:** Essential for building trust and citing sources.'
+    order: 3
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4299':
+    uid: HXwm9o8pt
+    id: 4299
+    string: '**Index:** A tool for readers to find specific topics quickly.'
+    order: 4
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4281':
+    uid: 4F2gL3unj
+    id: 4281
+    string: The body is generally organized into **Parts** and **Chapters**.
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4282':
+    uid: xbXZ5DUQX
+    id: 4282
+    string: The Macro Structure
+    order: 1
+    heading: 3
+    children:
+    - id: 4283
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4287':
+    uid: w_hzNttG2
+    id: 4287
+    string: The Chapter Level
+    order: 2
+    heading: 3
+    children:
+    - id: 4288
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4288':
+    uid: Q-TJj5YOe
+    id: 4288
+    string: 'A well-structured non-fiction chapter often follows a consistent internal
+      rhythm:'
+    order: 0
+    heading: null
+    children:
+    - id: 4289
+    - id: 4290
+    - id: 4291
+    - id: 4292
+    refs: null
+    page:
+      id: 4239
+    children_view_type: numbered
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4289':
+    uid: GyxQPJZIM
+    id: 4289
+    string: '**The Hook:** A story, statistic, or provocative question.'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4290':
+    uid: vJvOWMHag
+    id: 4290
+    string: '**The Core Concept:** The main lesson or information for that chapter.'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4291':
+    uid: 48iWitcfn
+    id: 4291
+    string: '**Evidence/Examples:** Case studies, data, or anecdotes that prove your
+      point.'
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4292':
+    uid: qZq-Ti0Qk
+    id: 4292
+    string: '**The Summary/Action Steps:** A recap of what was learned and, if applicable,
+      how to use it.'
+    order: 3
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4283':
+    uid: 8g4aivYkq
+    id: 4283
+    string: 'Many authors use a "Three-Act" or "Part-based" approach to keep the reader
+      from feeling overwhelmed:'
+    order: 0
+    heading: null
+    children:
+    - id: 4284
+    - id: 4285
+    - id: 4286
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4284':
+    uid: bB3b629o0
+    id: 4284
+    string: '**Part I: The Problem/Context.** Establishing the current state of affairs
+      and why change or knowledge is needed.'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4283
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4285':
+    uid: JmNTnZHcu
+    id: 4285
+    string: '**Part II: The Solution/Process.** The "meat" of the book. This is where
+      you provide the steps, the data, or the narrative arc.'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4283
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4286':
+    uid: 0PGLC7lHF
+    id: 4286
+    string: '**Part III: The Future/Application.** How the reader can apply this knowledge
+      or what the implications are for the world.'
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4283
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4275':
+    uid: EU4QT4Z1y
+    id: 4275
+    string: This section includes the administrative and "warm-up" pages before the
+      actual reading begins.
+    order: 0
+    heading: null
+    children:
+    - id: 4276
+    - id: 4277
+    - id: 4278
+    - id: 4279
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4276':
+    uid: 9Oyp5dC3o
+    id: 4276
+    string: '**Title Page & Copyright Page:** The essentials for publishing and legalities.'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4277':
+    uid: mM0wEvHWC
+    id: 4277
+    string: '**Table of Contents (TOC):** The roadmap. In modern non-fiction, chapter
+      titles are often descriptive to help readers "skim-value" the book.'
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4278':
+    uid: jPLvyjFib
+    id: 4278
+    string: '**Foreword:** Usually written by someone other than the author to provide
+      credibility.'
+    order: 2
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4279':
+    uid: FPS_zGKv1
+    id: 4279
+    string: '**Preface/Introduction:** This is where you establish the "Why." You
+      define the problem you''re solving or the story you’re telling and set the expectations
+      for the reader.'
+    order: 3
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    props: null
+    title: null
+    attrs: null
+  '4322':
+    uid: f6qkHenCs
+    id: 4322
+    string: '[[Conclusion]]'
+    order: 0
+    heading: 3
+    children: null
+    refs:
+    - id: 4347
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4323':
+    uid: 2g2zyljem
+    id: 4323
+    string: '[[Appendices]]'
+    order: 3
+    heading: 3
+    children: null
+    refs:
+    - id: 4350
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4324':
+    uid: wtY_f3pLh
+    id: 4324
+    string: '[[Glossary]]'
+    order: 4
+    heading: 3
+    children: null
+    refs:
+    - id: 4351
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4327':
+    uid: j6wMz5rw7
+    id: 4327
+    string: '[[Index]]'
+    order: 8
+    heading: 3
+    children: null
+    refs:
+    - id: 4353
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4328':
+    uid: 9HnvEUcUr
+    id: 4328
+    string: '[[List of Illustrations]]'
+    order: 5
+    heading: 3
+    children: null
+    refs:
+    - id: 4348
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4329':
+    uid: sM6_XLBnK
+    id: 4329
+    string: '[[Endnotes]]'
+    order: 6
+    heading: 3
+    children: null
+    refs:
+    - id: 4349
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4330':
+    uid: d-PCN8cvy
+    id: 4330
+    string: '[[Colophon]]'
+    order: 10
+    heading: 3
+    children: null
+    refs:
+    - id: 4352
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4429':
+    uid: lPY1Vc9NN
+    id: 4429
+    string: '[[Epilogue]]'
+    order: 1
+    heading: 3
+    children: null
+    refs:
+    - id: 4431
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4430':
+    uid: zD_pM8ok9
+    id: 4430
+    string: '[[Afterword]]'
+    order: 2
+    heading: 3
+    children: null
+    refs:
+    - id: 4432
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4533':
+    uid: 7PiQDBpsY
+    id: 4533
+    string: '[[Bibliography]]'
+    order: 7
+    heading: 3
+    children: null
+    refs:
+    - id: 4534
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4587':
+    uid: 5g2cTraKh
+    id: 4587
+    string: '[[About the Author]]'
+    order: 9
+    heading: 3
+    children: null
+    refs:
+    - id: 4588
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4306
+    props: null
+    title: null
+    attrs: null
+  '4316':
+    uid: OQSRs-in8
+    id: 4316
+    string: 'Many authors use a "Three-Act" or "Part-based" approach to keep the reader
+      from feeling overwhelmed:'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    props: null
+    title: null
+    attrs: null
+  '4317':
+    uid: eXfUanMQN
+    id: 4317
+    string: '[[Part I: The Problem]]'
+    order: 1
+    heading: 3
+    children:
+    - id: 4320
+    - id: 5289
+    - id: 5295
+    - id: 5298
+    - id: 5304
+    refs:
+    - id: 4343
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    props: null
+    title: null
+    attrs: null
+  '4318':
+    uid: fbt9zLY1Q
+    id: 4318
+    string: '[[Part II: The Solution]]'
+    order: 2
+    heading: 3
+    children:
+    - id: 5305
+    - id: 7532
+    - id: 7694
+    - id: 8098
+    - id: 8228
+    refs:
+    - id: 4344
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    props: null
+    title: null
+    attrs: null
+  '4319':
+    uid: FZKyWhyzP
+    id: 4319
+    string: '[[Part III: The Future/Application]]'
+    order: 3
+    heading: 3
+    children:
+    - id: 4321
+    - id: 7534
+    refs:
+    - id: 4345
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    props: null
+    title: null
+    attrs: null
+  '4321':
+    uid: -AD8CsoKU
+    id: 4321
+    string: How the reader can apply this knowledge or what the implications are for
+      the world.
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4319
+    props: null
+    title: null
+    attrs: null
+  '7534':
+    uid: W7KV8u9eS
+    id: 7534
+    string: Where are things going?
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4319
+    props: null
+    title: null
+    attrs: null
+  '5305':
+    uid: QCXOCz93t
+    id: 5305
+    string: '[[Chapter 6: [[Code Ergonomics]]]]'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5306
+    - id: 5852
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    props: null
+    title: null
+    attrs: null
+  '7532':
+    uid: 1Fiem_-Bb
+    id: 7532
+    string: '[[Chapter 7: [[What You See is What it Means]]]]'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 7530
+    - id: 7531
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    props: null
+    title: null
+    attrs: null
+  '7694':
+    uid: hZnGB3vfW
+    id: 7694
+    string: '[[Chapter 8: [[Code Economy]]]]'
+    order: 2
+    heading: null
+    children: null
+    refs:
+    - id: 7676
+    - id: 8243
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    props: null
+    title: null
+    attrs: null
+  '8098':
+    uid: vCbPEEBBr
+    id: 8098
+    string: '[[Chapter 9: [[Shape]]]]'
+    order: 3
+    heading: null
+    children: null
+    refs:
+    - id: 7750
+    - id: 8097
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    props: null
+    title: null
+    attrs: null
+  '8228':
+    uid: xbjh9nQYr
+    id: 8228
+    string: '[[Chapter 10: [[Behavior]]]]'
+    order: 4
+    heading: null
+    children: null
+    refs:
+    - id: 8099
+    - id: 8227
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    props: null
+    title: null
+    attrs: null
+  '4320':
+    uid: N_dMEQg-Y
+    id: 4320
+    string: '[[Chapter I: What is [[Source Code]]?]]'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5288
+    - id: 8654
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    props: null
+    title: null
+    attrs: null
+  '5289':
+    uid: 8VZhZGoCn
+    id: 5289
+    string: '[[Chapter 3: The Lives of Programs]]'
+    order: 2
+    heading: null
+    children: null
+    refs:
+    - id: 5291
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    props: null
+    title: null
+    attrs: null
+  '5295':
+    uid: fcK_RYG_j
+    id: 5295
+    string: '[[Chapter 2: The Semantic Ascent of Programming: Metal -> Mind]]'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 5293
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    props: null
+    title: null
+    attrs: null
+  '5298':
+    uid: -7pcOTTuy
+    id: 5298
+    string: '[[Chapter 4: The Lives of Programmers]]'
+    order: 3
+    heading: null
+    children: null
+    refs:
+    - id: 5296
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    props: null
+    title: null
+    attrs: null
+  '5304':
+    uid: iULWaSvfs
+    id: 5304
+    string: '[[Chapter 5: The Big ⟦Risk|Payoff⟧]]'
+    order: 4
+    heading: null
+    children: null
+    refs:
+    - id: 6553
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    props: null
+    title: null
+    attrs: null
+  '4307':
+    uid: 2ybbTRNbc
+    id: 4307
+    string: '[[Cover]]'
+    order: 0
+    heading: 3
+    children: null
+    refs:
+    - id: 4332
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4308':
+    uid: CpeNN51Mp
+    id: 4308
+    string: '[[Copyright Page]]'
+    order: 2
+    heading: 3
+    children: null
+    refs:
+    - id: 4336
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4309':
+    uid: oRcnImceK
+    id: 4309
+    string: '[[Epigraph]]'
+    order: 3
+    heading: 3
+    children: null
+    refs:
+    - id: 4337
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4310':
+    uid: RsoghGBlZ
+    id: 4310
+    string: '[[Acknowledgments]]'
+    order: 4
+    heading: 3
+    children: null
+    refs:
+    - id: 4338
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4311':
+    uid: 8L96zvsd2
+    id: 4311
+    string: '[[Foreword]]'
+    order: 5
+    heading: 3
+    children: null
+    refs:
+    - id: 4339
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4313':
+    uid: ntyaZAHWF
+    id: 4313
+    string: '[[Table of Contents]]'
+    order: 9
+    heading: 3
+    children: null
+    refs:
+    - id: 4341
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4314':
+    uid: BT8bzBAIn
+    id: 4314
+    string: '[[Preface]]'
+    order: 6
+    heading: 3
+    children: null
+    refs:
+    - id: 4340
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4334':
+    uid: H8WMaL9B8
+    id: 4334
+    string: '[[Title Page]]'
+    order: 1
+    heading: 3
+    children: null
+    refs:
+    - id: 4335
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4369':
+    uid: MJhqcwHUy
+    id: 4369
+    string: '[[Introduction]]'
+    order: 8
+    heading: 3
+    children:
+    - id: 4669
+    - id: 4671
+    - id: 4673
+    - id: 4675
+    - id: 5000
+    - id: 5002
+    - id: 5007
+    - id: 5010
+    refs:
+    - id: 4370
+    page:
+      id: 4239
+    children_view_type: numbered
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4385':
+    uid: 5r8k42wIw
+    id: 4385
+    string: '[[Who is this Book for?]]'
+    order: 7
+    heading: 3
+    children:
+    - id: 4677
+    - id: 4688
+    - id: 5609
+    refs:
+    - id: 4384
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    props: null
+    title: null
+    attrs: null
+  '4677':
+    uid: R_h_4O2SM
+    id: 4677
+    string: '[[Intended Audience]]'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 4678
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4385
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '4688':
+    uid: AC_iLFslt
+    id: 4688
+    string: '[[Who this book is not for]]'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 4689
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4385
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '5609':
+    uid: _v1Ad76ER
+    id: 5609
+    string: '[[A Note: concerning the [[Programming Language]]s appearing in this
+      book]]'
+    order: 2
+    heading: null
+    children: null
+    refs:
+    - id: 8657
+    - id: 8658
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4385
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '4669':
+    uid: jx1n-CTeJ
+    id: 4669
+    string: '[[Opening hook]]'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 4670
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '4671':
+    uid: 6Gn3Ru22o
+    id: 4671
+    string: '[[Problem statement]]'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 4672
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '4673':
+    uid: 3sCG2N7Gx
+    id: 4673
+    string: '[[How is the Book structured (the "roadmap")?]]'
+    order: 5
+    heading: null
+    children: null
+    refs:
+    - id: 4674
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '4675':
+    uid: kCKT-pjot
+    id: 4675
+    string: '[[What the reader should have learned by the end]]'
+    order: 6
+    heading: null
+    children: null
+    refs:
+    - id: 4676
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '5000':
+    uid: BoL20uTB5
+    id: 5000
+    string: '[[The Big Idea/central argument]]'
+    order: 2
+    heading: null
+    children: null
+    refs:
+    - id: 5001
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '5002':
+    uid: VSy0JS3Up
+    id: 5002
+    string: '[[What this book covers]]'
+    order: 3
+    heading: null
+    children: null
+    refs:
+    - id: 5003
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '5007':
+    uid: rM22loGk-
+    id: 5007
+    string: __~~[[How to read this book]]~~__
+    order: 4
+    heading: null
+    children: null
+    refs:
+    - id: 5008
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
+    attrs: null
+  '5010':
+    uid: FH7SciYQf
+    id: 5010
+    string: __~~[[Conventions and prerequisites]]~~__
+    order: 7
+    heading: null
+    children: null
+    refs:
+    - id: 5011
+    page:
+      id: 4239
+    children_view_type: null
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    title: null
     attrs: null

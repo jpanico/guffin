@@ -29,6 +29,97 @@
     id: 4239
     uid: cBrKZ4MS4
     title: Book Structure
+- - string: '**Title Page & Copyright Page:** The essentials for publishing and legalities.'
+    id: 4276
+    uid: 9Oyp5dC3o
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
+- - string: '[[Chapter 6: [[Code Ergonomics]]]]'
+    id: 5305
+    uid: QCXOCz93t
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 5306
+    - id: 5852
+- - string: '[[Chapter 7: [[What You See is What it Means]]]]'
+    id: 7532
+    uid: 1Fiem_-Bb
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 7530
+    - id: 7531
+- - heading: 3
+    string: '[[Colophon]]'
+    id: 4330
+    uid: d-PCN8cvy
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 10
+    page:
+      id: 4239
+    refs:
+    - id: 4352
+- - string: '[[The Big Idea/central argument]]'
+    id: 5000
+    uid: BoL20uTB5
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 5001
+- - heading: 2
+    string: 3. The Back Matter (The Foundation)
+    children:
+    - id: 4294
+    - id: 4300
+    id: 4293
+    uid: QrYCfPOkF
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    order: 3
+    page:
+      id: 4239
+- - string: '[[Chapter 8: [[Code Economy]]]]'
+    id: 7694
+    uid: hZnGB3vfW
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 7676
+    - id: 8243
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
     id: 4224
@@ -41,6 +132,20 @@
     refs:
     - id: 5450
     - id: 5462
+- - string: '**Evidence/Examples:** Case studies, data, or anecdotes that prove your
+      point.'
+    id: 4291
+    uid: 48iWitcfn
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    order: 2
+    page:
+      id: 4239
 - - id: 5456
     uid: Q-T5fKOEq
     title: '!QUOTE'
@@ -61,6 +166,34 @@
     order: 0
     page:
       id: 5618
+- - string: '**Foreword:** Usually written by someone other than the author to provide
+      credibility.'
+    id: 4278
+    uid: jPLvyjFib
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    order: 2
+    page:
+      id: 4239
+- - heading: 2
+    string: 2. The Body (The Framework)
+    children:
+    - id: 4281
+    - id: 4282
+    - id: 4287
+    id: 4280
+    uid: S0ZhPKnF2
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    order: 2
+    page:
+      id: 4239
 - - string: '[[>]] [[!WARNING]] Warning
 
       Optional body via Shift+Enter'
@@ -74,9 +207,59 @@
     refs:
     - id: 5450
     - id: 5470
+- - string: '[[How is the Book structured (the "roadmap")?]]'
+    id: 4673
+    uid: 3sCG2N7Gx
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 5
+    page:
+      id: 4239
+    refs:
+    - id: 4674
+- - heading: 3
+    string: '[[Acknowledgments]]'
+    id: 4310
+    uid: RsoghGBlZ
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 4
+    page:
+      id: 4239
+    refs:
+    - id: 4338
 - - id: 11823
     uid: -gG94Gziw
     title: attribute1
+- - heading: 3
+    string: '[[List of Illustrations]]'
+    id: 4328
+    uid: 9HnvEUcUr
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 5
+    page:
+      id: 4239
+    refs:
+    - id: 4348
+- - string: '**Index:** A tool for readers to find specific topics quickly.'
+    id: 4299
+    uid: HXwm9o8pt
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    order: 4
+    page:
+      id: 4239
 - - string: '`↤`'
     id: 5687
     uid: oVtdQG8i6
@@ -89,6 +272,19 @@
     order: 0
     page:
       id: 5618
+- - string: '[[Chapter I: What is [[Source Code]]?]]'
+    id: 4320
+    uid: N_dMEQg-Y
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 5288
+    - id: 8654
 - - string: '`≠`'
     id: 5675
     uid: uE5Cc1dLS
@@ -118,6 +314,28 @@
     id: 5453
     uid: d87aKN4hh
     title: callouts demo
+- - heading: 3
+    string: '[[Introduction]]'
+    children:
+    - id: 4669
+    - id: 4671
+    - id: 4673
+    - id: 4675
+    - id: 5000
+    - id: 5002
+    - id: 5007
+    - id: 5010
+    id: 4369
+    uid: MJhqcwHUy
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 8
+    view-type: numbered
+    page:
+      id: 4239
+    refs:
+    - id: 4370
 - - string: '`^`'
     children:
     - id: 5678
@@ -196,6 +414,18 @@
     refs:
     - id: 261
     - id: 11243
+- - heading: 3
+    string: '[[Preface]]'
+    id: 4314
+    uid: BT8bzBAIn
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 6
+    page:
+      id: 4239
+    refs:
+    - id: 4340
 - - string: '`=`'
     children:
     - id: 5654
@@ -225,9 +455,81 @@
     order: 0
     page:
       id: 5618
+- - string: If you can read just your Table of Contents and understand the logical
+      "argument" or "journey" of the book, your structure is solid. If the chapters
+      feel like a random list of topics, you might need to reorganize them into a
+      more linear path.
+    id: 4301
+    uid: qQiKx_Jqb
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4300
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
 - - id: 5455
     uid: GyoWxXiMq
     title: '!NOTE'
+- - string: '**Part I: The Problem/Context.** Establishing the current state of affairs
+      and why change or knowledge is needed.'
+    id: 4284
+    uid: bB3b629o0
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4283
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
+- - string: '**Glossary:** Definitions for specialized terminology.'
+    id: 4297
+    uid: _IQQcdpX9
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    order: 2
+    page:
+      id: 4239
+- - string: '[[Chapter 4: The Lives of Programmers]]'
+    id: 5298
+    uid: -7pcOTTuy
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    order: 3
+    page:
+      id: 4239
+    refs:
+    - id: 5296
+- - string: 'A well-structured non-fiction chapter often follows a consistent internal
+      rhythm:'
+    children:
+    - id: 4289
+    - id: 4290
+    - id: 4291
+    - id: 4292
+    id: 4288
+    uid: Q-TJj5YOe
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4315
+    order: 0
+    view-type: numbered
+    page:
+      id: 4239
 - - string: '`->`'
     children:
     - id: 5657
@@ -401,6 +703,20 @@
     order: 0
     page:
       id: 5618
+- - heading: 3
+    string: The Macro Structure
+    children:
+    - id: 4283
+    id: 4282
+    uid: xbXZ5DUQX
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
 - - string: '`↻`'
     id: 5696
     uid: NX0_hsJA_
@@ -425,6 +741,18 @@
     order: 12
     page:
       id: 5618
+- - string: '[[Chapter 2: The Semantic Ascent of Programming: Metal -> Mind]]'
+    id: 5295
+    uid: fcK_RYG_j
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 5293
 - - id: 5450
     uid: OexZiLR_O
     title: '>'
@@ -440,6 +768,45 @@
     - id: 4381
     - id: 5453
     - id: 11823
+- - string: from [[Gemini]]
+    children:
+    - id: 4274
+    - id: 4280
+    - id: 4293
+    - id: 4303
+    id: 4271
+    uid: 2o9mNvV-b
+    parents:
+    - id: 4239
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 4272
+- - heading: 2
+    string: '[[Back Matter]]'
+    children:
+    - id: 4322
+    - id: 4323
+    - id: 4324
+    - id: 4327
+    - id: 4328
+    - id: 4329
+    - id: 4330
+    - id: 4429
+    - id: 4430
+    - id: 4533
+    - id: 4587
+    id: 4306
+    uid: K3Q8mo67o
+    parents:
+    - id: 4239
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 4346
 - - id: 5457
     uid: NdzIKCUiw
     title: '!SUMMARY'
@@ -455,6 +822,63 @@
     order: 13
     page:
       id: 5618
+- - string: '**Table of Contents (TOC):** The roadmap. In modern non-fiction, chapter
+      titles are often descriptive to help readers "skim-value" the book.'
+    id: 4277
+    uid: mM0wEvHWC
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
+- - heading: 3
+    string: '[[Part I: The Problem]]'
+    children:
+    - id: 4320
+    - id: 5289
+    - id: 5295
+    - id: 5298
+    - id: 5304
+    id: 4317
+    uid: eXfUanMQN
+    parents:
+    - id: 4239
+    - id: 4305
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 4343
+- - string: '[[What this book covers]]'
+    id: 5002
+    uid: VSy0JS3Up
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 3
+    page:
+      id: 4239
+    refs:
+    - id: 5003
+- - heading: 3
+    string: '[[Index]]'
+    id: 4327
+    uid: j6wMz5rw7
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 8
+    page:
+      id: 4239
+    refs:
+    - id: 4353
 - - string: '[[>]] [[!QUOTE]] Quote
 
       Optional body via Shift+Enter'
@@ -480,6 +904,50 @@
     order: 0
     page:
       id: 5618
+- - heading: 3
+    string: '[[Part II: The Solution]]'
+    children:
+    - id: 5305
+    - id: 7532
+    - id: 7694
+    - id: 8098
+    - id: 8228
+    id: 4318
+    uid: fbt9zLY1Q
+    parents:
+    - id: 4239
+    - id: 4305
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 4344
+- - heading: 3
+    string: '[[Cover]]'
+    id: 4307
+    uid: 2ybbTRNbc
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 4332
+- - string: '**Part III: The Future/Application.** How the reader can apply this knowledge
+      or what the implications are for the world.'
+    id: 4286
+    uid: 0PGLC7lHF
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4283
+    - id: 4315
+    order: 2
+    page:
+      id: 4239
 - - string: '`@`'
     children:
     - id: 5693
@@ -518,6 +986,32 @@
     order: 0
     page:
       id: 5618
+- - heading: 3
+    string: '[[Endnotes]]'
+    id: 4329
+    uid: sM6_XLBnK
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 6
+    page:
+      id: 4239
+    refs:
+    - id: 4349
+- - string: '[[Opening hook]]'
+    id: 4669
+    uid: jx1n-CTeJ
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 4670
 - - string: '`→`'
     id: 5657
     uid: 4YZgl5cYa
@@ -530,6 +1024,18 @@
     order: 0
     page:
       id: 5618
+- - heading: 3
+    string: '[[Bibliography]]'
+    id: 4533
+    uid: 7PiQDBpsY
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 7
+    page:
+      id: 4239
+    refs:
+    - id: 4534
 - - attrs:
     - - source:
         - uid
@@ -565,6 +1071,18 @@
 - - id: 5470
     uid: Y2mxk0bpD
     title: '!WARNING'
+- - string: '[[Chapter 5: The Big ⟦Risk|Payoff⟧]]'
+    id: 5304
+    uid: iULWaSvfs
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    order: 4
+    page:
+      id: 4239
+    refs:
+    - id: 6553
 - - id: 2216
     uid: xFhfCd8lJ
     title: table
@@ -580,6 +1098,22 @@
     order: 0
     page:
       id: 5618
+- - heading: 2
+    string: '[[Body matter]]'
+    children:
+    - id: 4316
+    - id: 4317
+    - id: 4318
+    - id: 4319
+    id: 4305
+    uid: X_YREzXxf
+    parents:
+    - id: 4239
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 4342
 - - string: '`↗`'
     id: 5693
     uid: nlN78fCtg
@@ -595,6 +1129,86 @@
 - - id: 5466
     uid: jH8aemWDv
     title: '!SUCCESS'
+- - string: __~~[[Conventions and prerequisites]]~~__
+    id: 5010
+    uid: FH7SciYQf
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 7
+    page:
+      id: 4239
+    refs:
+    - id: 5011
+- - string: '[[Chapter 9: [[Shape]]]]'
+    id: 8098
+    uid: vCbPEEBBr
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    order: 3
+    page:
+      id: 4239
+    refs:
+    - id: 7750
+    - id: 8097
+- - heading: 2
+    string: 1. The Front Matter (The Entryway)
+    children:
+    - id: 4275
+    id: 4274
+    uid: THzm_HWRU
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
+- - string: The body is generally organized into **Parts** and **Chapters**.
+    id: 4281
+    uid: 4F2gL3unj
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
+- - string: '[[Chapter 3: The Lives of Programs]]'
+    id: 5289
+    uid: 8VZhZGoCn
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4317
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 5291
+- - string: This section includes the administrative and "warm-up" pages before the
+      actual reading begins.
+    children:
+    - id: 4276
+    - id: 4277
+    - id: 4278
+    - id: 4279
+    id: 4275
+    uid: EU4QT4Z1y
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
 - - string: '`◊`'
     id: 5684
     uid: vXoWB-OG_
@@ -662,6 +1276,31 @@
 - - id: 5472
     uid: rOZQNUic-
     title: '!FAILURE'
+- - string: '**Preface/Introduction:** This is where you establish the "Why." You
+      define the problem you''re solving or the story you’re telling and set the expectations
+      for the reader.'
+    id: 4279
+    uid: FPS_zGKv1
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4274
+    - id: 4275
+    - id: 4315
+    order: 3
+    page:
+      id: 4239
+- - string: How the reader can apply this knowledge or what the implications are for
+      the world.
+    id: 4321
+    uid: -AD8CsoKU
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4319
+    order: 0
+    page:
+      id: 4239
 - - string: '[[>]] [[!SUCCESS]] Success
 
       Optional body via Shift+Enter'
@@ -687,6 +1326,16 @@
     order: 6
     page:
       id: 5618
+- - string: reference
+    children:
+    - id: 4271
+    id: 4315
+    uid: HCOUV-MA_
+    parents:
+    - id: 4239
+    order: 3
+    page:
+      id: 4239
 - - string: 'authors:: Joe Panico, Emi Panico'
     id: 11834
     uid: hF-KdTW65
@@ -698,6 +1347,20 @@
       id: 11494
     refs:
     - id: 11842
+- - string: '**The Summary/Action Steps:** A recap of what was learned and, if applicable,
+      how to use it.'
+    id: 4292
+    uid: qZq-Ti0Qk
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    order: 3
+    page:
+      id: 4239
 - - string: '`⇒`'
     id: 5660
     uid: tjv91T19w
@@ -723,6 +1386,20 @@
     refs:
     - id: 5450
     - id: 11238
+- - string: __~~[[How to read this book]]~~__
+    id: 5007
+    uid: rM22loGk-
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 4
+    page:
+      id: 4239
+    refs:
+    - id: 5008
 - - string: '`~`'
     children:
     - id: 5675
@@ -754,6 +1431,18 @@
 - - id: 11243
     uid: HGasV4ras
     title: Guffin
+- - heading: 3
+    string: '[[Table of Contents]]'
+    id: 4313
+    uid: ntyaZAHWF
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 9
+    page:
+      id: 4239
+    refs:
+    - id: 4341
 - - children:
     - id: 5646
     id: 5618
@@ -770,6 +1459,20 @@
     refs:
     - id: 261
     - id: 4239
+- - string: '[[What the reader should have learned by the end]]'
+    id: 4675
+    uid: kCKT-pjot
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 6
+    page:
+      id: 4239
+    refs:
+    - id: 4676
 - - string: '{{[[table]]}}'
     children:
     - id: 5649
@@ -798,6 +1501,22 @@
       id: 5618
     refs:
     - id: 2216
+- - heading: 3
+    string: '[[Who is this Book for?]]'
+    children:
+    - id: 4677
+    - id: 4688
+    - id: 5609
+    id: 4385
+    uid: 5r8k42wIw
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 7
+    page:
+      id: 4239
+    refs:
+    - id: 4384
 - - string: '[[>]] [[!EXAMPLE]] Example
 
       Optional body via Shift+Enter'
@@ -811,6 +1530,20 @@
     refs:
     - id: 5450
     - id: 5458
+- - string: '[[Intended Audience]]'
+    id: 4677
+    uid: R_h_4O2SM
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4385
+    props:
+      ah-level: h4
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 4678
 - - string: '[[>]] [[!SUMMARY]] Summary
 
       Optional body via Shift+Enter'
@@ -827,6 +1560,16 @@
 - - id: 321
     uid: BxGxeeGk1
     title: .rm-g
+- - string: Where are things going?
+    id: 7534
+    uid: W7KV8u9eS
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4319
+    order: 1
+    page:
+      id: 4239
 - - string: '`|`'
     children:
     - id: 5690
@@ -840,9 +1583,35 @@
     order: 0
     page:
       id: 5618
+- - string: '**Notes & Bibliography:** Essential for building trust and citing sources.'
+    id: 4298
+    uid: FtV9x0HrE
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    order: 3
+    page:
+      id: 4239
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
+- - string: '[[Who this book is not for]]'
+    id: 4688
+    uid: AC_iLFslt
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4385
+    props:
+      ah-level: h4
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 4689
 - - id: 11842
     uid: MhnnPhnTB
     title: authors
@@ -975,6 +1744,30 @@
     order: 0
     page:
       id: 5618
+- - heading: 3
+    string: '[[Appendices]]'
+    id: 4323
+    uid: 2g2zyljem
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 3
+    page:
+      id: 4239
+    refs:
+    - id: 4350
+- - heading: 3
+    string: '[[Epilogue]]'
+    id: 4429
+    uid: lPY1Vc9NN
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 4431
 - - string: hello world!
     id: 11503
     uid: AKAMsYfSW
@@ -983,6 +1776,23 @@
     order: 1
     page:
       id: 11494
+- - string: This is where you provide the "receipts" and further resources.
+    children:
+    - id: 4295
+    - id: 4296
+    - id: 4297
+    - id: 4298
+    - id: 4299
+    id: 4294
+    uid: 9W5Gcu5Nc
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
 - - string: '[[>]] [[!INFO]] Info
 
       Optional body via Shift+Enter'
@@ -996,6 +1806,33 @@
     refs:
     - id: 5450
     - id: 5462
+- - heading: 3
+    string: 'Pro-Tip: The "Table of Contents" Test'
+    children:
+    - id: 4301
+    - id: 4302
+    id: 4300
+    uid: MN9nNo8ph
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
+- - heading: 3
+    string: '[[About the Author]]'
+    id: 4587
+    uid: 5g2cTraKh
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 9
+    page:
+      id: 4239
+    refs:
+    - id: 4588
 - - string: '`+`'
     children:
     - id: 5669
@@ -1009,6 +1846,74 @@
     order: 0
     page:
       id: 5618
+- - string: Since you're working on a book project, would you like me to help you
+      draft a sample Table of Contents for one of your chapters?
+    id: 4302
+    uid: i76QO2gJn
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4300
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
+- - string: '[[A Note: concerning the [[Programming Language]]s appearing in this
+      book]]'
+    id: 5609
+    uid: _v1Ad76ER
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4385
+    props:
+      ah-level: h4
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 8657
+    - id: 8658
+- - string: '**The Core Concept:** The main lesson or information for that chapter.'
+    id: 4290
+    uid: vJvOWMHag
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
+- - string: '[[Problem statement]]'
+    id: 4671
+    uid: 6Gn3Ru22o
+    parents:
+    - id: 4239
+    - id: 4304
+    - id: 4369
+    props:
+      ah-level: h4
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 4672
+- - heading: 3
+    string: '[[Conclusion]]'
+    id: 4322
+    uid: f6qkHenCs
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 4347
 - - string: '`▸`'
     id: 5678
     uid: GV3tAKsLN
@@ -1045,6 +1950,18 @@
     - id: 261
     - id: 5618
     - id: 11243
+- - string: '**Conclusion/Epilogue:** A final call to action or a summary of the journey.'
+    id: 4295
+    uid: MXDjGZd07
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
 - - string: Evidence / support
     children:
     - id: 5677
@@ -1057,6 +1974,18 @@
     order: 9
     page:
       id: 5618
+- - heading: 3
+    string: '[[Glossary]]'
+    id: 4324
+    uid: wtY_f3pLh
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 4
+    page:
+      id: 4239
+    refs:
+    - id: 4351
 - - string: '`⎇`'
     id: 5690
     uid: keiYVs1oE
@@ -1069,9 +1998,40 @@
     order: 0
     page:
       id: 5618
+- - string: '**The Hook:** A story, statistic, or provocative question.'
+    id: 4289
+    uid: GyxQPJZIM
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4287
+    - id: 4288
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
 - - attrs: []
-    string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **attributes**"
+    string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
+      – DO NOT REMOVE
+
+      Features:
+
+      - **attributes**, in both Roam forms: attribute blocks and `:entity/attrs` structured
+      assertions
+
+      - end-user attribute blocks that fold onto their parent and render as `pills`:
+      a `tags::` with reference values and an `attribute1::` mixing a literal value
+      with references
+
+      - a `guffin-meta::` block carrying guffin-domain document metadata: `title::`
+      (overrides the page title in every export — this page renders as "Source Code
+      For Humans"), `date::`, `authors::` (two), and `identifier::`
+
+      - a guffin-domain `tags::` inside the guffin-meta block that is **not** a recognized
+      PublishingSemantics attribute (folded, never rendered)
+
+      - this INFO `Callout box`'
     id: 11502
     uid: 2-2g3rmpU
     parents:
@@ -1094,6 +2054,38 @@
     order: 3
     page:
       id: 5618
+- - heading: 2
+    string: '[[Front Matter]]'
+    children:
+    - id: 4307
+    - id: 4308
+    - id: 4309
+    - id: 4310
+    - id: 4311
+    - id: 4313
+    - id: 4314
+    - id: 4334
+    - id: 4369
+    - id: 4385
+    id: 4304
+    uid: l-mPr1MsE
+    parents:
+    - id: 4239
+    order: 0
+    page:
+      id: 4239
+    refs:
+    - id: 4331
+- - string: 'Many authors use a "Three-Act" or "Part-based" approach to keep the reader
+      from feeling overwhelmed:'
+    id: 4316
+    uid: OQSRs-in8
+    parents:
+    - id: 4239
+    - id: 4305
+    order: 0
+    page:
+      id: 4239
 - - string: Contrast / however
     children:
     - id: 5674
@@ -1106,6 +2098,33 @@
     order: 8
     page:
       id: 5618
+- - string: '**Appendices:** Extra material that is too "heavy" for the main chapters
+      (e.g., detailed charts, technical specs, or worksheets).'
+    id: 4296
+    uid: PDWQHkY5L
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4293
+    - id: 4294
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
+- - string: '**Part II: The Solution/Process.** The "meat" of the book. This is where
+      you provide the steps, the data, or the narrative arc.'
+    id: 4285
+    uid: JmNTnZHcu
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4283
+    - id: 4315
+    order: 1
+    page:
+      id: 4239
 - - string: '[[>]] [[!DANGER]] Danger
 
       Optional body via Shift+Enter'
@@ -1119,6 +2138,44 @@
     refs:
     - id: 5450
     - id: 5474
+- - heading: 3
+    string: '[[Epigraph]]'
+    id: 4309
+    uid: oRcnImceK
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 3
+    page:
+      id: 4239
+    refs:
+    - id: 4337
+- - heading: 3
+    string: '[[Afterword]]'
+    id: 4430
+    uid: zD_pM8ok9
+    parents:
+    - id: 4239
+    - id: 4306
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 4432
+- - heading: 3
+    string: The Chapter Level
+    children:
+    - id: 4288
+    id: 4287
+    uid: w_hzNttG2
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4315
+    order: 2
+    page:
+      id: 4239
 - - attrs:
     - - source:
         - uid
@@ -1245,9 +2302,77 @@
     order: 0
     page:
       id: 5618
+- - heading: 3
+    string: '[[Copyright Page]]'
+    id: 4308
+    uid: CpeNN51Mp
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 2
+    page:
+      id: 4239
+    refs:
+    - id: 4336
+- - string: 'Many authors use a "Three-Act" or "Part-based" approach to keep the reader
+      from feeling overwhelmed:'
+    children:
+    - id: 4284
+    - id: 4285
+    - id: 4286
+    id: 4283
+    uid: 8g4aivYkq
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4280
+    - id: 4282
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
+- - heading: 3
+    string: '[[Foreword]]'
+    id: 4311
+    uid: 8L96zvsd2
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 5
+    page:
+      id: 4239
+    refs:
+    - id: 4339
+- - string: 'A typical non-fiction book is built like a well-engineered building:
+      it needs a solid foundation (the intro), a logical framework (the chapters),
+      and a clear exit strategy (the conclusion). While the specific content varies
+      depending on whether you are writing a memoir, a technical manual, or a business
+      book, most follow a standard structural blueprint.'
+    id: 4303
+    uid: L5N_49Nqn
+    parents:
+    - id: 4239
+    - id: 4271
+    - id: 4315
+    order: 0
+    page:
+      id: 4239
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
+- - string: '[[Chapter 10: [[Behavior]]]]'
+    id: 8228
+    uid: xbjh9nQYr
+    parents:
+    - id: 4239
+    - id: 4305
+    - id: 4318
+    order: 4
+    page:
+      id: 4239
+    refs:
+    - id: 8099
+    - id: 8227
 - - string: '`+`'
     id: 5669
     uid: KQJjAUkzT
@@ -1260,6 +2385,18 @@
     order: 0
     page:
       id: 5618
+- - heading: 3
+    string: '[[Title Page]]'
+    id: 4334
+    uid: H8WMaL9B8
+    parents:
+    - id: 4239
+    - id: 4304
+    order: 1
+    page:
+      id: 4239
+    refs:
+    - id: 4335
 - - string: Hypothesis / tentative
     children:
     - id: 5683
@@ -1275,3 +2412,18 @@
 - - id: 11843
     uid: PZyg8sHJZ
     title: title
+- - heading: 3
+    string: '[[Part III: The Future/Application]]'
+    children:
+    - id: 4321
+    - id: 7534
+    id: 4319
+    uid: FZKyWhyzP
+    parents:
+    - id: 4239
+    - id: 4305
+    order: 3
+    page:
+      id: 4239
+    refs:
+    - id: 4345

@@ -96,7 +96,11 @@ follows (here, `**bold**` emphasis on one portion of the page name).
 
 #### `[[Test Article]] 5`
 
-- **attributes**
+- **attributes**, in both Roam forms: attribute blocks and `:entity/attrs` structured assertions
+- end-user attribute blocks that fold onto their parent and render as `pills`: a `tags::` with reference values and an `attribute1::` mixing a literal value with references
+- a `guffin-meta::` block carrying guffin-domain document metadata: `title::` (overrides the page title in every export — this page renders as "Source Code For Humans"), `date::`, `authors::` (two), and `identifier::`
+- a guffin-domain `tags::` inside the guffin-meta block that is **not** a recognized PublishingSemantics attribute (folded, never rendered)
+- this INFO `Callout box`
 
 #### `[[Test Article]] 6`
 
