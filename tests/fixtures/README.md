@@ -104,13 +104,22 @@ follows (here, `**bold**` emphasis on one portion of the page name).
 
 #### `[[Test Article]] 6`
 
-- structuring a Book for PDF/ePub
-- exercise effect of PublishingSemantics on structuring/formatting of export
-- interaction of PublishingSemantics with transclusion through: `VertexLink`/`BLOCK_EMBED`/`PAGE_EMBED`
+- a small **Book** (The Picture of Dorian Gray) whose sections are declared with `element-type::` heading tags: copyright-page, preface, chapter
+- full `guffin-meta::` bibliographic metadata: `title::` (overrides the page title in every export), `authors::`, `date::` (reduced-precision year), `publisher::`, `rights::`, `identifier::`, `revision::` (draft-1), and a `cover-image::` block ref
+- PublishingSemantics interacting with transclusion: each section's content is a PAGE_EMBED of a different page
+- per-embed `children_layout` presentation: the Uncopyright embed set to `document`, the Preface embed unset, the chapter I embed set to `numbered`; the page itself uses `document` children layout
+- this INFO `Callout box`
 
 #### `[[Test Article]] 7`
 
-- a very large Book structured document intended for testing scalability and performance
+- a very large **parts Book** (The Travels of Marco Polo, ~30 chapters of prose) for scalability and performance testing
+- four level-1 `element-type:: part` headings (**Book I–IV**, with bold runs in the heading text) — the content auto-detects the PART division, chapters at level 2
+- 30 `element-type:: chapter` headings, plus introduction, acknowledgments, and section tags, and a bespoke `matter:: front-matter` override
+- internal element numbers leading the headings — `[0.x]` front matter, `[1.p]` parts, `[1.p.c]` chapters — exercising the numbering validators (well-formedness, matter agreement, uniqueness, ordering, nesting)
+- full `guffin-meta::` bibliographic metadata: `title::`, `subtitle::`, `authors::` (two), `date::` (full W3CDTF date), `publisher::`, `rights::`, `identifier::`
+- front-matter headings whose text is a page reference (Acknowledgments; Who is this Book for?)
+- a chapter whose body is a fenced Python `code block` (Chapter 4: Code Listing)
+- this INFO `Callout box`
 
 #### `[[Test Article]] 8 has a **bold** word`
 

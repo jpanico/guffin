@@ -9422,6 +9422,24 @@ RbM-trDdE:
       - uid
       - vSGgmBM_w
       value: ' part'
+HrLHMMak9:
+  uid: HrLHMMak9
+  id: 8677
+  string: 'isa:: [[Formal Language]]'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 8599
+  - id: 8678
+  page:
+    id: 8657
+  children_view_type: null
+  parents:
+  - id: 8657
+  props: null
+  title: null
+  attrs: null
 kPcAk-Bw1:
   uid: kPcAk-Bw1
   id: 4388
@@ -14039,7 +14057,29 @@ rhPsF4zq3:
 
     Features:
 
-    - a very large Book structured document intended for testing scalability and performance'
+    - a very large **parts Book** (The Travels of Marco Polo, ~30 chapters of prose)
+    for scalability and performance testing
+
+    - four level-1 `element-type:: part` headings (**Book I–IV**, with bold runs in
+    the heading text) — the content auto-detects the PART division, chapters at level
+    2
+
+    - 30 `element-type:: chapter` headings, plus introduction, acknowledgments, and
+    section tags, and a bespoke `matter:: front-matter` override
+
+    - internal element numbers leading the headings — `[0.x]` front matter, `[1.p]`
+    parts, `[1.p.c]` chapters — exercising the numbering validators (well-formedness,
+    matter agreement, uniqueness, ordering, nesting)
+
+    - full `guffin-meta::` bibliographic metadata: `title::`, `subtitle::`, `authors::`
+    (two), `date::` (full W3CDTF date), `publisher::`, `rights::`, `identifier::`
+
+    - front-matter headings whose text is a page reference (Acknowledgments; Who is
+    this Book for?)
+
+    - a chapter whose body is a fenced Python `code block` (Chapter 4: Code Listing)
+
+    - this INFO `Callout box`'
   order: 0
   heading: null
   children: null
@@ -16740,6 +16780,44 @@ XEXppTHQE:
   props: null
   title: null
   attrs: null
+eb6oOgGOt:
+  uid: eb6oOgGOt
+  id: 8662
+  string: '[[>]] [[!INFO]] Contextual Definition: Programming Language (Gemini)
+
+    A programming language is a **formal** system of rules, symbols, and syntax used
+    to provide instructions to a computer. It acts as a bridge between human thought
+    patterns and the binary operations of a processor, allowing developers to define
+    data structures, control flow, and algorithms.
+
+
+    Examples: [[Fortran]], [[ALGOL]], [[COBOL]], [[Pascal]], [[C]], [[C++]], [[Java]],
+    [[Visual Basic/VB.NET]], [[Python]], [[Rust]]'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 4648
+  - id: 4649
+  - id: 4650
+  - id: 4654
+  - id: 4655
+  - id: 5450
+  - id: 5462
+  - id: 8723
+  - id: 8731
+  - id: 8732
+  - id: 8733
+  - id: 8931
+  page:
+    id: 8657
+  children_view_type: null
+  parents:
+  - id: 8657
+  props:
+    type: equal
+  title: null
+  attrs: null
 faeKau1gd:
   uid: faeKau1gd
   id: 12151
@@ -16896,6 +16974,35 @@ vf0E7bSFT:
   - id: 12007
   - id: 12019
   - id: 12021
+  props: null
+  title: null
+  attrs: null
+XyG4ILJOo:
+  uid: XyG4ILJOo
+  id: 8670
+  string: '[[>]] [[!NOTE]] Contextual Core Components (Gemini)
+
+    **Syntax**: The specific set of rules that defines the combinations of symbols
+    that are considered to be correctly structured programs (the "grammar").
+
+
+    **Semantics:** The meaning or behavior of the code when executed.
+
+
+    **Abstraction:** The ability to hide complex hardware operations behind human-readable
+    commands (e.g., using `print()` instead of manually managing memory buffers and
+    CPU registers).'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5455
+  page:
+    id: 8657
+  children_view_type: null
+  parents:
+  - id: 8657
   props: null
   title: null
   attrs: null
@@ -17892,6 +17999,28 @@ wVuAR5ZWY:
   - id: 11850
   - id: 11902
   - id: 12314
+  props: null
+  title: null
+  attrs: null
+ABHkVeu8O:
+  uid: ABHkVeu8O
+  id: 8676
+  string: '[[>]] [[!NOTE]] The Translation Process
+
+    Because computers only understand machine code (1s and 0s), programming languages
+    rely on a **compiler** or an **interpreter** to translate the source code into
+    a format the hardware can execute.'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5455
+  page:
+    id: 8657
+  children_view_type: null
+  parents:
+  - id: 8657
   props: null
   title: null
   attrs: null

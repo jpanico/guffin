@@ -103,11 +103,22 @@
     – DO NOT REMOVE
   body: 'Features:
 
-    - structuring a Book for PDF/ePub
+    - a small **Book** (The Picture of Dorian Gray) whose sections are declared with
+    `element-type::` heading tags: copyright-page, preface, chapter
 
-    - exercise effect of PublishingSemantics on structuring/formatting of export
+    - full `guffin-meta::` bibliographic metadata: `title::` (overrides the page title
+    in every export), `authors::`, `date::` (reduced-precision year), `publisher::`,
+    `rights::`, `identifier::`, `revision::` (draft-1), and a `cover-image::` block
+    ref
 
-    - interaction of PublishingSemantics with transclusion through: `VertexLink`/`BLOCK_EMBED`/`PAGE_EMBED`'
+    - PublishingSemantics interacting with transclusion: each section''s content is
+    a PAGE_EMBED of a different page
+
+    - per-embed `children_layout` presentation: the Uncopyright embed set to `document`,
+    the Preface embed unset, the chapter I embed set to `numbered`; the page itself
+    uses `document` children layout
+
+    - this INFO `Callout box`'
 - vertex_type: guffin/heading
   uid: a9LW1J8BT
   children:

@@ -7,9 +7,11 @@
 >
 > Features:
 >
-> - structuring a Book for PDF/ePub
-> - exercise effect of PublishingSemantics on structuring/formatting of export
-> - interaction of PublishingSemantics with transclusion through: `VertexLink`/`BLOCK_EMBED`/`PAGE_EMBED`
+> - a small **Book** (The Picture of Dorian Gray) whose sections are declared with `element-type::` heading tags: copyright-page, preface, chapter
+> - full `guffin-meta::` bibliographic metadata: `title::` (overrides the page title in every export), `authors::`, `date::` (reduced-precision year), `publisher::`, `rights::`, `identifier::`, `revision::` (draft-1), and a `cover-image::` block ref
+> - PublishingSemantics interacting with transclusion: each section’s content is a PAGE_EMBED of a different page
+> - per-embed `children_layout` presentation: the Uncopyright embed set to `document`, the Preface embed unset, the chapter I embed set to `numbered`; the page itself uses `document` children layout
+> - this INFO `Callout box`
 
 ## Uncopyright
 
