@@ -91,10 +91,15 @@ def parse_inline_md(texts: list[str]) -> InlineMap:
     time would spawn one subprocess per block.  Batching every unique string
     into a single call amortizes that cost across the whole document.
 
-    Joins all unique, non-empty strings with a random sentinel paragraph as
+    Joins all unique, non-empty strings with a random sentinel ATX heading as
     separator, converts the combined document to Pandoc JSON in a single
     subprocess call, then maps each input string back to the inline elements
-    from its corresponding paragraph block.
+    from its corresponding paragraph block.  The separator must be a heading
+    rather than a bare paragraph: Pandoc's ``definition_lists`` extension
+    captures a preceding paragraph — even across one blank line — as the term
+    of a ``~``- or ``:``-led definition, so an entry starting with either
+    marker would swallow a paragraph separator and silently misalign every
+    entry after it; a heading can never be captured that way.
 
     Text strings that produce no paragraph block (e.g. bare ``---``, which
     Pandoc parses as a thematic break) are absent from the returned mapping;
@@ -112,10 +117,11 @@ def parse_inline_md(texts: list[str]) -> InlineMap:
     if not unique:
         return {}
 
-    # Random sentinel used as a paragraph separator between entries.
-    # UUID hex makes collision with real content effectively impossible.
+    # Random sentinel used as an ATX-heading separator between entries.  UUID hex makes
+    # collision with real content effectively impossible; the heading form keeps an adjacent
+    # entry's parse from absorbing the separator (see the docstring).
     sep: Final[str] = f"GUFFIN_SEP_{uuid.uuid4().hex}"
-    combined: Final[str] = f"\n\n{sep}\n\n".join(unique)
+    combined: Final[str] = f"\n\n# {sep}\n\n".join(unique)
 
     json_str: Final[str] = _markdown_to_pandoc_json(combined)
     doc: Final[pf.Doc] = pf.load(StringIO(json_str))
@@ -127,9 +133,9 @@ def parse_inline_md(texts: list[str]) -> InlineMap:
         if text_idx >= len(unique):
             break
         block_inlines: list[pf.Inline] = list(block.content) if hasattr(block, "content") else []
-        # Sentinel paragraph → advance to the next text entry.
+        # Sentinel heading → advance to the next text entry.
         if (
-            isinstance(block, pf.Para)
+            isinstance(block, pf.Header)
             and len(block_inlines) == 1
             and isinstance(block_inlines[0], pf.Str)
             and block_inlines[0].text == sep

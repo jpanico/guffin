@@ -115,6 +115,26 @@ class TestParseInlineMd:
             assert isinstance(inlines, list)
             assert len(inlines) > 0
 
+    def test_definition_marker_entry_does_not_misalign_following_entries(self) -> None:
+        """An entry that is a lone ``~`` maps every entry — before, itself, and after — to its own text.
+
+        Pandoc's definition_lists extension captures a preceding paragraph (even across a blank
+        line) as the term of a ``~``-led definition; a paragraph separator would be swallowed and
+        every following entry would map to its neighbour's inlines.
+        """
+        texts = ["before", "~", "first after", "second after"]
+        result = parse_inline_md(texts)
+        for text in texts:
+            assert text in result
+            assert pf.stringify(pf.Para(*result[text])).strip() == text
+
+    def test_colon_led_entry_does_not_misalign_following_entries(self) -> None:
+        """A ``:``-led entry (Pandoc's other definition marker) does not shift later entries."""
+        texts = ["before", ": colon led", "after"]
+        result = parse_inline_md(texts)
+        assert pf.stringify(pf.Para(*result["before"])).strip() == "before"
+        assert pf.stringify(pf.Para(*result["after"])).strip() == "after"
+
     def test_standalone_x_guffin_link_parses_to_pf_link(self) -> None:
         """A standalone x-guffin link produces a Link inline whose url is the x-guffin URL."""
         uid: str = "abc123xyz"
