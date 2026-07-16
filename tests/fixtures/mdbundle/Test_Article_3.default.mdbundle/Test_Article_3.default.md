@@ -5,15 +5,16 @@
 >
 > Features:
 >
-> - This page is primarily a demonstration of different kinds of refs:
+> - an exhaustive matrix of Roam `refs` and `embeds`: inline vs. standalone × internal (in-page) vs. external (out-of-page) × target kind
+> - `Feature Content` section holds the reference targets:
 >
-> – inline page ref  
-> – ref to Daily Notes Page  
-> – internal block ref (to block on this page)  
-> – external block ref (to block on a *different page*)  
-> – internal embed (of block from this page)  
-> – external embed (of block from *different page*)
+> – styled text runs: plain, italics, bold, strikethrough, highlight, inline-code  
+> – `color spans`: text color, highlight color, underline, box  
+> – a fenced Python `code block`, a standalone `image`, a Roam `callout`, a native `{{table}}`  
+> – `block quotes` (Markdown and Roam native, single- and multi-line) and Roam `pull quotes`
 >
+> - `Internal (in-page) links:` section: inline refs to the styled/colored targets, plus standalone refs to page / block / parent block / header and to every block-level target above, plus a block embed
+> - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout embed
 > - this INFO `Callout box`, which contains Roam `page references`
 
 ### Feature Content

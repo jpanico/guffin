@@ -383,6 +383,20 @@
     order: 2
     page:
       id: 3327
+- - string: ((VxYhmVTG3))
+    id: 14459
+    uid: mfYCtWH-T
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    - id: 14458
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 12920
 - - string: '[La Curne, Dict., s.v. Sendaus has: Silk stuff: “Somme de la delivrance
       des sendaus.” (Nouv. Compt. de l’Arg. p. 19).—Godefroy, Dict., gives: “Sendain,
       adj., made with the stuff called cendal: Drap d’or sendains (1392, Test. de
@@ -468,6 +482,21 @@
     refs:
     - id: 5844
     - id: 11664
+- - string: ((jN4ClkAEl))
+    children:
+    - id: 14461
+    id: 14460
+    uid: 8VPJRGOt4
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    order: 1
+    page:
+      id: 3327
+    refs:
+    - id: 12919
 - - id: 246
     uid: q3JUnfC1_
     title: pdf
@@ -758,21 +787,30 @@
 
       Features:
 
-      - This page is primarily a demonstration of different kinds of refs:
+      - an exhaustive matrix of Roam `refs` and `embeds`: inline vs. standalone ×
+      internal (in-page) vs. external (out-of-page) × target kind
 
-      -- inline page ref
+      - `Feature Content` section holds the reference targets:
 
-      -- ref to Daily Notes Page
+      -- styled text runs: plain, italics, bold, strikethrough, highlight, inline-code
 
-      -- internal block ref (to block on this page)
+      -- `color spans`: text color, highlight color, underline, box
 
-      -- external block ref (to block on a __different page__)
+      -- a fenced Python `code block`, a standalone `image`, a Roam `callout`, a native
+      `{{table}}`
 
-      -- internal embed (of block from this page)
+      -- `block quotes` (Markdown and Roam native, single- and multi-line) and Roam
+      `pull quotes`
 
-      -- external embed (of block from __different page__)
+      - `Internal (in-page) links:` section: inline refs to the styled/colored targets,
+      plus standalone refs to page / block / parent block / header and to every block-level
+      target above, plus a block embed
 
-      - this INFO `Callout box`, which contains Roam `page references` '
+      - `External (out-of-page) links:` section: the same matrix against Test Article
+      1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout
+      embed
+
+      - this INFO `Callout box`, which contains Roam `page references`'
     id: 11133
     uid: I1QOMCtdJ
     parents:
@@ -1037,6 +1075,21 @@
     refs:
     - id: 5844
     - id: 11743
+- - string: ((DaltU9ClP))
+    children:
+    - id: 14459
+    id: 14458
+    uid: BeDkLXjgQ
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 12916
 - - string: Block 3.2
     id: 11809
     uid: fv5nh7u81
@@ -1150,6 +1203,35 @@
     order: 4
     page:
       id: 11137
+- - string: ((DPW-zEDaU))
+    id: 14461
+    uid: 1NasQjcTQ
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    - id: 14460
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 12925
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)'
+    id: 12920
+    uid: VxYhmVTG3
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12910
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7
+        : width: 320
+          height: null
+    order: 0
+    page:
+      id: 12904
 - - string: ((EOXU_iAwJ))
     id: 13495
     uid: j1_LH6NTQ
@@ -1984,6 +2066,26 @@
     order: 0
     page:
       id: 4225
+- - string: '{{table}}'
+    children:
+    - id: 14458
+    - id: 14460
+    id: 14457
+    uid: nhX6sTxSE
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    props:
+      table:
+        columns:
+          '0':
+            width: 336
+          '1':
+            width: 349
+    order: 0
+    page:
+      id: 3327
 - - string: Block 1.3
     id: 11681
     uid: gmLJbWZYp
@@ -2182,6 +2284,21 @@
     order: 0
     page:
       id: 3327
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1)'
+    id: 12916
+    uid: DaltU9ClP
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12906
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1
+        : width: 316
+          height: null
+    order: 0
+    page:
+      id: 12904
 - - attrs:
     - - source:
         - uid
@@ -2242,6 +2359,10 @@
       - a single JPEG `image` that **has** been resized through the Roam UI (illustration
       2.1)
 
+      - a native `{{table}}` (Section 2.2) whose four cells are each a standalone
+      `block reference` to a JPEG `image` block, so each cell displays its referenced
+      image
+
       - an embedded PDF document that has no special PublishingSemantics Attributes
       attached
 
@@ -2285,6 +2406,8 @@
       id: 3327
 - - heading: 2
     string: Section 2.2
+    children:
+    - id: 14457
     id: 4026
     uid: 5f1ahOFdp
     parents:
@@ -2402,6 +2525,21 @@
 - - id: 11932
     uid: vuPFRAwZI
     title: the following block embeds a PDF with guffin-meta
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)'
+    id: 12919
+    uid: jN4ClkAEl
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12909
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4
+        : width: 300
+          height: null
+    order: 0
+    page:
+      id: 12904
 - - string: Block 2.2.1
     id: 11966
     uid: cxJA2xr-u
@@ -2485,6 +2623,21 @@
       id: 4225
     refs:
     - id: 11716
+- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)'
+    id: 12925
+    uid: DPW-zEDaU
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12914
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e
+        : width: 270
+          height: null
+    order: 0
+    page:
+      id: 12904
 - - string: ((F9TXbzC0K))
     id: 13487
     uid: MYwGv0l_h

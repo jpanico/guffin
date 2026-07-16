@@ -203,7 +203,9 @@ for `[[Test Article]] 6` (epub baseline):
 for `[[Test Article]] 2` (mdbundle baseline — the small, asset-free article the offline
 `TestExportRoamTreeMdbundleFromRaw` test renders from the recorded `raw_result`, so its
 `raw_result` and mdbundle baseline must be regenerated together):
-`python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2 --mdbundle`.
+`python tests/regen_fixtures.py "[[Test Article]] 2" --prefix test_article_2 --mdbundle`;
+for `[[Test Article]] 3` (mdbundle baseline — the live mdbundle export test's source):
+`python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3 --mdbundle`.
 
 ## Git
 - **Never commit or push without explicit instructions**: do not run `git commit` or `git push` unless the user explicitly asks. This applies even after completing a task — finish the work, then wait for the user to request a commit/push.

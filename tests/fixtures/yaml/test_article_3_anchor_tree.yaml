@@ -698,21 +698,30 @@ tree_network:
 
     Features:
 
-    - This page is primarily a demonstration of different kinds of refs:
+    - an exhaustive matrix of Roam `refs` and `embeds`: inline vs. standalone × internal
+    (in-page) vs. external (out-of-page) × target kind
 
-    -- inline page ref
+    - `Feature Content` section holds the reference targets:
 
-    -- ref to Daily Notes Page
+    -- styled text runs: plain, italics, bold, strikethrough, highlight, inline-code
 
-    -- internal block ref (to block on this page)
+    -- `color spans`: text color, highlight color, underline, box
 
-    -- external block ref (to block on a __different page__)
+    -- a fenced Python `code block`, a standalone `image`, a Roam `callout`, a native
+    `{{table}}`
 
-    -- internal embed (of block from this page)
+    -- `block quotes` (Markdown and Roam native, single- and multi-line) and Roam
+    `pull quotes`
 
-    -- external embed (of block from __different page__)
+    - `Internal (in-page) links:` section: inline refs to the styled/colored targets,
+    plus standalone refs to page / block / parent block / header and to every block-level
+    target above, plus a block embed
 
-    - this INFO `Callout box`, which contains Roam `page references` '
+    - `External (out-of-page) links:` section: the same matrix against Test Article
+    1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout
+    embed
+
+    - this INFO `Callout box`, which contains Roam `page references`'
   order: 0
   heading: null
   children: null
@@ -3949,6 +3958,10 @@ refs_by_id:
       - a single JPEG `image` that **has** been resized through the Roam UI (illustration
       2.1)
 
+      - a native `{{table}}` (Section 2.2) whose four cells are each a standalone
+      `block reference` to a JPEG `image` block, so each cell displays its referenced
+      image
+
       - an embedded PDF document that has no special PublishingSemantics Attributes
       attached
 
@@ -4323,7 +4336,8 @@ refs_by_id:
     string: Section 2.2
     order: 1
     heading: 2
-    children: null
+    children:
+    - id: 14457
     refs: null
     page:
       id: 3327
@@ -4331,6 +4345,116 @@ refs_by_id:
     parents:
     - id: 3327
     - id: 3329
+    props: null
+    title: null
+    attrs: null
+  '14457':
+    uid: nhX6sTxSE
+    id: 14457
+    string: '{{table}}'
+    order: 0
+    heading: null
+    children:
+    - id: 14458
+    - id: 14460
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    props:
+      table:
+        columns:
+          '0':
+            width: 336
+          '1':
+            width: 349
+    title: null
+    attrs: null
+  '14458':
+    uid: BeDkLXjgQ
+    id: 14458
+    string: ((DaltU9ClP))
+    order: 0
+    heading: null
+    children:
+    - id: 14459
+    refs:
+    - id: 12916
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    props: null
+    title: null
+    attrs: null
+  '14460':
+    uid: 8VPJRGOt4
+    id: 14460
+    string: ((jN4ClkAEl))
+    order: 1
+    heading: null
+    children:
+    - id: 14461
+    refs:
+    - id: 12919
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    props: null
+    title: null
+    attrs: null
+  '14461':
+    uid: 1NasQjcTQ
+    id: 14461
+    string: ((DPW-zEDaU))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 12925
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    - id: 14460
+    props: null
+    title: null
+    attrs: null
+  '14459':
+    uid: mfYCtWH-T
+    id: 14459
+    string: ((VxYhmVTG3))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 12920
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 4026
+    - id: 14457
+    - id: 14458
     props: null
     title: null
     attrs: null
@@ -6172,21 +6296,30 @@ refs_by_id:
 
       Features:
 
-      - This page is primarily a demonstration of different kinds of refs:
+      - an exhaustive matrix of Roam `refs` and `embeds`: inline vs. standalone ×
+      internal (in-page) vs. external (out-of-page) × target kind
 
-      -- inline page ref
+      - `Feature Content` section holds the reference targets:
 
-      -- ref to Daily Notes Page
+      -- styled text runs: plain, italics, bold, strikethrough, highlight, inline-code
 
-      -- internal block ref (to block on this page)
+      -- `color spans`: text color, highlight color, underline, box
 
-      -- external block ref (to block on a __different page__)
+      -- a fenced Python `code block`, a standalone `image`, a Roam `callout`, a native
+      `{{table}}`
 
-      -- internal embed (of block from this page)
+      -- `block quotes` (Markdown and Roam native, single- and multi-line) and Roam
+      `pull quotes`
 
-      -- external embed (of block from __different page__)
+      - `Internal (in-page) links:` section: inline refs to the styled/colored targets,
+      plus standalone refs to page / block / parent block / header and to every block-level
+      target above, plus a block embed
 
-      - this INFO `Callout box`, which contains Roam `page references` '
+      - `External (out-of-page) links:` section: the same matrix against Test Article
+      1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout
+      embed
+
+      - this INFO `Callout box`, which contains Roam `page references`'
     order: 0
     heading: null
     children: null
@@ -7491,6 +7624,94 @@ refs_by_id:
     parents: null
     props: null
     title: .rm-g
+    attrs: null
+  '12916':
+    uid: DaltU9ClP
+    id: 12916
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12906
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1
+        : width: 316
+          height: null
+    title: null
+    attrs: null
+  '12919':
+    uid: jN4ClkAEl
+    id: 12919
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12909
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4
+        : width: 300
+          height: null
+    title: null
+    attrs: null
+  '12920':
+    uid: VxYhmVTG3
+    id: 12920
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12910
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7
+        : width: 320
+          height: null
+    title: null
+    attrs: null
+  '12925':
+    uid: DPW-zEDaU
+    id: 12925
+    string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12904
+    children_view_type: null
+    parents:
+    - id: 12904
+    - id: 12905
+    - id: 12914
+    props:
+      image-size:
+        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e
+        : width: 270
+          height: null
+    title: null
     attrs: null
   '11932':
     uid: vuPFRAwZI
