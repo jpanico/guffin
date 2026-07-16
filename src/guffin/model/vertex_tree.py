@@ -436,8 +436,9 @@ def enrich_image_original_sizes(tree: VertexTree, sizes: dict[Uid, ImageSize]) -
 
     Each :class:`~guffin.model.vertex.ImageVertex` whose UID appears in *sizes* receives a
     copy with :attr:`~guffin.model.vertex.ImageVertex.original_image_size` set to the
-    corresponding :class:`~guffin.common.geometry.ImageSize`.  All other vertices pass
-    through unchanged.
+    corresponding :class:`~guffin.common.geometry.ImageSize`.  All other vertices — including
+    image vertices absent from *sizes*, whose native size is simply unknown — pass through
+    unchanged.
 
     Args:
         tree: The source :class:`VertexTree`.
@@ -449,10 +450,8 @@ def enrich_image_original_sizes(tree: VertexTree, sizes: dict[Uid, ImageSize]) -
     """
 
     def _enrich(vtx: Vertex) -> Vertex:
-        if isinstance(vtx, ImageVertex):
-            if vtx.uid in sizes:
-                return vtx.model_copy(update={"original_image_size": sizes[vtx.uid]})
-            logger.warning("ImageVertex uid=%r absent from sizes map; original_image_size left unset", vtx.uid)
+        if isinstance(vtx, ImageVertex) and vtx.uid in sizes:
+            return vtx.model_copy(update={"original_image_size": sizes[vtx.uid]})
         return vtx
 
     return map_vertices(tree, _enrich)

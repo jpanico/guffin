@@ -236,15 +236,20 @@ class TestEnrichImageOriginalSizes:
         enriched: Final[ImageVertex] = next(v for v in result.tree_vertices if isinstance(v, ImageVertex))
         assert enriched.original_image_size == size
 
-    def test_unmatched_image_vertex_logs_warning(self, caplog: pytest.LogCaptureFixture) -> None:
-        """ImageVertex absent from sizes map logs a WARNING and keeps original_image_size as None."""
+    def test_unmatched_image_vertex_passes_through_silently(self, caplog: pytest.LogCaptureFixture) -> None:
+        """ImageVertex absent from sizes map keeps original_image_size None, with no warning.
+
+        An undisplayed image (e.g. one merely mentioned inline) is legitimately never fetched, so
+        absence from the sizes map is a normal state, not a fault; fetch failures are warned about
+        at the fetch site.
+        """
         vertex: Final[ImageVertex] = _make_image_vertex("img000002")
         tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
-        with caplog.at_level(logging.WARNING, logger="guffin.vertex_tree"):
+        with caplog.at_level(logging.WARNING, logger="guffin.model.vertex_tree"):
             result: Final[VertexTree] = enrich_image_original_sizes(tree, {})
         unmatched: Final[ImageVertex] = next(v for v in result.tree_vertices if isinstance(v, ImageVertex))
         assert unmatched.original_image_size is None
-        assert any("absent from sizes map" in r.message for r in caplog.records)
+        assert not caplog.records
 
     def test_non_image_vertices_pass_through(self) -> None:
         """TextVertex is returned unchanged regardless of the sizes map."""
