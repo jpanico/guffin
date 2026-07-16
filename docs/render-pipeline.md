@@ -167,6 +167,11 @@ The line holds across both rendering shapes a reference can take:
   referenced block itself — a fidelity accommodation for targets that have no faithful
   inline form, **not** a transclusion. The target is rendered stripped of its `children`
   and folded `attribute_assignments`.
+- **Cell image path** (`_table_vertex_to_blocks`): a table cell that is a *standalone*
+  reference to an `ImageVertex` (per `model/vertex_tree.standalone_link_target_of_text`)
+  renders the referenced image in the cell — the cell-level twin of the block-level path,
+  kind-agnostic (`REFERENCE` and `EMBED` alike), scoped to images only. Any other cell
+  renders as its parsed inline content.
 
 The same line scopes semantics: `transcluded_vertices()` (the render-visible set that
 `assignments_for`, `has_parts`, and the element-number validators walk) includes
@@ -175,10 +180,12 @@ kind renders.
 
 It also scopes **asset fetching**: `render/asset_fetch.fetch_assets` fetches exactly the assets
 the rendered document places from local files — `model/vertex_tree.visible_asset_vertices()`
-(render-visible asset vertices, plus targets of the block-level standalone-reference path,
-recognized by `model/vertex_link.parse_standalone_vertex_link`) together with the root's cover
+(render-visible asset vertices, plus targets of the block-level standalone-reference path and
+of standalone image-referencing table cells, recognized by
+`model/vertex_link.parse_standalone_vertex_link`) together with the root's cover
 image. An asset
-merely *mentioned* — linked inline amid surrounding text — renders as a remote hyperlink and is
+merely *mentioned* — linked inline amid surrounding text, in body text or a table cell —
+renders as a remote hyperlink and is
 never downloaded, so a `.mdbundle` carries no orphan files for content that only mentions
 foreign pages.
 

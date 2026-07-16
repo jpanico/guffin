@@ -124,7 +124,12 @@ from guffin.model.vertex import (
     VertexChildren,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
-from guffin.model.vertex_tree import VertexTree, root_vertex, standalone_link_target
+from guffin.model.vertex_tree import (
+    VertexTree,
+    root_vertex,
+    standalone_link_target,
+    standalone_link_target_of_text,
+)
 from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexView, ViewMap
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
@@ -1034,6 +1039,8 @@ def _halign_to_pandoc_str(align: HAlign) -> str:
 
 def _table_vertex_to_blocks(
     vertex: TableVertex,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
     inline_map: InlineMap,
 ) -> list[pf.Block]:
     """Render *vertex* as a Panflute :class:`~panflute.Table`.
@@ -1045,6 +1052,15 @@ def _table_vertex_to_blocks(
     ``row_head_columns=1`` is set on the :class:`~panflute.TableBody` so Pandoc
     treats the first column as a row-header column.
 
+    A cell that is a *standalone* reference to an
+    :class:`~guffin.model.vertex.ImageVertex` (per
+    :func:`~guffin.model.vertex_tree.standalone_link_target_of_text`) renders as the
+    referenced image itself (via the image vertex's block rendering, so the fetched
+    local file, alt text, authored resize, and remote-link fallback all apply) — the
+    cell-level twin of :func:`_block_ref_target`'s block-level path, and likewise
+    kind-agnostic (``REFERENCE`` and ``EMBED`` alike).  Every other cell renders as
+    its parsed inline content.
+
     Cell alignment is resolved via
     :meth:`~guffin.common.table.TableStyle.style_for` and mapped to Pandoc
     alignment strings.  Column widths are left as ``'ColWidthDefault'``
@@ -1052,6 +1068,8 @@ def _table_vertex_to_blocks(
 
     Args:
         vertex: The table vertex to render.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID (image or PDF) to local asset file path.
         inline_map: Mapping from cell text to parsed panflute inline elements.
 
     Returns:
@@ -1066,8 +1084,12 @@ def _table_vertex_to_blocks(
     def make_cell(row_idx: int, col_idx: int) -> pf.TableCell:
         cell_text = table.rows[row_idx][col_idx]
         cell_style = style.style_for(row_idx, col_idx, table)
+        alignment: str = _halign_to_pandoc_str(cell_style.align)
+        cell_target: Vertex | None = standalone_link_target_of_text(cell_text, vertex_tree)
+        if isinstance(cell_target, ImageVertex):
+            return pf.TableCell(*_image_vertex_to_blocks(cell_target, asset_files, inline_map), alignment=alignment)
         inlines = inline_map.get(cell_text, [pf.Str(cell_text)])
-        return pf.TableCell(pf.Plain(*inlines), alignment=_halign_to_pandoc_str(cell_style.align))
+        return pf.TableCell(pf.Plain(*inlines), alignment=alignment)
 
     def make_row(row_idx: int) -> pf.TableRow:
         return pf.TableRow(*[make_cell(row_idx, col) for col in range(num_cols)])
@@ -1194,7 +1216,7 @@ def _vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
         case TableVertex():
-            return _table_vertex_to_blocks(vertex, inline_map)
+            return _table_vertex_to_blocks(vertex, vertex_tree, asset_files, inline_map)
         case BlockEmbedVertex() | PageEmbedVertex():
             return _embed_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth

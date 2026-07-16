@@ -44,9 +44,9 @@
 
 ### Section 2.2
 
-| [![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1)](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1) | [![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7) |
+| [j2QaOlGrbf.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1) | [IHkqRJ_Wmb.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7) |
 |----|----|
-| [![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4) | [![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e) |
+| [u2aukLge2y.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4) | [\_asI3qPwPQ.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e) |
 
 ## Section 3
 

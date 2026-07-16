@@ -20,6 +20,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
+from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
@@ -32,6 +33,7 @@ from guffin.model.vertex import (
     PdfVertex,
     QuoteBlockVertex,
     QuoteType,
+    TableVertex,
     TextVertex,
     Vertex,
 )
@@ -690,6 +692,106 @@ class TestVertexTreeToPandocImageVertex:
         inline = list(list(doc.content)[0].content)[0]
         assert isinstance(inline, pf.Link)
         assert _collect_text(inline) == "photo.jpg"
+
+
+# ---------------------------------------------------------------------------
+# TestVertexTreeToPandocTableCellImage
+# ---------------------------------------------------------------------------
+
+
+class TestVertexTreeToPandocTableCellImage:
+    """Tests for vertex_tree_to_pandoc() — a table cell that is a standalone image reference."""
+
+    @staticmethod
+    def _image_ref_table_tree(cell_extra: str = "") -> VertexTree:
+        """A page holding a one-row table whose first cell references an image, second cell plain.
+
+        The first cell's text is a standalone reference-form vertex link to the ref-side
+        image vertex, optionally prefixed by *cell_extra* (making it a mention instead).
+        """
+        ref_cell: str = f"{cell_extra}[a flower]({vertex_link_url('img00001a', VertexLinkKind.REFERENCE)})"
+        table = TableVertex(
+            uid="table0001",
+            table=Table(rows=[[ref_cell, "plain cell"]]),
+            table_style=TableStyle(),
+        )
+        page = PageVertex(uid="page00001", title="P", children=["table0001"])
+        image = ImageVertex(
+            uid="img00001a",
+            source=_IMAGE_URL,
+            alt_text="A flower",
+            media_type=MediaType.JPEG,
+            scaled_image_size=ImageSize(),
+        )
+        return VertexTree(tree_vertices=[page, table], ref_vertices=[image])
+
+    @staticmethod
+    def _cells(doc: pf.Doc) -> list[pf.TableCell]:
+        """The single table's body cells, first row."""
+        table = list(doc.content)[0]
+        assert isinstance(table, pf.Table)
+        body = table.content[0]
+        return list(body.content[0].content)
+
+    def test_fetched_cell_image_renders_as_image(self, tmp_path: Path) -> None:
+        """A standalone image-ref cell renders the referenced image from its local file."""
+        fake_img = tmp_path / "photo.jpg"
+        fake_img.write_bytes(b"")
+        tree = self._image_ref_table_tree()
+        doc, _ = vertex_tree_to_pandoc(tree, {"img00001a": fake_img}, {})
+        cells = self._cells(doc)
+        cell_block = list(cells[0].content)[0]
+        assert isinstance(cell_block, pf.Para)
+        inline = list(cell_block.content)[0]
+        assert isinstance(inline, pf.Image)
+        assert inline.url == str(fake_img)
+
+    def test_unfetched_cell_image_falls_back_to_link(self) -> None:
+        """A standalone image-ref cell whose asset was not fetched falls back to a remote link."""
+        tree = self._image_ref_table_tree()
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        cells = self._cells(doc)
+        inline = list(list(cells[0].content)[0].content)[0]
+        assert isinstance(inline, pf.Link)
+        assert inline.url == str(_IMAGE_URL)
+
+    def test_plain_cell_stays_inline(self, tmp_path: Path) -> None:
+        """A cell with no vertex link keeps the plain inline path."""
+        fake_img = tmp_path / "photo.jpg"
+        fake_img.write_bytes(b"")
+        tree = self._image_ref_table_tree()
+        doc, _ = vertex_tree_to_pandoc(tree, {"img00001a": fake_img}, {})
+        plain_block = list(self._cells(doc)[1].content)[0]
+        assert isinstance(plain_block, pf.Plain)
+        assert _collect_text(plain_block) == "plain cell"
+
+    def test_mentioned_cell_image_stays_inline(self, tmp_path: Path) -> None:
+        """An image linked amid other cell text is a mention: no image block in the cell."""
+        fake_img = tmp_path / "photo.jpg"
+        fake_img.write_bytes(b"")
+        tree = self._image_ref_table_tree(cell_extra="see ")
+        doc, _ = vertex_tree_to_pandoc(tree, {"img00001a": fake_img}, {})
+        cell_block = list(self._cells(doc)[0].content)[0]
+        assert isinstance(cell_block, pf.Plain)
+
+    def test_embed_kind_cell_renders_as_image(self, tmp_path: Path) -> None:
+        """An embed-form cell link takes the same image path (kind-agnostic)."""
+        fake_img = tmp_path / "photo.jpg"
+        fake_img.write_bytes(b"")
+        embed_cell: str = f"[a flower]({vertex_link_url('img00001a', VertexLinkKind.EMBED)})"
+        table = TableVertex(uid="table0001", table=Table(rows=[[embed_cell]]), table_style=TableStyle())
+        page = PageVertex(uid="page00001", title="P", children=["table0001"])
+        image = ImageVertex(
+            uid="img00001a",
+            source=_IMAGE_URL,
+            media_type=MediaType.JPEG,
+            scaled_image_size=ImageSize(),
+        )
+        tree = VertexTree(tree_vertices=[page, table], ref_vertices=[image])
+        doc, _ = vertex_tree_to_pandoc(tree, {"img00001a": fake_img}, {})
+        inline = list(list(self._cells(doc)[0].content)[0].content)[0]
+        assert isinstance(inline, pf.Image)
+        assert inline.url == str(fake_img)
 
 
 # ---------------------------------------------------------------------------

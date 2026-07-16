@@ -13,11 +13,14 @@ Public symbols:
 - :func:`assignments_for` — return every ``(vertex, assignment)`` pair in a :class:`VertexTree`'s
   render-visible document (per :func:`transcluded_vertices`) whose assignment is for a given
   :class:`~guffin.model.attribute.Attribute`.
+- :func:`standalone_link_target_of_text` — return the vertex a text's *standalone* vertex link
+  points at (the link is the text's entire content), or ``None``.
 - :func:`standalone_link_target` — return the vertex a text-bearing vertex's *standalone* vertex
   link points at (its entire text is one Pandoc-Markdown-form link), or ``None``.
 - :func:`visible_asset_vertices` — return every :data:`~guffin.model.vertex.AssetVertex` the
-  render-visible document displays: assets among :func:`transcluded_vertices` plus assets targeted
-  by a render-visible vertex's standalone vertex link.
+  render-visible document displays: assets among :func:`transcluded_vertices`, plus assets targeted
+  by a render-visible vertex's standalone vertex link, plus assets targeted by a render-visible
+  table cell that is a standalone vertex link.
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
@@ -49,6 +52,7 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PdfVertex,
+    TableVertex,
     TextVertex,
     Vertex,
     is_asset_vertex,
@@ -235,14 +239,37 @@ def assignments_for(tree: VertexTree, attribute: Attribute) -> Iterator[tuple[Ve
 
 
 @validate_call
+def standalone_link_target_of_text(text: str, tree: VertexTree) -> Vertex | None:
+    """Return the vertex that *text*'s standalone vertex link points at, or ``None``.
+
+    A text that is a standalone Pandoc-Markdown-form vertex link (per
+    :func:`~guffin.model.vertex_link.parse_standalone_vertex_link`) *is* that link — it
+    displays nothing but its destination.  This resolves such a text to the destination,
+    whatever container the text lives in (a vertex's body text, a table cell, …).
+
+    Args:
+        text: The text to inspect.
+        tree: The :class:`VertexTree` providing the UID-to-vertex lookup.
+
+    Returns:
+        The destination :data:`~guffin.model.vertex.Vertex`, or ``None`` when *text* is not a
+        standalone vertex link or the destination is absent from :attr:`VertexTree.uid_map`.
+    """
+    link: Final[VertexLink | None] = parse_standalone_vertex_link(text)
+    if link is None:
+        return None
+    return tree.uid_map.get(link.uid)
+
+
+@validate_call
 def standalone_link_target(vertex: Vertex, tree: VertexTree) -> Vertex | None:
     """Return the vertex that *vertex*'s standalone vertex link points at, or ``None``.
 
     A text-bearing vertex (:class:`~guffin.model.vertex.TextVertex` or
     :class:`~guffin.model.vertex.HeadingVertex`) whose entire text is one
-    Pandoc-Markdown-form vertex link (per
-    :func:`~guffin.model.vertex_link.parse_standalone_vertex_link`) *is* that link: the vertex
-    displays nothing but its destination.  This resolves such a vertex to the destination.
+    Pandoc-Markdown-form vertex link (per :func:`standalone_link_target_of_text`) *is*
+    that link: the vertex displays nothing but its destination.  This resolves such a
+    vertex to the destination.
 
     Args:
         vertex: The vertex to inspect.
@@ -255,25 +282,25 @@ def standalone_link_target(vertex: Vertex, tree: VertexTree) -> Vertex | None:
     """
     if not isinstance(vertex, (TextVertex, HeadingVertex)):
         return None
-    link: Final[VertexLink | None] = parse_standalone_vertex_link(vertex.text)
-    if link is None:
-        return None
-    return tree.uid_map.get(link.uid)
+    return standalone_link_target_of_text(vertex.text, tree)
 
 
 @validate_call
 def visible_asset_vertices(tree: VertexTree) -> list[AssetVertex]:
     """Return every :data:`~guffin.model.vertex.AssetVertex` the render-visible document displays.
 
-    Two ways an asset is displayed:
+    Three ways an asset is displayed:
 
     - the asset vertex is itself render-visible (per :func:`transcluded_vertices` — a tree
       vertex, or transcluded through an embed), or
     - a render-visible vertex is a *standalone* link to it (per :func:`standalone_link_target`):
-      the referencing vertex displays nothing but the asset.
+      the referencing vertex displays nothing but the asset, or
+    - a render-visible table's cell is a *standalone* link to it (per
+      :func:`standalone_link_target_of_text`): the cell displays nothing but the asset.
 
-    An asset that is merely *mentioned* — linked inline amid surrounding text — is not
-    displayed (the mention renders as a link) and is not included.
+    An asset that is merely *mentioned* — linked inline amid surrounding text, whether in a
+    vertex's body text or a table cell — is not displayed (the mention renders as a link)
+    and is not included.
 
     Args:
         tree: The :class:`VertexTree` to walk.
@@ -285,8 +312,10 @@ def visible_asset_vertices(tree: VertexTree) -> list[AssetVertex]:
     displayed: Final[list[AssetVertex]] = []
     seen: Final[set[Uid]] = set()
     for vertex in transcluded_vertices(tree):
-        target: Vertex | None = standalone_link_target(vertex, tree)
-        for candidate in (vertex, target):
+        candidates: list[Vertex | None] = [vertex, standalone_link_target(vertex, tree)]
+        if isinstance(vertex, TableVertex):
+            candidates.extend(standalone_link_target_of_text(cell, tree) for row in vertex.table.rows for cell in row)
+        for candidate in candidates:
             if candidate is None or not is_asset_vertex(candidate) or candidate.uid in seen:
                 continue
             seen.add(candidate.uid)
