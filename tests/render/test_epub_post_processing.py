@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Final
 
 from guffin.render.epub_post_processing import (
+    bake_code_line_numbers,
     restore_matter_divisions,
     stamp_titlepage_illustrators,
     stamp_titlepage_revision,
@@ -174,3 +175,82 @@ class TestStampTitlepageIllustrators:
         with zipfile.ZipFile(epub) as archive:
             xhtml: Final[str] = archive.read("EPUB/text/ch001.xhtml").decode("utf-8")
         assert "illustrators" not in xhtml
+
+
+_NUMBERED_LISTING_DOC: Final[str] = (
+    '<?xml version="1.0" encoding="utf-8"?>\n'
+    '<html xmlns:epub="http://www.idpf.org/2007/ops">\n'
+    '<body epub:type="bodymatter">\n'
+    '<section id="ch1" class="level1"><h1>Chapter</h1>\n'
+    '<div class="sourceCode" id="cb1">'
+    '<pre class="sourceCode numberSource python numberLines"><code class="sourceCode python">'
+    '<span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">def</span> foo():</span>\n'
+    '<span id="cb1-2"><a href="#cb1-2"></a></span>\n'
+    '<span id="cb1-3"><a href="#cb1-3"></a>    <span class="cf">return</span> <span class="dv">1</span></span>\n'
+    '<span id="cb1-4"><a href="#cb1-4"></a></span>\n'
+    '<span id="cb1-5"><a href="#cb1-5"></a></span>\n'
+    '<span id="cb1-6"><a href="#cb1-6"></a></span>\n'
+    '<span id="cb1-7"><a href="#cb1-7"></a></span>\n'
+    '<span id="cb1-8"><a href="#cb1-8"></a></span>\n'
+    '<span id="cb1-9"><a href="#cb1-9"></a></span>\n'
+    '<span id="cb1-10"><a href="#cb1-10"></a>foo()</span></code></pre></div>\n'
+    "</section>\n</body>\n</html>\n"
+)
+
+_NBSP: Final[str] = "\u00a0"
+
+
+class TestBakeCodeLineNumbers:
+    """bake_code_line_numbers rewrites skylighting's CSS-counter gutter into literal-text numbers."""
+
+    def _baked(self, tmp_path: Path) -> str:
+        """Write the numbered-listing document into an EPUB, bake it, and return the result XHTML."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(epub, {"EPUB/text/ch001.xhtml": _NUMBERED_LISTING_DOC})
+        bake_code_line_numbers(epub)
+        with zipfile.ZipFile(epub) as archive:
+            return archive.read("EPUB/text/ch001.xhtml").decode("utf-8")
+
+    def test_line_numbers_become_literal_text(self, tmp_path: Path) -> None:
+        """Each line leads with a span.line-number holding its number as literal text."""
+        xhtml: Final[str] = self._baked(tmp_path)
+        assert f'<span class="line-number">{_NBSP}1{_NBSP}</span><span class="kw">def</span> foo():' in xhtml
+        assert f'<span class="line-number">10{_NBSP}</span>foo()' in xhtml
+
+    def test_numbers_right_align_to_the_widest(self, tmp_path: Path) -> None:
+        """Single-digit numbers are no-break-space padded to the width of the listing's widest number."""
+        xhtml: Final[str] = self._baked(tmp_path)
+        assert f'<span class="line-number">{_NBSP}3{_NBSP}</span>' in xhtml
+
+    def test_per_line_spans_and_anchors_are_dissolved(self, tmp_path: Path) -> None:
+        """The per-line spans and their self-link anchors are gone; highlight-token spans survive."""
+        xhtml: Final[str] = self._baked(tmp_path)
+        assert '<span id="cb1-' not in xhtml
+        assert "<a href=" not in xhtml
+        assert '<span class="cf">return</span>' in xhtml
+
+    def test_gutter_classes_are_dropped(self, tmp_path: Path) -> None:
+        """numberSource/numberLines leave the pre, and sourceCode leaves the code element."""
+        xhtml: Final[str] = self._baked(tmp_path)
+        assert "numberSource" not in xhtml
+        assert "numberLines" not in xhtml
+        assert '<pre class="sourceCode python"><code class="python">' in xhtml
+
+    def test_document_without_listing_is_untouched(self, tmp_path: Path) -> None:
+        """A document with no numberSource listing passes through byte-identical."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(epub, {"EPUB/text/ch001.xhtml": _PLAIN_DOC})
+        bake_code_line_numbers(epub)
+        with zipfile.ZipFile(epub) as archive:
+            xhtml: Final[str] = archive.read("EPUB/text/ch001.xhtml").decode("utf-8")
+        assert xhtml == _PLAIN_DOC
+
+    def test_mimetype_stays_first_and_stored(self, tmp_path: Path) -> None:
+        """Repackaging preserves the EPUB's mimetype-first, uncompressed requirement."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(epub, {"EPUB/text/ch001.xhtml": _NUMBERED_LISTING_DOC})
+        bake_code_line_numbers(epub)
+        with zipfile.ZipFile(epub) as archive:
+            infos: Final[list[zipfile.ZipInfo]] = archive.infolist()
+        assert infos[0].filename == "mimetype"
+        assert infos[0].compress_type == zipfile.ZIP_STORED

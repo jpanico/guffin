@@ -23,6 +23,30 @@ div.sourceCode code {
   font-size: 0.85em;
 }
 
+/*
+ * Zero the pre's own box explicitly: the equivalent reset (`pre.sourceCode { margin: 0 }`) lives
+ * in Pandoc's per-chapter skylighting <style>, which not every reading system's conversion
+ * preserves (notably the Kindle app) — without it, the system's own default pre margin/padding
+ * pads the code box's left gutter. The box's spacing is carried entirely by div.sourceCode.
+ */
+div.sourceCode pre {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Kindle-only gutter compensation. Kindle's renderer draws the code box's left gutter slightly
+ * wider than other reading systems (its monospace fallback and minimum-font-size floor widen the
+ * line-number column), so the box's left padding is trimmed under Amazon's proprietary
+ * `amzn-kf8` media query — honored by the Kindle conversion pipeline and ignored, per spec, by
+ * every other reading system, which keeps Apple Books/Calibre untouched.
+ */
+@media amzn-kf8 {
+  div.sourceCode {
+    padding-left: 0.5em;
+  }
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -150,41 +174,27 @@ div.callout > :last-child { margin-bottom: 0; }
  */
 
 /*
- * Code line numbers (skylighting "numberSource"). These higher-specificity rules override
- * skylighting's inline defaults to match the Typst/PDF gutter: drop the underline on each number,
- * remove the divider line (the PDF has none), and tighten the fixed 3em gutter toward the widest
- * number. The em geometry preserves skylighting's relationship (span left = number-box width =
- * margin + 1em), just scaled down.
+ * Code line numbers. Skylighting's "numberSource" gutter draws each number with CSS counters,
+ * position:relative offsets, and inline-block per-line spans — techniques several reading
+ * systems do not implement (notably the Kindle app: the unapplied offsets leave the number's
+ * gutter box inline as an enormous left margin, and the per-line spans fall back to block,
+ * doubling the line spacing). The packaged e-book is therefore rewritten
+ * (epub_post_processing.bake_code_line_numbers) to carry each line's number as literal text in
+ * a leading span — right-aligned by no-break-space padding in the monospace face — leaving only
+ * the number's colour to CSS (skylighting's gutter gray).
  */
-div.sourceCode pre.numberSource {
-  margin-left: 1.3em;
-  border-left: none;
-  padding-left: 0;
-}
-div.sourceCode pre.numberSource code > span {
-  left: -2.3em;
-}
-div.sourceCode pre.numberSource code > span > a:first-child::before {
-  width: 2.3em;
-  text-decoration: none;
-}
-div.sourceCode pre.numberSource code > span > a {
-  text-decoration: none;
+div.sourceCode span.line-number {
+  color: #aaaaaa;
 }
 
 /*
  * Wrap long code lines so a listing never overflows the page width in reflowable readers (which,
- * unlike the PDF, have no horizontal scroll). This mirrors skylighting's own @media print rule,
- * applied on screen: `white-space: pre-wrap` on the code, with a hanging indent (negative
- * text-indent cancelled by matching padding-left) so a wrapped continuation aligns under the code
- * rather than back under the line-number gutter.
+ * unlike the PDF, have no horizontal scroll). A wrapped continuation aligns at the code box's
+ * left edge: the hanging indent skylighting achieves with inline-block per-line spans is
+ * deliberately not reproduced, since those spans are dissolved by the line-number baking above.
  */
-div.sourceCode pre > code.sourceCode {
+div.sourceCode pre > code {
   white-space: pre-wrap;
-}
-div.sourceCode pre.numberSource code > span {
-  padding-left: 2.6em;
-  text-indent: -2.6em;
 }
 
 /*

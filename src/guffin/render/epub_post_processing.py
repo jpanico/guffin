@@ -1,6 +1,6 @@
 """EPUB post-processing: content rewrites applied to the packaged e-book.
 
-Four passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
+Five passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
 compression, so the ``mimetype`` entry stays first and uncompressed):
 
 - **CMOS division restoration.**  Pandoc assigns each content document's ``<body epub:type>``
@@ -24,6 +24,15 @@ compression, so the ``mimetype`` entry stays first and uncompressed):
   illustration credit line directly below the author paragraphs (below the title block when
   there are none) on the generated title page, which renders creators but not contributors.
 
+- **Baked code line numbers.**  Skylighting's ``numberSource`` code listings draw each line
+  number with CSS counters, ``position: relative`` offsets, and ``inline-block`` line spans —
+  techniques several reading systems do not implement (notably the Kindle app, where the
+  unapplied offsets leave an enormous left gutter and the line spans fall back to ``block``,
+  doubling the line spacing).  :func:`bake_code_line_numbers` rewrites every numbered listing
+  to carry its line numbers as literal text — a leading ``<span class="line-number">`` per
+  line, right-aligned by no-break-space padding in the monospace face — and dissolves the
+  per-line spans and gutter classes so none of the fragile CSS applies.
+
 Public symbols:
 
 - **Functions**: :func:`restore_matter_divisions` — rewrite an ``.epub`` in place so each content
@@ -31,7 +40,9 @@ Public symbols:
   :func:`stamp_titlepage_provenance` — inject a provenance line at the foot of the generated
   title page; :func:`stamp_titlepage_revision` — inject the authored revision name directly
   below the title on the generated title page; :func:`stamp_titlepage_illustrators` — inject an
-  illustration credit line directly below the authors on the generated title page.
+  illustration credit line directly below the authors on the generated title page;
+  :func:`bake_code_line_numbers` — rewrite every numbered code listing to literal-text line
+  numbers.
 """
 
 import logging
@@ -59,6 +70,26 @@ _TITLE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(
 """Matches the generated title page's title block: the title heading plus any subtitle paragraph."""
 _AUTHOR_RUN_RE: Final[regex.Pattern[str]] = regex.compile(r'(?:\s*<p class="author">.*?</p>)+', regex.DOTALL)
 """Matches the generated title page's run of author paragraphs (one ``<p class="author">`` each)."""
+_NUMBERED_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(
+    r'<pre class="(?P<pre_classes>[^"]*\bnumberSource\b[^"]*)"><code class="(?P<code_classes>[^"]*)">'
+    r"(?P<body>.*?)</code>",
+    regex.DOTALL,
+)
+"""Matches a skylighting ``numberSource`` code listing: the ``<pre>``/``<code>`` open tags and body."""
+_LINE_SPAN_RE: Final[regex.Pattern[str]] = regex.compile(
+    r'<span id="cb\d+-(?P<line>\d+)"><a href="#cb\d+-\d+"[^>]*></a>(?P<content>[^\n]*)</span>'
+)
+"""Matches one per-line span of a code listing's body: its line number, anchor, and line content.
+
+The content capture is greedy up to the line's last ``</span>``, so nested highlight-token spans
+stay inside it (the Pandoc writer emits each source line on one physical line).
+"""
+_NBSP: Final[str] = "\u00a0"
+"""No-break space; pads baked line numbers so the monospace face right-aligns them."""
+_GUTTER_CLASSES: Final[frozenset[str]] = frozenset({"numberSource", "numberLines"})
+"""The ``<pre>`` classes that trigger skylighting's CSS-counter line-number gutter."""
+_CODE_CLASSES: Final[frozenset[str]] = frozenset({"sourceCode"})
+"""The ``<code>`` class that skylighting's per-line-span layout rules key on."""
 
 
 def _rewrite_xhtml_entries(epub_path: Path, transform: Callable[[str, str], str]) -> None:
@@ -230,3 +261,69 @@ def stamp_titlepage_illustrators(epub_path: Path, credit: str) -> None:
         logger.info("Stamped title-page illustration credit in %s", epub_path)
     else:
         logger.warning("No title-page anchor found in %s; illustration credit not stamped", epub_path)
+
+
+def _without_class_tokens(class_attr: str, removed: frozenset[str]) -> str:
+    """Return the class attribute value *class_attr* with every token in *removed* dropped."""
+    return " ".join(token for token in class_attr.split() if token not in removed)
+
+
+def _baked_block(pre_classes: str, code_classes: str, body: str) -> str:
+    """Return a ``numberSource`` code listing rebuilt around literal-text line numbers.
+
+    Each per-line span in *body* (see :data:`_LINE_SPAN_RE`) is dissolved into a leading
+    ``<span class="line-number">`` holding its line number as literal text — right-aligned by
+    no-break-space padding to the listing's widest number, with a no-break-space separator —
+    followed by the line's own content (nested highlight-token spans intact).  The gutter
+    classes are dropped from *pre_classes* (:data:`_GUTTER_CLASSES`) and the per-line-span
+    layout class from *code_classes* (:data:`_CODE_CLASSES`), so no CSS-counter,
+    ``position: relative``, or ``inline-block`` rule applies to the result.
+
+    Args:
+        pre_classes: The listing's ``<pre>`` class attribute value.
+        code_classes: The listing's ``<code>`` class attribute value.
+        body: The listing markup between the ``<code>`` open tag and its ``</code>``.
+
+    Returns:
+        The rebuilt listing markup, from ``<pre`` through ``</code>``.
+    """
+    width: Final[int] = max((len(m.group("line")) for m in _LINE_SPAN_RE.finditer(body)), default=0)
+
+    def _bake_line(match: regex.Match[str]) -> str:
+        number: str = match.group("line").rjust(width, _NBSP)
+        return f'<span class="line-number">{number}{_NBSP}</span>{match.group("content")}'
+
+    baked_body: Final[str] = _LINE_SPAN_RE.sub(_bake_line, body)
+    kept_code_classes: Final[str] = _without_class_tokens(code_classes, _CODE_CLASSES)
+    code_class_attr: Final[str] = f' class="{kept_code_classes}"' if kept_code_classes else ""
+    return (
+        f'<pre class="{_without_class_tokens(pre_classes, _GUTTER_CLASSES)}">'
+        f"<code{code_class_attr}>{baked_body}</code>"
+    )
+
+
+@validate_call
+def bake_code_line_numbers(epub_path: Path) -> None:
+    """Rewrite the EPUB at *epub_path* in place so code listings carry literal-text line numbers.
+
+    Skylighting's ``numberSource`` listings draw line numbers with CSS counters positioned by
+    ``position: relative`` offsets on ``inline-block`` per-line spans.  Reading systems that do
+    not implement those techniques (notably the Kindle app) degrade badly: the unapplied offsets
+    leave the number's gutter box inline as an enormous left margin, and the per-line spans fall
+    back to ``block``, doubling the line spacing.  Every ``numberSource`` listing in every
+    content document is therefore rebuilt via :func:`_baked_block`: line numbers become literal
+    text (right-aligned by no-break-space padding in the monospace face), the per-line spans and
+    anchors are dissolved, and the classes the fragile CSS keys on are dropped — highlight-token
+    spans and their colours are untouched.  Documents without a numbered listing are left
+    unchanged.  Entry order, timestamps, and per-entry compression are preserved, so the
+    ``mimetype`` entry stays first and uncompressed.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+    """
+
+    def _bake(match: regex.Match[str]) -> str:
+        return _baked_block(match.group("pre_classes"), match.group("code_classes"), match.group("body"))
+
+    _rewrite_xhtml_entries(epub_path, lambda _filename, xhtml: _NUMBERED_BLOCK_RE.sub(_bake, xhtml))
+    logger.info("Baked literal code line numbers in %s", epub_path)

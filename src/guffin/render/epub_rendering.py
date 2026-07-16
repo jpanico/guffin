@@ -53,6 +53,7 @@ from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, dro
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
 from guffin.render.callout_theme import callout_accent, callout_title_tint
 from guffin.render.epub_post_processing import (
+    bake_code_line_numbers,
     restore_matter_divisions,
     stamp_titlepage_illustrators,
     stamp_titlepage_provenance,
@@ -180,6 +181,11 @@ def render(
     line is stamped directly below the authors (via
     :func:`~guffin.render.epub_post_processing.stamp_titlepage_illustrators`), since Pandoc's
     generated title page renders creators but not contributors.
+
+    Code listings are rewritten after packaging so their line numbers are literal text rather
+    than skylighting's CSS-counter gutter (via
+    :func:`~guffin.render.epub_post_processing.bake_code_line_numbers`), which reading systems
+    without CSS-counter/positioning support (notably the Kindle app) cannot render.
 
     Pandoc must be installed and on ``PATH``.
 
@@ -309,6 +315,7 @@ def render(
         )
 
     restore_matter_divisions(output_path)
+    bake_code_line_numbers(output_path)
     if emit_title_page and (provenance is not None or revision is not None):
         stamp_titlepage_provenance(output_path, colophon_summary(provenance, revision))
     # The authored revision name rides the title page directly below the title — content, not
