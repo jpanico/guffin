@@ -18,6 +18,27 @@ wjN-kVF3B:
   props: null
   title: null
   attrs: null
+xfq7UYRb2:
+  uid: xfq7UYRb2
+  id: 14465
+  string: 'code-language:: FORTRAN'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 14466
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 14462
+  - id: 14463
+  - id: 14464
+  props: null
+  title: null
+  attrs: null
 7MoH-wIQh:
   uid: 7MoH-wIQh
   id: 4224
@@ -74,7 +95,7 @@ r09kXvUg-:
     this is the __2nd line__
 
     - this is the **3rd line**'
-  order: 10
+  order: 11
   heading: null
   children: null
   refs:
@@ -106,6 +127,44 @@ jVQvHi40O:
   props: null
   title: null
   attrs: null
+hLpHeEto9:
+  uid: hLpHeEto9
+  id: 14464
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 14465
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 14462
+  - id: 14463
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - hLpHeEto9
+      value:
+      - uid
+      - hLpHeEto9
+    - source:
+      - uid
+      - xfq7UYRb2
+      value:
+      - uid
+      - SEtRXQkX7
+    - source:
+      - uid
+      - xfq7UYRb2
+      value: ' FORTRAN'
 iXrVW8EGw:
   uid: iXrVW8EGw
   id: 11199
@@ -165,6 +224,7 @@ MRKYttxrM:
   - id: 11193
   - id: 13454
   - id: 13455
+  - id: 14462
   refs: null
   page:
     id: 11137
@@ -237,6 +297,9 @@ qnCiceZgk:
 
     - isolated fenced code block
 
+    - isolated fenced code block whose `plain text` fence language is overridden by
+    a `code-language:: FORTRAN` tag
+
     - Markdown single line block quote
 
     - Markdown multi-line block quote
@@ -287,7 +350,7 @@ WtrddPBAt:
   uid: WtrddPBAt
   id: 11153
   string: block 1.2
-  order: 14
+  order: 15
   heading: null
   children: null
   refs: null
@@ -327,7 +390,7 @@ WtrddPBAt:
     this is the __2nd line__
 
     - this is the **3rd line**'
-  order: 8
+  order: 9
   heading: null
   children: null
   refs: null
@@ -364,7 +427,7 @@ Yz0pqYfBh:
   uid: Yz0pqYfBh
   id: 11186
   string: '> This is a __Markdown standard__ single line **Block Quote**'
-  order: 7
+  order: 8
   heading: null
   children: null
   refs: null
@@ -415,7 +478,7 @@ ooVLwinzV:
   uid: ooVLwinzV
   id: 13455
   string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
-  order: 11
+  order: 12
   heading: null
   children: null
   refs:
@@ -504,6 +567,25 @@ qXV6E7HV8:
   props: null
   title: null
   attrs: null
+CgaFSZKa9:
+  uid: CgaFSZKa9
+  id: 14462
+  string: 'The child of this block is an isolated fenced code block whose fence language
+    (`plain text`) is overridden by a `code-language:: FORTRAN` tag'
+  order: 7
+  heading: null
+  children:
+  - id: 14463
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  props: null
+  title: null
+  attrs: null
 hD2qvZqjh:
   uid: hD2qvZqjh
   id: 11234
@@ -553,7 +635,7 @@ GeE5zPJOv:
 
 
     '
-  order: 12
+  order: 13
   heading: null
   children: null
   refs:
@@ -568,6 +650,50 @@ GeE5zPJOv:
   props: null
   title: null
   attrs: null
+_oNY-uWg-:
+  uid: _oNY-uWg-
+  id: 14463
+  string: "```plain text\nC     FIZZBUZZ FOR IBM 704 FORTRAN\n      DO 100 I = 1,\
+    \ 100\nC     CHECK FOR 15 (3 * 5)\n      M15 = I - (I/15)*15\n      IF (M15) 10,\
+    \ 5, 10\n    5 PRINT 501\n      GO TO 100\nC     CHECK FOR 3\n   10 M3 = I - (I/3)*3\n\
+    \      IF (M3) 20, 15, 20\n   15 PRINT 502\n      GO TO 100\nC     CHECK FOR 5\n\
+    \   20 M5 = I - (I/5)*5\n      IF (M5) 30, 25, 30\n   25 PRINT 503\n      GO TO\
+    \ 100\nC     PRINT THE NUMBER\n   30 PRINT 504, I\n  100 CONTINUE\nC     FORMAT\
+    \ STATEMENTS FOR THE TELETYPE\n  501 FORMAT (8HFIZZBUZZ)\n  502 FORMAT (4HFIZZ)\n\
+    \  503 FORMAT (4HBUZZ)\n  504 FORMAT (I3)\n      STOP```"
+  order: 0
+  heading: null
+  children:
+  - id: 14464
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 14462
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - _oNY-uWg-
+      value:
+      - uid
+      - _oNY-uWg-
+    - source:
+      - uid
+      - hLpHeEto9
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - hLpHeEto9
+      value:
+      - uid
+      - BxGxeeGk1
 lS4kg-3mw:
   uid: lS4kg-3mw
   id: 5458
@@ -586,7 +712,7 @@ gq_29_H-7:
   uid: gq_29_H-7
   id: 11188
   string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
-  order: 9
+  order: 10
   heading: null
   children: null
   refs:
@@ -651,7 +777,7 @@ mGk4VnMT3:
   uid: mGk4VnMT3
   id: 11151
   string: block 1.1
-  order: 13
+  order: 14
   heading: null
   children:
   - id: 11152
@@ -741,6 +867,34 @@ S3NNepskY:
   - id: 13094
   props: null
   title: null
+  attrs: null
+SEtRXQkX7:
+  uid: SEtRXQkX7
+  id: 14466
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: code-language
+  attrs: null
+BxGxeeGk1:
+  uid: BxGxeeGk1
+  id: 321
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: .rm-g
   attrs: null
 VvbwbLchA:
   uid: VvbwbLchA
@@ -1020,6 +1174,20 @@ jrIkVSHfA:
   - id: 11149
   props: null
   title: null
+  attrs: null
+2xY4zCjId:
+  uid: 2xY4zCjId
+  id: 11839
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: guffin-meta
   attrs: null
 fY4nP4RUv:
   uid: fY4nP4RUv

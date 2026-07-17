@@ -51,6 +51,7 @@ follows (here, `**bold**` emphasis on one portion of the page name).
 - `inline-code`
 - fenced code mixed with text, block
 - isolated fenced code block
+- isolated fenced code block whose `plain text` fence language is overridden by a `code-language:: FORTRAN` tag
 - Markdown single line block quote
 - Markdown multi-line block quote
 - Roam-native single line block quote

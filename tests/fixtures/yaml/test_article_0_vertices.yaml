@@ -40,6 +40,9 @@
 
     - isolated fenced code block
 
+    - isolated fenced code block whose `plain text` fence language is overridden by
+    a `code-language:: FORTRAN` tag
+
     - Markdown single line block quote
 
     - Markdown multi-line block quote
@@ -65,6 +68,7 @@
   - ETesnk4Zi
   - E_Nsc0SmT
   - 8FeLZHNMW
+  - CgaFSZKa9
   - Yz0pqYfBh
   - 6bcyfVpL2
   - gq_29_H-7
@@ -108,6 +112,34 @@
     \ 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n            print(\"\
     Buzz\")\n        else:\n            print(i)"
   language: python
+- vertex_type: guffin/text
+  uid: CgaFSZKa9
+  children:
+  - _oNY-uWg-
+  text: 'The child of this block is an isolated fenced code block whose fence language
+    (`plain text`) is overridden by a `code-language:: FORTRAN` tag'
+- vertex_type: guffin/code-block
+  uid: _oNY-uWg-
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: code-language
+        domain: guffin
+      link:
+      - vertex
+      - SEtRXQkX7
+    values:
+    - kind: literal
+      value: FORTRAN
+  code: "C     FIZZBUZZ FOR IBM 704 FORTRAN\n      DO 100 I = 1, 100\nC     CHECK\
+    \ FOR 15 (3 * 5)\n      M15 = I - (I/15)*15\n      IF (M15) 10, 5, 10\n    5 PRINT\
+    \ 501\n      GO TO 100\nC     CHECK FOR 3\n   10 M3 = I - (I/3)*3\n      IF (M3)\
+    \ 20, 15, 20\n   15 PRINT 502\n      GO TO 100\nC     CHECK FOR 5\n   20 M5 =\
+    \ I - (I/5)*5\n      IF (M5) 30, 25, 30\n   25 PRINT 503\n      GO TO 100\nC \
+    \    PRINT THE NUMBER\n   30 PRINT 504, I\n  100 CONTINUE\nC     FORMAT STATEMENTS\
+    \ FOR THE TELETYPE\n  501 FORMAT (8HFIZZBUZZ)\n  502 FORMAT (4HFIZZ)\n  503 FORMAT\
+    \ (4HBUZZ)\n  504 FORMAT (I3)\n      STOP"
+  language: fortran
 - vertex_type: guffin/quote-block
   uid: Yz0pqYfBh
   quote_type: block

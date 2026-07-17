@@ -11,6 +11,20 @@
     order: 1
     page:
       id: 11137
+- - string: 'code-language:: FORTRAN'
+    id: 14465
+    uid: xfq7UYRb2
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 14462
+    - id: 14463
+    - id: 14464
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 14466
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
     id: 4224
@@ -41,7 +55,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 10
+    order: 11
     page:
       id: 11137
     refs:
@@ -57,6 +71,43 @@
     order: 3
     page:
       id: 11137
+- - attrs:
+    - - source:
+        - uid
+        - hLpHeEto9
+        value:
+        - uid
+        - hLpHeEto9
+      - source:
+        - uid
+        - xfq7UYRb2
+        value:
+        - uid
+        - SEtRXQkX7
+      - source:
+        - uid
+        - xfq7UYRb2
+        value: ' FORTRAN'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 14465
+    id: 14464
+    lookup:
+    - id: 14464
+    - id: 14465
+    - id: 14466
+    uid: hLpHeEto9
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 14462
+    - id: 14463
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'the next block is a basic Roam-native table: 3x3. No column/row/col resizing
       of any kind'
     id: 11199
@@ -96,6 +147,7 @@
     - id: 11193
     - id: 13454
     - id: 13455
+    - id: 14462
     id: 11149
     uid: MRKYttxrM
     parents:
@@ -148,6 +200,9 @@
 
       - isolated fenced code block
 
+      - isolated fenced code block whose `plain text` fence language is overridden
+      by a `code-language:: FORTRAN` tag
+
       - Markdown single line block quote
 
       - Markdown multi-line block quote
@@ -188,7 +243,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 14
+    order: 15
     page:
       id: 11137
 - - string: Header 1
@@ -213,7 +268,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 8
+    order: 9
     page:
       id: 11137
 - - string: block 2
@@ -235,7 +290,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 7
+    order: 8
     page:
       id: 11137
 - - string: Header 2
@@ -260,7 +315,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 11
+    order: 12
     page:
       id: 11137
     refs:
@@ -309,6 +364,18 @@
     order: 0
     page:
       id: 11137
+- - string: 'The child of this block is an isolated fenced code block whose fence
+      language (`plain text`) is overridden by a `code-language:: FORTRAN` tag'
+    children:
+    - id: 14463
+    id: 14462
+    uid: CgaFSZKa9
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 7
+    page:
+      id: 11137
 - - string: r2.c3
     id: 11234
     uid: hD2qvZqjh
@@ -345,12 +412,55 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 12
+    order: 13
     page:
       id: 11137
     refs:
     - id: 5450
     - id: 5456
+- - attrs:
+    - - source:
+        - uid
+        - _oNY-uWg-
+        value:
+        - uid
+        - _oNY-uWg-
+      - source:
+        - uid
+        - hLpHeEto9
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - hLpHeEto9
+        value:
+        - uid
+        - BxGxeeGk1
+    string: "```plain text\nC     FIZZBUZZ FOR IBM 704 FORTRAN\n      DO 100 I = 1,\
+      \ 100\nC     CHECK FOR 15 (3 * 5)\n      M15 = I - (I/15)*15\n      IF (M15)\
+      \ 10, 5, 10\n    5 PRINT 501\n      GO TO 100\nC     CHECK FOR 3\n   10 M3 =\
+      \ I - (I/3)*3\n      IF (M3) 20, 15, 20\n   15 PRINT 502\n      GO TO 100\n\
+      C     CHECK FOR 5\n   20 M5 = I - (I/5)*5\n      IF (M5) 30, 25, 30\n   25 PRINT\
+      \ 503\n      GO TO 100\nC     PRINT THE NUMBER\n   30 PRINT 504, I\n  100 CONTINUE\n\
+      C     FORMAT STATEMENTS FOR THE TELETYPE\n  501 FORMAT (8HFIZZBUZZ)\n  502 FORMAT\
+      \ (4HFIZZ)\n  503 FORMAT (4HBUZZ)\n  504 FORMAT (I3)\n      STOP```"
+    children:
+    - id: 14464
+    id: 14463
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 14463
+    - id: 14464
+    uid: _oNY-uWg-
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 14462
+    order: 0
+    page:
+      id: 11137
 - - id: 5458
     uid: lS4kg-3mw
     title: '!EXAMPLE'
@@ -360,7 +470,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 9
+    order: 10
     page:
       id: 11137
     refs:
@@ -405,7 +515,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 13
+    order: 14
     page:
       id: 11137
 - - string: r2.c1
@@ -456,6 +566,12 @@
     order: 0
     page:
       id: 11137
+- - id: 14466
+    uid: SEtRXQkX7
+    title: code-language
+- - id: 321
+    uid: BxGxeeGk1
+    title: .rm-g
 - - string: This para features ^^highlight^^
     id: 11171
     uid: VvbwbLchA
@@ -617,6 +733,9 @@
     order: 2
     page:
       id: 11137
+- - id: 11839
+    uid: 2xY4zCjId
+    title: guffin-meta
 - - string: r2.c2
     id: 13097
     uid: fY4nP4RUv

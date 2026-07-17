@@ -707,6 +707,8 @@ class TestToCalloutVertex:
             "- `inline-code`\n"
             "- fenced code mixed with text, block\n"
             "- isolated fenced code block\n"
+            "- isolated fenced code block whose `plain text` fence language is overridden by a "
+            "`code-language:: FORTRAN` tag\n"
             "- Markdown single line block quote\n"
             "- Markdown multi-line block quote\n"
             "- Roam-native single line block quote\n"

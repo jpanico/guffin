@@ -14,6 +14,7 @@
 > - `inline-code`
 > - fenced code mixed with text, block
 > - isolated fenced code block
+> - isolated fenced code block whose `plain text` fence language is overridden by a `code-language:: FORTRAN` tag
 > - Markdown single line block quote
 > - Markdown multi-line block quote
 > - Roam-native single line block quote
@@ -61,6 +62,36 @@
                 print("Buzz")
             else:
                 print(i)
+    ```
+
+  - The child of this block is an isolated fenced code block whose fence language (`plain text`) is overridden by a `code-language:: FORTRAN` tag
+    ``` fortran
+    C     FIZZBUZZ FOR IBM 704 FORTRAN
+          DO 100 I = 1, 100
+    C     CHECK FOR 15 (3 * 5)
+          M15 = I - (I/15)*15
+          IF (M15) 10, 5, 10
+        5 PRINT 501
+          GO TO 100
+    C     CHECK FOR 3
+       10 M3 = I - (I/3)*3
+          IF (M3) 20, 15, 20
+       15 PRINT 502
+          GO TO 100
+    C     CHECK FOR 5
+       20 M5 = I - (I/5)*5
+          IF (M5) 30, 25, 30
+       25 PRINT 503
+          GO TO 100
+    C     PRINT THE NUMBER
+       30 PRINT 504, I
+      100 CONTINUE
+    C     FORMAT STATEMENTS FOR THE TELETYPE
+      501 FORMAT (8HFIZZBUZZ)
+      502 FORMAT (4HFIZZ)
+      503 FORMAT (4HBUZZ)
+      504 FORMAT (I3)
+          STOP
     ```
 
   > This is a *Markdown standard* single line **Block Quote**
