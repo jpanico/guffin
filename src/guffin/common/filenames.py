@@ -2,7 +2,7 @@
 
 Public symbols:
 
-- :func:`shell_safe_filename` — normalize a string to be safe for POSIX <touch>
+- :func:`shell_safe_filename` — normalize a string to be safe for POSIX <touch>,<touch>
   filenames without shell escaping.
 """
 
