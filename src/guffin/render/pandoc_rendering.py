@@ -954,7 +954,7 @@ def _code_block_vertex_to_blocks(vertex: CodeBlockVertex) -> list[pf.Block]:
     Returns:
         A single-element list containing the :class:`~panflute.CodeBlock`.
     """
-    return [pf.CodeBlock(vertex.code, classes=[vertex.language.value])]
+    return [pf.CodeBlock(vertex.code, classes=[vertex.language])]
 
 
 def _quote_block_vertex_to_blocks(
@@ -1538,7 +1538,7 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
             case PdfVertex():
                 return [pf.Link(*display, url=str(vertex.source))]
             case CodeBlockVertex():
-                return [pf.Code(vertex.code, classes=[vertex.language.value])]
+                return [pf.Code(vertex.code, classes=[vertex.language])]
             case CalloutVertex():
                 return display
             case QuoteBlockVertex():

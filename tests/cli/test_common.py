@@ -8,7 +8,6 @@ import pytest
 from conftest import article1_node_tree
 
 from guffin.cli.common import SemanticsValidationError, deduce_out_file_stem, fetch_roam_trees, resolve_profile
-from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
@@ -37,6 +36,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.project import BookProfile, ProjectType, TopLevelDivision
+from guffin.roam.code_language import CodeLanguage
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 

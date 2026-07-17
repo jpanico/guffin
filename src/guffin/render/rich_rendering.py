@@ -510,7 +510,7 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
             )
         case VertexType.CODE_BLOCK:
             title_content = (
-                f"[bold orange1]{markup_escape(f'CODE [{vertex.language.value}]:')}[/bold orange1]"
+                f"[bold orange1]{markup_escape(f'CODE [{vertex.language}]:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(_trunc(vertex.code, truncate=truncate))}[/bold #00aa00]"
             )
         case VertexType.QUOTE_BLOCK:

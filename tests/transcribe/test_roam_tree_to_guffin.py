@@ -2,12 +2,12 @@
 
 import datetime
 import json
+import logging
 
 import pytest
 import yaml
 from pydantic import ValidationError
 
-from guffin.common.code_language import CodeLanguage
 from guffin.model.attribute import AttributeDomain, LiteralValue, ReferenceValue
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
@@ -733,9 +733,9 @@ class TestToCodeBlockVertex:
         assert isinstance(to_code_block_vertex(node, _node_tree(node)), CodeBlockVertex)
 
     def test_language_from_info_string(self) -> None:
-        """Test that the opening fence's info string maps to a CodeLanguage."""
+        """Test that the opening fence's info string maps to a canonical language id."""
         node = _make_code()
-        assert to_code_block_vertex(node, _node_tree(node)).language is CodeLanguage.PYTHON
+        assert to_code_block_vertex(node, _node_tree(node)).language == "python"
 
     def test_code_excludes_fences(self) -> None:
         """Test that the code content excludes the opening and closing fences."""
@@ -755,8 +755,73 @@ class TestToCodeBlockVertex:
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "C6xVTMnsh")
         tree: NodeTree = NodeTree.build(fixture_node, nodes)
         vertex: CodeBlockVertex = to_code_block_vertex(fixture_node, tree)
-        assert vertex.language is CodeLanguage.PYTHON
+        assert vertex.language == "python"
         assert vertex.code.startswith("def fizz_buzz(limit: int = 100):")
+
+
+# ---------------------------------------------------------------------------
+# TestCodeLanguageOverride
+# ---------------------------------------------------------------------------
+
+
+class TestCodeLanguageOverride:
+    """A ``code-language::`` guffin-meta tag overrides the fence language at transcription."""
+
+    @staticmethod
+    def _code_with_override(value: str) -> tuple[RoamNode, NodeTree]:
+        """A python-fenced code node whose guffin-meta child tags ``code-language:: <value>``."""
+        code = RoamNode(
+            uid="codeuid01",
+            id=106,
+            string=_CODE_STRING,
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            children=[IdObject(id=107)],
+        )
+        meta = RoamNode(
+            uid="metauid01",
+            id=107,
+            string="guffin-meta:: #.rm-g",
+            order=0,
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            children=[IdObject(id=108)],
+        )
+        tag = RoamNode(
+            uid="claguid01",
+            id=108,
+            string=f"code-language:: {value}",
+            order=0,
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            refs=[IdObject(id=109)],
+        )
+        attribute_page = RoamNode(uid="clpage001", id=109, title="code-language")
+        return code, _node_tree(code, meta, tag, attribute_page)
+
+    def test_legal_override_replaces_fence_language(self) -> None:
+        """A legal code-language value (any case) replaces the fence's language with its canonical id."""
+        node, tree = self._code_with_override("FORTRAN")
+        assert to_code_block_vertex(node, tree).language == "fortran"
+
+    def test_alias_override_resolves_to_canonical_id(self) -> None:
+        """A vocabulary alias resolves to the canonical id."""
+        node, tree = self._code_with_override("gnu asm")
+        assert to_code_block_vertex(node, tree).language == "unix assembly"
+
+    def test_illegal_override_falls_back_to_fence_language(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A value outside the vocabulary is ignored with a warning; the fence language stands."""
+        node, tree = self._code_with_override("edsac")
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert to_code_block_vertex(node, tree).language == "python"
+        assert "ignoring code-language" in caplog.text
+
+    def test_override_assignment_stays_folded(self) -> None:
+        """The code-language assignment remains folded on the vertex for the vocabulary validators."""
+        node, tree = self._code_with_override("FORTRAN")
+        vertex = to_code_block_vertex(node, tree)
+        assert vertex.attribute_assignments is not None
+        assert any(a.attribute.definition.name == "code-language" for a in vertex.attribute_assignments)
 
 
 # ---------------------------------------------------------------------------

@@ -15,7 +15,6 @@ import regex
 from conftest import article5_node_tree
 from pydantic import HttpUrl
 
-from guffin.common.code_language import CodeLanguage
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
@@ -30,6 +29,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.render.epub_rendering import render
 from guffin.render.project import BookProfile, DefaultProfile, ProjectProfile
 from guffin.render.render_options import EpubRenderOptions
+from guffin.roam.code_language import CodeLanguage
 from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
 

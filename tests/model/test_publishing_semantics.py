@@ -26,6 +26,7 @@ from guffin.model.publishing_semantics import (
     PublishingSemantics,
     _anchor_mismatch,
     all_attributes_anchored,
+    all_code_language_values_legal,
     all_cover_image_values_legal,
     all_date_values_legal,
     all_element_number_matters_agree,
@@ -40,6 +41,8 @@ from guffin.model.publishing_semantics import (
     all_matter_values_legal,
     all_pdf_render_values_legal,
     all_publish_values_legal,
+    code_language_of,
+    code_language_of_vertex,
     cover_image_of,
     cover_image_vertex,
     date_of,
@@ -64,6 +67,7 @@ from guffin.model.publishing_semantics import (
 )
 from guffin.model.vertex import (
     BlockEmbedVertex,
+    CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
     PageEmbedVertex,
@@ -421,6 +425,75 @@ class TestAllPdfRenderValuesLegal:
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "pdf-render" in error.message
+
+
+def _code_block_with(assignments: list[AttributeAssignment] | None) -> CodeBlockVertex:
+    """A python code-block vertex carrying *assignments*."""
+    return CodeBlockVertex(uid="codeuid01", code="print(1)", language="python", attribute_assignments=assignments)
+
+
+class TestCodeLanguageOf:
+    """code_language_of validates the attribute identity and resolves the value to a canonical id."""
+
+    def test_returns_canonical_id(self) -> None:
+        """A valid code-language assignment yields the canonical language id."""
+        assert code_language_of(_assignment("code-language", "FORTRAN")) == "fortran"
+
+    def test_alias_resolves(self) -> None:
+        """A vocabulary alias resolves to the canonical id."""
+        assert code_language_of(_assignment("code-language", "gnu asm")) == "unix assembly"
+
+    def test_wrong_attribute_name_rejected(self) -> None:
+        """An assignment for a different attribute raises, even with a valid language value."""
+        with pytest.raises(ValueError):
+            code_language_of(_assignment("matter", "fortran"))
+
+    def test_unknown_language_rejected(self) -> None:
+        """A value outside the canonical vocabulary raises."""
+        with pytest.raises(ValueError):
+            code_language_of(_assignment("code-language", "edsac"))
+
+
+class TestCodeLanguageOfVertex:
+    """code_language_of_vertex() resolves a code block's code-language tag, tolerating absence and junk."""
+
+    def test_tagged_code_block_resolves(self) -> None:
+        """A code-language tag resolves to its canonical id."""
+        vertex = _code_block_with([_assignment("code-language", "Fortran")])
+        assert code_language_of_vertex(vertex) == "fortran"
+
+    def test_untagged_is_none(self) -> None:
+        """An untagged code block resolves to None (the fence language stands)."""
+        assert code_language_of_vertex(_code_block_with(None)) is None
+
+    def test_illegal_value_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A junk code-language value is ignored (warned), not raised."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert code_language_of_vertex(_code_block_with([_assignment("code-language", "edsac")])) is None
+        assert "ignoring code-language" in caplog.text
+
+
+class TestAllCodeLanguageValuesLegal:
+    """all_code_language_values_legal() rejects unresolvable code-language values across a tree."""
+
+    def test_legal_value_passes(self) -> None:
+        """A tree whose code-language values all resolve produces no error."""
+        tree = VertexTree(tree_vertices=[_code_block_with([_assignment("code-language", "fortran")])])
+        assert all_code_language_values_legal(tree) is None
+
+    def test_illegal_value_reported(self) -> None:
+        """An unresolvable code-language value is reported with the vertex uid."""
+        tree = VertexTree(tree_vertices=[_code_block_with([_assignment("code-language", "edsac")])])
+        error = all_code_language_values_legal(tree)
+        assert error is not None
+        assert "codeuid01" in error.message
+
+    def test_code_language_on_heading_reported_by_anchor_validator(self) -> None:
+        """A code-language tag on a heading is a misanchoring, caught by all_attributes_anchored."""
+        tree = VertexTree(tree_vertices=[_heading_with([_assignment("code-language", "fortran")])])
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "code-language" in error.message
 
 
 class TestFindPublishingAttribute:

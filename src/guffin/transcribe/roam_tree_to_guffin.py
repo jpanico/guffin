@@ -51,7 +51,6 @@ from typing import Final, assert_never
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
 
-from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import FencedCodeBlock, HeadingLevel, parse_fenced_code_block
 from guffin.common.media_type import MediaType
@@ -65,6 +64,7 @@ from guffin.model.attribute import (
     ReferenceValue,
 )
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.publishing_semantics import code_language_of_vertex
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -93,6 +93,7 @@ from guffin.roam.blockquote import (
     parse_pull_quote,
     strip_block_quote_marker,
 )
+from guffin.roam.code_language import CodeLanguage, canonical_id_for
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
@@ -621,10 +622,15 @@ def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
     """Build a :class:`~guffin.vertex.CodeBlockVertex` from a fenced code block *node*.
 
     Splits ``node.string`` into its info string and code content via
-    :func:`~guffin.common.markdown.parse_fenced_code_block`, mapping the info
-    string to a :class:`~guffin.common.code_language.CodeLanguage`.  The code
-    content is preserved verbatim — Roam-to-Pandoc Markdown normalization is
-    deliberately not applied, so the source is kept exactly as authored.
+    :func:`~guffin.common.markdown.parse_fenced_code_block`.  The block's language is the
+    canonical language id (:data:`~guffin.common.programming_language.CodeLanguageId`) of
+    its ``code-language::`` tag when one is present and legal (the tag exists because the
+    Roam UI's fence-language dropdown is a closed set); otherwise the fence's own info
+    string — a :class:`~guffin.roam.code_language.CodeLanguage` — mapped to its
+    canonical id.  An illegal tag value is ignored with a warning (the vocabulary
+    validator reports it separately).  The code content is preserved verbatim —
+    Roam-to-Pandoc Markdown normalization is deliberately not applied, so the source is
+    kept exactly as authored.
 
     Args:
         node: A code block node whose ``string`` is a fenced code block.
@@ -639,20 +645,22 @@ def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
         ValidationError: If *node* or *tree* is ``None`` or invalid.
         ValueError: If ``node.string`` is ``None``, is not a fenced code block, or
             carries an info string that is not a recognised
-            :class:`~guffin.common.code_language.CodeLanguage`.
+            :class:`~guffin.roam.code_language.CodeLanguage`.
     """
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     parsed: Final[FencedCodeBlock] = parse_fenced_code_block(node.string.strip())
-    return CodeBlockVertex(
+    vertex: Final[CodeBlockVertex] = CodeBlockVertex(
         uid=node.uid,
         code=parsed.code,
-        language=CodeLanguage(parsed.info),
+        language=canonical_id_for(CodeLanguage(parsed.info)),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
+    override: Final[str | None] = code_language_of_vertex(vertex)
+    return vertex if override is None else vertex.model_copy(update={"language": override})
 
 
 @validate_call

@@ -64,10 +64,10 @@ from typing import Annotated, Final, Literal, TypeIs, get_args
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, TypeAdapter, field_validator, validate_call
 
-from guffin.common.code_language import CodeLanguage
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
+from guffin.common.programming_language import CodeLanguageId
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import Attribute
 from guffin.model.attribute_assignment import AttributeAssignment, find_assignment_for
@@ -426,8 +426,8 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
         vertex_type: Always :attr:`~VertexType.CODE_BLOCK`.
             Serialized as ``'vertex-type'``.
         code: Code content of the fenced block — the lines between the fences.
-        language: Programming language of the code block
-            (:class:`~guffin.common.code_language.CodeLanguage`).
+        language: Programming language of the code block, as a canonical language id
+            (:data:`~guffin.common.programming_language.CodeLanguageId`).
     """
 
     vertex_type: Literal[VertexType.CODE_BLOCK] = Field(
@@ -436,7 +436,9 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
         description="Always VertexType.CODE_BLOCK (serialized as 'vertex-type').",
     )
     code: str = Field(..., description="Code content of the fenced block (the lines between the fences).")
-    language: CodeLanguage = Field(..., description="Programming language of the fenced code block.")
+    language: CodeLanguageId = Field(
+        ..., description="Programming language of the fenced code block, as a canonical language id."
+    )
 
 
 class QuoteType(StrEnum):

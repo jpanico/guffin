@@ -21,7 +21,10 @@ Public symbols:
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
   assignment's value as a :class:`Matter`; :func:`pdf_render_of` — read a ``pdf-render``
-  assignment's value as a :class:`PdfRender`; :func:`publish_of` — read a ``publish``
+  assignment's value as a :class:`PdfRender`; :func:`code_language_of` — read a
+  ``code-language`` assignment's value as a canonical
+  :data:`~guffin.common.programming_language.CodeLanguageId` (any vocabulary name or alias,
+  case-insensitively); :func:`publish_of` — read a ``publish``
   assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
   :data:`~guffin.common.date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
   :func:`cover_image_of` — read a ``cover-image`` assignment's value as the referenced image
@@ -34,8 +37,9 @@ Public symbols:
   :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
-  :func:`publish_of_vertex` —
+  :func:`code_language_of_vertex` / :func:`publish_of_vertex` —
   resolve a heading's ``element-type`` / bare ``matter`` tag, a PDF embed's ``pdf-render`` tag,
+  a code block's ``code-language`` tag,
   or any block's ``publish`` tag, to its value, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
@@ -54,7 +58,9 @@ Public symbols:
   :func:`all_element_type_values_legal` (every ``element-type`` value is a
   :class:`StructuralElement`), :func:`all_matter_values_legal` (every ``matter`` value is a
   :class:`Matter`), :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
-  :class:`PdfRender`), :func:`all_publish_values_legal` (every ``publish`` value is a boolean
+  :class:`PdfRender`), :func:`all_code_language_values_legal` (every ``code-language`` value
+  names a language in the canonical vocabulary),
+  :func:`all_publish_values_legal` (every ``publish`` value is a boolean
   literal), :func:`all_date_values_legal` (every ``date`` value is a W3CDTF
   reduced-precision date), :func:`all_cover_image_values_legal` (every ``cover-image`` value
   is a block reference resolving to an image vertex in the tree), and
@@ -91,6 +97,7 @@ import regex
 from pydantic import ConfigDict, Field, field_validator, validate_call
 
 from guffin.common.date import W3cdtfDate, verified_w3cdtf_date
+from guffin.common.programming_language import CodeLanguageId, canonical_language_id
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
 from guffin.model.attribute import (
     Attribute,
@@ -109,6 +116,7 @@ from guffin.model.element_number import (
 )
 from guffin.model.primitives import UID_PATTERN, Uid
 from guffin.model.vertex import (
+    CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
     PdfVertex,
@@ -187,6 +195,9 @@ class PublishingSemantics(enum.Enum):
       :class:`Matter` division directly, for a bespoke section with no specific element type.
     - **PDF tags** (:attr:`AttributeAnchor.PDF`) — applied to an individual embedded PDF asset:
       :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated output.
+    - **Code-block tags** (:attr:`AttributeAnchor.CODE_BLOCK`) — applied to an individual fenced
+      code listing: :attr:`CODE_LANGUAGE` declares the listing's language, overriding the closed
+      vocabulary the Roam UI embeds in the fence.
     - **Block tags** (:attr:`AttributeAnchor.BLOCK`) — applied to any block vertex: :attr:`PUBLISH`
       declares whether the block, with its entire subtree, appears in rendered output.
 
@@ -210,6 +221,9 @@ class PublishingSemantics(enum.Enum):
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
         PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a link).
+        CODE_LANGUAGE: Tags a fenced code listing with its language — any name or alias of the
+            canonical vocabulary (:mod:`~guffin.common.programming_language`) — overriding the
+            closed language set the Roam UI offers (which lacks e.g. Fortran).
         PUBLISH: Tags a block with its publication state; ``false`` omits the block and every
             descendant from all rendered output (absent, :data:`DEFAULT_PUBLISH` applies).
     """
@@ -231,6 +245,7 @@ class PublishingSemantics(enum.Enum):
     ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=AttributeAnchor.HEADING)
     MATTER = PublishingAttribute(name="matter", anchor=AttributeAnchor.HEADING)
     PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=AttributeAnchor.PDF)
+    CODE_LANGUAGE = PublishingAttribute(name="code-language", anchor=AttributeAnchor.CODE_BLOCK)
     PUBLISH = PublishingAttribute(name="publish", anchor=AttributeAnchor.BLOCK)
 
 
@@ -292,6 +307,34 @@ def pdf_render_of(assignment: AttributeAssignment) -> PdfRender:
             one value, or its value is not a recognised :class:`PdfRender`.
     """
     return PdfRender(verified_sole_value_text(assignment, PublishingSemantics.PDF_RENDER.value))
+
+
+@validate_call
+def code_language_of(assignment: AttributeAssignment) -> CodeLanguageId:
+    """Return the canonical language id that a ``code-language`` assignment names.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.CODE_LANGUAGE` attribute, then
+    resolves its sole value — any language name or alias of the canonical vocabulary,
+    case-insensitively — to its canonical id via
+    :func:`~guffin.common.programming_language.canonical_language_id` (``FORTRAN`` →
+    ``fortran``).
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.CODE_LANGUAGE` attribute assignment (one value
+            expected).
+
+    Returns:
+        The canonical language id.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``code-language`` attribute, does not carry
+            exactly one value, or its value names no language in the canonical vocabulary.
+    """
+    value_text: Final[str] = verified_sole_value_text(assignment, PublishingSemantics.CODE_LANGUAGE.value)
+    resolved: Final[str | None] = canonical_language_id(value_text)
+    if resolved is None:
+        raise ValueError(f"code-language value {value_text!r} names no language in the canonical vocabulary")
+    return resolved
 
 
 @validate_call
@@ -467,6 +510,30 @@ def pdf_render_of_vertex(vertex: PdfVertex) -> PdfRender | None:
         return pdf_render_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring pdf-render on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def code_language_of_vertex(vertex: CodeBlockVertex) -> CodeLanguageId | None:
+    """Resolve *vertex*'s ``code-language`` tag to a canonical language id, or ``None``.
+
+    ``None`` when *vertex* carries no ``code-language`` assignment, or when the assignment does
+    not resolve against the canonical vocabulary (ignored with a warning).  An untagged code
+    block's language is whatever the Roam fence embeds.
+
+    Args:
+        vertex: The code-block vertex whose tag to resolve.
+
+    Returns:
+        The canonical language id, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.CODE_LANGUAGE)
+    if assignment is None:
+        return None
+    try:
+        return code_language_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring code-language on vertex uid=%r: %s", vertex.uid, exc)
         return None
 
 
@@ -973,6 +1040,30 @@ def all_pdf_render_values_legal(tree: VertexTree) -> ValidationError | None:
 
 
 @validate_call
+def all_code_language_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``code-language`` values.
+
+    Every :attr:`PublishingSemantics.CODE_LANGUAGE` assignment in *tree* must carry exactly one
+    value, and that value must name a language in the canonical vocabulary
+    (:mod:`~guffin.common.programming_language`) by name or alias, case-insensitively.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``code-language`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.CODE_LANGUAGE, code_language_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal code-language values: " + "; ".join(violations),
+        validator=all_code_language_values_legal,
+    )
+
+
+@validate_call
 def all_publish_values_legal(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring legal ``publish`` values.
 
@@ -1386,6 +1477,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_element_type_values_legal,
             all_matter_values_legal,
             all_pdf_render_values_legal,
+            all_code_language_values_legal,
             all_publish_values_legal,
             all_date_values_legal,
             all_cover_image_values_legal,
