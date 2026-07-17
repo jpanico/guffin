@@ -1,0 +1,56 @@
+%YAML 1.2
+---
+# Compact fixed-form FORTRAN grammar (FORTRAN 66/77-era listings).
+#
+# Typst's bundled syntect syntax set (Sublime Text's default packages) carries no Fortran
+# grammar, so a `fortran`-tagged raw block would render unstyled in PDF output.  This file
+# supplies one, scoped to the *fixed-form* dialect that Linguist's `fortran` language id
+# denotes (column-1 `C`/`*` comment lines, columns 1-5 statement labels, Hollerith
+# constants); free-form Fortran is a different Linguist language (`fortran free form`).
+# Loaded via the Bergfink `code-syntaxes` variable (see default_styles.typ).
+#
+# The `name` is what syntect matches the raw block's language token against
+# (case-insensitively), so it must stay exactly `Fortran`.
+name: Fortran
+file_extensions:
+  - f
+  - for
+  - f77
+  - fortran
+scope: source.fortran
+contexts:
+  main:
+    # Comment line: C, c, or * in column 1 (the fixed-form comment convention).
+    - match: '^[Cc*].*$'
+      scope: comment.line.fortran
+    # Inline comment (F77+); harmless for older listings, which cannot contain `!`.
+    - match: '!.*$'
+      scope: comment.line.fortran
+    # Statement label: digits within columns 1-5.
+    - match: '^[ ]{0,4}\d+'
+      scope: constant.numeric.label.fortran
+    - match: "'"
+      scope: punctuation.definition.string.begin.fortran
+      push: string
+    # Hollerith constant: nH followed by n characters (length not enforceable by regex;
+    # run to the delimiter, which over-approximates acceptably inside FORMAT lists).
+    - match: '\b\d+H[^),]*'
+      scope: string.other.hollerith.fortran
+    - match: '(?i)\b(GO\s*TO|IF|THEN|ELSE\s*IF|ELSE|END\s*IF|DO|CONTINUE|STOP|PAUSE|CALL|RETURN|PRINT|READ|WRITE|FORMAT|ASSIGN|REWIND|BACKSPACE|ENDFILE|END)\b'
+      scope: keyword.control.fortran
+    - match: '(?i)\b(PROGRAM|SUBROUTINE|FUNCTION|BLOCK\s+DATA|DIMENSION|COMMON|EQUIVALENCE|DATA|IMPLICIT|PARAMETER|EXTERNAL|INTRINSIC|SAVE)\b'
+      scope: keyword.declaration.fortran
+    - match: '(?i)\b(INTEGER|REAL|DOUBLE\s+PRECISION|COMPLEX|LOGICAL|CHARACTER)\b'
+      scope: storage.type.fortran
+    - match: '(?i)\.(AND|OR|NOT|EQV|NEQV|EQ|NE|LT|LE|GT|GE|TRUE|FALSE)\.'
+      scope: keyword.operator.word.fortran
+    - match: '\b\d+(\.\d*)?([EDed][+-]?\d+)?\b'
+      scope: constant.numeric.fortran
+  string:
+    - meta_scope: string.quoted.single.fortran
+    # A doubled quote is the escaped-quote convention.
+    - match: "''"
+      scope: constant.character.escape.fortran
+    - match: "'"
+      scope: punctuation.definition.string.end.fortran
+      pop: true

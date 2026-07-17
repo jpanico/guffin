@@ -35,6 +35,7 @@ The `.typ` and `.typst` files in this directory are the **Bergfink** Pandoc/Typs
 | `abstract.typ` | Abstract and acknowledgements page layout |
 | `toc.typ` | Table of contents layout |
 | `yamltable.typ` | Helper for rendering YAML-defined tables |
+| `fortran_fixed.sublime-syntax` | Fixed-form FORTRAN highlighting grammar — Typst's built-in syntect set (Sublime Text's default packages) has no Fortran, so `fortran`-tagged code blocks would render unstyled; loaded via the `code-syntaxes` config key (absolute paths, one per grammar; the renderer passes every bundled grammar automatically) |
 
 ### Font Requirements
 

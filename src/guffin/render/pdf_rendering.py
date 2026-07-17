@@ -84,6 +84,9 @@ _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
 _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
 _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 _TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
+# Bundled .sublime-syntax grammars loaded into Typst's highlighter beyond its built-in
+# syntect set (via the Bergfink `code-syntaxes` variable, one entry per file).
+_SYNTAX_FILENAMES: Final[tuple[str, ...]] = ("fortran_fixed.sublime-syntax",)
 
 
 def _typst_resources_dir() -> Path:
@@ -173,6 +176,10 @@ def _typst_template_args(
         "-V",
         "listings=true",
     ]
+    # Bundled highlighting grammars for languages Typst's built-in syntect set lacks
+    # (e.g. fixed-form FORTRAN); absolute paths, resolvable under the engine's --root=/.
+    for syntax_filename in _SYNTAX_FILENAMES:
+        args.extend(["-V", f"code-syntaxes={bundled_dir / syntax_filename}"])
     # Bergfink reads section numbering from its own `number-sections` variable; Pandoc's
     # `--number-sections` flag does not set it, so pass it explicitly via -V.
     if number_sections:

@@ -317,6 +317,10 @@
 #show raw.where(block: true): set text(1em / 0.9)
 #show raw: set text(ligatures: true, font: cfg.code-font)
 
+// additional highlighting grammars beyond Typst's bundled syntect set (e.g. fixed-form
+// FORTRAN); absolute paths supplied by the renderer via the code-syntaxes variable
+#set raw(syntaxes: cfg.code-syntaxes)
+
 // blockquote styling — gray left border with left padding
 #show quote.where(block: true): it => {
   block(

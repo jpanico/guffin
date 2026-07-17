@@ -32,6 +32,9 @@
   font: "noto sans",
   heading-font: "noto sans",
   code-font: "noto sans mono",
+  // Additional .sublime-syntax highlighting grammars for raw blocks, as absolute paths
+  // (the renderer compiles with --root=/); empty means Typst's bundled set only.
+  code-syntaxes: (),
   header-footer-font: "noto sans",
   // Contrasting body face for callout boxes: a serif set against the sans body so callout
   // content reads as a distinct register at a glance.  Libertinus Serif ships embedded with

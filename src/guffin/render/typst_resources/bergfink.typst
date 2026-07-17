@@ -233,6 +233,9 @@ $endif$
 $if(listing-prefix)$
 #(cfg.listing-prefix = "$listing-prefix$")
 $endif$
+$if(code-syntaxes)$
+#(cfg.code-syntaxes = ($for(code-syntaxes)$"$code-syntaxes$"$sep$, $endfor$,))
+$endif$
 
 $default_styles.typ()$
 $yamltable.typ()$
