@@ -647,6 +647,21 @@ class TestEffectiveChildrenViewType:
         )
         assert effective_children_view_type(node) == view_type
 
+    def test_unknown_view_type_value_is_tolerated_as_unset(self) -> None:
+        """The block-level view-type bookkeeping ("outline") flattens onto the same wire key; it parses as unset."""
+        node = RoamNode.model_validate(
+            {
+                "uid": "block0001",
+                "id": 1,
+                "string": "stub",
+                "parents": [{"id": 99}],
+                "page": {"id": 99},
+                "view-type": "outline",
+            }
+        )
+        assert node.children_view_type is None
+        assert effective_children_view_type(node) == DEFAULT_CHILDREN_VIEW_TYPE
+
 
 class TestDailyNoteTitleValidation:
     """A daily-note-UID (MM-DD-YYYY) page's title must be the verbose date the UID encodes."""
