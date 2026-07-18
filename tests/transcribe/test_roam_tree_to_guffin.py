@@ -834,7 +834,7 @@ class TestCodeSourceFold:
     _DATE = "2026-07-17"
 
     @classmethod
-    def _code_with_source(cls, sha: str) -> tuple[RoamNode, NodeTree]:
+    def _code_with_source(cls, sha: str, url_separator: str = ", ") -> tuple[RoamNode, NodeTree]:
         """A python-fenced code node whose guffin-meta child tags ``code-source:: <url>, <sha>, <date>``."""
         code = RoamNode(
             uid="codeuid01",
@@ -856,7 +856,7 @@ class TestCodeSourceFold:
         tag = RoamNode(
             uid="csrcuid01",
             id=108,
-            string=f"code-source:: {cls._URL}, {sha}, {cls._DATE}",
+            string=f"code-source:: {cls._URL}{url_separator}{sha}, {cls._DATE}",
             order=0,
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
@@ -871,6 +871,14 @@ class TestCodeSourceFold:
         vertex = to_code_block_vertex(node, tree)
         assert vertex.code_source is not None
         assert vertex.code_source.url == self._URL
+
+    def test_space_before_first_comma_parses_identically(self) -> None:
+        """The authoring form puts a space before the URL's comma (so Roam's auto-linker stops at the URL)."""
+        node, tree = self._code_with_source(self._SHA, url_separator=" , ")
+        vertex = to_code_block_vertex(node, tree)
+        assert vertex.code_source is not None
+        assert vertex.code_source.url == self._URL
+        assert vertex.code_source.commit_sha == self._SHA
         assert vertex.code_source.commit_sha == self._SHA
         assert vertex.code_source.fetched_date.isoformat() == self._DATE
 
