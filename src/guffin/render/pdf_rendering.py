@@ -53,6 +53,7 @@ from guffin.model.publishing_semantics import (
     drop_unpublished,
     has_element_type,
     pdf_render_of_vertex,
+    promote_non_body_sections,
     strip_element_numbers,
 )
 from guffin.model.render_bundle import RenderBundle
@@ -486,9 +487,14 @@ def render(
     numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
+    # promoted to part level so the Typst outline (nested by heading level) cannot adopt them
+    # into the preceding part.
+    parts_book: Final[bool] = profile.structural_policy.top_level_division is TopLevelDivision.PART
+    promoted: Final[VertexTree] = promote_non_body_sections(sourced) if parts_book else sourced
     # Loose preamble (root children ahead of the first heading) is pruned so it cannot
     # strand on its own page ahead of the book's first division.
-    content: Final[VertexTree] = drop_root_preamble(sourced) if drop_preamble else sourced
+    content: Final[VertexTree] = drop_root_preamble(promoted) if drop_preamble else promoted
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.pdf"
 

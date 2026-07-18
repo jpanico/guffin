@@ -371,3 +371,62 @@ class TestCodeSourceRendering:
         assert "Source:" in result
         assert "https://github.com/psf/requests/blob/0d9ca427f7d7dbe92694284d4a6249178255036e/" in result
         assert "<div" not in result
+
+
+def _parts_book_bundle() -> RenderBundle:
+    """A parts book: one part (with a chapter) followed by a root-level back-matter section."""
+    link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
+
+    def _meta(name: str, value: str) -> AttributeAssignment:
+        return AttributeAssignment(
+            attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+            values=(LiteralValue(value=value),),
+        )
+
+    page = PageVertex(uid="page00001", title="Travels", children=["part00001", "sect00001"])
+    part = HeadingVertex(
+        uid="part00001",
+        text="Book IV",
+        heading_level=1,
+        children=["chap00001"],
+        attribute_assignments=[_meta("element-type", "part")],
+    )
+    chapter = HeadingVertex(uid="chap00001", text="Chapter 1", heading_level=2, children=["text00001"])
+    text = TextVertex(uid="text00001", text="Wars among the Tartar princes.")
+    section = HeadingVertex(
+        uid="sect00001",
+        text="About the Author",
+        heading_level=2,
+        children=["text00002"],
+        attribute_assignments=[_meta("matter", "back-matter")],
+    )
+    bio = TextVertex(uid="text00002", text="Rustichello da Pisa.")
+    return RenderBundle(content=VertexTree(tree_vertices=[page, part, chapter, text, section, bio]), view={})
+
+
+class TestPartsBookSectionPromotion:
+    """A parts book renders root-level non-body sections at part level, not chapter level."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, profile: BookProfile | DefaultProfile) -> str:
+        render(
+            _parts_book_bundle(),
+            profile=profile,
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_parts_book_promotes_back_matter_section_to_part_level(self, tmp_path: Path) -> None:
+        """In a parts book the back-matter section renders at the parts' own heading level."""
+        result = self._render(tmp_path, BookProfile(with_parts=True))
+        assert "## Book IV" in result
+        assert "## About the Author" in result
+        assert "### About the Author" not in result
+
+    def test_default_profile_keeps_the_authored_level(self, tmp_path: Path) -> None:
+        """Outside a parts book the section keeps its authored (chapter) level."""
+        result = self._render(tmp_path, DefaultProfile())
+        assert "### About the Author" in result

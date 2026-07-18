@@ -61,6 +61,7 @@ from guffin.model.publishing_semantics import (
     matter_of_vertex,
     pdf_render_of,
     pdf_render_of_vertex,
+    promote_non_body_sections,
     publish_of,
     publish_of_vertex,
     resolved_matter,
@@ -606,6 +607,82 @@ class TestAllCodeSourceValuesLegal:
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "code-source" in error.message
+
+
+class TestPromoteNonBodySections:
+    """promote_non_body_sections() lifts root-level explicit front/back-matter headings to level 1."""
+
+    @staticmethod
+    def _parts_tree(section_level: int, section_assignments: list[AttributeAssignment] | None) -> VertexTree:
+        """A page with one part (level 1, with a level-2 chapter) and one trailing root-level section."""
+        page = PageVertex(uid="page00001", title="Book", children=["part00001", "sect00001"])
+        part = HeadingVertex(
+            uid="part00001",
+            text="Part I",
+            heading_level=1,
+            children=["chap00001"],
+            attribute_assignments=[_assignment("element-type", "part")],
+        )
+        chapter = HeadingVertex(uid="chap00001", text="Chapter 1", heading_level=2)
+        section = HeadingVertex(
+            uid="sect00001",
+            text="About the Author",
+            heading_level=section_level,
+            attribute_assignments=section_assignments,
+        )
+        return VertexTree(tree_vertices=[page, part, chapter, section])
+
+    def test_back_matter_root_section_is_promoted(self) -> None:
+        """A level-2 root child tagged back-matter lands at level 1."""
+        tree = self._parts_tree(2, [_assignment("matter", "back-matter")])
+        promoted = promote_non_body_sections(tree)
+        section = promoted.uid_map["sect00001"]
+        assert isinstance(section, HeadingVertex) and section.heading_level == 1
+
+    def test_front_matter_element_type_is_promoted(self) -> None:
+        """The conventional matter of an element-type tag qualifies too (no bare matter tag needed)."""
+        tree = self._parts_tree(2, [_assignment("element-type", "preface")])
+        promoted = promote_non_body_sections(tree)
+        section = promoted.uid_map["sect00001"]
+        assert isinstance(section, HeadingVertex) and section.heading_level == 1
+
+    def test_untagged_root_section_is_left_alone(self) -> None:
+        """A root child with no matter signal keeps its authored level."""
+        tree = promote_non_body_sections(self._parts_tree(2, None))
+        section = tree.uid_map["sect00001"]
+        assert isinstance(section, HeadingVertex) and section.heading_level == 2
+
+    def test_body_matter_root_section_is_left_alone(self) -> None:
+        """An explicitly body-matter root child keeps its authored level."""
+        tree = promote_non_body_sections(self._parts_tree(2, [_assignment("matter", "body-matter")]))
+        section = tree.uid_map["sect00001"]
+        assert isinstance(section, HeadingVertex) and section.heading_level == 2
+
+    def test_level_1_section_needs_no_promotion(self) -> None:
+        """A root child already at level 1 comes back unchanged (the whole tree untouched)."""
+        tree = self._parts_tree(1, [_assignment("matter", "back-matter")])
+        assert promote_non_body_sections(tree) == tree
+
+    def test_non_body_section_nested_inside_a_part_is_left_alone(self) -> None:
+        """Hierarchy wins: a back-matter-tagged heading inside a part is not a root section."""
+        page = PageVertex(uid="page00001", title="Book", children=["part00001"])
+        part = HeadingVertex(
+            uid="part00001",
+            text="Part I",
+            heading_level=1,
+            children=["nest00001"],
+            attribute_assignments=[_assignment("element-type", "part")],
+        )
+        nested = HeadingVertex(
+            uid="nest00001",
+            text="Appendix inside the part",
+            heading_level=2,
+            attribute_assignments=[_assignment("matter", "back-matter")],
+        )
+        tree = VertexTree(tree_vertices=[page, part, nested])
+        promoted = promote_non_body_sections(tree)
+        result = promoted.uid_map["nest00001"]
+        assert isinstance(result, HeadingVertex) and result.heading_level == 2
 
 
 class TestFindPublishingAttribute:

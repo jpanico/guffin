@@ -39,7 +39,7 @@ import regex
 from pydantic import validate_call
 
 from guffin.common.revision import Revision
-from guffin.model.publishing_semantics import drop_unpublished, strip_element_numbers
+from guffin.model.publishing_semantics import drop_unpublished, promote_non_body_sections, strip_element_numbers
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
@@ -50,7 +50,7 @@ from guffin.render.pandoc_rendering import (
     revision_line,
     vertex_tree_to_pandoc,
 )
-from guffin.render.project import ProjectProfile
+from guffin.render.project import ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
@@ -209,7 +209,12 @@ def render(
     # Internal element numbers are authoring bookkeeping; they render only on explicit request.
     numbered: Final[VertexTree] = attributed if options.emit_element_numbers else strip_element_numbers(attributed)
     # Code-source attributions likewise render only on explicit request.
-    content: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
+    # promoted to part level so a ToC built from heading levels cannot nest them under the
+    # preceding part.
+    parts_book: Final[bool] = profile.structural_policy.top_level_division is TopLevelDivision.PART
+    content: Final[VertexTree] = promote_non_body_sections(sourced) if parts_book else sourced
     gfm_dir: Final[Path] = _gfm_resources_dir()
     if should_bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"

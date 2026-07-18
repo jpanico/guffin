@@ -1998,6 +1998,23 @@
     order: 8
     page:
       id: 11850
+- - string: '**Rustichello da Pisa**, also known as **Rusticiano** (fl. late 13th
+      century), was an Italian [romance](https://en.wikipedia.org/wiki/Romance_%28heroic_literature%29) writer
+      in [Franco-Italian](https://en.wikipedia.org/wiki/Franco-Italian) language.
+      He is best known for co-writing [Marco Polo](https://en.wikipedia.org/wiki/Marco_Polo)''s
+      autobiography, __[The Travels of Marco Polo](https://en.wikipedia.org/wiki/The_Travels_of_Marco_Polo)__,
+      while they were in prison together in [Genoa](https://en.wikipedia.org/wiki/Genoa).
+      Earlier, he wrote the __Roman de Roi Artus__ (__Romance of King Arthur__), also
+      known as the __Compilation__, the earliest known Arthurian romance by an Italian
+      author.'
+    id: 14552
+    uid: 44FHkkJ_O
+    parents:
+    - id: 11850
+    - id: 14548
+    order: 1
+    page:
+      id: 11850
 - - string: And after the Great Kaan had defeated Nayan in the way you have heard,
       he went back to his capital city of Cambaluc and abode there, taking his ease
       and making festivity. And the other Tartar Lord called Caydu was greatly troubled
@@ -4429,6 +4446,56 @@
     order: 1
     page:
       id: 11850
+- - string: 'matter:: back-matter'
+    id: 14550
+    uid: yBBotE59L
+    parents:
+    - id: 11850
+    - id: 14548
+    - id: 14549
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 11892
+- - attrs:
+    - - source:
+        - uid
+        - t3KZEIxj8
+        value:
+        - uid
+        - t3KZEIxj8
+      - source:
+        - uid
+        - eAd0SHsPQ
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - eAd0SHsPQ
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: '[2.1] [[About the Author]]'
+    children:
+    - id: 14549
+    - id: 14552
+    id: 14548
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 14548
+    - id: 14549
+    uid: t3KZEIxj8
+    parents:
+    - id: 11850
+    order: 9
+    page:
+      id: 11850
+    refs:
+    - id: 4588
 - - string: In leaving Badashan you ride twelve days between east and north-east,
       ascending a river that runs through land belonging to a brother of the Prince
       of Badashan, and containing a good many towns and villages and scattered habitations.
@@ -5023,6 +5090,7 @@
     - id: 11903
     - id: 11905
     - id: 12792
+    - id: 14548
     id: 11850
     lookup:
     - id: 321
@@ -8582,6 +8650,41 @@
       id: 11850
     refs:
     - id: 5450
+- - attrs:
+    - - source:
+        - uid
+        - eAd0SHsPQ
+        value:
+        - uid
+        - eAd0SHsPQ
+      - source:
+        - uid
+        - yBBotE59L
+        value:
+        - uid
+        - eYctDQDaV
+      - source:
+        - uid
+        - yBBotE59L
+        value: ' back-matter'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 14550
+    id: 14549
+    lookup:
+    - id: 11892
+    - id: 14549
+    - id: 14550
+    uid: eAd0SHsPQ
+    parents:
+    - id: 11850
+    - id: 14548
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: '[Rabelais says (Bk. I. ch. xvi.): “Si de ce vous efmerveillez, efmerveillez
       vous d’advantage de la queue des béliers de la Scythie, qui pesait plus de trente
       livres; et des moutons de Surie, esquels fault (si Tenaud, dict vray) affuster
@@ -10803,6 +10906,9 @@
     order: 2
     page:
       id: 11850
+- - id: 4588
+    uid: R9gPO6rxP
+    title: About the Author
 - - string: If it's **a few sentences**, it fits naturally inside the introduction
       — just fold it into the opening where you're framing the book's purpose.
     id: 4387

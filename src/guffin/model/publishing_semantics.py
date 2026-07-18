@@ -54,6 +54,9 @@ Public symbols:
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   :func:`strip_element_numbers` — remove every heading's internal element number (the
   well-formed leading marker) from a :class:`~guffin.model.vertex_tree.VertexTree`;
+  :func:`promote_non_body_sections` — promote every root-level heading of explicit
+  front/back matter to heading level 1, so a linear rendering cannot nest it under a
+  preceding part;
   the :data:`~guffin.common.validation.Validator` functions :func:`all_attributes_anchored`
   (every recognised guffin attribute satisfies its :class:`AttributeAnchor` — one of its vertex types, at
   its tree position),
@@ -903,6 +906,47 @@ def strip_element_numbers(tree: VertexTree) -> VertexTree:
         return vertex.model_copy(update={"text": stripped_text})
 
     return map_vertices(tree, _strip)
+
+
+@validate_call
+def promote_non_body_sections(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`~guffin.model.vertex_tree.VertexTree` with root-level non-body sections at heading level 1.
+
+    Promotes every :class:`~guffin.model.vertex.HeadingVertex` that is (a) a **direct child of
+    the root vertex** and (b) **explicitly non-body matter** (its :func:`resolved_matter` is
+    :attr:`~guffin.model.chicago_structure.Matter.FRONT` or
+    :attr:`~guffin.model.chicago_structure.Matter.BACK`) to ``heading_level`` 1.  Per CMOS, such
+    sections stand outside every part — but a rendered document is a linear stream whose tables
+    of contents nest by heading level alone, so a chapter-leveled section following a part would
+    otherwise be adopted by it.  The two conditions keep the rule conservative: a non-body
+    section genuinely nested *inside* a part is left alone (the hierarchy says it belongs
+    there), as is an untagged or body-matter root child.  The original *tree* is not modified.
+
+    Args:
+        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
+
+    Returns:
+        A new :class:`~guffin.model.vertex_tree.VertexTree` with the qualifying sections at
+        heading level 1; *tree* unchanged in content when none qualify.
+    """
+    root: Final[Vertex] = root_vertex(tree)
+    promoted_uids: Final[set[Uid]] = set()
+    for child_uid in root.children or []:
+        child: Vertex | None = tree.uid_map.get(child_uid)
+        if not isinstance(child, HeadingVertex) or child.heading_level == 1:
+            continue
+        if resolved_matter(child) not in (Matter.FRONT, Matter.BACK):
+            continue
+        promoted_uids.add(child.uid)
+    if not promoted_uids:
+        return tree
+
+    def _promote(vertex: Vertex) -> Vertex:
+        if vertex.uid not in promoted_uids:
+            return vertex
+        return vertex.model_copy(update={"heading_level": 1})
+
+    return map_vertices(tree, _promote)
 
 
 _SEMANTICS_BY_NAME: Final[dict[str, PublishingSemantics]] = {

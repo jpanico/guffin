@@ -13,6 +13,7 @@
   - lZKsMSgZX
   - 09KMheZHg
   - MGvH7SY4M
+  - t3KZEIxj8
   refs:
   - LBFKibPIj
   attribute_assignments:
@@ -7872,3 +7873,32 @@
   text: '[1.4] **Book IV**: Wars Among the Tartar Princes and Some Account of the
     Northern Countries'
   heading_level: 1
+- vertex_type: guffin/heading
+  uid: t3KZEIxj8
+  children:
+  - 44FHkkJ_O
+  refs:
+  - R9gPO6rxP
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: matter
+        domain: guffin
+      link:
+      - vertex
+      - eYctDQDaV
+    values:
+    - kind: literal
+      value: back-matter
+  text: '[2.1] [About the Author](x-guffin:vertex/R9gPO6rxP)'
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: 44FHkkJ_O
+  text: '**Rustichello da Pisa**, also known as **Rusticiano** (fl. late 13th century),
+    was an Italian [romance](https://en.wikipedia.org/wiki/Romance_%28heroic_literature%29) writer
+    in [Franco-Italian](https://en.wikipedia.org/wiki/Franco-Italian) language. He
+    is best known for co-writing [Marco Polo](https://en.wikipedia.org/wiki/Marco_Polo)''s
+    autobiography, *[The Travels of Marco Polo](https://en.wikipedia.org/wiki/The_Travels_of_Marco_Polo)*,
+    while they were in prison together in [Genoa](https://en.wikipedia.org/wiki/Genoa).
+    Earlier, he wrote the *Roman de Roi Artus* (*Romance of King Arthur*), also known
+    as the *Compilation*, the earliest known Arthurian romance by an Italian author.'

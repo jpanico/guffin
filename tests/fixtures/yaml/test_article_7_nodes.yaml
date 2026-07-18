@@ -2435,6 +2435,30 @@
   props: null
   title: null
   attrs: null
+- uid: 44FHkkJ_O
+  id: 14552
+  string: '**Rustichello da Pisa**, also known as **Rusticiano** (fl. late 13th century),
+    was an Italian [romance](https://en.wikipedia.org/wiki/Romance_%28heroic_literature%29) writer
+    in [Franco-Italian](https://en.wikipedia.org/wiki/Franco-Italian) language. He
+    is best known for co-writing [Marco Polo](https://en.wikipedia.org/wiki/Marco_Polo)''s
+    autobiography, __[The Travels of Marco Polo](https://en.wikipedia.org/wiki/The_Travels_of_Marco_Polo)__,
+    while they were in prison together in [Genoa](https://en.wikipedia.org/wiki/Genoa).
+    Earlier, he wrote the __Roman de Roi Artus__ (__Romance of King Arthur__), also
+    known as the __Compilation__, the earliest known Arthurian romance by an Italian
+    author.'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 14548
+  props: null
+  title: null
+  attrs: null
 - uid: eJw3wMeFK
   id: 12613
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -5432,6 +5456,60 @@
   props: null
   title: null
   attrs: null
+- uid: yBBotE59L
+  id: 14550
+  string: 'matter:: back-matter'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11892
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 14548
+  - id: 14549
+  props: null
+  title: null
+  attrs: null
+- uid: t3KZEIxj8
+  id: 14548
+  string: '[2.1] [[About the Author]]'
+  order: 9
+  heading: 2
+  children:
+  - id: 14549
+  - id: 14552
+  refs:
+  - id: 4588
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - t3KZEIxj8
+      value:
+      - uid
+      - t3KZEIxj8
+    - source:
+      - uid
+      - eAd0SHsPQ
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - eAd0SHsPQ
+      value:
+      - uid
+      - BxGxeeGk1
 - uid: iA9v_0ZbK
   id: 12495
   string: In leaving Badashan you ride twelve days between east and north-east, ascending
@@ -6132,6 +6210,7 @@
   - id: 11903
   - id: 11905
   - id: 12792
+  - id: 14548
   refs:
   - id: 4223
   page: null
@@ -10459,6 +10538,41 @@
   props: null
   title: null
   attrs: null
+- uid: eAd0SHsPQ
+  id: 14549
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 14550
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 14548
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - eAd0SHsPQ
+      value:
+      - uid
+      - eAd0SHsPQ
+    - source:
+      - uid
+      - yBBotE59L
+      value:
+      - uid
+      - eYctDQDaV
+    - source:
+      - uid
+      - yBBotE59L
+      value: ' back-matter'
 - uid: EfCCAg-iA
   id: 12298
   string: '[Rabelais says (Bk. I. ch. xvi.): “Si de ce vous efmerveillez, efmerveillez
