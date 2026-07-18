@@ -826,6 +826,74 @@ class TestCodeLanguageOverride:
         assert any(a.attribute.definition.name == "code-language" for a in vertex.attribute_assignments)
 
 
+class TestCodeSourceFold:
+    """A ``code-source::`` guffin-meta tag populates the code block's provenance at transcription."""
+
+    _URL = "https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60"
+    _SHA = "0d9ca427f7d7dbe92694284d4a6249178255036e"
+    _DATE = "2026-07-17"
+
+    @classmethod
+    def _code_with_source(cls, sha: str) -> tuple[RoamNode, NodeTree]:
+        """A python-fenced code node whose guffin-meta child tags ``code-source:: <url>, <sha>, <date>``."""
+        code = RoamNode(
+            uid="codeuid01",
+            id=106,
+            string=_CODE_STRING,
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            children=[IdObject(id=107)],
+        )
+        meta = RoamNode(
+            uid="metauid01",
+            id=107,
+            string="guffin-meta:: #.rm-g",
+            order=0,
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            children=[IdObject(id=108)],
+        )
+        tag = RoamNode(
+            uid="csrcuid01",
+            id=108,
+            string=f"code-source:: {cls._URL}, {sha}, {cls._DATE}",
+            order=0,
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            refs=[IdObject(id=109)],
+        )
+        attribute_page = RoamNode(uid="cspage001", id=109, title="code-source")
+        return code, _node_tree(code, meta, tag, attribute_page)
+
+    def test_legal_source_populates_provenance(self) -> None:
+        """A legal three-valued tag lands as the vertex's parsed CodeSource."""
+        node, tree = self._code_with_source(self._SHA)
+        vertex = to_code_block_vertex(node, tree)
+        assert vertex.code_source is not None
+        assert vertex.code_source.url == self._URL
+        assert vertex.code_source.commit_sha == self._SHA
+        assert vertex.code_source.fetched_date.isoformat() == self._DATE
+
+    def test_untagged_code_block_has_no_provenance(self) -> None:
+        """A code block without a code-source tag transcribes with code_source None."""
+        node = _make_code()
+        assert to_code_block_vertex(node, _node_tree(node)).code_source is None
+
+    def test_illegal_source_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """An illegal value (abbreviated SHA) is ignored with a warning; provenance stays None."""
+        node, tree = self._code_with_source("0d9ca42")
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert to_code_block_vertex(node, tree).code_source is None
+        assert "ignoring code-source" in caplog.text
+
+    def test_source_assignment_stays_folded(self) -> None:
+        """The code-source assignment remains folded on the vertex for the vocabulary validators."""
+        node, tree = self._code_with_source(self._SHA)
+        vertex = to_code_block_vertex(node, tree)
+        assert vertex.attribute_assignments is not None
+        assert any(a.attribute.definition.name == "code-source" for a in vertex.attribute_assignments)
+
+
 # ---------------------------------------------------------------------------
 # TestToQuoteBlockVertex
 # ---------------------------------------------------------------------------

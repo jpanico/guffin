@@ -69,6 +69,8 @@ class RenderOptions(BaseModel):
         emit_element_numbers: When ``True``, keep internal element numbers (a heading's
             ``[1.2.3]`` lead) in the rendered output; ``False`` (default) strips them — they are
             authoring bookkeeping, not content.
+        emit_code_sources: When ``True``, render each sourced code block's GitHub attribution
+            line below it; ``False`` (default) omits the attributions.
         daily_note_format: How a reference/link to a Roam daily-note page renders its date; defaults
             to :attr:`~guffin.render.date_format.DateFormat.ROAM_LONG` (the page's own title).
     """
@@ -89,6 +91,9 @@ class RenderOptions(BaseModel):
     emit_element_numbers: bool = Field(
         default=False, description="Keep internal element numbers (heading [1.2.3] leads) in the output."
     )
+    emit_code_sources: bool = Field(
+        default=False, description="Render each sourced code block's GitHub attribution line below it."
+    )
     daily_note_format: DateFormat = Field(
         default=DateFormat.ROAM_LONG, description="How a daily-note-page reference renders its date."
     )
@@ -105,6 +110,7 @@ class RenderOptions(BaseModel):
         dump_pandoc_ast: bool = False,
         emit_colophon: bool = False,
         emit_element_numbers: bool = False,
+        emit_code_sources: bool = False,
         include_preamble: bool | None = None,
         number_sections: bool | None = None,
         daily_note_format: DateFormat = DateFormat.ROAM_LONG,
@@ -127,6 +133,8 @@ class RenderOptions(BaseModel):
             emit_colophon: Stamp the output with a provenance colophon from the bundle's provenance.
             emit_element_numbers: Keep internal element numbers (heading ``[1.2.3]`` leads) in the
                 output; ``False`` (default) strips them.
+            emit_code_sources: Render each sourced code block's GitHub attribution line below it;
+                ``False`` (default) omits the attributions.
             include_preamble: PDF/EPUB-only; keep the export root's loose preamble (``True``), drop
                 it (``False``), or defer to the project profile's policy (``None``, default).
             number_sections: PDF/EPUB-only; number the headings (``True``), turn all heading
@@ -147,6 +155,7 @@ class RenderOptions(BaseModel):
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
+                    emit_code_sources=emit_code_sources,
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
@@ -159,6 +168,7 @@ class RenderOptions(BaseModel):
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
+                    emit_code_sources=emit_code_sources,
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
@@ -172,6 +182,7 @@ class RenderOptions(BaseModel):
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
+                    emit_code_sources=emit_code_sources,
                     daily_note_format=daily_note_format,
                 )
             case _ as unreachable:

@@ -22,7 +22,9 @@ absent from any given live schema fetch (see `INTERMITTENT_ATTRIBUTES` in
 | block          | props             |
 | block          | refs              |
 | block          | string            |
+| block          | text-align        |
 | block          | uid               |
+| block          | view-type         |
 | children       | view-type         |
 | create         | time              |
 | create         | user              |

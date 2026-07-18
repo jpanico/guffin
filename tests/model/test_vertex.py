@@ -7,8 +7,10 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeInstance, LiteralValue, ReferenceValue
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.code_source import CodeSource
 from guffin.model.vertex import (
     BlockEmbedVertex,
+    CodeBlockVertex,
     ImageVertex,
     PageEmbedVertex,
     PageVertex,
@@ -74,6 +76,35 @@ class TestPageEmbedVertex:
         restored = vertex_adapter.validate_python(vertex.model_dump())
         assert isinstance(restored, PageEmbedVertex)
         assert restored == vertex
+
+
+class TestCodeBlockVertex:
+    """Tests for the CodeBlockVertex concrete vertex type."""
+
+    _SOURCE = CodeSource(
+        url="https://raw.githubusercontent.com/psf/requests/main/setup.py#L1-L5",
+        commit_sha="0d9ca427f7d7dbe92694284d4a6249178255036e",
+        fetched_date="2026-07-17",
+    )
+
+    def test_code_source_defaults_to_none(self) -> None:
+        """An unsourced code block carries no provenance."""
+        vertex = CodeBlockVertex(uid="code00001", code="print(1)", language="python")
+        assert vertex.code_source is None
+
+    def test_code_source_serializes_under_kebab_alias(self) -> None:
+        """A sourced code block dumps its provenance under the 'code-source' alias."""
+        vertex = CodeBlockVertex(uid="code00001", code="print(1)", language="python", code_source=self._SOURCE)
+        dumped = vertex.model_dump(by_alias=True)
+        assert dumped["code-source"]["commit-sha"] == self._SOURCE.commit_sha
+
+    def test_adapter_round_trips_via_discriminator(self) -> None:
+        """Vertex_adapter selects CodeBlockVertex from a dumped dict, provenance intact."""
+        vertex = CodeBlockVertex(uid="code00001", code="print(1)", language="python", code_source=self._SOURCE)
+        restored = vertex_adapter.validate_python(vertex.model_dump())
+        assert isinstance(restored, CodeBlockVertex)
+        assert restored == vertex
+        assert restored.code_source == self._SOURCE
 
 
 class TestAttributeAssignmentsField:

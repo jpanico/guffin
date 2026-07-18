@@ -88,6 +88,7 @@ import panflute as pf  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
+from guffin.common.github_url import GitHubFileRef, blob_github_url
 from guffin.common.markdown import contains_fenced_code_block, hard_broken_markdown
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
@@ -98,6 +99,7 @@ from guffin.model.attribute import (
 )
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.chicago_structure import Matter, StructuralElement
+from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     PdfRender,
@@ -941,20 +943,82 @@ def _callout_vertex_to_blocks(
     return [pf.Div(*callout_blocks, classes=["callout", f"callout-{callout_type}"])]
 
 
+_CODE_SOURCE_CLASS: Final[str] = "code-source"
+"""The class tagging the source-attribution :class:`~panflute.Div` below a sourced code block."""
+
+
+def _code_source_block(source: CodeSource) -> pf.Div:
+    """Render a :class:`~guffin.model.code_source.CodeSource` to its attribution :class:`~panflute.Div`.
+
+    The Div contains one emphasized paragraph — ``Source:``, a link displaying
+    ``owner/repo/path`` (with the line range when the reference carries one), and the
+    abbreviated commit SHA plus fetch date.  The link targets the ``github.com`` blob page
+    **pinned at the recorded commit SHA**, so it shows the referenced version even after a
+    branch ref moves on.  Beyond the base emphasis the Div carries no styling of its own —
+    each output format styles the ``code-source`` class itself (Typst
+    ``typst_code_source.lua``, GFM ``gfm_code_source.lua``, or EPUB CSS on
+    ``div.code-source``).
+
+    Args:
+        source: The source reference to render.
+
+    Returns:
+        The ``code-source`` :class:`~panflute.Div`.
+    """
+    file_ref: Final[GitHubFileRef] = source.file_ref()
+    range_text: Final[str] = (
+        ""
+        if file_ref.line_range is None
+        else (
+            f" L{file_ref.line_range.start}"
+            if file_ref.line_range.start == file_ref.line_range.end
+            else f" L{file_ref.line_range.start}–L{file_ref.line_range.end}"
+        )
+    )
+    display: Final[str] = f"{file_ref.owner}/{file_ref.repo}/{file_ref.path}{range_text}"
+    link: Final[pf.Link] = pf.Link(pf.Str(display), url=blob_github_url(file_ref, commit_sha=source.commit_sha))
+    return pf.Div(
+        pf.Para(
+            pf.Emph(
+                pf.Str("Source:"),
+                pf.Space,
+                link,
+                pf.Space,
+                pf.Str("@"),
+                pf.Space,
+                pf.Str(f"{source.commit_sha[:7]},"),
+                pf.Space,
+                pf.Str("fetched"),
+                pf.Space,
+                pf.Str(source.fetched_date.isoformat()),
+            )
+        ),
+        classes=[_CODE_SOURCE_CLASS],
+    )
+
+
 def _code_block_vertex_to_blocks(vertex: CodeBlockVertex) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.CodeBlockVertex` to a Pandoc :class:`~panflute.CodeBlock`.
 
     The vertex's :attr:`~guffin.vertex.CodeBlockVertex.language` is set as the
     code block's class, which Pandoc uses to apply language-specific syntax
-    highlighting in the output.  The code content is emitted verbatim.
+    highlighting in the output.  The code content is emitted verbatim.  A vertex carrying a
+    :attr:`~guffin.vertex.CodeBlockVertex.code_source` is followed by its source-attribution
+    ``code-source`` :class:`~panflute.Div` (see :func:`_code_source_block`); rendering the
+    attribution is therefore controlled upstream by clearing the field
+    (:func:`~guffin.model.vertex_tree.drop_code_sources`), not by an option here.
 
     Args:
         vertex: The code block vertex to render.
 
     Returns:
-        A single-element list containing the :class:`~panflute.CodeBlock`.
+        The :class:`~panflute.CodeBlock`, followed by the attribution
+        :class:`~panflute.Div` when the vertex carries a source reference.
     """
-    return [pf.CodeBlock(vertex.code, classes=[vertex.language])]
+    code_block: Final[pf.CodeBlock] = pf.CodeBlock(vertex.code, classes=[vertex.language])
+    if vertex.code_source is None:
+        return [code_block]
+    return [code_block, _code_source_block(vertex.code_source)]
 
 
 def _quote_block_vertex_to_blocks(

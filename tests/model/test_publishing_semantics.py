@@ -18,6 +18,7 @@ from guffin.model.attribute import (
 from guffin.model.attribute_anchor import AttributeAnchor
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.chicago_structure import Matter, StructuralElement
+from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     DEFAULT_PUBLISH,
@@ -27,6 +28,7 @@ from guffin.model.publishing_semantics import (
     _anchor_mismatch,
     all_attributes_anchored,
     all_code_language_values_legal,
+    all_code_source_values_legal,
     all_cover_image_values_legal,
     all_date_values_legal,
     all_element_number_matters_agree,
@@ -43,6 +45,8 @@ from guffin.model.publishing_semantics import (
     all_publish_values_legal,
     code_language_of,
     code_language_of_vertex,
+    code_source_of,
+    code_source_of_vertex,
     cover_image_of,
     cover_image_vertex,
     date_of,
@@ -87,6 +91,14 @@ def _assignment(name: str, value: str, domain: AttributeDomain = AttributeDomain
     return AttributeAssignment(
         attribute=AttributeInstance(definition=Attribute(name=name, domain=domain), link=_LINK),
         values=(LiteralValue(value=value),),
+    )
+
+
+def _multi_assignment(name: str, *values: str) -> AttributeAssignment:
+    """Build a guffin-domain AttributeAssignment for attribute *name* carrying *values* in order."""
+    return AttributeAssignment(
+        attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=_LINK),
+        values=tuple(LiteralValue(value=value) for value in values),
     )
 
 
@@ -494,6 +506,106 @@ class TestAllCodeLanguageValuesLegal:
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "code-language" in error.message
+
+
+_SOURCE_URL = "https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60"
+_SOURCE_SHA = "0d9ca427f7d7dbe92694284d4a6249178255036e"
+_SOURCE_DATE = "2026-07-17"
+
+
+def _code_source_assignment(
+    url: str = _SOURCE_URL, sha: str = _SOURCE_SHA, date: str = _SOURCE_DATE
+) -> AttributeAssignment:
+    """Build a three-valued code-source assignment (url, commit sha, fetched date)."""
+    return _multi_assignment("code-source", url, sha, date)
+
+
+class TestCodeSourceOf:
+    """code_source_of validates the attribute identity, the arity, and each of the three values."""
+
+    def test_returns_code_source(self) -> None:
+        """A legal three-valued assignment yields the parsed CodeSource."""
+        source = code_source_of(_code_source_assignment())
+        assert source == CodeSource(url=_SOURCE_URL, commit_sha=_SOURCE_SHA, fetched_date=_SOURCE_DATE)
+
+    def test_wrong_attribute_name_rejected(self) -> None:
+        """An assignment for a different attribute raises, even with legal values."""
+        with pytest.raises(ValueError):
+            code_source_of(_multi_assignment("code-language", _SOURCE_URL, _SOURCE_SHA, _SOURCE_DATE))
+
+    @pytest.mark.parametrize("count", [1, 2, 4])
+    def test_wrong_arity_rejected(self, count: int) -> None:
+        """An assignment with other than three values raises."""
+        with pytest.raises(ValueError, match="3 values"):
+            code_source_of(_multi_assignment("code-source", *([_SOURCE_URL, _SOURCE_SHA, _SOURCE_DATE] * 2)[:count]))
+
+    def test_unparseable_url_rejected(self) -> None:
+        """A first value that is not a raw GitHub URL raises."""
+        with pytest.raises(ValueError, match="raw.githubusercontent.com"):
+            code_source_of(_code_source_assignment(url="https://example.com/f.py"))
+
+    def test_abbreviated_sha_rejected(self) -> None:
+        """A second value that is not a full 40-hex SHA raises."""
+        with pytest.raises(ValueError, match="40-hex"):
+            code_source_of(_code_source_assignment(sha="0d9ca42"))
+
+    def test_reduced_precision_date_rejected(self) -> None:
+        """A third value not at full YYYY-MM-DD precision raises."""
+        with pytest.raises(ValueError, match="valid date"):
+            code_source_of(_code_source_assignment(date="2026-07"))
+
+
+class TestCodeSourceOfVertex:
+    """code_source_of_vertex() resolves a code block's code-source tag, tolerating absence and junk."""
+
+    def test_tagged_code_block_resolves(self) -> None:
+        """A code-source tag resolves to its parsed CodeSource."""
+        vertex = _code_block_with([_code_source_assignment()])
+        source = code_source_of_vertex(vertex)
+        assert source is not None
+        assert source.commit_sha == _SOURCE_SHA
+
+    def test_untagged_is_none(self) -> None:
+        """An untagged code block resolves to None (no recorded provenance)."""
+        assert code_source_of_vertex(_code_block_with(None)) is None
+
+    def test_illegal_value_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A junk code-source value is ignored (warned), not raised."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert code_source_of_vertex(_code_block_with([_code_source_assignment(sha="junk")])) is None
+        assert "ignoring code-source" in caplog.text
+
+
+class TestAllCodeSourceValuesLegal:
+    """all_code_source_values_legal() rejects malformed code-source triples across a tree."""
+
+    def test_legal_triple_passes(self) -> None:
+        """A tree whose code-source triples all parse produces no error."""
+        tree = VertexTree(tree_vertices=[_code_block_with([_code_source_assignment()])])
+        assert all_code_source_values_legal(tree) is None
+
+    def test_illegal_triple_reported(self) -> None:
+        """A malformed code-source value is reported with the vertex uid."""
+        tree = VertexTree(tree_vertices=[_code_block_with([_code_source_assignment(date="July 17")])])
+        error = all_code_source_values_legal(tree)
+        assert error is not None
+        assert "codeuid01" in error.message
+
+    def test_wrong_arity_reported(self) -> None:
+        """A two-valued code-source assignment is reported."""
+        tree = VertexTree(
+            tree_vertices=[_code_block_with([_multi_assignment("code-source", _SOURCE_URL, _SOURCE_SHA)])]
+        )
+        error = all_code_source_values_legal(tree)
+        assert error is not None
+        assert "3 values" in error.message
+
+    def test_code_source_on_heading_reported_by_anchor_validator(self) -> None:
+        """A code-source tag on a heading is a misanchoring, caught by all_attributes_anchored."""
+        tree = VertexTree(tree_vertices=[_heading_with([_code_source_assignment()])])
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "code-source" in error.message
 
 
 class TestFindPublishingAttribute:
@@ -951,7 +1063,7 @@ class TestAllPublishValuesLegal:
 
 
 class TestDateOf:
-    """date_of() reads a date assignment's sole value as a W3CDTF reduced-precision date string.
+    """date_of() parses a date assignment's sole value into a W3CDTF reduced-precision date.
 
     Format-level cases live with the delegate (``tests/common/test_date.py``); these tests cover
     the vocabulary layer: attribute verification and the delegation itself.
@@ -959,11 +1071,11 @@ class TestDateOf:
 
     def test_year_only(self) -> None:
         """A bare year (the CMOS-canonical publication date) is legal."""
-        assert date_of(_assignment("date", "1298")) == "1298"
+        assert str(date_of(_assignment("date", "1298"))) == "1298"
 
     def test_full_date(self) -> None:
         """A full year-month-day date is legal."""
-        assert date_of(_assignment("date", "1298-07-10")) == "1298-07-10"
+        assert str(date_of(_assignment("date", "1298-07-10"))) == "1298-07-10"
 
     def test_rejects_wrong_attribute(self) -> None:
         """An assignment for a different attribute is rejected."""

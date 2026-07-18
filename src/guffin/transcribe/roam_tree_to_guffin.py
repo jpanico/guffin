@@ -54,6 +54,7 @@ from pydantic import HttpUrl, TypeAdapter, validate_call
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import FencedCodeBlock, HeadingLevel, parse_fenced_code_block
 from guffin.common.media_type import MediaType
+from guffin.common.programming_language import CodeLanguageId
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import (
     Attribute,
@@ -64,7 +65,8 @@ from guffin.model.attribute import (
     ReferenceValue,
 )
 from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.publishing_semantics import code_language_of_vertex
+from guffin.model.code_source import CodeSource
+from guffin.model.publishing_semantics import code_language_of_vertex, code_source_of_vertex
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -628,9 +630,11 @@ def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
     Roam UI's fence-language dropdown is a closed set); otherwise the fence's own info
     string — a :class:`~guffin.roam.code_language.CodeLanguage` — mapped to its
     canonical id.  An illegal tag value is ignored with a warning (the vocabulary
-    validator reports it separately).  The code content is preserved verbatim —
-    Roam-to-Pandoc Markdown normalization is deliberately not applied, so the source is
-    kept exactly as authored.
+    validator reports it separately).  A ``code-source::`` tag, when present and legal,
+    populates the block's :class:`~guffin.model.code_source.CodeSource` provenance the
+    same way (absent or illegal, the provenance stays ``None``).  The code content is
+    preserved verbatim — Roam-to-Pandoc Markdown normalization is deliberately not
+    applied, so the source is kept exactly as authored.
 
     Args:
         node: A code block node whose ``string`` is a fenced code block.
@@ -659,8 +663,14 @@ def to_code_block_vertex(node: RoamNode, tree: NodeTree) -> CodeBlockVertex:
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
     )
-    override: Final[str | None] = code_language_of_vertex(vertex)
-    return vertex if override is None else vertex.model_copy(update={"language": override})
+    overrides: Final[dict[str, CodeLanguageId | CodeSource]] = {}
+    language_override: Final[CodeLanguageId | None] = code_language_of_vertex(vertex)
+    if language_override is not None:
+        overrides["language"] = language_override
+    source: Final[CodeSource | None] = code_source_of_vertex(vertex)
+    if source is not None:
+        overrides["code_source"] = source
+    return vertex.model_copy(update=overrides) if overrides else vertex
 
 
 @validate_call

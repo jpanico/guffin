@@ -71,6 +71,7 @@ from guffin.common.programming_language import CodeLanguageId
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import Attribute
 from guffin.model.attribute_assignment import AttributeAssignment, find_assignment_for
+from guffin.model.code_source import CodeSource
 from guffin.model.primitives import Uid
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 
@@ -428,6 +429,9 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
         code: Code content of the fenced block — the lines between the fences.
         language: Programming language of the code block, as a canonical language id
             (:data:`~guffin.common.programming_language.CodeLanguageId`).
+        code_source: The GitHub source reference the code was snapshotted from
+            (:class:`~guffin.model.code_source.CodeSource`), or ``None`` when the content has
+            no recorded provenance.  Serialized as ``'code-source'``.
     """
 
     vertex_type: Literal[VertexType.CODE_BLOCK] = Field(
@@ -438,6 +442,12 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
     code: str = Field(..., description="Code content of the fenced block (the lines between the fences).")
     language: CodeLanguageId = Field(
         ..., description="Programming language of the fenced code block, as a canonical language id."
+    )
+    code_source: CodeSource | None = Field(
+        default=None,
+        serialization_alias="code-source",
+        description="GitHub source reference the code was snapshotted from; None when unsourced "
+        "(serialized as 'code-source').",
     )
 
 

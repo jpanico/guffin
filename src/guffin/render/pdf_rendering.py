@@ -57,7 +57,7 @@ from guffin.model.publishing_semantics import (
 )
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex, PdfVertex
-from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_root_preamble
+from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources, drop_root_preamble
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
 from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
@@ -81,6 +81,7 @@ _TEMPLATE_ENTRY: Final[str] = "bergfink.typst"
 _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 # Lua-filter filenames, resolved against the bundled typst_resources directory at render time.
 _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
+_TYPST_CODE_SOURCE_FILTER: Final[str] = "typst_code_source.lua"
 _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
 _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 _TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
@@ -171,7 +172,8 @@ def _typst_template_args(
         f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
         # Registered after the inline transforms so their rewrites are captured when the
-        # fancy-quote content is serialized to Typst.
+        # fancy-quote and code-source content is serialized to Typst.
+        f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
         "-V",
         "listings=true",
@@ -246,6 +248,7 @@ def _dump_typst_sources(
             f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+            f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
         ],
     )
@@ -481,9 +484,11 @@ def render(
     stripped: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Internal element numbers are authoring bookkeeping; they render only on explicit request.
     numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
+    # Code-source attributions likewise render only on explicit request.
+    sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
     # Loose preamble (root children ahead of the first heading) is pruned so it cannot
     # strand on its own page ahead of the book's first division.
-    content: Final[VertexTree] = drop_root_preamble(numbered) if drop_preamble else numbered
+    content: Final[VertexTree] = drop_root_preamble(sourced) if drop_preamble else sourced
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path: Final[Path] = output_dir / f"{filename_stem}.pdf"
 

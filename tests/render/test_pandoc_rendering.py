@@ -23,9 +23,11 @@ from guffin.common.revision import Revision
 from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.code_source import CodeSource
 from guffin.model.vertex import (
     BlockEmbedVertex,
     CalloutVertex,
+    CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
     PageEmbedVertex,
@@ -534,6 +536,48 @@ class TestVertexTreeToPandocHeadingSemantics:
 # ---------------------------------------------------------------------------
 # TestVertexTreeToPandocText
 # ---------------------------------------------------------------------------
+
+
+class TestVertexTreeToPandocCodeSource:
+    """Tests for vertex_tree_to_pandoc() — the code-source attribution Div below a sourced code block."""
+
+    _SHA: Final[str] = "0d9ca427f7d7dbe92694284d4a6249178255036e"
+    _SOURCE: Final[CodeSource] = CodeSource(
+        url="https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60",
+        commit_sha=_SHA,
+        fetched_date="2026-07-17",
+    )
+
+    def _doc_blocks(self, code_source: CodeSource | None) -> list[pf.Block]:
+        page = PageVertex(uid="page00001", title="P", children=["code00001"])
+        code = CodeBlockVertex(uid="code00001", code="print(1)", language="python", code_source=code_source)
+        tree = VertexTree(tree_vertices=[page, code])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        return list(doc.content)
+
+    def test_sourced_block_gets_attribution_div(self) -> None:
+        """A sourced code block is followed by a code-source Div linking the SHA-pinned blob URL."""
+        blocks = self._doc_blocks(self._SOURCE)
+        assert isinstance(blocks[0], pf.CodeBlock)
+        attribution = blocks[1]
+        assert isinstance(attribution, pf.Div)
+        assert attribution.classes == ["code-source"]
+        paragraph = attribution.content[0]
+        assert isinstance(paragraph, pf.Para)
+        emphasis = paragraph.content[0]
+        assert isinstance(emphasis, pf.Emph)
+        link = next(el for el in emphasis.content if isinstance(el, pf.Link))
+        assert link.url == f"https://github.com/psf/requests/blob/{self._SHA}/src/requests/api.py#L14-L60"
+        rendered_text = pf.stringify(attribution)
+        assert "psf/requests/src/requests/api.py L14–L60" in rendered_text
+        assert f"@ {self._SHA[:7]}," in rendered_text
+        assert "fetched 2026-07-17" in rendered_text
+
+    def test_unsourced_block_has_no_attribution(self) -> None:
+        """An unsourced code block renders as the bare CodeBlock."""
+        blocks = self._doc_blocks(None)
+        assert isinstance(blocks[0], pf.CodeBlock)
+        assert not any(isinstance(b, pf.Div) for b in blocks)
 
 
 class TestVertexTreeToPandocText:

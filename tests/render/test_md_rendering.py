@@ -11,8 +11,9 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.common.revision import Revision
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.code_source import CodeSource
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import HeadingVertex, PageVertex, QuoteBlockVertex, QuoteType, TextVertex
+from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex, QuoteBlockVertex, QuoteType, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.md_rendering import render
@@ -322,3 +323,51 @@ class TestElementNumberRendering:
         """With emit_element_numbers the marker renders (brackets entity-encoded for Typora)."""
         result = self._render(tmp_path, emit_element_numbers=True)
         assert "&#91;1.1&#93; Chapter I" in result
+
+
+def _sourced_bundle() -> RenderBundle:
+    """A page with one sourced Python code block."""
+    page = PageVertex(uid="page00001", title="Sourced Doc", children=["code00001"])
+    code = CodeBlockVertex(
+        uid="code00001",
+        code="print(1)",
+        language="python",
+        code_source=CodeSource(
+            url="https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60",
+            commit_sha="0d9ca427f7d7dbe92694284d4a6249178255036e",
+            fetched_date="2026-07-17",
+        ),
+    )
+    return RenderBundle(content=VertexTree(tree_vertices=[page, code]), view={})
+
+
+class TestCodeSourceRendering:
+    """Code-source attributions render only on explicit request."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, emit_code_sources: bool) -> str:
+        render(
+            _sourced_bundle(),
+            profile=DefaultProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(
+                output_dir=tmp_path, should_bundle=False, emit_code_sources=emit_code_sources
+            ),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_default_omits_attribution(self, tmp_path: Path) -> None:
+        """By default a sourced code block renders with no attribution line."""
+        result = self._render(tmp_path, emit_code_sources=False)
+        assert "print(1)" in result
+        assert "Source:" not in result
+
+    def test_emit_option_renders_attribution(self, tmp_path: Path) -> None:
+        """With emit_code_sources the italic attribution line follows the listing, SHA-pinned link included."""
+        result = self._render(tmp_path, emit_code_sources=True)
+        assert "print(1)" in result
+        assert "Source:" in result
+        assert "https://github.com/psf/requests/blob/0d9ca427f7d7dbe92694284d4a6249178255036e/" in result
+        assert "<div" not in result

@@ -116,6 +116,18 @@ div.fancy-quote-attribution {
 }
 
 /*
+ * Code-source attribution. guffin emits <div class="code-source"> directly below a sourced code
+ * listing: one emphasized line naming the GitHub file the listing was snapshotted from. Small and
+ * muted so it reads as a caption, pulled up toward the listing it annotates.
+ */
+div.code-source {
+  font-size: 0.8em;
+  color: #555555;
+  margin-top: -0.5em;
+  margin-bottom: 1em;
+}
+
+/*
  * Callouts. guffin emits <div class="callout callout-TYPE"> with an inner
  * <div class="callout-title">, where TYPE is one of the twelve Roam callout keywords.
  * Mirroring the gentle-clues callout in the PDF output, the title is a tinted header

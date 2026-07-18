@@ -4,7 +4,7 @@ import logging
 import os
 import pathlib
 from typing import Final
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
@@ -18,9 +18,10 @@ from conftest import (
     PDF_CREATION_TIMESTAMP,
     article1_node_tree,
 )
-from typer.testing import CliRunner
+from typer.testing import CliRunner, Result
 
 from guffin.cli.export_roam_tree import app
+from guffin.code_source_verification import CodeSourceDiagnosis, CodeSourceFinding, CodeSourceVerificationError
 from guffin.common.provenance import Provenance
 from guffin.common.validation import ValidationError, ValidationResult
 from guffin.model.render_bundle import RenderBundle
@@ -459,6 +460,160 @@ class TestExportRoamTreeColophon:
         bundle, options = self._render_call_for_flag(tmp_path, "--no-colophon")
         assert options.emit_colophon is False
         assert bundle.provenance is None
+
+
+class TestExportRoamTreeCodeSources:
+    """The --code-sources/--no-code-sources flag plumbs emit_code_sources onto the render options.
+
+    Turning the option into an attribution line in the output is the render layer's job and is
+    covered there (``tests/render/test_md_rendering.py``); mocking the renderer keeps this
+    flag-plumbing check fast while still exercising the full CLI path.
+    """
+
+    def _options_for_flags(self, tmp_path: pathlib.Path, *flags: str) -> MarkdownRenderOptions:
+        """Invoke the CLI with *flags* (renderer mocked); return the render options it received."""
+        fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
+            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
+        )
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        runner: CliRunner = CliRunner()
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch("guffin.cli.export_roam_tree.render_md") as mock_render_md,
+        ):
+            saved_handlers = logging.root.handlers[:]
+            logging.root.handlers.clear()
+            try:
+                result = runner.invoke(
+                    app,
+                    [
+                        "[[Test Article]] 1",
+                        "--port",
+                        "3333",
+                        "--graph",
+                        "SCFH",
+                        "--token",
+                        "tok",
+                        "--output-dir",
+                        str(tmp_path),
+                        "--no-bundle",
+                        *flags,
+                    ],
+                )
+            finally:
+                logging.root.handlers = saved_handlers
+        assert result.exit_code == 0, result.output
+        options: MarkdownRenderOptions = mock_render_md.call_args.args[4]
+        return options
+
+    def test_code_sources_flag_sets_emit(self, tmp_path: pathlib.Path) -> None:
+        """--code-sources sets emit_code_sources on the options."""
+        assert self._options_for_flags(tmp_path, "--code-sources").emit_code_sources is True
+
+    def test_default_omits_code_sources(self, tmp_path: pathlib.Path) -> None:
+        """Without the flag, emit_code_sources defaults off."""
+        assert self._options_for_flags(tmp_path).emit_code_sources is False
+
+
+class TestExportRoamTreeVerifyCodeSources:
+    """The --verify-code-sources/--no-verify-code-sources flag gates the export-time GitHub check."""
+
+    def _invoke(self, tmp_path: pathlib.Path, *flags: str) -> tuple[Result, MagicMock]:
+        """Invoke the CLI with *flags* (renderer and verifier mocked); return (result, verifier mock)."""
+        fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
+            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
+        )
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        runner: CliRunner = CliRunner()
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch("guffin.cli.export_roam_tree.render_md"),
+            patch("guffin.cli.export_roam_tree.verify_code_sources") as mock_verify,
+        ):
+            saved_handlers = logging.root.handlers[:]
+            logging.root.handlers.clear()
+            try:
+                result = runner.invoke(
+                    app,
+                    [
+                        "[[Test Article]] 1",
+                        "--port",
+                        "3333",
+                        "--graph",
+                        "SCFH",
+                        "--token",
+                        "tok",
+                        "--output-dir",
+                        str(tmp_path),
+                        "--no-bundle",
+                        *flags,
+                    ],
+                )
+            finally:
+                logging.root.handlers = saved_handlers
+        return result, mock_verify
+
+    def test_verification_runs_by_default(self, tmp_path: pathlib.Path) -> None:
+        """Without a flag, verification runs on the fetched content."""
+        result, mock_verify = self._invoke(tmp_path)
+        assert result.exit_code == 0, result.output
+        mock_verify.assert_called_once()
+
+    def test_no_verify_flag_skips_the_check(self, tmp_path: pathlib.Path) -> None:
+        """--no-verify-code-sources skips the verifier entirely (the offline path)."""
+        result, mock_verify = self._invoke(tmp_path, "--no-verify-code-sources")
+        assert result.exit_code == 0, result.output
+        mock_verify.assert_not_called()
+
+    def test_verification_failure_aborts_with_exit_1(self, tmp_path: pathlib.Path) -> None:
+        """A verification failure logs each finding and aborts the export with exit code 1."""
+        result, mock_verify = self._invoke(tmp_path)
+        assert result.exit_code == 0
+        finding = CodeSourceFinding(
+            uid="code00001",
+            url="https://raw.githubusercontent.com/psf/requests/main/setup.py",
+            diagnosis=CodeSourceDiagnosis.DRIFT,
+            detail="the source has moved on",
+        )
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes") as mock_fetch,
+            patch("guffin.cli.export_roam_tree.render_md") as mock_render,
+            patch(
+                "guffin.cli.export_roam_tree.verify_code_sources",
+                side_effect=CodeSourceVerificationError((finding,)),
+            ),
+        ):
+            fetch_spec = NodeFetchSpec(anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True)
+            node_tree = article1_node_tree()
+            all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+            mock_fetch.return_value = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+            runner: CliRunner = CliRunner()
+            saved_handlers = logging.root.handlers[:]
+            logging.root.handlers.clear()
+            try:
+                result = runner.invoke(
+                    app,
+                    [
+                        "[[Test Article]] 1",
+                        "--port",
+                        "3333",
+                        "--graph",
+                        "SCFH",
+                        "--token",
+                        "tok",
+                        "--output-dir",
+                        str(tmp_path),
+                        "--no-bundle",
+                    ],
+                )
+            finally:
+                logging.root.handlers = saved_handlers
+        assert result.exit_code == 1
+        mock_render.assert_not_called()
 
 
 class TestExportRoamTreeProfile:

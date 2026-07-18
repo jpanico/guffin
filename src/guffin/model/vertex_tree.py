@@ -26,6 +26,8 @@ Public symbols:
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
 - :func:`drop_attribute_assignments` — return a new :class:`VertexTree` with every vertex's
   :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` cleared.
+- :func:`drop_code_sources` — return a new :class:`VertexTree` with every code block's
+  :attr:`~guffin.model.vertex.CodeBlockVertex.code_source` cleared.
 - :func:`drop_root_preamble` — return a new :class:`VertexTree` with the root vertex's loose
   preamble (children preceding its first heading child) pruned.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
@@ -49,6 +51,7 @@ from guffin.model.attribute_assignment import AttributeAssignment, is_assignment
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
     AssetVertex,
+    CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
     PdfVertex,
@@ -390,6 +393,30 @@ def drop_attribute_assignments(tree: VertexTree) -> VertexTree:
         if len(kept) == len(vtx.attribute_assignments):
             return vtx
         return vtx.model_copy(update={"attribute_assignments": kept or None})
+
+    return map_vertices(tree, _clear)
+
+
+@validate_call
+def drop_code_sources(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`VertexTree` with every code block's source provenance cleared.
+
+    Each :class:`~guffin.model.vertex.CodeBlockVertex`'s
+    :attr:`~guffin.model.vertex.CodeBlockVertex.code_source` becomes ``None`` — tree and
+    referenced vertices alike — so no source attribution can surface in rendered output.  All
+    other fields are preserved and the original *tree* is not modified.
+
+    Args:
+        tree: The source :class:`VertexTree`.
+
+    Returns:
+        A new :class:`VertexTree` whose code blocks carry no source provenance.
+    """
+
+    def _clear(vtx: Vertex) -> Vertex:
+        if isinstance(vtx, CodeBlockVertex) and vtx.code_source is not None:
+            return vtx.model_copy(update={"code_source": None})
+        return vtx
 
     return map_vertices(tree, _clear)
 

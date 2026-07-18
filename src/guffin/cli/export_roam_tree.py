@@ -77,6 +77,7 @@ from pydantic import validate_call
 from guffin.cli.common import SemanticsValidationError, deduce_out_file_stem, fetch_roam_trees, resolve_profile
 from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
+from guffin.code_source_verification import CodeSourceVerificationError, verify_code_sources
 from guffin.common.provenance import Provenance, gather_provenance
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
@@ -250,6 +251,33 @@ def main(
             ),
         ),
     ] = False,
+    code_sources: Annotated[
+        bool,
+        typer.Option(
+            "--code-sources/--no-code-sources",
+            envvar="GUFFIN_CODE_SOURCES",
+            help=(
+                "When enabled, renders each sourced code block's GitHub attribution line "
+                "(from its code-source:: tag) below the listing. Disabled by default: the "
+                "attributions are authoring metadata, omitted from every format's output."
+            ),
+        ),
+    ] = False,
+    verify_code_sources_enabled: Annotated[
+        bool,
+        typer.Option(
+            "--verify-code-sources/--no-verify-code-sources",
+            envvar="GUFFIN_VERIFY_CODE_SOURCES",
+            help=(
+                "When enabled (the default), every code block carrying a code-source:: tag is "
+                "verified against GitHub before rendering: the referenced content is fetched at "
+                "the ref's current tip and compared to the block's code, and any mismatch or "
+                "fetch failure aborts the export. Set GUFFIN_GITHUB_TOKEN to raise the GitHub "
+                "API rate limit. --no-verify-code-sources skips the check entirely (the "
+                "offline path)."
+            ),
+        ),
+    ] = True,
     daily_note_format: Annotated[
         DateFormat,
         typer.Option(
@@ -305,6 +333,27 @@ def main(
         logger.info("provenance: %s", provenance.summary())
     render_bundle: Final[RenderBundle] = fetched_bundle.with_provenance(provenance)
 
+    # An export must not publish code that no longer matches its declared source of truth, so
+    # sourced code blocks are verified against GitHub before rendering (skippable when offline).
+    if verify_code_sources_enabled:
+        try:
+            verify_code_sources(render_bundle.content)
+        except CodeSourceVerificationError as exc:
+            for finding in exc.findings:
+                logger.error(
+                    "code-source verification [%s] vertex uid=%r (%s): %s",
+                    finding.diagnosis.value,
+                    finding.uid,
+                    finding.url,
+                    finding.detail,
+                )
+            logger.error(
+                "aborting export of %r: code-source verification failed "
+                "(pass --no-verify-code-sources to skip, e.g. when offline)",
+                target,
+            )
+            raise typer.Exit(code=1) from exc
+
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
     # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
     # parts book; the content itself, not a CLI switch, is the source of that structure.
@@ -319,6 +368,7 @@ def main(
         dump_pandoc_ast=dump_pandoc_ast,
         emit_colophon=colophon,
         emit_element_numbers=element_numbers,
+        emit_code_sources=code_sources,
         include_preamble=preamble,
         number_sections=numbering,
         daily_note_format=daily_note_format,

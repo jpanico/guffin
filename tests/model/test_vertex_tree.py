@@ -10,11 +10,13 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.vertex import HeadingVertex, ImageVertex, PageVertex, PdfVertex, TextVertex, Vertex
+from guffin.model.code_source import CodeSource
+from guffin.model.vertex import CodeBlockVertex, HeadingVertex, ImageVertex, PageVertex, PdfVertex, TextVertex, Vertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import (
     VertexTree,
     drop_attribute_assignments,
+    drop_code_sources,
     drop_root_preamble,
     enrich_image_original_sizes,
     enrich_pdf_original_file_names,
@@ -128,6 +130,41 @@ class TestDropAttributeAssignments:
         assert new_root.attribute_assignments is None
         assert new_root.children == ["keep00001"]
         assert isinstance(new_root, TextVertex) and new_root.text == "root"
+
+
+class TestDropCodeSources:
+    """Tests for drop_code_sources()."""
+
+    _SOURCE: Final[CodeSource] = CodeSource(
+        url="https://raw.githubusercontent.com/psf/requests/main/setup.py#L1-L5",
+        commit_sha="0d9ca427f7d7dbe92694284d4a6249178255036e",
+        fetched_date="2026-07-17",
+    )
+
+    def test_clears_code_source_in_tree_and_ref_vertices(self) -> None:
+        """Sourced code blocks lose their provenance in both vertex collections; other fields survive."""
+        tree_code: Final[CodeBlockVertex] = CodeBlockVertex(
+            uid="code00001", code="print(1)", language="python", code_source=self._SOURCE
+        )
+        ref_code: Final[CodeBlockVertex] = CodeBlockVertex(
+            uid="code00002", code="print(2)", language="python", code_source=self._SOURCE
+        )
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[tree_code], ref_vertices=[ref_code])
+        result: Final[VertexTree] = drop_code_sources(tree)
+        cleared_tree_code = result.tree_vertices[0]
+        cleared_ref_code = result.ref_vertices[0]
+        assert isinstance(cleared_tree_code, CodeBlockVertex) and cleared_tree_code.code_source is None
+        assert isinstance(cleared_ref_code, CodeBlockVertex) and cleared_ref_code.code_source is None
+        assert cleared_tree_code.code == "print(1)"
+        assert cleared_tree_code.language == "python"
+
+    def test_unsourced_vertices_pass_through(self) -> None:
+        """Code blocks without provenance, and non-code vertices, are untouched."""
+        code: Final[CodeBlockVertex] = CodeBlockVertex(uid="code00001", code="print(1)", language="python")
+        text: Final[TextVertex] = TextVertex(uid="text00001", text="prose")
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[code, text])
+        result: Final[VertexTree] = drop_code_sources(tree)
+        assert result == tree
 
     def test_tree_without_attributes_unchanged(self) -> None:
         """A tree with no attribute assignments passes every vertex through unchanged."""

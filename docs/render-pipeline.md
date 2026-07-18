@@ -501,6 +501,22 @@ layer translates. (Where a publishing label and a format term happen to coincide
   `epub_type_for`, letting an element's identity drive format-specific styling/placement. (The
   `data-guffin-matter`/`epub:type` scaffolding rides along harmlessly meanwhile — GFM drops it,
   Typst ignores it.)
+- **Code-source attribution — done, all formats.** A `code-source::` tag (three ordered values:
+  raw GitHub URL, snapshot commit SHA, fetch date) lands on `CodeBlockVertex.code_source` at
+  transcription. The shared Doc build follows a sourced code block with a `code-source`-classed
+  `Div` — one emphasized line linking the `github.com` blob page **pinned at the recorded SHA**
+  (immutable even after the branch moves) plus the abbreviated SHA and fetch date — and each
+  format styles the class itself, on the fancy-quote pattern: `typst_code_source.lua` (a
+  caption-styled raw block), `gfm_code_source.lua` (unwraps to the bare italic line), and
+  `epub.css` (`div.code-source`, no filter). Whether the attribution appears at all is decided
+  **upstream of the Doc build**: attributions are authoring metadata, so every renderer clears
+  the field via `model/vertex_tree.drop_code_sources` unless `RenderOptions.emit_code_sources`
+  is set (the `--code-sources` flag) — the same drop-by-default shape as element numbers.
+  Orthogonally, the export CLI verifies each sourced block against GitHub before rendering
+  (`code_source_verification.py`, `--verify-code-sources`, default on): the URL's ref resolves
+  to its tip commit via the GitHub API, the immutable SHA-pinned raw content is fetched and
+  line-sliced, and any mismatch — `drift` vs `local-modification`, disambiguated by the recorded
+  snapshot SHA — or fetch failure aborts the export with exit 1.
 
 ## Status & next steps
 

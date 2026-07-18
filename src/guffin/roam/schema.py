@@ -75,7 +75,9 @@ class SchemaAttribute(Enum):
     BLOCK_PROPS = (SchemaNamespace.BLOCK, "props")
     BLOCK_REFS = (SchemaNamespace.BLOCK, "refs")
     BLOCK_STRING = (SchemaNamespace.BLOCK, "string")
+    BLOCK_TEXT_ALIGN = (SchemaNamespace.BLOCK, "text-align")
     BLOCK_UID = (SchemaNamespace.BLOCK, "uid")
+    BLOCK_VIEW_TYPE = (SchemaNamespace.BLOCK, "view-type")
 
     # children/
     CHILDREN_VIEW_TYPE = (SchemaNamespace.CHILDREN, "view-type")

@@ -37,3 +37,6 @@ Notes on GFM-pipeline constructs that are handled differently here:
   paragraph), and the italic body-size attribution. It carries **no** left bar (unlike the plain block
   quote), so the mark and large type carry the signal. Its serif `font-family` (shared with the callout
   body) is the customization point.
+- **code-source attribution** — likewise **no filter**: the `<div class="code-source">` below a sourced
+  code listing (the emphasized line naming the GitHub file it was snapshotted from) survives to XHTML,
+  and `epub.css` styles it as a caption — small, muted, pulled up toward the listing.

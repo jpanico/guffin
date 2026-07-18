@@ -24,9 +24,11 @@ Public symbols:
   assignment's value as a :class:`PdfRender`; :func:`code_language_of` — read a
   ``code-language`` assignment's value as a canonical
   :data:`~guffin.common.programming_language.CodeLanguageId` (any vocabulary name or alias,
-  case-insensitively); :func:`publish_of` — read a ``publish``
+  case-insensitively); :func:`code_source_of` — read a ``code-source`` assignment's three
+  ordered values (raw GitHub URL, commit SHA, fetch date) as a
+  :class:`~guffin.model.code_source.CodeSource`; :func:`publish_of` — read a ``publish``
   assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
-  :data:`~guffin.common.date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
+  parsed :class:`~guffin.common.w3cdtf.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
   :func:`cover_image_of` — read a ``cover-image`` assignment's value as the referenced image
   block's :data:`~guffin.model.primitives.Uid` (the value is a Roam block reference
   ``((<uid>))``); :func:`cover_image_vertex` — resolve a tree's cover to the
@@ -37,9 +39,9 @@ Public symbols:
   :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
-  :func:`code_language_of_vertex` / :func:`publish_of_vertex` —
+  :func:`code_language_of_vertex` / :func:`code_source_of_vertex` / :func:`publish_of_vertex` —
   resolve a heading's ``element-type`` / bare ``matter`` tag, a PDF embed's ``pdf-render`` tag,
-  a code block's ``code-language`` tag,
+  a code block's ``code-language`` or ``code-source`` tag,
   or any block's ``publish`` tag, to its value, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
@@ -60,6 +62,8 @@ Public symbols:
   :class:`Matter`), :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
   :class:`PdfRender`), :func:`all_code_language_values_legal` (every ``code-language`` value
   names a language in the canonical vocabulary),
+  :func:`all_code_source_values_legal` (every ``code-source`` value is a legal
+  URL/SHA/date triple),
   :func:`all_publish_values_legal` (every ``publish`` value is a boolean
   literal), :func:`all_date_values_legal` (every ``date`` value is a W3CDTF
   reduced-precision date), :func:`all_cover_image_values_legal` (every ``cover-image`` value
@@ -84,7 +88,8 @@ Public symbols:
 This module sits at the top of the ``model/`` conceptual stack: it may depend on the structural
 primitives (:mod:`~guffin.model.attribute`, :mod:`~guffin.model.vertex`,
 :mod:`~guffin.model.vertex_tree`), the :mod:`~guffin.model.attribute_anchor` affordances, the
-:mod:`~guffin.model.chicago_structure` taxonomy, and the :mod:`~guffin.model.element_number`
+:mod:`~guffin.model.chicago_structure` taxonomy, the :mod:`~guffin.model.code_source` value
+model, and the :mod:`~guffin.model.element_number`
 numbering primitive, and none of them may depend on it.
 """
 
@@ -96,17 +101,18 @@ from typing import Final
 import regex
 from pydantic import ConfigDict, Field, field_validator, validate_call
 
-from guffin.common.date import W3cdtfDate, verified_w3cdtf_date
 from guffin.common.programming_language import CodeLanguageId, canonical_language_id
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
+from guffin.common.w3cdtf import W3cdtfDate, verified_w3cdtf_date
 from guffin.model.attribute import (
     Attribute,
     AttributeDomain,
     attribute_value_text,
 )
 from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
-from guffin.model.attribute_assignment import AttributeAssignment, verified_sole_value_text
+from guffin.model.attribute_assignment import AttributeAssignment, verified_sole_value_text, verify_assignment_for
 from guffin.model.chicago_structure import Matter, StructuralElement
+from guffin.model.code_source import CodeSource
 from guffin.model.element_number import (
     ElementNumber,
     leads_with_dotted_element_number_shape,
@@ -224,6 +230,10 @@ class PublishingSemantics(enum.Enum):
         CODE_LANGUAGE: Tags a fenced code listing with its language — any name or alias of the
             canonical vocabulary (:mod:`~guffin.common.programming_language`) — overriding the
             closed language set the Roam UI offers (which lacks e.g. Fortran).
+        CODE_SOURCE: Tags a fenced code listing with the provenance of its content — three
+            ordered values: the raw GitHub URL it was fetched from, the full commit SHA
+            actually fetched, and the fetch date (see
+            :class:`~guffin.model.code_source.CodeSource`).
         PUBLISH: Tags a block with its publication state; ``false`` omits the block and every
             descendant from all rendered output (absent, :data:`DEFAULT_PUBLISH` applies).
     """
@@ -246,6 +256,7 @@ class PublishingSemantics(enum.Enum):
     MATTER = PublishingAttribute(name="matter", anchor=AttributeAnchor.HEADING)
     PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=AttributeAnchor.PDF)
     CODE_LANGUAGE = PublishingAttribute(name="code-language", anchor=AttributeAnchor.CODE_BLOCK)
+    CODE_SOURCE = PublishingAttribute(name="code-source", anchor=AttributeAnchor.CODE_BLOCK)
     PUBLISH = PublishingAttribute(name="publish", anchor=AttributeAnchor.BLOCK)
 
 
@@ -338,6 +349,34 @@ def code_language_of(assignment: AttributeAssignment) -> CodeLanguageId:
 
 
 @validate_call
+def code_source_of(assignment: AttributeAssignment) -> CodeSource:
+    """Return the :class:`~guffin.model.code_source.CodeSource` that a ``code-source`` assignment describes.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.CODE_SOURCE` attribute, then reads
+    its three ordered values — the raw GitHub URL the content was fetched from, the full 40-hex
+    commit SHA actually fetched, and the full-precision fetch date — into a
+    :class:`~guffin.model.code_source.CodeSource`.
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.CODE_SOURCE` attribute assignment (three ordered
+            values expected: url, commit sha, fetched date).
+
+    Returns:
+        The described :class:`~guffin.model.code_source.CodeSource`.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``code-source`` attribute, does not carry
+            exactly three values, or any value is illegal — an unparseable raw GitHub URL, a
+            SHA that is not full 40-hex, or a date not at full ``YYYY-MM-DD`` precision.
+    """
+    verify_assignment_for(assignment, PublishingSemantics.CODE_SOURCE.value)
+    if len(assignment.values) != 3:
+        raise ValueError(f"code-source expects 3 values (url, commit sha, fetched date); got {len(assignment.values)}")
+    url_text, sha_text, date_text = (attribute_value_text(value) for value in assignment.values)
+    return CodeSource.model_validate({"url": url_text, "commit_sha": sha_text, "fetched_date": date_text})
+
+
+@validate_call
 def publish_of(assignment: AttributeAssignment) -> bool:
     """Return the publication state that a ``publish`` assignment names.
 
@@ -363,18 +402,18 @@ def publish_of(assignment: AttributeAssignment) -> bool:
 
 @validate_call
 def date_of(assignment: AttributeAssignment) -> W3cdtfDate:
-    """Return the :data:`~guffin.common.date.W3cdtfDate` that a ``date`` assignment carries.
+    """Return the :class:`~guffin.common.w3cdtf.W3cdtfDate` that a ``date`` assignment carries.
 
-    Verifies *assignment* is for the :attr:`PublishingSemantics.DATE` attribute, then checks its
-    sole value is a W3CDTF reduced-precision date — ``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``
+    Verifies *assignment* is for the :attr:`PublishingSemantics.DATE` attribute, then parses its
+    sole value as a W3CDTF reduced-precision date — ``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``
     (year first), with a real calendar month and day when present — via
-    :func:`~guffin.common.date.verified_w3cdtf_date`.
+    :func:`~guffin.common.w3cdtf.verified_w3cdtf_date`.
 
     Args:
         assignment: A :attr:`PublishingSemantics.DATE` attribute assignment (one value expected).
 
     Returns:
-        The assignment's value as a :data:`~guffin.common.date.W3cdtfDate`, unchanged.
+        The assignment's value as a parsed :class:`~guffin.common.w3cdtf.W3cdtfDate`.
 
     Raises:
         ValueError: If *assignment* is not for the ``date`` attribute, does not carry exactly one
@@ -534,6 +573,30 @@ def code_language_of_vertex(vertex: CodeBlockVertex) -> CodeLanguageId | None:
         return code_language_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring code-language on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def code_source_of_vertex(vertex: CodeBlockVertex) -> CodeSource | None:
+    """Resolve *vertex*'s ``code-source`` tag to its :class:`~guffin.model.code_source.CodeSource`, or ``None``.
+
+    ``None`` when *vertex* carries no ``code-source`` assignment, or when the assignment does
+    not describe a legal source reference (ignored with a warning).  An untagged code block's
+    content simply has no recorded provenance.
+
+    Args:
+        vertex: The code-block vertex whose tag to resolve.
+
+    Returns:
+        The described :class:`~guffin.model.code_source.CodeSource`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.CODE_SOURCE)
+    if assignment is None:
+        return None
+    try:
+        return code_source_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring code-source on vertex uid=%r: %s", vertex.uid, exc)
         return None
 
 
@@ -944,7 +1007,9 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
 def _illegal_value_violations(
     tree: VertexTree,
     attribute: PublishingSemantics,
-    value_coercer: Callable[[AttributeAssignment], StructuralElement | Matter | PdfRender | bool | W3cdtfDate],
+    value_coercer: Callable[
+        [AttributeAssignment], StructuralElement | Matter | PdfRender | bool | W3cdtfDate | CodeLanguageId | CodeSource
+    ],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
 
@@ -1060,6 +1125,31 @@ def all_code_language_values_legal(tree: VertexTree) -> ValidationError | None:
     return ValidationError(
         message="illegal code-language values: " + "; ".join(violations),
         validator=all_code_language_values_legal,
+    )
+
+
+@validate_call
+def all_code_source_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``code-source`` values.
+
+    Every :attr:`PublishingSemantics.CODE_SOURCE` assignment in *tree* must carry exactly three
+    ordered values — a parseable ``raw.githubusercontent.com`` URL, a full 40-hex commit SHA,
+    and a fetch date at full ``YYYY-MM-DD`` precision (see
+    :class:`~guffin.model.code_source.CodeSource`).
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``code-source`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.CODE_SOURCE, code_source_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal code-source values: " + "; ".join(violations),
+        validator=all_code_source_values_legal,
     )
 
 
@@ -1450,7 +1540,8 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
-    :func:`all_pdf_render_values_legal`, :func:`all_publish_values_legal`,
+    :func:`all_pdf_render_values_legal`, :func:`all_code_source_values_legal`,
+    :func:`all_publish_values_legal`,
     :func:`all_date_values_legal`, :func:`all_cover_image_values_legal`, and
     :func:`all_matter_tags_at_section_level` — and every internal-element-numbering validator —
     :func:`all_element_numbers_well_formed`, :func:`all_element_numbers_in_headings_only`,
@@ -1478,6 +1569,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_matter_values_legal,
             all_pdf_render_values_legal,
             all_code_language_values_legal,
+            all_code_source_values_legal,
             all_publish_values_legal,
             all_date_values_legal,
             all_cover_image_values_legal,

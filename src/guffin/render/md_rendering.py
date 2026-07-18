@@ -27,6 +27,7 @@ _GFM_RESOURCES_PACKAGE: Final[str] = "guffin.render.gfm_resources"
 # Lua-filter filenames, resolved against the bundled gfm_resources directory at render time.
 _GFM_BRACKET_FILTER: Final[str] = "gfm_bracket.lua"
 _GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
+_GFM_CODE_SOURCE_FILTER: Final[str] = "gfm_code_source.lua"
 _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
@@ -40,7 +41,7 @@ from pydantic import validate_call
 from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import drop_unpublished, strip_element_numbers
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments
+from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -206,7 +207,9 @@ def render(
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     attributed: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Internal element numbers are authoring bookkeeping; they render only on explicit request.
-    content: Final[VertexTree] = attributed if options.emit_element_numbers else strip_element_numbers(attributed)
+    numbered: Final[VertexTree] = attributed if options.emit_element_numbers else strip_element_numbers(attributed)
+    # Code-source attributions likewise render only on explicit request.
+    content: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
     gfm_dir: Final[Path] = _gfm_resources_dir()
     if should_bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"
@@ -245,6 +248,7 @@ def render(
                 *standalone_args,
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_CODE_SOURCE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
@@ -280,6 +284,7 @@ def render(
                 *standalone_args,
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_CODE_SOURCE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
