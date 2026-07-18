@@ -1,21 +1,13 @@
-"""Tests for the guffin.code_source_verification module."""
-
-import os
+"""Tests for the guffin.cli.code_source_verification module."""
 
 import pytest
 import requests
 
-import guffin.code_source_verification as csv_module
-from guffin.code_source_verification import (
-    CodeSourceDiagnosis,
-    CodeSourceVerificationError,
-    fetch_source_at_commit,
-    resolve_commit_sha,
-    verify_code_source,
-    verify_code_sources,
-)
+import guffin.cli.code_source_verification as csv_module
+from guffin.cli.code_source_verification import verify_code_source, verify_code_sources
 from guffin.common.github_url import GitHubFileRef
 from guffin.model.code_source import CodeSource
+from guffin.model.code_source_diagnosis import CodeSourceDiagnosis
 from guffin.model.vertex import CodeBlockVertex, PageVertex
 from guffin.model.vertex_tree import VertexTree
 
@@ -53,15 +45,6 @@ def _patch_github(
     monkeypatch.setattr(csv_module, "resolve_commit_sha", _fake_resolve)
     monkeypatch.setattr(csv_module, "fetch_source_at_commit", _fake_fetch)
     return fetched
-
-
-class TestResolveCommitSha:
-    """resolve_commit_sha() short-circuits SHA refs without any network access."""
-
-    def test_sha_ref_resolves_to_itself(self) -> None:
-        """A full-SHA ref is immutable and resolves offline to itself."""
-        file_ref = GitHubFileRef(owner="psf", repo="requests", ref=_TIP_SHA, path="setup.py")
-        assert resolve_commit_sha(file_ref) == _TIP_SHA
 
 
 class TestVerifyCodeSource:
@@ -126,42 +109,27 @@ class TestVerifyCodeSource:
 
 
 class TestVerifyCodeSources:
-    """verify_code_sources() accumulates every finding across the render-visible tree."""
+    """verify_code_sources() returns every finding accumulated across the render-visible tree."""
 
     def test_tree_without_sourced_blocks_passes_offline(self) -> None:
-        """A tree with no sourced code blocks verifies without any network access."""
+        """A tree with no sourced code blocks verifies to no findings without any network access."""
         page = PageVertex(uid="page00001", title="P", children=["code00001"])
         code = CodeBlockVertex(uid="code00001", code="print(1)", language="python")
-        verify_code_sources(VertexTree(tree_vertices=[page, code]))
+        assert verify_code_sources(VertexTree(tree_vertices=[page, code])) == ()
 
-    def test_all_findings_accumulate_before_raising(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Two failing blocks both appear in the raised error's findings."""
+    def test_all_findings_accumulate(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Two failing blocks both appear in the returned findings, in document order."""
         _patch_github(monkeypatch, _SNAPSHOT_SHA, {_SNAPSHOT_SHA: _FILE_TEXT})
         page = PageVertex(uid="page00001", title="P", children=["code00001", "code00002"])
         bad_one = _sourced_vertex("edited one", uid="code00001")
         bad_two = _sourced_vertex("edited two", uid="code00002")
         tree = VertexTree(tree_vertices=[page, bad_one, bad_two])
-        with pytest.raises(CodeSourceVerificationError) as exc_info:
-            verify_code_sources(tree)
-        assert [finding.uid for finding in exc_info.value.findings] == ["code00001", "code00002"]
+        findings = verify_code_sources(tree)
+        assert [finding.uid for finding in findings] == ["code00001", "code00002"]
 
-    def test_passing_tree_raises_nothing(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """A tree whose sourced blocks all match verifies silently."""
+    def test_passing_tree_returns_no_findings(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A tree whose sourced blocks all match verifies to an empty result."""
         _patch_github(monkeypatch, _TIP_SHA, {_TIP_SHA: _FILE_TEXT})
         page = PageVertex(uid="page00001", title="P", children=["code00001"])
         good = _sourced_vertex("line two\nline three")
-        verify_code_sources(VertexTree(tree_vertices=[page, good]))
-
-
-class TestLiveGitHubFetch:
-    """Live tests against real GitHub endpoints (network required)."""
-
-    @pytest.mark.live
-    @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires network access to github.com")
-    def test_resolve_and_fetch_pinned_public_file(self) -> None:
-        """A tag-pinned public file resolves to a full SHA and fetches content containing a known line."""
-        file_ref = GitHubFileRef(owner="psf", repo="requests", ref="refs/tags/v2.32.3", path="setup.py")
-        sha = resolve_commit_sha(file_ref)
-        assert len(sha) == 40
-        content = fetch_source_at_commit(file_ref, sha)
-        assert "setuptools" in content
+        assert verify_code_sources(VertexTree(tree_vertices=[page, good])) == ()

@@ -7,7 +7,13 @@ from unittest.mock import patch
 import pytest
 from conftest import article1_node_tree
 
-from guffin.cli.common import SemanticsValidationError, deduce_out_file_stem, fetch_roam_trees, resolve_profile
+from guffin.cli.common import (
+    CodeSourceVerificationError,
+    SemanticsValidationError,
+    deduce_out_file_stem,
+    fetch_roam_trees,
+    resolve_profile,
+)
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
@@ -20,6 +26,7 @@ from guffin.model.attribute import (
     LiteralValue,
 )
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.code_source_diagnosis import CodeSourceDiagnosis, CodeSourceFinding
 from guffin.model.publishing_semantics import PublishingSemantics
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -255,9 +262,9 @@ def _invalid_result() -> ValidationResult:
 
 
 class TestFetchRoamTreesStrictSemantics:
-    """fetch_roam_trees() escalates vocabulary violations per its strict_semantics flag."""
+    """fetch_roam_trees() escalates vocabulary violations per its strict posture."""
 
-    def _fetch(self, strict_semantics: bool) -> object:
+    def _fetch(self, strict: bool) -> object:
         """Run fetch_roam_trees over the article1 fixture with validate_semantics forced invalid."""
         fetch_spec = NodeFetchSpec(anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True)
         node_tree = article1_node_tree()
@@ -268,18 +275,72 @@ class TestFetchRoamTreesStrictSemantics:
             patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
             patch("guffin.cli.common.validate_semantics", return_value=_invalid_result()),
         ):
-            return fetch_roam_trees(fetch_spec, True, endpoint, strict_semantics=strict_semantics)
+            return fetch_roam_trees(fetch_spec, True, endpoint, strict=strict)
 
     def test_strict_raises_on_violation(self) -> None:
-        """strict_semantics=True turns a vocabulary violation into a SemanticsValidationError."""
+        """strict=True turns a vocabulary violation into a SemanticsValidationError."""
         with pytest.raises(SemanticsValidationError) as exc_info:
-            self._fetch(strict_semantics=True)
+            self._fetch(strict=True)
         assert "synthetic violation" in str(exc_info.value)
         assert not exc_info.value.result.is_valid
 
     def test_advisory_warns_and_succeeds(self, caplog: pytest.LogCaptureFixture) -> None:
-        """strict_semantics=False (the default) logs the violation and returns the bundle."""
+        """strict=False (the default) logs the violation and returns the bundle."""
         with caplog.at_level(logging.WARNING, logger="guffin.cli.common"):
-            result = self._fetch(strict_semantics=False)
+            result = self._fetch(strict=False)
         assert result is not None
         assert "synthetic violation" in caplog.text
+
+
+def _drift_finding() -> CodeSourceFinding:
+    """A synthetic drift finding for gate tests."""
+    return CodeSourceFinding(
+        uid="code00001",
+        url="https://raw.githubusercontent.com/psf/requests/main/setup.py",
+        diagnosis=CodeSourceDiagnosis.DRIFT,
+        detail="the source has moved on",
+    )
+
+
+class TestFetchRoamTreesCodeSourceGate:
+    """fetch_roam_trees() runs the optional code-source gate at the caller's strict posture."""
+
+    def _fetch(self, strict: bool, verify: bool, findings: tuple[CodeSourceFinding, ...]) -> object:
+        """Run fetch_roam_trees over the article1 fixture with the verifier mocked to *findings*."""
+        fetch_spec = NodeFetchSpec(anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True)
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        endpoint = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="tok")
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch(
+                "guffin.cli.code_source_verification.verify_code_sources", return_value=findings
+            ) as self._mock_verify,
+        ):
+            return fetch_roam_trees(fetch_spec, True, endpoint, strict=strict, verify_code_sources=verify)
+
+    def test_disabled_gate_never_calls_the_verifier(self) -> None:
+        """verify_code_sources=False (the default) skips the network check entirely."""
+        result = self._fetch(strict=True, verify=False, findings=(_drift_finding(),))
+        assert result is not None
+        self._mock_verify.assert_not_called()
+
+    def test_strict_raises_on_findings(self) -> None:
+        """The strict posture turns findings into a CodeSourceVerificationError."""
+        with pytest.raises(CodeSourceVerificationError) as exc_info:
+            self._fetch(strict=True, verify=True, findings=(_drift_finding(),))
+        assert exc_info.value.findings[0].diagnosis is CodeSourceDiagnosis.DRIFT
+
+    def test_advisory_warns_and_succeeds(self, caplog: pytest.LogCaptureFixture) -> None:
+        """The advisory posture logs each finding as a warning and returns the bundle."""
+        with caplog.at_level(logging.WARNING, logger="guffin.cli.common"):
+            result = self._fetch(strict=False, verify=True, findings=(_drift_finding(),))
+        assert result is not None
+        assert "the source has moved on" in caplog.text
+
+    def test_clean_verification_passes_silently(self) -> None:
+        """No findings means no warnings and no raise, under either posture."""
+        result = self._fetch(strict=True, verify=True, findings=())
+        assert result is not None
+        self._mock_verify.assert_called_once()

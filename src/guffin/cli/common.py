@@ -4,9 +4,12 @@ Public symbols:
 
 - :class:`SemanticsValidationError` — raised when strict semantics validation rejects the
   transcribed content.
+- :class:`CodeSourceVerificationError` — raised when strict code-source verification rejects
+  the transcribed content.
 - :func:`fetch_roam_trees` — fetch nodes for a :class:`~guffin.roam.node_fetch_result.NodeFetchSpec`
   and return a :class:`~guffin.roam.node_fetch_result.NodeFetchResult` paired with an optional
-  :class:`~guffin.vertex_tree.VertexTree`, ready for rendering or further processing.
+  :class:`~guffin.vertex_tree.VertexTree`, gated by semantics validation and optional
+  code-source verification, ready for rendering or further processing.
 - :func:`deduce_out_file_stem` — derive a shell-safe output filename stem (suffixed with the
   project type) from a :class:`~guffin.model.vertex_tree.VertexTree`'s root vertex.
 - :func:`resolve_profile` — build the :class:`~guffin.render.project.ProjectProfile` for a project
@@ -19,10 +22,12 @@ from typing import Final
 
 from pydantic import validate_call
 
+from guffin.cli import code_source_verification
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.common.validation import ValidationResult
 from guffin.model.attribute_assignment import AttributeAssignment, sole_value_text
+from guffin.model.code_source_diagnosis import CodeSourceFinding
 from guffin.model.publishing_semantics import (
     PublishingSemantics,
     find_publishing_attribute,
@@ -71,14 +76,62 @@ class SemanticsValidationError(Exception):
         self.result: ValidationResult = result
 
 
+class CodeSourceVerificationError(Exception):
+    """Raised when strict code-source verification rejects the transcribed content.
+
+    Attributes:
+        findings: Every :class:`~guffin.model.code_source_diagnosis.CodeSourceFinding`
+            accumulated across the verified content.
+    """
+
+    def __init__(self, findings: tuple[CodeSourceFinding, ...]) -> None:
+        """Store the accumulated findings for inspection by callers."""
+        super().__init__(f"code-source verification failed: {len(findings)} code block(s) with findings")
+        self.findings: Final[tuple[CodeSourceFinding, ...]] = findings
+
+
+def _gate_code_sources(content: VertexTree, strict: bool, verify_code_sources: bool) -> None:
+    """Run the code-source gate over *content* at the caller's *strict* posture.
+
+    A no-op when *verify_code_sources* is unset (the gate stands open — the offline path).
+    Otherwise verifies every sourced, render-visible code block against GitHub
+    (:func:`guffin.cli.code_source_verification.verify_code_sources`).  Under the strict
+    posture any findings raise; otherwise each finding is logged as a warning and the gate
+    passes.
+
+    Args:
+        content: The transcribed :class:`~guffin.model.vertex_tree.VertexTree` to verify.
+        strict: The caller's strictness posture.
+        verify_code_sources: Whether to run the gate at all.
+
+    Raises:
+        CodeSourceVerificationError: If *strict* and *verify_code_sources* are set and any
+            sourced code block fails verification.
+    """
+    if not verify_code_sources:
+        return
+    findings: Final[tuple[CodeSourceFinding, ...]] = code_source_verification.verify_code_sources(content)
+    if strict and findings:
+        raise CodeSourceVerificationError(findings)
+    for finding in findings:
+        logger.warning(
+            "code-source verification [%s] vertex uid=%r (%s): %s",
+            finding.diagnosis.value,
+            finding.uid,
+            finding.url,
+            finding.detail,
+        )
+
+
 @validate_call
 def fetch_roam_trees(
     fetch_spec: NodeFetchSpec,
     include_vertex_tree: bool,
     api_endpoint: ApiEndpoint,
-    strict_semantics: bool = False,
+    strict: bool = False,
+    verify_code_sources: bool = False,
 ) -> tuple[NodeFetchResult, RenderBundle | None]:
-    """Fetch Roam nodes for *fetch_spec* and build a validated node tree and render bundle.
+    """Fetch Roam nodes for *fetch_spec* and build a gated node tree and render bundle.
 
     Fetches :class:`~guffin.roam.node.RoamNode` records for *fetch_spec* via
     *api_endpoint*, constructs a :class:`~guffin.roam.node_tree.NodeTree`, and optionally
@@ -86,10 +139,13 @@ def fetch_roam_trees(
     :class:`~guffin.model.vertex_tree.VertexTree` content paired with the presentation
     :data:`~guffin.model.vertex_view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
 
-    The transcribed content is checked against the guffin vocabulary invariants
-    (:func:`~guffin.model.publishing_semantics.validate_semantics`); how violations — e.g. a guffin
-    attribute declared on the wrong vertex type — are handled depends on *strict_semantics*:
-    logged as warnings (``False``), or raised as a :class:`SemanticsValidationError` (``True``).
+    The transcribed content then passes through the pipeline's gates.  Semantics validation
+    (:func:`~guffin.model.publishing_semantics.validate_semantics`) always runs; code-source
+    verification (:func:`guffin.cli.code_source_verification.verify_code_sources` — a network
+    check against GitHub) runs when *verify_code_sources* is set.  How a gate's findings are
+    handled depends on the caller's *strict* posture: logged as warnings (``False``), or
+    raised (``True``) as a :class:`SemanticsValidationError` /
+    :class:`CodeSourceVerificationError`.
 
     Propagates any exception raised during fetching or transcription; callers are
     responsible for exit behaviour.
@@ -99,19 +155,23 @@ def fetch_roam_trees(
             include_node_tree flag.
         include_vertex_tree: When ``True``, builds the :class:`~guffin.model.render_bundle.RenderBundle`
             (content + view) and returns it as the second element of the pair.  When ``False``,
-            skips transcription and returns ``None`` instead.
+            skips transcription (and every content gate) and returns ``None`` instead.
         api_endpoint: Configured API endpoint used to fetch nodes.
-        strict_semantics: When ``True``, vocabulary violations in the transcribed content raise a
-            :class:`SemanticsValidationError`; when ``False`` (default), they are logged as
-            warnings and the fetch succeeds.
+        strict: The caller's strictness posture, applied to every gate.  When ``True``, a
+            gate's findings raise; when ``False`` (default), they are logged as warnings and
+            the fetch succeeds.
+        verify_code_sources: When ``True``, verify every ``code-source::``-tagged code block
+            against GitHub; when ``False`` (default), skip the network check entirely.
 
     Returns:
         A ``(fetch_result, render_bundle)`` pair ready for rendering or further processing.
         ``render_bundle`` is ``None`` when *include_vertex_tree* is ``False``.
 
     Raises:
-        SemanticsValidationError: If *strict_semantics* is set and the transcribed content
-            violates any guffin vocabulary invariant.
+        SemanticsValidationError: If *strict* is set and the transcribed content violates
+            any guffin vocabulary invariant.
+        CodeSourceVerificationError: If *strict* and *verify_code_sources* are set and any
+            sourced code block fails verification.
     """
     result: Final[NodeFetchResult] = FetchRoamNodes.fetch_roam_nodes(
         anchor=fetch_spec.anchor,
@@ -130,12 +190,13 @@ def fetch_roam_trees(
     anchor_tree: Final[NodeTree] = result.anchor_tree
     transcribed: Final[RenderBundle] = to_render_bundle(anchor_tree)
     validation_result: Final[ValidationResult] = validate_semantics(transcribed.content)
-    if strict_semantics and not validation_result.is_valid:
+    if strict and not validation_result.is_valid:
         raise SemanticsValidationError(validation_result)
-    # Without strict_semantics, vocabulary violations are advisory: surfaced loudly but never
+    # Without the strict posture, vocabulary violations are advisory: surfaced loudly but never
     # failing the fetch — a misplaced tag simply has no effect.
     for validation_error in validation_result.errors:
         logger.warning("guffin semantics validation: %s", validation_error)
+    _gate_code_sources(transcribed.content, strict, verify_code_sources)
     # The content revision is captured on every fetch: the snapshot hash and edit bookkeeping
     # come from the raw wire response, the optional revision name from the root vertex's
     # authored revision:: attribute.  Emission stays a renderer decision (the colophon).

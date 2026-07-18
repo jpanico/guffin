@@ -328,6 +328,20 @@ def main(
             "word-count) that are hidden by default. No effect without --raw-results.",
         ),
     ] = False,
+    verify_code_sources_enabled: Annotated[
+        bool,
+        typer.Option(
+            "--verify-code-sources/--no-verify-code-sources",
+            envvar="GUFFIN_VERIFY_CODE_SOURCES",
+            help=(
+                "When enabled (the default), every code block carrying a code-source:: tag is "
+                "verified against GitHub, with any mismatch or fetch failure reported as a "
+                "warning — advisory only, the dump always renders. Requires the render bundle "
+                "(--render-bundle). --no-verify-code-sources skips the check entirely (the "
+                "offline path)."
+            ),
+        ),
+    ] = True,
 ) -> None:
     """Dump a Roam Research page or node subtree as a Rich tree to the console.
 
@@ -344,6 +358,10 @@ def main(
     ``:block/refs`` from the target page or its descendants.  Use ``--no-truncate`` to
     render full string values across every view instead of shortening long strings with
     an ellipsis.
+
+    Code blocks carrying a ``code-source::`` tag are verified against GitHub by default
+    (``--no-verify-code-sources`` skips the network check); any mismatch or fetch failure
+    is reported as a warning — advisory only, the dump always renders.
     """
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, api_bearer_token=%r, node_props=%r, vertex_props=%r, "
@@ -372,8 +390,11 @@ def main(
         anchor=NodeFetchAnchor(qualifier=target), include_refs=include_refs, include_node_tree=show_node_tree
     )
     try:
+        # Both content gates (semantics validation and the optional code-source verification)
+        # run advisorily here: findings warn, the dump always renders — this is the inspection
+        # tool, not the publisher.
         trees: Final[tuple[NodeFetchResult, RenderBundle | None]] = fetch_roam_trees(
-            fetch_spec, show_render_bundle, api_endpoint
+            fetch_spec, show_render_bundle, api_endpoint, verify_code_sources=verify_code_sources_enabled
         )
     except RoamNodeNotFoundError as exc:
         kind_label: Final[str] = "Page" if exc.fetch_spec.anchor.kind == QueryAnchorKind.PAGE_TITLE else "Node"

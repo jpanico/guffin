@@ -74,10 +74,15 @@ from typing import Annotated, Final
 import typer
 from pydantic import validate_call
 
-from guffin.cli.common import SemanticsValidationError, deduce_out_file_stem, fetch_roam_trees, resolve_profile
+from guffin.cli.common import (
+    CodeSourceVerificationError,
+    SemanticsValidationError,
+    deduce_out_file_stem,
+    fetch_roam_trees,
+    resolve_profile,
+)
 from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
-from guffin.code_source_verification import CodeSourceVerificationError, verify_code_sources
 from guffin.common.provenance import Provenance, gather_provenance
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
@@ -322,9 +327,13 @@ def main(
 
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port, graph_name, api_bearer_token)
 
-    # An export must not publish content that violates the guffin vocabulary, so semantics
-    # validation is strict here (dump-roam-tree keeps it advisory).
-    fetched_bundle: Final[RenderBundle] = fetch_render_bundle(api_endpoint, target, strict_semantics=True)
+    # An export must not publish content that violates the guffin vocabulary, nor code that no
+    # longer matches its declared source of truth, so the fetch pipeline runs with the strict
+    # posture here (dump-roam-tree keeps both gates advisory); code-source verification is
+    # skippable when offline (--no-verify-code-sources).
+    fetched_bundle: Final[RenderBundle] = fetch_render_bundle(
+        api_endpoint, target, strict=True, verify_code_sources=verify_code_sources_enabled
+    )
 
     # The colophon's data (provenance) is stamped onto the bundle as origin metadata; whether to
     # render it is the separate emit_colophon option carried on the render options.
@@ -332,27 +341,6 @@ def main(
     if provenance is not None:
         logger.info("provenance: %s", provenance.summary())
     render_bundle: Final[RenderBundle] = fetched_bundle.with_provenance(provenance)
-
-    # An export must not publish code that no longer matches its declared source of truth, so
-    # sourced code blocks are verified against GitHub before rendering (skippable when offline).
-    if verify_code_sources_enabled:
-        try:
-            verify_code_sources(render_bundle.content)
-        except CodeSourceVerificationError as exc:
-            for finding in exc.findings:
-                logger.error(
-                    "code-source verification [%s] vertex uid=%r (%s): %s",
-                    finding.diagnosis.value,
-                    finding.uid,
-                    finding.url,
-                    finding.detail,
-                )
-            logger.error(
-                "aborting export of %r: code-source verification failed "
-                "(pass --no-verify-code-sources to skip, e.g. when offline)",
-                target,
-            )
-            raise typer.Exit(code=1) from exc
 
     out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
     # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
@@ -378,25 +366,30 @@ def main(
 
 
 @validate_call
-def fetch_render_bundle(api_endpoint: ApiEndpoint, target: TargetArgument, strict_semantics: bool) -> RenderBundle:
+def fetch_render_bundle(
+    api_endpoint: ApiEndpoint, target: TargetArgument, strict: bool, verify_code_sources: bool = False
+) -> RenderBundle:
     """Fetch *target* from a Roam graph and return its transcribed render bundle.
 
-    Resolves *target* against *api_endpoint* (following references), runs guffin-semantics
-    validation at the requested strictness, and unwraps the :class:`~guffin.model.render_bundle.RenderBundle`
-    from the fetch result.
+    Resolves *target* against *api_endpoint* (following references), runs the fetch
+    pipeline's content gates — guffin-semantics validation, and code-source verification
+    when *verify_code_sources* is set — at the requested *strict* posture, and unwraps the
+    :class:`~guffin.model.render_bundle.RenderBundle` from the fetch result.
 
     Args:
         api_endpoint: The Roam Local API endpoint identifying the graph and bearer token.
         target: The page title, node UID, or ``((uid))`` block reference to fetch.
-        strict_semantics: When ``True``, a guffin-vocabulary violation aborts the fetch; when
-            ``False``, violations are advisory (logged, not fatal).
+        strict: When ``True``, a gate's findings abort the fetch; when ``False``, they are
+            advisory (logged, not fatal).
+        verify_code_sources: When ``True``, verify every ``code-source::``-tagged code block
+            against GitHub; when ``False`` (default), skip the network check.
 
     Returns:
         The :class:`~guffin.model.render_bundle.RenderBundle` transcribed from *target*'s subtree.
 
     Raises:
-        typer.Exit: With code 1 when the target is not found, the content fails strict semantics
-            validation, any other fetch error occurs, or no render bundle is produced.
+        typer.Exit: With code 1 when the target is not found, the content fails a strict
+            gate, any other fetch error occurs, or no render bundle is produced.
     """
     graph_name: Final[str] = api_endpoint.url.graph_name
     try:
@@ -404,7 +397,8 @@ def fetch_render_bundle(api_endpoint: ApiEndpoint, target: TargetArgument, stric
             NodeFetchSpec(anchor=NodeFetchAnchor(qualifier=target), include_refs=True),
             include_vertex_tree=True,
             api_endpoint=api_endpoint,
-            strict_semantics=strict_semantics,
+            strict=strict,
+            verify_code_sources=verify_code_sources,
         )
     except RoamNodeNotFoundError as exc:
         kind_label: Final[str] = "Page" if exc.fetch_spec.anchor.kind == QueryAnchorKind.PAGE_TITLE else "Node"
@@ -419,6 +413,21 @@ def fetch_render_bundle(api_endpoint: ApiEndpoint, target: TargetArgument, stric
         for validation_error in exc.result.errors:
             logger.error("guffin semantics validation: %s", validation_error)
         logger.error("aborting export of %r: the content violates the guffin vocabulary (see above)", target)
+        raise typer.Exit(code=1)
+    except CodeSourceVerificationError as exc:
+        for finding in exc.findings:
+            logger.error(
+                "code-source verification [%s] vertex uid=%r (%s): %s",
+                finding.diagnosis.value,
+                finding.uid,
+                finding.url,
+                finding.detail,
+            )
+        logger.error(
+            "aborting export of %r: code-source verification failed "
+            "(pass --no-verify-code-sources to skip, e.g. when offline)",
+            target,
+        )
         raise typer.Exit(code=1)
     except Exception:
         logger.exception("Error fetching %r from graph %r", target, graph_name)

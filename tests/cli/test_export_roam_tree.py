@@ -21,9 +21,9 @@ from conftest import (
 from typer.testing import CliRunner, Result
 
 from guffin.cli.export_roam_tree import app
-from guffin.code_source_verification import CodeSourceDiagnosis, CodeSourceFinding, CodeSourceVerificationError
 from guffin.common.provenance import Provenance
 from guffin.common.validation import ValidationError, ValidationResult
+from guffin.model.code_source_diagnosis import CodeSourceDiagnosis, CodeSourceFinding
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.project import BookProfile, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
@@ -532,7 +532,7 @@ class TestExportRoamTreeVerifyCodeSources:
         with (
             patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
             patch("guffin.cli.export_roam_tree.render_md"),
-            patch("guffin.cli.export_roam_tree.verify_code_sources") as mock_verify,
+            patch("guffin.cli.code_source_verification.verify_code_sources", return_value=()) as mock_verify,
         ):
             saved_handlers = logging.root.handlers[:]
             logging.root.handlers.clear()
@@ -582,10 +582,7 @@ class TestExportRoamTreeVerifyCodeSources:
         with (
             patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes") as mock_fetch,
             patch("guffin.cli.export_roam_tree.render_md") as mock_render,
-            patch(
-                "guffin.cli.export_roam_tree.verify_code_sources",
-                side_effect=CodeSourceVerificationError((finding,)),
-            ),
+            patch("guffin.cli.code_source_verification.verify_code_sources", return_value=(finding,)),
         ):
             fetch_spec = NodeFetchSpec(anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True)
             node_tree = article1_node_tree()
