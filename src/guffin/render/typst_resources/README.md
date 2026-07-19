@@ -192,7 +192,7 @@ title-page foot in `titlepage.typ`) formats a `datetime` through `cfg.dateformat
 reduced-precision string verbatim. The PDF metadata (`#set document(date:)` in
 `default_styles.typ`) takes only `datetime | auto | none`, so a reduced-precision date is omitted
 there rather than fabricated. Guffin validates the `guffin-meta:: date:` value to the same W3CDTF
-forms at export time (`publishing_semantics.all_date_values_legal`), so the template's fallback
+forms at export time (`publishing_validation.all_date_values_legal`), so the template's fallback
 path only ever sees `YYYY` or `YYYY-MM`.
 
 ### Updating

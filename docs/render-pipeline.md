@@ -433,8 +433,9 @@ pure taxonomy with no other `guffin` dependencies.
   (before asset fetching, so omitted assets are never downloaded), and an embed (block or page) whose
   transclusion target was removed vanishes with it, to a fixpoint. An export root tagged
   `publish:: false` raises — the export target cannot be omitted from its own output.
-- **`validate_semantics(tree)`** — the vocabulary's validation pass (built on `common/validation`),
-  accumulating eight validators: `all_attributes_anchored` (every recognized guffin attribute sits
+- **`validate_semantics(tree)`** — the vocabulary's validation pass (in `model/publishing_validation.py`,
+  the judging module directly above the vocabulary; built on `common/validation`),
+  accumulating the validators: `all_attributes_anchored` (every recognized guffin attribute sits
   on one of the vertex types its `AttributeAnchor` names — the `AttributeAnchor.vertex_types` correspondence is the
   enforced invariant), `all_element_type_values_legal` / `all_matter_values_legal` /
   `all_pdf_render_values_legal` / `all_publish_values_legal` (every `element-type` / `matter` /

@@ -33,8 +33,8 @@ from guffin.model.publishing_semantics import (
     find_publishing_attribute,
     has_parts,
     revision_of_vertex,
-    validate_semantics,
 )
+from guffin.model.publishing_validation import validate_semantics
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -140,7 +140,7 @@ def fetch_roam_trees(
     :data:`~guffin.model.vertex_view.ViewMap`) via :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`.
 
     The transcribed content then passes through the pipeline's gates.  Semantics validation
-    (:func:`~guffin.model.publishing_semantics.validate_semantics`) always runs; code-source
+    (:func:`~guffin.model.publishing_validation.validate_semantics`) always runs; code-source
     verification (:func:`guffin.cli.code_source_verification.verify_code_sources` — a network
     check against GitHub) runs when *verify_code_sources* is set.  How a gate's findings are
     handled depends on the caller's *strict* posture: logged as warnings (``False``), or
