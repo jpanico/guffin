@@ -46,7 +46,7 @@ from pydantic import validate_call
 
 from guffin.common.programming_language import CodeLanguageId
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
-from guffin.common.w3cdtf import W3cdtfDate
+from guffin.common.w3cdtf_date import W3cdtfDate
 from guffin.model.attribute import Attribute, AttributeDomain
 from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
 from guffin.model.attribute_assignment import AttributeAssignment

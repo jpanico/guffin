@@ -690,8 +690,8 @@ class TestPublishOfVertex:
 class TestDateOf:
     """date_of() parses a date assignment's sole value into a W3CDTF reduced-precision date.
 
-    Format-level cases live with the delegate (``tests/common/test_date.py``); these tests cover
-    the vocabulary layer: attribute verification and the delegation itself.
+    Format-level cases live with the delegate (``tests/common/test_w3cdtf_date.py``); these tests
+    cover the vocabulary layer: attribute verification and the delegation itself.
     """
 
     def test_year_only(self) -> None:

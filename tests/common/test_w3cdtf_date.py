@@ -1,9 +1,9 @@
-"""Tests for the guffin.common.w3cdtf module."""
+"""Tests for the guffin.common.w3cdtf_date module."""
 
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from guffin.common.w3cdtf import DatePrecision, W3cdtfDate, verified_w3cdtf_date
+from guffin.common.w3cdtf_date import DatePrecision, W3cdtfDate, verified_w3cdtf_date
 
 
 class TestVerifiedW3cdtfDate:

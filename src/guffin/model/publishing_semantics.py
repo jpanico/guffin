@@ -28,7 +28,7 @@ Public symbols:
   ordered values (raw GitHub URL, commit SHA, fetch date) as a
   :class:`~guffin.model.code_source.CodeSource`; :func:`publish_of` — read a ``publish``
   assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
-  parsed :class:`~guffin.common.w3cdtf.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
+  parsed :class:`~guffin.common.w3cdtf_date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
   :func:`cover_image_of` — read a ``cover-image`` assignment's value as the referenced image
   block's :data:`~guffin.model.primitives.Uid` (the value is a Roam block reference
   ``((<uid>))``); :func:`cover_image_vertex` — resolve a tree's cover to the
@@ -74,7 +74,7 @@ import regex
 from pydantic import ConfigDict, Field, field_validator, validate_call
 
 from guffin.common.programming_language import CodeLanguageId, canonical_language_id
-from guffin.common.w3cdtf import W3cdtfDate, verified_w3cdtf_date
+from guffin.common.w3cdtf_date import W3cdtfDate, verified_w3cdtf_date
 from guffin.model.attribute import (
     Attribute,
     AttributeDomain,
@@ -366,18 +366,18 @@ def publish_of(assignment: AttributeAssignment) -> bool:
 
 @validate_call
 def date_of(assignment: AttributeAssignment) -> W3cdtfDate:
-    """Return the :class:`~guffin.common.w3cdtf.W3cdtfDate` that a ``date`` assignment carries.
+    """Return the :class:`~guffin.common.w3cdtf_date.W3cdtfDate` that a ``date`` assignment carries.
 
     Verifies *assignment* is for the :attr:`PublishingSemantics.DATE` attribute, then parses its
     sole value as a W3CDTF reduced-precision date — ``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``
     (year first), with a real calendar month and day when present — via
-    :func:`~guffin.common.w3cdtf.verified_w3cdtf_date`.
+    :func:`~guffin.common.w3cdtf_date.verified_w3cdtf_date`.
 
     Args:
         assignment: A :attr:`PublishingSemantics.DATE` attribute assignment (one value expected).
 
     Returns:
-        The assignment's value as a parsed :class:`~guffin.common.w3cdtf.W3cdtfDate`.
+        The assignment's value as a parsed :class:`~guffin.common.w3cdtf_date.W3cdtfDate`.
 
     Raises:
         ValueError: If *assignment* is not for the ``date`` attribute, does not carry exactly one
