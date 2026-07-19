@@ -435,6 +435,25 @@
   props: null
   title: null
   attrs: null
+- uid: X2GQc9xlb
+  id: 14558
+  string: The child of this block is an isolated fenced code block whose `code-source`
+    is https://github.com/jpanico/guffin/blob/main/src/guffin/common/validation.py
+  order: 1
+  heading: null
+  children:
+  - id: 14559
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 14462
+  props: null
+  title: null
+  attrs: null
 - uid: 0hoWxyjNR
   id: 11232
   string: r2.c1
@@ -497,6 +516,7 @@
   heading: null
   children:
   - id: 14463
+  - id: 14558
   refs: null
   page:
     id: 11137
@@ -763,6 +783,45 @@
   props: null
   title: null
   attrs: null
+- uid: 6AFKj93ma
+  id: 14562
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 14563
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 14462
+  - id: 14558
+  - id: 14559
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 6AFKj93ma
+      value:
+      - uid
+      - 6AFKj93ma
+    - source:
+      - uid
+      - fAKwzdSzg
+      value:
+      - uid
+      - C8y7bMPpW
+    - source:
+      - uid
+      - fAKwzdSzg
+      value: ' https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py
+        , 3b081e9dd1bb94983f66b39b1d3f8250d7df5031, 2026-07-19'
 - uid: VvbwbLchA
   id: 11171
   string: This para features ^^highlight^^
@@ -776,6 +835,28 @@
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  attrs: null
+- uid: fAKwzdSzg
+  id: 14563
+  string: 'code-source:: https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py
+    , 3b081e9dd1bb94983f66b39b1d3f8250d7df5031, 2026-07-19'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 14555
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 14462
+  - id: 14558
+  - id: 14559
+  - id: 14562
   props: null
   title: null
   attrs: null
@@ -795,6 +876,78 @@
   props: null
   title: null
   attrs: null
+- uid: H_9tvN3-X
+  id: 14559
+  string: "```python\n\"\"\"Generic accumulator-pipeline validation framework.\n\n\
+    Provides a small, side-effect-free validation pipeline:\n\n- :class:`ValidationError`\
+    \ — immutable record of a single validation failure.\n- :class:`ValidationResult`\
+    \ — immutable collection of all failures from a\n  validation run; empty means\
+    \ valid.\n- :data:`Validator` — type alias for a pure validator function.\n- :func:`validate_all`\
+    \ — runs every validator in sequence and accumulates\n  results into a :class:`ValidationResult`.\n\
+    \nAll validators always run regardless of prior failures (no short-circuit),\n\
+    so the caller receives the complete set of errors in one pass.\n\"\"\"\n\nfrom\
+    \ collections.abc import Callable\nfrom dataclasses import dataclass\nfrom typing\
+    \ import Final\n\n\n@dataclass(frozen=True)\nclass ValidationError:\n    \"\"\"\
+    Immutable record of a single validation failure.\n\n    Attributes:\n        validator:\
+    \ The validator function that produced this error.\n        message: Human-readable\
+    \ description of the validation failure.\n    \"\"\"\n\n    validator: Callable[...,\
+    \ ValidationError | None]\n    message: str\n\n    def __str__(self) -> str:\n\
+    \        \"\"\"Return a human-readable string combining the validator name and\
+    \ message.\"\"\"\n        return f\"{self.validator.__name__}: {self.message}\"\
+    \n\n\n@dataclass(frozen=True)\nclass ValidationResult:\n    \"\"\"Immutable collection\
+    \ of all validation failures from a single run.\n\n    An empty :attr:`errors`\
+    \ tuple means the input was valid.\n\n    Attributes:\n        errors: All failures\
+    \ produced by the validator pipeline. Empty when valid.\n    \"\"\"\n\n    errors:\
+    \ tuple[ValidationError, ...]\n\n    @property\n    def is_valid(self) -> bool:\n\
+    \        \"\"\"Return True when no validation errors were recorded.\"\"\"\n  \
+    \      return len(self.errors) == 0\n\n\ntype Validator[T] = Callable[[T], ValidationError\
+    \ | None]\n\"\"\"A pure validator function over an input of type ``T``.\n\nReturns\
+    \ a :class:`ValidationError` if the input violates the rule,\nor ``None`` if the\
+    \ input passes.\n\nEach validator is responsible only for detecting a single violation;\
+    \ it has\nno knowledge of the :class:`ValidationResult` accumulator or other validators\n\
+    in the pipeline.\n\"\"\"\n\n\ndef validate_all[T](input: T, validators: list[Validator[T]])\
+    \ -> ValidationResult:\n    \"\"\"Run every validator over ``input`` and return\
+    \ the accumulated result.\n\n    All validators always run regardless of prior\
+    \ failures — no short-circuit.\n\n    Args:\n        input: The value to validate.\n\
+    \        validators: Ordered list of validators to apply.\n\n    Returns:\n  \
+    \      A :class:`ValidationResult` containing all failures, or an empty\n    \
+    \    result if every validator passed.\n    \"\"\"\n    errors: Final[tuple[ValidationError,\
+    \ ...]] = tuple(error for v in validators if (error := v(input)) is not None)\n\
+    \    return ValidationResult(errors=errors)\n\n```"
+  order: 0
+  heading: null
+  children:
+  - id: 14562
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 14462
+  - id: 14558
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - H_9tvN3-X
+      value:
+      - uid
+      - H_9tvN3-X
+    - source:
+      - uid
+      - 6AFKj93ma
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - 6AFKj93ma
+      value:
+      - uid
+      - BxGxeeGk1
 - uid: tzwIznt_u
   id: 13094
   string: ''

@@ -760,6 +760,31 @@ class TestToCodeBlockVertex:
         assert vertex.language == "python"
         assert vertex.code.startswith("def fizz_buzz(limit: int = 100):")
 
+    def test_article_0_fixture_code_source(self) -> None:
+        """The Article 0 sourced code block (H_9tvN3-X) folds its authored code-source:: tag.
+
+        Covers the real Roam-authored shape end to end — the ``guffin-meta::`` child, the
+        ``code-source::`` grandchild with the space-before-comma separator, and the wire
+        format the Local API actually returns — where the hand-built cases above use
+        synthetic nodes.  Loads the with-refs fixture: folding needs the ``code-source``
+        attribute *page* in :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`, which the
+        anchor-only nodes fixture deliberately omits.
+        """
+        raw_by_uid: dict[str, dict[str, object]] = yaml.safe_load(
+            (FIXTURES_YAML_DIR / "test_article_0_nodes_by_uid.yaml").read_text()
+        )
+        all_nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
+        root_node: RoamNode = next(n for n in all_nodes if n.title == "[[Test Article]] 0")
+        tree: NodeTree = NodeTree.build(super_network=all_nodes, root_node=root_node)
+        fixture_node: RoamNode = tree.id_map[next(n.id for n in all_nodes if n.uid == "H_9tvN3-X")]
+        vertex: CodeBlockVertex = to_code_block_vertex(fixture_node, tree)
+        assert vertex.code_source is not None
+        assert vertex.code_source.url == (
+            "https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py"
+        )
+        assert len(vertex.code_source.commit_sha) == 40
+        assert vertex.code_source.file_ref().ref_name == "main"
+
 
 # ---------------------------------------------------------------------------
 # TestCodeLanguageOverride

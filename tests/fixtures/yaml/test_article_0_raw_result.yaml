@@ -118,6 +118,9 @@
     order: 0
     page:
       id: 11137
+- - id: 14555
+    uid: C8y7bMPpW
+    title: code-source
 - - string: r1.c1
     children:
     - id: 13094
@@ -330,6 +333,19 @@
     order: 4
     page:
       id: 11137
+- - string: The child of this block is an isolated fenced code block whose `code-source`
+      is https://github.com/jpanico/guffin/blob/main/src/guffin/common/validation.py
+    children:
+    - id: 14559
+    id: 14558
+    uid: X2GQc9xlb
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 14462
+    order: 1
+    page:
+      id: 11137
 - - string: r2.c1
     children:
     - id: 11233
@@ -368,6 +384,7 @@
       language (`plain text`) is overridden by a `code-language:: FORTRAN` tag'
     children:
     - id: 14463
+    - id: 14558
     id: 14462
     uid: CgaFSZKa9
     parents:
@@ -566,6 +583,48 @@
     order: 0
     page:
       id: 11137
+- - attrs:
+    - - source:
+        - uid
+        - 6AFKj93ma
+        value:
+        - uid
+        - 6AFKj93ma
+      - source:
+        - uid
+        - fAKwzdSzg
+        value:
+        - uid
+        - C8y7bMPpW
+      - source:
+        - uid
+        - fAKwzdSzg
+        value: ' https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py
+          , 3b081e9dd1bb94983f66b39b1d3f8250d7df5031, 2026-07-19'
+    heading: 0
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 14563
+    text-align: left
+    id: 14562
+    lookup:
+    - id: 14555
+    - id: 14562
+    - id: 14563
+    uid: 6AFKj93ma
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 14462
+    - id: 14558
+    - id: 14559
+    order: 0
+    view-type: outline
+    page:
+      id: 11137
+    refs:
+    - id: 321
+    - id: 11839
 - - id: 14466
     uid: SEtRXQkX7
     title: code-language
@@ -581,6 +640,25 @@
     order: 3
     page:
       id: 11137
+- - heading: 0
+    string: 'code-source:: https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py
+      , 3b081e9dd1bb94983f66b39b1d3f8250d7df5031, 2026-07-19'
+    text-align: left
+    id: 14563
+    uid: fAKwzdSzg
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 14462
+    - id: 14558
+    - id: 14559
+    - id: 14562
+    order: 0
+    view-type: outline
+    page:
+      id: 11137
+    refs:
+    - id: 14555
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
@@ -591,6 +669,81 @@
     - id: 11137
     - id: 11149
     order: 1
+    page:
+      id: 11137
+- - attrs:
+    - - source:
+        - uid
+        - H_9tvN3-X
+        value:
+        - uid
+        - H_9tvN3-X
+      - source:
+        - uid
+        - 6AFKj93ma
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 6AFKj93ma
+        value:
+        - uid
+        - BxGxeeGk1
+    string: "```python\n\"\"\"Generic accumulator-pipeline validation framework.\n\
+      \nProvides a small, side-effect-free validation pipeline:\n\n- :class:`ValidationError`\
+      \ — immutable record of a single validation failure.\n- :class:`ValidationResult`\
+      \ — immutable collection of all failures from a\n  validation run; empty means\
+      \ valid.\n- :data:`Validator` — type alias for a pure validator function.\n\
+      - :func:`validate_all` — runs every validator in sequence and accumulates\n\
+      \  results into a :class:`ValidationResult`.\n\nAll validators always run regardless\
+      \ of prior failures (no short-circuit),\nso the caller receives the complete\
+      \ set of errors in one pass.\n\"\"\"\n\nfrom collections.abc import Callable\n\
+      from dataclasses import dataclass\nfrom typing import Final\n\n\n@dataclass(frozen=True)\n\
+      class ValidationError:\n    \"\"\"Immutable record of a single validation failure.\n\
+      \n    Attributes:\n        validator: The validator function that produced this\
+      \ error.\n        message: Human-readable description of the validation failure.\n\
+      \    \"\"\"\n\n    validator: Callable[..., ValidationError | None]\n    message:\
+      \ str\n\n    def __str__(self) -> str:\n        \"\"\"Return a human-readable\
+      \ string combining the validator name and message.\"\"\"\n        return f\"\
+      {self.validator.__name__}: {self.message}\"\n\n\n@dataclass(frozen=True)\nclass\
+      \ ValidationResult:\n    \"\"\"Immutable collection of all validation failures\
+      \ from a single run.\n\n    An empty :attr:`errors` tuple means the input was\
+      \ valid.\n\n    Attributes:\n        errors: All failures produced by the validator\
+      \ pipeline. Empty when valid.\n    \"\"\"\n\n    errors: tuple[ValidationError,\
+      \ ...]\n\n    @property\n    def is_valid(self) -> bool:\n        \"\"\"Return\
+      \ True when no validation errors were recorded.\"\"\"\n        return len(self.errors)\
+      \ == 0\n\n\ntype Validator[T] = Callable[[T], ValidationError | None]\n\"\"\"\
+      A pure validator function over an input of type ``T``.\n\nReturns a :class:`ValidationError`\
+      \ if the input violates the rule,\nor ``None`` if the input passes.\n\nEach\
+      \ validator is responsible only for detecting a single violation; it has\nno\
+      \ knowledge of the :class:`ValidationResult` accumulator or other validators\n\
+      in the pipeline.\n\"\"\"\n\n\ndef validate_all[T](input: T, validators: list[Validator[T]])\
+      \ -> ValidationResult:\n    \"\"\"Run every validator over ``input`` and return\
+      \ the accumulated result.\n\n    All validators always run regardless of prior\
+      \ failures — no short-circuit.\n\n    Args:\n        input: The value to validate.\n\
+      \        validators: Ordered list of validators to apply.\n\n    Returns:\n\
+      \        A :class:`ValidationResult` containing all failures, or an empty\n\
+      \        result if every validator passed.\n    \"\"\"\n    errors: Final[tuple[ValidationError,\
+      \ ...]] = tuple(error for v in validators if (error := v(input)) is not None)\n\
+      \    return ValidationResult(errors=errors)\n\n```"
+    children:
+    - id: 14562
+    text-align: left
+    id: 14559
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 14559
+    - id: 14562
+    uid: H_9tvN3-X
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 14462
+    - id: 14558
+    order: 0
+    view-type: outline
     page:
       id: 11137
 - - string: ''
