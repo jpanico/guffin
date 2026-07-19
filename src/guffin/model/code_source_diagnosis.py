@@ -26,7 +26,7 @@ from typing import Final
 
 from pydantic import BaseModel, ConfigDict, validate_call
 
-from guffin.common.github_url import CommitSha, RawGitHubUrl
+from guffin.common.github_file_ref import CommitSha, RawGitHubUrl
 from guffin.model.code_source import CodeSource
 from guffin.model.primitives import Uid
 from guffin.model.vertex import CodeBlockVertex
@@ -57,7 +57,7 @@ class CodeSourceFinding(BaseModel):
     Attributes:
         uid: The failing code-block vertex's uid.
         url: The source reference's raw GitHub URL
-            (:data:`~guffin.common.github_url.RawGitHubUrl`), verbatim.
+            (:data:`~guffin.common.github_file_ref.RawGitHubUrl`), verbatim.
         diagnosis: What the failure means (:class:`CodeSourceDiagnosis`).
         detail: A human-readable elaboration of the diagnosis.
     """

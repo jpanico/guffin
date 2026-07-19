@@ -22,7 +22,7 @@ import requests
 from pydantic import validate_call
 
 from guffin.common.github_fetch import fetch_source_at_commit, resolve_commit_sha
-from guffin.common.github_url import CommitSha, GitHubFileRef
+from guffin.common.github_file_ref import CommitSha, GitHubFileRef
 from guffin.common.line_range import sliced_line_range
 from guffin.model.code_source import CodeSource
 from guffin.model.code_source_diagnosis import (

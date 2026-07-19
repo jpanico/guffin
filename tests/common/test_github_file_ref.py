@@ -1,9 +1,9 @@
-"""Tests for the guffin.common.github_url module."""
+"""Tests for the guffin.common.github_file_ref module."""
 
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from guffin.common.github_url import (
+from guffin.common.github_file_ref import (
     CommitSha,
     GitHubFileRef,
     RawGitHubUrl,

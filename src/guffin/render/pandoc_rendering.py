@@ -88,7 +88,7 @@ import panflute as pf  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
 from guffin.common.geometry import ImageSize
-from guffin.common.github_url import GitHubFileRef, blob_github_url
+from guffin.common.github_file_ref import GitHubFileRef, blob_github_url
 from guffin.common.markdown import contains_fenced_code_block, hard_broken_markdown
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision

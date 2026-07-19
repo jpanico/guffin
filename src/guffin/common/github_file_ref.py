@@ -1,4 +1,4 @@
-"""GitHub URL grammar — commit-SHA and raw-URL types, parsing, and URL derivations — with no domain coupling.
+"""GitHub file addressing — :class:`GitHubFileRef` with its string types and URL encodings — with no domain coupling.
 
 Public symbols:
 

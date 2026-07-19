@@ -5,7 +5,7 @@ import requests
 
 import guffin.cli.code_source_verification as csv_module
 from guffin.cli.code_source_verification import verify_code_source, verify_code_sources
-from guffin.common.github_url import GitHubFileRef
+from guffin.common.github_file_ref import GitHubFileRef
 from guffin.model.code_source import CodeSource
 from guffin.model.code_source_diagnosis import CodeSourceDiagnosis
 from guffin.model.vertex import CodeBlockVertex, PageVertex

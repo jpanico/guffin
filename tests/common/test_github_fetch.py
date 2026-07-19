@@ -5,7 +5,7 @@ import os
 import pytest
 
 from guffin.common.github_fetch import fetch_source_at_commit, resolve_commit_sha
-from guffin.common.github_url import GitHubFileRef
+from guffin.common.github_file_ref import GitHubFileRef
 
 _SHA: str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 

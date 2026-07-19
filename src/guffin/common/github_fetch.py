@@ -16,7 +16,7 @@ from typing import Final
 import requests
 from pydantic import validate_call
 
-from guffin.common.github_url import CommitSha, GitHubFileRef, raw_github_url, verified_commit_sha
+from guffin.common.github_file_ref import CommitSha, GitHubFileRef, raw_github_url, verified_commit_sha
 
 GITHUB_TOKEN_ENV_VAR: Final[str] = "GUFFIN_GITHUB_TOKEN"
 """Environment variable naming an optional GitHub token for ref resolution.

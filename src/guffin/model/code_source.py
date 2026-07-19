@@ -13,7 +13,7 @@ import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from guffin.common.github_url import CommitSha, GitHubFileRef, RawGitHubUrl, parse_raw_github_url
+from guffin.common.github_file_ref import CommitSha, GitHubFileRef, RawGitHubUrl, parse_raw_github_url
 
 
 class CodeSource(BaseModel):
@@ -25,8 +25,8 @@ class CodeSource(BaseModel):
 
     Attributes:
         url: The ``raw.githubusercontent.com`` URL the content was fetched from
-            (:data:`~guffin.common.github_url.RawGitHubUrl` — verbatim text, always parseable
-            via :func:`~guffin.common.github_url.parse_raw_github_url`), optionally narrowed
+            (:data:`~guffin.common.github_file_ref.RawGitHubUrl` — verbatim text, always parseable
+            via :func:`~guffin.common.github_file_ref.parse_raw_github_url`), optionally narrowed
             by a ``#L<n>[-L<m>]`` line-range fragment.
         commit_sha: The full 40-hex commit SHA the content was actually fetched at — immutable
             even when the URL's ref is a branch that has since moved (serialized as
@@ -45,7 +45,7 @@ class CodeSource(BaseModel):
         """Return the decomposed reference the ``url`` denotes.
 
         Returns:
-            The :class:`~guffin.common.github_url.GitHubFileRef` parsed from ``url``; always
+            The :class:`~guffin.common.github_file_ref.GitHubFileRef` parsed from ``url``; always
             succeeds, since ``url`` is validated at construction.
         """
         return parse_raw_github_url(self.url)
