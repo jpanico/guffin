@@ -425,7 +425,7 @@ class TestCodeLanguageOfVertex:
         assert "ignoring code-language" in caplog.text
 
 
-_SOURCE_URL = "https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60"
+_SOURCE_URL = "https://github.com/psf/requests/blob/main/src/requests/api.py#L14-L60"
 _SOURCE_SHA = "0d9ca427f7d7dbe92694284d4a6249178255036e"
 _SOURCE_DATE = "2026-07-17"
 
@@ -457,8 +457,8 @@ class TestCodeSourceOf:
             code_source_of(_multi_assignment("code-source", *([_SOURCE_URL, _SOURCE_SHA, _SOURCE_DATE] * 2)[:count]))
 
     def test_unparseable_url_rejected(self) -> None:
-        """A first value that is not a raw GitHub URL raises."""
-        with pytest.raises(ValueError, match="raw.githubusercontent.com"):
+        """A first value that is not a GitHub blob URL raises."""
+        with pytest.raises(ValueError, match="github.com"):
             code_source_of(_code_source_assignment(url="https://example.com/f.py"))
 
     def test_abbreviated_sha_rejected(self) -> None:

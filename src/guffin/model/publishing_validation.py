@@ -305,7 +305,7 @@ def all_code_source_values_legal(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring legal ``code-source`` values.
 
     Every :attr:`PublishingSemantics.CODE_SOURCE` assignment in *tree* must carry exactly three
-    ordered values — a parseable ``raw.githubusercontent.com`` URL, a full 40-hex commit SHA,
+    ordered values — a parseable ``github.com`` blob URL, a full 40-hex commit SHA,
     and a fetch date at full ``YYYY-MM-DD`` precision (see
     :class:`~guffin.model.code_source.CodeSource`).
 

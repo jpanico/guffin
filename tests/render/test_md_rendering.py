@@ -333,7 +333,7 @@ def _sourced_bundle() -> RenderBundle:
         code="print(1)",
         language="python",
         code_source=CodeSource(
-            url="https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60",
+            url="https://github.com/psf/requests/blob/main/src/requests/api.py#L14-L60",
             commit_sha="0d9ca427f7d7dbe92694284d4a6249178255036e",
             fetched_date="2026-07-17",
         ),

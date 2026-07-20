@@ -12,7 +12,7 @@ from guffin.model.vertex import CodeBlockVertex
 
 _TIP_SHA: str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 _SNAPSHOT_SHA: str = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-_URL: str = "https://raw.githubusercontent.com/psf/requests/main/setup.py#L2-L3"
+_URL: str = "https://github.com/psf/requests/blob/main/setup.py#L2-L3"
 
 
 def _sourced_vertex(code: str, sha: str = _SNAPSHOT_SHA) -> CodeBlockVertex:

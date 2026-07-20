@@ -25,7 +25,7 @@ Public symbols:
   ``code-language`` assignment's value as a canonical
   :data:`~guffin.common.programming_language.CodeLanguageId` (any vocabulary name or alias,
   case-insensitively); :func:`code_source_of` — read a ``code-source`` assignment's three
-  ordered values (raw GitHub URL, commit SHA, fetch date) as a
+  ordered values (GitHub blob URL, commit SHA, fetch date) as a
   :class:`~guffin.model.code_source.CodeSource`; :func:`publish_of` — read a ``publish``
   assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
   parsed :class:`~guffin.common.w3cdtf_date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
@@ -195,7 +195,7 @@ class PublishingSemantics(enum.Enum):
             canonical vocabulary (:mod:`~guffin.common.programming_language`) — overriding the
             closed language set the Roam UI offers (which lacks e.g. Fortran).
         CODE_SOURCE: Tags a fenced code listing with the provenance of its content — three
-            ordered values: the raw GitHub URL it was fetched from, the full commit SHA
+            ordered values: the GitHub blob URL naming its source, the full commit SHA
             actually fetched, and the fetch date (see
             :class:`~guffin.model.code_source.CodeSource`).
         PUBLISH: Tags a block with its publication state; ``false`` omits the block and every
@@ -317,7 +317,7 @@ def code_source_of(assignment: AttributeAssignment) -> CodeSource:
     """Return the :class:`~guffin.model.code_source.CodeSource` that a ``code-source`` assignment describes.
 
     Verifies *assignment* is for the :attr:`PublishingSemantics.CODE_SOURCE` attribute, then reads
-    its three ordered values — the raw GitHub URL the content was fetched from, the full 40-hex
+    its three ordered values — the GitHub blob URL naming the source, the full 40-hex
     commit SHA actually fetched, and the full-precision fetch date — into a
     :class:`~guffin.model.code_source.CodeSource`.
 
@@ -330,7 +330,7 @@ def code_source_of(assignment: AttributeAssignment) -> CodeSource:
 
     Raises:
         ValueError: If *assignment* is not for the ``code-source`` attribute, does not carry
-            exactly three values, or any value is illegal — an unparseable raw GitHub URL, a
+            exactly three values, or any value is illegal — an unparseable GitHub blob URL, a
             SHA that is not full 40-hex, or a date not at full ``YYYY-MM-DD`` precision.
     """
     verify_assignment_for(assignment, PublishingSemantics.CODE_SOURCE.value)

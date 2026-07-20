@@ -780,7 +780,7 @@ class TestToCodeBlockVertex:
         vertex: CodeBlockVertex = to_code_block_vertex(fixture_node, tree)
         assert vertex.code_source is not None
         assert vertex.code_source.url == (
-            "https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py"
+            "https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py"
         )
         assert len(vertex.code_source.commit_sha) == 40
         assert vertex.code_source.file_ref().ref_name == "main"
@@ -854,7 +854,7 @@ class TestCodeLanguageOverride:
 class TestCodeSourceFold:
     """A ``code-source::`` guffin-meta tag populates the code block's provenance at transcription."""
 
-    _URL = "https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60"
+    _URL = "https://github.com/psf/requests/blob/main/src/requests/api.py#L14-L60"
     _SHA = "0d9ca427f7d7dbe92694284d4a6249178255036e"
     _DATE = "2026-07-17"
 

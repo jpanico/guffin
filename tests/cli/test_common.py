@@ -296,7 +296,7 @@ def _drift_finding() -> CodeSourceFinding:
     """A synthetic drift finding for gate tests."""
     return CodeSourceFinding(
         uid="code00001",
-        url="https://raw.githubusercontent.com/psf/requests/main/setup.py",
+        url="https://github.com/psf/requests/blob/main/setup.py",
         diagnosis=CodeSourceDiagnosis.DRIFT,
         detail="the source has moved on",
     )

@@ -13,7 +13,7 @@ from guffin.model.vertex_tree import VertexTree
 
 _TIP_SHA: str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 _SNAPSHOT_SHA: str = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-_URL: str = "https://raw.githubusercontent.com/psf/requests/main/setup.py#L2-L3"
+_URL: str = "https://github.com/psf/requests/blob/main/setup.py#L2-L3"
 _FILE_TEXT: str = "line one\nline two\nline three\nline four\n"
 
 

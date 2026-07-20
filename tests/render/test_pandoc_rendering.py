@@ -543,7 +543,7 @@ class TestVertexTreeToPandocCodeSource:
 
     _SHA: Final[str] = "0d9ca427f7d7dbe92694284d4a6249178255036e"
     _SOURCE: Final[CodeSource] = CodeSource(
-        url="https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60",
+        url="https://github.com/psf/requests/blob/main/src/requests/api.py#L14-L60",
         commit_sha=_SHA,
         fetched_date="2026-07-17",
     )

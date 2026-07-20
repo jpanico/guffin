@@ -96,7 +96,7 @@ def _code_block_with(assignments: list[AttributeAssignment] | None) -> CodeBlock
     return CodeBlockVertex(uid="codeuid01", code="print(1)", language="python", attribute_assignments=assignments)
 
 
-_SOURCE_URL = "https://raw.githubusercontent.com/psf/requests/main/src/requests/api.py#L14-L60"
+_SOURCE_URL = "https://github.com/psf/requests/blob/main/src/requests/api.py#L14-L60"
 _SOURCE_SHA = "0d9ca427f7d7dbe92694284d4a6249178255036e"
 _SOURCE_DATE = "2026-07-17"
 

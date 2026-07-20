@@ -2,7 +2,7 @@
 
 Public symbols:
 
-- :class:`CodeSource` — where a code block's content was fetched from: the raw GitHub URL,
+- :class:`CodeSource` — where a code block's content was fetched from: the GitHub blob URL,
   the commit SHA the content was actually fetched at, and the fetch date.
 
 A pure value model near the bottom of the ``model/`` conceptual stack: depends only on
@@ -13,7 +13,7 @@ import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from guffin.common.github_file_ref import CommitSha, GitHubFileRef, RawGitHubUrl, parse_raw_github_url
+from guffin.common.github_file_ref import BlobGitHubUrl, CommitSha, GitHubFileRef, parse_blob_github_url
 
 
 class CodeSource(BaseModel):
@@ -24,10 +24,12 @@ class CodeSource(BaseModel):
     when the capture happened (``fetched_date``).
 
     Attributes:
-        url: The ``raw.githubusercontent.com`` URL the content was fetched from
-            (:data:`~guffin.common.github_file_ref.RawGitHubUrl` — verbatim text, always parseable
-            via :func:`~guffin.common.github_file_ref.parse_raw_github_url`), optionally narrowed
-            by a ``#L<n>[-L<m>]`` line-range fragment.
+        url: The ``github.com`` blob URL naming the source file at its ref
+            (:data:`~guffin.common.github_file_ref.BlobGitHubUrl` — verbatim text, always
+            parseable via :func:`~guffin.common.github_file_ref.parse_blob_github_url`),
+            optionally narrowed by a ``#L<n>[-L<m>]`` line-range fragment.  The blob form is
+            the human-usable click target; the raw content URL a fetch needs is derived from
+            the parsed reference, never stored.
         commit_sha: The full 40-hex commit SHA the content was actually fetched at — immutable
             even when the URL's ref is a branch that has since moved (serialized as
             ``commit-sha``).
@@ -37,7 +39,7 @@ class CodeSource(BaseModel):
 
     model_config = ConfigDict(frozen=True, validate_by_name=True)
 
-    url: RawGitHubUrl
+    url: BlobGitHubUrl
     commit_sha: CommitSha = Field(..., serialization_alias="commit-sha")
     fetched_date: datetime.date = Field(..., serialization_alias="fetched-date")
 
@@ -48,4 +50,4 @@ class CodeSource(BaseModel):
             The :class:`~guffin.common.github_file_ref.GitHubFileRef` parsed from ``url``; always
             succeeds, since ``url`` is validated at construction.
         """
-        return parse_raw_github_url(self.url)
+        return parse_blob_github_url(self.url)

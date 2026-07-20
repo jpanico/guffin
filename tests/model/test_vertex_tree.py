@@ -136,7 +136,7 @@ class TestDropCodeSources:
     """Tests for drop_code_sources()."""
 
     _SOURCE: Final[CodeSource] = CodeSource(
-        url="https://raw.githubusercontent.com/psf/requests/main/setup.py#L1-L5",
+        url="https://github.com/psf/requests/blob/main/setup.py#L1-L5",
         commit_sha="0d9ca427f7d7dbe92694284d4a6249178255036e",
         fetched_date="2026-07-17",
     )

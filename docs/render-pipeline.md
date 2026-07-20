@@ -503,7 +503,7 @@ layer translates. (Where a publishing label and a format term happen to coincide
   `data-guffin-matter`/`epub:type` scaffolding rides along harmlessly meanwhile — GFM drops it,
   Typst ignores it.)
 - **Code-source attribution — done, all formats.** A `code-source::` tag (three ordered values:
-  raw GitHub URL, snapshot commit SHA, fetch date) lands on `CodeBlockVertex.code_source` at
+  GitHub blob URL, snapshot commit SHA, fetch date) lands on `CodeBlockVertex.code_source` at
   transcription. The shared Doc build follows a sourced code block with a `code-source`-classed
   `Div` — one emphasized line linking the `github.com` blob page **pinned at the recorded SHA**
   (immutable even after the branch moves) plus the abbreviated SHA and fetch date — and each

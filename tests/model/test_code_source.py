@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from guffin.common.line_range import LineRange
 from guffin.model.code_source import CodeSource
 
-_URL: str = "https://raw.githubusercontent.com/psf/requests/refs/heads/main/src/requests/api.py#L14-L60"
+_URL: str = "https://github.com/psf/requests/blob/refs/heads/main/src/requests/api.py#L14-L60"
 _SHA: str = "0d9ca427f7d7dbe92694284d4a6249178255036e"
 _DATE: str = "2026-07-17"
 
@@ -24,8 +24,8 @@ class TestCodeSource:
         assert source.fetched_date == datetime.date(2026, 7, 17)
 
     def test_rejects_unparseable_url(self) -> None:
-        """A URL that is not a raw GitHub URL is rejected at construction."""
-        with pytest.raises(ValidationError, match="raw.githubusercontent.com"):
+        """A URL that is not a GitHub blob URL is rejected at construction."""
+        with pytest.raises(ValidationError, match="github.com"):
             CodeSource(url="https://example.com/file.py", commit_sha=_SHA, fetched_date=_DATE)
 
     def test_rejects_abbreviated_sha(self) -> None:

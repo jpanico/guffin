@@ -159,7 +159,7 @@
       - C8y7bMPpW
     values:
     - kind: literal
-      value: https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py
+      value: https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py
     - kind: literal
       value: 3b081e9dd1bb94983f66b39b1d3f8250d7df5031
     - kind: literal
@@ -202,7 +202,7 @@
     \    return ValidationResult(errors=errors)\n"
   language: python
   code_source:
-    url: https://raw.githubusercontent.com/jpanico/guffin/refs/heads/main/src/guffin/common/validation.py
+    url: https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py
     commit_sha: 3b081e9dd1bb94983f66b39b1d3f8250d7df5031
     fetched_date: '2026-07-19'
 - vertex_type: guffin/quote-block
