@@ -36,6 +36,9 @@ Public symbols:
   unresolvable assignments (``None``, warning);
   :func:`illustrators_of_vertex` — a vertex's declared illustrator names, in source order
   (empty tuple when none);
+  :func:`effective_title` — a :class:`~guffin.model.vertex_tree.VertexTree`'s document title,
+  derived from its root by a fixed precedence (a root ``title`` assignment, else a page root's
+  ``title``, else a basis from the root's own content);
   :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
@@ -81,16 +84,28 @@ from guffin.model.attribute import (
     attribute_value_text,
 )
 from guffin.model.attribute_anchor import AttributeAnchor
-from guffin.model.attribute_assignment import AttributeAssignment, verified_sole_value_text, verify_assignment_for
+from guffin.model.attribute_assignment import (
+    AttributeAssignment,
+    sole_value_text,
+    verified_sole_value_text,
+    verify_assignment_for,
+)
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.code_source import CodeSource
 from guffin.model.element_number import stripped_element_number
 from guffin.model.primitives import UID_PATTERN, Uid
 from guffin.model.vertex import (
+    BlockEmbedVertex,
+    CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    PageEmbedVertex,
+    PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    TableVertex,
+    TextVertex,
     Vertex,
     find_attribute_assignment,
     is_embed_vertex,
@@ -685,6 +700,64 @@ def illustrators_of_vertex(vertex: Vertex) -> tuple[str, ...]:
     if assignment is None:
         return ()
     return tuple(attribute_value_text(value) for value in assignment.values)
+
+
+def _vertex_effective_title(vertex: Vertex, tree: VertexTree) -> str:
+    """Return the effective title contributed by *vertex* (see :func:`effective_title`).
+
+    A :attr:`PublishingSemantics.TITLE` assignment on *vertex* takes precedence; otherwise the
+    title is drawn from the vertex's type.  For an :data:`~guffin.model.vertex.EmbedVertex` (block
+    or page embed), recurses into the transcluded target resolved through *tree*'s ``uid_map``.
+    """
+    title_assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.TITLE)
+    if title_assignment is not None:
+        return sole_value_text(title_assignment)
+    match vertex:
+        case PageVertex():
+            return vertex.title
+        case HeadingVertex() | TextVertex():
+            return vertex.text
+        case QuoteBlockVertex():
+            return vertex.quote
+        case ImageVertex():
+            return vertex.alt_text or vertex.file_name or str(vertex.source)
+        case PdfVertex():
+            return vertex.file_name or str(vertex.source)
+        case CalloutVertex():
+            return vertex.title or vertex.body
+        case CodeBlockVertex():
+            return vertex.code
+        case TableVertex():
+            return "_".join(vertex.table.rows[0])
+        case BlockEmbedVertex() | PageEmbedVertex():
+            return _vertex_effective_title(tree.uid_map[vertex.vertex_link.uid], tree)
+
+
+@validate_call
+def effective_title(tree: VertexTree) -> str:
+    """Return the effective document title of *tree*, derived from its root vertex.
+
+    A :class:`~guffin.model.vertex_tree.VertexTree` always has a title, whatever its root's type.
+    It is resolved by a fixed precedence:
+
+    1. a :attr:`PublishingSemantics.TITLE` assignment on the root — its sole value's text (an
+       author's explicit title, overriding everything below);
+    2. otherwise, if the root is a :class:`~guffin.model.vertex.PageVertex`, its ``title``;
+    3. otherwise, a basis drawn from the root's own content by type — block text, image
+       alt-text/filename/source, callout title-or-body, code, or the first table row's cells
+       joined by ``_`` — and, for an :data:`~guffin.model.vertex.EmbedVertex`, the effective
+       title of the transcluded target.
+
+    The returned text is raw: links are not unwrapped and length is not clipped, so a consumer
+    that needs a filename or rendered inlines applies its own transform.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` whose title to derive.
+
+    Returns:
+        The effective title text.
+    """
+    return _vertex_effective_title(root_vertex(tree), tree)
 
 
 @validate_call

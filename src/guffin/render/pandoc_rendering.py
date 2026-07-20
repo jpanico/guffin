@@ -21,10 +21,13 @@ while correctly handling all Pandoc Markdown inline syntax.
 
 Rendering rules:
 
-- :class:`~guffin.vertex.PageVertex` — title always stored as the Pandoc document metadata
-  ``title``; when *title_in_header* is ``True`` it is additionally rendered as a leading H1
-  :class:`~panflute.Header` in the document body, with every content heading demoted one level
-  (clamped at H6) so the title contains them.  Children rendered at depth 1 in both cases.
+- **Document title** — the tree's
+  :func:`~guffin.model.publishing_semantics.effective_title` (a root ``title`` attribute, else a
+  page root's Roam title, else a basis drawn from the root's own content) is always stored as the
+  Pandoc document metadata ``title``; when *title_in_header* is ``True`` it is additionally
+  rendered as a leading H1 :class:`~panflute.Header` in the document body, with every content
+  heading demoted one level (clamped at H6) so the title contains them.  Children rendered at
+  depth 1 in both cases.
 - :class:`~guffin.vertex.HeadingVertex` — rendered as a
   :class:`~panflute.Header` at the vertex's recorded heading level.
 - :class:`~guffin.vertex.TextVertex` — laid out per the parent's
@@ -104,6 +107,7 @@ from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     PdfRender,
     PublishingSemantics,
+    effective_title,
     element_type_of_vertex,
     pdf_render_of_vertex,
     resolved_matter,
@@ -242,7 +246,9 @@ def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
 
 
 _METADATA_KEY_BY_NAME: Final[dict[str, str]] = {
-    PublishingSemantics.TITLE.value.name: "title",
+    # `title` is deliberately absent: the document title is the tree's effective title
+    # (:func:`~guffin.model.publishing_semantics.effective_title`), the single source resolved in
+    # :func:`vertex_tree_to_pandoc`, so a root ``title`` attribute is read there, not here.
     PublishingSemantics.SUBTITLE.value.name: "subtitle",
     PublishingSemantics.AUTHORS.value.name: "author",
     # Illustrators are supportive contributors, not co-creators: they map to Pandoc's structured
@@ -1445,15 +1451,17 @@ def vertex_tree_to_pandoc(
     :func:`_demote_content_headings`) so the title contains them rather than sitting
     beside its own level-1 sections.
 
+    The document title is the tree's
+    :func:`~guffin.model.publishing_semantics.effective_title` — a root ``title`` attribute, else
+    a page root's Roam title, else a basis drawn from the root's own content — so a subtree
+    export whose root is a block is titled too, not only a page root.
+
     The export root is a **transparent container** whatever its type: it contributes the
     document's identity but renders no body of its own, and its children form the document's
-    top-level run.  Its metadata-domain attributes (see :func:`_document_metadata`) populate the
-    document metadata — a subtree export's root hosts them exactly as a page root does: a
-    ``title`` attribute overrides a page root's Roam title (in both the header and metadata
-    forms) and is the *only* source of a title for a non-page root (whose own text is the export
-    target's name, not content); ``subtitle`` / ``author`` / ``date`` / ``publisher`` /
-    ``rights`` / ``identifier`` are added to the metadata.  Metadata-domain attributes never
-    appear as body pills.
+    top-level run.  Its remaining metadata-domain attributes (see :func:`_document_metadata`)
+    populate the document metadata — a subtree export's root hosts them exactly as a page root
+    does: ``subtitle`` / ``author`` / ``date`` / ``publisher`` / ``rights`` / ``identifier`` are
+    added to the metadata.  Metadata-domain attributes never appear as body pills.
 
     Args:
         vertex_tree: The normalized vertex tree to convert.
@@ -1498,23 +1506,26 @@ def vertex_tree_to_pandoc(
     # root's type — bibliographic metadata is root-anchored, and a subtree export's root hosts it
     # exactly as a page root does.
     root_metadata: Final[dict[str, pf.MetaValue]] = _document_metadata(root.attribute_assignments)
-    # A metadata-domain `title` attribute overrides a page root's Roam title; a subtree root's
-    # own text is body content, so only an explicit `title` attribute titles the document.
-    title_meta: pf.MetaValue | None = root_metadata.get("title")
-    if title_meta is None and isinstance(root, PageVertex):
-        page_title_inlines: Final[list[pf.Inline]] = strip_links(list(inline_map.get(root.title, [pf.Str(root.title)])))
-        title_meta = pf.MetaInlines(*page_title_inlines)
-    if title_meta is not None:
-        # The title always lands in the document metadata; title_in_header *additionally* renders
-        # it as a leading H1 body block (the visible title for formats whose writer drops or
-        # only optionally emits metadata, e.g. GFM).
-        if title_in_header:
-            blocks.append(pf.Header(*list(title_meta.content), level=1))
-        metadata["title"] = title_meta
-    # Every other recognised metadata key copies straight over; only `title` needs the special
-    # handling above (the page-title fallback and the optional H1 body rendering).
+    # The document title is the tree's effective title (a root `title` attribute, else a page
+    # root's Roam title, else a basis drawn from the root's own content) — so a block-rooted
+    # subtree export is titled too, not only a page root.  Its text is parsed to inlines (reusing
+    # the pre-parsed body map when present, else parsed on the fly for a `title` attribute or an
+    # asset/source basis absent from the map) with any link unwrapped, as a title is never itself
+    # a hyperlink.
+    title_text: Final[str] = effective_title(vertex_tree)
+    parsed_title: Final[list[pf.Inline]] = list(
+        inline_map.get(title_text) or parse_inline_md([title_text]).get(title_text, [pf.Str(title_text)])
+    )
+    title_inlines: Final[list[pf.Inline]] = strip_links(parsed_title)
+    # The title always lands in the document metadata; title_in_header *additionally* renders it
+    # as a leading H1 body block (the visible title for formats whose writer drops or only
+    # optionally emits metadata, e.g. GFM).
+    if title_in_header:
+        blocks.append(pf.Header(*title_inlines, level=1))
+    metadata["title"] = pf.MetaInlines(*title_inlines)
+    # Every other recognised metadata key copies straight over from the root's attributes.
     for meta_key in _METADATA_KEY_BY_NAME.values():
-        if meta_key != "title" and meta_key in root_metadata:
+        if meta_key in root_metadata:
             metadata[meta_key] = root_metadata[meta_key]
 
     # The export root is a transparent container whatever its type: it contributes the document's

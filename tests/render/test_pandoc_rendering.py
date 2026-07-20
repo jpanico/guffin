@@ -123,11 +123,11 @@ class TestVertexTreeToPandocPageVertex:
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         assert list(doc.content) == []
 
-    def test_non_page_root_produces_no_metadata_title(self) -> None:
-        """When the root is not a PageVertex, no metadata title is set."""
+    def test_non_page_root_titles_from_its_content(self) -> None:
+        """When the root is not a PageVertex, its effective title comes from the root's own content."""
         tree = VertexTree(tree_vertices=[HeadingVertex(uid="head00001", text="Intro", heading_level=1)])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        assert "title" not in doc.metadata
+        assert _collect_text(doc.metadata["title"]) == "Intro"
 
     def test_all_metadata_attributes_reach_doc_metadata(self) -> None:
         """Every recognised guffin-domain metadata attribute lands under its Pandoc key."""
@@ -268,10 +268,10 @@ class TestVertexTreeToPandocSubtreeRootMetadata:
         assert first.level == 1
         assert _collect_text(first) == "A Real Title"
 
-    def test_untagged_subtree_root_has_no_title(self) -> None:
-        """Without a title attribute, a non-page root contributes no document title."""
+    def test_untagged_subtree_root_titles_from_its_content(self) -> None:
+        """Without a title attribute, a non-page root's effective title comes from its own content."""
         doc, _ = vertex_tree_to_pandoc(self._tree(None), {}, {})
-        assert "title" not in doc.metadata
+        assert _collect_text(doc.metadata["title"]) == "A Section"
 
     def test_non_page_root_is_a_transparent_container(self) -> None:
         """The root renders no block of its own; only its children form the document body."""

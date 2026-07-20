@@ -278,14 +278,16 @@ class TestHeadingDemotion:
         result = self._render_bundle(tmp_path, _book_bundle())
         assert result.startswith("# Dorian Gray\n")
 
-    def test_titleless_document_keeps_heading_levels(self, tmp_path: Path) -> None:
-        """A subtree export with no document title leaves its level-1 headings at H1."""
+    def test_heading_root_titles_the_document_and_demotes_content(self, tmp_path: Path) -> None:
+        """A heading-rooted subtree titles the document from its root, demoting content headings."""
         root = HeadingVertex(uid="root00001", text="Notes", heading_level=1, children=["chap00001"])
         chapter = HeadingVertex(uid="chap00001", text="Chapter I", heading_level=1, children=["text00001"])
         text = TextVertex(uid="text00001", text="Some prose.")
         bundle = RenderBundle(content=VertexTree(tree_vertices=[root, chapter, text]), view={})
         result = self._render_bundle(tmp_path, bundle)
-        assert result.startswith("# Chapter I\n")
+        # The root heading "Notes" becomes the title H1; the content "Chapter I" is demoted to H2.
+        assert result.startswith("# Notes\n")
+        assert "\n## Chapter I\n" in result
 
 
 def _numbered_bundle() -> RenderBundle:

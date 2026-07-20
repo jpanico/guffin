@@ -33,6 +33,7 @@ from guffin.model.publishing_semantics import (
     cover_image_vertex,
     date_of,
     drop_unpublished,
+    effective_title,
     element_type_of,
     element_type_of_vertex,
     find_publishing_attribute,
@@ -996,3 +997,48 @@ class TestStripElementNumbers:
         original = tree.uid_map["head0000a"]
         assert isinstance(original, HeadingVertex)
         assert original.text == "[1.1] Book I"
+
+
+class TestEffectiveTitle:
+    """effective_title() derives a tree's document title from its root by a fixed precedence."""
+
+    def test_title_attribute_takes_precedence(self) -> None:
+        """A root TITLE assignment wins over every content-derived basis."""
+        page = PageVertex(
+            uid="pageroot1",
+            title="Roam Page Title",
+            attribute_assignments=[_assignment(PublishingSemantics.TITLE.value.name, "Explicit Title")],
+        )
+        assert effective_title(VertexTree(tree_vertices=[page])) == "Explicit Title"
+
+    def test_page_root_uses_its_title(self) -> None:
+        """Without a TITLE assignment, a page root's title is the effective title."""
+        page = PageVertex(uid="pageroot1", title="Roam Page Title")
+        assert effective_title(VertexTree(tree_vertices=[page])) == "Roam Page Title"
+
+    def test_heading_root_uses_its_text(self) -> None:
+        """A block (heading) root with no TITLE assignment falls back to its own content."""
+        heading = HeadingVertex(uid="headroot1", text="A Section", heading_level=1)
+        assert effective_title(VertexTree(tree_vertices=[heading])) == "A Section"
+
+    def test_text_root_uses_its_text(self) -> None:
+        """A plain-text root contributes its text as the title."""
+        text = TextVertex(uid="textroot1", text="Some plain text")
+        assert effective_title(VertexTree(tree_vertices=[text])) == "Some plain text"
+
+    def test_embed_root_recurses_into_its_target(self) -> None:
+        """An embed root resolves to the effective title of the transcluded target."""
+        embed = BlockEmbedVertex(uid="embedroot", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="targethd1"))
+        target = HeadingVertex(uid="targethd1", text="Embedded Target", heading_level=1)
+        tree = VertexTree(tree_vertices=[embed], ref_vertices=[target])
+        assert effective_title(tree) == "Embedded Target"
+
+    def test_title_attribute_on_heading_root_wins(self) -> None:
+        """A TITLE assignment on a non-page root overrides its content basis."""
+        heading = HeadingVertex(
+            uid="headroot1",
+            text="A Section",
+            heading_level=1,
+            attribute_assignments=[_assignment(PublishingSemantics.TITLE.value.name, "Overridden Title")],
+        )
+        assert effective_title(VertexTree(tree_vertices=[heading])) == "Overridden Title"

@@ -26,30 +26,14 @@ from guffin.cli import code_source_verification
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.common.validation import ValidationResult
-from guffin.model.attribute_assignment import AttributeAssignment, sole_value_text
 from guffin.model.code_source_diagnosis import CodeSourceFinding
 from guffin.model.publishing_semantics import (
-    PublishingSemantics,
-    find_publishing_attribute,
+    effective_title,
     has_parts,
     revision_of_vertex,
 )
 from guffin.model.publishing_validation import validate_semantics
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import (
-    BlockEmbedVertex,
-    CalloutVertex,
-    CodeBlockVertex,
-    HeadingVertex,
-    ImageVertex,
-    PageEmbedVertex,
-    PageVertex,
-    PdfVertex,
-    QuoteBlockVertex,
-    TableVertex,
-    TextVertex,
-    Vertex,
-)
 from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.render.project import BookProfile, ProjectProfile, ProjectType, profile_for
 from guffin.roam.local_api import ApiEndpoint
@@ -206,60 +190,29 @@ def fetch_roam_trees(
     return result, render_bundle
 
 
-def _stem_basis(vertex: Vertex, vertex_tree: VertexTree) -> str:
-    """Return the raw (un-clipped) filename-stem basis for *vertex*.
-
-    A :data:`~guffin.model.publishing_semantics.PublishingSemantics.TITLE` attribute on *vertex* takes precedence:
-    when present, its sole value's text is the basis.  Otherwise the basis comes from the vertex's
-    type — page title, block text, etc.  For an :data:`~guffin.model.vertex.EmbedVertex` (block or
-    page embed), recurses into the embedded vertex resolved through *vertex_tree*'s ``uid_map``.
-    """
-    title_assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.TITLE)
-    if title_assignment is not None:
-        return sole_value_text(title_assignment)
-    match vertex:
-        case PageVertex():
-            return vertex.title
-        case HeadingVertex() | TextVertex():
-            return vertex.text
-        case QuoteBlockVertex():
-            return vertex.quote
-        case ImageVertex():
-            return vertex.alt_text or vertex.file_name or str(vertex.source)
-        case PdfVertex():
-            return vertex.file_name or str(vertex.source)
-        case CalloutVertex():
-            return vertex.title or vertex.body
-        case CodeBlockVertex():
-            return vertex.code
-        case TableVertex():
-            return "_".join(vertex.table.rows[0])
-        case BlockEmbedVertex() | PageEmbedVertex():
-            return _stem_basis(vertex_tree.uid_map[vertex.vertex_link.uid], vertex_tree)
-
-
 @validate_call
 def deduce_out_file_stem(vertex_tree: VertexTree, project_type: ProjectType) -> str:
-    """Derive a filename stem for the export output from *vertex_tree*'s root vertex.
+    """Derive a filename stem for the export output from *vertex_tree*'s effective title.
 
-    The stem basis is taken from the root vertex according to its type — page title,
-    block text, image alt-text/filename/source, callout title-or-body, code, the
-    first table row's cells joined by ``_``, or (for a block embed) the embedded
-    vertex's basis.  Markdown links in the basis are unwrapped to their text (so a
-    rendered page reference contributes only its text, not the URL), then the basis is
-    shortened to 40 characters and normalised to a POSIX-safe filename.  Finally,
-    ``.<project_type>`` is appended so that exports of the same target under different
-    project types land in distinct files (e.g. ``Foo.book``, ``Foo.manuscript``).
+    The stem basis is *vertex_tree*'s
+    :func:`~guffin.model.publishing_semantics.effective_title` — a root ``title`` assignment,
+    else a page root's title, else a basis from the root's own content (block text, image
+    alt-text/filename/source, callout title-or-body, code, the first table row's cells joined
+    by ``_``, or, for a block embed, the transcluded target's title).  Markdown links in the
+    basis are unwrapped to their text (so a rendered page reference contributes only its text,
+    not the URL), then the basis is shortened to 40 characters and normalised to a POSIX-safe
+    filename.  Finally, ``.<project_type>`` is appended so that exports of the same target under
+    different project types land in distinct files (e.g. ``Foo.book``, ``Foo.manuscript``).
 
     Args:
-        vertex_tree: The transcribed tree whose root supplies the stem basis.
+        vertex_tree: The transcribed tree whose effective title supplies the stem basis.
         project_type: The project type whose value is appended as a ``.<type>`` segment.
 
     Returns:
         A shell-safe filename stem of the form ``<basis>.<project_type>`` (no format
         extension or directory component); the renderer appends the format extension.
     """
-    basis: Final[str] = _stem_basis(root_vertex(vertex_tree), vertex_tree)
+    basis: Final[str] = effective_title(vertex_tree)
     unwrapped_basis: Final[str] = unwrap_links(basis)
     # The clip marker deliberately ends in "_" (retained by shell_safe_filename, which strips
     # only leading underscores) so that an appended extension reads "..._.pdf" — a distinctive,
