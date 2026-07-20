@@ -62,6 +62,8 @@ flowchart TD
     TREE    -->|"to_render_bundle()"| BUNDLE
     BUNDLE  -->|"render(...)"| RENDER
     RENDER  --> OUT
+
+    click RENDER "render-pipeline.md" "Render pipeline (details)"
 ```
 
 The `cli/` layer wires these together end to end: `fetch_roam_trees()` (in `cli/common.py`) runs the
