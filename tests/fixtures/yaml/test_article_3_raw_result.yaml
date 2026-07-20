@@ -309,7 +309,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 10
+    order: 11
     page:
       id: 11137
     refs:
@@ -779,7 +779,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 8
+    order: 9
     page:
       id: 11137
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -915,7 +915,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 7
+    order: 8
     page:
       id: 11137
 - - string: Header 2
@@ -1140,7 +1140,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 11
+    order: 12
     page:
       id: 11137
     refs:
@@ -1424,7 +1424,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 12
+    order: 13
     page:
       id: 11137
     refs:
@@ -1487,7 +1487,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 9
+    order: 10
     page:
       id: 11137
     refs:

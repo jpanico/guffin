@@ -2899,7 +2899,7 @@ refs_by_id:
       this is the __2nd line__
 
       - this is the **3rd line**'
-    order: 10
+    order: 11
     heading: null
     children: null
     refs:
@@ -2993,7 +2993,7 @@ refs_by_id:
       this is the __2nd line__
 
       - this is the **3rd line**'
-    order: 8
+    order: 9
     heading: null
     children: null
     refs: null
@@ -3010,7 +3010,7 @@ refs_by_id:
     uid: Yz0pqYfBh
     id: 11186
     string: '> This is a __Markdown standard__ single line **Block Quote**'
-    order: 7
+    order: 8
     heading: null
     children: null
     refs: null
@@ -3151,7 +3151,7 @@ refs_by_id:
     uid: ooVLwinzV
     id: 13455
     string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
-    order: 11
+    order: 12
     heading: null
     children: null
     refs:
@@ -3241,7 +3241,7 @@ refs_by_id:
 
 
       '
-    order: 12
+    order: 13
     heading: null
     children: null
     refs:
@@ -3291,7 +3291,7 @@ refs_by_id:
     uid: gq_29_H-7
     id: 11188
     string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
-    order: 9
+    order: 10
     heading: null
     children: null
     refs:
