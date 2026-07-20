@@ -497,6 +497,12 @@ class TestToPandocMd:
         # [bright]{.mark} inside the link display text is never treated as a page-link delimiter.
         assert to_pandoc_md("[^^bright^^]([[Page]])", _empty_tree()) == "[[bright]{.mark}](Page)"
 
+    def test_non_breaking_spaces_normalized(self) -> None:
+        """Non-ASCII space separators (e.g. no-break spaces) are folded to ordinary spaces."""
+        # A paste artifact: every inter-word gap is a U+00A0 no-break space.
+        source = " ".join(["A", "Rube", "Goldberg", "machine"])
+        assert to_pandoc_md(source, _empty_tree()) == "A Rube Goldberg machine"
+
     def test_code_block_normalized(self) -> None:
         """Test that a Roam fenced code block has its closing fence isolated."""
         assert to_pandoc_md("```python\nx = 1```", _empty_tree()) == "```python\nx = 1\n```"

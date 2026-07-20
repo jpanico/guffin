@@ -50,6 +50,7 @@ import regex
 from pydantic import validate_call
 
 from guffin.common.markdown import CODE_BLOCK_RE
+from guffin.common.whitespace import normalize_spaces
 from guffin.model.vertex_link import VertexLinkKind, vertex_link_url
 from guffin.roam.markdown import (
     BG_COLOR_LINE_RE,
@@ -79,6 +80,11 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
     double-substitution artefacts.  Each individual conversion is also
     available as a standalone function for testing or selective use.
 
+    The pipeline opens by folding non-ASCII Unicode space separators (the no-break
+    space and its kin — common paste artifacts) to the ordinary ASCII space via
+    :func:`~guffin.common.whitespace.normalize_spaces`, so both the conversions below
+    and the downstream renderers see normal, breakable spacing.
+
     The following Roam constructs are intentionally left verbatim for future
     expansion: block embeds ``{{embed: ((uid))}}`` and other ``{{…}}`` components.
 
@@ -94,6 +100,9 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
         The Pandoc Markdown string.
     """
     result: str = roam_string
+    # Fold paste-artifact space separators (no-break space and kin) to the ASCII space first, so
+    # every later conversion — and the downstream renderers — see ordinary, breakable spacing.
+    result = normalize_spaces(result)
     result = convert_color_bold(result)
     result = convert_color_highlight(result)
     result = convert_color_underline(result)

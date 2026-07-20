@@ -191,7 +191,7 @@
   heading_level: 2
 - vertex_type: guffin/text
   uid: 5baESCL4s
-  text: '**t’s an approximately** 600-year-old mystery that continues to stump scholars,
+  text: '**t’s an approximately** 600-year-old mystery that continues to stump scholars,
     cryptographers, physicists, and computer scientists: a roughly 240-page medieval
     codex written in an indecipherable language, brimming with bizarre drawings of
     esoteric plants, naked women, and astrological symbols. Known as the Voynich manuscript,
@@ -200,9 +200,9 @@
   uid: dR1TZ3P8J
   text: And yet, over the years a steady stream of researchers have stepped up with
     new claims to have cracked its secrets. Just last summer, an anthropologist at
-    Foothill College in California declared that the text was a [“vulgar Latin dialect” ](https://www.academia.edu/39776000/A_Proposal_for_Reading_the_Voynich_Manuscript)written
+    Foothill College in California declared that the text was a [“vulgar Latin dialect” ](https://www.academia.edu/39776000/A_Proposal_for_Reading_the_Voynich_Manuscript)written
     in an obscure Roman shorthand. And earlier in the year, Gerard Cheshire, an academic
-    at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
+    at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
     the journal Romance Studies arguing the script is a mix of languages he called
     “proto-Romance.”
 - vertex_type: guffin/heading
