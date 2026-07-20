@@ -35,7 +35,6 @@ _GFM_QUOTE_FILTER: Final[str] = "gfm_quote.lua"
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
-import regex
 from pydantic import validate_call
 
 from guffin.common.revision import Revision
@@ -43,6 +42,7 @@ from guffin.model.publishing_semantics import drop_unpublished, promote_non_body
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
+from guffin.render.md_post_processing import strip_list_separator_comments
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     make_resolver,
@@ -56,19 +56,6 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
-
-_LIST_SEPARATOR_COMMENT_RE: Final[regex.Pattern[str]] = regex.compile(r"\n\n[ \t]*<!-- -->[ \t]*\n\n")
-"""Matches Pandoc's empty ``<!-- -->`` list-separator comment (on its own line, blank-line padded).
-
-The GFM writer emits this between two adjacent lists to keep them from merging on re-parse.  Our
-sibling blocks are intentionally a single continuous outline, and some renderers (e.g. Typora) show
-the comment literally, so it is stripped from the output — letting the adjacent lists merge.
-"""
-
-
-def _strip_list_separator_comments(gfm: str) -> str:
-    """Remove Pandoc's empty ``<!-- -->`` list-separator comments from *gfm*."""
-    return _LIST_SEPARATOR_COMMENT_RE.sub("\n\n", gfm)
 
 
 def _stamp_revision_metadata(doc: pf.Doc, revision: Revision | None) -> None:
@@ -261,7 +248,7 @@ def render(
             ],
         )
         output_file: Final[Path] = bundle_dir / f"{filename_stem}.md"
-        output_file.write_text(_strip_list_separator_comments(md_text), encoding="utf-8")
+        output_file.write_text(strip_list_separator_comments(md_text), encoding="utf-8")
         logger.info("Wrote Markdown to: %s", output_file)
 
     else:
@@ -296,5 +283,5 @@ def render(
             ],
         )
         output_path: Final[Path] = output_dir / f"{filename_stem}.md"
-        output_path.write_text(_strip_list_separator_comments(no_bundle_md), encoding="utf-8")
+        output_path.write_text(strip_list_separator_comments(no_bundle_md), encoding="utf-8")
         logger.info("Wrote Markdown to %s", output_path)

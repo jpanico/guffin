@@ -13,7 +13,7 @@ it.
 
 Every export format runs through the same core — build a format-neutral Pandoc `Doc` (Phase 1),
 then convert it (Phase 2) — bracketed by two conditional phases: model transforms before the build
-(Phase 0), and package post-processing after the conversion (Phase 3, EPUB only).
+(Phase 0), and output post-processing after the conversion (Phase 3, conditional per format).
 
 ```mermaid
 flowchart LR
@@ -25,7 +25,7 @@ flowchart LR
       P0["<b>Phase 0 — prepare</b><br/>model transforms<br/><i>VertexTree → VertexTree</i>"]
       P1["<b>Phase 1 — build</b><br/>vertex_tree_to_pandoc()<br/><i>VertexTree → Panflute Doc</i>"]
       P2["<b>Phase 2 — convert</b><br/>md / pdf / epub _rendering<br/><i>Doc → format output</i>"]
-      P3["<b>Phase 3 — post-process</b><br/>epub_post_processing<br/><i>.epub → .epub</i>"]
+      P3["<b>Phase 3 — post-process</b><br/>&lt;format&gt;_post_processing<br/><i>output → output</i>"]
     end
 
     VB --> P0
@@ -52,10 +52,17 @@ flowchart LR
 - **Phase 2 — convert** — `render/{md,pdf,epub}_rendering.py`: serializes the `Doc` to Pandoc JSON
   and invokes Pandoc (plus Typst for PDF), applying the **format-specific** writer, Lua filters,
   templates, and bundled resources.
-- **Phase 3 — post-process** — `render/epub_post_processing.py` (EPUB only): rewrites the packaged
-  `.epub` for effects Pandoc's writer cannot be told at invocation time —
-  `restore_matter_divisions()` (the CMOS `<body>` divisions) and `stamp_titlepage_provenance()`
-  (the provenance colophon onto the generated title page).
+- **Phase 3 — post-process** — `render/<format>_post_processing.py`: transforms a format's rendered
+  **output** for effects Pandoc's writer cannot be told to produce at invocation time. **Policy —
+  post-processing isolation:** all of a format's post-processing lives in its own
+  `<format>_post_processing.py` module (never inline in the renderer), and a format with none omits
+  the module (enforced by `tests/test_architecture.py::TestPostProcessingSegregation`; see the
+  CLAUDE.md architecture rule). EPUB (`epub_post_processing.py`) rewrites the packaged `.epub` —
+  `restore_matter_divisions()` (CMOS `<body>` divisions), `bake_code_line_numbers()`, and the
+  title-page stamps (`stamp_titlepage_provenance` / `_revision` / `_illustrators`). Markdown
+  (`md_post_processing.py`) strips Pandoc's `<!-- -->` list-separator comments from the GFM. PDF has
+  none. Pre-conversion `Doc` rewrites (e.g. `pdf_rendering._apply_pdf_embeds`) are Phase 1, not
+  post-processing.
 
 
 ## Three orthogonal inputs
