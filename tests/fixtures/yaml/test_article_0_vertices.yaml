@@ -161,9 +161,9 @@
     - kind: literal
       value: https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py
     - kind: literal
-      value: 3b081e9dd1bb94983f66b39b1d3f8250d7df5031
+      value: 272ad8d16d9e32c98cfaccdf346787754eeebd2b
     - kind: literal
-      value: '2026-07-19'
+      value: '2026-07-20'
   code: "\"\"\"Generic accumulator-pipeline validation framework.\n\nProvides a small,\
     \ side-effect-free validation pipeline:\n\n- :class:`ValidationError` — immutable\
     \ record of a single validation failure.\n- :class:`ValidationResult` — immutable\
@@ -203,8 +203,8 @@
   language: python
   code_source:
     url: https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py
-    commit_sha: 3b081e9dd1bb94983f66b39b1d3f8250d7df5031
-    fetched_date: '2026-07-19'
+    commit_sha: 272ad8d16d9e32c98cfaccdf346787754eeebd2b
+    fetched_date: '2026-07-20'
 - vertex_type: guffin/quote-block
   uid: Yz0pqYfBh
   quote_type: block
