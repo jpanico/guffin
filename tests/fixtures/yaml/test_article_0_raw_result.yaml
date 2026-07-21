@@ -64,6 +64,7 @@
     children:
     - id: 11154
     - id: 11155
+    - id: 14660
     id: 11147
     uid: jVQvHi40O
     parents:
@@ -108,6 +109,24 @@
     refs:
     - id: 321
     - id: 11839
+- - string: '[[>]] [[!EXAMPLE]] This is the callout title
+
+      This is line 1 of the callout body
+
+
+      This is line 2 of the callout body'
+    id: 14659
+    uid: fUle3zmFp
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 11155
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 5458
 - - string: 'the next block is a basic Roam-native table: 3x3. No column/row/col resizing
       of any kind'
     id: 11199
@@ -504,26 +523,6 @@
     order: 0
     page:
       id: 11137
-- - string: '[[>]] [[!EXAMPLE]] This is the callout title
-
-      This is line 1 of the callout body
-
-
-      This is line 2 of the callout body
-
-      '
-    id: 11773
-    uid: 4SIo9hSEY
-    parents:
-    - id: 11137
-    - id: 11147
-    - id: 11155
-    order: 0
-    page:
-      id: 11137
-    refs:
-    - id: 5450
-    - id: 5458
 - - string: block 1.1
     children:
     - id: 11152
@@ -581,6 +580,17 @@
     - id: 13093
     - id: 13094
     order: 0
+    page:
+      id: 11137
+- - string: block 3.3
+    children:
+    - id: 14661
+    id: 14660
+    uid: Sz76xTH3N
+    parents:
+    - id: 11137
+    - id: 11147
+    order: 2
     page:
       id: 11137
 - - attrs:
@@ -759,6 +769,19 @@
     order: 0
     page:
       id: 11137
+- - string: '[[>]] [[!EXAMPLE]] This is a callout with only a title-- no body.'
+    id: 14661
+    uid: PZsiyXDGs
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 14660
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 5458
 - - string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
       \ int = 100):\n    for i in range(1, limit + 1):\n        if i % 15 == 0:\n\
       \            print(\"FizzBuzz\")\n        elif i % 3 == 0:\n            print(\"\
@@ -823,7 +846,7 @@
       id: 11137
 - - string: block 3.2
     children:
-    - id: 11773
+    - id: 14659
     id: 11155
     uid: 5N_QAEc3C
     parents:

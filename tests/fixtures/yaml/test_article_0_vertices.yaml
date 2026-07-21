@@ -319,6 +319,7 @@
   children:
   - d6b4AGFrG
   - 5N_QAEc3C
+  - Sz76xTH3N
   text: block 3
 - vertex_type: guffin/text
   uid: d6b4AGFrG
@@ -331,10 +332,10 @@
 - vertex_type: guffin/text
   uid: 5N_QAEc3C
   children:
-  - 4SIo9hSEY
+  - fUle3zmFp
   text: block 3.2
 - vertex_type: guffin/callout
-  uid: 4SIo9hSEY
+  uid: fUle3zmFp
   refs:
   - OexZiLR_O
   - lS4kg-3mw
@@ -344,3 +345,16 @@
 
 
     This is line 2 of the callout body'
+- vertex_type: guffin/text
+  uid: Sz76xTH3N
+  children:
+  - PZsiyXDGs
+  text: block 3.3
+- vertex_type: guffin/callout
+  uid: PZsiyXDGs
+  refs:
+  - OexZiLR_O
+  - lS4kg-3mw
+  callout_type: example
+  title: This is a callout with only a title-- no body.
+  body: ''

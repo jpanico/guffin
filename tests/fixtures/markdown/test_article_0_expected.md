@@ -227,3 +227,6 @@
     > This is line 1 of the callout body
     >
     > This is line 2 of the callout body
+  - block 3.3
+    > [!NOTE]
+    > **This is a callout with only a title– no body.**
