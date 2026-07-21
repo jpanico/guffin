@@ -926,15 +926,17 @@ def _callout_vertex_to_blocks(
         A single-element list containing the :class:`~panflute.Div`.
     """
     callout_type: Final[str] = vertex.callout_type.value.lower()
-    callout_blocks: list[pf.Block] = []
-    if vertex.title:
-        title_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.title, [pf.Str(vertex.title)])
-        callout_blocks.append(pf.Div(pf.Para(*title_inlines), classes=["callout-title"]))
+    title_blocks: Final[list[pf.Block]] = (
+        [pf.Div(pf.Para(*inline_map.get(vertex.title, [pf.Str(vertex.title)])), classes=["callout-title"])]
+        if vertex.title
+        else []
+    )
+    body_blocks: list[pf.Block] = []
     if vertex.body:
         # Rejoin Roam's soft line-breaks as hard breaks (consecutive plain lines stay one
         # paragraph, embedded lists stay real lists) before the block-level parse.
-        callout_blocks.extend(parse_block_md(hard_broken_markdown(vertex.body)))
-    callout_blocks.extend(
+        body_blocks.extend(parse_block_md(hard_broken_markdown(vertex.body)))
+    body_blocks.extend(
         build_child_blocks(
             vertex.children or [],
             vertex_tree,
@@ -946,7 +948,13 @@ def _callout_vertex_to_blocks(
             vertex.attribute_assignments,
         )
     )
-    return [pf.Div(*callout_blocks, classes=["callout", f"callout-{callout_type}"])]
+    # A callout with no body content must render as its header band alone: the per-format callout
+    # styling draws an empty body box otherwise (gentle-clues' box in the PDF, the box's bottom
+    # padding in the EPUB).  The ``callout-no-body`` marker class carries that one decision to every
+    # format's filter/CSS (typst_callout.lua collapses the box with ``content-inset: 0pt``; epub.css
+    # drops the empty body area); the GFM path ignores it, having no body box.
+    classes: Final[list[str]] = ["callout", f"callout-{callout_type}"] + ([] if body_blocks else ["callout-no-body"])
+    return [pf.Div(*title_blocks, *body_blocks, classes=classes)]
 
 
 _CODE_SOURCE_CLASS: Final[str] = "code-source"

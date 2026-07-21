@@ -104,6 +104,12 @@ function Div(el)
   if accent then
     args[#args + 1] = 'accent-color: rgb("' .. accent .. '")'
   end
+  -- A callout with no body content (marked callout-no-body by pandoc_rendering) must render as its
+  -- header band alone. gentle-clues has no title-only mode — it always draws a body box — so collapse
+  -- that box to zero height with content-inset: 0pt, leaving just the title/header rectangle.
+  if el.classes:includes("callout-no-body") then
+    args[#args + 1] = "content-inset: 0pt"
+  end
   -- `#set text(font: cfg.callout-font)` at the head of the clue's content block gives the callout
   -- BODY a contrasting face (a serif against the sans body), so callout content reads as a distinct
   -- register.  It is scoped to the content block, so the title (passed as a string arg and rendered

@@ -179,6 +179,15 @@ div.callout-title + * { margin-top: 0.7em; }
 div.callout > :last-child { margin-bottom: 0; }
 
 /*
+ * A callout with no body content (marked callout-no-body by pandoc_rendering) renders as its
+ * header band alone: drop the box's empty-body bottom padding so its bottom border hugs the title
+ * band, and drop the title's now-redundant bottom border (the box border already closes the
+ * rectangle). Mirrors the PDF path, where gentle-clues' body box is collapsed with content-inset: 0.
+ */
+div.callout.callout-no-body { padding-bottom: 0; }
+div.callout.callout-no-body > div.callout-title { border-bottom: none; }
+
+/*
  * Per-type callout colours (the left accent bar and the header-band tint) are NOT declared here.
  * They are generated from the canonical single-source palette (guffin/render/callout_theme.py) by
  * epub_rendering.py into a second stylesheet loaded after this one, so the same colour drives every

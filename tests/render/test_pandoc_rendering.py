@@ -1260,6 +1260,50 @@ class TestPullQuoteRendering:
         assert "child block" in pf.stringify(doc)  # the child still renders, outside the decoration
 
 
+class TestCalloutNoBodyMarker:
+    """A callout with no body content is tagged callout-no-body so each format renders header-only."""
+
+    @staticmethod
+    def _callout_div(callout: CalloutVertex) -> pf.Div:
+        """Render a one-callout tree and return its outer callout Div."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=[callout.uid])
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, callout]), {}, {})
+        divs: list[pf.Div] = [
+            block for block in doc.content if isinstance(block, pf.Div) and "callout" in block.classes
+        ]
+        assert len(divs) == 1
+        return divs[0]
+
+    def test_title_only_callout_is_marked_no_body(self) -> None:
+        """A callout with a title but empty body and no children carries callout-no-body."""
+        callout = CalloutVertex(
+            uid="cal000001", callout_type=CalloutVertex.CalloutType.EXAMPLE, title="Title only", body=""
+        )
+        assert "callout-no-body" in self._callout_div(callout).classes
+
+    def test_callout_with_body_is_not_marked_no_body(self) -> None:
+        """A callout with body text keeps only the type classes (no callout-no-body)."""
+        callout = CalloutVertex(
+            uid="cal000001", callout_type=CalloutVertex.CalloutType.EXAMPLE, title="Title", body="the body"
+        )
+        assert "callout-no-body" not in self._callout_div(callout).classes
+
+    def test_callout_with_child_is_not_marked_no_body(self) -> None:
+        """A childful callout has body content (the child block), so it is not callout-no-body."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["cal000001"])
+        callout = CalloutVertex(
+            uid="cal000001",
+            callout_type=CalloutVertex.CalloutType.EXAMPLE,
+            title="Title",
+            body="",
+            children=["calchild1"],
+        )
+        child = TextVertex(uid="calchild1", text="a child block")
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, callout, child]), {}, {})
+        div = next(block for block in doc.content if isinstance(block, pf.Div) and "callout" in block.classes)
+        assert "callout-no-body" not in div.classes
+
+
 class TestBlockRefToBlockLevelVertex:
     """A text vertex that is solely a reference to a block-level vertex renders as that block.
 
