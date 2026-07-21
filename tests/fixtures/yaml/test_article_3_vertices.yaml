@@ -910,15 +910,13 @@
 - vertex_type: guffin/text
   uid: Wq2dXafRn
   refs:
-  - 4SIo9hSEY
+  - fUle3zmFp
   text: '[[[>]] [[!EXAMPLE]] This is the callout title
 
     This is line 1 of the callout body
 
 
-    This is line 2 of the callout body
-
-    ](x-guffin:vertex/4SIo9hSEY)'
+    This is line 2 of the callout body](x-guffin:vertex/fUle3zmFp)'
 - vertex_type: guffin/text
   uid: xkmJLzW3G
   children:
@@ -942,10 +940,10 @@
   uid: aGe-4YuyS
   refs:
   - o2hTH3dbf
-  - 4SIo9hSEY
+  - fUle3zmFp
   vertex_link:
   - vertex-embed
-  - 4SIo9hSEY
+  - fUle3zmFp
 - vertex_type: guffin/text
   uid: LfXmNr-tV
   children:

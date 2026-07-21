@@ -397,6 +397,24 @@
       id: 3327
     refs:
     - id: 12920
+- - string: '[[>]] [[!EXAMPLE]] This is the callout title
+
+      This is line 1 of the callout body
+
+
+      This is line 2 of the callout body'
+    id: 14659
+    uid: fUle3zmFp
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 11155
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 5458
 - - string: '[La Curne, Dict., s.v. Sendaus has: Silk stuff: “Somme de la delivrance
       des sendaus.” (Nouv. Compt. de l’Arg. p. 19).—Godefroy, Dict., gives: “Sendain,
       adj., made with the stuff called cendal: Drap d’or sendains (1392, Test. de
@@ -1630,26 +1648,6 @@
       id: 4225
     refs:
     - id: 11193
-- - string: '[[>]] [[!EXAMPLE]] This is the callout title
-
-      This is line 1 of the callout body
-
-
-      This is line 2 of the callout body
-
-      '
-    id: 11773
-    uid: 4SIo9hSEY
-    parents:
-    - id: 11137
-    - id: 11147
-    - id: 11155
-    order: 0
-    page:
-      id: 11137
-    refs:
-    - id: 5450
-    - id: 5458
 - - heading: 0
     string: 'AI assistant (Claude Opus 4.6): '
     id: 4758
@@ -2672,7 +2670,7 @@
     order: 1
     page:
       id: 11674
-- - string: ((4SIo9hSEY))
+- - string: ((fUle3zmFp))
     id: 11772
     uid: Wq2dXafRn
     parents:
@@ -2683,7 +2681,7 @@
     page:
       id: 4225
     refs:
-    - id: 11773
+    - id: 14659
 - - string: r1.c3
     id: 11798
     uid: SnpYMTuWc
@@ -2916,7 +2914,7 @@
       id: 4225
     refs:
     - id: 5844
-- - string: '{{[[embed]]: ((4SIo9hSEY))}}'
+- - string: '{{[[embed]]: ((fUle3zmFp))}}'
     id: 13264
     uid: aGe-4YuyS
     parents:
@@ -2928,7 +2926,7 @@
       id: 4225
     refs:
     - id: 867
-    - id: 11773
+    - id: 14659
 - - string: ((LfaVt18Iw))
     id: 11708
     uid: JpKqqwnAJ
