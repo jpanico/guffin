@@ -5,11 +5,12 @@ Public symbols:
 - **Constants**: :data:`DEFAULT_PDF_RENDER` — the :class:`PdfRender` placement of an untagged
   PDF embed; :data:`DEFAULT_PUBLISH` — the publication state of an untagged vertex.
 - **Enumerations**: :class:`PublishingSemantics` — the attributes Guffin recognizes (document metadata +
-  the ``element-type``/``matter`` heading tags + the ``pdf-render`` PDF tag + the ``publish``
-  block tag), each member a
+  the ``element-type``/``matter``/``page-break`` heading tags + the ``pdf-render`` PDF tag + the
+  ``publish`` block tag), each member a
   :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
   domain; :class:`PdfRender` — how an embedded PDF asset is placed in paginated output (inline /
-  link).  The anchoring affordances an attribute declares
+  link); :class:`PageBreak` — where a page break is forced relative to the tagged heading
+  (``before``).  The anchoring affordances an attribute declares
   (:class:`~guffin.model.attribute_anchor.AttributeAnchor`,
   :class:`~guffin.model.attribute_anchor.TreePosition`) live in
   :mod:`~guffin.model.attribute_anchor`; the CMOS-aligned structural taxonomy the ``element-type`` and
@@ -20,7 +21,8 @@ Public symbols:
   :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN` domain and carrying a :class:`AttributeAnchor`.
 - **Functions**: :func:`element_type_of` — read an ``element-type`` assignment's value as a
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
-  assignment's value as a :class:`Matter`; :func:`pdf_render_of` — read a ``pdf-render``
+  assignment's value as a :class:`Matter`; :func:`page_break_of` — read a ``page-break``
+  assignment's value as a :class:`PageBreak`; :func:`pdf_render_of` — read a ``pdf-render``
   assignment's value as a :class:`PdfRender`; :func:`code_language_of` — read a
   ``code-language`` assignment's value as a canonical
   :data:`~guffin.common.programming_language.CodeLanguageId` (any vocabulary name or alias,
@@ -41,10 +43,11 @@ Public symbols:
   ``title``, else a basis from the root's own content);
   :func:`find_publishing_attribute` — find a vertex's
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
-  :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`pdf_render_of_vertex` /
+  :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`page_break_of_vertex` /
+  :func:`pdf_render_of_vertex` /
   :func:`code_language_of_vertex` / :func:`code_source_of_vertex` / :func:`publish_of_vertex` —
-  resolve a heading's ``element-type`` / bare ``matter`` tag, a PDF embed's ``pdf-render`` tag,
-  a code block's ``code-language`` or ``code-source`` tag,
+  resolve a heading's ``element-type`` / bare ``matter`` / ``page-break`` tag, a PDF embed's
+  ``pdf-render`` tag, a code block's ``code-language`` or ``code-source`` tag,
   or any block's ``publish`` tag, to its value, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
@@ -57,6 +60,8 @@ Public symbols:
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   :func:`strip_element_numbers` — remove every heading's internal element number (the
   well-formed leading marker) from a :class:`~guffin.model.vertex_tree.VertexTree`;
+  :func:`drop_page_breaks` — remove every heading's ``page-break`` tag from a
+  :class:`~guffin.model.vertex_tree.VertexTree`, so no authored page-break directive is honored;
   :func:`promote_non_body_sections` — promote every root-level heading of explicit
   front/back matter to heading level 1, so a linear rendering cannot nest it under a
   preceding part.
@@ -86,6 +91,7 @@ from guffin.model.attribute import (
 from guffin.model.attribute_anchor import AttributeAnchor
 from guffin.model.attribute_assignment import (
     AttributeAssignment,
+    is_assignment_for,
     sole_value_text,
     verified_sole_value_text,
     verify_assignment_for,
@@ -132,6 +138,20 @@ class PdfRender(enum.StrEnum):
 DEFAULT_PDF_RENDER: Final[PdfRender] = PdfRender.LINK
 """The :class:`PdfRender` placement of a PDF embed carrying no ``pdf-render`` tag."""
 
+
+class PageBreak(enum.StrEnum):
+    """Where a page break is forced relative to the tagged heading — the values a ``page-break`` tag takes.
+
+    A directive about paginated output only; a format without pages expresses it as nothing.
+    An untagged heading forces no break — there is no default member.
+
+    Attributes:
+        BEFORE: The tagged heading opens on a new page.
+    """
+
+    BEFORE = "before"
+
+
 DEFAULT_PUBLISH: Final[bool] = True
 """The publication state of a vertex carrying no ``publish`` tag."""
 
@@ -177,7 +197,8 @@ class PublishingSemantics(enum.Enum):
       per CMOS only the book *interior* is matter-classified — the cover is exterior.
     - **Heading tags** (:attr:`AttributeAnchor.HEADING`) — applied to an individual heading: :attr:`ELEMENT_TYPE`
       declares which :class:`StructuralElement` the heading is; :attr:`MATTER` declares its
-      :class:`Matter` division directly, for a bespoke section with no specific element type.
+      :class:`Matter` division directly, for a bespoke section with no specific element type;
+      :attr:`PAGE_BREAK` forces a :class:`PageBreak` in paginated output.
     - **PDF tags** (:attr:`AttributeAnchor.PDF`) — applied to an individual embedded PDF asset:
       :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated output.
     - **Code-block tags** (:attr:`AttributeAnchor.CODE_BLOCK`) — applied to an individual fenced
@@ -205,6 +226,8 @@ class PublishingSemantics(enum.Enum):
             ``((<uid>))`` to an image block, keeping the cover ordinary, reusable Roam content.
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
+        PAGE_BREAK: Tags a heading with a forced :class:`PageBreak` in paginated output
+            (``before`` opens the heading on a new page).
         PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a link).
         CODE_LANGUAGE: Tags a fenced code listing with its language — any name or alias of the
             canonical vocabulary (:mod:`~guffin.common.programming_language`) — overriding the
@@ -233,6 +256,7 @@ class PublishingSemantics(enum.Enum):
     COVER_IMAGE = PublishingAttribute(name="cover-image", anchor=AttributeAnchor.ROOT)
     ELEMENT_TYPE = PublishingAttribute(name="element-type", anchor=AttributeAnchor.HEADING)
     MATTER = PublishingAttribute(name="matter", anchor=AttributeAnchor.HEADING)
+    PAGE_BREAK = PublishingAttribute(name="page-break", anchor=AttributeAnchor.HEADING)
     PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=AttributeAnchor.PDF)
     CODE_LANGUAGE = PublishingAttribute(name="code-language", anchor=AttributeAnchor.CODE_BLOCK)
     CODE_SOURCE = PublishingAttribute(name="code-source", anchor=AttributeAnchor.CODE_BLOCK)
@@ -277,6 +301,26 @@ def matter_of(assignment: AttributeAssignment) -> Matter:
             value, or its value is not a recognised :class:`Matter`.
     """
     return Matter(verified_sole_value_text(assignment, PublishingSemantics.MATTER.value))
+
+
+@validate_call
+def page_break_of(assignment: AttributeAssignment) -> PageBreak:
+    """Return the :class:`PageBreak` that a ``page-break`` assignment names.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.PAGE_BREAK` attribute, then coerces
+    its sole value to a :class:`PageBreak` (``before``).
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.PAGE_BREAK` attribute assignment (one value expected).
+
+    Returns:
+        The named :class:`PageBreak`.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``page-break`` attribute, does not carry exactly
+            one value, or its value is not a recognised :class:`PageBreak`.
+    """
+    return PageBreak(verified_sole_value_text(assignment, PublishingSemantics.PAGE_BREAK.value))
 
 
 @validate_call
@@ -503,6 +547,30 @@ def matter_of_vertex(vertex: HeadingVertex) -> Matter | None:
         return matter_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring matter on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def page_break_of_vertex(vertex: HeadingVertex) -> PageBreak | None:
+    """Resolve *vertex*'s ``page-break`` tag to a :class:`PageBreak`, or ``None``.
+
+    ``None`` when *vertex* carries no ``page-break`` assignment, or when the assignment does not
+    coerce to a :class:`PageBreak` (ignored with a warning).  An untagged heading forces no
+    page break.
+
+    Args:
+        vertex: The heading vertex whose tag to resolve.
+
+    Returns:
+        The named :class:`PageBreak`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.PAGE_BREAK)
+    if assignment is None:
+        return None
+    try:
+        return page_break_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring page-break on vertex uid=%r: %s", vertex.uid, exc)
         return None
 
 
@@ -939,6 +1007,42 @@ def strip_element_numbers(tree: VertexTree) -> VertexTree:
         return vertex.model_copy(update={"text": stripped_text})
 
     return map_vertices(tree, _strip)
+
+
+@validate_call
+def drop_page_breaks(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`~guffin.model.vertex_tree.VertexTree` with every heading's ``page-break`` tag removed.
+
+    Each :class:`~guffin.model.vertex.HeadingVertex` — tree and referenced vertices alike, so
+    embed-transcluded headings are covered — has its :attr:`PublishingSemantics.PAGE_BREAK`
+    assignment removed, so no authored page-break directive remains to be honored; each removal
+    is logged as a warning.  Headings with no such tag and every other vertex type pass through
+    unchanged, and the original *tree* is not modified.
+
+    Args:
+        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
+
+    Returns:
+        A new :class:`~guffin.model.vertex_tree.VertexTree` whose headings carry no ``page-break``
+        tags.
+    """
+
+    def _drop(vertex: Vertex) -> Vertex:
+        if not isinstance(vertex, HeadingVertex) or not vertex.attribute_assignments:
+            return vertex
+        kept: Final[list[AttributeAssignment]] = [
+            assignment
+            for assignment in vertex.attribute_assignments
+            if not is_assignment_for(assignment, PublishingSemantics.PAGE_BREAK.value)
+        ]
+        if len(kept) == len(vertex.attribute_assignments):
+            return vertex
+        logger.warning(
+            "dropping page-break tag on heading uid=%r: authored page breaks are not honored here", vertex.uid
+        )
+        return vertex.model_copy(update={"attribute_assignments": kept})
+
+    return map_vertices(tree, _drop)
 
 
 @validate_call

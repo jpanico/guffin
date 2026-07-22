@@ -22,6 +22,7 @@ from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     DEFAULT_PUBLISH,
+    PageBreak,
     PdfRender,
     PublishingAttribute,
     PublishingSemantics,
@@ -32,6 +33,7 @@ from guffin.model.publishing_semantics import (
     cover_image_of,
     cover_image_vertex,
     date_of,
+    drop_page_breaks,
     drop_unpublished,
     effective_title,
     element_type_of,
@@ -42,6 +44,8 @@ from guffin.model.publishing_semantics import (
     illustrators_of_vertex,
     matter_of,
     matter_of_vertex,
+    page_break_of,
+    page_break_of_vertex,
     pdf_render_of,
     pdf_render_of_vertex,
     promote_non_body_sections,
@@ -128,7 +132,7 @@ class TestPublishingSemanticsMembers:
     def test_heading_anchored_tag_members(self) -> None:
         """The heading-tag members are heading-anchored."""
         heading_members = {m.value.name for m in PublishingSemantics if m.value.anchor is AttributeAnchor.HEADING}
-        assert heading_members == {"element-type", "matter"}
+        assert heading_members == {"element-type", "matter", "page-break"}
 
     def test_pdf_anchored_tag_members(self) -> None:
         """The PDF-tag members are pdf-anchored."""
@@ -305,6 +309,44 @@ class TestMatterOfVertex:
         with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert matter_of_vertex(heading) is None
         assert "ignoring matter" in caplog.text
+
+
+class TestPageBreakOf:
+    """page_break_of validates the attribute identity and coerces the value to a PageBreak."""
+
+    def test_returns_named_page_break(self) -> None:
+        """A valid page-break assignment yields the named PageBreak."""
+        assert page_break_of(_assignment("page-break", "before")) is PageBreak.BEFORE
+
+    def test_rejects_other_attribute(self) -> None:
+        """An assignment for a different attribute raises."""
+        with pytest.raises(ValueError, match="page-break"):
+            page_break_of(_assignment("matter", "before"))
+
+    def test_rejects_unrecognised_value(self) -> None:
+        """A value that names no PageBreak member raises."""
+        with pytest.raises(ValueError, match="after"):
+            page_break_of(_assignment("page-break", "after"))
+
+
+class TestPageBreakOfVertex:
+    """page_break_of_vertex() resolves a heading's page-break tag, tolerating absence and junk."""
+
+    def test_tagged_heading_resolves(self) -> None:
+        """A heading tagged with a legal page-break resolves to its PageBreak."""
+        heading = _heading_with([_assignment("page-break", "before")])
+        assert page_break_of_vertex(heading) is PageBreak.BEFORE
+
+    def test_untagged_heading_is_none(self) -> None:
+        """A heading with no page-break assignment resolves to None."""
+        assert page_break_of_vertex(_heading_with(None)) is None
+
+    def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """An illegal page-break value resolves to None and logs a warning."""
+        heading = _heading_with([_assignment("page-break", "sideways")])
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert page_break_of_vertex(heading) is None
+        assert "ignoring page-break" in caplog.text
 
 
 class TestResolvedMatter:
@@ -997,6 +1039,68 @@ class TestStripElementNumbers:
         original = tree.uid_map["head0000a"]
         assert isinstance(original, HeadingVertex)
         assert original.text == "[1.1] Book I"
+
+
+def _page_break_tagged_tree() -> VertexTree:
+    """A page with one page-break-tagged heading (also matter-tagged) and one untagged heading."""
+    page = PageVertex(uid="pageroot1", title="Doc", children=["head0000a", "head0000b"])
+    tagged = HeadingVertex(
+        uid="head0000a",
+        text="Breaking Section",
+        heading_level=3,
+        attribute_assignments=[_assignment("page-break", "before"), _assignment("matter", "back-matter")],
+    )
+    untagged = HeadingVertex(uid="head0000b", text="Flowing Section", heading_level=3)
+    return VertexTree(tree_vertices=[page, tagged, untagged])
+
+
+class TestDropPageBreaks:
+    """drop_page_breaks removes page-break tags from headings, keeping every other assignment."""
+
+    def test_tag_is_removed_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A tagged heading loses its page-break assignment, and the drop is logged."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            dropped = drop_page_breaks(_page_break_tagged_tree())
+        heading = dropped.uid_map["head0000a"]
+        assert isinstance(heading, HeadingVertex)
+        assert page_break_of_vertex(heading) is None
+        assert "dropping page-break tag on heading uid='head0000a'" in caplog.text
+
+    def test_other_assignments_survive(self) -> None:
+        """Only the page-break assignment is removed; the heading's other tags stay in force."""
+        dropped = drop_page_breaks(_page_break_tagged_tree())
+        heading = dropped.uid_map["head0000a"]
+        assert isinstance(heading, HeadingVertex)
+        assert matter_of_vertex(heading) is Matter.BACK
+
+    def test_untagged_heading_is_unchanged(self) -> None:
+        """A heading with no page-break tag passes through as the same object."""
+        tree = _page_break_tagged_tree()
+        dropped = drop_page_breaks(tree)
+        assert dropped.uid_map["head0000b"] is tree.uid_map["head0000b"]
+
+    def test_referenced_heading_is_dropped_too(self) -> None:
+        """A heading reachable only through ref_vertices (an embed target) loses its tag too."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["embed0001"])
+        embed = BlockEmbedVertex(uid="embed0001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="chaphead1"))
+        target = HeadingVertex(
+            uid="chaphead1",
+            text="Transcluded Section",
+            heading_level=3,
+            attribute_assignments=[_assignment("page-break", "before")],
+        )
+        dropped = drop_page_breaks(VertexTree(tree_vertices=[page, embed], ref_vertices=[target]))
+        heading = dropped.uid_map["chaphead1"]
+        assert isinstance(heading, HeadingVertex)
+        assert page_break_of_vertex(heading) is None
+
+    def test_original_tree_is_not_modified(self) -> None:
+        """The source tree keeps its tags; the transformer returns a new tree."""
+        tree = _page_break_tagged_tree()
+        drop_page_breaks(tree)
+        original = tree.uid_map["head0000a"]
+        assert isinstance(original, HeadingVertex)
+        assert page_break_of_vertex(original) is PageBreak.BEFORE
 
 
 class TestEffectiveTitle:

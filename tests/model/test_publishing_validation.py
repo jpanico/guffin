@@ -36,6 +36,7 @@ from guffin.model.publishing_validation import (
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
+    all_page_break_values_legal,
     all_pdf_render_values_legal,
     all_publish_values_legal,
     validate_semantics,
@@ -206,6 +207,39 @@ class TestValidateSemanticsArticle7Fixture:
         result = validate_semantics(tree)
         assert result.errors == ()
         assert result.is_valid
+
+
+class TestAllPageBreakValuesLegal:
+    """all_page_break_values_legal() rejects unrecognised page-break values across a tree."""
+
+    def test_legal_value_passes(self) -> None:
+        """A tree whose page-break values are all recognised produces no error."""
+        tree = VertexTree(tree_vertices=[_heading_with([_assignment("page-break", "before")])])
+        assert all_page_break_values_legal(tree) is None
+
+    def test_illegal_value_reported(self) -> None:
+        """An unrecognised page-break value is reported with the vertex uid."""
+        tree = VertexTree(tree_vertices=[_heading_with([_assignment("page-break", "after")])])
+        error = all_page_break_values_legal(tree)
+        assert error is not None
+        assert "head00001" in error.message
+
+    def test_page_break_on_text_reported_by_anchor_validator(self) -> None:
+        """A page-break tag on a text block is a misanchoring, caught by all_attributes_anchored."""
+        text = TextVertex(
+            uid="text00001", text="loose block", attribute_assignments=[_assignment("page-break", "before")]
+        )
+        tree = VertexTree(tree_vertices=[text])
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "page-break" in error.message
+
+    def test_surfaces_through_validate_semantics(self) -> None:
+        """An illegal page-break value fails validate_semantics."""
+        tree = VertexTree(tree_vertices=[_heading_with([_assignment("page-break", "after")])])
+        result = validate_semantics(tree)
+        assert not result.is_valid
+        assert any("page-break" in error.message for error in result.errors)
 
 
 class TestAllPdfRenderValuesLegal:

@@ -40,3 +40,8 @@ Notes on GFM-pipeline constructs that are handled differently here:
 - **code-source attribution** — likewise **no filter**: the `<div class="code-source">` below a sourced
   code listing (the emphasized line naming the GitHub file it was snapshotted from) survives to XHTML,
   and `epub.css` styles it as a caption — small, muted, pulled up toward the listing.
+- **authored page break** — likewise **no filter**: a heading tagged `page-break:: before` carries a
+  `page-break-before` class that Pandoc propagates to the section wrapper, and `epub.css` applies
+  `break-before: page` (plus the legacy `page-break-before: always`). Best-effort by nature —
+  reading-system support for the property varies, and a section already opening a content document
+  starts a page regardless.

@@ -257,3 +257,14 @@ p.revision {
   font-style: italic;
   font-size: 0.9em;
 }
+
+/*
+ * Authored page break. A section whose heading carries page-break:: before (the
+ * page-break-before class, stamped by pandoc_rendering) opens on a new page. Best-effort:
+ * break-before is the standard property, page-break-before the legacy alias; reading-system
+ * support varies, and a section already opening a content document starts a page regardless.
+ */
+.page-break-before {
+  break-before: page;
+  page-break-before: always;
+}

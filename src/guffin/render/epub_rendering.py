@@ -47,6 +47,7 @@ from pydantic import validate_call
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import (
+    drop_page_breaks,
     drop_unpublished,
     illustrators_of_vertex,
     promote_non_body_sections,
@@ -243,11 +244,14 @@ def render(
     numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # Authored page-break directives are honored only when the profile's policy says so; a
+    # policy that fixes its own pagination has the tags dropped (each drop logged).
+    paginated: Final[VertexTree] = sourced if profile.structural_policy.honor_page_breaks else drop_page_breaks(sourced)
     # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
     # promoted to part level so the nav (nested by heading level) cannot adopt them into the
     # preceding part.
     parts_book: Final[bool] = profile.structural_policy.top_level_division is TopLevelDivision.PART
-    promoted: Final[VertexTree] = promote_non_body_sections(sourced) if parts_book else sourced
+    promoted: Final[VertexTree] = promote_non_body_sections(paginated) if parts_book else paginated
     # Loose preamble (root children ahead of the first heading) is pruned so it cannot
     # surface as a spurious title-bearing chapter ahead of the book's first division.
     content: Final[VertexTree] = drop_root_preamble(promoted) if drop_preamble else promoted

@@ -34,7 +34,13 @@ pure taxonomy with no other `guffin` dependencies.
     per CMOS only the book interior is matter-classified, the cover being exterior.
   - *Heading-anchored tags* (`AttributeAnchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
     `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
-    for a bespoke heading with no specific element type.
+    for a bespoke heading with no specific element type; `PAGE_BREAK` (`page-break::`) forces a
+    `PageBreak` in paginated output (`before` opens the tagged heading on a new page). Whether the
+    directive is *honored* is the project profile's decision, not the tag's: a book's pagination is
+    fixed by its own structural conventions (chapters and parts open pages by ritual), so
+    `BookProfile`'s policy sets `honor_page_breaks` off and every renderer drops the tags (with a
+    warning per drop, via `drop_page_breaks()`), while the default and manuscript profiles honor
+    them — content declares, policy disposes.
   - *PDF-anchored tags* (`AttributeAnchor.PDF`): `PDF_RENDER` (`pdf-render::`) declares an embedded PDF
     asset's `PdfRender` placement in paginated output (`inline` pages vs the default `link`).
   - *Code-block-anchored tags* (`AttributeAnchor.CODE_BLOCK`): `CODE_LANGUAGE` (`code-language::`)
@@ -75,7 +81,8 @@ The invariants it enforces fall into four groups:
 - **Anchoring** — every recognized guffin attribute sits on a vertex its `AttributeAnchor` allows
   (document metadata only on the root, a heading tag only on a heading, and so on).
 - **Value legality** — each tag's value is drawn from that tag's legal set: `element-type` names a
-  `StructuralElement`, `matter` a `Matter`, `pdf-render` a `PdfRender`, `code-language` a canonical
+  `StructuralElement`, `matter` a `Matter`, `page-break` a `PageBreak`, `pdf-render` a `PdfRender`,
+  `code-language` a canonical
   language, `code-source` a well-formed URL/commit-SHA/date triple, `publish` a boolean, `date` a
   W3CDTF reduced-precision date, and `cover-image` a block reference resolving to an image in the tree.
 - **Placement** — a `matter` tag sits at the book's section level (level 1, or level 2 in a parts book).
@@ -131,6 +138,16 @@ artifact must not be built from content that violates the vocabulary.
   `epub_type_for`, letting an element's identity drive format-specific styling/placement — is not
   part of these formats; the `data-guffin-matter`/`epub:type` scaffolding rides along harmlessly
   (GFM drops it, Typst ignores it).
+- **Authored page breaks (paginated formats).** A heading's `page-break:: before` tag is gated
+  **upstream of the Doc build** by the profile's `honor_page_breaks` policy directive: a book's
+  pagination is fixed by its own conventions, so every renderer applies
+  `publishing_semantics.drop_page_breaks` (a warning per dropped tag) when the policy declines —
+  the same drop-by-default shape as element numbers and code-source attributions, but decided by
+  the *profile* rather than an option. When the tag survives, `pandoc_rendering._heading_semantics`
+  stamps the `page-break-before` class on the Header in the shared Doc build, and each paginated
+  format maps the class itself: `typst_page_break.lua` prepends a weak Typst `#pagebreak` (a heading
+  already at a page top gains no blank page), and `epub.css` applies `break-before: page`
+  (best-effort — reading-system support varies). GFM drops the class, having no pages.
 - **Code-source attribution (all formats).** A `code-source::` tag (three ordered values:
   GitHub blob URL, snapshot commit SHA, fetch date) lands on `CodeBlockVertex.code_source` at
   transcription. The shared Doc build follows a sourced code block with a `code-source`-classed

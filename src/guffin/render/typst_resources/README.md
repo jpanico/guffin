@@ -216,6 +216,7 @@ pypandoc.convert_text(json_str, "typst", format="json", extra_args=[
     f"--lua-filter={bundled_dir / 'typst_callout.lua'}",
     f"--lua-filter={bundled_dir / 'typst_color_span.lua'}",
     f"--lua-filter={bundled_dir / 'typst_list_para.lua'}",
+    f"--lua-filter={bundled_dir / 'typst_page_break.lua'}",
     f"--lua-filter={bundled_dir / 'typst_code_source.lua'}",
     f"--lua-filter={bundled_dir / 'typst_quote.lua'}",
     # …
@@ -233,6 +234,7 @@ These filters apply only to the PDF/Typst path. The Markdown/GFM path uses a par
 | `typst_callout.lua` | a `Div` with a `callout-<type>` class (plus an optional `callout-title` sub-`Div`) | a [gentle-clues](https://typst.app/universe/package/gentle-clues) callout call (`info[…]`, `warning[…]`, `tip[…]`, …) — `bergfink.typst` imports the gentle-clues package |
 | `typst_color_span.lua` | a color `Span` / `Div` carrying a `color`, `highlight-color` (with class `mark`), `underline-color`, `box-color`, or `bg-color` attribute | `#text(fill: …)`, `#highlight(fill: …)`, `#underline[…]`, `#box(stroke: …)`, or a full-width `#block(fill: …)`, with inner content preserved |
 | `typst_list_para.lua` | a list item whose leading `Plain` block is immediately followed by a non-list block | promotes that `Plain` to a `Para`, keeping the leading text and the following block (e.g. an image) as separate Typst paragraphs |
+| `typst_page_break.lua` | a `Header` with a `page-break-before` class (an authored `page-break:: before` tag) | a raw `#pagebreak(weak: true)` prepended ahead of the heading, so it opens on a new page (weak: a heading already at a page top gains no blank page); the class is consumed |
 | `typst_code_source.lua` | a `Div` with a `code-source` class (the source attribution below a sourced code listing) | a raw Typst block styled as a caption: `#block(above: 0.5em)[#text(size: 0.8em, fill: luma(35%))[…]]`, the emphasized attribution line (with its GitHub link) serialized inside |
 | `typst_quote.lua` | a `Div` with a `fancy-quote` class (its `fancy-quote-text` and optional `fancy-quote-attribution` sub-`Div`s) | a call to the template's `#fancy-quote(quote: […], attribution: […])` helper (`default_styles.typ`) — a barless pull-quote whose quotation line is bold at 1.5x body size in `cfg.quote-font` led by an oversize `“` and whose attribution is italic in `cfg.attribution-font` |
 

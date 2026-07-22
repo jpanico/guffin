@@ -42,6 +42,7 @@ flowchart LR
 
 - **Phase 0 — prepare** (in each `render()` entry point): transforms on the `VertexTree`, before
   any Pandoc structure exists — `drop_attribute_assignments()` (the `suppress_attributes` option),
+  `drop_page_breaks()` (the profile's `honor_page_breaks` directive, when it declines),
   `drop_root_preamble()` (the profile's `drop_preamble` directive, overridable via the
   `include_preamble` option), and `fetch_and_enrich_assets()` (Cloud Firestore assets +
   `enrich_image_original_sizes()` / `enrich_pdf_original_file_names()`).  Conditional: which
@@ -304,6 +305,15 @@ chapter 1. An explicit `include_preamble` render option (CLI `--preamble/--no-pr
 the profile's directive in either direction; Markdown output is untouched (no pagination, no
 prune).
 
+The sixth, `honor_page_breaks`, gates the authored `page-break:: before` heading tag in Phase 0
+(prepare): when the policy declines (a book — its pagination is fixed by its own conventions),
+every renderer applies `publishing_semantics.drop_page_breaks()` to remove the tags before the
+Doc build, logging a warning per drop. When the policy honors them (default and manuscript),
+the tag survives to Phase 1, where the shared build stamps the `page-break-before` class on the
+Header; each paginated format then maps the class in Phase 2 — `typst_page_break.lua` prepends a
+weak Typst `#pagebreak`, `epub.css` applies `break-before: page` (best-effort in reading
+systems). GFM drops header classes, so Markdown output is untouched either way.
+
 So the structural half **cannot** be absorbed entirely into the build (Phase 1): the EPUB renderer
 (`--split-level`) and the PDF path (a Bergfink template variable) each consult the policy. The
 chapters-vs-sections distinction is handled in the Typst template (below) rather than by a flag,
@@ -349,6 +359,7 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 | `title`, `subtitle`, `authors`, `date`, `publisher`, `rights`, `identifier` (**content**: `guffin`-domain attributes — not the profile's unused bibliographic fields) | 1 (build) | `pandoc_rendering._document_metadata` | no (Bergfink title page extended for `publisher`/`rights`) |
 | `top_level_division`, `number_sections` (+ `number_sections` option override), title page (profile policy) | 2 (convert) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
 | `drop_preamble` (+ `include_preamble` option override) (profile policy) | 0 (prepare) | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
+| `honor_page_breaks` (profile policy) + `page-break:: before` (**content**) | 0 (prepare) gate, 1 (build) class stamp, 2 (convert) mapping | all renderers → `drop_page_breaks` when declined; `_heading_semantics` → `typst_page_break.lua` / `epub.css` | yes (minimal) |
 
 
 ## The `PublishingSemantics` vocabulary (model → format mapping)

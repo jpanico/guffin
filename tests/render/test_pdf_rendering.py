@@ -11,21 +11,24 @@ import shutil
 from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
+import pypandoc  # type: ignore[import-untyped]
 import pytest
 from conftest import FIXTURES_PDF_DIR
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.publishing_semantics import PdfRender
-from guffin.model.vertex import PageVertex, PdfVertex, TextVertex
+from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef
+from guffin.render.pandoc_ast import pandoc_to_json
 from guffin.render.pandoc_rendering import vertex_tree_to_pandoc
 from guffin.render.pdf_rendering import (
     _apply_pdf_embeds,
     _prepare_pdf_embeds,
     _prepare_title_metadata,
+    _typst_resources_dir,
     _typst_str,
     _typst_template_args,
 )
@@ -285,3 +288,49 @@ class TestTypstTemplateArgs:
         """The running page header renders the name on every profile; no title page still passes it."""
         args = self._args(None, revision_name="draft-3", emit_title_page=False)
         assert "revision=draft-3" in args
+
+
+# ---------------------------------------------------------------------------
+# TestTypstPageBreakFilter
+# ---------------------------------------------------------------------------
+
+
+_PAGE_BREAK_TAG = AttributeAssignment(
+    attribute=AttributeInstance(
+        definition=Attribute(name="page-break", domain=AttributeDomain.GUFFIN),
+        link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1"),
+    ),
+    values=(LiteralValue(value="before"),),
+)
+
+
+@pytest.mark.pandoc
+class TestTypstPageBreakFilter:
+    """typst_page_break.lua opens a page-break-tagged heading on a new page in the Typst output."""
+
+    @staticmethod
+    def _typst_for(tagged: bool) -> str:
+        page = PageVertex(uid="page00001", title="Doc", children=["head0001a"])
+        heading = HeadingVertex(
+            uid="head0001a",
+            text="Breaking Section",
+            heading_level=3,
+            attribute_assignments=[_PAGE_BREAK_TAG] if tagged else None,
+        )
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, heading]), {}, {})
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_page_break.lua'}"],
+        )
+
+    def test_tagged_heading_is_preceded_by_weak_pagebreak(self) -> None:
+        """The tagged heading gains a weak Typst pagebreak ahead of it."""
+        typst = self._typst_for(tagged=True)
+        assert "#pagebreak(weak: true)" in typst
+        assert typst.index("#pagebreak(weak: true)") < typst.index("Breaking Section")
+
+    def test_untagged_heading_gains_no_pagebreak(self) -> None:
+        """An untagged heading converts with no pagebreak."""
+        assert "#pagebreak(weak: true)" not in self._typst_for(tagged=False)

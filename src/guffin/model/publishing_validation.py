@@ -8,6 +8,8 @@ Public symbols:
   position), :func:`all_element_type_values_legal` (every ``element-type`` value is a
   :class:`~guffin.model.chicago_structure.StructuralElement`), :func:`all_matter_values_legal`
   (every ``matter`` value is a :class:`~guffin.model.chicago_structure.Matter`),
+  :func:`all_page_break_values_legal` (every ``page-break`` value is a
+  :class:`~guffin.model.publishing_semantics.PageBreak`),
   :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
   :class:`~guffin.model.publishing_semantics.PdfRender`), :func:`all_code_language_values_legal`
   (every ``code-language`` value names a language in the canonical vocabulary),
@@ -60,6 +62,7 @@ from guffin.model.element_number import (
 )
 from guffin.model.primitives import Uid
 from guffin.model.publishing_semantics import (
+    PageBreak,
     PdfRender,
     PublishingAttribute,
     PublishingSemantics,
@@ -70,6 +73,7 @@ from guffin.model.publishing_semantics import (
     element_type_of,
     has_parts,
     matter_of,
+    page_break_of,
     pdf_render_of,
     publish_of,
     resolved_matter,
@@ -180,7 +184,8 @@ def _illegal_value_violations(
     tree: VertexTree,
     attribute: PublishingSemantics,
     value_coercer: Callable[
-        [AttributeAssignment], StructuralElement | Matter | PdfRender | bool | W3cdtfDate | CodeLanguageId | CodeSource
+        [AttributeAssignment],
+        StructuralElement | Matter | PageBreak | PdfRender | bool | W3cdtfDate | CodeLanguageId | CodeSource,
     ],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
@@ -249,6 +254,30 @@ def all_matter_values_legal(tree: VertexTree) -> ValidationError | None:
     return ValidationError(
         message="illegal matter values: " + "; ".join(violations),
         validator=all_matter_values_legal,
+    )
+
+
+@validate_call
+def all_page_break_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``page-break`` values.
+
+    Every :attr:`PublishingSemantics.PAGE_BREAK` assignment in *tree* must carry exactly one
+    value, and that value must name a :class:`PageBreak` member — the authoritative set of legal
+    ``page-break`` values.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``page-break`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.PAGE_BREAK, page_break_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal page-break values: " + "; ".join(violations),
+        validator=all_page_break_values_legal,
     )
 
 
@@ -712,6 +741,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
+    :func:`all_page_break_values_legal`,
     :func:`all_pdf_render_values_legal`, :func:`all_code_source_values_legal`,
     :func:`all_publish_values_legal`,
     :func:`all_date_values_legal`, :func:`all_cover_image_values_legal`, and
@@ -739,6 +769,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_attributes_anchored,
             all_element_type_values_legal,
             all_matter_values_legal,
+            all_page_break_values_legal,
             all_pdf_render_values_legal,
             all_code_language_values_legal,
             all_code_source_values_legal,

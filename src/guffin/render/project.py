@@ -93,6 +93,10 @@ class StructuralPolicy(BaseModel):
         emit_abstract: Whether to render an abstract block from the profile.
         drop_preamble: Whether to drop the export root's loose preamble — children preceding its
             first heading child, content belonging to no titled division — from paginated output.
+        honor_page_breaks: Whether authored ``page-break`` directives are honored.  A work whose
+            pagination is fixed by its own structural conventions (a book: chapters and parts open
+            pages by ritual, not by tag) does not honor them; a work whose pagination is the
+            author's to shape does.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -103,6 +107,7 @@ class StructuralPolicy(BaseModel):
     number_sections: bool = Field(..., description="Number the divisions.")
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
     drop_preamble: bool = Field(..., description="Drop the root's children preceding its first heading.")
+    honor_page_breaks: bool = Field(..., description="Honor authored page-break directives.")
 
 
 class ProjectProfile(BaseModel):
@@ -146,7 +151,7 @@ class DefaultProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Sections, no title page, no generated ToC, unnumbered, no abstract, preamble kept."""
+        """Sections, no title page, no generated ToC, unnumbered, no abstract, preamble kept, page breaks honored."""
         return StructuralPolicy(
             top_level_division=TopLevelDivision.SECTION,
             emit_title_page=False,
@@ -154,6 +159,7 @@ class DefaultProfile(ProjectProfile):
             number_sections=False,
             emit_abstract=False,
             drop_preamble=False,
+            honor_page_breaks=True,
         )
 
 
@@ -173,11 +179,15 @@ class BookProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Chapters (or parts), a title page, a generated ToC, numbered, no abstract, preamble dropped.
+        """Chapters (or parts), a title page, a generated ToC, numbered, no abstract, preamble dropped, page breaks.
+
+        fixed.
 
         A book's root is a container for its divisions: loose preamble ahead of the first
         chapter belongs to no division (and would otherwise surface as a spurious title-bearing
-        chapter in paginated output), so it is dropped by default.
+        chapter in paginated output), so it is dropped by default.  A book's pagination is
+        likewise fixed by its structure — chapters and parts open pages by convention — so
+        authored ``page-break`` directives are not honored.
         """
         return StructuralPolicy(
             top_level_division=TopLevelDivision.PART if self.with_parts else TopLevelDivision.CHAPTER,
@@ -186,6 +196,7 @@ class BookProfile(ProjectProfile):
             number_sections=True,
             emit_abstract=False,
             drop_preamble=True,
+            honor_page_breaks=False,
         )
 
 
@@ -206,7 +217,10 @@ class ManuscriptProfile(ProjectProfile):
 
     @property
     def structural_policy(self) -> StructuralPolicy:
-        """Sections, a title block, no generated ToC, unnumbered, with an abstract, preamble kept."""
+        """Sections, a title block, no generated ToC, unnumbered, with an abstract, preamble kept, page breaks.
+
+        honored.
+        """
         return StructuralPolicy(
             top_level_division=TopLevelDivision.SECTION,
             emit_title_page=True,
@@ -214,6 +228,7 @@ class ManuscriptProfile(ProjectProfile):
             number_sections=False,
             emit_abstract=True,
             drop_preamble=False,
+            honor_page_breaks=True,
         )
 
 

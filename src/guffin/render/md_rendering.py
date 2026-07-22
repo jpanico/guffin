@@ -38,7 +38,12 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
 from guffin.common.revision import Revision
-from guffin.model.publishing_semantics import drop_unpublished, promote_non_body_sections, strip_element_numbers
+from guffin.model.publishing_semantics import (
+    drop_page_breaks,
+    drop_unpublished,
+    promote_non_body_sections,
+    strip_element_numbers,
+)
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
@@ -197,11 +202,15 @@ def render(
     numbered: Final[VertexTree] = attributed if options.emit_element_numbers else strip_element_numbers(attributed)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # Authored page-break directives are honored only when the profile's policy says so; a
+    # policy that fixes its own pagination has the tags dropped (each drop logged).  GFM output
+    # expresses no page break either way — the gate is kept for policy uniformity across formats.
+    paginated: Final[VertexTree] = sourced if profile.structural_policy.honor_page_breaks else drop_page_breaks(sourced)
     # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
     # promoted to part level so a ToC built from heading levels cannot nest them under the
     # preceding part.
     parts_book: Final[bool] = profile.structural_policy.top_level_division is TopLevelDivision.PART
-    content: Final[VertexTree] = promote_non_body_sections(sourced) if parts_book else sourced
+    content: Final[VertexTree] = promote_non_body_sections(paginated) if parts_book else paginated
     gfm_dir: Final[Path] = _gfm_resources_dir()
     if should_bundle:
         bundle_dir: Final[Path] = output_dir / f"{filename_stem}.mdbundle"

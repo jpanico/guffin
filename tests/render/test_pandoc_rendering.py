@@ -420,7 +420,7 @@ class TestVertexTreeToPandocHeadingVertex:
 
 
 class TestVertexTreeToPandocHeadingSemantics:
-    """A heading's element-type / matter tags drive its Header's epub:type and unnumbered class."""
+    """A heading's guffin tags drive its Header's epub:type, unnumbered class, and page-break class."""
 
     def _tree_with_heading_tags(self, tags: list[tuple[str, str]]) -> VertexTree:
         """Build a VertexTree whose single H1 carries each ``(name, value)`` as a guffin-domain tag."""
@@ -476,6 +476,18 @@ class TestVertexTreeToPandocHeadingSemantics:
     def test_body_matter_is_numbered(self) -> None:
         """A body-matter element leaves the Header numbered (no unnumbered class)."""
         assert "unnumbered" not in self._heading_with_element_type("chapter").classes
+
+    def test_page_break_tag_stamps_class(self) -> None:
+        """A page-break:: before tag stamps the page-break-before class on the Header."""
+        assert "page-break-before" in self._heading_with_tag("page-break", "before").classes
+
+    def test_no_page_break_tag_stamps_no_class(self) -> None:
+        """A heading without a page-break tag carries no page-break-before class."""
+        assert "page-break-before" not in self._heading_with_element_type("chapter").classes
+
+    def test_illegal_page_break_value_stamps_no_class(self) -> None:
+        """An unrecognised page-break value is dropped (no class), not raised."""
+        assert "page-break-before" not in self._heading_with_tag("page-break", "sideways").classes
 
     def test_untagged_heading_is_numbered(self) -> None:
         """An untagged heading is not marked unnumbered."""

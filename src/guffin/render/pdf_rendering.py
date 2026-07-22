@@ -50,6 +50,7 @@ from guffin.model.chicago_structure import StructuralElement
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
     PdfRender,
+    drop_page_breaks,
     drop_unpublished,
     has_element_type,
     pdf_render_of_vertex,
@@ -85,6 +86,7 @@ _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
 _TYPST_CODE_SOURCE_FILTER: Final[str] = "typst_code_source.lua"
 _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
 _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
+_TYPST_PAGE_BREAK_FILTER: Final[str] = "typst_page_break.lua"
 _TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
 # Bundled .sublime-syntax grammars loaded into Typst's highlighter beyond its built-in
 # syntect set (via the Bergfink `code-syntaxes` variable, one entry per file).
@@ -175,6 +177,7 @@ def _typst_template_args(
         f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
         # Registered after the inline transforms so their rewrites are captured when the
         # fancy-quote and code-source content is serialized to Typst.
         f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
@@ -252,6 +255,7 @@ def _dump_typst_sources(
             f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+            f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
             f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
         ],
@@ -490,11 +494,14 @@ def render(
     numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # Authored page-break directives are honored only when the profile's policy says so; a
+    # policy that fixes its own pagination has the tags dropped (each drop logged).
+    paginated: Final[VertexTree] = sourced if profile.structural_policy.honor_page_breaks else drop_page_breaks(sourced)
     # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
     # promoted to part level so the Typst outline (nested by heading level) cannot adopt them
     # into the preceding part.
     parts_book: Final[bool] = profile.structural_policy.top_level_division is TopLevelDivision.PART
-    promoted: Final[VertexTree] = promote_non_body_sections(sourced) if parts_book else sourced
+    promoted: Final[VertexTree] = promote_non_body_sections(paginated) if parts_book else paginated
     # Loose preamble (root children ahead of the first heading) is pruned so it cannot
     # strand on its own page ahead of the book's first division.
     content: Final[VertexTree] = drop_root_preamble(promoted) if drop_preamble else promoted

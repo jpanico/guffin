@@ -36,7 +36,7 @@ class TestStructuralPolicy:
     """The structural policy each project type resolves to."""
 
     def test_default_is_article_like(self) -> None:
-        """Default: sections, no title page, no ToC, unnumbered, no abstract, preamble kept."""
+        """Default: sections, no title page, no ToC, unnumbered, no abstract, preamble kept, breaks honored."""
         policy: Final = DefaultProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.SECTION
         assert not policy.emit_title_page
@@ -44,15 +44,17 @@ class TestStructuralPolicy:
         assert not policy.number_sections
         assert not policy.emit_abstract
         assert not policy.drop_preamble
+        assert policy.honor_page_breaks
 
     def test_book_uses_chapters(self) -> None:
-        """Book: chapters, title page, generated ToC, numbered, preamble dropped."""
+        """Book: chapters, title page, generated ToC, numbered, preamble dropped, breaks fixed."""
         policy: Final = BookProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.CHAPTER
         assert policy.emit_title_page
         assert policy.emit_toc
         assert policy.number_sections
         assert policy.drop_preamble
+        assert not policy.honor_page_breaks
 
     def test_book_with_parts_promotes_top_level(self) -> None:
         """A book with parts makes the top-level division a part."""
@@ -60,13 +62,14 @@ class TestStructuralPolicy:
         assert policy.top_level_division is TopLevelDivision.PART
 
     def test_manuscript_emits_abstract(self) -> None:
-        """Manuscript: sections, title block, no ToC, unnumbered, abstract, preamble kept."""
+        """Manuscript: sections, title block, no ToC, unnumbered, abstract, preamble kept, breaks honored."""
         policy: Final = ManuscriptProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.SECTION
         assert policy.emit_abstract
         assert not policy.emit_toc
         assert not policy.number_sections
         assert not policy.drop_preamble
+        assert policy.honor_page_breaks
 
 
 class TestProfileDiscriminator:

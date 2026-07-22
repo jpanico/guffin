@@ -106,10 +106,12 @@ from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     DEFAULT_PDF_RENDER,
+    PageBreak,
     PdfRender,
     PublishingSemantics,
     effective_title,
     element_type_of_vertex,
+    page_break_of_vertex,
     pdf_render_of_vertex,
     resolved_matter,
 )
@@ -675,6 +677,10 @@ def _page_vertex_to_blocks(
     )
 
 
+_PAGE_BREAK_BEFORE_CLASS: Final[str] = "page-break-before"
+"""The class tagging a Header whose ``page-break:: before`` directive opens it on a new page."""
+
+
 def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]]:
     """Return the ``(classes, attributes)`` a heading's guffin tags contribute to its Header.
 
@@ -688,6 +694,12 @@ def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]
       ``element-type``'s conventional placement) is outside
       :attr:`~guffin.model.publishing_semantics.Matter.BODY`, so Pandoc's ``--number-sections`` numbers
       only body-matter chapters.
+    - the :data:`_PAGE_BREAK_BEFORE_CLASS` class — added when the heading carries a
+      ``page-break:: before`` tag, so each paginated format's styling can open the heading on a
+      new page (the PDF path's ``typst_page_break.lua`` prepends a Typst page break; ``epub.css``
+      applies ``break-before``); GFM drops it, having no pages.  Whether the tag survives to this
+      point is controlled upstream by
+      :func:`~guffin.model.publishing_semantics.drop_page_breaks`, not here.
     - the :data:`~guffin.render.epub_semantics.MATTER_DATA_ATTRIBUTE` attribute — the heading's
       resolved matter, as its CMOS ``<body>`` :class:`~guffin.render.epub_semantics.EpubDivision`
       value, stamped whenever a matter resolves.  The EPUB post-processing pass
@@ -697,6 +709,8 @@ def _heading_semantics(vertex: HeadingVertex) -> tuple[list[str], dict[str, str]
     element: Final[StructuralElement | None] = element_type_of_vertex(vertex)
     matter: Final[Matter | None] = resolved_matter(vertex)
     classes: Final[list[str]] = ["unnumbered"] if matter is not None and matter is not Matter.BODY else []
+    if page_break_of_vertex(vertex) is PageBreak.BEFORE:
+        classes.append(_PAGE_BREAK_BEFORE_CLASS)
     epub_type: Final[EpubType | None] = epub_type_for(element) if element is not None else None
     attributes: Final[dict[str, str]] = {}
     if epub_type is not None:
