@@ -88,7 +88,10 @@ _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 _TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
 # Bundled .sublime-syntax grammars loaded into Typst's highlighter beyond its built-in
 # syntect set (via the Bergfink `code-syntaxes` variable, one entry per file).
-_SYNTAX_FILENAMES: Final[tuple[str, ...]] = ("fortran_fixed.sublime-syntax",)
+_SYNTAX_FILENAMES: Final[tuple[str, ...]] = (
+    "apl.sublime-syntax",
+    "fortran_fixed.sublime-syntax",
+)
 
 
 def _typst_resources_dir() -> Path:
