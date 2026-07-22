@@ -49,8 +49,9 @@ Rendering rules:
   labelled with the PDF's filename, pointing at the local path from
   *asset_files* when present, else at the remote Cloud Firestore source URL.
 - :class:`~guffin.vertex.CodeBlockVertex` — rendered as a
-  :class:`~panflute.CodeBlock` whose class is the vertex's language, so Pandoc
-  applies language-specific syntax highlighting.
+  :class:`~panflute.CodeBlock` whose class is the vertex's language's
+  :func:`~guffin.render.code_language_token.code_language_token`, so Pandoc applies
+  language-specific syntax highlighting.
 
 Public symbols:
 
@@ -137,6 +138,7 @@ from guffin.model.vertex_tree import (
     standalone_link_target_of_text,
 )
 from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, VertexView, ViewMap
+from guffin.render.code_language_token import code_language_token
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
@@ -1015,8 +1017,11 @@ def _code_block_vertex_to_blocks(vertex: CodeBlockVertex) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.CodeBlockVertex` to a Pandoc :class:`~panflute.CodeBlock`.
 
     The vertex's :attr:`~guffin.vertex.CodeBlockVertex.language` is set as the
-    code block's class, which Pandoc uses to apply language-specific syntax
-    highlighting in the output.  The code content is emitted verbatim.  A vertex carrying a
+    code block's class — respelled through
+    :func:`~guffin.render.code_language_token.code_language_token`, since a
+    space-bearing canonical id would corrupt a fenced info string — which Pandoc uses
+    to apply language-specific syntax highlighting in the output.  The code content is
+    emitted verbatim.  A vertex carrying a
     :attr:`~guffin.vertex.CodeBlockVertex.code_source` is followed by its source-attribution
     ``code-source`` :class:`~panflute.Div` (see :func:`_code_source_block`); rendering the
     attribution is therefore controlled upstream by clearing the field
@@ -1029,7 +1034,7 @@ def _code_block_vertex_to_blocks(vertex: CodeBlockVertex) -> list[pf.Block]:
         The :class:`~panflute.CodeBlock`, followed by the attribution
         :class:`~panflute.Div` when the vertex carries a source reference.
     """
-    code_block: Final[pf.CodeBlock] = pf.CodeBlock(vertex.code, classes=[vertex.language])
+    code_block: Final[pf.CodeBlock] = pf.CodeBlock(vertex.code, classes=[code_language_token(vertex.language)])
     if vertex.code_source is None:
         return [code_block]
     return [code_block, _code_source_block(vertex.code_source)]
@@ -1621,7 +1626,7 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
             case PdfVertex():
                 return [pf.Link(*display, url=str(vertex.source))]
             case CodeBlockVertex():
-                return [pf.Code(vertex.code, classes=[vertex.language])]
+                return [pf.Code(vertex.code, classes=[code_language_token(vertex.language)])]
             case CalloutVertex():
                 return display
             case QuoteBlockVertex():

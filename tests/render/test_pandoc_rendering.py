@@ -12,6 +12,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
+import pypandoc  # type: ignore[import-untyped]
 import pytest
 from conftest import article1_vertex_tree, article8_vertex_tree
 from pydantic import HttpUrl
@@ -44,7 +45,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView
 from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
-from guffin.render.pandoc_ast import parse_inline_md
+from guffin.render.pandoc_ast import pandoc_to_json, parse_inline_md
 from guffin.render.pandoc_rendering import (
     _attribute_assignment_text,
     _block_ref_target,
@@ -578,6 +579,37 @@ class TestVertexTreeToPandocCodeSource:
         blocks = self._doc_blocks(None)
         assert isinstance(blocks[0], pf.CodeBlock)
         assert not any(isinstance(b, pf.Div) for b in blocks)
+
+
+class TestVertexTreeToPandocCodeBlockLanguage:
+    """Tests for vertex_tree_to_pandoc() — a code block's class is its language's code-language token."""
+
+    @staticmethod
+    def _code_doc(language: str) -> pf.Doc:
+        page = PageVertex(uid="page00001", title="P", children=["code00001"])
+        code = CodeBlockVertex(uid="code00001", code="(defun identity-fn (x) x)", language=language)
+        tree = VertexTree(tree_vertices=[page, code])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        return doc
+
+    def test_space_bearing_language_is_classed_by_its_token(self) -> None:
+        """A "common lisp" block is classed "lisp" — the class never carries the space-bearing id."""
+        code_block = list(self._code_doc("common lisp").content)[0]
+        assert isinstance(code_block, pf.CodeBlock)
+        assert code_block.classes == ["lisp"]
+
+    def test_whitespace_free_language_is_classed_verbatim(self) -> None:
+        """A "python" block keeps its language id as the class unchanged."""
+        code_block = list(self._code_doc("python").content)[0]
+        assert isinstance(code_block, pf.CodeBlock)
+        assert code_block.classes == ["python"]
+
+    def test_typst_fence_carries_the_single_token(self) -> None:
+        """The Typst fence reads ```lisp — no " lisp" remainder leaking into the listing content."""
+        typst = pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(self._code_doc("common lisp")), "typst", format="json"
+        )
+        assert "```lisp\n(defun identity-fn (x) x)" in typst
 
 
 class TestVertexTreeToPandocText:
