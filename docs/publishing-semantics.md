@@ -17,13 +17,15 @@ pure taxonomy with no other `guffin` dependencies.
   kind of vertex it attaches to, and where in the tree. The anchoring affordances themselves live
   in `model/attribute_anchor.py` — what the model *can express* is independent of how this vocabulary uses
   it. `AttributeAnchor` has `PAGE`, `HEADING`, `PDF`, `CODE_BLOCK`,
-  `BLOCK`, `ANY`, and `ROOT`; each member carries two constraint axes a host vertex must satisfy:
+  `BLOCK`, `ANY`, and `ROOT`; each member carries three constraint axes a host vertex must satisfy:
   the `frozenset[VertexType]` it corresponds to (the AttributeAnchor↔VertexType correspondence is a single
-  source of truth on the enum; `VertexType` is defined in `model/vertex.py`) and its `TreePosition`
-  (`anywhere`/`root`). `BLOCK` covers every vertex type except a page and `ANY`/`ROOT` cover them
-  all, derived from `VertexType` itself; `ROOT` is the positional anchor — type-independent, but
-  its host must be the tree's root vertex (the export target: a page for a page export, a heading
-  or block for a subtree export).
+  source of truth on the enum; `VertexType` is defined in `model/vertex.py`), its `TreePosition`
+  (`anywhere`/`root`), and `through_standalone_links` — whether the type constraint may alternatively
+  be satisfied *through* a standalone vertex link, the host tagging the vertex its link references
+  at that reference site (only `PDF` declares it). `BLOCK` covers every vertex type except a page
+  and `ANY`/`ROOT` cover them all, derived from `VertexType` itself; `ROOT` is the positional
+  anchor — type-independent, but its host must be the tree's root vertex (the export target: a page
+  for a page export, a heading or block for a subtree export).
 - **`PublishingSemantics`** — the enum of recognized guffin attributes, each a `PublishingAttribute`:
   - *Root-anchored document metadata* (`AttributeAnchor.ROOT`): `TITLE`, `SUBTITLE`, `AUTHORS`,
     `ILLUSTRATORS`, `DATE`, `PUBLISHER`, `RIGHTS`, `IDENTIFIER`, `LANGUAGE`, `DESCRIPTION`,
@@ -42,7 +44,11 @@ pure taxonomy with no other `guffin` dependencies.
     warning per drop, via `drop_page_breaks()`), while the default and manuscript profiles honor
     them — content declares, policy disposes.
   - *PDF-anchored tags* (`AttributeAnchor.PDF`): `PDF_RENDER` (`pdf-render::`) declares an embedded PDF
-    asset's `PdfRender` placement in paginated output (`inline` pages vs the default `link`).
+    asset's `PdfRender` placement in paginated output (`inline` pages vs the default `link`). The tag
+    sits on the PDF embed itself, or — because the pdf anchor sees through standalone links — on a
+    standalone block reference to it, so a PDF living on another page can be tagged where this
+    document displays it; the reference site's tag governs that reference and outranks the target
+    embed's own tag.
   - *Code-block-anchored tags* (`AttributeAnchor.CODE_BLOCK`): `CODE_LANGUAGE` (`code-language::`)
     overrides the closed fence-language set the Roam UI offers, its value resolved against the
     canonical language vocabulary (`common/programming_language.py`); `CODE_SOURCE` (`code-source::`)

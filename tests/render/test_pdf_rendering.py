@@ -13,7 +13,7 @@ from pathlib import Path
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 import pytest
-from conftest import FIXTURES_PDF_DIR
+from conftest import FIXTURES_PDF_DIR, article3_node_tree
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
@@ -28,21 +28,38 @@ from guffin.render.pdf_rendering import (
     _apply_pdf_embeds,
     _prepare_pdf_embeds,
     _prepare_title_metadata,
+    _standalone_reference_renders,
     _typst_resources_dir,
     _typst_str,
     _typst_template_args,
 )
 from guffin.render.project import TopLevelDivision
+from guffin.transcribe.roam_tree_to_guffin import transcribe
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fa.pdf.enc?alt=media&token=aaa"
 
-_INLINE_TAG = AttributeAssignment(
-    attribute=AttributeInstance(
-        definition=Attribute(name="pdf-render", domain=AttributeDomain.GUFFIN),
-        link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1"),
-    ),
-    values=(LiteralValue(value="inline"),),
-)
+
+def _render_tag(value: str) -> AttributeAssignment:
+    """A guffin pdf-render assignment carrying *value*."""
+    return AttributeAssignment(
+        attribute=AttributeInstance(
+            definition=Attribute(name="pdf-render", domain=AttributeDomain.GUFFIN),
+            link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1"),
+        ),
+        values=(LiteralValue(value=value),),
+    )
+
+
+_INLINE_TAG = _render_tag("inline")
+
+
+def _reference_site(target_uid: str, render: str | None = None) -> TextVertex:
+    """A text vertex whose entire text is a standalone vertex link to *target_uid*, optionally tagged."""
+    return TextVertex(
+        uid="refsite01",
+        text=f"[a.pdf](x-guffin:vertex/{target_uid})",
+        attribute_assignments=[_render_tag(render)] if render else None,
+    )
 
 
 def _pdf(
@@ -129,6 +146,45 @@ class TestPreparePdfEmbeds:
         """A PDF vertex with no fetched asset contributes no spec."""
         tree = VertexTree(tree_vertices=[_pdf("pdfuid001")])
         assert _prepare_pdf_embeds(tree, {}) == {}
+
+    def test_reference_site_tag_selects_inline_render(self, tmp_path: Path) -> None:
+        """A pdf-render:: inline tag at a standalone reference site governs the referenced PDF."""
+        vertex = _pdf("pdfuid001")
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        tree = VertexTree(tree_vertices=[page, _reference_site("pdfuid001", render="inline")], ref_vertices=[vertex])
+        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        spec = specs[str(vertex.source)]
+        assert spec.render is PdfRender.INLINE
+        assert spec.pages == 1
+
+    def test_reference_site_tag_outranks_target_tag(self, tmp_path: Path) -> None:
+        """The reference site is where this document displays the PDF, so its tag wins over the target's."""
+        vertex = _pdf("pdfuid001", inline=True)
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        tree = VertexTree(tree_vertices=[page, _reference_site("pdfuid001", render="link")], ref_vertices=[vertex])
+        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        spec = specs[str(vertex.source)]
+        assert spec.render is PdfRender.LINK
+        assert spec.pages is None
+
+    def test_untagged_reference_site_falls_back_to_target_tag(self, tmp_path: Path) -> None:
+        """An untagged reference site defers to the target PDF's own pdf-render tag."""
+        vertex = _pdf("pdfuid001", inline=True)
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        tree = VertexTree(tree_vertices=[page, _reference_site("pdfuid001")], ref_vertices=[vertex])
+        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        assert specs[str(vertex.source)].render is PdfRender.INLINE
+
+    def test_article3_fixture_reference_site_declares_inline(self) -> None:
+        """The [[Test Article]] 3 fixture's site-tagged standalone PDF reference resolves to INLINE.
+
+        The referenced PDF block lives on [[Test Article]] 1, so the fixture exercises the
+        cross-page transclusion case end to end: the transcriber folds the ``pdf-render`` tag
+        onto the reference-site text vertex, and the site's declaration reaches the embed
+        preparation keyed by the target PDF's uid.
+        """
+        tree = transcribe(article3_node_tree())
+        assert _standalone_reference_renders(tree) == {"pTvGGeTlB": PdfRender.INLINE}
 
 
 # ---------------------------------------------------------------------------

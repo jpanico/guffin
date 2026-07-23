@@ -210,7 +210,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 27
+    order: 28
     page:
       id: 4225
     refs:
@@ -589,6 +589,20 @@
       id: 4225
     refs:
     - id: 13469
+- - string: ((pTvGGeTlB))
+    children:
+    - id: 15112
+    id: 15113
+    uid: poU5xk1rO
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 15114
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11922
 - - string: Block 1 (children_layout=bullet)
     children:
     - id: 11678
@@ -652,7 +666,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 28
+    order: 29
     page:
       id: 4225
     refs:
@@ -759,7 +773,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 25
+    order: 26
     page:
       id: 4225
     refs:
@@ -825,8 +839,10 @@
       target above, plus a block embed
 
       - `External (out-of-page) links:` section: the same matrix against Test Article
-      1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout
-      embed
+      1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed,
+      and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render:
+      "inline"` at the reference site (the site''s tag drives the PDF format''s inline
+      placement)
 
       - this INFO `Callout box`, which contains Roam `page references`'
     id: 11133
@@ -858,7 +874,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 26
+    order: 27
     page:
       id: 4225
     refs:
@@ -896,7 +912,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 22
+    order: 23
     page:
       id: 4225
     refs:
@@ -922,7 +938,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 18
+    order: 19
     page:
       id: 4225
     refs:
@@ -1164,6 +1180,43 @@
     refs:
     - id: 5450
     - id: 5456
+- - attrs:
+    - - source:
+        - uid
+        - 5f-Isz9_x
+        value:
+        - uid
+        - 5f-Isz9_x
+      - source:
+        - uid
+        - 10pBwqT7Q
+        value:
+        - uid
+        - Jy_Ee6w8E
+      - source:
+        - uid
+        - 10pBwqT7Q
+        value: ' inline'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 15111
+    id: 15112
+    lookup:
+    - id: 11933
+    - id: 15111
+    - id: 15112
+    uid: 5f-Isz9_x
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 15113
+    - id: 15114
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 321
+    - id: 11839
 - - string: This para features ^^highlight^^
     id: 11721
     uid: Q-nJAf9KK
@@ -1297,8 +1350,33 @@
     refs:
     - id: 5844
     - id: 11719
-- - string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
+- - attrs:
+    - - source:
+        - uid
+        - poU5xk1rO
+        value:
+        - uid
+        - pTvGGeTlB
+      - source:
+        - uid
+        - 5f-Isz9_x
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 5f-Isz9_x
+        value:
+        - uid
+        - BxGxeeGk1
+    string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
     id: 11922
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 11922
+    - id: 15112
+    - id: 15113
     uid: pTvGGeTlB
     parents:
     - id: 3327
@@ -1376,7 +1454,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 29
+    order: 30
     page:
       id: 4225
     refs:
@@ -1413,7 +1491,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 24
+    order: 25
     page:
       id: 4225
     refs:
@@ -1494,7 +1572,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 19
+    order: 20
     page:
       id: 4225
     refs:
@@ -1610,6 +1688,22 @@
     order: 15
     page:
       id: 4225
+- - string: '#c:FUCHSIA **standalone PDF BLOCK ref, site-tagged pdf-render: "inline"
+      (from [[[[Test Article]] 1]]) ↓**'
+    children:
+    - id: 15113
+    id: 15114
+    uid: R1rSN0xY_
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 17
+    page:
+      id: 4225
+    refs:
+    - id: 3327
+    - id: 4223
+    - id: 5844
 - - string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref
       ↓**'
     children:
@@ -1619,7 +1713,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 21
+    order: 22
     page:
       id: 4225
     refs:
@@ -1714,7 +1808,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 20
+    order: 21
     page:
       id: 4225
     refs:
@@ -2256,6 +2350,20 @@
       id: 3327
     refs:
     - id: 11932
+- - string: 'pdf-render:: inline'
+    id: 15111
+    uid: 10pBwqT7Q
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 15112
+    - id: 15113
+    - id: 15114
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11933
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
     children:
     - id: 13487
@@ -2759,7 +2867,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 17
+    order: 18
     page:
       id: 4225
     refs:
@@ -2994,7 +3102,7 @@
     parents:
     - id: 4225
     - id: 4227
-    order: 23
+    order: 24
     page:
       id: 4225
     refs:
@@ -3032,6 +3140,7 @@
     - id: 13477
     - id: 13479
     - id: 13481
+    - id: 15114
     id: 4227
     uid: d3T1YpYig
     parents:

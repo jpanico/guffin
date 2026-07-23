@@ -421,6 +421,15 @@ class TestPdfRenderOfVertex:
             assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "sideways")])) is None
         assert "ignoring pdf-render" in caplog.text
 
+    def test_reference_site_host_resolves(self) -> None:
+        """The host may be a standalone-link reference site, not only the PDF embed itself."""
+        site = TextVertex(
+            uid="refsite01",
+            text="[a.pdf](x-guffin:vertex/pdfuid001)",
+            attribute_assignments=[_assignment("pdf-render", "inline")],
+        )
+        assert pdf_render_of_vertex(site) is PdfRender.INLINE
+
 
 def _code_block_with(assignments: list[AttributeAssignment] | None) -> CodeBlockVertex:
     """A python code-block vertex carrying *assignments*."""

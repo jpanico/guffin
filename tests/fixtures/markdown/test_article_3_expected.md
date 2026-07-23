@@ -14,7 +14,7 @@
 > – `block quotes` (Markdown and Roam native, single- and multi-line) and Roam `pull quotes`
 >
 > - `Internal (in-page) links:` section: inline refs to the styled/colored targets, plus standalone refs to page / block / parent block / header and to every block-level target above, plus a block embed
-> - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout embed
+> - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed, and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render: "inline"` at the reference site (the site’s tag drives the PDF format’s inline placement)
 > - this INFO `Callout box`, which contains Roam `page references`
 
 ### Feature Content
@@ -189,6 +189,8 @@ def fizz_buzz(limit: int = 100):
   - this image **has been resized** through the Roam UI (width:257, height:None)
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   [A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)
+- <span style="color: fuchsia">**standalone PDF BLOCK ref, site-tagged pdf-render: “inline” (from Test Article 1) ↓**</span>
+  [u-F9pv-nvn.pdf](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03 "u-F9pv-nvn.pdf")
 - <span style="color: fuchsia">**standalone BLOCK EMBED (from Test Article 1) ↓**</span>
   ### Section 2.1
 

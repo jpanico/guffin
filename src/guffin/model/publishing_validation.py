@@ -79,7 +79,13 @@ from guffin.model.publishing_semantics import (
     resolved_matter,
 )
 from guffin.model.vertex import HeadingVertex, ImageVertex, TextVertex, Vertex, is_embed_vertex
-from guffin.model.vertex_tree import VertexTree, assignments_for, root_vertex, transcluded_vertices
+from guffin.model.vertex_tree import (
+    VertexTree,
+    assignments_for,
+    root_vertex,
+    standalone_link_target,
+    transcluded_vertices,
+)
 
 _SEMANTICS_BY_NAME: Final[dict[str, PublishingSemantics]] = {
     member.value.name: member for member in PublishingSemantics
@@ -87,24 +93,51 @@ _SEMANTICS_BY_NAME: Final[dict[str, PublishingSemantics]] = {
 """Maps each recognised guffin attribute name to its :class:`PublishingSemantics` member."""
 
 
-def _anchor_mismatch(attribute: PublishingAttribute, vertex: Vertex, root_uid: Uid) -> str | None:
+def _satisfies_type_through_link(anchor: AttributeAnchor, vertex: Vertex, tree: VertexTree) -> bool:
+    """Return whether *vertex* satisfies *anchor*'s type constraint through its standalone vertex link.
+
+    Only an anchor declaring :attr:`~AttributeAnchor.through_standalone_links` may be satisfied this
+    way: *vertex* must be a standalone vertex link (per
+    :func:`~guffin.model.vertex_tree.standalone_link_target`) whose target's type is among the
+    anchor's :attr:`~AttributeAnchor.vertex_types` — the attribute then tags the referenced vertex
+    at its reference site.
+
+    Args:
+        anchor: The anchor whose type constraint to check.
+        vertex: The vertex the attribute is declared on.
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` resolving the link target.
+
+    Returns:
+        ``True`` when the anchor sees through standalone links and *vertex*'s link target
+        satisfies the type constraint, else ``False``.
+    """
+    if not anchor.through_standalone_links:
+        return False
+    target: Final[Vertex | None] = standalone_link_target(vertex, tree)
+    return target is not None and target.vertex_type in anchor.vertex_types
+
+
+def _anchor_mismatch(attribute: PublishingAttribute, vertex: Vertex, root_uid: Uid, tree: VertexTree) -> str | None:
     """Describe how *vertex* fails *attribute*'s anchor, or ``None`` when it satisfies it.
 
-    A host vertex must satisfy both anchor axes: its type must be among the anchor's
-    :attr:`~AttributeAnchor.vertex_types`, and its position must match the anchor's
-    :attr:`~AttributeAnchor.tree_position` (:attr:`TreePosition.ROOT` requires the vertex to be the
-    tree's root, identified by *root_uid*).
+    A host vertex must satisfy every anchor axis: its type must be among the anchor's
+    :attr:`~AttributeAnchor.vertex_types` (or, for an anchor declaring
+    :attr:`~AttributeAnchor.through_standalone_links`, its standalone vertex link must resolve to
+    such a vertex — see :func:`_satisfies_type_through_link`), and its position must match the
+    anchor's :attr:`~AttributeAnchor.tree_position` (:attr:`TreePosition.ROOT` requires the vertex
+    to be the tree's root, identified by *root_uid*).
 
     Args:
         attribute: The publishing attribute whose anchor to check.
         vertex: The vertex the attribute is declared on.
         root_uid: The uid of the tree's root vertex.
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` resolving standalone link targets.
 
     Returns:
         The mismatch description, or ``None`` when *vertex* satisfies the anchor.
     """
     anchor: Final[AttributeAnchor] = attribute.anchor
-    if vertex.vertex_type not in anchor.vertex_types:
+    if vertex.vertex_type not in anchor.vertex_types and not _satisfies_type_through_link(anchor, vertex, tree):
         return (
             f"{attribute.name!r} is {anchor.value}-anchored but declared on a "
             f"{vertex.vertex_type.value!r} vertex (uid={vertex.uid!r})"
@@ -116,7 +149,7 @@ def _anchor_mismatch(attribute: PublishingAttribute, vertex: Vertex, root_uid: U
     return None
 
 
-def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment, root_uid: Uid) -> str | None:
+def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment, root_uid: Uid, tree: VertexTree) -> str | None:
     """Describe how *assignment* violates the anchor invariant on *vertex*, or ``None``.
 
     ``None`` when *assignment* is outside the vocabulary (non-guffin domain, or a name matching no
@@ -128,6 +161,7 @@ def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment, root_uid:
         vertex: The vertex the assignment is declared on.
         assignment: The attribute assignment to check.
         root_uid: The uid of the tree's root vertex.
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` resolving standalone link targets.
 
     Returns:
         The violation description, or ``None`` when there is no violation.
@@ -138,7 +172,7 @@ def _anchor_violation(vertex: Vertex, assignment: AttributeAssignment, root_uid:
     member: Final[PublishingSemantics | None] = _SEMANTICS_BY_NAME.get(assignment_attribute.name)
     if member is None:
         return None
-    return _anchor_mismatch(member.value, vertex, root_uid)
+    return _anchor_mismatch(member.value, vertex, root_uid, tree)
 
 
 @validate_call
@@ -151,7 +185,10 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
     returned by :func:`~guffin.model.vertex_tree.transcluded_vertices` (the tree vertices plus
     embed-transcluded content): every guffin-domain assignment whose name is a recognised member must
     be declared on a vertex of one of the anchor's types, at the anchor's tree position (a
-    root-positioned anchor accepts only the tree's root vertex).  A vertex reached only by *mention*
+    root-positioned anchor accepts only the tree's root vertex).  An anchor declaring
+    :attr:`~AttributeAnchor.through_standalone_links` (the pdf anchor) also accepts a host whose
+    standalone vertex link resolves to a vertex of the anchor's types — the attribute tags the
+    referenced vertex at its reference site.  A vertex reached only by *mention*
     (a page or block reference rendered inline as text) is not part of this document — it carries its
     own foreign page's guffin metadata — and is not checked.
     Default-domain assignments and unrecognised guffin-domain names are outside the vocabulary and
@@ -170,7 +207,7 @@ def all_attributes_anchored(tree: VertexTree) -> ValidationError | None:
         violation
         for vertex in transcluded_vertices(tree)
         for assignment in vertex.attribute_assignments or ()
-        if (violation := _anchor_violation(vertex, assignment, root_uid)) is not None
+        if (violation := _anchor_violation(vertex, assignment, root_uid, tree)) is not None
     ]
     if not violations:
         return None

@@ -32,3 +32,8 @@ class TestAnchorVertexTypes:
         for member in AttributeAnchor:
             if member is not AttributeAnchor.ROOT:
                 assert member.tree_position is TreePosition.ANYWHERE, member
+
+    def test_only_the_pdf_anchor_sees_through_standalone_links(self) -> None:
+        """PDF alone may be satisfied through a standalone vertex link to a matching target."""
+        for member in AttributeAnchor:
+            assert member.through_standalone_links is (member is AttributeAnchor.PDF), member

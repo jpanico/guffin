@@ -58,8 +58,15 @@ from guffin.model.publishing_semantics import (
     strip_element_numbers,
 )
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import ImageVertex, PdfVertex
-from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources, drop_root_preamble
+from guffin.model.vertex import ImageVertex, PdfVertex, Vertex
+from guffin.model.vertex_tree import (
+    VertexTree,
+    drop_attribute_assignments,
+    drop_code_sources,
+    drop_root_preamble,
+    standalone_link_target,
+    transcluded_vertices,
+)
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
 from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
@@ -307,14 +314,45 @@ def _typst_raw_block(text: str) -> pf.RawBlock:
     return raw
 
 
+def _standalone_reference_renders(tree: VertexTree) -> dict[Uid, PdfRender]:
+    """Collect the ``pdf-render`` placement each standalone PDF reference site declares.
+
+    A render-visible vertex whose standalone vertex link (per
+    :func:`~guffin.model.vertex_tree.standalone_link_target`) resolves to a
+    :class:`~guffin.model.vertex.PdfVertex` may carry a ``pdf-render`` tag governing that
+    reference — the per-use declaration the pdf anchor's link transparency legalises.  When
+    several tagged sites reference the same PDF, the first (in render-visible walk order) wins.
+
+    Args:
+        tree: The vertex tree whose reference sites to scan.
+
+    Returns:
+        A mapping from referenced PDF vertex uid to the placement its reference site declares.
+    """
+    renders: Final[dict[Uid, PdfRender]] = {}
+    for vertex in transcluded_vertices(tree):
+        if isinstance(vertex, PdfVertex):
+            continue
+        target: Vertex | None = standalone_link_target(vertex, tree)
+        if not isinstance(target, PdfVertex) or target.uid in renders:
+            continue
+        render: PdfRender | None = pdf_render_of_vertex(vertex)
+        if render is None:
+            continue
+        renders[target.uid] = render
+    return renders
+
+
 def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[str, _PdfEmbedSpec]:
     """Prepare an embed spec for every fetched PDF asset in *tree*.
 
     Each spec carries the fetched file's path and its
-    :class:`~guffin.model.publishing_semantics.PdfRender` placement (the vertex's ``pdf-render``
-    tag, defaulting per :data:`~guffin.model.publishing_semantics.DEFAULT_PDF_RENDER`).  Only an
-    :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE` placement — which renders each
-    page — pays for a page count; a :attr:`~guffin.model.publishing_semantics.PdfRender.LINK`
+    :class:`~guffin.model.publishing_semantics.PdfRender` placement — a standalone reference
+    site's ``pdf-render`` tag (see :func:`_standalone_reference_renders`), else the PDF vertex's
+    own tag, else :data:`~guffin.model.publishing_semantics.DEFAULT_PDF_RENDER` (the reference
+    site is where this document displays the PDF, so its declaration outranks the target's).
+    Only an :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE` placement — which renders
+    each page — pays for a page count; a :attr:`~guffin.model.publishing_semantics.PdfRender.LINK`
     placement never uses one, so its PDF file is not parsed at all.
 
     The returned specs are keyed by the vertex's source URL — the URL its rendered link carries —
@@ -330,6 +368,7 @@ def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> di
     Returns:
         A mapping from source URL to the :class:`_PdfEmbedSpec` for that PDF.
     """
+    site_renders: Final[dict[Uid, PdfRender]] = _standalone_reference_renders(tree)
     specs: Final[dict[str, _PdfEmbedSpec]] = {}
     for vertex in tree.uid_map.values():
         if not isinstance(vertex, PdfVertex) or str(vertex.source) in specs:
@@ -337,7 +376,7 @@ def _prepare_pdf_embeds(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> di
         ref: AssetRef | None = asset_refs.get(vertex.uid)
         if ref is None:
             continue
-        render: PdfRender = pdf_render_of_vertex(vertex) or DEFAULT_PDF_RENDER
+        render: PdfRender = site_renders.get(vertex.uid) or pdf_render_of_vertex(vertex) or DEFAULT_PDF_RENDER
         page_count: int | None = len(PdfReader(str(ref.path)).pages) if render is PdfRender.INLINE else None
         specs[str(vertex.source)] = _PdfEmbedSpec(source_path=ref.path, pages=page_count, render=render)
         if render is PdfRender.INLINE:

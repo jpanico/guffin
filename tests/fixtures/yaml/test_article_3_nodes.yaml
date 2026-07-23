@@ -141,7 +141,7 @@
 - uid: QnqMI7-2J
   id: 11771
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-  order: 27
+  order: 28
   heading: null
   children:
   - id: 11772
@@ -462,6 +462,25 @@
   props: null
   title: null
   attrs: null
+- uid: poU5xk1rO
+  id: 15113
+  string: ((pTvGGeTlB))
+  order: 0
+  heading: null
+  children:
+  - id: 15112
+  refs:
+  - id: 11922
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 15114
+  props: null
+  title: null
+  attrs: null
 - uid: vk7Up544K
   id: 11739
   string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
@@ -500,7 +519,7 @@
 - uid: xkmJLzW3G
   id: 11804
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-  order: 28
+  order: 29
   heading: null
   children:
   - id: 11805
@@ -627,7 +646,7 @@
 - uid: 8VCtZe0gi
   id: 13479
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
-  order: 25
+  order: 26
   heading: null
   children:
   - id: 13480
@@ -704,8 +723,10 @@
     target above, plus a block embed
 
     - `External (out-of-page) links:` section: the same matrix against Test Article
-    1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout
-    embed
+    1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed,
+    and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render:
+    "inline"` at the reference site (the site''s tag drives the PDF format''s inline
+    placement)
 
     - this INFO `Callout box`, which contains Roam `page references`'
   order: 0
@@ -742,7 +763,7 @@
 - uid: BXNgBxGq1
   id: 13481
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
-  order: 26
+  order: 27
   heading: null
   children:
   - id: 13482
@@ -796,7 +817,7 @@
 - uid: kTP7bM3mT
   id: 13473
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 22
+  order: 23
   heading: null
   children:
   - id: 13474
@@ -832,7 +853,7 @@
 - uid: 2yzYmXmgB
   id: 12818
   string: '#c:FUCHSIA **standalone PAGE EMBED ↓**'
-  order: 18
+  order: 19
   heading: null
   children:
   - id: 12819
@@ -1010,6 +1031,43 @@
   props: null
   title: null
   attrs: null
+- uid: 5f-Isz9_x
+  id: 15112
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 15111
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 15113
+  - id: 15114
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 5f-Isz9_x
+      value:
+      - uid
+      - 5f-Isz9_x
+    - source:
+      - uid
+      - 10pBwqT7Q
+      value:
+      - uid
+      - Jy_Ee6w8E
+    - source:
+      - uid
+      - 10pBwqT7Q
+      value: ' inline'
 - uid: Q-nJAf9KK
   id: 11721
   string: This para features ^^highlight^^
@@ -1156,7 +1214,7 @@
 - uid: 1HipLqaCb
   id: 13263
   string: '#c:FUCHSIA **standalone CALLOUT EMBED ↓**'
-  order: 29
+  order: 30
   heading: null
   children:
   - id: 13264
@@ -1192,7 +1250,7 @@
 - uid: 8YtNUz59e
   id: 13477
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 24
+  order: 25
   heading: null
   children:
   - id: 13478
@@ -1263,7 +1321,7 @@
 - uid: wta7y8AlI
   id: 11774
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-  order: 19
+  order: 20
   heading: null
   children:
   - id: 11775
@@ -1399,10 +1457,31 @@
   props: null
   title: null
   attrs: null
+- uid: R1rSN0xY_
+  id: 15114
+  string: '#c:FUCHSIA **standalone PDF BLOCK ref, site-tagged pdf-render: "inline"
+    (from [[[[Test Article]] 1]]) ↓**'
+  order: 17
+  heading: null
+  children:
+  - id: 15113
+  refs:
+  - id: 3327
+  - id: 4223
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
 - uid: ZP4r7M_bw
   id: 13471
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 21
+  order: 22
   heading: null
   children:
   - id: 13472
@@ -1490,7 +1569,7 @@
 - uid: ipvsMyx77
   id: 11776
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-  order: 20
+  order: 21
   heading: null
   children:
   - id: 11777
@@ -1969,6 +2048,26 @@
   props: null
   title: null
   attrs: null
+- uid: 10pBwqT7Q
+  id: 15111
+  string: 'pdf-render:: inline'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11933
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 15112
+  - id: 15113
+  - id: 15114
+  props: null
+  title: null
+  attrs: null
 - uid: yTLZTltae
   id: 13486
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -2287,7 +2386,7 @@
 - uid: 8jkmASa1c
   id: 4233
   string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
-  order: 17
+  order: 18
   heading: null
   children:
   - id: 4234
@@ -2487,7 +2586,7 @@
 - uid: 9ixJaPK7A
   id: 13475
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 23
+  order: 24
   heading: null
   children:
   - id: 13476
@@ -2538,6 +2637,7 @@
   - id: 13477
   - id: 13479
   - id: 13481
+  - id: 15114
   refs: null
   page:
     id: 4225

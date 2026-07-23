@@ -14,7 +14,7 @@
 > – `block quotes` (Markdown and Roam native, single- and multi-line) and Roam `pull quotes`
 >
 > - `Internal (in-page) links:` section: inline refs to the styled/colored targets, plus standalone refs to page / block / parent block / header and to every block-level target above, plus a block embed
-> - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, and a callout embed
+> - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed, and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render: "inline"` at the reference site (the site’s tag drives the PDF format’s inline placement)
 > - this INFO `Callout box`, which contains Roam `page references`
 
 ### Feature Content
@@ -189,6 +189,8 @@ def fizz_buzz(limit: int = 100):
   - this image **has been resized** through the Roam UI (width:257, height:None)
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   <img src="flower-1.jpeg" alt="A flower" style="margin: 0;">
+- <span style="color: fuchsia">**standalone PDF BLOCK ref, site-tagged pdf-render: “inline” (from Test Article 1) ↓**</span>
+  [dummy.pdf](dummy.pdf "dummy.pdf")
 - <span style="color: fuchsia">**standalone BLOCK EMBED (from Test Article 1) ↓**</span>
   ### Section 2.1
 

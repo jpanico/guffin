@@ -47,7 +47,8 @@ Public symbols:
   :func:`pdf_render_of_vertex` /
   :func:`code_language_of_vertex` / :func:`code_source_of_vertex` / :func:`publish_of_vertex` —
   resolve a heading's ``element-type`` / bare ``matter`` / ``page-break`` tag, a PDF embed's
-  ``pdf-render`` tag, a code block's ``code-language`` or ``code-source`` tag,
+  ``pdf-render`` tag (declared on the embed itself or on a standalone-link reference to it), a
+  code block's ``code-language`` or ``code-source`` tag,
   or any block's ``publish`` tag, to its value, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
@@ -199,8 +200,11 @@ class PublishingSemantics(enum.Enum):
       declares which :class:`StructuralElement` the heading is; :attr:`MATTER` declares its
       :class:`Matter` division directly, for a bespoke section with no specific element type;
       :attr:`PAGE_BREAK` forces a :class:`PageBreak` in paginated output.
-    - **PDF tags** (:attr:`AttributeAnchor.PDF`) — applied to an individual embedded PDF asset:
-      :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated output.
+    - **PDF tags** (:attr:`AttributeAnchor.PDF`) — applied to an individual embedded PDF asset,
+      directly or at a standalone-link reference site (the pdf anchor sees through standalone
+      vertex links, so a reference to a PDF living on another page can be tagged where it is
+      displayed): :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated
+      output.
     - **Code-block tags** (:attr:`AttributeAnchor.CODE_BLOCK`) — applied to an individual fenced
       code listing: :attr:`CODE_LANGUAGE` declares the listing's language, overriding the closed
       vocabulary the Roam UI embeds in the fence.
@@ -228,7 +232,9 @@ class PublishingSemantics(enum.Enum):
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
         PAGE_BREAK: Tags a heading with a forced :class:`PageBreak` in paginated output
             (``before`` opens the heading on a new page).
-        PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a link).
+        PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a
+            link); declared on the embed itself or on a standalone-link reference to it (the
+            reference site's tag governing that reference).
         CODE_LANGUAGE: Tags a fenced code listing with its language — any name or alias of the
             canonical vocabulary (:mod:`~guffin.common.programming_language`) — overriding the
             closed language set the Roam UI offers (which lacks e.g. Fortran).
@@ -575,15 +581,18 @@ def page_break_of_vertex(vertex: HeadingVertex) -> PageBreak | None:
 
 
 @validate_call
-def pdf_render_of_vertex(vertex: PdfVertex) -> PdfRender | None:
+def pdf_render_of_vertex(vertex: Vertex) -> PdfRender | None:
     """Resolve *vertex*'s ``pdf-render`` tag to a :class:`PdfRender`, or ``None``.
 
-    ``None`` when *vertex* carries no ``pdf-render`` assignment, or when the assignment does not
-    coerce to a :class:`PdfRender` (ignored with a warning).  An untagged embed's placement is
-    :data:`DEFAULT_PDF_RENDER`.
+    The host may be the PDF embed itself, or — per the pdf anchor's
+    :attr:`~guffin.model.attribute_anchor.AttributeAnchor.through_standalone_links` affordance — a
+    vertex whose standalone vertex link references a PDF embed, tagging that embed at its
+    reference site.  ``None`` when *vertex* carries no ``pdf-render`` assignment, or when the
+    assignment does not coerce to a :class:`PdfRender` (ignored with a warning).  An untagged
+    embed's placement is :data:`DEFAULT_PDF_RENDER`.
 
     Args:
-        vertex: The PDF vertex whose tag to resolve.
+        vertex: The vertex whose tag to resolve.
 
     Returns:
         The named :class:`PdfRender`, or ``None``.

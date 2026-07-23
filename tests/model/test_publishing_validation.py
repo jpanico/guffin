@@ -79,6 +79,23 @@ def _article7_vertex_tree() -> VertexTree:
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
 
 
+def _article3_vertex_tree() -> VertexTree:
+    """Load the [[Test Article]] 3 VertexTree from its YAML fixture, with its referenced PDF target.
+
+    The fixture's external-links matrix standalone-references a PDF block living on
+    [[Test Article]] 3's sibling article ``[[Test Article]] 1``, so that target vertex (from the
+    article-1 fixture) rides along as a ref vertex — without it, the reference site's
+    ``pdf-render`` tag could not resolve its standalone link target.
+    """
+    raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_vertices.yaml").read_text())
+    article1_raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text())
+    pdf_target = next(vertex for vertex in article1_raw if vertex["uid"] == "pTvGGeTlB")
+    return VertexTree(
+        tree_vertices=[vertex_adapter.validate_python(r) for r in raw],
+        ref_vertices=[vertex_adapter.validate_python(pdf_target)],
+    )
+
+
 def _heading_with(assignments: list[AttributeAssignment] | None) -> HeadingVertex:
     """A level-1 heading carrying *assignments*."""
     return HeadingVertex(uid="head00001", text="A Heading", heading_level=1, attribute_assignments=assignments)
@@ -204,6 +221,26 @@ class TestValidateSemanticsArticle7Fixture:
             or find_publishing_attribute(vertex, PublishingSemantics.MATTER) is not None
         ]
         assert tagged, "fixture carries no vocabulary tags; regenerate it from [[Test Article]] 7"
+        result = validate_semantics(tree)
+        assert result.errors == ()
+        assert result.is_valid
+
+
+class TestValidateSemanticsArticle3Fixture:
+    """validate_semantics passes the [[Test Article]] 3 fixture, whose links matrix site-tags a PDF reference."""
+
+    def test_fixture_is_semantically_valid(self) -> None:
+        """The fixture's pdf-render tag at a standalone PDF reference site validates cleanly."""
+        tree = _article3_vertex_tree()
+        # Precondition: the fixture actually carries a pdf-render tag on a non-PDF (reference-site)
+        # vertex, so a pass exercises the anchor's standalone-link transparency and is not vacuous.
+        sites = [
+            vertex
+            for vertex in VertexTreeDFSIterator(tree)
+            if not isinstance(vertex, PdfVertex)
+            and find_publishing_attribute(vertex, PublishingSemantics.PDF_RENDER) is not None
+        ]
+        assert sites, "fixture carries no reference-site pdf-render tag; regenerate it from [[Test Article]] 3"
         result = validate_semantics(tree)
         assert result.errors == ()
         assert result.is_valid
@@ -370,6 +407,30 @@ class TestAllAttributesAnchored:
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "uid='refhead01'" in error.message
+
+    def test_pdf_render_on_standalone_reference_to_pdf_passes(self) -> None:
+        """A pdf-render tag at a standalone-link reference site whose target is a PDF is legal."""
+        site = TextVertex(
+            uid="refsite01",
+            text="[a.pdf](x-guffin:vertex/pdfuid001)",
+            attribute_assignments=[_assignment("pdf-render", "inline")],
+        )
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        tree = VertexTree(tree_vertices=[page, site], ref_vertices=[_pdf_with(None)])
+        assert all_attributes_anchored(tree) is None
+
+    def test_pdf_render_on_plain_text_vertex_is_reported(self) -> None:
+        """A pdf-render tag on a text vertex that is no standalone PDF link stays a violation."""
+        stray = TextVertex(
+            uid="refsite01",
+            text="just prose",
+            attribute_assignments=[_assignment("pdf-render", "inline")],
+        )
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        tree = VertexTree(tree_vertices=[page, stray])
+        error = all_attributes_anchored(tree)
+        assert error is not None
+        assert "'pdf-render' is pdf-anchored" in error.message
 
     def test_mention_only_ref_vertices_are_not_checked(self) -> None:
         """A misanchored attribute on a merely-mentioned ref vertex (not transcluded) is not checked."""
@@ -541,26 +602,34 @@ class TestValidateSemantics:
         assert "misplaced matter tags" in messages
 
 
+def _stray_text_tree(stray: TextVertex) -> VertexTree:
+    """A page root whose sole child is *stray*."""
+    page = PageVertex(uid="pageroot1", title="Doc", children=[stray.uid])
+    return VertexTree(tree_vertices=[page, stray])
+
+
 class TestAnchorMismatch:
-    """_anchor_mismatch() checks both anchor axes: vertex type and tree position."""
+    """_anchor_mismatch() checks every anchor axis: vertex type and tree position."""
 
     def test_root_anchored_on_root_vertex_passes(self) -> None:
         """A root-anchored attribute on the root vertex satisfies the anchor."""
         attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.ROOT)
         root = PageVertex(uid="pageroot1", title="Doc")
-        assert _anchor_mismatch(attribute, root, "pageroot1") is None
+        tree = VertexTree(tree_vertices=[root])
+        assert _anchor_mismatch(attribute, root, "pageroot1", tree) is None
 
     def test_root_anchored_on_non_page_root_passes(self) -> None:
         """The root anchor is type-independent: a heading root (subtree export) also satisfies it."""
         attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.ROOT)
         root = HeadingVertex(uid="head00001", text="H", heading_level=1)
-        assert _anchor_mismatch(attribute, root, "head00001") is None
+        tree = VertexTree(tree_vertices=[root])
+        assert _anchor_mismatch(attribute, root, "head00001", tree) is None
 
     def test_root_anchored_on_non_root_vertex_is_reported(self) -> None:
         """A root-anchored attribute anywhere but the root is a positional mismatch."""
         attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.ROOT)
         stray = TextVertex(uid="txt00001a", text="hello")
-        mismatch = _anchor_mismatch(attribute, stray, "pageroot1")
+        mismatch = _anchor_mismatch(attribute, stray, "pageroot1", _stray_text_tree(stray))
         assert mismatch is not None
         assert "root-anchored" in mismatch
         assert "non-root vertex" in mismatch
@@ -570,7 +639,37 @@ class TestAnchorMismatch:
         """A vertex failing the type axis reports the type mismatch."""
         attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.HEADING)
         stray = TextVertex(uid="txt00001a", text="hello")
-        mismatch = _anchor_mismatch(attribute, stray, "pageroot1")
+        mismatch = _anchor_mismatch(attribute, stray, "pageroot1", _stray_text_tree(stray))
+        assert mismatch is not None
+        assert "heading-anchored" in mismatch
+
+    def test_link_transparent_anchor_satisfied_through_standalone_link(self) -> None:
+        """A pdf-anchored attribute on a standalone-link host whose target is a PDF satisfies the anchor."""
+        attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.PDF)
+        site = TextVertex(uid="refsite01", text="[a.pdf](x-guffin:vertex/pdfuid001)")
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        tree = VertexTree(tree_vertices=[page, site], ref_vertices=[_pdf_with(None)])
+        assert _anchor_mismatch(attribute, site, "pageroot1", tree) is None
+
+    def test_link_transparent_anchor_rejects_non_matching_target(self) -> None:
+        """A pdf-anchored attribute on a standalone link to a non-PDF target stays a type mismatch."""
+        attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.PDF)
+        site = TextVertex(uid="refsite01", text="[t](x-guffin:vertex/txttarget)")
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        target = TextVertex(uid="txttarget", text="plain")
+        tree = VertexTree(tree_vertices=[page, site], ref_vertices=[target])
+        mismatch = _anchor_mismatch(attribute, site, "pageroot1", tree)
+        assert mismatch is not None
+        assert "pdf-anchored" in mismatch
+
+    def test_opaque_anchor_never_satisfied_through_link(self) -> None:
+        """An anchor without link transparency (heading) rejects a standalone-link host regardless of target."""
+        attribute = PublishingAttribute(name="test-attr", anchor=AttributeAnchor.HEADING)
+        site = TextVertex(uid="refsite01", text="[h](x-guffin:vertex/refhead01)")
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
+        target = HeadingVertex(uid="refhead01", text="H", heading_level=1)
+        tree = VertexTree(tree_vertices=[page, site], ref_vertices=[target])
+        mismatch = _anchor_mismatch(attribute, site, "pageroot1", tree)
         assert mismatch is not None
         assert "heading-anchored" in mismatch
 

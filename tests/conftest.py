@@ -132,6 +132,24 @@ def article1_vertex_tree() -> VertexTree:
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
 
 
+def article3_node_tree() -> NodeTree:
+    """Load and return the ``[[Test Article]] 3`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
+
+    Loads all nodes from ``test_article_3_nodes_by_uid.yaml`` (anchor subtree plus referenced
+    pages) so that :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` is populated and the
+    external-links matrix's cross-page references — including its standalone reference to a
+    ``[[Test Article]] 1`` PDF block — resolve during transcription.
+    """
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
+        (FIXTURES_YAML_DIR / "test_article_3_nodes_by_uid.yaml").read_text()
+    )
+    all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
+    root_node: Final[RoamNode] = next(
+        n for n in all_nodes if node_type(n) == NodeType.PAGE and n.title == "[[Test Article]] 3"
+    )
+    return NodeTree.build(super_network=all_nodes, root_node=root_node)
+
+
 def article5_node_tree() -> NodeTree:
     """Load and return the ``[[Test Article]] 5`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
