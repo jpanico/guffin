@@ -1202,6 +1202,68 @@ class TestMetaBlockFolding:
 
 
 # ---------------------------------------------------------------------------
+# TestInTreeRefTranscription
+# ---------------------------------------------------------------------------
+
+
+class TestInTreeRefTranscription:
+    """A ref target inside the anchor tree is transcribed once, by the tree pass alone."""
+
+    @staticmethod
+    def _self_referencing_tree() -> NodeTree:
+        """Build a page whose text block references the page's own level-2 heading block."""
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2), IdObject(id=3)])
+        heading = RoamNode(
+            uid="headng001",
+            id=2,
+            string="Section",
+            heading=2,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+        )
+        referrer = RoamNode(
+            uid="referrer1",
+            id=3,
+            string="see ((headng001))",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=2)],
+        )
+        return _node_tree(root, heading, referrer)
+
+    def test_in_tree_ref_target_reaches_refs_by_id(self) -> None:
+        """Sanity: the fetch model records the in-tree target in refs_by_id."""
+        assert 2 in self._self_referencing_tree().refs_by_id
+
+    def test_in_tree_ref_target_yields_no_ref_vertex(self) -> None:
+        """An in-tree ref target is not transcribed again as a ref vertex."""
+        vtree = transcribe(self._self_referencing_tree())
+        assert [v.uid for v in vtree.ref_vertices] == []
+
+    def test_uid_map_resolves_to_the_normalized_tree_vertex(self) -> None:
+        """The by-uid map holds the tree vertex — heading normalized to H1, not shadowed at H2."""
+        vtree = transcribe(self._self_referencing_tree())
+        vertex = vtree.uid_map["headng001"]
+        assert isinstance(vertex, HeadingVertex)
+        assert vertex.heading_level == 1
+
+    def test_foreign_ref_target_still_transcribed(self) -> None:
+        """A ref target outside the anchor tree still yields a ref vertex."""
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        referrer = RoamNode(
+            uid="referrer1",
+            id=2,
+            string="see [[Foreign]]",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=3)],
+        )
+        foreign = RoamNode(uid="refpage01", id=3, title="Foreign")
+        vtree = transcribe(_node_tree(root, referrer, foreign))
+        assert [v.uid for v in vtree.ref_vertices] == ["refpage01"]
+
+
+# ---------------------------------------------------------------------------
 # TestTranscribeArticleFixture
 # ---------------------------------------------------------------------------
 

@@ -991,7 +991,10 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     Returns:
         A :class:`~guffin.vertex_tree.VertexTree` in document (DFS) order, with
         :attr:`~guffin.vertex_tree.VertexTree.ref_vertices` populated from
-        :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`.  Referenced native-table
+        :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`.  A referenced node that is
+        itself a member of the anchor tree yields no ref vertex — the tree pass already
+        transcribes it (heading normalization applied), and each uid maps to exactly one
+        vertex.  Referenced native-table
         nodes are consumed into a single :class:`~guffin.vertex.TableVertex` (with their
         row/cell descendants) just as in-tree tables are, so a cross-page table reference
         resolves to a complete table.
@@ -1028,12 +1031,17 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
             vertices.append(transcribe_standalone_node(node, node_tree, heading_offset))
     ref_vertices: Final[list[Vertex]] = []
     ref_consumed: Final[set[Id]] = set()
+    # A ref target can live inside the anchor tree itself (a block ref to an in-tree node).  Such a
+    # node is already transcribed by the tree pass above — heading normalization applied — so the
+    # ref passes skip it; transcribing it again would emit a duplicate, un-normalized vertex under
+    # the same uid, and that duplicate would shadow the tree vertex in VertexTree.uid_map.
+    tree_ids: Final[frozenset[Id]] = frozenset(tree_node.id for tree_node in node_tree.tree_network)
     # Native tables are multi-node constructs: consume each referenced table together with its
     # row/cell descendants first, so those descendants are not also transcribed as standalone
     # ref vertices.  refs_by_id is not in DFS order, so a single-pass consumed-set guard could
     # encounter a cell before its table; a dedicated table pass avoids that.
     for ref_node in node_tree.refs_by_id.values():
-        if node_type(ref_node) != NodeType.NATIVE_TABLE:
+        if ref_node.id in tree_ids or node_type(ref_node) != NodeType.NATIVE_TABLE:
             continue
         try:
             ref_table_vertex, ref_nodes_consumed = to_table_vertex(ref_node, node_tree)
@@ -1043,9 +1051,11 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         ref_consumed.update(ref_nodes_consumed)
         ref_vertices.append(ref_table_vertex)
     for ref_node in node_tree.refs_by_id.values():
-        # Native tables are consumed above; attribute blocks and meta containers are not vertices.
+        # In-tree nodes are covered by the tree pass; native tables are consumed above; attribute
+        # blocks and meta containers are not vertices.
         if (
-            ref_node.id in ref_consumed
+            ref_node.id in tree_ids
+            or ref_node.id in ref_consumed
             or node_type(ref_node) in (NodeType.NATIVE_TABLE, NodeType.ATTRIBUTE_BLOCK)
             or _is_meta_block(ref_node)
         ):

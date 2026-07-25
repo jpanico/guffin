@@ -17,7 +17,7 @@
 > - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed, and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render: "inline"` at the reference site (the site’s tag drives the PDF format’s inline placement)
 > - this INFO `Callout box`, which contains Roam `page references`
 
-### Feature Content
+## Feature Content
 
 - This para features plain text
 - This para features *italics*
@@ -89,7 +89,7 @@ def fizz_buzz(limit: int = 100):
 
   - this is a child block of Pull Quote
 
-### Internal (in-page) links:
+## Internal (in-page) links:
 
 - <span style="color: fuchsia">**inline PAGE ref ⟶**</span> Test Article 3
 - <span style="color: fuchsia">**inline PLAIN TEXT ref ⟶**</span> This para features plain text
@@ -166,7 +166,7 @@ def fizz_buzz(limit: int = 100):
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
 
-### External (out-of-page) links:
+## External (out-of-page) links:
 
 - <span style="color: fuchsia">**inline PAGE ref ⟶**</span> Test Article 2
 - <span style="color: fuchsia">**inline DAILY NOTES PAGE ref ⟶**</span> January 1st, 2026
