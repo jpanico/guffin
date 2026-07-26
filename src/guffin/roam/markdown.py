@@ -393,40 +393,56 @@ Numbered group (no named groups):
   newlines (:data:`regex.DOTALL` is set).
 """
 
-COLOR_BOLD_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) \*\*(.+?)\*\*")
+COLOR_BOLD_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)\*\*(.+?)\*\*")
 """Compiled regex matching a Color Highlighter bold span ``#c:COLOR **text**``.
 
+The first space after the color name is the tag separator; a longer whitespace run still
+matches, with the additional spaces captured separately (group 2).
+
 Numbered groups (no named groups):
 
 - Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
-- Group 2 — the bold content between the ``**`` delimiters.
+- Group 2 — any spaces beyond the single separator space (may be empty).
+- Group 3 — the bold content between the ``**`` delimiters.
 """
 
-COLOR_HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) \^\^(.+?)\^\^")
+COLOR_HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)\^\^(.+?)\^\^")
 """Compiled regex matching a Color Highlighter highlight span ``#c:COLOR ^^text^^``.
 
+The first space after the color name is the tag separator; a longer whitespace run still
+matches, with the additional spaces captured separately (group 2).
+
 Numbered groups (no named groups):
 
 - Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
-- Group 2 — the highlighted content between the ``^^`` delimiters.
+- Group 2 — any spaces beyond the single separator space (may be empty).
+- Group 3 — the highlighted content between the ``^^`` delimiters.
 """
 
-COLOR_UNDERLINE_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) __(.+?)__")
+COLOR_UNDERLINE_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)__(.+?)__")
 """Compiled regex matching a Color Highlighter underline span ``#c:COLOR __text__``.
 
+The first space after the color name is the tag separator; a longer whitespace run still
+matches, with the additional spaces captured separately (group 2).
+
 Numbered groups (no named groups):
 
 - Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
-- Group 2 — the underlined content between the ``__`` delimiters.
+- Group 2 — any spaces beyond the single separator space (may be empty).
+- Group 3 — the underlined content between the ``__`` delimiters.
 """
 
-COLOR_BOX_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ~~(.+?)~~")
+COLOR_BOX_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)~~(.+?)~~")
 """Compiled regex matching a Color Highlighter box span ``#c:COLOR ~~text~~``.
+
+The first space after the color name is the tag separator; a longer whitespace run still
+matches, with the additional spaces captured separately (group 2).
 
 Numbered groups (no named groups):
 
 - Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
-- Group 2 — the boxed content between the ``~~`` delimiters.
+- Group 2 — any spaces beyond the single separator space (may be empty).
+- Group 3 — the boxed content between the ``~~`` delimiters.
 """
 
 BG_COLOR_LINE_RE: Final[regex.Pattern[str]] = regex.compile(r"^(.*) #\.bg-([A-Za-z]+)$", regex.DOTALL)

@@ -281,6 +281,14 @@ class TestConvertColorBold:
         """Test that plain bold text without a #c: prefix is returned unchanged."""
         assert convert_color_bold("**bold**") == "**bold**"
 
+    def test_extra_space_becomes_span_padding(self) -> None:
+        """A second separator space renders as one escaped space of left padding inside the span."""
+        assert convert_color_bold("#c:FUCHSIA  **text**") == '[\\ **text**]{color="fuchsia"}'
+
+    def test_whitespace_run_collapses_to_one_padding_space(self) -> None:
+        """A longer whitespace run still pads by a single space, matching the Roam UI's collapse."""
+        assert convert_color_bold("#c:FUCHSIA     **text**") == '[\\ **text**]{color="fuchsia"}'
+
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
         assert convert_color_bold("") == ""
@@ -314,6 +322,10 @@ class TestConvertColorHighlight:
     def test_no_color_span(self) -> None:
         """Test that plain highlight text without a #c: prefix is returned unchanged."""
         assert convert_color_highlight("^^highlight^^") == "^^highlight^^"
+
+    def test_whitespace_run_becomes_one_padding_space(self) -> None:
+        """A whitespace run after the tag pads the span content by a single escaped space."""
+        assert convert_color_highlight("#c:ORANGE   ^^text^^") == '[\\ text]{.mark highlight-color="orange"}'
 
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
@@ -349,6 +361,10 @@ class TestConvertColorUnderline:
         """Test that __italic__ without a #c: prefix is left unchanged."""
         assert convert_color_underline("__italic__") == "__italic__"
 
+    def test_whitespace_run_becomes_one_padding_space(self) -> None:
+        """A whitespace run after the tag pads the span content by a single escaped space."""
+        assert convert_color_underline("#c:ORANGE   __text__") == '[\\ text]{underline-color="orange"}'
+
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""
         assert convert_color_underline("") == ""
@@ -380,6 +396,10 @@ class TestConvertColorBox:
     def test_plain_strikethrough_unchanged(self) -> None:
         """Test that ~~strikethrough~~ without a #c: prefix is left unchanged."""
         assert convert_color_box("~~strikethrough~~") == "~~strikethrough~~"
+
+    def test_whitespace_run_becomes_one_padding_space(self) -> None:
+        """A whitespace run after the tag pads the span content by a single escaped space."""
+        assert convert_color_box("#c:ORANGE   ~~text~~") == '[\\ text]{box-color="orange"}'
 
     def test_empty_string(self) -> None:
         """Test that an empty string is returned unchanged."""

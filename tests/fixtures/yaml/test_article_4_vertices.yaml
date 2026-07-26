@@ -49,8 +49,8 @@
   uid: Vu3azKD1d
   refs:
   - lF-qY0Xrs
-  text: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. It extra space between
-    the color markup and the bold Markdown'
+  text: '[\ **This span is BOLD fuchsia text color**]{color="fuchsia"}. It extra space
+    between the color markup and the bold Markdown'
 - vertex_type: guffin/text
   uid: Jt4-6SLWM
   children:

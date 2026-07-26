@@ -117,6 +117,24 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
     return result
 
 
+def _color_span_padding(extra_spaces: str) -> str:
+    r"""Return the span-leading pad encoding a color tag's extra separator spaces, else ``""``.
+
+    The Roam UI treats the first space after a ``#c:COLOR`` tag as the tag separator; a longer
+    whitespace run renders as a single space of left padding on the colored span (the UI's HTML
+    collapses the run, however long).  The padding is emitted as Pandoc's escaped space —
+    a no-break space in the parsed AST — because a plain space leading a bracketed span's
+    content is dropped by Pandoc's inline parser.
+
+    Args:
+        extra_spaces: The spaces beyond the single separator space (may be empty).
+
+    Returns:
+        ``"\\ "`` when *extra_spaces* is non-empty, else the empty string.
+    """
+    return "\\ " if extra_spaces else ""
+
+
 @validate_call
 def convert_color_bold(roam_string: str) -> str:
     """Convert Color Highlighter colorized bold spans to Pandoc bracketed spans.
@@ -125,7 +143,9 @@ def convert_color_bold(roam_string: str) -> str:
     render bold text in a named color.  Each such span is converted to a Pandoc
     bracketed span with a ``color`` attribute:
     ``[**bold text**]{color="orange"}``.  The color name is lowercased for
-    CSS compatibility.  Must run before other conversions so that any Roam
+    CSS compatibility.  A whitespace run after the color tag renders as a single
+    space of left padding inside the span (see :func:`_color_span_padding`).
+    Must run before other conversions so that any Roam
     constructs inside the bold content are still available for subsequent steps.
 
     Args:
@@ -137,7 +157,9 @@ def convert_color_bold(roam_string: str) -> str:
         ``[**text**]{color="color"}`` bracketed spans.
     """
     return COLOR_BOLD_RE.sub(
-        lambda match: f'[**{match.group(2)}**]{{color="{match.group(1).lower()}"}}',
+        lambda match: (
+            f'[{_color_span_padding(match.group(2))}**{match.group(3)}**]{{color="{match.group(1).lower()}"}}'
+        ),
         roam_string,
     )
 
@@ -152,7 +174,9 @@ def convert_color_highlight(roam_string: str) -> str:
     attribute: ``[text]{.mark highlight-color="orange"}``.  The color name is
     lowercased for CSS compatibility.  The ``mark`` class preserves compatibility
     with the default highlight pipeline; ``highlight-color`` signals that a
-    specific color was requested.  Must run before :func:`convert_highlights` so
+    specific color was requested.  A whitespace run after the color tag renders as
+    a single space of left padding inside the span (see :func:`_color_span_padding`).
+    Must run before :func:`convert_highlights` so
     that the ``^^...^^`` delimiters are still present.
 
     Args:
@@ -164,7 +188,10 @@ def convert_color_highlight(roam_string: str) -> str:
         ``[text]{.mark highlight-color="color"}`` bracketed spans.
     """
     return COLOR_HIGHLIGHT_RE.sub(
-        lambda match: f'[{match.group(2)}]{{.mark highlight-color="{match.group(1).lower()}"}}',
+        lambda match: (
+            f"[{_color_span_padding(match.group(2))}{match.group(3)}]"
+            f'{{.mark highlight-color="{match.group(1).lower()}"}}'
+        ),
         roam_string,
     )
 
@@ -179,7 +206,9 @@ def convert_color_underline(roam_string: str) -> str:
     ``[text]{underline-color="orange"}``.  The color name is lowercased for
     CSS compatibility.  No ``underline`` class is added, to prevent Pandoc from
     treating the span as a native ``Underline`` element and silently dropping
-    the color attribute.  Must run before :func:`convert_italics` because Roam
+    the color attribute.  A whitespace run after the color tag renders as a single
+    space of left padding inside the span (see :func:`_color_span_padding`).
+    Must run before :func:`convert_italics` because Roam
     also uses ``__text__`` for italics.
 
     Args:
@@ -191,7 +220,9 @@ def convert_color_underline(roam_string: str) -> str:
         ``[text]{underline-color="color"}`` bracketed spans.
     """
     return COLOR_UNDERLINE_RE.sub(
-        lambda match: f'[{match.group(2)}]{{underline-color="{match.group(1).lower()}"}}',
+        lambda match: (
+            f"[{_color_span_padding(match.group(2))}{match.group(3)}]" f'{{underline-color="{match.group(1).lower()}"}}'
+        ),
         roam_string,
     )
 
@@ -204,7 +235,9 @@ def convert_color_box(roam_string: str) -> str:
     text surrounded by a colored box.  Each such span is converted to a Pandoc
     bracketed span with a ``box-color`` attribute:
     ``[text]{box-color="orange"}``.  The color name is lowercased for
-    CSS compatibility.  Must run before Pandoc processes the string because
+    CSS compatibility.  A whitespace run after the color tag renders as a single
+    space of left padding inside the span (see :func:`_color_span_padding`).
+    Must run before Pandoc processes the string because
     Pandoc treats ``~~text~~`` as strikethrough.
 
     Args:
@@ -216,7 +249,9 @@ def convert_color_box(roam_string: str) -> str:
         ``[text]{box-color="color"}`` bracketed spans.
     """
     return COLOR_BOX_RE.sub(
-        lambda match: f'[{match.group(2)}]{{box-color="{match.group(1).lower()}"}}',
+        lambda match: (
+            f'[{_color_span_padding(match.group(2))}{match.group(3)}]{{box-color="{match.group(1).lower()}"}}'
+        ),
         roam_string,
     )
 
