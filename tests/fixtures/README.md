@@ -94,6 +94,7 @@ follows (here, `**bold**` emphasis on one portion of the page name).
 #### `[[Test Article]] 4`
 
 - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter
+ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)
 
 #### `[[Test Article]] 5`
 

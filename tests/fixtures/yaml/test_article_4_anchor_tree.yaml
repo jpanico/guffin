@@ -6,11 +6,8 @@ root_node:
   heading: null
   children:
   - id: 11647
-  - id: 11654
-  - id: 11657
-  - id: 11662
-  - id: 11666
-  - id: 11669
+  - id: 15251
+  - id: 15252
   refs:
   - id: 4223
   page: null
@@ -23,7 +20,7 @@ tree_network:
 - uid: Jt4-6SLWM
   id: 11657
   string: ^^highlight^^ color
-  order: 2
+  order: 1
   heading: null
   children:
   - id: 11653
@@ -34,6 +31,7 @@ tree_network:
   children_view_type: null
   parents:
   - id: 11643
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -51,6 +49,7 @@ tree_network:
   parents:
   - id: 11643
   - id: 11662
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -67,6 +66,27 @@ tree_network:
   parents:
   - id: 11643
   - id: 11654
+  - id: 15251
+  props: null
+  title: null
+  attrs: null
+- uid: K3nIwx36y
+  id: 15251
+  string: Children blocks exercise __Color Highlighter__  (Roam Extension)
+  order: 1
+  heading: null
+  children:
+  - id: 11654
+  - id: 11657
+  - id: 11662
+  - id: 11666
+  - id: 11669
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
   props: null
   title: null
   attrs: null
@@ -77,11 +97,8 @@ tree_network:
   heading: null
   children:
   - id: 11647
-  - id: 11654
-  - id: 11657
-  - id: 11662
-  - id: 11666
-  - id: 11669
+  - id: 15251
+  - id: 15252
   refs:
   - id: 4223
   page: null
@@ -104,6 +121,7 @@ tree_network:
   parents:
   - id: 11643
   - id: 11669
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -121,6 +139,7 @@ tree_network:
   parents:
   - id: 11643
   - id: 11666
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -138,13 +157,32 @@ tree_network:
   parents:
   - id: 11643
   - id: 11669
+  - id: 15251
   props: null
+  title: null
+  attrs: null
+- uid: s4E578cqU
+  id: 15253
+  string: Equal / definition -> `=`
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: equal
   title: null
   attrs: null
 - uid: yd7MFbFou
   id: 11647
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-    \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
+    \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter\n\
+    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
   order: 0
   heading: null
   children: null
@@ -173,6 +211,7 @@ tree_network:
   parents:
   - id: 11643
   - id: 11666
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -190,6 +229,7 @@ tree_network:
   parents:
   - id: 11643
   - id: 11662
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -197,7 +237,7 @@ tree_network:
   id: 11662
   string: underline color (Markdown does not have a standard underline markup, because
     of the conflict with hyperlink rendering)
-  order: 3
+  order: 2
   heading: null
   children:
   - id: 11664
@@ -208,13 +248,14 @@ tree_network:
   children_view_type: null
   parents:
   - id: 11643
+  - id: 15251
   props: null
   title: null
   attrs: null
 - uid: c9kTivLOo
   id: 11654
   string: '**BOLD** text color'
-  order: 1
+  order: 0
   heading: null
   children:
   - id: 11648
@@ -227,7 +268,25 @@ tree_network:
   children_view_type: null
   parents:
   - id: 11643
+  - id: 15251
   props: null
+  title: null
+  attrs: null
+- uid: gcRT-AWUS
+  id: 15260
+  string: Evidence / support -> `▸`
+  order: 7
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: evidence
   title: null
   attrs: null
 - uid: Rjt1IvrVq
@@ -244,6 +303,7 @@ tree_network:
   parents:
   - id: 11643
   - id: 11654
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -261,13 +321,13 @@ tree_network:
   parents:
   - id: 11643
   - id: 11657
+  - id: 15251
   props: null
   title: null
   attrs: null
 - uid: Vu3azKD1d
   id: 15249
-  string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. It extra space between
-    the color markup and the bold Markdown'
+  string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. extra space'
   order: 3
   heading: null
   children: null
@@ -279,6 +339,7 @@ tree_network:
   parents:
   - id: 11643
   - id: 11654
+  - id: 15251
   props: null
   title: null
   attrs: null
@@ -296,13 +357,14 @@ tree_network:
   parents:
   - id: 11643
   - id: 11657
+  - id: 15251
   props: null
   title: null
   attrs: null
 - uid: TH55X8Rc_
   id: 11669
   string: box background color
-  order: 5
+  order: 4
   heading: null
   children:
   - id: 11670
@@ -313,7 +375,42 @@ tree_network:
   children_view_type: null
   parents:
   - id: 11643
+  - id: 15251
   props: null
+  title: null
+  attrs: null
+- uid: -BBC2P-dl
+  id: 15258
+  string: Idea / addition -> `+`
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: plus
+  title: null
+  attrs: null
+- uid: OB9ieYhhM
+  id: 15261
+  string: Decision / choice -> `⎇`
+  order: 8
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: decision
   title: null
   attrs: null
 - uid: AE3uVp_QL
@@ -330,13 +427,31 @@ tree_network:
   parents:
   - id: 11643
   - id: 11654
+  - id: 15251
   props: null
+  title: null
+  attrs: null
+- uid: Km0_c28gQ
+  id: 15254
+  string: Leads to -> `→`
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: arrow
   title: null
   attrs: null
 - uid: S2yCBxWED
   id: 11666
   string: box color
-  order: 4
+  order: 3
   heading: null
   children:
   - id: 11667
@@ -347,7 +462,136 @@ tree_network:
   children_view_type: null
   parents:
   - id: 11643
+  - id: 15251
   props: null
+  title: null
+  attrs: null
+- uid: CG696Sg5n
+  id: 15256
+  string: Question -> `?`
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: question
+  title: null
+  attrs: null
+- uid: _eF-sDI9v
+  id: 15252
+  string: Children blocks exercise __Better Bullets__  (Roam Extension)
+  order: 2
+  heading: null
+  children:
+  - id: 15253
+  - id: 15254
+  - id: 15255
+  - id: 15256
+  - id: 15257
+  - id: 15258
+  - id: 15259
+  - id: 15260
+  - id: 15261
+  - id: 15262
+  - id: 15263
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  attrs: null
+- uid: W2MDdrb3g
+  id: 15257
+  string: Important / warning -> `!`
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: important
+  title: null
+  attrs: null
+- uid: g84nBRdMI
+  id: 15255
+  string: Result -> `⇒`
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: doubleArrow
+  title: null
+  attrs: null
+- uid: AFS0kx5dj
+  id: 15263
+  string: Process / ongoing -> `↻`
+  order: 10
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: process
+  title: null
+  attrs: null
+- uid: ZS_mZaDxD
+  id: 15259
+  string: Contrast / however -> `≠`
+  order: 6
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: contrast
+  title: null
+  attrs: null
+- uid: ForFtTYqy
+  id: 15262
+  string: Reference / related -> `↗`
+  order: 9
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: reference
   title: null
   attrs: null
 refs_by_id:

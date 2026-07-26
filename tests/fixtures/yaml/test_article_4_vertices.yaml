@@ -6,11 +6,8 @@
   uid: mkHZLUn8Q
   children:
   - yd7MFbFou
-  - c9kTivLOo
-  - Jt4-6SLWM
-  - ShnYeNIu5
-  - S2yCBxWED
-  - TH55X8Rc_
+  - K3nIwx36y
+  - _eF-sDI9v
   refs:
   - LBFKibPIj
   title: '[Test Article](x-guffin:vertex/LBFKibPIj) 4'
@@ -22,7 +19,17 @@
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
-  body: "Features:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
+  body: "Features:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter\n\
+    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
+- vertex_type: guffin/text
+  uid: K3nIwx36y
+  children:
+  - c9kTivLOo
+  - Jt4-6SLWM
+  - ShnYeNIu5
+  - S2yCBxWED
+  - TH55X8Rc_
+  text: Children blocks exercise *Color Highlighter*  (Roam Extension)
 - vertex_type: guffin/text
   uid: c9kTivLOo
   children:
@@ -49,8 +56,7 @@
   uid: Vu3azKD1d
   refs:
   - lF-qY0Xrs
-  text: '[\ **This span is BOLD fuchsia text color**]{color="fuchsia"}. It extra space
-    between the color markup and the bold Markdown'
+  text: '[\ **This span is BOLD fuchsia text color**]{color="fuchsia"}. extra space'
 - vertex_type: guffin/text
   uid: Jt4-6SLWM
   children:
@@ -120,3 +126,51 @@
   refs:
   - LnMn9Dq7S
   text: '[This entire line is an orange background box]{bg-color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: _eF-sDI9v
+  children:
+  - s4E578cqU
+  - Km0_c28gQ
+  - g84nBRdMI
+  - CG696Sg5n
+  - W2MDdrb3g
+  - -BBC2P-dl
+  - ZS_mZaDxD
+  - gcRT-AWUS
+  - OB9ieYhhM
+  - ForFtTYqy
+  - AFS0kx5dj
+  text: Children blocks exercise *Better Bullets*  (Roam Extension)
+- vertex_type: guffin/text
+  uid: s4E578cqU
+  text: Equal / definition -> `=`
+- vertex_type: guffin/text
+  uid: Km0_c28gQ
+  text: Leads to -> `→`
+- vertex_type: guffin/text
+  uid: g84nBRdMI
+  text: Result -> `⇒`
+- vertex_type: guffin/text
+  uid: CG696Sg5n
+  text: Question -> `?`
+- vertex_type: guffin/text
+  uid: W2MDdrb3g
+  text: Important / warning -> `!`
+- vertex_type: guffin/text
+  uid: -BBC2P-dl
+  text: Idea / addition -> `+`
+- vertex_type: guffin/text
+  uid: ZS_mZaDxD
+  text: Contrast / however -> `≠`
+- vertex_type: guffin/text
+  uid: gcRT-AWUS
+  text: Evidence / support -> `▸`
+- vertex_type: guffin/text
+  uid: OB9ieYhhM
+  text: Decision / choice -> `⎇`
+- vertex_type: guffin/text
+  uid: ForFtTYqy
+  text: Reference / related -> `↗`
+- vertex_type: guffin/text
+  uid: AFS0kx5dj
+  text: Process / ongoing -> `↻`

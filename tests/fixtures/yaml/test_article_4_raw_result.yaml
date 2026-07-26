@@ -6,7 +6,8 @@
     uid: Jt4-6SLWM
     parents:
     - id: 11643
-    order: 2
+    - id: 15251
+    order: 1
     page:
       id: 11643
 - - string: '#c:FUCHSIA __This span is underlined fuchsia. __This span is not.'
@@ -15,6 +16,7 @@
     parents:
     - id: 11643
     - id: 11662
+    - id: 15251
     order: 1
     page:
       id: 11643
@@ -46,19 +48,31 @@
     parents:
     - id: 11643
     - id: 11654
+    - id: 15251
     order: 0
     page:
       id: 11643
 - - id: 11671
     uid: 1GLhru-f7
     title: .bg-ORANGE
-- - children:
-    - id: 11647
+- - string: Children blocks exercise __Color Highlighter__  (Roam Extension)
+    children:
     - id: 11654
     - id: 11657
     - id: 11662
     - id: 11666
     - id: 11669
+    id: 15251
+    uid: K3nIwx36y
+    parents:
+    - id: 11643
+    order: 1
+    page:
+      id: 11643
+- - children:
+    - id: 11647
+    - id: 15251
+    - id: 15252
     id: 11643
     uid: mkHZLUn8Q
     title: '[[Test Article]] 4'
@@ -70,6 +84,7 @@
     parents:
     - id: 11643
     - id: 11669
+    - id: 15251
     order: 1
     page:
       id: 11643
@@ -81,6 +96,7 @@
     parents:
     - id: 11643
     - id: 11666
+    - id: 15251
     order: 1
     page:
       id: 11643
@@ -92,13 +108,26 @@
     parents:
     - id: 11643
     - id: 11669
+    - id: 15251
     order: 0
     page:
       id: 11643
     refs:
     - id: 11671
+- - string: Equal / definition -> `=`
+    id: 15253
+    uid: s4E578cqU
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: equal
+    order: 0
+    page:
+      id: 11643
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter"
+      \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter\n\
+      \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
     id: 11647
     uid: yd7MFbFou
     parents:
@@ -118,6 +147,7 @@
     parents:
     - id: 11643
     - id: 11666
+    - id: 15251
     order: 0
     page:
       id: 11643
@@ -129,6 +159,7 @@
     parents:
     - id: 11643
     - id: 11662
+    - id: 15251
     order: 0
     page:
       id: 11643
@@ -143,7 +174,8 @@
     uid: ShnYeNIu5
     parents:
     - id: 11643
-    order: 3
+    - id: 15251
+    order: 2
     page:
       id: 11643
 - - string: '**BOLD** text color'
@@ -156,7 +188,19 @@
     uid: c9kTivLOo
     parents:
     - id: 11643
-    order: 1
+    - id: 15251
+    order: 0
+    page:
+      id: 11643
+- - string: Evidence / support -> `▸`
+    id: 15260
+    uid: gcRT-AWUS
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: evidence
+    order: 7
     page:
       id: 11643
 - - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
@@ -165,6 +209,7 @@
     parents:
     - id: 11643
     - id: 11654
+    - id: 15251
     order: 1
     page:
       id: 11643
@@ -176,18 +221,19 @@
     parents:
     - id: 11643
     - id: 11657
+    - id: 15251
     order: 1
     page:
       id: 11643
     refs:
     - id: 5844
-- - string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. It extra space
-      between the color markup and the bold Markdown'
+- - string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. extra space'
     id: 15249
     uid: Vu3azKD1d
     parents:
     - id: 11643
     - id: 11654
+    - id: 15251
     order: 3
     page:
       id: 11643
@@ -199,6 +245,7 @@
     parents:
     - id: 11643
     - id: 11657
+    - id: 15251
     order: 0
     page:
       id: 11643
@@ -212,7 +259,30 @@
     uid: TH55X8Rc_
     parents:
     - id: 11643
+    - id: 15251
+    order: 4
+    page:
+      id: 11643
+- - string: Idea / addition -> `+`
+    id: 15258
+    uid: -BBC2P-dl
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: plus
     order: 5
+    page:
+      id: 11643
+- - string: Decision / choice -> `⎇`
+    id: 15261
+    uid: OB9ieYhhM
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: decision
+    order: 8
     page:
       id: 11643
 - - string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
@@ -221,11 +291,23 @@
     parents:
     - id: 11643
     - id: 11654
+    - id: 15251
     order: 2
     page:
       id: 11643
     refs:
     - id: 5844
+- - string: Leads to -> `→`
+    id: 15254
+    uid: Km0_c28gQ
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: arrow
+    order: 1
+    page:
+      id: 11643
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
@@ -237,7 +319,8 @@
     uid: S2yCBxWED
     parents:
     - id: 11643
-    order: 4
+    - id: 15251
+    order: 3
     page:
       id: 11643
 - - id: 11673
@@ -246,3 +329,89 @@
 - - id: 5844
     uid: lF-qY0Xrs
     title: c:FUCHSIA
+- - string: Question -> `?`
+    id: 15256
+    uid: CG696Sg5n
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: question
+    order: 3
+    page:
+      id: 11643
+- - string: Children blocks exercise __Better Bullets__  (Roam Extension)
+    children:
+    - id: 15253
+    - id: 15254
+    - id: 15255
+    - id: 15256
+    - id: 15257
+    - id: 15258
+    - id: 15259
+    - id: 15260
+    - id: 15261
+    - id: 15262
+    - id: 15263
+    id: 15252
+    uid: _eF-sDI9v
+    parents:
+    - id: 11643
+    order: 2
+    page:
+      id: 11643
+- - string: Important / warning -> `!`
+    id: 15257
+    uid: W2MDdrb3g
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: important
+    order: 4
+    page:
+      id: 11643
+- - string: Result -> `⇒`
+    id: 15255
+    uid: g84nBRdMI
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: doubleArrow
+    order: 2
+    page:
+      id: 11643
+- - string: Process / ongoing -> `↻`
+    id: 15263
+    uid: AFS0kx5dj
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: process
+    order: 10
+    page:
+      id: 11643
+- - string: Contrast / however -> `≠`
+    id: 15259
+    uid: ZS_mZaDxD
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: contrast
+    order: 6
+    page:
+      id: 11643
+- - string: Reference / related -> `↗`
+    id: 15262
+    uid: ForFtTYqy
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: reference
+    order: 9
+    page:
+      id: 11643
