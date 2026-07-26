@@ -524,39 +524,48 @@ def _pdf_link_list_item(
     view_map: ViewMap,
     inherited_layout: ChildrenLayout,
     depth: int,
+    site: Vertex | None = None,
 ) -> pf.ListItem:
-    """Build a Pandoc :class:`~panflute.ListItem` from a link-placed PDF vertex.
+    """Build a Pandoc :class:`~panflute.ListItem` from a link-placed PDF display occurrence.
 
-    The item body is the vertex's link paragraph (see :func:`_pdf_vertex_to_blocks`).  If the
-    vertex has children (or folded attribute assignments) they are rendered recursively via
-    :func:`build_child_blocks` using the vertex's effective children layout, and appended as
-    nested blocks inside the item.
+    The item body is the PDF's link paragraph (see :func:`_pdf_vertex_to_blocks`), whether the
+    occurrence is the PDF embed itself or a standalone reference *site* displaying it — the two
+    display forms produce the same item, so a reference reads exactly like a direct embed.  The
+    occurrence's owner — *site* when given, else *vertex* — supplies the placement resolution
+    (see :func:`_resolved_pdf_placement`) and any children (or folded attribute assignments),
+    which are rendered recursively via :func:`build_child_blocks` using the owner's effective
+    children layout and appended as nested blocks inside the item.
 
     Args:
-        vertex: The :class:`~guffin.vertex.PdfVertex` to render as a list item.
+        vertex: The :class:`~guffin.vertex.PdfVertex` this occurrence displays.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         asset_files: Mapping from asset vertex UID (image or PDF) to local
             asset file path.
         inline_map: Mapping from text string to parsed panflute inline elements.
         view_map: Presentation view map keyed by vertex uid, governing child layout.
         inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
-        depth: Tree depth of *vertex* (≥ 2 when this function is called).
+        depth: Tree depth of the occurrence (≥ 2 when this function is called).
+        site: The standalone reference site displaying *vertex*, when the occurrence is a
+            reference; ``None`` when *vertex* is displayed where it lives (a direct embed).
 
     Returns:
         A :class:`~panflute.ListItem` wrapping the link paragraph and any nested children and
         attribute pills.
     """
-    content: Final[list[pf.Block]] = _pdf_vertex_to_blocks(vertex, asset_files, _resolved_pdf_placement(vertex))
+    owner: Final[Vertex] = site if site is not None else vertex
+    content: Final[list[pf.Block]] = _pdf_vertex_to_blocks(
+        vertex, asset_files, _resolved_pdf_placement(vertex, site=site)
+    )
     content.extend(
         build_child_blocks(
-            vertex.children or [],
+            owner.children or [],
             vertex_tree,
             asset_files,
             inline_map,
             view_map,
-            _effective_layout(vertex.uid, view_map, inherited_layout),
+            _effective_layout(owner.uid, view_map, inherited_layout),
             depth + 1,
-            vertex.attribute_assignments,
+            owner.attribute_assignments,
         )
     )
     return pf.ListItem(*content)
@@ -585,11 +594,14 @@ def build_child_blocks(
     - :attr:`~guffin.model.vertex_view.ChildrenLayout.DOCUMENT` — rendered as flowing blocks
       (paragraphs) via :func:`_vertex_to_blocks`, with no list wrapper.
 
-    A link-placed PDF embed (:func:`_is_link_placed_pdf`) participates in the layout like a
-    text sibling: its link paragraph joins the same list.  Any other non-text vertex flushes
-    the pending list and is rendered via
+    A link-placed PDF display occurrence participates in the layout like a text sibling: its
+    link paragraph joins the same list — whether the occurrence is the PDF embed itself
+    (:func:`_is_link_placed_pdf`) or a standalone reference site whose resolved placement is
+    ``link``, so the two display forms render identically (see :func:`_pdf_link_list_item`).
+    Any other non-text vertex flushes the pending list and is rendered via
     :func:`_vertex_to_blocks` regardless of *layout*.  A text vertex that is a standalone
-    reference to a block-level vertex (see :func:`_block_ref_target`) is likewise flushed
+    reference to any other block-level vertex (see :func:`_block_ref_target`) — or to an
+    inline-placed PDF — is likewise flushed
     and rendered as the referenced block *itself* — stripped of its descendants (children
     and folded attribute assignments), since a ``REFERENCE`` never transcludes the target's
     subtree (that is ``EMBED`` semantics).  Each vertex's own children are rendered using *its* effective layout — its
@@ -634,17 +646,30 @@ def build_child_blocks(
             continue
         vertex: Vertex = vertex_tree.uid_map[uid]
         ref_target: Vertex | None = _block_ref_target(vertex, vertex_tree) if isinstance(vertex, TextVertex) else None
-        if ref_target is not None:
+        ref_pdf: PdfVertex | None = ref_target if isinstance(ref_target, PdfVertex) else None
+        if (
+            ref_pdf is not None
+            and _resolved_pdf_placement(ref_pdf, site=vertex) is PdfRender.LINK
+            and layout is not ChildrenLayout.DOCUMENT
+        ):
+            # A standalone reference displaying a link-placed PDF reads as a line of the outline
+            # exactly like a link-placed direct embed, so it lists with its siblings; the site
+            # owns the occurrence — its pdf-render tag resolved the placement, and its children
+            # nest inside the item.
+            pending_items.append(
+                _pdf_link_list_item(ref_pdf, vertex_tree, asset_files, inline_map, view_map, layout, depth, site=vertex)
+            )
+        elif ref_target is not None:
             # A block whose entire content references a block-level vertex renders as that
-            # referenced block — never wrapped in a list item.  A REFERENCE includes only the
+            # referenced block.  A REFERENCE includes only the
             # target vertex itself: its descendants (children, and the attribute assignments
             # folded from child blocks) are not transcluded — full transclusion is EMBED's job.
             flush_pending()
-            if isinstance(ref_target, PdfVertex):
+            if ref_pdf is not None:
                 # The reference site is where this document displays the PDF, so the site's own
                 # pdf-render tag governs this occurrence, outranking the target's.
                 result.extend(
-                    _pdf_vertex_to_blocks(ref_target, asset_files, _resolved_pdf_placement(ref_target, site=vertex))
+                    _pdf_vertex_to_blocks(ref_pdf, asset_files, _resolved_pdf_placement(ref_pdf, site=vertex))
                 )
             else:
                 referenced: Vertex = ref_target.model_copy(update={"children": None, "attribute_assignments": None})

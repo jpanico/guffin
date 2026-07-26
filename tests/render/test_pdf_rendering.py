@@ -198,9 +198,16 @@ class TestApplyPdfEmbeds:
         raw_blocks = [b for b in doc.content if isinstance(b, pf.RawBlock)]
         assert len(raw_blocks) == 1
         assert raw_blocks[0].text.count("#image(") == 1
-        bare_paras = [
-            b for b in doc.content if isinstance(b, pf.Para) and not any(isinstance(i, pf.Link) for i in b.content)
-        ]
+        # The untagged (link-placed) reference lists with its siblings, so its bare filename
+        # paragraph lives inside a list item — collect paragraphs by walking, not just top level.
+        bare_paras: list[pf.Para] = []
+
+        def _collect(elem: pf.Element, doc: pf.Doc) -> None:
+            if isinstance(elem, pf.Para) and not any(isinstance(i, pf.Link) for i in elem.content):
+                bare_paras.append(elem)
+            return None
+
+        doc.walk(_collect)
         assert len(bare_paras) == 1
         assert pf.stringify(bare_paras[0]).strip() == "dummy.pdf"
 

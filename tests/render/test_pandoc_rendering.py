@@ -1074,6 +1074,67 @@ class TestPdfPlacementStamping:
 
 
 # ---------------------------------------------------------------------------
+# TestPdfReferenceLayout
+# ---------------------------------------------------------------------------
+
+
+class TestPdfReferenceLayout:
+    """A standalone reference to a link-placed PDF lays out exactly like a link-placed direct embed."""
+
+    def test_link_placed_reference_renders_exactly_like_direct_embed(self) -> None:
+        """A page displaying a PDF via an untagged standalone reference produces the same Doc as a direct embed."""
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        direct_page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
+        direct_doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[direct_page, pdf]), {}, {})
+        ref_page = PageVertex(uid="page00001", title="P", children=["refsite01"])
+        ref_tree = VertexTree(tree_vertices=[ref_page, _pdf_site("refsite01", "pdf00001a")], ref_vertices=[pdf])
+        ref_doc, _ = vertex_tree_to_pandoc(ref_tree, {}, {})
+        assert pandoc_to_json(ref_doc) == pandoc_to_json(direct_doc)
+
+    def test_link_placed_reference_joins_sibling_list(self) -> None:
+        """A link-placed PDF reference coalesces into the same list as its text siblings."""
+        page = PageVertex(uid="page00001", title="P", children=["textuid01", "refsite01"])
+        text = TextVertex(uid="textuid01", text="a sibling")
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        tree = VertexTree(tree_vertices=[page, text, _pdf_site("refsite01", "pdf00001a")], ref_vertices=[pdf])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.BulletList)
+        assert len(list(blocks[0].content)) == 2
+
+    def test_reference_site_children_nest_inside_the_item(self) -> None:
+        """A link-placed PDF reference site's own children render nested inside its list item."""
+        page = PageVertex(uid="page00001", title="P", children=["refsite01"])
+        child = TextVertex(uid="childuid1", text="a note about the PDF")
+        site = TextVertex(uid="refsite01", text="[paper.pdf](x-guffin:vertex/pdf00001a)", children=["childuid1"])
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        tree = VertexTree(tree_vertices=[page, site, child], ref_vertices=[pdf])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.BulletList)
+        item_blocks = list(list(blocks[0].content)[0].content)
+        assert isinstance(item_blocks[0], pf.Para)
+        assert isinstance(item_blocks[1], pf.BulletList)
+        assert pf.stringify(item_blocks[1]).strip() == "a note about the PDF"
+
+    def test_inline_placed_reference_stays_structural(self) -> None:
+        """A reference resolving to inline placement flushes the list — its pages replace it in output."""
+        page = PageVertex(uid="page00001", title="P", children=["textuid01", "refsite01"])
+        text = TextVertex(uid="textuid01", text="a sibling")
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        tree = VertexTree(
+            tree_vertices=[page, text, _pdf_site("refsite01", "pdf00001a", render="inline")], ref_vertices=[pdf]
+        )
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(doc.content)
+        assert len(blocks) == 2
+        assert isinstance(blocks[0], pf.BulletList)
+        assert isinstance(blocks[1], pf.Para)
+
+
+# ---------------------------------------------------------------------------
 # TestBuildBlocksCoalescing
 # ---------------------------------------------------------------------------
 
