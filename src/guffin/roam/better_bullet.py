@@ -3,13 +3,17 @@
 The **Better Bullets** Roam extension (``mlava/better-bullets``) restyles a block's bullet
 when the block's text leads with a recognized marker token: the plain-text *marker* the
 author types is displayed as the extension's *bullet* glyph, conveying the block's
-rhetorical role (definition, consequence, question, …).
+rhetorical role (definition, consequence, question, …).  A block can also be badged with
+its *provenance* — the source channel its content arrived through (a calendar event, an
+email, …) — declared the same way, by a leading marker.
 
 Public symbols:
 
 - **Enumerations**: :class:`BetterBulletType` — the recognized Better Bullets kinds, each
   member carrying its human-readable meaning, its authored marker token, and the bullet
-  glyph the extension renders.
+  glyph the extension renders; :class:`BetterBulletProvenance` — the recognized provenance
+  kinds, each member carrying its human-readable source, its default marker token, and the
+  badge glyph the extension renders.
 """
 
 import enum
@@ -73,3 +77,52 @@ class BetterBulletType(enum.StrEnum):
     DECISION = ("decision", "Decision / choice", "|", "⎇")
     REFERENCE = ("reference", "Reference / related", "@", "↗")
     PROCESS = ("process", "Process / ongoing", "...", "↻")
+
+
+class BetterBulletProvenance(enum.StrEnum):
+    """A provenance kind: the source channel a block's content arrived through, and its badge.
+
+    Each member's string value is its short :attr:`id` — the identifier the extension
+    persists on a block (the ``provenance`` entry of the block's property map), so a stored
+    identifier resolves to its member by plain value lookup.  The member carries the
+    human-readable *source* the badge conveys, the *default marker* token an author types at
+    the head of a block, and the *badge* glyph the extension displays.  A marker and its
+    badge may coincide (the pictographic markers), where the authored token already is the
+    display glyph.
+
+    Attributes:
+        source: The human-readable source channel the badge conveys.
+        default_marker: The token an author types, by default, to request the badge.
+        badge: The glyph the extension renders as the block's badge.
+        CALENDAR_EVENT: A calendar event; ``📅`` renders as ``📅``.
+        EMAIL: An email message; ``📨`` renders as ``📨``.
+        PHONE_CALL: A phone call; ``📞`` renders as ``📞``.
+        CHAT_MESSAGE: A chat message; ``💬`` renders as ``💬``.
+        SCANNED_POST: Scanned post; ``📪`` renders as ``📪`` (persisted id ``mail``).
+        SLACK: A Slack conversation; ``%`` renders as ``＃``.
+    """
+
+    def __new__(cls, value: str, source: str, default_marker: str, badge: str) -> Self:
+        """Create a member whose string value is *value*, carrying source, marker, and badge."""
+        member = str.__new__(cls, value)
+        member._value_ = value
+        member.source = source
+        member.default_marker = default_marker
+        member.badge = badge
+        return member
+
+    source: str
+    default_marker: str
+    badge: str
+
+    @property
+    def id(self) -> str:
+        """The kind's short identifier — the member's string value."""
+        return self.value
+
+    CALENDAR_EVENT = ("calendar", "Calendar event", "📅", "📅")
+    EMAIL = ("email", "Email", "📨", "📨")
+    PHONE_CALL = ("phone", "Phone call", "📞", "📞")
+    CHAT_MESSAGE = ("chat", "Chat message", "💬", "💬")
+    SCANNED_POST = ("mail", "Scanned post", "📪", "📪")
+    SLACK = ("slack", "Slack", "%", "＃")
