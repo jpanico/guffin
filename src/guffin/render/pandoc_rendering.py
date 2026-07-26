@@ -162,7 +162,8 @@ def _effective_layout(uid: Uid, view_map: ViewMap, inherited_layout: ChildrenLay
     """Return *uid*'s effective :class:`~guffin.model.vertex_view.ChildrenLayout`.
 
     The tri-state effective-layout rule (see ``docs/render-pipeline.md``, *Children layout*): the
-    layout explicitly assigned to the vertex in *view_map* wins; absent one, the vertex adopts
+    layout explicitly assigned to the vertex in *view_map* wins; absent one — no entry, or an
+    entry whose layout is unset — the vertex adopts
     *inherited_layout* — its parent's effective layout, threaded down the render recursion, with
     the recursion's entry point passing :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT`
     for the parentless root.
@@ -176,7 +177,9 @@ def _effective_layout(uid: Uid, view_map: ViewMap, inherited_layout: ChildrenLay
         The layout governing the vertex's children.
     """
     entry: Final[VertexView | None] = view_map.get(uid)
-    return entry.children_layout if entry is not None else inherited_layout
+    if entry is None or entry.children_layout is None:
+        return inherited_layout
+    return entry.children_layout
 
 
 type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
