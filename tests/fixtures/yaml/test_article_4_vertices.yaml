@@ -187,19 +187,19 @@
   text: Provenance
 - vertex_type: guffin/text
   uid: n-exvRYBw
-  text: 📅  Calendar event -> 📅
+  text: Calendar event -> 📅
 - vertex_type: guffin/text
   uid: 8A-YVZxaH
-  text: 📨 Email -> 📨
+  text: Email -> 📨
 - vertex_type: guffin/text
   uid: zP-izykRs
-  text: 📞 Phone call -> 📞
+  text: Phone call -> 📞
 - vertex_type: guffin/text
   uid: ysm8EX8Gt
-  text: 💬 Chat message -> 💬
+  text: Chat message -> 💬
 - vertex_type: guffin/text
   uid: d1RJ3aT5i
-  text: 📪 Postal mail -> 📪
+  text: Postal mail -> 📪
 - vertex_type: guffin/text
   uid: vEvZXUyix
-  text: '% Slack -> ＃'
+  text: Slack -> ＃

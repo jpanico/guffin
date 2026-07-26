@@ -28,21 +28,21 @@
 
     - <span style="background-color: fuchsia">This entire line is an orange background box</span>
 - Children blocks exercise *Better Bullets* (Roam Extension)
-  - Equal / definition -\> `=`
-  - Leads to -\> `→`
-  - Result -\> `⇒`
-  - Question -\> `?`
-  - Important / warning -\> `!`
-  - Idea / addition -\> `+`
-  - Contrast / however -\> `≠`
-  - Evidence / support -\> `▸`
-  - Decision / choice -\> `⎇`
-  - Reference / related -\> `↗`
-  - Process / ongoing -\> `↻`
+  - = Equal / definition -\> `=`
+  - → Leads to -\> `→`
+  - ⇒ Result -\> `⇒`
+  - ? Question -\> `?`
+  - ! Important / warning -\> `!`
+  - \+ Idea / addition -\> `+`
+  - ≠ Contrast / however -\> `≠`
+  - ▸ Evidence / support -\> `▸`
+  - ⎇ Decision / choice -\> `⎇`
+  - ↗ Reference / related -\> `↗`
+  - ↻ Process / ongoing -\> `↻`
   - Provenance
     - 📅 Calendar event -\> 📅
     - 📨 Email -\> 📨
     - 📞 Phone call -\> 📞
     - 💬 Chat message -\> 💬
     - 📪 Postal mail -\> 📪
-    - % Slack -\> ＃
+    - ＃ Slack -\> ＃

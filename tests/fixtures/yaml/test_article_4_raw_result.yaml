@@ -169,7 +169,7 @@
       id: 11643
     refs:
     - id: 11454
-- - string: 📨 Email -> 📨
+- - string: Email -> 📨
     id: 15266
     uid: 8A-YVZxaH
     parents:
@@ -220,7 +220,7 @@
     order: 0
     page:
       id: 11643
-- - string: '% Slack -> ＃'
+- - string: Slack -> ＃
     id: 15278
     uid: vEvZXUyix
     parents:
@@ -243,7 +243,7 @@
     order: 7
     page:
       id: 11643
-- - string: 💬 Chat message -> 💬
+- - string: Chat message -> 💬
     id: 15276
     uid: ysm8EX8Gt
     parents:
@@ -291,7 +291,7 @@
       id: 11643
     refs:
     - id: 5844
-- - string: 📪 Postal mail -> 📪
+- - string: Postal mail -> 📪
     id: 15277
     uid: d1RJ3aT5i
     parents:
@@ -303,7 +303,7 @@
     order: 4
     page:
       id: 11643
-- - string: 📞 Phone call -> 📞
+- - string: Phone call -> 📞
     id: 15275
     uid: zP-izykRs
     parents:
@@ -470,7 +470,7 @@
     order: 10
     page:
       id: 11643
-- - string: 📅  Calendar event -> 📅
+- - string: Calendar event -> 📅
     id: 15265
     uid: n-exvRYBw
     parents:

@@ -309,7 +309,7 @@ T6cykqu88:
 8A-YVZxaH:
   uid: 8A-YVZxaH
   id: 15266
-  string: 📨 Email -> 📨
+  string: Email -> 📨
   order: 1
   heading: null
   children: null
@@ -388,7 +388,7 @@ c9kTivLOo:
 vEvZXUyix:
   uid: vEvZXUyix
   id: 15278
-  string: '% Slack -> ＃'
+  string: Slack -> ＃
   order: 5
   heading: null
   children: null
@@ -425,7 +425,7 @@ gcRT-AWUS:
 ysm8EX8Gt:
   uid: ysm8EX8Gt
   id: 15276
-  string: 💬 Chat message -> 💬
+  string: Chat message -> 💬
   order: 3
   heading: null
   children: null
@@ -501,7 +501,7 @@ Vu3azKD1d:
 d1RJ3aT5i:
   uid: d1RJ3aT5i
   id: 15277
-  string: 📪 Postal mail -> 📪
+  string: Postal mail -> 📪
   order: 4
   heading: null
   children: null
@@ -520,7 +520,7 @@ d1RJ3aT5i:
 zP-izykRs:
   uid: zP-izykRs
   id: 15275
-  string: 📞 Phone call -> 📞
+  string: Phone call -> 📞
   order: 2
   heading: null
   children: null
@@ -811,7 +811,7 @@ AFS0kx5dj:
 n-exvRYBw:
   uid: n-exvRYBw
   id: 15265
-  string: 📅  Calendar event -> 📅
+  string: Calendar event -> 📅
   order: 0
   heading: null
   children: null
