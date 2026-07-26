@@ -268,3 +268,14 @@ p.revision {
   break-before: page;
   page-break-before: always;
 }
+
+/*
+ * Semantic bullets. A classified list (epub_bullet.lua wraps it in Div.semantic-bullets and
+ * leads every item with a bullet-glyph span) shows each item's glyph where the marker was, so
+ * the native markers are suppressed. The suppression targets only the wrapped list's own ul —
+ * nested lists inside its items keep their markers. No ::marker and no :has(), which the
+ * Kindle app's renderer does not support.
+ */
+div.semantic-bullets > ul {
+  list-style: none;
+}

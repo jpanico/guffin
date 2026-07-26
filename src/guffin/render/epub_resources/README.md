@@ -8,6 +8,7 @@ their `gfm_resources/` counterparts:
 
 | Filter | Rewrites |
 |---|---|
+| `epub_bullet.lua` | a `BulletList` containing semantic-classified items (the scaffold `Div` stamped with `data-guffin-semantic` / `data-guffin-semantic-glyph`) → the list wrapped in `Div.semantic-bullets` with every item led by a `bullet-glyph` `Span` (the semantic glyph, or the plain default bullet for unclassified siblings); `epub.css` suppresses the wrapped list's native markers via `list-style: none` — no `::marker` and no `:has()`, which the Kindle app's renderer does not support |
 | `epub_callout.lua` | prepends the shared SVG icon from `../callout_icons/` into each callout's `callout-title` header (icon + title, mirroring the gentle-clues PDF header) |
 | `epub_color_span.lua` | Color Highlighter `Span`/`Div` elements → inline-styled `<span>`/`<mark>` (text color, highlight, underline-color, box, whole-line background) and the attribute-assignment `.pill` badge |
 | `epub_mark.lua` | plain `.mark` `Span` → `<mark>` |

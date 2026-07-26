@@ -92,6 +92,7 @@ logger = logging.getLogger(__name__)
 _EPUB_RESOURCES_PACKAGE: Final[str] = "guffin.render.epub_resources"
 _CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.render.callout_icons"
 # Lua-filter filenames, resolved against the bundled epub_resources directory at render time.
+_EPUB_BULLET_FILTER: Final[str] = "epub_bullet.lua"
 _EPUB_COLOR_SPAN_FILTER: Final[str] = "epub_color_span.lua"
 _EPUB_MARK_FILTER: Final[str] = "epub_mark.lua"
 _EPUB_CALLOUT_FILTER: Final[str] = "epub_callout.lua"
@@ -310,6 +311,7 @@ def render(
         callout_colors_css.write_text(_callout_colors_css(), encoding="utf-8")
 
         extra_args: list[str] = [
+            f"--lua-filter={epub_dir / _EPUB_BULLET_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",

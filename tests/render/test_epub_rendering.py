@@ -26,6 +26,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import CodeBlockVertex, HeadingVertex, ImageVertex, PageVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
+from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
 from guffin.render.epub_rendering import render
 from guffin.render.project import BookProfile, DefaultProfile, ProjectProfile
 from guffin.render.render_options import EpubRenderOptions
@@ -122,6 +123,19 @@ def code_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
     )
     bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, code]))
     return _render_epub(tmp_path_factory.mktemp("code"), bundle, DefaultProfile(), "code")
+
+
+@pytest.fixture(scope="module")
+def classified_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """A document with one classified list item and one plain sibling, rendered to EPUB."""
+    page: Final[PageVertex] = PageVertex(uid="page00001", title="Classified", children=["plain0001", "classed01"])
+    plain: Final[TextVertex] = TextVertex(uid="plain0001", text="a plain sibling")
+    classed: Final[TextVertex] = TextVertex(uid="classed01", text="the result block")
+    bundle: Final[RenderBundle] = RenderBundle(
+        content=VertexTree(tree_vertices=[page, plain, classed]),
+        view={"classed01": VertexView(semantic=Semantic.RESULT, source_channel=SourceChannel.EMAIL)},
+    )
+    return _render_epub(tmp_path_factory.mktemp("classified"), bundle, DefaultProfile(), "classified")
 
 
 @pytest.fixture(scope="module")
@@ -340,6 +354,25 @@ class TestRenderEpub:
     def test_suppress_attributes_drops_pills(self, article5_suppressed_epub: Path) -> None:
         """With suppress_attributes, the attribute pills are absent from the EPUB."""
         assert "background-color: #FF851C" not in _chapter_xhtml(article5_suppressed_epub)
+
+    def test_classified_list_glyphs(self, classified_epub: Path) -> None:
+        """A classified list is wrapped for marker suppression, its items led by glyph spans.
+
+        The classified item leads with its badge then its semantic glyph span; the plain
+        sibling gets the default bullet glyph; the scaffold attributes are consumed.
+        """
+        chapter: Final[str] = _chapter_xhtml(classified_epub)
+        assert 'class="semantic-bullets"' in chapter
+        assert chapter.count('class="bullet-glyph"') == 2
+        assert "⇒" in chapter and "•" in chapter
+        assert "📨 the result block" in chapter
+        assert "data-guffin" not in chapter
+        # The stylesheet ships the marker-suppression rule the wrapper class relies on.
+        with zipfile.ZipFile(classified_epub) as zf:
+            css: Final[str] = "\n".join(
+                zf.read(name).decode("utf-8") for name in zf.namelist() if name.endswith(".css")
+            )
+        assert "div.semantic-bullets > ul" in css
 
 
 class TestStructuralPolicyDirectives:
