@@ -28,13 +28,16 @@ from guffin.model.vertex import (
     vertex_adapter,
 )
 from guffin.model.vertex_link import VertexLinkKind
-from guffin.model.vertex_view import ChildrenLayout, VertexView
+from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
+from guffin.roam.better_bullet import BetterBulletProvenance, BetterBulletType
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator
 from guffin.roam.primitives import ChildrenViewType, Id, IdObject
 from guffin.transcribe.roam_tree_to_guffin import (
+    SEMANTIC_BY_BULLET_TYPE,
+    SOURCE_CHANNEL_BY_PROVENANCE,
     _is_meta_block,
     build_view_map,
     to_block_embed_vertex,
@@ -70,7 +73,7 @@ _CALLOUT_STRING: str = "[[>]] [[!NOTE]] This is a note"
 # Raw Roam form: closing fence attached to the final content line (no separating newline).
 _CODE_STRING: str = "```python\ndef f():\n    pass```"
 
-from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, article1_node_tree, article5_node_tree
+from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, article1_node_tree, article4_node_tree, article5_node_tree
 
 # ---------------------------------------------------------------------------
 # Factory helpers
@@ -1589,6 +1592,74 @@ class TestBuildViewMap:
         )
         view_map = build_view_map(_node_tree(root, embed, ref_page))
         assert view_map == {"refpage01": VertexView(children_layout=ChildrenLayout.DOCUMENT)}
+
+    def test_semantic_by_bullet_type_is_total(self) -> None:
+        """Every Better Bullets kind maps to a Semantic."""
+        assert set(SEMANTIC_BY_BULLET_TYPE) == set(BetterBulletType)
+
+    def test_source_channel_by_provenance_is_total(self) -> None:
+        """Every Better Bullets provenance maps to a SourceChannel."""
+        assert set(SOURCE_CHANNEL_BY_PROVENANCE) == set(BetterBulletProvenance)
+
+    def test_records_bullet_type_as_semantic(self) -> None:
+        """A node's persisted Better Bullets kind is recorded as the view's semantic."""
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        block = RoamNode(
+            uid="bullet001",
+            id=2,
+            string="why though?",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            props={"type": "question"},
+        )
+        view_map = build_view_map(_node_tree(root, block))
+        assert view_map == {"bullet001": VertexView(semantic=Semantic.QUESTION)}
+
+    def test_records_provenance_as_source_channel(self) -> None:
+        """A node's persisted provenance badge is recorded as the view's source channel.
+
+        The divergent persisted spellings map across: ``phone`` → voice-call.
+        """
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        block = RoamNode(
+            uid="badge0001",
+            id=2,
+            string="call with the publisher",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            props={"provenance": "phone"},
+        )
+        view_map = build_view_map(_node_tree(root, block))
+        assert view_map == {"badge0001": VertexView(source_channel=SourceChannel.VOICE_CALL)}
+
+    def test_records_all_three_declarations_on_one_node(self) -> None:
+        """Layout, semantic, and source channel co-exist on one recorded view."""
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        block = RoamNode(
+            uid="fullhouse",
+            id=2,
+            string="decision from the call",
+            children_view_type=ChildrenViewType.DOCUMENT,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            props={"type": "decision", "provenance": "phone"},
+        )
+        view_map = build_view_map(_node_tree(root, block))
+        assert view_map == {
+            "fullhouse": VertexView(
+                children_layout=ChildrenLayout.DOCUMENT,
+                semantic=Semantic.DECISION,
+                source_channel=SourceChannel.VOICE_CALL,
+            )
+        }
+
+    def test_article_4_fixture_records_semantics_and_source_channels(self) -> None:
+        """The [[Test Article]] 4 fixture's Better Bullets sections enrich the ViewMap end to end."""
+        view_map = build_view_map(article4_node_tree())
+        semantics = [view.semantic for view in view_map.values() if view.semantic is not None]
+        channels = [view.source_channel for view in view_map.values() if view.source_channel is not None]
+        assert sorted(semantics) == sorted(Semantic)
+        assert sorted(channels) == sorted(SourceChannel)
 
 
 # ---------------------------------------------------------------------------

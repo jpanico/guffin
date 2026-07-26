@@ -9,6 +9,10 @@ Public symbols:
 
 - :data:`SHOULD_NORMALIZE_HEADING_LEVELS` — whether heading levels should be
   normalized during transcription.
+- :data:`SEMANTIC_BY_BULLET_TYPE` — member-keyed map from a Better Bullets kind to the
+  :class:`~guffin.model.vertex_view.Semantic` it declares.
+- :data:`SOURCE_CHANNEL_BY_PROVENANCE` — member-keyed map from a Better Bullets provenance to
+  the :class:`~guffin.model.vertex_view.SourceChannel` it declares.
 - :func:`vertex_type` — classify a :class:`~guffin.roam.node.RoamNode` into a
   :class:`~guffin.vertex.VertexType`.
 - :func:`to_page_vertex` — build a :class:`~guffin.vertex.PageVertex` from a
@@ -45,6 +49,7 @@ Public symbols:
 """
 
 import logging
+from collections.abc import Mapping
 from itertools import chain
 from typing import Final, assert_never
 
@@ -88,7 +93,8 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
+from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView, ViewMap
+from guffin.roam.better_bullet import BetterBulletProvenance, BetterBulletType
 from guffin.roam.blockquote import (
     RoamCallout,
     parse_callout,
@@ -109,6 +115,8 @@ from guffin.roam.markdown import (
 from guffin.roam.node import (
     NodeType,
     RoamNode,
+    better_bullet_provenance,
+    better_bullet_type,
     effective_heading_level,
     image_size,
     node_type,
@@ -1067,6 +1075,45 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
     return VertexTree(tree_vertices=vertices, ref_vertices=ref_vertices)
 
 
+SEMANTIC_BY_BULLET_TYPE: Final[Mapping[BetterBulletType, Semantic]] = {
+    BetterBulletType.EQUAL: Semantic.DEFINITION,
+    BetterBulletType.ARROW: Semantic.LEADS_TO,
+    BetterBulletType.RESULT: Semantic.RESULT,
+    BetterBulletType.QUESTION: Semantic.QUESTION,
+    BetterBulletType.IMPORTANT: Semantic.WARNING,
+    BetterBulletType.IDEA: Semantic.IDEA,
+    BetterBulletType.CONTRAST: Semantic.CONTRAST,
+    BetterBulletType.EVIDENCE: Semantic.EVIDENCE,
+    BetterBulletType.DECISION: Semantic.DECISION,
+    BetterBulletType.REFERENCE: Semantic.REFERENCE,
+    BetterBulletType.PROCESS: Semantic.PROCESS,
+}
+"""Member-keyed map from a Better Bullets kind to the :class:`~guffin.model.vertex_view.Semantic` it declares.
+
+The bridge from the extension's persisted bullet vocabulary to the model's
+markup-independent classification.  Total over
+:class:`~guffin.roam.better_bullet.BetterBulletType` (enforced by test).
+"""
+
+SOURCE_CHANNEL_BY_PROVENANCE: Final[Mapping[BetterBulletProvenance, SourceChannel]] = {
+    BetterBulletProvenance.CALENDAR_EVENT: SourceChannel.CALENDAR_EVENT,
+    BetterBulletProvenance.EMAIL: SourceChannel.EMAIL,
+    BetterBulletProvenance.PHONE_CALL: SourceChannel.VOICE_CALL,
+    BetterBulletProvenance.CHAT_MESSAGE: SourceChannel.CHAT_MESSAGE,
+    BetterBulletProvenance.SCANNED_POST: SourceChannel.POSTAL_MAIL,
+    BetterBulletProvenance.SLACK: SourceChannel.SLACK,
+}
+"""Member-keyed map from a Better Bullets provenance to the :class:`~guffin.model.vertex_view.SourceChannel` it.
+
+declares.
+
+The bridge from the extension's persisted provenance vocabulary to the model's
+markup-independent classification, spanning the label divergences (``phone`` →
+``voice-call``, ``mail`` → ``postal-mail``).  Total over
+:class:`~guffin.roam.better_bullet.BetterBulletProvenance` (enforced by test).
+"""
+
+
 @validate_call
 def build_view_map(node_tree: NodeTree) -> ViewMap:
     """Derive the presentation :data:`~guffin.model.vertex_view.ViewMap` for *node_tree*.
@@ -1075,14 +1122,23 @@ def build_view_map(node_tree: NodeTree) -> ViewMap:
     the same node population — the anchor subtree *and* the referenced nodes
     (:attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`), so a transcluded page or block carries
     its authored presentation with it.  It records a
-    :class:`~guffin.model.vertex_view.VertexView` keyed by uid for every node that carries an
-    *explicit* children-view-type (:attr:`~guffin.roam.node.RoamNode.children_view_type` is not
-    ``None``), mapping it straight to the matching
-    :class:`~guffin.model.vertex_view.ChildrenLayout` — an explicit ``BULLET`` included, so it is
-    recorded distinctly from an unset node rather than being conflated with the default.  The map
-    is sparse: a node with no explicit children-view-type is absent, and at render time adopts its
-    parent's effective layout (the tri-state effective-layout rules; see
-    ``docs/render-pipeline.md``), falling back to
+    :class:`~guffin.model.vertex_view.VertexView` keyed by uid for every node carrying at least
+    one explicit declaration, each mapped to its model form:
+
+    - an *explicit* children-view-type (:attr:`~guffin.roam.node.RoamNode.children_view_type`
+      is not ``None``) maps straight to the matching
+      :class:`~guffin.model.vertex_view.ChildrenLayout` — an explicit ``BULLET`` included, so it
+      is recorded distinctly from an unset node rather than being conflated with the default;
+    - a Better Bullets bullet kind (:func:`~guffin.roam.node.better_bullet_type`) maps to its
+      :class:`~guffin.model.vertex_view.Semantic` via :data:`SEMANTIC_BY_BULLET_TYPE`;
+    - a Better Bullets provenance badge (:func:`~guffin.roam.node.better_bullet_provenance`)
+      maps to its :class:`~guffin.model.vertex_view.SourceChannel` via
+      :data:`SOURCE_CHANNEL_BY_PROVENANCE`.
+
+    The map is sparse, and each recorded view carries only the fields its node declares.  A
+    node with no explicit children-view-type is absent (or its view's layout is unset) and at
+    render time adopts its parent's effective layout (the tri-state effective-layout rules;
+    see ``docs/render-pipeline.md``), falling back to
     :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` only at a parentless root.
 
     Args:
@@ -1090,13 +1146,24 @@ def build_view_map(node_tree: NodeTree) -> ViewMap:
 
     Returns:
         A :data:`~guffin.model.vertex_view.ViewMap` covering exactly the fetched nodes — anchor
-        subtree and referenced nodes alike — that carry an explicit children-view-type.
+        subtree and referenced nodes alike — that carry an explicit children-view-type, bullet
+        kind, or provenance badge.
     """
-    return {
-        node.uid: VertexView(children_layout=ChildrenLayout(node.children_view_type))
-        for node in chain(node_tree.dfs(), node_tree.refs_by_id.values())
-        if node.children_view_type is not None
-    }
+    view_map: Final[ViewMap] = {}
+    for node in chain(node_tree.dfs(), node_tree.refs_by_id.values()):
+        layout: ChildrenLayout | None = (
+            ChildrenLayout(node.children_view_type) if node.children_view_type is not None else None
+        )
+        bullet: BetterBulletType | None = better_bullet_type(node)
+        provenance: BetterBulletProvenance | None = better_bullet_provenance(node)
+        if layout is None and bullet is None and provenance is None:
+            continue
+        view_map[node.uid] = VertexView(
+            children_layout=layout,
+            semantic=SEMANTIC_BY_BULLET_TYPE[bullet] if bullet is not None else None,
+            source_channel=SOURCE_CHANNEL_BY_PROVENANCE[provenance] if provenance is not None else None,
+        )
+    return view_map
 
 
 @validate_call

@@ -150,6 +150,23 @@ def article3_node_tree() -> NodeTree:
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
 
 
+def article4_node_tree() -> NodeTree:
+    """Load and return the ``[[Test Article]] 4`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
+
+    Loads all nodes from ``test_article_4_nodes_by_uid.yaml`` (anchor subtree plus referenced
+    pages), covering the article's Color Highlighter and Better Bullets sections — the latter's
+    blocks carrying persisted ``type`` / ``provenance`` block properties.
+    """
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
+        (FIXTURES_YAML_DIR / "test_article_4_nodes_by_uid.yaml").read_text()
+    )
+    all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
+    root_node: Final[RoamNode] = next(
+        n for n in all_nodes if node_type(n) == NodeType.PAGE and n.title == "[[Test Article]] 4"
+    )
+    return NodeTree.build(super_network=all_nodes, root_node=root_node)
+
+
 def article5_node_tree() -> NodeTree:
     """Load and return the ``[[Test Article]] 5`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
