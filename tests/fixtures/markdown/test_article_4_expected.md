@@ -8,8 +8,10 @@
 > - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter
 
 - **BOLD** text color
+  - **This span is BOLD uncolored**.
   - <span style="color: orange">**This span is BOLD orange text color**</span>. This span is not.
   - <span style="color: fuchsia">**This span is BOLD fuchsia text color**</span>. This span is not.
+  - \#c:FUCHSIA **This span is BOLD fuchsia text color**. It extra space between the color markup and the bold Markdown
 - <mark>highlight</mark> color
   - <mark style="background-color: orange">This span is highlighted orange.</mark> This span is not.
   - <mark style="background-color: fuchsia">This span is highlighted fuchsia.</mark> This span is not.

@@ -26,9 +26,14 @@
 - vertex_type: guffin/text
   uid: c9kTivLOo
   children:
+  - 0wrSU1U9e
   - Rjt1IvrVq
   - AE3uVp_QL
+  - Vu3azKD1d
   text: '**BOLD** text color'
+- vertex_type: guffin/text
+  uid: 0wrSU1U9e
+  text: '**This span is BOLD  uncolored**.'
 - vertex_type: guffin/text
   uid: Rjt1IvrVq
   refs:
@@ -40,6 +45,12 @@
   - lF-qY0Xrs
   text: '[**This span is BOLD fuchsia text color**]{color="fuchsia"}. This span is
     not.'
+- vertex_type: guffin/text
+  uid: Vu3azKD1d
+  refs:
+  - lF-qY0Xrs
+  text: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. It extra space between
+    the color markup and the bold Markdown'
 - vertex_type: guffin/text
   uid: Jt4-6SLWM
   children:

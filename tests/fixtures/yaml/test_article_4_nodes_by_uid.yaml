@@ -82,6 +82,23 @@ LBFKibPIj:
   props: null
   title: Test Article
   attrs: null
+0wrSU1U9e:
+  uid: 0wrSU1U9e
+  id: 15250
+  string: '**This span is BOLD  uncolored**.'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 11654
+  props: null
+  title: null
+  attrs: null
 1GLhru-f7:
   uid: 1GLhru-f7
   id: 11671
@@ -268,6 +285,8 @@ c9kTivLOo:
   children:
   - id: 11648
   - id: 11655
+  - id: 15249
+  - id: 15250
   refs: null
   page:
     id: 11643
@@ -281,7 +300,7 @@ Rjt1IvrVq:
   uid: Rjt1IvrVq
   id: 11648
   string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
-  order: 0
+  order: 1
   heading: null
   children: null
   refs:
@@ -310,6 +329,25 @@ rArYyVVBS:
   parents:
   - id: 11643
   - id: 11657
+  props: null
+  title: null
+  attrs: null
+Vu3azKD1d:
+  uid: Vu3azKD1d
+  id: 15249
+  string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. It extra space between
+    the color markup and the bold Markdown'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 11654
   props: null
   title: null
   attrs: null
@@ -353,7 +391,7 @@ AE3uVp_QL:
   uid: AE3uVp_QL
   id: 11655
   string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
-  order: 1
+  order: 2
   heading: null
   children: null
   refs:

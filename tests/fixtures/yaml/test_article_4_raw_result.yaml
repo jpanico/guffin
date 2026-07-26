@@ -40,6 +40,15 @@
     id: 4223
     uid: LBFKibPIj
     title: Test Article
+- - string: '**This span is BOLD  uncolored**.'
+    id: 15250
+    uid: 0wrSU1U9e
+    parents:
+    - id: 11643
+    - id: 11654
+    order: 0
+    page:
+      id: 11643
 - - id: 11671
     uid: 1GLhru-f7
     title: .bg-ORANGE
@@ -141,6 +150,8 @@
     children:
     - id: 11648
     - id: 11655
+    - id: 15249
+    - id: 15250
     id: 11654
     uid: c9kTivLOo
     parents:
@@ -154,7 +165,7 @@
     parents:
     - id: 11643
     - id: 11654
-    order: 0
+    order: 1
     page:
       id: 11643
     refs:
@@ -166,6 +177,18 @@
     - id: 11643
     - id: 11657
     order: 1
+    page:
+      id: 11643
+    refs:
+    - id: 5844
+- - string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. It extra space
+      between the color markup and the bold Markdown'
+    id: 15249
+    uid: Vu3azKD1d
+    parents:
+    - id: 11643
+    - id: 11654
+    order: 3
     page:
       id: 11643
     refs:
@@ -198,7 +221,7 @@
     parents:
     - id: 11643
     - id: 11654
-    order: 1
+    order: 2
     page:
       id: 11643
     refs:
