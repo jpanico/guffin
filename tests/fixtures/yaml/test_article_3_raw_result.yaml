@@ -725,7 +725,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 25
+    order: 26
     page:
       id: 4225
     refs:
@@ -925,7 +925,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 17
+    order: 18
     page:
       id: 4225
     refs:
@@ -1077,7 +1077,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 23
+    order: 24
     page:
       id: 4225
     refs:
@@ -1144,6 +1144,18 @@
     order: 18
     page:
       id: 4225
+- - string: ((pTvGGeTlB))
+    id: 15243
+    uid: uiBphM2Fb
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 15242
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11922
 - - string: the child block contains a standard markdown single-line block quote
     children:
     - id: 13457
@@ -1163,7 +1175,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 24
+    order: 25
     page:
       id: 4225
     refs:
@@ -1260,7 +1272,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 27
+    order: 28
     page:
       id: 4225
     refs:
@@ -1976,6 +1988,7 @@
     - id: 13490
     - id: 13492
     - id: 13494
+    - id: 15242
     id: 4226
     uid: LfaVt18Iw
     parents:
@@ -2232,7 +2245,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 20
+    order: 21
     page:
       id: 4225
     refs:
@@ -2372,7 +2385,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 22
+    order: 23
     page:
       id: 4225
     refs:
@@ -2688,7 +2701,20 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 18
+    order: 19
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: '#c:FUCHSIA **standalone PDF BLOCK ref↓**'
+    children:
+    - id: 15243
+    id: 15242
+    uid: OYxDubiuN
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 17
     page:
       id: 4225
     refs:
@@ -3189,7 +3215,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 26
+    order: 27
     page:
       id: 4225
     refs:
@@ -3203,7 +3229,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 21
+    order: 22
     page:
       id: 4225
     refs:
@@ -3228,7 +3254,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 19
+    order: 20
     page:
       id: 4225
     refs:

@@ -293,6 +293,7 @@
   - ZT_EVUtHq
   - HftouGiTA
   - AQqf7TbPh
+  - OYxDubiuN
   - dYYKZExzI
   - Y0xFlk7y6
   - fZr8Ve9SS
@@ -439,6 +440,18 @@
   refs:
   - J_Vt5_C6p
   text: '[![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)](x-guffin:vertex/J_Vt5_C6p)'
+- vertex_type: guffin/text
+  uid: OYxDubiuN
+  children:
+  - uiBphM2Fb
+  refs:
+  - lF-qY0Xrs
+  text: '[**standalone PDF BLOCK ref↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: uiBphM2Fb
+  refs:
+  - pTvGGeTlB
+  text: '[{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}](x-guffin:vertex/pTvGGeTlB)'
 - vertex_type: guffin/text
   uid: dYYKZExzI
   children:

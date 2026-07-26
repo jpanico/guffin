@@ -112,6 +112,8 @@ def fizz_buzz(limit: int = 100):
   - Internal (in-page) links:
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   <img src="flower.jpeg" style="margin: 0;">
+- <span style="color: fuchsia">**standalone PDF BLOCK ref↓**</span>
+  [dummy.pdf](dummy.pdf "dummy.pdf")
 - <span style="color: fuchsia">**standalone BLOCK EMBED ↓**</span>
   Section 3
 
