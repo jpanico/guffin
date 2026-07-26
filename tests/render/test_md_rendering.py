@@ -16,6 +16,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex, QuoteBlockVertex, QuoteType, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
+from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
 from guffin.render.md_rendering import render
 from guffin.render.project import BookProfile, DefaultProfile
 from guffin.render.render_options import MarkdownRenderOptions
@@ -54,6 +55,39 @@ class TestRenderArticleFixture:
         result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
         expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert result == expected
+
+
+class TestSemanticBullets:
+    """Classified list items render dash + glyph in GFM (via gfm_bullet.lua and badge injection)."""
+
+    def test_classified_items_render_glyphs(self, tmp_path: Path) -> None:
+        """A semantic renders its bullet glyph, a source channel its badge, both after the dash."""
+        page = PageVertex(uid="page00001", title="P", children=["plain0001", "classed01", "badge0001"])
+        plain = TextVertex(uid="plain0001", text="a plain sibling")
+        classed = TextVertex(uid="classed01", text="the result block")
+        badged = TextVertex(uid="badge0001", text="notes from the call")
+        bundle: Final[RenderBundle] = RenderBundle(
+            content=VertexTree(tree_vertices=[page, plain, classed, badged]),
+            view={
+                "classed01": VertexView(semantic=Semantic.RESULT),
+                "badge0001": VertexView(source_channel=SourceChannel.VOICE_CALL),
+            },
+        )
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            bundle,
+            profile=DefaultProfile(),
+            filename_stem="semantic",
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result: Final[str] = (tmp_path / "semantic.md").read_text(encoding="utf-8")
+        assert "- a plain sibling" in result
+        assert "- ⇒ the result block" in result
+        assert "- 📞 notes from the call" in result
+        assert "data-guffin" not in result
 
 
 def _book_bundle() -> RenderBundle:
