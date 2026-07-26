@@ -726,7 +726,7 @@ class TestBetterBulletType:
         _walk(raw)
         section = nodes[15252]
         assert section.children is not None
-        resolved = [better_bullet_type(nodes[stub.id]) for stub in section.children]
+        resolved = [bullet for stub in section.children if (bullet := better_bullet_type(nodes[stub.id])) is not None]
         assert resolved == list(BetterBulletType)
 
 

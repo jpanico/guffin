@@ -90,6 +90,22 @@
       id: 11643
     refs:
     - id: 11673
+- - string: Provenance
+    children:
+    - id: 15265
+    - id: 15266
+    - id: 15275
+    - id: 15276
+    - id: 15277
+    - id: 15278
+    id: 15264
+    uid: NBEU8i91k
+    parents:
+    - id: 11643
+    - id: 15252
+    order: 11
+    page:
+      id: 11643
 - - string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
     id: 11668
     uid: GUiM9K-kR
@@ -153,6 +169,18 @@
       id: 11643
     refs:
     - id: 11454
+- - string: 📨 Email -> 📨
+    id: 15266
+    uid: 8A-YVZxaH
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15264
+    props:
+      provenance: email
+    order: 1
+    page:
+      id: 11643
 - - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     id: 11664
     uid: _EtYSMJNn
@@ -192,6 +220,18 @@
     order: 0
     page:
       id: 11643
+- - string: '% Slack -> ＃'
+    id: 15278
+    uid: vEvZXUyix
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15264
+    props:
+      provenance: slack
+    order: 5
+    page:
+      id: 11643
 - - string: Evidence / support -> `▸`
     id: 15260
     uid: gcRT-AWUS
@@ -201,6 +241,18 @@
     props:
       type: evidence
     order: 7
+    page:
+      id: 11643
+- - string: 💬 Chat message -> 💬
+    id: 15276
+    uid: ysm8EX8Gt
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15264
+    props:
+      provenance: chat
+    order: 3
     page:
       id: 11643
 - - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
@@ -239,6 +291,30 @@
       id: 11643
     refs:
     - id: 5844
+- - string: 📪 Postal mail -> 📪
+    id: 15277
+    uid: d1RJ3aT5i
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15264
+    props:
+      provenance: mail
+    order: 4
+    page:
+      id: 11643
+- - string: 📞 Phone call -> 📞
+    id: 15275
+    uid: zP-izykRs
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15264
+    props:
+      provenance: phone
+    order: 2
+    page:
+      id: 11643
 - - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
     id: 11653
     uid: 9a_6taJAn
@@ -353,6 +429,7 @@
     - id: 15261
     - id: 15262
     - id: 15263
+    - id: 15264
     id: 15252
     uid: _eF-sDI9v
     parents:
@@ -391,6 +468,18 @@
     props:
       type: process
     order: 10
+    page:
+      id: 11643
+- - string: 📅  Calendar event -> 📅
+    id: 15265
+    uid: n-exvRYBw
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15264
+    props:
+      provenance: calendar
+    order: 0
     page:
       id: 11643
 - - string: Contrast / however -> `≠`

@@ -125,6 +125,28 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: NBEU8i91k
+  id: 15264
+  string: Provenance
+  order: 11
+  heading: null
+  children:
+  - id: 15265
+  - id: 15266
+  - id: 15275
+  - id: 15276
+  - id: 15277
+  - id: 15278
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props: null
+  title: null
+  attrs: null
 - uid: GUiM9K-kR
   id: 11668
   string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
@@ -215,6 +237,24 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: 8A-YVZxaH
+  id: 15266
+  string: 📨 Email -> 📨
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15264
+  props:
+    provenance: email
+  title: null
+  attrs: null
 - uid: _EtYSMJNn
   id: 11664
   string: '#c:ORANGE __This span is underlined orange. __This span is not.'
@@ -272,6 +312,24 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: vEvZXUyix
+  id: 15278
+  string: '% Slack -> ＃'
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15264
+  props:
+    provenance: slack
+  title: null
+  attrs: null
 - uid: gcRT-AWUS
   id: 15260
   string: Evidence / support -> `▸`
@@ -287,6 +345,24 @@ tree_network:
   - id: 15252
   props:
     type: evidence
+  title: null
+  attrs: null
+- uid: ysm8EX8Gt
+  id: 15276
+  string: 💬 Chat message -> 💬
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15264
+  props:
+    provenance: chat
   title: null
   attrs: null
 - uid: Rjt1IvrVq
@@ -341,6 +417,42 @@ tree_network:
   - id: 11654
   - id: 15251
   props: null
+  title: null
+  attrs: null
+- uid: d1RJ3aT5i
+  id: 15277
+  string: 📪 Postal mail -> 📪
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15264
+  props:
+    provenance: mail
+  title: null
+  attrs: null
+- uid: zP-izykRs
+  id: 15275
+  string: 📞 Phone call -> 📞
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15264
+  props:
+    provenance: phone
   title: null
   attrs: null
 - uid: 9a_6taJAn
@@ -500,6 +612,7 @@ tree_network:
   - id: 15261
   - id: 15262
   - id: 15263
+  - id: 15264
   refs: null
   page:
     id: 11643
@@ -558,6 +671,24 @@ tree_network:
   - id: 15252
   props:
     type: process
+  title: null
+  attrs: null
+- uid: n-exvRYBw
+  id: 15265
+  string: 📅  Calendar event -> 📅
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15264
+  props:
+    provenance: calendar
   title: null
   attrs: null
 - uid: ZS_mZaDxD

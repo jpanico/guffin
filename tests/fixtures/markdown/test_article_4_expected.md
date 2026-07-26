@@ -39,3 +39,10 @@
   - Decision / choice -\> `⎇`
   - Reference / related -\> `↗`
   - Process / ongoing -\> `↻`
+  - Provenance
+    - 📅 Calendar event -\> 📅
+    - 📨 Email -\> 📨
+    - 📞 Phone call -\> 📞
+    - 💬 Chat message -\> 💬
+    - 📪 Postal mail -\> 📪
+    - % Slack -\> ＃
