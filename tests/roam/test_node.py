@@ -6,9 +6,11 @@ from conftest import FIXTURES_YAML_DIR
 from pydantic import ValidationError
 
 from guffin.common.geometry import ImageSize
+from guffin.roam.better_bullet import BetterBulletType
 from guffin.roam.node import (
     NodeType,
     RoamNode,
+    better_bullet_type,
     effective_children_view_type,
     image_size,
     node_type,
@@ -661,6 +663,71 @@ class TestEffectiveChildrenViewType:
         )
         assert node.children_view_type is None
         assert effective_children_view_type(node) == DEFAULT_CHILDREN_VIEW_TYPE
+
+
+class TestBetterBulletType:
+    """Tests for the better_bullet_type() function."""
+
+    @staticmethod
+    def _node(props: dict[str, object] | None) -> RoamNode:
+        """Build a minimal block node carrying *props*."""
+        return RoamNode(
+            uid="block0001",
+            id=1,
+            string="stub",
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            props=props,
+        )
+
+    @pytest.mark.parametrize("member", list(BetterBulletType))
+    def test_recognized_type_prop_resolves_to_its_member(self, member: BetterBulletType) -> None:
+        """A 'type' prop holding a persisted Better Bullets identifier resolves to its member."""
+        assert better_bullet_type(self._node({"type": member.id})) is member
+
+    def test_no_props_resolves_to_none(self) -> None:
+        """A node with no property map carries no Better Bullet."""
+        assert better_bullet_type(self._node(None)) is None
+
+    def test_no_type_entry_resolves_to_none(self) -> None:
+        """A property map without a 'type' entry carries no Better Bullet."""
+        assert better_bullet_type(self._node({"ah-level": "4"})) is None
+
+    def test_unrecognized_identifier_rejected_at_construction(self) -> None:
+        """A 'type' value outside the Better Bullets vocabulary fails RoamNode validation."""
+        with pytest.raises(ValidationError, match="unrecognized Better Bullets"):
+            self._node({"type": "somethingElse"})
+
+    def test_non_string_type_prop_rejected_at_construction(self) -> None:
+        """A non-string 'type' value fails RoamNode validation."""
+        with pytest.raises(ValidationError, match="unrecognized Better Bullets"):
+            self._node({"type": 7})
+
+    def test_article_4_fixture_covers_every_member(self) -> None:
+        """The [[Test Article]] 4 Better Bullets section's children resolve to all eleven members.
+
+        The fixture records the identifiers the extension actually persists (including the
+        divergent ``doubleArrow`` and ``plus`` spellings), so this pins the enum's ids to the
+        live vocabulary.
+        """
+        raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_4_nodes.yaml").read_text())
+        nodes: dict[int, RoamNode] = {}
+
+        def _walk(item: object) -> None:
+            if isinstance(item, dict):
+                if "id" in item and ("string" in item or "title" in item):
+                    nodes[item["id"]] = RoamNode.model_validate(item)
+                for value in item.values():
+                    _walk(value)
+            elif isinstance(item, list):
+                for value in item:
+                    _walk(value)
+
+        _walk(raw)
+        section = nodes[15252]
+        assert section.children is not None
+        resolved = [better_bullet_type(nodes[stub.id]) for stub in section.children]
+        assert resolved == list(BetterBulletType)
 
 
 class TestDailyNoteTitleValidation:

@@ -15,12 +15,15 @@ Public symbols:
 - :func:`image_size` — return the :class:`~guffin.common.geometry.ImageSize` recorded in
   a :attr:`NodeType.IMAGE_BLOCK` node's ``image-size`` prop, or ``None`` if the node
   is not an image block.
+- :func:`better_bullet_type` — return the :class:`~guffin.roam.better_bullet.BetterBulletType`
+  recorded in a node's ``type`` prop, or ``None`` if it carries none.
 - :data:`NodesByUid` — ``dict`` mapping each :attr:`~RoamNode.uid` to its :class:`RoamNode`.
 """
 
 import datetime
 import enum
 import logging
+from collections.abc import Mapping
 from typing import Final
 
 import regex
@@ -35,6 +38,7 @@ from pydantic import (
 
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel, is_fenced_code_block
+from guffin.roam.better_bullet import BetterBulletType
 from guffin.roam.blockquote import CALLOUT_RE, is_quote_block
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
@@ -133,6 +137,11 @@ class RoamNode(BaseModel):
     A further invariant, enforced by :meth:`_validate_daily_note_title`: a **daily-note page** —
     one whose ``uid`` is an ``MM-DD-YYYY`` date (:data:`~guffin.roam.primitives.DAILY_NOTE_UID_PATTERN`)
     — must carry that date's verbose ``title`` (e.g. ``01-01-2026`` → ``January 1st, 2026``).
+
+    And another, enforced by :meth:`_validate_better_bullet_type`: a ``type`` block property,
+    when present, must hold a recognized
+    :class:`~guffin.roam.better_bullet.BetterBulletType` identifier (the Better Bullets
+    extension's persisted bullet kind).
 
     All remaining fields (``parents``, ``children``, ``heading``, ``refs``, etc.)
     are optional and vary by entity type and feature usage.
@@ -286,6 +295,24 @@ class RoamNode(BaseModel):
             raise ValueError(f"daily-note page uid={self.uid!r} must have title {expected!r}, got {self.title!r}")
         return self
 
+    @model_validator(mode="after")
+    def _validate_better_bullet_type(self) -> RoamNode:
+        """Require a ``type`` block property, when present, to be a recognized Better Bullets id.
+
+        The Better Bullets extension persists an applied bullet kind in the block's ``type``
+        property as a :class:`~guffin.roam.better_bullet.BetterBulletType` identifier.  Nodes
+        with no property map, or none carrying a ``type`` entry, are unconstrained.
+
+        Returns:
+            The validated instance.
+
+        Raises:
+            ValueError: If the ``type`` property holds anything but a recognized
+                :class:`~guffin.roam.better_bullet.BetterBulletType` identifier.
+        """
+        _parsed_better_bullet_type(self.props, self.uid)
+        return self
+
 
 @validate_call
 def effective_heading_level(node: RoamNode) -> HeadingLevel | None:
@@ -360,6 +387,50 @@ def image_size(node: RoamNode) -> ImageSize | None:
         width=first_entry.get("width"),
         height=first_entry.get("height"),
     )
+
+
+def _parsed_better_bullet_type(props: Mapping[str, object] | None, uid: Uid) -> BetterBulletType | None:
+    """Return the Better Bullets kind a block property map records, or ``None`` if it records none.
+
+    Args:
+        props: A block's property map; may be ``None``.
+        uid: The owning node's uid, naming the node in the failure message.
+
+    Returns:
+        The :class:`~guffin.roam.better_bullet.BetterBulletType` the map's ``type`` entry
+        identifies, or ``None`` when *props* is ``None`` or carries no ``type`` entry.
+
+    Raises:
+        ValueError: If the ``type`` entry holds anything but a recognized
+            :class:`~guffin.roam.better_bullet.BetterBulletType` identifier.
+    """
+    raw: Final[object | None] = (props or {}).get("type")
+    if raw is None:
+        return None
+    if not isinstance(raw, str) or raw not in BetterBulletType:
+        raise ValueError(f"node uid={uid!r} has an unrecognized Better Bullets 'type' prop {raw!r}")
+    return BetterBulletType(raw)
+
+
+@validate_call
+def better_bullet_type(node: RoamNode) -> BetterBulletType | None:
+    """Return the Better Bullets kind recorded on *node*, or ``None`` if it carries none.
+
+    The Better Bullets Roam extension persists an applied bullet kind on the block as the
+    kind's identifier in the ``type`` entry of the block's property map
+    (``node.props["type"]``).  An absent property map or an absent ``type`` entry resolves to
+    ``None``.  An unrecognized value never occurs on a constructed node:
+    :class:`RoamNode` enforces the same judgment at construction
+    (:meth:`RoamNode._validate_better_bullet_type`).
+
+    Args:
+        node: The node to inspect.
+
+    Returns:
+        The :class:`~guffin.roam.better_bullet.BetterBulletType` the block's ``type``
+        property identifies, or ``None``.
+    """
+    return _parsed_better_bullet_type(node.props, node.uid)
 
 
 type NodesByUid = dict[Uid, RoamNode]
