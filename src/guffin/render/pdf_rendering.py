@@ -91,6 +91,7 @@ _CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.render.callout_icons"
 _TEMPLATE_ENTRY: Final[str] = "bergfink.typst"
 _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 # Lua-filter filenames, resolved against the bundled typst_resources directory at render time.
+_TYPST_BULLET_FILTER: Final[str] = "typst_bullet.lua"
 _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
 _TYPST_CODE_SOURCE_FILTER: Final[str] = "typst_code_source.lua"
 _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
@@ -129,6 +130,31 @@ def _callout_colors_env() -> str:
     class suffix (the lowercased :class:`~guffin.roam.blockquote.CalloutType` value).
     """
     return ";".join(f"{callout_type.value.lower()}={color}" for callout_type, color in CALLOUT_ACCENT.items())
+
+
+def _typst_filter_args(bundled_dir: Path) -> list[str]:
+    """Return the ``--lua-filter`` arguments applying the bundled Typst filters, in evaluation order.
+
+    The single declaration of the filter chain: the inline and structural transforms first, the
+    fancy-quote and code-source transforms after them (their content is serialized once
+    rewritten), and the semantic-bullet transform last — it serializes classified list items'
+    bodies to Typst, so every earlier transform must already have rewritten them.
+
+    Args:
+        bundled_dir: The bundled Typst resources directory holding the filter files.
+
+    Returns:
+        One ``--lua-filter=<path>`` argument per bundled filter, in application order.
+    """
+    return [
+        f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_BULLET_FILTER}",
+    ]
 
 
 def _typst_template_args(
@@ -183,14 +209,7 @@ def _typst_template_args(
     args: Final[list[str]] = [
         f"--template={template_path}",
         f"--resource-path={bundled_dir}",
-        f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
-        # Registered after the inline transforms so their rewrites are captured when the
-        # fancy-quote and code-source content is serialized to Typst.
-        f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
+        *_typst_filter_args(bundled_dir),
         "-V",
         "listings=true",
     ]
@@ -260,14 +279,7 @@ def _dump_typst_sources(
         json_str,
         "typst",
         format="json",
-        extra_args=[
-            f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
-            f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
-            f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
-            f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
-            f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
-            f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
-        ],
+        extra_args=_typst_filter_args(bundled_dir),
     )
     typst_body_path: Final[Path] = output_dir / f"{stem}.body.typ"
     typst_body_path.write_text(typst_body, encoding="utf-8")

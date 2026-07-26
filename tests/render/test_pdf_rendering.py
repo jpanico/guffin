@@ -20,6 +20,7 @@ from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
+from guffin.model.vertex_view import Semantic, SourceChannel, VertexView, ViewMap
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.pandoc_ast import pandoc_to_json
 from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, vertex_tree_to_pandoc
@@ -370,6 +371,46 @@ _PAGE_BREAK_TAG = AttributeAssignment(
     ),
     values=(LiteralValue(value="before"),),
 )
+
+
+@pytest.mark.pandoc
+class TestTypstBulletFilter:
+    """typst_bullet.lua rebuilds a classified BulletList as a glyph-column Typst grid."""
+
+    @staticmethod
+    def _typst_for(views: ViewMap) -> str:
+        page = PageVertex(uid="page00001", title="Doc", children=["plain0001", "classed01"])
+        plain = TextVertex(uid="plain0001", text="a plain sibling")
+        classed = TextVertex(uid="classed01", text="the result block")
+        tree = VertexTree(tree_vertices=[page, plain, classed])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_bullet.lua'}"],
+        )
+
+    def test_classified_list_becomes_a_glyph_grid(self) -> None:
+        """A semantic item's list is rebuilt as a grid: its glyph in column one, default bullet for siblings."""
+        typst = self._typst_for({"classed01": VertexView(semantic=Semantic.RESULT)})
+        assert "#grid(" in typst
+        assert '"⇒", [' in typst
+        assert '"•", [' in typst
+        assert "the result block" in typst
+        assert "data-guffin" not in typst
+
+    def test_unclassified_list_keeps_native_markers(self) -> None:
+        """A list with no classified item passes through as native Typst bullets."""
+        typst = self._typst_for({})
+        assert "#grid(" not in typst
+        assert "- a plain sibling" in typst
+
+    def test_badge_only_list_keeps_native_markers(self) -> None:
+        """A source-channel badge decorates content only; the list keeps its native markers."""
+        typst = self._typst_for({"classed01": VertexView(source_channel=SourceChannel.EMAIL)})
+        assert "#grid(" not in typst
+        assert "📨 the result block" in typst
 
 
 @pytest.mark.pandoc
