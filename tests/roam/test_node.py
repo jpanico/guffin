@@ -6,10 +6,11 @@ from conftest import FIXTURES_YAML_DIR
 from pydantic import ValidationError
 
 from guffin.common.geometry import ImageSize
-from guffin.roam.better_bullet import BetterBulletType
+from guffin.roam.better_bullet import BetterBulletProvenance, BetterBulletType
 from guffin.roam.node import (
     NodeType,
     RoamNode,
+    better_bullet_provenance,
     better_bullet_type,
     effective_children_view_type,
     image_size,
@@ -728,6 +729,73 @@ class TestBetterBulletType:
         assert section.children is not None
         resolved = [bullet for stub in section.children if (bullet := better_bullet_type(nodes[stub.id])) is not None]
         assert resolved == list(BetterBulletType)
+
+
+class TestBetterBulletProvenance:
+    """Tests for the better_bullet_provenance() function."""
+
+    @staticmethod
+    def _node(props: dict[str, object] | None) -> RoamNode:
+        """Build a minimal block node carrying *props*."""
+        return RoamNode(
+            uid="block0001",
+            id=1,
+            string="stub",
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            props=props,
+        )
+
+    @pytest.mark.parametrize("member", list(BetterBulletProvenance))
+    def test_recognized_provenance_prop_resolves_to_its_member(self, member: BetterBulletProvenance) -> None:
+        """A 'provenance' prop holding a persisted identifier resolves to its member."""
+        assert better_bullet_provenance(self._node({"provenance": member.id})) is member
+
+    def test_no_props_resolves_to_none(self) -> None:
+        """A node with no property map carries no provenance badge."""
+        assert better_bullet_provenance(self._node(None)) is None
+
+    def test_no_provenance_entry_resolves_to_none(self) -> None:
+        """A property map without a 'provenance' entry carries no provenance badge."""
+        assert better_bullet_provenance(self._node({"type": "question"})) is None
+
+    def test_unrecognized_identifier_rejected_at_construction(self) -> None:
+        """A 'provenance' value outside the vocabulary fails RoamNode validation."""
+        with pytest.raises(ValidationError, match="unrecognized Better Bullets"):
+            self._node({"provenance": "carrierPigeon"})
+
+    def test_non_string_provenance_prop_rejected_at_construction(self) -> None:
+        """A non-string 'provenance' value fails RoamNode validation."""
+        with pytest.raises(ValidationError, match="unrecognized Better Bullets"):
+            self._node({"provenance": 7})
+
+    def test_article_4_fixture_covers_every_member(self) -> None:
+        """The [[Test Article]] 4 Provenance section's children resolve to all six members.
+
+        The fixture records the identifiers the extension actually persists (including the
+        ``mail`` spelling for scanned post), so this pins the enum's ids to the live
+        vocabulary.
+        """
+        raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_4_nodes.yaml").read_text())
+        nodes: dict[int, RoamNode] = {}
+
+        def _walk(item: object) -> None:
+            if isinstance(item, dict):
+                if "id" in item and ("string" in item or "title" in item):
+                    nodes[item["id"]] = RoamNode.model_validate(item)
+                for value in item.values():
+                    _walk(value)
+            elif isinstance(item, list):
+                for value in item:
+                    _walk(value)
+
+        _walk(raw)
+        section = nodes[15264]
+        assert section.children is not None
+        resolved = [
+            badge for stub in section.children if (badge := better_bullet_provenance(nodes[stub.id])) is not None
+        ]
+        assert resolved == list(BetterBulletProvenance)
 
 
 class TestDailyNoteTitleValidation:
