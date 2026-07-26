@@ -143,6 +143,7 @@ tree_network:
   - id: 13464
   - id: 13467
   - id: 13468
+  - id: 15247
   refs: null
   page:
     id: 4225
@@ -239,6 +240,23 @@ tree_network:
   - id: 11716
   - id: 13468
   - id: 13470
+  props: null
+  title: null
+  attrs: null
+- uid: l2hbop1R_
+  id: 15247
+  string: the child block contains a Roam hosted PDF Asset (upload)
+  order: 20
+  heading: null
+  children:
+  - id: 15248
+  refs: null
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
   props: null
   title: null
   attrs: null
@@ -879,6 +897,24 @@ tree_network:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  attrs: null
+- uid: v2l4ZwcCw
+  id: 15248
+  string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 246
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  - id: 15247
   props: null
   title: null
   attrs: null
@@ -2976,6 +3012,7 @@ refs_by_id:
     - id: 13464
     - id: 13467
     - id: 13468
+    - id: 15247
     refs: null
     page:
       id: 4225
@@ -3088,6 +3125,20 @@ refs_by_id:
     - id: 11155
     props: null
     title: null
+    attrs: null
+  '246':
+    uid: q3JUnfC1_
+    id: 246
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: pdf
     attrs: null
   '11722':
     uid: BuP4ifx3v
@@ -6476,6 +6527,43 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+  '15247':
+    uid: l2hbop1R_
+    id: 15247
+    string: the child block contains a Roam hosted PDF Asset (upload)
+    order: 20
+    heading: null
+    children:
+    - id: 15248
+    refs: null
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    attrs: null
+  '15248':
+    uid: v2l4ZwcCw
+    id: 15248
+    string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 246
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 15247
+    props: null
+    title: null
+    attrs: null
   '4227':
     uid: d3T1YpYig
     id: 4227
@@ -8050,18 +8138,4 @@ refs_by_id:
     parents: null
     props: null
     title: publish
-    attrs: null
-  '246':
-    uid: q3JUnfC1_
-    id: 246
-    string: null
-    order: null
-    heading: null
-    children: null
-    refs: null
-    page: null
-    children_view_type: null
-    parents: null
-    props: null
-    title: pdf
     attrs: null

@@ -88,6 +88,8 @@ def fizz_buzz(limit: int = 100):
   > *this is the 2nd line*
 
   - this is a child block of Pull Quote
+- the child block contains a Roam hosted PDF Asset (upload)
+  - [u-F9pv-nvn.pdf](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03 "u-F9pv-nvn.pdf")
 
 ## Internal (in-page) links:
 

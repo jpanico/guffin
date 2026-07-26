@@ -88,6 +88,8 @@ def fizz_buzz(limit: int = 100):
   > *this is the 2nd line*
 
   - this is a child block of Pull Quote
+- the child block contains a Roam hosted PDF Asset (upload)
+  - [dummy.pdf](dummy.pdf "dummy.pdf")
 
 ## Internal (in-page) links:
 

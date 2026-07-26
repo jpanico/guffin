@@ -232,12 +232,14 @@ class TestApplyPdfEmbeds:
         _apply_pdf_embeds(doc, paths)
         assert not any(isinstance(b, pf.RawBlock) for b in doc.content)
 
-    def test_article3_fixture_sites_place_independently(self) -> None:
-        """The [[Test Article]] 3 fixture's two standalone references to one PDF stamp per site.
+    def test_article3_fixture_occurrences_place_independently(self) -> None:
+        """The [[Test Article]] 3 fixture's three displays of one uploaded PDF each stamp per occurrence.
 
-        The referenced PDF block lives on [[Test Article]] 1, so the fixture exercises the
-        cross-page case end to end: the site tagged ``pdf-render: "inline"`` stamps inline while
-        the untagged site stamps the link default — the same PDF, placed differently per site.
+        The same Firestore asset is displayed three times, exercising every resolution path:
+        an untagged direct embed in Feature Content (link default), an untagged standalone
+        reference to the [[Test Article]] 1 PDF block (link default), and a standalone
+        reference tagged ``pdf-render: "inline"`` at the site (inline) — one PDF, placed
+        per occurrence.
         """
         tree = transcribe(article3_node_tree())
         pdf_url = str(tree.uid_map["pTvGGeTlB"].source)
@@ -250,7 +252,7 @@ class TestApplyPdfEmbeds:
             return None
 
         doc.walk(_collect)
-        assert sorted(stamps) == ["inline", "link"]
+        assert sorted(stamps) == ["inline", "link", "link"]
 
 
 class TestPrepareTitleMetadata:

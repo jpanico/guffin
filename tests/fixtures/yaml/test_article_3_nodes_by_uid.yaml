@@ -257,6 +257,7 @@ SYZfEd44O:
   - id: 13464
   - id: 13467
   - id: 13468
+  - id: 15247
   refs: null
   page:
     id: 4225
@@ -482,6 +483,24 @@ r09kXvUg-:
   parents:
   - id: 11137
   - id: 11149
+  props: null
+  title: null
+  attrs: null
+l2hbop1R_:
+  uid: l2hbop1R_
+  id: 15247
+  string: the child block contains a Roam hosted PDF Asset (upload)
+  order: 20
+  heading: null
+  children:
+  - id: 15248
+  refs: null
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
   props: null
   title: null
   attrs: null
@@ -1574,6 +1593,25 @@ T6cykqu88:
   children_view_type: null
   parents:
   - id: 3327
+  props: null
+  title: null
+  attrs: null
+v2l4ZwcCw:
+  uid: v2l4ZwcCw
+  id: 15248
+  string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 246
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  - id: 15247
   props: null
   title: null
   attrs: null

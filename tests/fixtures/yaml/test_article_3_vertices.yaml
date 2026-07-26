@@ -72,6 +72,7 @@
   - kfm7Kk_B3
   - 9uT8Z9xNJ
   - OegKTVVNv
+  - l2hbop1R_
   text: Feature Content
   heading_level: 1
 - vertex_type: guffin/text
@@ -273,6 +274,17 @@
 - vertex_type: guffin/text
   uid: A7r0inxrX
   text: this is a child block of Pull Quote
+- vertex_type: guffin/text
+  uid: l2hbop1R_
+  children:
+  - v2l4ZwcCw
+  text: the child block contains a Roam hosted PDF Asset (upload)
+- vertex_type: guffin/pdf
+  uid: v2l4ZwcCw
+  refs:
+  - q3JUnfC1_
+  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
+  file_name: u-F9pv-nvn.pdf.enc
 - vertex_type: guffin/heading
   uid: LfaVt18Iw
   children:

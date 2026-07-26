@@ -183,6 +183,7 @@
     - id: 13464
     - id: 13467
     - id: 13468
+    - id: 15247
     id: 11716
     uid: 7XdTiY_ZF
     parents:
@@ -314,6 +315,17 @@
       id: 11137
     refs:
     - id: 5450
+- - string: the child block contains a Roam hosted PDF Asset (upload)
+    children:
+    - id: 15248
+    id: 15247
+    uid: l2hbop1R_
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 20
+    page:
+      id: 4225
 - - id: 11933
     uid: Jy_Ee6w8E
     title: pdf-render
@@ -1004,6 +1016,18 @@
     order: 3
     page:
       id: 3327
+- - string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
+    id: 15248
+    uid: v2l4ZwcCw
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 15247
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 246
 - - string: section 3.1
     children:
     - id: 4231
