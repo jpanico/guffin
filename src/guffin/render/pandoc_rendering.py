@@ -48,6 +48,11 @@ Rendering rules:
 - :class:`~guffin.vertex.PdfVertex` — rendered as a :class:`~panflute.Link`
   labelled with the PDF's filename, pointing at the local path from
   *asset_files* when present, else at the remote Cloud Firestore source URL.
+  Each display occurrence carries its resolved ``pdf-render`` placement — the
+  standalone reference site's tag for a reference occurrence, else the PDF's own
+  tag, else the default — as the :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold
+  attribute, consumed by a page-placing format pass or stripped
+  (:func:`strip_pdf_placement`) by every other conversion.
 - :class:`~guffin.vertex.CodeBlockVertex` — rendered as a
   :class:`~panflute.CodeBlock` whose class is the vertex's language's
   :func:`~guffin.render.code_language_token.code_language_token`, so Pandoc applies
@@ -70,6 +75,10 @@ Public symbols:
   ``x-guffin`` link as its destination vertex's own converted content.
 - :func:`resolve_vertex_links` — walk a :class:`~panflute.Doc` in place and replace
   ``x-guffin`` :class:`~panflute.Link` elements using a caller-supplied resolver.
+- :data:`PDF_PLACEMENT_ATTRIBUTE` — scaffold attribute carrying a PDF embed link's
+  resolved per-occurrence ``pdf-render`` placement.
+- :func:`strip_pdf_placement` — remove the :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold
+  from every Link in a :class:`~panflute.Doc`, for conversions that do not consume it.
 
 Guffin-independent Pandoc/Panflute helpers used here — :func:`~guffin.render.pandoc_ast.parse_inline_md`,
 :func:`~guffin.render.pandoc_ast.parse_block_md`, :func:`~guffin.render.pandoc_ast.strip_links`,
@@ -215,6 +224,36 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
     QuoteBlockVertex,
     TableVertex,
 )
+
+PDF_PLACEMENT_ATTRIBUTE: Final[str] = "data-guffin-pdf-render"
+"""Scaffold attribute carrying a PDF embed link's resolved ``pdf-render`` placement.
+
+Each PDF embed's link paragraph is stamped with the :class:`~guffin.model.publishing_semantics.PdfRender`
+placement governing that display occurrence — resolved per occurrence, so two references to the
+same PDF may carry different placements.  The attribute is internal scaffolding, never content: a
+format that places PDF pages consumes it, and every other format must strip it
+(:func:`strip_pdf_placement`) before conversion, since Pandoc writers otherwise surface it in
+output (GFM falls back to a raw HTML anchor for an attributed link).
+"""
+
+
+def _resolved_pdf_placement(pdf: PdfVertex, site: Vertex | None = None) -> PdfRender:
+    """Resolve the ``pdf-render`` placement governing one display occurrence of *pdf*.
+
+    A standalone reference site's own tag governs the occurrence it displays (the site is where
+    the document shows the PDF, so its declaration outranks the target's), else the PDF vertex's
+    own tag applies, else :data:`~guffin.model.publishing_semantics.DEFAULT_PDF_RENDER`.
+
+    Args:
+        pdf: The PDF vertex being displayed.
+        site: The standalone reference site displaying *pdf*, when the occurrence is a
+            reference; ``None`` when *pdf* is displayed where it lives (a direct embed).
+
+    Returns:
+        The :class:`~guffin.model.publishing_semantics.PdfRender` placement for this occurrence.
+    """
+    site_render: Final[PdfRender | None] = pdf_render_of_vertex(site) if site is not None else None
+    return site_render or pdf_render_of_vertex(pdf) or DEFAULT_PDF_RENDER
 
 
 def _attribute_assignment_text(assignment: AttributeAssignment) -> str:
@@ -474,7 +513,7 @@ def _is_link_placed_pdf(vertex: Vertex) -> bool:
     """
     if not isinstance(vertex, PdfVertex):
         return False
-    return (pdf_render_of_vertex(vertex) or DEFAULT_PDF_RENDER) is PdfRender.LINK
+    return _resolved_pdf_placement(vertex) is PdfRender.LINK
 
 
 def _pdf_link_list_item(
@@ -507,7 +546,7 @@ def _pdf_link_list_item(
         A :class:`~panflute.ListItem` wrapping the link paragraph and any nested children and
         attribute pills.
     """
-    content: Final[list[pf.Block]] = _pdf_vertex_to_blocks(vertex, asset_files)
+    content: Final[list[pf.Block]] = _pdf_vertex_to_blocks(vertex, asset_files, _resolved_pdf_placement(vertex))
     content.extend(
         build_child_blocks(
             vertex.children or [],
@@ -600,9 +639,18 @@ def build_child_blocks(
             # referenced block — never wrapped in a list item.  A REFERENCE includes only the
             # target vertex itself: its descendants (children, and the attribute assignments
             # folded from child blocks) are not transcluded — full transclusion is EMBED's job.
-            referenced: Vertex = ref_target.model_copy(update={"children": None, "attribute_assignments": None})
             flush_pending()
-            result.extend(_vertex_to_blocks(referenced, vertex_tree, asset_files, inline_map, view_map, layout, depth))
+            if isinstance(ref_target, PdfVertex):
+                # The reference site is where this document displays the PDF, so the site's own
+                # pdf-render tag governs this occurrence, outranking the target's.
+                result.extend(
+                    _pdf_vertex_to_blocks(ref_target, asset_files, _resolved_pdf_placement(ref_target, site=vertex))
+                )
+            else:
+                referenced: Vertex = ref_target.model_copy(update={"children": None, "attribute_assignments": None})
+                result.extend(
+                    _vertex_to_blocks(referenced, vertex_tree, asset_files, inline_map, view_map, layout, depth)
+                )
             if isinstance(vertex, TextVertex) and (vertex.children or vertex.attribute_assignments):
                 result.extend(
                     build_child_blocks(
@@ -872,19 +920,25 @@ def _image_vertex_to_blocks(
 def _pdf_vertex_to_blocks(
     vertex: PdfVertex,
     asset_files: dict[Uid, Path],
+    placement: PdfRender,
 ) -> list[pf.Block]:
-    """Render a :class:`~guffin.vertex.PdfVertex` to Pandoc block elements.
+    """Render one display occurrence of a :class:`~guffin.vertex.PdfVertex` to Pandoc block elements.
 
     Produces a :class:`~panflute.Para` containing a :class:`~panflute.Link`
     labelled with the PDF's originally uploaded filename when known, else the
     storage-key filename (Roam's encryption suffix stripped), else the source
     URL.  The link points at the local fetched file when *asset_files* has an
-    entry for the vertex, else at the remote Cloud Firestore source URL.
+    entry for the vertex, else at the remote Cloud Firestore source URL.  The
+    occurrence's resolved *placement* is stamped on the link as the
+    :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold attribute for a downstream format
+    pass to consume or strip.
 
     Args:
         vertex: The PDF vertex to render.
         asset_files: Mapping from asset vertex UID (image or PDF) to local
             asset file path.
+        placement: The ``pdf-render`` placement governing this occurrence
+            (see :func:`_resolved_pdf_placement`).
 
     Returns:
         A single-element list containing the :class:`~panflute.Para`-wrapped link.
@@ -898,7 +952,10 @@ def _pdf_vertex_to_blocks(
     if pdf_path is None:
         logger.debug("PDF uid=%r has no local asset file; rendering as link to its remote source", vertex.uid)
     url: Final[str] = str(pdf_path) if pdf_path is not None else str(vertex.source)
-    return [pf.Para(pf.Link(pf.Str(label_text), url=url, title=label_text))]
+    link: Final[pf.Link] = pf.Link(
+        pf.Str(label_text), url=url, title=label_text, attributes={PDF_PLACEMENT_ATTRIBUTE: placement.value}
+    )
+    return [pf.Para(link)]
 
 
 def _callout_vertex_to_blocks(
@@ -1301,7 +1358,7 @@ def _vertex_to_blocks(
         case ImageVertex():
             return _image_vertex_to_blocks(vertex, asset_files, inline_map)
         case PdfVertex():
-            return _pdf_vertex_to_blocks(vertex, asset_files)
+            return _pdf_vertex_to_blocks(vertex, asset_files, _resolved_pdf_placement(vertex))
         case CalloutVertex():
             return _callout_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
@@ -1732,3 +1789,26 @@ def resolve_vertex_links(
         return list(elem.content)
 
     doc.walk(_unwrap_survivor)
+
+
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def strip_pdf_placement(doc: pf.Doc) -> None:
+    """Remove the :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold from every Link in *doc*, in place.
+
+    The document builder stamps each PDF embed link with its resolved ``pdf-render`` placement
+    (see :data:`PDF_PLACEMENT_ATTRIBUTE`).  A conversion that does not consume the scaffold must
+    strip it first: Pandoc writers otherwise surface the attribute in output — the GFM writer,
+    for one, falls back to a raw HTML anchor for any attributed link.
+
+    Mutates *doc* in place via :meth:`~panflute.Element.walk`; does not return a new document.
+
+    Args:
+        doc: The Panflute document to strip.
+    """
+
+    def _action(elem: pf.Element, doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Link) and PDF_PLACEMENT_ATTRIBUTE in elem.attributes:
+            del elem.attributes[PDF_PLACEMENT_ATTRIBUTE]
+        return None
+
+    doc.walk(_action)

@@ -47,6 +47,7 @@ from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import pandoc_to_json, parse_inline_md
 from guffin.render.pandoc_rendering import (
+    PDF_PLACEMENT_ATTRIBUTE,
     _attribute_assignment_text,
     _block_ref_target,
     _effective_layout,
@@ -54,6 +55,7 @@ from guffin.render.pandoc_rendering import (
     colophon_summary,
     make_resolver,
     resolve_vertex_links,
+    strip_pdf_placement,
     vertex_tree_to_pandoc,
 )
 
@@ -960,6 +962,115 @@ class TestVertexTreeToPandocPdfVertex:
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Para)
+
+
+# ---------------------------------------------------------------------------
+# TestPdfPlacementStamping
+# ---------------------------------------------------------------------------
+
+
+def _pdf_render_tag(value: str) -> AttributeAssignment:
+    """A guffin pdf-render assignment carrying *value*."""
+    return AttributeAssignment(
+        attribute=AttributeInstance(
+            definition=Attribute(name="pdf-render", domain=AttributeDomain.GUFFIN),
+            link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1"),
+        ),
+        values=(LiteralValue(value=value),),
+    )
+
+
+def _pdf_site(uid: str, target_uid: str, render: str | None = None) -> TextVertex:
+    """A text vertex whose entire text is a standalone vertex link to *target_uid*, optionally tagged."""
+    return TextVertex(
+        uid=uid,
+        text=f"[paper.pdf](x-guffin:vertex/{target_uid})",
+        attribute_assignments=[_pdf_render_tag(render)] if render else None,
+    )
+
+
+def _stamped_placements(doc: pf.Doc) -> list[str]:
+    """Collect every Link's PDF-placement stamp in document order."""
+    found: list[str] = []
+
+    def _action(elem: pf.Element, doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Link) and PDF_PLACEMENT_ATTRIBUTE in elem.attributes:
+            found.append(elem.attributes[PDF_PLACEMENT_ATTRIBUTE])
+        return None
+
+    doc.walk(_action)
+    return found
+
+
+class TestPdfPlacementStamping:
+    """vertex_tree_to_pandoc() stamps each PDF display occurrence's resolved pdf-render placement."""
+
+    @staticmethod
+    def _direct_tree(inline: bool) -> VertexTree:
+        """A page whose child is a PDF embed, optionally tagged pdf-render:: inline."""
+        page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
+        pdf = PdfVertex(
+            uid="pdf00001a",
+            source=_PDF_URL,
+            file_name="paper.pdf.enc",
+            attribute_assignments=[_pdf_render_tag("inline")] if inline else None,
+        )
+        return VertexTree(tree_vertices=[page, pdf])
+
+    @staticmethod
+    def _ref_tree(site_render: str | None, target_inline: bool) -> VertexTree:
+        """A page whose child standalone-references a PDF, site and target optionally tagged."""
+        page = PageVertex(uid="page00001", title="P", children=["refsite01"])
+        pdf = PdfVertex(
+            uid="pdf00001a",
+            source=_PDF_URL,
+            file_name="paper.pdf.enc",
+            attribute_assignments=[_pdf_render_tag("inline")] if target_inline else None,
+        )
+        return VertexTree(
+            tree_vertices=[page, _pdf_site("refsite01", "pdf00001a", render=site_render)], ref_vertices=[pdf]
+        )
+
+    def test_untagged_direct_embed_stamps_link_default(self) -> None:
+        """An untagged PDF embed occurrence is stamped with the link default."""
+        doc, _ = vertex_tree_to_pandoc(self._direct_tree(inline=False), {}, {})
+        assert _stamped_placements(doc) == ["link"]
+
+    def test_inline_tagged_direct_embed_stamps_inline(self) -> None:
+        """A pdf-render:: inline embed occurrence is stamped inline."""
+        doc, _ = vertex_tree_to_pandoc(self._direct_tree(inline=True), {}, {})
+        assert _stamped_placements(doc) == ["inline"]
+
+    def test_untagged_site_falls_back_to_target_tag(self) -> None:
+        """An untagged reference site defers to the target PDF's own pdf-render tag."""
+        doc, _ = vertex_tree_to_pandoc(self._ref_tree(site_render=None, target_inline=True), {}, {})
+        assert _stamped_placements(doc) == ["inline"]
+
+    def test_site_tag_outranks_target_tag(self) -> None:
+        """The reference site is where the document displays the PDF, so its tag wins over the target's."""
+        doc, _ = vertex_tree_to_pandoc(self._ref_tree(site_render="link", target_inline=True), {}, {})
+        assert _stamped_placements(doc) == ["link"]
+
+    def test_sites_of_one_pdf_stamp_independently(self) -> None:
+        """Two reference sites to the same PDF each carry their own resolved placement."""
+        page = PageVertex(uid="page00001", title="P", children=["refsite01", "refsite02"])
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        tree = VertexTree(
+            tree_vertices=[
+                page,
+                _pdf_site("refsite01", "pdf00001a", render="inline"),
+                _pdf_site("refsite02", "pdf00001a"),
+            ],
+            ref_vertices=[pdf],
+        )
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        assert _stamped_placements(doc) == ["inline", "link"]
+
+    def test_strip_pdf_placement_removes_scaffold(self) -> None:
+        """strip_pdf_placement() leaves no placement stamp on any link."""
+        doc, _ = vertex_tree_to_pandoc(self._direct_tree(inline=True), {}, {})
+        strip_pdf_placement(doc)
+        assert _stamped_placements(doc) == []
 
 
 # ---------------------------------------------------------------------------

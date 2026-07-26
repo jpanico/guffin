@@ -5,7 +5,7 @@
 # Unknown propagation from that import — suppressing them here avoids false positives.
 # pyright: reportPrivateUsage=false
 # Rationale: these unit tests deliberately exercise module-private helpers (e.g.
-# _prepare_pdf_embeds, _apply_pdf_embeds, _typst_str) directly.
+# _pdf_asset_paths, _apply_pdf_embeds, _typst_str) directly.
 
 import shutil
 from pathlib import Path
@@ -17,18 +17,16 @@ from conftest import FIXTURES_PDF_DIR, article3_node_tree
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.publishing_semantics import PdfRender
 from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.pandoc_ast import pandoc_to_json
-from guffin.render.pandoc_rendering import vertex_tree_to_pandoc
+from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, vertex_tree_to_pandoc
 from guffin.render.pdf_rendering import (
     _apply_pdf_embeds,
-    _prepare_pdf_embeds,
+    _pdf_asset_paths,
     _prepare_title_metadata,
-    _standalone_reference_renders,
     _typst_resources_dir,
     _typst_str,
     _typst_template_args,
@@ -53,10 +51,10 @@ def _render_tag(value: str) -> AttributeAssignment:
 _INLINE_TAG = _render_tag("inline")
 
 
-def _reference_site(target_uid: str, render: str | None = None) -> TextVertex:
+def _reference_site(target_uid: str, render: str | None = None, uid: str = "refsite01") -> TextVertex:
     """A text vertex whose entire text is a standalone vertex link to *target_uid*, optionally tagged."""
     return TextVertex(
-        uid="refsite01",
+        uid=uid,
         text=f"[a.pdf](x-guffin:vertex/{target_uid})",
         attribute_assignments=[_render_tag(render)] if render else None,
     )
@@ -103,88 +101,24 @@ class TestTypstStr:
 
 
 # ---------------------------------------------------------------------------
-# TestPreparePdfEmbeds
+# TestPdfAssetPaths
 # ---------------------------------------------------------------------------
 
 
-class TestPreparePdfEmbeds:
-    """_prepare_pdf_embeds() builds one spec per fetched PDF asset, keyed by source URL."""
+class TestPdfAssetPaths:
+    """_pdf_asset_paths() maps each fetched PDF asset's source URL to its local path."""
 
-    def test_spec_carries_path_and_default_render_without_page_count(self, tmp_path: Path) -> None:
-        """An untagged PDF yields a LINK spec carrying the fetched path and no page count."""
+    def test_fetched_pdf_maps_source_url_to_path(self, tmp_path: Path) -> None:
+        """A fetched PDF contributes a source-URL → local-path entry."""
         vertex = _pdf("pdfuid001")
         tree = VertexTree(tree_vertices=[vertex])
         ref = _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": ref})
-        spec = specs[str(vertex.source)]
-        assert spec.source_path == ref.path
-        assert spec.pages is None
-        assert spec.render is PdfRender.LINK
-
-    def test_inline_tag_selects_inline_render_with_page_count(self, tmp_path: Path) -> None:
-        """A pdf-render:: inline tag yields an INLINE spec carrying the page count."""
-        vertex = _pdf("pdfuid001", inline=True)
-        tree = VertexTree(tree_vertices=[vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
-        spec = specs[str(vertex.source)]
-        assert spec.render is PdfRender.INLINE
-        assert spec.pages == 1
-
-    def test_link_placement_never_parses_the_pdf(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-        """A LINK-placed PDF is never opened for a page count — the parse is INLINE's cost alone."""
-
-        def _boom(path: str) -> None:
-            raise AssertionError(f"PdfReader must not be invoked for a LINK placement (got {path!r})")
-
-        monkeypatch.setattr("guffin.render.pdf_rendering.PdfReader", _boom)
-        vertex = _pdf("pdfuid001")
-        tree = VertexTree(tree_vertices=[vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
-        assert specs[str(vertex.source)].pages is None
+        assert _pdf_asset_paths(tree, {"pdfuid001": ref}) == {str(vertex.source): ref.path}
 
     def test_unfetched_pdf_is_skipped(self, tmp_path: Path) -> None:
-        """A PDF vertex with no fetched asset contributes no spec."""
+        """A PDF vertex with no fetched asset contributes no entry."""
         tree = VertexTree(tree_vertices=[_pdf("pdfuid001")])
-        assert _prepare_pdf_embeds(tree, {}) == {}
-
-    def test_reference_site_tag_selects_inline_render(self, tmp_path: Path) -> None:
-        """A pdf-render:: inline tag at a standalone reference site governs the referenced PDF."""
-        vertex = _pdf("pdfuid001")
-        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
-        tree = VertexTree(tree_vertices=[page, _reference_site("pdfuid001", render="inline")], ref_vertices=[vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
-        spec = specs[str(vertex.source)]
-        assert spec.render is PdfRender.INLINE
-        assert spec.pages == 1
-
-    def test_reference_site_tag_outranks_target_tag(self, tmp_path: Path) -> None:
-        """The reference site is where this document displays the PDF, so its tag wins over the target's."""
-        vertex = _pdf("pdfuid001", inline=True)
-        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
-        tree = VertexTree(tree_vertices=[page, _reference_site("pdfuid001", render="link")], ref_vertices=[vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
-        spec = specs[str(vertex.source)]
-        assert spec.render is PdfRender.LINK
-        assert spec.pages is None
-
-    def test_untagged_reference_site_falls_back_to_target_tag(self, tmp_path: Path) -> None:
-        """An untagged reference site defers to the target PDF's own pdf-render tag."""
-        vertex = _pdf("pdfuid001", inline=True)
-        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
-        tree = VertexTree(tree_vertices=[page, _reference_site("pdfuid001")], ref_vertices=[vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
-        assert specs[str(vertex.source)].render is PdfRender.INLINE
-
-    def test_article3_fixture_reference_site_declares_inline(self) -> None:
-        """The [[Test Article]] 3 fixture's site-tagged standalone PDF reference resolves to INLINE.
-
-        The referenced PDF block lives on [[Test Article]] 1, so the fixture exercises the
-        cross-page transclusion case end to end: the transcriber folds the ``pdf-render`` tag
-        onto the reference-site text vertex, and the site's declaration reaches the embed
-        preparation keyed by the target PDF's uid.
-        """
-        tree = transcribe(article3_node_tree())
-        assert _standalone_reference_renders(tree) == {"pTvGGeTlB": PdfRender.INLINE}
+        assert _pdf_asset_paths(tree, {}) == {}
 
 
 # ---------------------------------------------------------------------------
@@ -194,25 +128,25 @@ class TestPreparePdfEmbeds:
 
 @pytest.mark.pandoc
 class TestApplyPdfEmbeds:
-    """_apply_pdf_embeds() rewrites PDF-embed link paragraphs into their Typst form."""
+    """_apply_pdf_embeds() rewrites stamped PDF-embed link paragraphs into their Typst form."""
 
     @staticmethod
-    def _doc_and_specs(tmp_path: Path, inline: bool) -> tuple[pf.Doc, dict[str, object], str]:
+    def _doc_and_paths(tmp_path: Path, inline: bool) -> tuple[pf.Doc, dict[str, Path], str]:
         page = PageVertex(uid="page00001", title="Doc", children=["pdfuid001"])
         vertex = _pdf("pdfuid001", inline=inline)
         tree = VertexTree(tree_vertices=[page, vertex])
-        specs = _prepare_pdf_embeds(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        paths = _pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        return doc, specs, str(vertex.source)
+        return doc, paths, str(vertex.source)
 
     def test_link_mode_drops_link_keeping_filename_text(self, tmp_path: Path) -> None:
-        """A LINK embed is replaced by bare filename text — no attachment, no hyperlink.
+        """A LINK occurrence is replaced by bare filename text — no attachment, no hyperlink.
 
         The link-placed embed follows its parent's BULLET layout, so the paragraph lives inside
         the bulleted list item.
         """
-        doc, specs, _url = self._doc_and_specs(tmp_path, inline=False)
-        _apply_pdf_embeds(doc, specs)  # type: ignore[arg-type]
+        doc, paths, _url = self._doc_and_paths(tmp_path, inline=False)
+        _apply_pdf_embeds(doc, paths)
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.BulletList)
@@ -224,9 +158,9 @@ class TestApplyPdfEmbeds:
         assert not any(isinstance(block, pf.RawBlock) for block in doc.content)
 
     def test_inline_mode_renders_pages_without_attachment(self, tmp_path: Path) -> None:
-        """An INLINE embed is replaced by one image call per page and no attachment."""
-        doc, specs, _url = self._doc_and_specs(tmp_path, inline=True)
-        _apply_pdf_embeds(doc, specs)  # type: ignore[arg-type]
+        """An INLINE occurrence is replaced by one image call per page and no attachment."""
+        doc, paths, _url = self._doc_and_paths(tmp_path, inline=True)
+        _apply_pdf_embeds(doc, paths)
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.RawBlock)
@@ -236,18 +170,87 @@ class TestApplyPdfEmbeds:
         assert "page: 1" in blocks[0].text
         assert "width: 100%" in blocks[0].text
 
+    def test_link_placement_never_parses_the_pdf(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A LINK-placed occurrence never opens the PDF for a page count — the parse is INLINE's cost alone."""
+
+        def _boom(path: str) -> None:
+            raise AssertionError(f"PdfReader must not be invoked for a LINK placement (got {path!r})")
+
+        monkeypatch.setattr("guffin.render.pdf_rendering.PdfReader", _boom)
+        doc, paths, _url = self._doc_and_paths(tmp_path, inline=False)
+        _apply_pdf_embeds(doc, paths)
+
+    def test_per_site_placements_apply_independently(self, tmp_path: Path) -> None:
+        """Two references to one PDF render per their own site tags — one inline, one as bare text."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01", "refsite02"])
+        vertex = _pdf("pdfuid001")
+        tree = VertexTree(
+            tree_vertices=[
+                page,
+                _reference_site("pdfuid001", render="inline", uid="refsite01"),
+                _reference_site("pdfuid001", uid="refsite02"),
+            ],
+            ref_vertices=[vertex],
+        )
+        paths = _pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        _apply_pdf_embeds(doc, paths)
+        raw_blocks = [b for b in doc.content if isinstance(b, pf.RawBlock)]
+        assert len(raw_blocks) == 1
+        assert raw_blocks[0].text.count("#image(") == 1
+        bare_paras = [
+            b for b in doc.content if isinstance(b, pf.Para) and not any(isinstance(i, pf.Link) for i in b.content)
+        ]
+        assert len(bare_paras) == 1
+        assert pf.stringify(bare_paras[0]).strip() == "dummy.pdf"
+
+    def test_unfetched_stamped_link_keeps_link_without_scaffold(self, tmp_path: Path) -> None:
+        """A stamped paragraph whose PDF was never fetched keeps its link, minus the scaffold attribute."""
+        doc, _paths, _url = self._doc_and_paths(tmp_path, inline=False)
+        _apply_pdf_embeds(doc, {})
+        links: list[pf.Link] = []
+
+        def _collect(elem: pf.Element, doc: pf.Doc) -> None:
+            if isinstance(elem, pf.Link):
+                links.append(elem)
+            return None
+
+        doc.walk(_collect)
+        assert len(links) == 1
+        assert PDF_PLACEMENT_ATTRIBUTE not in links[0].attributes
+
     def test_prose_paragraph_with_link_untouched(self, tmp_path: Path) -> None:
         """A link inside surrounding prose is not a PDF embed and is left alone."""
         page = PageVertex(uid="page00001", title="Doc", children=["textuid01"])
         text = TextVertex(uid="textuid01", text=f"see [dummy.pdf]({_URL_A}) here")
         tree = VertexTree(tree_vertices=[page, text])
         pdf = _pdf("pdfuid001")
-        specs = _prepare_pdf_embeds(
+        paths = _pdf_asset_paths(
             VertexTree(tree_vertices=[pdf]), {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")}
         )
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        _apply_pdf_embeds(doc, specs)
+        _apply_pdf_embeds(doc, paths)
         assert not any(isinstance(b, pf.RawBlock) for b in doc.content)
+
+    def test_article3_fixture_sites_place_independently(self) -> None:
+        """The [[Test Article]] 3 fixture's two standalone references to one PDF stamp per site.
+
+        The referenced PDF block lives on [[Test Article]] 1, so the fixture exercises the
+        cross-page case end to end: the site tagged ``pdf-render: "inline"`` stamps inline while
+        the untagged site stamps the link default — the same PDF, placed differently per site.
+        """
+        tree = transcribe(article3_node_tree())
+        pdf_url = str(tree.uid_map["pTvGGeTlB"].source)
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        stamps: list[str] = []
+
+        def _collect(elem: pf.Element, doc: pf.Doc) -> None:
+            if isinstance(elem, pf.Link) and elem.url == pdf_url and PDF_PLACEMENT_ATTRIBUTE in elem.attributes:
+                stamps.append(elem.attributes[PDF_PLACEMENT_ATTRIBUTE])
+            return None
+
+        doc.walk(_collect)
+        assert sorted(stamps) == ["inline", "link"]
 
 
 class TestPrepareTitleMetadata:
