@@ -77,6 +77,8 @@ Public symbols:
   ``x-guffin`` :class:`~panflute.Link` elements using a caller-supplied resolver.
 - :data:`PDF_PLACEMENT_ATTRIBUTE` — scaffold attribute carrying a PDF embed link's
   resolved per-occurrence ``pdf-render`` placement.
+- :data:`SEMANTIC_ATTRIBUTE` / :data:`SEMANTIC_GLYPH_ATTRIBUTE` — scaffold attributes naming
+  a classified list item's semantic and carrying its bullet glyph.
 - :func:`strip_pdf_placement` — remove the :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold
   from every Link in a :class:`~panflute.Doc`, for conversions that do not consume it.
 
@@ -153,6 +155,7 @@ from guffin.render.code_language_token import code_language_token
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
+from guffin.render.semantic_theme import BADGE_GLYPH_BY_SOURCE_CHANNEL, BULLET_GLYPH_BY_SEMANTIC
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
@@ -227,6 +230,22 @@ _BLOCK_LEVEL_VERTEX_TYPES: Final[tuple[type[Vertex], ...]] = (
     QuoteBlockVertex,
     TableVertex,
 )
+
+SEMANTIC_ATTRIBUTE: Final[str] = "data-guffin-semantic"
+"""Scaffold attribute naming a classified list item's :class:`~guffin.model.vertex_view.Semantic`.
+
+Stamped on the ``Div`` wrapping a classified item's own body, alongside
+:data:`SEMANTIC_GLYPH_ATTRIBUTE`.  Internal scaffolding, never content: each format's list
+pass maps it to marker presentation (or a styling class) and removes it.
+"""
+
+SEMANTIC_GLYPH_ATTRIBUTE: Final[str] = "data-guffin-semantic-glyph"
+"""Scaffold attribute carrying a classified list item's bullet glyph.
+
+The glyph (:data:`~guffin.render.semantic_theme.BULLET_GLYPH_BY_SEMANTIC`) rides the scaffold
+so a format pass can render it in place of the item's marker without knowing the semantic
+vocabulary.
+"""
 
 PDF_PLACEMENT_ATTRIBUTE: Final[str] = "data-guffin-pdf-render"
 """Scaffold attribute carrying a PDF embed link's resolved ``pdf-render`` placement.
@@ -458,6 +477,14 @@ def _build_list_item(
     :func:`build_child_blocks` using the vertex's effective children layout, and appended as
     nested blocks inside the item.
 
+    Under a ``BULLET`` layout, the vertex's :class:`~guffin.model.vertex_view.VertexView`
+    classification decorates the item: a declared source channel's badge glyph
+    (:data:`~guffin.render.semantic_theme.BADGE_GLYPH_BY_SOURCE_CHANNEL`) leads the item's
+    inline content, and a declared semantic wraps the item's own body (children excluded) in
+    a scaffold ``Div`` stamped with :data:`SEMANTIC_ATTRIBUTE` and
+    :data:`SEMANTIC_GLYPH_ATTRIBUTE` for a format pass to map to marker presentation.  Under
+    a ``NUMBERED`` layout the item renders undecorated (numbering is the marker).
+
     Args:
         vertex: The :class:`~guffin.vertex.TextVertex` to render as a list item.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
@@ -472,18 +499,42 @@ def _build_list_item(
         A :class:`~panflute.ListItem` wrapping the vertex text and any
         nested children and attribute pills.
     """
+    view: Final[VertexView | None] = view_map.get(vertex.uid) if inherited_layout is ChildrenLayout.BULLET else None
+    badge_glyph: Final[str | None] = (
+        BADGE_GLYPH_BY_SOURCE_CHANNEL[view.source_channel]
+        if view is not None and view.source_channel is not None
+        else None
+    )
     text: Final[str] = vertex.text
     content: list[pf.Block]
     if contains_fenced_code_block(text):
         content = parse_block_md(text)
     else:
-        inlines: Final[list[pf.Inline]] = inline_map.get(text, [pf.Str(text)])
+        inlines: list[pf.Inline] = inline_map.get(text, [pf.Str(text)])
+        # The whole-line bg-color span is recognized before the badge leads the content, so a
+        # badge decorates a background-colored line rather than defeating its recognition.
         bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(inlines)
         if bg is not None:
             bg_color, inner = bg
+            if badge_glyph is not None:
+                inner = [pf.Str(badge_glyph), pf.Space(), *inner]
             content = [pf.Div(pf.Plain(*inner), attributes={"bg-color": bg_color})]
         else:
+            if badge_glyph is not None:
+                inlines = [pf.Str(badge_glyph), pf.Space(), *inlines]
             content = [pf.Plain(*inlines)]
+    if view is not None and view.semantic is not None:
+        # The scaffold wraps only the item's own body: the nested children appended below sit
+        # outside it, so the semantic decorates this item's line alone.
+        content = [
+            pf.Div(
+                *content,
+                attributes={
+                    SEMANTIC_ATTRIBUTE: view.semantic.value,
+                    SEMANTIC_GLYPH_ATTRIBUTE: BULLET_GLYPH_BY_SEMANTIC[view.semantic],
+                },
+            )
+        ]
     content.extend(
         build_child_blocks(
             vertex.children or [],

@@ -42,12 +42,14 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.vertex_view import ChildrenLayout, VertexView
+from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView, ViewMap
 from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import pandoc_to_json, parse_inline_md
 from guffin.render.pandoc_rendering import (
     PDF_PLACEMENT_ATTRIBUTE,
+    SEMANTIC_ATTRIBUTE,
+    SEMANTIC_GLYPH_ATTRIBUTE,
     _attribute_assignment_text,
     _block_ref_target,
     _effective_layout,
@@ -1132,6 +1134,96 @@ class TestPdfReferenceLayout:
         assert len(blocks) == 2
         assert isinstance(blocks[0], pf.BulletList)
         assert isinstance(blocks[1], pf.Para)
+
+
+# ---------------------------------------------------------------------------
+# TestSemanticBulletStamping
+# ---------------------------------------------------------------------------
+
+
+class TestSemanticBulletStamping:
+    """_build_list_item decorates classified items: badge glyphs lead content, semantics stamp a scaffold Div."""
+
+    @staticmethod
+    def _tree_and_views(view: VertexView) -> tuple[VertexTree, ViewMap]:
+        page = PageVertex(uid="page00001", title="P", children=["plain0001", "classed01"])
+        plain = TextVertex(uid="plain0001", text="a plain sibling")
+        classed = TextVertex(uid="classed01", text="the classified block")
+        return VertexTree(tree_vertices=[page, plain, classed]), {"classed01": view}
+
+    @staticmethod
+    def _items(doc: pf.Doc) -> list[pf.ListItem]:
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.BulletList)
+        return list(blocks[0].content)
+
+    def test_badge_glyph_leads_the_item_content(self) -> None:
+        """A source-channel view leads the item's inlines with the badge glyph, keeping one list."""
+        tree, views = self._tree_and_views(VertexView(source_channel=SourceChannel.VOICE_CALL))
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        items = self._items(doc)
+        assert len(items) == 2
+        classed_plain = list(items[1].content)[0]
+        assert isinstance(classed_plain, pf.Plain)
+        assert pf.stringify(classed_plain) == "📞 the classified block"
+
+    def test_semantic_wraps_the_item_body_in_a_stamped_div(self) -> None:
+        """A semantic view wraps the item's own body in the scaffold Div carrying name and glyph."""
+        tree, views = self._tree_and_views(VertexView(semantic=Semantic.RESULT))
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        items = self._items(doc)
+        scaffold = list(items[1].content)[0]
+        assert isinstance(scaffold, pf.Div)
+        assert scaffold.attributes[SEMANTIC_ATTRIBUTE] == "result"
+        assert scaffold.attributes[SEMANTIC_GLYPH_ATTRIBUTE] == "⇒"
+        assert pf.stringify(scaffold) == "the classified block"
+
+    def test_unclassified_sibling_is_untouched(self) -> None:
+        """The classified item's plain sibling renders exactly as before."""
+        tree, views = self._tree_and_views(VertexView(semantic=Semantic.RESULT))
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        plain_item = self._items(doc)[0]
+        assert isinstance(list(plain_item.content)[0], pf.Plain)
+        assert pf.stringify(plain_item) == "a plain sibling"
+
+    def test_badge_leads_inside_the_semantic_scaffold(self) -> None:
+        """A doubly classified item nests badge-led content inside the semantic Div."""
+        tree, views = self._tree_and_views(VertexView(semantic=Semantic.DECISION, source_channel=SourceChannel.EMAIL))
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        scaffold = list(self._items(doc)[1].content)[0]
+        assert isinstance(scaffold, pf.Div)
+        assert scaffold.attributes[SEMANTIC_GLYPH_ATTRIBUTE] == "⎇"
+        assert pf.stringify(scaffold) == "📨 the classified block"
+
+    def test_children_nest_outside_the_scaffold(self) -> None:
+        """A classified item's children render as siblings of the scaffold Div, not inside it."""
+        page = PageVertex(uid="page00001", title="P", children=["classed01"])
+        classed = TextVertex(uid="classed01", text="the classified block", children=["childuid1"])
+        child = TextVertex(uid="childuid1", text="a nested child")
+        tree = VertexTree(tree_vertices=[page, classed, child])
+        views: ViewMap = {"classed01": VertexView(semantic=Semantic.QUESTION)}
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        item_blocks = list(self._items(doc)[0].content)
+        assert isinstance(item_blocks[0], pf.Div)
+        assert isinstance(item_blocks[1], pf.BulletList)
+        assert pf.stringify(item_blocks[1]).strip() == "a nested child"
+
+    def test_numbered_layout_renders_undecorated(self) -> None:
+        """Under a NUMBERED layout the classification is ignored — numbering is the marker."""
+        page = PageVertex(uid="page00001", title="P", children=["classed01"])
+        classed = TextVertex(uid="classed01", text="the classified block")
+        tree = VertexTree(tree_vertices=[page, classed])
+        views: ViewMap = {
+            "page00001": VertexView(children_layout=ChildrenLayout.NUMBERED),
+            "classed01": VertexView(semantic=Semantic.RESULT, source_channel=SourceChannel.EMAIL),
+        }
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        blocks = list(doc.content)
+        assert isinstance(blocks[0], pf.OrderedList)
+        item_head = list(list(blocks[0].content)[0].content)[0]
+        assert isinstance(item_head, pf.Plain)
+        assert pf.stringify(item_head) == "the classified block"
 
 
 # ---------------------------------------------------------------------------
