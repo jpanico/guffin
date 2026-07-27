@@ -33,7 +33,11 @@ pure taxonomy with no other `guffin` dependencies.
     from a `guffin-meta::` block on the export root (a referenced page's metadata can no longer
     masquerade as the work's own). `COVER_IMAGE` (`cover-image::`) is a Roam block reference
     `((<uid>))` to an image block — the cover is metadata rather than a `StructuralElement` because
-    per CMOS only the book interior is matter-classified, the cover being exterior.
+    per CMOS only the book interior is matter-classified, the cover being exterior. `REVISION`
+    (`revision::`) names the draft an export was taken from — an *authored* label, distinct from the
+    machine-captured `Revision` snapshot the fetch stamps on the bundle; it renders below the title
+    block on a generated title page (and in the PDF's running header, displacing the publication
+    date), independently of whether a colophon is emitted.
   - *Heading-anchored tags* (`AttributeAnchor.HEADING`): `ELEMENT_TYPE` (`element-type::`) declares which
     `StructuralElement` a heading is; `MATTER` (`matter::`) declares its `Matter` division directly,
     for a bespoke heading with no specific element type; `PAGE_BREAK` (`page-break::`) forces a
@@ -102,6 +106,28 @@ command: `dump-roam-tree` reports violations as advisory warnings — the dump a
 while `export-roam-tree` treats them as fatal, aborting the export with exit 1. A publishable
 artifact must not be built from content that violates the vocabulary.
 
+## From tags to structure (the tree transformers)
+
+Several tags never render at all — they *reshape the tree* before any Pandoc structure exists.
+Those transformers live in `publishing_semantics.py` rather than on the tree primitives, because
+each has to read the vocabulary to decide what to touch; the generic field-clearing transforms that
+need no vocabulary (`drop_attribute_assignments`, `drop_code_sources`) stay in
+`model/vertex_tree.py`. Every renderer applies them in Phase 0 (see
+[render-pipeline.md](render-pipeline.md)):
+
+| Transformer | Applied | Effect |
+|---|---|---|
+| `drop_unpublished()` | always, first | prunes every `publish:: false` vertex with its whole subtree, to a fixpoint — an embed of pruned content vanishes with it; an unpublished export root raises rather than producing an empty document |
+| `strip_element_numbers()` | unless `emit_element_numbers` | removes each heading's well-formed element-number lead — the numbers are the author's bookkeeping of logical order, validated but not published |
+| `drop_page_breaks()` | when the profile's `honor_page_breaks` declines (a book) | removes every `page-break` tag, one warning per drop |
+| `promote_non_body_sections()` | parts books only | lifts every root-level heading of explicit front/back matter to heading level 1 |
+
+The last is a CMOS accommodation. Per CMOS a front- or back-matter section stands outside every
+part, but a parts book puts its chapters at level 2, so an author writes such a section at chapter
+level too — and a rendered ToC nests purely by heading level, which would file an "About the
+Author" following the last part *inside* that part. Promoting it to part level keeps every format's
+ToC faithful to the matter division the tag declares.
+
 ## How it maps to output (the design contract)
 
 - Everything in `model/publishing_semantics.py` lives in `model/` with **zero render/format dependency**
@@ -111,6 +137,12 @@ artifact must not be built from content that violates the vocabulary.
 - Every per-format mapping lives in `render/`, as an **explicit map keyed on the model member** —
   never a name-equality lookup against the format's own vocabulary. Some members have no counterpart
   in a given format (and vice-versa), so the map is deliberately partial.
+- **Document metadata.** The root-anchored members are read into `doc.metadata` by
+  `pandoc_rendering._document_metadata`, and each Pandoc writer maps them to its format natively.
+  The per-field mapping — including the Guffin-authored Bergfink title-page extensions for
+  `publisher`/`rights`/`illustrators` and the cover-image handling — is a render-phase concern, so
+  it is documented in [render-pipeline.md](render-pipeline.md) under *Phase 1 (build) — metadata*
+  rather than here.
 - **EPUB.** `render/epub_semantics.py::epub_type_for()` is the explicit `StructuralElement →
   EpubType` map (e.g. `COLOPHON → EpubType.COLOPHON`, `TABLE_OF_CONTENTS → EpubType.TOC`,
   `None` for elements with no EPUB term). During Doc construction, `pandoc_rendering._heading_semantics`
@@ -138,8 +170,10 @@ artifact must not be built from content that violates the vocabulary.
     heading's **`Matter`**, not its `epub:type`, so it also corrects bespoke `matter::` sections that
     carry no `epub:type` (e.g. a matter-only "Who is this Book for?"). It is `<body>`-level metadata,
     invisible in Apple Books, but makes the package's structural semantics conformant.
-- **PDF / GFM.** The tags drive two format-independent effects in PDF: the matter-derived
-  `unnumbered` exemption (above) and, via `has_parts` → the PART division, part/chapter pagination.
+- **PDF / GFM.** The tags drive three format-independent effects in PDF: the matter-derived
+  `unnumbered` exemption (above); via `has_parts` → the PART division, part/chapter pagination; and,
+  via `has_element_type`, suppression of the generated Typst outline when the content authors its
+  own `element-type:: table-of-contents` section, so a book never carries two ToCs.
   The **per-element** sibling map (`StructuralElement → PDF/Typst`, `→ GFM`) — the analogue of
   `epub_type_for`, letting an element's identity drive format-specific styling/placement — is not
   part of these formats; the `data-guffin-matter`/`epub:type` scaffolding rides along harmlessly
