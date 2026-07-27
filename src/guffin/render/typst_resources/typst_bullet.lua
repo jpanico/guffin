@@ -1,10 +1,11 @@
 -- typst_bullet.lua
 -- Lua filter for the Typst/PDF output path.
--- Transforms a BulletList containing semantic-classified items (the scaffold Div produced by
--- pandoc_rendering.py, stamped with data-guffin-semantic / data-guffin-semantic-glyph) into a
--- raw Typst two-column grid: each item's glyph in the first column — the semantic glyph
--- standing where the list marker was — and the item's body in the second.  Unclassified items
--- in the same list get the plain default bullet, keeping the run visually one uniform list.
+-- Transforms a BulletList containing classified items (the scaffold Div produced by
+-- pandoc_rendering.py, stamped with data-guffin-marker-glyph) into a raw Typst two-column
+-- grid: each item's glyph in the first column — the semantic bullet, or a lone source
+-- channel's badge, standing where the list marker was — and the item's body in the second.
+-- Unclassified items in the same list get the plain default bullet, keeping the run visually
+-- one uniform list.
 -- A grid is required because neither Pandoc's list model nor Typst's list() supports per-item
 -- markers (Typst's list.marker varies by nesting depth, not item index).
 --
@@ -12,15 +13,14 @@
 -- the block transforms (fancy-quote, code-source) have already rewritten any item content
 -- before it is serialized to Typst here.
 
-local GLYPH_ATTRIBUTE = "data-guffin-semantic-glyph"
-local SEMANTIC_ATTRIBUTE = "data-guffin-semantic"
+local GLYPH_ATTRIBUTE = "data-guffin-marker-glyph"
 -- The plain bullet for unclassified items listed among classified ones; mirrors
 -- DEFAULT_BULLET_GLYPH in render/semantic_theme.py.
 local DEFAULT_GLYPH = "•"
--- Semantic glyphs render 20% larger than the item text, so the marker reads at a glance; the
--- default bullet stays at text size, mimicking the native marker it stands in for.  Mirrors
--- the span.bullet-glyph.semantic font-size in epub_resources/epub.css.
-local SEMANTIC_GLYPH_SIZE = "1.2em"
+-- Classification glyphs render 20% larger than the item text, so the marker reads at a glance;
+-- the default bullet stays at text size, mimicking the native marker it stands in for.  Mirrors
+-- the span.bullet-glyph.classified font-size in epub_resources/epub.css.
+local CLASSIFIED_GLYPH_SIZE = "1.2em"
 
 -- Serialize a list of Pandoc blocks to a Typst content string.
 local function to_typst(blocks)
@@ -62,7 +62,7 @@ function BulletList(el)
     -- glyphs carry no quotes or backslashes, and Lua's %q would byte-escape their UTF-8.
     local glyph_cell
     if glyph ~= nil then
-      glyph_cell = string.format('text(size: %s, "%s")', SEMANTIC_GLYPH_SIZE, glyph)
+      glyph_cell = string.format('text(size: %s, "%s")', CLASSIFIED_GLYPH_SIZE, glyph)
     else
       glyph_cell = string.format('"%s"', DEFAULT_GLYPH)
     end

@@ -1,12 +1,13 @@
 -- gfm_bullet.lua
 -- Lua filter for the GFM Markdown output path.
--- Maps the semantic-bullet scaffold Div produced by pandoc_rendering.py (a classified list
--- item's body, stamped with data-guffin-semantic / data-guffin-semantic-glyph) to Markdown's
--- syntax ceiling: the bullet glyph riding the scaffold is prepended to the item's line, after
--- the native dash marker, and the Div wrapper is dissolved.  Markdown list syntax offers no
--- marker control, so `- ⇒ result text` is the whole treatment.
+-- Maps the classification scaffold Div produced by pandoc_rendering.py (a classified list
+-- item's body, stamped with data-guffin-marker-glyph) to Markdown's syntax ceiling: the glyph
+-- riding the scaffold is prepended to the item's line, after the native dash marker, and the
+-- Div wrapper is dissolved.  Markdown list syntax offers no marker control, so `- ⇒ result
+-- text` is the whole treatment — which is why a lone source channel's badge, which the
+-- paginated formats stand in the marker's place, still reads identically here.
 
-local GLYPH_ATTRIBUTE = "data-guffin-semantic-glyph"
+local GLYPH_ATTRIBUTE = "data-guffin-marker-glyph"
 local SEMANTIC_ATTRIBUTE = "data-guffin-semantic"
 
 -- Prepend the glyph (and a space) to the first inline-bearing block among `blocks`,

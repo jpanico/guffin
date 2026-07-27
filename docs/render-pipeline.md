@@ -158,16 +158,22 @@ The glyph each member renders as is declared once, in `render/semantic_theme.py`
 classification counterpart of `callout_theme.py`'s colour palette, so one classification looks the
 same in every format.
 
-Phase 1 renders the two at deliberately different depths:
+A classification replaces the item's *marker*, which the Pandoc AST cannot express — a
+`BulletList` item has no marker node. So Phase 1 wraps the item's own body (children excluded, so
+the classification decorates that one line) in a scaffold `Div` carrying
+`data-guffin-marker-glyph`: the glyph that stands where the marker was. Which glyph that is
+follows one rule of precedence:
 
-- a **source channel** is decoration: its badge glyph simply leads the item's inline content
+- a **semantic** always holds the marker — its bullet glyph, plus `data-guffin-semantic` naming
+  the member;
+- a **source channel** holds the marker too, with its badge glyph, but only on an item that
+  declares no semantic. A marker admits one glyph, and the semantic — the kind of thinking the
+  content performs — is the more load-bearing of the two;
+- an outranked badge falls back to decoration: it leads the item's inline content instead
   (recognized *after* a whole-line background-colour span, so a badge decorates a coloured line
-  rather than defeating its recognition);
-- a **semantic** replaces the item's *marker*, which the Pandoc AST cannot express — a `BulletList`
-  item has no marker node. So the build wraps the item's own body (children excluded, so the
-  classification decorates that one line) in a scaffold `Div` carrying `data-guffin-semantic` and
-  `data-guffin-semantic-glyph`, and each format's `*_bullet.lua` filter maps that scaffold to its
-  own ceiling in Phase 2:
+  rather than defeating its recognition).
+
+Each format's `*_bullet.lua` filter maps the scaffold to its own ceiling in Phase 2:
 
 | Format | Mapping |
 |---|---|
@@ -177,6 +183,10 @@ Phase 1 renders the two at deliberately different depths:
 
 In every format an unclassified item sharing a list with classified siblings gets
 `DEFAULT_BULLET_GLYPH` (`•`), so the run stays visually one uniform list.
+
+Markdown is the one format where the precedence rule makes no visible difference: it cannot
+address a marker at all, so a lone badge lands in the same place — leading the item's line, behind
+the native dash — whether it arrives as the marker glyph or as decoration.
 
 
 ## REFERENCE vs. EMBED: the transclusion line

@@ -69,6 +69,19 @@
     order: 1
     page:
       id: 11643
+- - string: Equal / definition, Calendar event -> `=`📅
+    id: 15287
+    uid: 4LHkAnvZO
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15286
+    props:
+      type: equal
+      provenance: calendar
+    order: 0
+    page:
+      id: 11643
 - - children:
     - id: 11647
     - id: 15251
@@ -193,6 +206,18 @@
       id: 11643
     refs:
     - id: 11454
+- - string: Mixed
+    children:
+    - id: 15287
+    - id: 15288
+    id: 15286
+    uid: xpWZZUv08
+    parents:
+    - id: 11643
+    - id: 15252
+    order: 12
+    page:
+      id: 11643
 - - string: underline color (Markdown does not have a standard underline markup, because
       of the conflict with hyperlink rendering)
     children:
@@ -416,6 +441,19 @@
     order: 3
     page:
       id: 11643
+- - string: Chat Message, Question -> ?💬
+    id: 15288
+    uid: XiH3AmC-L
+    parents:
+    - id: 11643
+    - id: 15252
+    - id: 15286
+    props:
+      provenance: chat
+      type: question
+    order: 1
+    page:
+      id: 11643
 - - string: Children blocks exercise __Better Bullets__  (Roam Extension)
     children:
     - id: 15253
@@ -430,6 +468,7 @@
     - id: 15262
     - id: 15263
     - id: 15264
+    - id: 15286
     id: 15252
     uid: _eF-sDI9v
     parents:

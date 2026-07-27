@@ -47,9 +47,9 @@ from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import pandoc_to_json, parse_inline_md
 from guffin.render.pandoc_rendering import (
+    MARKER_GLYPH_ATTRIBUTE,
     PDF_PLACEMENT_ATTRIBUTE,
     SEMANTIC_ATTRIBUTE,
-    SEMANTIC_GLYPH_ATTRIBUTE,
     _attribute_assignment_text,
     _block_ref_target,
     _effective_layout,
@@ -1142,7 +1142,7 @@ class TestPdfReferenceLayout:
 
 
 class TestSemanticBulletStamping:
-    """_build_list_item decorates classified items: badge glyphs lead content, semantics stamp a scaffold Div."""
+    """_build_list_item decorates classified items: the marker glyph stamps a scaffold Div, an outranked badge leads."""
 
     @staticmethod
     def _tree_and_views(view: VertexView) -> tuple[VertexTree, ViewMap]:
@@ -1158,15 +1158,18 @@ class TestSemanticBulletStamping:
         assert isinstance(blocks[0], pf.BulletList)
         return list(blocks[0].content)
 
-    def test_badge_glyph_leads_the_item_content(self) -> None:
-        """A source-channel view leads the item's inlines with the badge glyph, keeping one list."""
+    def test_lone_badge_holds_the_marker(self) -> None:
+        """A source channel with no semantic stamps the scaffold with its badge — the marker glyph."""
         tree, views = self._tree_and_views(VertexView(source_channel=SourceChannel.VOICE_CALL))
         doc, _ = vertex_tree_to_pandoc(tree, {}, views)
         items = self._items(doc)
         assert len(items) == 2
-        classed_plain = list(items[1].content)[0]
-        assert isinstance(classed_plain, pf.Plain)
-        assert pf.stringify(classed_plain) == "📞 the classified block"
+        scaffold = list(items[1].content)[0]
+        assert isinstance(scaffold, pf.Div)
+        assert scaffold.attributes[MARKER_GLYPH_ATTRIBUTE] == "📞"
+        # No semantic to name, and the badge holds the marker rather than leading the content.
+        assert SEMANTIC_ATTRIBUTE not in scaffold.attributes
+        assert pf.stringify(scaffold) == "the classified block"
 
     def test_semantic_wraps_the_item_body_in_a_stamped_div(self) -> None:
         """A semantic view wraps the item's own body in the scaffold Div carrying name and glyph."""
@@ -1176,7 +1179,7 @@ class TestSemanticBulletStamping:
         scaffold = list(items[1].content)[0]
         assert isinstance(scaffold, pf.Div)
         assert scaffold.attributes[SEMANTIC_ATTRIBUTE] == "result"
-        assert scaffold.attributes[SEMANTIC_GLYPH_ATTRIBUTE] == "⇒"
+        assert scaffold.attributes[MARKER_GLYPH_ATTRIBUTE] == "⇒"
         assert pf.stringify(scaffold) == "the classified block"
 
     def test_unclassified_sibling_is_untouched(self) -> None:
@@ -1187,13 +1190,13 @@ class TestSemanticBulletStamping:
         assert isinstance(list(plain_item.content)[0], pf.Plain)
         assert pf.stringify(plain_item) == "a plain sibling"
 
-    def test_badge_leads_inside_the_semantic_scaffold(self) -> None:
-        """A doubly classified item nests badge-led content inside the semantic Div."""
+    def test_badge_outranked_by_a_semantic_leads_the_content(self) -> None:
+        """A doubly classified item gives the marker to its semantic, so the badge leads the content."""
         tree, views = self._tree_and_views(VertexView(semantic=Semantic.DECISION, source_channel=SourceChannel.EMAIL))
         doc, _ = vertex_tree_to_pandoc(tree, {}, views)
         scaffold = list(self._items(doc)[1].content)[0]
         assert isinstance(scaffold, pf.Div)
-        assert scaffold.attributes[SEMANTIC_GLYPH_ATTRIBUTE] == "⎇"
+        assert scaffold.attributes[MARKER_GLYPH_ATTRIBUTE] == "⎇"
         assert pf.stringify(scaffold) == "📨 the classified block"
 
     def test_children_nest_outside_the_scaffold(self) -> None:

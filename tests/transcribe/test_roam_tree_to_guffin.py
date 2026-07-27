@@ -1658,8 +1658,13 @@ class TestBuildViewMap:
         view_map = build_view_map(article4_node_tree())
         semantics = [view.semantic for view in view_map.values() if view.semantic is not None]
         channels = [view.source_channel for view in view_map.values() if view.source_channel is not None]
-        assert sorted(semantics) == sorted(Semantic)
-        assert sorted(channels) == sorted(SourceChannel)
+        # Coverage, not exact counts: the article's Mixed section declares both axes on one
+        # block, so a few members are declared more than once.
+        assert set(semantics) == set(Semantic)
+        assert set(channels) == set(SourceChannel)
+        # The doubly classified block is its own render path (the semantic takes the marker,
+        # leaving the badge to lead the content), so the fixture must keep exercising it.
+        assert any(view.semantic is not None and view.source_channel is not None for view in view_map.values())
 
 
 # ---------------------------------------------------------------------------

@@ -141,6 +141,7 @@
   - ForFtTYqy
   - AFS0kx5dj
   - NBEU8i91k
+  - xpWZZUv08
   text: Children blocks exercise *Better Bullets*  (Roam Extension)
 - vertex_type: guffin/text
   uid: s4E578cqU
@@ -203,3 +204,15 @@
 - vertex_type: guffin/text
   uid: vEvZXUyix
   text: Slack -> ＃
+- vertex_type: guffin/text
+  uid: xpWZZUv08
+  children:
+  - 4LHkAnvZO
+  - XiH3AmC-L
+  text: Mixed
+- vertex_type: guffin/text
+  uid: 4LHkAnvZO
+  text: Equal / definition, Calendar event -> `=`📅
+- vertex_type: guffin/text
+  uid: XiH3AmC-L
+  text: Chat Message, Question -> ?💬

@@ -1,15 +1,14 @@
 -- epub_bullet.lua
 -- Lua filter for the EPUB output path.
--- Transforms a BulletList containing semantic-classified items (the scaffold Div produced by
--- pandoc_rendering.py, stamped with data-guffin-semantic / data-guffin-semantic-glyph) so each
--- item's glyph stands where the list marker was: the list is wrapped in a Div.semantic-bullets
+-- Transforms a BulletList containing classified items (the scaffold Div produced by
+-- pandoc_rendering.py, stamped with data-guffin-marker-glyph) so each item's glyph stands
+-- where the list marker was: the list is wrapped in a Div.semantic-bullets
 -- (epub.css suppresses its native markers via list-style: none — no ::marker and no :has(),
 -- which the Kindle app's renderer does not support) and every item's content is led by a
 -- bullet-glyph Span carrying the item's glyph.  Unclassified items in the same list get the
 -- plain default bullet, keeping the run visually one uniform list.
 
-local GLYPH_ATTRIBUTE = "data-guffin-semantic-glyph"
-local SEMANTIC_ATTRIBUTE = "data-guffin-semantic"
+local GLYPH_ATTRIBUTE = "data-guffin-marker-glyph"
 -- The plain bullet for unclassified items listed among classified ones; mirrors
 -- DEFAULT_BULLET_GLYPH in render/semantic_theme.py.
 local DEFAULT_GLYPH = "•"
@@ -31,11 +30,11 @@ local function glyph_and_body(item)
 end
 
 -- Lead the first inline-bearing block of `body` with a bullet-glyph Span; prepend a new Plain
--- when the body opens with a non-inline block.  A semantic glyph's span carries the extra
--- `semantic` class, which epub.css renders 20% larger than the item text; the default bullet
+-- when the body opens with a non-inline block.  A classification glyph's span carries the extra
+-- `classified` class, which epub.css renders 20% larger than the item text; the default bullet
 -- stays at text size, mimicking the native marker it stands in for.
 local function lead_with_glyph(body, glyph, classified)
-  local classes = classified and { "bullet-glyph", "semantic" } or { "bullet-glyph" }
+  local classes = classified and { "bullet-glyph", "classified" } or { "bullet-glyph" }
   local span = pandoc.Span({ pandoc.Str(glyph) }, pandoc.Attr("", classes))
   local first = body[1]
   if first ~= nil and (first.t == "Plain" or first.t == "Para") then

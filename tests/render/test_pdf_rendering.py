@@ -406,11 +406,14 @@ class TestTypstBulletFilter:
         assert "#grid(" not in typst
         assert "- a plain sibling" in typst
 
-    def test_badge_only_list_keeps_native_markers(self) -> None:
-        """A source-channel badge decorates content only; the list keeps its native markers."""
+    def test_lone_badge_stands_in_the_marker_column(self) -> None:
+        """A source channel with no semantic puts its badge where the marker was, like a semantic glyph."""
         typst = self._typst_for({"classed01": VertexView(source_channel=SourceChannel.EMAIL)})
-        assert "#grid(" not in typst
-        assert "📨 the result block" in typst
+        assert "#grid(" in typst
+        assert 'text(size: 1.2em, "📨"), [' in typst
+        assert '"•", [' in typst
+        # The badge holds the marker, so it no longer leads the item's own text.
+        assert "📨 the result block" not in typst
 
     def test_classified_item_children_render_once(self) -> None:
         """A classified item's nested children serialize into its grid cell exactly once.

@@ -78,6 +78,25 @@
   props: null
   title: null
   attrs: null
+- uid: 4LHkAnvZO
+  id: 15287
+  string: Equal / definition, Calendar event -> `=`📅
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15286
+  props:
+    type: equal
+    provenance: calendar
+  title: null
+  attrs: null
 - uid: mkHZLUn8Q
   id: 11643
   string: null
@@ -258,6 +277,24 @@
   - id: 11643
   - id: 11662
   - id: 15251
+  props: null
+  title: null
+  attrs: null
+- uid: xpWZZUv08
+  id: 15286
+  string: Mixed
+  order: 12
+  heading: null
+  children:
+  - id: 15287
+  - id: 15288
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
   props: null
   title: null
   attrs: null
@@ -583,6 +620,25 @@
     type: question
   title: null
   attrs: null
+- uid: XiH3AmC-L
+  id: 15288
+  string: Chat Message, Question -> ?💬
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  - id: 15286
+  props:
+    provenance: chat
+    type: question
+  title: null
+  attrs: null
 - uid: _eF-sDI9v
   id: 15252
   string: Children blocks exercise __Better Bullets__  (Roam Extension)
@@ -601,6 +657,7 @@
   - id: 15262
   - id: 15263
   - id: 15264
+  - id: 15286
   refs: null
   page:
     id: 11643

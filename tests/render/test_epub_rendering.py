@@ -127,14 +127,20 @@ def code_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 @pytest.fixture(scope="module")
 def classified_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """A document with a classified list item (carrying a child) and a plain sibling, rendered to EPUB."""
-    page: Final[PageVertex] = PageVertex(uid="page00001", title="Classified", children=["plain0001", "classed01"])
+    """A document with two classified list items (one carrying a child) and a plain sibling, rendered to EPUB."""
+    page: Final[PageVertex] = PageVertex(
+        uid="page00001", title="Classified", children=["plain0001", "classed01", "badged001"]
+    )
     plain: Final[TextVertex] = TextVertex(uid="plain0001", text="a plain sibling")
     classed: Final[TextVertex] = TextVertex(uid="classed01", text="the result block", children=["childuid1"])
     child: Final[TextVertex] = TextVertex(uid="childuid1", text="a nested child")
+    badged: Final[TextVertex] = TextVertex(uid="badged001", text="notes from the call")
     bundle: Final[RenderBundle] = RenderBundle(
-        content=VertexTree(tree_vertices=[page, plain, classed, child]),
-        view={"classed01": VertexView(semantic=Semantic.RESULT, source_channel=SourceChannel.EMAIL)},
+        content=VertexTree(tree_vertices=[page, plain, classed, child, badged]),
+        view={
+            "classed01": VertexView(semantic=Semantic.RESULT, source_channel=SourceChannel.EMAIL),
+            "badged001": VertexView(source_channel=SourceChannel.VOICE_CALL),
+        },
     )
     return _render_epub(tmp_path_factory.mktemp("classified"), bundle, DefaultProfile(), "classified")
 
@@ -359,17 +365,20 @@ class TestRenderEpub:
     def test_classified_list_glyphs(self, classified_epub: Path) -> None:
         """A classified list is wrapped for marker suppression, its items led by glyph spans.
 
-        The classified item leads with its badge then its semantic glyph span; the plain
-        sibling gets the default bullet glyph; the scaffold attributes are consumed.
+        The doubly classified item leads with its badge behind its semantic glyph span; the
+        badge-only item's own badge stands in the marker's place; the plain sibling gets the
+        default bullet glyph; the scaffold attributes are consumed.
         """
         chapter: Final[str] = _chapter_xhtml(classified_epub)
         assert 'class="semantic-bullets"' in chapter
-        # The classified item's span carries the extra `semantic` class (the 20% size boost);
-        # the plain sibling's default-bullet span does not.
-        assert chapter.count('class="bullet-glyph semantic"') == 1
+        # Both classified spans carry the extra `classified` class (the 20% size boost); the
+        # plain sibling's default-bullet span does not.
+        assert chapter.count('class="bullet-glyph classified"') == 2
         assert chapter.count('class="bullet-glyph"') == 1
         assert "⇒" in chapter and "•" in chapter
         assert "📨 the result block" in chapter
+        # The lone badge holds the marker, so it does not also lead its item's text.
+        assert "📞 notes from the call" not in chapter
         # Regression: the classified item's nested child renders exactly once (glyph_and_body
         # once aliased the scaffold Div's content, duplicating the children).
         assert chapter.count("a nested child") == 1

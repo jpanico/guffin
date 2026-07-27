@@ -46,3 +46,6 @@
     - 💬 Chat message -\> 💬
     - 📪 Postal mail -\> 📪
     - ＃ Slack -\> ＃
+  - Mixed
+    - = 📅 Equal / definition, Calendar event -\> `=`📅
+    - ? 💬 Chat Message, Question -\> ?💬
