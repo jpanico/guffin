@@ -127,12 +127,13 @@ def code_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 @pytest.fixture(scope="module")
 def classified_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """A document with one classified list item and one plain sibling, rendered to EPUB."""
+    """A document with a classified list item (carrying a child) and a plain sibling, rendered to EPUB."""
     page: Final[PageVertex] = PageVertex(uid="page00001", title="Classified", children=["plain0001", "classed01"])
     plain: Final[TextVertex] = TextVertex(uid="plain0001", text="a plain sibling")
-    classed: Final[TextVertex] = TextVertex(uid="classed01", text="the result block")
+    classed: Final[TextVertex] = TextVertex(uid="classed01", text="the result block", children=["childuid1"])
+    child: Final[TextVertex] = TextVertex(uid="childuid1", text="a nested child")
     bundle: Final[RenderBundle] = RenderBundle(
-        content=VertexTree(tree_vertices=[page, plain, classed]),
+        content=VertexTree(tree_vertices=[page, plain, classed, child]),
         view={"classed01": VertexView(semantic=Semantic.RESULT, source_channel=SourceChannel.EMAIL)},
     )
     return _render_epub(tmp_path_factory.mktemp("classified"), bundle, DefaultProfile(), "classified")
@@ -369,6 +370,9 @@ class TestRenderEpub:
         assert chapter.count('class="bullet-glyph"') == 1
         assert "⇒" in chapter and "•" in chapter
         assert "📨 the result block" in chapter
+        # Regression: the classified item's nested child renders exactly once (glyph_and_body
+        # once aliased the scaffold Div's content, duplicating the children).
+        assert chapter.count("a nested child") == 1
         assert "data-guffin" not in chapter
         # The stylesheet ships the marker-suppression rule the wrapper class relies on.
         with zipfile.ZipFile(classified_epub) as zf:

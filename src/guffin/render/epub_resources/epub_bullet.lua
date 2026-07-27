@@ -15,13 +15,15 @@ local SEMANTIC_ATTRIBUTE = "data-guffin-semantic"
 local DEFAULT_GLYPH = "•"
 
 -- Return the item's glyph (or nil when unclassified) and its body blocks, the scaffold Div
--- dissolved.
+-- dissolved.  Side-effect-free: the body is built on a clone — pandoc.List(existing) would
+-- alias the Div's own content (it returns the same table), so inserting the item's trailing
+-- blocks into it would mutate the document, duplicating them on a repeated call.
 local function glyph_and_body(item)
   local first = item[1]
   if first == nil or first.t ~= "Div" or first.attributes[GLYPH_ATTRIBUTE] == nil then
     return nil, item
   end
-  local body = pandoc.List(first.content)
+  local body = first.content:clone()
   for index = 2, #item do
     body:insert(item[index])
   end

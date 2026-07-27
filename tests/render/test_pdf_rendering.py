@@ -412,6 +412,28 @@ class TestTypstBulletFilter:
         assert "#grid(" not in typst
         assert "📨 the result block" in typst
 
+    def test_classified_item_children_render_once(self) -> None:
+        """A classified item's nested children serialize into its grid cell exactly once.
+
+        Regression: glyph_and_body once aliased the scaffold Div's content (pandoc.List of an
+        existing list returns the same table), so the detection pass appended the children into
+        the document and the build pass appended them again — duplicating every child of a
+        list's first classified item.
+        """
+        page = PageVertex(uid="page00001", title="Doc", children=["classed01"])
+        classed = TextVertex(uid="classed01", text="the classified block", children=["childuid1"])
+        child = TextVertex(uid="childuid1", text="a nested child")
+        tree = VertexTree(tree_vertices=[page, classed, child])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {"classed01": VertexView(semantic=Semantic.WARNING)})
+        typst = pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_bullet.lua'}"],
+        )
+        assert "#grid(" in typst
+        assert typst.count("a nested child") == 1
+
 
 @pytest.mark.pandoc
 class TestTypstPageBreakFilter:
