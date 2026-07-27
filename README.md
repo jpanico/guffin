@@ -456,6 +456,7 @@ See [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) for detailed instructions a
 - [docs/processing_pipeline.md](docs/processing_pipeline.md) — High-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages
 - [docs/render-pipeline.md](docs/render-pipeline.md) — The render layer (model → output four-phase pipeline: prepare → build → convert → post-process) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`)
 - [docs/publishing-semantics.md](docs/publishing-semantics.md) — The format-independent `PublishingSemantics` vocabulary and how it maps to each output format (companion to `render-pipeline.md`)
+- [docs/pdf-render.md](docs/pdf-render.md) — What each `pdf-render` placement renders in each output format, and whether the PDF file travels with the output
 - [docs/roam-local-api.md](docs/roam-local-api.md) — Roam Local API reference (JSON over HTTP)
 - [docs/roam-md.md](docs/roam-md.md) — Roam-flavored Markdown vs. CommonMark differences
 - [docs/roam-querying.md](docs/roam-querying.md) — Datalog query language, query structure, and all queries used in this project

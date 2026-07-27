@@ -52,7 +52,8 @@ pure taxonomy with no other `guffin` dependencies.
     sits on the PDF embed itself, or — because the pdf anchor sees through standalone links — on a
     standalone block reference to it, so a PDF living on another page can be tagged where this
     document displays it; the reference site's tag governs that reference and outranks the target
-    embed's own tag.
+    embed's own tag.  What each member actually produces per format — and whether the PDF file
+    travels with the output — is tabulated in [pdf-render.md](pdf-render.md).
   - *Code-block-anchored tags* (`AttributeAnchor.CODE_BLOCK`): `CODE_LANGUAGE` (`code-language::`)
     overrides the closed fence-language set the Roam UI offers, its value resolved against the
     canonical language vocabulary (`common/programming_language.py`); `CODE_SOURCE` (`code-source::`)

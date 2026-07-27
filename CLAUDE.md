@@ -295,6 +295,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `docs/processing_pipeline.md` — high-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages; the render stage is detailed in `render-pipeline.md`
 - `docs/render-pipeline.md` — the render layer (model → output four-phase pipeline: prepare → build → convert → post-process) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`
 - `docs/publishing-semantics.md` — the format-independent `PublishingSemantics` vocabulary (the semantic identity of a document's pieces) and how it maps to each output format; companion to `render-pipeline.md`
+- `docs/pdf-render.md` — the `pdf-render` tag cell by cell: what each `PdfRender` member renders in each output format, whether the PDF file travels with the output, and the verified format capabilities behind those cells
 
 ## Environment Variables
 - `GUFFIN_ROAM_LOCAL_API_PORT` — port for Roam Local API (all CLI tools)
