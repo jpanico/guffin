@@ -144,112 +144,134 @@ Always `import regex` (never `import re`) and use `regex.compile`, `regex.Patter
 ```
 guffin/
 ├── src/
-│   └── guffin/                        # Main package
-│       ├── cli/                         # CLI entry points and supporting infrastructure
-│       │   ├── common.py                  # Shared tree-loading pipeline (fetch_roam_trees,
-│       │   │                              #   resolve_profile); output-filename derivation
-│       │   ├── dump_roam_tree.py          # dump-roam-tree: render Roam subtree as a Rich tree
-│       │   ├── export_roam_tree.py        # export-roam-tree: export to Markdown, PDF, or EPUB
-│       │   ├── logging_config.py          # Colorized logging; reads LOG_LEVEL env var
-│       │   └── params.py                  # Shared Typer Argument/Option declarations
+│   └── guffin/                          # Main package
+│       ├── cli/                           # CLI entry points and supporting infrastructure
+│       │   ├── code_source_verification.py  # Verify code-source:: code blocks against GitHub
+│       │   ├── common.py                    # Shared tree-loading pipeline (fetch_roam_trees,
+│       │   │                                #   resolve_profile); output-filename derivation
+│       │   ├── dump_roam_tree.py            # dump-roam-tree: render Roam subtree as a Rich tree
+│       │   ├── export_roam_tree.py          # export-roam-tree: export to Markdown, PDF, or EPUB
+│       │   ├── logging_config.py            # Colorized logging; reads LOG_LEVEL env var
+│       │   └── params.py                    # Shared Typer Argument/Option declarations
 │       │
-│       ├── common/                      # Cross-cutting helpers (no guffin dependencies)
-│       │   ├── code_language.py           # CodeLanguage StrEnum of programming-language identifiers
-│       │   ├── date.py                    # Locale-independent month names; W3CDTF reduced-precision date
-│       │   ├── filenames.py               # POSIX filename normalization (shell_safe_filename)
-│       │   ├── geometry.py                # Generic 2D geometry types (ImageSize)
-│       │   ├── json_value.py              # JsonValue recursive type alias
-│       │   ├── markdown.py                # CommonMark fenced-code-block and hard-break utilities
-│       │   ├── media_type.py              # MediaType enum; MIME type detection from filenames
-│       │   ├── provenance.py              # Export provenance (source git commit + timestamps)
-│       │   ├── revision.py                # Content revision (snapshot hash + edit/fetch bookkeeping)
-│       │   ├── table.py                   # Table, TableStyle — 2-D cell grid model
-│       │   └── validation.py              # Generic accumulator-pipeline validation framework
+│       ├── common/                        # Cross-cutting helpers (no guffin dependencies)
+│       │   ├── date.py                      # English month names, ordinal suffixes, UTC timestamps
+│       │   ├── filenames.py                 # POSIX filename normalization (shell_safe_filename)
+│       │   ├── geometry.py                  # Generic 2D geometry types (ImageSize)
+│       │   ├── github_fetch.py              # GitHub ref resolution + commit-pinned file retrieval
+│       │   ├── github_file_ref.py           # GitHubFileRef: file addressing + blob/raw URL encodings
+│       │   ├── json_value.py                # JsonValue recursive type alias
+│       │   ├── line_range.py                # LineRange: inclusive 1-based line range + slicing
+│       │   ├── markdown.py                  # CommonMark fenced-code-block and hard-break utilities
+│       │   ├── media_type.py                # MediaType enum; MIME type detection from filenames
+│       │   ├── programming_language.py      # Canonical language vocabulary (vendored GitHub Linguist);
+│       │   │                                #   programming_language_data.py holds the generated data
+│       │   ├── provenance.py                # Export provenance (source git commit + timestamps)
+│       │   ├── revision.py                  # Content revision (snapshot hash + edit/fetch bookkeeping)
+│       │   ├── table.py                     # Table, TableStyle — 2-D cell grid model
+│       │   ├── validation.py                # Generic accumulator-pipeline validation framework
+│       │   ├── w3cdtf_date.py               # W3CDTF reduced-precision date (YYYY[-MM[-DD]])
+│       │   └── whitespace.py                # Unicode space-separator normalization (normalize_spaces)
 │       │
-│       ├── model/                       # Core normalized-graph model (depends only on common/)
-│       │   ├── primitives.py              # Uid + UID regex primitives; is_daily_note_uid()
-│       │   ├── vertex.py                  # VertexType StrEnum; Vertex union + eleven concrete types
-│       │   │                              #   (Page/Heading/Text/Image/Pdf/Callout/CodeBlock/
-│       │   │                              #   BlockQuote/Table/BlockEmbed/PageEmbed); asset & embed
-│       │   │                              #   unions with narrowing predicates
-│       │   ├── vertex_tree.py             # VertexTree (tree_vertices, ref_vertices, uid_map),
-│       │   │                              #   transcluded_vertices(), assignments_for(), transformers
-│       │   ├── vertex_view.py             # Presentation overlay: ChildrenLayout, VertexView, ViewMap
-│       │   ├── render_bundle.py           # RenderBundle: VertexTree + ViewMap + provenance + revision
-│       │   ├── vertex_link.py             # x-guffin inter-vertex link scheme
-│       │   ├── attribute.py               # Attribute identity/values (Attribute, AttributeInstance,
-│       │   │                              #   AttributeDomain, LiteralValue/ReferenceValue)
-│       │   ├── attribute_assignment.py    # A whole `<attribute>:: <value>, …` assignment + readers
-│       │   ├── attribute_anchor.py        # Anchoring affordances: TreePosition, AttributeAnchor
-│       │   ├── chicago_structure.py       # CMOS taxonomy: Matter, StructuralElement
-│       │   ├── element_number.py          # Internal element numbering (a heading's [1.2.3] lead)
-│       │   └── publishing_semantics.py    # Guffin's publishing-standard attribute vocabulary
-│       │                                  #   (PublishingSemantics) + the validation pass
+│       ├── model/                         # Core normalized-graph model (depends only on common/)
+│       │   ├── primitives.py                # Uid + UID regex primitives; is_daily_note_uid()
+│       │   ├── vertex.py                    # VertexType StrEnum; Vertex union + eleven concrete types
+│       │   │                                #   (Page/Heading/Text/Image/Pdf/Callout/CodeBlock/
+│       │   │                                #   QuoteBlock/Table/BlockEmbed/PageEmbed); asset & embed
+│       │   │                                #   unions with narrowing predicates
+│       │   ├── vertex_tree.py               # VertexTree (tree_vertices, ref_vertices, uid_map),
+│       │   │                                #   transcluded_vertices(), assignments_for(), transformers
+│       │   ├── vertex_view.py               # Presentation overlay: ChildrenLayout, Semantic,
+│       │   │                                #   SourceChannel, VertexView, ViewMap
+│       │   ├── render_bundle.py             # RenderBundle: VertexTree + ViewMap + provenance + revision
+│       │   ├── vertex_link.py               # x-guffin inter-vertex link scheme
+│       │   ├── attribute.py                 # Attribute identity/values (Attribute, AttributeInstance,
+│       │   │                                #   AttributeDomain, LiteralValue/ReferenceValue)
+│       │   ├── attribute_assignment.py      # A whole `<attribute>:: <value>, …` assignment + readers
+│       │   ├── attribute_anchor.py          # Anchoring affordances: TreePosition, AttributeAnchor
+│       │   ├── chicago_structure.py         # CMOS taxonomy: Matter, StructuralElement
+│       │   ├── element_number.py            # Internal element numbering (a heading's [1.2.3] lead)
+│       │   ├── code_source.py               # CodeSource: a code block's GitHub provenance
+│       │   │                                #   (blob URL + commit SHA + fetch date)
+│       │   ├── code_source_diagnosis.py     # Pure verdict of a code block against its source
+│       │   │                                #   (drift vs. local modification vs. fetch failure)
+│       │   ├── publishing_semantics.py      # Guffin's publishing-standard attribute vocabulary
+│       │   │                                #   (PublishingSemantics)
+│       │   └── publishing_validation.py     # The vocabulary's validation pass (validate_semantics)
 │       │
-│       ├── transcribe/                  # Source → model bridge: transcription + normalization
-│       │   ├── roam_md_to_pandoc_md.py    # Convert Roam-flavored Markdown strings to Pandoc Markdown
-│       │   └── roam_tree_to_guffin.py     # NodeTree → render model: transcribe(), build_view_map(),
-│       │                                  #   to_render_bundle()
+│       ├── transcribe/                    # Source → model bridge: transcription + normalization
+│       │   ├── roam_md_to_pandoc_md.py      # Convert Roam-flavored Markdown strings to Pandoc Markdown
+│       │   └── roam_tree_to_guffin.py       # NodeTree → render model: transcribe(), build_view_map(),
+│       │                                    #   to_render_bundle()
 │       │
-│       ├── render/                      # Output rendering: model → output (export + terminal)
-│       │   ├── date_format.py             # DateFormat (roam-long/iso/abbrev-month-day) + format_date()
-│       │   ├── render_options.py          # OutputFormat discriminator; RenderOptions base + per-format
-│       │   ├── project.py                 # ProjectType, ProjectProfile + subclasses, StructuralPolicy
-│       │   ├── asset_fetch.py             # Pandoc-free asset fetching; AssetRef; fetch_and_enrich_assets()
-│       │   ├── pandoc_ast.py              # Guffin-independent Pandoc AST helpers
-│       │   ├── pandoc_rendering.py        # Shared model→Pandoc utilities; vertex_tree_to_pandoc();
-│       │   │                              #   x-guffin link resolution
-│       │   ├── md_rendering.py            # VertexTree → GFM Markdown; writes .mdbundle or plain .md
-│       │   ├── pdf_rendering.py           # VertexTree → PDF via Pandoc + Typst
-│       │   ├── epub_rendering.py          # VertexTree → EPUB 3 via Pandoc
-│       │   ├── epub_semantics.py          # EPUB structural-semantics vocabulary + model→EPUB mappings
-│       │   ├── epub_post_processing.py    # EPUB post-passes (matter divisions, colophon, revision)
-│       │   ├── rich_rendering.py          # Rich panel/tree rendering for the dump command
-│       │   ├── callout_theme.py           # Canonical per-callout-type colour palette (all formats)
-│       │   ├── gfm_resources/             # GFM Pandoc Lua filters (package data)
-│       │   ├── typst_resources/           # Bergfink Typst template + typst_*.lua filters (package data)
-│       │   ├── epub_resources/            # EPUB Lua filters + epub.css (package data)
-│       │   └── callout_icons/             # Shared SVG callout badge icons (PDF + EPUB)
+│       ├── render/                        # Output rendering: model → output (export + terminal)
+│       │   ├── date_format.py               # DateFormat (roam-long/iso/abbrev-month-day) + format_date()
+│       │   ├── render_options.py            # OutputFormat discriminator; RenderOptions base + per-format
+│       │   ├── project.py                   # ProjectType, ProjectProfile + subclasses, StructuralPolicy
+│       │   ├── asset_fetch.py               # Pandoc-free asset fetching; AssetRef; fetch_and_enrich_assets()
+│       │   ├── pandoc_ast.py                # Guffin-independent Pandoc AST helpers
+│       │   ├── pandoc_server.py             # Persistent pandoc-server for fast Markdown→JSON parses
+│       │   ├── pandoc_rendering.py          # Shared model→Pandoc utilities; vertex_tree_to_pandoc();
+│       │   │                                #   x-guffin link resolution
+│       │   ├── code_language_token.py       # Whitespace-free language token for info strings/classes
+│       │   ├── md_rendering.py              # VertexTree → GFM Markdown; writes .mdbundle or plain .md
+│       │   ├── md_post_processing.py        # GFM text post-passes (list-separator comment removal)
+│       │   ├── pdf_rendering.py             # VertexTree → PDF via Pandoc + Typst
+│       │   ├── epub_rendering.py            # VertexTree → EPUB 3 via Pandoc
+│       │   ├── epub_semantics.py            # EPUB structural-semantics vocabulary + model→EPUB mappings
+│       │   ├── epub_post_processing.py      # EPUB post-passes (matter divisions, colophon, revision)
+│       │   ├── rich_rendering.py            # Rich panel/tree rendering for the dump command
+│       │   ├── callout_theme.py             # Canonical per-callout-type colour palette (all formats)
+│       │   ├── semantic_theme.py            # Canonical bullet/badge glyphs for the classification
+│       │   │                                #   overlay (Semantic, SourceChannel) — all formats
+│       │   ├── gfm_resources/               # GFM Pandoc Lua filters (package data)
+│       │   ├── typst_resources/             # Bergfink Typst template + typst_*.lua filters (package data)
+│       │   ├── epub_resources/              # EPUB Lua filters + epub.css (package data)
+│       │   └── callout_icons/               # Shared SVG callout badge icons (PDF + EPUB)
 │       │
-│       └── roam/                        # Roam Research data model, API, and processing
-│           ├── primitives.py              # Foundational type aliases, stub models, UID regex
-│           ├── blockquote.py              # Roam block-quote / callout constructs
-│           ├── markdown.py                # Roam Markdown constructs (image links, PDF embeds, tables)
-│           ├── schema.py                  # Datomic schema model types
-│           ├── node.py                    # RoamNode, NodeType, node_type, NodesByUid
-│           ├── node_network.py            # NodeNetwork; network validators and utilities
-│           ├── node_tree.py               # NodeTree (build() factory), NodeTreeDFSIterator, to_table
-│           ├── asset.py                   # Cloud Firestore asset model
-│           ├── local_api.py               # ApiEndpoint model for the Roam Local API
-│           ├── node_fetch_result.py       # NodeFetchAnchor, NodeFetchSpec, NodeFetchResult
-│           ├── node_fetch.py              # Fetch RoamNode records via Local API
-│           ├── schema_fetch.py            # Fetch Datomic schema via Local API
-│           ├── asset_fetch.py             # Fetch Cloud Firestore assets via Local API
-│           └── revision.py                # Capture a content Revision from a raw fetch
+│       └── roam/                          # Roam Research data model, API, and processing
+│           ├── primitives.py                # Foundational type aliases, stub models, UID regex
+│           ├── better_bullet.py             # Better Bullets extension: marker → bullet vocabulary
+│           ├── blockquote.py                # Roam block-quote / callout / pull-quote constructs
+│           ├── code_language.py             # Roam's fence-language vocabulary + canonical mapping
+│           ├── markdown.py                  # Roam Markdown constructs (image links, PDF embeds, tables)
+│           ├── schema.py                    # Datomic schema model types
+│           ├── node.py                      # RoamNode, NodeType, node_type, NodesByUid
+│           ├── node_network.py              # NodeNetwork; network validators and utilities
+│           ├── node_tree.py                 # NodeTree (build() factory), NodeTreeDFSIterator, to_table
+│           ├── asset.py                     # Cloud Firestore asset model
+│           ├── local_api.py                 # ApiEndpoint model for the Roam Local API
+│           ├── node_fetch_result.py         # NodeFetchAnchor, NodeFetchSpec, NodeFetchResult
+│           ├── node_fetch.py                # Fetch RoamNode records via Local API
+│           ├── schema_fetch.py              # Fetch Datomic schema via Local API
+│           ├── asset_fetch.py               # Fetch Cloud Firestore assets via Local API
+│           └── revision.py                  # Capture a content Revision from a raw fetch
 │
 ├── tests/                               # pytest test suite; mirrors src/guffin/
-│   ├── conftest.py                        # Shared fixtures and helpers
-│   ├── regen_fixtures.py                  # Developer script: regenerate fixture files from live Roam
-│   └── fixtures/                          # markdown/, yaml/, images/, json/, mdbundle/, pdf/, epub/
+│   ├── conftest.py                      # Shared fixtures and helpers
+│   ├── regen_fixtures.py                # Developer script: regenerate fixture files from live Roam
+│   └── fixtures/                        # markdown/, yaml/, images/, json/, mdbundle/, pdf/, epub/
 │
 ├── scripts/
-│   ├── dump-roam-tree.sh                  # Shell wrapper for dump-roam-tree
-│   ├── export-roam-tree.sh                # Shell wrapper for export-roam-tree
-│   ├── setup-mdbundle-handler.sh          # Setup .mdbundle auto-open in Typora (macOS)
-│   └── refresh-mdbundle-folders.sh        # Refresh existing .mdbundle folders (macOS)
+│   ├── dump-roam-tree.sh                # Shell wrapper for dump-roam-tree
+│   ├── export-roam-tree.sh              # Shell wrapper for export-roam-tree
+│   ├── setup-mdbundle-handler.sh        # Setup .mdbundle auto-open in Typora (macOS)
+│   ├── refresh-mdbundle-folders.sh      # Refresh existing .mdbundle folders (macOS)
+│   └── regen_programming_languages.py   # Regenerate the vendored Linguist language data
 │
 ├── docs/
-│   ├── processing_pipeline.md             # High-level overview of the whole pipeline
-│   ├── render-pipeline.md                 # Render layer (four-phase) + the project-type model
-│   ├── publishing-semantics.md            # The PublishingSemantics vocabulary + per-format mapping
-│   ├── roam-local-api.md                  # Roam Local API (JSON over HTTP) reference
-│   ├── roam-md.md                         # Roam-flavored Markdown vs. CommonMark differences
-│   ├── roam-querying.md                   # Datalog query language and all queries used here
-│   ├── roam-schema.md                     # Full Roam attribute schema
-│   └── MDBUNDLE_SETUP.md                  # macOS .mdbundle integration guide
+│   ├── processing_pipeline.md           # High-level overview of the whole pipeline
+│   ├── render-pipeline.md               # Render layer (four-phase) + the project-type model
+│   ├── publishing-semantics.md          # The PublishingSemantics vocabulary + per-format mapping
+│   ├── code-source-display-plan.md      # Plan for displaying code-source provenance in Roam
+│   ├── roam-local-api.md                # Roam Local API (JSON over HTTP) reference
+│   ├── roam-md.md                       # Roam-flavored Markdown vs. CommonMark differences
+│   ├── roam-querying.md                 # Datalog query language and all queries used here
+│   ├── roam-schema.md                   # Full Roam attribute schema
+│   └── MDBUNDLE_SETUP.md                # macOS .mdbundle integration guide
 │
-├── CLAUDE.md                              # Exhaustive per-module index and project conventions
-└── pyproject.toml                         # Project configuration
+├── CLAUDE.md                            # Exhaustive per-module index and project conventions
+└── pyproject.toml                       # Project configuration
 ```
 
 ## Usage
