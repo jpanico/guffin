@@ -116,6 +116,8 @@ def _resolved_file_name(asset: RoamAsset, source_url: str, claimed_names: Mappin
     Returns:
         The resolved filename for the asset.
     """
+    # locals() is exactly the parameters when read as the first statement.
+    logger.debug("args: %r", locals())
     preferred: Final[str] = _preferred_file_name(asset)
     stem: Final[str] = Path(preferred).stem
     suffix: Final[str] = Path(preferred).suffix
@@ -162,6 +164,8 @@ def fetch_asset(
         pixel size for an image asset (``None`` for a non-image asset), and
         the original upload filename when known.
     """
+    # locals() is exactly the parameters when read as the first statement.
+    logger.debug("args: %r", locals())
     names: Final[Mapping[str, str]] = claimed_names if claimed_names is not None else {}
     asset: Final[RoamAsset] = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)
     file_name: Final[str] = _resolved_file_name(asset, str(vertex.source), names)
@@ -211,6 +215,8 @@ def fetch_assets(
         size.  Vertices that could not be fetched are absent from the
         mapping.
     """
+    # locals() is exactly the parameters when read as the first statement.
+    logger.debug("args: %r", locals())
     displayed: Final[list[AssetVertex]] = visible_asset_vertices(vertex_tree)
     cover: Final[ImageVertex | None] = cover_image_vertex(vertex_tree)
     fetchable: Final[list[AssetVertex]] = (
@@ -257,6 +263,8 @@ def fetch_and_enrich_assets(
         *vertex_tree*; *asset_refs* is the ``{uid: AssetRef}`` mapping as returned by
         :func:`fetch_assets`.
     """
+    # locals() is exactly the parameters when read as the first statement.
+    logger.debug("args: %r", locals())
     asset_refs: Final[dict[Uid, AssetRef]] = fetch_assets(vertex_tree, api_endpoint, asset_dir, cache_dir)
     original_sizes: Final[dict[Uid, ImageSize]] = {
         uid: ref.size for uid, ref in asset_refs.items() if ref.size is not None
@@ -289,6 +297,8 @@ def cover_image_path(vertex_tree: VertexTree, asset_refs: Mapping[Uid, AssetRef]
         or — with a warning — when the cover's asset is absent from *asset_refs* (its fetch
         failed and was already warned about by :func:`fetch_assets`).
     """
+    # locals() is exactly the parameters when read as the first statement.
+    logger.debug("args: %r", locals())
     cover_vertex: Final[ImageVertex | None] = cover_image_vertex(vertex_tree)
     if cover_vertex is None:
         return None

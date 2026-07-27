@@ -392,7 +392,7 @@ Fetches a Roam `Page` or `Node` subtree via the Local API, and renders it as a c
 ```bash
 dump-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token <token> \
   [--render-bundle] [--node-tree] [--raw-results] [--include-refs] [--truncate] [--show-transient] \
-  [--node-props <props>] [--vertex-props <props>]
+  [--node-props <props>] [--vertex-props <props>] [--cache-dir <dir>]
 ```
 
 Flags (all are boolean toggles with a `--no-*` / uppercase-letter inverse):
@@ -411,6 +411,8 @@ The `--render-bundle` output is an outer **Render Bundle** panel wrapping two su
 `--node-props heading,parents` selects which `RoamNode` fields appear for each node in the node-tree output (defaults to `heading,order,children,parents,page`).
 
 `--vertex-props type,children,text` selects which `Vertex` fields appear for each vertex in the vertex-tree output (defaults to `vertex_type.value,children,refs`).
+
+`--cache-dir <dir>` / `-c` (env `GUFFIN_CACHE_DIR`) caches downloaded Cloud Firestore assets across runs. Rendering the render bundle fetches every displayed asset to read each image's native pixel size and each PDF's original filename; without a cache directory, every run re-downloads them.
 
 Examples:
 ```bash

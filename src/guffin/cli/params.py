@@ -10,12 +10,14 @@ Public symbols:
 - :data:`PortOption` — ``--port`` / ``-p`` Roam Local API port option.
 - :data:`GraphOption` — ``--graph`` / ``-g`` Roam graph-name option.
 - :data:`TokenOption` — ``--token`` / ``-t`` Roam Local API bearer-token option.
+- :data:`CacheDirOption` — ``--cache-dir`` / ``-c`` asset-cache directory option.
 
 Each alias is a plain ``Name = Annotated[...]`` assignment rather than a PEP 695 ``type`` alias:
 Typer resolves the embedded ``Argument``/``Option`` metadata off the annotation object and cannot see
 through a ``TypeAliasType`` (it raises ``RuntimeError: Type not yet supported``).
 """
 
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -60,5 +62,18 @@ TokenOption = Annotated[
         "-t",
         envvar="GUFFIN_ROAM_API_TOKEN",
         help="Bearer token for Roam Local API authentication",
+    ),
+]
+
+CacheDirOption = Annotated[
+    Path | None,
+    typer.Option(
+        "--cache-dir",
+        "-c",
+        envvar="GUFFIN_CACHE_DIR",
+        help=(
+            "Directory for caching downloaded Cloud Firestore assets across runs. "
+            "Unset, every run re-downloads every asset it displays or inspects."
+        ),
     ),
 ]

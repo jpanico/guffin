@@ -82,7 +82,7 @@ from guffin.cli.common import (
     resolve_profile,
 )
 from guffin.cli.logging_config import configure_logging
-from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
+from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.common.provenance import Provenance, gather_provenance
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
@@ -161,18 +161,7 @@ def main(
             ),
         ),
     ] = True,
-    cache_dir: Annotated[
-        pathlib.Path | None,
-        typer.Option(
-            "--cache-dir",
-            "-c",
-            envvar="GUFFIN_CACHE_DIR",
-            help=(
-                "Directory for caching downloaded Cloud Firestore assets across runs. "
-                "Applies to both --format markdown (bundle mode) and --format pdf."
-            ),
-        ),
-    ] = None,
+    cache_dir: CacheDirOption = None,
     template_dir: Annotated[
         pathlib.Path | None,
         typer.Option(
@@ -319,6 +308,10 @@ def main(
     With ``--format epub``: writes ``<target>.<type>.epub`` via Pandoc.  The page
     title becomes the EPUB title and top-level headings become chapters.  The
     ``--bundle/--no-bundle`` and ``--template-dir`` options are ignored.
+
+    Every format but plain Markdown (``--no-bundle``) fetches the Cloud Firestore assets
+    the document displays; pass ``--cache-dir`` / ``-c`` to keep those downloads across
+    runs.
     """
     # Captured as the first statement so locals() is exactly the CLI parameters; the bearer token
     # is filtered out (see _SECRET_PARAMS) so it never reaches the logs.

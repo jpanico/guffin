@@ -9,7 +9,8 @@ hierarchy:
   :class:`~guffin.model.render_bundle.RenderBundle` produced by
   :func:`~guffin.transcribe.roam_tree_to_guffin.to_render_bundle`, rendered as an outer panel over
   two sub-panels: the content :class:`~guffin.vertex_tree.VertexTree` (image vertices enriched with
-  their native pixel size, fetched via the Local API, before display) and the presentation
+  their native pixel size, fetched via the Local API, before display — pass ``--cache-dir`` to keep
+  those downloads across runs) and the presentation
   :data:`~guffin.model.vertex_view.ViewMap` (as a tree of the vertices carrying a view entry, plus the
   ancestors connecting them to the root).
 - **Node tree** (``--node-tree`` / ``-n/-N``) — raw :class:`~guffin.roam.node_tree.NodeTree`
@@ -61,7 +62,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.cli.common import fetch_roam_trees
 from guffin.cli.logging_config import configure_logging
-from guffin.cli.params import GraphOption, PortOption, TargetArgument, TokenOption
+from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ViewMap
@@ -148,6 +149,7 @@ def _dump_render_bundle(
     api_endpoint: ApiEndpoint,
     console: Console,
     truncate: bool,
+    cache_dir: Path | None,
 ) -> None:
     """Enrich the bundle's content, then render it as a nested Rich panel of both its parts.
 
@@ -169,12 +171,16 @@ def _dump_render_bundle(
             original-size enrichment.
         console: Rich :class:`~rich.console.Console` to print to.
         truncate: When ``False``, render full (untruncated) panel strings.
+        cache_dir: Directory caching downloaded assets across runs, or ``None`` to fetch
+            every asset afresh.
     """
     if render_bundle is None:
         logger.warning("show_render_bundle=True but render_bundle is None; skipping render bundle output")
         return
     with tempfile.TemporaryDirectory() as tmp:
-        enriched_tree: Final[VertexTree] = fetch_and_enrich_assets(render_bundle.content, api_endpoint, Path(tmp))[0]
+        enriched_tree: Final[VertexTree] = fetch_and_enrich_assets(
+            render_bundle.content, api_endpoint, Path(tmp), cache_dir
+        )[0]
     view_map: Final[ViewMap] = render_bundle.view
     effective_props: Final[list[str]] = (
         [p.strip() for p in vertex_props.split(",")] if vertex_props is not None else list(DEFAULT_VERTEX_PANEL_PROPS)
@@ -207,6 +213,7 @@ def dump_trees(
     show_render_bundle: bool,
     truncate: bool,
     show_transient: bool,
+    cache_dir: Path | None = None,
 ) -> None:
     """Dispatch to the enabled display functions and print results to the console.
 
@@ -235,6 +242,8 @@ def dump_trees(
         truncate: When ``False``, render full (untruncated) string values in every view.
         show_transient: When ``True``, include the transient session/UI attribute columns in the
             raw-results table.
+        cache_dir: Directory caching downloaded assets across runs, forwarded to
+            :func:`_dump_render_bundle`; ``None`` (the default) fetches every asset afresh.
     """
     console: Final[Console] = Console()
     if show_raw_results:
@@ -242,7 +251,7 @@ def dump_trees(
     if show_node_tree:
         _dump_node_tree(fetch_result, node_props, console, truncate)
     if show_render_bundle:
-        _dump_render_bundle(render_bundle, vertex_props, api_endpoint, console, truncate)
+        _dump_render_bundle(render_bundle, vertex_props, api_endpoint, console, truncate, cache_dir)
 
 
 @app.command()
@@ -328,6 +337,7 @@ def main(
             "word-count) that are hidden by default. No effect without --raw-results.",
         ),
     ] = False,
+    cache_dir: CacheDirOption = None,
     verify_code_sources_enabled: Annotated[
         bool,
         typer.Option(
@@ -357,7 +367,9 @@ def main(
     table.  Use ``--include-refs`` / ``-i/-I`` to additionally fetch nodes referenced via
     ``:block/refs`` from the target page or its descendants.  Use ``--no-truncate`` to
     render full string values across every view instead of shortening long strings with
-    an ellipsis.
+    an ellipsis.  Rendering the render bundle fetches every displayed asset (to read each
+    image's native pixel size and each PDF's original filename); pass ``--cache-dir`` /
+    ``-c`` to keep those downloads across runs.
 
     Code blocks carrying a ``code-source::`` tag are verified against GitHub by default
     (``--no-verify-code-sources`` skips the network check); any mismatch or fetch failure
@@ -366,7 +378,7 @@ def main(
     logger.debug(
         "target=%r, local_api_port=%r, graph_name=%r, api_bearer_token=%r, node_props=%r, vertex_props=%r, "
         "show_raw_results=%r, show_render_bundle=%r, show_node_tree=%r, include_refs=%r, truncate=%r, "
-        "show_transient=%r",
+        "show_transient=%r, cache_dir=%r",
         target,
         local_api_port,
         graph_name,
@@ -379,6 +391,7 @@ def main(
         include_refs,
         truncate,
         show_transient,
+        cache_dir,
     )
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
         local_api_port=local_api_port,
@@ -421,6 +434,7 @@ def main(
         show_render_bundle=show_render_bundle,
         truncate=truncate,
         show_transient=show_transient,
+        cache_dir=cache_dir,
     )
 
 
