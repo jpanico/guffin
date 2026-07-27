@@ -392,10 +392,10 @@ class TestTypstBulletFilter:
         )
 
     def test_classified_list_becomes_a_glyph_grid(self) -> None:
-        """A semantic item's list is rebuilt as a grid: its glyph in column one, default bullet for siblings."""
+        """A semantic item's list is rebuilt as a grid: its boosted glyph in column one, default bullet for siblings."""
         typst = self._typst_for({"classed01": VertexView(semantic=Semantic.RESULT)})
         assert "#grid(" in typst
-        assert '"⇒", [' in typst
+        assert 'text(size: 1.2em, "⇒"), [' in typst
         assert '"•", [' in typst
         assert "the result block" in typst
         assert "data-guffin" not in typst

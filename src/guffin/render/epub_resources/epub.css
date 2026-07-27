@@ -279,3 +279,13 @@ p.revision {
 div.semantic-bullets > ul {
   list-style: none;
 }
+
+/*
+ * A semantic glyph reads at a glance: 20% larger than the item text, with the line box pinned
+ * so the boost cannot inflate line spacing. The default bullet span carries no `semantic`
+ * class and stays at text size, mimicking the native marker it stands in for.
+ */
+span.bullet-glyph.semantic {
+  font-size: 1.2em;
+  line-height: 1;
+}

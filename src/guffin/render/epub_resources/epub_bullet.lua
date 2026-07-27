@@ -29,9 +29,12 @@ local function glyph_and_body(item)
 end
 
 -- Lead the first inline-bearing block of `body` with a bullet-glyph Span; prepend a new Plain
--- when the body opens with a non-inline block.
-local function lead_with_glyph(body, glyph)
-  local span = pandoc.Span({ pandoc.Str(glyph) }, pandoc.Attr("", { "bullet-glyph" }))
+-- when the body opens with a non-inline block.  A semantic glyph's span carries the extra
+-- `semantic` class, which epub.css renders 20% larger than the item text; the default bullet
+-- stays at text size, mimicking the native marker it stands in for.
+local function lead_with_glyph(body, glyph, classified)
+  local classes = classified and { "bullet-glyph", "semantic" } or { "bullet-glyph" }
+  local span = pandoc.Span({ pandoc.Str(glyph) }, pandoc.Attr("", classes))
   local first = body[1]
   if first ~= nil and (first.t == "Plain" or first.t == "Para") then
     first.content:insert(1, pandoc.Space())
@@ -55,7 +58,7 @@ function BulletList(el)
   local items = pandoc.List()
   for _, item in ipairs(el.content) do
     local glyph, body = glyph_and_body(item)
-    lead_with_glyph(body, glyph or DEFAULT_GLYPH)
+    lead_with_glyph(body, glyph or DEFAULT_GLYPH, glyph ~= nil)
     items:insert(body)
   end
   return pandoc.Div({ pandoc.BulletList(items) }, pandoc.Attr("", { "semantic-bullets" }))

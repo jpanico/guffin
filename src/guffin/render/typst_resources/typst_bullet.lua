@@ -17,6 +17,10 @@ local SEMANTIC_ATTRIBUTE = "data-guffin-semantic"
 -- The plain bullet for unclassified items listed among classified ones; mirrors
 -- DEFAULT_BULLET_GLYPH in render/semantic_theme.py.
 local DEFAULT_GLYPH = "•"
+-- Semantic glyphs render 20% larger than the item text, so the marker reads at a glance; the
+-- default bullet stays at text size, mimicking the native marker it stands in for.  Mirrors
+-- the span.bullet-glyph.semantic font-size in epub_resources/epub.css.
+local SEMANTIC_GLYPH_SIZE = "1.2em"
 
 -- Serialize a list of Pandoc blocks to a Typst content string.
 local function to_typst(blocks)
@@ -54,7 +58,13 @@ function BulletList(el)
     -- The glyph rides as a quoted Typst string, immune to markup parsing (a bare `=` or `+`
     -- would otherwise read as heading or list syntax at content start).  Quoted by hand: the
     -- glyphs carry no quotes or backslashes, and Lua's %q would byte-escape their UTF-8.
-    cells:insert(string.format('"%s", [%s],', glyph or DEFAULT_GLYPH, to_typst(body)))
+    local glyph_cell
+    if glyph ~= nil then
+      glyph_cell = string.format('text(size: %s, "%s")', SEMANTIC_GLYPH_SIZE, glyph)
+    else
+      glyph_cell = string.format('"%s"', DEFAULT_GLYPH)
+    end
+    cells:insert(string.format("%s, [%s],", glyph_cell, to_typst(body)))
   end
   local grid = "#grid(\n"
       .. "  columns: (auto, 1fr),\n"

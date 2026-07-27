@@ -363,7 +363,10 @@ class TestRenderEpub:
         """
         chapter: Final[str] = _chapter_xhtml(classified_epub)
         assert 'class="semantic-bullets"' in chapter
-        assert chapter.count('class="bullet-glyph"') == 2
+        # The classified item's span carries the extra `semantic` class (the 20% size boost);
+        # the plain sibling's default-bullet span does not.
+        assert chapter.count('class="bullet-glyph semantic"') == 1
+        assert chapter.count('class="bullet-glyph"') == 1
         assert "⇒" in chapter and "•" in chapter
         assert "📨 the result block" in chapter
         assert "data-guffin" not in chapter
