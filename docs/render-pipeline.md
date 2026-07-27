@@ -17,7 +17,7 @@ then convert it (Phase 2) — bracketed by two conditional phases: model transfo
 
 ```mermaid
 flowchart LR
-    VB["RenderBundle<br/><i>VertexTree + ViewMap</i>"]
+    VB["RenderBundle<br/><i>VertexTree + ViewMap<br/>+ Provenance · Revision</i>"]
     PP["ProjectProfile<br/><i>project_type</i>"]
     RO["RenderOptions<br/><i>output_format + knobs</i>"]
 
@@ -41,12 +41,19 @@ flowchart LR
 ```
 
 - **Phase 0 — prepare** (in each `render()` entry point): transforms on the `VertexTree`, before
-  any Pandoc structure exists — `drop_attribute_assignments()` (the `suppress_attributes` option),
-  `drop_page_breaks()` (the profile's `honor_page_breaks` directive, when it declines),
+  any Pandoc structure exists. All three renderers apply the same sequence in the same order —
+  `drop_unpublished()` (always first: prunes every `publish:: false` vertex with its whole subtree,
+  embeds of pruned content vanishing with it), `drop_attribute_assignments()` (the
+  `suppress_attributes` option), `strip_element_numbers()` (unless `emit_element_numbers` — a
+  heading's `[1.2.3]` lead is authoring bookkeeping, not content, so exported output hides it by
+  default), `drop_code_sources()` (unless `emit_code_sources` — clears each code block's provenance
+  so no attribution line renders), `drop_page_breaks()` (the profile's `honor_page_breaks`
+  directive, when it declines), `promote_non_body_sections()` (parts books only), and
+  `fetch_and_enrich_assets()` (Cloud Firestore assets + `enrich_image_original_sizes()` /
+  `enrich_pdf_original_file_names()`); the two paginated renderers additionally apply
   `drop_root_preamble()` (the profile's `drop_preamble` directive, overridable via the
-  `include_preamble` option), and `fetch_and_enrich_assets()` (Cloud Firestore assets +
-  `enrich_image_original_sizes()` / `enrich_pdf_original_file_names()`).  Conditional: which
-  transforms run depends on the options and the structural policy.
+  `include_preamble` option). Conditional: which transforms run depends on the options and the
+  structural policy.
 - **Phase 1 — build** — `render/pandoc_rendering.py::vertex_tree_to_pandoc()`: walks the
   `VertexTree`, batch-parses inline Pandoc Markdown, and builds a **format-neutral** Panflute `Doc`
   (the in-memory Pandoc AST). Shared by all formats.
@@ -87,6 +94,12 @@ make them the same kind of thing:
   invariant across formats and across render operations. A book is a book whether you render it to
   PDF, to EPUB, or not at all.
 
+The bundle also carries the **origin metadata** captured upstream — a `Provenance` (the source
+commit that produced the export) and a `Revision` (the content snapshot it was produced from). The
+split follows the same logic: the *data* travels with the content on the bundle, while
+`emit_colophon` — whether a renderer stamps it, and the placement rules per format — is a
+render-operation knob on `RenderOptions`.
+
 ### Why they are not merged
 
 `output_format` (md/pdf/epub) and `project_type` (default/book/manuscript) cross-product
@@ -105,9 +118,11 @@ Keeping them separate gives the correct cardinality: **one** `ProjectProfile`, *
 
 Roam records a per-block presentation choice in the `:children/view-type` prop (bullet / document /
 numbered). Transcription carries it into the presentation half of the `RenderBundle`: the sparse
-`ViewMap` holds a `VertexView` for **every fetched node with an explicit value** — anchor-subtree
-nodes and referenced nodes alike, and an explicit `bullet` is recorded distinctly from an unset
-node. At render time the rules below turn that sparse map into each vertex's **effective**
+`ViewMap` holds a `VertexView` for **every fetched node that records one** — an explicit children
+view type, a bullet kind, or a provenance badge — anchor-subtree nodes and referenced nodes alike,
+and an explicit `bullet` is recorded distinctly from an unset node. `children_layout` is the layout
+half of that view (the classification half is the next section). At render time the rules below turn
+that sparse map into each vertex's **effective**
 `children_view_type`. They are simple, and they apply **uniformly** — to children of the tree root
 and to children transcluded through embeds; the tri-state logic is always in play:
 
@@ -127,6 +142,41 @@ The resolution is a render-layer policy (`pandoc_rendering._effective_layout`, a
 as the render recursion descends — per transclusion *site*, so the same target embedded from two
 places can inherit two different layouts), independent of the data source; the `ViewMap` stays
 sparse and authored-only so that *explicit* and *inherited* never get conflated in the model.
+
+
+## Classification: semantic bullets and source badges
+
+The other half of a `VertexView` classifies the vertex itself rather than laying out its children:
+a `Semantic` (the kind of thinking the content performs — definition, leads-to, result, question, …)
+and a `SourceChannel` (the medium it arrived through — calendar event, email, Slack, …). Both are
+declared in the source — today, the Better Bullets Roam extension's block properties — and
+translated into the model's own vocabulary at transcription, so the render layer never sees the
+extension.
+
+The glyph each member renders as is declared once, in `render/semantic_theme.py`
+(`BULLET_GLYPH_BY_SEMANTIC`, `BADGE_GLYPH_BY_SOURCE_CHANNEL`, `DEFAULT_BULLET_GLYPH`) — the
+classification counterpart of `callout_theme.py`'s colour palette, so one classification looks the
+same in every format.
+
+Phase 1 renders the two at deliberately different depths:
+
+- a **source channel** is decoration: its badge glyph simply leads the item's inline content
+  (recognized *after* a whole-line background-colour span, so a badge decorates a coloured line
+  rather than defeating its recognition);
+- a **semantic** replaces the item's *marker*, which the Pandoc AST cannot express — a `BulletList`
+  item has no marker node. So the build wraps the item's own body (children excluded, so the
+  classification decorates that one line) in a scaffold `Div` carrying `data-guffin-semantic` and
+  `data-guffin-semantic-glyph`, and each format's `*_bullet.lua` filter maps that scaffold to its
+  own ceiling in Phase 2:
+
+| Format | Mapping |
+|---|---|
+| Markdown (GFM) | the glyph is prepended to the item's line, behind the native `-` marker — Markdown's syntax ceiling, since a list marker is not addressable |
+| PDF (Typst) | the list is rewritten as a raw two-column Typst grid, glyph in the first column, set 20% larger than the item text so the marker reads at a glance |
+| EPUB | the list is wrapped in a `Div.semantic-bullets` whose native markers `epub.css` suppresses (`list-style: none` — no `::marker` and no `:has()`, neither supported by the Kindle app's renderer), each item led by a `bullet-glyph` span |
+
+In every format an unclassified item sharing a list with classified siblings gets
+`DEFAULT_BULLET_GLYPH` (`•`), so the run stays visually one uniform list.
 
 
 ## REFERENCE vs. EMBED: the transclusion line
@@ -201,7 +251,8 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
   type→structure semantics live in one place. Each directive is a statement about the *work*, not a
   guarantee about any particular output: a renderer maps directives onto the mechanisms its format
   offers, and the mapping is deliberately partial (mirroring the partial `StructuralElement →
-  EpubType` map). The two paginated formats express all five directives; the Markdown renderer
+  EpubType` map). The two paginated formats express all six live directives (`emit_abstract` is
+  declared on the policy but no renderer expresses it yet); the Markdown renderer
   expresses only `emit_title_page` — an unpaginated interchange document has no title *page*, page
   breaks, or generated ToC (its consumers — GitHub, Typora — provide their own outline
   affordances), so the directive maps to the format's bibliographic record instead: the GFM
@@ -213,11 +264,11 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
   model's normalized levels (shallowest heading = 1) are untouched, so the paginated formats and
   the semantics vocabulary are unaffected.
 
-| `ProjectType` | top-level division | title page | generated ToC | numbered | abstract | loose preamble |
-|---|---|---|---|---|---|---|
-| `default` (article) | section | no | no | no | no | kept |
-| `book` | chapter (or part) | yes | yes | yes | no | dropped |
-| `manuscript` | section | yes | no | no | yes | kept |
+| `ProjectType` | top-level division | title page | generated ToC | numbered | abstract | loose preamble | authored page breaks |
+|---|---|---|---|---|---|---|---|
+| `default` (article) | section | no | no | no | no | kept | honored |
+| `book` | chapter (or part) | yes | yes | yes | no | dropped | dropped |
+| `manuscript` | section | yes | no | no | yes | kept | honored |
 
 
 ## Where the profile is consumed
@@ -260,6 +311,18 @@ extension on the PDF side, and a post-packaging title-page stamp on the EPUB sid
 creators but not contributors. `identifier`, `language`, and
 `description` are catalog metadata only (EPUB OPF `dc:identifier` / `dc:language` /
 `dc:description`); no format renders them on the title page.
+
+The **colophon** is origin metadata rather than bibliographic metadata, and `emit_colophon` decides
+whether it renders at all. Its placement mirrors the title page in the paginated formats: where one
+is emitted, the combined provenance + revision line sits at its foot (PDF Bergfink
+`titlepage-provenance`; EPUB `epub_post_processing.stamp_titlepage_provenance`, since Pandoc's
+generated title page is built from document metadata alone and cannot otherwise carry extra
+content); where none is, the PDF runs it on a line below the page footer (`footer-provenance`) and
+the EPUB emits an end-of-document block — which is also how Markdown always carries it. An authored
+`revision::` *name* is separate and colophon-independent: it renders directly below the title block
+on a generated title page (and, in the PDF, in the running header's right slot, replacing the
+publication date), leads the reading flow as an emphasized line where there is no title page, and
+joins the Markdown front-matter block as a `revision` entry when the profile emits one.
 
 The **cover** is also root metadata — `cover-image::`, whose value is a Roam **block reference**
 `((<uid>))` to an image block (paste the cover into any block, reference that block) — never a
@@ -360,6 +423,9 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 | `top_level_division`, `number_sections` (+ `number_sections` option override), title page (profile policy) | 2 (convert) | `pdf` / `epub` renderers + Bergfink template | yes (minimal) |
 | `drop_preamble` (+ `include_preamble` option override) (profile policy) | 0 (prepare) | `pdf` / `epub` renderers → `drop_root_preamble` model prune | yes (minimal) |
 | `honor_page_breaks` (profile policy) + `page-break:: before` (**content**) | 0 (prepare) gate, 1 (build) class stamp, 2 (convert) mapping | all renderers → `drop_page_breaks` when declined; `_heading_semantics` → `typst_page_break.lua` / `epub.css` | yes (minimal) |
+| `publish:: false` (**content**) | 0 (prepare) | all renderers → `drop_unpublished` | no |
+| element numbers, code-source attributions (**options**: `emit_element_numbers` / `emit_code_sources`) | 0 (prepare) | all renderers → `strip_element_numbers` / `drop_code_sources` | no |
+| `Semantic` / `SourceChannel` classification (**content**: the `ViewMap`) | 1 (build) badge + scaffold, 2 (convert) mapping | `pandoc_rendering` → `gfm_bullet.lua` / `typst_bullet.lua` / `epub_bullet.lua` | yes (one filter each) |
 
 
 ## The `PublishingSemantics` vocabulary (model → format mapping)
