@@ -1653,6 +1653,34 @@ class TestBuildViewMap:
             )
         }
 
+    def test_declaration_order_does_not_change_the_recorded_view(self) -> None:
+        """Two nodes declaring the same pair in opposite property order record the same view.
+
+        Which key a block's property map happens to carry first reflects the order an author
+        applied the markers in the Roam UI — the source's own bookkeeping, never a statement
+        about the content — so it must not reach the recorded view.
+        """
+        root = RoamNode(uid="page00001", id=1, title="P", children=[IdObject(id=2)])
+        semantic_first = RoamNode(
+            uid="semfirst1",
+            id=2,
+            string="marked as a definition, then badged",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            props={"type": "equal", "provenance": "calendar"},
+        )
+        channel_first = RoamNode(
+            uid="chanfirst",
+            id=2,
+            string="badged, then marked as a definition",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            props={"provenance": "calendar", "type": "equal"},
+        )
+        expected = VertexView(semantic=Semantic.DEFINITION, source_channel=SourceChannel.CALENDAR_EVENT)
+        assert build_view_map(_node_tree(root, semantic_first)) == {"semfirst1": expected}
+        assert build_view_map(_node_tree(root, channel_first)) == {"chanfirst": expected}
+
     def test_article_4_fixture_records_semantics_and_source_channels(self) -> None:
         """The [[Test Article]] 4 fixture's Better Bullets sections enrich the ViewMap end to end."""
         view_map = build_view_map(article4_node_tree())
