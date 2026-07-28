@@ -347,10 +347,17 @@ _APPENDIX_ID: Final[str] = "pdf-appendix"
 _APPENDIX_TITLE: Final[str] = "Appendix"
 """Heading text of the generated appendix section."""
 
+_APPENDIX_FIRST_PAGE_HEIGHT: Final[str] = "85%"
+"""Height cap on an appendix entry's first page image, as a fraction of the text height.
+
+Leaves room for the entry's heading above it, so the pages start on the heading's own page.  The
+remaining 15% is comfortably more than a one- or two-line heading needs; a page capped this way is
+scaled to fit, so it stays legible rather than being cropped."""
+
 
 def _appendix_blocks(
     entries: dict[Path, tuple[str, list[pf.Inline]]],
-    pages_markup: Callable[[Path], str],
+    pages_markup: Callable[[Path, bool], str],
 ) -> list[pf.Block]:
     """Build the back-matter appendix: a section holding one labelled subsection per PDF.
 
@@ -362,10 +369,15 @@ def _appendix_blocks(
     Emitted at heading level 1, which makes it a sibling of a parts book's parts rather than a
     section adopted by the last one.
 
+    Each entry's first page is capped in height to leave room for its heading, so the pages start
+    on the heading's own page.  A full-width page image is taller than what a heading leaves behind,
+    so without that cap it would be pushed to the next page and strand the heading.
+
     Args:
         entries: Each PDF's subsection identifier and display label, keyed by local path, in the
             order the document first referenced them.
-        pages_markup: Builds the raw Typst placing every page of the PDF at a given path.
+        pages_markup: Builds the raw Typst placing every page of the PDF at a given path; the
+            second argument caps the first page's height to leave room for its heading.
 
     Returns:
         The appendix section's blocks, to append to the document.
@@ -375,7 +387,7 @@ def _appendix_blocks(
     ]
     for path, (identifier, label) in entries.items():
         blocks.append(pf.Header(*label, level=2, identifier=identifier, classes=["unnumbered"]))
-        blocks.append(_typst_raw_block(pages_markup(path)))
+        blocks.append(_typst_raw_block(pages_markup(path, True)))
     return blocks
 
 
@@ -425,11 +437,29 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
             page_counts[path] = len(PdfReader(str(path)).pages)
         return page_counts[path]
 
-    def _pages_markup(path: Path) -> str:
-        """Raw Typst placing every page of the PDF at *path*, one full-width image per page."""
+    def _pages_markup(path: Path, leave_room_for_heading: bool = False) -> str:
+        """Raw Typst placing every page of the PDF at *path*, one full-width image per page.
+
+        With *leave_room_for_heading*, the first page is capped at
+        :data:`_APPENDIX_FIRST_PAGE_HEIGHT` of the text height so that it fits *below* its
+        heading rather than being pushed to the next page — a full-width page image is taller
+        than what a heading leaves behind, which would strand the heading on a near-empty page.
+        ``fit: "contain"`` scales the page down inside that box, preserving its aspect ratio.
+
+        The cap is a fixed fraction rather than Typst's ``1fr`` "take the remaining space":
+        every appendix entry sits in one flow, so competing ``fr`` blocks *share* the leftover
+        space and each first page collapses to an unreadable sliver.
+        """
         pages: Final[int] = _page_count(path)
         logger.info("placed PDF %s (%d page(s))", path.name, pages)
-        return "\n".join(f"#image({_typst_str(str(path))}, page: {page}, width: 100%)" for page in range(1, pages + 1))
+        markup: Final[list[str]] = []
+        for page in range(1, pages + 1):
+            image: str = f"#image({_typst_str(str(path))}, page: {page}, width: 100%"
+            if page == 1 and leave_room_for_heading:
+                markup.append(f'{image}, height: {_APPENDIX_FIRST_PAGE_HEIGHT}, fit: "contain")')
+            else:
+                markup.append(f"{image})")
+        return "\n".join(markup)
 
     def _appendix_entry(path: Path, label: list[pf.Inline]) -> str:
         """The identifier of *path*'s appendix subsection, registering it on first reference."""

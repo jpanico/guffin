@@ -306,7 +306,14 @@ class TestAppendixPlacement:
         links: list[pf.Link] = []
         doc.walk(lambda e, d: links.append(e) if isinstance(e, pf.Link) else None)
         assert [link.url for link in links] == [f"#{headers[1].identifier}"]
-        assert any(isinstance(b, pf.RawBlock) and "#image(" in b.text for b in doc.content)
+        raw = next(b for b in doc.content if isinstance(b, pf.RawBlock))
+        assert "#image(" in raw.text
+        # The first page fits the space left under the heading, so it starts on the heading's own
+        # page rather than being pushed to the next one; later pages take a full page each.
+        first, *rest = raw.text.splitlines()
+        assert 'height: 85%' in first and 'fit: "contain"' in first
+        # Only the first page is capped; the rest take a page each at full width.
+        assert all("height:" not in line for line in rest)
 
     def test_repeated_occurrences_share_one_appendix_entry(self, tmp_path: Path) -> None:
         """Two embeds of one PDF produce a single subsection that both anchors link to."""
