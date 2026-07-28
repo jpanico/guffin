@@ -42,6 +42,7 @@ import logging
 import os
 import tempfile
 from collections.abc import Callable
+from copy import deepcopy
 from pathlib import Path
 from typing import Final
 
@@ -347,6 +348,14 @@ _APPENDIX_ID: Final[str] = "pdf-appendix"
 _APPENDIX_TITLE: Final[str] = "Appendix"
 """Heading text of the generated appendix section."""
 
+_APPENDIX_LINK_COLOR: Final[str] = 'rgb("#1A4F8A")'
+"""Typst fill for an appendix anchor, as a Typst colour expression.
+
+An internal link is otherwise indistinguishable from the text around it — its only affordance is
+the cursor, which a printed page does not have.  Colouring and underlining it gives the reader the
+conventional signal that the filename leads somewhere.
+"""
+
 _APPENDIX_FIRST_PAGE_HEIGHT: Final[str] = "85%"
 """Height cap on an appendix entry's first page image, as a fraction of the text height.
 
@@ -485,8 +494,13 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
         if placement is PdfRender.APPENDIX_NATIVE:
             # The pages move to the back; what stands here is an ordinary internal link to them,
             # which every reader supports (unlike the embedded-file actions — see docs/pdf-render.md).
+            # The anchor is styled like a hyperlink (underline-color is the shared convention
+            # typst_color_span.lua maps to #underline[#text(fill: …)]), since an unstyled internal
+            # link reads as ordinary text on the page.
             label: Final[list[pf.Inline]] = list(inline.content)
-            return [pf.Para(pf.Link(*label, url=f"#{_appendix_entry(path, label)}"))]
+            identifier: Final[str] = _appendix_entry(path, deepcopy(label))
+            anchor: Final[pf.Span] = pf.Span(*label, attributes={"underline-color": _APPENDIX_LINK_COLOR})
+            return [pf.Para(pf.Link(anchor, url=f"#{identifier}"))]
         if placement is PdfRender.EXTERNAL_LINK:
             # Link to the hosted original; the scaffold must not reach the Typst writer.
             warn_unresolvable_external_link(inline.title, str(inline.url))

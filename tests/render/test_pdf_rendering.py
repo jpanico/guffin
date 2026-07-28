@@ -311,7 +311,7 @@ class TestAppendixPlacement:
         # The first page fits the space left under the heading, so it starts on the heading's own
         # page rather than being pushed to the next one; later pages take a full page each.
         first, *rest = raw.text.splitlines()
-        assert 'height: 85%' in first and 'fit: "contain"' in first
+        assert "height: 85%" in first and 'fit: "contain"' in first
         # Only the first page is capped; the rest take a page each at full width.
         assert all("height:" not in line for line in rest)
 
