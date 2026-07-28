@@ -170,19 +170,34 @@ under `promote_non_body_sections` — and it is what makes the EPUB and Markdown
 out of the existing machinery instead of needing three separate implementations. Only the page
 images themselves stay format-specific.
 
-### Open questions
+### Decisions (2026-07-27)
+
+- **The section is purely renderer-generated** — deliberately *not* a `StructuralElement` member,
+  which would drag in follow-on vocabulary questions for no immediate gain. Consequences: the
+  generated `Header` is stamped directly with what a tagged heading would have earned through the
+  vocabulary — the `unnumbered` class and the back-matter `MATTER_DATA_ATTRIBUTE`, and an
+  `epub:type` if wanted (`EpubType.APPENDIX` is the closest existing term) — rather than deriving
+  them from an `element-type` tag. The trade accepted: an *authored* section of this kind is not
+  recognized, so nothing dedupes a generated Attachments section against a hand-written one, the way
+  `has_element_type` suppresses a duplicate generated ToC.
+- **Deduplicate by source URL.** Two occurrences of one PDF produce one subsection, with both
+  anchors linking to it; per-occurrence resolution already distinguishes the sites.
+- **The section and every subsection appear in the ToC.** This does not conflict with being
+  unnumbered: Pandoc emits an unnumbered heading as `#heading(level: n, numbering: none)[…]`, and a
+  Typst `#outline()` still lists it (verified — *Attachments* and its subsection both appear in the
+  generated Contents).
+- **In a parts book it is a sibling of the parts**, never adopted by the last one. This falls out
+  rather than needing work: `promote_non_body_sections` runs in Phase 0 over the model tree, and the
+  section does not exist until Phase 1, so it is simply emitted at heading level 1 — which *is*
+  sibling-of-parts in a parts book.
+- **Built in the shared Doc build (Phase 1)**, not in `_apply_pdf_embeds`'s post-build rewrite.
+
+### Still open
 
 - **Is it a new `PdfRender` member, or a redefinition of `LINK`?** It is a third answer to *where do
   this PDF's pages go?* — at the anchor, at the back, or nowhere — which argues for a distinct
   member (`APPENDED`? `ATTACHED`? the naming is open) and for keeping a "named only, no pages"
-  placement available. Which one an untagged embed defaults to is a separate decision.
-- **Section identity.** Should *Attachments* be a `StructuralElement` member, so it can be
-  recognized (and an authored section of that type respected, the way `has_element_type` suppresses
-  a duplicate generated ToC), or purely renderer-generated?
-- **Deduplication.** Two occurrences of one PDF should produce one subsection with both anchors
-  linking to it — keyed by source URL, since per-occurrence resolution already distinguishes the
-  sites.
-- **Book interaction.** A level-1 *Attachments* heading in a parts book must land as a sibling of
-  the parts, not be adopted by the last one — the case `promote_non_body_sections` exists for.
+  placement available. Which one an untagged embed defaults to is a separate decision. **This one
+  blocks implementation**; the rest do not.
 - **Cost.** A long attached PDF makes the export much larger and dominates the back matter; whether
   that wants a page limit, or is simply the author's call, is undecided.
