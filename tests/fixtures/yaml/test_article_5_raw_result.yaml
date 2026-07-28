@@ -79,6 +79,41 @@
       id: 4239
     refs:
     - id: 4352
+- - string: A branch URL makes the snippet __track__ that branch — refresh pulls the
+      current tip
+    id: 14506
+    uid: QunbGbJr8
+    parents:
+    - id: 14489
+    - id: 14509
+    order: 0
+    page:
+      id: 14489
+- - string: 'Settings: [[roam/js/github-code]] (the `github-token::` block)'
+    id: 14523
+    uid: 4ot3wpf8s
+    parents:
+    - id: 14489
+    - id: 14525
+    order: 2
+    page:
+      id: 14489
+    refs:
+    - id: 14482
+- - string: '**Troubleshooting**'
+    children:
+    - id: 14526
+    - id: 14527
+    - id: 14528
+    - id: 14529
+    - id: 14532
+    id: 14530
+    uid: OVMz_wY1G
+    parents:
+    - id: 14489
+    order: 11
+    page:
+      id: 14489
 - - string: '[[The Big Idea/central argument]]'
     id: 5000
     uid: BoL20uTB5
@@ -236,6 +271,17 @@
 - - id: 11823
     uid: -gG94Gziw
     title: attribute1
+- - string: Click into the code block — the syntax-colored code editor and the raw-markup
+      view both work — or anywhere in its `guffin-meta::` subtree, then Cmd+P → **Refresh
+      GitHub code**
+    id: 14501
+    uid: Sr01RPGgW
+    parents:
+    - id: 14489
+    - id: 14505
+    order: 0
+    page:
+      id: 14489
 - - heading: 3
     string: '[[List of Illustrations]]'
     id: 4328
@@ -260,6 +306,19 @@
     order: 4
     page:
       id: 4239
+- - string: '**Freshness & rate limits**'
+    children:
+    - id: 14510
+    - id: 14511
+    - id: 14512
+    - id: 14513
+    id: 14514
+    uid: Z10VRgbp5
+    parents:
+    - id: 14489
+    order: 7
+    page:
+      id: 14489
 - - string: '`↤`'
     id: 5687
     uid: oVtdQG8i6
@@ -297,6 +356,16 @@
     order: 0
     page:
       id: 5618
+- - string: The ref segment (after `/blob/`) may be a branch (`main`), a tag, a commit
+      SHA, or the qualified `refs/heads/<branch>` / `refs/tags/<tag>` form
+    id: 14497
+    uid: QylYGU7y1
+    parents:
+    - id: 14489
+    - id: 14500
+    order: 2
+    page:
+      id: 14489
 - - children:
     - id: 5454
     - id: 5460
@@ -314,6 +383,24 @@
     id: 5453
     uid: d87aKN4hh
     title: callouts demo
+- - string: '[[GitHub Code]]'
+    id: 14817
+    uid: eBdHYD6CH
+    parents:
+    - id: 11243
+    order: 0
+    page:
+      id: 11243
+    refs:
+    - id: 14489
+- - string: '"Refresh GitHub code" command-palette entry'
+    id: 14491
+    uid: BNTkHRohL
+    parents:
+    - id: 14489
+    order: 1
+    page:
+      id: 14489
 - - heading: 3
     string: '[[Introduction]]'
     children:
@@ -327,11 +414,11 @@
     - id: 5010
     id: 4369
     uid: MJhqcwHUy
+    children-view-type: numbered
     parents:
     - id: 4239
     - id: 4304
     order: 8
-    view-type: numbered
     page:
       id: 4239
     refs:
@@ -402,6 +489,16 @@
       id: 11494
     refs:
     - id: 11845
+- - string: settings on [[roam/js/github-code]]
+    id: 14492
+    uid: 3-yJMj89V
+    parents:
+    - id: 14489
+    order: 2
+    page:
+      id: 14489
+    refs:
+    - id: 14482
 - - string: 'tags:: #Guffin'
     id: 11848
     uid: ZQ8KWa3iR
@@ -426,6 +523,17 @@
       id: 4239
     refs:
     - id: 4340
+- - string: 'Commands missing from the `jj` menu or the palette: check that SmartBlocks
+      is installed and the graph was reloaded since the last code edit; errors from
+      the script surface in the developer console (Cmd+Option+I)'
+    id: 14529
+    uid: _soXJFAIP
+    parents:
+    - id: 14489
+    - id: 14530
+    order: 3
+    page:
+      id: 14489
 - - string: '`=`'
     children:
     - id: 5654
@@ -487,6 +595,16 @@
     order: 0
     page:
       id: 4239
+- - string: The URL must not contain a comma (SmartBlocks splits command arguments
+      on commas)
+    id: 14498
+    uid: rg-UoeoFd
+    parents:
+    - id: 14489
+    - id: 14500
+    order: 3
+    page:
+      id: 14489
 - - string: '**Glossary:** Definitions for specialized terminology.'
     id: 4297
     uid: _IQQcdpX9
@@ -520,6 +638,7 @@
     - id: 4292
     id: 4288
     uid: Q-TJj5YOe
+    children-view-type: numbered
     parents:
     - id: 4239
     - id: 4271
@@ -527,9 +646,19 @@
     - id: 4287
     - id: 4315
     order: 0
-    view-type: numbered
     page:
       id: 4239
+- - string: Language detection covers common extensions; anything else falls back
+      to `plain text` — add guffin's `code-language::` tag for languages Roam's fence
+      dropdown lacks (e.g. FORTRAN)
+    id: 14516
+    uid: aW1qHDv_S
+    parents:
+    - id: 14489
+    - id: 14517
+    order: 1
+    page:
+      id: 14489
 - - string: '`->`'
     children:
     - id: 5657
@@ -556,6 +685,16 @@
     refs:
     - id: 5450
     - id: 5468
+- - string: If the API call fails (offline, rate-limited), it falls back to the branch
+      raw URL, which GitHub's caches can serve up to ~10 minutes stale
+    id: 14511
+    uid: H0bLepLkj
+    parents:
+    - id: 14489
+    - id: 14514
+    order: 1
+    page:
+      id: 14489
 - - attrs:
     - - source:
         - uid
@@ -753,6 +892,47 @@
       id: 4239
     refs:
     - id: 5293
+- - attrs:
+    - - source:
+        - uid
+        - dgdc4Amij
+        value:
+        - uid
+        - dgdc4Amij
+      - source:
+        - uid
+        - kAcv5lnuF
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - kAcv5lnuF
+        value:
+        - uid
+        - HGasV4ras
+    children:
+    - id: 14490
+    - id: 14491
+    - id: 14492
+    - id: 14494
+    - id: 14500
+    - id: 14505
+    - id: 14509
+    - id: 14514
+    - id: 14517
+    - id: 14520
+    - id: 14525
+    - id: 14530
+    - id: 14816
+    id: 14489
+    lookup:
+    - id: 261
+    - id: 11243
+    - id: 14489
+    - id: 14816
+    uid: dgdc4Amij
+    title: GitHub Code
 - - id: 5450
     uid: OexZiLR_O
     title: '>'
@@ -822,6 +1002,19 @@
     order: 13
     page:
       id: 5618
+- - string: '**Where the pieces live**'
+    children:
+    - id: 14521
+    - id: 14522
+    - id: 14523
+    - id: 14524
+    id: 14525
+    uid: Rthwt99qQ
+    parents:
+    - id: 14489
+    order: 10
+    page:
+      id: 14489
 - - string: '**Table of Contents (TOC):** The roadmap. In modern non-fiction, chapter
       titles are often descriptive to help readers "skim-value" the book.'
     id: 4277
@@ -835,6 +1028,17 @@
     order: 1
     page:
       id: 4239
+- - string: '**Limitations**'
+    children:
+    - id: 14515
+    - id: 14516
+    id: 14517
+    uid: H392AakIj
+    parents:
+    - id: 14489
+    order: 8
+    page:
+      id: 14489
 - - heading: 3
     string: '[[Part I: The Problem]]'
     children:
@@ -867,6 +1071,16 @@
       id: 4239
     refs:
     - id: 5003
+- - string: A SHA or tag URL makes it a __fixed citation__ — refresh re-fetches the
+      same content (a full-SHA ref costs no API call at all)
+    id: 14507
+    uid: d_xqp_XU1
+    parents:
+    - id: 14489
+    - id: 14509
+    order: 1
+    page:
+      id: 14489
 - - heading: 3
     string: '[[Index]]'
     id: 4327
@@ -892,6 +1106,17 @@
     refs:
     - id: 5450
     - id: 5456
+- - string: A refresh that "does nothing" on a branch-tracked snippet usually means
+      the branch genuinely hasn't changed — the `code-source::` tag's recorded SHA
+      tells you exactly which commit the content matches
+    id: 14528
+    uid: -PDgYmaJ9
+    parents:
+    - id: 14489
+    - id: 14530
+    order: 2
+    page:
+      id: 14489
 - - string: '`∴`'
     id: 5681
     uid: KuIjT9oGp
@@ -922,6 +1147,20 @@
       id: 4239
     refs:
     - id: 4344
+- - string: 'Exports **verify** every sourced block against GitHub by default (`--verify-code-sources`):
+      the ref resolves to its tip, the SHA-pinned content is fetched and compared,
+      and any drift or local modification aborts the export with a diagnosis (the
+      recorded SHA disambiguates which). `dump-roam-tree` runs the same check advisorily
+      (warnings only). `GUFFIN_GITHUB_TOKEN` raises the API rate limit; `--no-verify-code-sources`
+      is the offline path'
+    id: 14556
+    uid: Nvkdd5rg3
+    parents:
+    - id: 14489
+    - id: 14520
+    order: 2
+    page:
+      id: 14489
 - - heading: 3
     string: '[[Cover]]'
     id: 4307
@@ -948,6 +1187,16 @@
     order: 2
     page:
       id: 4239
+- - string: Requires the SmartBlocks extension (Roam Depot) and the one-time `roam/js`
+      approval; **reload the graph after any code edit** — scripts run at load
+    id: 14524
+    uid: pSvabPgNV
+    parents:
+    - id: 14489
+    - id: 14525
+    order: 3
+    page:
+      id: 14489
 - - string: '`@`'
     children:
     - id: 5693
@@ -1012,6 +1261,36 @@
       id: 4239
     refs:
     - id: 4670
+- - string: '**What it is** — snapshots source code from GitHub into an ordinary Roam
+      fenced code block, with provenance recorded as guffin''s `code-source::` tag
+      (blob URL, resolved commit SHA, fetch date) under a `guffin-meta::` child. Built
+      on [[SmartBlocks]] plus a custom `roam/js` script. The snippet is real block
+      content: searchable, readable offline, and exported by guffin as a first-class
+      sourced code block.'
+    id: 14494
+    uid: 6hmXo4GYL
+    parents:
+    - id: 14489
+    order: 3
+    page:
+      id: 14489
+    refs:
+    - id: 14470
+- - string: '`x-ratelimit-limit` shows 60 despite a token in [[roam/js/github-code]]
+      — reload the graph: `roam/js` edits are inert until reload, and a stale script
+      fails silently (API requests simply go unauthenticated). Verify via dev-tools
+      Network tab, filter `api.github`, run a refresh (past the 60-second memo window),
+      and check the response headers'
+    id: 14532
+    uid: EnB1Dcl4J
+    parents:
+    - id: 14489
+    - id: 14530
+    order: 4
+    page:
+      id: 14489
+    refs:
+    - id: 14482
 - - string: '`→`'
     id: 5657
     uid: 4YZgl5cYa
@@ -1024,6 +1303,15 @@
     order: 0
     page:
       id: 5618
+- - string: The snippet exports as an ordinary code block in every format (a `CodeBlockVertex`)
+    id: 14518
+    uid: npC_Fbazq
+    parents:
+    - id: 14489
+    - id: 14520
+    order: 0
+    page:
+      id: 14489
 - - heading: 3
     string: '[[Bibliography]]'
     id: 4533
@@ -1068,6 +1356,14 @@
 - - id: 5458
     uid: lS4kg-3mw
     title: '!EXAMPLE'
+- - string: GITHUBCODE / GITHUBCODESOURCE SmartBlocks commands
+    id: 14490
+    uid: ksU03cWVz
+    parents:
+    - id: 14489
+    order: 0
+    page:
+      id: 14489
 - - id: 5470
     uid: Y2mxk0bpD
     title: '!WARNING'
@@ -1098,6 +1394,17 @@
     order: 0
     page:
       id: 5618
+- - string: 'Updates the code block **in place**: the block UID is unchanged, so block
+      refs and embeds elsewhere keep working; the `code-source::` tag re-stamps its
+      resolved commit SHA and fetch date'
+    id: 14502
+    uid: viwXm5MQj
+    parents:
+    - id: 14489
+    - id: 14505
+    order: 1
+    page:
+      id: 14489
 - - heading: 2
     string: '[[Body matter]]'
     children:
@@ -1129,6 +1436,18 @@
 - - id: 5466
     uid: jH8aemWDv
     title: '!SUCCESS'
+- - string: 'The `code-source::` tag is a guffin-domain attribute: it never renders
+      as a pill in exported output, and the attribution line (SHA-pinned GitHub link
+      + fetch date below the listing) renders only with `--code-sources` (default
+      off)'
+    id: 14519
+    uid: -jw3OTbfC
+    parents:
+    - id: 14489
+    - id: 14520
+    order: 1
+    page:
+      id: 14489
 - - string: __~~[[Conventions and prerequisites]]~~__
     id: 5010
     uid: FH7SciYQf
@@ -1169,6 +1488,17 @@
     order: 1
     page:
       id: 4239
+- - string: 'tags:: #Guffin'
+    id: 14816
+    uid: kAcv5lnuF
+    parents:
+    - id: 14489
+    order: 12
+    page:
+      id: 14489
+    refs:
+    - id: 261
+    - id: 11243
 - - string: The body is generally organized into **Parts** and **Chapters**.
     id: 4281
     uid: 4F2gL3unj
@@ -1221,6 +1551,18 @@
     order: 0
     page:
       id: 5618
+- - string: 'Unauthenticated API limit: 60 requests/hour per IP. Resolutions are memoized
+      for 60 seconds per repo+ref (the insert workflow''s two commands share one call,
+      and refreshing many snippets that track one branch costs a single call), and
+      full-SHA-pinned snippets never touch the API'
+    id: 14512
+    uid: CSQkzdtL5
+    parents:
+    - id: 14489
+    - id: 14514
+    order: 2
+    page:
+      id: 14489
 - - string: '`⤷`'
     id: 5672
     uid: 2B28nP0fN
@@ -1248,6 +1590,29 @@
 - - id: 5468
     uid: xZC0Q6cvU
     title: '!QUESTION'
+- - string: Any text before or after the fence in the same block is preserved — only
+      the fenced span is replaced
+    id: 14504
+    uid: Q-kJiQ1Y3
+    parents:
+    - id: 14489
+    - id: 14505
+    order: 3
+    page:
+      id: 14489
+- - string: 'Result: a fenced code block (language mapped from the file extension,
+      falling back to `plain text`) with a `guffin-meta::` child whose `code-source::`
+      grandchild records the blob URL, the full commit SHA actually fetched, and the
+      fetch date — the exact provenance triple guffin''s exporter folds onto the code
+      block'
+    id: 14499
+    uid: gt6TUsSaq
+    parents:
+    - id: 14489
+    - id: 14500
+    order: 4
+    page:
+      id: 14489
 - - string: '`...`'
     children:
     - id: 5696
@@ -1336,6 +1701,20 @@
     order: 3
     page:
       id: 4239
+- - string: '**Insert a snippet**'
+    children:
+    - id: 14495
+    - id: 14496
+    - id: 14497
+    - id: 14498
+    - id: 14499
+    id: 14500
+    uid: yMvndnURt
+    parents:
+    - id: 14489
+    order: 4
+    page:
+      id: 14489
 - - string: 'authors:: Joe Panico, Emi Panico'
     id: 11834
     uid: hF-KdTW65
@@ -1347,6 +1726,20 @@
       id: 11494
     refs:
     - id: 11842
+- - string: 'An optional GitHub token raises the limit to 5,000/hour per token: paste
+      it into the `github-token::` block on [[roam/js/github-code]]. Use a fine-grained
+      PAT with Repository access = Public repositories (read-only) and **no** permissions
+      granted — it can read nothing anonymous access can''t'
+    id: 14513
+    uid: LNif6Rj-8
+    parents:
+    - id: 14489
+    - id: 14514
+    order: 3
+    page:
+      id: 14489
+    refs:
+    - id: 14482
 - - string: '**The Summary/Action Steps:** A recap of what was learned and, if applicable,
       how to use it.'
     id: 4292
@@ -1361,6 +1754,27 @@
     order: 3
     page:
       id: 4239
+- - string: 'Fail-safe: any problem (missing URL, network error, rate limit) shows
+      an alert and leaves the blocks untouched'
+    id: 14503
+    uid: vDPWDjh77
+    parents:
+    - id: 14489
+    - id: 14505
+    order: 2
+    page:
+      id: 14489
+- - string: '"fetch failed, block left unchanged — GITHUBCODE error: HTTP 404…" —
+      the file moved or the ref vanished; fix the URL (the `code-source::` tag''s
+      first value) and refresh again'
+    id: 14527
+    uid: RhnUBR0eg
+    parents:
+    - id: 14489
+    - id: 14530
+    order: 1
+    page:
+      id: 14489
 - - string: '`⇒`'
     id: 5660
     uid: tjv91T19w
@@ -1428,7 +1842,9 @@
     order: 0
     page:
       id: 5618
-- - id: 11243
+- - children:
+    - id: 14817
+    id: 11243
     uid: HGasV4ras
     title: Guffin
 - - heading: 3
@@ -1459,6 +1875,17 @@
     refs:
     - id: 261
     - id: 4239
+- - string: 'Line ranges are positional, not content-anchored: if the file gains or
+      loses lines above the range, `#L14-L60` denotes different code after a refresh.
+      Rule of thumb: range-limited snippets deserve SHA-pinned URLs'
+    id: 14508
+    uid: QzIYouAiQ
+    parents:
+    - id: 14489
+    - id: 14509
+    order: 2
+    page:
+      id: 14489
 - - string: '[[What the reader should have learned by the end]]'
     id: 4675
     uid: kCKT-pjot
@@ -1501,6 +1928,18 @@
       id: 5618
     refs:
     - id: 2216
+- - string: '**Choosing the ref: pin vs track**'
+    children:
+    - id: 14506
+    - id: 14507
+    - id: 14508
+    id: 14509
+    uid: MHzYOJPca
+    parents:
+    - id: 14489
+    order: 6
+    page:
+      id: 14489
 - - heading: 3
     string: '[[Who is this Book for?]]'
     children:
@@ -1682,6 +2121,18 @@
     order: 0
     page:
       id: 5618
+- - string: '**Export behavior (guffin)**'
+    children:
+    - id: 14518
+    - id: 14519
+    - id: 14556
+    id: 14520
+    uid: xjupjZz3i
+    parents:
+    - id: 14489
+    order: 9
+    page:
+      id: 14489
 - - string: Conclusion / synthesis
     children:
     - id: 5680
@@ -1694,6 +2145,17 @@
     order: 10
     page:
       id: 5618
+- - string: A fetch first resolves the ref to its tip commit SHA via api.github.com,
+      then fetches the immutable SHA-pinned raw URL — current to the second, even
+      immediately after a push
+    id: 14510
+    uid: ff0P08EI3
+    parents:
+    - id: 14489
+    - id: 14514
+    order: 0
+    page:
+      id: 14489
 - - string: Meaning
     children:
     - id: 5650
@@ -1806,6 +2268,18 @@
     refs:
     - id: 5450
     - id: 5462
+- - string: 'Type `jj` in any block and pick **GitHub Code** — select with arrow keys
+      + Enter (mouse selection can leave the `jj` trigger text behind in the block)
+      — or bind a hotkey in the SmartBlocks settings, or place a button: `{{Insert
+      GitHub code:SmartBlock:GitHub Code}}`'
+    id: 14495
+    uid: Lf1juv06N
+    parents:
+    - id: 14489
+    - id: 14500
+    order: 0
+    page:
+      id: 14489
 - - heading: 3
     string: 'Pro-Tip: The "Table of Contents" Test'
     children:
@@ -1986,6 +2460,30 @@
       id: 4239
     refs:
     - id: 4351
+- - string: 'Paste a `github.com` blob URL (the file page''s address in the browser)
+      at the prompt, optionally ending with a line range: `#L14-L60` (a single line:
+      `#L12`)'
+    id: 14496
+    uid: CH8aA6LWA
+    parents:
+    - id: 14489
+    - id: 14500
+    order: 1
+    page:
+      id: 14489
+- - string: 'Code: the **GitHub Code** branch on [[roam/js]] — the `GITHUBCODE` command
+      (fetch + fence), the `GITHUBCODESOURCE` command (the guffin `code-source::`
+      provenance line), and the palette refresh command'
+    id: 14521
+    uid: j0a09ELZa
+    parents:
+    - id: 14489
+    - id: 14525
+    order: 0
+    page:
+      id: 14489
+    refs:
+    - id: 459
 - - string: '`⎇`'
     id: 5690
     uid: keiYVs1oE
@@ -2042,6 +2540,16 @@
     refs:
     - id: 5450
     - id: 5462
+- - string: '"place the cursor in the code block…" — click into the snippet (or its
+      `guffin-meta::` subtree) before invoking the palette command'
+    id: 14526
+    uid: XlqgO134E
+    parents:
+    - id: 14489
+    - id: 14530
+    order: 0
+    page:
+      id: 14489
 - - string: Result
     children:
     - id: 5659
@@ -2343,6 +2851,19 @@
       id: 4239
     refs:
     - id: 4339
+- - string: '**Refresh a snippet**'
+    children:
+    - id: 14501
+    - id: 14502
+    - id: 14503
+    - id: 14504
+    id: 14505
+    uid: ZCzIGXCAX
+    parents:
+    - id: 14489
+    order: 5
+    page:
+      id: 14489
 - - string: 'A typical non-fiction book is built like a well-engineered building:
       it needs a solid foundation (the intro), a logical framework (the chapters),
       and a clear exit strategy (the conclusion). While the specific content varies
@@ -2357,6 +2878,17 @@
     order: 0
     page:
       id: 4239
+- - string: 'Workflow template: the `#SmartBlock GitHub Code` block on [[SmartBlocks]]'
+    id: 14522
+    uid: 1Kz2KznR-
+    parents:
+    - id: 14489
+    - id: 14525
+    order: 1
+    page:
+      id: 14489
+    refs:
+    - id: 14470
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
@@ -2427,3 +2959,13 @@
       id: 4239
     refs:
     - id: 4345
+- - string: Public repositories only; the token is used solely for the API rate limit
+      and is deliberately never sent to raw.githubusercontent.com
+    id: 14515
+    uid: TXzr4wG8U
+    parents:
+    - id: 14489
+    - id: 14517
+    order: 0
+    page:
+      id: 14489

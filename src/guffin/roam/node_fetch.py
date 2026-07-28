@@ -63,7 +63,7 @@ class FetchRoamNodes:
     class Request:
         """Namespace for the ``data.q`` request.
 
-        All queries in this namespace use ``(pull ?node [*])`` in their ``:find`` clause.
+        All queries in this namespace pull with :data:`PULL_PATTERN` in their ``:find`` clause.
         The ``pull [*]`` wildcard fetches every DataScript attribute present on each matched
         entity, including ``:block/props`` — the block property key-value map populated by
         Roam extensions such as Augmented Headings (e.g. ``ah-level: h4``).  Block
@@ -126,8 +126,23 @@ class FetchRoamNodes:
         rule sets must be shipped together in a single vector.
         """
 
-        _BY_PAGE_TITLE_QUERY_BASE: Final[str] = textwrap.dedent("""\
-            [:find (pull ?node [*])
+        PULL_PATTERN: Final[str] = (
+            '[* [:block/view-type :as "block-view-type"] [:children/view-type :as "children-view-type"]]'
+        )
+        """The pull pattern every query in this namespace uses.
+
+        The wildcard alone is lossy here.  The Local API strips namespaces from pull-block keys,
+        so ``:block/view-type`` (a per-block display default, written by the Alpha API) and
+        ``:children/view-type`` (the authored children layout) both serialize to one ``view-type``
+        key and the later one silently overwrites the earlier — with the winner depending on the
+        pull pattern's shape, so a block carrying both could lose its authored ``document`` or
+        ``numbered`` layout.  Aliasing both attributes gives each its own key and removes the
+        ambiguous one entirely; :attr:`~guffin.roam.node.RoamNode.children_view_type` reads the
+        unambiguous ``children-view-type``.
+        """
+
+        _BY_PAGE_TITLE_QUERY_BASE: Final[str] = textwrap.dedent(f"""\
+            [:find (pull ?node {PULL_PATTERN})
              :in $ ?title %
              :where
              [?anchor :node/title ?title]
@@ -224,8 +239,8 @@ class FetchRoamNodes:
            arrives with its cells and can be transcribed.  Fan-out stays bounded at two ref hops.
         """
 
-        _BY_NODE_UID_QUERY_BASE: Final[str] = textwrap.dedent("""\
-            [:find (pull ?node [*])
+        _BY_NODE_UID_QUERY_BASE: Final[str] = textwrap.dedent(f"""\
+            [:find (pull ?node {PULL_PATTERN})
              :in $ ?uid %
              :where
              [?anchor :block/uid ?uid]

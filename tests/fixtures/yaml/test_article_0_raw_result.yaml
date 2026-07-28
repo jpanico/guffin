@@ -622,6 +622,7 @@
     - id: 14562
     - id: 14563
     uid: 6AFKj93ma
+    children-view-type: bullet
     parents:
     - id: 11137
     - id: 11149
@@ -629,7 +630,6 @@
     - id: 14558
     - id: 14559
     order: 0
-    view-type: outline
     page:
       id: 11137
     refs:
@@ -656,6 +656,7 @@
     text-align: left
     id: 14563
     uid: fAKwzdSzg
+    children-view-type: bullet
     parents:
     - id: 11137
     - id: 11149
@@ -664,7 +665,6 @@
     - id: 14559
     - id: 14562
     order: 0
-    view-type: outline
     page:
       id: 11137
     refs:
@@ -747,13 +747,13 @@
     - id: 14559
     - id: 14562
     uid: H_9tvN3-X
+    children-view-type: bullet
     parents:
     - id: 11137
     - id: 11149
     - id: 14462
     - id: 14558
     order: 0
-    view-type: outline
     page:
       id: 11137
 - - string: ''

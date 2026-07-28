@@ -198,7 +198,7 @@ class RoamNode(BaseModel):
     )
     children_view_type: ChildrenViewType | None = Field(
         default=None,
-        alias="view-type",
+        alias="children-view-type",
         description=f"{SchemaAttribute.CHILDREN_VIEW_TYPE} — how this block's children are rendered",
     )
     parents: list[IdObject] | None = Field(
@@ -232,11 +232,10 @@ class RoamNode(BaseModel):
     @field_validator("children_view_type", mode="before")
     @classmethod
     def _tolerate_unknown_view_type(cls, val: object) -> object:
-        # The Local API strips attribute namespaces, so :children/view-type and the newer
-        # :block/view-type (a per-block display default, observed as "outline" on any block
-        # the Alpha API has updated) flatten onto the same "view-type" key.  A value outside
-        # the children vocabulary is that display bookkeeping, not a children layout: treat
-        # it as unset rather than failing the whole fetch.
+        # The fetch pulls :children/view-type under its own alias, so this key can no longer
+        # carry :block/view-type's display bookkeeping (see FetchRoamNodes.Request.PULL_PATTERN).
+        # A value outside the vocabulary is therefore genuinely unrecognized — a children layout
+        # Roam has added since: report it, but treat it as unset rather than failing the fetch.
         if val is None or val in {member.value for member in ChildrenViewType}:
             return val
         logger.warning("ignoring unrecognized view-type %r (not a children view type)", val)

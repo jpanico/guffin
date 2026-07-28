@@ -132,6 +132,63 @@ d-PCN8cvy:
   props: null
   title: null
   attrs: null
+QunbGbJr8:
+  uid: QunbGbJr8
+  id: 14506
+  string: A branch URL makes the snippet __track__ that branch — refresh pulls the
+    current tip
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14509
+  props: null
+  title: null
+  attrs: null
+4ot3wpf8s:
+  uid: 4ot3wpf8s
+  id: 14523
+  string: 'Settings: [[roam/js/github-code]] (the `github-token::` block)'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 14482
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14525
+  props: null
+  title: null
+  attrs: null
+OVMz_wY1G:
+  uid: OVMz_wY1G
+  id: 14530
+  string: '**Troubleshooting**'
+  order: 11
+  heading: null
+  children:
+  - id: 14526
+  - id: 14527
+  - id: 14528
+  - id: 14529
+  - id: 14532
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
 BoL20uTB5:
   uid: BoL20uTB5
   id: 5000
@@ -396,6 +453,25 @@ RsoghGBlZ:
   props: null
   title: attribute1
   attrs: null
+Sr01RPGgW:
+  uid: Sr01RPGgW
+  id: 14501
+  string: Click into the code block — the syntax-colored code editor and the raw-markup
+    view both work — or anywhere in its `guffin-meta::` subtree, then Cmd+P → **Refresh
+    GitHub code**
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14505
+  props: null
+  title: null
+  attrs: null
 9HnvEUcUr:
   uid: 9HnvEUcUr
   id: 4328
@@ -431,6 +507,26 @@ HXwm9o8pt:
   - id: 4293
   - id: 4294
   - id: 4315
+  props: null
+  title: null
+  attrs: null
+Z10VRgbp5:
+  uid: Z10VRgbp5
+  id: 14514
+  string: '**Freshness & rate limits**'
+  order: 7
+  heading: null
+  children:
+  - id: 14510
+  - id: 14511
+  - id: 14512
+  - id: 14513
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
   props: null
   title: null
   attrs: null
@@ -494,6 +590,24 @@ uE5Cc1dLS:
   props: null
   title: null
   attrs: null
+QylYGU7y1:
+  uid: QylYGU7y1
+  id: 14497
+  string: The ref segment (after `/blob/`) may be a branch (`main`), a tag, a commit
+    SHA, or the qualified `refs/heads/<branch>` / `refs/tags/<tag>` form
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14500
+  props: null
+  title: null
+  attrs: null
 d87aKN4hh:
   uid: d87aKN4hh
   id: 5453
@@ -520,6 +634,39 @@ d87aKN4hh:
   parents: null
   props: null
   title: callouts demo
+  attrs: null
+eBdHYD6CH:
+  uid: eBdHYD6CH
+  id: 14817
+  string: '[[GitHub Code]]'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 14489
+  page:
+    id: 11243
+  children_view_type: null
+  parents:
+  - id: 11243
+  props: null
+  title: null
+  attrs: null
+BNTkHRohL:
+  uid: BNTkHRohL
+  id: 14491
+  string: '"Refresh GitHub code" command-palette entry'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
   attrs: null
 MJhqcwHUy:
   uid: MJhqcwHUy
@@ -670,6 +817,23 @@ ZyUTn2I17:
   props: null
   title: null
   attrs: null
+3-yJMj89V:
+  uid: 3-yJMj89V
+  id: 14492
+  string: settings on [[roam/js/github-code]]
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 14482
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
 ZQ8KWa3iR:
   uid: ZQ8KWa3iR
   id: 11848
@@ -704,6 +868,25 @@ BT8bzBAIn:
   parents:
   - id: 4239
   - id: 4304
+  props: null
+  title: null
+  attrs: null
+_soXJFAIP:
+  uid: _soXJFAIP
+  id: 14529
+  string: 'Commands missing from the `jj` menu or the palette: check that SmartBlocks
+    is installed and the graph was reloaded since the last code edit; errors from
+    the script surface in the developer console (Cmd+Option+I)'
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14530
   props: null
   title: null
   attrs: null
@@ -819,6 +1002,24 @@ bB3b629o0:
   props: null
   title: null
   attrs: null
+rg-UoeoFd:
+  uid: rg-UoeoFd
+  id: 14498
+  string: The URL must not contain a comma (SmartBlocks splits command arguments on
+    commas)
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14500
+  props: null
+  title: null
+  attrs: null
 _IQQcdpX9:
   uid: _IQQcdpX9
   id: 4297
@@ -883,6 +1084,25 @@ Q-TJj5YOe:
   props: null
   title: null
   attrs: null
+aW1qHDv_S:
+  uid: aW1qHDv_S
+  id: 14516
+  string: Language detection covers common extensions; anything else falls back to
+    `plain text` — add guffin's `code-language::` tag for languages Roam's fence dropdown
+    lacks (e.g. FORTRAN)
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14517
+  props: null
+  title: null
+  attrs: null
 WAgi7UK_T:
   uid: WAgi7UK_T
   id: 5656
@@ -920,6 +1140,24 @@ PZVQH4ZQe:
   children_view_type: null
   parents:
   - id: 5453
+  props: null
+  title: null
+  attrs: null
+H0bLepLkj:
+  uid: H0bLepLkj
+  id: 14511
+  string: If the API call fails (offline, rate-limited), it falls back to the branch
+    raw URL, which GitHub's caches can serve up to ~10 minutes stale
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14514
   props: null
   title: null
   attrs: null
@@ -1184,6 +1422,51 @@ fcK_RYG_j:
   props: null
   title: null
   attrs: null
+dgdc4Amij:
+  uid: dgdc4Amij
+  id: 14489
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 14490
+  - id: 14491
+  - id: 14492
+  - id: 14494
+  - id: 14500
+  - id: 14505
+  - id: 14509
+  - id: 14514
+  - id: 14517
+  - id: 14520
+  - id: 14525
+  - id: 14530
+  - id: 14816
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: GitHub Code
+  attrs:
+  - - source:
+      - uid
+      - dgdc4Amij
+      value:
+      - uid
+      - dgdc4Amij
+    - source:
+      - uid
+      - kAcv5lnuF
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - kAcv5lnuF
+      value:
+      - uid
+      - HGasV4ras
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -1300,6 +1583,26 @@ RFzweTcL1:
   props: null
   title: null
   attrs: null
+Rthwt99qQ:
+  uid: Rthwt99qQ
+  id: 14525
+  string: '**Where the pieces live**'
+  order: 10
+  heading: null
+  children:
+  - id: 14521
+  - id: 14522
+  - id: 14523
+  - id: 14524
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
 mM0wEvHWC:
   uid: mM0wEvHWC
   id: 4277
@@ -1318,6 +1621,24 @@ mM0wEvHWC:
   - id: 4274
   - id: 4275
   - id: 4315
+  props: null
+  title: null
+  attrs: null
+H392AakIj:
+  uid: H392AakIj
+  id: 14517
+  string: '**Limitations**'
+  order: 8
+  heading: null
+  children:
+  - id: 14515
+  - id: 14516
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
   props: null
   title: null
   attrs: null
@@ -1364,6 +1685,24 @@ VSy0JS3Up:
     ah-level: h4
   title: null
   attrs: null
+d_xqp_XU1:
+  uid: d_xqp_XU1
+  id: 14507
+  string: A SHA or tag URL makes it a __fixed citation__ — refresh re-fetches the
+    same content (a full-SHA ref costs no API call at all)
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14509
+  props: null
+  title: null
+  attrs: null
 j6wMz5rw7:
   uid: j6wMz5rw7
   id: 4327
@@ -1399,6 +1738,25 @@ jJF8rfQXO:
   children_view_type: null
   parents:
   - id: 5453
+  props: null
+  title: null
+  attrs: null
+-PDgYmaJ9:
+  uid: -PDgYmaJ9
+  id: 14528
+  string: A refresh that "does nothing" on a branch-tracked snippet usually means
+    the branch genuinely hasn't changed — the `code-source::` tag's recorded SHA tells
+    you exactly which commit the content matches
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14530
   props: null
   title: null
   attrs: null
@@ -1445,6 +1803,28 @@ fbt9zLY1Q:
   props: null
   title: null
   attrs: null
+Nvkdd5rg3:
+  uid: Nvkdd5rg3
+  id: 14556
+  string: 'Exports **verify** every sourced block against GitHub by default (`--verify-code-sources`):
+    the ref resolves to its tip, the SHA-pinned content is fetched and compared, and
+    any drift or local modification aborts the export with a diagnosis (the recorded
+    SHA disambiguates which). `dump-roam-tree` runs the same check advisorily (warnings
+    only). `GUFFIN_GITHUB_TOKEN` raises the API rate limit; `--no-verify-code-sources`
+    is the offline path'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14520
+  props: null
+  title: null
+  attrs: null
 2ybbTRNbc:
   uid: 2ybbTRNbc
   id: 4307
@@ -1482,6 +1862,24 @@ fbt9zLY1Q:
   - id: 4282
   - id: 4283
   - id: 4315
+  props: null
+  title: null
+  attrs: null
+pSvabPgNV:
+  uid: pSvabPgNV
+  id: 14524
+  string: Requires the SmartBlocks extension (Roam Depot) and the one-time `roam/js`
+    approval; **reload the graph after any code edit** — scripts run at load
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14525
   props: null
   title: null
   attrs: null
@@ -1583,6 +1981,50 @@ jx1n-CTeJ:
     ah-level: h4
   title: null
   attrs: null
+6hmXo4GYL:
+  uid: 6hmXo4GYL
+  id: 14494
+  string: '**What it is** — snapshots source code from GitHub into an ordinary Roam
+    fenced code block, with provenance recorded as guffin''s `code-source::` tag (blob
+    URL, resolved commit SHA, fetch date) under a `guffin-meta::` child. Built on
+    [[SmartBlocks]] plus a custom `roam/js` script. The snippet is real block content:
+    searchable, readable offline, and exported by guffin as a first-class sourced
+    code block.'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 14470
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
+EnB1Dcl4J:
+  uid: EnB1Dcl4J
+  id: 14532
+  string: '`x-ratelimit-limit` shows 60 despite a token in [[roam/js/github-code]]
+    — reload the graph: `roam/js` edits are inert until reload, and a stale script
+    fails silently (API requests simply go unauthenticated). Verify via dev-tools
+    Network tab, filter `api.github`, run a refresh (past the 60-second memo window),
+    and check the response headers'
+  order: 4
+  heading: null
+  children: null
+  refs:
+  - id: 14482
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14530
+  props: null
+  title: null
+  attrs: null
 4YZgl5cYa:
   uid: 4YZgl5cYa
   id: 5657
@@ -1600,6 +2042,23 @@ jx1n-CTeJ:
   - id: 5648
   - id: 5655
   - id: 5656
+  props: null
+  title: null
+  attrs: null
+npC_Fbazq:
+  uid: npC_Fbazq
+  id: 14518
+  string: The snippet exports as an ordinary code block in every format (a `CodeBlockVertex`)
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14520
   props: null
   title: null
   attrs: null
@@ -1668,6 +2127,22 @@ lS4kg-3mw:
   props: null
   title: '!EXAMPLE'
   attrs: null
+ksU03cWVz:
+  uid: ksU03cWVz
+  id: 14490
+  string: GITHUBCODE / GITHUBCODESOURCE SmartBlocks commands
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
 Y2mxk0bpD:
   uid: Y2mxk0bpD
   id: 5470
@@ -1735,6 +2210,25 @@ kPqUpd641:
   props: null
   title: null
   attrs: null
+viwXm5MQj:
+  uid: viwXm5MQj
+  id: 14502
+  string: 'Updates the code block **in place**: the block UID is unchanged, so block
+    refs and embeds elsewhere keep working; the `code-source::` tag re-stamps its
+    resolved commit SHA and fetch date'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14505
+  props: null
+  title: null
+  attrs: null
 X_YREzXxf:
   uid: X_YREzXxf
   id: 4305
@@ -1789,6 +2283,25 @@ jH8aemWDv:
   parents: null
   props: null
   title: '!SUCCESS'
+  attrs: null
+-jw3OTbfC:
+  uid: -jw3OTbfC
+  id: 14519
+  string: 'The `code-source::` tag is a guffin-domain attribute: it never renders
+    as a pill in exported output, and the attribution line (SHA-pinned GitHub link
+    + fetch date below the listing) renders only with `--code-sources` (default off)'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14520
+  props: null
+  title: null
   attrs: null
 FH7SciYQf:
   uid: FH7SciYQf
@@ -1846,6 +2359,24 @@ THzm_HWRU:
   - id: 4239
   - id: 4271
   - id: 4315
+  props: null
+  title: null
+  attrs: null
+kAcv5lnuF:
+  uid: kAcv5lnuF
+  id: 14816
+  string: 'tags:: #Guffin'
+  order: 12
+  heading: null
+  children: null
+  refs:
+  - id: 261
+  - id: 11243
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
   props: null
   title: null
   attrs: null
@@ -1931,6 +2462,26 @@ vXoWB-OG_:
   props: null
   title: null
   attrs: null
+CSQkzdtL5:
+  uid: CSQkzdtL5
+  id: 14512
+  string: 'Unauthenticated API limit: 60 requests/hour per IP. Resolutions are memoized
+    for 60 seconds per repo+ref (the insert workflow''s two commands share one call,
+    and refreshing many snippets that track one branch costs a single call), and full-SHA-pinned
+    snippets never touch the API'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14514
+  props: null
+  title: null
+  attrs: null
 2B28nP0fN:
   uid: 2B28nP0fN
   id: 5672
@@ -1983,6 +2534,44 @@ xZC0Q6cvU:
   parents: null
   props: null
   title: '!QUESTION'
+  attrs: null
+Q-kJiQ1Y3:
+  uid: Q-kJiQ1Y3
+  id: 14504
+  string: Any text before or after the fence in the same block is preserved — only
+    the fenced span is replaced
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14505
+  props: null
+  title: null
+  attrs: null
+gt6TUsSaq:
+  uid: gt6TUsSaq
+  id: 14499
+  string: 'Result: a fenced code block (language mapped from the file extension, falling
+    back to `plain text`) with a `guffin-meta::` child whose `code-source::` grandchild
+    records the blob URL, the full commit SHA actually fetched, and the fetch date
+    — the exact provenance triple guffin''s exporter folds onto the code block'
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14500
+  props: null
+  title: null
   attrs: null
 DZhDzcotF:
   uid: DZhDzcotF
@@ -2134,6 +2723,27 @@ HCOUV-MA_:
   props: null
   title: null
   attrs: null
+yMvndnURt:
+  uid: yMvndnURt
+  id: 14500
+  string: '**Insert a snippet**'
+  order: 4
+  heading: null
+  children:
+  - id: 14495
+  - id: 14496
+  - id: 14497
+  - id: 14498
+  - id: 14499
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
 hF-KdTW65:
   uid: hF-KdTW65
   id: 11834
@@ -2149,6 +2759,27 @@ hF-KdTW65:
   parents:
   - id: 11494
   - id: 11833
+  props: null
+  title: null
+  attrs: null
+LNif6Rj-8:
+  uid: LNif6Rj-8
+  id: 14513
+  string: 'An optional GitHub token raises the limit to 5,000/hour per token: paste
+    it into the `github-token::` block on [[roam/js/github-code]]. Use a fine-grained
+    PAT with Repository access = Public repositories (read-only) and **no** permissions
+    granted — it can read nothing anonymous access can''t'
+  order: 3
+  heading: null
+  children: null
+  refs:
+  - id: 14482
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14514
   props: null
   title: null
   attrs: null
@@ -2171,6 +2802,43 @@ qZq-Ti0Qk:
   - id: 4287
   - id: 4288
   - id: 4315
+  props: null
+  title: null
+  attrs: null
+vDPWDjh77:
+  uid: vDPWDjh77
+  id: 14503
+  string: 'Fail-safe: any problem (missing URL, network error, rate limit) shows an
+    alert and leaves the blocks untouched'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14505
+  props: null
+  title: null
+  attrs: null
+RhnUBR0eg:
+  uid: RhnUBR0eg
+  id: 14527
+  string: '"fetch failed, block left unchanged — GITHUBCODE error: HTTP 404…" — the
+    file moved or the ref vanished; fix the URL (the `code-source::` tag''s first
+    value) and refresh again'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14530
   props: null
   title: null
   attrs: null
@@ -2292,7 +2960,8 @@ HGasV4ras:
   string: null
   order: null
   heading: null
-  children: null
+  children:
+  - id: 14817
   refs: null
   page: null
   children_view_type: null
@@ -2351,6 +3020,25 @@ tcSQVWaAo:
   props: null
   title: null
   attrs: null
+QzIYouAiQ:
+  uid: QzIYouAiQ
+  id: 14508
+  string: 'Line ranges are positional, not content-anchored: if the file gains or
+    loses lines above the range, `#L14-L60` denotes different code after a refresh.
+    Rule of thumb: range-limited snippets deserve SHA-pinned URLs'
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14509
+  props: null
+  title: null
+  attrs: null
 kCKT-pjot:
   uid: kCKT-pjot
   id: 4675
@@ -2402,6 +3090,25 @@ kCKT-pjot:
   parents:
   - id: 5618
   - id: 5646
+  props: null
+  title: null
+  attrs: null
+MHzYOJPca:
+  uid: MHzYOJPca
+  id: 14509
+  string: '**Choosing the ref: pin vs track**'
+  order: 6
+  heading: null
+  children:
+  - id: 14506
+  - id: 14507
+  - id: 14508
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
   props: null
   title: null
   attrs: null
@@ -2731,6 +3438,25 @@ TeB_pRnMW:
   props: null
   title: null
   attrs: null
+xjupjZz3i:
+  uid: xjupjZz3i
+  id: 14520
+  string: '**Export behavior (guffin)**'
+  order: 9
+  heading: null
+  children:
+  - id: 14518
+  - id: 14519
+  - id: 14556
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
 WVvR1vklx:
   uid: WVvR1vklx
   id: 5679
@@ -2747,6 +3473,25 @@ WVvR1vklx:
   - id: 5618
   - id: 5646
   - id: 5648
+  props: null
+  title: null
+  attrs: null
+ff0P08EI3:
+  uid: ff0P08EI3
+  id: 14510
+  string: A fetch first resolves the ref to its tip commit SHA via api.github.com,
+    then fetches the immutable SHA-pinned raw URL — current to the second, even immediately
+    after a push
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14514
   props: null
   title: null
   attrs: null
@@ -2921,6 +3666,26 @@ AKAMsYfSW:
   children_view_type: null
   parents:
   - id: 5453
+  props: null
+  title: null
+  attrs: null
+Lf1juv06N:
+  uid: Lf1juv06N
+  id: 14495
+  string: 'Type `jj` in any block and pick **GitHub Code** — select with arrow keys
+    + Enter (mouse selection can leave the `jj` trigger text behind in the block)
+    — or bind a hotkey in the SmartBlocks settings, or place a button: `{{Insert GitHub
+    code:SmartBlock:GitHub Code}}`'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14500
   props: null
   title: null
   attrs: null
@@ -3199,6 +3964,45 @@ wtY_f3pLh:
   props: null
   title: null
   attrs: null
+CH8aA6LWA:
+  uid: CH8aA6LWA
+  id: 14496
+  string: 'Paste a `github.com` blob URL (the file page''s address in the browser)
+    at the prompt, optionally ending with a line range: `#L14-L60` (a single line:
+    `#L12`)'
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14500
+  props: null
+  title: null
+  attrs: null
+j0a09ELZa:
+  uid: j0a09ELZa
+  id: 14521
+  string: 'Code: the **GitHub Code** branch on [[roam/js]] — the `GITHUBCODE` command
+    (fetch + fence), the `GITHUBCODESOURCE` command (the guffin `code-source::` provenance
+    line), and the palette refresh command'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 459
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14525
+  props: null
+  title: null
+  attrs: null
 keiYVs1oE:
   uid: keiYVs1oE
   id: 5690
@@ -3277,6 +4081,24 @@ GyxQPJZIM:
   props: null
   title: null
   attrs: []
+XlqgO134E:
+  uid: XlqgO134E
+  id: 14526
+  string: '"place the cursor in the code block…" — click into the snippet (or its
+    `guffin-meta::` subtree) before invoking the palette command'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14530
+  props: null
+  title: null
+  attrs: null
 -CgA_YrJD:
   uid: -CgA_YrJD
   id: 5658
@@ -3664,6 +4486,26 @@ CpeNN51Mp:
   props: null
   title: null
   attrs: null
+ZCzIGXCAX:
+  uid: ZCzIGXCAX
+  id: 14505
+  string: '**Refresh a snippet**'
+  order: 5
+  heading: null
+  children:
+  - id: 14501
+  - id: 14502
+  - id: 14503
+  - id: 14504
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  props: null
+  title: null
+  attrs: null
 L5N_49Nqn:
   uid: L5N_49Nqn
   id: 4303
@@ -3683,6 +4525,24 @@ L5N_49Nqn:
   - id: 4239
   - id: 4271
   - id: 4315
+  props: null
+  title: null
+  attrs: null
+1Kz2KznR-:
+  uid: 1Kz2KznR-
+  id: 14522
+  string: 'Workflow template: the `#SmartBlock GitHub Code` block on [[SmartBlocks]]'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 14470
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14525
   props: null
   title: null
   attrs: null
@@ -3808,6 +4668,24 @@ FZKyWhyzP:
   parents:
   - id: 4239
   - id: 4305
+  props: null
+  title: null
+  attrs: null
+TXzr4wG8U:
+  uid: TXzr4wG8U
+  id: 14515
+  string: Public repositories only; the token is used solely for the API rate limit
+    and is deliberately never sent to raw.githubusercontent.com
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 14489
+  children_view_type: null
+  parents:
+  - id: 14489
+  - id: 14517
   props: null
   title: null
   attrs: null

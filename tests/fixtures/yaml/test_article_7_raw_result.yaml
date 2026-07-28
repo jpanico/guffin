@@ -4159,10 +4159,10 @@
     - id: 11878
     - id: 11880
     uid: Lo-2ftdb7
+    children-view-type: document
     parents:
     - id: 11850
     order: 4
-    view-type: document
     page:
       id: 11850
 - - string: The Emperor hath, by those four wives of his, twenty-two male children;
@@ -6755,10 +6755,10 @@
     - id: 11902
     - id: 11909
     uid: lSrjeyDaT
+    children-view-type: document
     parents:
     - id: 11850
     order: 5
-    view-type: document
     page:
       id: 11850
 - - string: Marches.
@@ -7794,12 +7794,12 @@
     - id: 12021
     id: 12019
     uid: AyYZmSD81
+    children-view-type: document
     parents:
     - id: 11850
     - id: 11902
     - id: 12007
     order: 2
-    view-type: document
     page:
       id: 11850
 - - string: 'Programmers, with at least a rudimentary understanding of computer programming,
@@ -11225,10 +11225,10 @@
     - id: 11871
     - id: 11890
     uid: jqAiDA6IM
+    children-view-type: document
     parents:
     - id: 11850
     order: 3
-    view-type: document
     page:
       id: 11850
     refs:
@@ -11522,10 +11522,10 @@
     - id: 11861
     - id: 11862
     uid: dpoX6c0Pl
+    children-view-type: document
     parents:
     - id: 11850
     order: 2
-    view-type: document
     page:
       id: 11850
     refs:
@@ -13679,10 +13679,10 @@
     - id: 11903
     - id: 11912
     uid: lZKsMSgZX
+    children-view-type: document
     parents:
     - id: 11850
     order: 6
-    view-type: document
     page:
       id: 11850
 - - string: Peking As it is and As it was, about 1290
@@ -13860,12 +13860,12 @@
     - id: 12037
     id: 12018
     uid: zO6VlUygf
+    children-view-type: bullet
     parents:
     - id: 11850
     - id: 11902
     - id: 12007
     order: 4
-    view-type: bullet
     page:
       id: 11850
 - - attrs:
@@ -14401,13 +14401,13 @@
     - id: 12031
     id: 12021
     uid: 87HpA1p5c
+    children-view-type: numbered
     parents:
     - id: 11850
     - id: 11902
     - id: 12007
     - id: 12019
     order: 0
-    view-type: numbered
     page:
       id: 11850
 - - string: There are two Hermenias, the Greater and the Less. The Lesser Hermenia

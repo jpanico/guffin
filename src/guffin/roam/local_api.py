@@ -239,6 +239,11 @@ TRANSIENT_RAW_KEYS: Final[frozenset[str]] = frozenset(
         "seen-by",  # :edit/seen-by — seen-by user refs
         "word-count",  # :page/word-count — page word count
         "prevent-clean",  # :restrictions/prevent-clean — restriction flag
+        # :block/view-type — a per-block display default the Alpha API writes onto any block it
+        # updates; pulled under its own alias so it cannot collide with the authored children
+        # layout, and transient here because an extension touching a block would otherwise move
+        # the content snapshot without the content having changed.
+        "block-view-type",
     }
 )
 """Local API wire keys carrying transient session/UI state, not a node's structural content.

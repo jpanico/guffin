@@ -811,7 +811,7 @@
   - id: 11839
   page:
     id: 11137
-  children_view_type: null
+  children_view_type: bullet
   parents:
   - id: 11137
   - id: 11149
@@ -865,7 +865,7 @@
   - id: 14555
   page:
     id: 11137
-  children_view_type: null
+  children_view_type: bullet
   parents:
   - id: 11137
   - id: 11149
@@ -937,7 +937,7 @@
   refs: null
   page:
     id: 11137
-  children_view_type: null
+  children_view_type: bullet
   parents:
   - id: 11137
   - id: 11149

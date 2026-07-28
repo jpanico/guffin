@@ -288,11 +288,11 @@
     string: 'AI assistant (Claude Opus 4.6): '
     id: 4758
     uid: Ma5KGUH9O
+    children-view-type: bullet
     parents:
     - id: 3327
     - id: 3328
     order: 1
-    view-type: bullet
     page:
       id: 3327
 - - heading: 1
@@ -604,8 +604,8 @@
     - id: 11113
     id: 3327
     uid: 6olpFWiw1
+    children-view-type: bullet
     title: '[[Test Article]] 1'
-    view-type: bullet
     refs:
     - id: 4223
 - - id: 11932

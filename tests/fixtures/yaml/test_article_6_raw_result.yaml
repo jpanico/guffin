@@ -30,8 +30,8 @@
     - id: 12842
     - id: 12848
     uid: HY7HhHrci
+    children-view-type: document
     title: '[[Test Article]] 6'
-    view-type: document
     refs:
     - id: 4223
 - - string: “I am all expectation, Basil,” continued his companion, glancing at him.
@@ -380,8 +380,8 @@
     - id: 13059
     id: 12977
     uid: ArmnLLo63
+    children-view-type: numbered
     title: Dorian chapter I
-    view-type: numbered
 - - string: “Poets are not so scrupulous as you are. They know how useful passion
       is for publication. Nowadays a broken heart will run to many editions.”
     id: 13038
@@ -480,8 +480,8 @@
     - id: 12898
     id: 12892
     uid: V0ilimaj0
+    children-view-type: document
     title: Uncopyright
-    view-type: document
 - - string: '“The story is simply this,” said the painter after some time. “Two months
       ago I went to a crush at Lady Brandon’s. You know we poor artists have to show
       ourselves in society from time to time, just to remind the public that we are
