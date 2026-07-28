@@ -705,11 +705,12 @@ class TestBetterBulletType:
             self._node({"type": 7})
 
     def test_article_4_fixture_covers_every_member(self) -> None:
-        """The [[Test Article]] 4 Better Bullets section's children resolve to all eleven members.
+        """The [[Test Article]] 4 Better Bullets section demonstrates every member, in enum order.
 
         The fixture records the identifiers the extension actually persists (including the
-        divergent ``doubleArrow`` and ``plus`` spellings), so this pins the enum's ids to the
-        live vocabulary.
+        divergent ``doubleArrow``, ``plus``, and ``downRight90`` spellings), so this pins the
+        enum's ids to the live vocabulary — and, by comparing in document order, that the demo
+        section walks the vocabulary rather than merely covering it.
         """
         raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_4_nodes.yaml").read_text())
         nodes: dict[int, RoamNode] = {}
@@ -727,7 +728,11 @@ class TestBetterBulletType:
         _walk(raw)
         section = nodes[15252]
         assert section.children is not None
-        resolved = [bullet for stub in section.children if (bullet := better_bullet_type(nodes[stub.id])) is not None]
+        # Sorted by :block/order — the document order — because :block/children arrives in
+        # creation order, so a block inserted mid-section sits last in the stub list.  Comparing
+        # the enum against that would pin it to when each demo block happened to be authored.
+        ordered = sorted(section.children, key=lambda stub: nodes[stub.id].order or 0)
+        resolved = [bullet for stub in ordered if (bullet := better_bullet_type(nodes[stub.id])) is not None]
         assert resolved == list(BetterBulletType)
 
 

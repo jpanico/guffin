@@ -17,8 +17,12 @@ class TestBetterBulletType:
             (BetterBulletType.QUESTION, "question", "Question", "?", "?"),
             (BetterBulletType.IMPORTANT, "important", "Important / warning", "!", "!"),
             (BetterBulletType.IDEA, "plus", "Idea / addition", "+", "+"),
+            (BetterBulletType.COROLLARY, "downRight90", "Subproof / corollary", "v>", "⤷"),
             (BetterBulletType.CONTRAST, "contrast", "Contrast / however", "~", "≠"),
             (BetterBulletType.EVIDENCE, "evidence", "Evidence / support", "^", "▸"),
+            (BetterBulletType.CONCLUSION, "conclusion", "Conclusion / synthesis", "∴", "∴"),
+            (BetterBulletType.HYPOTHESIS, "hypothesis", "Hypothesis / tentative", "??", "◊"),
+            (BetterBulletType.DEPENDS_ON, "depends", "Depends on / prerequisite", "<-", "↤"),
             (BetterBulletType.DECISION, "decision", "Decision / choice", "|", "⎇"),
             (BetterBulletType.REFERENCE, "reference", "Reference / related", "@", "↗"),
             (BetterBulletType.PROCESS, "process", "Process / ongoing", "...", "↻"),
@@ -35,7 +39,7 @@ class TestBetterBulletType:
 
     def test_member_count(self) -> None:
         """Exactly the declared kinds exist."""
-        assert len(BetterBulletType) == 11
+        assert len(BetterBulletType) == 15
 
     def test_id_is_the_member_value(self) -> None:
         """The id is the member's string value, so value lookup works by id."""

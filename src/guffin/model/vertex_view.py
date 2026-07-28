@@ -50,9 +50,13 @@ class Semantic(enum.StrEnum):
         RESULT: A result or consequence.
         QUESTION: A question.
         IDEA: An idea or addition.
-        WARNING: An important point or warning.
+        COROLLARY: A subproof or corollary — a result established from the one it hangs under.
         CONTRAST: A contrast or objection.
         EVIDENCE: Evidence or support.
+        CONCLUSION: A conclusion or synthesis drawn from what precedes it.
+        HYPOTHESIS: A tentative claim, advanced to be tested rather than asserted.
+        DEPENDS_ON: A dependency or prerequisite — the inverse of :attr:`LEADS_TO`.
+        WARNING: An important point or warning.
         DECISION: A decision or choice.
         REFERENCE: A pointer to related material.
         PROCESS: A process or ongoing work.
@@ -63,9 +67,13 @@ class Semantic(enum.StrEnum):
     RESULT = "result"
     QUESTION = "question"
     IDEA = "idea"
-    WARNING = "warning"
+    COROLLARY = "corollary"
     CONTRAST = "contrast"
     EVIDENCE = "evidence"
+    CONCLUSION = "conclusion"
+    HYPOTHESIS = "hypothesis"
+    DEPENDS_ON = "depends-on"
+    WARNING = "warning"
     DECISION = "decision"
     REFERENCE = "reference"
     PROCESS = "process"

@@ -41,8 +41,15 @@ class BetterBulletType(enum.StrEnum):
         QUESTION: A question; ``?`` renders as ``?``.
         IMPORTANT: An important point or warning; ``!`` renders as ``!``.
         IDEA: An idea or addition; ``+`` renders as ``+`` (persisted id ``plus``).
+        COROLLARY: A subproof or corollary; ``v>`` renders as ``⤷`` (persisted id
+            ``downRight90``).  The extension names this one for its glyph's shape rather than
+            for a role, so the meaning recorded here is the one it is authored with.
         CONTRAST: A contrast or however; ``~`` renders as ``≠``.
         EVIDENCE: Evidence or support; ``^`` renders as ``▸``.
+        CONCLUSION: A conclusion or synthesis; ``∴`` renders as ``∴``.
+        HYPOTHESIS: A hypothesis or tentative claim; ``??`` renders as ``◊``.
+        DEPENDS_ON: A dependency or prerequisite; ``<-`` renders as ``↤`` (persisted id
+            ``depends``).
         DECISION: A decision or choice; ``|`` renders as ``⎇``.
         REFERENCE: A reference to related material; ``@`` renders as ``↗``.
         PROCESS: A process or ongoing work; ``...`` renders as ``↻``.
@@ -72,8 +79,12 @@ class BetterBulletType(enum.StrEnum):
     QUESTION = ("question", "Question", "?", "?")
     IMPORTANT = ("important", "Important / warning", "!", "!")
     IDEA = ("plus", "Idea / addition", "+", "+")
+    COROLLARY = ("downRight90", "Subproof / corollary", "v>", "⤷")
     CONTRAST = ("contrast", "Contrast / however", "~", "≠")
     EVIDENCE = ("evidence", "Evidence / support", "^", "▸")
+    CONCLUSION = ("conclusion", "Conclusion / synthesis", "∴", "∴")
+    HYPOTHESIS = ("hypothesis", "Hypothesis / tentative", "??", "◊")
+    DEPENDS_ON = ("depends", "Depends on / prerequisite", "<-", "↤")
     DECISION = ("decision", "Decision / choice", "|", "⎇")
     REFERENCE = ("reference", "Reference / related", "@", "↗")
     PROCESS = ("process", "Process / ongoing", "...", "↻")

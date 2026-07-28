@@ -19,7 +19,8 @@
   callout_type: info
   title: THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
     – DO NOT REMOVE
-  body: "Features:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter\n\
+  body: "Features:\n\n - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter:\
+    \ Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)\n\
     \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
 - vertex_type: guffin/text
   uid: K3nIwx36y
@@ -135,8 +136,12 @@
   - CG696Sg5n
   - W2MDdrb3g
   - -BBC2P-dl
+  - u2Imp6gEk
   - ZS_mZaDxD
   - gcRT-AWUS
+  - gdElvR3SM
+  - xKnaCfS21
+  - FUpfcXPED
   - OB9ieYhhM
   - ForFtTYqy
   - AFS0kx5dj
@@ -162,11 +167,23 @@
   uid: -BBC2P-dl
   text: Idea / addition -> `+`
 - vertex_type: guffin/text
+  uid: u2Imp6gEk
+  text: Right-angle arrow -> `⤷`
+- vertex_type: guffin/text
   uid: ZS_mZaDxD
   text: Contrast / however -> `≠`
 - vertex_type: guffin/text
   uid: gcRT-AWUS
   text: Evidence / support -> `▸`
+- vertex_type: guffin/text
+  uid: gdElvR3SM
+  text: Conclusion / synthesis -> `∴`
+- vertex_type: guffin/text
+  uid: xKnaCfS21
+  text: Hypothesis / tentative -> `◊`
+- vertex_type: guffin/text
+  uid: FUpfcXPED
+  text: Depends on / prerequisite -> `↤`
 - vertex_type: guffin/text
   uid: OB9ieYhhM
   text: Decision / choice -> `⎇`

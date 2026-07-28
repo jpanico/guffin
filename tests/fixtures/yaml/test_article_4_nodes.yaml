@@ -132,10 +132,27 @@
   props: null
   title: null
   attrs: null
+- uid: gdElvR3SM
+  id: 15290
+  string: Conclusion / synthesis -> `∴`
+  order: 9
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: conclusion
+  title: null
+  attrs: null
 - uid: NBEU8i91k
   id: 15264
   string: Provenance
-  order: 11
+  order: 15
   heading: null
   children:
   - id: 15265
@@ -207,10 +224,28 @@
     type: equal
   title: null
   attrs: null
+- uid: u2Imp6gEk
+  id: 15289
+  string: Right-angle arrow -> `⤷`
+  order: 6
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: downRight90
+  title: null
+  attrs: null
 - uid: yd7MFbFou
   id: 11647
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-    \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter\n\
+    \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter:\
+    \ Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)\n\
     \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
   order: 0
   heading: null
@@ -283,7 +318,7 @@
 - uid: xpWZZUv08
   id: 15286
   string: Mixed
-  order: 12
+  order: 16
   heading: null
   children:
   - id: 15287
@@ -358,7 +393,7 @@
 - uid: gcRT-AWUS
   id: 15260
   string: Evidence / support -> `▸`
-  order: 7
+  order: 8
   heading: null
   children: null
   refs: null
@@ -516,6 +551,40 @@
   props: null
   title: null
   attrs: null
+- uid: xKnaCfS21
+  id: 15291
+  string: Hypothesis / tentative -> `◊`
+  order: 10
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: hypothesis
+  title: null
+  attrs: null
+- uid: FUpfcXPED
+  id: 15292
+  string: Depends on / prerequisite -> `↤`
+  order: 11
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 15252
+  props:
+    type: depends
+  title: null
+  attrs: null
 - uid: -BBC2P-dl
   id: 15258
   string: Idea / addition -> `+`
@@ -536,7 +605,7 @@
 - uid: OB9ieYhhM
   id: 15261
   string: Decision / choice -> `⎇`
-  order: 8
+  order: 12
   heading: null
   children: null
   refs: null
@@ -658,6 +727,10 @@
   - id: 15263
   - id: 15264
   - id: 15286
+  - id: 15289
+  - id: 15290
+  - id: 15291
+  - id: 15292
   refs: null
   page:
     id: 11643
@@ -704,7 +777,7 @@
 - uid: AFS0kx5dj
   id: 15263
   string: Process / ongoing -> `↻`
-  order: 10
+  order: 14
   heading: null
   children: null
   refs: null
@@ -739,7 +812,7 @@
 - uid: ZS_mZaDxD
   id: 15259
   string: Contrast / however -> `≠`
-  order: 6
+  order: 7
   heading: null
   children: null
   refs: null
@@ -756,7 +829,7 @@
 - uid: ForFtTYqy
   id: 15262
   string: Reference / related -> `↗`
-  order: 9
+  order: 13
   heading: null
   children: null
   refs: null

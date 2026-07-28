@@ -5,7 +5,7 @@
 >
 > Features:
 >
-> - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter  
+> - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter: Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)  
 > - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)
 
 - Children blocks exercise *Color Highlighter* (Roam Extension)
@@ -34,8 +34,12 @@
   - ? Question -\> `?`
   - ! Important / warning -\> `!`
   - \+ Idea / addition -\> `+`
+  - ⤷ Right-angle arrow -\> `⤷`
   - ≠ Contrast / however -\> `≠`
   - ▸ Evidence / support -\> `▸`
+  - ∴ Conclusion / synthesis -\> `∴`
+  - ◊ Hypothesis / tentative -\> `◊`
+  - ↤ Depends on / prerequisite -\> `↤`
   - ⎇ Decision / choice -\> `⎇`
   - ↗ Reference / related -\> `↗`
   - ↻ Process / ongoing -\> `↻`

@@ -103,6 +103,17 @@
       id: 11643
     refs:
     - id: 11673
+- - string: Conclusion / synthesis -> `∴`
+    id: 15290
+    uid: gdElvR3SM
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: conclusion
+    order: 9
+    page:
+      id: 11643
 - - string: Provenance
     children:
     - id: 15265
@@ -116,7 +127,7 @@
     parents:
     - id: 11643
     - id: 15252
-    order: 11
+    order: 15
     page:
       id: 11643
 - - string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
@@ -154,8 +165,20 @@
     order: 0
     page:
       id: 11643
+- - string: Right-angle arrow -> `⤷`
+    id: 15289
+    uid: u2Imp6gEk
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: downRight90
+    order: 6
+    page:
+      id: 11643
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: https://github.com/fbgallet/roam-extension-color-highlighter\n\
+      \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter:\
+      \ Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)\n\
       \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
     id: 11647
     uid: yd7MFbFou
@@ -215,7 +238,7 @@
     parents:
     - id: 11643
     - id: 15252
-    order: 12
+    order: 16
     page:
       id: 11643
 - - string: underline color (Markdown does not have a standard underline markup, because
@@ -265,7 +288,7 @@
     - id: 15252
     props:
       type: evidence
-    order: 7
+    order: 8
     page:
       id: 11643
 - - string: Chat message -> 💬
@@ -364,6 +387,28 @@
     order: 4
     page:
       id: 11643
+- - string: Hypothesis / tentative -> `◊`
+    id: 15291
+    uid: xKnaCfS21
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: hypothesis
+    order: 10
+    page:
+      id: 11643
+- - string: Depends on / prerequisite -> `↤`
+    id: 15292
+    uid: FUpfcXPED
+    parents:
+    - id: 11643
+    - id: 15252
+    props:
+      type: depends
+    order: 11
+    page:
+      id: 11643
 - - string: Idea / addition -> `+`
     id: 15258
     uid: -BBC2P-dl
@@ -383,7 +428,7 @@
     - id: 15252
     props:
       type: decision
-    order: 8
+    order: 12
     page:
       id: 11643
 - - string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
@@ -469,6 +514,10 @@
     - id: 15263
     - id: 15264
     - id: 15286
+    - id: 15289
+    - id: 15290
+    - id: 15291
+    - id: 15292
     id: 15252
     uid: _eF-sDI9v
     parents:
@@ -506,7 +555,7 @@
     - id: 15252
     props:
       type: process
-    order: 10
+    order: 14
     page:
       id: 11643
 - - string: Calendar event -> 📅
@@ -529,7 +578,7 @@
     - id: 15252
     props:
       type: contrast
-    order: 6
+    order: 7
     page:
       id: 11643
 - - string: Reference / related -> `↗`
@@ -540,6 +589,6 @@
     - id: 15252
     props:
       type: reference
-    order: 9
+    order: 13
     page:
       id: 11643
