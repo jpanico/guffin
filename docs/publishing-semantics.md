@@ -48,7 +48,13 @@ pure taxonomy with no other `guffin` dependencies.
     warning per drop, via `drop_page_breaks()`), while the default and manuscript profiles honor
     them — content declares, policy disposes.
   - *PDF-anchored tags* (`AttributeAnchor.PDF`): `PDF_RENDER` (`pdf-render::`) declares an embedded PDF
-    asset's `PdfRender` placement in paginated output (`inline` pages vs the default `link`). The tag
+    asset's `PdfRender` placement: where its pages go and at what fidelity (`inline-native` /
+    `inline-image` at the embed, `appendix-native` / `appendix-image` in an appendix at the back),
+    or that the file is referenced rather than reproduced (`internal-link` / `external-link` /
+    `name-only`). The vocabulary spans the whole space an author might ask for, whether or not a
+    format implements a member; an unsupported request falls back to `name-only` with a warning,
+    and there is no default member — what an untagged embed gets depends on the output, so that
+    policy lives in `render/pdf_placement.py`. The tag
     sits on the PDF embed itself, or — because the pdf anchor sees through standalone links — on a
     standalone block reference to it, so a PDF living on another page can be tagged where this
     document displays it; the reference site's tag governs that reference and outranks the target

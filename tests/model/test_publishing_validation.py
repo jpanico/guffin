@@ -284,7 +284,7 @@ class TestAllPdfRenderValuesLegal:
 
     def test_legal_value_passes(self) -> None:
         """A tree whose pdf-render values are all recognised produces no error."""
-        tree = VertexTree(tree_vertices=[_pdf_with([_assignment("pdf-render", "inline")])])
+        tree = VertexTree(tree_vertices=[_pdf_with([_assignment("pdf-render", "inline-native")])])
         assert all_pdf_render_values_legal(tree) is None
 
     def test_illegal_value_reported(self) -> None:
@@ -296,7 +296,7 @@ class TestAllPdfRenderValuesLegal:
 
     def test_pdf_render_on_heading_reported_by_anchor_validator(self) -> None:
         """A pdf-render tag on a heading is a misanchoring, caught by all_attributes_anchored."""
-        tree = VertexTree(tree_vertices=[_heading_with([_assignment("pdf-render", "inline")])])
+        tree = VertexTree(tree_vertices=[_heading_with([_assignment("pdf-render", "inline-native")])])
         error = all_attributes_anchored(tree)
         assert error is not None
         assert "pdf-render" in error.message
@@ -413,7 +413,7 @@ class TestAllAttributesAnchored:
         site = TextVertex(
             uid="refsite01",
             text="[a.pdf](x-guffin:vertex/pdfuid001)",
-            attribute_assignments=[_assignment("pdf-render", "inline")],
+            attribute_assignments=[_assignment("pdf-render", "inline-native")],
         )
         page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
         tree = VertexTree(tree_vertices=[page, site], ref_vertices=[_pdf_with(None)])
@@ -424,7 +424,7 @@ class TestAllAttributesAnchored:
         stray = TextVertex(
             uid="refsite01",
             text="just prose",
-            attribute_assignments=[_assignment("pdf-render", "inline")],
+            attribute_assignments=[_assignment("pdf-render", "inline-native")],
         )
         page = PageVertex(uid="pageroot1", title="Doc", children=["refsite01"])
         tree = VertexTree(tree_vertices=[page, stray])

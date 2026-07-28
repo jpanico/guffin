@@ -60,7 +60,7 @@
     refs:
     - id: 5450
     - id: 5462
-- - string: 'pdf-render:: inline'
+- - string: 'pdf-render:: inline-native'
     id: 11931
     uid: EWMNZcPZX
     parents:
@@ -708,7 +708,7 @@
       - source:
         - uid
         - EWMNZcPZX
-        value: ' inline'
+        value: ' inline-native'
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11931

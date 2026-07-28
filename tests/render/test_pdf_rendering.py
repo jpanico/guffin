@@ -23,7 +23,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView, ViewMap
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.pandoc_ast import pandoc_to_json
-from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, vertex_tree_to_pandoc
+from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, PDF_PLACEMENT_UNSET, vertex_tree_to_pandoc
 from guffin.render.pdf_rendering import (
     _apply_pdf_embeds,
     _pdf_asset_paths,
@@ -32,7 +32,7 @@ from guffin.render.pdf_rendering import (
     _typst_str,
     _typst_template_args,
 )
-from guffin.render.project import TopLevelDivision
+from guffin.render.project import ProjectType, TopLevelDivision
 from guffin.transcribe.roam_tree_to_guffin import transcribe
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fa.pdf.enc?alt=media&token=aaa"
@@ -49,7 +49,7 @@ def _render_tag(value: str) -> AttributeAssignment:
     )
 
 
-_INLINE_TAG = _render_tag("inline")
+_INLINE_TAG = _render_tag("inline-native")
 
 
 def _reference_site(target_uid: str, render: str | None = None, uid: str = "refsite01") -> TextVertex:
@@ -147,7 +147,7 @@ class TestApplyPdfEmbeds:
         the bulleted list item.
         """
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=False)
-        _apply_pdf_embeds(doc, paths)
+        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.BulletList)
@@ -161,7 +161,7 @@ class TestApplyPdfEmbeds:
     def test_inline_mode_renders_pages_without_attachment(self, tmp_path: Path) -> None:
         """An INLINE occurrence is replaced by one image call per page and no attachment."""
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=True)
-        _apply_pdf_embeds(doc, paths)
+        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.RawBlock)
@@ -179,7 +179,7 @@ class TestApplyPdfEmbeds:
 
         monkeypatch.setattr("guffin.render.pdf_rendering.PdfReader", _boom)
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=False)
-        _apply_pdf_embeds(doc, paths)
+        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
 
     def test_per_site_placements_apply_independently(self, tmp_path: Path) -> None:
         """Two references to one PDF render per their own site tags — one inline, one as bare text."""
@@ -188,14 +188,14 @@ class TestApplyPdfEmbeds:
         tree = VertexTree(
             tree_vertices=[
                 page,
-                _reference_site("pdfuid001", render="inline", uid="refsite01"),
+                _reference_site("pdfuid001", render="inline-native", uid="refsite01"),
                 _reference_site("pdfuid001", uid="refsite02"),
             ],
             ref_vertices=[vertex],
         )
         paths = _pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        _apply_pdf_embeds(doc, paths)
+        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
         raw_blocks = [b for b in doc.content if isinstance(b, pf.RawBlock)]
         assert len(raw_blocks) == 1
         assert raw_blocks[0].text.count("#image(") == 1
@@ -215,7 +215,7 @@ class TestApplyPdfEmbeds:
     def test_unfetched_stamped_link_keeps_link_without_scaffold(self, tmp_path: Path) -> None:
         """A stamped paragraph whose PDF was never fetched keeps its link, minus the scaffold attribute."""
         doc, _paths, _url = self._doc_and_paths(tmp_path, inline=False)
-        _apply_pdf_embeds(doc, {})
+        _apply_pdf_embeds(doc, {}, ProjectType.DEFAULT)
         links: list[pf.Link] = []
 
         def _collect(elem: pf.Element, doc: pf.Doc) -> None:
@@ -237,17 +237,17 @@ class TestApplyPdfEmbeds:
             VertexTree(tree_vertices=[pdf]), {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")}
         )
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        _apply_pdf_embeds(doc, paths)
+        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
         assert not any(isinstance(b, pf.RawBlock) for b in doc.content)
 
     def test_article3_fixture_occurrences_place_independently(self) -> None:
         """The [[Test Article]] 3 fixture's three displays of one uploaded PDF each stamp per occurrence.
 
         The same Firestore asset is displayed three times, exercising every resolution path:
-        an untagged direct embed in Feature Content (link default), an untagged standalone
-        reference to the [[Test Article]] 1 PDF block (link default), and a standalone
-        reference tagged ``pdf-render: "inline"`` at the site (inline) — one PDF, placed
-        per occurrence.
+        two untagged occurrences — a direct embed in Feature Content and a standalone reference
+        to the [[Test Article]] 1 PDF block — which the format-neutral build leaves unset for the
+        format pass to default, and one standalone reference tagged ``pdf-render: inline-native``
+        at the site.  One PDF, placed per occurrence.
         """
         tree = transcribe(article3_node_tree())
         pdf_url = str(tree.uid_map["pTvGGeTlB"].source)
@@ -260,7 +260,7 @@ class TestApplyPdfEmbeds:
             return None
 
         doc.walk(_collect)
-        assert sorted(stamps) == ["inline", "link", "link"]
+        assert sorted(stamps) == ["inline-native", PDF_PLACEMENT_UNSET, PDF_PLACEMENT_UNSET]
 
 
 class TestPrepareTitleMetadata:

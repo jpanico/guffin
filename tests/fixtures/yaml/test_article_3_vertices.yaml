@@ -810,7 +810,7 @@
       - Jy_Ee6w8E
     values:
     - kind: literal
-      value: inline
+      value: inline-native
   text: '[{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}](x-guffin:vertex/pTvGGeTlB)'
 - vertex_type: guffin/text
   uid: 8jkmASa1c

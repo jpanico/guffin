@@ -1121,7 +1121,7 @@
     - source:
       - uid
       - 10pBwqT7Q
-      value: ' inline'
+      value: ' inline-native'
 - uid: Q-nJAf9KK
   id: 11721
   string: This para features ^^highlight^^
@@ -2105,7 +2105,7 @@
   attrs: null
 - uid: 10pBwqT7Q
   id: 15111
-  string: 'pdf-render:: inline'
+  string: 'pdf-render:: inline-native'
   order: 0
   heading: null
   children: null

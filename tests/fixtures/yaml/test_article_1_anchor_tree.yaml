@@ -77,7 +77,7 @@ tree_network:
       value: ' false'
 - uid: EWMNZcPZX
   id: 11931
-  string: 'pdf-render:: inline'
+  string: 'pdf-render:: inline-native'
   order: 0
   heading: null
   children: null
@@ -812,7 +812,7 @@ tree_network:
     - source:
       - uid
       - EWMNZcPZX
-      value: ' inline'
+      value: ' inline-native'
 - uid: tWkumkdUE
   id: 11167
   string: this image **has been resized** through the Roam UI (width:257, height:None)

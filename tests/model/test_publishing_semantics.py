@@ -20,8 +20,8 @@ from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
-    DEFAULT_PDF_RENDER,
     DEFAULT_PUBLISH,
+    PDF_RENDER_FALLBACK,
     PageBreak,
     PdfRender,
     PublishingAttribute,
@@ -386,7 +386,7 @@ class TestPdfRenderOf:
 
     def test_returns_named_pdf_render(self) -> None:
         """A valid pdf-render assignment yields the named PdfRender."""
-        assert pdf_render_of(_assignment("pdf-render", "inline")) is PdfRender.INLINE
+        assert pdf_render_of(_assignment("pdf-render", "inline-native")) is PdfRender.INLINE_NATIVE
 
     def test_wrong_attribute_name_rejected(self) -> None:
         """An assignment for a different attribute raises, even with a valid pdf-render value."""
@@ -404,16 +404,16 @@ class TestPdfRenderOfVertex:
 
     def test_inline_tag_resolves(self) -> None:
         """A pdf-render:: inline tag resolves to INLINE."""
-        assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "inline")])) is PdfRender.INLINE
+        assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "inline-native")])) is PdfRender.INLINE_NATIVE
 
     def test_link_tag_resolves(self) -> None:
         """A pdf-render:: link tag resolves to LINK."""
-        assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "link")])) is PdfRender.LINK
+        assert pdf_render_of_vertex(_pdf_with([_assignment("pdf-render", "name-only")])) is PdfRender.NAME_ONLY
 
     def test_untagged_is_none_and_default_is_link(self) -> None:
         """An untagged PDF resolves to None; the vocabulary default placement is LINK."""
         assert pdf_render_of_vertex(_pdf_with(None)) is None
-        assert DEFAULT_PDF_RENDER is PdfRender.LINK
+        assert PDF_RENDER_FALLBACK is PdfRender.NAME_ONLY
 
     def test_illegal_value_ignored_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """A junk pdf-render value is ignored (warned), not raised."""
@@ -426,9 +426,9 @@ class TestPdfRenderOfVertex:
         site = TextVertex(
             uid="refsite01",
             text="[a.pdf](x-guffin:vertex/pdfuid001)",
-            attribute_assignments=[_assignment("pdf-render", "inline")],
+            attribute_assignments=[_assignment("pdf-render", "inline-native")],
         )
-        assert pdf_render_of_vertex(site) is PdfRender.INLINE
+        assert pdf_render_of_vertex(site) is PdfRender.INLINE_NATIVE
 
 
 def _code_block_with(assignments: list[AttributeAssignment] | None) -> CodeBlockVertex:

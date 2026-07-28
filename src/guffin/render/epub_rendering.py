@@ -77,11 +77,11 @@ from guffin.render.pandoc_rendering import (
     make_resolver,
     resolve_vertex_links,
     revision_line,
-    strip_pdf_placement,
     vertex_tree_to_pandoc,
 )
+from guffin.render.pdf_placement import apply_reference_placements
 from guffin.render.project import ProjectProfile, TopLevelDivision
-from guffin.render.render_options import EpubRenderOptions
+from guffin.render.render_options import EpubRenderOptions, OutputFormat
 from guffin.roam.blockquote import CalloutType
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
@@ -296,7 +296,7 @@ def render(
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         # This conversion places no PDF pages, so the placement scaffold must not reach the
         # XHTML output as a stray attribute.
-        strip_pdf_placement(doc)
+        apply_reference_placements(doc, OutputFormat.EPUB, profile.project_type)
         # Without a title page to stamp, the authored revision name leads the reading flow
         # instead — the first block a reader sees on opening the book (the EPUB body carries no
         # title of its own; dc:title lives in the package metadata).

@@ -23,7 +23,7 @@ Public symbols:
 """
 
 import enum
-from typing import Literal, Self
+from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, validate_call
 
@@ -119,6 +119,8 @@ class ProjectProfile(BaseModel):
     fall back to what the content itself provides (such as the page title).
 
     Attributes:
+        project_type: The kind of work this profile describes; each subclass pins it to its own
+            :class:`ProjectType` as the discriminator.
         title: Publication title; ``None`` uses the root page's own title.
         authors: Author names, in byline order.
         date: Publication date (ISO-8601 recommended); ``None`` lets the renderer decide.
@@ -127,6 +129,7 @@ class ProjectProfile(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    project_type: ProjectType = Field(..., description="Discriminator identifying the kind of work.")
     title: str | None = Field(default=None, description="Publication title; None uses the page title.")
     authors: tuple[str, ...] = Field(default=(), description="Author names, in byline order.")
     date: str | None = Field(default=None, description="Publication date (ISO-8601 recommended).")
@@ -145,7 +148,7 @@ class DefaultProfile(ProjectProfile):
         project_type: Always :attr:`ProjectType.DEFAULT` (the discriminator).
     """
 
-    project_type: Literal[ProjectType.DEFAULT] = Field(
+    project_type: ProjectType = Field(
         default=ProjectType.DEFAULT, description="Discriminator identifying a default (article) project."
     )
 
@@ -172,9 +175,7 @@ class BookProfile(ProjectProfile):
             when ``False`` (default), level-1 headings are chapters.
     """
 
-    project_type: Literal[ProjectType.BOOK] = Field(
-        default=ProjectType.BOOK, description="Discriminator identifying a book project."
-    )
+    project_type: ProjectType = Field(default=ProjectType.BOOK, description="Discriminator identifying a book project.")
     with_parts: bool = Field(default=False, description="Top-level headings are parts (else chapters).")
 
     @property
@@ -209,7 +210,7 @@ class ManuscriptProfile(ProjectProfile):
         keywords: Optional keyword list associated with the manuscript.
     """
 
-    project_type: Literal[ProjectType.MANUSCRIPT] = Field(
+    project_type: ProjectType = Field(
         default=ProjectType.MANUSCRIPT, description="Discriminator identifying a manuscript project."
     )
     abstract: str | None = Field(default=None, description="Abstract text rendered ahead of the body.")

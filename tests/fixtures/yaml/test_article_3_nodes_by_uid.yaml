@@ -336,7 +336,7 @@ Q-T5fKOEq:
 EWMNZcPZX:
   uid: EWMNZcPZX
   id: 11931
-  string: 'pdf-render:: inline'
+  string: 'pdf-render:: inline-native'
   order: 0
   heading: null
   children: null
@@ -1957,7 +1957,7 @@ ooVLwinzV:
     - source:
       - uid
       - 10pBwqT7Q
-      value: ' inline'
+      value: ' inline-native'
 Q-nJAf9KK:
   uid: Q-nJAf9KK
   id: 11721
@@ -3746,7 +3746,7 @@ YCexI8mL4:
 10pBwqT7Q:
   uid: 10pBwqT7Q
   id: 15111
-  string: 'pdf-render:: inline'
+  string: 'pdf-render:: inline-native'
   order: 0
   heading: null
   children: null
@@ -5109,7 +5109,7 @@ GvRO438Ze:
     - source:
       - uid
       - EWMNZcPZX
-      value: ' inline'
+      value: ' inline-native'
 1O4yGV-Tq:
   uid: 1O4yGV-Tq
   id: 11968

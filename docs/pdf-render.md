@@ -15,21 +15,82 @@ tag governs that reference and outranks the target embed's own tag. Placement th
 **per occurrence**: two references to the same PDF may place it differently.
 
 
-## What appears in the document text
+## The vocabulary
 
-| `PdfRender` | `md --bundle` | `md --no-bundle` | `pdf` | `epub` |
+Seven placements, spanning the whole space an author might ask for — deliberately including
+combinations no format implements yet. Guffin applies no heuristic about what "makes sense": the
+author states the intent, and a format that cannot honour it says so (see *Fallback*, below).
+
+| member | where the pages go | at what fidelity | what stands at the embed |
+|---|---|---|---|
+| `INLINE_NATIVE` | at the embed | the format's own content | the pages themselves |
+| `INLINE_IMAGE` | at the embed | page images | the pages themselves |
+| `APPENDIX_NATIVE` | an appendix at the back | the format's own content | a link into the appendix |
+| `APPENDIX_IMAGE` | an appendix at the back | page images | a link into the appendix |
+| `INTERNAL_LINK` | — the file itself travels inside the output | — | a link to the contained copy |
+| `EXTERNAL_LINK` | — the file stays where it is hosted | — | an ordinary URL link |
+| `NAME_ONLY` | — nothing is reproduced or linked | — | the filename, as plain text |
+
+Values are kebab-case: `pdf-render:: inline-native`, `pdf-render:: appendix-image`, and so on.
+
+
+## What an untagged embed gets
+
+There is no single default. What an untagged embed becomes depends on what is being produced — a
+bundle can hand the reader the file itself, a lone `.md` can only point at where it is hosted, and
+a book carries its referenced documents rather than pointing away from them. The matrix lives in
+`render/pdf_placement.py`, not in the vocabulary, because it is a render-layer decision:
+
+| | article | manuscript | book |
+|---|---|---|---|
+| `md --bundle` | `INTERNAL_LINK` | `INTERNAL_LINK` | `APPENDIX_NATIVE` |
+| `md --no-bundle` | `EXTERNAL_LINK` | `EXTERNAL_LINK` | `EXTERNAL_LINK` |
+| `pdf` | `APPENDIX_NATIVE` | `APPENDIX_NATIVE` | `APPENDIX_NATIVE` |
+| `epub` | `APPENDIX_NATIVE` | `APPENDIX_NATIVE` | `APPENDIX_IMAGE` |
+
+
+## What each format implements today
+
+| placement | `md --bundle` | `md --no-bundle` | `pdf` | `epub` |
 |---|---|---|---|---|
-| **`INLINE`** | *tag ignored* — relative link `[dummy.pdf](dummy.pdf)` | *tag ignored* — remote link, label is the **storage key** `[u-F9pv-nvn.pdf](https://…enc)` | **honoured** — one full-width `#image(…, page: n)` per page, replacing the reference | *tag ignored* — remote link `[dummy.pdf](https://…enc)` |
-| **`LINK`** (default) | relative link `[dummy.pdf](dummy.pdf)` | remote link, label is the **storage key** | **plain text** `dummy.pdf`, hyperlink dropped | remote link `[dummy.pdf](https://…enc)` |
-| *fetch failed* | remote link | remote link | remote link (scaffold stripped) | remote link |
+| `INLINE_NATIVE` | ✗ | ✗ | ✅ one full-width `#image(…, page: n)` per page, vector and searchable | ✗ |
+| `INLINE_IMAGE` | ✗ | ✗ | ✗ | ✗ |
+| `APPENDIX_NATIVE` | ✗ | ✗ | ✗ | ✗ |
+| `APPENDIX_IMAGE` | ✗ | ✗ | ✗ | ✗ |
+| `INTERNAL_LINK` | ✅ relative link to the copy in `.mdbundle/` | ✗ nothing to contain it | ✗ measured dead — see *Format capabilities* | ✗ untested — see *Format capabilities* |
+| `EXTERNAL_LINK` | ✅ | ✅ | ✅ | ✅ |
+| `NAME_ONLY` | ✅ | ✅ | ✅ | ✅ |
+
+Everything marked ✗ falls back. Note the consequence of the two matrices together: **`pdf` and
+`epub` exports warn on every PDF embed today**, because their default is `APPENDIX_NATIVE` and no
+format implements it yet. That noise ends when the appendix placements are built.
+
+
+## Fallback
+
+An unsupported request lands on `NAME_ONLY` — `PDF_RENDER_FALLBACK` — and logs a warning naming the
+placement, the format, and the PDF. Deliberately a single fixed member rather than a ranked chain:
+a chain would have Guffin decide which *unasked-for* placement is closest to the request, and that
+judgment belongs to the author.
+
+The warning fires on every fallback, including when the request came from the default policy rather
+than an authored tag. An unmet placement is worth knowing about either way.
+
+Separately, an `EXTERNAL_LINK` whose asset URL ends `.enc` warns that the link points at
+Roam-encrypted bytes and will not resolve outside the Roam client. The link is still rendered:
+whether to point at the original is the author's call, and the warning only makes it an informed
+one.
 
 
 ## Does the PDF file travel with the output?
 
-| `PdfRender` | `md --bundle` | `md --no-bundle` | `pdf` | `epub` |
+Only `INTERNAL_LINK` carries the file, and only where the format can contain one. This is otherwise
+a *packaging* question rather than a placement one — `--bundle` decides whether Markdown's assets
+travel, and the other formats always carry their own.
+
+| | `md --bundle` | `md --no-bundle` | `pdf` | `epub` |
 |---|---|---|---|---|
-| **`INLINE`** | **yes** — copied into `.mdbundle/` | no | no — fetched to a temp dir, rasterized, discarded | no |
-| **`LINK`** | **yes** — copied into `.mdbundle/` | no | no — fetched only to learn the label | no |
+| the PDF file travels | **yes**, under `INTERNAL_LINK` | no | no — fetched to a temp dir, read, discarded | no |
 
 
 ## Where each cell is decided
@@ -37,20 +98,28 @@ tag governs that reference and outranks the target embed's own tag. Placement th
 - **The shared build** renders every PDF occurrence as a `Para` holding one `Link`, labelled with
   the original upload filename when known (else the storage-key filename, Roam's `.enc` suffix
   stripped), pointing at the fetched local file when there is one and at the remote Cloud Firestore
-  source otherwise. The resolved placement rides the link as the `PDF_PLACEMENT_ATTRIBUTE` scaffold
+  source otherwise. It stamps the link with the *authored* placement — or with
+  `PDF_PLACEMENT_UNSET` when the occurrence carries no tag
   (`render/pandoc_rendering._pdf_vertex_to_blocks`).
-- **PDF** is the only format that consumes the scaffold: `pdf_rendering._apply_pdf_embeds` replaces
-  an `INLINE` occurrence with one raw Typst `image(…, page: n)` per page, and a `LINK` occurrence
-  with its bare label text — dropping the hyperlink, since the file is not carried into the output.
-- **Markdown and EPUB** both call `strip_pdf_placement`, which removes the scaffold without reading
-  it (an attributed link would otherwise fall back to a raw HTML anchor in the GFM writer). That is
-  why the tag has no effect in either.
-- **Bundling** is decided by `--bundle`, not by the tag: bundle mode fetches every displayed asset
-  into the bundle directory and hands the build filename-only paths, so the links resolve to the
-  copies beside the `.md`. Plain `--no-bundle` skips the fetch entirely and builds with an empty
-  asset map. EPUB fetches assets but deliberately withholds `PdfVertex` entries from that map, since
-  a PDF cannot be embedded in the package and a link to the temporary local path would be dead in
-  the output (`epub_rendering`).
+- **The build applies no default**, deliberately. `vertex_tree_to_pandoc` is format-neutral, and
+  the default depends on the format, the bundle mode, and the project type — none of which it
+  knows. An unstamped occurrence means *nobody asked*; the format pass reads that as "apply my
+  default".
+- **Each format pass resolves and acts.** `pdf_placement.requested_pdf_render` reads the stamp or
+  defaults it; `honoured_pdf_render` narrows it to what the format supports, warning on any
+  fallback. `pdf_rendering._apply_pdf_embeds` then renders pages for `INLINE_NATIVE`; the
+  reference-only formats share `pdf_placement.apply_reference_placements`, which unwraps a
+  `NAME_ONLY` occurrence to bare text and leaves a link placement's link intact. Every pass
+  consumes the scaffold, since Pandoc writers otherwise surface it (the GFM writer falls back to a
+  raw HTML anchor for an attributed link).
+- **The link's URL is already decided by the build**, which is why `INTERNAL_LINK` needs no special
+  handling: bundle mode fetches every displayed asset into the bundle directory and hands the build
+  filename-only paths, so links resolve to the copies beside the `.md`. Plain `--no-bundle` skips
+  the fetch and builds with an empty asset map, leaving the remote URL. EPUB fetches assets but
+  deliberately withholds `PdfVertex` entries from that map, since a PDF cannot be embedded in the
+  package and a link to the temporary local path would be dead in the output.
+- **A failed fetch** keeps the link to the remote source with the scaffold stripped, whatever the
+  placement asked for.
 
 
 ## Format capabilities (verified 2026-07-27)
@@ -78,35 +147,29 @@ Facts established by direct test, recorded so they need not be re-derived:
   as the graph is encrypted.
 
 
-## Observations
+## Known wart
 
-Three things the matrix makes plain:
-
-1. **The bundling table has no vertical variation.** Both rows are identical in every column: the
-   file travels iff `--bundle`, never because of the tag. Presentation (pages vs. reference) and
-   packaging (do the bytes travel) are separate axes, and `pdf-render` has no say in the second.
-2. **`INLINE` is silently ignored in three of four outputs.** Tagging a PDF `inline` and exporting
-   EPUB yields a link with no indication the directive was dropped — unlike `page-break::`, which
-   logs a warning per dropped tag when a book's policy declines it.
-3. **The plain-`.md` label is degraded, and only there.** It shows the storage key
-   (`u-F9pv-nvn.pdf`) rather than the upload name (`dummy.pdf`), because the friendly name is
-   learned by fetching and `--no-bundle` skips the fetch. Combined with the encrypted href, the one
-   output a human is most likely to read raw carries both the least informative label and a dead
-   link.
+**The plain-`.md` label is degraded, and only there.** It shows the storage key
+(`u-F9pv-nvn.pdf`) rather than the upload name (`dummy.pdf`), because the friendly name is learned
+by fetching and `--no-bundle` skips the fetch. Combined with that format defaulting to
+`EXTERNAL_LINK` — whose href is the encrypted asset — the output a human is most likely to read raw
+carries both the least informative label and a link that only resolves for an unencrypted graph.
+The `.enc` warning fires, so it is at least not silent.
 
 
-## Design note: an Attachments-section placement (proposed, not implemented)
+## Design note: the appendix placements (vocabulary settled, behaviour unbuilt)
 
-> **Status: a proposal.** Nothing in this section is built. Everything above it describes current
-> behaviour.
+> **Status.** `APPENDIX_NATIVE` and `APPENDIX_IMAGE` are members of the vocabulary and are the
+> default for `pdf` and `epub`, but **no format implements them yet** — every appendix request
+> currently warns and falls back to `NAME_ONLY`. This section is the design for building them.
 
-### The problem
+### The problem they solve
 
-A `LINK` occurrence in the PDF format renders as inert filename text: the reader is told a document
-exists and given no way to reach it. The two obvious repairs are both closed. Linking to the
-original is useless — the URL serves ciphertext outside the Roam client. Carrying the file as a PDF
-attachment is a dead end measured twice: no viewer Guffin targets offers a usable way in (see
-*Format capabilities* above).
+A `NAME_ONLY` occurrence renders as inert filename text: the reader is told a document exists and
+given no way to reach it. The two obvious repairs are both closed. Linking to the original is
+useless — the URL serves ciphertext outside the Roam client. Carrying the file as a PDF attachment
+is a dead end measured twice: no viewer Guffin targets offers a usable way in (see *Format
+capabilities* above).
 
 Both repairs failed for the same reason — they tried to deliver the PDF *as a file*.
 
@@ -115,7 +178,7 @@ Both repairs failed for the same reason — they tried to deliver the PDF *as a 
 Deliver it as **rendered content that lives at the back of the document**:
 
 - every PDF referenced by a `LINK`-placed occurrence gets a subsection under one generated
-  back-matter section — *Attachments* — whose body is that PDF's pages, inlined exactly as
+  back-matter section — *Appendix* — whose body is that PDF's pages, inlined exactly as
   `INLINE` already inlines them;
 - the reference at the anchor point becomes an **internal link** to that subsection, rather than
   plain text or an external URL.
@@ -138,8 +201,8 @@ Pandoc's Typst writer emits a Typst label from a header's identifier, so a raw-T
 against a real Pandoc heading — no hand-built destinations:
 
 ```
-= Attachments
-<attachments>
+= Appendix
+<appendix>
 == dummy.pdf
 <att-dummy>
 ```
@@ -164,7 +227,7 @@ legitimate member of a format-independent vocabulary rather than a PDF trick:
 ### Where it would be built
 
 In the **shared Doc build (Phase 1)**, not in `pdf_rendering._apply_pdf_embeds`'s post-build
-rewrite. The Attachments section is real document structure, so building it there is what earns it
+rewrite. The Appendix section is real document structure, so building it there is what earns it
 a ToC entry, the `unnumbered` exemption for non-body matter, an `epub:type`, and correct behaviour
 under `promote_non_body_sections` — and it is what makes the EPUB and Markdown columns above fall
 out of the existing machinery instead of needing three separate implementations. Only the page
@@ -178,13 +241,13 @@ images themselves stay format-specific.
   vocabulary — the `unnumbered` class and the back-matter `MATTER_DATA_ATTRIBUTE`, and an
   `epub:type` if wanted (`EpubType.APPENDIX` is the closest existing term) — rather than deriving
   them from an `element-type` tag. The trade accepted: an *authored* section of this kind is not
-  recognized, so nothing dedupes a generated Attachments section against a hand-written one, the way
+  recognized, so nothing dedupes a generated Appendix section against a hand-written one, the way
   `has_element_type` suppresses a duplicate generated ToC.
 - **Deduplicate by source URL.** Two occurrences of one PDF produce one subsection, with both
   anchors linking to it; per-occurrence resolution already distinguishes the sites.
 - **The section and every subsection appear in the ToC.** This does not conflict with being
   unnumbered: Pandoc emits an unnumbered heading as `#heading(level: n, numbering: none)[…]`, and a
-  Typst `#outline()` still lists it (verified — *Attachments* and its subsection both appear in the
+  Typst `#outline()` still lists it (verified — the generated section and its subsection both appear in the
   generated Contents).
 - **In a parts book it is a sibling of the parts**, never adopted by the last one. This falls out
   rather than needing work: `promote_non_body_sections` runs in Phase 0 over the model tree, and the

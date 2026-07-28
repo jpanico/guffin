@@ -61,4 +61,4 @@
 
 - the following block embeds a PDF with guffin-meta:: pdf-render: “inline”
 
-[dummy.pdf](dummy-1.pdf "dummy.pdf")
+dummy.pdf

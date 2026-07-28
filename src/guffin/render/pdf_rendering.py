@@ -78,8 +78,9 @@ from guffin.render.pandoc_rendering import (
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
-from guffin.render.project import ProjectProfile, TopLevelDivision
-from guffin.render.render_options import PdfRenderOptions
+from guffin.render.pdf_placement import honoured_pdf_render, requested_pdf_render, warn_unresolvable_external_link
+from guffin.render.project import ProjectProfile, ProjectType, TopLevelDivision
+from guffin.render.render_options import OutputFormat, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
@@ -339,20 +340,28 @@ def _pdf_asset_paths(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[
     return paths
 
 
-def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path]) -> None:
+def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: ProjectType) -> None:
     """Rewrite *doc*'s PDF-embed link paragraphs in place; the asset is never embedded.
 
     A PDF embed reaches the document as a paragraph containing a single link stamped with the
     :data:`~guffin.render.pandoc_rendering.PDF_PLACEMENT_ATTRIBUTE` scaffold attribute — the
-    occurrence's resolved ``pdf-render`` placement, declared per display occurrence, so two
-    references to the same PDF may place it differently.  For each such paragraph whose link URL
-    has a fetched path in *asset_paths*:
+    occurrence's *authored* ``pdf-render`` placement, declared per display occurrence (so two
+    references to the same PDF may place it differently), or
+    :data:`~guffin.render.pandoc_rendering.PDF_PLACEMENT_UNSET` when it carries no tag, in which
+    case this format's default applies
+    (:func:`~guffin.render.pdf_placement.default_pdf_render`).  The request is then narrowed to
+    what this format supports (:func:`~guffin.render.pdf_placement.honoured_pdf_render`), which
+    warns and falls back when it cannot be honoured.  For each such paragraph whose link URL has a
+    fetched path in *asset_paths*:
 
-    - an :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE` occurrence is replaced by
-      one full-width Typst ``image`` per page (the page count read once per file, on first
-      inline use), and
-    - a :attr:`~guffin.model.publishing_semantics.PdfRender.LINK` occurrence is replaced by its
-      bare label text — the PDF's original filename with no hyperlink (the source file is not
+    - an :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE_NATIVE` occurrence is replaced
+      by one full-width Typst ``image`` per page (the page count read once per file, on first
+      inline use);
+    - an :attr:`~guffin.model.publishing_semantics.PdfRender.EXTERNAL_LINK` occurrence keeps its
+      link to the hosted original, warning when that original is Roam-encrypted and so
+      unresolvable outside the Roam client; and
+    - an :attr:`~guffin.model.publishing_semantics.PdfRender.NAME_ONLY` occurrence is replaced by
+      its bare label text — the PDF's original filename with no hyperlink (the source file is not
       carried into the output, matching the EPUB format).
 
     A stamped paragraph whose URL has no fetched path (a failed fetch) keeps its link with the
@@ -363,6 +372,8 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path]) -> None:
         doc: The Panflute document to rewrite.
         asset_paths: Mapping from source URL to the fetched PDF's local path, as built by
             :func:`_pdf_asset_paths`.
+        project_type: The kind of work being produced, which selects the default placement for
+            an untagged occurrence.
     """
     page_counts: Final[dict[Path, int]] = {}
 
@@ -378,21 +389,27 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path]) -> None:
         inline = list(elem.content)[0]
         if not isinstance(inline, pf.Link) or PDF_PLACEMENT_ATTRIBUTE not in inline.attributes:
             return None
-        placement: Final[PdfRender] = PdfRender(inline.attributes[PDF_PLACEMENT_ATTRIBUTE])
+        requested: Final[PdfRender] = requested_pdf_render(inline, OutputFormat.PDF, project_type)
         path: Final[Path | None] = asset_paths.get(inline.url)
         if path is None:
             # A failed fetch: the link to the remote source stays, minus the scaffold attribute.
-            del inline.attributes[PDF_PLACEMENT_ATTRIBUTE]
+            inline.attributes.pop(PDF_PLACEMENT_ATTRIBUTE, None)
             return None
-        if placement is PdfRender.INLINE:
+        placement: Final[PdfRender] = honoured_pdf_render(requested, OutputFormat.PDF, uid=path.name)
+        if placement is PdfRender.INLINE_NATIVE:
             pages: Final[int] = _page_count(path)
-            logger.info("rendered PDF embed %s (%d page(s), inline)", path.name, pages)
+            logger.info("rendered PDF embed %s (%d page(s), %s)", path.name, pages, placement.value)
             pages_markup: Final[str] = "\n".join(
                 f"#image({_typst_str(str(path))}, page: {page}, width: 100%)" for page in range(1, pages + 1)
             )
             return [_typst_raw_block(pages_markup)]
-        # LINK: drop the hyperlink, keeping only the label text (the PDF's filename).
-        logger.info("rendered PDF embed %s (link)", path.name)
+        if placement is PdfRender.EXTERNAL_LINK:
+            # Link to the hosted original; the scaffold must not reach the Typst writer.
+            warn_unresolvable_external_link(inline.title, str(inline.url))
+            inline.attributes.pop(PDF_PLACEMENT_ATTRIBUTE, None)
+            return None
+        # NAME_ONLY: drop the hyperlink, keeping only the label text (the PDF's filename).
+        logger.info("rendered PDF embed %s (%s)", path.name, placement.value)
         return [pf.Para(*list(inline.content))]
 
     doc.walk(_action)
@@ -602,7 +619,7 @@ def render(
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
-        _apply_pdf_embeds(doc, pdf_paths)
+        _apply_pdf_embeds(doc, pdf_paths, profile.project_type)
         # Split the title into a plain string (PDF /Title + the running-header %title% string
         # machinery) and a rich `title-display` copy the header renders as content, so a bold
         # portion of the title shows as markup rather than leaking literal Typst source.

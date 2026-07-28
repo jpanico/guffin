@@ -222,7 +222,7 @@
 - - id: 5456
     uid: Q-T5fKOEq
     title: '!QUOTE'
-- - string: 'pdf-render:: inline'
+- - string: 'pdf-render:: inline-native'
     id: 11931
     uid: EWMNZcPZX
     parents:
@@ -1234,7 +1234,7 @@
       - source:
         - uid
         - 10pBwqT7Q
-        value: ' inline'
+        value: ' inline-native'
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 15111
@@ -2391,7 +2391,7 @@
       id: 3327
     refs:
     - id: 11932
-- - string: 'pdf-render:: inline'
+- - string: 'pdf-render:: inline-native'
     id: 15111
     uid: 10pBwqT7Q
     parents:
@@ -3303,7 +3303,7 @@
       - source:
         - uid
         - EWMNZcPZX
-        value: ' inline'
+        value: ' inline-native'
     string: 'guffin-meta:: #.rm-g'
     children:
     - id: 11931

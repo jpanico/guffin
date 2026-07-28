@@ -61,4 +61,4 @@
 
 - the following block embeds a PDF with guffin-meta:: pdf-render: “inline”
 
-[3IX5aCGhi\_.pdf](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407 "3IX5aCGhi_.pdf")
+3IX5aCGhi\_.pdf

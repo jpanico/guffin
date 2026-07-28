@@ -54,11 +54,11 @@ from guffin.render.pandoc_rendering import (
     make_resolver,
     resolve_vertex_links,
     revision_line,
-    strip_pdf_placement,
     vertex_tree_to_pandoc,
 )
+from guffin.render.pdf_placement import apply_reference_placements
 from guffin.render.project import ProjectProfile, TopLevelDivision
-from guffin.render.render_options import MarkdownRenderOptions
+from guffin.render.render_options import MarkdownRenderOptions, OutputFormat
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
@@ -241,7 +241,7 @@ def render(
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
-        strip_pdf_placement(doc)
+        apply_reference_placements(doc, OutputFormat.MARKDOWN, profile.project_type, should_bundle=True)
         _insert_revision_line(doc, revision_name)
         _stamp_revision_metadata(doc, title_page_revision)
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
@@ -281,7 +281,7 @@ def render(
         resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map, options.daily_note_format))
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
-        strip_pdf_placement(no_bundle_doc)
+        apply_reference_placements(no_bundle_doc, OutputFormat.MARKDOWN, profile.project_type, should_bundle=False)
         _insert_revision_line(no_bundle_doc, revision_name)
         _stamp_revision_metadata(no_bundle_doc, title_page_revision)
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)

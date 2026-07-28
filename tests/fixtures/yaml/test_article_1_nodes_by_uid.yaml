@@ -79,7 +79,7 @@ ivTC6d-rG:
 EWMNZcPZX:
   uid: EWMNZcPZX
   id: 11931
-  string: 'pdf-render:: inline'
+  string: 'pdf-render:: inline-native'
   order: 0
   heading: null
   children: null
@@ -1047,7 +1047,7 @@ GvRO438Ze:
     - source:
       - uid
       - EWMNZcPZX
-      value: ' inline'
+      value: ' inline-native'
 2xY4zCjId:
   uid: 2xY4zCjId
   id: 11839

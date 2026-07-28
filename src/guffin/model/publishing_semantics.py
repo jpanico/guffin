@@ -2,14 +2,16 @@
 
 Public symbols:
 
-- **Constants**: :data:`DEFAULT_PDF_RENDER` — the :class:`PdfRender` placement of an untagged
-  PDF embed; :data:`DEFAULT_PUBLISH` — the publication state of an untagged vertex.
+- **Constants**: :data:`PDF_RENDER_FALLBACK` — the :class:`PdfRender` placement a format falls
+  back to when it cannot honour the requested one; :data:`DEFAULT_PUBLISH` — the publication
+  state of an untagged vertex.
 - **Enumerations**: :class:`PublishingSemantics` — the attributes Guffin recognizes (document metadata +
   the ``element-type``/``matter``/``page-break`` heading tags + the ``pdf-render`` PDF tag + the
   ``publish`` block tag), each member a
   :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
-  domain; :class:`PdfRender` — how an embedded PDF asset is placed in paginated output (inline /
-  link); :class:`PageBreak` — where a page break is forced relative to the tagged heading
+  domain; :class:`PdfRender` — how an embedded PDF asset is placed in output (reproduced at the
+  embed or in an appendix, natively or as images; linked as a contained copy or an external URL;
+  or named only); :class:`PageBreak` — where a page break is forced relative to the tagged heading
   (``before``).  The anchoring affordances an attribute declares
   (:class:`~guffin.model.attribute_anchor.AttributeAnchor`,
   :class:`~guffin.model.attribute_anchor.TreePosition`) live in
@@ -123,21 +125,49 @@ logger = logging.getLogger(__name__)
 
 
 class PdfRender(enum.StrEnum):
-    """How an embedded PDF asset is placed in paginated output — the values a ``pdf-render`` tag takes.
+    """How an embedded PDF asset is placed in output — the values a ``pdf-render`` tag takes.
+
+    The vocabulary spans the whole space of placements an author might ask for, whether or not a
+    given format can honour a given one: two axes for reproducing the document's pages (*where* —
+    at the embed or at the back — and *at what fidelity* — the format's own content or page
+    images), two for referencing the file instead of reproducing it (a copy carried inside the
+    output, or the externally hosted original), and one for naming it and nothing more.  A format
+    that cannot honour the requested placement falls back to :attr:`NAME_ONLY` with a warning
+    rather than silently choosing something else — the author asks, and is told when the answer
+    is no.
 
     Attributes:
-        INLINE: Every page of the PDF renders in the document flow, in place of the embed.
-        LINK: The PDF is represented as a reference rather than its rendered pages (the untagged
-            default, :data:`DEFAULT_PDF_RENDER`); how that reference is presented is format-specific
-            (e.g. a bundled-file link in Markdown, plain filename text in PDF).
+        INLINE_NATIVE: The PDF's pages are reproduced at the embed, as the output format's own
+            content.
+        INLINE_IMAGE: The PDF's pages are reproduced at the embed, as images.
+        APPENDIX_NATIVE: The PDF's pages are reproduced in an appendix at the back, linked from
+            the embed, as the output format's own content.
+        APPENDIX_IMAGE: The PDF's pages are reproduced in an appendix at the back, linked from
+            the embed, as images.
+        INTERNAL_LINK: The PDF file itself travels inside the output document, and the embed
+            links to that contained copy.
+        EXTERNAL_LINK: The embed links to the PDF where it is hosted, outside the output
+            document, by ordinary URL.
+        NAME_ONLY: The PDF is named in the text; it is neither reproduced nor linked.  The
+            universal fallback, since every format can name a file.
     """
 
-    INLINE = "inline"
-    LINK = "link"
+    INLINE_NATIVE = "inline-native"
+    INLINE_IMAGE = "inline-image"
+    APPENDIX_NATIVE = "appendix-native"
+    APPENDIX_IMAGE = "appendix-image"
+    INTERNAL_LINK = "internal-link"
+    EXTERNAL_LINK = "external-link"
+    NAME_ONLY = "name-only"
 
 
-DEFAULT_PDF_RENDER: Final[PdfRender] = PdfRender.LINK
-"""The :class:`PdfRender` placement of a PDF embed carrying no ``pdf-render`` tag."""
+PDF_RENDER_FALLBACK: Final[PdfRender] = PdfRender.NAME_ONLY
+"""The placement a format falls back to when it cannot honour the one an author asked for.
+
+Deliberately a single fixed member rather than a ranked chain: a chain would have Guffin choose
+which unasked-for placement is *closest* to the request, and that judgment is the author's to
+make.  Every fallback is logged as a warning, so a request that could not be met is never silent.
+"""
 
 
 class PageBreak(enum.StrEnum):

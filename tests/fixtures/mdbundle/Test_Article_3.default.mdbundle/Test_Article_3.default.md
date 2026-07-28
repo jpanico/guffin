@@ -194,7 +194,7 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   <img src="flower-1.jpeg" alt="A flower" style="margin: 0;">
 - <span style="color: fuchsia">**standalone PDF BLOCK ref, site-tagged pdf-render: “inline” (from Test Article 1) ↓**</span>
-  [dummy.pdf](dummy.pdf "dummy.pdf")
+  dummy.pdf
 - <span style="color: fuchsia">**standalone BLOCK EMBED (from Test Article 1) ↓**</span>
   ### Section 2.1
 

@@ -1135,7 +1135,7 @@ tree_network:
     - source:
       - uid
       - 10pBwqT7Q
-      value: ' inline'
+      value: ' inline-native'
 - uid: Q-nJAf9KK
   id: 11721
   string: This para features ^^highlight^^
@@ -2119,7 +2119,7 @@ tree_network:
   attrs: null
 - uid: 10pBwqT7Q
   id: 15111
-  string: 'pdf-render:: inline'
+  string: 'pdf-render:: inline-native'
   order: 0
   heading: null
   children: null
@@ -4541,11 +4541,11 @@ refs_by_id:
       - source:
         - uid
         - EWMNZcPZX
-        value: ' inline'
+        value: ' inline-native'
   '11931':
     uid: EWMNZcPZX
     id: 11931
-    string: 'pdf-render:: inline'
+    string: 'pdf-render:: inline-native'
     order: 0
     heading: null
     children: null
@@ -7317,11 +7317,11 @@ refs_by_id:
       - source:
         - uid
         - 10pBwqT7Q
-        value: ' inline'
+        value: ' inline-native'
   '15111':
     uid: 10pBwqT7Q
     id: 15111
-    string: 'pdf-render:: inline'
+    string: 'pdf-render:: inline-native'
     order: 0
     heading: null
     children: null
