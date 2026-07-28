@@ -64,14 +64,14 @@ SUPPORTED_PDF_RENDERS: Final[Mapping[_OutputTarget, frozenset[PdfRender]]] = {
     (OutputFormat.PDF, True): frozenset(
         {PdfRender.INLINE_NATIVE, PdfRender.APPENDIX_NATIVE, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}
     ),
-    (OutputFormat.EPUB, True): frozenset({PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
+    (OutputFormat.EPUB, True): frozenset({PdfRender.APPENDIX_IMAGE, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
 }
 """The placements each output target implements today; every other request falls back.
 
 A bundling Markdown export writes the asset beside the document, so it can link to a contained
 copy; a plain ``.md`` has nowhere to put one.  The PDF path reproduces pages natively via Typst,
-either at the embed or in a generated back-matter appendix linked from it.  No format renders
-page images, and no format but PDF reproduces pages at all.
+either at the embed or in a generated back-matter appendix linked from it.  EPUB cannot display a
+PDF at all, so it reproduces an appendix entry's pages as rasterised images instead.
 """
 
 _DEFAULT_PDF_RENDERS: Final[Mapping[tuple[OutputFormat, bool, ProjectType], PdfRender]] = {

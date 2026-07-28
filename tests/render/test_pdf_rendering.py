@@ -5,7 +5,7 @@
 # Unknown propagation from that import — suppressing them here avoids false positives.
 # pyright: reportPrivateUsage=false
 # Rationale: these unit tests deliberately exercise module-private helpers (e.g.
-# _pdf_asset_paths, _apply_pdf_embeds, _typst_str) directly.
+# pdf_asset_paths, _apply_pdf_embeds, _typst_str) directly.
 
 import shutil
 from pathlib import Path
@@ -21,16 +21,16 @@ from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView, ViewMap
-from guffin.render.asset_fetch import AssetRef
+from guffin.render.asset_fetch import AssetRef, pdf_asset_paths
 from guffin.render.pandoc_ast import pandoc_to_json
 from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, PDF_PLACEMENT_UNSET, vertex_tree_to_pandoc
 from guffin.render.pdf_rendering import (
     _apply_pdf_embeds,
-    _pdf_asset_paths,
     _prepare_title_metadata,
     _typst_resources_dir,
     _typst_str,
     _typst_template_args,
+    pdf_asset_paths,
 )
 from guffin.render.project import ProjectType, TopLevelDivision
 from guffin.transcribe.roam_tree_to_guffin import transcribe
@@ -107,19 +107,19 @@ class TestTypstStr:
 
 
 class TestPdfAssetPaths:
-    """_pdf_asset_paths() maps each fetched PDF asset's source URL to its local path."""
+    """pdf_asset_paths() maps each fetched PDF asset's source URL to its local path."""
 
     def test_fetched_pdf_maps_source_url_to_path(self, tmp_path: Path) -> None:
         """A fetched PDF contributes a source-URL → local-path entry."""
         vertex = _pdf("pdfuid001")
         tree = VertexTree(tree_vertices=[vertex])
         ref = _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")
-        assert _pdf_asset_paths(tree, {"pdfuid001": ref}) == {str(vertex.source): ref.path}
+        assert pdf_asset_paths(tree, {"pdfuid001": ref}) == {str(vertex.source): ref.path}
 
     def test_unfetched_pdf_is_skipped(self, tmp_path: Path) -> None:
         """A PDF vertex with no fetched asset contributes no entry."""
         tree = VertexTree(tree_vertices=[_pdf("pdfuid001")])
-        assert _pdf_asset_paths(tree, {}) == {}
+        assert pdf_asset_paths(tree, {}) == {}
 
 
 # ---------------------------------------------------------------------------
@@ -144,7 +144,7 @@ class TestApplyPdfEmbeds:
                 attribute_assignments=[_render_tag(render)],
             )
         tree = VertexTree(tree_vertices=[page, vertex])
-        paths = _pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        paths = pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         return doc, paths, str(vertex.source)
 
@@ -201,7 +201,7 @@ class TestApplyPdfEmbeds:
             ],
             ref_vertices=[vertex],
         )
-        paths = _pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
+        paths = pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
         raw_blocks = [b for b in doc.content if isinstance(b, pf.RawBlock)]
@@ -241,7 +241,7 @@ class TestApplyPdfEmbeds:
         text = TextVertex(uid="textuid01", text=f"see [dummy.pdf]({_URL_A}) here")
         tree = VertexTree(tree_vertices=[page, text])
         pdf = _pdf("pdfuid001")
-        paths = _pdf_asset_paths(
+        paths = pdf_asset_paths(
             VertexTree(tree_vertices=[pdf]), {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")}
         )
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
@@ -291,7 +291,7 @@ class TestAppendixPlacement:
         tree = VertexTree(tree_vertices=[page, *pdfs])
         refs = {uid: _dummy_ref(uid, tmp_path, "sha1.pdf") for uid in uids}
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        return doc, _pdf_asset_paths(tree, refs)
+        return doc, pdf_asset_paths(tree, refs)
 
     def test_anchor_links_into_a_generated_appendix(self, tmp_path: Path) -> None:
         """The embed becomes an internal link, and the pages land under an unnumbered appendix."""

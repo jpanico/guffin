@@ -47,6 +47,7 @@ from pydantic import validate_call
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import (
+    PdfRender,
     drop_page_breaks,
     drop_unpublished,
     illustrators_of_vertex,
@@ -62,7 +63,7 @@ from guffin.model.vertex_tree import (
     drop_root_preamble,
     root_vertex,
 )
-from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
+from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import callout_accent, callout_title_tint
 from guffin.render.epub_post_processing import (
     bake_code_line_numbers,
@@ -73,14 +74,17 @@ from guffin.render.epub_post_processing import (
 )
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
+    PDF_PLACEMENT_ATTRIBUTE,
     colophon_summary,
     make_resolver,
     resolve_vertex_links,
     revision_line,
     vertex_tree_to_pandoc,
 )
-from guffin.render.pdf_placement import apply_reference_placements
-from guffin.render.project import ProjectProfile, TopLevelDivision
+from guffin.render.pdf_appendix import AppendixEntries, appendix_anchor, appendix_section, entry_identifier
+from guffin.render.pdf_placement import honoured_pdf_render, requested_pdf_render, warn_unresolvable_external_link
+from guffin.render.pdf_raster import rasterize_pages
+from guffin.render.project import ProjectProfile, ProjectType, TopLevelDivision
 from guffin.render.render_options import EpubRenderOptions, OutputFormat
 from guffin.roam.blockquote import CalloutType
 from guffin.roam.local_api import ApiEndpoint
@@ -154,6 +158,65 @@ def _split_level_for(division: TopLevelDivision) -> int:
         The ``--split-level`` value: ``2`` for :attr:`TopLevelDivision.PART`, otherwise ``1``.
     """
     return 2 if division is TopLevelDivision.PART else 1
+
+
+def _page_images(source: Path, image_dir: Path) -> list[pf.Block]:
+    """Reproduce every page of the PDF at *source* as a rasterised image block."""
+    return [
+        pf.Para(pf.Image(pf.Str(f"page {number}"), url=str(image), title=f"page {number}"))
+        for number, image in enumerate(rasterize_pages(source, image_dir), start=1)
+    ]
+
+
+def _apply_pdf_appendix(
+    doc: pf.Doc,
+    asset_paths: dict[str, Path],
+    project_type: ProjectType,
+    image_dir: Path,
+) -> None:
+    """Resolve every PDF embed for EPUB output, reproducing appendix-placed PDFs as page images.
+
+    EPUB cannot display a PDF, so an
+    :attr:`~guffin.model.publishing_semantics.PdfRender.APPENDIX_IMAGE` occurrence has its pages
+    rasterised into *image_dir* and reproduced in a generated back-matter appendix, with an
+    intra-publication link left where the PDF was embedded.  Every other placement is a reference:
+    a link to the hosted original, or the bare filename.
+
+    Args:
+        doc: The Panflute document to rewrite.
+        asset_paths: Mapping from source URL to the fetched PDF's local path.
+        project_type: The kind of work being produced, which selects the default placement.
+        image_dir: Directory the rasterised page images are written into; Pandoc embeds them into
+            the package from there.
+    """
+    appendix: Final[AppendixEntries] = {}
+
+    def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Block] | None:
+        if not isinstance(elem, pf.Para) or len(list(elem.content)) != 1:
+            return None
+        link = list(elem.content)[0]
+        if not isinstance(link, pf.Link) or PDF_PLACEMENT_ATTRIBUTE not in link.attributes:
+            return None
+        requested: Final[PdfRender] = requested_pdf_render(link, OutputFormat.EPUB, project_type)
+        path: Final[Path | None] = asset_paths.get(link.url)
+        if path is None:
+            # A failed fetch: the link to the remote source stays, minus the scaffold attribute.
+            link.attributes.pop(PDF_PLACEMENT_ATTRIBUTE, None)
+            return None
+        placement: Final[PdfRender] = honoured_pdf_render(requested, OutputFormat.EPUB, uid=path.name)
+        del link.attributes[PDF_PLACEMENT_ATTRIBUTE]
+        if placement is PdfRender.APPENDIX_IMAGE:
+            label: Final[list[pf.Inline]] = list(link.content)
+            return [appendix_anchor(label, entry_identifier(appendix, path, label))]
+        if placement is PdfRender.NAME_ONLY:
+            return [pf.Para(*list(link.content))]
+        if placement is PdfRender.EXTERNAL_LINK:
+            warn_unresolvable_external_link(link.title, str(link.url))
+        return None
+
+    doc.walk(_action)
+    if appendix:
+        doc.content.extend(appendix_section(appendix, lambda path: _page_images(path, image_dir)))
 
 
 @validate_call
@@ -294,9 +357,10 @@ def render(
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
-        # This conversion places no PDF pages, so the placement scaffold must not reach the
+        # Appendix-placed PDFs are rasterised into the asset directory and reproduced at the
+        # back; every other placement is a reference.  Either way the scaffold must not reach the
         # XHTML output as a stray attribute.
-        apply_reference_placements(doc, OutputFormat.EPUB, profile.project_type)
+        _apply_pdf_appendix(doc, pdf_asset_paths(enriched_tree, asset_refs), profile.project_type, Path(tmp))
         # Without a title page to stamp, the authored revision name leads the reading flow
         # instead — the first block a reader sees on opening the book (the EPUB body carries no
         # title of its own; dc:title lives in the package metadata).

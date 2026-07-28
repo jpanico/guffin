@@ -41,7 +41,6 @@ import importlib.resources
 import logging
 import os
 import tempfile
-from collections.abc import Callable
 from copy import deepcopy
 from pathlib import Path
 from typing import Final
@@ -63,14 +62,14 @@ from guffin.model.publishing_semantics import (
     strip_element_numbers,
 )
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import ImageVertex, PdfVertex
+from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import (
     VertexTree,
     drop_attribute_assignments,
     drop_code_sources,
     drop_root_preamble,
 )
-from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets
+from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -80,6 +79,7 @@ from guffin.render.pandoc_rendering import (
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
+from guffin.render.pdf_appendix import AppendixEntries, appendix_anchor, appendix_section, entry_identifier
 from guffin.render.pdf_placement import honoured_pdf_render, requested_pdf_render, warn_unresolvable_external_link
 from guffin.render.project import ProjectProfile, ProjectType, TopLevelDivision
 from guffin.render.render_options import OutputFormat, PdfRenderOptions
@@ -314,40 +314,6 @@ def _typst_raw_block(text: str) -> pf.RawBlock:
     return raw
 
 
-def _pdf_asset_paths(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[str, Path]:
-    """Map each fetched PDF asset's source URL to its local file path.
-
-    The keys are the PDF vertices' source URLs — the URL a rendered embed link carries — so a
-    Pandoc document's PDF-embed paragraphs can be matched against the mapping.  When several PDF
-    vertices share one source URL, the first (in
-    :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` order) wins.  PDF vertices absent from
-    *asset_refs* (failed fetches) contribute no entry.
-
-    Args:
-        tree: The vertex tree whose PDF assets to map.
-        asset_refs: The fetched assets, as returned by
-            :func:`~guffin.render.asset_fetch.fetch_assets`.
-
-    Returns:
-        A mapping from source URL to the fetched PDF's local path.
-    """
-    paths: Final[dict[str, Path]] = {}
-    for vertex in tree.uid_map.values():
-        if not isinstance(vertex, PdfVertex) or str(vertex.source) in paths:
-            continue
-        ref: AssetRef | None = asset_refs.get(vertex.uid)
-        if ref is None:
-            continue
-        paths[str(vertex.source)] = ref.path
-    return paths
-
-
-_APPENDIX_ID: Final[str] = "pdf-appendix"
-"""Identifier of the generated appendix section, and the stem of each subsection's identifier."""
-
-_APPENDIX_TITLE: Final[str] = "Appendix"
-"""Heading text of the generated appendix section."""
-
 _APPENDIX_LINK_COLOR: Final[str] = 'rgb("#1A4F8A")'
 """Typst fill for an appendix anchor, as a Typst colour expression.
 
@@ -362,42 +328,6 @@ _APPENDIX_FIRST_PAGE_HEIGHT: Final[str] = "85%"
 Leaves room for the entry's heading above it, so the pages start on the heading's own page.  The
 remaining 15% is comfortably more than a one- or two-line heading needs; a page capped this way is
 scaled to fit, so it stays legible rather than being cropped."""
-
-
-def _appendix_blocks(
-    entries: dict[Path, tuple[str, list[pf.Inline]]],
-    pages_markup: Callable[[Path, bool], str],
-) -> list[pf.Block]:
-    """Build the back-matter appendix: a section holding one labelled subsection per PDF.
-
-    The section is renderer-generated rather than authored, so it carries no ``element-type`` tag;
-    it is stamped directly with what such a tag would have earned it — the ``unnumbered`` class,
-    since back matter stands outside the body's numbering.  Unnumbered headings still appear in a
-    Typst outline, so the appendix and its entries reach the table of contents.
-
-    Emitted at heading level 1, which makes it a sibling of a parts book's parts rather than a
-    section adopted by the last one.
-
-    Each entry's first page is capped in height to leave room for its heading, so the pages start
-    on the heading's own page.  A full-width page image is taller than what a heading leaves behind,
-    so without that cap it would be pushed to the next page and strand the heading.
-
-    Args:
-        entries: Each PDF's subsection identifier and display label, keyed by local path, in the
-            order the document first referenced them.
-        pages_markup: Builds the raw Typst placing every page of the PDF at a given path; the
-            second argument caps the first page's height to leave room for its heading.
-
-    Returns:
-        The appendix section's blocks, to append to the document.
-    """
-    blocks: Final[list[pf.Block]] = [
-        pf.Header(pf.Str(_APPENDIX_TITLE), level=1, identifier=_APPENDIX_ID, classes=["unnumbered"])
-    ]
-    for path, (identifier, label) in entries.items():
-        blocks.append(pf.Header(*label, level=2, identifier=identifier, classes=["unnumbered"]))
-        blocks.append(_typst_raw_block(pages_markup(path, True)))
-    return blocks
 
 
 def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: ProjectType) -> None:
@@ -438,7 +368,7 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
     page_counts: Final[dict[Path, int]] = {}
     # Insertion-ordered, so the appendix presents its entries in first-reference order; keyed by
     # path, so several occurrences of one PDF share a single entry and all link to it.
-    appendix: Final[dict[Path, tuple[str, list[pf.Inline]]]] = {}
+    appendix: Final[AppendixEntries] = {}
 
     def _page_count(path: Path) -> int:
         """The number of pages in the PDF at *path*, read once per file."""
@@ -470,12 +400,6 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
                 markup.append(f"{image})")
         return "\n".join(markup)
 
-    def _appendix_entry(path: Path, label: list[pf.Inline]) -> str:
-        """The identifier of *path*'s appendix subsection, registering it on first reference."""
-        if path not in appendix:
-            appendix[path] = (f"{_APPENDIX_ID}-{len(appendix) + 1}", label)
-        return appendix[path][0]
-
     def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Block] | None:
         if not isinstance(elem, pf.Para) or len(list(elem.content)) != 1:
             return None
@@ -498,9 +422,11 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
             # typst_color_span.lua maps to #underline[#text(fill: …)]), since an unstyled internal
             # link reads as ordinary text on the page.
             label: Final[list[pf.Inline]] = list(inline.content)
-            identifier: Final[str] = _appendix_entry(path, deepcopy(label))
-            anchor: Final[pf.Span] = pf.Span(*label, attributes={"underline-color": _APPENDIX_LINK_COLOR})
-            return [pf.Para(pf.Link(anchor, url=f"#{identifier}"))]
+            identifier: Final[str] = entry_identifier(appendix, path, label)
+            styled: Final[list[pf.Inline]] = [
+                pf.Span(*deepcopy(label), attributes={"underline-color": _APPENDIX_LINK_COLOR})
+            ]
+            return [appendix_anchor(label, identifier, styled)]
         if placement is PdfRender.EXTERNAL_LINK:
             # Link to the hosted original; the scaffold must not reach the Typst writer.
             warn_unresolvable_external_link(inline.title, str(inline.url))
@@ -512,7 +438,7 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
 
     doc.walk(_action)
     if appendix:
-        doc.content.extend(_appendix_blocks(appendix, _pages_markup))
+        doc.content.extend(appendix_section(appendix, lambda path: [_typst_raw_block(_pages_markup(path, True))]))
 
 
 def _prepare_title_metadata(doc: pf.Doc) -> None:
@@ -704,7 +630,7 @@ def render(
         asset_files: Final[dict[Uid, Path]] = {
             uid: ref.path for uid, ref in asset_refs.items() if isinstance(enriched_tree.uid_map[uid], ImageVertex)
         }
-        pdf_paths: Final[dict[str, Path]] = _pdf_asset_paths(enriched_tree, asset_refs)
+        pdf_paths: Final[dict[str, Path]] = pdf_asset_paths(enriched_tree, asset_refs)
         # The PDF provenance rides the page footer (see _typst_template_args), not an end-of-body
         # colophon, so it is deliberately not passed to vertex_tree_to_pandoc here.
         # Without a title page the document title has no visible home, so it opens the flow as a

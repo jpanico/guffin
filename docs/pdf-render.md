@@ -56,14 +56,37 @@ a book carries its referenced documents rather than pointing away from them. The
 | `INLINE_NATIVE` | ✗ | ✗ | ✅ one full-width `#image(…, page: n)` per page, vector and searchable | ✗ |
 | `INLINE_IMAGE` | ✗ | ✗ | ✗ | ✗ |
 | `APPENDIX_NATIVE` | ✗ | ✗ | ✅ a generated *Appendix* section holds the pages; the embed becomes an internal link to its subsection | ✗ |
-| `APPENDIX_IMAGE` | ✗ | ✗ | ✗ | ✗ |
+| `APPENDIX_IMAGE` | ✗ | ✗ | ✗ | ✅ pages rasterised at 150 dpi into the package, under a back-matter *Appendix*; the embed becomes an intra-publication link |
 | `INTERNAL_LINK` | ✅ relative link to the copy in `.mdbundle/` | ✗ nothing to contain it | ✗ measured dead — see *Format capabilities* | ✗ untested — see *Format capabilities* |
 | `EXTERNAL_LINK` | ✅ | ✅ | ✅ | ✅ |
 | `NAME_ONLY` | ✅ | ✅ | ✅ | ✅ |
 
-Everything marked ✗ falls back. Note the consequence of the two matrices together: **`epub`
-exports warn on every PDF embed today**, because their default is an appendix placement that EPUB
-does not yet implement. The `pdf` defaults are all honoured.
+Everything marked ✗ falls back. Note the consequence of the two matrices together: every `pdf`
+and `epub` **book** default is now honoured. An `epub` *article* or *manuscript* still warns on each
+embed, since its default is `APPENDIX_NATIVE` — reproducing a PDF as EPUB's own content needs text
+extraction, which is unbuilt (see *Reproducing pages outside the PDF format*).
+
+
+## Reproducing pages outside the PDF format
+
+Only Typst can display a PDF. It places each page as a Form XObject — vector, and its text stays
+selectable — which is why `INLINE_NATIVE` and `APPENDIX_NATIVE` are lossless there and cost nothing
+but the source file.
+
+Everywhere else, reproducing a page means one of two things, and the choice is what separates the
+`*_NATIVE` members from the `*_IMAGE` ones:
+
+- **Images** (`*_IMAGE`) — rasterise with `pypdfium2` (PDFium, Chrome's renderer; BSD-3-Clause and
+  Apache-2.0, unlike PyMuPDF's AGPL, which rules it out for an MIT project). Pixel-faithful and
+  never fails, but the result is not reflowable or searchable, and it is heavy: 150 dpi
+  (`pdf_raster.PAGE_RASTER_DPI`) costs roughly 300 KB per page — 9 MB for a 31-page appendix.
+- **The format's own content** (`*_NATIVE`) — extract the PDF's text and structure into XHTML or
+  Markdown. Unbuilt. Measured against a real corpus of 14 referenced PDFs: `pypdf.extract_text`
+  yields clean, correctly ordered text for 13 of them but loses every heading, table, and image;
+  9 of the 14 carry a structure tree (`/H2`, `/L`/`/LI`, `/Table`/`/TR`/`/TD`) that would preserve
+  those semantics, at the cost of resolving `/MCID` mappings pypdf does not resolve for you; and one
+  — a payment-screen capture — yields 95 characters, so text extraction would render it as a blank
+  page. That last case is why `*_IMAGE` was built first.
 
 
 ## Fallback
@@ -107,11 +130,16 @@ travel, and the other formats always carry their own.
   default".
 - **Each format pass resolves and acts.** `pdf_placement.requested_pdf_render` reads the stamp or
   defaults it; `honoured_pdf_render` narrows it to what the format supports, warning on any
-  fallback. `pdf_rendering._apply_pdf_embeds` then renders pages for `INLINE_NATIVE`; the
-  reference-only formats share `pdf_placement.apply_reference_placements`, which unwraps a
-  `NAME_ONLY` occurrence to bare text and leaves a link placement's link intact. Every pass
-  consumes the scaffold, since Pandoc writers otherwise surface it (the GFM writer falls back to a
-  raw HTML anchor for an attributed link).
+  fallback. `pdf_rendering._apply_pdf_embeds` then renders pages for `INLINE_NATIVE` and
+  `APPENDIX_NATIVE`; `epub_rendering._apply_pdf_appendix` rasterises them for `APPENDIX_IMAGE`;
+  Markdown, which reproduces nothing, uses `pdf_placement.apply_reference_placements`. All three
+  unwrap a `NAME_ONLY` occurrence to bare text and leave a link placement's link intact, and all
+  three consume the scaffold, since Pandoc writers otherwise surface it (the GFM writer falls back
+  to a raw HTML anchor for an attributed link).
+- **The appendix's structure is shared, its pages are not.** `render/pdf_appendix.py` builds the
+  section, its labelled subsections, the per-PDF deduplication, and the anchors — identical in every
+  format — and takes the page reproduction as a callback, which is the only part that differs
+  (`#image(…, page: n)` for Typst, rasterised PNGs for EPUB).
 - **The link's URL is already decided by the build**, which is why `INTERNAL_LINK` needs no special
   handling: bundle mode fetches every displayed asset into the bundle directory and hands the build
   filename-only paths, so links resolve to the copies beside the `.md`. Plain `--no-bundle` skips

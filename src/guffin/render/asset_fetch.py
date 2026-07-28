@@ -22,6 +22,7 @@ Public symbols:
 - :func:`fetch_and_enrich_assets` — :func:`fetch_assets` plus tree enrichment; returns the
   tree with ``original_image_size`` (images) and ``original_file_name`` (PDFs) populated,
   together with the ``{uid: AssetRef}`` mapping.
+- :func:`pdf_asset_paths` — map each fetched PDF asset's source URL to its local path.
 - :func:`cover_image_path` — pure lookup: the fetched local path of the cover image a
   tree's root vertex references, resolved against a :func:`fetch_assets` result; ``None``
   when no cover is declared.
@@ -37,7 +38,7 @@ from pydantic import validate_call
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.model.publishing_semantics import cover_image_vertex
-from guffin.model.vertex import AssetVertex, ImageVertex
+from guffin.model.vertex import AssetVertex, ImageVertex, PdfVertex
 from guffin.model.vertex_tree import (
     VertexTree,
     enrich_image_original_sizes,
@@ -307,3 +308,32 @@ def cover_image_path(vertex_tree: VertexTree, asset_refs: Mapping[Uid, AssetRef]
         logger.warning("cover image uid=%r was not fetched; rendering without a cover", cover_vertex.uid)
         return None
     return cover_ref.path
+
+
+@validate_call
+def pdf_asset_paths(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[str, Path]:
+    """Map each fetched PDF asset's source URL to its local file path.
+
+    The keys are the PDF vertices' source URLs — the URL a rendered embed link carries — so a
+    Pandoc document's PDF-embed paragraphs can be matched against the mapping.  When several PDF
+    vertices share one source URL, the first (in
+    :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` order) wins.  PDF vertices absent from
+    *asset_refs* (failed fetches) contribute no entry.
+
+    Args:
+        tree: The vertex tree whose PDF assets to map.
+        asset_refs: The fetched assets, as returned by
+            :func:`fetch_assets`.
+
+    Returns:
+        A mapping from source URL to the fetched PDF's local path.
+    """
+    paths: Final[dict[str, Path]] = {}
+    for vertex in tree.uid_map.values():
+        if not isinstance(vertex, PdfVertex) or str(vertex.source) in paths:
+            continue
+        ref: AssetRef | None = asset_refs.get(vertex.uid)
+        if ref is None:
+            continue
+        paths[str(vertex.source)] = ref.path
+    return paths
