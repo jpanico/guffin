@@ -2,6 +2,7 @@
 
 import json
 import logging
+from typing import Final
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -123,7 +124,7 @@ class TestApiEndpoint:
         url: ApiEndpointURL = ApiEndpointURL(local_api_port=3333, graph_name="SCFH")
         endpoint: ApiEndpoint = ApiEndpoint(url=url, bearer_token="my-secret-token")
         assert endpoint.url == url
-        assert endpoint.bearer_token == "my-secret-token"
+        assert endpoint.bearer_token.get_secret_value() == "my-secret-token"
 
     def test_missing_url_raises_validation_error(self) -> None:
         """Test that omitting url raises ValidationError."""
@@ -173,7 +174,7 @@ class TestApiEndpoint:
         )
         assert endpoint.url.local_api_port == 3333
         assert endpoint.url.graph_name == "SCFH"
-        assert endpoint.bearer_token == "my-secret-token"
+        assert endpoint.bearer_token.get_secret_value() == "my-secret-token"
 
     def test_from_parts_url_string(self) -> None:
         """Test that from_parts produces the same URL string as direct construction."""
@@ -203,6 +204,48 @@ class TestApiEndpoint:
         )
         with pytest.raises(Exception):
             endpoint.bearer_token = "new-token"  # type: ignore[misc]
+
+    # ------------------------------------------------------------------
+    # Secrecy
+    # ------------------------------------------------------------------
+
+    def test_bearer_token_never_renders(self) -> None:
+        """The token is absent from every rendering of the endpoint — repr, str, and both dumps.
+
+        Every Local API call logs its endpoint at DEBUG, and an endpoint is a parameter of much of
+        the fetch layer, so a rendering that leaked the token would put it in the logs from many
+        sites at once.
+        """
+        secret: Final[str] = "roam-graph-local-token-must-not-appear"
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="SCFH", bearer_token=secret
+        )
+
+        def logged(template: str) -> str:
+            """The message a ``logger.debug(template, endpoint)`` call would emit."""
+            record: Final[logging.LogRecord] = logging.LogRecord(
+                name="test",
+                level=logging.DEBUG,
+                pathname=__file__,
+                lineno=0,
+                msg=template,
+                args=(endpoint,),
+                exc_info=None,
+            )
+            return record.getMessage()
+
+        renderings: Final[list[str]] = [
+            repr(endpoint),
+            str(endpoint),
+            str(endpoint.model_dump()),
+            endpoint.model_dump_json(),
+            logged("endpoint: %s"),
+            logged("endpoint: %r"),
+        ]
+        for rendering in renderings:
+            assert secret not in rendering, rendering
+        # Still readable when asked deliberately.
+        assert endpoint.bearer_token.get_secret_value() == secret
 
     # ------------------------------------------------------------------
     # Immutability
@@ -342,7 +385,8 @@ class TestMakeRequest:
             invoke_action(file_get_payload, api_endpoint)
 
         headers: dict[str, str] = mock_post.call_args.kwargs["headers"]
-        assert headers["Authorization"] == f"Bearer {api_endpoint.bearer_token}"
+        # The real token, not the mask: interpolating the field itself would yield "**********".
+        assert headers["Authorization"] == f"Bearer {api_endpoint.bearer_token.get_secret_value()}"
 
     def test_sends_content_type_header(
         self, api_endpoint: ApiEndpoint, file_get_payload: Request.Payload, mock_200_response: MagicMock

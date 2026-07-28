@@ -375,14 +375,16 @@ def main(
     (``--no-verify-code-sources`` skips the network check); any mismatch or fetch failure
     is reported as a warning — advisory only, the dump always renders.
     """
+    # The bearer token is deliberately absent: it is a secret, and this is the one site that sees
+    # it before ApiEndpoint's masked field takes over (export-roam-tree filters it the same way,
+    # via _SECRET_PARAMS).
     logger.debug(
-        "target=%r, local_api_port=%r, graph_name=%r, api_bearer_token=%r, node_props=%r, vertex_props=%r, "
+        "target=%r, local_api_port=%r, graph_name=%r, node_props=%r, vertex_props=%r, "
         "show_raw_results=%r, show_render_bundle=%r, show_node_tree=%r, include_refs=%r, truncate=%r, "
         "show_transient=%r, cache_dir=%r",
         target,
         local_api_port,
         graph_name,
-        api_bearer_token,
         node_props,
         vertex_props,
         show_raw_results,

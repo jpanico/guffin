@@ -23,7 +23,7 @@ import logging
 from typing import ClassVar, Final, Literal
 
 import requests
-from pydantic import BaseModel, ConfigDict, Field, validate_call
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, validate_call
 
 from guffin.common.json_value import JsonValue
 
@@ -61,15 +61,23 @@ class ApiEndpoint(BaseModel):
     Bundles the two values required for every authenticated Local API call.
     Once created, instances cannot be modified (frozen).
 
+    The token is held as a :class:`~pydantic.SecretStr`, so it is masked wherever the endpoint is
+    rendered — ``repr``, ``str``, and ``model_dump``/``model_dump_json`` alike.  Every Local API
+    call logs its endpoint at DEBUG, and an endpoint is a parameter of much of the fetch layer, so
+    a plain string would reach the logs from many sites; masking it at the field is the one place
+    that covers them all.  Read the value deliberately, via
+    :meth:`~pydantic.SecretStr.get_secret_value`.
+
     Attributes:
         url: The endpoint URL identifying the host, port, and graph.
-        bearer_token: Bearer token for authenticating with the Local API (non-empty).
+        bearer_token: Bearer token for authenticating with the Local API (non-empty), masked
+            in every rendering of the model.
     """
 
     model_config = ConfigDict(frozen=True)
 
     url: ApiEndpointURL
-    bearer_token: str = Field(min_length=1)
+    bearer_token: SecretStr = Field(min_length=1)
 
     @classmethod
     def from_parts(cls, local_api_port: int, graph_name: str, bearer_token: str) -> ApiEndpoint:
@@ -82,14 +90,15 @@ class ApiEndpoint(BaseModel):
         Args:
             local_api_port: Port on which the Roam Local API is listening.
             graph_name: Name of the target Roam graph (non-empty).
-            bearer_token: Bearer token for authenticating with the Local API (non-empty).
+            bearer_token: Bearer token for authenticating with the Local API (non-empty); a
+                plain string here, wrapped into the model's masked field on construction.
 
         Returns:
             A frozen :class:`ApiEndpoint` instance.
         """
         return cls(
             url=ApiEndpointURL(local_api_port=local_api_port, graph_name=graph_name),
-            bearer_token=bearer_token,
+            bearer_token=SecretStr(bearer_token),
         )
 
 
@@ -192,7 +201,10 @@ def invoke_action(request_payload: Request.Payload, api_endpoint: ApiEndpoint) -
         requests.exceptions.HTTPError: If the Local API returns a non-200 status.
     """
     logger.debug("payload: %s, api_endpoint: %s", request_payload, api_endpoint)
-    request_headers: Final[Request.Headers] = Request.Headers.with_bearer_token(api_endpoint.bearer_token)
+    # The one deliberate read of the secret: it has to reach the Authorization header.
+    request_headers: Final[Request.Headers] = Request.Headers.with_bearer_token(
+        api_endpoint.bearer_token.get_secret_value()
+    )
     request_url: Final[str] = str(api_endpoint.url)
     json_body: Final[dict[str, JsonValue]] = request_payload.model_dump(mode="json")
     header_fields: Final[dict[str, str]] = request_headers.model_dump(by_alias=True)
