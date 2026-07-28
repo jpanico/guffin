@@ -20,6 +20,7 @@ Public symbols:
 - :class:`AppendixEntries` — the PDFs an appendix must reproduce, in first-reference order.
 - :func:`appendix_anchor` — the link that stands where an appendix-placed PDF was embedded.
 - :func:`appendix_section` — the appendix's blocks, given a way to reproduce one PDF's pages.
+- :data:`APPENDIX_ENTRY_CLASS` — the class each entry's heading carries, for format styling.
 - :data:`APPENDIX_EPUB_TYPE` — the EPUB structural-semantics term the section carries.
 """
 
@@ -43,6 +44,9 @@ APPENDIX_ID: Final[str] = "pdf-appendix"
 
 APPENDIX_TITLE: Final[str] = "Appendix"
 """Heading text of the generated appendix section."""
+
+APPENDIX_ENTRY_CLASS: Final[str] = "pdf-appendix-entry"
+"""Class on each entry's heading, so a format's stylesheet can keep it with the pages below it."""
 
 APPENDIX_EPUB_TYPE: Final[EpubType] = EpubType.APPENDIX
 """The EPUB structural-semantics term the generated appendix carries.
@@ -116,6 +120,6 @@ def appendix_section(entries: AppendixEntries, pages_blocks: Callable[[Path], li
         )
     ]
     for path, (identifier, label) in entries.items():
-        blocks.append(pf.Header(*label, level=2, identifier=identifier, classes=["unnumbered"]))
+        blocks.append(pf.Header(*label, level=2, identifier=identifier, classes=["unnumbered", APPENDIX_ENTRY_CLASS]))
         blocks.extend(pages_blocks(path))
     return blocks

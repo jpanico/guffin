@@ -18,9 +18,9 @@ from guffin.model.vertex import PageVertex, PdfVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef, pdf_asset_paths
-from guffin.render.epub_rendering import _apply_pdf_appendix
+from guffin.render.epub_rendering import PDF_PAGE_CLASS, _apply_pdf_appendix
 from guffin.render.pandoc_rendering import vertex_tree_to_pandoc
-from guffin.render.pdf_appendix import APPENDIX_ID, APPENDIX_TITLE
+from guffin.render.pdf_appendix import APPENDIX_ENTRY_CLASS, APPENDIX_ID, APPENDIX_TITLE
 from guffin.render.pdf_raster import rasterize_pages
 from guffin.render.project import ProjectType
 
@@ -88,6 +88,10 @@ class TestEpubPdfAppendix:
         doc.walk(lambda e, d: images.append(e) if isinstance(e, pf.Image) else None)
         assert len(images) == 1
         assert Path(images[0].url).exists()
+        # Styling hooks: epub.css bounds the page's height and asks the reader to keep the
+        # heading with it, so the pages start under their own heading rather than overleaf.
+        assert PDF_PAGE_CLASS in images[0].classes
+        assert APPENDIX_ENTRY_CLASS in headers[1].classes
 
     def test_repeated_occurrences_share_one_entry(self, tmp_path: Path) -> None:
         """Two embeds of one PDF produce a single subsection that both anchors link to."""

@@ -289,3 +289,39 @@ span.bullet-glyph.classified {
   font-size: 1.2em;
   line-height: 1;
 }
+
+/*
+ * An appendix entry's pages belong under its own heading. Three requests together:
+ *
+ * 1. Each entry opens a new page — except the first, which shares the page with the "Appendix"
+ *    title above it rather than stranding that title on a page of its own. Without this an entry's
+ *    heading lands wherever the previous entry's last page left off, typically near the foot of a
+ *    screen, where nothing can fit beneath it.
+ * 2. Keep the heading with what follows, so it is never separated from its first page.
+ * 3. Bound the page image so heading and page fit together. A rasterised page is about 1.4 times
+ *    as tall as the column is wide, so at full width it cannot share a screen with a heading at
+ *    all, whatever the reading system does about 1 and 2.
+ *
+ * width/height auto with both maxima is the fit-inside-a-box idiom: the reading system scales the
+ * page down preserving its aspect ratio, rather than squashing it to the capped height.
+ *
+ * The break is asked for on the section rather than the heading, since the section is the block
+ * that opens the entry; the sibling selector is what exempts the first one. Both the modern and
+ * legacy spellings are given, as older engines know only the page-break-* form.
+ */
+section.pdf-appendix-entry + section.pdf-appendix-entry {
+  break-before: page;
+  page-break-before: always;
+}
+
+h2.pdf-appendix-entry {
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+img.pdf-page {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 85vh;
+}

@@ -81,7 +81,12 @@ from guffin.render.pandoc_rendering import (
     revision_line,
     vertex_tree_to_pandoc,
 )
-from guffin.render.pdf_appendix import AppendixEntries, appendix_anchor, appendix_section, entry_identifier
+from guffin.render.pdf_appendix import (
+    AppendixEntries,
+    appendix_anchor,
+    appendix_section,
+    entry_identifier,
+)
 from guffin.render.pdf_placement import honoured_pdf_render, requested_pdf_render, warn_unresolvable_external_link
 from guffin.render.pdf_raster import rasterize_pages
 from guffin.render.project import ProjectProfile, ProjectType, TopLevelDivision
@@ -160,10 +165,20 @@ def _split_level_for(division: TopLevelDivision) -> int:
     return 2 if division is TopLevelDivision.PART else 1
 
 
+PDF_PAGE_CLASS: Final[str] = "pdf-page"
+"""Class on a rasterised appendix page image, so ``epub.css`` can bound its height.
+
+A page image is about 1.4 times as tall as the column is wide, so at full width it cannot fit
+under its own heading and a reading system pushes it to the next screen — stranding the heading.
+The stylesheet caps it, and asks the reader to keep each entry's heading
+(:data:`~guffin.render.pdf_appendix.APPENDIX_ENTRY_CLASS`) with what follows.
+"""
+
+
 def _page_images(source: Path, image_dir: Path) -> list[pf.Block]:
     """Reproduce every page of the PDF at *source* as a rasterised image block."""
     return [
-        pf.Para(pf.Image(pf.Str(f"page {number}"), url=str(image), title=f"page {number}"))
+        pf.Para(pf.Image(pf.Str(f"page {number}"), url=str(image), title=f"page {number}", classes=[PDF_PAGE_CLASS]))
         for number, image in enumerate(rasterize_pages(source, image_dir), start=1)
     ]
 
