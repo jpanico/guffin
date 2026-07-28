@@ -1077,7 +1077,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
 
 SEMANTIC_BY_BULLET_TYPE: Final[Mapping[BetterBulletType, Semantic]] = {
     BetterBulletType.EQUAL: Semantic.DEFINITION,
-    BetterBulletType.ARROW: Semantic.LEADS_TO,
+    BetterBulletType.LEADS_TO: Semantic.LEADS_TO,
     BetterBulletType.RESULT: Semantic.RESULT,
     BetterBulletType.QUESTION: Semantic.QUESTION,
     BetterBulletType.IMPORTANT: Semantic.WARNING,

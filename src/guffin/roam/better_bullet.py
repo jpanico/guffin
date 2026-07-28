@@ -36,7 +36,7 @@ class BetterBulletType(enum.StrEnum):
         marker: The plain-text token an author types to request the bullet.
         bullet: The glyph the extension renders as the block's bullet.
         EQUAL: Equality or a definition; ``=`` renders as ``=``.
-        ARROW: A leads-to relation; ``->`` renders as ``→``.
+        LEADS_TO: A leads-to relation; ``->`` renders as ``→`` (persisted id ``arrow``).
         RESULT: A result or consequence; ``=>`` renders as ``⇒`` (persisted id ``doubleArrow``).
         QUESTION: A question; ``?`` renders as ``?``.
         IMPORTANT: An important point or warning; ``!`` renders as ``!``.
@@ -67,7 +67,7 @@ class BetterBulletType(enum.StrEnum):
         return self.value
 
     EQUAL = ("equal", "Equal / definition", "=", "=")
-    ARROW = ("arrow", "Leads to", "->", "→")
+    LEADS_TO = ("arrow", "Leads to", "->", "→")
     RESULT = ("doubleArrow", "Result", "=>", "⇒")
     QUESTION = ("question", "Question", "?", "?")
     IMPORTANT = ("important", "Important / warning", "!", "!")

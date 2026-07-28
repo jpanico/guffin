@@ -12,7 +12,7 @@ class TestBetterBulletType:
         ("member", "expected_id", "meaning", "marker", "bullet"),
         [
             (BetterBulletType.EQUAL, "equal", "Equal / definition", "=", "="),
-            (BetterBulletType.ARROW, "arrow", "Leads to", "->", "→"),
+            (BetterBulletType.LEADS_TO, "arrow", "Leads to", "->", "→"),
             (BetterBulletType.RESULT, "doubleArrow", "Result", "=>", "⇒"),
             (BetterBulletType.QUESTION, "question", "Question", "?", "?"),
             (BetterBulletType.IMPORTANT, "important", "Important / warning", "!", "!"),
@@ -39,8 +39,8 @@ class TestBetterBulletType:
 
     def test_id_is_the_member_value(self) -> None:
         """The id is the member's string value, so value lookup works by id."""
-        assert BetterBulletType("arrow") is BetterBulletType.ARROW
-        assert BetterBulletType.ARROW.id == BetterBulletType.ARROW.value
+        assert BetterBulletType("arrow") is BetterBulletType.LEADS_TO
+        assert BetterBulletType.LEADS_TO.id == BetterBulletType.LEADS_TO.value
 
     def test_markers_are_unique(self) -> None:
         """No two kinds claim the same marker token."""
