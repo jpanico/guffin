@@ -132,21 +132,29 @@ class TestApplyPdfEmbeds:
     """_apply_pdf_embeds() rewrites stamped PDF-embed link paragraphs into their Typst form."""
 
     @staticmethod
-    def _doc_and_paths(tmp_path: Path, inline: bool) -> tuple[pf.Doc, dict[str, Path], str]:
+    def _doc_and_paths(tmp_path: Path, inline: bool, render: str | None = None) -> tuple[pf.Doc, dict[str, Path], str]:
         page = PageVertex(uid="page00001", title="Doc", children=["pdfuid001"])
         vertex = _pdf("pdfuid001", inline=inline)
+        if render is not None:
+            vertex = PdfVertex(
+                uid="pdfuid001",
+                source=_URL_A,  # type: ignore[arg-type]
+                file_name="a.pdf.enc",
+                original_file_name="dummy.pdf",
+                attribute_assignments=[_render_tag(render)],
+            )
         tree = VertexTree(tree_vertices=[page, vertex])
         paths = _pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         return doc, paths, str(vertex.source)
 
-    def test_link_mode_drops_link_keeping_filename_text(self, tmp_path: Path) -> None:
-        """A LINK occurrence is replaced by bare filename text — no attachment, no hyperlink.
+    def test_name_only_drops_link_keeping_filename_text(self, tmp_path: Path) -> None:
+        """A NAME_ONLY occurrence is replaced by bare filename text — no attachment, no hyperlink.
 
-        The link-placed embed follows its parent's BULLET layout, so the paragraph lives inside
-        the bulleted list item.
+        The reference-placed embed follows its parent's BULLET layout, so the paragraph lives
+        inside the bulleted list item.
         """
-        doc, paths, _url = self._doc_and_paths(tmp_path, inline=False)
+        doc, paths, _url = self._doc_and_paths(tmp_path, inline=False, render="name-only")
         _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
         blocks = list(doc.content)
         assert len(blocks) == 1
@@ -175,10 +183,10 @@ class TestApplyPdfEmbeds:
         """A LINK-placed occurrence never opens the PDF for a page count — the parse is INLINE's cost alone."""
 
         def _boom(path: str) -> None:
-            raise AssertionError(f"PdfReader must not be invoked for a LINK placement (got {path!r})")
+            raise AssertionError(f"PdfReader must not be invoked for a NAME_ONLY placement (got {path!r})")
 
         monkeypatch.setattr("guffin.render.pdf_rendering.PdfReader", _boom)
-        doc, paths, _url = self._doc_and_paths(tmp_path, inline=False)
+        doc, paths, _url = self._doc_and_paths(tmp_path, inline=False, render="name-only")
         _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
 
     def test_per_site_placements_apply_independently(self, tmp_path: Path) -> None:
@@ -189,7 +197,7 @@ class TestApplyPdfEmbeds:
             tree_vertices=[
                 page,
                 _reference_site("pdfuid001", render="inline-native", uid="refsite01"),
-                _reference_site("pdfuid001", uid="refsite02"),
+                _reference_site("pdfuid001", render="name-only", uid="refsite02"),
             ],
             ref_vertices=[vertex],
         )
@@ -199,7 +207,7 @@ class TestApplyPdfEmbeds:
         raw_blocks = [b for b in doc.content if isinstance(b, pf.RawBlock)]
         assert len(raw_blocks) == 1
         assert raw_blocks[0].text.count("#image(") == 1
-        # The untagged (link-placed) reference lists with its siblings, so its bare filename
+        # The name-only reference lists with its siblings, so its bare filename
         # paragraph lives inside a list item — collect paragraphs by walking, not just top level.
         bare_paras: list[pf.Para] = []
 
@@ -261,6 +269,56 @@ class TestApplyPdfEmbeds:
 
         doc.walk(_collect)
         assert sorted(stamps) == ["inline-native", PDF_PLACEMENT_UNSET, PDF_PLACEMENT_UNSET]
+
+
+class TestAppendixPlacement:
+    """_apply_pdf_embeds() moves APPENDIX_NATIVE pages to a generated back-matter appendix."""
+
+    @staticmethod
+    def _doc_and_paths(tmp_path: Path, uids: list[str]) -> tuple[pf.Doc, dict[str, Path]]:
+        """A page whose children are appendix-tagged embeds of one shared PDF asset."""
+        page = PageVertex(uid="page00001", title="Doc", children=uids)
+        pdfs = [
+            PdfVertex(
+                uid=uid,
+                source=_URL_A,  # type: ignore[arg-type]
+                file_name="a.pdf.enc",
+                original_file_name="dummy.pdf",
+                attribute_assignments=[_render_tag("appendix-native")],
+            )
+            for uid in uids
+        ]
+        tree = VertexTree(tree_vertices=[page, *pdfs])
+        refs = {uid: _dummy_ref(uid, tmp_path, "sha1.pdf") for uid in uids}
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        return doc, _pdf_asset_paths(tree, refs)
+
+    def test_anchor_links_into_a_generated_appendix(self, tmp_path: Path) -> None:
+        """The embed becomes an internal link, and the pages land under an unnumbered appendix."""
+        doc, paths = self._doc_and_paths(tmp_path, ["pdfuid001"])
+        _apply_pdf_embeds(doc, paths, ProjectType.BOOK)
+        headers = [b for b in doc.content if isinstance(b, pf.Header)]
+        assert [h.level for h in headers] == [1, 2]
+        assert pf.stringify(headers[0]) == "Appendix"
+        assert pf.stringify(headers[1]) == "dummy.pdf"
+        # Back matter stands outside the body's numbering, but still reaches the Typst outline.
+        assert all("unnumbered" in h.classes for h in headers)
+        links: list[pf.Link] = []
+        doc.walk(lambda e, d: links.append(e) if isinstance(e, pf.Link) else None)
+        assert [link.url for link in links] == [f"#{headers[1].identifier}"]
+        assert any(isinstance(b, pf.RawBlock) and "#image(" in b.text for b in doc.content)
+
+    def test_repeated_occurrences_share_one_appendix_entry(self, tmp_path: Path) -> None:
+        """Two embeds of one PDF produce a single subsection that both anchors link to."""
+        doc, paths = self._doc_and_paths(tmp_path, ["pdfuid001", "pdfuid002"])
+        _apply_pdf_embeds(doc, paths, ProjectType.BOOK)
+        headers = [b for b in doc.content if isinstance(b, pf.Header)]
+        assert [h.level for h in headers] == [1, 2]
+        links: list[pf.Link] = []
+        doc.walk(lambda e, d: links.append(e) if isinstance(e, pf.Link) else None)
+        assert len(links) == 2
+        assert {link.url for link in links} == {f"#{headers[1].identifier}"}
+        assert sum(isinstance(b, pf.RawBlock) for b in doc.content) == 1
 
 
 class TestPrepareTitleMetadata:

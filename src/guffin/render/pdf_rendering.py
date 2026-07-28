@@ -41,6 +41,7 @@ import importlib.resources
 import logging
 import os
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Final
 
@@ -340,6 +341,44 @@ def _pdf_asset_paths(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[
     return paths
 
 
+_APPENDIX_ID: Final[str] = "pdf-appendix"
+"""Identifier of the generated appendix section, and the stem of each subsection's identifier."""
+
+_APPENDIX_TITLE: Final[str] = "Appendix"
+"""Heading text of the generated appendix section."""
+
+
+def _appendix_blocks(
+    entries: dict[Path, tuple[str, list[pf.Inline]]],
+    pages_markup: Callable[[Path], str],
+) -> list[pf.Block]:
+    """Build the back-matter appendix: a section holding one labelled subsection per PDF.
+
+    The section is renderer-generated rather than authored, so it carries no ``element-type`` tag;
+    it is stamped directly with what such a tag would have earned it — the ``unnumbered`` class,
+    since back matter stands outside the body's numbering.  Unnumbered headings still appear in a
+    Typst outline, so the appendix and its entries reach the table of contents.
+
+    Emitted at heading level 1, which makes it a sibling of a parts book's parts rather than a
+    section adopted by the last one.
+
+    Args:
+        entries: Each PDF's subsection identifier and display label, keyed by local path, in the
+            order the document first referenced them.
+        pages_markup: Builds the raw Typst placing every page of the PDF at a given path.
+
+    Returns:
+        The appendix section's blocks, to append to the document.
+    """
+    blocks: Final[list[pf.Block]] = [
+        pf.Header(pf.Str(_APPENDIX_TITLE), level=1, identifier=_APPENDIX_ID, classes=["unnumbered"])
+    ]
+    for path, (identifier, label) in entries.items():
+        blocks.append(pf.Header(*label, level=2, identifier=identifier, classes=["unnumbered"]))
+        blocks.append(_typst_raw_block(pages_markup(path)))
+    return blocks
+
+
 def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: ProjectType) -> None:
     """Rewrite *doc*'s PDF-embed link paragraphs in place; the asset is never embedded.
 
@@ -376,12 +415,27 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
             an untagged occurrence.
     """
     page_counts: Final[dict[Path, int]] = {}
+    # Insertion-ordered, so the appendix presents its entries in first-reference order; keyed by
+    # path, so several occurrences of one PDF share a single entry and all link to it.
+    appendix: Final[dict[Path, tuple[str, list[pf.Inline]]]] = {}
 
     def _page_count(path: Path) -> int:
         """The number of pages in the PDF at *path*, read once per file."""
         if path not in page_counts:
             page_counts[path] = len(PdfReader(str(path)).pages)
         return page_counts[path]
+
+    def _pages_markup(path: Path) -> str:
+        """Raw Typst placing every page of the PDF at *path*, one full-width image per page."""
+        pages: Final[int] = _page_count(path)
+        logger.info("placed PDF %s (%d page(s))", path.name, pages)
+        return "\n".join(f"#image({_typst_str(str(path))}, page: {page}, width: 100%)" for page in range(1, pages + 1))
+
+    def _appendix_entry(path: Path, label: list[pf.Inline]) -> str:
+        """The identifier of *path*'s appendix subsection, registering it on first reference."""
+        if path not in appendix:
+            appendix[path] = (f"{_APPENDIX_ID}-{len(appendix) + 1}", label)
+        return appendix[path][0]
 
     def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Block] | None:
         if not isinstance(elem, pf.Para) or len(list(elem.content)) != 1:
@@ -397,12 +451,12 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
             return None
         placement: Final[PdfRender] = honoured_pdf_render(requested, OutputFormat.PDF, uid=path.name)
         if placement is PdfRender.INLINE_NATIVE:
-            pages: Final[int] = _page_count(path)
-            logger.info("rendered PDF embed %s (%d page(s), %s)", path.name, pages, placement.value)
-            pages_markup: Final[str] = "\n".join(
-                f"#image({_typst_str(str(path))}, page: {page}, width: 100%)" for page in range(1, pages + 1)
-            )
-            return [_typst_raw_block(pages_markup)]
+            return [_typst_raw_block(_pages_markup(path))]
+        if placement is PdfRender.APPENDIX_NATIVE:
+            # The pages move to the back; what stands here is an ordinary internal link to them,
+            # which every reader supports (unlike the embedded-file actions — see docs/pdf-render.md).
+            label: Final[list[pf.Inline]] = list(inline.content)
+            return [pf.Para(pf.Link(*label, url=f"#{_appendix_entry(path, label)}"))]
         if placement is PdfRender.EXTERNAL_LINK:
             # Link to the hosted original; the scaffold must not reach the Typst writer.
             warn_unresolvable_external_link(inline.title, str(inline.url))
@@ -413,6 +467,8 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
         return [pf.Para(*list(inline.content))]
 
     doc.walk(_action)
+    if appendix:
+        doc.content.extend(_appendix_blocks(appendix, _pages_markup))
 
 
 def _prepare_title_metadata(doc: pf.Doc) -> None:

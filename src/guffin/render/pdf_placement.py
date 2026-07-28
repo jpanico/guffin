@@ -61,14 +61,17 @@ always carry their assets.
 SUPPORTED_PDF_RENDERS: Final[Mapping[_OutputTarget, frozenset[PdfRender]]] = {
     (OutputFormat.MARKDOWN, True): frozenset({PdfRender.INTERNAL_LINK, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
     (OutputFormat.MARKDOWN, False): frozenset({PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
-    (OutputFormat.PDF, True): frozenset({PdfRender.INLINE_NATIVE, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
+    (OutputFormat.PDF, True): frozenset(
+        {PdfRender.INLINE_NATIVE, PdfRender.APPENDIX_NATIVE, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}
+    ),
     (OutputFormat.EPUB, True): frozenset({PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
 }
 """The placements each output target implements today; every other request falls back.
 
 A bundling Markdown export writes the asset beside the document, so it can link to a contained
-copy; a plain ``.md`` has nowhere to put one.  The PDF path reproduces pages natively via Typst.
-Neither appendix placement is built in any format yet, and no format renders page images.
+copy; a plain ``.md`` has nowhere to put one.  The PDF path reproduces pages natively via Typst,
+either at the embed or in a generated back-matter appendix linked from it.  No format renders
+page images, and no format but PDF reproduces pages at all.
 """
 
 _DEFAULT_PDF_RENDERS: Final[Mapping[tuple[OutputFormat, bool, ProjectType], PdfRender]] = {

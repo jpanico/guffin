@@ -55,15 +55,15 @@ a book carries its referenced documents rather than pointing away from them. The
 |---|---|---|---|---|
 | `INLINE_NATIVE` | ✗ | ✗ | ✅ one full-width `#image(…, page: n)` per page, vector and searchable | ✗ |
 | `INLINE_IMAGE` | ✗ | ✗ | ✗ | ✗ |
-| `APPENDIX_NATIVE` | ✗ | ✗ | ✗ | ✗ |
+| `APPENDIX_NATIVE` | ✗ | ✗ | ✅ a generated *Appendix* section holds the pages; the embed becomes an internal link to its subsection | ✗ |
 | `APPENDIX_IMAGE` | ✗ | ✗ | ✗ | ✗ |
 | `INTERNAL_LINK` | ✅ relative link to the copy in `.mdbundle/` | ✗ nothing to contain it | ✗ measured dead — see *Format capabilities* | ✗ untested — see *Format capabilities* |
 | `EXTERNAL_LINK` | ✅ | ✅ | ✅ | ✅ |
 | `NAME_ONLY` | ✅ | ✅ | ✅ | ✅ |
 
-Everything marked ✗ falls back. Note the consequence of the two matrices together: **`pdf` and
-`epub` exports warn on every PDF embed today**, because their default is `APPENDIX_NATIVE` and no
-format implements it yet. That noise ends when the appendix placements are built.
+Everything marked ✗ falls back. Note the consequence of the two matrices together: **`epub`
+exports warn on every PDF embed today**, because their default is an appendix placement that EPUB
+does not yet implement. The `pdf` defaults are all honoured.
 
 
 ## Fallback
@@ -159,9 +159,9 @@ The `.enc` warning fires, so it is at least not silent.
 
 ## Design note: the appendix placements (vocabulary settled, behaviour unbuilt)
 
-> **Status.** `APPENDIX_NATIVE` and `APPENDIX_IMAGE` are members of the vocabulary and are the
-> default for `pdf` and `epub`, but **no format implements them yet** — every appendix request
-> currently warns and falls back to `NAME_ONLY`. This section is the design for building them.
+> **Status.** `APPENDIX_NATIVE` is **implemented for `--format pdf`** (see below); it and
+> `APPENDIX_IMAGE` remain unbuilt everywhere else, where an appendix request warns and falls back
+> to `NAME_ONLY`. This section records the design, and what the PDF implementation settled.
 
 ### The problem they solve
 
@@ -224,14 +224,21 @@ legitimate member of a format-independent vocabulary rather than a PDF trick:
 | `epub` | back-matter section, one subsection per PDF | intra-publication link (`<a href="chNNN.xhtml#id">`); *expected, unverified* |
 | `md` | a heading per PDF | anchor link to the heading; whether pages can be *shown* depends on the format's image support |
 
-### Where it would be built
+### Where it is built — and why the plan changed
 
-In the **shared Doc build (Phase 1)**, not in `pdf_rendering._apply_pdf_embeds`'s post-build
-rewrite. The Appendix section is real document structure, so building it there is what earns it
-a ToC entry, the `unnumbered` exemption for non-body matter, an `epub:type`, and correct behaviour
-under `promote_non_body_sections` — and it is what makes the EPUB and Markdown columns above fall
-out of the existing machinery instead of needing three separate implementations. Only the page
-images themselves stay format-specific.
+The design said the shared Doc build (Phase 1), so the section would be real document structure and
+the other formats would get it for free. **The PDF implementation put it in the format pass
+instead** (`pdf_rendering._appendix_blocks`, called from `_apply_pdf_embeds`), because the earlier
+decision to keep the shared build format-neutral made the original plan impossible: the appendix
+exists only for occurrences that *resolve* to an appendix placement, and resolution now depends on
+the format's own default and supported set — which the shared build deliberately does not know.
+
+Nothing was lost. The section is still built from real Pandoc `Header` elements rather than raw
+markup, so it earns its ToC entry and takes the `unnumbered` class exactly as planned; and because
+it is emitted at heading level 1 it is a sibling of a parts book's parts, so `promote_non_body_sections`
+never needed to see it. What the format pass cannot supply is the EPUB-specific stamping
+(`epub:type`, the matter attribute) — which a PDF-only implementation would not use anyway, and
+which the EPUB implementation can add when it lands.
 
 ### Decisions (2026-07-27)
 
