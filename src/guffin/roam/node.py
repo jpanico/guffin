@@ -164,7 +164,8 @@ class RoamNode(BaseModel):
         refs: Raw page/block reference stubs (BLOCK_REFS).
         page: IdObject stub for the containing page (BLOCK_PAGE). Present only on Blocks.
         children_view_type: How this block's children are rendered (CHILDREN_VIEW_TYPE). Present
-            only on Blocks.
+            only on Blocks.  Read from the ``children-view-type`` wire key, the alias the node
+            queries pull it under so that ``:block/view-type`` cannot overwrite it.
         parents: IdObject stubs for all ancestor blocks (BLOCK_PARENTS). Present only on Blocks.
         props: Block property key-value map (BLOCK_PROPS). Present only on Blocks that have block
             properties set (e.g. ``ah-level`` from the Augmented Headings extension).

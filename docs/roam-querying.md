@@ -91,13 +91,20 @@ Common pull patterns used in this project:
 |---|---|
 | `[*]` | All attributes of the entity |
 | `[:block/uid :block/string]` | Only those two attributes |
+| `[[:children/view-type :as "children-view-type"]]` | That attribute, returned under the given key instead of its stripped name |
+
+The `:as` form matters because namespaces are stripped from result keys (see **Pull Result Shape
+and Normalization** below), so two attributes sharing a name would otherwise collide. It composes
+with the wildcard: `[* [:children/view-type :as "children-view-type"]]` pulls everything *and*
+names that one attribute unambiguously.
 
 ## Queries Used in This Project
 
 ### 1. Page fetch — `FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY`
 
 ```datalog
-[:find (pull ?page [*])
+[:find (pull ?page [* [:block/view-type :as "block-view-type"]
+                      [:children/view-type :as "children-view-type"]])
  :in $ ?title
  :where
  [?page :node/title ?title]]
@@ -106,6 +113,8 @@ Common pull patterns used in this project:
 - Input binding: `?title` — the exact page title string (passed as `args[1]`).
 - Finds the entity whose `:node/title` equals the title, then pulls all its attributes.
 - Returns `[row[0] for row in result]` — a `list[RoamNode]` where each `RoamNode` holds the full pull-block dict.
+- The pull pattern is `FetchRoamNodes.Request.PULL_PATTERN`, shared by every node query. The two
+  aliases are not decoration: without them the two `view-type` attributes collide (below).
 
 
 ### 2. Schema introspection — `FetchRoamSchema.Request.DATALOG_SCHEMA_QUERY`
@@ -145,6 +154,33 @@ strips the leading colon and namespace slash, returning plain string keys:
 Nested references (`:block/children`, `:block/refs`, `:block/page`, `:block/parents`) are
 returned as **`IdObject` stubs** — `{"id": <db-id>}` — not fully pulled sub-entities.
 Resolving stubs to stable UIDs requires a second query pass or a recursive pull pattern.
+
+### Stripping makes distinct attributes collide
+
+Namespaces carry meaning, and dropping them can merge two attributes into one key. Roam's schema
+has both `:block/view-type` (a per-block display default, which the Alpha API writes onto any block
+it updates — observed as `outline`) and `:children/view-type` (the authored children layout:
+`bullet` / `document` / `numbered`). Both strip to `view-type`, so a plain `[*]` pull returns **one**
+key and the later attribute silently overwrites the earlier:
+
+```json
+{ "uid": "6AFKj93ma", "view-type": "outline" }
+```
+
+Worse, the winner depends on the pull pattern's shape — a wildcard pull yielded `:block/view-type`'s
+value, while an explicit pull listing `:children/view-type` last yielded that one instead. There is
+no ordering guarantee to rely on, and nothing in the response says a value was dropped.
+
+`:as` is the fix. Aliasing both attributes gives each its own key *and* removes the ambiguous one:
+
+```json
+{ "uid": "6AFKj93ma", "children-view-type": "bullet", "block-view-type": "outline" }
+```
+
+This is why `PULL_PATTERN` carries the two aliases. When adding an attribute to a query, check
+whether its stripped name collides with another attribute in
+[roam-schema.md](roam-schema.md) — the namespace that distinguishes them on the wire is gone by the
+time the JSON arrives.
 
 
 ## Datalog Rules
