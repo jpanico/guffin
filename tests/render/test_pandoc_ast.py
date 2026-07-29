@@ -1,14 +1,65 @@
 """Tests for guffin.render.pandoc_ast."""
 
+from copy import deepcopy
+
 import panflute as pf  # type: ignore[import-untyped]
 import pytest
 
 from guffin.model.vertex_link import VertexLinkKind, vertex_link_url
-from guffin.render.pandoc_ast import parse_inline_md
-
-pytestmark = pytest.mark.pandoc
+from guffin.render.pandoc_ast import detached_copy, parse_inline_md
 
 
+def _deeply_nested_inline(depth: int) -> tuple[pf.Doc, pf.Str]:
+    """Build a document nesting one Str *depth* Spans deep, returning it and that Str.
+
+    Descends through the containers on the way back down, since panflute assigns an element's
+    ``parent`` lazily, when the container it sits in is accessed.
+    """
+    node: pf.Inline = pf.Str("label.pdf")
+    for _ in range(depth):
+        node = pf.Span(node)
+    doc = pf.Doc(pf.Para(node))
+    innermost = list(doc.content)[0]
+    while not isinstance(innermost, pf.Str):
+        innermost = list(innermost.content)[0]
+    return doc, innermost
+
+
+class TestDetachedCopy:
+    """Tests for detached_copy()."""
+
+    def test_copy_is_independent_of_the_original(self) -> None:
+        """Mutating a copy leaves the original untouched."""
+        original = [pf.Emph(pf.Str("a")), pf.Str("b")]
+        copied = detached_copy(original)
+        copied[1].text = "changed"
+        assert original[1].text == "b"
+
+    def test_copy_is_parentless(self) -> None:
+        """A copy carries no parent, so it is free to be placed elsewhere."""
+        _, innermost = _deeply_nested_inline(3)
+        assert detached_copy([innermost])[0].parent is None
+
+    def test_originals_keep_their_place(self) -> None:
+        """Copying does not detach the originals from the document they sit in."""
+        _, innermost = _deeply_nested_inline(3)
+        parent_before = innermost.parent
+        detached_copy([innermost])
+        assert innermost.parent is parent_before
+
+    def test_does_not_copy_the_enclosing_document(self) -> None:
+        """A copy is bounded by the element, not by the document holding it.
+
+        Regression: a panflute element's ``parent`` back-reference makes a plain deepcopy walk the
+        whole enclosing document, which exhausts the interpreter stack on a real export.
+        """
+        _, innermost = _deeply_nested_inline(2000)
+        with pytest.raises(RecursionError):
+            deepcopy([innermost])
+        assert detached_copy([innermost])[0].text == "label.pdf"
+
+
+@pytest.mark.pandoc
 class TestParseInlineMd:
     """Tests for parse_inline_md()."""
 

@@ -30,7 +30,6 @@ Public symbols:
 # here avoids dozens of cascading false-positive errors without relaxing any other strict checks.
 
 from collections.abc import Callable
-from copy import deepcopy
 from pathlib import Path
 from typing import Final
 
@@ -38,6 +37,7 @@ import panflute as pf  # type: ignore[import-untyped]
 
 from guffin.model.chicago_structure import Matter
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter
+from guffin.render.pandoc_ast import detached_copy
 
 APPENDIX_ID: Final[str] = "pdf-appendix"
 """Identifier of the generated appendix section, and the stem of each subsection's identifier."""
@@ -75,7 +75,7 @@ def entry_identifier(entries: AppendixEntries, path: Path, label: list[pf.Inline
         The identifier of *path*'s appendix subsection.
     """
     if path not in entries:
-        entries[path] = (f"{APPENDIX_ID}-{len(entries) + 1}", deepcopy(label))
+        entries[path] = (f"{APPENDIX_ID}-{len(entries) + 1}", detached_copy(label))
     return entries[path][0]
 
 

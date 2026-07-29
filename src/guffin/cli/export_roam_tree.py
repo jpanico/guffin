@@ -456,8 +456,8 @@ def _render(
             render_md(render_bundle, profile, filename_stem, api_endpoint, options)
         else:
             raise TypeError(f"unsupported render options type: {type(options).__name__}")
-    except Exception as e:
-        logger.error("Error rendering %s for %r: %s", type(options).__name__, target, e)
+    except Exception:
+        logger.exception("Error rendering %s for %r", type(options).__name__, target)
         raise typer.Exit(code=1)
 
 

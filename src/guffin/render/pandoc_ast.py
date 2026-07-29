@@ -8,7 +8,8 @@ Public symbols:
 
 - **Type aliases**: :data:`InlineMap` — mapping from a Pandoc Markdown text string to its parsed
   panflute inline elements.
-- **Functions**: :func:`strip_links` — unwrap every Link to its display-text content;
+- **Functions**: :func:`detached_copy` — copy elements without copying the document holding them;
+  :func:`strip_links` — unwrap every Link to its display-text content;
   :func:`parse_inline_md` — batch-parse Pandoc Markdown strings into inline element lists;
   :func:`parse_block_md` — parse a Pandoc Markdown string into block elements; :func:`pandoc_to_json`
   — serialize a :class:`~panflute.Doc` to a Pandoc JSON string.
@@ -20,13 +21,14 @@ Public symbols:
 
 import logging
 import uuid
+from copy import deepcopy
 from io import StringIO
 from pathlib import Path
 from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
-from pydantic import validate_call
+from pydantic import ConfigDict, validate_call
 
 from guffin.render import pandoc_server
 
@@ -52,6 +54,32 @@ def _markdown_to_pandoc_json(text: str) -> str:
         return served
     cli_json: Final[str] = pypandoc.convert_text(text, "json", format="markdown")  # type: ignore[no-untyped-call]
     return cli_json
+
+
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def detached_copy(elements: list[pf.Inline]) -> list[pf.Inline]:
+    """Return an independent copy of *elements*, without copying the document they sit in.
+
+    A panflute element holds a ``parent`` back-reference, so deep-copying one copies its ancestors
+    too — reaching the whole :class:`~panflute.Doc` and, on a document of any size, exhausting the
+    interpreter stack before the copy finishes.  Detaching the top-level elements for the duration
+    of the copy bounds it to the subtree actually wanted; the originals keep their place in the
+    document, so this is safe to call on elements still in the tree.
+
+    Args:
+        elements: The elements to copy, left attached to their own parents.
+
+    Returns:
+        Parentless copies, safe to place elsewhere in the document.
+    """
+    parents: Final[list[pf.Element | None]] = [element.parent for element in elements]
+    for element in elements:
+        element.parent = None
+    try:
+        return deepcopy(elements)
+    finally:
+        for element, parent in zip(elements, parents):
+            element.parent = parent
 
 
 type InlineMap = dict[str, list[pf.Inline]]

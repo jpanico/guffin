@@ -41,7 +41,6 @@ import importlib.resources
 import logging
 import os
 import tempfile
-from copy import deepcopy
 from pathlib import Path
 from typing import Final
 
@@ -71,7 +70,7 @@ from guffin.model.vertex_tree import (
 )
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import CALLOUT_ACCENT
-from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
+from guffin.render.pandoc_ast import InlineMap, detached_copy, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     PDF_PLACEMENT_ATTRIBUTE,
     colophon_summary,
@@ -424,7 +423,7 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
             label: Final[list[pf.Inline]] = list(inline.content)
             identifier: Final[str] = entry_identifier(appendix, path, label)
             styled: Final[list[pf.Inline]] = [
-                pf.Span(*deepcopy(label), attributes={"underline-color": _APPENDIX_LINK_COLOR})
+                pf.Span(*detached_copy(label), attributes={"underline-color": _APPENDIX_LINK_COLOR})
             ]
             return [appendix_anchor(label, identifier, styled)]
         if placement is PdfRender.EXTERNAL_LINK:
