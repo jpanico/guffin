@@ -9,6 +9,7 @@ description = "Export Roam Research graph sub-trees to self-contained Markdown, 
 license = "MIT"
 requires-python = ">=3.14"
 dependencies = [
+    "fastapi>=0.115",
     "imagesize>=1.4",
     "panflute>=2.3",
     "pillow>=10.0",
@@ -20,6 +21,7 @@ dependencies = [
     "requests>=2.31.0",
     "rich>=13.0",
     "typer>=0.9.0",
+    "uvicorn>=0.30",
 ]
 
 [project.optional-dependencies]
@@ -27,6 +29,7 @@ dev = [
     "pytest>=7.0",
     "pytest-xdist>=3.0",
     "black>=23.0",
+    "httpx>=0.27",
     "pyright>=1.1",
     "pydocstringformatter>=0.7",
     "ruff>=0.4",
@@ -38,6 +41,7 @@ dev = [
 [project.scripts]
 dump-roam-tree = "guffin.cli.dump_roam_tree:app"
 export-roam-tree = "guffin.cli.export_roam_tree:app"
+guffin-server = "guffin.cli.serve:app"
 
 [tool.hatch.envs.default]
 features = ["dev"]

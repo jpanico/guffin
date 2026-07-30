@@ -326,7 +326,8 @@ _APPENDIX_FIRST_PAGE_HEIGHT: Final[str] = "85%"
 
 Leaves room for the entry's heading above it, so the pages start on the heading's own page.  The
 remaining 15% is comfortably more than a one- or two-line heading needs; a page capped this way is
-scaled to fit, so it stays legible rather than being cropped."""
+scaled to fit, so it stays legible rather than being cropped.
+"""
 
 
 def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: ProjectType) -> None:

@@ -1,10 +1,11 @@
 # Guffin server mode
 
-**Status: requirements and plan, all decisions ratified — nothing is implemented yet.** This is
-the working design document for *server mode*, a major new capability: remote, RPC-like
-invocation of the two existing commands, `dump-roam-tree` and `export-roam-tree`. It records
-the requirements, the protocol evaluation, an API sketch, the in-process invocation design, and
-the decision log; Phase 1 implementation is unblocked.
+**Status: Phase 1 (the synchronous v1) is implemented** — the `server/` sub-package, the
+`guffin-server` launcher (binding `127.0.0.1:8077` by default), and the offline + live test
+tiers; phases 2–3 remain planned. This is the working design document for *server mode*:
+remote, RPC-like invocation of the two existing commands, `dump-roam-tree` and
+`export-roam-tree`. It records the requirements, the protocol evaluation, the API design, the
+in-process invocation design, and the decision log.
 
 Companion docs: [processing_pipeline.md](processing_pipeline.md) (what the commands do),
 [roam-local-api.md](roam-local-api.md) (why the server must live next to Roam Desktop).
@@ -375,7 +376,7 @@ pool.
 
 ## Plan
 
-**Phase 1 — the synchronous v1 (this document's scope):**
+**Phase 1 — the synchronous v1 (implemented):**
 
 1. `server/` sub-package: request models derived from the Typer command signatures, invocation
    harness (CliRunner + log capture + dump representations), ASGI app with `/v1/export`,

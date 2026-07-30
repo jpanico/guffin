@@ -6,6 +6,9 @@ from typing import Final
 
 _PACKAGE_ROOT: Final[pathlib.Path] = pathlib.Path(__file__).parent.parent / "src" / "guffin"
 _RENDER_DIR: Final[pathlib.Path] = _PACKAGE_ROOT / "render"
+_CLI_DIR: Final[pathlib.Path] = _PACKAGE_ROOT / "cli"
+_SERVER_DIR: Final[pathlib.Path] = _PACKAGE_ROOT / "server"
+_LAUNCHER_MODULE: Final[str] = "guffin.cli.serve"
 
 
 def _import_targets(source: pathlib.Path) -> set[str]:
@@ -24,6 +27,54 @@ def _import_targets(source: pathlib.Path) -> set[str]:
             targets.add(node.module)
             targets.update(f"{node.module}.{alias.name}" for alias in node.names)
     return targets
+
+
+def _imports_package(targets: set[str], package: str) -> bool:
+    """Return whether any of *targets* is *package* or a module within it."""
+    return any(target == package or target.startswith(package + ".") for target in targets)
+
+
+def _library_modules() -> list[pathlib.Path]:
+    """Return every source module outside the front-end packages (``cli/`` and ``server/``)."""
+    return sorted(
+        source
+        for source in _PACKAGE_ROOT.rglob("*.py")
+        if not source.is_relative_to(_CLI_DIR) and not source.is_relative_to(_SERVER_DIR)
+    )
+
+
+class TestFrontEndIsolation:
+    """The front-end packages (``cli/``, ``server/``) are leaves: no library package imports them.
+
+    ``server/`` is a peer front end whose charter is invoking the CLI entry points in process,
+    so ``server/`` → ``cli/`` is allowed; ``cli/`` → ``server/`` is allowed only so the launcher
+    can start the ASGI app.  That package-level cycle stays module-level acyclic because nothing
+    in ``server/`` imports the launcher module.
+    """
+
+    def test_no_library_module_imports_cli(self) -> None:
+        """No module outside the front-end packages imports ``guffin.cli``."""
+        for source in _library_modules():
+            assert not _imports_package(
+                _import_targets(source), "guffin.cli"
+            ), f"{source.relative_to(_PACKAGE_ROOT)} imports guffin.cli; only a front end may"
+
+    def test_no_library_or_cli_module_imports_server(self) -> None:
+        """No module outside ``server/`` imports ``guffin.server`` — except the ``cli/`` launcher."""
+        sources: Final[list[pathlib.Path]] = _library_modules() + sorted(_CLI_DIR.glob("*.py"))
+        for source in sources:
+            if source == _CLI_DIR / "serve.py":
+                continue
+            assert not _imports_package(
+                _import_targets(source), "guffin.server"
+            ), f"{source.relative_to(_PACKAGE_ROOT)} imports guffin.server; only the launcher may"
+
+    def test_server_never_imports_the_launcher(self) -> None:
+        """No module in ``server/`` imports the launcher — the cycle stays module-level acyclic."""
+        for source in sorted(_SERVER_DIR.glob("*.py")):
+            assert _LAUNCHER_MODULE not in _import_targets(
+                source
+            ), f"server/{source.name} imports {_LAUNCHER_MODULE}, closing the cli/server import cycle"
 
 
 class TestPackageLayout:
