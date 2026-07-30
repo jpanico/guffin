@@ -23,7 +23,6 @@ Public symbols:
 - :data:`app` — the :class:`~fastapi.FastAPI` application instance.
 """
 
-import importlib.metadata
 import json
 import logging
 import shutil
@@ -60,11 +59,11 @@ from guffin.server.request_models import (
 
 logger = logging.getLogger(__name__)
 
-_VERSION: Final[str] = importlib.metadata.version("guffin")
-"""The installed package version, surfaced by the health endpoint and the OpenAPI document."""
-
 _PROVENANCE: Final[Provenance] = gather_provenance()
 """The serving code's provenance, captured once at startup for the health endpoint."""
+
+_VERSION: Final[str] = _PROVENANCE.version
+"""The installed package version (the provenance capture's), surfaced by health and OpenAPI."""
 
 _EXPORT_COMMAND: Final[str] = "export-roam-tree"
 """The export command's name, as problem responses and log lines identify it."""

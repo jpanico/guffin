@@ -367,7 +367,7 @@ The `--preamble/--no-preamble` and `--numbering/--no-numbering` flags (PDF/EPUB 
 | `--element-numbers/--no-element-numbers` | | all | Keep/strip internal element numbers (a heading's `[1.2.3]` lead); stripped by default. |
 | `--daily-note-format` | | all | How a daily-note-page reference renders its date: `roam-long` (default), `iso`, `abbrev-month-day`. |
 
-The `--colophon` provenance records the source git commit (hash + commit time, marked `-dirty` for uncommitted changes) and the export time, plus the content revision (snapshot hash, edit/fetch times, and any authored `revision::` name), so any generated document can be traced back to the exact source and content snapshot that produced it. Placement differs by format: PDF renders it at the foot of the title page (or below the page footer when no title page is emitted); EPUB mirrors that; Markdown carries it as an end-of-document block.
+The `--colophon` provenance records the guffin package version, the source git commit (hash + commit time, marked `-dirty` for uncommitted changes), and the export time, plus the content revision (snapshot hash, edit/fetch times, and any authored `revision::` name), so any generated document can be traced back to the exact source and content snapshot that produced it. Placement differs by format: PDF renders it at the foot of the title page (or below the page footer when no title page is emitted); EPUB mirrors that; Markdown carries it as an end-of-document block.
 
 #### Environment variables
 

@@ -306,6 +306,7 @@ class TestVertexTreeToPandocColophon:
     def test_colophon_appended_with_provenance(self) -> None:
         """Provenance appends a trailing HorizontalRule and an emphasized summary line."""
         provenance = Provenance(
+            version="1.2.3",
             commit="abc123def456",
             dirty=True,
             committed_at=datetime(2026, 6, 29, 14, 2, 11, tzinfo=UTC),
@@ -343,19 +344,19 @@ class TestVertexTreeToPandocColophon:
 class TestColophonSummary:
     """colophon_summary() joins the software and content halves into one line."""
 
-    _PROVENANCE = Provenance(commit="abc123def456")
+    _PROVENANCE = Provenance(version="1.2.3", commit="abc123def456")
     _REVISION = Revision(snapshot="d8666f090982" + "0" * 52)
 
     def test_both_halves(self) -> None:
         """Revision leads, provenance follows, pipe-joined."""
         assert (
             colophon_summary(self._PROVENANCE, self._REVISION)
-            == "revision: — (snapshot: d8666f090982) | guffin, commit: abc123d"
+            == "revision: — (snapshot: d8666f090982) | guffin 1.2.3, commit: abc123d"
         )
 
     def test_provenance_only(self) -> None:
         """A missing revision leaves the provenance summary alone."""
-        assert colophon_summary(self._PROVENANCE, None) == "guffin, commit: abc123d"
+        assert colophon_summary(self._PROVENANCE, None) == "guffin 1.2.3, commit: abc123d"
 
     def test_revision_only(self) -> None:
         """A missing provenance leaves the revision summary alone."""

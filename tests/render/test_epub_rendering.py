@@ -211,7 +211,7 @@ def meta_book_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
     return _render_epub(tmp_path_factory.mktemp("meta_book"), _meta_bundle(), BookProfile(), "meta_book")
 
 
-_PROVENANCE: Final[Provenance] = Provenance(commit="abc123", dirty=False)
+_PROVENANCE: Final[Provenance] = Provenance(version="1.2.3", commit="abc123", dirty=False)
 _PROVENANCE_SUMMARY: Final[str] = _PROVENANCE.summary()
 
 

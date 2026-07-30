@@ -21,7 +21,9 @@ class TestWithProvenance:
     def test_stamps_provenance_on_a_new_copy(self) -> None:
         """A non-None provenance is recorded on a new bundle; content carries over; original unchanged."""
         base: Final[RenderBundle] = _bundle()
-        provenance: Final[Provenance] = Provenance(commit="abc123", exported_at=datetime(2026, 6, 29, tzinfo=UTC))
+        provenance: Final[Provenance] = Provenance(
+            version="1.2.3", commit="abc123", exported_at=datetime(2026, 6, 29, tzinfo=UTC)
+        )
         stamped: Final[RenderBundle] = base.with_provenance(provenance)
         assert stamped is not base
         assert stamped.provenance == provenance
