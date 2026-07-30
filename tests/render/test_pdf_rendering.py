@@ -155,7 +155,7 @@ class TestApplyPdfEmbeds:
         inside the bulleted list item.
         """
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=False, render="name-only")
-        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
+        _apply_pdf_embeds(doc, paths, ProjectType.ARTICLE)
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.BulletList)
@@ -169,13 +169,13 @@ class TestApplyPdfEmbeds:
     def test_strip_removes_the_occurrence_and_its_emptied_container(self, tmp_path: Path) -> None:
         """A STRIP occurrence vanishes entirely — no name, link, pages, or leftover empty bullet."""
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=False, render="strip")
-        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
+        _apply_pdf_embeds(doc, paths, ProjectType.ARTICLE)
         assert list(doc.content) == []
 
     def test_inline_mode_renders_pages_without_attachment(self, tmp_path: Path) -> None:
         """An INLINE occurrence is replaced by one image call per page and no attachment."""
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=True)
-        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
+        _apply_pdf_embeds(doc, paths, ProjectType.ARTICLE)
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.RawBlock)
@@ -193,7 +193,7 @@ class TestApplyPdfEmbeds:
 
         monkeypatch.setattr("guffin.render.pdf_rendering.PdfReader", _boom)
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=False, render="name-only")
-        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
+        _apply_pdf_embeds(doc, paths, ProjectType.ARTICLE)
 
     def test_per_site_placements_apply_independently(self, tmp_path: Path) -> None:
         """Two references to one PDF render per their own site tags — one inline, one as bare text."""
@@ -209,7 +209,7 @@ class TestApplyPdfEmbeds:
         )
         paths = pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
+        _apply_pdf_embeds(doc, paths, ProjectType.ARTICLE)
         raw_blocks = [b for b in doc.content if isinstance(b, pf.RawBlock)]
         assert len(raw_blocks) == 1
         assert raw_blocks[0].text.count("#image(") == 1
@@ -229,7 +229,7 @@ class TestApplyPdfEmbeds:
     def test_unfetched_stamped_link_keeps_link_without_scaffold(self, tmp_path: Path) -> None:
         """A stamped paragraph whose PDF was never fetched keeps its link, minus the scaffold attribute."""
         doc, _paths, _url = self._doc_and_paths(tmp_path, inline=False)
-        _apply_pdf_embeds(doc, {}, ProjectType.DEFAULT)
+        _apply_pdf_embeds(doc, {}, ProjectType.ARTICLE)
         links: list[pf.Link] = []
 
         def _collect(elem: pf.Element, doc: pf.Doc) -> None:
@@ -251,7 +251,7 @@ class TestApplyPdfEmbeds:
             VertexTree(tree_vertices=[pdf]), {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")}
         )
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
+        _apply_pdf_embeds(doc, paths, ProjectType.ARTICLE)
         assert not any(isinstance(b, pf.RawBlock) for b in doc.content)
 
     def test_article3_fixture_occurrences_place_independently(self) -> None:

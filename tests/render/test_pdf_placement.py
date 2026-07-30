@@ -29,16 +29,16 @@ class TestDefaultPdfRender:
 
     def test_matrix_default_for_pdf_output(self) -> None:
         """An untagged embed in PDF output defaults to the back-matter appendix."""
-        assert default_pdf_render(OutputFormat.PDF, ProjectType.DEFAULT) is PdfRenderPlacement.APPENDIX_NATIVE
+        assert default_pdf_render(OutputFormat.PDF, ProjectType.ARTICLE) is PdfRenderPlacement.APPENDIX_NATIVE
 
     def test_matrix_default_for_unbundled_markdown(self) -> None:
         """A plain .md has nowhere to put a copy, so the default points at the hosted original."""
-        placement = default_pdf_render(OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        placement = default_pdf_render(OutputFormat.MARKDOWN, ProjectType.ARTICLE, should_bundle=False)
         assert placement is PdfRenderPlacement.EXTERNAL_LINK
 
     def test_override_replaces_the_matrix(self) -> None:
         """An override resolves the untagged placement regardless of the built-in matrix."""
-        placement = default_pdf_render(OutputFormat.PDF, ProjectType.DEFAULT, override=PdfRenderPlacement.INLINE_NATIVE)
+        placement = default_pdf_render(OutputFormat.PDF, ProjectType.ARTICLE, override=PdfRenderPlacement.INLINE_NATIVE)
         assert placement is PdfRenderPlacement.INLINE_NATIVE
 
     def test_none_override_defers_to_the_matrix(self) -> None:
@@ -56,7 +56,7 @@ class TestRequestedPdfRender:
         placement = requested_pdf_render(
             _stamped_link(PDF_PLACEMENT_UNSET),
             OutputFormat.PDF,
-            ProjectType.DEFAULT,
+            ProjectType.ARTICLE,
             default_override=PdfRenderPlacement.INLINE_NATIVE,
         )
         assert placement is PdfRenderPlacement.INLINE_NATIVE
@@ -66,14 +66,14 @@ class TestRequestedPdfRender:
         placement = requested_pdf_render(
             _stamped_link(PdfRenderPlacement.NAME_ONLY.value),
             OutputFormat.PDF,
-            ProjectType.DEFAULT,
+            ProjectType.ARTICLE,
             default_override=PdfRenderPlacement.INLINE_NATIVE,
         )
         assert placement is PdfRenderPlacement.NAME_ONLY
 
     def test_untagged_link_without_override_resolves_to_the_matrix(self) -> None:
         """With no override, an untagged occurrence gets the built-in default."""
-        placement = requested_pdf_render(_stamped_link(PDF_PLACEMENT_UNSET), OutputFormat.PDF, ProjectType.DEFAULT)
+        placement = requested_pdf_render(_stamped_link(PDF_PLACEMENT_UNSET), OutputFormat.PDF, ProjectType.ARTICLE)
         assert placement is PdfRenderPlacement.APPENDIX_NATIVE
 
 
@@ -105,7 +105,7 @@ class TestApplyReferencePlacementsStrip:
     def test_strip_removes_the_paragraph_and_its_emptied_list(self) -> None:
         """A stripped only-occurrence takes its emptied list item — and list — with it."""
         doc = pf.Doc(pf.BulletList(pf.ListItem(pf.Para(_stamped_link(PdfRenderPlacement.STRIP.value)))))
-        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.ARTICLE, should_bundle=False)
         assert list(doc.content) == []
         assert stripped == frozenset({"https://example.com/doc.pdf"})
 
@@ -117,7 +117,7 @@ class TestApplyReferencePlacementsStrip:
                 pf.ListItem(pf.Para(pf.Str("kept"))),
             )
         )
-        apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.ARTICLE, should_bundle=False)
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.BulletList)
@@ -130,7 +130,7 @@ class TestApplyReferencePlacementsStrip:
         stripped = apply_reference_placements(
             doc,
             OutputFormat.MARKDOWN,
-            ProjectType.DEFAULT,
+            ProjectType.ARTICLE,
             should_bundle=False,
             default_override=PdfRenderPlacement.STRIP,
         )
@@ -143,12 +143,12 @@ class TestApplyReferencePlacementsStrip:
             pf.Para(_stamped_link(PdfRenderPlacement.STRIP.value)),
             pf.Para(_stamped_link(PdfRenderPlacement.NAME_ONLY.value)),
         )
-        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.ARTICLE, should_bundle=False)
         assert stripped == frozenset()
         assert pf.stringify(doc).strip() == "doc.pdf"
 
     def test_no_strips_reports_nothing(self) -> None:
         """A run with no stripped occurrence reports no removable URLs."""
         doc = pf.Doc(pf.Para(_stamped_link(PdfRenderPlacement.NAME_ONLY.value)))
-        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.ARTICLE, should_bundle=False)
         assert stripped == frozenset()

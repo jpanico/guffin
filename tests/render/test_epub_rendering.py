@@ -28,7 +28,7 @@ from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
 from guffin.render.epub_rendering import render
-from guffin.render.project import BookProfile, DefaultProfile, ProjectProfile
+from guffin.render.project import ArticleProfile, BookProfile, ProjectProfile
 from guffin.render.render_options import EpubRenderOptions
 from guffin.roam.code_language import CodeLanguage
 from guffin.roam.local_api import ApiEndpoint
@@ -93,7 +93,7 @@ def _render_epub(
 @pytest.fixture(scope="module")
 def article5_default_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """``[[Test Article]] 5`` rendered with the default (article) profile."""
-    return _render_epub(tmp_path_factory.mktemp("a5_default"), _article5_bundle(), DefaultProfile(), _ARTICLE5_STEM)
+    return _render_epub(tmp_path_factory.mktemp("a5_default"), _article5_bundle(), ArticleProfile(), _ARTICLE5_STEM)
 
 
 @pytest.fixture(scope="module")
@@ -102,7 +102,7 @@ def article5_suppressed_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
     return _render_epub(
         tmp_path_factory.mktemp("a5_suppressed"),
         _article5_bundle(),
-        DefaultProfile(),
+        ArticleProfile(),
         _ARTICLE5_STEM,
         suppress_attributes=True,
     )
@@ -122,7 +122,7 @@ def code_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
         uid="codeaaaaa", code="print(1)\nprint(2)\nprint(3)", language=CodeLanguage.PYTHON
     )
     bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, code]))
-    return _render_epub(tmp_path_factory.mktemp("code"), bundle, DefaultProfile(), "code")
+    return _render_epub(tmp_path_factory.mktemp("code"), bundle, ArticleProfile(), "code")
 
 
 @pytest.fixture(scope="module")
@@ -142,7 +142,7 @@ def classified_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
             "badged001": VertexView(source_channel=SourceChannel.VOICE_CALL),
         },
     )
-    return _render_epub(tmp_path_factory.mktemp("classified"), bundle, DefaultProfile(), "classified")
+    return _render_epub(tmp_path_factory.mktemp("classified"), bundle, ArticleProfile(), "classified")
 
 
 @pytest.fixture(scope="module")
@@ -151,12 +151,12 @@ def multi_level_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Pat
     out: Final[Path] = tmp_path_factory.mktemp("multi_level")
     bundle: Final[RenderBundle] = _multi_level_bundle()
     return {
-        "article": _render_epub(out, bundle, DefaultProfile(), "article"),  # SECTION -> split-level 1
+        "article": _render_epub(out, bundle, ArticleProfile(), "article"),  # SECTION -> split-level 1
         "book": _render_epub(out, bundle, BookProfile(), "book"),  # CHAPTER -> split-level 1
         "parts": _render_epub(out, bundle, BookProfile(with_parts=True), "parts"),  # PART -> split-level 2
         # number_sections option overrides of the profile policy:
         "book_unnumbered": _render_epub(out, bundle, BookProfile(), "book_unnumbered", number_sections=False),
-        "article_numbered": _render_epub(out, bundle, DefaultProfile(), "article_numbered", number_sections=True),
+        "article_numbered": _render_epub(out, bundle, ArticleProfile(), "article_numbered", number_sections=True),
     }
 
 
@@ -222,7 +222,7 @@ def colophon_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
     bundle: Final[RenderBundle] = _multi_level_bundle().with_provenance(_PROVENANCE)
     return {
         "book": _render_epub(out, bundle, BookProfile(), "book", emit_colophon=True),
-        "article": _render_epub(out, bundle, DefaultProfile(), "article", emit_colophon=True),
+        "article": _render_epub(out, bundle, ArticleProfile(), "article", emit_colophon=True),
     }
 
 
@@ -236,7 +236,7 @@ def revision_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
     bundle: Final[RenderBundle] = _multi_level_bundle().with_revision(_REVISION)
     return {
         "book": _render_epub(out, bundle, BookProfile(), "book"),
-        "article": _render_epub(out, bundle, DefaultProfile(), "article"),
+        "article": _render_epub(out, bundle, ArticleProfile(), "article"),
     }
 
 
@@ -252,7 +252,7 @@ def preamble_epubs(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
     return {
         "book": _render_epub(out, bundle, BookProfile(), "book"),
         "book_kept": _render_epub(out, bundle, BookProfile(), "book_kept", include_preamble=True),
-        "article": _render_epub(out, bundle, DefaultProfile(), "article"),
+        "article": _render_epub(out, bundle, ArticleProfile(), "article"),
     }
 
 

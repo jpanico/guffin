@@ -101,16 +101,16 @@ supported everywhere.
 """
 
 _DEFAULT_PDF_RENDERS: Final[Mapping[tuple[OutputFormat, bool, ProjectType], PdfRenderPlacement]] = {
-    (OutputFormat.MARKDOWN, True, ProjectType.DEFAULT): PdfRenderPlacement.INTERNAL_LINK,
+    (OutputFormat.MARKDOWN, True, ProjectType.ARTICLE): PdfRenderPlacement.INTERNAL_LINK,
     (OutputFormat.MARKDOWN, True, ProjectType.MANUSCRIPT): PdfRenderPlacement.INTERNAL_LINK,
     (OutputFormat.MARKDOWN, True, ProjectType.BOOK): PdfRenderPlacement.APPENDIX_NATIVE,
-    (OutputFormat.MARKDOWN, False, ProjectType.DEFAULT): PdfRenderPlacement.EXTERNAL_LINK,
+    (OutputFormat.MARKDOWN, False, ProjectType.ARTICLE): PdfRenderPlacement.EXTERNAL_LINK,
     (OutputFormat.MARKDOWN, False, ProjectType.MANUSCRIPT): PdfRenderPlacement.EXTERNAL_LINK,
     (OutputFormat.MARKDOWN, False, ProjectType.BOOK): PdfRenderPlacement.EXTERNAL_LINK,
-    (OutputFormat.PDF, True, ProjectType.DEFAULT): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.PDF, True, ProjectType.ARTICLE): PdfRenderPlacement.APPENDIX_NATIVE,
     (OutputFormat.PDF, True, ProjectType.MANUSCRIPT): PdfRenderPlacement.APPENDIX_NATIVE,
     (OutputFormat.PDF, True, ProjectType.BOOK): PdfRenderPlacement.APPENDIX_NATIVE,
-    (OutputFormat.EPUB, True, ProjectType.DEFAULT): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.EPUB, True, ProjectType.ARTICLE): PdfRenderPlacement.APPENDIX_NATIVE,
     (OutputFormat.EPUB, True, ProjectType.MANUSCRIPT): PdfRenderPlacement.APPENDIX_NATIVE,
     (OutputFormat.EPUB, True, ProjectType.BOOK): PdfRenderPlacement.APPENDIX_IMAGE,
 }

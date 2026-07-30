@@ -63,41 +63,41 @@ class TestDeduceOutFileStem:
     def test_page_uses_title(self) -> None:
         """A page root derives its stem from the page title."""
         tree = _tree(PageVertex(uid="page00001", title="My Page"))
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "My_Page.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "My_Page.article"
 
     def test_heading_uses_text(self) -> None:
         """A heading root derives its stem from the heading text."""
         tree = _tree(HeadingVertex(uid="headng001", text="Section One", heading_level=1))
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "Section_One.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "Section_One.article"
 
     def test_text_uses_text(self) -> None:
         """A text root derives its stem from the block text."""
         tree = _tree(TextVertex(uid="text00001", text="Some plain text"))
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "Some_plain_text.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "Some_plain_text.article"
 
     def test_quote_block_uses_quote(self) -> None:
         """A quote-block root derives its stem from the quotation text."""
         tree = _tree(QuoteBlockVertex(uid="quote0001", quote="A quoted line"))
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "A_quoted_line.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "A_quoted_line.article"
 
     def test_code_block_uses_code(self) -> None:
         """A code-block root derives its stem from the code content."""
         tree = _tree(CodeBlockVertex(uid="code00001", code="hello world", language=CodeLanguage.PYTHON))
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "hello_world.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "hello_world.article"
 
     def test_callout_prefers_title(self) -> None:
         """A callout root prefers its title when present."""
         callout = CalloutVertex(
             uid="calout001", callout_type=CalloutVertex.CalloutType.INFO, title="Important Note", body="some body"
         )
-        assert deduce_out_file_stem(_tree(callout), ProjectType.DEFAULT) == "Important_Note.default"
+        assert deduce_out_file_stem(_tree(callout), ProjectType.ARTICLE) == "Important_Note.article"
 
     def test_callout_falls_back_to_body(self) -> None:
         """A callout root falls back to its body when the title is empty."""
         callout = CalloutVertex(
             uid="calout001", callout_type=CalloutVertex.CalloutType.INFO, title="", body="Fallback Body"
         )
-        assert deduce_out_file_stem(_tree(callout), ProjectType.DEFAULT) == "Fallback_Body.default"
+        assert deduce_out_file_stem(_tree(callout), ProjectType.ARTICLE) == "Fallback_Body.article"
 
     def test_image_prefers_alt_text(self) -> None:
         """An image root prefers its alt text when present."""
@@ -108,7 +108,7 @@ class TestDeduceOutFileStem:
             scaled_image_size=ImageSize(),
             alt_text="A flower",
         )
-        assert deduce_out_file_stem(_tree(image), ProjectType.DEFAULT) == "A_flower.default"
+        assert deduce_out_file_stem(_tree(image), ProjectType.ARTICLE) == "A_flower.article"
 
     def test_image_falls_back_to_file_name(self) -> None:
         """An image root falls back to its file name when alt text is absent."""
@@ -119,7 +119,7 @@ class TestDeduceOutFileStem:
             scaled_image_size=ImageSize(),
             file_name="photo.jpeg",
         )
-        assert deduce_out_file_stem(_tree(image), ProjectType.DEFAULT) == "photo.jpeg.default"
+        assert deduce_out_file_stem(_tree(image), ProjectType.ARTICLE) == "photo.jpeg.article"
 
     def test_image_falls_back_to_source(self) -> None:
         """An image root falls back to its source URL when alt text and file name are absent."""
@@ -132,22 +132,22 @@ class TestDeduceOutFileStem:
             scaled_image_size=ImageSize(),
         )
         assert (
-            deduce_out_file_stem(_tree(image), ProjectType.DEFAULT)
-            == shell_safe_filename(str(image.source)) + ".default"
+            deduce_out_file_stem(_tree(image), ProjectType.ARTICLE)
+            == shell_safe_filename(str(image.source)) + ".article"
         )
 
     def test_table_joins_first_row_cells(self) -> None:
         """A table root joins the first row's cell values with underscores."""
         table = Table(rows=(("Name", "Age"), ("Bob", "30")))
         tree = _tree(TableVertex(uid="table0001", table=table, table_style=TableStyle()))
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "Name_Age.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "Name_Age.article"
 
     def test_block_embed_recurses_into_target(self) -> None:
         """A block-embed root derives its stem from the embedded (referenced) vertex."""
         target = TextVertex(uid="target001", text="Embedded Target")
         embed = BlockEmbedVertex(uid="embed0001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="target001"))
         tree = VertexTree(tree_vertices=[embed], ref_vertices=[target])
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "Embedded_Target.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "Embedded_Target.article"
 
     def test_appends_project_type(self) -> None:
         """The selected project type is appended as a ``.<type>`` segment before the extension."""
@@ -163,15 +163,15 @@ class TestDeduceOutFileStem:
         run of dots ``....default``.
         """
         long_title = "This is a very long page title that certainly exceeds the limit"
-        result = deduce_out_file_stem(_tree(PageVertex(uid="page00001", title=long_title)), ProjectType.DEFAULT)
-        assert result == shell_safe_filename(textwrap.shorten(long_title, width=40, placeholder="..._")) + ".default"
-        assert result.endswith("..._.default")
+        result = deduce_out_file_stem(_tree(PageVertex(uid="page00001", title=long_title)), ProjectType.ARTICLE)
+        assert result == shell_safe_filename(textwrap.shorten(long_title, width=40, placeholder="..._")) + ".article"
+        assert result.endswith("..._.article")
 
     def test_unwraps_markdown_links(self) -> None:
         """A rendered Markdown link in the basis is unwrapped to its text, dropping the URL."""
         # A page titled "[[Test Article]] 3" transcribes to a rendered page-ref link.
         tree = _tree(PageVertex(uid="page00001", title="[Test Article](x-guffin:vertex/LBFKibPIj) 3"))
-        assert deduce_out_file_stem(tree, ProjectType.DEFAULT) == "Test_Article_3.default"
+        assert deduce_out_file_stem(tree, ProjectType.ARTICLE) == "Test_Article_3.article"
 
     def test_guffin_title_attribute_takes_precedence(self) -> None:
         """A guffin/title attribute on the root overrides the vertex's own title for the stem basis."""
@@ -189,7 +189,7 @@ class TestDeduceOutFileStem:
                 )
             ],
         )
-        assert deduce_out_file_stem(_tree(page), ProjectType.DEFAULT) == "Override_Title.default"
+        assert deduce_out_file_stem(_tree(page), ProjectType.ARTICLE) == "Override_Title.article"
 
     def test_non_guffin_title_attribute_is_ignored(self) -> None:
         """A ``title`` attribute outside the guffin domain does not override the basis."""
@@ -206,7 +206,7 @@ class TestDeduceOutFileStem:
                 )
             ],
         )
-        assert deduce_out_file_stem(_tree(page), ProjectType.DEFAULT) == "Page_Title.default"
+        assert deduce_out_file_stem(_tree(page), ProjectType.ARTICLE) == "Page_Title.article"
 
 
 def _content_tree(part_tagged: bool) -> VertexTree:
@@ -247,7 +247,7 @@ class TestResolveProfile:
 
     def test_non_book_type_ignores_part_tags(self) -> None:
         """Part-tagged content does not affect a non-book project type."""
-        profile = resolve_profile(ProjectType.DEFAULT, _content_tree(part_tagged=True))
+        profile = resolve_profile(ProjectType.ARTICLE, _content_tree(part_tagged=True))
         assert not isinstance(profile, BookProfile)
 
 

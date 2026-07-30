@@ -102,7 +102,7 @@ render-operation knob on `RenderOptions`.
 
 ### Why they are not merged
 
-`output_format` (md/pdf/epub) and `project_type` (default/book/manuscript) cross-product
+`output_format` (md/pdf/epub) and `project_type` (article/book/manuscript) cross-product
 independently — a 3×3 space. Folding the profile into `RenderOptions` would either:
 
 - **flatten the two discriminators** → one subclass per *combination* (`PdfBookOptions`,
@@ -249,12 +249,12 @@ foreign pages.
 Just a native vocabulary and the structural semantics it implies, expressed as Guffin's own Pydantic
 models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
 
-- `ProjectType` — `default` | `book` | `manuscript` (the discriminator).
+- `ProjectType` — `article` | `book` | `manuscript` (the discriminator).
 - `ProjectProfile` — the format-independent base, with bibliographic fields
   (`title`, `authors`, `date`, `identifier`) shared by every kind of work. _Note:_ these fields are
   not the metadata source — bibliographic metadata is sourced from the content's
   `guffin`-domain attributes instead (see Phase 1 — metadata), so the profile fields are unused.
-- Per-type subclasses — `DefaultProfile`, `BookProfile` (`with_parts`),
+- Per-type subclasses — `ArticleProfile`, `BookProfile` (`with_parts`),
   `ManuscriptProfile` (`abstract`, `keywords`).
 - `StructuralPolicy` — the format-independent structural directives a profile **resolves to** (via
   `profile.structural_policy`). Renderers consume this rather than branching on `ProjectType`, so the
@@ -276,7 +276,7 @@ models (mirroring the `RenderOptions` discriminated-hierarchy pattern).
 
 | `ProjectType` | top-level division | title page | generated ToC | numbered | abstract | loose preamble | authored page breaks |
 |---|---|---|---|---|---|---|---|
-| `default` (article) | section | no | no | no | no | kept | honored |
+| `article` | section | no | no | no | no | kept | honored |
 | `book` | chapter (or part) | yes | yes | yes | no | dropped | dropped |
 | `manuscript` | section | yes | no | no | yes | kept | honored |
 
@@ -381,7 +381,7 @@ prune).
 The sixth, `honor_page_breaks`, gates the authored `page-break:: before` heading tag in Phase 0
 (prepare): when the policy declines (a book — its pagination is fixed by its own conventions),
 every renderer applies `publishing_semantics.drop_page_breaks()` to remove the tags before the
-Doc build, logging a warning per drop. When the policy honors them (default and manuscript),
+Doc build, logging a warning per drop. When the policy honors them (article and manuscript),
 the tag survives to Phase 1, where the shared build stamps the `page-break-before` class on the
 Header; each paginated format then maps the class in Phase 2 — `typst_page_break.lua` prepends a
 weak Typst `#pagebreak`, `epub.css` applies `break-before: page` (best-effort in reading

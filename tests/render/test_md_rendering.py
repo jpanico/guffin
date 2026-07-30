@@ -19,7 +19,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.md_rendering import _remove_stripped_bundle_assets, render
-from guffin.render.project import BookProfile, DefaultProfile
+from guffin.render.project import ArticleProfile, BookProfile
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
@@ -48,7 +48,7 @@ class TestRenderArticleFixture:
         )
         render(
             render_bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem=stem,
             api_endpoint=endpoint,
             options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
@@ -79,7 +79,7 @@ class TestSemanticBullets:
         )
         render(
             bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem="semantic",
             api_endpoint=endpoint,
             options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
@@ -117,7 +117,7 @@ class TestFrontMatter:
 
     _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 
-    def _render(self, tmp_path: Path, profile: BookProfile | DefaultProfile) -> str:
+    def _render(self, tmp_path: Path, profile: BookProfile | ArticleProfile) -> str:
         render(
             _book_bundle(),
             profile=profile,
@@ -144,7 +144,7 @@ class TestFrontMatter:
 
     def test_default_profile_emits_no_front_matter(self, tmp_path: Path) -> None:
         """A default (article) render carries no YAML block; the H1 title opens the document."""
-        result = self._render(tmp_path, DefaultProfile())
+        result = self._render(tmp_path, ArticleProfile())
         assert result.startswith("# Dorian Gray")
         assert "publisher:" not in result
 
@@ -168,7 +168,7 @@ class TestRevisionLine:
 
     _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 
-    def _render(self, tmp_path: Path, bundle: RenderBundle, profile: BookProfile | DefaultProfile) -> str:
+    def _render(self, tmp_path: Path, bundle: RenderBundle, profile: BookProfile | ArticleProfile) -> str:
         render(
             bundle,
             profile=profile,
@@ -181,18 +181,18 @@ class TestRevisionLine:
     def test_default_profile_renders_revision_below_title(self, tmp_path: Path) -> None:
         """With an authored revision name, an emphasized revision line follows the H1 title."""
         bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
-        result = self._render(tmp_path, bundle, DefaultProfile())
+        result = self._render(tmp_path, bundle, ArticleProfile())
         assert result.startswith("# Dorian Gray\n\n*revision: draft-3*\n")
 
     def test_no_authored_name_no_revision_line(self, tmp_path: Path) -> None:
         """A revision without an authored name inserts nothing."""
         bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982"))
-        result = self._render(tmp_path, bundle, DefaultProfile())
+        result = self._render(tmp_path, bundle, ArticleProfile())
         assert "revision" not in result
 
     def test_no_revision_no_revision_line(self, tmp_path: Path) -> None:
         """A bundle with no captured revision inserts nothing."""
-        result = self._render(tmp_path, _book_bundle(), DefaultProfile())
+        result = self._render(tmp_path, _book_bundle(), ArticleProfile())
         assert "revision" not in result
 
     def test_front_matter_profile_omits_revision_line(self, tmp_path: Path) -> None:
@@ -216,7 +216,7 @@ class TestRevisionLine:
     def test_default_profile_carries_no_revision_metadata(self, tmp_path: Path) -> None:
         """A profile without front matter serializes no revision metadata entry."""
         bundle = _book_bundle().with_revision(Revision(snapshot="d8666f090982", revision="draft-3"))
-        result = self._render(tmp_path, bundle, DefaultProfile())
+        result = self._render(tmp_path, bundle, ArticleProfile())
         assert "snapshot: d8666f090982" not in result
 
 
@@ -232,7 +232,7 @@ class TestBracketEntities:
         bundle = RenderBundle(content=VertexTree(tree_vertices=[page, text]), view={})
         render(
             bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem="doc",
             api_endpoint=self._ENDPOINT,
             options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
@@ -253,7 +253,7 @@ class TestPullQuoteRendering:
         bundle = RenderBundle(content=VertexTree(tree_vertices=[page, vtx]), view={})
         render(
             bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem="doc",
             api_endpoint=self._ENDPOINT,
             options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
@@ -295,7 +295,7 @@ class TestHeadingDemotion:
     def _render_bundle(self, tmp_path: Path, bundle: RenderBundle) -> str:
         render(
             bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem="doc",
             api_endpoint=self._ENDPOINT,
             options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
@@ -341,7 +341,7 @@ class TestElementNumberRendering:
     def _render(self, tmp_path: Path, emit_element_numbers: bool) -> str:
         render(
             _numbered_bundle(),
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem="doc",
             api_endpoint=self._ENDPOINT,
             options=MarkdownRenderOptions(
@@ -386,7 +386,7 @@ class TestCodeSourceRendering:
     def _render(self, tmp_path: Path, emit_code_sources: bool) -> str:
         render(
             _sourced_bundle(),
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem="doc",
             api_endpoint=self._ENDPOINT,
             options=MarkdownRenderOptions(
@@ -446,7 +446,7 @@ class TestPartsBookSectionPromotion:
 
     _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 
-    def _render(self, tmp_path: Path, profile: BookProfile | DefaultProfile) -> str:
+    def _render(self, tmp_path: Path, profile: BookProfile | ArticleProfile) -> str:
         render(
             _parts_book_bundle(),
             profile=profile,
@@ -465,7 +465,7 @@ class TestPartsBookSectionPromotion:
 
     def test_default_profile_keeps_the_authored_level(self, tmp_path: Path) -> None:
         """Outside a parts book the section keeps its authored (chapter) level."""
-        result = self._render(tmp_path, DefaultProfile())
+        result = self._render(tmp_path, ArticleProfile())
         assert "### About the Author" in result
 
 

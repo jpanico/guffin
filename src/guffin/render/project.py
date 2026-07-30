@@ -1,7 +1,7 @@
 """Project profile: the *kind* of work being rendered, modeled on Quarto's ``project: type:``.
 
 This adopts Quarto's project-type *concept* — not any Quarto artifact: no ``_quarto.yml``, no
-``quarto`` CLI, no extensions.  Just a native vocabulary (``default`` / ``book`` / ``manuscript``)
+``quarto`` CLI, no extensions.  Just a native vocabulary (``article`` / ``book`` / ``manuscript``)
 and the structural semantics each implies, expressed as Guffin's own Pydantic models.
 
 The project profile is orthogonal to the output format
@@ -12,12 +12,12 @@ that each renderer maps onto its own mechanism (PDF document class / EPUB split 
 
 Public symbols:
 
-- **Enumerations**: :class:`ProjectType` — the supported project types (default / book / manuscript);
+- **Enumerations**: :class:`ProjectType` — the supported project types (article / book / manuscript);
   :class:`TopLevelDivision` — the top-level structural division a project's highest headings
   represent.
 - **Models**: :class:`StructuralPolicy` — the format-independent structural directives derived from a
   profile; :class:`ProjectProfile` — the format-independent base profile; and the per-type subclasses
-  :class:`DefaultProfile`, :class:`BookProfile`, :class:`ManuscriptProfile`.
+  :class:`ArticleProfile`, :class:`BookProfile`, :class:`ManuscriptProfile`.
 - **Functions**: :func:`profile_for` — build a default-valued :class:`ProjectProfile` for a
   :class:`ProjectType`.
 """
@@ -36,12 +36,12 @@ class ProjectType(enum.StrEnum):
 
     Attributes:
         description: A one-line description of the kind of work the member produces.
-        DEFAULT: A flowing, article-like single document (:class:`DefaultProfile`).
+        ARTICLE: An article — a flowing single document (:class:`ArticleProfile`).
         BOOK: A multi-chapter book (:class:`BookProfile`).
         MANUSCRIPT: A scholarly article/paper (:class:`ManuscriptProfile`).
     """
 
-    DEFAULT = ("default", "an article-like single document")
+    ARTICLE = ("article", "a flowing single document")
     BOOK = ("book", "a multi-chapter book")
     MANUSCRIPT = ("manuscript", "a scholarly paper")
 
@@ -113,7 +113,7 @@ class StructuralPolicy(BaseModel):
 class ProjectProfile(BaseModel):
     """The format-independent description of the work being rendered.
 
-    A base for the per-type subclasses (:class:`DefaultProfile`, :class:`BookProfile`,
+    A base for the per-type subclasses (:class:`ArticleProfile`, :class:`BookProfile`,
     :class:`ManuscriptProfile`); not instantiated directly.  Carries bibliographic metadata that
     every output format can consume (e.g. PDF title block, EPUB ``dc:*``); ``None``/empty values
     fall back to what the content itself provides (such as the page title).
@@ -141,15 +141,15 @@ class ProjectProfile(BaseModel):
         raise NotImplementedError
 
 
-class DefaultProfile(ProjectProfile):
-    """An article-like single document — the default project type.
+class ArticleProfile(ProjectProfile):
+    """An article: a flowing single document — the default project type.
 
     Attributes:
-        project_type: Always :attr:`ProjectType.DEFAULT` (the discriminator).
+        project_type: Always :attr:`ProjectType.ARTICLE` (the discriminator).
     """
 
     project_type: ProjectType = Field(
-        default=ProjectType.DEFAULT, description="Discriminator identifying a default (article) project."
+        default=ProjectType.ARTICLE, description="Discriminator identifying an article project."
     )
 
     @property
@@ -245,11 +245,11 @@ def profile_for(project_type: ProjectType) -> ProjectProfile:
         project_type: The kind of work to build a profile for.
 
     Returns:
-        A :class:`DefaultProfile`, :class:`BookProfile`, or :class:`ManuscriptProfile`.
+        An :class:`ArticleProfile`, :class:`BookProfile`, or :class:`ManuscriptProfile`.
     """
     match project_type:
-        case ProjectType.DEFAULT:
-            return DefaultProfile()
+        case ProjectType.ARTICLE:
+            return ArticleProfile()
         case ProjectType.BOOK:
             return BookProfile()
         case ProjectType.MANUSCRIPT:

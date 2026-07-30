@@ -55,7 +55,7 @@ from guffin.model.vertex_tree import VertexTree, root_vertex
 from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render
 from guffin.render.pdf_rendering import render as render_pdf
-from guffin.render.project import DefaultProfile, ProjectType
+from guffin.render.project import ArticleProfile, ProjectType
 from guffin.render.render_options import EpubRenderOptions, MarkdownRenderOptions, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint, without_transient_keys
 from guffin.roam.node import RoamNode
@@ -230,7 +230,7 @@ def main() -> None:
     render_bundle: Final[RenderBundle] = RenderBundle(
         content=vertex_tree, view=build_view_map(anchor_tree)
     ).with_revision(gather_revision(result.raw_result, revision_name))
-    out_stem: Final[str] = deduce_out_file_stem(vertex_tree, ProjectType.DEFAULT)
+    out_stem: Final[str] = deduce_out_file_stem(vertex_tree, ProjectType.ARTICLE)
     print(f"  fetched {len(result.network)} node(s) total, {len(nodes)} anchor node(s)")
     print(f"  transcribed {len(vertex_tree.tree_vertices)} vertex/vertices")
 
@@ -277,7 +277,7 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as tmp_dir:
         render(
             render_bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
             options=MarkdownRenderOptions(output_dir=pathlib.Path(tmp_dir), should_bundle=False),
@@ -346,7 +346,7 @@ def main() -> None:
         os.environ["GUFFIN_PDF_CREATION_TIMESTAMP"] = str(PDF_CREATION_TIMESTAMP)
         render_pdf(
             render_bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
             options=PdfRenderOptions(output_dir=FIXTURES_PDF),
@@ -367,7 +367,7 @@ def main() -> None:
         shutil.rmtree(cache_fixture, ignore_errors=True)
         render(
             render_bundle,
-            profile=DefaultProfile(),
+            profile=ArticleProfile(),
             filename_stem=out_stem,
             api_endpoint=endpoint,
             options=MarkdownRenderOptions(output_dir=FIXTURES_MDBUNDLE, should_bundle=True, cache_dir=cache_fixture),

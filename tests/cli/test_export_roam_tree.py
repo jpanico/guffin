@@ -84,7 +84,7 @@ class TestExportRoamTreeNoBundle:
                 logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        output_file: pathlib.Path = tmp_path / "Test_Article_1.default.md"
+        output_file: pathlib.Path = tmp_path / "Test_Article_1.article.md"
         assert output_file.exists()
         expected: str = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert output_file.read_text() == expected
@@ -135,9 +135,9 @@ class TestExportRoamTreeBundle:
                     logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        bundle_dir: pathlib.Path = tmp_path / "Test_Article_1.default.mdbundle"
+        bundle_dir: pathlib.Path = tmp_path / "Test_Article_1.article.mdbundle"
         assert bundle_dir.is_dir()
-        assert (bundle_dir / "Test_Article_1.default.md").exists()
+        assert (bundle_dir / "Test_Article_1.article.md").exists()
 
 
 @pytest.mark.pandoc
@@ -157,7 +157,7 @@ class TestExportRoamTreeMdbundleFromRaw:
         raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_2_raw_result.yaml").read_text())
         api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
 
-        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_2.default.mdbundle"
+        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_2.article.mdbundle"
         cache_dir: Final[pathlib.Path] = tmp_path / "cache"
         cache_dir.mkdir()
 
@@ -193,7 +193,7 @@ class TestExportRoamTreeMdbundleFromRaw:
                 logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = output_dir / "Test_Article_2.default.mdbundle"
+        actual: Final[pathlib.Path] = output_dir / "Test_Article_2.article.mdbundle"
         assert actual.is_dir()
         expected_names: Final[list[str]] = sorted(f.name for f in baseline.iterdir())
         actual_names: Final[list[str]] = sorted(f.name for f in actual.iterdir())
@@ -256,7 +256,7 @@ class TestExportRoamTreeMdbundleLive:
 
         Roam credentials (GUFFIN_ROAM_*) are read from the environment by the CLI.
         """
-        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.default.mdbundle"
+        baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_3.article.mdbundle"
         assert baseline.exists(), (
             f"baseline mdbundle missing: {baseline}. Record it with: "
             'python tests/regen_fixtures.py "[[Test Article]] 3" --prefix test_article_3 --mdbundle'
@@ -273,7 +273,7 @@ class TestExportRoamTreeMdbundleLive:
             logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = tmp_path / "Test_Article_3.default.mdbundle"
+        actual: Final[pathlib.Path] = tmp_path / "Test_Article_3.article.mdbundle"
         assert actual.exists()
         expected_names: Final[list[str]] = sorted(f.name for f in baseline.iterdir())
         actual_names: Final[list[str]] = sorted(f.name for f in actual.iterdir())
@@ -298,7 +298,7 @@ class TestExportRoamTreePdfLive:
         Pins Typst's creation timestamp via GUFFIN_PDF_CREATION_TIMESTAMP so the output is
         reproducible; Roam credentials (GUFFIN_ROAM_*) are read from the environment by the CLI.
         """
-        baseline: Final[pathlib.Path] = FIXTURES_PDF_DIR / "Test_Article_1.default.pdf"
+        baseline: Final[pathlib.Path] = FIXTURES_PDF_DIR / "Test_Article_1.article.pdf"
         assert baseline.exists(), (
             f"baseline PDF missing: {baseline}. Record it with: "
             'python tests/regen_fixtures.py "[[Test Article]] 1" --prefix test_article_1 --pdf'
@@ -316,7 +316,7 @@ class TestExportRoamTreePdfLive:
             logging.root.handlers = saved_handlers
 
         assert result.exit_code == 0, result.output
-        actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.default.pdf"
+        actual: Final[pathlib.Path] = tmp_path / "Test_Article_1.article.pdf"
         assert actual.exists()
         assert actual.read_bytes() == baseline.read_bytes()
 
@@ -693,8 +693,8 @@ class TestExportRoamTreeProfile:
         assert profile.structural_policy.top_level_division is TopLevelDivision.CHAPTER
 
     def test_default_type_yields_default_profile(self, tmp_path: pathlib.Path) -> None:
-        """--type default resolves to the (non-book) default profile."""
-        profile = self._profile_for_args(tmp_path, ["--type", "default"])
+        """--type article resolves to the (non-book) article profile."""
+        profile = self._profile_for_args(tmp_path, ["--type", "article"])
         assert not isinstance(profile, BookProfile)
 
 

@@ -20,7 +20,7 @@ class TestResolvedArtifactPath:
 
     def test_single_file_resolves(self, tmp_path: pathlib.Path) -> None:
         """A lone document file with debug files beside it resolves to the document."""
-        artifact = tmp_path / "Foo.default.md"
+        artifact = tmp_path / "Foo.article.md"
         artifact.write_text("# Foo\n")
         (tmp_path / "Foo.pandoc.json").write_text("{}")
         (tmp_path / "Foo.body.typ").write_text("")
@@ -28,7 +28,7 @@ class TestResolvedArtifactPath:
 
     def test_mdbundle_directory_resolves(self, tmp_path: pathlib.Path) -> None:
         """A .mdbundle directory is an artifact entry like any document file."""
-        bundle = tmp_path / "Foo.default.mdbundle"
+        bundle = tmp_path / "Foo.article.mdbundle"
         bundle.mkdir()
         assert resolved_artifact_path(tmp_path) == bundle
 
@@ -40,9 +40,9 @@ class TestResolvedArtifactPath:
 
     def test_multiple_artifacts_raise(self, tmp_path: pathlib.Path) -> None:
         """More than one artifact entry is a resolution error naming them all."""
-        (tmp_path / "Foo.default.md").write_text("")
-        (tmp_path / "Foo.default.pdf").write_bytes(b"")
-        with pytest.raises(ArtifactResolutionError, match="Foo.default.md"):
+        (tmp_path / "Foo.article.md").write_text("")
+        (tmp_path / "Foo.article.pdf").write_bytes(b"")
+        with pytest.raises(ArtifactResolutionError, match="Foo.article.md"):
             resolved_artifact_path(tmp_path)
 
 
@@ -52,9 +52,9 @@ class TestPackagedArtifact:
     @pytest.mark.parametrize(
         ("file_name", "media_type"),
         [
-            ("Foo.default.pdf", "application/pdf"),
+            ("Foo.article.pdf", "application/pdf"),
             ("Foo.book.epub", "application/epub+zip"),
-            ("Foo.default.md", "text/markdown"),
+            ("Foo.article.md", "text/markdown"),
         ],
     )
     def test_file_artifact_transfers_as_itself(self, tmp_path: pathlib.Path, file_name: str, media_type: str) -> None:
@@ -68,17 +68,17 @@ class TestPackagedArtifact:
 
     def test_mdbundle_zips_with_its_layout_preserved(self, tmp_path: pathlib.Path) -> None:
         """A .mdbundle directory transfers as a zip whose entries are rooted at the bundle name."""
-        bundle = tmp_path / "Foo.default.mdbundle"
+        bundle = tmp_path / "Foo.article.mdbundle"
         (bundle / "assets").mkdir(parents=True)
-        (bundle / "Foo.default.md").write_text("# Foo\n")
+        (bundle / "Foo.article.md").write_text("# Foo\n")
         (bundle / "assets" / "img.png").write_bytes(b"png-bytes")
         artifact = packaged_artifact(bundle)
         assert artifact.media_type == "application/zip"
-        assert artifact.file_name == "Foo.default.mdbundle.zip"
+        assert artifact.file_name == "Foo.article.mdbundle.zip"
         with zipfile.ZipFile(artifact.path) as archive:
             assert sorted(archive.namelist()) == [
-                "Foo.default.mdbundle/Foo.default.md",
-                "Foo.default.mdbundle/assets/img.png",
+                "Foo.article.mdbundle/Foo.article.md",
+                "Foo.article.mdbundle/assets/img.png",
             ]
 
 

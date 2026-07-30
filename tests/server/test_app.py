@@ -86,7 +86,7 @@ class TestExportEndpoint:
         assert response.headers["content-type"].startswith("text/markdown")
         expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert response.text == expected
-        assert "Test_Article_1.default.md" in response.headers["content-disposition"]
+        assert "Test_Article_1.article.md" in response.headers["content-disposition"]
         expected_digest: Final[str] = base64.b64encode(hashlib.sha256(response.content).digest()).decode("ascii")
         assert response.headers["content-digest"] == f"sha-256=:{expected_digest}:"
 

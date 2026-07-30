@@ -3,8 +3,8 @@
 from typing import Final
 
 from guffin.render.project import (
+    ArticleProfile,
     BookProfile,
-    DefaultProfile,
     ManuscriptProfile,
     ProjectProfile,
     ProjectType,
@@ -18,7 +18,7 @@ class TestProjectType:
 
     def test_values_are_preserved(self) -> None:
         """The string value (discriminator / CLI choice / filename segment) is the bare type name."""
-        assert ProjectType.DEFAULT.value == "default"
+        assert ProjectType.ARTICLE.value == "article"
         assert ProjectType.BOOK.value == "book"
         assert ProjectType.MANUSCRIPT.value == "manuscript"
         # StrEnum identity: value-based lookup and string comparison still work.
@@ -27,7 +27,7 @@ class TestProjectType:
 
     def test_descriptions(self) -> None:
         """Each member exposes its one-line description."""
-        assert ProjectType.DEFAULT.description == "an article-like single document"
+        assert ProjectType.ARTICLE.description == "a flowing single document"
         assert ProjectType.BOOK.description == "a multi-chapter book"
         assert ProjectType.MANUSCRIPT.description == "a scholarly paper"
 
@@ -37,7 +37,7 @@ class TestStructuralPolicy:
 
     def test_default_is_article_like(self) -> None:
         """Default: sections, no title page, no ToC, unnumbered, no abstract, preamble kept, breaks honored."""
-        policy: Final = DefaultProfile().structural_policy
+        policy: Final = ArticleProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.SECTION
         assert not policy.emit_title_page
         assert not policy.emit_toc
@@ -77,7 +77,7 @@ class TestProfileDiscriminator:
 
     def test_discriminators(self) -> None:
         """Each profile subclass reports its own project_type."""
-        assert DefaultProfile().project_type is ProjectType.DEFAULT
+        assert ArticleProfile().project_type is ProjectType.ARTICLE
         assert BookProfile().project_type is ProjectType.BOOK
         assert ManuscriptProfile().project_type is ProjectType.MANUSCRIPT
 
@@ -95,7 +95,7 @@ class TestProfileFor:
 
     def test_maps_each_type_to_its_subclass(self) -> None:
         """Each ProjectType yields the matching profile subclass."""
-        assert isinstance(profile_for(ProjectType.DEFAULT), DefaultProfile)
+        assert isinstance(profile_for(ProjectType.ARTICLE), ArticleProfile)
         assert isinstance(profile_for(ProjectType.BOOK), BookProfile)
         assert isinstance(profile_for(ProjectType.MANUSCRIPT), ManuscriptProfile)
 

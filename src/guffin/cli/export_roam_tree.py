@@ -150,7 +150,7 @@ def main(
                 + ". Selects the project profile; its structural effects apply to all formats."
             ),
         ),
-    ] = ProjectType.DEFAULT,
+    ] = ProjectType.ARTICLE,
     should_bundle: Annotated[
         bool,
         typer.Option(
@@ -310,7 +310,7 @@ def main(
 
     In every format the output filename stem embeds the selected ``--type`` as a
     ``.<type>`` segment, so the same target exported under different project types lands
-    in distinct files — e.g. ``<target>.default.epub``, ``<target>.book.pdf``.
+    in distinct files — e.g. ``<target>.article.epub``, ``<target>.book.pdf``.
 
     With ``--format markdown`` (default): ``--bundle`` writes a
     ``<target>.<type>.mdbundle/`` directory with images; ``--no-bundle`` writes a

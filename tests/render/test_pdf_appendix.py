@@ -76,7 +76,7 @@ class TestEpubPdfAppendix:
     def test_pages_become_images_under_an_appendix(self, tmp_path: Path) -> None:
         """The embed becomes an internal link and the pages land as images in a back-matter section."""
         doc, paths = self._doc_and_paths(tmp_path, ["pdfuid001"])
-        _apply_pdf_appendix(doc, paths, ProjectType.DEFAULT, tmp_path)
+        _apply_pdf_appendix(doc, paths, ProjectType.ARTICLE, tmp_path)
         headers = [b for b in doc.content if isinstance(b, pf.Header)]
         assert [h.level for h in headers] == [1, 2]
         assert pf.stringify(headers[0]) == APPENDIX_TITLE
@@ -96,7 +96,7 @@ class TestEpubPdfAppendix:
     def test_repeated_occurrences_share_one_entry(self, tmp_path: Path) -> None:
         """Two embeds of one PDF produce a single subsection that both anchors link to."""
         doc, paths = self._doc_and_paths(tmp_path, ["pdfuid001", "pdfuid002"])
-        _apply_pdf_appendix(doc, paths, ProjectType.DEFAULT, tmp_path)
+        _apply_pdf_appendix(doc, paths, ProjectType.ARTICLE, tmp_path)
         headers = [b for b in doc.content if isinstance(b, pf.Header)]
         assert [h.level for h in headers] == [1, 2]
         links: list[pf.Link] = []
