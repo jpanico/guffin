@@ -48,7 +48,7 @@ from guffin.model.publishing_semantics import (
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
-from guffin.render.md_post_processing import strip_list_separator_comments
+from guffin.render.md_post_processing import indent_fenced_blank_lines, strip_list_separator_comments
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     make_resolver,
@@ -263,7 +263,7 @@ def render(
             ],
         )
         output_file: Final[Path] = bundle_dir / f"{filename_stem}.md"
-        output_file.write_text(strip_list_separator_comments(md_text), encoding="utf-8")
+        output_file.write_text(indent_fenced_blank_lines(strip_list_separator_comments(md_text)), encoding="utf-8")
         logger.info("Wrote Markdown to: %s", output_file)
 
     else:
@@ -302,5 +302,5 @@ def render(
             ],
         )
         output_path: Final[Path] = output_dir / f"{filename_stem}.md"
-        output_path.write_text(strip_list_separator_comments(no_bundle_md), encoding="utf-8")
+        output_path.write_text(indent_fenced_blank_lines(strip_list_separator_comments(no_bundle_md)), encoding="utf-8")
         logger.info("Wrote Markdown to %s", output_path)
