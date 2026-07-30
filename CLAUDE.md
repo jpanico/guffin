@@ -179,7 +179,7 @@ GUFFIN_LIVE_TESTS=1 pytest -m live -v
     - `schema_fetch.py` — fetches Datomic schema via Local API
     - `asset_fetch.py` — fetches Firestore assets via Local API; `fetch_and_cache_asset` names cached files `<sha256>.<ext>` and preserves the original upload filename in a `<sha256>.meta.json` sidecar
     - `revision.py` — captures a content `Revision` from a raw fetch: `snapshot()` (SHA-256 over the canonical form — transient keys stripped via `without_transient_keys`, rows sorted by uid, stub lists sorted by id, keys sorted — so neither wire ordering nor session state can move the digest) and `gather_revision()` (snapshot hash + max create/edit bookkeeping timestamp + caller-resolved revision name + capture moment)
-- `scripts/` — shell wrapper scripts (`dump-roam-tree.sh`, `export-roam-tree.sh`) and `regen_programming_languages.py` (developer script; regenerates `common/programming_language_data.py` from GitHub Linguist at a pinned release tag)
+- `scripts/` — the macOS `.mdbundle` handler-setup script (`setup-mdbundle-handler.sh`) and `regen_programming_languages.py` (developer script; regenerates `common/programming_language_data.py` from GitHub Linguist at a pinned release tag)
 - `tests/fixtures/` — sample markdown, YAML, images, JSON, and PDF for tests, plus the recorded `mdbundle/`, `pdf/`, and `epub/` export baselines
 - `tests/regen_fixtures.py` — developer script; regenerates all six fixture files for a given Roam page title or node UID (see **Test Fixtures** below)
 

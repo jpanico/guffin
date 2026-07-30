@@ -266,10 +266,7 @@ guffin/
 │   └── fixtures/                        # markdown/, yaml/, images/, json/, mdbundle/, pdf/, epub/
 │
 ├── scripts/
-│   ├── dump-roam-tree.sh                # Shell wrapper for dump-roam-tree
-│   ├── export-roam-tree.sh              # Shell wrapper for export-roam-tree
 │   ├── setup-mdbundle-handler.sh        # Setup .mdbundle auto-open in Typora (macOS)
-│   ├── refresh-mdbundle-folders.sh      # Refresh existing .mdbundle folders (macOS)
 │   └── regen_programming_languages.py   # Regenerate the vendored Linguist language data
 │
 ├── docs/
@@ -487,14 +484,7 @@ To configure macOS to automatically open `.mdbundle` folders in Typora when doub
 
    This creates and registers `OpenMDBundle.app` which handles `.mdbundle` folders.
 
-2. **Refresh existing .mdbundle folders (if any):**
-   ```bash
-   ./scripts/refresh-mdbundle-folders.sh ~/wip
-   ```
-
-   This updates the metadata for existing `.mdbundle` folders so macOS recognizes them properly.
-
-3. **Done!** Double-clicking any `.mdbundle` folder will now open the markdown file in Typora
+2. **Done!** Double-clicking any `.mdbundle` folder will now open the markdown file in Typora
 
 See [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) for detailed instructions and troubleshooting.
 

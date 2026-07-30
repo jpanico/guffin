@@ -174,17 +174,12 @@ For a more integrated solution, create a custom application bundle:
 ### "Open with" doesn't show OpenMDBundle
 This happens if the `.mdbundle` folder was created before setting up the handler.
 
-**Solution 1: Refresh individual folder**
+**Solution 1: Refresh the folder**
 ```bash
 mdimport ~/path/to/your.mdbundle
 ```
 
-**Solution 2: Refresh all .mdbundle folders in a directory**
-```bash
-./refresh-mdbundle-folders.sh ~/wip
-```
-
-**Solution 3: Set handler using duti (if installed)**
+**Solution 2: Set handler using duti (if installed)**
 ```bash
 duti -s com.local.openmdbundle com.local.markdown-bundle all
 ```
