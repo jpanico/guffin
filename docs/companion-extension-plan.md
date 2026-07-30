@@ -1,10 +1,12 @@
 # Plan: the Guffin Companion Roam extension
 
-> **Status: phases 0–1 complete** (drafted 2026-07-30; phase-0 spike run 2026-07-30, findings
+> **Status: phases 0–2 complete** (drafted 2026-07-30; phase-0 spike run 2026-07-30, findings
 > recorded below — every unknown settled favorably; phase 1 implemented 2026-07-30 —
-> `server/cors.py` wired to a repeatable `guffin-server --allow-origin`; phases 2–4 remain).
-> Two-sided: a small `guffin-server` change (opt-in CORS — phase 1) plus a new Roam extension
-> living in its **own repository**; no other guffin code is touched. Companion to
+> `server/cors.py` wired to a repeatable `guffin-server --allow-origin`; phase 2 implemented
+> and verified live 2026-07-30 — the extension MVP in its own repository,
+> `~/Documents/github/guffin-companion`; phases 3–4 remain). Two-sided: a small
+> `guffin-server` change (opt-in CORS — phase 1) plus a new Roam extension living in its
+> **own repository**; no other guffin code is touched. Companion to
 > [server-mode.md](server-mode.md), the server this extension is a client of.
 
 ## Goal
@@ -119,6 +121,12 @@ use either mechanism (the anchor flow is the baseline).
   guard — flag unset means **no** CORS headers at all.
 
 ## Phase 2 — extension MVP
+
+> Implemented and verified live 2026-07-30, in the extension's own repository
+> (`~/Documents/github/guffin-companion`: `extension.js`, README, CHANGELOG, MIT license —
+> dev-mode loaded, not yet in Depot). Everything below is as specified; health, dump, and
+> export (multiple targets and formats) confirmed end to end against `guffin-server
+> --allow-origin https://roamresearch.com`, preflights and all.
 
 **Targeting.** `roamAlphaAPI.ui.mainWindow.getOpenPageOrBlockUid()` → pass the **UID** as
 `target`. The server accepts title-or-UID; the UID sidesteps every title-quoting question,
