@@ -8,7 +8,9 @@ remote, RPC-like invocation of the two existing commands, `dump-roam-tree` and
 in-process invocation design, and the decision log.
 
 Companion docs: [processing_pipeline.md](processing_pipeline.md) (what the commands do),
-[roam-local-api.md](roam-local-api.md) (why the server must live next to Roam Desktop).
+[roam-local-api.md](roam-local-api.md) (why the server must live next to Roam Desktop), and
+[companion-extension-plan.md](companion-extension-plan.md) (a planned in-Roam extension client
+of this server, and the opt-in CORS admitting it).
 
 
 ## Why a server
