@@ -1,9 +1,10 @@
 # Plan: the Guffin Companion Roam extension
 
-> **Status: unimplemented plan** (drafted 2026-07-30). Two-sided: a small `guffin-server`
-> change (opt-in CORS — phase 1) plus a new Roam extension living in its **own repository**;
-> no other guffin code is touched. Companion to [server-mode.md](server-mode.md), the server
-> this extension is a client of.
+> **Status: phase 0 complete** (drafted 2026-07-30; spike run 2026-07-30, findings recorded
+> below — every unknown settled favorably; phases 1–4 remain). Two-sided: a small
+> `guffin-server` change (opt-in CORS — phase 1) plus a new Roam extension living in its
+> **own repository**; no other guffin code is touched. Companion to
+> [server-mode.md](server-mode.md), the server this extension is a client of.
 
 ## Goal
 
@@ -65,6 +66,32 @@ empirically the three unknowns that decide everything downstream:
 3. **File saving.** Verify that the anchor-click-on-object-URL download pattern triggers
    Electron's save flow in Roam Desktop; if not, test `window.showSaveFilePicker`. One of
    the two will work; which one shapes the export UX.
+
+### Findings (2026-07-30 — Roam Desktop 0.0.38, Electron 38.2.0, Chrome 140)
+
+The spike ran an instrumented dev-mode extension against a loopback logging server answering
+exactly the phase-1 CORS response shape. Every unknown settled favorably:
+
+1. **Origin: `https://roamresearch.com`** — confirmed twice over: `location.origin` as seen
+   by the extension, and the browser-stamped `Origin` header on every request the server
+   logged.
+2. **The CORS dialog works end to end.** A simple GET is sent with no preflight and its
+   response is readable under the allow-origin echo; the JSON POST's preflight
+   (`OPTIONS` + `Access-Control-Request-Method`/`-Headers`) is satisfied by the phase-1
+   response shape and the POST follows.
+3. **PNA is not enforced** in this Electron: the real preflight carries no
+   `Access-Control-Request-Private-Network`. The conditional response header stays in
+   phase 1 regardless — harmless today, immunizes against a future Electron upgrade.
+4. **No CSP interference**: zero `securitypolicyviolation` events — Roam's page policy does
+   not restrict `connect-src` against loopback HTTP.
+5. **Anchor download works**: the anchor-click-on-object-URL pattern raises Electron's
+   native save dialog; the saved file's bytes verified intact against the generated content.
+6. **`showSaveFilePicker` works too**: present, shows a native dialog, write + close
+   succeed — a viable direct-write alternative.
+
+Consequence: the architecture is viable exactly as planned — phase 1's CORS middleware is
+sufficient and necessary, no extension-side workaround is needed, and phase 2's save UX may
+use either mechanism (the anchor flow is the baseline).
 
 ## Phase 1 — `guffin-server`: opt-in CORS
 
@@ -144,9 +171,9 @@ developer mode covers personal use indefinitely — this phase is genuinely seve
 
 ## Risks
 
-- **PNA enforcement drift**: even if Roam's current Electron does not enforce Private
-  Network Access, a Roam Desktop upgrade could start. Mitigated by emitting the PNA response
-  header from day one (phase 1).
+- **PNA enforcement drift**: Roam's current Electron does not enforce Private Network
+  Access (phase 0 confirmed), but a Roam Desktop upgrade could start. Mitigated by emitting
+  the PNA response header from day one (phase 1).
 - **Origin changes**: an offline build or `file://` shell would present a different (or
   null) origin. Mitigated by `--allow-origin` being operator-set, never hardcoded.
 - **Long renders vs. fetch timeouts**: the strictly-synchronous v1 means the extension
