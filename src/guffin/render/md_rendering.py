@@ -34,6 +34,8 @@ _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
 _GFM_QUOTE_FILTER: Final[str] = "gfm_quote.lua"
 
+from collections.abc import Mapping
+
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
@@ -104,6 +106,25 @@ def _insert_revision_line(doc: pf.Doc, revision_name: str | None) -> None:
     if not blocks or not isinstance(blocks[0], pf.Header):
         return
     doc.content.insert(1, revision_line(revision_name))
+
+
+def _remove_stripped_bundle_assets(
+    bundle_dir: Path, asset_refs: Mapping[Uid, AssetRef], fully_stripped_urls: frozenset[str]
+) -> None:
+    """Delete the bundled files named by *fully_stripped_urls* from *bundle_dir*.
+
+    A bundle-mode link URL is the asset's bundled filename, so a URL whose every occurrence was
+    stripped names a file the written Markdown no longer references anywhere — a file that must
+    not travel with output that reads as though the embed were absent.  Only files actually
+    fetched into *bundle_dir* (per *asset_refs*) are candidates; each removal is logged.
+    """
+    for ref in asset_refs.values():
+        if ref.path.name not in fully_stripped_urls:
+            continue
+        if ref.path.parent != bundle_dir or not ref.path.exists():
+            continue
+        ref.path.unlink()
+        logger.info("removed stripped asset %s from the bundle", ref.path.name)
 
 
 def _gfm_resources_dir() -> Path:
@@ -241,13 +262,14 @@ def render(
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
-        apply_reference_placements(
+        fully_stripped_urls: Final[frozenset[str]] = apply_reference_placements(
             doc,
             OutputFormat.MARKDOWN,
             profile.project_type,
             should_bundle=True,
             default_override=options.default_pdf_render,
         )
+        _remove_stripped_bundle_assets(bundle_dir, asset_refs, fully_stripped_urls)
         _insert_revision_line(doc, revision_name)
         _stamp_revision_metadata(doc, title_page_revision)
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)

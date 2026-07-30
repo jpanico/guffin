@@ -87,7 +87,12 @@ from guffin.render.pdf_appendix import (
     appendix_section,
     entry_identifier,
 )
-from guffin.render.pdf_placement import honoured_pdf_render, requested_pdf_render, warn_unresolvable_external_link
+from guffin.render.pdf_placement import (
+    honoured_pdf_render,
+    prune_emptied_list_containers,
+    requested_pdf_render,
+    warn_unresolvable_external_link,
+)
 from guffin.render.pdf_raster import rasterize_pages
 from guffin.render.project import ProjectProfile, ProjectType, TopLevelDivision
 from guffin.render.render_options import EpubRenderOptions, OutputFormat
@@ -195,8 +200,10 @@ def _apply_pdf_appendix(
     EPUB cannot display a PDF, so an
     :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.APPENDIX_IMAGE` occurrence has its pages
     rasterised into *image_dir* and reproduced in a generated back-matter appendix, with an
-    intra-publication link left where the PDF was embedded.  Every other placement is a reference:
-    a link to the hosted original, or the bare filename.
+    intra-publication link left where the PDF was embedded.  Every other placement is a reference
+    — a link to the hosted original, or the bare filename — except a
+    :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.STRIP` occurrence, which is
+    removed outright, as though the embed were absent.
 
     Args:
         doc: The Panflute document to rewrite.
@@ -208,6 +215,7 @@ def _apply_pdf_appendix(
             built-in default matrix; an authored stamp always outranks it.
     """
     appendix: Final[AppendixEntries] = {}
+    stripped: Final[list[bool]] = []
 
     def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Block] | None:
         if not isinstance(elem, pf.Para) or len(list(elem.content)) != 1:
@@ -218,6 +226,10 @@ def _apply_pdf_appendix(
         requested: Final[PdfRenderPlacement] = requested_pdf_render(
             link, OutputFormat.EPUB, project_type, default_override=default_override
         )
+        if requested is PdfRenderPlacement.STRIP:
+            # A stripped occurrence vanishes regardless of fetch state — no pages, link, or name.
+            stripped.append(True)
+            return []
         path: Final[Path | None] = asset_paths.get(link.url)
         if path is None:
             # A failed fetch: the link to the remote source stays, minus the scaffold attribute.
@@ -235,6 +247,8 @@ def _apply_pdf_appendix(
         return None
 
     doc.walk(_action)
+    if stripped:
+        prune_emptied_list_containers(doc)
     if appendix:
         doc.content.extend(appendix_section(appendix, lambda path: _page_images(path, image_dir)))
 

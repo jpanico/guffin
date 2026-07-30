@@ -66,6 +66,14 @@ same warning an authored request would earn.
 | `INTERNAL_LINK` | ✅ relative link to the copy in `.mdbundle/` | ✗ nothing to contain it | ✗ measured dead — see *Format capabilities* | ✗ untested — see *Format capabilities* |
 | `EXTERNAL_LINK` | ✅ | ✅ | ✅ | ✅ |
 | `NAME_ONLY` | ✅ | ✅ | ✅ | ✅ |
+| `STRIP` | ✅ | ✅ | ✅ | ✅ |
+
+`STRIP` removes the occurrence outright in every format — no pages, no link, no name — and a list
+item (or whole list) emptied by the removal goes with it, so the output reads as though the embed
+were absent. It applies even when the asset's fetch failed, since there is nothing to show either
+way. In a bundling Markdown export, a PDF whose *every* occurrence stripped is also removed from
+the `.mdbundle` directory — the file does not travel with output that never references it (a PDF
+with any surviving occurrence still ships, as it would today).
 
 Everything marked ✗ falls back. Note the consequence of the two matrices together: every `pdf`
 and `epub` **book** default is now honoured. An `epub` *article* or *manuscript* still warns on each

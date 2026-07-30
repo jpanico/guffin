@@ -4,7 +4,13 @@ import panflute as pf
 
 from guffin.model.publishing_semantics import PdfRenderPlacement
 from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, PDF_PLACEMENT_UNSET
-from guffin.render.pdf_placement import default_pdf_render, honoured_pdf_render, requested_pdf_render
+from guffin.render.pdf_placement import (
+    SUPPORTED_PDF_RENDERS,
+    apply_reference_placements,
+    default_pdf_render,
+    honoured_pdf_render,
+    requested_pdf_render,
+)
 from guffin.render.project import ProjectType
 from guffin.render.render_options import OutputFormat
 
@@ -86,3 +92,63 @@ class TestHonouredPdfRender:
             honoured_pdf_render(PdfRenderPlacement.INLINE_IMAGE, OutputFormat.EPUB, uid="doc.pdf")
             is PdfRenderPlacement.NAME_ONLY
         )
+
+    def test_strip_is_supported_by_every_output_target(self) -> None:
+        """Removing an occurrence is universally implementable, so no target falls back on it."""
+        for supported in SUPPORTED_PDF_RENDERS.values():
+            assert PdfRenderPlacement.STRIP in supported
+
+
+class TestApplyReferencePlacementsStrip:
+    """apply_reference_placements removes a STRIP occurrence without leaving a trace."""
+
+    def test_strip_removes_the_paragraph_and_its_emptied_list(self) -> None:
+        """A stripped only-occurrence takes its emptied list item — and list — with it."""
+        doc = pf.Doc(pf.BulletList(pf.ListItem(pf.Para(_stamped_link(PdfRenderPlacement.STRIP.value)))))
+        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        assert list(doc.content) == []
+        assert stripped == frozenset({"https://example.com/doc.pdf"})
+
+    def test_strip_leaves_sibling_items_intact(self) -> None:
+        """Stripping one list item never disturbs its populated siblings."""
+        doc = pf.Doc(
+            pf.BulletList(
+                pf.ListItem(pf.Para(_stamped_link(PdfRenderPlacement.STRIP.value))),
+                pf.ListItem(pf.Para(pf.Str("kept"))),
+            )
+        )
+        apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        assert isinstance(blocks[0], pf.BulletList)
+        assert len(list(blocks[0].content)) == 1
+        assert pf.stringify(doc).strip() == "kept"
+
+    def test_strip_via_default_override_removes_an_untagged_occurrence(self) -> None:
+        """--default-pdf-render strip removes every untagged occurrence."""
+        doc = pf.Doc(pf.Para(_stamped_link(PDF_PLACEMENT_UNSET)))
+        stripped = apply_reference_placements(
+            doc,
+            OutputFormat.MARKDOWN,
+            ProjectType.DEFAULT,
+            should_bundle=False,
+            default_override=PdfRenderPlacement.STRIP,
+        )
+        assert list(doc.content) == []
+        assert stripped == frozenset({"https://example.com/doc.pdf"})
+
+    def test_url_with_a_surviving_occurrence_is_not_reported_stripped(self) -> None:
+        """One stripped and one surviving occurrence of a URL: the file is still referenced."""
+        doc = pf.Doc(
+            pf.Para(_stamped_link(PdfRenderPlacement.STRIP.value)),
+            pf.Para(_stamped_link(PdfRenderPlacement.NAME_ONLY.value)),
+        )
+        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        assert stripped == frozenset()
+        assert pf.stringify(doc).strip() == "doc.pdf"
+
+    def test_no_strips_reports_nothing(self) -> None:
+        """A run with no stripped occurrence reports no removable URLs."""
+        doc = pf.Doc(pf.Para(_stamped_link(PdfRenderPlacement.NAME_ONLY.value)))
+        stripped = apply_reference_placements(doc, OutputFormat.MARKDOWN, ProjectType.DEFAULT, should_bundle=False)
+        assert stripped == frozenset()

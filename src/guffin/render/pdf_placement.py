@@ -26,6 +26,8 @@ Public symbols:
 - :func:`honoured_pdf_render` — a requested placement narrowed to one the target supports.
 - :func:`apply_reference_placements` — resolve and apply every PDF placement, for a format that
   reproduces no pages.
+- :func:`prune_emptied_list_containers` — remove the empty list items (and lists) a stripped
+  occurrence leaves behind.
 - :func:`warn_unresolvable_external_link` — warn when an external link points at encrypted bytes.
 """
 
@@ -60,19 +62,32 @@ always carry their assets.
 
 SUPPORTED_PDF_RENDERS: Final[Mapping[_OutputTarget, frozenset[PdfRenderPlacement]]] = {
     (OutputFormat.MARKDOWN, True): frozenset(
-        {PdfRenderPlacement.INTERNAL_LINK, PdfRenderPlacement.EXTERNAL_LINK, PdfRenderPlacement.NAME_ONLY}
+        {
+            PdfRenderPlacement.INTERNAL_LINK,
+            PdfRenderPlacement.EXTERNAL_LINK,
+            PdfRenderPlacement.NAME_ONLY,
+            PdfRenderPlacement.STRIP,
+        }
     ),
-    (OutputFormat.MARKDOWN, False): frozenset({PdfRenderPlacement.EXTERNAL_LINK, PdfRenderPlacement.NAME_ONLY}),
+    (OutputFormat.MARKDOWN, False): frozenset(
+        {PdfRenderPlacement.EXTERNAL_LINK, PdfRenderPlacement.NAME_ONLY, PdfRenderPlacement.STRIP}
+    ),
     (OutputFormat.PDF, True): frozenset(
         {
             PdfRenderPlacement.INLINE_NATIVE,
             PdfRenderPlacement.APPENDIX_NATIVE,
             PdfRenderPlacement.EXTERNAL_LINK,
             PdfRenderPlacement.NAME_ONLY,
+            PdfRenderPlacement.STRIP,
         }
     ),
     (OutputFormat.EPUB, True): frozenset(
-        {PdfRenderPlacement.APPENDIX_IMAGE, PdfRenderPlacement.EXTERNAL_LINK, PdfRenderPlacement.NAME_ONLY}
+        {
+            PdfRenderPlacement.APPENDIX_IMAGE,
+            PdfRenderPlacement.EXTERNAL_LINK,
+            PdfRenderPlacement.NAME_ONLY,
+            PdfRenderPlacement.STRIP,
+        }
     ),
 }
 """The placements each output target implements today; every other request falls back.
@@ -80,7 +95,9 @@ SUPPORTED_PDF_RENDERS: Final[Mapping[_OutputTarget, frozenset[PdfRenderPlacement
 A bundling Markdown export writes the asset beside the document, so it can link to a contained
 copy; a plain ``.md`` has nowhere to put one.  The PDF path reproduces pages natively via Typst,
 either at the embed or in a generated back-matter appendix linked from it.  EPUB cannot display a
-PDF at all, so it reproduces an appendix entry's pages as rasterised images instead.
+PDF at all, so it reproduces an appendix entry's pages as rasterised images instead.  Removing an
+occurrence outright (:attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.STRIP`) is
+supported everywhere.
 """
 
 _DEFAULT_PDF_RENDERS: Final[Mapping[tuple[OutputFormat, bool, ProjectType], PdfRenderPlacement]] = {
@@ -210,17 +227,18 @@ def apply_reference_placements(
     project_type: ProjectType,
     should_bundle: bool = True,
     default_override: PdfRenderPlacement | None = None,
-) -> None:
+) -> frozenset[str]:
     """Resolve every PDF embed's placement for a format that reproduces no pages, in place.
 
     For formats whose only supported placements are references — a link to a contained copy, a
-    link to the hosted original, or the bare filename — this applies the whole resolution in one
-    pass: the authored stamp or this output's default, narrowed to what the format supports
-    (warning on any fallback), then acted on.  A
+    link to the hosted original, the bare filename, or nothing at all — this applies the whole
+    resolution in one pass: the authored stamp or this output's default, narrowed to what the
+    format supports (warning on any fallback), then acted on.  A
     :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.NAME_ONLY` occurrence is unwrapped to its
-    label text; a link placement keeps its link, whose URL the shared build already pointed at
-    either the bundled copy or the remote source.  The scaffold attribute is consumed either way,
-    since Pandoc writers surface it in output.
+    label text; a :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.STRIP` occurrence is
+    removed outright, as though the embed were absent; a link placement keeps its link, whose URL
+    the shared build already pointed at either the bundled copy or the remote source.  The
+    scaffold attribute is consumed either way, since Pandoc writers surface it in output.
 
     Args:
         doc: The Panflute document to rewrite.
@@ -229,7 +247,15 @@ def apply_reference_placements(
         should_bundle: Whether a Markdown render is bundling its assets.
         default_override: The placement an *untagged* occurrence resolves to instead of the
             built-in default matrix; an authored stamp always outranks it.
+
+    Returns:
+        The link URLs whose *every* stamped occurrence was stripped — files the rewritten
+        document no longer references anywhere, so a caller that laid them beside the output
+        can remove them.  A URL with any surviving occurrence (whatever its placement) is
+        excluded.
     """
+    stripped_urls: Final[set[str]] = set()
+    kept_urls: Final[set[str]] = set()
 
     def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Block] | None:
         if not isinstance(elem, pf.Para) or len(list(elem.content)) != 1:
@@ -244,10 +270,38 @@ def apply_reference_placements(
             requested, output_format, uid=str(link.title or link.url), should_bundle=should_bundle
         )
         del link.attributes[PDF_PLACEMENT_ATTRIBUTE]
+        if placement is PdfRenderPlacement.STRIP:
+            stripped_urls.add(str(link.url))
+            return []
+        kept_urls.add(str(link.url))
         if placement is PdfRenderPlacement.NAME_ONLY:
             return [pf.Para(*list(link.content))]
         if placement is PdfRenderPlacement.EXTERNAL_LINK:
             warn_unresolvable_external_link(link.title, str(link.url))
+        return None
+
+    doc.walk(_action)
+    if stripped_urls:
+        prune_emptied_list_containers(doc)
+    return frozenset(stripped_urls - kept_urls)
+
+
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def prune_emptied_list_containers(doc: pf.Doc) -> None:
+    """Remove empty list items — and lists left with no items — from *doc*, in place.
+
+    A stripped occurrence
+    (:attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.STRIP`) can leave behind the
+    list item that held only its paragraph, and an empty item still renders as a bare marker —
+    a visible trace of what was removed.  The traversal is post-order, so the emptying cascades
+    bottom-up: an item emptied here empties its list, which is then removed too.
+    """
+
+    def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Element] | None:
+        if isinstance(elem, pf.ListItem) and not list(elem.content):
+            return []
+        if isinstance(elem, pf.BulletList | pf.OrderedList) and not list(elem.content):
+            return []
         return None
 
     doc.walk(_action)

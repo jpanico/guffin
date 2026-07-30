@@ -131,10 +131,10 @@ class PdfRenderPlacement(enum.StrEnum):
     given format can honour a given one: two axes for reproducing the document's pages (*where* —
     at the embed or at the back — and *at what fidelity* — the format's own content or page
     images), two for referencing the file instead of reproducing it (a copy carried inside the
-    output, or the externally hosted original), and one for naming it and nothing more.  A format
-    that cannot honour the requested placement falls back to :attr:`NAME_ONLY` with a warning
-    rather than silently choosing something else — the author asks, and is told when the answer
-    is no.
+    output, or the externally hosted original), one for naming it and nothing more, and one for
+    omitting the occurrence entirely.  A format that cannot honour the requested placement falls
+    back to :attr:`NAME_ONLY` with a warning rather than silently choosing something else — the
+    author asks, and is told when the answer is no.
 
     Attributes:
         INLINE_NATIVE: The PDF's pages are reproduced at the embed, as the output format's own
@@ -150,6 +150,8 @@ class PdfRenderPlacement(enum.StrEnum):
             document, by ordinary URL.
         NAME_ONLY: The PDF is named in the text; it is neither reproduced nor linked.  The
             universal fallback, since every format can name a file.
+        STRIP: The occurrence is omitted entirely — no pages, no link, no name; the output reads
+            as though the embed were absent.
     """
 
     INLINE_NATIVE = "inline-native"
@@ -159,6 +161,7 @@ class PdfRenderPlacement(enum.StrEnum):
     INTERNAL_LINK = "internal-link"
     EXTERNAL_LINK = "external-link"
     NAME_ONLY = "name-only"
+    STRIP = "strip"
 
 
 PDF_RENDER_FALLBACK: Final[PdfRenderPlacement] = PdfRenderPlacement.NAME_ONLY

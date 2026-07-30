@@ -166,6 +166,12 @@ class TestApplyPdfEmbeds:
         assert pf.stringify(item_blocks[0]).strip() == "dummy.pdf"
         assert not any(isinstance(block, pf.RawBlock) for block in doc.content)
 
+    def test_strip_removes_the_occurrence_and_its_emptied_container(self, tmp_path: Path) -> None:
+        """A STRIP occurrence vanishes entirely — no name, link, pages, or leftover empty bullet."""
+        doc, paths, _url = self._doc_and_paths(tmp_path, inline=False, render="strip")
+        _apply_pdf_embeds(doc, paths, ProjectType.DEFAULT)
+        assert list(doc.content) == []
+
     def test_inline_mode_renders_pages_without_attachment(self, tmp_path: Path) -> None:
         """An INLINE occurrence is replaced by one image call per page and no attachment."""
         doc, paths, _url = self._doc_and_paths(tmp_path, inline=True)

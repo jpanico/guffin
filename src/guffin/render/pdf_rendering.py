@@ -79,7 +79,12 @@ from guffin.render.pandoc_rendering import (
     vertex_tree_to_pandoc,
 )
 from guffin.render.pdf_appendix import AppendixEntries, appendix_anchor, appendix_section, entry_identifier
-from guffin.render.pdf_placement import honoured_pdf_render, requested_pdf_render, warn_unresolvable_external_link
+from guffin.render.pdf_placement import (
+    honoured_pdf_render,
+    prune_emptied_list_containers,
+    requested_pdf_render,
+    warn_unresolvable_external_link,
+)
 from guffin.render.project import ProjectProfile, ProjectType, TopLevelDivision
 from guffin.render.render_options import OutputFormat, PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
@@ -357,7 +362,9 @@ def _apply_pdf_embeds(
       unresolvable outside the Roam client; and
     - an :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.NAME_ONLY` occurrence is replaced by
       its bare label text — the PDF's original filename with no hyperlink (the source file is not
-      carried into the output, matching the EPUB format).
+      carried into the output, matching the EPUB format); and
+    - a :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.STRIP` occurrence is removed
+      outright — regardless of fetch state — so the output reads as though the embed were absent.
 
     A stamped paragraph whose URL has no fetched path (a failed fetch) keeps its link with the
     scaffold attribute stripped.  Unstamped paragraphs and inline mentions of a PDF (a link
@@ -373,6 +380,7 @@ def _apply_pdf_embeds(
             built-in default matrix; an authored stamp always outranks it.
     """
     page_counts: Final[dict[Path, int]] = {}
+    stripped: Final[list[bool]] = []
     # Insertion-ordered, so the appendix presents its entries in first-reference order; keyed by
     # path, so several occurrences of one PDF share a single entry and all link to it.
     appendix: Final[AppendixEntries] = {}
@@ -416,6 +424,10 @@ def _apply_pdf_embeds(
         requested: Final[PdfRenderPlacement] = requested_pdf_render(
             inline, OutputFormat.PDF, project_type, default_override=default_override
         )
+        if requested is PdfRenderPlacement.STRIP:
+            # A stripped occurrence vanishes regardless of fetch state — no pages, link, or name.
+            stripped.append(True)
+            return []
         path: Final[Path | None] = asset_paths.get(inline.url)
         if path is None:
             # A failed fetch: the link to the remote source stays, minus the scaffold attribute.
@@ -446,6 +458,8 @@ def _apply_pdf_embeds(
         return [pf.Para(*list(inline.content))]
 
     doc.walk(_action)
+    if stripped:
+        prune_emptied_list_containers(doc)
     if appendix:
         doc.content.extend(appendix_section(appendix, lambda path: [_typst_raw_block(_pages_markup(path, True))]))
 

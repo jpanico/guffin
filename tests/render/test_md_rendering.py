@@ -17,7 +17,8 @@ from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex, Quot
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
-from guffin.render.md_rendering import render
+from guffin.render.asset_fetch import AssetRef
+from guffin.render.md_rendering import _remove_stripped_bundle_assets, render
 from guffin.render.project import BookProfile, DefaultProfile
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
@@ -466,3 +467,31 @@ class TestPartsBookSectionPromotion:
         """Outside a parts book the section keeps its authored (chapter) level."""
         result = self._render(tmp_path, DefaultProfile())
         assert "### About the Author" in result
+
+
+class TestRemoveStrippedBundleAssets:
+    """_remove_stripped_bundle_assets deletes only fully-stripped files, only inside the bundle."""
+
+    def test_stripped_file_is_removed_and_others_stay(self, tmp_path: Path) -> None:
+        """The named file leaves the bundle; every other fetched asset stays."""
+        stripped_file = tmp_path / "gone.pdf"
+        stripped_file.write_bytes(b"pdf-bytes")
+        kept_file = tmp_path / "kept.pdf"
+        kept_file.write_bytes(b"pdf-bytes")
+        refs = {
+            "abcdefghi": AssetRef(uid="abcdefghi", path=stripped_file, size=None),
+            "bcdefghij": AssetRef(uid="bcdefghij", path=kept_file, size=None),
+        }
+        _remove_stripped_bundle_assets(tmp_path, refs, frozenset({"gone.pdf"}))
+        assert not stripped_file.exists()
+        assert kept_file.exists()
+
+    def test_file_outside_the_bundle_dir_is_never_touched(self, tmp_path: Path) -> None:
+        """Only files laid inside the bundle directory are removal candidates."""
+        outside_dir = tmp_path / "elsewhere"
+        outside_dir.mkdir()
+        outside_file = outside_dir / "gone.pdf"
+        outside_file.write_bytes(b"pdf-bytes")
+        refs = {"abcdefghi": AssetRef(uid="abcdefghi", path=outside_file, size=None)}
+        _remove_stripped_bundle_assets(tmp_path, refs, frozenset({"gone.pdf"}))
+        assert outside_file.exists()
