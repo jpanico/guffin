@@ -241,7 +241,13 @@ def render(
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
-        apply_reference_placements(doc, OutputFormat.MARKDOWN, profile.project_type, should_bundle=True)
+        apply_reference_placements(
+            doc,
+            OutputFormat.MARKDOWN,
+            profile.project_type,
+            should_bundle=True,
+            default_override=options.default_pdf_render,
+        )
         _insert_revision_line(doc, revision_name)
         _stamp_revision_metadata(doc, title_page_revision)
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
@@ -281,7 +287,13 @@ def render(
         resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map, options.daily_note_format))
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
-        apply_reference_placements(no_bundle_doc, OutputFormat.MARKDOWN, profile.project_type, should_bundle=False)
+        apply_reference_placements(
+            no_bundle_doc,
+            OutputFormat.MARKDOWN,
+            profile.project_type,
+            should_bundle=False,
+            default_override=options.default_pdf_render,
+        )
         _insert_revision_line(no_bundle_doc, revision_name)
         _stamp_revision_metadata(no_bundle_doc, title_page_revision)
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)

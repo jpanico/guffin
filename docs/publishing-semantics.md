@@ -48,7 +48,7 @@ pure taxonomy with no other `guffin` dependencies.
     warning per drop, via `drop_page_breaks()`), while the default and manuscript profiles honor
     them — content declares, policy disposes.
   - *PDF-anchored tags* (`AttributeAnchor.PDF`): `PDF_RENDER` (`pdf-render::`) declares an embedded PDF
-    asset's `PdfRender` placement: where its pages go and at what fidelity (`inline-native` /
+    asset's `PdfRenderPlacement` placement: where its pages go and at what fidelity (`inline-native` /
     `inline-image` at the embed, `appendix-native` / `appendix-image` in an appendix at the back),
     or that the file is referenced rather than reproduced (`internal-link` / `external-link` /
     `name-only`). The vocabulary spans the whole space an author might ask for, whether or not a
@@ -98,7 +98,7 @@ The invariants it enforces fall into four groups:
 - **Anchoring** — every recognized guffin attribute sits on a vertex its `AttributeAnchor` allows
   (document metadata only on the root, a heading tag only on a heading, and so on).
 - **Value legality** — each tag's value is drawn from that tag's legal set: `element-type` names a
-  `StructuralElement`, `matter` a `Matter`, `page-break` a `PageBreak`, `pdf-render` a `PdfRender`,
+  `StructuralElement`, `matter` a `Matter`, `page-break` a `PageBreak`, `pdf-render` a `PdfRenderPlacement`,
   `code-language` a canonical
   language, `code-source` a well-formed URL/commit-SHA/date triple, `publish` a boolean, `date` a
   W3CDTF reduced-precision date, and `cover-image` a block reference resolving to an image in the tree.

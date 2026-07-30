@@ -25,6 +25,7 @@ from guffin.cli.export_roam_tree import app
 from guffin.common.provenance import Provenance
 from guffin.common.validation import ValidationError, ValidationResult
 from guffin.model.code_source_diagnosis import CodeSourceDiagnosis, CodeSourceFinding
+from guffin.model.publishing_semantics import PdfRenderPlacement
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.project import BookProfile, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
@@ -463,6 +464,49 @@ class TestExportRoamTreeColophon:
         assert bundle.provenance is None
 
 
+def _options_for_flags(tmp_path: pathlib.Path, *flags: str) -> MarkdownRenderOptions:
+    """Invoke the CLI with *flags* (renderer mocked); return the render options it received.
+
+    The shared harness for flag-plumbing tests: the full CLI path runs (Typer parsing, options
+    assembly) while the renderer is mocked, so each test asserts only what landed on the options.
+    """
+    fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
+        anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
+    )
+    node_tree = article1_node_tree()
+    all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+    mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+    runner: CliRunner = CliRunner()
+    with (
+        patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+        patch("guffin.cli.export_roam_tree.render_md") as mock_render_md,
+    ):
+        saved_handlers = logging.root.handlers[:]
+        logging.root.handlers.clear()
+        try:
+            result = runner.invoke(
+                app,
+                [
+                    "[[Test Article]] 1",
+                    "--port",
+                    "3333",
+                    "--graph",
+                    "SCFH",
+                    "--token",
+                    "tok",
+                    "--output-dir",
+                    str(tmp_path),
+                    "--no-bundle",
+                    *flags,
+                ],
+            )
+        finally:
+            logging.root.handlers = saved_handlers
+    assert result.exit_code == 0, result.output
+    options: MarkdownRenderOptions = mock_render_md.call_args.args[4]
+    return options
+
+
 class TestExportRoamTreeCodeSources:
     """The --code-sources/--no-code-sources flag plumbs emit_code_sources onto the render options.
 
@@ -471,51 +515,31 @@ class TestExportRoamTreeCodeSources:
     flag-plumbing check fast while still exercising the full CLI path.
     """
 
-    def _options_for_flags(self, tmp_path: pathlib.Path, *flags: str) -> MarkdownRenderOptions:
-        """Invoke the CLI with *flags* (renderer mocked); return the render options it received."""
-        fetch_spec: Final[NodeFetchSpec] = NodeFetchSpec(
-            anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True
-        )
-        node_tree = article1_node_tree()
-        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
-        mock_result: Final[NodeFetchResult] = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
-        runner: CliRunner = CliRunner()
-        with (
-            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
-            patch("guffin.cli.export_roam_tree.render_md") as mock_render_md,
-        ):
-            saved_handlers = logging.root.handlers[:]
-            logging.root.handlers.clear()
-            try:
-                result = runner.invoke(
-                    app,
-                    [
-                        "[[Test Article]] 1",
-                        "--port",
-                        "3333",
-                        "--graph",
-                        "SCFH",
-                        "--token",
-                        "tok",
-                        "--output-dir",
-                        str(tmp_path),
-                        "--no-bundle",
-                        *flags,
-                    ],
-                )
-            finally:
-                logging.root.handlers = saved_handlers
-        assert result.exit_code == 0, result.output
-        options: MarkdownRenderOptions = mock_render_md.call_args.args[4]
-        return options
-
     def test_code_sources_flag_sets_emit(self, tmp_path: pathlib.Path) -> None:
         """--code-sources sets emit_code_sources on the options."""
-        assert self._options_for_flags(tmp_path, "--code-sources").emit_code_sources is True
+        assert _options_for_flags(tmp_path, "--code-sources").emit_code_sources is True
 
     def test_default_omits_code_sources(self, tmp_path: pathlib.Path) -> None:
         """Without the flag, emit_code_sources defaults off."""
-        assert self._options_for_flags(tmp_path).emit_code_sources is False
+        assert _options_for_flags(tmp_path).emit_code_sources is False
+
+
+class TestExportRoamTreeDefaultPdfRender:
+    """The --default-pdf-render flag plumbs the untagged-embed placement override onto the options.
+
+    Resolving the override against authored tags and the built-in default matrix is the render
+    layer's job and is covered there (``tests/render/test_pdf_placement.py``); this checks only
+    the CLI plumbing.
+    """
+
+    def test_flag_sets_the_override(self, tmp_path: pathlib.Path) -> None:
+        """--default-pdf-render lands its placement on the options."""
+        options = _options_for_flags(tmp_path, "--default-pdf-render", "external-link")
+        assert options.default_pdf_render is PdfRenderPlacement.EXTERNAL_LINK
+
+    def test_default_is_unset(self, tmp_path: pathlib.Path) -> None:
+        """Without the flag, the override is unset and the built-in default matrix decides."""
+        assert _options_for_flags(tmp_path).default_pdf_render is None
 
 
 class TestExportRoamTreeVerifyCodeSources:

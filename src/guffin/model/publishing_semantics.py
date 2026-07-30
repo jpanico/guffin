@@ -2,14 +2,14 @@
 
 Public symbols:
 
-- **Constants**: :data:`PDF_RENDER_FALLBACK` — the :class:`PdfRender` placement a format falls
+- **Constants**: :data:`PDF_RENDER_FALLBACK` — the :class:`PdfRenderPlacement` placement a format falls
   back to when it cannot honour the requested one; :data:`DEFAULT_PUBLISH` — the publication
   state of an untagged vertex.
 - **Enumerations**: :class:`PublishingSemantics` — the attributes Guffin recognizes (document metadata +
   the ``element-type``/``matter``/``page-break`` heading tags + the ``pdf-render`` PDF tag + the
   ``publish`` block tag), each member a
   :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
-  domain; :class:`PdfRender` — how an embedded PDF asset is placed in output (reproduced at the
+  domain; :class:`PdfRenderPlacement` — how an embedded PDF asset is placed in output (reproduced at the
   embed or in an appendix, natively or as images; linked as a contained copy or an external URL;
   or named only); :class:`PageBreak` — where a page break is forced relative to the tagged heading
   (``before``).  The anchoring affordances an attribute declares
@@ -25,7 +25,7 @@ Public symbols:
   :class:`StructuralElement` (raising if it is not one); :func:`matter_of` — read a ``matter``
   assignment's value as a :class:`Matter`; :func:`page_break_of` — read a ``page-break``
   assignment's value as a :class:`PageBreak`; :func:`pdf_render_of` — read a ``pdf-render``
-  assignment's value as a :class:`PdfRender`; :func:`code_language_of` — read a
+  assignment's value as a :class:`PdfRenderPlacement`; :func:`code_language_of` — read a
   ``code-language`` assignment's value as a canonical
   :data:`~guffin.common.programming_language.CodeLanguageId` (any vocabulary name or alias,
   case-insensitively); :func:`code_source_of` — read a ``code-source`` assignment's three
@@ -124,7 +124,7 @@ from guffin.model.vertex_tree import VertexTree, map_vertices, root_vertex, tran
 logger = logging.getLogger(__name__)
 
 
-class PdfRender(enum.StrEnum):
+class PdfRenderPlacement(enum.StrEnum):
     """How an embedded PDF asset is placed in output — the values a ``pdf-render`` tag takes.
 
     The vocabulary spans the whole space of placements an author might ask for, whether or not a
@@ -161,7 +161,7 @@ class PdfRender(enum.StrEnum):
     NAME_ONLY = "name-only"
 
 
-PDF_RENDER_FALLBACK: Final[PdfRender] = PdfRender.NAME_ONLY
+PDF_RENDER_FALLBACK: Final[PdfRenderPlacement] = PdfRenderPlacement.NAME_ONLY
 """The placement a format falls back to when it cannot honour the one an author asked for.
 
 Deliberately a single fixed member rather than a ranked chain: a chain would have Guffin choose
@@ -233,7 +233,7 @@ class PublishingSemantics(enum.Enum):
     - **PDF tags** (:attr:`AttributeAnchor.PDF`) — applied to an individual embedded PDF asset,
       directly or at a standalone-link reference site (the pdf anchor sees through standalone
       vertex links, so a reference to a PDF living on another page can be tagged where it is
-      displayed): :attr:`PDF_RENDER` declares its :class:`PdfRender` placement in paginated
+      displayed): :attr:`PDF_RENDER` declares its :class:`PdfRenderPlacement` placement in paginated
       output.
     - **Code-block tags** (:attr:`AttributeAnchor.CODE_BLOCK`) — applied to an individual fenced
       code listing: :attr:`CODE_LANGUAGE` declares the listing's language, overriding the closed
@@ -262,7 +262,7 @@ class PublishingSemantics(enum.Enum):
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
         PAGE_BREAK: Tags a heading with a forced :class:`PageBreak` in paginated output
             (``before`` opens the heading on a new page).
-        PDF_RENDER: Tags an embedded PDF with its :class:`PdfRender` placement (inline pages vs a
+        PDF_RENDER: Tags an embedded PDF with its :class:`PdfRenderPlacement` placement (inline pages vs a
             link); declared on the embed itself or on a standalone-link reference to it (the
             reference site's tag governing that reference).
         CODE_LANGUAGE: Tags a fenced code listing with its language — any name or alias of the
@@ -360,23 +360,23 @@ def page_break_of(assignment: AttributeAssignment) -> PageBreak:
 
 
 @validate_call
-def pdf_render_of(assignment: AttributeAssignment) -> PdfRender:
-    """Return the :class:`PdfRender` placement that a ``pdf-render`` assignment names.
+def pdf_render_of(assignment: AttributeAssignment) -> PdfRenderPlacement:
+    """Return the :class:`PdfRenderPlacement` placement that a ``pdf-render`` assignment names.
 
     Verifies *assignment* is for the :attr:`PublishingSemantics.PDF_RENDER` attribute, then coerces
-    its sole value to a :class:`PdfRender` (``inline`` / ``link``).
+    its sole value to a :class:`PdfRenderPlacement` (``inline`` / ``link``).
 
     Args:
         assignment: A :attr:`PublishingSemantics.PDF_RENDER` attribute assignment (one value expected).
 
     Returns:
-        The named :class:`PdfRender`.
+        The named :class:`PdfRenderPlacement`.
 
     Raises:
         ValueError: If *assignment* is not for the ``pdf-render`` attribute, does not carry exactly
-            one value, or its value is not a recognised :class:`PdfRender`.
+            one value, or its value is not a recognised :class:`PdfRenderPlacement`.
     """
-    return PdfRender(verified_sole_value_text(assignment, PublishingSemantics.PDF_RENDER.value))
+    return PdfRenderPlacement(verified_sole_value_text(assignment, PublishingSemantics.PDF_RENDER.value))
 
 
 @validate_call
@@ -611,21 +611,21 @@ def page_break_of_vertex(vertex: HeadingVertex) -> PageBreak | None:
 
 
 @validate_call
-def pdf_render_of_vertex(vertex: Vertex) -> PdfRender | None:
-    """Resolve *vertex*'s ``pdf-render`` tag to a :class:`PdfRender`, or ``None``.
+def pdf_render_of_vertex(vertex: Vertex) -> PdfRenderPlacement | None:
+    """Resolve *vertex*'s ``pdf-render`` tag to a :class:`PdfRenderPlacement`, or ``None``.
 
     The host may be the PDF embed itself, or — per the pdf anchor's
     :attr:`~guffin.model.attribute_anchor.AttributeAnchor.through_standalone_links` affordance — a
     vertex whose standalone vertex link references a PDF embed, tagging that embed at its
     reference site.  ``None`` when *vertex* carries no ``pdf-render`` assignment, or when the
-    assignment does not coerce to a :class:`PdfRender` (ignored with a warning).  An untagged
+    assignment does not coerce to a :class:`PdfRenderPlacement` (ignored with a warning).  An untagged
     embed's placement is :data:`DEFAULT_PDF_RENDER`.
 
     Args:
         vertex: The vertex whose tag to resolve.
 
     Returns:
-        The named :class:`PdfRender`, or ``None``.
+        The named :class:`PdfRenderPlacement`, or ``None``.
     """
     assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.PDF_RENDER)
     if assignment is None:

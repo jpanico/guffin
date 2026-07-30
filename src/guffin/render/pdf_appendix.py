@@ -1,7 +1,7 @@
 """The generated back-matter appendix that holds appendix-placed PDFs, and the anchors linking to it.
 
-A :attr:`~guffin.model.publishing_semantics.PdfRender.APPENDIX_NATIVE` or
-:attr:`~guffin.model.publishing_semantics.PdfRender.APPENDIX_IMAGE` occurrence leaves a link where
+A :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.APPENDIX_NATIVE` or
+:attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.APPENDIX_IMAGE` occurrence leaves a link where
 the PDF was embedded and reproduces its pages at the back of the document.  The *structure* of that
 arrangement is the same in every format — one section, one labelled subsection per PDF, an internal
 link from each occurrence — while only the reproduction of the pages differs (native page placement

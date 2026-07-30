@@ -30,6 +30,7 @@ from typing import Literal, assert_never
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from guffin.model.publishing_semantics import PdfRenderPlacement
 from guffin.render.date_format import DateFormat
 
 
@@ -71,6 +72,12 @@ class RenderOptions(BaseModel):
             authoring bookkeeping, not content.
         emit_code_sources: When ``True``, render each sourced code block's GitHub attribution
             line below it; ``False`` (default) omits the attributions.
+        default_pdf_render: The placement an *untagged* PDF embed resolves to, overriding the
+            built-in format/bundle/type default matrix
+            (:func:`~guffin.render.pdf_placement.default_pdf_render`); ``None`` (default) defers
+            to that matrix.  An embed's own authored ``pdf-render`` tag always outranks it, and a
+            placement the output cannot honour falls back with a warning exactly as an authored
+            request would.
         daily_note_format: How a reference/link to a Roam daily-note page renders its date; defaults
             to :attr:`~guffin.render.date_format.DateFormat.ROAM_LONG` (the page's own title).
     """
@@ -94,6 +101,9 @@ class RenderOptions(BaseModel):
     emit_code_sources: bool = Field(
         default=False, description="Render each sourced code block's GitHub attribution line below it."
     )
+    default_pdf_render: PdfRenderPlacement | None = Field(
+        default=None, description="Placement an untagged PDF embed resolves to; None defers to the built-in default."
+    )
     daily_note_format: DateFormat = Field(
         default=DateFormat.ROAM_LONG, description="How a daily-note-page reference renders its date."
     )
@@ -113,6 +123,7 @@ class RenderOptions(BaseModel):
         emit_code_sources: bool = False,
         include_preamble: bool | None = None,
         number_sections: bool | None = None,
+        default_pdf_render: PdfRenderPlacement | None = None,
         daily_note_format: DateFormat = DateFormat.ROAM_LONG,
     ) -> RenderOptions:
         """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
@@ -140,6 +151,8 @@ class RenderOptions(BaseModel):
             number_sections: PDF/EPUB-only; number the headings (``True``), turn all heading
                 numbering off (``False``), or defer to the project profile's policy (``None``,
                 default).
+            default_pdf_render: Placement an untagged PDF embed resolves to, or ``None``
+                (default) to defer to the built-in format/bundle/type default matrix.
             daily_note_format: How a daily-note-page reference renders its date.
 
         Returns:
@@ -156,6 +169,7 @@ class RenderOptions(BaseModel):
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
                     emit_code_sources=emit_code_sources,
+                    default_pdf_render=default_pdf_render,
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
@@ -169,6 +183,7 @@ class RenderOptions(BaseModel):
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
                     emit_code_sources=emit_code_sources,
+                    default_pdf_render=default_pdf_render,
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
@@ -183,6 +198,7 @@ class RenderOptions(BaseModel):
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
                     emit_code_sources=emit_code_sources,
+                    default_pdf_render=default_pdf_render,
                     daily_note_format=daily_note_format,
                 )
             case _ as unreachable:

@@ -84,6 +84,7 @@ from guffin.cli.common import (
 from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption, VersionOption
 from guffin.common.provenance import Provenance, gather_provenance
+from guffin.model.publishing_semantics import PdfRenderPlacement
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
 from guffin.render.epub_rendering import render as render_epub
@@ -284,6 +285,20 @@ def main(
             ),
         ),
     ] = DateFormat.ROAM_LONG,
+    default_pdf_render: Annotated[
+        PdfRenderPlacement | None,
+        typer.Option(
+            "--default-pdf-render",
+            envvar="GUFFIN_DEFAULT_PDF_RENDER",
+            help=(
+                "Placement an untagged {{[[pdf]]: <url>}} embed resolves to, overriding the "
+                "built-in format/bundle/type default. An embed's own pdf-render:: tag always "
+                "wins, and a placement the output format cannot honor falls back to name-only "
+                "with a warning. Unset (default), the built-in default applies. Applies to all "
+                "formats."
+            ),
+        ),
+    ] = None,
     version: VersionOption = False,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
@@ -353,6 +368,7 @@ def main(
         emit_code_sources=code_sources,
         include_preamble=preamble,
         number_sections=numbering,
+        default_pdf_render=default_pdf_render,
         daily_note_format=daily_note_format,
     )
 

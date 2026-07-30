@@ -117,7 +117,7 @@ from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     PageBreak,
-    PdfRender,
+    PdfRenderPlacement,
     PublishingSemantics,
     effective_title,
     element_type_of_vertex,
@@ -254,7 +254,7 @@ PDF_PLACEMENT_ATTRIBUTE: Final[str] = "data-guffin-pdf-render"
 """Scaffold attribute carrying a PDF embed link's resolved ``pdf-render`` placement.
 
 Each PDF embed's link paragraph is stamped with the *authored*
-:class:`~guffin.model.publishing_semantics.PdfRender` placement governing that display occurrence
+:class:`~guffin.model.publishing_semantics.PdfRenderPlacement` placement governing that display occurrence
 — resolved per occurrence, so two references to the same PDF may carry different placements — or
 with :data:`PDF_PLACEMENT_UNSET` when the occurrence carries no tag.  This build is
 format-neutral, so it never applies a default: what an untagged embed becomes depends on the
@@ -268,13 +268,13 @@ output (GFM falls back to a raw HTML anchor for an attributed link).
 PDF_PLACEMENT_UNSET: Final[str] = "unset"
 """The :data:`PDF_PLACEMENT_ATTRIBUTE` value marking an occurrence that carries no authored tag.
 
-Deliberately not a :class:`~guffin.model.publishing_semantics.PdfRender` member: "nobody asked"
+Deliberately not a :class:`~guffin.model.publishing_semantics.PdfRenderPlacement` member: "nobody asked"
 is not a placement, and the attribute stays present either way so a format pass can still
 recognise which links are PDF embeds.
 """
 
 
-def _resolved_pdf_placement(pdf: PdfVertex, site: Vertex | None = None) -> PdfRender | None:
+def _resolved_pdf_placement(pdf: PdfVertex, site: Vertex | None = None) -> PdfRenderPlacement | None:
     """Resolve the *authored* ``pdf-render`` placement for one display occurrence of *pdf*.
 
     A standalone reference site's own tag governs the occurrence it displays (the site is where
@@ -291,10 +291,10 @@ def _resolved_pdf_placement(pdf: PdfVertex, site: Vertex | None = None) -> PdfRe
             reference; ``None`` when *pdf* is displayed where it lives (a direct embed).
 
     Returns:
-        The authored :class:`~guffin.model.publishing_semantics.PdfRender`, or ``None`` when the
+        The authored :class:`~guffin.model.publishing_semantics.PdfRenderPlacement`, or ``None`` when the
         occurrence carries no tag.
     """
-    site_render: Final[PdfRender | None] = pdf_render_of_vertex(site) if site is not None else None
+    site_render: Final[PdfRenderPlacement | None] = pdf_render_of_vertex(site) if site is not None else None
     return site_render or pdf_render_of_vertex(pdf)
 
 
@@ -578,7 +578,7 @@ def _build_list_item(
 def _is_reference_placed_pdf(vertex: Vertex) -> bool:
     """Return whether *vertex* is a PDF embed that reads as a line of its parent's outline.
 
-    Every placement except the two :attr:`PdfRender.INLINE_NATIVE` / :attr:`PdfRender.INLINE_IMAGE`
+    Every placement except the two :attr:`PdfRenderPlacement.INLINE_NATIVE` / :attr:`PdfRenderPlacement.INLINE_IMAGE`
     reproductions renders the embed as a reference — a filename, a link, or a link into an
     appendix — which reads like a text sibling and so participates in the parent's children
     layout.  An inline reproduction is a display block (its pages stand where the embed was) and
@@ -597,7 +597,7 @@ def _is_reference_placed_pdf(vertex: Vertex) -> bool:
     """
     if not isinstance(vertex, PdfVertex):
         return False
-    return _resolved_pdf_placement(vertex) not in {PdfRender.INLINE_NATIVE, PdfRender.INLINE_IMAGE}
+    return _resolved_pdf_placement(vertex) not in {PdfRenderPlacement.INLINE_NATIVE, PdfRenderPlacement.INLINE_IMAGE}
 
 
 def _pdf_link_list_item(
@@ -733,7 +733,8 @@ def build_child_blocks(
         ref_pdf: PdfVertex | None = ref_target if isinstance(ref_target, PdfVertex) else None
         if (
             ref_pdf is not None
-            and _resolved_pdf_placement(ref_pdf, site=vertex) not in {PdfRender.INLINE_NATIVE, PdfRender.INLINE_IMAGE}
+            and _resolved_pdf_placement(ref_pdf, site=vertex)
+            not in {PdfRenderPlacement.INLINE_NATIVE, PdfRenderPlacement.INLINE_IMAGE}
             and layout is not ChildrenLayout.DOCUMENT
         ):
             # A standalone reference displaying a reference-placed PDF reads as a line of the
@@ -1032,7 +1033,7 @@ def _image_vertex_to_blocks(
 def _pdf_vertex_to_blocks(
     vertex: PdfVertex,
     asset_files: dict[Uid, Path],
-    placement: PdfRender | None,
+    placement: PdfRenderPlacement | None,
 ) -> list[pf.Block]:
     """Render one display occurrence of a :class:`~guffin.vertex.PdfVertex` to Pandoc block elements.
 

@@ -11,7 +11,7 @@ Public symbols:
   :func:`all_page_break_values_legal` (every ``page-break`` value is a
   :class:`~guffin.model.publishing_semantics.PageBreak`),
   :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
-  :class:`~guffin.model.publishing_semantics.PdfRender`), :func:`all_code_language_values_legal`
+  :class:`~guffin.model.publishing_semantics.PdfRenderPlacement`), :func:`all_code_language_values_legal`
   (every ``code-language`` value names a language in the canonical vocabulary),
   :func:`all_code_source_values_legal` (every ``code-source`` value is a legal URL/SHA/date
   triple), :func:`all_publish_values_legal` (every ``publish`` value is a boolean literal),
@@ -63,7 +63,7 @@ from guffin.model.element_number import (
 from guffin.model.primitives import Uid
 from guffin.model.publishing_semantics import (
     PageBreak,
-    PdfRender,
+    PdfRenderPlacement,
     PublishingAttribute,
     PublishingSemantics,
     code_language_of,
@@ -222,7 +222,7 @@ def _illegal_value_violations(
     attribute: PublishingSemantics,
     value_coercer: Callable[
         [AttributeAssignment],
-        StructuralElement | Matter | PageBreak | PdfRender | bool | W3cdtfDate | CodeLanguageId | CodeSource,
+        StructuralElement | Matter | PageBreak | PdfRenderPlacement | bool | W3cdtfDate | CodeLanguageId | CodeSource,
     ],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
@@ -323,7 +323,7 @@ def all_pdf_render_values_legal(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring legal ``pdf-render`` values.
 
     Every :attr:`PublishingSemantics.PDF_RENDER` assignment in *tree* must carry exactly one value,
-    and that value must name a :class:`PdfRender` member — the authoritative set of legal
+    and that value must name a :class:`PdfRenderPlacement` member — the authoritative set of legal
     ``pdf-render`` values.
 
     Args:

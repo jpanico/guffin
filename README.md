@@ -362,6 +362,7 @@ The `--preamble/--no-preamble` and `--numbering/--no-numbering` flags (PDF/EPUB 
 | `--preamble/--no-preamble` | | pdf, epub | Keep/drop the root's loose preamble; unset defers to the `--type` profile. |
 | `--numbering/--no-numbering` | | pdf, epub | Turn heading numbering on/off; unset defers to the `--type` profile. |
 | `--element-numbers/--no-element-numbers` | | all | Keep/strip internal element numbers (a heading's `[1.2.3]` lead); stripped by default. |
+| `--default-pdf-render` | | all | Placement an *untagged* PDF embed resolves to (e.g. `external-link`), overriding the built-in format/type default; an embed's own `pdf-render::` tag still wins. |
 | `--daily-note-format` | | all | How a daily-note-page reference renders its date: `roam-long` (default), `iso`, `abbrev-month-day`. |
 
 The `--colophon` provenance records the guffin package version, the source git commit (hash + commit time, marked `-dirty` for uncommitted changes), and the export time, plus the content revision (snapshot hash, edit/fetch times, and any authored `revision::` name), so any generated document can be traced back to the exact source and content snapshot that produced it. Placement differs by format: PDF renders it at the foot of the title page (or below the page footer when no title page is emitted); EPUB mirrors that; Markdown carries it as an end-of-document block.
@@ -382,6 +383,7 @@ export GUFFIN_INCLUDE_PREAMBLE=false         # optional: backs --preamble/--no-p
 export GUFFIN_NUMBER_SECTIONS=false          # optional: backs --numbering/--no-numbering (pdf/epub)
 export GUFFIN_ELEMENT_NUMBERS=1              # optional: backs --element-numbers (keep the [1.2.3] leads)
 export GUFFIN_DAILY_NOTE_FORMAT=iso          # optional: backs --daily-note-format
+export GUFFIN_DEFAULT_PDF_RENDER=external-link  # optional: backs --default-pdf-render (untagged PDF embeds)
 export GUFFIN_DUMP_PANDOC_AST=1              # optional: dump the Pandoc JSON AST before conversion (debug)
 export GUFFIN_DUMP_TYPST=1                   # optional: dump intermediate Typst sources (--format pdf, debug)
 

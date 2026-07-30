@@ -53,7 +53,7 @@ from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.model.chicago_structure import StructuralElement
 from guffin.model.publishing_semantics import (
-    PdfRender,
+    PdfRenderPlacement,
     drop_page_breaks,
     drop_unpublished,
     has_element_type,
@@ -330,7 +330,12 @@ scaled to fit, so it stays legible rather than being cropped.
 """
 
 
-def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: ProjectType) -> None:
+def _apply_pdf_embeds(
+    doc: pf.Doc,
+    asset_paths: dict[str, Path],
+    project_type: ProjectType,
+    default_override: PdfRenderPlacement | None = None,
+) -> None:
     """Rewrite *doc*'s PDF-embed link paragraphs in place; the asset is never embedded.
 
     A PDF embed reaches the document as a paragraph containing a single link stamped with the
@@ -344,13 +349,13 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
     warns and falls back when it cannot be honoured.  For each such paragraph whose link URL has a
     fetched path in *asset_paths*:
 
-    - an :attr:`~guffin.model.publishing_semantics.PdfRender.INLINE_NATIVE` occurrence is replaced
+    - an :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.INLINE_NATIVE` occurrence is replaced
       by one full-width Typst ``image`` per page (the page count read once per file, on first
       inline use);
-    - an :attr:`~guffin.model.publishing_semantics.PdfRender.EXTERNAL_LINK` occurrence keeps its
+    - an :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.EXTERNAL_LINK` occurrence keeps its
       link to the hosted original, warning when that original is Roam-encrypted and so
       unresolvable outside the Roam client; and
-    - an :attr:`~guffin.model.publishing_semantics.PdfRender.NAME_ONLY` occurrence is replaced by
+    - an :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.NAME_ONLY` occurrence is replaced by
       its bare label text — the PDF's original filename with no hyperlink (the source file is not
       carried into the output, matching the EPUB format).
 
@@ -364,6 +369,8 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
             :func:`_pdf_asset_paths`.
         project_type: The kind of work being produced, which selects the default placement for
             an untagged occurrence.
+        default_override: The placement an untagged occurrence resolves to instead of the
+            built-in default matrix; an authored stamp always outranks it.
     """
     page_counts: Final[dict[Path, int]] = {}
     # Insertion-ordered, so the appendix presents its entries in first-reference order; keyed by
@@ -406,16 +413,18 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
         inline = list(elem.content)[0]
         if not isinstance(inline, pf.Link) or PDF_PLACEMENT_ATTRIBUTE not in inline.attributes:
             return None
-        requested: Final[PdfRender] = requested_pdf_render(inline, OutputFormat.PDF, project_type)
+        requested: Final[PdfRenderPlacement] = requested_pdf_render(
+            inline, OutputFormat.PDF, project_type, default_override=default_override
+        )
         path: Final[Path | None] = asset_paths.get(inline.url)
         if path is None:
             # A failed fetch: the link to the remote source stays, minus the scaffold attribute.
             inline.attributes.pop(PDF_PLACEMENT_ATTRIBUTE, None)
             return None
-        placement: Final[PdfRender] = honoured_pdf_render(requested, OutputFormat.PDF, uid=path.name)
-        if placement is PdfRender.INLINE_NATIVE:
+        placement: Final[PdfRenderPlacement] = honoured_pdf_render(requested, OutputFormat.PDF, uid=path.name)
+        if placement is PdfRenderPlacement.INLINE_NATIVE:
             return [_typst_raw_block(_pages_markup(path))]
-        if placement is PdfRender.APPENDIX_NATIVE:
+        if placement is PdfRenderPlacement.APPENDIX_NATIVE:
             # The pages move to the back; what stands here is an ordinary internal link to them,
             # which every reader supports (unlike the embedded-file actions — see docs/pdf-render.md).
             # The anchor is styled like a hyperlink (underline-color is the shared convention
@@ -427,7 +436,7 @@ def _apply_pdf_embeds(doc: pf.Doc, asset_paths: dict[str, Path], project_type: P
                 pf.Span(*detached_copy(label), attributes={"underline-color": _APPENDIX_LINK_COLOR})
             ]
             return [appendix_anchor(label, identifier, styled)]
-        if placement is PdfRender.EXTERNAL_LINK:
+        if placement is PdfRenderPlacement.EXTERNAL_LINK:
             # Link to the hosted original; the scaffold must not reach the Typst writer.
             warn_unresolvable_external_link(inline.title, str(inline.url))
             inline.attributes.pop(PDF_PLACEMENT_ATTRIBUTE, None)
@@ -645,7 +654,7 @@ def render(
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
         resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
-        _apply_pdf_embeds(doc, pdf_paths, profile.project_type)
+        _apply_pdf_embeds(doc, pdf_paths, profile.project_type, default_override=options.default_pdf_render)
         # Split the title into a plain string (PDF /Title + the running-header %title% string
         # machinery) and a rich `title-display` copy the header renders as content, so a bold
         # portion of the title shows as markup rather than leaking literal Typst source.

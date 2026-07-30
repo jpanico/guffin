@@ -1,6 +1,6 @@
 # `pdf-render`: how an embedded PDF is placed in each output format
 
-The `pdf-render` tag (`model/publishing_semantics.PdfRender`) declares how a display occurrence of
+The `pdf-render` tag (`model/publishing_semantics.PdfRenderPlacement`) declares how a display occurrence of
 an embedded PDF asset is placed in the exported document. This doc records, cell by cell, what each
 member actually produces in each output format — both what the reader sees and whether the PDF file
 itself travels with the output.
@@ -47,6 +47,12 @@ a book carries its referenced documents rather than pointing away from them. The
 | `md --no-bundle` | `EXTERNAL_LINK` | `EXTERNAL_LINK` | `EXTERNAL_LINK` |
 | `pdf` | `APPENDIX_NATIVE` | `APPENDIX_NATIVE` | `APPENDIX_NATIVE` |
 | `epub` | `APPENDIX_NATIVE` | `APPENDIX_NATIVE` | `APPENDIX_IMAGE` |
+
+The matrix can be overridden per export with `--default-pdf-render <placement>` (env
+`GUFFIN_DEFAULT_PDF_RENDER`): every untagged embed then resolves to the named placement instead.
+The override sits strictly between the tag and the matrix — an embed's own `pdf-render::` tag
+always outranks it, and an override the format cannot honour falls back to `NAME_ONLY` with the
+same warning an authored request would earn.
 
 
 ## What each format implements today
@@ -292,7 +298,7 @@ which the EPUB implementation can add when it lands.
 
 ### Still open
 
-- **Is it a new `PdfRender` member, or a redefinition of `LINK`?** It is a third answer to *where do
+- **Is it a new `PdfRenderPlacement` member, or a redefinition of `LINK`?** It is a third answer to *where do
   this PDF's pages go?* — at the anchor, at the back, or nowhere — which argues for a distinct
   member (`APPENDED`? `ATTACHED`? the naming is open) and for keeping a "named only, no pages"
   placement available. Which one an untagged embed defaults to is a separate decision. **This one

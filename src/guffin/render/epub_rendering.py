@@ -47,7 +47,7 @@ from pydantic import validate_call
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import (
-    PdfRender,
+    PdfRenderPlacement,
     drop_page_breaks,
     drop_unpublished,
     illustrators_of_vertex,
@@ -188,11 +188,12 @@ def _apply_pdf_appendix(
     asset_paths: dict[str, Path],
     project_type: ProjectType,
     image_dir: Path,
+    default_override: PdfRenderPlacement | None = None,
 ) -> None:
     """Resolve every PDF embed for EPUB output, reproducing appendix-placed PDFs as page images.
 
     EPUB cannot display a PDF, so an
-    :attr:`~guffin.model.publishing_semantics.PdfRender.APPENDIX_IMAGE` occurrence has its pages
+    :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.APPENDIX_IMAGE` occurrence has its pages
     rasterised into *image_dir* and reproduced in a generated back-matter appendix, with an
     intra-publication link left where the PDF was embedded.  Every other placement is a reference:
     a link to the hosted original, or the bare filename.
@@ -203,6 +204,8 @@ def _apply_pdf_appendix(
         project_type: The kind of work being produced, which selects the default placement.
         image_dir: Directory the rasterised page images are written into; Pandoc embeds them into
             the package from there.
+        default_override: The placement an untagged occurrence resolves to instead of the
+            built-in default matrix; an authored stamp always outranks it.
     """
     appendix: Final[AppendixEntries] = {}
 
@@ -212,20 +215,22 @@ def _apply_pdf_appendix(
         link = list(elem.content)[0]
         if not isinstance(link, pf.Link) or PDF_PLACEMENT_ATTRIBUTE not in link.attributes:
             return None
-        requested: Final[PdfRender] = requested_pdf_render(link, OutputFormat.EPUB, project_type)
+        requested: Final[PdfRenderPlacement] = requested_pdf_render(
+            link, OutputFormat.EPUB, project_type, default_override=default_override
+        )
         path: Final[Path | None] = asset_paths.get(link.url)
         if path is None:
             # A failed fetch: the link to the remote source stays, minus the scaffold attribute.
             link.attributes.pop(PDF_PLACEMENT_ATTRIBUTE, None)
             return None
-        placement: Final[PdfRender] = honoured_pdf_render(requested, OutputFormat.EPUB, uid=path.name)
+        placement: Final[PdfRenderPlacement] = honoured_pdf_render(requested, OutputFormat.EPUB, uid=path.name)
         del link.attributes[PDF_PLACEMENT_ATTRIBUTE]
-        if placement is PdfRender.APPENDIX_IMAGE:
+        if placement is PdfRenderPlacement.APPENDIX_IMAGE:
             label: Final[list[pf.Inline]] = list(link.content)
             return [appendix_anchor(label, entry_identifier(appendix, path, label))]
-        if placement is PdfRender.NAME_ONLY:
+        if placement is PdfRenderPlacement.NAME_ONLY:
             return [pf.Para(*list(link.content))]
-        if placement is PdfRender.EXTERNAL_LINK:
+        if placement is PdfRenderPlacement.EXTERNAL_LINK:
             warn_unresolvable_external_link(link.title, str(link.url))
         return None
 
@@ -375,7 +380,13 @@ def render(
         # Appendix-placed PDFs are rasterised into the asset directory and reproduced at the
         # back; every other placement is a reference.  Either way the scaffold must not reach the
         # XHTML output as a stray attribute.
-        _apply_pdf_appendix(doc, pdf_asset_paths(enriched_tree, asset_refs), profile.project_type, Path(tmp))
+        _apply_pdf_appendix(
+            doc,
+            pdf_asset_paths(enriched_tree, asset_refs),
+            profile.project_type,
+            Path(tmp),
+            default_override=options.default_pdf_render,
+        )
         # Without a title page to stamp, the authored revision name leads the reading flow
         # instead — the first block a reader sees on opening the book (the EPUB body carries no
         # title of its own; dc:title lives in the package metadata).

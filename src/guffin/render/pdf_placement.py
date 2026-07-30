@@ -1,4 +1,4 @@
-"""Which :class:`~guffin.model.publishing_semantics.PdfRender` placement a format applies, and what it can honour.
+"""Which :class:`~guffin.model.publishing_semantics.PdfRenderPlacement` a format applies, and what it can honour.
 
 The vocabulary in :mod:`~guffin.model.publishing_semantics` says what an author can *ask* for; it
 is format-independent by design, so it holds no defaults.  What an untagged embed gets, and what
@@ -41,7 +41,7 @@ from typing import Final
 import panflute as pf  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
-from guffin.model.publishing_semantics import PDF_RENDER_FALLBACK, PdfRender
+from guffin.model.publishing_semantics import PDF_RENDER_FALLBACK, PdfRenderPlacement
 from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, PDF_PLACEMENT_UNSET
 from guffin.render.project import ProjectType
 from guffin.render.render_options import OutputFormat
@@ -58,13 +58,22 @@ type _OutputTarget = tuple[OutputFormat, bool]
 always carry their assets.
 """
 
-SUPPORTED_PDF_RENDERS: Final[Mapping[_OutputTarget, frozenset[PdfRender]]] = {
-    (OutputFormat.MARKDOWN, True): frozenset({PdfRender.INTERNAL_LINK, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
-    (OutputFormat.MARKDOWN, False): frozenset({PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
-    (OutputFormat.PDF, True): frozenset(
-        {PdfRender.INLINE_NATIVE, PdfRender.APPENDIX_NATIVE, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}
+SUPPORTED_PDF_RENDERS: Final[Mapping[_OutputTarget, frozenset[PdfRenderPlacement]]] = {
+    (OutputFormat.MARKDOWN, True): frozenset(
+        {PdfRenderPlacement.INTERNAL_LINK, PdfRenderPlacement.EXTERNAL_LINK, PdfRenderPlacement.NAME_ONLY}
     ),
-    (OutputFormat.EPUB, True): frozenset({PdfRender.APPENDIX_IMAGE, PdfRender.EXTERNAL_LINK, PdfRender.NAME_ONLY}),
+    (OutputFormat.MARKDOWN, False): frozenset({PdfRenderPlacement.EXTERNAL_LINK, PdfRenderPlacement.NAME_ONLY}),
+    (OutputFormat.PDF, True): frozenset(
+        {
+            PdfRenderPlacement.INLINE_NATIVE,
+            PdfRenderPlacement.APPENDIX_NATIVE,
+            PdfRenderPlacement.EXTERNAL_LINK,
+            PdfRenderPlacement.NAME_ONLY,
+        }
+    ),
+    (OutputFormat.EPUB, True): frozenset(
+        {PdfRenderPlacement.APPENDIX_IMAGE, PdfRenderPlacement.EXTERNAL_LINK, PdfRenderPlacement.NAME_ONLY}
+    ),
 }
 """The placements each output target implements today; every other request falls back.
 
@@ -74,19 +83,19 @@ either at the embed or in a generated back-matter appendix linked from it.  EPUB
 PDF at all, so it reproduces an appendix entry's pages as rasterised images instead.
 """
 
-_DEFAULT_PDF_RENDERS: Final[Mapping[tuple[OutputFormat, bool, ProjectType], PdfRender]] = {
-    (OutputFormat.MARKDOWN, True, ProjectType.DEFAULT): PdfRender.INTERNAL_LINK,
-    (OutputFormat.MARKDOWN, True, ProjectType.MANUSCRIPT): PdfRender.INTERNAL_LINK,
-    (OutputFormat.MARKDOWN, True, ProjectType.BOOK): PdfRender.APPENDIX_NATIVE,
-    (OutputFormat.MARKDOWN, False, ProjectType.DEFAULT): PdfRender.EXTERNAL_LINK,
-    (OutputFormat.MARKDOWN, False, ProjectType.MANUSCRIPT): PdfRender.EXTERNAL_LINK,
-    (OutputFormat.MARKDOWN, False, ProjectType.BOOK): PdfRender.EXTERNAL_LINK,
-    (OutputFormat.PDF, True, ProjectType.DEFAULT): PdfRender.APPENDIX_NATIVE,
-    (OutputFormat.PDF, True, ProjectType.MANUSCRIPT): PdfRender.APPENDIX_NATIVE,
-    (OutputFormat.PDF, True, ProjectType.BOOK): PdfRender.APPENDIX_NATIVE,
-    (OutputFormat.EPUB, True, ProjectType.DEFAULT): PdfRender.APPENDIX_NATIVE,
-    (OutputFormat.EPUB, True, ProjectType.MANUSCRIPT): PdfRender.APPENDIX_NATIVE,
-    (OutputFormat.EPUB, True, ProjectType.BOOK): PdfRender.APPENDIX_IMAGE,
+_DEFAULT_PDF_RENDERS: Final[Mapping[tuple[OutputFormat, bool, ProjectType], PdfRenderPlacement]] = {
+    (OutputFormat.MARKDOWN, True, ProjectType.DEFAULT): PdfRenderPlacement.INTERNAL_LINK,
+    (OutputFormat.MARKDOWN, True, ProjectType.MANUSCRIPT): PdfRenderPlacement.INTERNAL_LINK,
+    (OutputFormat.MARKDOWN, True, ProjectType.BOOK): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.MARKDOWN, False, ProjectType.DEFAULT): PdfRenderPlacement.EXTERNAL_LINK,
+    (OutputFormat.MARKDOWN, False, ProjectType.MANUSCRIPT): PdfRenderPlacement.EXTERNAL_LINK,
+    (OutputFormat.MARKDOWN, False, ProjectType.BOOK): PdfRenderPlacement.EXTERNAL_LINK,
+    (OutputFormat.PDF, True, ProjectType.DEFAULT): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.PDF, True, ProjectType.MANUSCRIPT): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.PDF, True, ProjectType.BOOK): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.EPUB, True, ProjectType.DEFAULT): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.EPUB, True, ProjectType.MANUSCRIPT): PdfRenderPlacement.APPENDIX_NATIVE,
+    (OutputFormat.EPUB, True, ProjectType.BOOK): PdfRenderPlacement.APPENDIX_IMAGE,
 }
 """The placement an untagged embed resolves to, per output target and project type."""
 
@@ -96,33 +105,43 @@ def default_pdf_render(
     output_format: OutputFormat,
     project_type: ProjectType,
     should_bundle: bool = True,
-) -> PdfRender:
+    override: PdfRenderPlacement | None = None,
+) -> PdfRenderPlacement:
     """Return the placement an untagged PDF embed resolves to for this output.
 
     The default is not a property of the vocabulary but of what is being produced: a bundling
     Markdown export can hand the reader the file itself, a lone ``.md`` can only point at where it
     is hosted, and a book carries its referenced documents rather than pointing away from them.
+    An *override* replaces that matrix wholesale for one render — an explicit per-export decision
+    outranking the built-in policy, though never an authored ``pdf-render`` tag, which is resolved
+    before the default is ever consulted (see :func:`requested_pdf_render`).  An override the
+    output cannot honour falls back exactly as an authored request would
+    (:func:`honoured_pdf_render`).
 
     Args:
         output_format: The format being rendered.
         project_type: The kind of work being produced.
         should_bundle: Whether a Markdown render is bundling its assets; ignored by the other
             formats, which always carry theirs.
+        override: The placement to resolve to instead of the built-in matrix, or ``None``
+            (default) to consult the matrix.
 
     Returns:
-        The :class:`~guffin.model.publishing_semantics.PdfRender` for an untagged embed.
+        The :class:`~guffin.model.publishing_semantics.PdfRenderPlacement` for an untagged embed.
     """
+    if override is not None:
+        return override
     bundling: Final[bool] = should_bundle if output_format is OutputFormat.MARKDOWN else True
     return _DEFAULT_PDF_RENDERS[(output_format, bundling, project_type)]
 
 
 @validate_call
 def honoured_pdf_render(
-    requested: PdfRender,
+    requested: PdfRenderPlacement,
     output_format: OutputFormat,
     uid: str,
     should_bundle: bool = True,
-) -> PdfRender:
+) -> PdfRenderPlacement:
     """Return *requested* if this output supports it, else the fallback — logging a warning.
 
     Guffin never substitutes a placement it judges to be *closest* to the request: choosing among
@@ -140,7 +159,7 @@ def honoured_pdf_render(
         :data:`~guffin.model.publishing_semantics.PDF_RENDER_FALLBACK`.
     """
     bundling: Final[bool] = should_bundle if output_format is OutputFormat.MARKDOWN else True
-    supported: Final[frozenset[PdfRender]] = SUPPORTED_PDF_RENDERS[(output_format, bundling)]
+    supported: Final[frozenset[PdfRenderPlacement]] = SUPPORTED_PDF_RENDERS[(output_format, bundling)]
     if requested in supported:
         return requested
     logger.warning(
@@ -160,7 +179,8 @@ def requested_pdf_render(
     output_format: OutputFormat,
     project_type: ProjectType,
     should_bundle: bool = True,
-) -> PdfRender:
+    default_override: PdfRenderPlacement | None = None,
+) -> PdfRenderPlacement:
     """Return the placement *link* asks for: its authored stamp, else this output's default.
 
     Args:
@@ -169,15 +189,18 @@ def requested_pdf_render(
         output_format: The format being rendered.
         project_type: The kind of work being produced.
         should_bundle: Whether a Markdown render is bundling its assets.
+        default_override: The placement an *untagged* occurrence resolves to instead of the
+            built-in default matrix, or ``None`` (default) to consult the matrix.  An authored
+            stamp always outranks it.
 
     Returns:
-        The requested :class:`~guffin.model.publishing_semantics.PdfRender`, before any
+        The requested :class:`~guffin.model.publishing_semantics.PdfRenderPlacement`, before any
         supported-placement narrowing (see :func:`honoured_pdf_render`).
     """
     stamped: Final[str] = link.attributes.get(PDF_PLACEMENT_ATTRIBUTE, PDF_PLACEMENT_UNSET)
     if stamped == PDF_PLACEMENT_UNSET:
-        return default_pdf_render(output_format, project_type, should_bundle)
-    return PdfRender(stamped)
+        return default_pdf_render(output_format, project_type, should_bundle, override=default_override)
+    return PdfRenderPlacement(stamped)
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -186,6 +209,7 @@ def apply_reference_placements(
     output_format: OutputFormat,
     project_type: ProjectType,
     should_bundle: bool = True,
+    default_override: PdfRenderPlacement | None = None,
 ) -> None:
     """Resolve every PDF embed's placement for a format that reproduces no pages, in place.
 
@@ -193,7 +217,7 @@ def apply_reference_placements(
     link to the hosted original, or the bare filename — this applies the whole resolution in one
     pass: the authored stamp or this output's default, narrowed to what the format supports
     (warning on any fallback), then acted on.  A
-    :attr:`~guffin.model.publishing_semantics.PdfRender.NAME_ONLY` occurrence is unwrapped to its
+    :attr:`~guffin.model.publishing_semantics.PdfRenderPlacement.NAME_ONLY` occurrence is unwrapped to its
     label text; a link placement keeps its link, whose URL the shared build already pointed at
     either the bundled copy or the remote source.  The scaffold attribute is consumed either way,
     since Pandoc writers surface it in output.
@@ -203,6 +227,8 @@ def apply_reference_placements(
         output_format: The format being rendered.
         project_type: The kind of work being produced.
         should_bundle: Whether a Markdown render is bundling its assets.
+        default_override: The placement an *untagged* occurrence resolves to instead of the
+            built-in default matrix; an authored stamp always outranks it.
     """
 
     def _action(elem: pf.Element, doc: pf.Doc) -> list[pf.Block] | None:
@@ -211,14 +237,16 @@ def apply_reference_placements(
         link = list(elem.content)[0]
         if not isinstance(link, pf.Link) or PDF_PLACEMENT_ATTRIBUTE not in link.attributes:
             return None
-        requested: Final[PdfRender] = requested_pdf_render(link, output_format, project_type, should_bundle)
-        placement: Final[PdfRender] = honoured_pdf_render(
+        requested: Final[PdfRenderPlacement] = requested_pdf_render(
+            link, output_format, project_type, should_bundle, default_override=default_override
+        )
+        placement: Final[PdfRenderPlacement] = honoured_pdf_render(
             requested, output_format, uid=str(link.title or link.url), should_bundle=should_bundle
         )
         del link.attributes[PDF_PLACEMENT_ATTRIBUTE]
-        if placement is PdfRender.NAME_ONLY:
+        if placement is PdfRenderPlacement.NAME_ONLY:
             return [pf.Para(*list(link.content))]
-        if placement is PdfRender.EXTERNAL_LINK:
+        if placement is PdfRenderPlacement.EXTERNAL_LINK:
             warn_unresolvable_external_link(link.title, str(link.url))
         return None
 
