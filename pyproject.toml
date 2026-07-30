@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "guffin"
-version = "0.1.0"
+version = "0.2.0"
 description = "Export Roam Research graph sub-trees to self-contained Markdown, PDF, and EPUB documents"
 license = "MIT"
 requires-python = ">=3.14"
