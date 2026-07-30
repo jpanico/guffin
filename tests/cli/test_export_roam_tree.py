@@ -1,5 +1,6 @@
 """Unit tests for guffin.cli.export_roam_tree."""
 
+import importlib.metadata
 import logging
 import os
 import pathlib
@@ -671,3 +672,13 @@ class TestExportRoamTreeProfile:
         """--type default resolves to the (non-book) default profile."""
         profile = self._profile_for_args(tmp_path, ["--type", "default"])
         assert not isinstance(profile, BookProfile)
+
+
+class TestExportRoamTreeVersion:
+    """Tests for the --version flag."""
+
+    def test_version_flag_prints_the_package_version_and_exits(self) -> None:
+        """--version answers alone — no target or connection arguments required."""
+        result = CliRunner().invoke(app, ["--version"])
+        assert result.exit_code == 0, result.output
+        assert result.output.strip() == f"guffin {importlib.metadata.version('guffin')}"

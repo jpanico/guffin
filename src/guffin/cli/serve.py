@@ -28,6 +28,7 @@ import typer
 import uvicorn
 
 from guffin.cli.logging_config import configure_logging
+from guffin.cli.params import VersionOption
 from guffin.server.app import app as asgi_app
 
 configure_logging()
@@ -65,6 +66,7 @@ def main(
             help="TCP port to listen on.",
         ),
     ] = DEFAULT_PORT,
+    version: VersionOption = False,
 ) -> None:
     """Serve the Guffin commands over HTTP (export/dump command endpoints plus health).
 

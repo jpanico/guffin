@@ -10,8 +10,10 @@ from guffin.server.console_export import ConsoleFormat
 from guffin.server.request_derivation import argv_for_request
 from guffin.server.request_models import (
     DEFAULT_CONSOLE_WIDTH,
+    DUMP_EXCLUDED_PARAMETERS,
     DUMP_REQUEST_FIELDS,
     DUMP_REQUEST_MODEL,
+    EXPORT_EXCLUDED_PARAMETERS,
     EXPORT_REQUEST_FIELDS,
     EXPORT_REQUEST_MODEL,
 )
@@ -21,14 +23,23 @@ class TestExportRequestModel:
     """Tests for the derived export request vocabulary."""
 
     def test_one_field_per_command_parameter_minus_exclusions(self) -> None:
-        """The derived fields mirror the export command's parameters, minus output_dir."""
-        parameter_names = [name for name in inspect.signature(export_roam_tree.main).parameters if name != "output_dir"]
+        """The derived fields mirror the export command's parameters, minus the exclusions."""
+        parameter_names = [
+            name
+            for name in inspect.signature(export_roam_tree.main).parameters
+            if name not in EXPORT_EXCLUDED_PARAMETERS
+        ]
         assert [field.name for field in EXPORT_REQUEST_FIELDS] == parameter_names
 
     def test_output_dir_is_absent(self) -> None:
         """A request naming output_dir is rejected — the server allocates the output directory."""
         with pytest.raises(ValidationError, match="output_dir"):
             EXPORT_REQUEST_MODEL.model_validate({"target": "X", "output_dir": "/tmp"})
+
+    def test_version_is_absent(self) -> None:
+        """A request naming version is rejected — the flag is a terminal affordance, not work."""
+        with pytest.raises(ValidationError, match="version"):
+            EXPORT_REQUEST_MODEL.model_validate({"target": "X", "version": True})
 
     def test_target_is_required(self) -> None:
         """A request without a target fails validation."""
@@ -63,10 +74,17 @@ class TestExportRequestModel:
 class TestDumpRequestModel:
     """Tests for the derived dump request vocabulary and its console extras."""
 
-    def test_one_field_per_command_parameter(self) -> None:
-        """The derived fields mirror the dump command's parameters, none excluded."""
-        parameter_names = list(inspect.signature(dump_roam_tree.main).parameters)
+    def test_one_field_per_command_parameter_minus_exclusions(self) -> None:
+        """The derived fields mirror the dump command's parameters, minus the exclusions."""
+        parameter_names = [
+            name for name in inspect.signature(dump_roam_tree.main).parameters if name not in DUMP_EXCLUDED_PARAMETERS
+        ]
         assert [field.name for field in DUMP_REQUEST_FIELDS] == parameter_names
+
+    def test_version_is_absent(self) -> None:
+        """A request naming version is rejected — the flag is a terminal affordance, not work."""
+        with pytest.raises(ValidationError, match="version"):
+            DUMP_REQUEST_MODEL.model_validate({"target": "X", "version": True})
 
     def test_console_extras_carry_their_defaults(self) -> None:
         """The console extras default to a plain 120-column text rendering."""

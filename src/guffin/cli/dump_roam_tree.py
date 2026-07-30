@@ -62,7 +62,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.cli.common import fetch_roam_trees
 from guffin.cli.logging_config import configure_logging
-from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption
+from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption, VersionOption
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ViewMap
@@ -352,6 +352,7 @@ def main(
             ),
         ),
     ] = True,
+    version: VersionOption = False,
 ) -> None:
     """Dump a Roam Research page or node subtree as a Rich tree to the console.
 

@@ -2,11 +2,13 @@
 
 Each command's request vocabulary is not written here — it is read off the command function's own
 Typer signature via :mod:`guffin.server.request_derivation`, so the CLI declaration stays the
-single source of truth for parameter names, types, flag spellings, and help text.  Two deliberate
-per-command adjustments shape the derivation:
+single source of truth for parameter names, types, flag spellings, and help text.  Three
+deliberate per-command adjustments shape the derivation:
 
 - the export vocabulary excludes ``output_dir`` — a remote client names no server path; the
   serving layer supplies a per-request output directory of its own;
+- both vocabularies exclude ``version`` — a terminal print-and-exit affordance, not a work
+  parameter (the health endpoint reports the serving package's version);
 - the dump vocabulary gains three console fields with no CLI counterpart (``console_format``,
   ``console_width``, ``ansi``) — how the captured rendering is represented, how wide it wraps,
   and whether a text representation keeps ANSI style escapes.  They are consumed by the serving
@@ -15,6 +17,7 @@ per-command adjustments shape the derivation:
 Public symbols:
 
 - :data:`EXPORT_EXCLUDED_PARAMETERS` — export command parameters left out of the vocabulary.
+- :data:`DUMP_EXCLUDED_PARAMETERS` — dump command parameters left out of the vocabulary.
 - :data:`DEFAULT_CONSOLE_WIDTH` — the dump rendering width when a request names none.
 - :data:`EXPORT_REQUEST_FIELDS` — the export command's derived request fields.
 - :data:`DUMP_REQUEST_FIELDS` — the dump command's derived request fields.
@@ -30,11 +33,18 @@ from guffin.cli import dump_roam_tree, export_roam_tree
 from guffin.server.console_export import ConsoleFormat
 from guffin.server.request_derivation import RequestField, derived_request_model, request_fields_for
 
-EXPORT_EXCLUDED_PARAMETERS: Final[frozenset[str]] = frozenset({"output_dir"})
+EXPORT_EXCLUDED_PARAMETERS: Final[frozenset[str]] = frozenset({"output_dir", "version"})
 """Export command parameters deliberately absent from the request vocabulary.
 
 ``output_dir`` names a server path a remote client has no business choosing; the serving layer
-allocates a per-request output directory instead.
+allocates a per-request output directory instead.  ``version`` is a terminal print-and-exit
+affordance, not a work parameter.
+"""
+
+DUMP_EXCLUDED_PARAMETERS: Final[frozenset[str]] = frozenset({"version"})
+"""Dump command parameters deliberately absent from the request vocabulary.
+
+``version`` is a terminal print-and-exit affordance, not a work parameter.
 """
 
 DEFAULT_CONSOLE_WIDTH: Final[int] = 120
@@ -45,7 +55,9 @@ EXPORT_REQUEST_FIELDS: Final[tuple[RequestField, ...]] = request_fields_for(
 )
 """The export command's derived request fields, in signature order."""
 
-DUMP_REQUEST_FIELDS: Final[tuple[RequestField, ...]] = request_fields_for(dump_roam_tree.main)
+DUMP_REQUEST_FIELDS: Final[tuple[RequestField, ...]] = request_fields_for(
+    dump_roam_tree.main, excluded=DUMP_EXCLUDED_PARAMETERS
+)
 """The dump command's derived request fields, in signature order."""
 
 EXPORT_REQUEST_MODEL: Final[type[BaseModel]] = derived_request_model("ExportRequest", EXPORT_REQUEST_FIELDS)

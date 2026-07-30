@@ -290,7 +290,7 @@ guffin/
 
 ## Usage
 
-The package provides two command-line utilities, plus an HTTP server (`guffin-server`) that serves them both remotely.
+The package provides two command-line utilities, plus an HTTP server (`guffin-server`) that serves them both remotely. Every command accepts `--version`, printing the guffin package version and exiting.
 
 ### `export-roam-tree` — Export a Roam page or node subtree
 
@@ -458,7 +458,7 @@ guffin-server --host 0.0.0.0 -p 9000     # expose beyond the host — see the se
 | `POST /v1/dump` | `dump-roam-tree` | the captured console rendering: plain text (default), HTML, or SVG |
 | `GET /v1/health` | — | liveness, package version, and serving-code provenance |
 
-The JSON Request's fields are the command's own parameter names and types — each request model is derived from the CLI signature at import time, so the two vocabularies cannot drift. Every field except `target` is optional: an omitted field defers to the command's own default, including its `GUFFIN_*` env-var fallback resolved in the *server's* environment, so a server whose environment carries the Roam connection settings needs only a `target`. Two deliberate divergences from the CLI: `output_dir` is absent (the server exports into a per-request temporary directory and deletes it after the response), and the dump request adds `console_format` (`text`/`html`/`svg`), `console_width`, and `ansi`.
+The JSON Request's fields are the command's own parameter names and types — each request model is derived from the CLI signature at import time, so the two vocabularies cannot drift. Every field except `target` is optional: an omitted field defers to the command's own default, including its `GUFFIN_*` env-var fallback resolved in the *server's* environment, so a server whose environment carries the Roam connection settings needs only a `target`. The deliberate divergences from the CLI: `output_dir` is absent (the server exports into a per-request temporary directory and deletes it after the response), the CLI-only `--version` flag is absent from both vocabularies (the health endpoint reports the server's version), and the dump request adds `console_format` (`text`/`html`/`svg`), `console_width`, and `ansi`.
 
 ```bash
 # Export a book-profile EPUB; -OJ saves it under the Content-Disposition name (Test_Article.book.epub)

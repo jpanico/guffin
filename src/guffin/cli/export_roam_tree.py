@@ -82,7 +82,7 @@ from guffin.cli.common import (
     resolve_profile,
 )
 from guffin.cli.logging_config import configure_logging
-from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption
+from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption, VersionOption
 from guffin.common.provenance import Provenance, gather_provenance
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
@@ -284,6 +284,7 @@ def main(
             ),
         ),
     ] = DateFormat.ROAM_LONG,
+    version: VersionOption = False,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
 

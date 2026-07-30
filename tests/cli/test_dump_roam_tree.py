@@ -1,5 +1,6 @@
 """Unit tests for guffin.cli.dump_roam_tree."""
 
+import importlib.metadata
 import logging
 import pathlib
 from typing import Final
@@ -63,3 +64,13 @@ class TestDumpRoamTreeVerifyCodeSources:
         result, mock_verify = self._invoke(tmp_path, "--no-render-bundle")
         assert result.exit_code == 0, result.output
         mock_verify.assert_not_called()
+
+
+class TestDumpRoamTreeVersion:
+    """Tests for the --version flag."""
+
+    def test_version_flag_prints_the_package_version_and_exits(self) -> None:
+        """--version answers alone — no target or connection arguments required."""
+        result = CliRunner().invoke(app, ["--version"])
+        assert result.exit_code == 0, result.output
+        assert result.output.strip() == f"guffin {importlib.metadata.version('guffin')}"

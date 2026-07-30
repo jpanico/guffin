@@ -219,13 +219,16 @@ Typer default — including its env-var fallback (`GUFFIN_ROAM_LOCAL_API_PORT`,
 terminal (R10). A server colocated with Roam Desktop can thus hold the connection settings in
 its environment, and clients send only `target` plus whatever they want to override.
 
-The derivation takes two per-endpoint adjustments, both deliberate divergences from the CLI:
+The derivation takes a few per-endpoint adjustments, all deliberate divergences from the CLI:
 
 - **`output_dir` is absent from `ExportRequest`.** A remote client has no business naming a
   server path. The server allocates a per-request temporary output directory, sends the artifact
   back from it, and deletes it after the response completes. (`cache_dir` and `template_dir`
   remain available but name *server-side* paths; they are deployment configuration more than
   request parameters, and a later phase may constrain them to a server-configured allowlist.)
+- **`version` is absent from both request models.** The CLI's `--version` flag is a terminal
+  print-and-exit affordance, not a work parameter; the health endpoint reports the serving
+  package's version.
 - **Dump-specific request fields** (no CLI counterpart): `console_format` (`text`/`html`/`svg`,
   default `text`) selecting the response representation, `console_width` (int, default 120), and
   `ansi` (bool, default false; meaningful for `text` only — `html`/`svg` carry styling
