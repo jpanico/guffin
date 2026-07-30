@@ -1,9 +1,10 @@
 # Plan: the Guffin Companion Roam extension
 
-> **Status: phase 0 complete** (drafted 2026-07-30; spike run 2026-07-30, findings recorded
-> below — every unknown settled favorably; phases 1–4 remain). Two-sided: a small
-> `guffin-server` change (opt-in CORS — phase 1) plus a new Roam extension living in its
-> **own repository**; no other guffin code is touched. Companion to
+> **Status: phases 0–1 complete** (drafted 2026-07-30; phase-0 spike run 2026-07-30, findings
+> recorded below — every unknown settled favorably; phase 1 implemented 2026-07-30 —
+> `server/cors.py` wired to a repeatable `guffin-server --allow-origin`; phases 2–4 remain).
+> Two-sided: a small `guffin-server` change (opt-in CORS — phase 1) plus a new Roam extension
+> living in its **own repository**; no other guffin code is touched. Companion to
 > [server-mode.md](server-mode.md), the server this extension is a client of.
 
 ## Goal
@@ -95,6 +96,11 @@ use either mechanism (the anchor flow is the baseline).
 
 ## Phase 1 — `guffin-server`: opt-in CORS
 
+> Implemented 2026-07-30: `server/cors.py` (`cors_wrapped_app` — a non-mutating wrap in
+> Starlette's `CORSMiddleware`, whose native `allow_private_network` answers the PNA
+> preflight) wired to a repeatable `--allow-origin` in `cli/serve.py`; offline tests in
+> `tests/server/test_cors.py` and `tests/cli/test_serve.py`.
+
 - New `guffin-server` option `--allow-origin <origin>` (env `GUFFIN_SERVER_ALLOW_ORIGIN`),
   **default unset = no CORS**, preserving the current posture; the operator explicitly names
   the Roam origin to admit browser clients.
@@ -182,7 +188,6 @@ developer mode covers personal use indefinitely — this phase is genuinely seve
 
 ## Open decisions
 
-- **Multiple origins.** The Roam web app and Roam Desktop may both present
-  `https://roamresearch.com`, but if they ever diverge (or an offline shell appears),
-  a repeatable `--allow-origin` costs nothing extra now and avoids a v2 of the flag.
-  Leaning: accept multiple values from the start.
+- **Multiple origins** — *resolved with phase 1*: `--allow-origin` is repeatable (the env
+  var takes space-separated origins), per the leaning that it costs nothing now and avoids
+  a v2 of the flag.

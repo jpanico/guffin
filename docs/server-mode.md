@@ -342,6 +342,16 @@ never raises one — and the only process-exit in `server/`'s orbit remains the 
 
 - **Bind `127.0.0.1` by default.** Exposing the server beyond the host is an explicit
   `--host 0.0.0.0` decision by the operator.
+- **Browser pages are shut out by default (CORS).** The server emits no CORS headers unless
+  launched with `--allow-origin <origin>` (env `GUFFIN_SERVER_ALLOW_ORIGIN`; repeatable),
+  which applies `server/cors.py`'s origin-scoped grants — including Chromium's
+  Private-Network-Access preflight answer and the exposure of
+  `Content-Disposition`/`Content-Digest`. A grant governs only what a browser lets a page
+  read; it authenticates nothing, and non-browser clients are unaffected either way. Note
+  that admitting an origin admits every script running on that origin's pages — for
+  `https://roamresearch.com`, any Roam extension or `roam/js` script in any graph on the
+  machine — acceptable within the trusted-operator model until the phase-2 API key. See
+  [companion-extension-plan.md](companion-extension-plan.md).
 - **The bearer token rides in request bodies** (R9). Plain HTTP is acceptable only on a trusted
   path (localhost, an SSH tunnel, a tailnet). For anything else, terminate TLS in front of the
   server. v1 ships no auth of its own; an API-key header is the obvious phase-2 addition.

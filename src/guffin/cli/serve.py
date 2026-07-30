@@ -5,7 +5,9 @@ Starts a uvicorn server on the ASGI application in :mod:`guffin.server.app`, whi
 Guffin commands as HTTP command endpoints (``POST /v1/export``, ``POST /v1/dump``,
 ``GET /v1/health``).  The server must run on the machine where the Roam Desktop app runs — the
 Roam Local API answers only there — and binds ``127.0.0.1`` by default; exposing it beyond the
-host is an explicit ``--host`` decision.
+host is an explicit ``--host`` decision.  Browser pages are shut out by default: admitting an
+origin's pages (e.g. a Roam extension's) is an explicit ``--allow-origin`` decision, applying
+the CORS grants of :mod:`guffin.server.cors`.
 
 Logging is colorized by level via :mod:`guffin.cli.logging_config` and configurable via the
 ``LOG_LEVEL`` environment variable (default: ``INFO``).
@@ -19,6 +21,7 @@ Example::
 
     guffin-server
     guffin-server --host 0.0.0.0 --port 9000
+    guffin-server --allow-origin https://roamresearch.com
 """
 
 import logging
@@ -26,10 +29,12 @@ from typing import Annotated, Final
 
 import typer
 import uvicorn
+from starlette.types import ASGIApp
 
 from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import VersionOption
 from guffin.server.app import app as asgi_app
+from guffin.server.cors import cors_wrapped_app
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -66,6 +71,19 @@ def main(
             help="TCP port to listen on.",
         ),
     ] = DEFAULT_PORT,
+    allow_origin: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--allow-origin",
+            envvar="GUFFIN_SERVER_ALLOW_ORIGIN",
+            help=(
+                "Web origin (scheme://host[:port]) whose browser pages may use the server, via CORS; "
+                "repeatable (space-separated in the env var). Unset, no CORS headers are emitted and "
+                "browser pages cannot read responses. A grant only governs what a browser lets a page "
+                "read — it is not authentication."
+            ),
+        ),
+    ] = None,
     version: VersionOption = False,
 ) -> None:
     """Serve the Guffin commands over HTTP (export/dump command endpoints plus health).
@@ -74,8 +92,11 @@ def main(
     request's Roam fetch goes through the Roam Local API, which listens only on the local host
     of the machine running Roam Desktop.
     """
+    serving_app: Final[ASGIApp] = cors_wrapped_app(asgi_app, allow_origin) if allow_origin else asgi_app
+    if allow_origin:
+        logger.info("admitting browser pages via CORS from: %s", ", ".join(allow_origin))
     logger.info("serving guffin on http://%s:%d (endpoints: /v1/export, /v1/dump, /v1/health)", host, port)
-    uvicorn.run(asgi_app, host=host, port=port)
+    uvicorn.run(serving_app, host=host, port=port)
 
 
 if __name__ == "__main__":
