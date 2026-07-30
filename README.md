@@ -12,6 +12,8 @@ Document structure and bibliographic **metadata** are declared in the Roam conte
 
 It also includes `dump-roam-tree`, a companion tool that renders a graph sub-tree as a colorized tree in the terminal for interactive inspection.
 
+Both commands are also servable remotely: **server mode** (`guffin-server`) exposes them as HTTP command endpoints — the JSON Request mirrors the CLI arguments, and the response carries the exported document (streamed, integrity-headed) or the captured dump rendering — so any machine can request work from the one running Roam Desktop, the only host the Roam Local API answers on. See [docs/server-mode.md](docs/server-mode.md).
+
 ## Development Setup
 
 ### Prerequisites
@@ -152,7 +154,18 @@ guffin/
 │       │   ├── dump_roam_tree.py            # dump-roam-tree: render Roam subtree as a Rich tree
 │       │   ├── export_roam_tree.py          # export-roam-tree: export to Markdown, PDF, or EPUB
 │       │   ├── logging_config.py            # Colorized logging; reads LOG_LEVEL env var
-│       │   └── params.py                    # Shared Typer Argument/Option declarations
+│       │   ├── params.py                    # Shared Typer Argument/Option declarations
+│       │   └── serve.py                     # guffin-server: launch the HTTP server front end
+│       │
+│       ├── server/                        # HTTP server front end: remote RPC-like invocation
+│       │   ├── app.py                       # FastAPI ASGI app: POST /v1/export, POST /v1/dump,
+│       │   │                                #   GET /v1/health; RFC 9457 problem+json errors
+│       │   ├── request_derivation.py        # Typer signature → request model + argv translation
+│       │   ├── request_models.py            # The derived ExportRequest / DumpRequest models
+│       │   ├── invocation.py                # In-process CliRunner invocation, structured capture
+│       │   ├── console_export.py            # Dump representations: text / HTML / SVG (Rich export)
+│       │   ├── export_artifact.py           # Artifact resolution, .mdbundle zipping, Content-Digest
+│       │   └── problem_details.py           # RFC 9457 application/problem+json responses
 │       │
 │       ├── common/                        # Cross-cutting helpers (no guffin dependencies)
 │       │   ├── date.py                      # English month names, ordinal suffixes, UTC timestamps
@@ -263,6 +276,7 @@ guffin/
 │   ├── processing_pipeline.md           # High-level overview of the whole pipeline
 │   ├── render-pipeline.md               # Render layer (four-phase) + the project-type model
 │   ├── publishing-semantics.md          # The PublishingSemantics vocabulary + per-format mapping
+│   ├── server-mode.md                   # Server mode: protocol, API design, and decision log
 │   ├── code-source-display-plan.md      # Plan for displaying code-source provenance in Roam
 │   ├── roam-local-api.md                # Roam Local API (JSON over HTTP) reference
 │   ├── roam-md.md                       # Roam-flavored Markdown vs. CommonMark differences
@@ -276,7 +290,7 @@ guffin/
 
 ## Usage
 
-The package provides two command-line utilities.
+The package provides two command-line utilities, plus an HTTP server (`guffin-server`) that serves them both remotely.
 
 ### `export-roam-tree` — Export a Roam page or node subtree
 
@@ -429,6 +443,39 @@ dump-roam-tree "Test Article" --port 3333 --graph SCFH --token your-bearer-token
 dump-roam-tree wdMgyBiP9 --port 3333 --graph SCFH --token your-bearer-token
 ```
 
+### `guffin-server` — Serve the commands over HTTP
+
+Serves `export-roam-tree` and `dump-roam-tree` as HTTP command endpoints for remote, RPC-like invocation (design and decision log: [docs/server-mode.md](docs/server-mode.md)). The server must run on the machine running the Roam Desktop app — the Roam Local API answers only there — and binds `127.0.0.1:8077` by default (`--host` / `--port` `-p`, env `GUFFIN_SERVER_HOST` / `GUFFIN_SERVER_PORT`).
+
+```bash
+guffin-server                            # http://127.0.0.1:8077
+guffin-server --host 0.0.0.0 -p 9000     # expose beyond the host — see the security note below
+```
+
+| Endpoint | Invokes | Success body |
+|---|---|---|
+| `POST /v1/export` | `export-roam-tree` | the exported document (binary, streamed); a `.mdbundle` answers as a zip archive |
+| `POST /v1/dump` | `dump-roam-tree` | the captured console rendering: plain text (default), HTML, or SVG |
+| `GET /v1/health` | — | liveness, package version, and serving-code provenance |
+
+The JSON Request's fields are the command's own parameter names and types — each request model is derived from the CLI signature at import time, so the two vocabularies cannot drift. Every field except `target` is optional: an omitted field defers to the command's own default, including its `GUFFIN_*` env-var fallback resolved in the *server's* environment, so a server whose environment carries the Roam connection settings needs only a `target`. Two deliberate divergences from the CLI: `output_dir` is absent (the server exports into a per-request temporary directory and deletes it after the response), and the dump request adds `console_format` (`text`/`html`/`svg`), `console_width`, and `ansi`.
+
+```bash
+# Export a book-profile EPUB; -OJ saves it under the Content-Disposition name (Test_Article.book.epub)
+curl -fsS -OJ http://127.0.0.1:8077/v1/export \
+  -H "Content-Type: application/json" \
+  -d '{"target": "Test Article", "output_format": "epub", "project_type": "book"}'
+
+# Dump as a standalone HTML rendering, 100 columns wide
+curl -fsS http://127.0.0.1:8077/v1/dump \
+  -H "Content-Type: application/json" \
+  -d '{"target": "Test Article", "console_format": "html", "console_width": 100}' > dump.html
+```
+
+A success response streams the document with `Content-Length`, an RFC 9530 `Content-Digest` (`sha-256`) for end-to-end integrity verification, and a `Content-Disposition` download name — and it begins only after the invocation has fully completed, so the status code is always authoritative. Failures answer `application/problem+json` (RFC 9457): `400` for a malformed or invalid Request, `422` when the invocation itself failed — its `detail` carries the complete captured error text (log records, stderr, any traceback) — and `500` for a serving-layer fault. Invocations execute one at a time, and a render can take minutes, so give the client a generous read timeout.
+
+**Security**: the default bind serves the local host only, and the Roam bearer token rides in request bodies — expose the server beyond the host only over a trusted path (an SSH tunnel, a tailnet, or TLS terminated in front of it).
+
 ### macOS Integration: Auto-Open in Typora
 
 To configure macOS to automatically open `.mdbundle` folders in Typora when double-clicked:
@@ -457,6 +504,7 @@ See [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) for detailed instructions a
 - [docs/render-pipeline.md](docs/render-pipeline.md) — The render layer (model → output four-phase pipeline: prepare → build → convert → post-process) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`)
 - [docs/publishing-semantics.md](docs/publishing-semantics.md) — The format-independent `PublishingSemantics` vocabulary and how it maps to each output format (companion to `render-pipeline.md`)
 - [docs/pdf-render.md](docs/pdf-render.md) — What each `pdf-render` placement renders in each output format, and whether the PDF file travels with the output
+- [docs/server-mode.md](docs/server-mode.md) — Server mode: the ratified HTTP command-endpoint protocol, API design, in-process invocation design, and decision log (Phase 1 implemented)
 - [docs/roam-local-api.md](docs/roam-local-api.md) — Roam Local API reference (JSON over HTTP)
 - [docs/roam-md.md](docs/roam-md.md) — Roam-flavored Markdown vs. CommonMark differences
 - [docs/roam-querying.md](docs/roam-querying.md) — Datalog query language, query structure, and all queries used in this project

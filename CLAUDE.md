@@ -22,6 +22,14 @@ format-independent `guffin`-domain attribute vocabulary (`guffin-meta::`
 metadata, `element-type::`/`matter::` heading tags), which each renderer
 maps to its format's own conventions.
 
+Both commands are also servable remotely: **server mode** (`guffin-server`,
+the `server/` sub-package) exposes `dump-roam-tree` and `export-roam-tree` as
+HTTP command endpoints — the JSON Request mirrors the CLI arguments, and the
+response carries the exported document (integrity-headed, streamed) or the
+captured dump rendering — so any machine can request work from the one
+running Roam Desktop, the only host the Roam Local API answers on; see
+`docs/server-mode.md`.
+
 ## Setup
 ```bash
 source .venv/bin/activate
