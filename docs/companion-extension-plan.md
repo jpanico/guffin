@@ -1,13 +1,15 @@
 # Plan: the Guffin Companion Roam extension
 
-> **Status: phases 0–2 complete** (drafted 2026-07-30; phase-0 spike run 2026-07-30, findings
+> **Status: phases 0–3 complete** (drafted 2026-07-30; phase-0 spike run 2026-07-30, findings
 > recorded below — every unknown settled favorably; phase 1 implemented 2026-07-30 —
 > `server/cors.py` wired to a repeatable `guffin-server --allow-origin`; phase 2 implemented
 > and verified live 2026-07-30 — the extension MVP in its own repository,
-> `~/Documents/github/guffin-companion`; phases 3–4 remain). Two-sided: a small
-> `guffin-server` change (opt-in CORS — phase 1) plus a new Roam extension living in its
-> **own repository**; no other guffin code is touched. Companion to
-> [server-mode.md](server-mode.md), the server this extension is a client of.
+> `~/Documents/github/guffin-companion`; phase 3 implemented and verified live 2026-07-30 —
+> HTML dump inspector, block context menu, digest verification; only phase 4, optional Depot
+> distribution, remains). Two-sided: a small `guffin-server` change (opt-in CORS — phase 1)
+> plus a new Roam extension living in its **own repository**; no other guffin code is
+> touched. Companion to [server-mode.md](server-mode.md), the server this extension is a
+> client of.
 
 ## Goal
 
@@ -165,6 +167,12 @@ and is exactly what a terminal would have shown.
 overlay DOM — the Depot contract.
 
 ## Phase 3 — rounding out
+
+> Implemented and verified live 2026-07-30 (companion 0.3.0): all three items below, with the
+> dump inspector rendering in a fully sandboxed iframe and a *Dump width* setting; the block
+> context-menu commands (export / export-with-options / dump of the clicked subtree) register
+> on `roamAlphaAPI` directly and follow the fixed-command-list unload discipline; a digest
+> mismatch refuses to save and shows both hashes.
 
 - **Dump rendering in-app**: request `console_format: "html"` and show the rendering in a
   sandboxed iframe overlay (or `svg` inline); `console_width` from settings. The dump
