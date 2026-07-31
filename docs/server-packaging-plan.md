@@ -54,6 +54,22 @@ platform), PyOxidizer (unmaintained since Jan 2023; Anki migrated off), PyApp (f
 interpreter download violates zero-download), hand-rolled python-build-standalone (viable
 base, but re-owns launcher/layout/signing per OS).
 
+**Rejected: OCI containers (Docker/Podman) as the end-user distribution.** They fail nearly
+every requirement at once: (1) the prerequisite runtime — Docker/Podman Desktop — is itself
+a large developer-tool install needing admin rights, its own updater, and (Docker) its own
+licensing, breaking "single button, bundle everything" before guffin enters the picture;
+(2) on macOS/Windows a container runs inside a hidden Linux VM, with VM overhead and
+lifecycle a black box shouldn't have; (3) the loopback inversion is functional, not
+cosmetic — inside a container `127.0.0.1` is the container, so reaching Roam's Local API on
+the *host* loopback needs `host.docker.internal`/host-networking special cases, and the
+companion extension's requests to `127.0.0.1:8077` need port mapping back the other way —
+two config-bearing crossings where the requirement is zero; (4) images, restart policies,
+and volume mounts are Docker-literate maintenance by nature. The container *ideas* survive
+elsewhere: Flatpak/Snap (desktop-containerized app formats) are evaluated and rejected in
+§3, AppImage wins the Linux slot precisely by delivering a container image's bundling
+benefit with no runtime/daemon prerequisite, and plain build containers appear on the CI
+side (§7's old-glibc AppImage leg).
+
 No freezer cross-compiles: each OS/arch needs a native CI runner.
 
 ## 2. Bundle architecture
