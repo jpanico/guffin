@@ -5,8 +5,10 @@
 > `server/cors.py` wired to a repeatable `guffin-server --allow-origin`; phase 2 implemented
 > and verified live 2026-07-30 — the extension MVP in its own repository,
 > `~/Documents/github/guffin-companion`; phase 3 implemented and verified live 2026-07-30 —
-> HTML dump inspector, block context menu, digest verification; only phase 4, optional Depot
-> distribution, remains). Two-sided: a small `guffin-server` change (opt-in CORS — phase 1)
+> HTML dump inspector, block context menu, digest verification; phase 4, optional Depot
+> distribution, is on **indefinite hold** — dev-mode loading serves the sole user, and
+> publication would add a support surface with no present benefit). Two-sided: a small
+> `guffin-server` change (opt-in CORS — phase 1)
 > plus a new Roam extension living in its **own repository**; no other guffin code is
 > touched. Companion to [server-mode.md](server-mode.md), the server this extension is a
 > client of.
@@ -184,6 +186,10 @@ overlay DOM — the Depot contract.
   render-then-send reliability story.
 
 ## Phase 4 — optional: Depot distribution
+
+> On **indefinite hold** (2026-07-30): dev-mode loading covers the sole user completely, and
+> publication would add a maintenance/support surface with no present benefit. Everything
+> below stays accurate whenever the hold lifts.
 
 Repo with a `README` prominently documenting the prerequisite (a locally running
 `guffin-server` with `GUFFIN_*` env and `--allow-origin`), metadata JSON PR to
