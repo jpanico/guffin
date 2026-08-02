@@ -187,7 +187,7 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             callout: Final[RoamCallout | None] = parse_callout(node.string)
             assert callout is not None
             title_text = _trunc(callout.title, truncate=truncate)
-        case NodeType.PLAIN_BLOCK:
+        case NodeType.PLAIN_BLOCK | NodeType.TODO_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
         case NodeType.CODE_BLOCK:

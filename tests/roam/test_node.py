@@ -183,8 +183,8 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_exactly_twelve_members(self) -> None:
-        """Test that NodeType has exactly twelve members."""
+    def test_exactly_thirteen_members(self) -> None:
+        """Test that NodeType has exactly thirteen members."""
         assert set(NodeType) == {
             NodeType.PAGE,
             NodeType.PLAIN_BLOCK,
@@ -194,6 +194,7 @@ class TestNodeType:
             NodeType.CODE_BLOCK,
             NodeType.QUOTE_BLOCK,
             NodeType.NATIVE_TABLE,
+            NodeType.TODO_BLOCK,
             NodeType.EMBED_BLOCK,
             NodeType.EMBED_PAGE,
             NodeType.PDF_BLOCK,
@@ -433,6 +434,36 @@ class TestNodeTypeFunction:
     def test_table_marker_mixed_with_text_is_plain_block(self) -> None:
         """Test that a table marker mixed with surrounding text is not a NATIVE_TABLE."""
         node = _make_text(string="see {{table}} here")
+        assert node_type(node) is NodeType.PLAIN_BLOCK
+
+    def test_open_todo_marker_returns_todo_block(self) -> None:
+        """Test that a block leading with {{[[TODO]]}} returns TODO_BLOCK."""
+        node = _make_text(string="{{[[TODO]]}} an open item")
+        assert node_type(node) is NodeType.TODO_BLOCK
+
+    def test_done_todo_marker_returns_todo_block(self) -> None:
+        """Test that a block leading with {{[[DONE]]}} returns TODO_BLOCK."""
+        node = _make_text(string="{{[[DONE]]}} a completed item")
+        assert node_type(node) is NodeType.TODO_BLOCK
+
+    def test_bare_todo_marker_alone_returns_todo_block(self) -> None:
+        """Test that a block whose entire string is the marker returns TODO_BLOCK."""
+        node = _make_text(string="{{[[TODO]]}}")
+        assert node_type(node) is NodeType.TODO_BLOCK
+
+    def test_todo_marker_with_leading_whitespace_returns_todo_block(self) -> None:
+        """Test that leading whitespace before a TODO marker is tolerated."""
+        node = _make_text(string="  {{[[TODO]]}} an open item")
+        assert node_type(node) is NodeType.TODO_BLOCK
+
+    def test_raw_todo_spelling_is_plain_block(self) -> None:
+        """Test that the bare {{TODO}} spelling, unhandled by the Roam UI, stays PLAIN_BLOCK."""
+        node = _make_text(string="{{TODO}} an open item")
+        assert node_type(node) is NodeType.PLAIN_BLOCK
+
+    def test_todo_marker_mixed_with_leading_text_is_plain_block(self) -> None:
+        """Test that a TODO marker appearing amid text, not leading it, is not a TODO_BLOCK."""
+        node = _make_text(string="see {{[[TODO]]}} here")
         assert node_type(node) is NodeType.PLAIN_BLOCK
 
     def test_embed_block_returns_embed(self) -> None:

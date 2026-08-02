@@ -73,7 +73,14 @@ _CALLOUT_STRING: str = "[[>]] [[!NOTE]] This is a note"
 # Raw Roam form: closing fence attached to the final content line (no separating newline).
 _CODE_STRING: str = "```python\ndef f():\n    pass```"
 
-from conftest import FIXTURES_JSON_DIR, FIXTURES_YAML_DIR, article1_node_tree, article4_node_tree, article5_node_tree
+from conftest import (
+    FIXTURES_JSON_DIR,
+    FIXTURES_YAML_DIR,
+    article0_node_tree,
+    article1_node_tree,
+    article4_node_tree,
+    article5_node_tree,
+)
 
 # ---------------------------------------------------------------------------
 # Factory helpers
@@ -257,6 +264,14 @@ class TestVertexType:
     def test_page_ref_table_marker_returns_guffin_table(self) -> None:
         """Test that the page-reference marker form {{[[table]]}} classifies as TABLE."""
         assert vertex_type(_make_text(string="{{[[table]]}}")) is VertexType.TABLE
+
+    def test_open_todo_block_returns_roam_text_content(self) -> None:
+        """Test that a {{[[TODO]]}}-led block node classifies as TEXT."""
+        assert vertex_type(_make_text(string="{{[[TODO]]}} an open item")) is VertexType.TEXT
+
+    def test_done_todo_block_returns_roam_text_content(self) -> None:
+        """Test that a {{[[DONE]]}}-led block node classifies as TEXT."""
+        assert vertex_type(_make_text(string="{{[[DONE]]}} a completed item")) is VertexType.TEXT
 
     def test_block_embed_returns_guffin_block_embed(self) -> None:
         """Test that a block-embed node classifies as BLOCK_EMBED."""
@@ -1324,6 +1339,27 @@ class TestTranscribeArticleFixture:
 
         raw_vertices: list[dict[str, object]] = yaml.safe_load(
             (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
+        )
+        expected: list[Vertex] = [vertex_adapter.validate_python(r) for r in raw_vertices]
+
+        def _serialise(vtx: Vertex) -> dict[str, object]:
+            return vtx.model_dump(mode="json", exclude_none=True)
+
+        assert [_serialise(vtx) for vtx in vertex_tree.tree_vertices] == [_serialise(vtx) for vtx in expected]
+
+    def test_article_0_node_tree_transcribes_to_vertex_tree(self) -> None:
+        """Transcribing the Test Article 0 NodeTree via transcribe() produces the expected VertexTree.
+
+        Article 0 is the basic-features article: block structure, inline styling, quote and
+        callout forms, a native table, and the TODO items (``{{[[TODO]]}}`` / ``{{[[DONE]]}}``,
+        classified as ``TODO_BLOCK`` nodes and transcribed as plain ``TEXT`` vertices).
+        """
+        node_tree = article0_node_tree()
+
+        vertex_tree = transcribe(node_tree)
+
+        raw_vertices: list[dict[str, object]] = yaml.safe_load(
+            (FIXTURES_YAML_DIR / "test_article_0_vertices.yaml").read_text()
         )
         expected: list[Vertex] = [vertex_adapter.validate_python(r) for r in raw_vertices]
 

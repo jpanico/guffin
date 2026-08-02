@@ -4,8 +4,8 @@ Public symbols:
 
 - :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``PLAIN_BLOCK``,
   ``IMAGE_BLOCK``, ``HEADING_BLOCK``, ``CALLOUT_BLOCK``,
-  ``CODE_BLOCK``, ``QUOTE_BLOCK``, ``NATIVE_TABLE``, ``EMBED_BLOCK``, ``EMBED_PAGE``, ``PDF_BLOCK``,
-  ``ATTRIBUTE_BLOCK``.
+  ``CODE_BLOCK``, ``QUOTE_BLOCK``, ``NATIVE_TABLE``, ``TODO_BLOCK``, ``EMBED_BLOCK``,
+  ``EMBED_PAGE``, ``PDF_BLOCK``, ``ATTRIBUTE_BLOCK``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
 - :func:`effective_heading_level` — return the effective heading level for a
@@ -67,6 +67,7 @@ from guffin.roam.primitives import (
     parse_daily_note_uid,
 )
 from guffin.roam.schema import SchemaAttribute
+from guffin.roam.todo import TODO_MARKER_RE
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +96,10 @@ class NodeType(enum.StrEnum):
     - **NATIVE_TABLE**: ``string``, with surrounding whitespace trimmed, is one of
       :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS` (``"{{table}}"`` /
       ``"{{[[table]]}}"``); its child blocks form the table rows.
+    - **TODO_BLOCK**: ``string`` leads (after trimming surrounding whitespace) with a Roam TODO
+      marker ``{{[[TODO]]}}`` / ``{{[[DONE]]}}`` (as matched by
+      :data:`~guffin.roam.todo.TODO_MARKER_RE`); the marker's keyword names the item's
+      :class:`~guffin.roam.todo.TodoState`.
     - **EMBED_BLOCK**: ``title`` is ``None`` and ``string``, with surrounding whitespace
       trimmed, is wholly a Roam block embed ``{{embed: ((<uid>))}}`` /
       ``{{[[embed]]: ((<uid>))}}`` (matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`).
@@ -118,6 +123,7 @@ class NodeType(enum.StrEnum):
     CODE_BLOCK = "roam/code-block"
     QUOTE_BLOCK = "roam/quote-block"
     NATIVE_TABLE = "roam/table"
+    TODO_BLOCK = "roam/todo-block"
     EMBED_BLOCK = "roam/embed-block"
     EMBED_PAGE = "roam/embed-page"
     PDF_BLOCK = "roam/pdf-block"
@@ -524,6 +530,8 @@ def node_type(node: RoamNode) -> NodeType:
     (as determined by :func:`~guffin.common.markdown.is_fenced_code_block`),
     :attr:`NodeType.NATIVE_TABLE` when the trimmed ``string`` is one of
     :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`,
+    :attr:`NodeType.TODO_BLOCK` when the trimmed ``string`` leads with a Roam TODO marker
+    (as matched by :data:`~guffin.roam.todo.TODO_MARKER_RE`),
     :attr:`NodeType.EMBED_BLOCK` when the trimmed ``string`` is wholly a Roam block embed
     (as matched by :data:`~guffin.roam.markdown.BLOCK_EMBED_RE`),
     :attr:`NodeType.EMBED_PAGE` when the trimmed ``string`` is wholly a Roam page embed
@@ -546,6 +554,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.CODE_BLOCK` if the trimmed ``string`` is a CommonMark fenced code block;
         :attr:`NodeType.NATIVE_TABLE` if the trimmed ``string`` is one of
         :data:`~guffin.roam.markdown.ROAM_NATIVE_TABLE_MARKERS`;
+        :attr:`NodeType.TODO_BLOCK` if the trimmed ``string`` leads with a Roam TODO marker;
         :attr:`NodeType.EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
         :attr:`NodeType.EMBED_PAGE` if the trimmed ``string`` is wholly a Roam page embed;
         :attr:`NodeType.PDF_BLOCK` if the trimmed ``string`` is wholly a Roam PDF component;
@@ -569,6 +578,8 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.CODE_BLOCK
     if string.strip() in ROAM_NATIVE_TABLE_MARKERS:
         return NodeType.NATIVE_TABLE
+    if TODO_MARKER_RE.match(string.strip()):
+        return NodeType.TODO_BLOCK
     if BLOCK_EMBED_RE.fullmatch(string.strip()):
         return NodeType.EMBED_BLOCK
     if PAGE_EMBED_RE.fullmatch(string.strip()):

@@ -385,6 +385,9 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.PAGE
         case NodeType.PLAIN_BLOCK:
             return VertexType.TEXT
+        case NodeType.TODO_BLOCK:
+            # No dedicated TODO vertex type exists; the marker rides along in the text content.
+            return VertexType.TEXT
         case NodeType.CODE_BLOCK:
             return VertexType.CODE_BLOCK
         case NodeType.HEADING_BLOCK:
