@@ -105,6 +105,7 @@ _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
 _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 _TYPST_PAGE_BREAK_FILTER: Final[str] = "typst_page_break.lua"
 _TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
+_TYPST_TODO_FILTER: Final[str] = "typst_todo.lua"
 # Bundled .sublime-syntax grammars loaded into Typst's highlighter beyond its built-in
 # syntect set (via the Bergfink `code-syntaxes` variable, one entry per file).
 _SYNTAX_FILENAMES: Final[tuple[str, ...]] = (
@@ -157,6 +158,7 @@ def _typst_filter_args(bundled_dir: Path) -> list[str]:
         f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_TODO_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",

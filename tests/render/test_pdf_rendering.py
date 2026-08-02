@@ -17,10 +17,10 @@ from conftest import FIXTURES_PDF_DIR, article3_node_tree
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex
+from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex, TodoState, TodoVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.vertex_view import Semantic, SourceChannel, VertexView, ViewMap
+from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView, ViewMap
 from guffin.render.asset_fetch import AssetRef, pdf_asset_paths
 from guffin.render.pandoc_ast import pandoc_to_json
 from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, PDF_PLACEMENT_UNSET, vertex_tree_to_pandoc
@@ -507,6 +507,63 @@ class TestTypstBulletFilter:
         )
         assert "#grid(" in typst
         assert typst.count("a nested child") == 1
+
+
+@pytest.mark.pandoc
+class TestTypstTodoFilter:
+    """typst_todo.lua replaces a TODO item's leading checkbox glyph with a drawn Typst box.
+
+    The template's body font (Noto Sans) has no U+2610, so the glyph itself would render as
+    tofu; the filter substitutes a font-independent box drawn from Typst primitives.
+    """
+
+    @staticmethod
+    def _typst_for(todo_state: TodoState, view_map: ViewMap | None = None) -> str:
+        page = PageVertex(uid="page00001", title="Doc", children=["todo0001a"])
+        item = TodoVertex(uid="todo0001a", todo_state=todo_state, text="a short item")
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, item]), {}, view_map or {})
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_todo.lua'}"],
+        )
+
+    def test_open_item_draws_an_empty_box(self) -> None:
+        """An open item's ☐ becomes a stroked box with no cross, and the glyph itself is gone."""
+        typst = self._typst_for(TodoState.TODO)
+        assert "#box(baseline: 15%, width: 0.85em, height: 0.85em, stroke: 0.06em)" in typst
+        assert "☐" not in typst
+        assert "short item" in typst
+
+    def test_done_item_draws_a_crossed_box(self) -> None:
+        """A completed item's ☒ becomes a stroked box crossed by two drawn lines."""
+        typst = self._typst_for(TodoState.DONE)
+        assert "place(line(start: (8%, 8%), end: (92%, 92%)" in typst
+        assert "place(line(start: (92%, 8%), end: (8%, 92%)" in typst
+        assert "☒" not in typst
+
+    def test_document_layout_paragraph_is_also_covered(self) -> None:
+        """Under a DOCUMENT layout the item is a Para, whose leading glyph is likewise replaced."""
+        typst = self._typst_for(
+            TodoState.TODO, view_map={"page00001": VertexView(children_layout=ChildrenLayout.DOCUMENT)}
+        )
+        assert "#box(baseline: 15%" in typst
+        assert "☐" not in typst
+
+    def test_plain_text_is_untouched(self) -> None:
+        """A text block with no leading glyph passes through the filter unchanged."""
+        page = PageVertex(uid="page00001", title="Doc", children=["txt00001a"])
+        block = TextVertex(uid="txt00001a", text="no checkbox here")
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, block]), {}, {})
+        typst = pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_todo.lua'}"],
+        )
+        assert "#box(baseline: 15%" not in typst
+        assert "- no checkbox here" in typst
 
 
 @pytest.mark.pandoc
