@@ -37,6 +37,9 @@
     refs:
     - id: 5450
     - id: 5462
+- - id: 11454
+    uid: iF2Ey_unj
+    title: c:ORANGE
 - - id: 5456
     uid: Q-T5fKOEq
     title: '!QUOTE'
@@ -178,6 +181,9 @@
     page:
       id: 11137
 - - string: block 3.1.1
+    children:
+    - id: 15780
+    - id: 15781
     id: 11156
     uid: g9mXrLNQd
     parents:
@@ -236,6 +242,8 @@
       - Roam-native single line pull quote
 
       - Roam-native multi-line pull quote
+
+      - Roam-native TODO item (open and done)
 
       - Roam-native table (3x3)
 
@@ -412,6 +420,9 @@
     order: 7
     page:
       id: 11137
+- - id: 1371
+    uid: 7koyf_Urx
+    title: DONE
 - - string: r2.c3
     id: 11234
     uid: hD2qvZqjh
@@ -511,6 +522,28 @@
       id: 11137
     refs:
     - id: 5450
+- - string: ''
+    id: 1348
+    uid: jntuNAGBs
+    parents:
+    - id: 329
+    order: 0
+    page:
+      id: 329
+- - string: '{{[[TODO]]}} a short #c:ORANGE __open todo__'
+    id: 15780
+    uid: HJu1OIKOr
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 11154
+    - id: 11156
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 329
+    - id: 11454
 - - string: Header 3
     id: 13092
     uid: TfYw_AaIH
@@ -523,6 +556,20 @@
     order: 0
     page:
       id: 11137
+- - string: '{{[[DONE]]}} a short #c:ORANGE __closed todo__'
+    id: 15781
+    uid: R6Dm4usgJ
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 11154
+    - id: 11156
+    order: 1
+    page:
+      id: 11137
+    refs:
+    - id: 1371
+    - id: 11454
 - - string: block 1.1
     children:
     - id: 11152
@@ -865,6 +912,11 @@
     title: '[[Test Article]] 0'
     refs:
     - id: 4223
+- - children:
+    - id: 1348
+    id: 329
+    uid: 20E2gCz7h
+    title: TODO
 - - string: r1.c1
     children:
     - id: 11230

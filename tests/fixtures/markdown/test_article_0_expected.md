@@ -21,6 +21,7 @@
 > - Roam-native multi-line block quote
 > - Roam-native single line pull quote
 > - Roam-native multi-line pull quote
+> - Roam-native TODO item (open and done)
 > - Roam-native table (3x3)
 > - this INFO `Callout box`, which contains Roam `page references`
 
@@ -220,6 +221,8 @@
 - block 3
   - block 3.1
     - block 3.1.1
+      - {{TODO}} a short <span style="text-decoration: underline; color: orange">open todo</span>
+      - {{DONE}} a short <span style="text-decoration: underline; color: orange">closed todo</span>
   - block 3.2
     > [!NOTE]
     > **This is the callout title**

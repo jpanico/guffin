@@ -4,6 +4,7 @@ import importlib.metadata
 import logging
 from unittest.mock import patch
 
+import pytest
 from starlette.middleware.cors import CORSMiddleware
 from typer.testing import CliRunner, Result
 
@@ -40,8 +41,9 @@ class TestServeVersion:
 class TestServeAllowOrigin:
     """Tests for the --allow-origin CORS opt-in."""
 
-    def test_without_the_flag_the_bare_app_is_served(self) -> None:
+    def test_without_the_flag_the_bare_app_is_served(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Unset, uvicorn runs the ASGI app itself — no CORS wrap at all."""
+        monkeypatch.delenv("GUFFIN_SERVER_ALLOW_ORIGIN", raising=False)
         with patch("guffin.cli.serve.uvicorn.run") as run_mock:
             result = _invoke_without_root_handlers([])
         assert result.exit_code == 0, result.output

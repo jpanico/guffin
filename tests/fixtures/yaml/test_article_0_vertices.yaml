@@ -55,6 +55,8 @@
 
     - Roam-native multi-line pull quote
 
+    - Roam-native TODO item (open and done)
+
     - Roam-native table (3x3)
 
     - this INFO `Callout box`, which contains Roam `page references`'
@@ -328,7 +330,22 @@
   text: block 3.1
 - vertex_type: guffin/text
   uid: g9mXrLNQd
+  children:
+  - HJu1OIKOr
+  - R6Dm4usgJ
   text: block 3.1.1
+- vertex_type: guffin/text
+  uid: HJu1OIKOr
+  refs:
+  - 20E2gCz7h
+  - iF2Ey_unj
+  text: '{{[TODO](x-guffin:vertex/20E2gCz7h)}} a short [open todo]{underline-color="orange"}'
+- vertex_type: guffin/text
+  uid: R6Dm4usgJ
+  refs:
+  - 7koyf_Urx
+  - iF2Ey_unj
+  text: '{{[DONE](x-guffin:vertex/7koyf_Urx)}} a short [closed todo]{underline-color="orange"}'
 - vertex_type: guffin/text
   uid: 5N_QAEc3C
   children:

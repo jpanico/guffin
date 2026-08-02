@@ -58,6 +58,7 @@ follows (here, `**bold**` emphasis on one portion of the page name).
 - Roam-native multi-line block quote
 - Roam-native single line pull quote
 - Roam-native multi-line pull quote
+- Roam-native TODO item (open and done)
 - Roam-native table (3x3)
 - this INFO `Callout box`, which contains Roam `page references`
 
