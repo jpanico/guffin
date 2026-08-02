@@ -95,7 +95,7 @@ alias — live in :mod:`guffin.render.pandoc_ast`.
 
 import html
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Final
 
@@ -139,6 +139,8 @@ from guffin.model.vertex import (
     QuoteType,
     TableVertex,
     TextVertex,
+    TodoState,
+    TodoVertex,
     Vertex,
     VertexChildren,
 )
@@ -248,6 +250,19 @@ by source channel alone — that channel's badge
 (:data:`~guffin.render.semantic_theme.BADGE_GLYPH_BY_SOURCE_CHANNEL`).  It rides the scaffold
 so a format pass can render it in the marker's place without knowing either classification
 vocabulary.
+"""
+
+CHECKBOX_GLYPH_BY_TODO_STATE: Final[Mapping[TodoState, str]] = {
+    TodoState.TODO: "☐",
+    TodoState.DONE: "☒",
+}
+"""Member-keyed map from a :class:`~guffin.model.vertex.TodoState` to its checkbox glyph.
+
+``☐`` (U+2610 BALLOT BOX) for an open item, ``☒`` (U+2612 BALLOT BOX WITH X) for a completed
+one — Pandoc's own task-list convention: a list item whose inlines lead with the glyph is a
+task-list item, which writers with the ``task_lists`` extension (GFM among them) emit in their
+native checkbox syntax (``- [ ]`` / ``- [x]``).  Outside a list item, or in a writer without
+the extension, the glyph itself renders — a legible fallback either way.
 """
 
 PDF_PLACEMENT_ATTRIBUTE: Final[str] = "data-guffin-pdf-render"
@@ -480,7 +495,7 @@ def _block_ref_target(
 
 
 def _build_list_item(
-    vertex: TextVertex,
+    vertex: TextVertex | TodoVertex,
     vertex_tree: VertexTree,
     asset_files: dict[Uid, Path],
     inline_map: InlineMap,
@@ -488,7 +503,12 @@ def _build_list_item(
     inherited_layout: ChildrenLayout,
     depth: int,
 ) -> pf.ListItem:
-    """Build a Pandoc :class:`~panflute.ListItem` from a text vertex.
+    """Build a Pandoc :class:`~panflute.ListItem` from a text or TODO item vertex.
+
+    A :class:`~guffin.model.vertex.TodoVertex` item leads with its checkbox glyph
+    (:data:`CHECKBOX_GLYPH_BY_TODO_STATE`) ahead of everything else in the item's inlines,
+    making it a Pandoc task-list item — which a ``task_lists`` writer (GFM) emits in its
+    native checkbox syntax (``- [ ]`` / ``- [x]``).
 
     The item body is a :class:`~panflute.Plain` inline block, or — when the
     vertex text contains a fenced code block — the block elements produced by a
@@ -510,7 +530,8 @@ def _build_list_item(
     (numbering is the marker).
 
     Args:
-        vertex: The :class:`~guffin.vertex.TextVertex` to render as a list item.
+        vertex: The :class:`~guffin.vertex.TextVertex` or :class:`~guffin.model.vertex.TodoVertex`
+            to render as a list item.
         vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
         asset_files: Mapping from asset vertex UID (image or PDF) to local
             asset file path.
@@ -523,6 +544,9 @@ def _build_list_item(
         A :class:`~panflute.ListItem` wrapping the vertex text and any
         nested children and attribute pills.
     """
+    checkbox: Final[str | None] = (
+        CHECKBOX_GLYPH_BY_TODO_STATE[vertex.todo_state] if isinstance(vertex, TodoVertex) else None
+    )
     view: Final[VertexView | None] = view_map.get(vertex.uid) if inherited_layout is ChildrenLayout.BULLET else None
     semantic: Final[Semantic | None] = view.semantic if view is not None else None
     badge: Final[str | None] = (
@@ -538,8 +562,10 @@ def _build_list_item(
     content: list[pf.Block]
     if contains_fenced_code_block(text):
         content = parse_block_md(text)
+        if checkbox is not None:
+            content = [pf.Plain(pf.Str(checkbox)), *content]
     else:
-        inlines: list[pf.Inline] = inline_map.get(text, [pf.Str(text)])
+        inlines: list[pf.Inline] = inline_map.get(text, [pf.Str(text)] if text else [])
         # The whole-line bg-color span is recognized before the badge leads the content, so a
         # badge decorates a background-colored line rather than defeating its recognition.
         bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(inlines)
@@ -547,10 +573,14 @@ def _build_list_item(
             bg_color, inner = bg
             if badge_glyph is not None:
                 inner = [pf.Str(badge_glyph), pf.Space(), *inner]
+            if checkbox is not None:
+                inner = [pf.Str(checkbox), pf.Space(), *inner]
             content = [pf.Div(pf.Plain(*inner), attributes={"bg-color": bg_color})]
         else:
             if badge_glyph is not None:
                 inlines = [pf.Str(badge_glyph), pf.Space(), *inlines]
+            if checkbox is not None:
+                inlines = [pf.Str(checkbox), pf.Space(), *inlines]
             content = [pf.Plain(*inlines)]
     if marker_glyph is not None:
         # The scaffold wraps only the item's own body: the nested children appended below sit
@@ -678,6 +708,8 @@ def build_child_blocks(
     - :attr:`~guffin.model.vertex_view.ChildrenLayout.DOCUMENT` — rendered as flowing blocks
       (paragraphs) via :func:`_vertex_to_blocks`, with no list wrapper.
 
+    A :class:`~guffin.model.vertex.TodoVertex` participates in the layout exactly like a text
+    sibling, its list item leading with the checkbox glyph (see :func:`_build_list_item`).
     A link-placed PDF display occurrence participates in the layout like a text sibling: its
     link paragraph joins the same list — whether the occurrence is the PDF embed itself
     (:func:`_is_reference_placed_pdf`) or a standalone reference site whose resolved placement is
@@ -775,7 +807,7 @@ def build_child_blocks(
                         vertex.attribute_assignments,
                     )
                 )
-        elif isinstance(vertex, TextVertex) and layout is not ChildrenLayout.DOCUMENT:
+        elif isinstance(vertex, (TextVertex, TodoVertex)) and layout is not ChildrenLayout.DOCUMENT:
             pending_items.append(
                 _build_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, layout, depth)
             )
@@ -973,6 +1005,55 @@ def _text_vertex_to_blocks(
             para_blocks = [pf.Div(pf.Para(*inner), attributes={"bg-color": bg_color})]
         else:
             para_blocks = [pf.Para(*text_inlines)]
+    para_blocks.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            asset_files,
+            inline_map,
+            view_map,
+            _effective_layout(vertex.uid, view_map, inherited_layout),
+            depth + 1,
+            vertex.attribute_assignments,
+        )
+    )
+    return para_blocks
+
+
+def _todo_vertex_to_blocks(
+    vertex: TodoVertex,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
+    depth: int,
+) -> list[pf.Block]:
+    """Render a TODO item vertex to block elements led by its checkbox glyph.
+
+    Produces one :class:`~panflute.Para` whose inlines lead with the item's state glyph
+    (:data:`CHECKBOX_GLYPH_BY_TODO_STATE`) followed by the item text, then the recursively
+    rendered children (and trailing attribute pills) laid out per the vertex's effective
+    children layout.  When the item lands as a bullet-list item, the leading glyph makes it
+    a Pandoc task-list item, so a ``task_lists`` writer (GFM) emits its native checkbox
+    syntax.
+
+    Args:
+        vertex: The :class:`~guffin.model.vertex.TodoVertex` to render.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID (image or PDF) to local
+            asset file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
+        depth: Tree depth of *vertex* (1 = direct page child).
+
+    Returns:
+        A :class:`~panflute.Para` followed by any child and pill blocks.
+    """
+    glyph: Final[str] = CHECKBOX_GLYPH_BY_TODO_STATE[vertex.todo_state]
+    text_inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)] if vertex.text else [])
+    para_blocks: Final[list[pf.Block]] = [pf.Para(pf.Str(glyph), pf.Space(), *text_inlines)]
     para_blocks.extend(
         build_child_blocks(
             vertex.children or [],
@@ -1472,6 +1553,10 @@ def _vertex_to_blocks(
             return _text_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
+        case TodoVertex():
+            return _todo_vertex_to_blocks(
+                vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
+            )
         case ImageVertex():
             return _image_vertex_to_blocks(vertex, asset_files, inline_map)
         case PdfVertex():
@@ -1523,6 +1608,8 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
             case HeadingVertex(text=t):
                 texts.append(t)
             case TextVertex(text=t):
+                texts.append(t)
+            case TodoVertex(text=t) if t:
                 texts.append(t)
             case ImageVertex(alt_text=t) if t is not None:
                 texts.append(t)
@@ -1806,6 +1893,8 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
             case HeadingVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TextVertex():
+                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
+            case TodoVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case ImageVertex() if vertex_link.kind == VertexLinkKind.EMBED:
                 return [pf.Image(*display, url=str(vertex.source), title="")]

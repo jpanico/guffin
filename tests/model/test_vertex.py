@@ -16,6 +16,8 @@ from guffin.model.vertex import (
     PageVertex,
     PdfVertex,
     TextVertex,
+    TodoState,
+    TodoVertex,
     VertexType,
     find_attribute_assignment,
     is_asset_vertex,
@@ -105,6 +107,40 @@ class TestCodeBlockVertex:
         assert isinstance(restored, CodeBlockVertex)
         assert restored == vertex
         assert restored.code_source == self._SOURCE
+
+
+class TestTodoVertex:
+    """Tests for the TodoVertex concrete vertex type and its TodoState enum."""
+
+    def test_todo_state_has_exactly_two_members(self) -> None:
+        """TodoState has exactly the TODO and DONE members."""
+        assert set(TodoState) == {TodoState.TODO, TodoState.DONE}
+
+    def test_valid_construction(self) -> None:
+        """A TodoVertex has the expected fields."""
+        vertex = TodoVertex(uid="todo00001", todo_state=TodoState.TODO, text="an open item")
+        assert vertex.vertex_type is VertexType.TODO
+        assert vertex.todo_state is TodoState.TODO
+        assert vertex.text == "an open item"
+
+    def test_todo_state_is_required(self) -> None:
+        """A TodoVertex without a todo_state is rejected."""
+        with pytest.raises(ValidationError):
+            TodoVertex(uid="todo00001", text="an item")  # type: ignore[call-arg]
+
+    def test_todo_state_serializes_under_kebab_alias(self) -> None:
+        """A TodoVertex dumps its state under the 'todo-state' alias."""
+        vertex = TodoVertex(uid="todo00001", todo_state=TodoState.DONE, text="a completed item")
+        dumped = vertex.model_dump(by_alias=True)
+        assert dumped["todo-state"] == "done"
+        assert dumped["vertex-type"] == "guffin/todo"
+
+    def test_adapter_round_trips_via_discriminator(self) -> None:
+        """Vertex_adapter selects TodoVertex from a dumped dict via its vertex_type discriminator."""
+        vertex = TodoVertex(uid="todo00001", todo_state=TodoState.DONE, text="a completed item")
+        restored = vertex_adapter.validate_python(vertex.model_dump())
+        assert isinstance(restored, TodoVertex)
+        assert restored == vertex
 
 
 class TestAttributeAssignmentsField:

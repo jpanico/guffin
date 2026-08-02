@@ -115,6 +115,7 @@ from guffin.model.vertex import (
     QuoteBlockVertex,
     TableVertex,
     TextVertex,
+    TodoVertex,
     Vertex,
     find_attribute_assignment,
     is_embed_vertex,
@@ -825,7 +826,7 @@ def _vertex_effective_title(vertex: Vertex, tree: VertexTree) -> str:
     match vertex:
         case PageVertex():
             return vertex.title
-        case HeadingVertex() | TextVertex():
+        case HeadingVertex() | TextVertex() | TodoVertex():
             return vertex.text
         case QuoteBlockVertex():
             return vertex.quote

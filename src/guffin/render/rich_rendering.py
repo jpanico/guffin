@@ -501,6 +501,11 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
             )
         case VertexType.TEXT:
             title_content = f"[bold #00aa00]{markup_escape(_trunc(vertex.text, truncate=truncate))}[/bold #00aa00]"
+        case VertexType.TODO:
+            title_content = (
+                f"[bold orange1]{markup_escape(f'TODO [{vertex.todo_state.value}]:')}[/bold orange1]"
+                f" [bold #00aa00]{markup_escape(_trunc(vertex.text, truncate=truncate))}[/bold #00aa00]"
+            )
         case VertexType.IMAGE:
             title_content = (
                 f"[bold orange1]{markup_escape(f'IMAGE [{vertex.alt_text or ""}]')}[/bold orange1]"

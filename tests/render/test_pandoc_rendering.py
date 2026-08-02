@@ -38,6 +38,8 @@ from guffin.model.vertex import (
     QuoteType,
     TableVertex,
     TextVertex,
+    TodoState,
+    TodoVertex,
     Vertex,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
@@ -705,6 +707,77 @@ class TestVertexTreeToPandocText:
         assert isinstance(nested_list, pf.BulletList)
         child_item = list(nested_list.content)[0]
         assert _collect_text(list(child_item.content)[0]) == "Child"
+
+
+# ---------------------------------------------------------------------------
+# TestVertexTreeToPandocTodoVertex
+# ---------------------------------------------------------------------------
+
+
+class TestVertexTreeToPandocTodoVertex:
+    """Tests for vertex_tree_to_pandoc() — TodoVertex rendering."""
+
+    def test_list_item_leads_with_open_checkbox_glyph(self) -> None:
+        """Under a bullet layout, an open TODO item's inlines lead with ☐ + space — Pandoc's task-list form."""
+        page = PageVertex(uid="page00001", title="P", children=["todo0001a"])
+        item = TodoVertex(uid="todo0001a", todo_state=TodoState.TODO, text="an open item")
+        tree = VertexTree(tree_vertices=[page, item])
+        _doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(_doc.content)
+        assert isinstance(blocks[0], pf.BulletList)
+        item_blocks = list(list(blocks[0].content)[0].content)
+        assert isinstance(item_blocks[0], pf.Plain)
+        inlines = list(item_blocks[0].content)
+        assert inlines[0] == pf.Str("☐")
+        assert isinstance(inlines[1], pf.Space)
+        assert _collect_text(item_blocks[0]) == "☐ an open item"
+
+    def test_list_item_leads_with_done_checkbox_glyph(self) -> None:
+        """Under a bullet layout, a completed TODO item's inlines lead with ☒ + space."""
+        page = PageVertex(uid="page00001", title="P", children=["todo0001a"])
+        item = TodoVertex(uid="todo0001a", todo_state=TodoState.DONE, text="a completed item")
+        tree = VertexTree(tree_vertices=[page, item])
+        _doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(_doc.content)
+        assert isinstance(blocks[0], pf.BulletList)
+        item_blocks = list(list(blocks[0].content)[0].content)
+        inlines = list(item_blocks[0].content)
+        assert inlines[0] == pf.Str("☒")
+
+    def test_gfm_output_renders_task_list_checkboxes(self) -> None:
+        """The GFM writer emits the ☐/☒-led list items in native task-list syntax."""
+        page = PageVertex(uid="page00001", title="P", children=["todo0001a", "todo0001b"])
+        open_item = TodoVertex(uid="todo0001a", todo_state=TodoState.TODO, text="an open item")
+        done_item = TodoVertex(uid="todo0001b", todo_state=TodoState.DONE, text="a completed item")
+        tree = VertexTree(tree_vertices=[page, open_item, done_item])
+        _doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        gfm: str = pypandoc.convert_text(pandoc_to_json(_doc), "gfm", format="json")
+        assert "- [ ] an open item" in gfm
+        assert "- [x] a completed item" in gfm
+
+    def test_document_layout_renders_para_with_glyph(self) -> None:
+        """With a DOCUMENT layout, a TODO item renders as a flowing Para led by its glyph."""
+        page = PageVertex(uid="page00001", title="P", children=["todo0001a"])
+        item = TodoVertex(uid="todo0001a", todo_state=TodoState.TODO, text="an open item")
+        tree = VertexTree(tree_vertices=[page, item])
+        view_map = {"page00001": VertexView(children_layout=ChildrenLayout.DOCUMENT)}
+        _doc, _ = vertex_tree_to_pandoc(tree, {}, view_map)
+        blocks = list(_doc.content)
+        assert isinstance(blocks[0], pf.Para)
+        assert _collect_text(blocks[0]) == "☐ an open item"
+
+    def test_todo_children_nest_inside_the_item(self) -> None:
+        """A TODO item's children render as a nested list inside its list item."""
+        page = PageVertex(uid="page00001", title="P", children=["todo0001a"])
+        item = TodoVertex(uid="todo0001a", todo_state=TodoState.TODO, text="an open item", children=["txt00001a"])
+        child = TextVertex(uid="txt00001a", text="a detail")
+        tree = VertexTree(tree_vertices=[page, item, child])
+        _doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(_doc.content)
+        assert isinstance(blocks[0], pf.BulletList)
+        item_blocks = list(list(blocks[0].content)[0].content)
+        assert len(item_blocks) == 2
+        assert isinstance(item_blocks[1], pf.BulletList)
 
 
 # ---------------------------------------------------------------------------

@@ -13,6 +13,8 @@ Public symbols:
   :class:`~guffin.model.vertex_view.Semantic` it declares.
 - :data:`SOURCE_CHANNEL_BY_PROVENANCE` — member-keyed map from a Better Bullets provenance to
   the :class:`~guffin.model.vertex_view.SourceChannel` it declares.
+- :data:`TODO_STATE_BY_ROAM_STATE` — member-keyed map from a Roam TODO marker state to the
+  :class:`~guffin.model.vertex.TodoState` it declares.
 - :func:`vertex_type` — classify a :class:`~guffin.roam.node.RoamNode` into a
   :class:`~guffin.vertex.VertexType`.
 - :func:`to_page_vertex` — build a :class:`~guffin.vertex.PageVertex` from a
@@ -25,6 +27,8 @@ Public symbols:
   a heading block node.
 - :func:`to_text_vertex` — build a
   :class:`~guffin.vertex.TextVertex` from a plain text block node.
+- :func:`to_todo_vertex` — build a :class:`~guffin.model.vertex.TodoVertex` from a
+  TODO item block node.
 - :func:`to_callout_vertex` — build a :class:`~guffin.vertex.CalloutVertex` from a
   callout block node.
 - :func:`to_code_block_vertex` — build a :class:`~guffin.vertex.CodeBlockVertex` from a
@@ -86,6 +90,8 @@ from guffin.model.vertex import (
     QuoteType,
     TableVertex,
     TextVertex,
+    TodoState,
+    TodoVertex,
     Vertex,
     VertexChildren,
     VertexRefs,
@@ -124,6 +130,8 @@ from guffin.roam.node import (
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
 from guffin.roam.primitives import Id, Uid, parse_daily_note_uid
+from guffin.roam.todo import TODO_MARKER_RE
+from guffin.roam.todo import TodoState as RoamTodoState
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -386,8 +394,7 @@ def vertex_type(node: RoamNode) -> VertexType:
         case NodeType.PLAIN_BLOCK:
             return VertexType.TEXT
         case NodeType.TODO_BLOCK:
-            # No dedicated TODO vertex type exists; the marker rides along in the text content.
-            return VertexType.TEXT
+            return VertexType.TODO
         case NodeType.CODE_BLOCK:
             return VertexType.CODE_BLOCK
         case NodeType.HEADING_BLOCK:
@@ -584,6 +591,59 @@ def to_text_vertex(node: RoamNode, tree: NodeTree) -> TextVertex:
     return TextVertex(
         uid=node.uid,
         text=to_pandoc_md(node.string, tree),
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
+    )
+
+
+TODO_STATE_BY_ROAM_STATE: Final[Mapping[RoamTodoState, TodoState]] = {
+    RoamTodoState.TODO: TodoState.TODO,
+    RoamTodoState.DONE: TodoState.DONE,
+}
+"""Member-keyed map from a Roam TODO marker state to the :class:`~guffin.model.vertex.TodoState` it declares.
+
+Total over :class:`~guffin.roam.todo.TodoState` (enforced by test), so the source vocabulary
+is translated once at the transcription boundary and never reaches a renderer.
+"""
+
+
+@validate_call
+def to_todo_vertex(node: RoamNode, tree: NodeTree) -> TodoVertex:
+    """Build a :class:`~guffin.model.vertex.TodoVertex` from a TODO item block *node*.
+
+    Strips the leading Roam TODO marker (``{{[[TODO]]}}`` / ``{{[[DONE]]}}``) from
+    ``node.string``: the marker's keyword becomes the vertex's
+    :attr:`~guffin.model.vertex.TodoVertex.todo_state` (via
+    :data:`TODO_STATE_BY_ROAM_STATE`), and the remaining item text — normalized via
+    :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md` — becomes its
+    :attr:`~guffin.model.vertex.TodoVertex.text`.
+
+    Args:
+        node: A TODO item block node whose ``string`` leads with a Roam TODO marker.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
+
+    Returns:
+        A :class:`~guffin.model.vertex.TodoVertex`.
+
+    Raises:
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
+        ValueError: If ``node.string`` is ``None`` or leads with no TODO marker.
+    """
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    stripped: Final[str] = node.string.strip()
+    matched: Final[regex.Match[str] | None] = TODO_MARKER_RE.match(stripped)
+    if matched is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} string leads with no TODO marker: {node.string!r}")
+    roam_state: Final[RoamTodoState] = RoamTodoState(matched.group("state"))
+    return TodoVertex(
+        uid=node.uid,
+        todo_state=TODO_STATE_BY_ROAM_STATE[roam_state],
+        text=to_pandoc_md(stripped[matched.end() :].strip(), tree),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
@@ -952,6 +1012,8 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             return to_heading_vertex(node, tree, heading_offset)
         case VertexType.TEXT:
             return to_text_vertex(node, tree)
+        case VertexType.TODO:
+            return to_todo_vertex(node, tree)
         case VertexType.CALLOUT:
             return to_callout_vertex(node, tree)
         case VertexType.CODE_BLOCK:

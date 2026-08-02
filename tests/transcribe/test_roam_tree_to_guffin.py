@@ -23,6 +23,7 @@ from guffin.model.vertex import (
     QuoteType,
     TableVertex,
     TextVertex,
+    TodoState,
     Vertex,
     VertexType,
     vertex_adapter,
@@ -35,9 +36,11 @@ from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator
 from guffin.roam.primitives import ChildrenViewType, Id, IdObject
+from guffin.roam.todo import TodoState as RoamTodoState
 from guffin.transcribe.roam_tree_to_guffin import (
     SEMANTIC_BY_BULLET_TYPE,
     SOURCE_CHANNEL_BY_PROVENANCE,
+    TODO_STATE_BY_ROAM_STATE,
     _is_meta_block,
     build_view_map,
     to_block_embed_vertex,
@@ -52,6 +55,7 @@ from guffin.transcribe.roam_tree_to_guffin import (
     to_render_bundle,
     to_table_vertex,
     to_text_vertex,
+    to_todo_vertex,
     transcribe,
     transcribe_standalone_node,
     vertex_type,
@@ -265,13 +269,13 @@ class TestVertexType:
         """Test that the page-reference marker form {{[[table]]}} classifies as TABLE."""
         assert vertex_type(_make_text(string="{{[[table]]}}")) is VertexType.TABLE
 
-    def test_open_todo_block_returns_roam_text_content(self) -> None:
-        """Test that a {{[[TODO]]}}-led block node classifies as TEXT."""
-        assert vertex_type(_make_text(string="{{[[TODO]]}} an open item")) is VertexType.TEXT
+    def test_open_todo_block_returns_guffin_todo(self) -> None:
+        """Test that a {{[[TODO]]}}-led block node classifies as TODO."""
+        assert vertex_type(_make_text(string="{{[[TODO]]}} an open item")) is VertexType.TODO
 
-    def test_done_todo_block_returns_roam_text_content(self) -> None:
-        """Test that a {{[[DONE]]}}-led block node classifies as TEXT."""
-        assert vertex_type(_make_text(string="{{[[DONE]]}} a completed item")) is VertexType.TEXT
+    def test_done_todo_block_returns_guffin_todo(self) -> None:
+        """Test that a {{[[DONE]]}}-led block node classifies as TODO."""
+        assert vertex_type(_make_text(string="{{[[DONE]]}} a completed item")) is VertexType.TODO
 
     def test_block_embed_returns_guffin_block_embed(self) -> None:
         """Test that a block-embed node classifies as BLOCK_EMBED."""
@@ -618,6 +622,66 @@ class TestToTextVertex:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
             to_text_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# TestToTodoVertex
+# ---------------------------------------------------------------------------
+
+
+class TestToTodoVertex:
+    """Tests for to_todo_vertex and the TODO_STATE_BY_ROAM_STATE boundary map."""
+
+    def test_returns_guffin_todo_vertex_type(self) -> None:
+        """Test that to_todo_vertex produces a vertex with type TODO."""
+        node = _make_text(string="{{[[TODO]]}} an open item")
+        assert to_todo_vertex(node, _node_tree(node)).vertex_type is VertexType.TODO
+
+    def test_open_marker_yields_todo_state(self) -> None:
+        """Test that a {{[[TODO]]}} marker yields TodoState.TODO."""
+        node = _make_text(string="{{[[TODO]]}} an open item")
+        assert to_todo_vertex(node, _node_tree(node)).todo_state is TodoState.TODO
+
+    def test_done_marker_yields_done_state(self) -> None:
+        """Test that a {{[[DONE]]}} marker yields TodoState.DONE."""
+        node = _make_text(string="{{[[DONE]]}} a completed item")
+        assert to_todo_vertex(node, _node_tree(node)).todo_state is TodoState.DONE
+
+    def test_marker_is_stripped_from_text(self) -> None:
+        """Test that the vertex text is the item text with the leading marker stripped."""
+        node = _make_text(string="{{[[TODO]]}} an open item")
+        assert to_todo_vertex(node, _node_tree(node)).text == "an open item"
+
+    def test_marker_alone_yields_empty_text(self) -> None:
+        """Test that a string that is exactly the marker yields an empty item text."""
+        node = _make_text(string="{{[[TODO]]}}")
+        assert to_todo_vertex(node, _node_tree(node)).text == ""
+
+    def test_item_text_is_normalized_to_pandoc_md(self) -> None:
+        """Test that the item text passes through Roam→Pandoc Markdown normalization."""
+        node = _make_text(string="{{[[DONE]]}} finished the __italic__ part")
+        assert to_todo_vertex(node, _node_tree(node)).text == "finished the *italic* part"
+
+    def test_uid_preserved(self) -> None:
+        """Test that the vertex uid matches the source node uid."""
+        node = _make_text(uid="todouid01", string="{{[[TODO]]}} an item")
+        assert to_todo_vertex(node, _node_tree(node)).uid == "todouid01"
+
+    def test_string_without_marker_raises_value_error(self) -> None:
+        """Test that a block string leading with no TODO marker raises ValueError."""
+        node = _make_text(string="just plain text")
+        with pytest.raises(ValueError, match="no TODO marker"):
+            to_todo_vertex(node, _node_tree(node))
+
+    def test_missing_string_raises_value_error(self) -> None:
+        """Test that a node without a string raises ValueError."""
+        node = _make_page()
+        with pytest.raises(ValueError, match="no 'string'"):
+            to_todo_vertex(node, _node_tree(node))
+
+    def test_todo_state_by_roam_state_is_total(self) -> None:
+        """Every Roam TODO marker state maps to a model TodoState."""
+        assert set(TODO_STATE_BY_ROAM_STATE) == set(RoamTodoState)
 
 
 # ---------------------------------------------------------------------------

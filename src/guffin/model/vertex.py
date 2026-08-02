@@ -31,6 +31,8 @@ Public symbols:
 - :class:`HeadingVertex` — normalized (transcribed) form of a Roam Heading block node.
 - :class:`TextVertex` — normalized (transcribed) form of a plain-text Roam Block
   node.
+- :class:`TodoState` — the two states of a TODO item (``TODO`` open, ``DONE`` completed).
+- :class:`TodoVertex` — normalized (transcribed) form of a Roam TODO item block node.
 - :class:`ImageVertex` — normalized (transcribed) form of a Roam Firestore image block
   node.
 - :class:`PdfVertex` — normalized (transcribed) form of a Roam Firestore PDF block node.
@@ -43,7 +45,7 @@ Public symbols:
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
 - :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
 - :class:`PageEmbedVertex` — normalized (transcribed) form of a Roam page embed node.
-- :data:`Vertex` — union of all eleven concrete vertex types.
+- :data:`Vertex` — union of all twelve concrete vertex types.
 - :data:`AssetVertex` — union of the asset-bearing vertex types
   (:class:`ImageVertex` | :class:`PdfVertex`).
 - :data:`EmbedVertex` — union of the transcluding vertex types
@@ -88,6 +90,9 @@ class VertexType(StrEnum):
             present; ``:block/string`` is absent.
         TEXT: Normalized form of a Roam *Block* node that has no
             ``heading`` property — i.e. normal body text.
+        TODO: Normalized form of a Roam *Block* node whose ``:block/string``
+            leads with a Roam TODO marker (``{{[[TODO]]}}`` / ``{{[[DONE]]}}``) —
+            a checkbox item whose state the marker's keyword names.
         HEADING: Normalized form of a Roam *Block* node that carries a
             ``heading`` property (value 1, 2, or 3).
         IMAGE: Normalized form of a Roam *Block* node whose
@@ -117,6 +122,7 @@ class VertexType(StrEnum):
 
     PAGE = "guffin/page"
     TEXT = "guffin/text"
+    TODO = "guffin/todo"
     HEADING = "guffin/heading"
     IMAGE = "guffin/image"
     PDF = "guffin/pdf"
@@ -144,10 +150,10 @@ strings during transcription.
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
-    """Shared fields inherited by all eleven concrete vertex types.
+    """Shared fields inherited by all twelve concrete vertex types.
 
     Not instantiated directly — use :class:`PageVertex`, :class:`HeadingVertex`,
-    :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
+    :class:`TextVertex`, :class:`TodoVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
     :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`QuoteBlockVertex`,
     :class:`TableVertex`, :class:`BlockEmbedVertex`, or :class:`PageEmbedVertex`.
 
@@ -259,6 +265,48 @@ class TextVertex(_BaseVertex[Literal[VertexType.TEXT]]):
         description="Always VertexType.TEXT (serialized as 'vertex-type').",
     )
     text: str = Field(..., description="Block string from the source node's string field.")
+
+
+class TodoState(StrEnum):
+    """State of a TODO item.
+
+    Attributes:
+        TODO: The item is open (unchecked).
+        DONE: The item is completed (checked).
+    """
+
+    TODO = "todo"
+    DONE = "done"
+
+
+class TodoVertex(_BaseVertex[Literal[VertexType.TODO]]):
+    """Normalized (transcribed) form of a Roam TODO item block node.
+
+    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
+    ``:block/string`` leading with a Roam TODO marker (``{{[[TODO]]}}`` /
+    ``{{[[DONE]]}}``).  The marker is stripped: its keyword becomes
+    :attr:`todo_state` and the remaining item text becomes :attr:`text`.
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.TODO`.
+            Serialized as ``'vertex-type'``.
+        todo_state: The item's state — :attr:`TodoState.TODO` (open) or
+            :attr:`TodoState.DONE` (completed).
+            Serialized as ``'todo-state'``.
+        text: The item text — the block string with its leading marker stripped.
+    """
+
+    vertex_type: Literal[VertexType.TODO] = Field(
+        default=VertexType.TODO,
+        serialization_alias="vertex-type",
+        description="Always VertexType.TODO (serialized as 'vertex-type').",
+    )
+    todo_state: TodoState = Field(
+        ...,
+        serialization_alias="todo-state",
+        description="The item's state: open (TODO) or completed (DONE).",
+    )
+    text: str = Field(..., description="The item text, with the leading TODO marker stripped.")
 
 
 class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
@@ -589,6 +637,7 @@ type Vertex = (
     PageVertex
     | HeadingVertex
     | TextVertex
+    | TodoVertex
     | ImageVertex
     | PdfVertex
     | CalloutVertex
@@ -598,7 +647,7 @@ type Vertex = (
     | BlockEmbedVertex
     | PageEmbedVertex
 )
-"""Union of all eleven concrete, normalized vertex types.
+"""Union of all twelve concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
@@ -641,9 +690,9 @@ vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discri
 """Pydantic :class:`~pydantic.TypeAdapter` for validating a raw dict into the correct :data:`Vertex` subtype.
 
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
-:class:`HeadingVertex`, :class:`TextVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
-:class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`QuoteBlockVertex`, :class:`TableVertex`,
-:class:`BlockEmbedVertex`, and :class:`PageEmbedVertex`.
+:class:`HeadingVertex`, :class:`TextVertex`, :class:`TodoVertex`, :class:`ImageVertex`,
+:class:`PdfVertex`, :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`QuoteBlockVertex`,
+:class:`TableVertex`, :class:`BlockEmbedVertex`, and :class:`PageEmbedVertex`.
 
 Example::
 
