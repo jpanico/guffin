@@ -30,7 +30,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLinkKind
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
 from guffin.roam.better_bullet import BetterBulletProvenance, BetterBulletType
-from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
+from guffin.roam.markdown import ROAM_NATIVE_TABLE_RAW_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator
@@ -1347,7 +1347,7 @@ def _make_table_root(
     return RoamNode(
         uid=uid,
         id=node_id,
-        string=ROAM_NATIVE_TABLE_MARKER,
+        string=ROAM_NATIVE_TABLE_RAW_MARKER,
         parents=[IdObject(id=1)],
         page=IdObject(id=1),
         children=[IdObject(id=rid) for rid in row_ids],
@@ -1437,7 +1437,7 @@ class TestToTableVertex:
         root = RoamNode(
             uid="tabluid01",
             id=10,
-            string=ROAM_NATIVE_TABLE_MARKER,
+            string=ROAM_NATIVE_TABLE_RAW_MARKER,
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
         )

@@ -4,7 +4,7 @@ import pytest
 from conftest import article1_node_tree
 
 from guffin.common.validation import ValidationError
-from guffin.roam.markdown import ROAM_NATIVE_TABLE_MARKER
+from guffin.roam.markdown import ROAM_NATIVE_TABLE_RAW_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import (
     all_children_present,
@@ -816,7 +816,7 @@ def _make_table_root(uid: str, node_id: int, row_ids: list[int]) -> RoamNode:
     return RoamNode(
         uid=uid,
         id=node_id,
-        string=ROAM_NATIVE_TABLE_MARKER,
+        string=ROAM_NATIVE_TABLE_RAW_MARKER,
         parents=[IdObject(id=1)],
         page=IdObject(id=1),
         children=[IdObject(id=rid) for rid in row_ids],
@@ -924,7 +924,7 @@ class TestToTable:
         root = RoamNode(
             uid="tabluid01",
             id=10,
-            string=ROAM_NATIVE_TABLE_MARKER,
+            string=ROAM_NATIVE_TABLE_RAW_MARKER,
             parents=[IdObject(id=1)],
             page=IdObject(id=1),
         )

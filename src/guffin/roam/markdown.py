@@ -26,8 +26,9 @@ Public symbols:
   :func:`firestore_url_file_name` — decode the original filename from a Firestore storage URL.
 - **PDF-embed accessor**: :func:`pdf_embed_url` — extract the Cloud Firestore URL from the first
   PDF component in a block string.
-- **Table marker**: :data:`ROAM_NATIVE_TABLE_MARKER` — the canonical block string identifying a Roam
-  native table block; :data:`ROAM_NATIVE_TABLE_MARKERS` — every recognised spelling of the marker
+- **Table marker**: :data:`ROAM_NATIVE_TABLE_RAW_MARKER` — the canonical block string identifying a Roam
+  native table block; :data:`ROAM_NATIVE_TABLE_REF_MARKER` — the page-reference spelling of the marker;
+  :data:`ROAM_NATIVE_TABLE_MARKERS` — every recognised spelling of the marker
   (``{{table}}`` and ``{{[[table]]}}``).
 """
 
@@ -39,7 +40,7 @@ from pydantic import validate_call
 
 from guffin.roam.primitives import SYNTHETIC_UID_PATTERN
 
-ROAM_NATIVE_TABLE_MARKER: Final[str] = "{{table}}"
+ROAM_NATIVE_TABLE_RAW_MARKER: Final[str] = "{{table}}"
 """The canonical block string identifying a Roam native table block.
 
 A block whose :attr:`~guffin.roam.node.RoamNode.string` (after stripping surrounding
@@ -47,11 +48,21 @@ whitespace) is one of :data:`ROAM_NATIVE_TABLE_MARKERS` is a Roam native table c
 its child blocks form the rows, and each child's children are the cells.
 """
 
-ROAM_NATIVE_TABLE_MARKERS: Final[frozenset[str]] = frozenset({ROAM_NATIVE_TABLE_MARKER, "{{[[table]]}}"})
+ROAM_NATIVE_TABLE_REF_MARKER: Final[str] = "{{[[table]]}}"
+"""The page-reference spelling of the Roam native table marker.
+
+Equivalent to :data:`ROAM_NATIVE_TABLE_RAW_MARKER`, with the component name written as a Roam
+page reference (``[[table]]``) rather than bare text.
+"""
+
+ROAM_NATIVE_TABLE_MARKERS: Final[frozenset[str]] = frozenset(
+    {ROAM_NATIVE_TABLE_RAW_MARKER, ROAM_NATIVE_TABLE_REF_MARKER}
+)
 """Every recognised spelling of the Roam native table marker.
 
-Roam writes the component as either the bare :data:`ROAM_NATIVE_TABLE_MARKER` form
-(``{{table}}``) or the page-reference form (``{{[[table]]}}``); the two are equivalent.
+Roam writes the component as either the bare :data:`ROAM_NATIVE_TABLE_RAW_MARKER` form
+(``{{table}}``) or the page-reference :data:`ROAM_NATIVE_TABLE_REF_MARKER` form
+(``{{[[table]]}}``); the two are equivalent.
 """
 
 IMAGE_LINK_RE: Final[regex.Pattern[str]] = regex.compile(
