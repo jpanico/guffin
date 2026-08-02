@@ -221,8 +221,10 @@
 - block 3
   - block 3.1
     - block 3.1.1
-      - {{TODO}} a short <span style="text-decoration: underline; color: orange">open todo</span>
-      - {{DONE}} a short <span style="text-decoration: underline; color: orange">closed todo</span>
+      - {{TODO}} a short <span style="text-decoration: underline; color: orange">ref open todo</span>
+      - {{TODO}} a short <span style="text-decoration: underline; color: orange">raw open todo</span>
+      - {{DONE}} a short <span style="text-decoration: underline; color: orange">ref closed todo</span>
+      - {{DONE}} a short <span style="text-decoration: underline; color: orange">raw closed todo</span>
   - block 3.2
     > [!NOTE]
     > **This is the callout title**

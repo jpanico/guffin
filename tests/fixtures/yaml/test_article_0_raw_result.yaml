@@ -180,10 +180,25 @@
     order: 1
     page:
       id: 11137
+- - string: '{{DONE}} a short #c:ORANGE __raw closed todo__'
+    id: 15783
+    uid: ZrAnxmq6D
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 11154
+    - id: 11156
+    order: 3
+    page:
+      id: 11137
+    refs:
+    - id: 11454
 - - string: block 3.1.1
     children:
     - id: 15780
     - id: 15781
+    - id: 15782
+    - id: 15783
     id: 11156
     uid: g9mXrLNQd
     parents:
@@ -530,7 +545,20 @@
     order: 0
     page:
       id: 329
-- - string: '{{[[TODO]]}} a short #c:ORANGE __open todo__'
+- - string: '{{TODO}} a short #c:ORANGE __raw open todo__'
+    id: 15782
+    uid: mp9g9eBQ3
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 11154
+    - id: 11156
+    order: 1
+    page:
+      id: 11137
+    refs:
+    - id: 11454
+- - string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
     id: 15780
     uid: HJu1OIKOr
     parents:
@@ -556,7 +584,7 @@
     order: 0
     page:
       id: 11137
-- - string: '{{[[DONE]]}} a short #c:ORANGE __closed todo__'
+- - string: '{{[[DONE]]}} a short #c:ORANGE __ref closed todo__'
     id: 15781
     uid: R6Dm4usgJ
     parents:
@@ -564,7 +592,7 @@
     - id: 11147
     - id: 11154
     - id: 11156
-    order: 1
+    order: 2
     page:
       id: 11137
     refs:
