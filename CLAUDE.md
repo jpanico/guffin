@@ -330,6 +330,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `docs/render-pipeline.md` — the render layer (model → output four-phase pipeline: prepare → build → convert → post-process) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`
 - `docs/publishing-semantics.md` — the format-independent `PublishingSemantics` vocabulary (the semantic identity of a document's pieces) and how it maps to each output format; companion to `render-pipeline.md`
 - `docs/pdf-render.md` — the `pdf-render` tag cell by cell: what each `PdfRenderPlacement` member renders in each output format, whether the PDF file travels with the output, and the verified format capabilities behind those cells
+- `docs/quarto-borrowing-analysis.md` — design backlog from a 2026-08 examination of Quarto: concepts worth borrowing (typed cross-references, render profiles, conditional content, author-facing theme declaration, toolchain pinning/vendoring), what the comparison validates, and what was deliberately not borrowed
 - `docs/server-mode.md` — **server mode** (remote RPC-like invocation of `dump-roam-tree`/`export-roam-tree`, the `server/` sub-package + `guffin-server`): ratified protocol (HTTP command endpoints — JSON Request in, streamed binary response out), API design, in-process invocation design, and the decision log; Phase 1 (synchronous v1) implemented, phases 2–3 planned
 
 ## Environment Variables
