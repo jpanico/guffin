@@ -35,6 +35,7 @@ from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree as RichTree
 
+from guffin.common.filenames import url_file_name
 from guffin.common.geometry import ImageSize
 from guffin.common.table import Table as GuffinTable
 from guffin.common.table import TableStyle
@@ -363,7 +364,7 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
                 return Text(f"text={vertex.quote}")
             return Text("text=N/A")
         case "file_name":
-            return Text(f"file_name={vertex.file_name}" if is_asset_vertex(vertex) else "file_name=N/A")
+            return Text(f"file_name={url_file_name(vertex.source)}" if is_asset_vertex(vertex) else "file_name=N/A")
         case "media_type":
             return Text(
                 f"media_type={vertex.media_type.value}" if isinstance(vertex, ImageVertex) else "media_type=N/A"
@@ -516,7 +517,7 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
         case VertexType.PDF:
             title_content = (
                 f"[bold orange1]{markup_escape('PDF')}[/bold orange1]"
-                f" [bold #00aa00]{markup_escape(vertex.file_name or '<firestore_url>')}[/bold #00aa00]"
+                f" [bold #00aa00]{markup_escape(url_file_name(vertex.source) or '<firestore_url>')}[/bold #00aa00]"
             )
         case VertexType.CALLOUT:
             title_content = (

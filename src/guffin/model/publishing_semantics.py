@@ -84,6 +84,7 @@ from typing import Final
 import regex
 from pydantic import ConfigDict, Field, field_validator, validate_call
 
+from guffin.common.filenames import url_file_name
 from guffin.common.programming_language import CodeLanguageId, canonical_language_id
 from guffin.common.w3cdtf_date import W3cdtfDate, verified_w3cdtf_date
 from guffin.model.attribute import (
@@ -831,9 +832,9 @@ def _vertex_effective_title(vertex: Vertex, tree: VertexTree) -> str:
         case QuoteBlockVertex():
             return vertex.quote
         case ImageVertex():
-            return vertex.alt_text or vertex.file_name or str(vertex.source)
+            return vertex.alt_text or url_file_name(vertex.source) or str(vertex.source)
         case PdfVertex():
-            return vertex.file_name or str(vertex.source)
+            return url_file_name(vertex.source) or str(vertex.source)
         case CalloutVertex():
             return vertex.title or vertex.body
         case CodeBlockVertex():

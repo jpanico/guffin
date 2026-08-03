@@ -356,7 +356,6 @@
 - vertex_type: guffin/image
   uid: ZVvaN-_mA
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FDbVuSC4qn6.jpeg.enc?alt=media&token=e87ba4b9-8faf-4243-99d6-4757d99116d6
-  file_name: DbVuSC4qn6.jpeg.enc
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text
@@ -414,7 +413,6 @@
 - vertex_type: guffin/image
   uid: GJ-Y_OXdC
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FU73wJbltGF.jpeg.enc?alt=media&token=f7203ec3-c64d-4e35-a5d9-49f8fc4288ff
-  file_name: U73wJbltGF.jpeg.enc
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/callout
@@ -726,7 +724,6 @@
 - vertex_type: guffin/image
   uid: -cStchkqq
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FYT8W1P6jTQ.jpeg.enc?alt=media&token=24628986-cdbd-452e-a434-ab236c054db3
-  file_name: YT8W1P6jTQ.jpeg.enc
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text

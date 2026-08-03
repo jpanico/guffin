@@ -210,25 +210,6 @@
   props: null
   title: null
   attrs: null
-- uid: ZrAnxmq6D
-  id: 15783
-  string: '{{DONE}} a short #c:ORANGE __raw closed todo__'
-  order: 3
-  heading: null
-  children: null
-  refs:
-  - id: 11454
-  page:
-    id: 11137
-  children_view_type: null
-  parents:
-  - id: 11137
-  - id: 11147
-  - id: 11154
-  - id: 11156
-  props: null
-  title: null
-  attrs: null
 - uid: g9mXrLNQd
   id: 11156
   string: block 3.1.1
@@ -237,8 +218,6 @@
   children:
   - id: 15780
   - id: 15781
-  - id: 15782
-  - id: 15783
   refs: null
   page:
     id: 11137
@@ -698,25 +677,6 @@
   props: null
   title: null
   attrs: null
-- uid: mp9g9eBQ3
-  id: 15782
-  string: '{{TODO}} a short #c:ORANGE __raw open todo__'
-  order: 1
-  heading: null
-  children: null
-  refs:
-  - id: 11454
-  page:
-    id: 11137
-  children_view_type: null
-  parents:
-  - id: 11137
-  - id: 11147
-  - id: 11154
-  - id: 11156
-  props: null
-  title: null
-  attrs: null
 - uid: HJu1OIKOr
   id: 15780
   string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
@@ -759,7 +719,7 @@
 - uid: R6Dm4usgJ
   id: 15781
   string: '{{[[DONE]]}} a short #c:ORANGE __ref closed todo__'
-  order: 2
+  order: 1
   heading: null
   children: null
   refs:

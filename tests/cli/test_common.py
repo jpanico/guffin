@@ -111,23 +111,22 @@ class TestDeduceOutFileStem:
         assert deduce_out_file_stem(_tree(image), ProjectType.ARTICLE) == "A_flower.article"
 
     def test_image_falls_back_to_file_name(self) -> None:
-        """An image root falls back to its file name when alt text is absent."""
+        """An image root falls back to its source URL's filename when alt text is absent."""
         image = ImageVertex(
             uid="image0001",
             source=_IMAGE_URL,  # type: ignore[arg-type]
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
-            file_name="photo.jpeg",
         )
         assert deduce_out_file_stem(_tree(image), ProjectType.ARTICLE) == "photo.jpeg.article"
 
     def test_image_falls_back_to_source(self) -> None:
-        """An image root falls back to its source URL when alt text and file name are absent."""
+        """An image root falls back to its source URL when it has no alt text and the URL encodes no filename."""
         # A short URL so textwrap.shorten leaves it intact (a long URL is one unbreakable
         # "word" and would collapse to the ellipsis placeholder).
         image = ImageVertex(
             uid="image0001",
-            source="http://example.com/p.jpg",  # type: ignore[arg-type]
+            source="http://example.com/",  # type: ignore[arg-type]
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
         )

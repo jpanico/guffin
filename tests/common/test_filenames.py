@@ -1,6 +1,8 @@
 """Tests for guffin.common.filenames."""
 
-from guffin.common.filenames import shell_safe_filename
+from pydantic import HttpUrl
+
+from guffin.common.filenames import shell_safe_filename, url_file_name
 
 
 class TestShellSafeFilename:
@@ -65,3 +67,31 @@ class TestShellSafeFilename:
     def test_handles_leading_trailing_special_chars(self) -> None:
         """Test that leading and trailing special characters are stripped."""
         assert shell_safe_filename("!!!filename###.txt") == "filename.txt"
+
+
+class TestUrlFileName:
+    """Tests for url_file_name()."""
+
+    def test_reads_last_path_segment(self) -> None:
+        """A plain URL path yields its last segment."""
+        assert url_file_name(HttpUrl("https://example.com/docs/paper.pdf")) == "paper.pdf"
+
+    def test_decodes_percent_encoded_segment_to_its_basename(self) -> None:
+        """A segment percent-encoding a whole path (%2F) yields only its final name."""
+        url = HttpUrl(
+            "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com"
+            "/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=abc123"
+        )
+        assert url_file_name(url) == "fJoSdh65Ry.pkpass.enc"
+
+    def test_query_string_never_contributes(self) -> None:
+        """The query string is not part of the filename."""
+        assert url_file_name(HttpUrl("https://example.com/imgs/photo.jpeg?alt=media&token=abc123")) == "photo.jpeg"
+
+    def test_none_when_path_ends_in_separator(self) -> None:
+        """A URL path ending in a separator encodes no filename."""
+        assert url_file_name(HttpUrl("https://example.com/docs/")) is None
+
+    def test_none_when_bare_host(self) -> None:
+        """A bare-host URL normalizes to the root path, which encodes no filename."""
+        assert url_file_name(HttpUrl("https://example.com")) is None

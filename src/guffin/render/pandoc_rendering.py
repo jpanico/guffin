@@ -102,6 +102,7 @@ from typing import Final
 import panflute as pf  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
+from guffin.common.filenames import url_file_name
 from guffin.common.geometry import ImageSize
 from guffin.common.github_file_ref import GitHubFileRef, blob_github_url
 from guffin.common.markdown import contains_fenced_code_block, hard_broken_markdown
@@ -1089,6 +1090,7 @@ def _image_vertex_to_blocks(
         A :class:`~panflute.Para` wrapping either an embedded image or a
         hyperlink fallback.
     """
+    file_name: Final[str | None] = url_file_name(vertex.source)
     img_path: Path | None = asset_files.get(vertex.uid)
     if img_path is not None:
         alt: Final[list[pf.Inline]] = (
@@ -1101,10 +1103,10 @@ def _image_vertex_to_blocks(
                 attrs["width"] = str(size.width)
             if size.height is not None:
                 attrs["height"] = str(size.height)
-        img: Final[pf.Image] = pf.Image(*alt, url=str(img_path), title=vertex.file_name or "", attributes=attrs)
+        img: Final[pf.Image] = pf.Image(*alt, url=str(img_path), title=file_name or "", attributes=attrs)
         return [pf.Para(img)]
     else:
-        label_text: Final[str] = vertex.alt_text or vertex.file_name or str(vertex.source)
+        label_text: Final[str] = vertex.alt_text or file_name or str(vertex.source)
         label: Final[list[pf.Inline]] = inline_map.get(label_text, [pf.Str(label_text)])
         link: Final[pf.Link] = pf.Link(*label, url=str(vertex.source))
         logger.debug("Image uid=%r has no local asset file; rendering as link to its remote source", vertex.uid)
@@ -1141,9 +1143,8 @@ def _pdf_vertex_to_blocks(
         A single-element list containing the :class:`~panflute.Para`-wrapped link.
     """
     # Roam encrypts hosted assets with a trailing .enc extension; strip it for the display label.
-    storage_label: Final[str] = (
-        vertex.file_name.removesuffix(".enc") if vertex.file_name is not None else str(vertex.source)
-    )
+    file_name: Final[str | None] = url_file_name(vertex.source)
+    storage_label: Final[str] = file_name.removesuffix(".enc") if file_name is not None else str(vertex.source)
     label_text: Final[str] = vertex.original_file_name or storage_label
     pdf_path: Final[Path | None] = asset_files.get(vertex.uid)
     if pdf_path is None:

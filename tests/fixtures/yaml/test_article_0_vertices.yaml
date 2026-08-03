@@ -332,9 +332,7 @@
   uid: g9mXrLNQd
   children:
   - HJu1OIKOr
-  - mp9g9eBQ3
   - R6Dm4usgJ
-  - ZrAnxmq6D
   text: block 3.1.1
 - vertex_type: guffin/todo
   uid: HJu1OIKOr
@@ -343,11 +341,6 @@
   - iF2Ey_unj
   todo_state: todo
   text: a short [ ref open todo]{underline-color="orange"}
-- vertex_type: guffin/text
-  uid: mp9g9eBQ3
-  refs:
-  - iF2Ey_unj
-  text: '{{TODO}} a short [raw open todo]{underline-color="orange"}'
 - vertex_type: guffin/todo
   uid: R6Dm4usgJ
   refs:
@@ -355,11 +348,6 @@
   - iF2Ey_unj
   todo_state: done
   text: a short [ref closed todo]{underline-color="orange"}
-- vertex_type: guffin/text
-  uid: ZrAnxmq6D
-  refs:
-  - iF2Ey_unj
-  text: '{{DONE}} a short [raw closed todo]{underline-color="orange"}'
 - vertex_type: guffin/text
   uid: 5N_QAEc3C
   children:

@@ -323,9 +323,7 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
             (``![<alt_text>](<url>)``), stripped of leading/trailing whitespace.
             ``None`` when the alt text is absent or empty.
             Serialized as ``'alt-text'``.
-        file_name: Original filename decoded from *source*. ``None`` if the
-            filename cannot be extracted.
-        media_type: IANA media type inferred from *file_name*'s extension.
+        media_type: IANA media type inferred from the *source* URL filename's extension.
             Serialized as ``'media-type'``.
         scaled_image_size: Pixel dimensions from the source node's ``image-size`` block
             prop. Both axes are ``None`` when no ``image-size`` prop is recorded.
@@ -346,11 +344,10 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
         serialization_alias="alt-text",
         description="Alt text from the Markdown image link, stripped. None when absent or empty.",
     )
-    file_name: str | None = Field(default=None, description="Original filename decoded from source.")
     media_type: MediaType = Field(
         ...,
         serialization_alias="media-type",
-        description="IANA media type inferred from file_name's extension (serialized as 'media-type').",
+        description="IANA media type inferred from the source URL filename's extension (serialized as 'media-type').",
     )
     scaled_image_size: ImageSize = Field(
         ...,
@@ -393,8 +390,6 @@ class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
         vertex_type: Always :attr:`~VertexType.PDF`.
             Serialized as ``'vertex-type'``.
         source: Cloud Firestore storage URL for the PDF file.
-        file_name: Filename decoded from *source* (an opaque storage key). ``None`` if the
-            filename cannot be extracted.
         original_file_name: The filename the PDF was originally uploaded under. ``None``
             when unknown (populated by asset fetching, which reads it from the asset
             metadata rather than the storage URL).
@@ -407,7 +402,6 @@ class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
         description="Always VertexType.PDF (serialized as 'vertex-type').",
     )
     source: HttpUrl = Field(..., description="Cloud Firestore storage URL for the PDF file.")
-    file_name: str | None = Field(default=None, description="Filename decoded from source (an opaque storage key).")
     original_file_name: str | None = Field(
         default=None,
         serialization_alias="original-file-name",
@@ -657,9 +651,9 @@ type AssetVertex = ImageVertex | PdfVertex
 """Union of the asset-bearing vertex types.
 
 An asset-bearing vertex's content is not inline text but a file hosted in
-Cloud Firestore storage: every member carries a ``source`` storage URL and a
-``file_name`` decoded from it.  Use :func:`is_asset_vertex` to classify (and
-statically narrow) a :data:`Vertex`.
+Cloud Firestore storage: every member carries a ``source`` storage URL
+addressing it.  Use :func:`is_asset_vertex` to classify (and statically
+narrow) a :data:`Vertex`.
 
 This union is the single source of truth for asset-bearing-ness; the runtime
 classification is derived mechanically from it.

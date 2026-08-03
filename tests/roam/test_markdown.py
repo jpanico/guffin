@@ -13,7 +13,6 @@ from guffin.roam.markdown import (
     PAGE_REF_RE,
     PDF_EMBED_RE,
     TAG_RE,
-    firestore_url_file_name,
     image_link_alt_text,
     image_link_url,
     pdf_embed_url,
@@ -682,36 +681,3 @@ class TestImageLinkAltText:
     def test_none_when_no_image_link(self) -> None:
         """A string with no Firestore image link yields None."""
         assert image_link_alt_text("just some plain text") is None
-
-
-# ---------------------------------------------------------------------------
-# TestFirestoreUrlFileName
-# ---------------------------------------------------------------------------
-
-
-class TestFirestoreUrlFileName:
-    """Tests for firestore_url_file_name."""
-
-    def test_decodes_filename_from_url(self) -> None:
-        """The percent-encoded object path decodes to its last segment."""
-        assert firestore_url_file_name(_FIRESTORE_URL) == "photo.jpeg"
-
-    def test_decodes_nested_path_to_last_segment(self) -> None:
-        """A nested object path decodes to its last segment alone."""
-        url = (
-            "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com"
-            "/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=abc123"
-        )
-        assert firestore_url_file_name(url) == "fJoSdh65Ry.pkpass.enc"
-
-    def test_none_when_no_object_path(self) -> None:
-        """A URL without an /o/ object path segment yields None."""
-        assert firestore_url_file_name("https://firebasestorage.googleapis.com/v0/b/test.appspot.com") is None
-
-    def test_none_for_non_canonical_url(self) -> None:
-        """A non-Firestore URL is not the canonical form, so no filename is read from it."""
-        assert firestore_url_file_name("https://example.com/o/photo.jpeg?alt=media") is None
-
-    def test_none_when_url_has_trailing_text(self) -> None:
-        """The URL must be wholly canonical — trailing text disqualifies it."""
-        assert firestore_url_file_name(f"{_FIRESTORE_URL} and more") is None

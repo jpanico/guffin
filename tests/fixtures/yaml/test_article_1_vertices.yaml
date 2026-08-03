@@ -76,14 +76,12 @@
 - vertex_type: guffin/image
   uid: pfkKREU_Y
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4
-  file_name: mYFuvIq__9.jpeg.enc
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/image
   uid: uj8YolCoE
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0
   alt_text: A flower
-  file_name: _otAwc2B9g.jpeg.enc
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text
@@ -117,7 +115,6 @@
 - vertex_type: guffin/image
   uid: zZG-BfWvs
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
-  file_name: aOC1FnrcwK.jpeg.enc
   media_type: image/jpeg
   scaled_image_size:
     width: 257
@@ -186,7 +183,6 @@
 - vertex_type: guffin/pdf
   uid: pTvGGeTlB
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
-  file_name: u-F9pv-nvn.pdf.enc
 - vertex_type: guffin/heading
   uid: zE0QjA3N9
   children:
@@ -250,4 +246,3 @@
     - kind: literal
       value: inline-native
   source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407
-  file_name: 3IX5aCGhi_.pdf.enc

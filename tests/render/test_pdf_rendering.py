@@ -70,7 +70,6 @@ def _pdf(
     return PdfVertex(
         uid=uid,
         source=url,  # type: ignore[arg-type]
-        file_name="a.pdf.enc",
         original_file_name=original_file_name,
         attribute_assignments=[_INLINE_TAG] if inline else None,
     )
@@ -139,7 +138,6 @@ class TestApplyPdfEmbeds:
             vertex = PdfVertex(
                 uid="pdfuid001",
                 source=_URL_A,  # type: ignore[arg-type]
-                file_name="a.pdf.enc",
                 original_file_name="dummy.pdf",
                 attribute_assignments=[_render_tag(render)],
             )
@@ -288,7 +286,6 @@ class TestAppendixPlacement:
             PdfVertex(
                 uid=uid,
                 source=_URL_A,  # type: ignore[arg-type]
-                file_name="a.pdf.enc",
                 original_file_name="dummy.pdf",
                 attribute_assignments=[_render_tag("appendix-native")],
             )

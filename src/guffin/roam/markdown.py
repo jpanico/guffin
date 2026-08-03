@@ -32,8 +32,6 @@ Public symbols:
   :data:`HIGHLIGHT_DELIMITER` / :data:`STRIKETHROUGH_DELIMITER` — Roam's four inline-styling
   delimiters, declared once and composed into every pattern that spells them;
   :data:`INLINE_STYLE_DELIMITERS` — the four in one tuple.
-- **Firestore-URL accessor**: :func:`firestore_url_file_name` — decode the stored filename from a
-  canonical Cloud Firestore storage URL.
 - **Image-link accessors**: :func:`image_link_url`, :func:`image_link_alt_text` — extract the Cloud
   Firestore URL and the alt text from the first image link in a block string.
 - **PDF-embed accessor**: :func:`pdf_embed_url` — extract the Cloud Firestore URL from the first
@@ -45,7 +43,6 @@ Public symbols:
 """
 
 from typing import Final
-from urllib.parse import unquote
 
 import regex
 from pydantic import validate_call
@@ -94,7 +91,7 @@ Firestore and addresses it with one URL shape::
 - ``object_path`` — the percent-encoded object path.  Roam generates the path segments itself
   (e.g. ``imgs%2Fapp%2F<graph>%2F<uid>.<ext>[.enc]``), so the charset is deliberately tight:
   word characters, percent escapes, dots, and hyphens.  The decoded path's last segment is the
-  asset's stored filename (see :func:`firestore_url_file_name`).
+  asset's stored filename.
 - ``query`` — the access parameters (``alt=media&token=<uuid>``).
 
 The tight charsets make the pattern **self-terminating**: it never overruns a Markdown or Roam
@@ -177,26 +174,6 @@ def image_link_alt_text(string: str) -> str | None:
         return None
     alt: Final[str] = m.group("alt").strip()
     return alt if alt else None
-
-
-@validate_call
-def firestore_url_file_name(firestore_url: str) -> str | None:
-    """Return the filename encoded in a Cloud Firestore storage URL, or ``None``.
-
-    The URL must be wholly the canonical form (:data:`FIRESTORE_URL_PATTERN`); the filename is the
-    last segment of its percent-decoded ``object_path``.
-
-    Args:
-        firestore_url: A candidate Cloud Firestore storage URL string.
-
-    Returns:
-        The decoded filename (e.g. ``"image.png"``), or ``None`` if the URL is not a canonical
-        Cloud Firestore storage URL.
-    """
-    m: Final[regex.Match[str] | None] = FIRESTORE_URL_RE.fullmatch(firestore_url)
-    if m is None:
-        return None
-    return unquote(m.group("object_path")).split("/")[-1]
 
 
 PDF_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(

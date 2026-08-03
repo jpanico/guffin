@@ -60,6 +60,7 @@ from typing import Final, assert_never
 import regex
 from pydantic import HttpUrl, TypeAdapter, validate_call
 
+from guffin.common.filenames import url_file_name
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import FencedCodeBlock, HeadingLevel, parse_fenced_code_block
 from guffin.common.media_type import MediaType
@@ -113,7 +114,6 @@ from guffin.roam.markdown import (
     BLOCK_EMBED_RE,
     PAGE_EMBED_RE,
     TAG_RE,
-    firestore_url_file_name,
     image_link_alt_text,
     image_link_url,
     pdf_embed_url,
@@ -475,7 +475,8 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     firestore_url: Final[str | None] = image_link_url(node.string)
     if firestore_url is None:
         raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firestore URL")
-    file_name: Final[str | None] = firestore_url_file_name(firestore_url)
+    source: Final[HttpUrl] = _url_adapter.validate_python(firestore_url)
+    file_name: Final[str | None] = url_file_name(source)
     if file_name is None:
         raise ValueError(f"RoamNode uid={node.uid!r} filename cannot be extracted from URL {firestore_url!r}")
     # Roam encrypts hosted images with a double .enc extension; strip it to resolve the base media type.
@@ -489,9 +490,8 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
         raise ValueError(f"RoamNode uid={node.uid!r} image_size returned None for an image block")
     return ImageVertex(
         uid=node.uid,
-        source=_url_adapter.validate_python(firestore_url),
+        source=source,
         alt_text=image_link_alt_text(node.string),
-        file_name=file_name,
         media_type=media_type,
         scaled_image_size=size,
         children=_resolve_children(node, tree.id_map),
@@ -527,7 +527,6 @@ def to_pdf_vertex(node: RoamNode, tree: NodeTree) -> PdfVertex:
     return PdfVertex(
         uid=node.uid,
         source=_url_adapter.validate_python(firestore_url),
-        file_name=firestore_url_file_name(firestore_url),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),

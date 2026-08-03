@@ -60,7 +60,6 @@ class TestEpubPdfAppendix:
             PdfVertex(
                 uid=uid,
                 source=_URL,  # type: ignore[arg-type]
-                file_name="a.pdf.enc",
                 original_file_name="dummy.pdf",
                 attribute_assignments=[_appendix_tag()],
             )

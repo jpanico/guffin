@@ -1,3 +1,16 @@
+- - string: type:conclusion
+    id: 15334
+    uid: jFXKHUfAY
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15331
+    - id: 15332
+    - id: 15333
+    order: 0
+    page:
+      id: 5618
 - - string: '[[>]] [[!TIP]] Tip
 
       Optional body via Shift+Enter'
@@ -11,6 +24,19 @@
     refs:
     - id: 5450
     - id: 5464
+- - string: Marker
+    children:
+    - id: 15297
+    id: 15296
+    uid: UMvjq7Fua
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15295
+    order: 0
+    page:
+      id: 5618
 - - string: '> Tip: With “Require a space after marker” ON (default), markers only
       trigger when followed by a visible space/tab/NBSP or end-of-line.'
     id: 5647
@@ -54,6 +80,19 @@
     refs:
     - id: 5306
     - id: 5852
+- - string: '`<-`'
+    children:
+    - id: 15337
+    id: 15336
+    uid: L2fPIXnNm
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15335
+    order: 0
+    page:
+      id: 5618
 - - string: '[[Chapter 7: [[What You See is What it Means]]]]'
     id: 7532
     uid: 1Fiem_-Bb
@@ -114,6 +153,20 @@
     order: 11
     page:
       id: 14489
+- - string: Bullet
+    children:
+    - id: 15298
+    id: 15297
+    uid: HhpmxYi_b
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15295
+    - id: 15296
+    order: 0
+    page:
+      id: 5618
 - - string: '[[The Big Idea/central argument]]'
     id: 5000
     uid: BoL20uTB5
@@ -128,6 +181,19 @@
       id: 4239
     refs:
     - id: 5001
+- - string: '`=`'
+    children:
+    - id: 15301
+    id: 15300
+    uid: ONHTMtcuQ
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15299
+    order: 0
+    page:
+      id: 5618
 - - heading: 2
     string: 3. The Back Matter (The Foundation)
     children:
@@ -155,6 +221,19 @@
     refs:
     - id: 7676
     - id: 8243
+- - string: provenance:chat
+    id: 15374
+    uid: uL37iMEOo
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15375
+    - id: 15376
+    - id: 15377
+    order: 0
+    page:
+      id: 5618
 - - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
       \ TEST DATA – DO NOT REMOVE\n "
     id: 4224
@@ -181,6 +260,20 @@
     order: 2
     page:
       id: 4239
+- - string: '`📪`'
+    children:
+    - id: 15378
+    id: 15379
+    uid: 7c71be4Rd
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15380
+    - id: 15381
+    order: 0
+    page:
+      id: 5618
 - - id: 5456
     uid: Q-T5fKOEq
     title: '!QUOTE'
@@ -189,16 +282,29 @@
     id: 4223
     uid: LBFKibPIj
     title: Test Article
-- - string: Bullet
-    id: 5651
-    uid: _BCMCvPhJ
+- - string: '`📪`'
+    children:
+    - id: 15379
+    id: 15380
+    uid: Xsu_Gmmrx
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5649
-    - id: 5650
+    - id: 15294
+    - id: 15381
     order: 0
+    page:
+      id: 5618
+- - string: Decision / choice
+    children:
+    - id: 15340
+    id: 15339
+    uid: SzhlFrkU9
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 13
     page:
       id: 5618
 - - string: '**Foreword:** Usually written by someone other than the author to provide
@@ -214,6 +320,19 @@
     order: 2
     page:
       id: 4239
+- - string: '`!`'
+    children:
+    - id: 15317
+    id: 15316
+    uid: llcQTtCKR
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15315
+    order: 0
+    page:
+      id: 5618
 - - heading: 2
     string: 2. The Body (The Framework)
     children:
@@ -256,6 +375,20 @@
       id: 4239
     refs:
     - id: 4674
+- - string: '`↤`'
+    children:
+    - id: 15338
+    id: 15337
+    uid: 5ifyjMW6Y
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15335
+    - id: 15336
+    order: 0
+    page:
+      id: 5618
 - - heading: 3
     string: '[[Acknowledgments]]'
     id: 4310
@@ -306,6 +439,70 @@
     order: 4
     page:
       id: 4239
+- - string: Calendar event
+    children:
+    - id: 15364
+    id: 15365
+    uid: U5HUUufJY
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 16
+    page:
+      id: 5618
+- - string: Scanned post
+    children:
+    - id: 15380
+    id: 15381
+    uid: A_79VlTGP
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 20
+    page:
+      id: 5618
+- - string: '`→`'
+    children:
+    - id: 15306
+    id: 15305
+    uid: d8SiIA0Go
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15303
+    - id: 15304
+    order: 0
+    page:
+      id: 5618
+- - string: '`⤷`'
+    children:
+    - id: 15358
+    id: 15357
+    uid: FALowgdWX
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15355
+    - id: 15356
+    order: 0
+    page:
+      id: 5618
+- - string: Meaning
+    children:
+    - id: 15296
+    id: 15295
+    uid: a7YNFwjta
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 0
+    page:
+      id: 5618
 - - string: '**Freshness & rate limits**'
     children:
     - id: 14510
@@ -319,18 +516,6 @@
     order: 7
     page:
       id: 14489
-- - string: '`↤`'
-    id: 5687
-    uid: oVtdQG8i6
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5685
-    - id: 5686
-    order: 0
-    page:
-      id: 5618
 - - string: '[[Chapter I: What is [[Source Code]]?]]'
     id: 4320
     uid: N_dMEQg-Y
@@ -344,18 +529,6 @@
     refs:
     - id: 5288
     - id: 8654
-- - string: '`≠`'
-    id: 5675
-    uid: uE5Cc1dLS
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5673
-    - id: 5674
-    order: 0
-    page:
-      id: 5618
 - - string: The ref segment (after `/blob/`) may be a branch (`main`), a tag, a commit
       SHA, or the qualified `refs/heads/<branch>` / `refs/tags/<tag>` form
     id: 14497
@@ -383,6 +556,19 @@
     id: 5453
     uid: d87aKN4hh
     title: callouts demo
+- - string: type:depends
+    id: 15338
+    uid: UvH4-oqLx
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15335
+    - id: 15336
+    - id: 15337
+    order: 0
+    page:
+      id: 5618
 - - string: '[[GitHub Code]]'
     id: 14817
     uid: eBdHYD6CH
@@ -425,33 +611,71 @@
     - id: 4370
 - - string: '`^`'
     children:
-    - id: 5678
-    id: 5677
-    uid: B4UA05wqF
+    - id: 15329
+    id: 15328
+    uid: d38GJSdDj
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5676
+    - id: 15294
+    - id: 15327
     order: 0
     page:
       id: 5618
-- - string: '`??`'
+- - string: '`⇒`'
     children:
-    - id: 5684
-    id: 5683
-    uid: zULz_y5WG
+    - id: 15310
+    id: 15309
+    uid: LXYs8W6sm
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5682
+    - id: 15294
+    - id: 15307
+    - id: 15308
+    order: 0
+    page:
+      id: 5618
+- - string: type:arrow
+    id: 15306
+    uid: _n7t1q3Jz
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15303
+    - id: 15304
+    - id: 15305
     order: 0
     page:
       id: 5618
 - - id: 11238
     uid: r-BwcT9SY
     title: '!Definition'
+- - string: Phone call
+    children:
+    - id: 15372
+    id: 15373
+    uid: Fy5hJmQx1
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 18
+    page:
+      id: 5618
+- - string: Hypothesis / tentative
+    children:
+    - id: 15352
+    id: 15351
+    uid: 6j6599ABR
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 11
+    page:
+      id: 5618
 - - string: 'title:: "Source Code For Humans"'
     id: 11841
     uid: aVKZ0NyYr
@@ -463,21 +687,60 @@
       id: 11494
     refs:
     - id: 11843
-- - string: Process / ongoing
-    children:
-    - id: 5695
-    id: 5694
-    uid: qdCuaCd_m
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 15
-    page:
-      id: 5618
 - - id: 11845
     uid: ZyUTn2I17
     title: date
+- - string: Result
+    children:
+    - id: 15308
+    id: 15307
+    uid: _2hb3yFon
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 3
+    page:
+      id: 5618
+- - string: Important / warning
+    children:
+    - id: 15316
+    id: 15315
+    uid: qdAdmRlcu
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 5
+    page:
+      id: 5618
+- - string: '`↗`'
+    children:
+    - id: 15346
+    id: 15345
+    uid: 4MVc4O1eb
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15343
+    - id: 15344
+    order: 0
+    page:
+      id: 5618
+- - string: '`∴` (configurable)'
+    children:
+    - id: 15333
+    id: 15332
+    uid: JLok_F_YM
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15331
+    order: 0
+    page:
+      id: 5618
 - - string: 'date:: 2027-01-01'
     id: 11844
     uid: 5qQtO7uF3
@@ -534,33 +797,32 @@
     order: 3
     page:
       id: 14489
-- - string: '`=`'
-    children:
-    - id: 5654
-    id: 5653
-    uid: jDLtdo5HR
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5652
-    order: 0
-    page:
-      id: 5618
 - - id: 11847
     uid: 2_S3ySs7O
     title: identifier
-- - string: '`=>`'
+- - string: '`...`'
     children:
-    - id: 5660
-    id: 5659
-    uid: KfjRLh7m6
+    - id: 15349
+    id: 15348
+    uid: aJGblT-DJ
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5658
+    - id: 15294
+    - id: 15347
     order: 0
+    page:
+      id: 5618
+- - string: Subproof / corollary
+    children:
+    - id: 15356
+    id: 15355
+    uid: 2JBHFYXqH
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 7
     page:
       id: 5618
 - - string: If you can read just your Table of Contents and understand the logical
@@ -595,6 +857,18 @@
     order: 0
     page:
       id: 4239
+- - string: Equal / definition
+    children:
+    - id: 15300
+    id: 15299
+    uid: LDTJZADU2
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 1
+    page:
+      id: 5618
 - - string: The URL must not contain a comma (SmartBlocks splits command arguments
       on commas)
     id: 14498
@@ -659,19 +933,6 @@
     order: 1
     page:
       id: 14489
-- - string: '`->`'
-    children:
-    - id: 5657
-    id: 5656
-    uid: WAgi7UK_T
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5655
-    order: 0
-    page:
-      id: 5618
 - - string: '[[>]] [[!QUESTION]] Question
 
       Optional body via Shift+Enter'
@@ -817,29 +1078,16 @@
     refs:
     - id: 5450
     - id: 5476
-- - string: Right-angle arrow
+- - string: Chat message
     children:
-    - id: 5671
-    id: 5670
-    uid: oZCTywBkn
+    - id: 15376
+    id: 15377
+    uid: wY1mjPqAa
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    order: 7
-    page:
-      id: 5618
-- - string: '`∴` (configurable)'
-    children:
-    - id: 5681
-    id: 5680
-    uid: f-Lafbeay
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5679
-    order: 0
+    - id: 15294
+    order: 19
     page:
       id: 5618
 - - heading: 3
@@ -857,27 +1105,17 @@
     page:
       id: 4239
 - - string: '`↻`'
-    id: 5696
-    uid: NX0_hsJA_
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5694
-    - id: 5695
-    order: 0
-    page:
-      id: 5618
-- - string: Depends on / prerequisite
     children:
-    - id: 5686
-    id: 5685
-    uid: OWVKyWC3q
+    - id: 15350
+    id: 15349
+    uid: izy2jyA4v
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    order: 12
+    - id: 15294
+    - id: 15347
+    - id: 15348
+    order: 0
     page:
       id: 5618
 - - string: '[[Chapter 2: The Semantic Ascent of Programming: Metal -> Mind]]'
@@ -936,6 +1174,20 @@
 - - id: 5450
     uid: OexZiLR_O
     title: '>'
+- - string: '`∴`'
+    children:
+    - id: 15334
+    id: 15333
+    uid: LmitAzm-p
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15331
+    - id: 15332
+    order: 0
+    page:
+      id: 5618
 - - string: 'attribute1:: 5, #[[callouts demo]], #v01'
     id: 11822
     uid: v3WbOVP7U
@@ -990,18 +1242,6 @@
 - - id: 5457
     uid: NdzIKCUiw
     title: '!SUMMARY'
-- - string: Decision / choice
-    children:
-    - id: 5689
-    id: 5688
-    uid: RFzweTcL1
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 13
-    page:
-      id: 5618
 - - string: '**Where the pieces live**'
     children:
     - id: 14521
@@ -1015,6 +1255,19 @@
     order: 10
     page:
       id: 14489
+- - string: type:evidence
+    id: 15330
+    uid: uNYlzT6xx
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15327
+    - id: 15328
+    - id: 15329
+    order: 0
+    page:
+      id: 5618
 - - string: '**Table of Contents (TOC):** The roadmap. In modern non-fiction, chapter
       titles are often descriptive to help readers "skim-value" the book.'
     id: 4277
@@ -1028,6 +1281,19 @@
     order: 1
     page:
       id: 4239
+- - string: type:question
+    id: 15314
+    uid: myAjmoDtp
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15311
+    - id: 15312
+    - id: 15313
+    order: 0
+    page:
+      id: 5618
 - - string: '**Limitations**'
     children:
     - id: 14515
@@ -1057,6 +1323,20 @@
       id: 4239
     refs:
     - id: 4343
+- - string: '`＃`'
+    children:
+    - id: 15382
+    id: 15383
+    uid: b5qO0DIoM
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15384
+    - id: 15385
+    order: 0
+    page:
+      id: 5618
 - - string: '[[What this book covers]]'
     id: 5002
     uid: VSy0JS3Up
@@ -1081,6 +1361,19 @@
     order: 1
     page:
       id: 14489
+- - string: type:plus
+    id: 15322
+    uid: 5ELw1pvLE
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15319
+    - id: 15320
+    - id: 15321
+    order: 0
+    page:
+      id: 5618
 - - heading: 3
     string: '[[Index]]'
     id: 4327
@@ -1093,6 +1386,43 @@
       id: 4239
     refs:
     - id: 4353
+- - string: Idea / addition
+    children:
+    - id: 15320
+    id: 15319
+    uid: kdnp4OQDi
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 6
+    page:
+      id: 5618
+- - string: Process / ongoing
+    children:
+    - id: 15348
+    id: 15347
+    uid: VYt6UFoNX
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 15
+    page:
+      id: 5618
+- - string: '`~`'
+    children:
+    - id: 15325
+    id: 15324
+    uid: hI5GprRpc
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15323
+    order: 0
+    page:
+      id: 5618
 - - string: '[[>]] [[!QUOTE]] Quote
 
       Optional body via Shift+Enter'
@@ -1117,18 +1447,6 @@
     order: 2
     page:
       id: 14489
-- - string: '`∴`'
-    id: 5681
-    uid: KuIjT9oGp
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5679
-    - id: 5680
-    order: 0
-    page:
-      id: 5618
 - - heading: 3
     string: '[[Part II: The Solution]]'
     children:
@@ -1147,6 +1465,32 @@
       id: 4239
     refs:
     - id: 4344
+- - string: '`v>` (configurable)'
+    children:
+    - id: 15357
+    id: 15356
+    uid: NbUNBiF-7
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15355
+    order: 0
+    page:
+      id: 5618
+- - string: provenance:mail
+    id: 15378
+    uid: 2TY09DT9S
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15379
+    - id: 15380
+    - id: 15381
+    order: 0
+    page:
+      id: 5618
 - - string: 'Exports **verify** every sourced block against GitHub by default (`--verify-code-sources`):
       the ref resolves to its tip, the SHA-pinned content is fetched and compared,
       and any drift or local modification aborts the export with a diagnosis (the
@@ -1161,6 +1505,20 @@
     order: 2
     page:
       id: 14489
+- - string: '`=`'
+    children:
+    - id: 15302
+    id: 15301
+    uid: mlYthE4Sk
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15299
+    - id: 15300
+    order: 0
+    page:
+      id: 5618
 - - heading: 3
     string: '[[Cover]]'
     id: 4307
@@ -1187,6 +1545,18 @@
     order: 2
     page:
       id: 4239
+- - string: Conclusion / synthesis
+    children:
+    - id: 15332
+    id: 15331
+    uid: NwikUnfDQ
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 10
+    page:
+      id: 5618
 - - string: Requires the SmartBlocks extension (Roam Depot) and the one-time `roam/js`
       approval; **reload the graph after any code edit** — scripts run at load
     id: 14524
@@ -1197,17 +1567,16 @@
     order: 3
     page:
       id: 14489
-- - string: '`@`'
+- - string: Reference / related
     children:
-    - id: 5693
-    id: 5692
-    uid: Jw_ZxuVxr
+    - id: 15344
+    id: 15343
+    uid: wpwyxOM5E
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5691
-    order: 0
+    - id: 15294
+    order: 14
     page:
       id: 5618
 - - string: '[[>]] [[!NOTE]] Note
@@ -1223,15 +1592,42 @@
     refs:
     - id: 5450
     - id: 5455
-- - string: '`!`'
-    id: 5666
-    uid: v_8oFrt1s
+- - string: Depends on / prerequisite
+    children:
+    - id: 15336
+    id: 15335
+    uid: K3IskPQYL
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5664
-    - id: 5665
+    - id: 15294
+    order: 12
+    page:
+      id: 5618
+- - string: provenance:email
+    id: 15366
+    uid: NSzsBVMsj
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15367
+    - id: 15368
+    - id: 15369
+    order: 0
+    page:
+      id: 5618
+- - string: '`!`'
+    children:
+    - id: 15318
+    id: 15317
+    uid: PGEUxRlC5
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15315
+    - id: 15316
     order: 0
     page:
       id: 5618
@@ -1247,6 +1643,19 @@
       id: 4239
     refs:
     - id: 4349
+- - string: '`|`'
+    children:
+    - id: 15341
+    id: 15340
+    uid: uHvbyJ2PD
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15339
+    order: 0
+    page:
+      id: 5618
 - - string: '[[Opening hook]]'
     id: 4669
     uid: jx1n-CTeJ
@@ -1276,6 +1685,33 @@
       id: 14489
     refs:
     - id: 14470
+- - string: '`💬`'
+    children:
+    - id: 15375
+    id: 15376
+    uid: TkVskgzFW
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15377
+    order: 0
+    page:
+      id: 5618
+- - string: '`◊`'
+    children:
+    - id: 15354
+    id: 15353
+    uid: j5MdicH_O
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15351
+    - id: 15352
+    order: 0
+    page:
+      id: 5618
 - - string: '`x-ratelimit-limit` shows 60 despite a token in [[roam/js/github-code]]
       — reload the graph: `roam/js` edits are inert until reload, and a stale script
       fails silently (API requests simply go unauthenticated). Verify via dev-tools
@@ -1291,18 +1727,6 @@
       id: 14489
     refs:
     - id: 14482
-- - string: '`→`'
-    id: 5657
-    uid: 4YZgl5cYa
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5655
-    - id: 5656
-    order: 0
-    page:
-      id: 5618
 - - string: The snippet exports as an ordinary code block in every format (a `CodeBlockVertex`)
     id: 14518
     uid: npC_Fbazq
@@ -1382,15 +1806,29 @@
 - - id: 2216
     uid: xFhfCd8lJ
     title: table
-- - string: '`=`'
-    id: 5654
-    uid: kPqUpd641
+- - string: type:decision
+    id: 15342
+    uid: RPDlOhmh9
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5652
-    - id: 5653
+    - id: 15294
+    - id: 15339
+    - id: 15340
+    - id: 15341
+    order: 0
+    page:
+      id: 5618
+- - string: type:reference
+    id: 15346
+    uid: LkIj12LSa
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15343
+    - id: 15344
+    - id: 15345
     order: 0
     page:
       id: 5618
@@ -1405,6 +1843,19 @@
     order: 1
     page:
       id: 14489
+- - string: Node prop
+    id: 15298
+    uid: b_v_SFVL1
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15295
+    - id: 15296
+    - id: 15297
+    order: 0
+    page:
+      id: 5618
 - - heading: 2
     string: '[[Body matter]]'
     children:
@@ -1421,21 +1872,22 @@
       id: 4239
     refs:
     - id: 4342
-- - string: '`↗`'
-    id: 5693
-    uid: nlN78fCtg
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5691
-    - id: 5692
-    order: 0
-    page:
-      id: 5618
 - - id: 5466
     uid: jH8aemWDv
     title: '!SUCCESS'
+- - string: type:downRight90
+    id: 15358
+    uid: xunZzeqGR
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15355
+    - id: 15356
+    - id: 15357
+    order: 0
+    page:
+      id: 5618
 - - string: 'The `code-source::` tag is a guffin-domain attribute: it never renders
       as a pill in exported output, and the attribution line (SHA-pinned GitHub link
       + fetch date below the listing) renders only with `--code-sources` (default
@@ -1475,6 +1927,32 @@
     refs:
     - id: 7750
     - id: 8097
+- - string: type:process
+    id: 15350
+    uid: A0mCTstn4
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15347
+    - id: 15348
+    - id: 15349
+    order: 0
+    page:
+      id: 5618
+- - string: '`??`'
+    children:
+    - id: 15353
+    id: 15352
+    uid: RRhafaRK9
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15351
+    order: 0
+    page:
+      id: 5618
 - - heading: 2
     string: 1. The Front Matter (The Entryway)
     children:
@@ -1488,6 +1966,33 @@
     order: 1
     page:
       id: 4239
+- - string: '`@`'
+    children:
+    - id: 15345
+    id: 15344
+    uid: L5LJfk1qx
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15343
+    order: 0
+    page:
+      id: 5618
+- - string: '`⎇`'
+    children:
+    - id: 15342
+    id: 15341
+    uid: jn5uvEGzj
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15339
+    - id: 15340
+    order: 0
+    page:
+      id: 5618
 - - string: 'tags:: #Guffin'
     id: 14816
     uid: kAcv5lnuF
@@ -1539,18 +2044,6 @@
     order: 0
     page:
       id: 4239
-- - string: '`◊`'
-    id: 5684
-    uid: vXoWB-OG_
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5682
-    - id: 5683
-    order: 0
-    page:
-      id: 5618
 - - string: 'Unauthenticated API limit: 60 requests/hour per IP. Resolutions are memoized
       for 60 seconds per repo+ref (the insert workflow''s two commands share one call,
       and refreshing many snippets that track one branch costs a single call), and
@@ -1563,28 +2056,17 @@
     order: 2
     page:
       id: 14489
-- - string: '`⤷`'
-    id: 5672
-    uid: 2B28nP0fN
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5670
-    - id: 5671
-    order: 0
-    page:
-      id: 5618
-- - string: Question
+- - string: '`+`'
     children:
-    - id: 5662
-    id: 5661
-    uid: 8x-Tk-O5b
+    - id: 15321
+    id: 15320
+    uid: 4SwaUlURt
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    order: 4
+    - id: 15294
+    - id: 15319
+    order: 0
     page:
       id: 5618
 - - id: 5468
@@ -1613,31 +2095,6 @@
     order: 4
     page:
       id: 14489
-- - string: '`...`'
-    children:
-    - id: 5696
-    id: 5695
-    uid: DZhDzcotF
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5694
-    order: 0
-    page:
-      id: 5618
-- - string: Equal / definition
-    children:
-    - id: 5653
-    id: 5652
-    uid: dNk4bk1iw
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 1
-    page:
-      id: 5618
 - - id: 5472
     uid: rOZQNUic-
     title: '!FAILURE'
@@ -1655,6 +2112,33 @@
     order: 3
     page:
       id: 4239
+- - string: '`📨`'
+    children:
+    - id: 15366
+    id: 15367
+    uid: HyuTZl3mO
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15368
+    - id: 15369
+    order: 0
+    page:
+      id: 5618
+- - string: '`?`'
+    children:
+    - id: 15313
+    id: 15312
+    uid: kHvwKLDqb
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15311
+    order: 0
+    page:
+      id: 5618
 - - string: How the reader can apply this knowledge or what the implications are for
       the world.
     id: 4321
@@ -1679,18 +2163,6 @@
     refs:
     - id: 5450
     - id: 5466
-- - string: Idea / addition
-    children:
-    - id: 5668
-    id: 5667
-    uid: OZba4Vi3o
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 6
-    page:
-      id: 5618
 - - string: reference
     children:
     - id: 4271
@@ -1740,6 +2212,33 @@
       id: 14489
     refs:
     - id: 14482
+- - string: '`+`'
+    children:
+    - id: 15322
+    id: 15321
+    uid: pBO53gy7f
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15319
+    - id: 15320
+    order: 0
+    page:
+      id: 5618
+- - string: '`=>`'
+    children:
+    - id: 15309
+    id: 15308
+    uid: sap2MryLn
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15307
+    order: 0
+    page:
+      id: 5618
 - - string: '**The Summary/Action Steps:** A recap of what was learned and, if applicable,
       how to use it.'
     id: 4292
@@ -1775,15 +2274,31 @@
     order: 1
     page:
       id: 14489
-- - string: '`⇒`'
-    id: 5660
-    uid: tjv91T19w
+- - string: '`💬`'
+    children:
+    - id: 15374
+    id: 15375
+    uid: x19CfpA0u
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5658
-    - id: 5659
+    - id: 15294
+    - id: 15376
+    - id: 15377
+    order: 0
+    page:
+      id: 5618
+- - string: '`▸`'
+    children:
+    - id: 15330
+    id: 15329
+    uid: A1wXP-f0e
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15327
+    - id: 15328
     order: 0
     page:
       id: 5618
@@ -1814,17 +2329,16 @@
       id: 4239
     refs:
     - id: 5008
-- - string: '`~`'
+- - string: Contrast / however
     children:
-    - id: 5675
-    id: 5674
-    uid: EJ5HIvlOy
+    - id: 15324
+    id: 15323
+    uid: gvvS_eAwD
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5673
-    order: 0
+    - id: 15294
+    order: 8
     page:
       id: 5618
 - - id: 5474
@@ -1834,7 +2348,7 @@
     string: Marker → bullet map (default)
     children:
     - id: 5647
-    - id: 5648
+    - id: 15294
     id: 5646
     uid: ZcfOxAW8t
     parents:
@@ -1847,6 +2361,19 @@
     id: 11243
     uid: HGasV4ras
     title: Guffin
+- - string: provenance:calendar
+    id: 15362
+    uid: 2PBzKUar0
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15363
+    - id: 15364
+    - id: 15365
+    order: 0
+    page:
+      id: 5618
 - - heading: 3
     string: '[[Table of Contents]]'
     id: 4313
@@ -1900,34 +2427,6 @@
       id: 4239
     refs:
     - id: 4676
-- - string: '{{[[table]]}}'
-    children:
-    - id: 5649
-    - id: 5652
-    - id: 5655
-    - id: 5658
-    - id: 5661
-    - id: 5664
-    - id: 5667
-    - id: 5670
-    - id: 5673
-    - id: 5676
-    - id: 5679
-    - id: 5682
-    - id: 5685
-    - id: 5688
-    - id: 5691
-    - id: 5694
-    id: 5648
-    uid: 7grZRDfnd
-    parents:
-    - id: 5618
-    - id: 5646
-    order: 1
-    page:
-      id: 5618
-    refs:
-    - id: 2216
 - - string: '**Choosing the ref: pin vs track**'
     children:
     - id: 14506
@@ -2009,19 +2508,6 @@
     order: 1
     page:
       id: 4239
-- - string: '`|`'
-    children:
-    - id: 5690
-    id: 5689
-    uid: eSRf16Kaj
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5688
-    order: 0
-    page:
-      id: 5618
 - - string: '**Notes & Bibliography:** Essential for building trust and citing sources.'
     id: 4298
     uid: FtV9x0HrE
@@ -2051,36 +2537,38 @@
       id: 4239
     refs:
     - id: 4689
-- - id: 11842
-    uid: MhnnPhnTB
-    title: authors
-- - string: '`?`'
-    id: 5663
-    uid: UhO5FcuMA
+- - string: '`📨`'
+    children:
+    - id: 15367
+    id: 15368
+    uid: 0V7FlcuOC
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5661
-    - id: 5662
+    - id: 15294
+    - id: 15369
+    order: 0
+    page:
+      id: 5618
+- - id: 11842
+    uid: MhnnPhnTB
+    title: authors
+- - string: '`->`'
+    children:
+    - id: 15305
+    id: 15304
+    uid: gJKQXQenV
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15303
     order: 0
     page:
       id: 5618
 - - id: 5464
     uid: o1ZTAD2_S
     title: '!TIP'
-- - string: Leads to
-    children:
-    - id: 5656
-    id: 5655
-    uid: DTLR8M_sl
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 2
-    page:
-      id: 5618
 - - id: 261
     uid: RXwAqq0_T
     title: tags
@@ -2095,30 +2583,30 @@
       id: 11494
     refs:
     - id: 11847
-- - string: Marker
+- - string: '`?`'
     children:
-    - id: 5651
-    id: 5650
-    uid: v3GYZq3tO
+    - id: 15314
+    id: 15313
+    uid: 7O5akyZzX
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5649
+    - id: 15294
+    - id: 15311
+    - id: 15312
     order: 0
     page:
       id: 5618
-- - string: '`<-`'
+- - string: Email
     children:
-    - id: 5687
-    id: 5686
-    uid: TeB_pRnMW
+    - id: 15368
+    id: 15369
+    uid: XD-xW1W-g
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5685
-    order: 0
+    - id: 15294
+    order: 17
     page:
       id: 5618
 - - string: '**Export behavior (guffin)**'
@@ -2133,16 +2621,17 @@
     order: 9
     page:
       id: 14489
-- - string: Conclusion / synthesis
+- - string: '`📞`'
     children:
-    - id: 5680
-    id: 5679
-    uid: WVvR1vklx
+    - id: 15371
+    id: 15372
+    uid: 12wwlhJrR
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    order: 10
+    - id: 15294
+    - id: 15373
+    order: 0
     page:
       id: 5618
 - - string: A fetch first resolves the ref to its tip commit SHA via api.github.com,
@@ -2156,56 +2645,6 @@
     order: 0
     page:
       id: 14489
-- - string: Meaning
-    children:
-    - id: 5650
-    id: 5649
-    uid: zplCdLDOV
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 0
-    page:
-      id: 5618
-- - string: '`!`'
-    children:
-    - id: 5666
-    id: 5665
-    uid: cBp6Inlbg
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5664
-    order: 0
-    page:
-      id: 5618
-- - string: Important / warning
-    children:
-    - id: 5665
-    id: 5664
-    uid: M75pdqK84
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 5
-    page:
-      id: 5618
-- - string: '`?`'
-    children:
-    - id: 5663
-    id: 5662
-    uid: kNK5nidqB
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5661
-    order: 0
-    page:
-      id: 5618
 - - heading: 3
     string: '[[Appendices]]'
     id: 4323
@@ -2268,6 +2707,31 @@
     refs:
     - id: 5450
     - id: 5462
+- - string: type:important
+    id: 15318
+    uid: PKkpKMqy9
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15315
+    - id: 15316
+    - id: 15317
+    order: 0
+    page:
+      id: 5618
+- - string: Evidence / support
+    children:
+    - id: 15328
+    id: 15327
+    uid: 5NLmDhxCj
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 9
+    page:
+      id: 5618
 - - string: 'Type `jj` in any block and pick **GitHub Code** — select with arrow keys
       + Enter (mouse selection can leave the `jj` trigger text behind in the block)
       — or bind a hotkey in the SmartBlocks settings, or place a button: `{{Insert
@@ -2295,6 +2759,30 @@
     order: 1
     page:
       id: 4239
+- - string: Leads to
+    children:
+    - id: 15304
+    id: 15303
+    uid: mQyBn5TBz
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 2
+    page:
+      id: 5618
+- - string: Question
+    children:
+    - id: 15312
+    id: 15311
+    uid: PdYpopMak
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 4
+    page:
+      id: 5618
 - - heading: 3
     string: '[[About the Author]]'
     id: 4587
@@ -2307,19 +2795,6 @@
       id: 4239
     refs:
     - id: 4588
-- - string: '`+`'
-    children:
-    - id: 5669
-    id: 5668
-    uid: uMVC0fvaZ
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5667
-    order: 0
-    page:
-      id: 5618
 - - string: Since you're working on a book project, would you like me to help you
       draft a sample Table of Contents for one of your chapters?
     id: 4302
@@ -2388,30 +2863,6 @@
       id: 4239
     refs:
     - id: 4347
-- - string: '`▸`'
-    id: 5678
-    uid: GV3tAKsLN
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5676
-    - id: 5677
-    order: 0
-    page:
-      id: 5618
-- - string: Reference / related
-    children:
-    - id: 5692
-    id: 5691
-    uid: drw6chE89
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 14
-    page:
-      id: 5618
 - - string: 'tags:: #Guffin,#[[Better Bullets]]'
     id: 11504
     uid: Up9F5BMq9
@@ -2436,18 +2887,6 @@
     order: 0
     page:
       id: 4239
-- - string: Evidence / support
-    children:
-    - id: 5677
-    id: 5676
-    uid: Am1m9Nk_u
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 9
-    page:
-      id: 5618
 - - heading: 3
     string: '[[Glossary]]'
     id: 4324
@@ -2460,6 +2899,34 @@
       id: 4239
     refs:
     - id: 4351
+- - string: '`≠`'
+    children:
+    - id: 15326
+    id: 15325
+    uid: dNE1sVEXO
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15323
+    - id: 15324
+    order: 0
+    page:
+      id: 5618
+- - string: '`📅`'
+    children:
+    - id: 15362
+    id: 15363
+    uid: 0p83mERIF
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15364
+    - id: 15365
+    order: 0
+    page:
+      id: 5618
 - - string: 'Paste a `github.com` blob URL (the file page''s address in the browser)
       at the prompt, optionally ending with a line range: `#L14-L60` (a single line:
       `#L12`)'
@@ -2484,18 +2951,6 @@
       id: 14489
     refs:
     - id: 459
-- - string: '`⎇`'
-    id: 5690
-    uid: keiYVs1oE
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5688
-    - id: 5689
-    order: 0
-    page:
-      id: 5618
 - - string: '**The Hook:** A story, statistic, or provocative question.'
     id: 4289
     uid: GyxQPJZIM
@@ -2509,6 +2964,19 @@
     order: 0
     page:
       id: 4239
+- - string: '`%`'
+    children:
+    - id: 15383
+    id: 15384
+    uid: KC7xeLej3
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15385
+    order: 0
+    page:
+      id: 5618
 - - attrs: []
     string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
@@ -2550,18 +3018,6 @@
     order: 0
     page:
       id: 14489
-- - string: Result
-    children:
-    - id: 5659
-    id: 5658
-    uid: -CgA_YrJD
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 3
-    page:
-      id: 5618
 - - heading: 2
     string: '[[Front Matter]]'
     children:
@@ -2594,16 +3050,18 @@
     order: 0
     page:
       id: 4239
-- - string: Contrast / however
+- - string: '`📞`'
     children:
-    - id: 5674
-    id: 5673
-    uid: f8X4aoVut
+    - id: 15370
+    id: 15371
+    uid: BxslvFOEN
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    order: 8
+    - id: 15294
+    - id: 15372
+    - id: 15373
+    order: 0
     page:
       id: 5618
 - - string: '**Appendices:** Extra material that is too "heavy" for the main chapters
@@ -2646,6 +3104,63 @@
     refs:
     - id: 5450
     - id: 5474
+- - string: Slack
+    children:
+    - id: 15384
+    id: 15385
+    uid: 0cP-rt_CU
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    order: 21
+    page:
+      id: 5618
+- - string: '{{[[table]]}}'
+    children:
+    - id: 15295
+    - id: 15299
+    - id: 15303
+    - id: 15307
+    - id: 15311
+    - id: 15315
+    - id: 15319
+    - id: 15323
+    - id: 15327
+    - id: 15331
+    - id: 15335
+    - id: 15339
+    - id: 15343
+    - id: 15347
+    - id: 15351
+    - id: 15355
+    - id: 15365
+    - id: 15369
+    - id: 15373
+    - id: 15377
+    - id: 15381
+    - id: 15385
+    id: 15294
+    uid: O21FWM7Bt
+    parents:
+    - id: 5618
+    - id: 5646
+    props:
+      table:
+        columns:
+          '0':
+            width: 221
+          '1':
+            width: 158
+          '2':
+            width: 62
+          '3':
+            width: 150
+    order: 1
+    page:
+      id: 5618
+    refs:
+    - id: 2216
 - - heading: 3
     string: '[[Epigraph]]'
     id: 4309
@@ -2658,6 +3173,19 @@
       id: 4239
     refs:
     - id: 4337
+- - string: provenance:phone
+    id: 15370
+    uid: oJyGTK7kx
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15371
+    - id: 15372
+    - id: 15373
+    order: 0
+    page:
+      id: 5618
 - - heading: 3
     string: '[[Afterword]]'
     id: 4430
@@ -2670,6 +3198,19 @@
       id: 4239
     refs:
     - id: 4432
+- - string: '`📅`'
+    children:
+    - id: 15363
+    id: 15364
+    uid: TrdxsAhTx
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15365
+    order: 0
+    page:
+      id: 5618
 - - heading: 3
     string: The Chapter Level
     children:
@@ -2797,16 +3338,16 @@
     refs:
     - id: 321
     - id: 11839
-- - string: '`v>` (configurable)'
-    children:
-    - id: 5672
-    id: 5671
-    uid: BY3Wk3SIh
+- - string: type:contrast
+    id: 15326
+    uid: ehSF3zP03
     parents:
     - id: 5618
     - id: 5646
-    - id: 5648
-    - id: 5670
+    - id: 15294
+    - id: 15323
+    - id: 15324
+    - id: 15325
     order: 0
     page:
       id: 5618
@@ -2851,6 +3392,19 @@
       id: 4239
     refs:
     - id: 4339
+- - string: type:hypothesis
+    id: 15354
+    uid: cI_Md_wft
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15351
+    - id: 15352
+    - id: 15353
+    order: 0
+    page:
+      id: 5618
 - - string: '**Refresh a snippet**'
     children:
     - id: 14501
@@ -2892,6 +3446,19 @@
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
+- - string: type:equal
+    id: 15302
+    uid: GkxDRv-wG
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15299
+    - id: 15300
+    - id: 15301
+    order: 0
+    page:
+      id: 5618
 - - string: '[[Chapter 10: [[Behavior]]]]'
     id: 8228
     uid: xbjh9nQYr
@@ -2905,18 +3472,6 @@
     refs:
     - id: 8099
     - id: 8227
-- - string: '`+`'
-    id: 5669
-    uid: KQJjAUkzT
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    - id: 5667
-    - id: 5668
-    order: 0
-    page:
-      id: 5618
 - - heading: 3
     string: '[[Title Page]]'
     id: 4334
@@ -2929,18 +3484,6 @@
       id: 4239
     refs:
     - id: 4335
-- - string: Hypothesis / tentative
-    children:
-    - id: 5683
-    id: 5682
-    uid: JlT4c3ZtZ
-    parents:
-    - id: 5618
-    - id: 5646
-    - id: 5648
-    order: 11
-    page:
-      id: 5618
 - - id: 11843
     uid: PZyg8sHJZ
     title: title
@@ -2959,6 +3502,19 @@
       id: 4239
     refs:
     - id: 4345
+- - string: provenance:slack
+    id: 15382
+    uid: UFdt_bElp
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15383
+    - id: 15384
+    - id: 15385
+    order: 0
+    page:
+      id: 5618
 - - string: Public repositories only; the token is used solely for the API rate limit
       and is deliberately never sent to raw.githubusercontent.com
     id: 14515
@@ -2969,3 +3525,16 @@
     order: 0
     page:
       id: 14489
+- - string: type:doubleArrow
+    id: 15310
+    uid: OXEQiHxrj
+    parents:
+    - id: 5618
+    - id: 5646
+    - id: 15294
+    - id: 15307
+    - id: 15308
+    - id: 15309
+    order: 0
+    page:
+      id: 5618

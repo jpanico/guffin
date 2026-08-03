@@ -61,14 +61,12 @@ from guffin.transcribe.roam_tree_to_guffin import (
     vertex_type,
 )
 
-# A real Firestore URL whose path yields a predictable file_name and media_type:
-#   file_name  = "photo.jpeg"
-#   media_type = "image/jpeg"
+# A real Firestore URL whose path encodes the filename "photo.jpeg" (media_type "image/jpeg"):
 _FIRESTORE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
 )
 _IMAGE_STRING = f"![A flower]({_FIRESTORE_URL})"
-# A real Firestore URL whose path yields file_name = "paper.pdf.enc":
+# A real Firestore URL whose path encodes the filename "paper.pdf.enc":
 _FIRESTORE_PDF_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/pdfs%2Fpaper.pdf.enc?alt=media&token=abc123"
 )
@@ -430,12 +428,8 @@ class TestToImageVertex:
         node = _make_image(string=f"![]({_FIRESTORE_URL})")
         assert to_image_vertex(node, _node_tree(node)).alt_text is None
 
-    def test_file_name_extracted_from_url(self) -> None:
-        """Test that the filename is percent-decoded from the Firestore URL path."""
-        assert to_image_vertex(_make_image(), _node_tree(_make_image())).file_name == "photo.jpeg"
-
-    def test_media_type_inferred_from_file_name(self) -> None:
-        """Test that the IANA media type is inferred from the extracted filename extension."""
+    def test_media_type_inferred_from_source_url(self) -> None:
+        """Test that the IANA media type is inferred from the source URL filename's extension."""
         assert to_image_vertex(_make_image(), _node_tree(_make_image())).media_type == "image/jpeg"
 
     def test_children_none_when_no_children(self) -> None:
@@ -490,14 +484,10 @@ class TestToPdfVertex:
         v = to_pdf_vertex(_make_pdf(), _node_tree(_make_pdf()))
         assert v.source.host == "firebasestorage.googleapis.com"
 
-    def test_file_name_extracted_from_url(self) -> None:
-        """Test that the filename is percent-decoded from the Firestore URL path."""
-        assert to_pdf_vertex(_make_pdf(), _node_tree(_make_pdf())).file_name == "paper.pdf.enc"
-
     def test_page_reference_form_accepted(self) -> None:
         """Test that the {{[[pdf]]: <url>}} page-reference form transcribes identically."""
         node = _make_pdf(string=f"{{{{[[pdf]]: {_FIRESTORE_PDF_URL}}}}}")
-        assert to_pdf_vertex(node, _node_tree(node)).file_name == "paper.pdf.enc"
+        assert str(to_pdf_vertex(node, _node_tree(node)).source) == _FIRESTORE_PDF_URL
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the PDF node has no children."""
@@ -1137,7 +1127,6 @@ class TestTranscribeNode:
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, ImageVertex)
         assert v.vertex_type is VertexType.IMAGE
-        assert v.file_name == "photo.jpeg"
         assert v.media_type == "image/jpeg"
 
     def test_transcribes_pdf_node(self) -> None:
@@ -1146,7 +1135,7 @@ class TestTranscribeNode:
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, PdfVertex)
         assert v.vertex_type is VertexType.PDF
-        assert v.file_name == "paper.pdf.enc"
+        assert str(v.source) == _FIRESTORE_PDF_URL
 
     def test_transcribes_heading_node(self) -> None:
         """Test that a heading block node is transcribed to a HEADING vertex with correct fields."""
@@ -1213,7 +1202,6 @@ class TestTranscribeNode:
         assert v.uid == "mPCzedeKx"
         assert v.source.host == "firebasestorage.googleapis.com"
         assert v.alt_text == "A flower"
-        assert v.file_name == "-9owRBegJ8.jpeg.enc"
 
 
 # ---------------------------------------------------------------------------

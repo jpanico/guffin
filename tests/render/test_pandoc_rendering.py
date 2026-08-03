@@ -858,13 +858,12 @@ class TestVertexTreeToPandocImageVertex:
         assert isinstance(inline, pf.Link)
         assert _collect_text(inline) == "A flower"
 
-    def test_unfetched_image_link_label_falls_back_to_file_name(self) -> None:
-        """The fallback link label uses file_name when alt_text is absent."""
+    def test_unfetched_image_link_label_falls_back_to_url_file_name(self) -> None:
+        """The fallback link label uses the source URL's filename when alt_text is absent."""
         page = PageVertex(uid="page00001", title="P", children=["img00001a"])
         image = ImageVertex(
             uid="img00001a",
             source=_IMAGE_URL,
-            file_name="photo.jpg",
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
         )
@@ -872,7 +871,7 @@ class TestVertexTreeToPandocImageVertex:
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         inline = list(list(doc.content)[0].content)[0]
         assert isinstance(inline, pf.Link)
-        assert _collect_text(inline) == "photo.jpg"
+        assert _collect_text(inline) == "photo.jpeg"
 
 
 # ---------------------------------------------------------------------------
@@ -987,10 +986,10 @@ class TestVertexTreeToPandocPdfVertex:
     the default BULLET layout the link paragraph renders inside a bulleted list item.
     """
 
-    def _tree(self, file_name: str | None = "paper.pdf.enc") -> VertexTree:
+    def _tree(self, source: HttpUrl = _PDF_URL) -> VertexTree:
         """Build a page-rooted tree containing a single PdfVertex."""
         page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
-        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name=file_name)
+        pdf = PdfVertex(uid="pdf00001a", source=source)
         return VertexTree(tree_vertices=[page, pdf])
 
     @staticmethod
@@ -1019,24 +1018,22 @@ class TestVertexTreeToPandocPdfVertex:
         assert self._bulleted_link(doc).url == str(_PDF_URL)
 
     def test_link_label_strips_encryption_suffix(self) -> None:
-        """The link label is the storage filename with Roam's .enc suffix stripped."""
-        doc, _ = vertex_tree_to_pandoc(self._tree(file_name="paper.pdf.enc"), {}, {})
+        """The link label is the source URL's filename with Roam's .enc suffix stripped."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(source=HttpUrl("https://example.com/pdfs/paper.pdf.enc")), {}, {})
         assert _collect_text(self._bulleted_link(doc)) == "paper.pdf"
 
     def test_link_label_prefers_original_file_name(self) -> None:
         """When the originally uploaded filename is known, it labels the link."""
         page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
-        pdf = PdfVertex(
-            uid="pdf00001a", source=_PDF_URL, file_name="u-F9pv-nvn.pdf.enc", original_file_name="dummy.pdf"
-        )
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, original_file_name="dummy.pdf")
         tree = VertexTree(tree_vertices=[page, pdf])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         assert _collect_text(self._bulleted_link(doc)) == "dummy.pdf"
 
     def test_link_label_falls_back_to_source_url(self) -> None:
-        """When no filename is known, the link label is the source URL."""
-        doc, _ = vertex_tree_to_pandoc(self._tree(file_name=None), {}, {})
-        assert _collect_text(self._bulleted_link(doc)) == str(_PDF_URL)
+        """When the source URL encodes no filename, the link label is the URL itself."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(source=HttpUrl("https://example.com/")), {}, {})
+        assert _collect_text(self._bulleted_link(doc)) == "https://example.com/"
 
     def test_inline_placed_pdf_stays_structural(self) -> None:
         """A pdf-render:: inline embed does not join the sibling list; it stays a standalone Para."""
@@ -1048,7 +1045,7 @@ class TestVertexTreeToPandocPdfVertex:
             values=(LiteralValue(value="inline-native"),),
         )
         page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
-        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc", attribute_assignments=[inline_tag])
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, attribute_assignments=[inline_tag])
         doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, pdf]), {}, {})
         blocks = list(doc.content)
         assert len(blocks) == 1
@@ -1103,7 +1100,6 @@ class TestPdfPlacementStamping:
         pdf = PdfVertex(
             uid="pdf00001a",
             source=_PDF_URL,
-            file_name="paper.pdf.enc",
             attribute_assignments=[_pdf_render_tag("inline-native")] if inline else None,
         )
         return VertexTree(tree_vertices=[page, pdf])
@@ -1115,7 +1111,6 @@ class TestPdfPlacementStamping:
         pdf = PdfVertex(
             uid="pdf00001a",
             source=_PDF_URL,
-            file_name="paper.pdf.enc",
             attribute_assignments=[_pdf_render_tag("inline-native")] if target_inline else None,
         )
         return VertexTree(
@@ -1145,7 +1140,7 @@ class TestPdfPlacementStamping:
     def test_sites_of_one_pdf_stamp_independently(self) -> None:
         """Two reference sites to the same PDF each carry their own resolved placement."""
         page = PageVertex(uid="page00001", title="P", children=["refsite01", "refsite02"])
-        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL)
         tree = VertexTree(
             tree_vertices=[
                 page,
@@ -1174,7 +1169,7 @@ class TestPdfReferenceLayout:
 
     def test_link_placed_reference_renders_exactly_like_direct_embed(self) -> None:
         """A page displaying a PDF via an untagged standalone reference produces the same Doc as a direct embed."""
-        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL)
         direct_page = PageVertex(uid="page00001", title="P", children=["pdf00001a"])
         direct_doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[direct_page, pdf]), {}, {})
         ref_page = PageVertex(uid="page00001", title="P", children=["refsite01"])
@@ -1186,7 +1181,7 @@ class TestPdfReferenceLayout:
         """A link-placed PDF reference coalesces into the same list as its text siblings."""
         page = PageVertex(uid="page00001", title="P", children=["textuid01", "refsite01"])
         text = TextVertex(uid="textuid01", text="a sibling")
-        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL)
         tree = VertexTree(tree_vertices=[page, text, _pdf_site("refsite01", "pdf00001a")], ref_vertices=[pdf])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         blocks = list(doc.content)
@@ -1199,7 +1194,7 @@ class TestPdfReferenceLayout:
         page = PageVertex(uid="page00001", title="P", children=["refsite01"])
         child = TextVertex(uid="childuid1", text="a note about the PDF")
         site = TextVertex(uid="refsite01", text="[paper.pdf](x-guffin:vertex/pdf00001a)", children=["childuid1"])
-        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL)
         tree = VertexTree(tree_vertices=[page, site, child], ref_vertices=[pdf])
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         blocks = list(doc.content)
@@ -1214,7 +1209,7 @@ class TestPdfReferenceLayout:
         """A reference resolving to inline placement flushes the list — its pages replace it in output."""
         page = PageVertex(uid="page00001", title="P", children=["textuid01", "refsite01"])
         text = TextVertex(uid="textuid01", text="a sibling")
-        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL, file_name="paper.pdf.enc")
+        pdf = PdfVertex(uid="pdf00001a", source=_PDF_URL)
         tree = VertexTree(
             tree_vertices=[page, text, _pdf_site("refsite01", "pdf00001a", render="inline-native")], ref_vertices=[pdf]
         )
@@ -1340,7 +1335,7 @@ class TestBuildBlocksCoalescing:
     def test_link_placed_pdf_coalesces_with_text_siblings(self) -> None:
         """A link-placed PDF embed joins the same BulletList as its text siblings."""
         text = TextVertex(uid="txt000001", text="the following block is a PDF")
-        pdf = PdfVertex(uid="pdf000001", source=_PDF_URL, file_name="paper.pdf.enc")
+        pdf = PdfVertex(uid="pdf000001", source=_PDF_URL)
         blocks = build_child_blocks(
             ["txt000001", "pdf000001"],
             VertexTree(tree_vertices=[text, pdf]),
