@@ -2,7 +2,7 @@
 
 Public symbols:
 
-- :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``PLAIN_BLOCK``,
+- :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``TEXT_BLOCK``,
   ``IMAGE_BLOCK``, ``HEADING_BLOCK``, ``CALLOUT_BLOCK``,
   ``CODE_BLOCK``, ``QUOTE_BLOCK``, ``NATIVE_TABLE``, ``TODO_BLOCK``, ``EMBED_BLOCK``,
   ``EMBED_PAGE``, ``PDF_BLOCK``, ``ATTRIBUTE_BLOCK``.
@@ -79,7 +79,7 @@ class NodeType(enum.StrEnum):
     """Entity type of a Roam pull-block.
 
     - **PAGE**: ``title`` is a string, ``string`` is ``None``.
-    - **PLAIN_BLOCK**: ``string`` is set, ``title`` is ``None``, no special Roam properties.
+    - **TEXT_BLOCK**: ``string`` is set, ``title`` is ``None``, no special Roam properties.
     - **HEADING_BLOCK**: ``heading`` (levels 1–3) or ``props['ah-level']`` (levels 4–6) is set; the entire
       block content is the heading text.
     - **IMAGE_BLOCK**: ``string`` is a standalone Markdown image link to a Cloud Firestore URL
@@ -116,7 +116,7 @@ class NodeType(enum.StrEnum):
     """
 
     PAGE = "roam/page"
-    PLAIN_BLOCK = "roam/plain-block"
+    TEXT_BLOCK = "roam/text-block"
     HEADING_BLOCK = "roam/heading-block"
     IMAGE_BLOCK = "roam/image-block"
     CALLOUT_BLOCK = "roam/callout-block"
@@ -541,7 +541,7 @@ def node_type(node: RoamNode) -> NodeType:
     (as matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`),
     :attr:`NodeType.ATTRIBUTE_BLOCK` when the trimmed ``string`` is wholly a Roam attribute
     assignment (as matched in full by :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`),
-    and :attr:`NodeType.PLAIN_BLOCK` otherwise.
+    and :attr:`NodeType.TEXT_BLOCK` otherwise.
 
     Args:
         node: The node whose entity type to determine.
@@ -560,7 +560,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.EMBED_PAGE` if the trimmed ``string`` is wholly a Roam page embed;
         :attr:`NodeType.PDF_BLOCK` if the trimmed ``string`` is wholly a Roam PDF component;
         :attr:`NodeType.ATTRIBUTE_BLOCK` if the trimmed ``string`` is wholly a Roam attribute assignment;
-        :attr:`NodeType.PLAIN_BLOCK` otherwise.
+        :attr:`NodeType.TEXT_BLOCK` otherwise.
     """
     if node.title is not None:
         return NodeType.PAGE
@@ -589,4 +589,4 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.PDF_BLOCK
     if ATTRIBUTE_ASSIGNMENT_RE.fullmatch(string.strip()):
         return NodeType.ATTRIBUTE_BLOCK
-    return NodeType.PLAIN_BLOCK
+    return NodeType.TEXT_BLOCK

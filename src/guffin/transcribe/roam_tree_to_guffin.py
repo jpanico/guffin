@@ -391,7 +391,7 @@ def vertex_type(node: RoamNode) -> VertexType:
     match node_type(node):
         case NodeType.PAGE:
             return VertexType.PAGE
-        case NodeType.PLAIN_BLOCK:
+        case NodeType.TEXT_BLOCK:
             return VertexType.TEXT
         case NodeType.TODO_BLOCK:
             return VertexType.TODO

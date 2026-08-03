@@ -187,7 +187,7 @@ class TestNodeType:
         """Test that NodeType has exactly thirteen members."""
         assert set(NodeType) == {
             NodeType.PAGE,
-            NodeType.PLAIN_BLOCK,
+            NodeType.TEXT_BLOCK,
             NodeType.IMAGE_BLOCK,
             NodeType.HEADING_BLOCK,
             NodeType.CALLOUT_BLOCK,
@@ -216,7 +216,7 @@ class TestNodeTypeFunction:
         assert node_type(node) is NodeType.PAGE
 
     def test_block_node_returns_block(self) -> None:
-        """Test that a node with string set returns NodeType.PLAIN_BLOCK."""
+        """Test that a node with string set returns NodeType.TEXT_BLOCK."""
         node = RoamNode(
             uid="block0001",
             id=2,
@@ -224,12 +224,12 @@ class TestNodeTypeFunction:
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
         )
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_page_node_is_not_block(self) -> None:
-        """Test that a page node does not return NodeType.PLAIN_BLOCK."""
+        """Test that a page node does not return NodeType.TEXT_BLOCK."""
         node = RoamNode(uid="page00001", id=1, title="My Page", children=[])
-        assert node_type(node) is not NodeType.PLAIN_BLOCK
+        assert node_type(node) is not NodeType.TEXT_BLOCK
 
     def test_block_node_is_not_page(self) -> None:
         """Test that a block node does not return NodeType.PAGE."""
@@ -247,8 +247,8 @@ class TestNodeTypeFunction:
         assert node_type(_make_image()) is NodeType.IMAGE_BLOCK
 
     def test_image_node_is_not_block(self) -> None:
-        """Test that an image node does not return NodeType.PLAIN_BLOCK."""
-        assert node_type(_make_image()) is not NodeType.PLAIN_BLOCK
+        """Test that an image node does not return NodeType.TEXT_BLOCK."""
+        assert node_type(_make_image()) is not NodeType.TEXT_BLOCK
 
     def test_image_node_with_surrounding_whitespace_returns_image(self) -> None:
         """Test that leading/trailing whitespace around the image link is tolerated."""
@@ -273,7 +273,7 @@ class TestNodeTypeFunction:
         assert node_type(node) is NodeType.IMAGE_BLOCK
 
     def test_text_before_image_returns_block(self) -> None:
-        """Test that text before the image link yields NodeType.PLAIN_BLOCK, not Image."""
+        """Test that text before the image link yields NodeType.TEXT_BLOCK, not Image."""
         node = RoamNode(
             uid="imageuid1",
             id=101,
@@ -281,10 +281,10 @@ class TestNodeTypeFunction:
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
         )
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_text_after_image_returns_block(self) -> None:
-        """Test that text after the image link yields NodeType.PLAIN_BLOCK, not Image."""
+        """Test that text after the image link yields NodeType.TEXT_BLOCK, not Image."""
         node = RoamNode(
             uid="imageuid1",
             id=101,
@@ -292,10 +292,10 @@ class TestNodeTypeFunction:
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
         )
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_two_image_links_returns_block(self) -> None:
-        """Test that a string with two image links yields NodeType.PLAIN_BLOCK, not Image."""
+        """Test that a string with two image links yields NodeType.TEXT_BLOCK, not Image."""
         node = RoamNode(
             uid="imageuid1",
             id=101,
@@ -303,10 +303,10 @@ class TestNodeTypeFunction:
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
         )
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_relative_url_image_returns_block(self) -> None:
-        """Test that a Markdown image with a relative URL yields NodeType.PLAIN_BLOCK, not Image."""
+        """Test that a Markdown image with a relative URL yields NodeType.TEXT_BLOCK, not Image."""
         node = RoamNode(
             uid="imageuid1",
             id=101,
@@ -314,15 +314,15 @@ class TestNodeTypeFunction:
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
         )
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_heading_node_returns_heading(self) -> None:
         """Test that a native heading block (heading=2) returns NodeType.HEADING_BLOCK."""
         assert node_type(_make_heading()) is NodeType.HEADING_BLOCK
 
     def test_heading_node_is_not_block(self) -> None:
-        """Test that a heading node does not return NodeType.PLAIN_BLOCK."""
-        assert node_type(_make_heading()) is not NodeType.PLAIN_BLOCK
+        """Test that a heading node does not return NodeType.TEXT_BLOCK."""
+        assert node_type(_make_heading()) is not NodeType.TEXT_BLOCK
 
     def test_augmented_heading_returns_heading(self) -> None:
         """Test that a block with props['ah-level'] set returns NodeType.HEADING_BLOCK."""
@@ -344,9 +344,9 @@ class TestNodeTypeFunction:
         """Test that a block with a valid callout marker returns NodeType.CALLOUT_BLOCK."""
         assert node_type(_make_callout()) is NodeType.CALLOUT_BLOCK
 
-    def test_callout_node_is_not_plain_block(self) -> None:
-        """Test that a callout node does not return NodeType.PLAIN_BLOCK."""
-        assert node_type(_make_callout()) is not NodeType.PLAIN_BLOCK
+    def test_callout_node_is_not_text_block(self) -> None:
+        """Test that a callout node does not return NodeType.TEXT_BLOCK."""
+        assert node_type(_make_callout()) is not NodeType.TEXT_BLOCK
 
     def test_callout_with_suffix_content_returns_callout(self) -> None:
         """Test that a callout marker with trailing content still returns NodeType.CALLOUT_BLOCK."""
@@ -378,9 +378,9 @@ class TestNodeTypeFunction:
         """Test that a string fenced with ``` at both ends returns NodeType.CODE_BLOCK."""
         assert node_type(_make_code()) is NodeType.CODE_BLOCK
 
-    def test_code_block_is_not_plain_block(self) -> None:
-        """Test that a fenced code block does not return NodeType.PLAIN_BLOCK."""
-        assert node_type(_make_code()) is not NodeType.PLAIN_BLOCK
+    def test_code_block_is_not_text_block(self) -> None:
+        """Test that a fenced code block does not return NodeType.TEXT_BLOCK."""
+        assert node_type(_make_code()) is not NodeType.TEXT_BLOCK
 
     def test_code_block_with_surrounding_whitespace_returns_code_block(self) -> None:
         """Test that surrounding whitespace is trimmed before the fence check."""
@@ -394,17 +394,17 @@ class TestNodeTypeFunction:
         """Test that an opening fence with no closing fence is still a code block (closing optional)."""
         assert node_type(_make_code(string="```python\nx = 1")) is NodeType.CODE_BLOCK
 
-    def test_inline_code_is_plain_block(self) -> None:
+    def test_inline_code_is_text_block(self) -> None:
         """Test that single-backtick inline code is not classified as a code block."""
-        assert node_type(_make_code(string="`inline`")) is NodeType.PLAIN_BLOCK
+        assert node_type(_make_code(string="`inline`")) is NodeType.TEXT_BLOCK
 
     def test_block_quote_node_returns_block_quote(self) -> None:
         """Test that a [[>]]-prefixed block without a callout type returns QUOTE_BLOCK."""
         assert node_type(_make_block_quote()) is NodeType.QUOTE_BLOCK
 
-    def test_block_quote_is_not_plain_block(self) -> None:
-        """Test that a block quote node does not return PLAIN_BLOCK."""
-        assert node_type(_make_block_quote()) is not NodeType.PLAIN_BLOCK
+    def test_block_quote_is_not_text_block(self) -> None:
+        """Test that a block quote node does not return TEXT_BLOCK."""
+        assert node_type(_make_block_quote()) is not NodeType.TEXT_BLOCK
 
     def test_bare_block_quote_prefix_returns_block_quote(self) -> None:
         """Test that bare '[[>]]' with no following text returns QUOTE_BLOCK."""
@@ -431,10 +431,10 @@ class TestNodeTypeFunction:
         node = _make_text(string="  {{[[table]]}}  ")
         assert node_type(node) is NodeType.NATIVE_TABLE
 
-    def test_table_marker_mixed_with_text_is_plain_block(self) -> None:
+    def test_table_marker_mixed_with_text_is_text_block(self) -> None:
         """Test that a table marker mixed with surrounding text is not a NATIVE_TABLE."""
         node = _make_text(string="see {{table}} here")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_open_todo_marker_returns_todo_block(self) -> None:
         """Test that a block leading with {{[[TODO]]}} returns TODO_BLOCK."""
@@ -461,15 +461,15 @@ class TestNodeTypeFunction:
         node = _make_text(string="#c:FUCHSIA **{{[[TODO]]}} a bold fuchsia item**")
         assert node_type(node) is NodeType.TODO_BLOCK
 
-    def test_raw_todo_spelling_is_plain_block(self) -> None:
-        """Test that the bare {{TODO}} spelling, unhandled by the Roam UI, stays PLAIN_BLOCK."""
+    def test_raw_todo_spelling_is_text_block(self) -> None:
+        """Test that the bare {{TODO}} spelling, unhandled by the Roam UI, stays TEXT_BLOCK."""
         node = _make_text(string="{{TODO}} an open item")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
-    def test_todo_marker_mixed_with_leading_text_is_plain_block(self) -> None:
+    def test_todo_marker_mixed_with_leading_text_is_text_block(self) -> None:
         """Test that a TODO marker appearing amid text, not leading it, is not a TODO_BLOCK."""
         node = _make_text(string="see {{[[TODO]]}} here")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_embed_block_returns_embed(self) -> None:
         """Test that a block whose entire string is a block embed returns EMBED_BLOCK."""
@@ -481,10 +481,10 @@ class TestNodeTypeFunction:
         node = _make_text(string="  {{embed: ((wjN-kVF3B))}}  ")
         assert node_type(node) is NodeType.EMBED_BLOCK
 
-    def test_embed_mixed_with_text_is_plain_block(self) -> None:
+    def test_embed_mixed_with_text_is_text_block(self) -> None:
         """Test that an embed mixed with surrounding text is not a EMBED_BLOCK."""
         node = _make_text(string="see {{embed: ((wjN-kVF3B))}} here")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_page_embed_returns_embed_page(self) -> None:
         """Test that a block whose entire string is a page embed returns EMBED_PAGE."""
@@ -496,10 +496,10 @@ class TestNodeTypeFunction:
         node = _make_text(string="  {{embed: [[Some Page]]}}  ")
         assert node_type(node) is NodeType.EMBED_PAGE
 
-    def test_page_embed_mixed_with_text_is_plain_block(self) -> None:
+    def test_page_embed_mixed_with_text_is_text_block(self) -> None:
         """Test that a page embed mixed with surrounding text is not an EMBED_PAGE."""
         node = _make_text(string="see {{embed: [[Some Page]]}} here")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_pdf_component_returns_pdf_block(self) -> None:
         """Test that a block whose entire string is a Firestore PDF component returns PDF_BLOCK."""
@@ -516,15 +516,15 @@ class TestNodeTypeFunction:
         node = _make_text(string="  {{pdf: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf?alt=media}}  ")
         assert node_type(node) is NodeType.PDF_BLOCK
 
-    def test_pdf_component_mixed_with_text_is_plain_block(self) -> None:
+    def test_pdf_component_mixed_with_text_is_text_block(self) -> None:
         """Test that a PDF component mixed with surrounding text is not a PDF_BLOCK."""
         node = _make_text(string="see {{pdf: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf}} here")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
-    def test_non_firestore_pdf_component_is_plain_block(self) -> None:
+    def test_non_firestore_pdf_component_is_text_block(self) -> None:
         """Test that a PDF component pointing outside Firestore is not a PDF_BLOCK."""
         node = _make_text(string="{{pdf: https://example.com/paper.pdf}}")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_attribute_assignment_returns_attribute_block(self) -> None:
         """Test that a block whose entire string is an attribute assignment returns ATTRIBUTE_BLOCK."""
@@ -536,10 +536,10 @@ class TestNodeTypeFunction:
         node = _make_text(string="  tags:: #Guffin,#[[Better Bullets]]  ")
         assert node_type(node) is NodeType.ATTRIBUTE_BLOCK
 
-    def test_attribute_like_prose_is_plain_block(self) -> None:
+    def test_attribute_like_prose_is_text_block(self) -> None:
         """Test that 'attr:: free prose' (values not a comma list) is not an ATTRIBUTE_BLOCK."""
         node = _make_text(string="Note:: this is a sentence")
-        assert node_type(node) is NodeType.PLAIN_BLOCK
+        assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_result_is_str_enum(self) -> None:
         """Test that the returned value is a NodeType StrEnum member."""
