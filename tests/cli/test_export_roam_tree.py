@@ -17,6 +17,7 @@ from conftest import (
     FIXTURES_PDF_DIR,
     FIXTURES_YAML_DIR,
     PDF_CREATION_TIMESTAMP,
+    YamlFixtureLoader,
     article1_node_tree,
 )
 from typer.testing import CliRunner, Result
@@ -154,7 +155,9 @@ class TestExportRoamTreeMdbundleFromRaw:
         Cloud Firestore assets, so no asset fetch (hence no cache seeding) is needed — the
         empty ``--cache-dir`` keeps the run hermetic against a shell ``GUFFIN_CACHE_DIR``.
         """
-        raw_result: Final[object] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_2_raw_result.yaml").read_text())
+        raw_result: Final[object] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_2_raw_result.yaml").read_text(), Loader=YamlFixtureLoader
+        )
         api_response: Final[LocalApiResponse.Payload] = LocalApiResponse.Payload(success=True, result=raw_result)
 
         baseline: Final[pathlib.Path] = FIXTURES_MDBUNDLE_DIR / "Test_Article_2.article.mdbundle"

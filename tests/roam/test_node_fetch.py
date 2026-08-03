@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 import yaml
-from conftest import FIXTURES_YAML_DIR, article1_node_tree
+from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader, article1_node_tree
 from pydantic import ValidationError
 
 from guffin.roam.local_api import ApiEndpoint
@@ -600,8 +600,8 @@ class TestFetchTestarticle2WithRefs:
         :meth:`FetchRoamNodes._fetch` and returns the resulting
         :class:`~guffin.roam.node_fetch_result.NodeFetchResult`.
         """
-        raw_result: list[list[dict[str, object]]] = yaml.safe_load(
-            (FIXTURES_YAML_DIR / "test_article_2_raw_result.yaml").read_text()
+        raw_result: list[list[dict[str, object]]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_2_raw_result.yaml").read_text(), Loader=YamlFixtureLoader
         )
         mock_payload: LocalApiResponse.Payload = LocalApiResponse.Payload(success=True, result=raw_result)
         fetch_spec: NodeFetchSpec = NodeFetchSpec(
@@ -615,16 +615,16 @@ class TestFetchTestarticle2WithRefs:
 
     def test_anchor_tree_matches_fixture(self, fetch_result: NodeFetchResult) -> None:
         """Anchor tree produced by ``_fetch`` must match ``test_article_2_anchor_tree.yaml``."""
-        expected: dict[str, object] = yaml.safe_load(
-            (FIXTURES_YAML_DIR / "test_article_2_anchor_tree.yaml").read_text()
+        expected: dict[str, object] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_2_anchor_tree.yaml").read_text(), Loader=YamlFixtureLoader
         )
         assert fetch_result.anchor_tree is not None
         assert fetch_result.anchor_tree.model_dump(mode="json") == expected
 
     def test_nodes_by_uid_matches_fixture(self, fetch_result: NodeFetchResult) -> None:
         """``nodes_by_uid`` produced by ``_fetch`` must match ``test_article_2_nodes_by_uid.yaml``."""
-        expected: dict[str, object] = yaml.safe_load(
-            (FIXTURES_YAML_DIR / "test_article_2_nodes_by_uid.yaml").read_text()
+        expected: dict[str, object] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_2_nodes_by_uid.yaml").read_text(), Loader=YamlFixtureLoader
         )
         assert fetch_result.nodes_by_uid is not None
         actual: dict[str, object] = {

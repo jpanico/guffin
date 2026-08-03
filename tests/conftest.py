@@ -14,6 +14,13 @@ os.environ.setdefault("GUFFIN_PANDOC_SERVER", "1")
 import pytest
 import yaml
 
+try:
+    # libyaml's C loader parses the large YAML fixtures ~7x faster than the pure-Python
+    # SafeLoader; identical YAML 1.1 semantics, so which one loads is purely a speed matter.
+    from yaml import CSafeLoader as YamlFixtureLoader
+except ImportError:  # pragma: no cover - libyaml missing from this PyYAML build
+    from yaml import SafeLoader as YamlFixtureLoader  # type: ignore[assignment]
+
 from guffin.model.vertex import vertex_adapter
 from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
@@ -114,8 +121,8 @@ def article0_node_tree() -> NodeTree:
     references — including the features callout's — resolve to ``x-guffin`` vertex links
     during transcription.
     """
-    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
-        (FIXTURES_YAML_DIR / "test_article_0_nodes_by_uid.yaml").read_text()
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.load(
+        (FIXTURES_YAML_DIR / "test_article_0_nodes_by_uid.yaml").read_text(), Loader=YamlFixtureLoader
     )
     all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
     root_node: Final[RoamNode] = next(
@@ -132,8 +139,8 @@ def article1_node_tree() -> NodeTree:
     populated and page references resolve to ``x-guffin`` vertex links during
     transcription.
     """
-    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
-        (FIXTURES_YAML_DIR / "test_article_1_nodes_by_uid.yaml").read_text()
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.load(
+        (FIXTURES_YAML_DIR / "test_article_1_nodes_by_uid.yaml").read_text(), Loader=YamlFixtureLoader
     )
     all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
     root_node: Final[RoamNode] = next(
@@ -144,8 +151,8 @@ def article1_node_tree() -> NodeTree:
 
 def article1_vertex_tree() -> VertexTree:
     """Load and return the ``[[Test Article]] 1`` :class:`~guffin.vertex_tree.VertexTree` from its YAML fixture."""
-    raw: Final[list[dict[str, object]]] = yaml.safe_load(
-        (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
+    raw: Final[list[dict[str, object]]] = yaml.load(
+        (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text(), Loader=YamlFixtureLoader
     )
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
 
@@ -158,8 +165,8 @@ def article3_node_tree() -> NodeTree:
     external-links matrix's cross-page references — including its standalone reference to a
     ``[[Test Article]] 1`` PDF block — resolve during transcription.
     """
-    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
-        (FIXTURES_YAML_DIR / "test_article_3_nodes_by_uid.yaml").read_text()
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.load(
+        (FIXTURES_YAML_DIR / "test_article_3_nodes_by_uid.yaml").read_text(), Loader=YamlFixtureLoader
     )
     all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
     root_node: Final[RoamNode] = next(
@@ -175,8 +182,8 @@ def article4_node_tree() -> NodeTree:
     pages), covering the article's Color Highlighter and Better Bullets sections — the latter's
     blocks carrying persisted ``type`` / ``provenance`` block properties.
     """
-    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
-        (FIXTURES_YAML_DIR / "test_article_4_nodes_by_uid.yaml").read_text()
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.load(
+        (FIXTURES_YAML_DIR / "test_article_4_nodes_by_uid.yaml").read_text(), Loader=YamlFixtureLoader
     )
     all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
     root_node: Final[RoamNode] = next(
@@ -192,8 +199,8 @@ def article5_node_tree() -> NodeTree:
     so that :attr:`~guffin.roam.node_tree.NodeTree.page_name_map` is populated and attribute/tag page
     references resolve to ``x-guffin`` vertex links during transcription.
     """
-    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.safe_load(
-        (FIXTURES_YAML_DIR / "test_article_5_nodes_by_uid.yaml").read_text()
+    raw_by_uid: Final[dict[str, dict[str, object]]] = yaml.load(
+        (FIXTURES_YAML_DIR / "test_article_5_nodes_by_uid.yaml").read_text(), Loader=YamlFixtureLoader
     )
     all_nodes: Final[list[RoamNode]] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
     root_node: Final[RoamNode] = next(
@@ -208,7 +215,7 @@ def article8_vertex_tree() -> VertexTree:
     Article 8's page title carries ``**bold**`` emphasis on one portion of the name, so its
     transcribed :class:`~guffin.model.vertex.PageVertex` title exercises inline markup in the title.
     """
-    raw: Final[list[dict[str, object]]] = yaml.safe_load(
-        (FIXTURES_YAML_DIR / "test_article_8_vertices.yaml").read_text()
+    raw: Final[list[dict[str, object]]] = yaml.load(
+        (FIXTURES_YAML_DIR / "test_article_8_vertices.yaml").read_text(), Loader=YamlFixtureLoader
     )
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])

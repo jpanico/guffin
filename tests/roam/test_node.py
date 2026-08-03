@@ -2,7 +2,7 @@
 
 import pytest
 import yaml
-from conftest import FIXTURES_YAML_DIR
+from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader
 from pydantic import ValidationError
 
 from guffin.common.geometry import ImageSize
@@ -629,7 +629,9 @@ class TestImageSize:
         zZG-BfWvs has ``image-size: {<url>: {width: 257, height: null}}``, so the expected
         result is ``ImageSize(width=257, height=None)``.
         """
-        raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_1_nodes.yaml").read_text())
+        raw: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_1_nodes.yaml").read_text(), Loader=YamlFixtureLoader
+        )
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "zZG-BfWvs")
         assert image_size(fixture_node) == ImageSize(width=257, height=None)
@@ -748,7 +750,7 @@ class TestBetterBulletType:
         enum's ids to the live vocabulary — and, by comparing in document order, that the demo
         section walks the vocabulary rather than merely covering it.
         """
-        raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_4_nodes.yaml").read_text())
+        raw = yaml.load((FIXTURES_YAML_DIR / "test_article_4_nodes.yaml").read_text(), Loader=YamlFixtureLoader)
         nodes: dict[int, RoamNode] = {}
 
         def _walk(item: object) -> None:
@@ -817,7 +819,7 @@ class TestBetterBulletProvenance:
         ``mail`` spelling for scanned post), so this pins the enum's ids to the live
         vocabulary.
         """
-        raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_4_nodes.yaml").read_text())
+        raw = yaml.load((FIXTURES_YAML_DIR / "test_article_4_nodes.yaml").read_text(), Loader=YamlFixtureLoader)
         nodes: dict[int, RoamNode] = {}
 
         def _walk(item: object) -> None:

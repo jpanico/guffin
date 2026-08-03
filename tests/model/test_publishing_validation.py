@@ -1,7 +1,7 @@
 """Tests for guffin.model.publishing_validation."""
 
 import yaml
-from conftest import FIXTURES_YAML_DIR
+from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader
 from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
@@ -75,7 +75,7 @@ def _multi_assignment(name: str, *values: str) -> AttributeAssignment:
 
 def _article7_vertex_tree() -> VertexTree:
     """Load the [[Test Article]] 7 VertexTree from its YAML fixture."""
-    raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_7_vertices.yaml").read_text())
+    raw = yaml.load((FIXTURES_YAML_DIR / "test_article_7_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
 
 
@@ -87,8 +87,8 @@ def _article3_vertex_tree() -> VertexTree:
     article-1 fixture) rides along as a ref vertex — without it, the reference site's
     ``pdf-render`` tag could not resolve its standalone link target.
     """
-    raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_3_vertices.yaml").read_text())
-    article1_raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text())
+    raw = yaml.load((FIXTURES_YAML_DIR / "test_article_3_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
+    article1_raw = yaml.load((FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
     pdf_target = next(vertex for vertex in article1_raw if vertex["uid"] == "pTvGGeTlB")
     return VertexTree(
         tree_vertices=[vertex_adapter.validate_python(r) for r in raw],

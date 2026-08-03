@@ -80,6 +80,7 @@ _CODE_STRING: str = "```python\ndef f():\n    pass```"
 from conftest import (
     FIXTURES_JSON_DIR,
     FIXTURES_YAML_DIR,
+    YamlFixtureLoader,
     article0_node_tree,
     article1_node_tree,
     article4_node_tree,
@@ -758,7 +759,9 @@ class TestToCalloutVertex:
 
     def test_article_0_fixture_callout_type(self) -> None:
         """Test that the Article 0 callout node (qnCiceZgk) yields CalloutType.INFO."""
-        raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
+        raw: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text(), Loader=YamlFixtureLoader
+        )
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "qnCiceZgk")
         tree: NodeTree = NodeTree.build(fixture_node, nodes)
@@ -769,7 +772,9 @@ class TestToCalloutVertex:
 
         The title is the first line after the marker and contains a U+2013 en dash.
         """
-        raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
+        raw: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text(), Loader=YamlFixtureLoader
+        )
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "qnCiceZgk")
         tree: NodeTree = NodeTree.build(fixture_node, nodes)
@@ -781,7 +786,9 @@ class TestToCalloutVertex:
 
         The body is everything after the first newline in the block string, stripped.
         """
-        raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
+        raw: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text(), Loader=YamlFixtureLoader
+        )
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "qnCiceZgk")
         tree: NodeTree = NodeTree.build(fixture_node, nodes)
@@ -842,7 +849,9 @@ class TestToCodeBlockVertex:
 
     def test_article_0_fixture_code_block(self) -> None:
         """Test that the Article 0 isolated code block (C6xVTMnsh) yields PYTHON CodeBlockVertex."""
-        raw: list[dict[str, object]] = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text())
+        raw: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_0_nodes.yaml").read_text(), Loader=YamlFixtureLoader
+        )
         nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw]
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "C6xVTMnsh")
         tree: NodeTree = NodeTree.build(fixture_node, nodes)
@@ -860,8 +869,8 @@ class TestToCodeBlockVertex:
         attribute *page* in :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id`, which the
         anchor-only nodes fixture deliberately omits.
         """
-        raw_by_uid: dict[str, dict[str, object]] = yaml.safe_load(
-            (FIXTURES_YAML_DIR / "test_article_0_nodes_by_uid.yaml").read_text()
+        raw_by_uid: dict[str, dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_0_nodes_by_uid.yaml").read_text(), Loader=YamlFixtureLoader
         )
         all_nodes: list[RoamNode] = [RoamNode.model_validate(r) for r in raw_by_uid.values()]
         root_node: RoamNode = next(n for n in all_nodes if n.title == "[[Test Article]] 0")
@@ -1387,8 +1396,8 @@ class TestTranscribeArticleFixture:
             else:
                 actual_vertices.append(transcribe_standalone_node(node, node_tree, heading_offset))
 
-        raw_vertices: list[dict[str, object]] = yaml.safe_load(
-            (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
+        raw_vertices: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text(), Loader=YamlFixtureLoader
         )
         expected_vertices: list[Vertex] = [vertex_adapter.validate_python(r) for r in raw_vertices]
 
@@ -1408,8 +1417,8 @@ class TestTranscribeArticleFixture:
 
         vertex_tree = transcribe(node_tree)
 
-        raw_vertices: list[dict[str, object]] = yaml.safe_load(
-            (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text()
+        raw_vertices: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_1_vertices.yaml").read_text(), Loader=YamlFixtureLoader
         )
         expected: list[Vertex] = [vertex_adapter.validate_python(r) for r in raw_vertices]
 
@@ -1429,8 +1438,8 @@ class TestTranscribeArticleFixture:
 
         vertex_tree = transcribe(node_tree)
 
-        raw_vertices: list[dict[str, object]] = yaml.safe_load(
-            (FIXTURES_YAML_DIR / "test_article_0_vertices.yaml").read_text()
+        raw_vertices: list[dict[str, object]] = yaml.load(
+            (FIXTURES_YAML_DIR / "test_article_0_vertices.yaml").read_text(), Loader=YamlFixtureLoader
         )
         expected: list[Vertex] = [vertex_adapter.validate_python(r) for r in raw_vertices]
 

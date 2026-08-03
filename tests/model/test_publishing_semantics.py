@@ -4,7 +4,7 @@ import logging
 
 import pytest
 import yaml
-from conftest import FIXTURES_YAML_DIR
+from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader
 from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
@@ -183,7 +183,7 @@ class TestMatterOf:
 
 def _article7_vertex_tree() -> VertexTree:
     """Load the [[Test Article]] 7 VertexTree from its YAML fixture."""
-    raw = yaml.safe_load((FIXTURES_YAML_DIR / "test_article_7_vertices.yaml").read_text())
+    raw = yaml.load((FIXTURES_YAML_DIR / "test_article_7_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
 
 
