@@ -46,7 +46,7 @@ from guffin.roam.blockquote import CALLOUT_RE, is_quote_block
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
-    FIRESTORE_URL_RE,
+    FIREBASE_STORAGE_URL_RE,
     IMAGE_LINK_RE,
     PAGE_EMBED_RE,
     PDF_EMBED_RE,
@@ -112,7 +112,7 @@ class NodeType(enum.StrEnum):
       component ``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}`` whose URL is a Firebase Storage
       URL (matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`).
     - **ASSET_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a bare
-      Firebase Storage URL (matched in full by :data:`~guffin.roam.markdown.FIRESTORE_URL_RE`)
+      Firebase Storage URL (matched in full by :data:`~guffin.roam.markdown.FIREBASE_STORAGE_URL_RE`)
       — the one Roam asset-URL form with no Markdown or Roam-component chrome around it.
     - **ATTRIBUTE_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam
       attribute assignment ``<attribute>:: <value>[, <value>]…`` (matched in full by
@@ -545,7 +545,7 @@ def node_type(node: RoamNode) -> NodeType:
     :attr:`NodeType.PDF_BLOCK` when the trimmed ``string`` is wholly a Roam PDF component
     (as matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`),
     :attr:`NodeType.ASSET_BLOCK` when the trimmed ``string`` is wholly a bare Firebase Storage
-    URL (as matched in full by :data:`~guffin.roam.markdown.FIRESTORE_URL_RE`),
+    URL (as matched in full by :data:`~guffin.roam.markdown.FIREBASE_STORAGE_URL_RE`),
     :attr:`NodeType.ATTRIBUTE_BLOCK` when the trimmed ``string`` is wholly a Roam attribute
     assignment (as matched in full by :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`),
     and :attr:`NodeType.TEXT_BLOCK` otherwise.
@@ -595,7 +595,7 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.EMBED_PAGE
     if PDF_EMBED_RE.fullmatch(string.strip()):
         return NodeType.PDF_BLOCK
-    if FIRESTORE_URL_RE.fullmatch(string.strip()):
+    if FIREBASE_STORAGE_URL_RE.fullmatch(string.strip()):
         return NodeType.ASSET_BLOCK
     if ATTRIBUTE_ASSIGNMENT_RE.fullmatch(string.strip()):
         return NodeType.ATTRIBUTE_BLOCK

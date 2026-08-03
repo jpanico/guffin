@@ -62,15 +62,15 @@ from guffin.transcribe.roam_tree_to_guffin import (
 )
 
 # A real Firebase Storage URL whose path encodes the filename "photo.jpeg" (media_type "image/jpeg"):
-_FIRESTORE_URL = (
+_FIREBASE_STORAGE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
 )
-_IMAGE_STRING = f"![A flower]({_FIRESTORE_URL})"
+_IMAGE_STRING = f"![A flower]({_FIREBASE_STORAGE_URL})"
 # A real Firebase Storage URL whose path encodes the filename "paper.pdf.enc":
-_FIRESTORE_PDF_URL = (
+_FIREBASE_STORAGE_PDF_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/pdfs%2Fpaper.pdf.enc?alt=media&token=abc123"
 )
-_PDF_STRING = f"{{{{pdf: {_FIRESTORE_PDF_URL}}}}}"
+_PDF_STRING = f"{{{{pdf: {_FIREBASE_STORAGE_PDF_URL}}}}}"
 _CALLOUT_STRING: str = "[[>]] [[!NOTE]] This is a note"
 # Raw Roam form: closing fence attached to the final content line (no separating newline).
 _CODE_STRING: str = "```python\ndef f():\n    pass```"
@@ -408,24 +408,24 @@ class TestToImageVertex:
         node = _make_image(uid="imageuid1")
         assert to_image_vertex(node, _node_tree(node)).uid == "imageuid1"
 
-    def test_source_host_is_firestore(self) -> None:
+    def test_source_host_is_firebase_storage(self) -> None:
         """Test that the vertex source URL points to the Firebase Storage host."""
         v = to_image_vertex(_make_image(), _node_tree(_make_image()))
         assert v.source.host == "firebasestorage.googleapis.com"
 
     def test_alt_text_extracted_from_string(self) -> None:
         """Test that alt text is extracted and stripped from the Markdown image link."""
-        node = _make_image(string=f"![My Photo]({_FIRESTORE_URL})")
+        node = _make_image(string=f"![My Photo]({_FIREBASE_STORAGE_URL})")
         assert to_image_vertex(node, _node_tree(node)).alt_text == "My Photo"
 
     def test_alt_text_stripped_of_whitespace(self) -> None:
         """Test that leading/trailing whitespace (including newlines) is stripped from alt text."""
-        node = _make_image(string=f"![A flower\n        ]({_FIRESTORE_URL})")
+        node = _make_image(string=f"![A flower\n        ]({_FIREBASE_STORAGE_URL})")
         assert to_image_vertex(node, _node_tree(node)).alt_text == "A flower"
 
     def test_alt_text_none_when_empty(self) -> None:
         """Test that empty alt text produces None rather than an empty string."""
-        node = _make_image(string=f"![]({_FIRESTORE_URL})")
+        node = _make_image(string=f"![]({_FIREBASE_STORAGE_URL})")
         assert to_image_vertex(node, _node_tree(node)).alt_text is None
 
     def test_media_type_inferred_from_source_url(self) -> None:
@@ -443,7 +443,7 @@ class TestToImageVertex:
         with pytest.raises(ValueError, match="no 'string'"):
             to_image_vertex(node, _node_tree(node))
 
-    def test_non_firestore_url_raises_value_error(self) -> None:
+    def test_non_firebase_storage_url_raises_value_error(self) -> None:
         """Test that a string with a non-Firebase Storage https URL raises ValueError."""
         node = RoamNode(
             uid="imageuid1",
@@ -479,15 +479,15 @@ class TestToPdfVertex:
         node = _make_pdf(uid="pdfuid001")
         assert to_pdf_vertex(node, _node_tree(node)).uid == "pdfuid001"
 
-    def test_source_host_is_firestore(self) -> None:
+    def test_source_host_is_firebase_storage(self) -> None:
         """Test that the vertex source URL points to the Firebase Storage host."""
         v = to_pdf_vertex(_make_pdf(), _node_tree(_make_pdf()))
         assert v.source.host == "firebasestorage.googleapis.com"
 
     def test_page_reference_form_accepted(self) -> None:
         """Test that the {{[[pdf]]: <url>}} page-reference form transcribes identically."""
-        node = _make_pdf(string=f"{{{{[[pdf]]: {_FIRESTORE_PDF_URL}}}}}")
-        assert str(to_pdf_vertex(node, _node_tree(node)).source) == _FIRESTORE_PDF_URL
+        node = _make_pdf(string=f"{{{{[[pdf]]: {_FIREBASE_STORAGE_PDF_URL}}}}}")
+        assert str(to_pdf_vertex(node, _node_tree(node)).source) == _FIREBASE_STORAGE_PDF_URL
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the PDF node has no children."""
@@ -500,7 +500,7 @@ class TestToPdfVertex:
         with pytest.raises(ValueError, match="no 'string'"):
             to_pdf_vertex(node, _node_tree(node))
 
-    def test_non_firestore_url_raises_value_error(self) -> None:
+    def test_non_firebase_storage_url_raises_value_error(self) -> None:
         """Test that a PDF component with a non-Firebase Storage https URL raises ValueError."""
         node = _make_pdf(string="{{pdf: https://example.com/paper.pdf}}")
         with pytest.raises(ValueError, match="contains no Firebase Storage PDF component"):
@@ -1135,7 +1135,7 @@ class TestTranscribeNode:
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, PdfVertex)
         assert v.vertex_type is VertexType.PDF
-        assert str(v.source) == _FIRESTORE_PDF_URL
+        assert str(v.source) == _FIREBASE_STORAGE_PDF_URL
 
     def test_transcribes_heading_node(self) -> None:
         """Test that a heading block node is transcribed to a HEADING vertex with correct fields."""

@@ -145,7 +145,7 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
     ``node_type`` is the :attr:`~guffin.roam.node.NodeType` value string.
     ``title_text`` is determined by :func:`~guffin.roam.node.node_type`:
 
-    - :attr:`~guffin.roam.node.NodeType.IMAGE_BLOCK` — ``[<alt>](<firestore_url>)``.
+    - :attr:`~guffin.roam.node.NodeType.IMAGE_BLOCK` — ``[<alt>](<firebase_storage_url>)``.
     - :attr:`~guffin.roam.node.NodeType.HEADING_BLOCK` — when ``"heading"``
       is in *props*, ``H{n}: <string>`` (level from
       :func:`~guffin.roam.node.effective_heading_level`); otherwise the raw
@@ -176,7 +176,7 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             assert node.string is not None
             m = IMAGE_LINK_RE.search(node.string)
             assert m is not None
-            title_text = f"[{m.group('alt')}](<firestore_url>)"
+            title_text = f"[{m.group('alt')}](<firebase_storage_url>)"
         case NodeType.HEADING_BLOCK:
             level: Final[int | None] = effective_heading_level(node)
             title_text = f"H{level}: {node.string}"
@@ -204,9 +204,9 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
         case NodeType.PDF_BLOCK:
-            title_text = "{{pdf: <firestore_url>}}"
+            title_text = "{{pdf: <firebase_storage_url>}}"
         case NodeType.ASSET_BLOCK:
-            title_text = "<firestore_url>"
+            title_text = "<firebase_storage_url>"
         case NodeType.ATTRIBUTE_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
@@ -481,7 +481,7 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
     - :class:`~guffin.vertex.PageVertex` — page title.
     - :class:`~guffin.vertex.HeadingVertex` — ``H{n}: <text>``.
     - :class:`~guffin.vertex.TextVertex` — block text as-is.
-    - :class:`~guffin.vertex.ImageVertex` — ``IMAGE [<alt>](<firestore_url>)``.
+    - :class:`~guffin.vertex.ImageVertex` — ``IMAGE [<alt>](<firebase_storage_url>)``.
     - :class:`~guffin.vertex.PdfVertex` — ``PDF <file_name>``.
     - :class:`~guffin.vertex.CalloutVertex` — ``CALLOUT [<type>]: <title>``.
 
@@ -512,12 +512,13 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
         case VertexType.IMAGE:
             title_content = (
                 f"[bold orange1]{markup_escape(f'IMAGE [{vertex.alt_text or ""}]')}[/bold orange1]"
-                f"[bold #00aa00](<firestore_url>)[/bold #00aa00]"
+                f"[bold #00aa00](<firebase_storage_url>)[/bold #00aa00]"
             )
         case VertexType.PDF:
+            pdf_label: Final[str] = url_file_name(vertex.source) or "<firebase_storage_url>"
             title_content = (
                 f"[bold orange1]{markup_escape('PDF')}[/bold orange1]"
-                f" [bold #00aa00]{markup_escape(url_file_name(vertex.source) or '<firestore_url>')}[/bold #00aa00]"
+                f" [bold #00aa00]{markup_escape(pdf_label)}[/bold #00aa00]"
             )
         case VertexType.CALLOUT:
             title_content = (

@@ -2,7 +2,7 @@
 
 Public symbols:
 
-- **Pattern constants**: :data:`FIRESTORE_URL_RE` — compiled regex matching a Firebase Storage
+- **Pattern constants**: :data:`FIREBASE_STORAGE_URL_RE` — compiled regex matching a Firebase Storage
   URL, the single URL form of every Roam-managed asset; :data:`IMAGE_LINK_RE` — compiled
   regex matching a Roam markdown image link whose URL is a Firebase Storage URL;
   :data:`PDF_EMBED_RE` — compiled regex matching
@@ -21,7 +21,7 @@ Public symbols:
   highlight syntax ``^^text^^``; :data:`COLOR_BOLD_RE`, :data:`COLOR_HIGHLIGHT_RE`,
   :data:`COLOR_UNDERLINE_RE`, :data:`COLOR_BOX_RE`, :data:`BG_COLOR_LINE_RE` — compiled regexes
   for the five Color Highlighter inline and block-level color constructs.
-- **Pattern fragments**: :data:`FIRESTORE_URL_PATTERN` — the canonical Firebase Storage
+- **Pattern fragments**: :data:`FIREBASE_STORAGE_URL_PATTERN` — the canonical Firebase Storage
   URL form, the building block of every asset-bearing construct pattern (:data:`IMAGE_LINK_RE`,
   :data:`PDF_EMBED_RE`); :data:`SLUG` — a short restricted token (letters, digits, underscore,
   hyphen, em-dash), reused as a building block of larger patterns such as :data:`TAG_RE`;
@@ -74,7 +74,7 @@ Roam writes the component as either the bare :data:`ROAM_NATIVE_TABLE_RAW_MARKER
 (``{{[[table]]}}``); the two are equivalent.
 """
 
-FIRESTORE_URL_PATTERN: Final[str] = (
+FIREBASE_STORAGE_URL_PATTERN: Final[str] = (
     r"https://firebasestorage\.googleapis\.com"
     r"/v0/b/(?P<bucket>[\w.-]+)"
     r"/o/(?P<object_path>[\w%.-]+)"
@@ -100,13 +100,13 @@ The tight charsets make the pattern **self-terminating**: it never overruns a Ma
 component delimiter (``)``, ``}}``, whitespace), so host patterns embed it verbatim with no
 context-specific exclusions — the asset-bearing constructs (:data:`IMAGE_LINK_RE`,
 :data:`PDF_EMBED_RE`) differ only in the chrome wrapped around this one fragment.  Compiled
-standalone as :data:`FIRESTORE_URL_RE`.
+standalone as :data:`FIREBASE_STORAGE_URL_RE`.
 
 Named groups: ``bucket``, ``object_path``, ``query``.
 """
 
-FIRESTORE_URL_RE: Final[regex.Pattern[str]] = regex.compile(FIRESTORE_URL_PATTERN)
-"""Compiled regex matching a Firebase Storage URL (:data:`FIRESTORE_URL_PATTERN`).
+FIREBASE_STORAGE_URL_RE: Final[regex.Pattern[str]] = regex.compile(FIREBASE_STORAGE_URL_PATTERN)
+"""Compiled regex matching a Firebase Storage URL (:data:`FIREBASE_STORAGE_URL_PATTERN`).
 
 Named groups:
 
@@ -122,12 +122,12 @@ Example match on
 """
 
 IMAGE_LINK_RE: Final[regex.Pattern[str]] = regex.compile(
-    rf"!\[(?P<alt>(?:[^\]]|\n)*?)\]\((?P<url>{FIRESTORE_URL_PATTERN})\)"
+    rf"!\[(?P<alt>(?:[^\]]|\n)*?)\]\((?P<url>{FIREBASE_STORAGE_URL_PATTERN})\)"
 )
 """Compiled regex matching a Roam markdown image link whose URL is a Firebase Storage URL.
 
 A standard Markdown image reference (``![<alt>](<url>)``) whose URL is the canonical
-:data:`FIRESTORE_URL_PATTERN` — an image is ordinary Markdown chrome around the one Roam
+:data:`FIREBASE_STORAGE_URL_PATTERN` — an image is ordinary Markdown chrome around the one Roam
 asset-URL form.
 
 Named groups:
@@ -179,11 +179,11 @@ def image_link_alt_text(string: str) -> str | None:
 
 
 PDF_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(
-    rf"\{{\{{(?:pdf|\[\[pdf\]\]): (?P<url>{FIRESTORE_URL_PATTERN})\}}\}}"
+    rf"\{{\{{(?:pdf|\[\[pdf\]\]): (?P<url>{FIREBASE_STORAGE_URL_PATTERN})\}}\}}"
 )
 """Compiled regex matching a Roam PDF component whose URL is a Firebase Storage URL.
 
-PDF-specific chrome around the canonical :data:`FIRESTORE_URL_PATTERN`: Roam writes the
+PDF-specific chrome around the canonical :data:`FIREBASE_STORAGE_URL_PATTERN`: Roam writes the
 component as either the bare form (``{{pdf: <url>}}``) or the page-reference form
 (``{{[[pdf]]: <url>}}``); the two are equivalent.  Exactly one space follows the colon,
 mirroring the block-embed component (:data:`BLOCK_EMBED_RE`).

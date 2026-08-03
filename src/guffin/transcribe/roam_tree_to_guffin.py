@@ -472,13 +472,13 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
-    firestore_url: Final[str | None] = image_link_url(node.string)
-    if firestore_url is None:
+    firebase_storage_url: Final[str | None] = image_link_url(node.string)
+    if firebase_storage_url is None:
         raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firebase Storage URL")
-    source: Final[HttpUrl] = _url_adapter.validate_python(firestore_url)
+    source: Final[HttpUrl] = _url_adapter.validate_python(firebase_storage_url)
     file_name: Final[str | None] = url_file_name(source)
     if file_name is None:
-        raise ValueError(f"RoamNode uid={node.uid!r} filename cannot be extracted from URL {firestore_url!r}")
+        raise ValueError(f"RoamNode uid={node.uid!r} filename cannot be extracted from URL {firebase_storage_url!r}")
     # Roam encrypts hosted images with a double .enc extension; strip it to resolve the base media type.
     base_name: Final[str] = file_name.removesuffix(".enc")
     resolved_type: Final[MediaType | None] = MediaType.from_file_name(base_name)
@@ -521,12 +521,12 @@ def to_pdf_vertex(node: RoamNode, tree: NodeTree) -> PdfVertex:
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
-    firestore_url: Final[str | None] = pdf_embed_url(node.string)
-    if firestore_url is None:
+    firebase_storage_url: Final[str | None] = pdf_embed_url(node.string)
+    if firebase_storage_url is None:
         raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firebase Storage PDF component")
     return PdfVertex(
         uid=node.uid,
-        source=_url_adapter.validate_python(firestore_url),
+        source=_url_adapter.validate_python(firebase_storage_url),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),

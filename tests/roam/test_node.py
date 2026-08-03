@@ -18,10 +18,10 @@ from guffin.roam.node import (
 )
 from guffin.roam.primitives import DEFAULT_CHILDREN_VIEW_TYPE, ChildrenViewType, IdObject
 
-_FIRESTORE_URL = (
+_FIREBASE_STORAGE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
 )
-_IMAGE_STRING = f"![A flower]({_FIRESTORE_URL})"
+_IMAGE_STRING = f"![A flower]({_FIREBASE_STORAGE_URL})"
 
 
 def _make_image(uid: str = "imageuid1", node_id: int = 101, string: str = _IMAGE_STRING) -> RoamNode:
@@ -267,7 +267,7 @@ class TestNodeTypeFunction:
         node = RoamNode(
             uid="imageuid1",
             id=101,
-            string=f"![]({_FIRESTORE_URL})",
+            string=f"![]({_FIREBASE_STORAGE_URL})",
             parents=[IdObject(id=99)],
             page=IdObject(id=99),
         )
@@ -522,27 +522,27 @@ class TestNodeTypeFunction:
         node = _make_text(string="see {{pdf: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf}} here")
         assert node_type(node) is NodeType.TEXT_BLOCK
 
-    def test_non_firestore_pdf_component_is_text_block(self) -> None:
+    def test_non_firebase_storage_pdf_component_is_text_block(self) -> None:
         """Test that a PDF component pointing outside Firebase Storage is not a PDF_BLOCK."""
         node = _make_text(string="{{pdf: https://example.com/paper.pdf}}")
         assert node_type(node) is NodeType.TEXT_BLOCK
 
-    def test_bare_firestore_url_returns_asset_block(self) -> None:
+    def test_bare_firebase_storage_url_returns_asset_block(self) -> None:
         """Test that a block whose entire string is a bare Firebase Storage URL returns ASSET_BLOCK."""
-        node = _make_text(string=_FIRESTORE_URL)
+        node = _make_text(string=_FIREBASE_STORAGE_URL)
         assert node_type(node) is NodeType.ASSET_BLOCK
 
-    def test_bare_firestore_url_with_surrounding_whitespace_returns_asset_block(self) -> None:
+    def test_bare_firebase_storage_url_with_surrounding_whitespace_returns_asset_block(self) -> None:
         """Test that surrounding whitespace around a bare Firebase Storage URL is tolerated."""
-        node = _make_text(string=f"  {_FIRESTORE_URL}  ")
+        node = _make_text(string=f"  {_FIREBASE_STORAGE_URL}  ")
         assert node_type(node) is NodeType.ASSET_BLOCK
 
-    def test_firestore_url_mixed_with_text_is_text_block(self) -> None:
+    def test_firebase_storage_url_mixed_with_text_is_text_block(self) -> None:
         """Test that a Firebase Storage URL mixed with surrounding text is not an ASSET_BLOCK."""
-        node = _make_text(string=f"see {_FIRESTORE_URL} here")
+        node = _make_text(string=f"see {_FIREBASE_STORAGE_URL} here")
         assert node_type(node) is NodeType.TEXT_BLOCK
 
-    def test_non_firestore_url_is_text_block(self) -> None:
+    def test_non_firebase_storage_url_is_text_block(self) -> None:
         """Test that a bare URL pointing outside Firebase Storage is not an ASSET_BLOCK."""
         node = _make_text(string="https://example.com/paper.pdf")
         assert node_type(node) is NodeType.TEXT_BLOCK

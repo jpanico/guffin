@@ -294,9 +294,9 @@ tree_network:
   attrs: null
 - uid: it3wsZ7-H
   id: 15801
-  string: an asset is a BLOB stored by Roam in Cloud Firestore; usually a file dragged
-    into the Roam UI. The Roam Markdown representation of the asset is just the Cloud
-    Firestore URL.
+  string: an asset is a BLOB stored by Roam in Firebase Storage; usually a file dragged
+    into the Roam UI. The Roam Markdown representation of the asset is just the Firebase
+    Storage URL.
   order: 0
   heading: null
   children: null

@@ -13,10 +13,10 @@ from guffin.roam.blockquote import (
     parse_pull_quote,
 )
 
-_FIRESTORE_URL: Final[str] = (
+_FIREBASE_STORAGE_URL: Final[str] = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
 )
-_IMAGE_STRING: Final[str] = f"![A flower]({_FIRESTORE_URL})"
+_IMAGE_STRING: Final[str] = f"![A flower]({_FIREBASE_STORAGE_URL})"
 
 # ---------------------------------------------------------------------------
 # TestCalloutRE

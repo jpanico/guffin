@@ -127,9 +127,9 @@
   heading_level: 3
 - vertex_type: guffin/text
   uid: it3wsZ7-H
-  text: an asset is a BLOB stored by Roam in Cloud Firestore; usually a file dragged
-    into the Roam UI. The Roam Markdown representation of the asset is just the Cloud
-    Firestore URL.
+  text: an asset is a BLOB stored by Roam in Firebase Storage; usually a file dragged
+    into the Roam UI. The Roam Markdown representation of the asset is just the Firebase
+    Storage URL.
 - vertex_type: guffin/text
   uid: Wlzl_dhg_
   text: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
