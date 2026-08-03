@@ -184,6 +184,8 @@
     - id: 13467
     - id: 13468
     - id: 15247
+    - id: 15793
+    - id: 15794
     id: 11716
     uid: 7XdTiY_ZF
     parents:
@@ -277,6 +279,18 @@
     order: 1
     page:
       id: 3327
+- - string: '#c:FUCHSIA **inline Closed TODO ref ⟶**  ((I9tU2C5U6))'
+    id: 15796
+    uid: tU_piRCi2
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 16
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 15794
 - - string: ((kwybAuoGM))
     id: 13485
     uid: BlXTE6Z3J
@@ -323,7 +337,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 20
+    order: 22
     page:
       id: 4225
 - - id: 11933
@@ -488,7 +502,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 12
+    order: 14
     page:
       id: 4225
 - - string: The oriflamme of France was made of cendal. Chaucer couples taffetas and
@@ -737,7 +751,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 26
+    order: 30
     page:
       id: 4225
     refs:
@@ -774,7 +788,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 16
+    order: 18
     page:
       id: 4225
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
@@ -810,7 +824,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 19
+    order: 21
     page:
       id: 4225
 - - string: '> This is a Markdown standard multi-line Block Quote
@@ -875,7 +889,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 13
+    order: 15
     page:
       id: 4225
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
@@ -937,7 +951,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 18
+    order: 22
     page:
       id: 4225
     refs:
@@ -1103,7 +1117,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 24
+    order: 28
     page:
       id: 4225
     refs:
@@ -1167,9 +1181,20 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 18
+    order: 20
     page:
       id: 4225
+- - string: ((_aXU5hZqQ))
+    id: 15798
+    uid: vDvc-tHMh
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 13
+    page:
+      id: 4225
+    refs:
+    - id: 15793
 - - string: ((pTvGGeTlB))
     id: 15243
     uid: uiBphM2Fb
@@ -1190,7 +1215,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 14
+    order: 16
     page:
       id: 4225
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
@@ -1201,7 +1226,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 25
+    order: 29
     page:
       id: 4225
     refs:
@@ -1298,7 +1323,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 28
+    order: 32
     page:
       id: 4225
     refs:
@@ -1485,6 +1510,9 @@
     order: 0
     page:
       id: 4225
+- - id: 1371
+    uid: 7koyf_Urx
+    title: DONE
 - - string: '#c:FUCHSIA **standalone CALLOUT EMBED ↓**'
     children:
     - id: 13264
@@ -1586,7 +1614,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 15
+    order: 19
     page:
       id: 4225
     refs:
@@ -1635,7 +1663,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 13
+    order: 17
     page:
       id: 4225
     refs:
@@ -1664,6 +1692,26 @@
       id: 11643
     refs:
     - id: 11454
+- - string: '{{[[DONE]]}} a short #c:ORANGE __ref closed todo__'
+    id: 15794
+    uid: I9tU2C5U6
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 12
+    page:
+      id: 4225
+    refs:
+    - id: 1371
+    - id: 11454
+- - string: ''
+    id: 1348
+    uid: jntuNAGBs
+    parents:
+    - id: 329
+    order: 0
+    page:
+      id: 329
 - - string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
     id: 11745
     uid: zAIxMFBIB
@@ -1706,6 +1754,17 @@
     id: 12803
     uid: TXGdKldN6
     title: CHAPTER XXXVI. Account of the City of Juju.
+- - string: ((I9tU2C5U6))
+    id: 15799
+    uid: fR8I0SL7Z
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 14
+    page:
+      id: 4225
+    refs:
+    - id: 15794
 - - string: this is a child block of Block Quote
     id: 13498
     uid: 49jaaCtfI
@@ -1725,7 +1784,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 15
+    order: 17
     page:
       id: 4225
 - - string: '#c:FUCHSIA **standalone PDF BLOCK ref, site-tagged pdf-render: "inline"
@@ -1861,7 +1920,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 17
+    order: 19
     page:
       id: 4225
 - - string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((VvbwbLchA))'
@@ -1955,7 +2014,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 14
+    order: 18
     page:
       id: 4225
     refs:
@@ -2017,6 +2076,10 @@
     - id: 13492
     - id: 13494
     - id: 15242
+    - id: 15795
+    - id: 15796
+    - id: 15798
+    - id: 15799
     id: 4226
     uid: LfaVt18Iw
     parents:
@@ -2261,7 +2324,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 11
+    order: 13
     page:
       id: 4225
 - - string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref
@@ -2273,7 +2336,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 21
+    order: 25
     page:
       id: 4225
     refs:
@@ -2413,7 +2476,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 23
+    order: 27
     page:
       id: 4225
     refs:
@@ -2643,6 +2706,18 @@
     title: '[[Test Article]] 1'
     refs:
     - id: 4223
+- - string: '#c:FUCHSIA **inline Open TODO ref ⟶**  ((_aXU5hZqQ))'
+    id: 15795
+    uid: KWFlp92fa
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 15
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 15793
 - - string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
       \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
       \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n     \
@@ -2672,6 +2747,18 @@
 - - id: 11932
     uid: vuPFRAwZI
     title: the following block embeds a PDF with guffin-meta
+- - string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
+    id: 15793
+    uid: _aXU5hZqQ
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 11
+    page:
+      id: 4225
+    refs:
+    - id: 329
+    - id: 11454
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)'
     id: 12919
     uid: jN4ClkAEl
@@ -2729,7 +2816,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 19
+    order: 23
     page:
       id: 4225
     refs:
@@ -2742,7 +2829,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 17
+    order: 21
     page:
       id: 4225
     refs:
@@ -2994,6 +3081,11 @@
     order: 0
     page:
       id: 11674
+- - children:
+    - id: 1348
+    id: 329
+    uid: 20E2gCz7h
+    title: TODO
 - - string: r1.c1
     children:
     - id: 11230
@@ -3243,7 +3335,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 27
+    order: 31
     page:
       id: 4225
     refs:
@@ -3257,7 +3349,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 22
+    order: 26
     page:
       id: 4225
     refs:
@@ -3282,7 +3374,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 20
+    order: 24
     page:
       id: 4225
     refs:
@@ -3366,7 +3458,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 16
+    order: 20
     page:
       id: 4225
     refs:

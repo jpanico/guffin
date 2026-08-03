@@ -13,6 +13,7 @@ their `gfm_resources/` counterparts:
 | `epub_color_span.lua` | Color Highlighter `Span`/`Div` elements → inline-styled `<span>`/`<mark>` (text color, highlight, underline-color, box, whole-line background) and the attribute-assignment `.pill` badge |
 | `epub_mark.lua` | plain `.mark` `Span` → `<mark>` |
 | `epub_number_lines.lua` | adds the `numberLines` class to every code block so skylighting emits per-line spans with line identities (matching the Typst/PDF numbering); after packaging, `epub_post_processing.bake_code_line_numbers` rewrites the CSS-counter gutter into literal-text numbers (`span.line-number`, styled by `epub.css`) for reading systems — notably the Kindle app — that do not implement the counter/positioning CSS |
+| `epub_todo.lua` | a TODO checkbox glyph (`☐` U+2610 / `☒` U+2612) `Str` that does **not** open its `Plain`/`Para` — a reference's display amid text — → the glyph wrapped in a 1.2em inline-styled `<span>`, the DONE glyph displayed as `☑` (U+2611, the checkmark form matching the writer's native checkbox inputs); a glyph that *does* open its block is left bare, since on a list item that leading `Str` is what the writer's task-list conversion turns into a real `<input type="checkbox"/>` |
 
 `epub.css` is the bundled default stylesheet, applied via Pandoc `--css`. It is the customization
 point for the e-book's typeface — edit its `font-family` declarations to control the fonts.

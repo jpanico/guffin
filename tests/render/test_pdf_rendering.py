@@ -551,6 +551,18 @@ class TestTypstTodoFilter:
         assert "#box(baseline: 15%" in typst
         assert "☐" not in typst
 
+    def test_mid_paragraph_glyph_is_also_drawn(self) -> None:
+        """A checkbox glyph amid a paragraph's inlines — a reference's display — is drawn too."""
+        doc = pf.Doc(pf.Para(pf.Str("see"), pf.Space(), pf.Str("☒"), pf.Space(), pf.Str("it")))
+        typst = pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_todo.lua'}"],
+        )
+        assert "place(line(start: (8%, 8%)" in typst
+        assert "☒" not in typst
+
     def test_plain_text_is_untouched(self) -> None:
         """A text block with no leading glyph passes through the filter unchanged."""
         page = PageVertex(uid="page00001", title="Doc", children=["txt00001a"])

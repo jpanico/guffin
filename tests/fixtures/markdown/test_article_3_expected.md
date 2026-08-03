@@ -43,6 +43,8 @@ def fizz_buzz(limit: int = 100):
 - <mark style="background-color: orange">This span is highlighted orange.</mark> This span is not.
 - <span style="text-decoration: underline; color: orange">This span is underlined orange.</span>This span is not.
 - <span style="border: 1px solid orange; padding: 2px 4px">This span has box color orange.</span> This span does not.
+- [ ] a short <span style="text-decoration: underline; color: orange">ref open todo</span>
+- [x] a short <span style="text-decoration: underline; color: orange">ref closed todo</span>
 - the child block contains a standalone image
   [7rthRV4UHu.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)
 - the child block contains a Roam native callout
@@ -106,6 +108,10 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**inline HIGHLIGHTED ORANGE ref ⟶**</span> <mark style="background-color: orange">This span is highlighted orange.</mark> This span is not.
 - <span style="color: fuchsia">**inline UNDERLINED ORANGE ref ⟶**</span> <span style="text-decoration: underline; color: orange">This span is underlined orange.</span>This span is not.
 - <span style="color: fuchsia">**inline BOXED ORANGE ref ⟶**</span> <span style="border: 1px solid orange; padding: 2px 4px">This span has box color orange.</span> This span does not.
+- [ ] a short <span style="text-decoration: underline; color: orange">ref open todo</span>
+- [x] a short <span style="text-decoration: underline; color: orange">ref closed todo</span>
+- <span style="color: fuchsia">**inline Open TODO ref ⟶**</span> <span style="font-size: 1.2em; line-height: 1">☐</span> a short <span style="text-decoration: underline; color: orange">ref open todo</span>
+- <span style="color: fuchsia">**inline Closed TODO ref ⟶**</span> <span style="font-size: 1.2em; line-height: 1">☑</span> a short <span style="text-decoration: underline; color: orange">ref closed todo</span>
 - <span style="color: fuchsia">**standalone PAGE ref ↓**</span>
   - Test Article 3
 - <span style="color: fuchsia">**standalone BLOCK ref ↓**</span>

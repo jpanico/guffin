@@ -111,6 +111,7 @@ _EPUB_COLOR_SPAN_FILTER: Final[str] = "epub_color_span.lua"
 _EPUB_MARK_FILTER: Final[str] = "epub_mark.lua"
 _EPUB_CALLOUT_FILTER: Final[str] = "epub_callout.lua"
 _EPUB_NUMBER_LINES_FILTER: Final[str] = "epub_number_lines.lua"
+_EPUB_TODO_FILTER: Final[str] = "epub_todo.lua"
 # Bundled default stylesheet (the customization point for the e-book's font family).
 _EPUB_STYLESHEET: Final[str] = "epub.css"
 # Pandoc EPUB writer name (EPUB 3).
@@ -419,6 +420,7 @@ def render(
             f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_MARK_FILTER}",
+            f"--lua-filter={epub_dir / _EPUB_TODO_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
             f"--css={epub_dir / _EPUB_STYLESHEET}",
             f"--css={callout_colors_css}",

@@ -766,6 +766,20 @@ class TestVertexTreeToPandocTodoVertex:
         assert isinstance(blocks[0], pf.Para)
         assert _collect_text(blocks[0]) == "☐ an open item"
 
+    def test_reference_display_carries_the_checkbox(self) -> None:
+        """A reference to a TODO item leads its display inlines with the state glyph, as Roam does."""
+        item = TodoVertex(uid="todo0001a", todo_state=TodoState.DONE, text="a completed item")
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="todo0001a")
+        result = make_resolver({}, DateFormat.ROAM_LONG)(link, item, [pf.Str("a completed item")])
+        assert pf.stringify(pf.Para(*result)).strip() == "☒ a completed item"
+
+    def test_open_reference_display_carries_the_open_checkbox(self) -> None:
+        """A reference to an open TODO item leads with the open glyph."""
+        item = TodoVertex(uid="todo0001a", todo_state=TodoState.TODO, text="an open item")
+        link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="todo0001a")
+        result = make_resolver({}, DateFormat.ROAM_LONG)(link, item, [pf.Str("an open item")])
+        assert pf.stringify(pf.Para(*result)).strip() == "☐ an open item"
+
     def test_todo_children_nest_inside_the_item(self) -> None:
         """A TODO item's children render as a nested list inside its list item."""
         page = PageVertex(uid="page00001", title="P", children=["todo0001a"])

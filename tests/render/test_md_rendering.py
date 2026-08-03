@@ -13,8 +13,17 @@ from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import CodeBlockVertex, HeadingVertex, PageVertex, QuoteBlockVertex, QuoteType, TextVertex
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex import (
+    CodeBlockVertex,
+    HeadingVertex,
+    PageVertex,
+    QuoteBlockVertex,
+    QuoteType,
+    TextVertex,
+    TodoState,
+    TodoVertex,
+)
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
 from guffin.render.asset_fetch import AssetRef
@@ -89,6 +98,38 @@ class TestSemanticBullets:
         assert "- ⇒ the result block" in result
         assert "- 📞 notes from the call" in result
         assert "data-guffin" not in result
+
+
+class TestTodoRendering:
+    """TODO items and references to them render checkboxes in GFM."""
+
+    def test_items_and_inline_refs_render_checkboxes(self, tmp_path: Path) -> None:
+        """An item renders native task-list syntax; an inline ref carries a size-boosted glyph span."""
+        ref_url: Final[str] = vertex_link_url("tododone1", VertexLinkKind.REFERENCE)
+        page = PageVertex(uid="page00001", title="P", children=["todoopen1", "tododone1", "reftxt001"])
+        open_item = TodoVertex(uid="todoopen1", todo_state=TodoState.TODO, text="an open item")
+        done_item = TodoVertex(uid="tododone1", todo_state=TodoState.DONE, text="a completed item")
+        ref = TextVertex(uid="reftxt001", text=f"see [a completed item]({ref_url}) inline")
+        bundle: Final[RenderBundle] = RenderBundle(
+            content=VertexTree(tree_vertices=[page, open_item, done_item, ref]), view={}
+        )
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            bundle,
+            profile=ArticleProfile(),
+            filename_stem="todos",
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result: Final[str] = (tmp_path / "todos.md").read_text(encoding="utf-8")
+        assert "- [ ] an open item" in result
+        assert "- [x] a completed item" in result
+        # The inline reference's glyph is boosted 20% by gfm_todo.lua and its DONE state is
+        # displayed with the checkmark form (☑), matching GFM's native checkboxes; the leading
+        # task-list checkboxes above stay bare so the GFM writer's native syntax wins.
+        assert 'see <span style="font-size: 1.2em; line-height: 1">☑</span> a completed item inline' in result
 
 
 def _book_bundle() -> RenderBundle:

@@ -1895,7 +1895,13 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
             case TextVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TodoVertex():
-                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
+                # Roam shows the checkbox inside a reference to a TODO item, so the display
+                # inlines lead with the state glyph just as the item itself does.
+                return [
+                    pf.Str(CHECKBOX_GLYPH_BY_TODO_STATE[vertex.todo_state]),
+                    pf.Space(),
+                    *inline_map.get(vertex.text, [pf.Str(vertex.text)] if vertex.text else []),
+                ]
             case ImageVertex() if vertex_link.kind == VertexLinkKind.EMBED:
                 return [pf.Image(*display, url=str(vertex.source), title="")]
             case ImageVertex():

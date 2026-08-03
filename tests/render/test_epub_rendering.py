@@ -23,8 +23,16 @@ from guffin.common.revision import Revision
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import CodeBlockVertex, HeadingVertex, ImageVertex, PageVertex, TextVertex
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex import (
+    CodeBlockVertex,
+    HeadingVertex,
+    ImageVertex,
+    PageVertex,
+    TextVertex,
+    TodoState,
+    TodoVertex,
+)
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
 from guffin.render.epub_rendering import render
@@ -312,6 +320,27 @@ def _nav_in_spine(epub_path: Path) -> bool:
     """
     spine: Final[str] = _opf(epub_path).split("<spine", 1)[1]
     return 'idref="nav"' in spine
+
+
+class TestTodoRendering:
+    """TODO items and references to them render checkboxes in the packaged EPUB."""
+
+    def test_items_and_inline_refs_render_checkboxes(self, tmp_path: Path) -> None:
+        """Items become native checkbox inputs; an inline ref carries a size-boosted ☑/☐ span."""
+        ref_url: Final[str] = vertex_link_url("tododone1", VertexLinkKind.REFERENCE)
+        page = PageVertex(uid="page00001", title="Todos", children=["todoopen1", "tododone1", "reftxt001"])
+        open_item = TodoVertex(uid="todoopen1", todo_state=TodoState.TODO, text="an open item")
+        done_item = TodoVertex(uid="tododone1", todo_state=TodoState.DONE, text="a completed item")
+        ref = TextVertex(uid="reftxt001", text=f"see [a completed item]({ref_url}) inline")
+        bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, open_item, done_item, ref]))
+        epub_path: Final[Path] = _render_epub(tmp_path, bundle, ArticleProfile(), "todos")
+        xhtml: Final[str] = _all_text(epub_path)
+        assert '<input type="checkbox" />an open item' in xhtml
+        assert '<input type="checkbox" checked="" />a completed item' in xhtml
+        # The inline reference's glyph is boosted 20% by epub_todo.lua and its DONE state is
+        # displayed with the checkmark form (☑), matching the native checkbox inputs above.
+        assert 'see <span style="font-size: 1.2em; line-height: 1">☑</span> a completed item inline' in xhtml
+        assert "☒" not in xhtml
 
 
 class TestRenderEpub:

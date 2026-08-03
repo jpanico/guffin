@@ -33,6 +33,7 @@ _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
 _GFM_QUOTE_FILTER: Final[str] = "gfm_quote.lua"
+_GFM_TODO_FILTER: Final[str] = "gfm_todo.lua"
 
 from collections.abc import Mapping
 
@@ -287,6 +288,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
             ],
         )
@@ -332,6 +334,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_CODE_SOURCE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
             ],
         )

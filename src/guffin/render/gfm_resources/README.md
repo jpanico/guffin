@@ -18,6 +18,7 @@ pypandoc.convert_text(json_str, "gfm", format="json", extra_args=[
     f"--lua-filter={gfm_dir / 'gfm_color_span.lua'}",
     f"--lua-filter={gfm_dir / 'gfm_image.lua'}",    # bundle mode only
     f"--lua-filter={gfm_dir / 'gfm_mark.lua'}",
+    f"--lua-filter={gfm_dir / 'gfm_todo.lua'}",
     f"--lua-filter={gfm_dir / 'gfm_bracket.lua'}",
 ])
 ```
@@ -37,6 +38,7 @@ The input (`json_str`) is the Pandoc JSON AST (a serialized Panflute `Doc`). Pan
 | `gfm_color_span.lua` | a color `Span` / `Div` carrying a `color`, `highlight-color` (with class `mark`), `underline-color`, `box-color`, or `bg-color` attribute | inline HTML: `<span style="color: …">`, `<mark style="background-color: …">`, an underline or bordered `<span>`, or a `<span style="background-color: …">`, with inner content preserved |
 | `gfm_image.lua` | an `Image` (bundle mode) | `<img src="…" [alt] [width] [height] style="margin: 0;">`, with width/height read from the Pandoc attributes set by the rendering layer |
 | `gfm_mark.lua` | a `Span` with class `mark` (and no `highlight-color`) | `<mark>…</mark>` |
+| `gfm_todo.lua` | a TODO checkbox glyph (`☐` U+2610 / `☒` U+2612) `Str` that does **not** open its `Plain`/`Para` — a reference's display amid text | the glyph wrapped in `<span style="font-size: 1.2em; line-height: 1">` so it reads at the surrounding text's weight, the DONE glyph displayed as `☑` (U+2611, the checkmark form matching GFM's native checkboxes — `☒` stays confined to the AST, where it is the task-list convention the writer recognizes); a glyph that *does* open its block is left bare, since on a list item that leading `Str` is what the GFM writer's `task_lists` extension converts to native `- [ ]` / `- [x]` syntax |
 | `gfm_bracket.lua` | a `Str` containing a literal `[` or `]` | the surrounding text as `Str` pieces with each bracket as a raw-HTML character entity (`&#91;` / `&#93;`) |
 
 A few details worth noting:

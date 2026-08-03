@@ -63,6 +63,8 @@
   - zmb1Uac0S
   - GK_iI79mV
   - zAIxMFBIB
+  - _aXU5hZqQ
+  - I9tU2C5U6
   - _6Z-gzw6R
   - I7pBlEhyE
   - 4kdWXzDjz
@@ -122,6 +124,20 @@
   refs:
   - iF2Ey_unj
   text: '[This span has box color orange.]{box-color="orange"} This span does not.'
+- vertex_type: guffin/todo
+  uid: _aXU5hZqQ
+  refs:
+  - 20E2gCz7h
+  - iF2Ey_unj
+  todo_state: todo
+  text: a short [ ref open todo]{underline-color="orange"}
+- vertex_type: guffin/todo
+  uid: I9tU2C5U6
+  refs:
+  - 7koyf_Urx
+  - iF2Ey_unj
+  todo_state: done
+  text: a short [ref closed todo]{underline-color="orange"}
 - vertex_type: guffin/text
   uid: _6Z-gzw6R
   children:
@@ -301,6 +317,10 @@
   - JCyO1oiVt
   - 7AR6910sJ
   - 2IaJFXDZT
+  - vDvc-tHMh
+  - fR8I0SL7Z
+  - KWFlp92fa
+  - tU_piRCi2
   - b8ob6GcbI
   - ZT_EVUtHq
   - HftouGiTA
@@ -403,6 +423,30 @@
   - zAIxMFBIB
   text: '[**inline BOXED ORANGE ref ⟶**]{color="fuchsia"}  [#c:ORANGE ~~This span
     has box color orange.~~ This span does not.](x-guffin:vertex/zAIxMFBIB)'
+- vertex_type: guffin/text
+  uid: vDvc-tHMh
+  refs:
+  - _aXU5hZqQ
+  text: '[{{[[TODO]]}} a short #c:ORANGE __ ref open todo__](x-guffin:vertex/_aXU5hZqQ)'
+- vertex_type: guffin/text
+  uid: fR8I0SL7Z
+  refs:
+  - I9tU2C5U6
+  text: '[{{[[DONE]]}} a short #c:ORANGE *ref closed todo*](x-guffin:vertex/I9tU2C5U6)'
+- vertex_type: guffin/text
+  uid: KWFlp92fa
+  refs:
+  - lF-qY0Xrs
+  - _aXU5hZqQ
+  text: '[**inline Open TODO ref ⟶**]{color="fuchsia"}  [{{[[TODO]]}} a short #c:ORANGE
+    __ ref open todo__](x-guffin:vertex/_aXU5hZqQ)'
+- vertex_type: guffin/text
+  uid: tU_piRCi2
+  refs:
+  - lF-qY0Xrs
+  - I9tU2C5U6
+  text: '[**inline Closed TODO ref ⟶**]{color="fuchsia"}  [{{[[DONE]]}} a short #c:ORANGE
+    *ref closed todo*](x-guffin:vertex/I9tU2C5U6)'
 - vertex_type: guffin/text
   uid: b8ob6GcbI
   children:

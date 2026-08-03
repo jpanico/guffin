@@ -258,6 +258,8 @@ SYZfEd44O:
   - id: 13467
   - id: 13468
   - id: 15247
+  - id: 15793
+  - id: 15794
   refs: null
   page:
     id: 4225
@@ -426,6 +428,25 @@ yFUau9Cpg:
   props: null
   title: null
   attrs: null
+tU_piRCi2:
+  uid: tU_piRCi2
+  id: 15796
+  string: '#c:FUCHSIA **inline Closed TODO ref ⟶**  ((I9tU2C5U6))'
+  order: 16
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 15794
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
 BlXTE6Z3J:
   uid: BlXTE6Z3J
   id: 13485
@@ -490,7 +511,7 @@ l2hbop1R_:
   uid: l2hbop1R_
   id: 15247
   string: the child block contains a Roam hosted PDF Asset (upload)
-  order: 20
+  order: 22
   heading: null
   children:
   - id: 15248
@@ -750,7 +771,7 @@ I7pBlEhyE:
   uid: I7pBlEhyE
   id: 11766
   string: the child block contains a Roam native callout
-  order: 12
+  order: 14
   heading: null
   children:
   - id: 11767
@@ -1162,7 +1183,7 @@ uTV8PLeSZ:
   uid: 6cWeACALe
   id: 13492
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
-  order: 26
+  order: 30
   heading: null
   children:
   - id: 13493
@@ -1219,7 +1240,7 @@ SYAWArc3S:
   uid: 1AL7o_fUs
   id: 13463
   string: the child block contains a Roam native single-line block quote
-  order: 16
+  order: 18
   heading: null
   children:
   - id: 13465
@@ -1275,7 +1296,7 @@ OegKTVVNv:
   uid: OegKTVVNv
   id: 13468
   string: the child block contains a Roam native multiline Pull Quote
-  order: 19
+  order: 21
   heading: null
   children:
   - id: 13470
@@ -1362,7 +1383,7 @@ I1QOMCtdJ:
   uid: 4kdWXzDjz
   id: 11790
   string: the child block contains a Roam native table
-  order: 13
+  order: 15
   heading: null
   children:
   - id: 11792
@@ -1456,7 +1477,7 @@ dYYKZExzI:
   uid: dYYKZExzI
   id: 4229
   string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
-  order: 18
+  order: 22
   heading: null
   children:
   - id: 4232
@@ -1732,7 +1753,7 @@ bwfQEnrOi:
   uid: bwfQEnrOi
   id: 13488
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 24
+  order: 28
   heading: null
   children:
   - id: 13489
@@ -1831,7 +1852,7 @@ fv5nh7u81:
   uid: 9uT8Z9xNJ
   id: 13467
   string: the child block contains a Roam native single line Pull Quote
-  order: 18
+  order: 20
   heading: null
   children:
   - id: 13469
@@ -1842,6 +1863,24 @@ fv5nh7u81:
   parents:
   - id: 4225
   - id: 11716
+  props: null
+  title: null
+  attrs: null
+vDvc-tHMh:
+  uid: vDvc-tHMh
+  id: 15798
+  string: ((_aXU5hZqQ))
+  order: 13
+  heading: null
+  children: null
+  refs:
+  - id: 15793
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
   props: null
   title: null
   attrs: null
@@ -1868,7 +1907,7 @@ QB2Ym3btB:
   uid: QB2Ym3btB
   id: 13456
   string: the child block contains a standard markdown single-line block quote
-  order: 14
+  order: 16
   heading: null
   children:
   - id: 13457
@@ -1886,7 +1925,7 @@ QB2Ym3btB:
   uid: -K5d4a_ew
   id: 13490
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
-  order: 25
+  order: 29
   heading: null
   children:
   - id: 13491
@@ -2018,7 +2057,7 @@ SivJQaD8x:
   uid: SivJQaD8x
   id: 11802
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-  order: 28
+  order: 32
   heading: null
   children:
   - id: 11803
@@ -2315,6 +2354,20 @@ aM4rXqHLf:
   props: null
   title: null
   attrs: null
+7koyf_Urx:
+  uid: 7koyf_Urx
+  id: 1371
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: DONE
+  attrs: null
 1HipLqaCb:
   uid: 1HipLqaCb
   id: 13263
@@ -2460,7 +2513,7 @@ HftouGiTA:
   uid: HftouGiTA
   id: 11707
   string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
-  order: 15
+  order: 19
   heading: null
   children:
   - id: 11708
@@ -2547,7 +2600,7 @@ b8ob6GcbI:
   uid: b8ob6GcbI
   id: 11701
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
-  order: 13
+  order: 17
   heading: null
   children:
   - id: 11702
@@ -2597,6 +2650,41 @@ DZsnC1-jM:
   - id: 11643
   - id: 11657
   - id: 15251
+  props: null
+  title: null
+  attrs: null
+I9tU2C5U6:
+  uid: I9tU2C5U6
+  id: 15794
+  string: '{{[[DONE]]}} a short #c:ORANGE __ref closed todo__'
+  order: 12
+  heading: null
+  children: null
+  refs:
+  - id: 1371
+  - id: 11454
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  attrs: null
+jntuNAGBs:
+  uid: jntuNAGBs
+  id: 1348
+  string: ''
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 329
+  children_view_type: null
+  parents:
+  - id: 329
   props: null
   title: null
   attrs: null
@@ -2673,6 +2761,24 @@ TXGdKldN6:
   props: null
   title: CHAPTER XXXVI. Account of the City of Juju.
   attrs: []
+fR8I0SL7Z:
+  uid: fR8I0SL7Z
+  id: 15799
+  string: ((I9tU2C5U6))
+  order: 14
+  heading: null
+  children: null
+  refs:
+  - id: 15794
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
 49jaaCtfI:
   uid: 49jaaCtfI
   id: 13498
@@ -2696,7 +2802,7 @@ U_3KjJyqe:
   uid: U_3KjJyqe
   id: 13458
   string: the child block contains a standard markdown multi-line block quote
-  order: 15
+  order: 17
   heading: null
   children:
   - id: 13462
@@ -2902,7 +3008,7 @@ kfm7Kk_B3:
   uid: kfm7Kk_B3
   id: 13464
   string: the child block contains a Roam native multi-line block quote
-  order: 17
+  order: 19
   heading: null
   children:
   - id: 13466
@@ -3052,7 +3158,7 @@ ZT_EVUtHq:
   uid: ZT_EVUtHq
   id: 11704
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
-  order: 14
+  order: 18
   heading: null
   children:
   - id: 11705
@@ -3142,6 +3248,10 @@ LfaVt18Iw:
   - id: 13492
   - id: 13494
   - id: 15242
+  - id: 15795
+  - id: 15796
+  - id: 15798
+  - id: 15799
   refs: null
   page:
     id: 4225
@@ -3510,7 +3620,7 @@ _6Z-gzw6R:
   uid: _6Z-gzw6R
   id: 11757
   string: the child block contains a standalone image
-  order: 11
+  order: 13
   heading: null
   children:
   - id: 11758
@@ -3528,7 +3638,7 @@ nVv4pq7Fd:
   uid: nVv4pq7Fd
   id: 13494
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 21
+  order: 25
   heading: null
   children:
   - id: 13495
@@ -3768,7 +3878,7 @@ yTLZTltae:
   uid: yTLZTltae
   id: 13486
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 23
+  order: 27
   heading: null
   children:
   - id: 13487
@@ -4090,6 +4200,25 @@ HbJZh5mTY:
   props: null
   title: '[[Test Article]] 1'
   attrs: null
+KWFlp92fa:
+  uid: KWFlp92fa
+  id: 15795
+  string: '#c:FUCHSIA **inline Open TODO ref ⟶**  ((_aXU5hZqQ))'
+  order: 15
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 15793
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
 C6xVTMnsh:
   uid: C6xVTMnsh
   id: 11175
@@ -4143,6 +4272,25 @@ vuPFRAwZI:
   parents: null
   props: null
   title: the following block embeds a PDF with guffin-meta
+  attrs: null
+_aXU5hZqQ:
+  uid: _aXU5hZqQ
+  id: 15793
+  string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
+  order: 11
+  heading: null
+  children: null
+  refs:
+  - id: 329
+  - id: 11454
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
   attrs: null
 jN4ClkAEl:
   uid: jN4ClkAEl
@@ -4227,7 +4375,7 @@ Y0xFlk7y6:
   uid: Y0xFlk7y6
   id: 11733
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-  order: 19
+  order: 23
   heading: null
   children:
   - id: 11734
@@ -4246,7 +4394,7 @@ OYxDubiuN:
   uid: OYxDubiuN
   id: 15242
   string: '#c:FUCHSIA **standalone PDF BLOCK ref↓**'
-  order: 17
+  order: 21
   heading: null
   children:
   - id: 15243
@@ -4649,6 +4797,21 @@ UQQwogj1M:
   props: null
   title: null
   attrs: null
+20E2gCz7h:
+  uid: 20E2gCz7h
+  id: 329
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 1348
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: TODO
+  attrs: null
 bwUBoF2ee:
   uid: bwUBoF2ee
   id: 11229
@@ -5000,7 +5163,7 @@ _kTRqm3O-:
   uid: _kTRqm3O-
   id: 11769
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-  order: 27
+  order: 31
   heading: null
   children:
   - id: 11770
@@ -5019,7 +5182,7 @@ J1jloW5z0:
   uid: J1jloW5z0
   id: 13484
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 22
+  order: 26
   heading: null
   children:
   - id: 13485
@@ -5057,7 +5220,7 @@ fZr8Ve9SS:
   uid: fZr8Ve9SS
   id: 11735
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-  order: 20
+  order: 24
   heading: null
   children:
   - id: 11736
@@ -5183,7 +5346,7 @@ AQqf7TbPh:
   uid: AQqf7TbPh
   id: 11759
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
-  order: 16
+  order: 20
   heading: null
   children:
   - id: 11761
