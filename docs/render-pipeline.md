@@ -49,7 +49,7 @@ flowchart LR
   default), `drop_code_sources()` (unless `emit_code_sources` — clears each code block's provenance
   so no attribution line renders), `drop_page_breaks()` (the profile's `honor_page_breaks`
   directive, when it declines), `promote_non_body_sections()` (parts books only), and
-  `fetch_and_enrich_assets()` (Cloud Firestore assets + `enrich_image_original_sizes()` /
+  `fetch_and_enrich_assets()` (Firebase Storage assets + `enrich_image_original_sizes()` /
   `enrich_pdf_original_file_names()`); the two paginated renderers additionally apply
   `drop_root_preamble()` (the profile's `drop_preamble` directive, overridable via the
   `include_preamble` option). Conditional: which transforms run depends on the options and the

@@ -152,7 +152,7 @@ class TestExportRoamTreeMdbundleFromRaw:
         ``invoke_action`` (the Local API node fetch) returns the recorded
         ``test_article_2_raw_result.yaml`` wire response, so the real RoamNode parsing,
         tree build, transcription, and bundle rendering all run.  [[Test Article]] 2 has no
-        Cloud Firestore assets, so no asset fetch (hence no cache seeding) is needed — the
+        Firebase Storage assets, so no asset fetch (hence no cache seeding) is needed — the
         empty ``--cache-dir`` keeps the run hermetic against a shell ``GUFFIN_CACHE_DIR``.
         """
         raw_result: Final[object] = yaml.load(

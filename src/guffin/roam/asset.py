@@ -2,7 +2,7 @@
 
 Public symbols:
 
-- :class:`RoamAsset` — immutable representation of an asset fetched from Cloud Firestore
+- :class:`RoamAsset` — immutable representation of an asset fetched from Firebase Storage
   through the Roam API; :meth:`~RoamAsset.create` is the factory entry point.
 - :class:`RoamImageAsset` — :class:`RoamAsset` subclass for image assets; adds
   :attr:`~RoamImageAsset.image_size`.
@@ -30,10 +30,10 @@ def _imagesize_get(data: bytes) -> tuple[int, int]:
 
 
 class RoamAsset(BaseModel):
-    """Immutable representation of an asset fetched from Cloud Firestore through the Roam API.
+    """Immutable representation of an asset fetched from Firebase Storage through the Roam API.
 
-    Roam uploads all user assets (files, media) to Cloud Firestore, and stores only Cloud Firestore
-    locators (URLs) within the Roam graph DB itself (nodes).
+    Roam uploads all user assets (files, media) to Firebase Storage, and stores only
+    Firebase Storage locators (URLs) within the Roam graph DB itself (nodes).
 
     Use :meth:`create` to construct instances — it dispatches to the appropriate subclass based
     on *media_type*.
@@ -104,7 +104,7 @@ class RoamAsset(BaseModel):
 
 
 class RoamImageAsset(RoamAsset):
-    """Immutable representation of an image asset fetched from Cloud Firestore through the Roam API.
+    """Immutable representation of an image asset fetched from Firebase Storage through the Roam API.
 
     Extends :class:`RoamAsset` with pixel dimensions extracted from the image file contents.
 

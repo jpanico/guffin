@@ -255,7 +255,7 @@ class TestApplyPdfEmbeds:
     def test_article3_fixture_occurrences_place_independently(self) -> None:
         """The [[Test Article]] 3 fixture's three displays of one uploaded PDF each stamp per occurrence.
 
-        The same Firestore asset is displayed three times, exercising every resolution path:
+        The same Firebase Storage asset is displayed three times, exercising every resolution path:
         two untagged occurrences — a direct embed in Feature Content and a standalone reference
         to the [[Test Article]] 1 PDF block — which the format-neutral build leaves unset for the
         format pass to default, and one standalone reference tagged ``pdf-render: inline-native``

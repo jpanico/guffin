@@ -134,7 +134,7 @@ travel, and the other formats always carry their own.
 
 - **The shared build** renders every PDF occurrence as a `Para` holding one `Link`, labelled with
   the original upload filename when known (else the storage-key filename, Roam's `.enc` suffix
-  stripped), pointing at the fetched local file when there is one and at the remote Cloud Firestore
+  stripped), pointing at the fetched local file when there is one and at the remote Firebase Storage
   source otherwise. It stamps the link with the *authored* placement — or with
   `PDF_PLACEMENT_UNSET` when the occurrence carries no tag
   (`render/pandoc_rendering._pdf_vertex_to_blocks`).

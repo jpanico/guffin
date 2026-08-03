@@ -511,12 +511,12 @@ class TestPageEmbedRE:
 
 
 class TestFirestoreUrlRE:
-    """Tests for FIRESTORE_URL_RE — the canonical Cloud Firestore storage URL regex."""
+    """Tests for FIRESTORE_URL_RE — the canonical Firebase Storage URL regex."""
 
     # --- match cases ---
 
     def test_canonical_url_full_match(self) -> None:
-        """A canonical Firestore URL matches in full, with its anatomy captured."""
+        """A canonical Firebase Storage URL matches in full, with its anatomy captured."""
         m = FIRESTORE_URL_RE.fullmatch(_FIRESTORE_URL)
         assert m is not None
         assert m.group("bucket") == "test.appspot.com"
@@ -546,15 +546,15 @@ class TestFirestoreUrlRE:
     # --- no-match cases ---
 
     def test_no_match_other_host(self) -> None:
-        """A URL on any other host is not a Firestore storage URL."""
+        """A URL on any other host is not a Firebase Storage URL."""
         assert FIRESTORE_URL_RE.search("https://example.com/v0/b/x/o/y.png?alt=media") is None
 
     def test_no_match_missing_object_path(self) -> None:
-        """A Firestore-host URL without the /o/ object path does not match."""
+        """A Firebase Storage-host URL without the /o/ object path does not match."""
         assert FIRESTORE_URL_RE.search("https://firebasestorage.googleapis.com/v0/b/test.appspot.com") is None
 
     def test_no_match_missing_query(self) -> None:
-        """A Firestore URL without its access-parameter query string does not match."""
+        """A Firebase Storage URL without its access-parameter query string does not match."""
         assert (
             FIRESTORE_URL_RE.fullmatch("https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/x.png") is None
         )
@@ -592,7 +592,7 @@ class TestPdfEmbedRE:
     # --- no-match cases ---
 
     def test_no_match_non_firestore_url(self) -> None:
-        """A PDF component whose URL is not a Firestore URL does not match."""
+        """A PDF component whose URL is not a Firebase Storage URL does not match."""
         assert PDF_EMBED_RE.search("{{pdf: https://example.com/paper.pdf}}") is None
 
     def test_no_match_missing_space(self) -> None:
@@ -600,7 +600,7 @@ class TestPdfEmbedRE:
         assert PDF_EMBED_RE.search(f"{{{{pdf:{_FIRESTORE_PDF_URL}}}}}") is None
 
     def test_no_match_bare_url(self) -> None:
-        """A naked Firestore URL without the {{pdf: }} wrapper does not match."""
+        """A naked Firebase Storage URL without the {{pdf: }} wrapper does not match."""
         assert PDF_EMBED_RE.search(_FIRESTORE_PDF_URL) is None
 
     def test_no_match_other_component(self) -> None:
@@ -617,7 +617,7 @@ class TestPdfEmbedUrl:
     """Tests for pdf_embed_url."""
 
     def test_extracts_url_from_component(self) -> None:
-        """The Firestore URL is captured from a block string's PDF component."""
+        """The Firebase Storage URL is captured from a block string's PDF component."""
         assert pdf_embed_url(_PDF_STRING) == _FIRESTORE_PDF_URL
 
     def test_extracts_url_from_page_reference_form(self) -> None:
@@ -629,7 +629,7 @@ class TestPdfEmbedUrl:
         assert pdf_embed_url("just some plain text") is None
 
     def test_none_for_non_firestore_url(self) -> None:
-        """A PDF component pointing outside Firestore yields None."""
+        """A PDF component pointing outside Firebase Storage yields None."""
         assert pdf_embed_url("{{pdf: https://example.com/paper.pdf}}") is None
 
 
@@ -642,7 +642,7 @@ class TestImageLinkUrl:
     """Tests for image_link_url."""
 
     def test_extracts_url_from_image_link(self) -> None:
-        """The Firestore URL is captured from a block string's image link."""
+        """The Firebase Storage URL is captured from a block string's image link."""
         assert image_link_url(_IMAGE_STRING) == _FIRESTORE_URL
 
     def test_extracts_url_embedded_in_surrounding_text(self) -> None:
@@ -650,11 +650,11 @@ class TestImageLinkUrl:
         assert image_link_url(f"see {_IMAGE_STRING} below") == _FIRESTORE_URL
 
     def test_none_when_no_image_link(self) -> None:
-        """A string with no Firestore image link yields None."""
+        """A string with no Firebase Storage image link yields None."""
         assert image_link_url("just some plain text") is None
 
     def test_none_for_non_firestore_image(self) -> None:
-        """A markdown image whose URL is not a Firestore URL is not matched."""
+        """A markdown image whose URL is not a Firebase Storage URL is not matched."""
         assert image_link_url("![alt](https://example.com/photo.png)") is None
 
 
@@ -679,5 +679,5 @@ class TestImageLinkAltText:
         assert image_link_alt_text(f"![]({_FIRESTORE_URL})") is None
 
     def test_none_when_no_image_link(self) -> None:
-        """A string with no Firestore image link yields None."""
+        """A string with no Firebase Storage image link yields None."""
         assert image_link_alt_text("just some plain text") is None

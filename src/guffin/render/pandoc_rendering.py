@@ -47,7 +47,7 @@ Rendering rules:
   :class:`~panflute.Link` when *asset_files* has no entry for the vertex.
 - :class:`~guffin.vertex.PdfVertex` — rendered as a :class:`~panflute.Link`
   labelled with the PDF's filename, pointing at the local path from
-  *asset_files* when present, else at the remote Cloud Firestore source URL.
+  *asset_files* when present, else at the remote Firebase Storage source URL.
   Each display occurrence carries its resolved ``pdf-render`` placement — the
   standalone reference site's tag for a reference occurrence, else the PDF's own
   tag, else the default — as the :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold
@@ -1124,7 +1124,7 @@ def _pdf_vertex_to_blocks(
     labelled with the PDF's originally uploaded filename when known, else the
     storage-key filename (Roam's encryption suffix stripped), else the source
     URL.  The link points at the local fetched file when *asset_files* has an
-    entry for the vertex, else at the remote Cloud Firestore source URL.  An
+    entry for the vertex, else at the remote Firebase Storage source URL.  An
     *authored* placement is stamped on the link as the
     :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold attribute for a downstream format
     pass to consume; an unstamped link means the occurrence carries no tag, and

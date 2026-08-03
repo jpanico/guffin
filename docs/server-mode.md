@@ -379,7 +379,7 @@ pool.
 
 - **Offline endpoint tests** (`tests/server/`): FastAPI's `TestClient` against the app with the
   fetch pipeline fed from recorded fixtures — the `TestExportRoamTreeMdbundleFromRaw` pattern
-  (render a recorded `raw_result` end to end, no Roam, no Firestore). Covers the request→argv
+  (render a recorded `raw_result` end to end, no Roam, no Firebase Storage). Covers the request→argv
   translation, the response dichotomy, header correctness (`Content-Length`, `Content-Digest`,
   `Content-Disposition`), the mdbundle zip layout, and the error contract for each failure class
   (not-found, semantics violation, render error).

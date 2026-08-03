@@ -87,7 +87,7 @@ CacheDirOption = Annotated[
         "-c",
         envvar="GUFFIN_CACHE_DIR",
         help=(
-            "Directory for caching downloaded Cloud Firestore assets across runs. "
+            "Directory for caching downloaded Firebase Storage assets across runs. "
             "Unset, every run re-downloads every asset it displays or inspects."
         ),
     ),

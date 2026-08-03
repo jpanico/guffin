@@ -12,7 +12,7 @@ remaining EPUB-required metadata (a ``urn:uuid`` identifier, the date, and a lan
 is filled in automatically by Pandoc.  Top-level headings become the e-book's chapters via
 Pandoc's default EPUB split level.
 
-Cloud Firestore image assets are fetched via
+Firebase Storage image assets are fetched via
 :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets`, written to a temporary directory,
 and embedded in the EPUB by Pandoc's writer as local-path :class:`~panflute.Image` elements.  An
 optional *cache_dir* avoids re-downloading unchanged assets across runs.
@@ -264,7 +264,7 @@ def render(
 ) -> None:
     """Render *render_bundle* to an EPUB file inside ``options.output_dir``.
 
-    Writes ``<output_dir>/<filename_stem>.epub``.  Fetches all Cloud Firestore image assets into
+    Writes ``<output_dir>/<filename_stem>.epub``.  Fetches all Firebase Storage image assets into
     a temporary directory and enriches the vertex tree with each image's native pixel size via
     :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets`, builds a Panflute
     :class:`~panflute.Doc` via :func:`~guffin.render.pandoc_rendering.vertex_tree_to_pandoc`

@@ -251,7 +251,7 @@ class TestFetchRoamAssetFetch:
     @pytest.mark.live
     @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
     def test_live_image(self, live_api_endpoint: ApiEndpoint) -> None:
-        """Fetch a Cloud Firestore image asset and verify the returned RoamAsset is well-formed."""
+        """Fetch a Firebase Storage image asset and verify the returned RoamAsset is well-formed."""
         url: HttpUrl = HttpUrl(
             "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F-9owRBegJ8.jpeg.enc?alt=media&token=9b673aae-8089-4a91-84df-9dac152a7f94"
         )
@@ -271,7 +271,7 @@ class TestFetchRoamAssetFetch:
     @pytest.mark.live
     @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
     def test_live_pdf(self, live_api_endpoint: ApiEndpoint) -> None:
-        """Fetch a Cloud Firestore PDF asset and verify the returned RoamAsset is well-formed."""
+        """Fetch a Firebase Storage PDF asset and verify the returned RoamAsset is well-formed."""
         url: HttpUrl = HttpUrl(
             "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03"
         )

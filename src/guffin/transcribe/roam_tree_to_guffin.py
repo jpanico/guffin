@@ -20,9 +20,9 @@ Public symbols:
 - :func:`to_page_vertex` — build a :class:`~guffin.vertex.PageVertex` from a
   page node.
 - :func:`to_image_vertex` — build an :class:`~guffin.vertex.ImageVertex` from a
-  Firestore image block node.
+  Firebase Storage image block node.
 - :func:`to_pdf_vertex` — build a :class:`~guffin.vertex.PdfVertex` from a
-  Firestore PDF block node.
+  Firebase Storage PDF block node.
 - :func:`to_heading_vertex` — build a :class:`~guffin.vertex.HeadingVertex` from
   a heading block node.
 - :func:`to_text_vertex` — build a
@@ -457,7 +457,7 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     """Build an :class:`~guffin.vertex.ImageVertex` from *node*.
 
     Args:
-        node: A block node whose ``node.string`` embeds a Firestore image URL.
+        node: A block node whose ``node.string`` embeds a Firebase Storage image URL.
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
             its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
@@ -467,14 +467,14 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
 
     Raises:
         ValidationError: If *node* or *tree* is ``None`` or invalid.
-        ValueError: If ``node.string`` is ``None`` or contains no Firestore URL.
+        ValueError: If ``node.string`` is ``None`` or contains no Firebase Storage URL.
     """
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     firestore_url: Final[str | None] = image_link_url(node.string)
     if firestore_url is None:
-        raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firestore URL")
+        raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firebase Storage URL")
     source: Final[HttpUrl] = _url_adapter.validate_python(firestore_url)
     file_name: Final[str | None] = url_file_name(source)
     if file_name is None:
@@ -506,7 +506,7 @@ def to_pdf_vertex(node: RoamNode, tree: NodeTree) -> PdfVertex:
 
     Args:
         node: A block node whose ``node.string`` is wholly a Roam PDF component
-            (``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}``) with a Firestore URL.
+            (``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}``) with a Firebase Storage URL.
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
             its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
@@ -516,14 +516,14 @@ def to_pdf_vertex(node: RoamNode, tree: NodeTree) -> PdfVertex:
 
     Raises:
         ValidationError: If *node* or *tree* is ``None`` or invalid.
-        ValueError: If ``node.string`` is ``None`` or contains no Firestore PDF component.
+        ValueError: If ``node.string`` is ``None`` or contains no Firebase Storage PDF component.
     """
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     firestore_url: Final[str | None] = pdf_embed_url(node.string)
     if firestore_url is None:
-        raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firestore PDF component")
+        raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firebase Storage PDF component")
     return PdfVertex(
         uid=node.uid,
         source=_url_adapter.validate_python(firestore_url),

@@ -4,7 +4,7 @@ Converts the normalized vertex tree produced by
 :func:`~guffin.transcribe.roam_tree_to_guffin.transcribe` to a GFM document via the
 Pandoc object model (see :mod:`~guffin.pandoc_rendering`), and writes the
 result to disk as either a plain ``.md`` file or a self-contained
-``.mdbundle`` directory that embeds downloaded Cloud Firestore images.
+``.mdbundle`` directory that embeds downloaded Firebase Storage images.
 
 Public symbols:
 
@@ -163,7 +163,7 @@ def render(
     the result in one of two modes
     controlled by ``options.should_bundle``:
 
-    - ``should_bundle=True`` (default) — fetches Cloud Firestore image and PDF assets
+    - ``should_bundle=True`` (default) — fetches Firebase Storage image and PDF assets
       via :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets` (which also
       enriches the vertex tree with each image's native pixel size), places the
       assets in the bundle directory, and writes a self-contained
@@ -174,7 +174,7 @@ def render(
       ``<output_dir>/<filename_stem>.md`` without fetching
       assets.  :class:`~guffin.vertex.ImageVertex` and
       :class:`~guffin.vertex.PdfVertex` nodes fall back to
-      hyperlinks pointing at the original Cloud Firestore URLs.
+      hyperlinks pointing at the original Firebase Storage URLs.
 
     Pandoc must be installed and on ``PATH``.
 

@@ -25,7 +25,7 @@ _IMAGE_STRING = f"![A flower]({_FIRESTORE_URL})"
 
 
 def _make_image(uid: str = "imageuid1", node_id: int = 101, string: str = _IMAGE_STRING) -> RoamNode:
-    """Return a minimal Firestore image-block RoamNode."""
+    """Return a minimal Firebase Storage image-block RoamNode."""
     return RoamNode(
         uid=uid,
         id=node_id,
@@ -244,7 +244,7 @@ class TestNodeTypeFunction:
         assert node_type(node) is not NodeType.PAGE
 
     def test_image_node_returns_image(self) -> None:
-        """Test that a bare Firestore image block returns NodeType.IMAGE_BLOCK."""
+        """Test that a bare Firebase Storage image block returns NodeType.IMAGE_BLOCK."""
         assert node_type(_make_image()) is NodeType.IMAGE_BLOCK
 
     def test_image_node_is_not_block(self) -> None:
@@ -503,7 +503,7 @@ class TestNodeTypeFunction:
         assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_pdf_component_returns_pdf_block(self) -> None:
-        """Test that a block whose entire string is a Firestore PDF component returns PDF_BLOCK."""
+        """Test that a block whose entire string is a Firebase Storage PDF component returns PDF_BLOCK."""
         node = _make_text(string="{{pdf: https://firebasestorage.googleapis.com/v0/b/t/o/p.pdf.enc?alt=media}}")
         assert node_type(node) is NodeType.PDF_BLOCK
 
@@ -523,32 +523,32 @@ class TestNodeTypeFunction:
         assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_non_firestore_pdf_component_is_text_block(self) -> None:
-        """Test that a PDF component pointing outside Firestore is not a PDF_BLOCK."""
+        """Test that a PDF component pointing outside Firebase Storage is not a PDF_BLOCK."""
         node = _make_text(string="{{pdf: https://example.com/paper.pdf}}")
         assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_bare_firestore_url_returns_asset_block(self) -> None:
-        """Test that a block whose entire string is a bare Firestore URL returns ASSET_BLOCK."""
+        """Test that a block whose entire string is a bare Firebase Storage URL returns ASSET_BLOCK."""
         node = _make_text(string=_FIRESTORE_URL)
         assert node_type(node) is NodeType.ASSET_BLOCK
 
     def test_bare_firestore_url_with_surrounding_whitespace_returns_asset_block(self) -> None:
-        """Test that surrounding whitespace around a bare Firestore URL is tolerated."""
+        """Test that surrounding whitespace around a bare Firebase Storage URL is tolerated."""
         node = _make_text(string=f"  {_FIRESTORE_URL}  ")
         assert node_type(node) is NodeType.ASSET_BLOCK
 
     def test_firestore_url_mixed_with_text_is_text_block(self) -> None:
-        """Test that a Firestore URL mixed with surrounding text is not an ASSET_BLOCK."""
+        """Test that a Firebase Storage URL mixed with surrounding text is not an ASSET_BLOCK."""
         node = _make_text(string=f"see {_FIRESTORE_URL} here")
         assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_non_firestore_url_is_text_block(self) -> None:
-        """Test that a bare URL pointing outside Firestore is not an ASSET_BLOCK."""
+        """Test that a bare URL pointing outside Firebase Storage is not an ASSET_BLOCK."""
         node = _make_text(string="https://example.com/paper.pdf")
         assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_image_link_is_not_asset_block(self) -> None:
-        """Test that Markdown image chrome around a Firestore URL classifies as IMAGE_BLOCK, not ASSET_BLOCK."""
+        """Test that Markdown image chrome around a Firebase Storage URL is IMAGE_BLOCK, not ASSET_BLOCK."""
         assert node_type(_make_image()) is NodeType.IMAGE_BLOCK
 
     def test_attribute_assignment_returns_attribute_block(self) -> None:

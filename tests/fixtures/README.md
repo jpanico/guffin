@@ -17,7 +17,7 @@ This directory contains test data used by the guffin test suite.
 - `test_article_2.png` — Screenshot of the `[[Test Article]] 2` page in Roam (reference only)
 
 ### json/
-- `image_node.json` — Raw Roam node payload for a Firestore image block; used in `TestTranscribeNode::test_transcribes_image_node_from_fixture`
+- `image_node.json` — Raw Roam node payload for a Firebase Storage image block; used in `TestTranscribeNode::test_transcribes_image_node_from_fixture`
 
 ### markdown/
 - `descendant_rule.md` — CSS descendant-rule reference snippet used in `TestExportRoamPageNoBundle`

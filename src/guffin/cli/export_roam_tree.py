@@ -11,7 +11,7 @@ a ``.<type>`` segment (e.g. ``Foo.book.pdf``):
   GFM via :func:`~guffin.render.md_rendering.render`, then writes in one
   of two bundle modes:
 
-  - **Bundle mode** (default, ``--bundle``) — fetches Cloud Firestore images
+  - **Bundle mode** (default, ``--bundle``) — fetches Firebase Storage images
     and writes a self-contained ``<output_dir>/<target>.<type>.mdbundle/``
     directory.  Pass ``--cache-dir`` to avoid re-downloading unchanged assets
     across runs.
@@ -156,7 +156,7 @@ def main(
         typer.Option(
             "--bundle/--no-bundle",
             help=(
-                "Markdown only. When enabled (default), fetches Cloud Firestore images "
+                "Markdown only. When enabled (default), fetches Firebase Storage images "
                 "and writes a .mdbundle directory. When disabled, writes a plain .md file. "
                 "Ignored when --format pdf."
             ),
@@ -325,7 +325,7 @@ def main(
     title becomes the EPUB title and top-level headings become chapters.  The
     ``--bundle/--no-bundle`` and ``--template-dir`` options are ignored.
 
-    Every format but plain Markdown (``--no-bundle``) fetches the Cloud Firestore assets
+    Every format but plain Markdown (``--no-bundle``) fetches the Firebase Storage assets
     the document displays; pass ``--cache-dir`` / ``-c`` to keep those downloads across
     runs.
     """

@@ -6,10 +6,10 @@ Converts the normalized vertex tree produced by
 then exports the document to PDF by serializing the Doc to Pandoc JSON and
 invoking Pandoc via :mod:`pypandoc`.
 
-Cloud Firestore image assets are fetched via
+Firebase Storage image assets are fetched via
 :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets`, written to a temporary
 directory, and embedded in the PDF as local-path
-:class:`~panflute.Image` elements.  Cloud Firestore PDF assets are *not* embedded in the
+:class:`~panflute.Image` elements.  Firebase Storage PDF assets are *not* embedded in the
 output (matching the EPUB format): a display occurrence whose resolved ``pdf-render``
 placement is ``inline`` renders every page of the asset in the document flow (one
 full-width Typst ``image`` per page), while the ``link`` default renders as the PDF's
@@ -503,8 +503,8 @@ def render(
 ) -> None:
     """Render *render_bundle* to a PDF file inside ``options.output_dir``.
 
-    Writes ``<output_dir>/<filename_stem>.pdf``.  Fetches all Cloud
-    Firestore image assets into a temporary directory and enriches the vertex
+    Writes ``<output_dir>/<filename_stem>.pdf``.  Fetches all
+    Firebase Storage image assets into a temporary directory and enriches the vertex
     tree with each image's native pixel size via
     :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets`, builds a Panflute
     :class:`~panflute.Doc` via
@@ -535,7 +535,7 @@ def render(
         api_endpoint: Roam Local API endpoint used to fetch image assets.
         options: The PDF rendering options.  Reads ``output_dir`` (where the ``.pdf``
             is written; created if absent), ``cache_dir`` (optional cross-run asset
-            cache keyed by a SHA-256 hash of the Cloud Firestore URL), ``template_dir``
+            cache keyed by a SHA-256 hash of the Firebase Storage URL), ``template_dir``
             (optional directory with a ``user_cfg.typ`` override for the bundled
             Bergfink styling — passed to Pandoc as ``-V user-config=...`` so Bergfink
             loads it in place of the bundled default; all other template files always

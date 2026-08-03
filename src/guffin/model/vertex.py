@@ -33,9 +33,9 @@ Public symbols:
   node.
 - :class:`TodoState` — the two states of a TODO item (``TODO`` open, ``DONE`` completed).
 - :class:`TodoVertex` — normalized (transcribed) form of a Roam TODO item block node.
-- :class:`ImageVertex` — normalized (transcribed) form of a Roam Firestore image block
+- :class:`ImageVertex` — normalized (transcribed) form of a Roam Firebase Storage image block
   node.
-- :class:`PdfVertex` — normalized (transcribed) form of a Roam Firestore PDF block node.
+- :class:`PdfVertex` — normalized (transcribed) form of a Roam Firebase Storage PDF block node.
 - :class:`CalloutVertex` — normalized (transcribed) form of a Roam callout block node.
 - :class:`CodeBlockVertex` — normalized (transcribed) form of a Roam fenced code block
   node.
@@ -96,12 +96,12 @@ class VertexType(StrEnum):
         HEADING: Normalized form of a Roam *Block* node that carries a
             ``heading`` property (value 1, 2, or 3).
         IMAGE: Normalized form of a Roam *Block* node whose
-            ``:block/string`` embeds a Cloud Firestore URL pointing to a
+            ``:block/string`` embeds a Firebase Storage URL pointing to a
             Roam-managed image upload.
         PDF: Normalized form of a Roam *Block* node whose ``:block/string``
             is wholly a Roam PDF component (``{{pdf: <url>}}`` /
             ``{{[[pdf]]: <url>}}``) whose URL points to a Roam-managed PDF
-            upload in Cloud Firestore.
+            upload in Firebase Storage.
         CALLOUT: Normalized form of a Roam *Block* node whose
             ``:block/string`` starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
         CODE_BLOCK: Normalized form of a Roam *Block* node whose
@@ -251,7 +251,7 @@ class TextVertex(_BaseVertex[Literal[VertexType.TEXT]]):
     """Normalized (transcribed) form of a plain-text Roam Block node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has
-    ``:block/string`` set with no heading property and no embedded Firestore URL.
+    ``:block/string`` set with no heading property and no embedded Firebase Storage URL.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.TEXT`.
@@ -310,15 +310,15 @@ class TodoVertex(_BaseVertex[Literal[VertexType.TODO]]):
 
 
 class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
-    """Normalized (transcribed) form of a Roam Cloud Firestore image block node.
+    """Normalized (transcribed) form of a Roam Firebase Storage image block node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that embeds a Cloud Firestore storage URL.
+    ``:block/string`` that embeds a Firebase Storage URL.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.IMAGE`.
             Serialized as ``'vertex-type'``.
-        source: Cloud Firestore storage URL for the image file.
+        source: Firebase Storage URL for the image file.
         alt_text: Alt text extracted from the Markdown image link
             (``![<alt_text>](<url>)``), stripped of leading/trailing whitespace.
             ``None`` when the alt text is absent or empty.
@@ -338,7 +338,7 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
         serialization_alias="vertex-type",
         description="Always VertexType.IMAGE (serialized as 'vertex-type').",
     )
-    source: HttpUrl = Field(..., description="Cloud Firestore storage URL for the image file.")
+    source: HttpUrl = Field(..., description="Firebase Storage URL for the image file.")
     alt_text: str | None = Field(
         default=None,
         serialization_alias="alt-text",
@@ -380,16 +380,16 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
 
 
 class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
-    """Normalized (transcribed) form of a Roam Cloud Firestore PDF block node.
+    """Normalized (transcribed) form of a Roam Firebase Storage PDF block node.
 
     Produced when the source :class:`~guffin.roam.node.RoamNode` has a
     ``:block/string`` that is wholly a Roam PDF component (``{{pdf: <url>}}`` /
-    ``{{[[pdf]]: <url>}}``) whose URL is a Cloud Firestore storage URL.
+    ``{{[[pdf]]: <url>}}``) whose URL is a Firebase Storage URL.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.PDF`.
             Serialized as ``'vertex-type'``.
-        source: Cloud Firestore storage URL for the PDF file.
+        source: Firebase Storage URL for the PDF file.
         original_file_name: The filename the PDF was originally uploaded under. ``None``
             when unknown (populated by asset fetching, which reads it from the asset
             metadata rather than the storage URL).
@@ -401,7 +401,7 @@ class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
         serialization_alias="vertex-type",
         description="Always VertexType.PDF (serialized as 'vertex-type').",
     )
-    source: HttpUrl = Field(..., description="Cloud Firestore storage URL for the PDF file.")
+    source: HttpUrl = Field(..., description="Firebase Storage URL for the PDF file.")
     original_file_name: str | None = Field(
         default=None,
         serialization_alias="original-file-name",
@@ -651,7 +651,7 @@ type AssetVertex = ImageVertex | PdfVertex
 """Union of the asset-bearing vertex types.
 
 An asset-bearing vertex's content is not inline text but a file hosted in
-Cloud Firestore storage: every member carries a ``source`` storage URL
+Firebase Storage: every member carries a ``source`` storage URL
 addressing it.  Use :func:`is_asset_vertex` to classify (and statically
 narrow) a :data:`Vertex`.
 
@@ -700,7 +700,7 @@ def is_asset_vertex(vertex: Vertex) -> TypeIs[AssetVertex]:
     """Whether *vertex* is asset-bearing.
 
     Being asset-bearing is an inherent property of the vertex type: the
-    vertex's content is a Cloud Firestore-hosted file rather than inline
+    vertex's content is a Firebase Storage-hosted file rather than inline
     text.  Membership is declared solely by the :data:`AssetVertex` union;
     the check runs against the runtime tuple derived from it.
 

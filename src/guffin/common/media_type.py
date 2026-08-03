@@ -2,7 +2,7 @@
 
 Public symbols:
 
-- :class:`MediaType` — IANA media type for assets fetched from Cloud Firestore.
+- :class:`MediaType` — IANA media type for assets fetched from Firebase Storage.
 - :func:`is_image_type` — returns ``True`` if a :class:`MediaType` is an image MIME type.
 """
 

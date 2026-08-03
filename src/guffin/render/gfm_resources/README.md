@@ -25,7 +25,7 @@ pypandoc.convert_text(json_str, "gfm", format="json", extra_args=[
 
 The input (`json_str`) is the Pandoc JSON AST (a serialized Panflute `Doc`). Pandoc applies the filters **in the order given** to the parsed AST, *before* the GFM writer serializes it. Each filter defines element-type functions (`Div`, `Span`, `Image`) that Pandoc invokes for every matching node, returning replacement node(s). Where a filter emits HTML (or Markdown) the writer should pass through verbatim, it inserts `RawInline` / `RawBlock` nodes tagged `"html"` (or `"markdown"`).
 
-`gfm_image.lua` runs only in **bundle mode** (`--bundle`), where images are fetched into the `.mdbundle/` directory and need sized `<img>` tags. In plain mode (`--no-bundle`) images fall back to hyperlinks pointing at the original Cloud Firestore URLs, so the image filter is omitted.
+`gfm_image.lua` runs only in **bundle mode** (`--bundle`), where images are fetched into the `.mdbundle/` directory and need sized `<img>` tags. In plain mode (`--no-bundle`) images fall back to hyperlinks pointing at the original Firebase Storage URLs, so the image filter is omitted.
 
 ## Filters
 

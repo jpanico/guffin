@@ -318,7 +318,7 @@ def warn_unresolvable_external_link(label: str | None, source: str) -> bool:
 
     Args:
         label: The PDF's display label, for the warning.
-        source: The asset's Cloud Firestore URL.
+        source: The asset's Firebase Storage URL.
 
     Returns:
         ``True`` when the source names encrypted content (and a warning was logged).

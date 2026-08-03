@@ -178,7 +178,7 @@ blocker for the audience.
    MSIX is the only leg with clean uninstall for free).
 8. **Cache/logs** default to platform cache/log dirs in bundled mode (today
    `GUFFIN_CACHE_DIR` unset means no caching at all — a black box shouldn't re-download
-   every Firestore asset per export). Never write beside the executable.
+   every Firebase Storage asset per export). Never write beside the executable.
 
 ## 5. Prerequisite work in guffin (ordered)
 
@@ -204,7 +204,7 @@ blocker for the audience.
 5. `/setup` endpoint + config write, with the §4.3 CSRF protection.
 6. platformdirs cache/log defaults in bundled mode.
 7. PyInstaller spec: `collect_data_files("guffin")` (four resource dirs), certifi collected
-   (TLS to Roam/Firestore/GitHub fails otherwise), hooks-contrib set.
+   (TLS to Roam/Firebase Storage/GitHub fails otherwise), hooks-contrib set.
 8. *(Optional)* bake build provenance at freeze time — frozen bundles aren't git worktrees,
    so provenance degrades to `UNKNOWN_COMMIT` (gracefully — cosmetic only).
 9. *(Deferred)* the `pandoc server` argv spawn form, only if the acceleration is ever

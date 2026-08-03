@@ -2,8 +2,8 @@
 
 Python 3.14 toolkit for exporting Roam Research graph sub-trees to self-contained documents. Supports three output formats:
 
-- **Markdown** — renders to Github Flavored Markdown (GFM) and optionally bundles Roam-hosted (Cloud Firestore) images and PDFs into a self-contained `.mdbundle` directory.
-- **PDF** — builds a Pandoc object model directly from a graph sub-tree via [Panflute](https://github.com/sergiocorreia/panflute), fetches and embeds Roam-hosted (Cloud Firestore) images, and produces a PDF via [Pandoc](https://pandoc.org) + [Typst](https://typst.app) (the bundled Bergfink template). PDF assets are not embedded, but an embed tagged `pdf-render:: inline` renders all of its pages into the document flow.
+- **Markdown** — renders to Github Flavored Markdown (GFM) and optionally bundles Roam-hosted (Firebase Storage) images and PDFs into a self-contained `.mdbundle` directory.
+- **PDF** — builds a Pandoc object model directly from a graph sub-tree via [Panflute](https://github.com/sergiocorreia/panflute), fetches and embeds Roam-hosted (Firebase Storage) images, and produces a PDF via [Pandoc](https://pandoc.org) + [Typst](https://typst.app) (the bundled Bergfink template). PDF assets are not embedded, but an embed tagged `pdf-render:: inline` renders all of its pages into the document flow.
 - **EPUB** — builds the same Panflute object model and embeds Roam-hosted images into the package, then produces an EPUB 3 e-book via [Pandoc](https://pandoc.org) (no Typst required); top-level headings become chapters.
 
 Orthogonal to the format, a **project type** (`--type default|book|manuscript`) says what *kind* of work is being produced. Its structural profile drives where the document divides (sections vs. chapters vs. parts), whether headings are numbered, whether a title page and table of contents are emitted, and whether the root's loose preamble is kept. A `book`, for example, opens each chapter on a new page (or file, for EPUB), numbers its headings, emits a linked ToC and a title page, and drops the preamble; a `default` article does none of these. A book also **auto-detects parts** from its content: any level-1 heading tagged `element-type:: part` switches it to a part/chapter structure.
@@ -252,12 +252,12 @@ guffin/
 │           ├── node.py                      # RoamNode, NodeType, node_type, NodesByUid
 │           ├── node_network.py              # NodeNetwork; network validators and utilities
 │           ├── node_tree.py                 # NodeTree (build() factory), NodeTreeDFSIterator, to_table
-│           ├── asset.py                     # Cloud Firestore asset model
+│           ├── asset.py                     # Firebase Storage asset model
 │           ├── local_api.py                 # ApiEndpoint model for the Roam Local API
 │           ├── node_fetch_result.py         # NodeFetchAnchor, NodeFetchSpec, NodeFetchResult
 │           ├── node_fetch.py                # Fetch RoamNode records via Local API
 │           ├── schema_fetch.py              # Fetch Datomic schema via Local API
-│           ├── asset_fetch.py               # Fetch Cloud Firestore assets via Local API
+│           ├── asset_fetch.py               # Fetch Firebase Storage assets via Local API
 │           └── revision.py                  # Capture a content Revision from a raw fetch
 │
 ├── tests/                               # pytest test suite; mirrors src/guffin/
@@ -305,7 +305,7 @@ The output filename stem embeds the project type: `<target>.<type>.<ext>` (e.g. 
 
 #### Markdown output (default)
 
-By default (`--format markdown`) it creates a `<target>.<type>.mdbundle` directory containing the Github Flavored Markdown (GFM) document and any downloaded Cloud Firestore images and PDFs. Pass `--no-bundle` to write a plain `.md` file instead.
+By default (`--format markdown`) it creates a `<target>.<type>.mdbundle` directory containing the Github Flavored Markdown (GFM) document and any downloaded Firebase Storage images and PDFs. Pass `--no-bundle` to write a plain `.md` file instead.
 
 ```bash
 # Bundled (default) — creates ~/docs/Test_Article.default.mdbundle/
@@ -320,7 +320,7 @@ export-roam-tree wdMgyBiP9 --port 3333 --graph SCFH --token your-bearer-token --
 
 #### PDF output
 
-`--format pdf` builds a Pandoc object model directly from the vertex tree via Panflute, fetches and embeds Cloud Firestore images, and produces a PDF via Pandoc + Typst. Requires `typst` on `PATH`. The source PDF asset is never embedded; an untagged `{{[[pdf]]: <url>}}` embed renders as the PDF's original filename, while one tagged `pdf-render:: inline` (a `guffin-meta::` child of the embed block) renders all of its pages into the document flow (requires Typst ≥ 0.14).
+`--format pdf` builds a Pandoc object model directly from the vertex tree via Panflute, fetches and embeds Firebase Storage images, and produces a PDF via Pandoc + Typst. Requires `typst` on `PATH`. The source PDF asset is never embedded; an untagged `{{[[pdf]]: <url>}}` embed renders as the PDF's original filename, while one tagged `pdf-render:: inline` (a `guffin-meta::` child of the embed block) renders all of its pages into the document flow (requires Typst ≥ 0.14).
 
 ```bash
 # Creates ~/docs/Test_Article.default.pdf
@@ -331,7 +331,7 @@ Pass `--template-dir <dir>` (a directory containing a `user_cfg.typ`) to overrid
 
 #### EPUB output
 
-`--format epub` builds a Pandoc object model directly from the vertex tree via Panflute, fetches and embeds Cloud Firestore images, and produces an EPUB 3 e-book via Pandoc. The page title becomes the EPUB `dc:title` and top-level headings become the e-book's chapters. Requires `pandoc` on `PATH` (no Typst).
+`--format epub` builds a Pandoc object model directly from the vertex tree via Panflute, fetches and embeds Firebase Storage images, and produces an EPUB 3 e-book via Pandoc. The page title becomes the EPUB `dc:title` and top-level headings become the e-book's chapters. Requires `pandoc` on `PATH` (no Typst).
 
 ```bash
 # Creates ~/docs/Test_Article.default.epub
@@ -356,7 +356,7 @@ The `--preamble/--no-preamble` and `--numbering/--no-numbering` flags (PDF/EPUB 
 |---|---|---|---|
 | `--bundle/--no-bundle` | | markdown | Bundle images/PDFs into a `.mdbundle` (default) vs. write a plain `.md`. |
 | `--template-dir` | | pdf | Directory with a `user_cfg.typ` overriding the Bergfink styling. |
-| `--cache-dir` | `-c` | markdown, pdf, epub | Cache downloaded Cloud Firestore assets across runs. |
+| `--cache-dir` | `-c` | markdown, pdf, epub | Cache downloaded Firebase Storage assets across runs. |
 | `--suppress-attributes` | | all | Omit end-user Roam attribute assignments (the rendered pills) from the output. |
 | `--colophon/--no-colophon` | | all | Embed a provenance + revision colophon (on by default). |
 | `--preamble/--no-preamble` | | pdf, epub | Keep/drop the root's loose preamble; unset defers to the `--type` profile. |
@@ -425,7 +425,7 @@ The `--render-bundle` output is an outer **Render Bundle** panel wrapping two su
 
 `--vertex-props type,children,text` selects which `Vertex` fields appear for each vertex in the vertex-tree output (defaults to `vertex_type.value,children,refs`).
 
-`--cache-dir <dir>` / `-c` (env `GUFFIN_CACHE_DIR`) caches downloaded Cloud Firestore assets across runs. Rendering the render bundle fetches every displayed asset to read each image's native pixel size and each PDF's original filename; without a cache directory, every run re-downloads them.
+`--cache-dir <dir>` / `-c` (env `GUFFIN_CACHE_DIR`) caches downloaded Firebase Storage assets across runs. Rendering the render bundle fetches every displayed asset to read each image's native pixel size and each PDF's original filename; without a cache directory, every run re-downloads them.
 
 Examples:
 ```bash

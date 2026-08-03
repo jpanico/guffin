@@ -490,7 +490,7 @@ class TestFetchRoamNodesFetchByNodeUid:
         ``test_article_1_nodes.yaml`` fixture: Section 2.1 (``drtANJYTg``),
         illustration 2.1 (``OaTXPl93p``), its caption (``tWkumkdUE``), its image
         (``zZG-BfWvs``), asset 2.1 (``oTrZWi_EL``), its explainer text (``it3wsZ7-H``),
-        its naked Firestore asset URL (``Wlzl_dhg_``), Section 2.1.1 (``yFUau9Cpg``),
+        its naked Firebase Storage asset URL (``Wlzl_dhg_``), Section 2.1.1 (``yFUau9Cpg``),
         Section 2.1.1.1 (``bxkcECGwN``), Section 2.2 (``5f1ahOFdp``), its ``{{table}}``
         block (``nhX6sTxSE``), and the table's four image-referencing cells
         (``BeDkLXjgQ``, ``mfYCtWH-T``, ``8VPJRGOt4``, ``1NasQjcTQ``).  Transient
@@ -538,7 +538,7 @@ class TestFetchRoamNodesFetchByNodeUid:
         (Section 2).  Expects the root node plus its fifteen descendant blocks: Section 2.1
         (``drtANJYTg``), illustration 2.1 (``OaTXPl93p``), its caption (``tWkumkdUE``),
         its image (``zZG-BfWvs``), asset 2.1 (``oTrZWi_EL``), its explainer text
-        (``it3wsZ7-H``), its naked Firestore asset URL (``Wlzl_dhg_``), Section 2.1.1
+        (``it3wsZ7-H``), its naked Firebase Storage asset URL (``Wlzl_dhg_``), Section 2.1.1
         (``yFUau9Cpg``), Section 2.1.1.1 (``bxkcECGwN``), Section 2.2 (``5f1ahOFdp``), its
         ``{{table}}`` block (``nhX6sTxSE``), and the table's four image-referencing cells
         (``BeDkLXjgQ``, ``mfYCtWH-T``, ``8VPJRGOt4``, ``1NasQjcTQ``).

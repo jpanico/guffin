@@ -163,7 +163,7 @@ class TestCallout:
         assert parse_callout("Some plain text") is None
 
     def test_returns_none_for_image_link(self) -> None:
-        """Returns None when block_string is a Firestore image link."""
+        """Returns None when block_string is a Firebase Storage image link."""
         assert parse_callout(_IMAGE_STRING) is None
 
     # --- returns RoamCallout ---

@@ -3,9 +3,9 @@
 Public symbols:
 
 - :class:`FetchRoamAsset` — stateless utility class that fetches a Roam asset
-  (image or file) by its Cloud Firestore URL via the Local API's ``file.get``
+  (image or file) by its Firebase Storage URL via the Local API's ``file.get``
   action.
-- :func:`fetch_and_cache_asset` — fetch a Cloud Firestore asset, using a local
+- :func:`fetch_and_cache_asset` — fetch a Firebase Storage asset, using a local
   cache directory to avoid re-downloading unchanged assets.
 """
 
@@ -58,7 +58,7 @@ class FetchRoamAsset:
 
             Inherits ``action: str`` and ``args: list[object]`` from the parent.
             Instances must be constructed via :meth:`with_url`, which sets
-            ``action`` to ``"file.get"`` and wraps the Cloud Firestore URL in a
+            ``action`` to ``"file.get"`` and wraps the Firebase Storage URL in a
             single :class:`Arg`.
 
             Once created, instances cannot be modified (frozen).
@@ -70,7 +70,7 @@ class FetchRoamAsset:
                 """A single positional argument in a ``file.get`` request.
 
                 Attributes:
-                    url: Cloud Firestore URL of the asset to fetch.
+                    url: Firebase Storage URL of the asset to fetch.
                     format: Encoding format for the response; always ``'base64'``.
                 """
 
@@ -81,10 +81,10 @@ class FetchRoamAsset:
 
             @classmethod
             def with_url(cls, url: HttpUrl) -> Self:
-                """Construct a ``file.get`` payload for the given Cloud Firestore URL.
+                """Construct a ``file.get`` payload for the given Firebase Storage URL.
 
                 Args:
-                    url: Cloud Firestore URL of the asset to fetch.
+                    url: Firebase Storage URL of the asset to fetch.
 
                 Returns:
                     A frozen :class:`Payload` with ``action`` set to ``"file.get"``
@@ -115,7 +115,7 @@ class FetchRoamAsset:
     @staticmethod
     @validate_call
     def fetch(firebase_url: HttpUrl, api_endpoint: ApiEndpoint) -> RoamAsset:
-        """Fetch an asset from Cloud Firestore via the Roam Research Local API.
+        """Fetch an asset from Firebase Storage via the Roam Research Local API.
 
         Builds a ``file.get`` request payload and delegates the HTTP call to
         :func:`~guffin.roam.local_api.invoke_action`. The Roam Desktop app must be
@@ -123,7 +123,7 @@ class FetchRoamAsset:
         called.
 
         Args:
-            firebase_url: The Cloud Firestore URL of the asset, as it appears in the
+            firebase_url: The Firebase Storage URL of the asset, as it appears in the
                 Roam graph's Markdown.
             api_endpoint: The API endpoint (URL + bearer token) for the target Roam graph.
 
@@ -183,7 +183,7 @@ def _cached_asset(cache_dir: Path | None, cache_key: str, firebase_url: HttpUrl)
         cache_dir: Directory holding cached asset files and their sidecars,
             or ``None`` when caching is disabled.
         cache_key: The SHA-256 hex digest keying the asset's cache entry.
-        firebase_url: The asset's Cloud Firestore URL, for logging only.
+        firebase_url: The asset's Firebase Storage URL, for logging only.
 
     Returns:
         The cached :class:`~guffin.roam.asset.RoamAsset`, or ``None`` when
@@ -229,7 +229,7 @@ def _encache_asset(cache_dir: Path | None, cache_key: str, asset: RoamAsset, fir
             or ``None`` when caching is disabled.
         cache_key: The SHA-256 hex digest keying the asset's cache entry.
         asset: The fetched asset to cache.
-        firebase_url: The asset's Cloud Firestore URL, for logging only.
+        firebase_url: The asset's Firebase Storage URL, for logging only.
     """
     if cache_dir is None:
         return
@@ -248,7 +248,7 @@ def fetch_and_cache_asset(
     api_endpoint: ApiEndpoint,
     cache_dir: Path | None = None,
 ) -> RoamAsset:
-    """Fetch a Cloud Firestore asset, using *cache_dir* as a read/write cache.
+    """Fetch a Firebase Storage asset, using *cache_dir* as a read/write cache.
 
     The cache key is the SHA-256 hex digest of the URL string.  Cached files
     are stored as ``<sha256>.<ext>`` where the extension is derived from the
@@ -262,7 +262,7 @@ def fetch_and_cache_asset(
     cache hits too.
 
     Args:
-        firebase_url: The Cloud Firestore URL of the asset to fetch.
+        firebase_url: The Firebase Storage URL of the asset to fetch.
         api_endpoint: The Roam Local API endpoint (URL + bearer token).
         cache_dir: Optional directory for caching fetched assets across runs.
             On a cache hit the asset is read from disk; on a cache miss the

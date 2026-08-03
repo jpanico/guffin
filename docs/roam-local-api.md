@@ -73,4 +73,4 @@ Fetch a file hosted on Roam. Implemented in [roam/asset_fetch.py](../src/guffin/
 ]
 ```
 
-where `$file_url` is a Cloud Firestore URL from the Markdown content in a Roam _block_: `![]()` or naked Cloud Firestore URL, e.g.: `https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2Fhippo%2FHQYN2ig-o9.pages.enc?alt=media&token=dc2ecff5-bf90-40f7-9c75-c15f9fd39e0c`
+where `$file_url` is a Firebase Storage URL from the Markdown content in a Roam _block_: `![]()` or naked Firebase Storage URL, e.g.: `https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2Fhippo%2FHQYN2ig-o9.pages.enc?alt=media&token=dc2ecff5-bf90-40f7-9c75-c15f9fd39e0c`

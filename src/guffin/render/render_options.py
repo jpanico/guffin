@@ -57,7 +57,7 @@ class RenderOptions(BaseModel):
     Attributes:
         output_dir: Directory the exported document (file or bundle) is written into; created
             if it does not already exist.
-        cache_dir: Optional directory for caching downloaded Cloud Firestore assets across
+        cache_dir: Optional directory for caching downloaded Firebase Storage assets across
             runs; ``None`` disables caching.
         suppress_attributes: When ``True``, omit Roam attribute assignments
             (``<attribute>:: <value>, …``) from the rendered output.  Defaults to ``False``.
@@ -85,7 +85,9 @@ class RenderOptions(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     output_dir: Path = Field(..., description="Directory the exported document is written into.")
-    cache_dir: Path | None = Field(default=None, description="Directory for caching downloaded Cloud Firestore assets.")
+    cache_dir: Path | None = Field(
+        default=None, description="Directory for caching downloaded Firebase Storage assets."
+    )
     suppress_attributes: bool = Field(
         default=False, description="Omit Roam attribute assignments from the rendered output."
     )
@@ -136,7 +138,7 @@ class RenderOptions(BaseModel):
         Args:
             output_format: The output format whose options subclass to build.
             output_dir: Directory the exported document is written into.
-            cache_dir: Directory for caching downloaded Cloud Firestore assets; ``None`` disables it.
+            cache_dir: Directory for caching downloaded Firebase Storage assets; ``None`` disables it.
             template_dir: PDF-only ``user_cfg.typ`` override directory; ``None`` uses the bundled template.
             should_bundle: Markdown-only; write a ``.mdbundle`` directory (``True``) or a plain ``.md``.
             suppress_attributes: Omit Roam attribute assignments from the output.
@@ -210,7 +212,7 @@ class MarkdownRenderOptions(RenderOptions):
 
     Attributes:
         output_format: Always :attr:`OutputFormat.MARKDOWN` (the discriminator).
-        should_bundle: When ``True`` (default), fetch Cloud Firestore images and write a self-contained
+        should_bundle: When ``True`` (default), fetch Firebase Storage images and write a self-contained
             ``.mdbundle`` directory; when ``False``, write a plain ``.md`` file with image
             references left as hyperlinks.
     """

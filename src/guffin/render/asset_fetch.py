@@ -3,7 +3,7 @@
 Walks a :class:`~guffin.vertex_tree.VertexTree`, fetches every *displayed*
 asset-bearing vertex's (:data:`~guffin.model.vertex.AssetVertex`, scoped per
 :func:`~guffin.model.vertex_tree.visible_asset_vertices` plus the root's cover image)
-Cloud Firestore asset to a local directory via
+Firebase Storage asset to a local directory via
 :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, and returns a
 ``{uid: AssetRef}`` mapping bundling each asset's on-disk location.
 
@@ -57,7 +57,7 @@ class AssetRef(NamedTuple):
     """An asset-bearing vertex's fetched asset: its UID, on-disk path, pixel size, and original name.
 
     The association produced by :func:`fetch_assets` for every asset
-    successfully fetched from Cloud Firestore.
+    successfully fetched from Firebase Storage.
 
     Attributes:
         uid: The source :data:`~guffin.model.vertex.AssetVertex` UID.
@@ -138,7 +138,7 @@ def fetch_asset(
     cache_dir: Path | None = None,
     claimed_names: Mapping[str, str] | None = None,
 ) -> AssetRef:
-    """Fetch *vertex*'s Cloud Firestore asset to *asset_dir*.
+    """Fetch *vertex*'s Firebase Storage asset to *asset_dir*.
 
     Delegates fetching and caching to
     :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, writes the asset
