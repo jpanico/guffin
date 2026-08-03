@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from guffin.roam.todo import TODO_MARKER_RE, TodoState, todo_state
+from guffin.roam.todo import TODO_MARKER_RE, RoamTodo, TodoState, parse_todo, todo_state
 
 # ---------------------------------------------------------------------------
 # TestTodoState
@@ -59,6 +59,54 @@ class TestTodoMarkerRe:
     def test_rejects_lowercase_keywords(self) -> None:
         """Test that the marker keywords are case-sensitive."""
         assert TODO_MARKER_RE.match("{{[[todo]]}} an item") is None
+
+
+# ---------------------------------------------------------------------------
+# TestParseTodo
+# ---------------------------------------------------------------------------
+
+
+class TestParseTodo:
+    """Tests for the parse_todo() decomposition."""
+
+    def test_plain_marker_decomposes(self) -> None:
+        """Test that a marker-led string decomposes into its state and marker-free text."""
+        assert parse_todo("{{[[TODO]]}} an open item") == RoamTodo(state=TodoState.TODO, text="an open item")
+
+    def test_marker_alone_yields_empty_text(self) -> None:
+        """Test that a string that is exactly the marker yields an empty text."""
+        assert parse_todo("{{[[DONE]]}}") == RoamTodo(state=TodoState.DONE, text="")
+
+    def test_marker_inside_color_bold_markup_is_recognized(self) -> None:
+        """Test that a marker wrapped by a color tag and bold opener is recognized, Roam-faithfully."""
+        parsed = parse_todo("#c:FUCHSIA **{{[[TODO]]}} a bold fuchsia item**")
+        assert parsed == RoamTodo(state=TodoState.TODO, text="#c:FUCHSIA **a bold fuchsia item**")
+
+    def test_marker_inside_bold_markup_is_recognized(self) -> None:
+        """Test that a marker wrapped by a bare bold opener is recognized and excised in place."""
+        parsed = parse_todo("**{{[[DONE]]}} a bold item**")
+        assert parsed == RoamTodo(state=TodoState.DONE, text="**a bold item**")
+
+    def test_marker_inside_highlight_markup_is_recognized(self) -> None:
+        """Test that a marker wrapped by a highlight opener is recognized and excised in place."""
+        parsed = parse_todo("^^{{[[TODO]]}} a highlighted item^^")
+        assert parsed == RoamTodo(state=TodoState.TODO, text="^^a highlighted item^^")
+
+    def test_text_before_marker_disqualifies(self) -> None:
+        """Test that ordinary text ahead of the marker keeps the string from being a TODO item."""
+        assert parse_todo("see {{[[TODO]]}} here") is None
+
+    def test_closed_emphasis_before_marker_disqualifies(self) -> None:
+        """Test that a completed emphasis span ahead of the marker is content, not leading markup."""
+        assert parse_todo("**bold** {{[[TODO]]}} an item") is None
+
+    def test_raw_spelling_yields_none(self) -> None:
+        """Test that the bare {{TODO}} spelling yields None."""
+        assert parse_todo("{{TODO}} an open item") is None
+
+    def test_plain_text_yields_none(self) -> None:
+        """Test that a string with no marker yields None."""
+        assert parse_todo("just a plain block") is None
 
 
 # ---------------------------------------------------------------------------

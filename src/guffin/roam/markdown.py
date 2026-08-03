@@ -20,7 +20,14 @@ Public symbols:
   :data:`COLOR_UNDERLINE_RE`, :data:`COLOR_BOX_RE`, :data:`BG_COLOR_LINE_RE` — compiled regexes
   for the five Color Highlighter inline and block-level color constructs.
 - **Pattern fragments**: :data:`SLUG` — a short restricted token (letters, digits, underscore,
-  hyphen, em-dash), reused as a building block of larger patterns such as :data:`TAG_RE`.
+  hyphen, em-dash), reused as a building block of larger patterns such as :data:`TAG_RE`;
+  :data:`COLOR_TAG_PATTERN` — a Color Highlighter color tag ``#c:COLOR``, the building block of
+  the ``COLOR_*_RE`` span patterns; :data:`INLINE_STYLE_DELIMITER_PATTERN` — any one Roam
+  inline-styling delimiter, derived from :data:`INLINE_STYLE_DELIMITERS`.
+- **Delimiter constants**: :data:`BOLD_DELIMITER` / :data:`ITALIC_DELIMITER` /
+  :data:`HIGHLIGHT_DELIMITER` / :data:`STRIKETHROUGH_DELIMITER` — Roam's four inline-styling
+  delimiters, declared once and composed into every pattern that spells them;
+  :data:`INLINE_STYLE_DELIMITERS` — the four in one tuple.
 - **Image-link accessors**: :func:`image_link_url`, :func:`image_link_alt_text` — extract the Cloud
   Firestore URL and the alt text from the first image link in a block string;
   :func:`firestore_url_file_name` — decode the original filename from a Firestore storage URL.
@@ -381,7 +388,48 @@ Numbered groups (no named groups):
 - Group 2 — the page name between the inner ``[[`` and ``]]``; may be empty.
 """
 
-ITALIC_RE: Final[regex.Pattern[str]] = regex.compile(r"(?<!\w)__(?!\s)(.+?)(?<!\s)__(?!\w)", regex.DOTALL)
+BOLD_DELIMITER: Final[str] = "**"
+"""Roam's bold delimiter: ``**text**``."""
+
+ITALIC_DELIMITER: Final[str] = "__"
+"""Roam's italic delimiter: ``__text__`` (double underscores, not single)."""
+
+HIGHLIGHT_DELIMITER: Final[str] = "^^"
+"""Roam's highlight delimiter: ``^^text^^``."""
+
+STRIKETHROUGH_DELIMITER: Final[str] = "~~"
+"""Roam's strikethrough delimiter: ``~~text~~``."""
+
+INLINE_STYLE_DELIMITERS: Final[tuple[str, ...]] = (
+    BOLD_DELIMITER,
+    ITALIC_DELIMITER,
+    HIGHLIGHT_DELIMITER,
+    STRIKETHROUGH_DELIMITER,
+)
+"""Every Roam inline-styling delimiter, in one tuple."""
+
+INLINE_STYLE_DELIMITER_PATTERN: Final[str] = "|".join(regex.escape(delimiter) for delimiter in INLINE_STYLE_DELIMITERS)
+"""Regex pattern matching any one Roam inline-styling delimiter.
+
+An alternation derived from :data:`INLINE_STYLE_DELIMITERS`, each member regex-escaped.
+"""
+
+COLOR_TAG_PATTERN: Final[str] = r"#c:([A-Za-z]+)"
+"""Regex pattern matching a Color Highlighter color tag ``#c:COLOR``.
+
+Numbered group (no named groups):
+
+- Group 1 — the color name (e.g. ``ORANGE``); ASCII letters only.
+"""
+
+_BOLD: Final[str] = regex.escape(BOLD_DELIMITER)
+_ITALIC: Final[str] = regex.escape(ITALIC_DELIMITER)
+_HIGHLIGHT: Final[str] = regex.escape(HIGHLIGHT_DELIMITER)
+_STRIKETHROUGH: Final[str] = regex.escape(STRIKETHROUGH_DELIMITER)
+
+ITALIC_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"(?<!\w){_ITALIC}(?!\s)(.+?)(?<!\s){_ITALIC}(?!\w)", regex.DOTALL
+)
 """Compiled regex matching Roam italic syntax ``__text__``.
 
 Roam uses double underscores for italics.  Negative look-behind and look-ahead
@@ -395,7 +443,7 @@ Numbered group (no named groups):
   (:data:`regex.DOTALL` is set).
 """
 
-HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(r"\^\^(.+?)\^\^", regex.DOTALL)
+HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(rf"{_HIGHLIGHT}(.+?){_HIGHLIGHT}", regex.DOTALL)
 """Compiled regex matching Roam highlight syntax ``^^text^^``.
 
 Numbered group (no named groups):
@@ -404,7 +452,7 @@ Numbered group (no named groups):
   newlines (:data:`regex.DOTALL` is set).
 """
 
-COLOR_BOLD_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)\*\*(.+?)\*\*")
+COLOR_BOLD_RE: Final[regex.Pattern[str]] = regex.compile(rf"{COLOR_TAG_PATTERN} ( *){_BOLD}(.+?){_BOLD}")
 """Compiled regex matching a Color Highlighter bold span ``#c:COLOR **text**``.
 
 The first space after the color name is the tag separator; a longer whitespace run still
@@ -417,7 +465,7 @@ Numbered groups (no named groups):
 - Group 3 — the bold content between the ``**`` delimiters.
 """
 
-COLOR_HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)\^\^(.+?)\^\^")
+COLOR_HIGHLIGHT_RE: Final[regex.Pattern[str]] = regex.compile(rf"{COLOR_TAG_PATTERN} ( *){_HIGHLIGHT}(.+?){_HIGHLIGHT}")
 """Compiled regex matching a Color Highlighter highlight span ``#c:COLOR ^^text^^``.
 
 The first space after the color name is the tag separator; a longer whitespace run still
@@ -430,7 +478,7 @@ Numbered groups (no named groups):
 - Group 3 — the highlighted content between the ``^^`` delimiters.
 """
 
-COLOR_UNDERLINE_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)__(.+?)__")
+COLOR_UNDERLINE_RE: Final[regex.Pattern[str]] = regex.compile(rf"{COLOR_TAG_PATTERN} ( *){_ITALIC}(.+?){_ITALIC}")
 """Compiled regex matching a Color Highlighter underline span ``#c:COLOR __text__``.
 
 The first space after the color name is the tag separator; a longer whitespace run still
@@ -443,7 +491,9 @@ Numbered groups (no named groups):
 - Group 3 — the underlined content between the ``__`` delimiters.
 """
 
-COLOR_BOX_RE: Final[regex.Pattern[str]] = regex.compile(r"#c:([A-Za-z]+) ( *)~~(.+?)~~")
+COLOR_BOX_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"{COLOR_TAG_PATTERN} ( *){_STRIKETHROUGH}(.+?){_STRIKETHROUGH}"
+)
 """Compiled regex matching a Color Highlighter box span ``#c:COLOR ~~text~~``.
 
 The first space after the color name is the tag separator; a longer whitespace run still

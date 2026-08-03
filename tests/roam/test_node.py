@@ -456,6 +456,11 @@ class TestNodeTypeFunction:
         node = _make_text(string="  {{[[TODO]]}} an open item")
         assert node_type(node) is NodeType.TODO_BLOCK
 
+    def test_todo_marker_inside_leading_markup_returns_todo_block(self) -> None:
+        """Test that a marker wrapped by leading formatting markup still classifies as TODO_BLOCK."""
+        node = _make_text(string="#c:FUCHSIA **{{[[TODO]]}} a bold fuchsia item**")
+        assert node_type(node) is NodeType.TODO_BLOCK
+
     def test_raw_todo_spelling_is_plain_block(self) -> None:
         """Test that the bare {{TODO}} spelling, unhandled by the Roam UI, stays PLAIN_BLOCK."""
         node = _make_text(string="{{TODO}} an open item")

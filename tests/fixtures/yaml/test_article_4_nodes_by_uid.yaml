@@ -451,12 +451,36 @@ c9kTivLOo:
   - id: 11655
   - id: 15249
   - id: 15250
+  - id: 15789
+  - id: 15790
+  - id: 15791
+  - id: 15792
   refs: null
   page:
     id: 11643
   children_view_type: null
   parents:
   - id: 11643
+  - id: 15251
+  props: null
+  title: null
+  attrs: null
+fZ3tjoLAK:
+  uid: fZ3tjoLAK
+  id: 15789
+  string: '{{[[TODO]]}} #c:FUCHSIA **This is a BOLD fuchsia block turned into a TODO**'
+  order: 4
+  heading: null
+  children: null
+  refs:
+  - id: 329
+  - id: 5844
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 11654
   - id: 15251
   props: null
   title: null
@@ -555,6 +579,40 @@ rArYyVVBS:
   props: null
   title: null
   attrs: null
+7koyf_Urx:
+  uid: 7koyf_Urx
+  id: 1371
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: DONE
+  attrs: null
+FskiJW6IV:
+  uid: FskiJW6IV
+  id: 15790
+  string: '{{[[DONE]]}} #c:FUCHSIA **This is a BOLD fuchsia block turned into a DONE**'
+  order: 5
+  heading: null
+  children: null
+  refs:
+  - id: 1371
+  - id: 5844
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 11654
+  - id: 15251
+  props: null
+  title: null
+  attrs: null
 Vu3azKD1d:
   uid: Vu3azKD1d
   id: 15249
@@ -627,6 +685,42 @@ zP-izykRs:
   parents:
   - id: 11643
   - id: 11657
+  - id: 15251
+  props: null
+  title: null
+  attrs: null
+jntuNAGBs:
+  uid: jntuNAGBs
+  id: 1348
+  string: ''
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 329
+  children_view_type: null
+  parents:
+  - id: 329
+  props: null
+  title: null
+  attrs: null
+JAzMbb7Pd:
+  uid: JAzMbb7Pd
+  id: 15791
+  string: '#c:FUCHSIA **{{[[TODO]]}} This block is a TODO turned into BOLD fuschia**'
+  order: 6
+  heading: null
+  children: null
+  refs:
+  - id: 329
+  - id: 5844
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 11654
   - id: 15251
   props: null
   title: null
@@ -757,6 +851,26 @@ Km0_c28gQ:
   - id: 15252
   props:
     type: arrow
+  title: null
+  attrs: null
+2ezpm5AyA:
+  uid: 2ezpm5AyA
+  id: 15792
+  string: '#c:FUCHSIA **{{[[DONE]]}} This block is a DONE turned into BOLD fuschia**'
+  order: 7
+  heading: null
+  children: null
+  refs:
+  - id: 1371
+  - id: 5844
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 11654
+  - id: 15251
+  props: null
   title: null
   attrs: null
 ZgUWBRb7j:
@@ -944,6 +1058,21 @@ AFS0kx5dj:
   props:
     type: process
   title: null
+  attrs: null
+20E2gCz7h:
+  uid: 20E2gCz7h
+  id: 329
+  string: null
+  order: null
+  heading: null
+  children:
+  - id: 1348
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: TODO
   attrs: null
 n-exvRYBw:
   uid: n-exvRYBw

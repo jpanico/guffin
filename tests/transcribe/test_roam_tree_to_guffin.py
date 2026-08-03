@@ -662,6 +662,13 @@ class TestToTodoVertex:
         node = _make_text(string="{{[[DONE]]}} finished the __italic__ part")
         assert to_todo_vertex(node, _node_tree(node)).text == "finished the *italic* part"
 
+    def test_marker_inside_leading_markup_keeps_the_markup_on_the_text(self) -> None:
+        """Test that a marker excised from inside formatting markup leaves the markup wrapping the text."""
+        node = _make_text(string="#c:FUCHSIA **{{[[TODO]]}} a bold fuchsia item**")
+        vertex = to_todo_vertex(node, _node_tree(node))
+        assert vertex.todo_state is TodoState.TODO
+        assert vertex.text == '[**a bold fuchsia item**]{color="fuchsia"}'
+
     def test_uid_preserved(self) -> None:
         """Test that the vertex uid matches the source node uid."""
         node = _make_text(uid="todouid01", string="{{[[TODO]]}} an item")

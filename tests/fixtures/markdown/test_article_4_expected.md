@@ -14,6 +14,10 @@
     - <span style="color: orange">**This span is BOLD orange text color**</span>. This span is not.
     - <span style="color: fuchsia">**This span is BOLD fuchsia text color**</span>. This span is not.
     - <span style="color: fuchsia"> **This span is BOLD fuchsia text color**</span>. extra space
+    - [ ] <span style="color: fuchsia">**This is a BOLD fuchsia block turned into a TODO**</span>
+    - [x] <span style="color: fuchsia">**This is a BOLD fuchsia block turned into a DONE**</span>
+    - [ ] <span style="color: fuchsia">**This block is a TODO turned into BOLD fuschia**</span>
+    - [x] <span style="color: fuchsia">**This block is a DONE turned into BOLD fuschia**</span>
   - <mark>highlight</mark> color
     - <mark style="background-color: orange">This span is highlighted orange.</mark> This span is not.
     - <mark style="background-color: fuchsia">This span is highlighted fuchsia.</mark> This span is not.

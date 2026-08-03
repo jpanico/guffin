@@ -130,7 +130,7 @@ from guffin.roam.node import (
 from guffin.roam.node_network import min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, to_table
 from guffin.roam.primitives import Id, Uid, parse_daily_note_uid
-from guffin.roam.todo import TODO_MARKER_RE
+from guffin.roam.todo import RoamTodo, parse_todo
 from guffin.roam.todo import TodoState as RoamTodoState
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
@@ -612,15 +612,15 @@ is translated once at the transcription boundary and never reaches a renderer.
 def to_todo_vertex(node: RoamNode, tree: NodeTree) -> TodoVertex:
     """Build a :class:`~guffin.model.vertex.TodoVertex` from a TODO item block *node*.
 
-    Strips the leading Roam TODO marker (``{{[[TODO]]}}`` / ``{{[[DONE]]}}``) from
-    ``node.string``: the marker's keyword becomes the vertex's
-    :attr:`~guffin.model.vertex.TodoVertex.todo_state` (via
-    :data:`TODO_STATE_BY_ROAM_STATE`), and the remaining item text — normalized via
+    Decomposes ``node.string`` via :func:`~guffin.roam.todo.parse_todo` — the checkbox marker's
+    keyword becomes the vertex's :attr:`~guffin.model.vertex.TodoVertex.todo_state` (via
+    :data:`TODO_STATE_BY_ROAM_STATE`), and the marker-free item text — normalized via
     :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md` — becomes its
-    :attr:`~guffin.model.vertex.TodoVertex.text`.
+    :attr:`~guffin.model.vertex.TodoVertex.text`, so formatting markup that wrapped the marker
+    still wraps the text.
 
     Args:
-        node: A TODO item block node whose ``string`` leads with a Roam TODO marker.
+        node: A TODO item block node whose ``string``'s first content is a Roam TODO marker.
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
             its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
@@ -630,20 +630,18 @@ def to_todo_vertex(node: RoamNode, tree: NodeTree) -> TodoVertex:
 
     Raises:
         ValidationError: If *node* or *tree* is ``None`` or invalid.
-        ValueError: If ``node.string`` is ``None`` or leads with no TODO marker.
+        ValueError: If ``node.string`` is ``None`` or opens with no TODO marker.
     """
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
-    stripped: Final[str] = node.string.strip()
-    matched: Final[regex.Match[str] | None] = TODO_MARKER_RE.match(stripped)
-    if matched is None:
-        raise ValueError(f"RoamNode uid={node.uid!r} string leads with no TODO marker: {node.string!r}")
-    roam_state: Final[RoamTodoState] = RoamTodoState(matched.group("state"))
+    parsed: Final[RoamTodo | None] = parse_todo(node.string)
+    if parsed is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} string opens with no TODO marker: {node.string!r}")
     return TodoVertex(
         uid=node.uid,
-        todo_state=TODO_STATE_BY_ROAM_STATE[roam_state],
-        text=to_pandoc_md(stripped[matched.end() :].strip(), tree),
+        todo_state=TODO_STATE_BY_ROAM_STATE[parsed.state],
+        text=to_pandoc_md(parsed.text.strip(), tree),
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),

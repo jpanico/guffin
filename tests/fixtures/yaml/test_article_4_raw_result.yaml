@@ -260,6 +260,10 @@
     - id: 11655
     - id: 15249
     - id: 15250
+    - id: 15789
+    - id: 15790
+    - id: 15791
+    - id: 15792
     id: 11654
     uid: c9kTivLOo
     parents:
@@ -268,6 +272,20 @@
     order: 0
     page:
       id: 11643
+- - string: '{{[[TODO]]}} #c:FUCHSIA **This is a BOLD fuchsia block turned into a
+      TODO**'
+    id: 15789
+    uid: fZ3tjoLAK
+    parents:
+    - id: 11643
+    - id: 11654
+    - id: 15251
+    order: 4
+    page:
+      id: 11643
+    refs:
+    - id: 329
+    - id: 5844
 - - string: Slack -> ＃
     id: 15278
     uid: vEvZXUyix
@@ -327,6 +345,23 @@
       id: 11643
     refs:
     - id: 5844
+- - id: 1371
+    uid: 7koyf_Urx
+    title: DONE
+- - string: '{{[[DONE]]}} #c:FUCHSIA **This is a BOLD fuchsia block turned into a
+      DONE**'
+    id: 15790
+    uid: FskiJW6IV
+    parents:
+    - id: 11643
+    - id: 11654
+    - id: 15251
+    order: 5
+    page:
+      id: 11643
+    refs:
+    - id: 1371
+    - id: 5844
 - - string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. extra space'
     id: 15249
     uid: Vu3azKD1d
@@ -375,6 +410,27 @@
       id: 11643
     refs:
     - id: 11454
+- - string: ''
+    id: 1348
+    uid: jntuNAGBs
+    parents:
+    - id: 329
+    order: 0
+    page:
+      id: 329
+- - string: '#c:FUCHSIA **{{[[TODO]]}} This block is a TODO turned into BOLD fuschia**'
+    id: 15791
+    uid: JAzMbb7Pd
+    parents:
+    - id: 11643
+    - id: 11654
+    - id: 15251
+    order: 6
+    page:
+      id: 11643
+    refs:
+    - id: 329
+    - id: 5844
 - - string: box background color
     children:
     - id: 11670
@@ -454,6 +510,19 @@
     order: 1
     page:
       id: 11643
+- - string: '#c:FUCHSIA **{{[[DONE]]}} This block is a DONE turned into BOLD fuschia**'
+    id: 15792
+    uid: 2ezpm5AyA
+    parents:
+    - id: 11643
+    - id: 11654
+    - id: 15251
+    order: 7
+    page:
+      id: 11643
+    refs:
+    - id: 1371
+    - id: 5844
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
@@ -558,6 +627,11 @@
     order: 14
     page:
       id: 11643
+- - children:
+    - id: 1348
+    id: 329
+    uid: 20E2gCz7h
+    title: TODO
 - - string: Calendar event -> 📅
     id: 15265
     uid: n-exvRYBw
