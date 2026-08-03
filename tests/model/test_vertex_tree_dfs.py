@@ -152,7 +152,10 @@ class TestVertexTreeDFSIterator:
           OaTXPl93p  — illustration 2.1     (children[0] of Section 2.1)
           tWkumkdUE  — text block           (children[0] of illustration 2.1)
           zZG-BfWvs  — image block          (children[1] of illustration 2.1)
-          yFUau9Cpg  — Section 2.1.1        (children[1] of Section 2.1)
+          oTrZWi_EL  — asset 2.1            (children[1] of Section 2.1)
+          it3wsZ7-H  — text block           (children[0] of asset 2.1)
+          Wlzl_dhg_  — asset URL block      (children[1] of asset 2.1)
+          yFUau9Cpg  — Section 2.1.1        (children[2] of Section 2.1)
           bxkcECGwN  — Section 2.1.1.1      (children[0] of Section 2.1.1)
           5f1ahOFdp  — Section 2.2          (children[1] of Section 2)
           nhX6sTxSE  — native table         (children[0] of Section 2.2)
@@ -183,6 +186,9 @@ class TestVertexTreeDFSIterator:
             "OaTXPl93p",
             "tWkumkdUE",
             "zZG-BfWvs",
+            "oTrZWi_EL",
+            "it3wsZ7-H",
+            "Wlzl_dhg_",
             "yFUau9Cpg",
             "bxkcECGwN",
             "5f1ahOFdp",

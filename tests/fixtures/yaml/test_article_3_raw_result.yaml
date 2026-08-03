@@ -276,7 +276,7 @@
     - id: 3327
     - id: 3329
     - id: 3332
-    order: 1
+    order: 2
     page:
       id: 3327
 - - string: '#c:FUCHSIA **inline Closed TODO ref ⟶**  ((I9tU2C5U6))'
@@ -1378,6 +1378,19 @@
       id: 4225
     refs:
     - id: 13457
+- - string: an asset is a BLOB stored by Roam in Cloud Firestore; usually a file dragged
+      into the Roam UI. The Roam Markdown representation of the asset is just the
+      Cloud Firestore URL.
+    id: 15801
+    uid: it3wsZ7-H
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 15800
+    order: 0
+    page:
+      id: 3327
 - - string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
     id: 11648
     uid: Rjt1IvrVq
@@ -2394,6 +2407,20 @@
     order: 3
     page:
       id: 11137
+- - heading: 3
+    string: asset 2.1
+    children:
+    - id: 15801
+    - id: 15802
+    id: 15800
+    uid: oTrZWi_EL
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    order: 1
+    page:
+      id: 3327
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
@@ -2486,6 +2513,7 @@
     children:
     - id: 4025
     - id: 11163
+    - id: 15800
     id: 3332
     uid: drtANJYTg
     parents:
@@ -3488,3 +3516,14 @@
       id: 4225
     refs:
     - id: 5844
+- - order: 1
+    page:
+      id: 3327
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 15800
+    string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
+    uid: Wlzl_dhg_
+    id: 15802

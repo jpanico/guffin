@@ -210,6 +210,11 @@ def fizz_buzz(limit: int = 100):
 
   <img src="flower-2.jpeg" width="257" style="margin: 0;">
 
+  #### asset 2.1
+
+  - an asset is a BLOB stored by Roam in Cloud Firestore; usually a file dragged into the Roam UI. The Roam Markdown representation of the asset is just the Cloud Firestore URL.
+  - https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
+
   #### Section 2.1.1
 
   ##### Section 2.1.1.1

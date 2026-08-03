@@ -413,7 +413,7 @@ yFUau9Cpg:
   uid: yFUau9Cpg
   id: 4025
   string: Section 2.1.1
-  order: 1
+  order: 2
   heading: 3
   children:
   - id: 4028
@@ -2151,6 +2151,27 @@ j1_LH6NTQ:
   props: null
   title: null
   attrs: null
+it3wsZ7-H:
+  uid: it3wsZ7-H
+  id: 15801
+  string: an asset is a BLOB stored by Roam in Cloud Firestore; usually a file dragged
+    into the Roam UI. The Roam Markdown representation of the asset is just the Cloud
+    Firestore URL.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  - id: 15800
+  props: null
+  title: null
+  attrs: null
 Rjt1IvrVq:
   uid: Rjt1IvrVq
   id: 11648
@@ -3746,6 +3767,26 @@ VvbwbLchA:
   props: null
   title: null
   attrs: null
+oTrZWi_EL:
+  uid: oTrZWi_EL
+  id: 15800
+  string: asset 2.1
+  order: 1
+  heading: 3
+  children:
+  - id: 15801
+  - id: 15802
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  props: null
+  title: null
+  attrs: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
   id: 5462
@@ -3902,6 +3943,7 @@ drtANJYTg:
   children:
   - id: 4025
   - id: 11163
+  - id: 15800
   refs: null
   page:
     id: 3327
@@ -5396,6 +5438,25 @@ Dt8evi7AW:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  attrs: null
+Wlzl_dhg_:
+  uid: Wlzl_dhg_
+  id: 15802
+  string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  - id: 15800
   props: null
   title: null
   attrs: null
