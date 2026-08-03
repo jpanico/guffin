@@ -2,8 +2,10 @@
 
 Public symbols:
 
-- **Pattern constants**: :data:`IMAGE_LINK_RE` — compiled regex matching a Roam markdown image
-  link whose URL is a Cloud Firestore storage URL; :data:`PDF_EMBED_RE` — compiled regex matching
+- **Pattern constants**: :data:`FIRESTORE_URL_RE` — compiled regex matching a Cloud Firestore
+  storage URL, the single URL form of every Roam-managed asset; :data:`IMAGE_LINK_RE` — compiled
+  regex matching a Roam markdown image link whose URL is a Cloud Firestore storage URL;
+  :data:`PDF_EMBED_RE` — compiled regex matching
   a Roam PDF component ``{{pdf: <url>}}`` (or ``{{[[pdf]]: <url>}}``) whose URL is a Cloud
   Firestore storage URL; :data:`PAGE_REF_RE` — compiled regex matching
   a Roam page reference ``[[<page_name>]]``; :data:`TAG_RE` — compiled regex matching a Roam tag
@@ -19,7 +21,9 @@ Public symbols:
   highlight syntax ``^^text^^``; :data:`COLOR_BOLD_RE`, :data:`COLOR_HIGHLIGHT_RE`,
   :data:`COLOR_UNDERLINE_RE`, :data:`COLOR_BOX_RE`, :data:`BG_COLOR_LINE_RE` — compiled regexes
   for the five Color Highlighter inline and block-level color constructs.
-- **Pattern fragments**: :data:`SLUG` — a short restricted token (letters, digits, underscore,
+- **Pattern fragments**: :data:`FIRESTORE_URL_PATTERN` — the canonical Cloud Firestore storage
+  URL form, the building block of every asset-bearing construct pattern (:data:`IMAGE_LINK_RE`,
+  :data:`PDF_EMBED_RE`); :data:`SLUG` — a short restricted token (letters, digits, underscore,
   hyphen, em-dash), reused as a building block of larger patterns such as :data:`TAG_RE`;
   :data:`COLOR_TAG_PATTERN` — a Color Highlighter color tag ``#c:COLOR``, the building block of
   the ``COLOR_*_RE`` span patterns; :data:`INLINE_STYLE_DELIMITER_PATTERN` — any one Roam
@@ -28,9 +32,10 @@ Public symbols:
   :data:`HIGHLIGHT_DELIMITER` / :data:`STRIKETHROUGH_DELIMITER` — Roam's four inline-styling
   delimiters, declared once and composed into every pattern that spells them;
   :data:`INLINE_STYLE_DELIMITERS` — the four in one tuple.
+- **Firestore-URL accessor**: :func:`firestore_url_file_name` — decode the stored filename from a
+  canonical Cloud Firestore storage URL.
 - **Image-link accessors**: :func:`image_link_url`, :func:`image_link_alt_text` — extract the Cloud
-  Firestore URL and the alt text from the first image link in a block string;
-  :func:`firestore_url_file_name` — decode the original filename from a Firestore storage URL.
+  Firestore URL and the alt text from the first image link in a block string.
 - **PDF-embed accessor**: :func:`pdf_embed_url` — extract the Cloud Firestore URL from the first
   PDF component in a block string.
 - **Table marker**: :data:`ROAM_NATIVE_TABLE_RAW_MARKER` — the canonical block string identifying a Roam
@@ -40,7 +45,7 @@ Public symbols:
 """
 
 from typing import Final
-from urllib.parse import unquote, urlparse
+from urllib.parse import unquote
 
 import regex
 from pydantic import validate_call
@@ -72,15 +77,65 @@ Roam writes the component as either the bare :data:`ROAM_NATIVE_TABLE_RAW_MARKER
 (``{{[[table]]}}``); the two are equivalent.
 """
 
+FIRESTORE_URL_PATTERN: Final[str] = (
+    r"https://firebasestorage\.googleapis\.com"
+    r"/v0/b/(?P<bucket>[\w.-]+)"
+    r"/o/(?P<object_path>[\w%.-]+)"
+    r"\?(?P<query>[\w=&%.-]+)"
+)
+"""Pattern: the canonical form of a Cloud Firestore storage URL — the single URL form of every Roam-managed asset.
+
+Roam stores every managed asset binary (image, PDF, or any other uploaded file) in Cloud
+Firestore and addresses it with one URL shape::
+
+    https://firebasestorage.googleapis.com/v0/b/<bucket>/o/<object_path>?<query>
+
+- ``bucket`` — the storage bucket (host-like: word characters, dots, hyphens).
+- ``object_path`` — the percent-encoded object path.  Roam generates the path segments itself
+  (e.g. ``imgs%2Fapp%2F<graph>%2F<uid>.<ext>[.enc]``), so the charset is deliberately tight:
+  word characters, percent escapes, dots, and hyphens.  The decoded path's last segment is the
+  asset's stored filename (see :func:`firestore_url_file_name`).
+- ``query`` — the access parameters (``alt=media&token=<uuid>``).
+
+The tight charsets make the pattern **self-terminating**: it never overruns a Markdown or Roam
+component delimiter (``)``, ``}}``, whitespace), so host patterns embed it verbatim with no
+context-specific exclusions — the asset-bearing constructs (:data:`IMAGE_LINK_RE`,
+:data:`PDF_EMBED_RE`) differ only in the chrome wrapped around this one fragment.  Compiled
+standalone as :data:`FIRESTORE_URL_RE`.
+
+Named groups: ``bucket``, ``object_path``, ``query``.
+"""
+
+FIRESTORE_URL_RE: Final[regex.Pattern[str]] = regex.compile(FIRESTORE_URL_PATTERN)
+"""Compiled regex matching a Cloud Firestore storage URL (:data:`FIRESTORE_URL_PATTERN`).
+
+Named groups:
+
+- ``bucket`` — the storage bucket.
+- ``object_path`` — the percent-encoded object path after ``/o/``.
+- ``query`` — the query string after ``?``.
+
+Example match on
+``https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fabc.jpeg?alt=media&token=…``:
+
+- ``match.group(0)`` — the full URL.
+- ``match.group("object_path")`` — ``imgs%2Fapp%2FSCFH%2Fabc.jpeg``.
+"""
+
 IMAGE_LINK_RE: Final[regex.Pattern[str]] = regex.compile(
-    r"!\[(?P<alt>(?:[^\]]|\n)*?)\]\((?P<url>https://firebasestorage\.googleapis\.com/[^\)]+)\)"
+    rf"!\[(?P<alt>(?:[^\]]|\n)*?)\]\((?P<url>{FIRESTORE_URL_PATTERN})\)"
 )
 """Compiled regex matching a Roam markdown image link whose URL is a Cloud Firestore storage URL.
+
+A standard Markdown image reference (``![<alt>](<url>)``) whose URL is the canonical
+:data:`FIRESTORE_URL_PATTERN` — an image is ordinary Markdown chrome around the one Roam
+asset-URL form.
 
 Named groups:
 
 - ``alt`` — the alt-text content between ``[`` and ``]`` (may be empty or multi-line).
-- ``url`` — the Cloud Firestore storage URL between ``(`` and ``)``.
+- ``url`` — the Cloud Firestore storage URL between ``(`` and ``)`` (plus the pattern's own
+  ``bucket``/``object_path``/``query`` groups).
 
 Example match on ``![my photo](https://firebasestorage.googleapis.com/v0/b/...)``:
 
@@ -126,39 +181,38 @@ def image_link_alt_text(string: str) -> str | None:
 
 @validate_call
 def firestore_url_file_name(firestore_url: str) -> str | None:
-    """Return the original filename encoded in a Firestore URL, or ``None`` on failure.
+    """Return the filename encoded in a Cloud Firestore storage URL, or ``None``.
 
-    Firestore URLs encode the object path after ``/o/`` using percent-encoding.  The filename is the
-    last path segment after URL-decoding.
+    The URL must be wholly the canonical form (:data:`FIRESTORE_URL_PATTERN`); the filename is the
+    last segment of its percent-decoded ``object_path``.
 
     Args:
-        firestore_url: A ``https://firebasestorage.googleapis.com/...`` URL string.
+        firestore_url: A candidate Cloud Firestore storage URL string.
 
     Returns:
-        The decoded filename (e.g. ``"image.png"``), or ``None`` if extraction fails.
+        The decoded filename (e.g. ``"image.png"``), or ``None`` if the URL is not a canonical
+        Cloud Firestore storage URL.
     """
-    try:
-        path: Final[str] = urlparse(firestore_url).path
-        parts: Final[list[str]] = path.split("/o/", maxsplit=1)
-        if len(parts) == 2:
-            return unquote(parts[1]).split("/")[-1]
-    except Exception:
-        pass
-    return None
+    m: Final[regex.Match[str] | None] = FIRESTORE_URL_RE.fullmatch(firestore_url)
+    if m is None:
+        return None
+    return unquote(m.group("object_path")).split("/")[-1]
 
 
 PDF_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(
-    r"\{\{(?:pdf|\[\[pdf\]\]): (?P<url>https://firebasestorage\.googleapis\.com/[^\}\s]+)\}\}"
+    rf"\{{\{{(?:pdf|\[\[pdf\]\]): (?P<url>{FIRESTORE_URL_PATTERN})\}}\}}"
 )
 """Compiled regex matching a Roam PDF component whose URL is a Cloud Firestore storage URL.
 
-Roam writes the component as either the bare form (``{{pdf: <url>}}``) or the page-reference
-form (``{{[[pdf]]: <url>}}``); the two are equivalent.  Exactly one space follows the colon,
+PDF-specific chrome around the canonical :data:`FIRESTORE_URL_PATTERN`: Roam writes the
+component as either the bare form (``{{pdf: <url>}}``) or the page-reference form
+(``{{[[pdf]]: <url>}}``); the two are equivalent.  Exactly one space follows the colon,
 mirroring the block-embed component (:data:`BLOCK_EMBED_RE`).
 
 Named group:
 
-- ``url`` — the Cloud Firestore storage URL between the colon and the closing ``}}``.
+- ``url`` — the Cloud Firestore storage URL between the colon and the closing ``}}`` (plus the
+  pattern's own ``bucket``/``object_path``/``query`` groups).
 
 Example match on ``{{pdf: https://firebasestorage.googleapis.com/v0/b/...}}``:
 

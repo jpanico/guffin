@@ -8,6 +8,7 @@ from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     BLOCK_REF_RE,
+    FIRESTORE_URL_RE,
     PAGE_EMBED_RE,
     PAGE_REF_RE,
     PDF_EMBED_RE,
@@ -506,6 +507,61 @@ class TestPageEmbedRE:
 
 
 # ---------------------------------------------------------------------------
+# TestFirestoreUrlRE
+# ---------------------------------------------------------------------------
+
+
+class TestFirestoreUrlRE:
+    """Tests for FIRESTORE_URL_RE — the canonical Cloud Firestore storage URL regex."""
+
+    # --- match cases ---
+
+    def test_canonical_url_full_match(self) -> None:
+        """A canonical Firestore URL matches in full, with its anatomy captured."""
+        m = FIRESTORE_URL_RE.fullmatch(_FIRESTORE_URL)
+        assert m is not None
+        assert m.group("bucket") == "test.appspot.com"
+        assert m.group("object_path") == "imgs%2Fphoto.jpeg"
+        assert m.group("query") == "alt=media&token=abc123"
+
+    def test_nested_object_path(self) -> None:
+        """A deeply nested percent-encoded object path (the live-graph shape) matches in full."""
+        url = (
+            "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com"
+            "/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc"
+            "?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a"
+        )
+        m = FIRESTORE_URL_RE.fullmatch(url)
+        assert m is not None
+        assert m.group("object_path") == "imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc"
+
+    def test_self_terminates_before_delimiters(self) -> None:
+        """The tight charset stops the match at a host construct's delimiter, not inside it."""
+        m = FIRESTORE_URL_RE.search(f"({_FIRESTORE_URL})")
+        assert m is not None
+        assert m.group(0) == _FIRESTORE_URL
+        m2 = FIRESTORE_URL_RE.search(f"{{{{pdf: {_FIRESTORE_PDF_URL}}}}}")
+        assert m2 is not None
+        assert m2.group(0) == _FIRESTORE_PDF_URL
+
+    # --- no-match cases ---
+
+    def test_no_match_other_host(self) -> None:
+        """A URL on any other host is not a Firestore storage URL."""
+        assert FIRESTORE_URL_RE.search("https://example.com/v0/b/x/o/y.png?alt=media") is None
+
+    def test_no_match_missing_object_path(self) -> None:
+        """A Firestore-host URL without the /o/ object path does not match."""
+        assert FIRESTORE_URL_RE.search("https://firebasestorage.googleapis.com/v0/b/test.appspot.com") is None
+
+    def test_no_match_missing_query(self) -> None:
+        """A Firestore URL without its access-parameter query string does not match."""
+        assert (
+            FIRESTORE_URL_RE.fullmatch("https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/x.png") is None
+        )
+
+
+# ---------------------------------------------------------------------------
 # TestPdfEmbedRE
 # ---------------------------------------------------------------------------
 
@@ -640,6 +696,22 @@ class TestFirestoreUrlFileName:
         """The percent-encoded object path decodes to its last segment."""
         assert firestore_url_file_name(_FIRESTORE_URL) == "photo.jpeg"
 
+    def test_decodes_nested_path_to_last_segment(self) -> None:
+        """A nested object path decodes to its last segment alone."""
+        url = (
+            "https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com"
+            "/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=abc123"
+        )
+        assert firestore_url_file_name(url) == "fJoSdh65Ry.pkpass.enc"
+
     def test_none_when_no_object_path(self) -> None:
         """A URL without an /o/ object path segment yields None."""
         assert firestore_url_file_name("https://firebasestorage.googleapis.com/v0/b/test.appspot.com") is None
+
+    def test_none_for_non_canonical_url(self) -> None:
+        """A non-Firestore URL is not the canonical form, so no filename is read from it."""
+        assert firestore_url_file_name("https://example.com/o/photo.jpeg?alt=media") is None
+
+    def test_none_when_url_has_trailing_text(self) -> None:
+        """The URL must be wholly canonical — trailing text disqualifies it."""
+        assert firestore_url_file_name(f"{_FIRESTORE_URL} and more") is None
