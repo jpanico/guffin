@@ -5,7 +5,7 @@ Public symbols:
 - :class:`NodeType` — ``StrEnum`` of pull-block entity types: ``PAGE``, ``TEXT_BLOCK``,
   ``IMAGE_BLOCK``, ``HEADING_BLOCK``, ``CALLOUT_BLOCK``,
   ``CODE_BLOCK``, ``QUOTE_BLOCK``, ``NATIVE_TABLE``, ``TODO_BLOCK``, ``EMBED_BLOCK``,
-  ``EMBED_PAGE``, ``PDF_BLOCK``, ``ATTRIBUTE_BLOCK``.
+  ``EMBED_PAGE``, ``PDF_BLOCK``, ``ASSET_BLOCK``, ``ATTRIBUTE_BLOCK``.
 - :class:`RoamNode` — raw shape of a pull-block as returned by the Roam Local API.
 - :func:`node_type` — return the :class:`NodeType` of a :class:`RoamNode`.
 - :func:`effective_heading_level` — return the effective heading level for a
@@ -46,6 +46,7 @@ from guffin.roam.blockquote import CALLOUT_RE, is_quote_block
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
+    FIRESTORE_URL_RE,
     IMAGE_LINK_RE,
     PAGE_EMBED_RE,
     PDF_EMBED_RE,
@@ -110,6 +111,9 @@ class NodeType(enum.StrEnum):
     - **PDF_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam PDF
       component ``{{pdf: <url>}}`` / ``{{[[pdf]]: <url>}}`` whose URL is a Cloud Firestore
       storage URL (matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`).
+    - **ASSET_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a bare Cloud
+      Firestore storage URL (matched in full by :data:`~guffin.roam.markdown.FIRESTORE_URL_RE`)
+      — the one Roam asset-URL form with no Markdown or Roam-component chrome around it.
     - **ATTRIBUTE_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam
       attribute assignment ``<attribute>:: <value>[, <value>]…`` (matched in full by
       :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`).
@@ -127,6 +131,7 @@ class NodeType(enum.StrEnum):
     EMBED_BLOCK = "roam/embed-block"
     EMBED_PAGE = "roam/embed-page"
     PDF_BLOCK = "roam/pdf-block"
+    ASSET_BLOCK = "roam/asset-block"
     ATTRIBUTE_BLOCK = "roam/attribute-block"
 
 
@@ -539,6 +544,8 @@ def node_type(node: RoamNode) -> NodeType:
     (as matched by :data:`~guffin.roam.markdown.PAGE_EMBED_RE`),
     :attr:`NodeType.PDF_BLOCK` when the trimmed ``string`` is wholly a Roam PDF component
     (as matched in full by :data:`~guffin.roam.markdown.PDF_EMBED_RE`),
+    :attr:`NodeType.ASSET_BLOCK` when the trimmed ``string`` is wholly a bare Cloud Firestore
+    storage URL (as matched in full by :data:`~guffin.roam.markdown.FIRESTORE_URL_RE`),
     :attr:`NodeType.ATTRIBUTE_BLOCK` when the trimmed ``string`` is wholly a Roam attribute
     assignment (as matched in full by :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`),
     and :attr:`NodeType.TEXT_BLOCK` otherwise.
@@ -559,6 +566,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.EMBED_BLOCK` if the trimmed ``string`` is wholly a Roam block embed;
         :attr:`NodeType.EMBED_PAGE` if the trimmed ``string`` is wholly a Roam page embed;
         :attr:`NodeType.PDF_BLOCK` if the trimmed ``string`` is wholly a Roam PDF component;
+        :attr:`NodeType.ASSET_BLOCK` if the trimmed ``string`` is wholly a bare Cloud Firestore storage URL;
         :attr:`NodeType.ATTRIBUTE_BLOCK` if the trimmed ``string`` is wholly a Roam attribute assignment;
         :attr:`NodeType.TEXT_BLOCK` otherwise.
     """
@@ -587,6 +595,8 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.EMBED_PAGE
     if PDF_EMBED_RE.fullmatch(string.strip()):
         return NodeType.PDF_BLOCK
+    if FIRESTORE_URL_RE.fullmatch(string.strip()):
+        return NodeType.ASSET_BLOCK
     if ATTRIBUTE_ASSIGNMENT_RE.fullmatch(string.strip()):
         return NodeType.ATTRIBUTE_BLOCK
     return NodeType.TEXT_BLOCK

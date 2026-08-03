@@ -413,6 +413,9 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.BLOCK_EMBED
         case NodeType.EMBED_PAGE:
             return VertexType.PAGE_EMBED
+        case NodeType.ASSET_BLOCK:
+            # No dedicated vertex type exists for a bare asset URL; it transcribes as plain text.
+            return VertexType.TEXT
         case NodeType.ATTRIBUTE_BLOCK:
             # Attribute blocks are not transcribed as standalone vertices; they are folded into
             # their parent vertex's attribute_assignments field (see _resolve_attribute_assignments).

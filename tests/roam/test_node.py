@@ -183,8 +183,8 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_exactly_thirteen_members(self) -> None:
-        """Test that NodeType has exactly thirteen members."""
+    def test_exactly_fourteen_members(self) -> None:
+        """Test that NodeType has exactly fourteen members."""
         assert set(NodeType) == {
             NodeType.PAGE,
             NodeType.TEXT_BLOCK,
@@ -198,6 +198,7 @@ class TestNodeType:
             NodeType.EMBED_BLOCK,
             NodeType.EMBED_PAGE,
             NodeType.PDF_BLOCK,
+            NodeType.ASSET_BLOCK,
             NodeType.ATTRIBUTE_BLOCK,
         }
 
@@ -525,6 +526,30 @@ class TestNodeTypeFunction:
         """Test that a PDF component pointing outside Firestore is not a PDF_BLOCK."""
         node = _make_text(string="{{pdf: https://example.com/paper.pdf}}")
         assert node_type(node) is NodeType.TEXT_BLOCK
+
+    def test_bare_firestore_url_returns_asset_block(self) -> None:
+        """Test that a block whose entire string is a bare Firestore URL returns ASSET_BLOCK."""
+        node = _make_text(string=_FIRESTORE_URL)
+        assert node_type(node) is NodeType.ASSET_BLOCK
+
+    def test_bare_firestore_url_with_surrounding_whitespace_returns_asset_block(self) -> None:
+        """Test that surrounding whitespace around a bare Firestore URL is tolerated."""
+        node = _make_text(string=f"  {_FIRESTORE_URL}  ")
+        assert node_type(node) is NodeType.ASSET_BLOCK
+
+    def test_firestore_url_mixed_with_text_is_text_block(self) -> None:
+        """Test that a Firestore URL mixed with surrounding text is not an ASSET_BLOCK."""
+        node = _make_text(string=f"see {_FIRESTORE_URL} here")
+        assert node_type(node) is NodeType.TEXT_BLOCK
+
+    def test_non_firestore_url_is_text_block(self) -> None:
+        """Test that a bare URL pointing outside Firestore is not an ASSET_BLOCK."""
+        node = _make_text(string="https://example.com/paper.pdf")
+        assert node_type(node) is NodeType.TEXT_BLOCK
+
+    def test_image_link_is_not_asset_block(self) -> None:
+        """Test that Markdown image chrome around a Firestore URL classifies as IMAGE_BLOCK, not ASSET_BLOCK."""
+        assert node_type(_make_image()) is NodeType.IMAGE_BLOCK
 
     def test_attribute_assignment_returns_attribute_block(self) -> None:
         """Test that a block whose entire string is an attribute assignment returns ATTRIBUTE_BLOCK."""

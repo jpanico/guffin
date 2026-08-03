@@ -204,6 +204,8 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             title_text = _trunc(node.string, truncate=truncate)
         case NodeType.PDF_BLOCK:
             title_text = "{{pdf: <firestore_url>}}"
+        case NodeType.ASSET_BLOCK:
+            title_text = "<firestore_url>"
         case NodeType.ATTRIBUTE_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
