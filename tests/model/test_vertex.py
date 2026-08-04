@@ -1,6 +1,7 @@
 """Unit tests for guffin.model.vertex concrete vertex types."""
 
 import pytest
+from conftest import asset_storage
 from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
@@ -210,7 +211,7 @@ class TestIsAssetBearingVertex:
         """An ImageVertex is asset-bearing."""
         vertex = ImageVertex(
             uid="img00001a",
-            source=HttpUrl("https://example.com/imgs/photo.jpeg"),
+            storage=asset_storage(HttpUrl("https://example.com/imgs/photo.jpeg")),
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
         )
@@ -218,7 +219,7 @@ class TestIsAssetBearingVertex:
 
     def test_pdf_vertex_is_asset_bearing(self) -> None:
         """A PdfVertex is asset-bearing."""
-        vertex = PdfVertex(uid="pdf00001a", source=HttpUrl("https://example.com/pdfs/paper.pdf"))
+        vertex = PdfVertex(uid="pdf00001a", storage=asset_storage(HttpUrl("https://example.com/pdfs/paper.pdf")))
         assert is_asset_bearing_vertex(vertex)
 
     def test_non_asset_vertices_are_not_asset_bearing(self) -> None:

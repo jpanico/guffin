@@ -355,7 +355,10 @@
   heading_level: 2
 - vertex_type: guffin/image
   uid: ZVvaN-_mA
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FDbVuSC4qn6.jpeg.enc?alt=media&token=e87ba4b9-8faf-4243-99d6-4757d99116d6
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FDbVuSC4qn6.jpeg.enc?alt=media&token=e87ba4b9-8faf-4243-99d6-4757d99116d6
+    store_type: firebase-storage
+    is_encrypted: true
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text
@@ -412,7 +415,10 @@
   heading_level: 2
 - vertex_type: guffin/image
   uid: GJ-Y_OXdC
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FU73wJbltGF.jpeg.enc?alt=media&token=f7203ec3-c64d-4e35-a5d9-49f8fc4288ff
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FU73wJbltGF.jpeg.enc?alt=media&token=f7203ec3-c64d-4e35-a5d9-49f8fc4288ff
+    store_type: firebase-storage
+    is_encrypted: true
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/callout
@@ -723,7 +729,10 @@
   heading_level: 2
 - vertex_type: guffin/image
   uid: -cStchkqq
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FYT8W1P6jTQ.jpeg.enc?alt=media&token=24628986-cdbd-452e-a434-ab236c054db3
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FYT8W1P6jTQ.jpeg.enc?alt=media&token=24628986-cdbd-452e-a434-ab236c054db3
+    store_type: firebase-storage
+    is_encrypted: true
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text

@@ -5,7 +5,7 @@ import textwrap
 from unittest.mock import patch
 
 import pytest
-from conftest import article1_node_tree
+from conftest import article1_node_tree, asset_storage
 
 from guffin.cli.common import (
     CodeSourceVerificationError,
@@ -103,7 +103,7 @@ class TestDeduceOutFileStem:
         """An image root prefers its alt text when present."""
         image = ImageVertex(
             uid="image0001",
-            source=_IMAGE_URL,  # type: ignore[arg-type]
+            storage=asset_storage(_IMAGE_URL),
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
             alt_text="A flower",
@@ -114,7 +114,7 @@ class TestDeduceOutFileStem:
         """An image root falls back to its source URL's filename when alt text is absent."""
         image = ImageVertex(
             uid="image0001",
-            source=_IMAGE_URL,  # type: ignore[arg-type]
+            storage=asset_storage(_IMAGE_URL),
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
         )
@@ -126,13 +126,13 @@ class TestDeduceOutFileStem:
         # "word" and would collapse to the ellipsis placeholder).
         image = ImageVertex(
             uid="image0001",
-            source="http://example.com/",  # type: ignore[arg-type]
+            storage=asset_storage("http://example.com/"),
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
         )
         assert (
             deduce_out_file_stem(_tree(image), ProjectType.ARTICLE)
-            == shell_safe_filename(str(image.source)) + ".article"
+            == shell_safe_filename(str(image.storage.location)) + ".article"
         )
 
     def test_table_joins_first_row_cells(self) -> None:

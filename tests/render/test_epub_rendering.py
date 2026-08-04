@@ -12,7 +12,7 @@ from typing import Final
 
 import pytest
 import regex
-from conftest import article5_node_tree
+from conftest import article5_node_tree, asset_storage
 from pydantic import HttpUrl
 
 from guffin.common.filenames import shell_safe_filename
@@ -674,7 +674,7 @@ def _cover_bundle() -> RenderBundle:
     text: Final[TextVertex] = TextVertex(uid="text00001", text="Some prose.")
     cover_image: Final[ImageVertex] = ImageVertex(
         uid="imgcover1",
-        source=HttpUrl(_COVER_URL),
+        storage=asset_storage(HttpUrl(_COVER_URL)),
         media_type=MediaType.JPEG,
         scaled_image_size=ImageSize(),
     )

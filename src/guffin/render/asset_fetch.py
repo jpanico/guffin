@@ -20,9 +20,9 @@ Public symbols:
   :class:`~guffin.vertex_tree.VertexTree` to a local directory; return a
   ``{uid: AssetRef}`` mapping.
 - :func:`fetch_and_enrich_assets` — :func:`fetch_assets` plus tree enrichment; returns the
-  tree with ``original_image_size`` (images) and ``original_file_name`` (PDFs) populated,
+  tree with ``original_image_size`` (images) and ``file_name`` (PDFs) populated,
   together with the ``{uid: AssetRef}`` mapping.
-- :func:`pdf_asset_paths` — map each fetched PDF asset's source URL to its local path.
+- :func:`pdf_asset_paths` — map each fetched PDF asset's storage location to its local path.
 - :func:`cover_image_path` — pure lookup: the fetched local path of the cover image a
   tree's root vertex references, resolved against a :func:`fetch_assets` result; ``None``
   when no cover is declared.
@@ -42,7 +42,7 @@ from guffin.model.vertex import AssetBearingVertex, ImageVertex, PdfVertex
 from guffin.model.vertex_tree import (
     VertexTree,
     enrich_image_original_sizes,
-    enrich_pdf_original_file_names,
+    enrich_pdf_file_names,
     visible_asset_vertices,
 )
 from guffin.roam.asset import RoamAsset, RoamImageAsset
@@ -168,8 +168,8 @@ def fetch_asset(
     # locals() is exactly the parameters when read as the first statement.
     logger.debug("args: %r", locals())
     names: Final[Mapping[str, str]] = claimed_names if claimed_names is not None else {}
-    asset: Final[RoamAsset] = fetch_and_cache_asset(vertex.source, api_endpoint, cache_dir)
-    file_name: Final[str] = _resolved_file_name(asset, str(vertex.source), names)
+    asset: Final[RoamAsset] = fetch_and_cache_asset(vertex.storage.location, api_endpoint, cache_dir)
+    file_name: Final[str] = _resolved_file_name(asset, str(vertex.storage.location), names)
     asset_path: Final[Path] = asset_dir / file_name
     asset_path.write_bytes(asset.contents)
     size: Final[ImageSize | None] = asset.image_size if isinstance(asset, RoamImageAsset) else None
@@ -229,9 +229,9 @@ def fetch_assets(
         try:
             ref: AssetRef = fetch_asset(vertex, api_endpoint, asset_dir, cache_dir, claimed_names=claimed_names)
         except Exception as e:
-            logger.warning("Failed to fetch asset uid=%r source=%s: %s", vertex.uid, vertex.source, e)
+            logger.warning("Failed to fetch asset uid=%r location=%s: %s", vertex.uid, vertex.storage.location, e)
             continue
-        claimed_names[ref.path.name] = str(vertex.source)
+        claimed_names[ref.path.name] = str(vertex.storage.location)
         asset_refs[vertex.uid] = ref
         logger.info("Fetched asset uid=%r -> %s", vertex.uid, ref.path.name)
     return asset_refs
@@ -249,8 +249,8 @@ def fetch_and_enrich_assets(
     Convenience wrapper over :func:`fetch_assets`: after fetching, populates
     :attr:`~guffin.vertex.ImageVertex.original_image_size` on each image vertex
     (via :func:`~guffin.vertex_tree.enrich_image_original_sizes`) and
-    :attr:`~guffin.vertex.PdfVertex.original_file_name` on each PDF vertex
-    (via :func:`~guffin.vertex_tree.enrich_pdf_original_file_names`) from the
+    :attr:`~guffin.vertex.PdfVertex.file_name` on each PDF vertex
+    (via :func:`~guffin.vertex_tree.enrich_pdf_file_names`) from the
     corresponding :class:`AssetRef`.
 
     Args:
@@ -274,7 +274,7 @@ def fetch_and_enrich_assets(
         uid: ref.original_file_name for uid, ref in asset_refs.items() if ref.original_file_name is not None
     }
     sized_tree: Final[VertexTree] = enrich_image_original_sizes(vertex_tree, original_sizes)
-    enriched_tree: Final[VertexTree] = enrich_pdf_original_file_names(sized_tree, original_names)
+    enriched_tree: Final[VertexTree] = enrich_pdf_file_names(sized_tree, original_names)
     return enriched_tree, asset_refs
 
 
@@ -312,11 +312,11 @@ def cover_image_path(vertex_tree: VertexTree, asset_refs: Mapping[Uid, AssetRef]
 
 @validate_call
 def pdf_asset_paths(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[str, Path]:
-    """Map each fetched PDF asset's source URL to its local file path.
+    """Map each fetched PDF asset's storage location to its local file path.
 
-    The keys are the PDF vertices' source URLs — the URL a rendered embed link carries — so a
-    Pandoc document's PDF-embed paragraphs can be matched against the mapping.  When several PDF
-    vertices share one source URL, the first (in
+    The keys are the PDF vertices' storage-location URLs — the URL a rendered embed link
+    carries — so a Pandoc document's PDF-embed paragraphs can be matched against the mapping.
+    When several PDF vertices share one location, the first (in
     :attr:`~guffin.model.vertex_tree.VertexTree.uid_map` order) wins.  PDF vertices absent from
     *asset_refs* (failed fetches) contribute no entry.
 
@@ -326,14 +326,14 @@ def pdf_asset_paths(tree: VertexTree, asset_refs: dict[Uid, AssetRef]) -> dict[s
             :func:`fetch_assets`.
 
     Returns:
-        A mapping from source URL to the fetched PDF's local path.
+        A mapping from storage-location URL to the fetched PDF's local path.
     """
     paths: Final[dict[str, Path]] = {}
     for vertex in tree.uid_map.values():
-        if not isinstance(vertex, PdfVertex) or str(vertex.source) in paths:
+        if not isinstance(vertex, PdfVertex) or str(vertex.storage.location) in paths:
             continue
         ref: AssetRef | None = asset_refs.get(vertex.uid)
         if ref is None:
             continue
-        paths[str(vertex.source)] = ref.path
+        paths[str(vertex.storage.location)] = ref.path
     return paths

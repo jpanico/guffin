@@ -23,10 +23,13 @@ Public symbols:
 - :class:`TextVertex` — plain body text.
 - :class:`TodoState` — the two states of a TODO item (``TODO`` open, ``DONE`` completed).
 - :class:`TodoVertex` — a checkbox (TODO) item: a state plus the item text.
-- :class:`PdfVertex` — a hosted PDF asset displayed in the document.
-- :class:`ImageVertex` — a hosted image asset displayed in the document.
-- :class:`AssetVertex` — a hosted asset of unspecified kind, carried as its
+- :class:`AssetVertex` — a hosted asset: the general asset vertex (an asset of
+  unspecified kind) and the shared base of the asset vertex types, carrying its
   :class:`~guffin.model.asset_storage.AssetStorage` plus optional media type and filename.
+- :class:`ImageVertex` — a hosted image asset displayed in the document
+  (an :class:`AssetVertex` subclass).
+- :class:`PdfVertex` — a hosted PDF asset displayed in the document
+  (an :class:`AssetVertex` subclass).
 - :class:`CalloutVertex` — a callout (admonition) with a category, title, and body.
 - :class:`CodeBlockVertex` — a fenced code listing.
 - :class:`QuoteType` — how a quote block is presented (``BLOCK`` vs ``PULL``).
@@ -55,7 +58,7 @@ import datetime
 from enum import StrEnum
 from typing import Annotated, Final, Literal, TypeIs, get_args
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, TypeAdapter, field_validator, validate_call
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, validate_call
 
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel
@@ -268,18 +271,66 @@ class TodoVertex(_BaseVertex[Literal[VertexType.TODO]]):
     text: str = Field(..., description="The item text, marker-free.")
 
 
-class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
+class AssetVertex[VT: VertexType = Literal[VertexType.ASSET]](_BaseVertex[VT]):
+    """A hosted asset — the general asset vertex and the shared base of the asset vertex types.
+
+    Every asset vertex's content is a hosted file rather than inline text, described by
+    the same three facts: where the binary lives (:attr:`storage`), what kind of content
+    it is (:attr:`media_type`), and what the file is called (:attr:`file_name`).
+    :class:`ImageVertex` and :class:`PdfVertex` subclass this type, adding what their
+    specific kinds know.  Used directly — unparameterized — it is the vertex of a hosted
+    asset of *unspecified* kind: an uploaded file that is neither an image nor a PDF
+    component (e.g. an audio file, archive, or pass), with ``vertex_type``
+    :attr:`~VertexType.ASSET`.
+
+    Attributes:
+        vertex_type: :attr:`~VertexType.ASSET` when the class is used directly; each
+            subclass narrows it to its own member.  Serialized as ``'vertex-type'``.
+        storage: The :class:`~guffin.model.asset_storage.AssetStorage` holding the
+            asset's binary — its location, storing service, and encryption state.
+        media_type: IANA media type of the asset, or ``None`` when it cannot be
+            determined.  Serialized as ``'media-type'``.
+        file_name: The asset's filename, or ``None`` when no name is known.  Never
+            derived from the storage location — populated only by an authority that
+            actually knows the name (e.g. asset fetching reading upload metadata).
+            Serialized as ``'file-name'``.
+    """
+
+    # The ASSET default is sound only for the unparameterized class (VT unbound, so the
+    # PEP 696 default Literal[VertexType.ASSET] applies); every subclass overrides the
+    # field with its own literal and default, which the type system cannot express here.
+    vertex_type: VT = Field(  # pyright: ignore[reportAssignmentType]
+        default=VertexType.ASSET,
+        serialization_alias="vertex-type",
+        description="VertexType.ASSET when the class is used directly (serialized as 'vertex-type').",
+    )
+    storage: AssetStorage = Field(
+        ..., description="The storage holding the asset's binary: location, service, and encryption state."
+    )
+    media_type: MediaType | None = Field(
+        default=None,
+        serialization_alias="media-type",
+        description="IANA media type of the asset. None when undeterminable (serialized as 'media-type').",
+    )
+    file_name: str | None = Field(
+        default=None,
+        serialization_alias="file-name",
+        description="The asset's filename. None when no name is known (serialized as 'file-name').",
+    )
+
+
+class ImageVertex(AssetVertex[Literal[VertexType.IMAGE]]):
     """A hosted image asset displayed in the document.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.IMAGE`.
             Serialized as ``'vertex-type'``.
-        source: Firebase Storage URL for the image file.
+        media_type: IANA media type of the image — always known for an image, and
+            always an image MIME type (enforced at construction).
+            Serialized as ``'media-type'``.
         alt_text: The image's alt text, stripped of leading/trailing whitespace.
             ``None`` when the alt text is absent or empty.
             Serialized as ``'alt-text'``.
-        media_type: IANA media type inferred from the *source* URL filename's extension.
-            Serialized as ``'media-type'``.
         scaled_image_size: Display pixel dimensions recorded by the source (an authored
             resize). Both axes are ``None`` when no display size is recorded.
             Serialized as ``'image-size'``.
@@ -293,16 +344,10 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
         serialization_alias="vertex-type",
         description="Always VertexType.IMAGE (serialized as 'vertex-type').",
     )
-    source: HttpUrl = Field(..., description="Firebase Storage URL for the image file.")
     alt_text: str | None = Field(
         default=None,
         serialization_alias="alt-text",
         description="The image's alt text, stripped. None when absent or empty.",
-    )
-    media_type: MediaType = Field(
-        ...,
-        serialization_alias="media-type",
-        description="IANA media type inferred from the source URL filename's extension (serialized as 'media-type').",
     )
     scaled_image_size: ImageSize = Field(
         ...,
@@ -318,8 +363,8 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
 
     @field_validator("media_type")
     @classmethod
-    def media_type_must_be_image(cls, val: MediaType) -> MediaType:
-        """Reject any non-image MediaType.
+    def media_type_must_be_image(cls, val: MediaType | None) -> MediaType:
+        """Require a present, image-kind media type.
 
         Args:
             val: The candidate media type value.
@@ -328,74 +373,30 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
             *val* unchanged when it is an image MIME type.
 
         Raises:
-            ValueError: If *val* is a non-image :class:`~guffin.common.media_type.MediaType`.
+            ValueError: If *val* is ``None`` or a non-image
+                :class:`~guffin.common.media_type.MediaType`.
         """
-        if not is_image_type(val):
+        if val is None or not is_image_type(val):
             raise ValueError(f"media_type must be an image MIME type; got {val!r}")
         return val
 
 
-class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
+class PdfVertex(AssetVertex[Literal[VertexType.PDF]]):
     """A hosted PDF asset displayed in the document.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.PDF`.
             Serialized as ``'vertex-type'``.
-        source: Firebase Storage URL for the PDF file.
-        original_file_name: The filename the PDF was originally uploaded under. ``None``
+        file_name: The filename the PDF was originally uploaded under. ``None``
             when unknown (populated by asset fetching, which reads it from the asset
-            metadata rather than the storage URL).
-            Serialized as ``'original-file-name'``.
+            metadata rather than the storage location).
+            Serialized as ``'file-name'``.
     """
 
     vertex_type: Literal[VertexType.PDF] = Field(
         default=VertexType.PDF,
         serialization_alias="vertex-type",
         description="Always VertexType.PDF (serialized as 'vertex-type').",
-    )
-    source: HttpUrl = Field(..., description="Firebase Storage URL for the PDF file.")
-    original_file_name: str | None = Field(
-        default=None,
-        serialization_alias="original-file-name",
-        description="The originally uploaded filename. None when unknown (serialized as 'original-file-name').",
-    )
-
-
-class AssetVertex(_BaseVertex[Literal[VertexType.ASSET]]):
-    """A hosted asset of unspecified kind.
-
-    An uploaded file that is neither an image nor a PDF component — e.g. an audio
-    file, archive, or pass.  The vertex's content is the hosted file itself,
-    located by :attr:`storage`.
-
-    Attributes:
-        vertex_type: Always :attr:`~VertexType.ASSET`.
-            Serialized as ``'vertex-type'``.
-        storage: The :class:`~guffin.model.asset_storage.AssetStorage` holding the
-            asset's binary — its location, storing service, and encryption state.
-        media_type: IANA media type of the asset, or ``None`` when it cannot be
-            determined.  Serialized as ``'media-type'``.
-        file_name: The asset's filename, or ``None`` when no name is known.
-            Serialized as ``'file-name'``.
-    """
-
-    vertex_type: Literal[VertexType.ASSET] = Field(
-        default=VertexType.ASSET,
-        serialization_alias="vertex-type",
-        description="Always VertexType.ASSET (serialized as 'vertex-type').",
-    )
-    storage: AssetStorage = Field(
-        ..., description="The storage holding the asset's binary: location, service, and encryption state."
-    )
-    media_type: MediaType | None = Field(
-        default=None,
-        serialization_alias="media-type",
-        description="IANA media type of the asset. None when undeterminable (serialized as 'media-type').",
-    )
-    file_name: str | None = Field(
-        default=None,
-        serialization_alias="file-name",
-        description="The asset's filename. None when no name is known (serialized as 'file-name').",
     )
 
 
@@ -625,14 +626,16 @@ subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated 
 """
 
 type AssetBearingVertex = ImageVertex | PdfVertex
-"""Union of the asset-bearing vertex types.
+"""Union of the asset vertex types the asset pipeline fetches and enriches.
 
-An asset-bearing vertex's content is not inline text but a file hosted in
-Firebase Storage: every member carries a ``source`` storage URL
-addressing it.  Use :func:`is_asset_bearing_vertex` to classify (and statically
-narrow) a :data:`Vertex`.
+Each member's content is a hosted file, located by its ``storage``, that the
+pipeline downloads and treats specially — an image is reproduced in the output,
+a PDF is placed per its ``pdf-render`` resolution.  The unparameterized
+:class:`AssetVertex` (an asset of unspecified kind) is deliberately not a member:
+it is never fetched.  Use :func:`is_asset_bearing_vertex` to classify (and
+statically narrow) a :data:`Vertex`.
 
-This union is the single source of truth for asset-bearing-ness; the runtime
+This union is the single source of truth for pipeline membership; the runtime
 classification is derived mechanically from it.
 """
 

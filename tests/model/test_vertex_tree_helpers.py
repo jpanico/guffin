@@ -4,7 +4,7 @@ Covers transcluded_vertices, assignments_for, standalone_link_target_of_text,
 standalone_link_target, visible_asset_vertices, and root_vertex.
 """
 
-from conftest import article1_vertex_tree
+from conftest import article1_vertex_tree, asset_storage
 from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
@@ -58,7 +58,7 @@ def _assignment_of(name: str) -> AttributeAssignment:
 def _image(uid: str = "imguid001") -> ImageVertex:
     return ImageVertex(
         uid=uid,
-        source=HttpUrl("https://example.com/imgs/photo.jpeg"),
+        storage=asset_storage(HttpUrl("https://example.com/imgs/photo.jpeg")),
         media_type=MediaType.JPEG,
         scaled_image_size=ImageSize(),
     )

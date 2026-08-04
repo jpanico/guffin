@@ -10,7 +10,7 @@ from pathlib import Path
 
 import panflute as pf  # type: ignore[import-untyped]
 import pytest
-from conftest import FIXTURES_PDF_DIR
+from conftest import FIXTURES_PDF_DIR, asset_storage
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
@@ -59,8 +59,8 @@ class TestEpubPdfAppendix:
         pdfs = [
             PdfVertex(
                 uid=uid,
-                source=_URL,  # type: ignore[arg-type]
-                original_file_name="dummy.pdf",
+                storage=asset_storage(_URL),
+                file_name="dummy.pdf",
                 attribute_assignments=[_appendix_tag()],
             )
             for uid in uids

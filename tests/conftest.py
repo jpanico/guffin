@@ -21,6 +21,9 @@ try:
 except ImportError:  # pragma: no cover - libyaml missing from this PyYAML build
     from yaml import SafeLoader as YamlFixtureLoader  # type: ignore[assignment]
 
+from pydantic import HttpUrl
+
+from guffin.model.asset_storage import AssetStorage, StoreType
 from guffin.model.vertex import vertex_adapter
 from guffin.model.vertex_tree import VertexTree
 from guffin.roam.local_api import ApiEndpoint, ApiEndpointURL
@@ -60,6 +63,12 @@ EPUB_SOURCE_DATE_EPOCH: int = PDF_CREATION_TIMESTAMP
 Pandoc honors ``SOURCE_DATE_EPOCH`` for the EPUB ``dcterms:modified`` timestamp and the package's
 zip entry timestamps; shared by the live EPUB fixture test and ``regen_fixtures.py --epub``.
 """
+
+
+def asset_storage(location: str | HttpUrl) -> AssetStorage:
+    """Build a plain Firebase Storage ``AssetStorage`` at *location* (unencrypted)."""
+    validated: Final[HttpUrl] = location if isinstance(location, HttpUrl) else HttpUrl(location)
+    return AssetStorage(location=validated, store_type=StoreType.FIREBASE_STORAGE, is_encrypted=False)
 
 
 @pytest.fixture(autouse=True)

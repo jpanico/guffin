@@ -32,8 +32,8 @@ Public symbols:
   preamble (children preceding its first heading child) pruned.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
   :attr:`~guffin.model.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
-- :func:`enrich_pdf_original_file_names` — return a new :class:`VertexTree` with
-  :attr:`~guffin.model.vertex.PdfVertex.original_file_name` populated from a UID→filename map.
+- :func:`enrich_pdf_file_names` — return a new :class:`VertexTree` with
+  :attr:`~guffin.model.vertex.PdfVertex.file_name` populated from a UID→filename map.
 """
 
 import logging
@@ -508,12 +508,12 @@ def enrich_image_original_sizes(tree: VertexTree, sizes: dict[Uid, ImageSize]) -
 
 
 @validate_call
-def enrich_pdf_original_file_names(tree: VertexTree, names: dict[Uid, str]) -> VertexTree:
-    """Return a new :class:`VertexTree` with :attr:`~guffin.model.vertex.PdfVertex.original_file_name` populated.
+def enrich_pdf_file_names(tree: VertexTree, names: dict[Uid, str]) -> VertexTree:
+    """Return a new :class:`VertexTree` with :attr:`~guffin.model.vertex.PdfVertex.file_name` populated.
 
     Each :class:`~guffin.model.vertex.PdfVertex` whose UID appears in *names* receives a copy with
-    :attr:`~guffin.model.vertex.PdfVertex.original_file_name` set to the corresponding name.  All
-    other vertices — including PDF vertices absent from *names*, whose original filename is simply
+    :attr:`~guffin.model.vertex.PdfVertex.file_name` set to the corresponding name.  All
+    other vertices — including PDF vertices absent from *names*, whose filename is simply
     unknown — pass through unchanged.
 
     Args:
@@ -523,13 +523,13 @@ def enrich_pdf_original_file_names(tree: VertexTree, names: dict[Uid, str]) -> V
 
     Returns:
         A new :class:`VertexTree` with
-        :attr:`~guffin.model.vertex.PdfVertex.original_file_name` populated for all UIDs present
+        :attr:`~guffin.model.vertex.PdfVertex.file_name` populated for all UIDs present
         in *names*.
     """
 
     def _enrich(vtx: Vertex) -> Vertex:
         if isinstance(vtx, PdfVertex) and vtx.uid in names:
-            return vtx.model_copy(update={"original_file_name": names[vtx.uid]})
+            return vtx.model_copy(update={"file_name": names[vtx.uid]})
         return vtx
 
     return map_vertices(tree, _enrich)

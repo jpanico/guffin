@@ -13,7 +13,7 @@ from pathlib import Path
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 import pytest
-from conftest import FIXTURES_PDF_DIR, article3_node_tree
+from conftest import FIXTURES_PDF_DIR, article3_node_tree, asset_storage
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
@@ -64,13 +64,13 @@ def _reference_site(target_uid: str, render: str | None = None, uid: str = "refs
 def _pdf(
     uid: str,
     url: str = _URL_A,
-    original_file_name: str | None = "dummy.pdf",
+    file_name: str | None = "dummy.pdf",
     inline: bool = False,
 ) -> PdfVertex:
     return PdfVertex(
         uid=uid,
-        source=url,  # type: ignore[arg-type]
-        original_file_name=original_file_name,
+        storage=asset_storage(url),
+        file_name=file_name,
         attribute_assignments=[_INLINE_TAG] if inline else None,
     )
 
@@ -113,7 +113,7 @@ class TestPdfAssetPaths:
         vertex = _pdf("pdfuid001")
         tree = VertexTree(tree_vertices=[vertex])
         ref = _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")
-        assert pdf_asset_paths(tree, {"pdfuid001": ref}) == {str(vertex.source): ref.path}
+        assert pdf_asset_paths(tree, {"pdfuid001": ref}) == {str(vertex.storage.location): ref.path}
 
     def test_unfetched_pdf_is_skipped(self, tmp_path: Path) -> None:
         """A PDF vertex with no fetched asset contributes no entry."""
@@ -137,14 +137,14 @@ class TestApplyPdfEmbeds:
         if render is not None:
             vertex = PdfVertex(
                 uid="pdfuid001",
-                source=_URL_A,  # type: ignore[arg-type]
-                original_file_name="dummy.pdf",
+                storage=asset_storage(_URL_A),
+                file_name="dummy.pdf",
                 attribute_assignments=[_render_tag(render)],
             )
         tree = VertexTree(tree_vertices=[page, vertex])
         paths = pdf_asset_paths(tree, {"pdfuid001": _dummy_ref("pdfuid001", tmp_path, "sha1.pdf")})
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
-        return doc, paths, str(vertex.source)
+        return doc, paths, str(vertex.storage.location)
 
     def test_name_only_drops_link_keeping_filename_text(self, tmp_path: Path) -> None:
         """A NAME_ONLY occurrence is replaced by bare filename text — no attachment, no hyperlink.
@@ -262,7 +262,7 @@ class TestApplyPdfEmbeds:
         at the site.  One PDF, placed per occurrence.
         """
         tree = transcribe(article3_node_tree())
-        pdf_url = str(tree.uid_map["pTvGGeTlB"].source)
+        pdf_url = str(tree.uid_map["pTvGGeTlB"].storage.location)
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         stamps: list[str] = []
 
@@ -285,8 +285,8 @@ class TestAppendixPlacement:
         pdfs = [
             PdfVertex(
                 uid=uid,
-                source=_URL_A,  # type: ignore[arg-type]
-                original_file_name="dummy.pdf",
+                storage=asset_storage(_URL_A),
+                file_name="dummy.pdf",
                 attribute_assignments=[_render_tag("appendix-native")],
             )
             for uid in uids

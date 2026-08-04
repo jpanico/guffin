@@ -66,6 +66,7 @@ from guffin.common.markdown import FencedCodeBlock, HeadingLevel, parse_fenced_c
 from guffin.common.media_type import MediaType
 from guffin.common.programming_language import CodeLanguageId
 from guffin.common.table import Table, TableStyle
+from guffin.model.asset_storage import AssetStorage, StoreType
 from guffin.model.attribute import (
     Attribute,
     AttributeDomain,
@@ -452,6 +453,27 @@ def to_page_vertex(node: RoamNode, tree: NodeTree) -> PageVertex:
     )
 
 
+def _asset_storage(firebase_storage_url: str) -> AssetStorage:
+    """Return the :class:`~guffin.model.asset_storage.AssetStorage` locating a hosted asset.
+
+    Roam marks an encrypted graph's uploads with a trailing ``.enc`` on the stored
+    filename; that suffix is read here into the storage's encryption state.
+
+    Args:
+        firebase_storage_url: The asset's Firebase Storage URL string.
+
+    Returns:
+        An :class:`~guffin.model.asset_storage.AssetStorage` for the hosted asset.
+    """
+    location: Final[HttpUrl] = _url_adapter.validate_python(firebase_storage_url)
+    stored_name: Final[str | None] = url_file_name(location)
+    return AssetStorage(
+        location=location,
+        store_type=StoreType.FIREBASE_STORAGE,
+        is_encrypted=stored_name is not None and stored_name.endswith(".enc"),
+    )
+
+
 @validate_call
 def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     """Build an :class:`~guffin.vertex.ImageVertex` from *node*.
@@ -475,22 +497,22 @@ def to_image_vertex(node: RoamNode, tree: NodeTree) -> ImageVertex:
     firebase_storage_url: Final[str | None] = image_link_url(node.string)
     if firebase_storage_url is None:
         raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firebase Storage URL")
-    source: Final[HttpUrl] = _url_adapter.validate_python(firebase_storage_url)
-    file_name: Final[str | None] = url_file_name(source)
-    if file_name is None:
+    storage: Final[AssetStorage] = _asset_storage(firebase_storage_url)
+    stored_name: Final[str | None] = url_file_name(storage.location)
+    if stored_name is None:
         raise ValueError(f"RoamNode uid={node.uid!r} filename cannot be extracted from URL {firebase_storage_url!r}")
     # Roam encrypts hosted images with a double .enc extension; strip it to resolve the base media type.
-    base_name: Final[str] = file_name.removesuffix(".enc")
+    base_name: Final[str] = stored_name.removesuffix(".enc")
     resolved_type: Final[MediaType | None] = MediaType.from_file_name(base_name)
     if resolved_type is None:
-        raise ValueError(f"RoamNode uid={node.uid!r} media type cannot be determined from file_name={file_name!r}")
+        raise ValueError(f"RoamNode uid={node.uid!r} media type cannot be determined from file_name={stored_name!r}")
     media_type: Final[MediaType] = resolved_type
     size: Final[ImageSize | None] = image_size(node)
     if size is None:
         raise ValueError(f"RoamNode uid={node.uid!r} image_size returned None for an image block")
     return ImageVertex(
         uid=node.uid,
-        source=source,
+        storage=storage,
         alt_text=image_link_alt_text(node.string),
         media_type=media_type,
         scaled_image_size=size,
@@ -526,7 +548,8 @@ def to_pdf_vertex(node: RoamNode, tree: NodeTree) -> PdfVertex:
         raise ValueError(f"RoamNode uid={node.uid!r} 'string' contains no Firebase Storage PDF component")
     return PdfVertex(
         uid=node.uid,
-        source=_url_adapter.validate_python(firebase_storage_url),
+        storage=_asset_storage(firebase_storage_url),
+        media_type=MediaType.PDF,
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
@@ -1022,6 +1045,10 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             return to_quote_block_vertex(node, tree)
         case VertexType.TABLE:
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
+        case VertexType.ASSET:
+            # Unreachable today: a bare-asset block classifies as ASSET_BLOCK but still
+            # transcribes as TEXT until the asset rendering design lands (see vertex_type).
+            raise NotImplementedError(f"RoamNode uid={node.uid!r}: ASSET transcription is not wired")
         case VertexType.BLOCK_EMBED:
             return to_block_embed_vertex(node, tree)
         case VertexType.PAGE_EMBED:

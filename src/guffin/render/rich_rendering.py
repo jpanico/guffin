@@ -37,6 +37,7 @@ from rich.tree import Tree as RichTree
 
 from guffin.common.filenames import url_file_name
 from guffin.common.geometry import ImageSize
+from guffin.common.media_type import MediaType
 from guffin.common.table import Table as GuffinTable
 from guffin.common.table import TableStyle
 from guffin.model.attribute import AttributeDomain, LiteralValue
@@ -364,13 +365,14 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
                 return Text(f"text={vertex.quote}")
             return Text("text=N/A")
         case "file_name":
-            return Text(
-                f"file_name={url_file_name(vertex.source)}" if is_asset_bearing_vertex(vertex) else "file_name=N/A"
-            )
+            if is_asset_bearing_vertex(vertex):
+                return Text(f"file_name={vertex.file_name or url_file_name(vertex.storage.location)}")
+            return Text("file_name=N/A")
         case "media_type":
-            return Text(
-                f"media_type={vertex.media_type.value}" if isinstance(vertex, ImageVertex) else "media_type=N/A"
-            )
+            if not is_asset_bearing_vertex(vertex):
+                return Text("media_type=N/A")
+            media_type: Final[MediaType | None] = vertex.media_type
+            return Text(f"media_type={media_type.value}" if media_type is not None else "media_type=None")
         case "scaled_image_size":
             return Text(
                 f"scaled_image_size=({vertex.scaled_image_size})"
@@ -383,7 +385,7 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
             size: Final[ImageSize | None] = vertex.original_image_size
             return Text(f"original_image_size=({size})" if size is not None else "original_image_size=None")
         case "source":
-            return Text(f"source={vertex.source}" if is_asset_bearing_vertex(vertex) else "source=N/A")
+            return Text(f"source={vertex.storage.location}" if is_asset_bearing_vertex(vertex) else "source=N/A")
         case "alt_text":
             return Text(f"alt_text={vertex.alt_text}" if isinstance(vertex, ImageVertex) else "alt_text=N/A")
         case "body":
@@ -517,7 +519,9 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
                 f"[bold #00aa00](<firebase_storage_url>)[/bold #00aa00]"
             )
         case VertexType.PDF:
-            pdf_label: Final[str] = url_file_name(vertex.source) or "<firebase_storage_url>"
+            pdf_label: Final[str] = (
+                vertex.file_name or url_file_name(vertex.storage.location) or "<firebase_storage_url>"
+            )
             title_content = (
                 f"[bold orange1]{markup_escape('PDF')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(pdf_label)}[/bold #00aa00]"

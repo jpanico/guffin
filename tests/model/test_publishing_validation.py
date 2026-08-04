@@ -1,7 +1,7 @@
 """Tests for guffin.model.publishing_validation."""
 
 import yaml
-from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader
+from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader, asset_storage
 from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
@@ -106,7 +106,7 @@ _PDF_URL = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%
 
 def _pdf_with(assignments: list[AttributeAssignment] | None) -> PdfVertex:
     """A PDF vertex carrying *assignments*."""
-    return PdfVertex(uid="pdfuid001", source=_PDF_URL, attribute_assignments=assignments)  # type: ignore[arg-type]
+    return PdfVertex(uid="pdfuid001", storage=asset_storage(_PDF_URL), attribute_assignments=assignments)
 
 
 def _code_block_with(assignments: list[AttributeAssignment] | None) -> CodeBlockVertex:
@@ -187,7 +187,9 @@ def _cover_image_vertex_fixture(target_uid: str = "imgcover1") -> ImageVertex:
     """An ImageVertex standing in for a referenced cover image block."""
     return ImageVertex(
         uid=target_uid,
-        source=HttpUrl("https://firebasestorage.googleapis.com/v0/b/t/o/imgs%2Fcover.jpeg?alt=media&token=cov1"),
+        storage=asset_storage(
+            HttpUrl("https://firebasestorage.googleapis.com/v0/b/t/o/imgs%2Fcover.jpeg?alt=media&token=cov1")
+        ),
         media_type=MediaType.JPEG,
         scaled_image_size=ImageSize(),
     )

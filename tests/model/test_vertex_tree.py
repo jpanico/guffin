@@ -4,6 +4,7 @@ import logging
 from typing import Final
 
 import pytest
+from conftest import asset_storage
 from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
@@ -19,7 +20,7 @@ from guffin.model.vertex_tree import (
     drop_code_sources,
     drop_root_preamble,
     enrich_image_original_sizes,
-    enrich_pdf_original_file_names,
+    enrich_pdf_file_names,
     map_vertices,
 )
 
@@ -36,7 +37,7 @@ _IMAGE_SOURCE: Final[HttpUrl] = HttpUrl("https://example.com/img.jpg")
 def _make_image_vertex(uid: str) -> ImageVertex:
     return ImageVertex(
         uid=uid,
-        source=_IMAGE_SOURCE,
+        storage=asset_storage(_IMAGE_SOURCE),
         media_type=MediaType.JPEG,
         scaled_image_size=ImageSize(width=100, height=100),
     )
@@ -317,27 +318,27 @@ _PDF_SOURCE: Final[HttpUrl] = HttpUrl("https://example.com/doc.pdf")
 
 
 class TestEnrichPdfOriginalFileNames:
-    """Tests for enrich_pdf_original_file_names()."""
+    """Tests for enrich_pdf_file_names()."""
 
-    def test_matched_uid_sets_original_file_name(self) -> None:
-        """PdfVertex whose UID is in names receives original_file_name."""
-        vertex: Final[PdfVertex] = PdfVertex(uid="pdf000001", source=_PDF_SOURCE)
+    def test_matched_uid_sets_file_name(self) -> None:
+        """PdfVertex whose UID is in names receives file_name."""
+        vertex: Final[PdfVertex] = PdfVertex(uid="pdf000001", storage=asset_storage(_PDF_SOURCE))
         tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
-        result: Final[VertexTree] = enrich_pdf_original_file_names(tree, {"pdf000001": "dummy.pdf"})
+        result: Final[VertexTree] = enrich_pdf_file_names(tree, {"pdf000001": "dummy.pdf"})
         enriched: Final[PdfVertex] = next(v for v in result.tree_vertices if isinstance(v, PdfVertex))
-        assert enriched.original_file_name == "dummy.pdf"
+        assert enriched.file_name == "dummy.pdf"
 
     def test_unmatched_pdf_vertex_passes_through_silently(self) -> None:
         """A PdfVertex absent from the names map (name unknown) is unchanged, with no warning."""
-        vertex: Final[PdfVertex] = PdfVertex(uid="pdf000002", source=_PDF_SOURCE)
+        vertex: Final[PdfVertex] = PdfVertex(uid="pdf000002", storage=asset_storage(_PDF_SOURCE))
         tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
-        result: Final[VertexTree] = enrich_pdf_original_file_names(tree, {})
+        result: Final[VertexTree] = enrich_pdf_file_names(tree, {})
         unmatched: Final[PdfVertex] = next(v for v in result.tree_vertices if isinstance(v, PdfVertex))
-        assert unmatched.original_file_name is None
+        assert unmatched.file_name is None
 
     def test_non_pdf_vertices_pass_through(self) -> None:
         """TextVertex is returned unchanged regardless of the names map."""
         tree: Final[VertexTree] = _make_text_tree([("aaaaaaaaa", "hello")])
-        result: Final[VertexTree] = enrich_pdf_original_file_names(tree, {"aaaaaaaaa": "irrelevant.pdf"})
+        result: Final[VertexTree] = enrich_pdf_file_names(tree, {"aaaaaaaaa": "irrelevant.pdf"})
         texts: Final[list[str]] = [v.text for v in result.tree_vertices if isinstance(v, TextVertex)]
         assert texts == ["hello"]

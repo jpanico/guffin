@@ -411,7 +411,7 @@ class TestToImageVertex:
     def test_source_host_is_firebase_storage(self) -> None:
         """Test that the vertex source URL points to the Firebase Storage host."""
         v = to_image_vertex(_make_image(), _node_tree(_make_image()))
-        assert v.source.host == "firebasestorage.googleapis.com"
+        assert v.storage.location.host == "firebasestorage.googleapis.com"
 
     def test_alt_text_extracted_from_string(self) -> None:
         """Test that alt text is extracted and stripped from the Markdown image link."""
@@ -482,12 +482,12 @@ class TestToPdfVertex:
     def test_source_host_is_firebase_storage(self) -> None:
         """Test that the vertex source URL points to the Firebase Storage host."""
         v = to_pdf_vertex(_make_pdf(), _node_tree(_make_pdf()))
-        assert v.source.host == "firebasestorage.googleapis.com"
+        assert v.storage.location.host == "firebasestorage.googleapis.com"
 
     def test_page_reference_form_accepted(self) -> None:
         """Test that the {{[[pdf]]: <url>}} page-reference form transcribes identically."""
         node = _make_pdf(string=f"{{{{[[pdf]]: {_FIREBASE_STORAGE_PDF_URL}}}}}")
-        assert str(to_pdf_vertex(node, _node_tree(node)).source) == _FIREBASE_STORAGE_PDF_URL
+        assert str(to_pdf_vertex(node, _node_tree(node)).storage.location) == _FIREBASE_STORAGE_PDF_URL
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the PDF node has no children."""
@@ -1135,7 +1135,7 @@ class TestTranscribeNode:
         v = transcribe_standalone_node(node, _node_tree(node))
         assert isinstance(v, PdfVertex)
         assert v.vertex_type is VertexType.PDF
-        assert str(v.source) == _FIREBASE_STORAGE_PDF_URL
+        assert str(v.storage.location) == _FIREBASE_STORAGE_PDF_URL
 
     def test_transcribes_heading_node(self) -> None:
         """Test that a heading block node is transcribed to a HEADING vertex with correct fields."""
@@ -1200,7 +1200,7 @@ class TestTranscribeNode:
         assert isinstance(v, ImageVertex)
         assert v.vertex_type is VertexType.IMAGE
         assert v.uid == "mPCzedeKx"
-        assert v.source.host == "firebasestorage.googleapis.com"
+        assert v.storage.location.host == "firebasestorage.googleapis.com"
         assert v.alt_text == "A flower"
 
 

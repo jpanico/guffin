@@ -75,14 +75,20 @@
   text: this image **has not been resized** through the Roam UI.
 - vertex_type: guffin/image
   uid: pfkKREU_Y
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4
+    store_type: firebase-storage
+    is_encrypted: true
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/image
   uid: uj8YolCoE
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0
-  alt_text: A flower
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0
+    store_type: firebase-storage
+    is_encrypted: true
   media_type: image/jpeg
+  alt_text: A flower
   scaled_image_size: {}
 - vertex_type: guffin/text
   uid: Ma5KGUH9O
@@ -114,7 +120,10 @@
   text: this image **has been resized** through the Roam UI (width:257, height:None)
 - vertex_type: guffin/image
   uid: zZG-BfWvs
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
+    store_type: firebase-storage
+    is_encrypted: true
   media_type: image/jpeg
   scaled_image_size:
     width: 257
@@ -182,7 +191,11 @@
   text: 'the following block contains the canonical w3.org "Dummy" PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
 - vertex_type: guffin/pdf
   uid: pTvGGeTlB
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
+    store_type: firebase-storage
+    is_encrypted: true
+  media_type: application/pdf
 - vertex_type: guffin/heading
   uid: zE0QjA3N9
   children:
@@ -245,4 +258,8 @@
     values:
     - kind: literal
       value: inline-native
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407
+    store_type: firebase-storage
+    is_encrypted: true
+  media_type: application/pdf

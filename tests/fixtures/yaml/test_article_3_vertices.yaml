@@ -145,7 +145,10 @@
   text: the child block contains a standalone image
 - vertex_type: guffin/image
   uid: J_Vt5_C6p
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89
+    store_type: firebase-storage
+    is_encrypted: true
   media_type: image/jpeg
   scaled_image_size: {}
 - vertex_type: guffin/text
@@ -298,7 +301,11 @@
   uid: v2l4ZwcCw
   refs:
   - q3JUnfC1_
-  source: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03
+    store_type: firebase-storage
+    is_encrypted: true
+  media_type: application/pdf
 - vertex_type: guffin/heading
   uid: LfaVt18Iw
   children:

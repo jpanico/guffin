@@ -832,9 +832,9 @@ def _vertex_effective_title(vertex: Vertex, tree: VertexTree) -> str:
         case QuoteBlockVertex():
             return vertex.quote
         case ImageVertex():
-            return vertex.alt_text or url_file_name(vertex.source) or str(vertex.source)
+            return vertex.alt_text or url_file_name(vertex.storage.location) or str(vertex.storage.location)
         case PdfVertex():
-            return url_file_name(vertex.source) or str(vertex.source)
+            return url_file_name(vertex.storage.location) or str(vertex.storage.location)
         case CalloutVertex():
             return vertex.title or vertex.body
         case CodeBlockVertex():

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from conftest import article1_vertex_tree
+from conftest import article1_vertex_tree, asset_storage
 from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
@@ -35,7 +35,7 @@ def _image_vertex(uid: str) -> ImageVertex:
     """Build a minimal ImageVertex pointing at _IMAGE_URL."""
     return ImageVertex(
         uid=uid,
-        source=_IMAGE_URL,
+        storage=asset_storage(_IMAGE_URL),
         media_type=MediaType.JPEG,
         scaled_image_size=ImageSize(),
     )
@@ -76,7 +76,9 @@ class TestFetchAsset:
 
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
-        ref: Final[AssetRef] = fetch_asset(PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path)
+        ref: Final[AssetRef] = fetch_asset(
+            PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL)), _ENDPOINT, tmp_path
+        )
 
         assert ref.uid == "pdf00001a"
         assert ref.path == tmp_path / "dummy.pdf"
@@ -94,7 +96,7 @@ class TestFetchAsset:
         claimed: Final[dict[str, str]] = {"paper.pdf": "https://example.com/pdfs/other.pdf"}
 
         ref: Final[AssetRef] = fetch_asset(
-            PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path, claimed_names=claimed
+            PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL)), _ENDPOINT, tmp_path, claimed_names=claimed
         )
 
         assert ref.path == tmp_path / "paper-1.pdf"
@@ -110,7 +112,7 @@ class TestFetchAsset:
         claimed: Final[dict[str, str]] = {"paper.pdf": str(_PDF_URL)}
 
         ref: Final[AssetRef] = fetch_asset(
-            PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path, claimed_names=claimed
+            PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL)), _ENDPOINT, tmp_path, claimed_names=claimed
         )
 
         assert ref.path == tmp_path / "paper.pdf"
@@ -129,7 +131,7 @@ class TestFetchAsset:
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _raising)
 
         with pytest.raises(RuntimeError, match="network down"):
-            fetch_asset(PdfVertex(uid="pdf00001a", source=_PDF_URL), _ENDPOINT, tmp_path)
+            fetch_asset(PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL)), _ENDPOINT, tmp_path)
 
 
 class TestFetchAssets:
@@ -169,7 +171,9 @@ class TestFetchAssets:
 
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL))]
+        )
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
 
         assert list(result) == ["pdf00001a"]
@@ -187,7 +191,7 @@ class TestFetchAssets:
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
         tree: Final[VertexTree] = VertexTree(
-            tree_vertices=[_image_vertex("img00001a"), PdfVertex(uid="pdf00001a", source=_PDF_URL)]
+            tree_vertices=[_image_vertex("img00001a"), PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL))]
         )
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
 
@@ -203,7 +207,9 @@ class TestFetchAssets:
 
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL))]
+        )
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
 
         assert result["pdf00001a"].original_file_name == "dummy.pdf"
@@ -216,7 +222,9 @@ class TestFetchAssets:
 
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL))]
+        )
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
 
         ref: Final[AssetRef] = result["pdf00001a"]
@@ -233,7 +241,9 @@ class TestFetchAssets:
 
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL))]
+        )
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
 
         assert result["pdf00001a"].path == tmp_path / "0f0f0f.pdf"
@@ -253,8 +263,8 @@ class TestFetchAssets:
 
         tree: Final[VertexTree] = VertexTree(
             tree_vertices=[
-                PdfVertex(uid="pdf00001a", source=_PDF_URL),
-                PdfVertex(uid="pdf00002a", source=other_url),
+                PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL)),
+                PdfVertex(uid="pdf00002a", storage=asset_storage(other_url)),
             ]
         )
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
@@ -276,8 +286,8 @@ class TestFetchAssets:
 
         tree: Final[VertexTree] = VertexTree(
             tree_vertices=[
-                PdfVertex(uid="pdf00001a", source=_PDF_URL),
-                PdfVertex(uid="pdf00002a", source=_PDF_URL),
+                PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL)),
+                PdfVertex(uid="pdf00002a", storage=asset_storage(_PDF_URL)),
             ]
         )
         result: Final[dict[Uid, AssetRef]] = fetch_assets(tree, _ENDPOINT, tmp_path)
@@ -402,12 +412,14 @@ class TestFetchAndEnrichAssets:
 
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL))]
+        )
         fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(tree, _ENDPOINT, tmp_path)
 
         assert list(fetched[1]) == ["pdf00001a"]
 
-    def test_pdf_original_file_name_enriched(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_pdf_file_name_enriched(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """The returned tree carries each PDF vertex's originally uploaded filename."""
 
         def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
@@ -415,11 +427,13 @@ class TestFetchAndEnrichAssets:
 
         monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
 
-        tree: Final[VertexTree] = VertexTree(tree_vertices=[PdfVertex(uid="pdf00001a", source=_PDF_URL)])
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL))]
+        )
         fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(tree, _ENDPOINT, tmp_path)
 
         enriched_pdf: Final[PdfVertex] = next(v for v in fetched[0].tree_vertices if isinstance(v, PdfVertex))
-        assert enriched_pdf.original_file_name == "dummy.pdf"
+        assert enriched_pdf.file_name == "dummy.pdf"
 
     def test_input_tree_left_unmodified(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Enrichment returns a copy; the input tree's ImageVertex is left unchanged."""
@@ -467,7 +481,7 @@ class TestCoverImagePath:
         )
         page = PageVertex(uid="pageroot1", title="Doc", attribute_assignments=[cover])
         image = ImageVertex(
-            uid="imgcover1", source=_IMAGE_URL, media_type=MediaType.JPEG, scaled_image_size=ImageSize()
+            uid="imgcover1", storage=asset_storage(_IMAGE_URL), media_type=MediaType.JPEG, scaled_image_size=ImageSize()
         )
         return VertexTree(tree_vertices=[page], ref_vertices=[image])
 

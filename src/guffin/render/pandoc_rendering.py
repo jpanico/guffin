@@ -1090,7 +1090,7 @@ def _image_vertex_to_blocks(
         A :class:`~panflute.Para` wrapping either an embedded image or a
         hyperlink fallback.
     """
-    file_name: Final[str | None] = url_file_name(vertex.source)
+    file_name: Final[str | None] = url_file_name(vertex.storage.location)
     img_path: Path | None = asset_files.get(vertex.uid)
     if img_path is not None:
         alt: Final[list[pf.Inline]] = (
@@ -1106,9 +1106,9 @@ def _image_vertex_to_blocks(
         img: Final[pf.Image] = pf.Image(*alt, url=str(img_path), title=file_name or "", attributes=attrs)
         return [pf.Para(img)]
     else:
-        label_text: Final[str] = vertex.alt_text or file_name or str(vertex.source)
+        label_text: Final[str] = vertex.alt_text or file_name or str(vertex.storage.location)
         label: Final[list[pf.Inline]] = inline_map.get(label_text, [pf.Str(label_text)])
-        link: Final[pf.Link] = pf.Link(*label, url=str(vertex.source))
+        link: Final[pf.Link] = pf.Link(*label, url=str(vertex.storage.location))
         logger.debug("Image uid=%r has no local asset file; rendering as link to its remote source", vertex.uid)
         return [pf.Para(link)]
 
@@ -1142,14 +1142,16 @@ def _pdf_vertex_to_blocks(
     Returns:
         A single-element list containing the :class:`~panflute.Para`-wrapped link.
     """
-    # Roam encrypts hosted assets with a trailing .enc extension; strip it for the display label.
-    file_name: Final[str | None] = url_file_name(vertex.source)
-    storage_label: Final[str] = file_name.removesuffix(".enc") if file_name is not None else str(vertex.source)
-    label_text: Final[str] = vertex.original_file_name or storage_label
+    # An encrypted store's assets carry a trailing .enc extension; strip it for the display label.
+    stored_name: Final[str | None] = url_file_name(vertex.storage.location)
+    storage_label: Final[str] = (
+        stored_name.removesuffix(".enc") if stored_name is not None else str(vertex.storage.location)
+    )
+    label_text: Final[str] = vertex.file_name or storage_label
     pdf_path: Final[Path | None] = asset_files.get(vertex.uid)
     if pdf_path is None:
         logger.debug("PDF uid=%r has no local asset file; rendering as link to its remote source", vertex.uid)
-    url: Final[str] = str(pdf_path) if pdf_path is not None else str(vertex.source)
+    url: Final[str] = str(pdf_path) if pdf_path is not None else str(vertex.storage.location)
     stamped: Final[str] = PDF_PLACEMENT_UNSET if placement is None else placement.value
     link: Final[pf.Link] = pf.Link(
         pf.Str(label_text), url=url, title=label_text, attributes={PDF_PLACEMENT_ATTRIBUTE: stamped}
@@ -1904,11 +1906,11 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
                     *inline_map.get(vertex.text, [pf.Str(vertex.text)] if vertex.text else []),
                 ]
             case ImageVertex() if vertex_link.kind == VertexLinkKind.EMBED:
-                return [pf.Image(*display, url=str(vertex.source), title="")]
+                return [pf.Image(*display, url=str(vertex.storage.location), title="")]
             case ImageVertex():
-                return [pf.Link(*display, url=str(vertex.source))]
+                return [pf.Link(*display, url=str(vertex.storage.location))]
             case PdfVertex():
-                return [pf.Link(*display, url=str(vertex.source))]
+                return [pf.Link(*display, url=str(vertex.storage.location))]
             case CodeBlockVertex():
                 return [pf.Code(vertex.code, classes=[code_language_token(vertex.language)])]
             case CalloutVertex():
