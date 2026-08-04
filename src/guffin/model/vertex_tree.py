@@ -1,9 +1,9 @@
-"""VertexTree — normalized (transcribed) form of a NodeTree; traversal and transform helpers.
+"""VertexTree — a portable tree of vertices; traversal and transform helpers.
 
 Public symbols:
 
-- :class:`VertexTree` — normalized (transcribed) form of a
-  :class:`~guffin.roam.node_tree.NodeTree`; a portable tree of :data:`~guffin.model.vertex.Vertex` instances.
+- :class:`VertexTree` — a portable, self-contained tree of
+  :data:`~guffin.model.vertex.Vertex` instances.
 - :meth:`VertexTree.dfs` — return a :class:`VertexTreeDFSIterator` for pre-order
   depth-first traversal.
 - :class:`VertexTreeDFSIterator` — pre-order depth-first iterator over a
@@ -69,22 +69,16 @@ def _default_ref_vertices() -> list[Annotated[Vertex, Field(discriminator="verte
 
 
 class VertexTree(BaseModel):
-    """Normalized (transcribed) form of a :class:`~guffin.roam.node_tree.NodeTree`.
+    """A portable, self-contained tree of :data:`~guffin.model.vertex.Vertex` instances.
 
-    Produced by :func:`~guffin.transcribe.roam_tree_to_guffin.transcribe`, which applies
-    :func:`~guffin.transcribe.roam_tree_to_guffin.transcribe_standalone_node` to every node in the source
-    :class:`~guffin.roam.node_tree.NodeTree` and collects the results here in the
-    same insertion order.  The resulting collection is guaranteed to have exactly
-    one :data:`~guffin.model.vertex.Vertex` per source :class:`~guffin.roam.node.RoamNode` and
-    inherits the acyclic-tree structure of its origin.
+    Holds exactly one vertex per source node, in insertion order, and inherits the
+    acyclic-tree structure of its origin: a single root whose ``children`` UID lists
+    span every other tree vertex.
 
     Attributes:
-        tree_vertices: Transcribed vertices, one per source
-            :class:`~guffin.roam.node.RoamNode`, in insertion order.
-        ref_vertices: Stub vertices transcribed from
-            :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` — nodes referenced
-            from the anchor tree but not part of it.  Used only for UID lookup
-            (e.g. by :func:`~guffin.render.pandoc_rendering.resolve_vertex_links`);
+        tree_vertices: The tree's vertices, one per source node, in insertion order.
+        ref_vertices: Stub vertices for nodes referenced from the anchor tree but not
+            part of it.  Used only for UID lookup when a link is followed;
             not traversed by :class:`VertexTreeDFSIterator` (though
             :func:`transcluded_vertices` reaches those transcluded via embeds).
         uid_map: Map of :attr:`~guffin.model.vertex._BaseVertex.uid` →
@@ -95,7 +89,7 @@ class VertexTree(BaseModel):
     model_config = ConfigDict(frozen=True, validate_by_name=True)
 
     tree_vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
-        ..., description="Transcribed vertices, one per source RoamNode."
+        ..., description="The tree's vertices, one per source node, in insertion order."
     )
     ref_vertices: list[Annotated[Vertex, Field(discriminator="vertex_type")]] = Field(
         default_factory=_default_ref_vertices,
@@ -128,8 +122,8 @@ class VertexTreeDFSIterator(Iterator[Vertex]):
 
     Yields vertices starting from the single root, then recursively yields each
     child subtree in the order recorded in each vertex's
-    :attr:`~guffin.model.vertex._BaseVertex.children` list (which preserves the original
-    :attr:`~guffin.roam.node.RoamNode.order` sort applied during transcription).
+    :attr:`~guffin.model.vertex._BaseVertex.children` list (which preserves the
+    source's sibling order).
     The traversal is non-recursive internally (stack-based), so deep trees do not
     risk hitting Python's recursion limit.
 
@@ -372,7 +366,7 @@ def drop_attribute_assignments(tree: VertexTree) -> VertexTree:
 
     Each vertex's :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` keeps only its
     Guffin-system assignments (:attr:`~guffin.model.attribute.AttributeDomain.is_guffin`), so the
-    rendered output omits the Roam attribute pills while the assignments carrying Guffin-system
+    rendered output omits the attribute pills while the assignments carrying Guffin-system
     semantics — bibliographic metadata, structural tags, render directives, which never appear
     directly in output content anyway — stay in force.  A vertex left with no assignments gets
     ``None``.  All other fields are preserved and the original *tree* is not modified.

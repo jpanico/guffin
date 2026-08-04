@@ -1,9 +1,10 @@
-"""Normalized model of a Roam attribute assignment (``<attribute>:: <value>, …``).
+"""Normalized model of an attribute assignment (``<attribute>:: <value>, …``).
 
-A Roam attribute assignment names an attribute — itself a Roam *Page* — and assigns it an ordered
-list of values, each of which is either a bare literal token or a reference to another page.  This
-module models that construct decoupled from the Roam/parsing layer: page references are captured as
-:class:`~guffin.model.vertex_link.VertexLink` pointers rather than raw Roam UIDs or strings.
+An attribute assignment names an attribute — itself a page in the source graph — and assigns it an
+ordered list of values, each of which is either a bare literal token or a reference to another
+page.  This module models that construct decoupled from any source's own encoding: page references
+are captured as :class:`~guffin.model.vertex_link.VertexLink` pointers rather than raw source UIDs
+or strings.
 
 Public symbols:
 
@@ -11,11 +12,11 @@ Public symbols:
   :class:`ReferenceValue`.
 - **Enumerations**: :class:`AttributeDomain` — the namespaces an :class:`Attribute` may belong to
   (default / guffin); :class:`AttributeValueKind` — the two value kinds (literal / reference).
-- **Models**: :class:`Attribute` — a Roam attribute's graph-independent identity (name + domain;
+- **Models**: :class:`Attribute` — an attribute's graph-independent identity (name + domain;
   equality and hashing are identity-based, so a subclass instance compares equal to any
   :class:`Attribute` with the same identity);
-  :class:`AttributeInstance` — an occurrence of an :class:`Attribute` bound to a specific Roam
-  database via a runtime link to its page, the thing preceding ``::``; :class:`LiteralValue`
+  :class:`AttributeInstance` — an occurrence of an :class:`Attribute` bound to a specific source
+  graph via a runtime link to its page, the thing preceding ``::``; :class:`LiteralValue`
   — a bare literal value; :class:`ReferenceValue` — a value that references a page.
 - **Adapters**: :data:`attribute_value_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for
   validating a raw mapping into the appropriate :data:`AttributeValue`.
@@ -68,12 +69,12 @@ class AttributeValueKind(enum.StrEnum):
 
 
 class Attribute(BaseModel):
-    """A Roam attribute — the identity of the page named before the ``::`` separator.
+    """An attribute — the identity of the page named before the ``::`` separator.
 
     Runtime-independent: an :class:`Attribute` is described purely by its name and domain, both of
-    which are stable across graphs.  It carries no reference to any particular Roam database instance,
-    so the same :class:`Attribute` denotes "the attribute called *name* in *domain*" regardless of
-    which graph it was read from.  (Contrast :class:`AttributeInstance`, which binds this identity to a
+    which are stable across graphs.  It carries no reference to any particular source graph, so the
+    same :class:`Attribute` denotes "the attribute called *name* in *domain*" regardless of which
+    graph it was read from.  (Contrast :class:`AttributeInstance`, which binds this identity to a
     specific graph's page via a runtime link.)
 
     Equality and hashing are **identity-based**: two attributes are equal exactly when their
@@ -81,7 +82,7 @@ class Attribute(BaseModel):
     instance compares equal to any :class:`Attribute` carrying the same identity.
 
     Attributes:
-        name: The attribute name, i.e. the title of the referenced Roam *Page*.
+        name: The attribute name, i.e. the title of the referenced page.
         domain: The namespace the attribute belongs to; defaults to :attr:`AttributeDomain.DEFAULT`.
     """
 
@@ -107,7 +108,7 @@ class AttributeInstance(BaseModel):
     """A particular occurrence of an attribute — its :class:`Attribute` paired with a link to its page.
 
     Runtime-dependent: whereas the :class:`Attribute` :attr:`definition` is graph-independent, the
-    :attr:`link` binds it to the runtime identity of a specific Roam database instance — it resolves
+    :attr:`link` binds it to the runtime identity of a specific source graph — it resolves
     to the attribute page (by UID) within the graph this instance was read from, and is meaningful
     only against that graph.
 

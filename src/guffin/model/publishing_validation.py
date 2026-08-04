@@ -444,7 +444,7 @@ def all_cover_image_values_legal(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring legal, resolvable ``cover-image`` values.
 
     Every :attr:`PublishingSemantics.COVER_IMAGE` assignment in *tree* must carry exactly one
-    value; that value must be wholly a Roam block reference ``((<uid>))``; the referenced UID
+    value; that value must be wholly a block reference ``((<uid>))``; the referenced UID
     must be present in *tree*; and the referenced vertex must be an
     :class:`~guffin.model.vertex.ImageVertex` — the cover must resolve to an actual image.
 

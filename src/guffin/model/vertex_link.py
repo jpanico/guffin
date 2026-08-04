@@ -5,11 +5,11 @@ Two link kinds are distinguished by the URL path stem:
 
 - **Reference** — ``x-guffin:vertex/<uid>``.  The anchor carries only the
   destination's UID; the rest of the destination is obtained by *following* the
-  link.  These are the semantics of an HTTP hyperlink, a Roam page reference, or
-  a Roam block reference.
+  link.  These are the semantics of an HTTP hyperlink, or of a source graph's
+  page and block references.
 - **Embed** — ``x-guffin:vertex-embed/<uid>``.  The destination's contents are
   included/substituted at the anchor point, like a ``#include``.  These are the
-  semantics of a Roam block embed.
+  semantics of a source graph's block embed (transclusion).
 
 Public symbols:
 
@@ -45,11 +45,11 @@ class VertexLinkKind(enum.StrEnum):
 
     Attributes:
         REFERENCE: A pointer that must be *followed* to resolve the destination
-            (``vertex`` path stem); HTTP / Roam page-ref / Roam block-ref
+            (``vertex`` path stem); hyperlink / page-reference / block-reference
             semantics.
         EMBED: A pointer whose destination contents are substituted at the
-            anchor point (``vertex-embed`` path stem); Roam block-embed
-            semantics.
+            anchor point (``vertex-embed`` path stem); block-embed
+            (transclusion) semantics.
     """
 
     REFERENCE = "vertex"
@@ -105,8 +105,8 @@ _STANDALONE_VERTEX_LINK_MD_RE: Final[regex.Pattern[str]] = regex.compile(
 **Standalone** means the link is the text's entire content — the ``\\A``/``\\Z`` anchors
 encode that, so the pattern's language is standalone-link texts regardless of how it is
 matched.  The
-``[<display>](<x-guffin-url>)`` form is what a solo Roam ``((uid))`` / ``[[Page]]``
-reference transcribes to; the URL chunk is :data:`_VERTEX_LINK_URL_RE` itself, so the two
+``[<display>](<x-guffin-url>)`` form is what a solo source reference (a lone block or
+page reference) transcribes to; the URL chunk is :data:`_VERTEX_LINK_URL_RE` itself, so the two
 encodings cannot drift (shape only — the stem still needs
 :meth:`VertexLinkKind.by_path_stem` validation, the parse function's job).  The display
 is matched with DOTALL because a reference's display reproduces the destination's whole
@@ -170,7 +170,7 @@ def parse_standalone_vertex_link(text: str) -> VertexLink | None:
 
     **Standalone** means the link is the text's entire content — the text displays nothing
     but the link.  The Pandoc-Markdown link form ``[<display>](<x-guffin-url>)`` is the
-    canonical text encoding of a :class:`VertexLink` — the form a Roam reference or embed
+    canonical text encoding of a :class:`VertexLink` — the form a source reference or embed
     transcribes to.  Recognition is **structural**, from that shape
     (:data:`_STANDALONE_VERTEX_LINK_MD_RE`), rather than by a Markdown inline parse: a link
     whose display reproduces a multi-paragraph destination cannot be parsed as a single

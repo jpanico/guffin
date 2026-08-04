@@ -34,7 +34,7 @@ Public symbols:
   assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
   parsed :class:`~guffin.common.w3cdtf_date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
   :func:`cover_image_of` — read a ``cover-image`` assignment's value as the referenced image
-  block's :data:`~guffin.model.primitives.Uid` (the value is a Roam block reference
+  block's :data:`~guffin.model.primitives.Uid` (the value is a block reference
   ``((<uid>))``); :func:`cover_image_vertex` — resolve a tree's cover to the
   :class:`~guffin.model.vertex.ImageVertex` its root references, tolerating absent or
   unresolvable assignments (``None``, warning);
@@ -241,8 +241,8 @@ class PublishingSemantics(enum.Enum):
       displayed): :attr:`PDF_RENDER` declares its :class:`PdfRenderPlacement` placement in paginated
       output.
     - **Code-block tags** (:attr:`AttributeAnchor.CODE_BLOCK`) — applied to an individual fenced
-      code listing: :attr:`CODE_LANGUAGE` declares the listing's language, overriding the closed
-      vocabulary the Roam UI embeds in the fence.
+      code listing: :attr:`CODE_LANGUAGE` declares the listing's language, overriding whatever
+      language the source's fence records.
     - **Block tags** (:attr:`AttributeAnchor.BLOCK`) — applied to any block vertex: :attr:`PUBLISH`
       declares whether the block, with its entire subtree, appears in rendered output.
 
@@ -261,8 +261,8 @@ class PublishingSemantics(enum.Enum):
         REVISION: An author-declared revision label for the content (free text — e.g. a draft
             name or version string), carried into the export's content
             :class:`~guffin.common.revision.Revision` record.
-        COVER_IMAGE: The work's cover image — the value is a Roam block reference
-            ``((<uid>))`` to an image block, keeping the cover ordinary, reusable Roam content.
+        COVER_IMAGE: The work's cover image — the value is a block reference
+            ``((<uid>))`` to an image block, keeping the cover ordinary, reusable graph content.
         ELEMENT_TYPE: Tags a heading with its :class:`StructuralElement` (the book part it is).
         MATTER: Tags a heading with its :class:`Matter` division (for a section with no element type).
         PAGE_BREAK: Tags a heading with a forced :class:`PageBreak` in paginated output
@@ -272,7 +272,7 @@ class PublishingSemantics(enum.Enum):
             reference site's tag governing that reference).
         CODE_LANGUAGE: Tags a fenced code listing with its language — any name or alias of the
             canonical vocabulary (:mod:`~guffin.common.programming_language`) — overriding the
-            closed language set the Roam UI offers (which lacks e.g. Fortran).
+            language the source's fence records (a source's own language set may lack e.g. Fortran).
         CODE_SOURCE: Tags a fenced code listing with the provenance of its content — three
             ordered values: the GitHub blob URL naming its source, the full commit SHA
             actually fetched, and the fetch date (see
@@ -488,10 +488,10 @@ def date_of(assignment: AttributeAssignment) -> W3cdtfDate:
 
 
 _BLOCK_REF_VALUE_RE: Final[regex.Pattern[str]] = regex.compile(rf"\(\((?P<uid>{UID_PATTERN})\)\)")
-"""A Roam block reference ``((<uid>))`` as an attribute-value token (fullmatch-anchored at use).
+"""A block reference ``((<uid>))`` as an attribute-value token (fullmatch-anchored at use).
 
 Built from the model's own :data:`~guffin.model.primitives.UID_PATTERN`, so the vocabulary stays
-free of any ``roam/`` dependency.
+free of any source-package dependency.
 """
 
 
@@ -500,9 +500,9 @@ def cover_image_of(assignment: AttributeAssignment) -> Uid:
     """Return the UID of the image block that a ``cover-image`` assignment references.
 
     Verifies *assignment* is for the :attr:`PublishingSemantics.COVER_IMAGE` attribute, then
-    coerces its sole value to the referenced block's UID: the value must be wholly a Roam block
+    coerces its sole value to the referenced block's UID: the value must be wholly a block
     reference ``((<uid>))`` pointing at an image block.  Referencing a block (rather than
-    carrying a raw image URL) keeps the cover an ordinary piece of Roam content — reusable,
+    carrying a raw image URL) keeps the cover an ordinary piece of graph content — reusable,
     and editable in place.
 
     Args:
@@ -515,7 +515,7 @@ def cover_image_of(assignment: AttributeAssignment) -> Uid:
 
     Raises:
         ValueError: If *assignment* is not for the ``cover-image`` attribute, does not carry
-            exactly one value, or its value is not wholly a Roam block reference.
+            exactly one value, or its value is not wholly a block reference.
     """
     text: Final[str] = verified_sole_value_text(assignment, PublishingSemantics.COVER_IMAGE.value)
     ref_match: Final[regex.Match[str] | None] = _BLOCK_REF_VALUE_RE.fullmatch(text)
@@ -648,7 +648,7 @@ def code_language_of_vertex(vertex: CodeBlockVertex) -> CodeLanguageId | None:
 
     ``None`` when *vertex* carries no ``code-language`` assignment, or when the assignment does
     not resolve against the canonical vocabulary (ignored with a warning).  An untagged code
-    block's language is whatever the Roam fence embeds.
+    block's language is whatever the source's fence records.
 
     Args:
         vertex: The code-block vertex whose tag to resolve.

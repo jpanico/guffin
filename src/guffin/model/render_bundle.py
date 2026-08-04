@@ -67,8 +67,7 @@ class RenderBundle(BaseModel):
         """Return a copy of this bundle stamped with *revision*, or ``self`` unchanged when ``None``.
 
         A pure enrichment helper, the content-side twin of :meth:`with_provenance`: the bundle's
-        producer captures the revision separately (e.g. via
-        :func:`~guffin.roam.revision.gather_revision`) and attaches it here, keeping this model
+        producer captures the revision separately and attaches it here, keeping this model
         free of any runtime-capture side effects.
 
         Args:

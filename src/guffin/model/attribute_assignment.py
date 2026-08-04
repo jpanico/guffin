@@ -1,4 +1,4 @@
-"""A Roam attribute assignment (``<attribute>:: <value>, …``) and the helpers that read it.
+"""An attribute assignment (``<attribute>:: <value>, …``) and the helpers that read it.
 
 An assignment pairs an :class:`~guffin.model.attribute.AttributeInstance` (the attribute named before
 ``::``) with the ordered list of values assigned to it (after ``::``).  This module models that pairing
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 class AttributeAssignment(BaseModel):
-    """A Roam attribute assignment: an :class:`~guffin.model.attribute.AttributeInstance` and its ordered values.
+    """An attribute assignment: an :class:`~guffin.model.attribute.AttributeInstance` and its ordered values.
 
     Attributes:
         attribute: The attribute (the page named before ``::``).
@@ -140,7 +140,7 @@ def find_assignment_for(
 
     An assignment matches per :func:`is_assignment_for` (identity: name + domain).  The semantics
     of multiple assignments of the same attribute within one collection are undefined (neither
-    Guffin nor Roam defines them), so when more than one matches, a warning is logged and the
+    Guffin nor any source defines them), so when more than one matches, a warning is logged and the
     first wins.
 
     Args:

@@ -1,53 +1,40 @@
-"""Roam Research normalized graph vertex types.
+"""Normalized graph vertex types — the source-agnostic content model.
 
-A :data:`Vertex` is the normalized (transcribed) form of a single
-:class:`~guffin.roam.node.RoamNode`.
+A :data:`Vertex` is one node of the normalized content model: the self-contained,
+portable form a source graph's node takes after transcription.
 
 Normalization (transcription) means:
 
-- Datomic-internal numeric entity ids (:attr:`~guffin.roam.node.RoamNode.id`) are
-  eliminated.
-- Raw :class:`~guffin.roam.primitives.IdObject` stubs in ``children`` and ``refs`` are
-  resolved to stable ``:block/uid`` strings.
-- The raw ``string`` / ``title`` field distinction is collapsed into a single ``text``
-  field.
+- Source-internal numeric entity ids are eliminated.
+- Raw child and reference stubs are resolved to stable UID strings.
+- Source-specific markup and component syntax is translated away; what remains is the
+  content itself, typed by what it *is*.
 - Each node is classified into a :class:`VertexType`.
-- The result is self-contained and portable — no Datomic dependencies remain.
-
-Normalization is performed by :func:`~guffin.transcribe.roam_tree_to_guffin.transcribe` (for a full
-:class:`~guffin.roam.node_tree.NodeTree`) or
-:func:`~guffin.transcribe.roam_tree_to_guffin.transcribe_standalone_node` (for a single
-:class:`~guffin.roam.node.RoamNode`).
+- The result is self-contained and portable — no source dependencies remain.
 
 Public symbols:
 
-- :data:`VertexChildren` — normalized form of
-  :attr:`~guffin.roam.node.RoamNode.children`: ordered child UIDs.
-- :data:`VertexRefs` — normalized form of :attr:`~guffin.roam.node.RoamNode.refs`:
-  referenced UIDs.
-- :class:`VertexType` — string enum classifying each vertex by the shape of its source
-  :class:`~guffin.roam.node.RoamNode`.
-- :class:`PageVertex` — normalized (transcribed) form of a Roam Page node.
-- :class:`HeadingVertex` — normalized (transcribed) form of a Roam Heading block node.
-- :class:`TextVertex` — normalized (transcribed) form of a plain-text Roam Block
-  node.
+- :data:`VertexChildren` — a vertex's ordered child UIDs.
+- :data:`VertexRefs` — a vertex's referenced UIDs.
+- :class:`VertexType` — string enum classifying each vertex by the kind of content it
+  carries.
+- :class:`PageVertex` — a titled page, the top-level container vertex.
+- :class:`HeadingVertex` — a section heading (levels 1–6).
+- :class:`TextVertex` — plain body text.
 - :class:`TodoState` — the two states of a TODO item (``TODO`` open, ``DONE`` completed).
-- :class:`TodoVertex` — normalized (transcribed) form of a Roam TODO item block node.
-- :class:`ImageVertex` — normalized (transcribed) form of a Roam Firebase Storage image block
-  node.
-- :class:`PdfVertex` — normalized (transcribed) form of a Roam Firebase Storage PDF block node.
-- :class:`AssetVertex` — normalized form of a Roam bare-asset-URL block node: a hosted
-  asset of unspecified kind, carried as its :class:`~guffin.model.asset_storage.AssetStorage`
-  plus optional media type and filename.
-- :class:`CalloutVertex` — normalized (transcribed) form of a Roam callout block node.
-- :class:`CodeBlockVertex` — normalized (transcribed) form of a Roam fenced code block
-  node.
+- :class:`TodoVertex` — a checkbox (TODO) item: a state plus the item text.
+- :class:`PdfVertex` — a hosted PDF asset displayed in the document.
+- :class:`ImageVertex` — a hosted image asset displayed in the document.
+- :class:`AssetVertex` — a hosted asset of unspecified kind, carried as its
+  :class:`~guffin.model.asset_storage.AssetStorage` plus optional media type and filename.
+- :class:`CalloutVertex` — a callout (admonition) with a category, title, and body.
+- :class:`CodeBlockVertex` — a fenced code listing.
 - :class:`QuoteType` — how a quote block is presented (``BLOCK`` vs ``PULL``).
-- :class:`QuoteBlockVertex` — normalized (transcribed) form of a Roam quote-block node (any of the
-  three quote forms: ``>``, ``[[>]]``, ``[[>]] [[!QUOTE]]``).
-- :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
-- :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
-- :class:`PageEmbedVertex` — normalized (transcribed) form of a Roam page embed node.
+- :class:`QuoteBlockVertex` — a quotation, presented as a plain block quote or a
+  decorated pull quote.
+- :class:`TableVertex` — a table: a cell grid plus its styling overlay.
+- :class:`BlockEmbedVertex` — a transclusion of another block at this position.
+- :class:`PageEmbedVertex` — a transclusion of a whole page at this position.
 - :data:`Vertex` — union of the twelve concrete vertex types transcription currently
   produces (:class:`AssetVertex` deliberately excluded until its rendering design lands).
 - :data:`AssetBearingVertex` — union of the asset-bearing vertex types
@@ -86,47 +73,29 @@ from guffin.model.vertex_link import VertexLink, VertexLinkKind
 class VertexType(StrEnum):
     """Classification assigned to each vertex during transcription.
 
-    Every :class:`~guffin.roam.node.RoamNode` is classified into exactly one
-    ``VertexType`` based on the shape of its raw fields.  The values are
-    string-valued so they serialize cleanly to/from JSON without extra conversion.
+    Every source node is classified into exactly one ``VertexType`` by the kind of
+    content it carries.  The values are string-valued so they serialize cleanly
+    to/from JSON without extra conversion.
 
     Values:
-        PAGE: Normalized form of a Roam *Page* node — ``:node/title`` is
-            present; ``:block/string`` is absent.
-        TEXT: Normalized form of a Roam *Block* node that has no
-            ``heading`` property — i.e. normal body text.
-        TODO: Normalized form of a Roam *Block* node whose ``:block/string``
-            leads with a Roam TODO marker (``{{[[TODO]]}}`` / ``{{[[DONE]]}}``) —
-            a checkbox item whose state the marker's keyword names.
-        HEADING: Normalized form of a Roam *Block* node that carries a
-            ``heading`` property (value 1, 2, or 3).
-        IMAGE: Normalized form of a Roam *Block* node whose
-            ``:block/string`` embeds a Firebase Storage URL pointing to a
-            Roam-managed image upload.
-        PDF: Normalized form of a Roam *Block* node whose ``:block/string``
-            is wholly a Roam PDF component (``{{pdf: <url>}}`` /
-            ``{{[[pdf]]: <url>}}``) whose URL points to a Roam-managed PDF
-            upload in Firebase Storage.
-        ASSET: Normalized form of a Roam *Block* node whose ``:block/string``
-            is wholly a bare Firebase Storage URL — a Roam-managed upload of
-            unspecified kind, with no Markdown or Roam-component chrome
-            around its one URL.
-        CALLOUT: Normalized form of a Roam *Block* node whose
-            ``:block/string`` starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
-        CODE_BLOCK: Normalized form of a Roam *Block* node whose
-            ``:block/string`` is a CommonMark fenced code block.
-        QUOTE_BLOCK: Normalized form of a Roam *Block* node that is any of the three quote
-            forms — a standard Markdown block quote (``> text``), a Roam-native block quote
-            (``[[>]] text``), or a Roam pull quote (``[[>]] [[!QUOTE]] text``).
-        TABLE: Normalized form of a Roam native table node — a block whose
-            ``:block/string`` equals ``{{table}}``, with its child blocks forming the
-            rows and each child's children forming the cells.
-        BLOCK_EMBED: Normalized form of a Roam *Block* node whose
-            ``:block/string`` is wholly a block embed (``{{embed: ((<uid>))}}``),
-            transcluding the referenced block.
-        PAGE_EMBED: Normalized form of a Roam *Block* node whose
-            ``:block/string`` is wholly a page embed (``{{embed: [[<page_name>]]}}``),
-            transcluding the referenced page.
+        PAGE: A titled page — the top-level container vertex.
+        TEXT: Plain body text.
+        TODO: A checkbox (TODO) item — a state (open or completed) plus the item
+            text.
+        HEADING: A section heading, with an effective level 1–6.
+        IMAGE: A hosted image asset displayed in the document.
+        PDF: A hosted PDF asset displayed in the document.
+        ASSET: A hosted asset of unspecified kind — an upload that is neither an
+            image nor a PDF component (e.g. an audio file, archive, or pass).
+        CALLOUT: A callout (admonition) — a categorised aside with a title and
+            body.
+        CODE_BLOCK: A fenced code listing.
+        QUOTE_BLOCK: A quotation — presented as a plain block quote or a
+            decorated pull quote.
+        TABLE: A table — a cell grid whose rows come from the vertex's child
+            subtree.
+        BLOCK_EMBED: A transclusion of another block at this position.
+        PAGE_EMBED: A transclusion of a whole page at this position.
     """
 
     PAGE = "guffin/page"
@@ -145,17 +114,16 @@ class VertexType(StrEnum):
 
 
 type VertexChildren = list[Uid]
-"""Normalized form of :attr:`~guffin.roam.node.RoamNode.children`.
+"""A vertex's ordered child UIDs.
 
-Raw :class:`~guffin.roam.primitives.IdObject` stubs are resolved to stable ``:block/uid``
-strings and sorted by ``:block/order`` during transcription.
+Resolved from the source's raw child stubs to stable UID strings, in the source's
+sibling order.
 """
 
 type VertexRefs = list[Uid]
-"""Normalized form of :attr:`~guffin.roam.node.RoamNode.refs`.
+"""A vertex's referenced UIDs.
 
-Raw :class:`~guffin.roam.primitives.IdObject` stubs are resolved to stable ``:block/uid``
-strings during transcription.
+Resolved from the source's raw reference stubs to stable UID strings.
 """
 
 
@@ -175,50 +143,39 @@ class _BaseVertex[VT: VertexType](BaseModel):
     Attributes:
         vertex_type: Discriminator field identifying the concrete subtype.
             Narrowed to a :class:`~typing.Literal` in each subclass.
-        uid: Nine-character stable ``:block/uid`` identifier. Required.
-        children: Ordered child UIDs resolved from raw
-            :class:`~guffin.roam.primitives.IdObject` stubs. ``None`` when the
-            source node has no children.
-        refs: Referenced UIDs resolved from raw
-            :class:`~guffin.roam.primitives.IdObject` stubs. ``None`` when the
-            source node has no refs.
-        attribute_assignments: Roam attribute assignments (``<attribute>:: <value>, …``)
-            declared directly on this vertex, in source order. Sourced during
-            transcription from the node's attribute-block children, which are folded into
-            this field rather than transcribed as separate vertices. ``None`` when the
-            source node has no attribute-block children.
+        uid: Stable identifier of the vertex. Required.
+        children: Ordered child UIDs. ``None`` when the vertex has no children.
+        refs: Referenced UIDs. ``None`` when the vertex references nothing.
+        attribute_assignments: Attribute assignments (``<attribute>:: <value>, …``)
+            declared directly on this vertex, in source order — folded onto the
+            vertex rather than carried as separate child vertices. ``None`` when
+            the vertex declares none.
             Serialized as ``'attribute-assignments'``.
     """
 
     model_config = ConfigDict(frozen=True, validate_by_name=True)
 
     vertex_type: VT
-    uid: Uid = Field(..., description="Nine-character stable block/page identifier.")
-    children: VertexChildren | None = Field(
-        default=None, description="Ordered child UIDs resolved from raw IdObject stubs."
-    )
-    refs: VertexRefs | None = Field(default=None, description="Referenced UIDs resolved from raw IdObject stubs.")
+    uid: Uid = Field(..., description="Stable block/page identifier.")
+    children: VertexChildren | None = Field(default=None, description="Ordered child UIDs.")
+    refs: VertexRefs | None = Field(default=None, description="Referenced UIDs.")
     attribute_assignments: list[AttributeAssignment] | None = Field(
         default=None,
         serialization_alias="attribute-assignments",
-        description="Roam attribute assignments declared on this vertex (from its attribute-block children).",
+        description="Attribute assignments declared directly on this vertex, in source order.",
     )
 
 
 class PageVertex(_BaseVertex[Literal[VertexType.PAGE]]):
-    """Normalized (transcribed) form of a Roam Page node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has
-    ``:node/title`` set (i.e. ``node.title is not None``).  The ``title`` field
-    is collapsed into :attr:`text`.
+    """A titled page — the top-level container vertex.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.PAGE`.
             Serialized as ``'vertex-type'``.
-        title: Page title from the source node's ``title`` field.
-        daily_note_date: The calendar date this page represents when it is a Roam daily-note page
+        title: The page title.
+        daily_note_date: The calendar date this page represents when it is a daily-note page
             (its ``uid`` is an ``MM-DD-YYYY`` date), else ``None``.  Lets a renderer format
-            references to daily notes by date instead of relying on the Roam-authored ``title``.
+            references to daily notes by date instead of relying on the source-authored ``title``.
             Serialized as ``'daily-note-date'``.
     """
 
@@ -227,7 +184,7 @@ class PageVertex(_BaseVertex[Literal[VertexType.PAGE]]):
         serialization_alias="vertex-type",
         description="Always VertexType.PAGE (serialized as 'vertex-type').",
     )
-    title: str = Field(..., description="Page title from the source node's title field.")
+    title: str = Field(..., description="The page title.")
     daily_note_date: datetime.date | None = Field(
         default=None,
         serialization_alias="daily-note-date",
@@ -236,16 +193,12 @@ class PageVertex(_BaseVertex[Literal[VertexType.PAGE]]):
 
 
 class HeadingVertex(_BaseVertex[Literal[VertexType.HEADING]]):
-    """Normalized (transcribed) form of a Roam Heading block node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has an
-    effective heading level — either a native ``heading`` value (1–3) or an
-    Augmented Headings ``props['ah-level']`` value (h4–h6).
+    """A section heading.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.HEADING`.
             Serialized as ``'vertex-type'``.
-        text: Block string from the source node's ``string`` field.
+        text: The heading text.
         heading_level: Effective heading level in the range 1–6.
     """
 
@@ -254,20 +207,17 @@ class HeadingVertex(_BaseVertex[Literal[VertexType.HEADING]]):
         serialization_alias="vertex-type",
         description="Always VertexType.HEADING (serialized as 'vertex-type').",
     )
-    text: str = Field(..., description="Block string from the source node's string field.")
+    text: str = Field(..., description="The heading text.")
     heading_level: HeadingLevel = Field(..., description="Effective heading level (1–6).")
 
 
 class TextVertex(_BaseVertex[Literal[VertexType.TEXT]]):
-    """Normalized (transcribed) form of a plain-text Roam Block node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has
-    ``:block/string`` set with no heading property and no embedded Firebase Storage URL.
+    """Plain body text — a vertex whose content is ordinary prose.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.TEXT`.
             Serialized as ``'vertex-type'``.
-        text: Block string from the source node's ``string`` field.
+        text: The body text.
     """
 
     vertex_type: Literal[VertexType.TEXT] = Field(
@@ -275,7 +225,7 @@ class TextVertex(_BaseVertex[Literal[VertexType.TEXT]]):
         serialization_alias="vertex-type",
         description="Always VertexType.TEXT (serialized as 'vertex-type').",
     )
-    text: str = Field(..., description="Block string from the source node's string field.")
+    text: str = Field(..., description="The body text.")
 
 
 class TodoState(StrEnum):
@@ -291,12 +241,10 @@ class TodoState(StrEnum):
 
 
 class TodoVertex(_BaseVertex[Literal[VertexType.TODO]]):
-    """Normalized (transcribed) form of a Roam TODO item block node.
+    """A checkbox (TODO) item.
 
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` leading with a Roam TODO marker (``{{[[TODO]]}}`` /
-    ``{{[[DONE]]}}``).  The marker is stripped: its keyword becomes
-    :attr:`todo_state` and the remaining item text becomes :attr:`text`.
+    The source's state marker is translated away at transcription: its keyword
+    becomes :attr:`todo_state` and the remaining item text becomes :attr:`text`.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.TODO`.
@@ -304,7 +252,7 @@ class TodoVertex(_BaseVertex[Literal[VertexType.TODO]]):
         todo_state: The item's state — :attr:`TodoState.TODO` (open) or
             :attr:`TodoState.DONE` (completed).
             Serialized as ``'todo-state'``.
-        text: The item text — the block string with its leading marker stripped.
+        text: The item text, marker-free.
     """
 
     vertex_type: Literal[VertexType.TODO] = Field(
@@ -317,30 +265,26 @@ class TodoVertex(_BaseVertex[Literal[VertexType.TODO]]):
         serialization_alias="todo-state",
         description="The item's state: open (TODO) or completed (DONE).",
     )
-    text: str = Field(..., description="The item text, with the leading TODO marker stripped.")
+    text: str = Field(..., description="The item text, marker-free.")
 
 
 class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
-    """Normalized (transcribed) form of a Roam Firebase Storage image block node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that embeds a Firebase Storage URL.
+    """A hosted image asset displayed in the document.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.IMAGE`.
             Serialized as ``'vertex-type'``.
         source: Firebase Storage URL for the image file.
-        alt_text: Alt text extracted from the Markdown image link
-            (``![<alt_text>](<url>)``), stripped of leading/trailing whitespace.
+        alt_text: The image's alt text, stripped of leading/trailing whitespace.
             ``None`` when the alt text is absent or empty.
             Serialized as ``'alt-text'``.
         media_type: IANA media type inferred from the *source* URL filename's extension.
             Serialized as ``'media-type'``.
-        scaled_image_size: Pixel dimensions from the source node's ``image-size`` block
-            prop. Both axes are ``None`` when no ``image-size`` prop is recorded.
+        scaled_image_size: Display pixel dimensions recorded by the source (an authored
+            resize). Both axes are ``None`` when no display size is recorded.
             Serialized as ``'image-size'``.
         original_image_size: Native pixel dimensions of the image file before any
-            Roam scaling is applied. ``None`` when the original size is unknown.
+            display scaling is applied. ``None`` when the original size is unknown.
             Serialized as ``'original-image-size'``.
     """
 
@@ -353,7 +297,7 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
     alt_text: str | None = Field(
         default=None,
         serialization_alias="alt-text",
-        description="Alt text from the Markdown image link, stripped. None when absent or empty.",
+        description="The image's alt text, stripped. None when absent or empty.",
     )
     media_type: MediaType = Field(
         ...,
@@ -363,12 +307,13 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
     scaled_image_size: ImageSize = Field(
         ...,
         serialization_alias="image-size",
-        description="Pixel dimensions from the node's image-size prop (serialized as 'image-size').",
+        description="Display pixel dimensions recorded by the source (serialized as 'image-size').",
     )
     original_image_size: ImageSize | None = Field(
         default=None,
         serialization_alias="original-image-size",
-        description="Native dimensions before Roam scaling. None when unknown (serialized as 'original-image-size').",
+        description="Native dimensions before display scaling. None when unknown "
+        "(serialized as 'original-image-size').",
     )
 
     @field_validator("media_type")
@@ -391,11 +336,7 @@ class ImageVertex(_BaseVertex[Literal[VertexType.IMAGE]]):
 
 
 class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
-    """Normalized (transcribed) form of a Roam Firebase Storage PDF block node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that is wholly a Roam PDF component (``{{pdf: <url>}}`` /
-    ``{{[[pdf]]: <url>}}``) whose URL is a Firebase Storage URL.
+    """A hosted PDF asset displayed in the document.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.PDF`.
@@ -421,13 +362,11 @@ class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
 
 
 class AssetVertex(_BaseVertex[Literal[VertexType.ASSET]]):
-    """Normalized form of a Roam bare-asset-URL block node.
+    """A hosted asset of unspecified kind.
 
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that is wholly a bare Firebase Storage URL — a Roam-managed
-    upload of unspecified kind (neither a Markdown image link nor a Roam PDF
-    component; e.g. an audio file, archive, or pass dragged into the Roam UI).
-    The vertex's content is the hosted file itself, located by :attr:`storage`.
+    An uploaded file that is neither an image nor a PDF component — e.g. an audio
+    file, archive, or pass.  The vertex's content is the hosted file itself,
+    located by :attr:`storage`.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.ASSET`.
@@ -461,25 +400,21 @@ class AssetVertex(_BaseVertex[Literal[VertexType.ASSET]]):
 
 
 class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
-    """Normalized (transcribed) form of a Roam callout block node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
+    """A callout (admonition) — a categorised aside with a title and body.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.CALLOUT`.
             Serialized as ``'vertex-type'``.
-        callout_type: Callout category, one of the twelve recognised callout type keywords.
+        callout_type: Callout category, one of the recognised :class:`CalloutType` keywords.
             Serialized as ``'callout-type'``.
-        title: Callout heading text — the remainder of the first block string after the
-            ``[[>]] [[!<TYPE>]]`` marker, stripped of leading/trailing whitespace.
-        body: Callout body text accumulated from the block's child nodes.
+        title: Callout heading text, marker-free and stripped of leading/trailing whitespace.
+        body: Callout body text accumulated from the vertex's children.
     """
 
     class CalloutType(StrEnum):
-        """Callout category keyword, matching the eleven callout types in the Roam callout marker.
+        """Callout category keyword — the eleven recognised callout categories.
 
-        Note ``quote`` is deliberately absent: a Roam ``[[>]] [[!QUOTE]]`` block is a pull quote,
+        Note ``quote`` is deliberately absent: a quote-marked block is a pull quote,
         transcribed to a :class:`QuoteBlockVertex` (see :class:`QuoteType`), not a callout.
         """
 
@@ -505,16 +440,12 @@ class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
         serialization_alias="callout-type",
         description="Callout category keyword (serialized as 'callout-type').",
     )
-    title: str = Field(..., description="Callout heading text, stripped of the leading marker.")
-    body: str = Field(..., description="Callout body text accumulated from child nodes.")
+    title: str = Field(..., description="Callout heading text, marker-free.")
+    body: str = Field(..., description="Callout body text accumulated from the vertex's children.")
 
 
 class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
-    """Normalized (transcribed) form of a Roam fenced code block node.
-
-    Corresponds to a source :class:`~guffin.roam.node.RoamNode` classified as
-    :attr:`~guffin.roam.node.NodeType.CODE_BLOCK` — its ``:block/string`` is
-    a CommonMark fenced code block.
+    """A fenced code listing.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.CODE_BLOCK`.
@@ -548,10 +479,9 @@ class QuoteType(StrEnum):
     """How a quote block is presented — the source-agnostic rendering intent.
 
     Attributes:
-        BLOCK: A plain block quote (a standard Markdown ``> text`` or a Roam-native ``[[>]] text``
-            quote), rendered with the conventional left rule.
-        PULL: A pull quote (a Roam ``[[>]] [[!QUOTE]] text`` block), rendered with the decorated
-            treatment — an oversize opening quotation mark, a bold quotation, and an optional italic
+        BLOCK: A plain block quote, rendered with the conventional left rule.
+        PULL: A pull quote, rendered with the decorated treatment — an oversize
+            opening quotation mark, a bold quotation, and an optional italic
             attribution.
     """
 
@@ -560,18 +490,17 @@ class QuoteType(StrEnum):
 
 
 class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
-    """Normalized (transcribed) form of a Roam quote-block node.
+    """A quotation — a plain block quote or a decorated pull quote.
 
-    Produced from any of the three Roam quote forms: a standard Markdown block quote (``> text``),
-    a Roam-native block quote (``[[>]] text``), or a Roam pull quote (``[[>]] [[!QUOTE]] text``).
-    :attr:`quote_type` records which presentation applies.
+    :attr:`quote_type` records which presentation applies; the source's quote
+    markers are translated away at transcription.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.QUOTE_BLOCK`.
             Serialized as ``'vertex-type'``.
         quote_type: :attr:`QuoteType.BLOCK` for a plain block quote, :attr:`QuoteType.PULL` for a
             pull quote (the decorated treatment).
-        quote: The quotation text, with the leading quote marker stripped.
+        quote: The quotation text, marker-free.
         attribution: The attribution text — a pull quote's body lines after the first — or ``None``;
             always ``None`` for a plain block quote.
     """
@@ -585,7 +514,7 @@ class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
         default=QuoteType.BLOCK,
         description="Whether this is a plain block quote (BLOCK) or a pull quote (PULL).",
     )
-    quote: str = Field(..., description="The quotation text, with the leading quote marker stripped.")
+    quote: str = Field(..., description="The quotation text, marker-free.")
     attribution: str | None = Field(
         default=None,
         description="The attribution text (pull quotes only), or None.",
@@ -593,11 +522,10 @@ class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
 
 
 class TableVertex(_BaseVertex[Literal[VertexType.TABLE]]):
-    """Normalized (transcribed) form of a Roam native table node.
+    """A table — a cell grid plus its styling overlay.
 
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` equal to ``{{table}}``, with its child blocks forming the
-    rows and each child's children forming the cells.
+    The grid is reconstructed at transcription from the source's table structure
+    (rows and cells carried as the table's child subtree).
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.TABLE`.
@@ -639,11 +567,7 @@ class _BaseEmbedVertex[VT: VertexType](_BaseVertex[VT]):
 
 
 class BlockEmbedVertex(_BaseEmbedVertex[Literal[VertexType.BLOCK_EMBED]]):
-    """Normalized (transcribed) form of a Roam block embed node.
-
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that is wholly a block embed (``{{embed: ((<uid>))}}``),
-    transcluding the referenced block.
+    """A transclusion of another block at this position.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.BLOCK_EMBED`.
@@ -658,13 +582,11 @@ class BlockEmbedVertex(_BaseEmbedVertex[Literal[VertexType.BLOCK_EMBED]]):
 
 
 class PageEmbedVertex(_BaseEmbedVertex[Literal[VertexType.PAGE_EMBED]]):
-    """Normalized (transcribed) form of a Roam page embed node.
+    """A transclusion of a whole page at this position.
 
-    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
-    ``:block/string`` that is wholly a page embed (``{{embed: [[<page_name>]]}}``),
-    transcluding the referenced page.  The embedded page's title is resolved to the
-    page's UID at transcription, so :attr:`~_BaseEmbedVertex.vertex_link` targets the
-    page vertex directly.
+    A source's title-form page embed is resolved to the page's UID at
+    transcription, so :attr:`~_BaseEmbedVertex.vertex_link` targets the page
+    vertex directly.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.PAGE_EMBED`.
