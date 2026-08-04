@@ -1,7 +1,7 @@
 """Image and PDF asset fetching for the rendering pipeline — Pandoc-free.
 
 Walks a :class:`~guffin.vertex_tree.VertexTree`, fetches every *displayed*
-asset-bearing vertex's (:data:`~guffin.model.vertex.AssetVertex`, scoped per
+asset-bearing vertex's (:data:`~guffin.model.vertex.AssetBearingVertex`, scoped per
 :func:`~guffin.model.vertex_tree.visible_asset_vertices` plus the root's cover image)
 Firebase Storage asset to a local directory via
 :func:`~guffin.roam.asset_fetch.fetch_and_cache_asset`, and returns a
@@ -38,7 +38,7 @@ from pydantic import validate_call
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.model.publishing_semantics import cover_image_vertex
-from guffin.model.vertex import AssetVertex, ImageVertex, PdfVertex
+from guffin.model.vertex import AssetBearingVertex, ImageVertex, PdfVertex
 from guffin.model.vertex_tree import (
     VertexTree,
     enrich_image_original_sizes,
@@ -60,7 +60,7 @@ class AssetRef(NamedTuple):
     successfully fetched from Firebase Storage.
 
     Attributes:
-        uid: The source :data:`~guffin.model.vertex.AssetVertex` UID.
+        uid: The source :data:`~guffin.model.vertex.AssetBearingVertex` UID.
         path: Local filesystem path of the written asset file.
         size: Native pixel dimensions of an image asset — an empty
             :class:`~guffin.common.geometry.ImageSize` when they could not be
@@ -132,7 +132,7 @@ def _resolved_file_name(asset: RoamAsset, source_url: str, claimed_names: Mappin
 
 @validate_call
 def fetch_asset(
-    vertex: AssetVertex,
+    vertex: AssetBearingVertex,
     api_endpoint: ApiEndpoint,
     asset_dir: Path,
     cache_dir: Path | None = None,
@@ -218,9 +218,9 @@ def fetch_assets(
     """
     # locals() is exactly the parameters when read as the first statement.
     logger.debug("args: %r", locals())
-    displayed: Final[list[AssetVertex]] = visible_asset_vertices(vertex_tree)
+    displayed: Final[list[AssetBearingVertex]] = visible_asset_vertices(vertex_tree)
     cover: Final[ImageVertex | None] = cover_image_vertex(vertex_tree)
-    fetchable: Final[list[AssetVertex]] = (
+    fetchable: Final[list[AssetBearingVertex]] = (
         [*displayed, cover] if cover is not None and all(cover.uid != vertex.uid for vertex in displayed) else displayed
     )
     asset_refs: Final[dict[Uid, AssetRef]] = {}

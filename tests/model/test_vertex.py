@@ -5,10 +5,12 @@ from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.model.asset_storage import AssetStorage, StoreType
 from guffin.model.attribute import Attribute, AttributeInstance, LiteralValue, ReferenceValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
 from guffin.model.vertex import (
+    AssetVertex,
     BlockEmbedVertex,
     CodeBlockVertex,
     ImageVertex,
@@ -20,7 +22,7 @@ from guffin.model.vertex import (
     TodoVertex,
     VertexType,
     find_attribute_assignment,
-    is_asset_vertex,
+    is_asset_bearing_vertex,
     is_embed_vertex,
     vertex_adapter,
 )
@@ -201,8 +203,8 @@ class TestFindAttributeAssignment:
         assert find_attribute_assignment(vertex, Attribute(name="a")) is None
 
 
-class TestIsAssetVertex:
-    """Tests for the is_asset_vertex() asset-bearing classification predicate."""
+class TestIsAssetBearingVertex:
+    """Tests for the is_asset_bearing_vertex() asset-bearing classification predicate."""
 
     def test_image_vertex_is_asset_bearing(self) -> None:
         """An ImageVertex is asset-bearing."""
@@ -212,17 +214,60 @@ class TestIsAssetVertex:
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
         )
-        assert is_asset_vertex(vertex)
+        assert is_asset_bearing_vertex(vertex)
 
     def test_pdf_vertex_is_asset_bearing(self) -> None:
         """A PdfVertex is asset-bearing."""
         vertex = PdfVertex(uid="pdf00001a", source=HttpUrl("https://example.com/pdfs/paper.pdf"))
-        assert is_asset_vertex(vertex)
+        assert is_asset_bearing_vertex(vertex)
 
     def test_non_asset_vertices_are_not_asset_bearing(self) -> None:
         """Page and text vertices are not asset-bearing."""
-        assert not is_asset_vertex(PageVertex(uid="page00001", title="P"))
-        assert not is_asset_vertex(TextVertex(uid="txt00001a", text="hello"))
+        assert not is_asset_bearing_vertex(PageVertex(uid="page00001", title="P"))
+        assert not is_asset_bearing_vertex(TextVertex(uid="txt00001a", text="hello"))
+
+
+class TestAssetVertex:
+    """Tests for the AssetVertex concrete vertex type."""
+
+    _STORAGE = AssetStorage(
+        location="https://firebasestorage.googleapis.com/v0/b/test.appspot.com"
+        "/o/imgs%2FfJoSdh65Ry.pkpass.enc?alt=media&token=abc123",
+        store_type=StoreType.FIREBASE_STORAGE,
+        is_encrypted=True,
+    )
+
+    def test_valid_construction(self) -> None:
+        """An AssetVertex carries its storage plus optional media type and filename."""
+        vertex = AssetVertex(
+            uid="asset0001",
+            storage=self._STORAGE,
+            media_type=MediaType.PDF,
+            file_name="booking.pdf",
+        )
+        assert vertex.vertex_type is VertexType.ASSET
+        assert vertex.storage == self._STORAGE
+        assert vertex.media_type is MediaType.PDF
+        assert vertex.file_name == "booking.pdf"
+
+    def test_media_type_and_file_name_default_to_none(self) -> None:
+        """An asset of unrecognizable kind constructs with no media type and no filename."""
+        vertex = AssetVertex(uid="asset0001", storage=self._STORAGE)
+        assert vertex.media_type is None
+        assert vertex.file_name is None
+
+    def test_storage_is_required(self) -> None:
+        """An AssetVertex without a storage is rejected."""
+        with pytest.raises(ValidationError, match="storage"):
+            AssetVertex(uid="asset0001")  # type: ignore[call-arg]
+
+    def test_serializes_with_kebab_case_aliases(self) -> None:
+        """The media type and filename fields serialize under their kebab-case aliases."""
+        vertex = AssetVertex(uid="asset0001", storage=self._STORAGE, media_type=MediaType.PDF, file_name="a.pdf")
+        dumped = vertex.model_dump(by_alias=True)
+        assert dumped["vertex-type"] is VertexType.ASSET
+        assert dumped["media-type"] is MediaType.PDF
+        assert dumped["file-name"] == "a.pdf"
 
 
 class TestIsEmbedVertex:

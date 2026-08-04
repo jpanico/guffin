@@ -36,6 +36,9 @@ Public symbols:
 - :class:`ImageVertex` — normalized (transcribed) form of a Roam Firebase Storage image block
   node.
 - :class:`PdfVertex` — normalized (transcribed) form of a Roam Firebase Storage PDF block node.
+- :class:`AssetVertex` — normalized form of a Roam bare-asset-URL block node: a hosted
+  asset of unspecified kind, carried as its :class:`~guffin.model.asset_storage.AssetStorage`
+  plus optional media type and filename.
 - :class:`CalloutVertex` — normalized (transcribed) form of a Roam callout block node.
 - :class:`CodeBlockVertex` — normalized (transcribed) form of a Roam fenced code block
   node.
@@ -45,15 +48,16 @@ Public symbols:
 - :class:`TableVertex` — normalized (transcribed) form of a Roam native table node.
 - :class:`BlockEmbedVertex` — normalized (transcribed) form of a Roam block embed node.
 - :class:`PageEmbedVertex` — normalized (transcribed) form of a Roam page embed node.
-- :data:`Vertex` — union of all twelve concrete vertex types.
-- :data:`AssetVertex` — union of the asset-bearing vertex types
+- :data:`Vertex` — union of the twelve concrete vertex types transcription currently
+  produces (:class:`AssetVertex` deliberately excluded until its rendering design lands).
+- :data:`AssetBearingVertex` — union of the asset-bearing vertex types
   (:class:`ImageVertex` | :class:`PdfVertex`).
 - :data:`EmbedVertex` — union of the transcluding vertex types
   (:class:`BlockEmbedVertex` | :class:`PageEmbedVertex`).
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
-- :func:`is_asset_vertex` — whether a vertex is asset-bearing, narrowing it to
-  :data:`AssetVertex`.
+- :func:`is_asset_bearing_vertex` — whether a vertex is asset-bearing, narrowing it to
+  :data:`AssetBearingVertex`.
 - :func:`is_embed_vertex` — whether a vertex is transcluding, narrowing it to
   :data:`EmbedVertex`.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment for an
@@ -71,6 +75,7 @@ from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.programming_language import CodeLanguageId
 from guffin.common.table import Table, TableStyle
+from guffin.model.asset_storage import AssetStorage
 from guffin.model.attribute import Attribute
 from guffin.model.attribute_assignment import AttributeAssignment, find_assignment_for
 from guffin.model.code_source import CodeSource
@@ -102,6 +107,10 @@ class VertexType(StrEnum):
             is wholly a Roam PDF component (``{{pdf: <url>}}`` /
             ``{{[[pdf]]: <url>}}``) whose URL points to a Roam-managed PDF
             upload in Firebase Storage.
+        ASSET: Normalized form of a Roam *Block* node whose ``:block/string``
+            is wholly a bare Firebase Storage URL — a Roam-managed upload of
+            unspecified kind, with no Markdown or Roam-component chrome
+            around its one URL.
         CALLOUT: Normalized form of a Roam *Block* node whose
             ``:block/string`` starts with ``[[>]] [[!<TYPE>]]`` — a Roam callout marker.
         CODE_BLOCK: Normalized form of a Roam *Block* node whose
@@ -126,6 +135,7 @@ class VertexType(StrEnum):
     HEADING = "guffin/heading"
     IMAGE = "guffin/image"
     PDF = "guffin/pdf"
+    ASSET = "guffin/asset"
     CALLOUT = "guffin/callout"
     CODE_BLOCK = "guffin/code-block"
     QUOTE_BLOCK = "guffin/quote-block"
@@ -150,12 +160,13 @@ strings during transcription.
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
-    """Shared fields inherited by all twelve concrete vertex types.
+    """Shared fields inherited by all thirteen concrete vertex types.
 
     Not instantiated directly — use :class:`PageVertex`, :class:`HeadingVertex`,
     :class:`TextVertex`, :class:`TodoVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
-    :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`QuoteBlockVertex`,
-    :class:`TableVertex`, :class:`BlockEmbedVertex`, or :class:`PageEmbedVertex`.
+    :class:`AssetVertex`, :class:`CalloutVertex`, :class:`CodeBlockVertex`,
+    :class:`QuoteBlockVertex`, :class:`TableVertex`, :class:`BlockEmbedVertex`, or
+    :class:`PageEmbedVertex`.
 
     Type Parameters:
         VT: The :class:`VertexType` literal for the concrete subtype (e.g.
@@ -409,6 +420,46 @@ class PdfVertex(_BaseVertex[Literal[VertexType.PDF]]):
     )
 
 
+class AssetVertex(_BaseVertex[Literal[VertexType.ASSET]]):
+    """Normalized form of a Roam bare-asset-URL block node.
+
+    Produced when the source :class:`~guffin.roam.node.RoamNode` has a
+    ``:block/string`` that is wholly a bare Firebase Storage URL — a Roam-managed
+    upload of unspecified kind (neither a Markdown image link nor a Roam PDF
+    component; e.g. an audio file, archive, or pass dragged into the Roam UI).
+    The vertex's content is the hosted file itself, located by :attr:`storage`.
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.ASSET`.
+            Serialized as ``'vertex-type'``.
+        storage: The :class:`~guffin.model.asset_storage.AssetStorage` holding the
+            asset's binary — its location, storing service, and encryption state.
+        media_type: IANA media type of the asset, or ``None`` when it cannot be
+            determined.  Serialized as ``'media-type'``.
+        file_name: The asset's filename, or ``None`` when no name is known.
+            Serialized as ``'file-name'``.
+    """
+
+    vertex_type: Literal[VertexType.ASSET] = Field(
+        default=VertexType.ASSET,
+        serialization_alias="vertex-type",
+        description="Always VertexType.ASSET (serialized as 'vertex-type').",
+    )
+    storage: AssetStorage = Field(
+        ..., description="The storage holding the asset's binary: location, service, and encryption state."
+    )
+    media_type: MediaType | None = Field(
+        default=None,
+        serialization_alias="media-type",
+        description="IANA media type of the asset. None when undeterminable (serialized as 'media-type').",
+    )
+    file_name: str | None = Field(
+        default=None,
+        serialization_alias="file-name",
+        description="The asset's filename. None when no name is known (serialized as 'file-name').",
+    )
+
+
 class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
     """Normalized (transcribed) form of a Roam callout block node.
 
@@ -641,26 +692,32 @@ type Vertex = (
     | BlockEmbedVertex
     | PageEmbedVertex
 )
-"""Union of all twelve concrete, normalized vertex types.
+"""Union of the twelve concrete, normalized vertex types transcription currently produces.
+
+:class:`AssetVertex` is deliberately not yet a member: a bare-asset block still
+transcribes as :class:`TextVertex` while the asset rendering design is settled, so
+admitting the type here would declare a vertex nothing yet produces or consumes.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
 """
 
-type AssetVertex = ImageVertex | PdfVertex
+type AssetBearingVertex = ImageVertex | PdfVertex
 """Union of the asset-bearing vertex types.
 
 An asset-bearing vertex's content is not inline text but a file hosted in
 Firebase Storage: every member carries a ``source`` storage URL
-addressing it.  Use :func:`is_asset_vertex` to classify (and statically
+addressing it.  Use :func:`is_asset_bearing_vertex` to classify (and statically
 narrow) a :data:`Vertex`.
 
 This union is the single source of truth for asset-bearing-ness; the runtime
 classification is derived mechanically from it.
 """
 
-_ASSET_VERTEX_CLASSES: Final[tuple[type[ImageVertex] | type[PdfVertex], ...]] = get_args(AssetVertex.__value__)
-"""The :data:`AssetVertex` union members as a runtime tuple, derived from the union itself."""
+_ASSET_BEARING_VERTEX_CLASSES: Final[tuple[type[ImageVertex] | type[PdfVertex], ...]] = get_args(
+    AssetBearingVertex.__value__
+)
+"""The :data:`AssetBearingVertex` union members as a runtime tuple, derived from the union itself."""
 
 type EmbedVertex = BlockEmbedVertex | PageEmbedVertex
 """Union of the transcluding (embed) vertex types.
@@ -696,22 +753,22 @@ Example::
 
 
 @validate_call
-def is_asset_vertex(vertex: Vertex) -> TypeIs[AssetVertex]:
+def is_asset_bearing_vertex(vertex: Vertex) -> TypeIs[AssetBearingVertex]:
     """Whether *vertex* is asset-bearing.
 
     Being asset-bearing is an inherent property of the vertex type: the
     vertex's content is a Firebase Storage-hosted file rather than inline
-    text.  Membership is declared solely by the :data:`AssetVertex` union;
+    text.  Membership is declared solely by the :data:`AssetBearingVertex` union;
     the check runs against the runtime tuple derived from it.
 
     Args:
         vertex: The vertex to classify.
 
     Returns:
-        ``True`` when *vertex* is one of the :data:`AssetVertex` member
-        types, narrowing it to :data:`AssetVertex`.
+        ``True`` when *vertex* is one of the :data:`AssetBearingVertex` member
+        types, narrowing it to :data:`AssetBearingVertex`.
     """
-    return isinstance(vertex, _ASSET_VERTEX_CLASSES)
+    return isinstance(vertex, _ASSET_BEARING_VERTEX_CLASSES)
 
 
 @validate_call
