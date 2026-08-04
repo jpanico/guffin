@@ -167,7 +167,7 @@ class TestFindAssignmentFor:
     def test_returns_first_match_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
         """With several assignments for the attribute, the first wins and a warning is logged.
 
-        Neither Guffin nor Roam defines the semantics of assigning the same attribute more than
+        Neither Guffin nor any source defines the semantics of assigning the same attribute more than
         once on one node, so the duplicate is surfaced rather than silently ignored.
         """
         first = _assignment_of("a")

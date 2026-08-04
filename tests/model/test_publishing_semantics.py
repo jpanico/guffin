@@ -791,7 +791,7 @@ class TestCoverImageOf:
             cover_image_of(_assignment("cover-image", "![](https://example.com/cover.jpeg)"))
 
     def test_rejects_malformed_uid(self) -> None:
-        """A block reference whose UID is not a legal Roam UID is rejected."""
+        """A block reference whose UID is not a legal UID is rejected."""
         with pytest.raises(ValueError, match="block reference"):
             cover_image_of(_assignment("cover-image", "((not a uid))"))
 
@@ -1122,15 +1122,15 @@ class TestEffectiveTitle:
         """A root TITLE assignment wins over every content-derived basis."""
         page = PageVertex(
             uid="pageroot1",
-            title="Roam Page Title",
+            title="Authored Page Title",
             attribute_assignments=[_assignment(PublishingSemantics.TITLE.value.name, "Explicit Title")],
         )
         assert effective_title(VertexTree(tree_vertices=[page])) == "Explicit Title"
 
     def test_page_root_uses_its_title(self) -> None:
         """Without a TITLE assignment, a page root's title is the effective title."""
-        page = PageVertex(uid="pageroot1", title="Roam Page Title")
-        assert effective_title(VertexTree(tree_vertices=[page])) == "Roam Page Title"
+        page = PageVertex(uid="pageroot1", title="Authored Page Title")
+        assert effective_title(VertexTree(tree_vertices=[page])) == "Authored Page Title"
 
     def test_heading_root_uses_its_text(self) -> None:
         """A block (heading) root with no TITLE assignment falls back to its own content."""

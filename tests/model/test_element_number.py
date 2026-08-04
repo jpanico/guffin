@@ -62,7 +62,7 @@ class TestParseElementNumber:
         assert parse_element_number("Chapter [1.2] Two") is None
 
     def test_page_reference_lead_is_none(self) -> None:
-        """A Roam page-reference lead never reads as a marker."""
+        """A page-reference lead (``[[…]]``) never reads as a marker."""
         assert parse_element_number("[[Acknowledgments]]") is None
 
     def test_markdown_link_lead_is_none(self) -> None:
@@ -98,7 +98,7 @@ class TestLeadsWithElementNumberShape:
         assert leads_with_element_number_shape("Chapter Two") is False
 
     def test_page_reference_lead_is_not_shaped(self) -> None:
-        """A Roam page-reference lead is not number-shaped."""
+        """A page-reference lead (``[[…]]``) is not number-shaped."""
         assert leads_with_element_number_shape("[[Acknowledgments]]") is False
 
     def test_markdown_link_lead_is_not_shaped(self) -> None:

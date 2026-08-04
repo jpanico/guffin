@@ -13,7 +13,7 @@ class TestChildrenLayout:
         assert len(ChildrenLayout) == 3
 
     def test_default_is_bullet(self) -> None:
-        """Test that DEFAULT_CHILDREN_LAYOUT is BULLET (matching Roam's default view-type)."""
+        """Test that DEFAULT_CHILDREN_LAYOUT is BULLET (the conventional outliner default)."""
         assert DEFAULT_CHILDREN_LAYOUT is ChildrenLayout.BULLET
 
 
