@@ -118,7 +118,7 @@ class TestFetchAsset:
         assert ref.path == tmp_path / "paper.pdf"
 
     def test_rejects_non_asset_vertex(self, tmp_path: Path) -> None:
-        """A vertex that is not asset-bearing is rejected at the signature."""
+        """A vertex that is not a renderable asset is rejected at the signature."""
         with pytest.raises(ValidationError):
             fetch_asset(TextVertex(uid="txt00001a", text="hello"), _ENDPOINT, tmp_path)  # type: ignore[arg-type]
 

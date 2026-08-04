@@ -40,14 +40,15 @@ Public symbols:
 - :class:`PageEmbedVertex` — a transclusion of a whole page at this position.
 - :data:`Vertex` — union of the twelve concrete vertex types transcription currently
   produces (:class:`AssetVertex` deliberately excluded until its rendering design lands).
-- :data:`AssetBearingVertex` — union of the asset-bearing vertex types
+- :data:`RenderableAssetVertex` — union of the renderable asset vertex types, those
+  whose content a renderer can reproduce in the output
   (:class:`ImageVertex` | :class:`PdfVertex`).
 - :data:`EmbedVertex` — union of the transcluding vertex types
   (:class:`BlockEmbedVertex` | :class:`PageEmbedVertex`).
 - :data:`vertex_adapter` — Pydantic :class:`~pydantic.TypeAdapter` for validating a
   :data:`Vertex` from a raw dict.
-- :func:`is_asset_bearing_vertex` — whether a vertex is asset-bearing, narrowing it to
-  :data:`AssetBearingVertex`.
+- :func:`is_renderable_asset_vertex` — whether a vertex is a renderable asset, narrowing
+  it to :data:`RenderableAssetVertex`.
 - :func:`is_embed_vertex` — whether a vertex is transcluding, narrowing it to
   :data:`EmbedVertex`.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment for an
@@ -625,24 +626,24 @@ Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
 """
 
-type AssetBearingVertex = ImageVertex | PdfVertex
-"""Union of the asset vertex types the asset pipeline fetches and enriches.
+type RenderableAssetVertex = ImageVertex | PdfVertex
+"""Union of the renderable asset vertex types — those whose content a renderer can reproduce.
 
-Each member's content is a hosted file, located by its ``storage``, that the
-pipeline downloads and treats specially — an image is reproduced in the output,
-a PDF is placed per its ``pdf-render`` resolution.  The unparameterized
-:class:`AssetVertex` (an asset of unspecified kind) is deliberately not a member:
-it is never fetched.  Use :func:`is_asset_bearing_vertex` to classify (and
-statically narrow) a :data:`Vertex`.
+Each member's kind is one whose content can appear *in* rendered output: an image is
+embedded, a PDF's pages are placed per its ``pdf-render`` resolution.  That capability
+is why the asset pipeline fetches and enriches exactly these kinds.  The unparameterized
+:class:`AssetVertex` (an asset of unspecified kind) is deliberately not a member: its
+content cannot be reproduced in any output, only referenced.  Use
+:func:`is_renderable_asset_vertex` to classify (and statically narrow) a :data:`Vertex`.
 
-This union is the single source of truth for pipeline membership; the runtime
+This union is the single source of truth for renderability; the runtime
 classification is derived mechanically from it.
 """
 
-_ASSET_BEARING_VERTEX_CLASSES: Final[tuple[type[ImageVertex] | type[PdfVertex], ...]] = get_args(
-    AssetBearingVertex.__value__
+_RENDERABLE_ASSET_VERTEX_CLASSES: Final[tuple[type[ImageVertex] | type[PdfVertex], ...]] = get_args(
+    RenderableAssetVertex.__value__
 )
-"""The :data:`AssetBearingVertex` union members as a runtime tuple, derived from the union itself."""
+"""The :data:`RenderableAssetVertex` union members as a runtime tuple, derived from the union itself."""
 
 type EmbedVertex = BlockEmbedVertex | PageEmbedVertex
 """Union of the transcluding (embed) vertex types.
@@ -678,22 +679,22 @@ Example::
 
 
 @validate_call
-def is_asset_bearing_vertex(vertex: Vertex) -> TypeIs[AssetBearingVertex]:
-    """Whether *vertex* is asset-bearing.
+def is_renderable_asset_vertex(vertex: Vertex) -> TypeIs[RenderableAssetVertex]:
+    """Whether *vertex* is a renderable asset.
 
-    Being asset-bearing is an inherent property of the vertex type: the
-    vertex's content is a Firebase Storage-hosted file rather than inline
-    text.  Membership is declared solely by the :data:`AssetBearingVertex` union;
+    Renderability is an inherent property of the vertex kind: the vertex's
+    content is a hosted file a renderer can reproduce in the output.
+    Membership is declared solely by the :data:`RenderableAssetVertex` union;
     the check runs against the runtime tuple derived from it.
 
     Args:
         vertex: The vertex to classify.
 
     Returns:
-        ``True`` when *vertex* is one of the :data:`AssetBearingVertex` member
-        types, narrowing it to :data:`AssetBearingVertex`.
+        ``True`` when *vertex* is one of the :data:`RenderableAssetVertex` member
+        types, narrowing it to :data:`RenderableAssetVertex`.
     """
-    return isinstance(vertex, _ASSET_BEARING_VERTEX_CLASSES)
+    return isinstance(vertex, _RENDERABLE_ASSET_VERTEX_CLASSES)
 
 
 @validate_call

@@ -154,7 +154,7 @@ def _dump_render_bundle(
     """Enrich the bundle's content, then render it as a nested Rich panel of both its parts.
 
     Logs a warning and returns early when *render_bundle* is ``None``.  Otherwise fetches every
-    asset-bearing vertex's file (to a temporary directory) via
+    renderable asset vertex's file (to a temporary directory) via
     :func:`~guffin.render.asset_fetch.fetch_and_enrich_assets` so each image's
     :attr:`~guffin.vertex.ImageVertex.original_image_size` is populated before rendering, then prints
     an outer ``Render Bundle`` :class:`~rich.panel.Panel` holding two sub-panels: the content

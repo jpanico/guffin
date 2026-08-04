@@ -17,7 +17,7 @@ Public symbols:
   points at (the link is the text's entire content), or ``None``.
 - :func:`standalone_link_target` — return the vertex a text-bearing vertex's *standalone* vertex
   link points at (its entire text is one Pandoc-Markdown-form link), or ``None``.
-- :func:`visible_asset_vertices` — return every :data:`~guffin.model.vertex.AssetBearingVertex` the
+- :func:`visible_asset_vertices` — return every :data:`~guffin.model.vertex.RenderableAssetVertex` the
   render-visible document displays: assets among :func:`transcluded_vertices`, plus assets targeted
   by a render-visible vertex's standalone vertex link, plus assets targeted by a render-visible
   table cell that is a standalone vertex link.
@@ -50,16 +50,16 @@ from guffin.model.attribute import Attribute
 from guffin.model.attribute_assignment import AttributeAssignment, is_assignment_for
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
-    AssetBearingVertex,
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
     PdfVertex,
+    RenderableAssetVertex,
     TableVertex,
     TextVertex,
     Vertex,
-    is_asset_bearing_vertex,
     is_embed_vertex,
+    is_renderable_asset_vertex,
 )
 from guffin.model.vertex_link import VertexLink, parse_standalone_vertex_link
 
@@ -283,8 +283,8 @@ def standalone_link_target(vertex: Vertex, tree: VertexTree) -> Vertex | None:
 
 
 @validate_call
-def visible_asset_vertices(tree: VertexTree) -> list[AssetBearingVertex]:
-    """Return every :data:`~guffin.model.vertex.AssetBearingVertex` the render-visible document displays.
+def visible_asset_vertices(tree: VertexTree) -> list[RenderableAssetVertex]:
+    """Return every :data:`~guffin.model.vertex.RenderableAssetVertex` the render-visible document displays.
 
     Three ways an asset is displayed:
 
@@ -306,14 +306,14 @@ def visible_asset_vertices(tree: VertexTree) -> list[AssetBearingVertex]:
         The displayed asset vertices, each appearing once (deduplicated by UID), in
         render-visible walk order with each standalone-link destination following its referrer.
     """
-    displayed: Final[list[AssetBearingVertex]] = []
+    displayed: Final[list[RenderableAssetVertex]] = []
     seen: Final[set[Uid]] = set()
     for vertex in transcluded_vertices(tree):
         candidates: list[Vertex | None] = [vertex, standalone_link_target(vertex, tree)]
         if isinstance(vertex, TableVertex):
             candidates.extend(standalone_link_target_of_text(cell, tree) for row in vertex.table.rows for cell in row)
         for candidate in candidates:
-            if candidate is None or not is_asset_bearing_vertex(candidate) or candidate.uid in seen:
+            if candidate is None or not is_renderable_asset_vertex(candidate) or candidate.uid in seen:
                 continue
             seen.add(candidate.uid)
             displayed.append(candidate)

@@ -23,8 +23,8 @@ from guffin.model.vertex import (
     TodoVertex,
     VertexType,
     find_attribute_assignment,
-    is_asset_bearing_vertex,
     is_embed_vertex,
+    is_renderable_asset_vertex,
     vertex_adapter,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
@@ -204,28 +204,28 @@ class TestFindAttributeAssignment:
         assert find_attribute_assignment(vertex, Attribute(name="a")) is None
 
 
-class TestIsAssetBearingVertex:
-    """Tests for the is_asset_bearing_vertex() asset-bearing classification predicate."""
+class TestIsRenderableAssetVertex:
+    """Tests for the is_renderable_asset_vertex() renderability classification predicate."""
 
-    def test_image_vertex_is_asset_bearing(self) -> None:
-        """An ImageVertex is asset-bearing."""
+    def test_image_vertex_is_renderable(self) -> None:
+        """An ImageVertex is a renderable asset."""
         vertex = ImageVertex(
             uid="img00001a",
             storage=asset_storage(HttpUrl("https://example.com/imgs/photo.jpeg")),
             media_type=MediaType.JPEG,
             scaled_image_size=ImageSize(),
         )
-        assert is_asset_bearing_vertex(vertex)
+        assert is_renderable_asset_vertex(vertex)
 
-    def test_pdf_vertex_is_asset_bearing(self) -> None:
-        """A PdfVertex is asset-bearing."""
+    def test_pdf_vertex_is_renderable(self) -> None:
+        """A PdfVertex is a renderable asset."""
         vertex = PdfVertex(uid="pdf00001a", storage=asset_storage(HttpUrl("https://example.com/pdfs/paper.pdf")))
-        assert is_asset_bearing_vertex(vertex)
+        assert is_renderable_asset_vertex(vertex)
 
-    def test_non_asset_vertices_are_not_asset_bearing(self) -> None:
-        """Page and text vertices are not asset-bearing."""
-        assert not is_asset_bearing_vertex(PageVertex(uid="page00001", title="P"))
-        assert not is_asset_bearing_vertex(TextVertex(uid="txt00001a", text="hello"))
+    def test_non_asset_vertices_are_not_renderable_assets(self) -> None:
+        """Page and text vertices are not renderable assets."""
+        assert not is_renderable_asset_vertex(PageVertex(uid="page00001", title="P"))
+        assert not is_renderable_asset_vertex(TextVertex(uid="txt00001a", text="hello"))
 
 
 class TestAssetVertex:
