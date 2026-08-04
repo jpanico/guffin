@@ -105,6 +105,7 @@ from guffin.model.code_source import CodeSource
 from guffin.model.element_number import stripped_element_number
 from guffin.model.primitives import UID_PATTERN, Uid
 from guffin.model.vertex import (
+    AssetVertex,
     BlockEmbedVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -835,6 +836,8 @@ def _vertex_effective_title(vertex: Vertex, tree: VertexTree) -> str:
             return vertex.alt_text or url_file_name(vertex.storage.location) or str(vertex.storage.location)
         case PdfVertex():
             return url_file_name(vertex.storage.location) or str(vertex.storage.location)
+        case AssetVertex():
+            return vertex.file_name or url_file_name(vertex.storage.location) or str(vertex.storage.location)
         case CalloutVertex():
             return vertex.title or vertex.body
         case CodeBlockVertex():

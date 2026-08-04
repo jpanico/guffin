@@ -46,7 +46,9 @@ class RoamAsset(BaseModel):
 
     file_name: str = Field(..., min_length=1, description="Name of the file")
     last_modified: datetime = Field(..., description="Last modification timestamp")
-    media_type: MediaType = Field(..., description="MIME type (e.g., 'image/jpeg')")
+    media_type: MediaType | None = Field(
+        ..., description="MIME type (e.g., 'image/jpeg'); None for an asset of unrecognized kind"
+    )
     contents: bytes = Field(..., description="Binary file contents")
     original_file_name: str | None = Field(
         default=None,
@@ -58,20 +60,21 @@ class RoamAsset(BaseModel):
         cls,
         file_name: str,
         last_modified: datetime,
-        media_type: MediaType,
+        media_type: MediaType | None,
         contents: bytes,
         original_file_name: str | None = None,
     ) -> RoamAsset:
         """Construct a :class:`RoamAsset` or the appropriate subclass for *media_type*.
 
         For image media types, pixel dimensions are extracted from *contents* via
-        ``imagesize`` and a :class:`RoamImageAsset` is returned.  For all other types
-        a plain :class:`RoamAsset` is returned.
+        ``imagesize`` and a :class:`RoamImageAsset` is returned.  For all other types —
+        an unrecognized kind (``None``) included — a plain :class:`RoamAsset` is
+        returned.
 
         Args:
             file_name: Name of the file.
             last_modified: Last modification timestamp.
-            media_type: IANA media type of the asset.
+            media_type: IANA media type of the asset, or ``None`` when unrecognized.
             contents: Binary file contents.
             original_file_name: The filename the asset was originally uploaded under,
                 when known.
@@ -80,7 +83,7 @@ class RoamAsset(BaseModel):
             A :class:`RoamImageAsset` when *media_type* is an image type; a
             :class:`RoamAsset` otherwise.
         """
-        if is_image_type(media_type):
+        if media_type is not None and is_image_type(media_type):
             raw_size: Final[tuple[int, int]] = _imagesize_get(contents)
             image_size: Final[ImageSize] = ImageSize(
                 width=raw_size[0] if raw_size[0] != -1 else None,

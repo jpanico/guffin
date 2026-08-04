@@ -8,6 +8,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
+from guffin.common.media_type import MediaType
 from guffin.model.attribute import AttributeDomain, LiteralValue, ReferenceValue
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
@@ -43,6 +44,7 @@ from guffin.transcribe.roam_tree_to_guffin import (
     TODO_STATE_BY_ROAM_STATE,
     _is_meta_block,
     build_view_map,
+    to_asset_vertex,
     to_block_embed_vertex,
     to_callout_vertex,
     to_code_block_vertex,
@@ -235,6 +237,10 @@ class TestVertexType:
     def test_pdf_node_returns_guffin_pdf(self) -> None:
         """Test that a PDF component block node classifies as PDF."""
         assert vertex_type(_make_pdf()) is VertexType.PDF
+
+    def test_bare_asset_url_node_returns_guffin_asset(self) -> None:
+        """Test that a bare Firebase Storage URL block node classifies as ASSET."""
+        assert vertex_type(_make_text(string=_FIREBASE_STORAGE_URL)) is VertexType.ASSET
 
     def test_native_heading_node_returns_roam_heading(self) -> None:
         """Test that a native heading block node classifies as HEADING."""
@@ -510,6 +516,72 @@ class TestToPdfVertex:
         """Test that passing None as node raises a ValidationError."""
         with pytest.raises(ValidationError):
             to_pdf_vertex(None, _node_tree(_make_page()))  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# TestToAssetVertex
+# ---------------------------------------------------------------------------
+
+
+class TestToAssetVertex:
+    """Tests for to_asset_vertex."""
+
+    _PKPASS_URL = (
+        "https://firebasestorage.googleapis.com/v0/b/test.appspot.com"
+        "/o/imgs%2FfJoSdh65Ry.pkpass.enc?alt=media&token=abc123"
+    )
+
+    def test_returns_guffin_asset_vertex_type(self) -> None:
+        """Test that to_asset_vertex produces a vertex with type ASSET."""
+        node = _make_text(string=_FIREBASE_STORAGE_URL)
+        assert to_asset_vertex(node, _node_tree(node)).vertex_type is VertexType.ASSET
+
+    def test_storage_location_is_the_url(self) -> None:
+        """Test that the vertex storage location is the block's bare URL."""
+        node = _make_text(string=_FIREBASE_STORAGE_URL)
+        assert str(to_asset_vertex(node, _node_tree(node)).storage.location) == _FIREBASE_STORAGE_URL
+
+    def test_surrounding_whitespace_is_trimmed(self) -> None:
+        """Test that surrounding whitespace around the bare URL is tolerated."""
+        node = _make_text(string=f"  {_FIREBASE_STORAGE_URL}  ")
+        assert str(to_asset_vertex(node, _node_tree(node)).storage.location) == _FIREBASE_STORAGE_URL
+
+    def test_enc_suffix_marks_storage_encrypted(self) -> None:
+        """Test that a .enc stored name reads as an encrypted storage."""
+        node = _make_text(string=self._PKPASS_URL)
+        assert to_asset_vertex(node, _node_tree(node)).storage.is_encrypted is True
+
+    def test_plain_stored_name_marks_storage_unencrypted(self) -> None:
+        """Test that a stored name without .enc reads as an unencrypted storage."""
+        node = _make_text(string=_FIREBASE_STORAGE_URL)
+        assert to_asset_vertex(node, _node_tree(node)).storage.is_encrypted is False
+
+    def test_media_type_inferred_from_stored_name(self) -> None:
+        """Test that a recognizable stored-name extension yields the media type."""
+        node = _make_text(string=_FIREBASE_STORAGE_URL)
+        assert to_asset_vertex(node, _node_tree(node)).media_type is MediaType.JPEG
+
+    def test_unrecognizable_extension_leaves_media_type_none(self) -> None:
+        """Test that an unrecognizable extension (e.g. .pkpass) leaves media_type None."""
+        node = _make_text(string=self._PKPASS_URL)
+        assert to_asset_vertex(node, _node_tree(node)).media_type is None
+
+    def test_file_name_left_none(self) -> None:
+        """Test that file_name stays None at transcription (only fetching knows the real name)."""
+        node = _make_text(string=_FIREBASE_STORAGE_URL)
+        assert to_asset_vertex(node, _node_tree(node)).file_name is None
+
+    def test_non_bare_string_raises_value_error(self) -> None:
+        """Test that a string that is not wholly a bare Firebase Storage URL raises ValueError."""
+        node = _make_text(string=f"see {_FIREBASE_STORAGE_URL}")
+        with pytest.raises(ValueError, match="not wholly a bare Firebase Storage URL"):
+            to_asset_vertex(node, _node_tree(node))
+
+    def test_missing_string_raises_value_error(self) -> None:
+        """Test that a node without a string raises ValueError."""
+        node = _make_page()
+        with pytest.raises(ValueError, match="no 'string'"):
+            to_asset_vertex(node, _node_tree(node))
 
 
 # ---------------------------------------------------------------------------

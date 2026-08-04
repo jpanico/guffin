@@ -12,15 +12,24 @@ from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
-from guffin.model.vertex import CodeBlockVertex, HeadingVertex, ImageVertex, PageVertex, PdfVertex, TextVertex, Vertex
+from guffin.model.vertex import (
+    AssetVertex,
+    CodeBlockVertex,
+    HeadingVertex,
+    ImageVertex,
+    PageVertex,
+    PdfVertex,
+    TextVertex,
+    Vertex,
+)
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import (
     VertexTree,
     drop_attribute_assignments,
     drop_code_sources,
     drop_root_preamble,
+    enrich_asset_file_names,
     enrich_image_original_sizes,
-    enrich_pdf_file_names,
     map_vertices,
 )
 
@@ -317,14 +326,14 @@ class TestEnrichImageOriginalSizes:
 _PDF_SOURCE: Final[HttpUrl] = HttpUrl("https://example.com/doc.pdf")
 
 
-class TestEnrichPdfOriginalFileNames:
-    """Tests for enrich_pdf_file_names()."""
+class TestEnrichAssetFileNames:
+    """Tests for enrich_asset_file_names()."""
 
     def test_matched_uid_sets_file_name(self) -> None:
         """PdfVertex whose UID is in names receives file_name."""
         vertex: Final[PdfVertex] = PdfVertex(uid="pdf000001", storage=asset_storage(_PDF_SOURCE))
         tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
-        result: Final[VertexTree] = enrich_pdf_file_names(tree, {"pdf000001": "dummy.pdf"})
+        result: Final[VertexTree] = enrich_asset_file_names(tree, {"pdf000001": "dummy.pdf"})
         enriched: Final[PdfVertex] = next(v for v in result.tree_vertices if isinstance(v, PdfVertex))
         assert enriched.file_name == "dummy.pdf"
 
@@ -332,13 +341,22 @@ class TestEnrichPdfOriginalFileNames:
         """A PdfVertex absent from the names map (name unknown) is unchanged, with no warning."""
         vertex: Final[PdfVertex] = PdfVertex(uid="pdf000002", storage=asset_storage(_PDF_SOURCE))
         tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
-        result: Final[VertexTree] = enrich_pdf_file_names(tree, {})
+        result: Final[VertexTree] = enrich_asset_file_names(tree, {})
         unmatched: Final[PdfVertex] = next(v for v in result.tree_vertices if isinstance(v, PdfVertex))
         assert unmatched.file_name is None
+
+    def test_bare_asset_uid_sets_file_name(self) -> None:
+        """A bare AssetVertex whose UID is in names receives file_name."""
+        vertex: Final[AssetVertex] = AssetVertex(uid="asset0001", storage=asset_storage(_PDF_SOURCE))
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[vertex])
+        result: Final[VertexTree] = enrich_asset_file_names(tree, {"asset0001": "pass.pkpass"})
+        enriched = result.uid_map["asset0001"]
+        assert isinstance(enriched, AssetVertex)
+        assert enriched.file_name == "pass.pkpass"
 
     def test_non_pdf_vertices_pass_through(self) -> None:
         """TextVertex is returned unchanged regardless of the names map."""
         tree: Final[VertexTree] = _make_text_tree([("aaaaaaaaa", "hello")])
-        result: Final[VertexTree] = enrich_pdf_file_names(tree, {"aaaaaaaaa": "irrelevant.pdf"})
+        result: Final[VertexTree] = enrich_asset_file_names(tree, {"aaaaaaaaa": "irrelevant.pdf"})
         texts: Final[list[str]] = [v.text for v in result.tree_vertices if isinstance(v, TextVertex)]
         assert texts == ["hello"]

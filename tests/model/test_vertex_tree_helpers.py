@@ -13,6 +13,7 @@ from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import Attribute, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.vertex import (
+    AssetVertex,
     BlockEmbedVertex,
     HeadingVertex,
     ImageVertex,
@@ -30,6 +31,7 @@ from guffin.model.vertex_tree import (
     standalone_link_target_of_text,
     transcluded_vertices,
     visible_asset_vertices,
+    visible_bare_asset_vertices,
 )
 
 _REF_LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1")
@@ -62,6 +64,10 @@ def _image(uid: str = "imguid001") -> ImageVertex:
         media_type=MediaType.JPEG,
         scaled_image_size=ImageSize(),
     )
+
+
+def _bare_asset(uid: str = "assetuid1") -> AssetVertex:
+    return AssetVertex(uid=uid, storage=asset_storage(HttpUrl("https://example.com/files/pass.pkpass")))
 
 
 def _standalone_ref(target_uid: str) -> str:
@@ -404,3 +410,48 @@ class TestRootVertex:
     def test_article_fixture_root_is_page_vertex(self) -> None:
         """Test Article 1 fixture root is a PageVertex."""
         assert isinstance(root_vertex(article1_vertex_tree()), PageVertex)
+
+
+# ---------------------------------------------------------------------------
+# TestVisibleBareAssetVertices
+# ---------------------------------------------------------------------------
+
+
+class TestVisibleBareAssetVertices:
+    """Tests for visible_bare_asset_vertices()."""
+
+    def test_in_tree_bare_asset_included(self) -> None:
+        """A bare asset vertex in the tree is displayed."""
+        asset = _bare_asset("assetuid1")
+        page = PageVertex(uid="pageuid01", title="Page", children=["assetuid1"])
+        tree = VertexTree(tree_vertices=[page, asset])
+        assert visible_bare_asset_vertices(tree) == [asset]
+
+    def test_renderable_assets_excluded(self) -> None:
+        """Image and PDF vertices are renderable assets, not bare assets."""
+        image = _image("imguid001")
+        page = PageVertex(uid="pageuid01", title="Page", children=["imguid001"])
+        tree = VertexTree(tree_vertices=[page, image])
+        assert visible_bare_asset_vertices(tree) == []
+
+    def test_bare_assets_excluded_from_renderable_scope(self) -> None:
+        """The renderable-asset scope conversely never includes a bare asset."""
+        asset = _bare_asset("assetuid1")
+        page = PageVertex(uid="pageuid01", title="Page", children=["assetuid1"])
+        tree = VertexTree(tree_vertices=[page, asset])
+        assert visible_asset_vertices(tree) == []
+
+    def test_sole_ref_target_bare_asset_included(self) -> None:
+        """A ref-side bare asset targeted by a standalone reference is displayed."""
+        asset = _bare_asset("assetuid1")
+        referrer = _sole_ref_text("textuid01", "assetuid1")
+        page = PageVertex(uid="pageuid01", title="Page", children=["textuid01"])
+        tree = VertexTree(tree_vertices=[page, referrer], ref_vertices=[asset])
+        assert visible_bare_asset_vertices(tree) == [asset]
+
+    def test_mentioned_ref_bare_asset_excluded(self) -> None:
+        """A ref-side bare asset merely linked inline amid text is not displayed."""
+        referrer = TextVertex(uid="textuid01", text=f"see {_standalone_ref('assetuid1')} here")
+        page = PageVertex(uid="pageuid01", title="Page", children=["textuid01"])
+        tree = VertexTree(tree_vertices=[page, referrer], ref_vertices=[_bare_asset("assetuid1")])
+        assert visible_bare_asset_vertices(tree) == []

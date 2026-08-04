@@ -38,8 +38,7 @@ Public symbols:
 - :class:`TableVertex` — a table: a cell grid plus its styling overlay.
 - :class:`BlockEmbedVertex` — a transclusion of another block at this position.
 - :class:`PageEmbedVertex` — a transclusion of a whole page at this position.
-- :data:`Vertex` — union of the twelve concrete vertex types transcription currently
-  produces (:class:`AssetVertex` deliberately excluded until its rendering design lands).
+- :data:`Vertex` — union of all thirteen concrete vertex types.
 - :data:`RenderableAssetVertex` — union of the renderable asset vertex types, those
   whose content a renderer can reproduce in the output
   (:class:`ImageVertex` | :class:`PdfVertex`).
@@ -49,6 +48,8 @@ Public symbols:
   :data:`Vertex` from a raw dict.
 - :func:`is_renderable_asset_vertex` — whether a vertex is a renderable asset, narrowing
   it to :data:`RenderableAssetVertex`.
+- :func:`is_bare_asset_vertex` — whether a vertex is a bare asset (unspecified kind),
+  narrowing it to :class:`AssetVertex`.
 - :func:`is_embed_vertex` — whether a vertex is transcluding, narrowing it to
   :data:`EmbedVertex`.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment for an
@@ -609,6 +610,7 @@ type Vertex = (
     | TodoVertex
     | ImageVertex
     | PdfVertex
+    | AssetVertex
     | CalloutVertex
     | CodeBlockVertex
     | QuoteBlockVertex
@@ -616,11 +618,7 @@ type Vertex = (
     | BlockEmbedVertex
     | PageEmbedVertex
 )
-"""Union of the twelve concrete, normalized vertex types transcription currently produces.
-
-:class:`AssetVertex` is deliberately not yet a member: a bare-asset block still
-transcribes as :class:`TextVertex` while the asset rendering design is settled, so
-admitting the type here would declare a vertex nothing yet produces or consumes.
+"""Union of all thirteen concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
@@ -668,8 +666,9 @@ vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discri
 
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
 :class:`HeadingVertex`, :class:`TextVertex`, :class:`TodoVertex`, :class:`ImageVertex`,
-:class:`PdfVertex`, :class:`CalloutVertex`, :class:`CodeBlockVertex`, :class:`QuoteBlockVertex`,
-:class:`TableVertex`, :class:`BlockEmbedVertex`, and :class:`PageEmbedVertex`.
+:class:`PdfVertex`, :class:`AssetVertex`, :class:`CalloutVertex`, :class:`CodeBlockVertex`,
+:class:`QuoteBlockVertex`, :class:`TableVertex`, :class:`BlockEmbedVertex`, and
+:class:`PageEmbedVertex`.
 
 Example::
 
@@ -695,6 +694,25 @@ def is_renderable_asset_vertex(vertex: Vertex) -> TypeIs[RenderableAssetVertex]:
         types, narrowing it to :data:`RenderableAssetVertex`.
     """
     return isinstance(vertex, _RENDERABLE_ASSET_VERTEX_CLASSES)
+
+
+@validate_call
+def is_bare_asset_vertex(vertex: Vertex) -> TypeIs[AssetVertex]:
+    """Whether *vertex* is a bare asset — a hosted asset of unspecified kind.
+
+    ``True`` exactly for the unparameterized :class:`AssetVertex` (``vertex_type``
+    :attr:`~VertexType.ASSET`); ``False`` for its subclasses, whose kinds are known
+    (and renderable).  The discriminator check alone suffices: every concrete vertex
+    class pins its ``vertex_type`` literal at construction, and the literals are
+    unique across the :data:`Vertex` union.
+
+    Args:
+        vertex: The vertex to classify.
+
+    Returns:
+        ``True`` when *vertex* is a bare asset, narrowing it to :class:`AssetVertex`.
+    """
+    return vertex.vertex_type is VertexType.ASSET
 
 
 @validate_call

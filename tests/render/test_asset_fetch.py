@@ -14,7 +14,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.vertex import ImageVertex, PageVertex, PdfVertex, TextVertex
+from guffin.model.vertex import AssetVertex, ImageVertex, PageVertex, PdfVertex, TextVertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, fetch_asset, fetch_assets
@@ -132,6 +132,48 @@ class TestFetchAsset:
 
         with pytest.raises(RuntimeError, match="network down"):
             fetch_asset(PdfVertex(uid="pdf00001a", storage=asset_storage(_PDF_URL)), _ENDPOINT, tmp_path)
+
+
+class TestFetchAssetsBareScope:
+    """fetch_assets() bare-asset scope: excluded by default, opted in via include_bare_assets."""
+
+    @staticmethod
+    def _bare_tree() -> VertexTree:
+        page = PageVertex(uid="page00001", title="P", children=["asset0001"])
+        asset = AssetVertex(uid="asset0001", storage=asset_storage("https://example.com/files/pass.pkpass"))
+        return VertexTree(tree_vertices=[page, asset])
+
+    def test_bare_asset_not_fetched_by_default(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Without the opt-in, a displayed bare asset contributes no fetch."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset()
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+        assert fetch_assets(self._bare_tree(), _ENDPOINT, tmp_path) == {}
+
+    def test_bare_asset_fetched_with_opt_in(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """With include_bare_assets, the displayed bare asset is fetched like any other."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="boarding-pass.pkpass")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+        result = fetch_assets(self._bare_tree(), _ENDPOINT, tmp_path, include_bare_assets=True)
+        assert list(result) == ["asset0001"]
+        assert result["asset0001"].path.name == "boarding-pass.pkpass"
+
+    def test_enrichment_populates_bare_asset_file_name(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """fetch_and_enrich_assets writes the fetched original name onto the bare asset vertex."""
+
+        def _fake(firebase_url: HttpUrl, api_endpoint: ApiEndpoint, cache_dir: Path | None = None) -> RoamAsset:
+            return _pdf_asset(original_file_name="boarding-pass.pkpass")
+
+        monkeypatch.setattr("guffin.render.asset_fetch.fetch_and_cache_asset", _fake)
+        enriched_tree, _ = fetch_and_enrich_assets(self._bare_tree(), _ENDPOINT, tmp_path, include_bare_assets=True)
+        enriched = enriched_tree.uid_map["asset0001"]
+        assert isinstance(enriched, AssetVertex)
+        assert enriched.file_name == "boarding-pass.pkpass"
 
 
 class TestFetchAssets:

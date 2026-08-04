@@ -23,6 +23,8 @@ Public symbols:
   Firebase Storage image block node.
 - :func:`to_pdf_vertex` — build a :class:`~guffin.vertex.PdfVertex` from a
   Firebase Storage PDF block node.
+- :func:`to_asset_vertex` — build an :class:`~guffin.vertex.AssetVertex` from a
+  bare Firebase Storage asset block node.
 - :func:`to_heading_vertex` — build a :class:`~guffin.vertex.HeadingVertex` from
   a heading block node.
 - :func:`to_text_vertex` — build a
@@ -80,6 +82,7 @@ from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import code_language_of_vertex, code_source_of_vertex
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
+    AssetVertex,
     BlockEmbedVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -113,6 +116,7 @@ from guffin.roam.code_language import CodeLanguage, canonical_id_for
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
+    FIREBASE_STORAGE_URL_RE,
     PAGE_EMBED_RE,
     TAG_RE,
     image_link_alt_text,
@@ -415,8 +419,7 @@ def vertex_type(node: RoamNode) -> VertexType:
         case NodeType.EMBED_PAGE:
             return VertexType.PAGE_EMBED
         case NodeType.ASSET_BLOCK:
-            # No dedicated vertex type exists for a bare asset URL; it transcribes as plain text.
-            return VertexType.TEXT
+            return VertexType.ASSET
         case NodeType.ATTRIBUTE_BLOCK:
             # Attribute blocks are not transcribed as standalone vertices; they are folded into
             # their parent vertex's attribute_assignments field (see _resolve_attribute_assignments).
@@ -550,6 +553,50 @@ def to_pdf_vertex(node: RoamNode, tree: NodeTree) -> PdfVertex:
         uid=node.uid,
         storage=_asset_storage(firebase_storage_url),
         media_type=MediaType.PDF,
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
+    )
+
+
+@validate_call
+def to_asset_vertex(node: RoamNode, tree: NodeTree) -> AssetVertex:
+    """Build an :class:`~guffin.vertex.AssetVertex` from *node*.
+
+    The asset's media type is inferred from the stored filename's extension when it can
+    be; an unrecognizable extension leaves it ``None``.  The vertex's ``file_name`` is
+    left ``None`` — the stored name is derivable from the storage location, and the
+    genuinely independent upload-time name arrives only through asset fetching.
+
+    Args:
+        node: A block node whose ``node.string``, with surrounding whitespace trimmed,
+            is wholly a bare Firebase Storage URL.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
+
+    Returns:
+        An :class:`~guffin.vertex.AssetVertex`.
+
+    Raises:
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
+        ValueError: If ``node.string`` is ``None`` or is not wholly a bare Firebase Storage URL.
+    """
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
+    if node.string is None:
+        raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
+    trimmed: Final[str] = node.string.strip()
+    if not FIREBASE_STORAGE_URL_RE.fullmatch(trimmed):
+        raise ValueError(f"RoamNode uid={node.uid!r} 'string' is not wholly a bare Firebase Storage URL")
+    storage: Final[AssetStorage] = _asset_storage(trimmed)
+    stored_name: Final[str | None] = url_file_name(storage.location)
+    media_type: Final[MediaType | None] = (
+        MediaType.from_file_name(stored_name.removesuffix(".enc")) if stored_name is not None else None
+    )
+    return AssetVertex(
+        uid=node.uid,
+        storage=storage,
+        media_type=media_type,
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
@@ -1046,9 +1093,7 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
         case VertexType.TABLE:
             raise NotImplementedError(f"RoamNode uid={node.uid!r}: TABLE is not a standalone NodeType")
         case VertexType.ASSET:
-            # Unreachable today: a bare-asset block classifies as ASSET_BLOCK but still
-            # transcribes as TEXT until the asset rendering design lands (see vertex_type).
-            raise NotImplementedError(f"RoamNode uid={node.uid!r}: ASSET transcription is not wired")
+            return to_asset_vertex(node, tree)
         case VertexType.BLOCK_EMBED:
             return to_block_embed_vertex(node, tree)
         case VertexType.PAGE_EMBED:

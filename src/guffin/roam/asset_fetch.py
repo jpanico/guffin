@@ -16,7 +16,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Final, Literal, Self, final
 
-from pydantic import Base64Bytes, BaseModel, ConfigDict, Field, HttpUrl, validate_call
+from pydantic import Base64Bytes, BaseModel, ConfigDict, Field, HttpUrl, field_validator, validate_call
 
 from guffin.common.media_type import MediaType
 from guffin.roam.asset import RoamAsset
@@ -109,8 +109,22 @@ class FetchRoamAsset:
                 model_config = ConfigDict(frozen=True)
 
                 file_name: str = Field(alias="filename")
-                media_type: MediaType = Field(alias="mimetype")
+                media_type: MediaType | None = Field(alias="mimetype")
                 content: Base64Bytes = Field(alias="base64")
+
+                @field_validator("media_type", mode="before")
+                @classmethod
+                def _tolerate_unrecognized_mimetype(cls, val: object) -> object:
+                    # An asset of a kind the source does not recognize arrives with an empty
+                    # mimetype (observed for e.g. .pkpass); a kind outside the MediaType
+                    # vocabulary is equally unrecognized.  Either resolves to None rather
+                    # than failing the fetch — an asset's bytes are valid whatever its kind.
+                    if val is None or val == "":
+                        return None
+                    if isinstance(val, str) and val not in {member.value for member in MediaType}:
+                        logger.warning("unrecognized asset mimetype %r; treating the kind as unknown", val)
+                        return None
+                    return val
 
     @staticmethod
     @validate_call
@@ -203,9 +217,9 @@ def _cached_asset(cache_dir: Path | None, cache_key: str, firebase_url: HttpUrl)
     if not cached_files:
         return None
     cached_path: Final[Path] = cached_files[0]
+    # A None media type is legitimate: an asset of unrecognized kind is cached under its
+    # original extension (or .bin), which maps to no MediaType member.
     cached_media_type: Final[MediaType | None] = MediaType.from_file_name(cached_path.name)
-    if cached_media_type is None:
-        raise ValueError(f"Cached file has unrecognized extension: {cached_path.name!r}")
     logger.info("Cache hit: %s -> %s", firebase_url, cached_path.name)
     return RoamAsset.create(
         file_name=cached_path.name,
@@ -233,7 +247,7 @@ def _encache_asset(cache_dir: Path | None, cache_key: str, asset: RoamAsset, fir
     """
     if cache_dir is None:
         return
-    file_name: Final[str] = f"{cache_key}{asset.media_type.extension}"
+    file_name: Final[str] = f"{cache_key}{_asset_extension(asset)}"
     cache_dir.mkdir(parents=True, exist_ok=True)
     (cache_dir / file_name).write_bytes(asset.contents)
     (cache_dir / f"{cache_key}{_SIDECAR_SUFFIX}").write_text(
@@ -288,9 +302,22 @@ def fetch_and_cache_asset(
     _encache_asset(cache_dir, cache_key, asset, firebase_url)
 
     return RoamAsset.create(
-        file_name=f"{cache_key}{asset.media_type.extension}",
+        file_name=f"{cache_key}{_asset_extension(asset)}",
         last_modified=asset.last_modified,
         media_type=asset.media_type,
         contents=asset.contents,
         original_file_name=asset.original_file_name,
     )
+
+
+def _asset_extension(asset: RoamAsset) -> str:
+    """The dotted extension an asset's deterministic filename carries.
+
+    The media type's canonical extension when the kind is recognized; else the original
+    upload filename's own extension; else ``.bin``.
+    """
+    if asset.media_type is not None:
+        return asset.media_type.extension
+    if asset.original_file_name is not None and Path(asset.original_file_name).suffix:
+        return Path(asset.original_file_name).suffix
+    return ".bin"

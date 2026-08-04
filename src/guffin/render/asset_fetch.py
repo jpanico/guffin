@@ -20,8 +20,8 @@ Public symbols:
   :class:`~guffin.vertex_tree.VertexTree` to a local directory; return a
   ``{uid: AssetRef}`` mapping.
 - :func:`fetch_and_enrich_assets` — :func:`fetch_assets` plus tree enrichment; returns the
-  tree with ``original_image_size`` (images) and ``file_name`` (PDFs) populated,
-  together with the ``{uid: AssetRef}`` mapping.
+  tree with ``original_image_size`` (images) and ``file_name`` (PDFs and bare assets)
+  populated, together with the ``{uid: AssetRef}`` mapping.
 - :func:`pdf_asset_paths` — map each fetched PDF asset's storage location to its local path.
 - :func:`cover_image_path` — pure lookup: the fetched local path of the cover image a
   tree's root vertex references, resolved against a :func:`fetch_assets` result; ``None``
@@ -38,12 +38,13 @@ from pydantic import validate_call
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.geometry import ImageSize
 from guffin.model.publishing_semantics import cover_image_vertex
-from guffin.model.vertex import ImageVertex, PdfVertex, RenderableAssetVertex
+from guffin.model.vertex import AssetVertex, ImageVertex, PdfVertex, RenderableAssetVertex
 from guffin.model.vertex_tree import (
     VertexTree,
+    enrich_asset_file_names,
     enrich_image_original_sizes,
-    enrich_pdf_file_names,
     visible_asset_vertices,
+    visible_bare_asset_vertices,
 )
 from guffin.roam.asset import RoamAsset, RoamImageAsset
 from guffin.roam.asset_fetch import fetch_and_cache_asset
@@ -132,7 +133,7 @@ def _resolved_file_name(asset: RoamAsset, source_url: str, claimed_names: Mappin
 
 @validate_call
 def fetch_asset(
-    vertex: RenderableAssetVertex,
+    vertex: RenderableAssetVertex | AssetVertex,
     api_endpoint: ApiEndpoint,
     asset_dir: Path,
     cache_dir: Path | None = None,
@@ -148,7 +149,7 @@ def fetch_asset(
     usable), and returns the resulting association.
 
     Args:
-        vertex: The renderable asset vertex whose asset to fetch.
+        vertex: The asset vertex — renderable or bare — whose asset to fetch.
         api_endpoint: Roam Local API endpoint (URL + bearer token).
         asset_dir: Directory where the fetched asset file is written.
         cache_dir: Optional directory for caching downloaded assets across
@@ -182,6 +183,8 @@ def fetch_assets(
     api_endpoint: ApiEndpoint,
     asset_dir: Path,
     cache_dir: Path | None = None,
+    *,
+    include_bare_assets: bool = False,
 ) -> dict[Uid, AssetRef]:
     """Fetch every displayed renderable asset vertex's file to *asset_dir*.
 
@@ -201,7 +204,9 @@ def fetch_assets(
     typically reachable only through
     :attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`.  An asset merely
     *mentioned* inline amid surrounding text renders as a remote hyperlink and is not
-    fetched.
+    fetched.  With *include_bare_assets*, the displayed *bare* assets (per
+    :func:`~guffin.model.vertex_tree.visible_bare_asset_vertices`) join the fetch —
+    the opt-in for an output that carries asset files rather than reproducing content.
 
     Args:
         vertex_tree: The vertex tree whose assets to fetch.
@@ -209,6 +214,9 @@ def fetch_assets(
         asset_dir: Directory where fetched asset files are written.
         cache_dir: Optional directory for caching downloaded assets across
             runs.
+        include_bare_assets: Whether the displayed bare asset vertices are fetched
+            too.  Default ``False``: a bare asset's content cannot be reproduced in
+            output, so its file is worth fetching only when the output carries files.
 
     Returns:
         A mapping from asset vertex UID to an :class:`AssetRef` bundling the
@@ -218,9 +226,12 @@ def fetch_assets(
     """
     # locals() is exactly the parameters when read as the first statement.
     logger.debug("args: %r", locals())
-    displayed: Final[list[RenderableAssetVertex]] = visible_asset_vertices(vertex_tree)
+    displayed: Final[list[RenderableAssetVertex | AssetVertex]] = [
+        *visible_asset_vertices(vertex_tree),
+        *(visible_bare_asset_vertices(vertex_tree) if include_bare_assets else []),
+    ]
     cover: Final[ImageVertex | None] = cover_image_vertex(vertex_tree)
-    fetchable: Final[list[RenderableAssetVertex]] = (
+    fetchable: Final[list[RenderableAssetVertex | AssetVertex]] = (
         [*displayed, cover] if cover is not None and all(cover.uid != vertex.uid for vertex in displayed) else displayed
     )
     asset_refs: Final[dict[Uid, AssetRef]] = {}
@@ -243,14 +254,16 @@ def fetch_and_enrich_assets(
     api_endpoint: ApiEndpoint,
     asset_dir: Path,
     cache_dir: Path | None = None,
+    *,
+    include_bare_assets: bool = False,
 ) -> tuple[VertexTree, dict[Uid, AssetRef]]:
     """Fetch every displayed asset and return the tree enriched with what fetching alone can know.
 
     Convenience wrapper over :func:`fetch_assets`: after fetching, populates
     :attr:`~guffin.vertex.ImageVertex.original_image_size` on each image vertex
-    (via :func:`~guffin.vertex_tree.enrich_image_original_sizes`) and
-    :attr:`~guffin.vertex.PdfVertex.file_name` on each PDF vertex
-    (via :func:`~guffin.vertex_tree.enrich_pdf_file_names`) from the
+    (via :func:`~guffin.vertex_tree.enrich_image_original_sizes`) and ``file_name``
+    on each PDF and bare-asset vertex
+    (via :func:`~guffin.vertex_tree.enrich_asset_file_names`) from the
     corresponding :class:`AssetRef`.
 
     Args:
@@ -258,6 +271,8 @@ def fetch_and_enrich_assets(
         api_endpoint: Roam Local API endpoint (URL + bearer token).
         asset_dir: Directory where fetched asset files are written.
         cache_dir: Optional directory for caching downloaded assets across runs.
+        include_bare_assets: Whether the displayed bare asset vertices are fetched too
+            (see :func:`fetch_assets`).
 
     Returns:
         A ``(enriched_tree, asset_refs)`` pair: *enriched_tree* is the enriched copy of
@@ -266,7 +281,9 @@ def fetch_and_enrich_assets(
     """
     # locals() is exactly the parameters when read as the first statement.
     logger.debug("args: %r", locals())
-    asset_refs: Final[dict[Uid, AssetRef]] = fetch_assets(vertex_tree, api_endpoint, asset_dir, cache_dir)
+    asset_refs: Final[dict[Uid, AssetRef]] = fetch_assets(
+        vertex_tree, api_endpoint, asset_dir, cache_dir, include_bare_assets=include_bare_assets
+    )
     original_sizes: Final[dict[Uid, ImageSize]] = {
         uid: ref.size for uid, ref in asset_refs.items() if ref.size is not None
     }
@@ -274,7 +291,7 @@ def fetch_and_enrich_assets(
         uid: ref.original_file_name for uid, ref in asset_refs.items() if ref.original_file_name is not None
     }
     sized_tree: Final[VertexTree] = enrich_image_original_sizes(vertex_tree, original_sizes)
-    enriched_tree: Final[VertexTree] = enrich_pdf_file_names(sized_tree, original_names)
+    enriched_tree: Final[VertexTree] = enrich_asset_file_names(sized_tree, original_names)
     return enriched_tree, asset_refs
 
 

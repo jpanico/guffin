@@ -21,6 +21,8 @@ Public symbols:
   render-visible document displays: assets among :func:`transcluded_vertices`, plus assets targeted
   by a render-visible vertex's standalone vertex link, plus assets targeted by a render-visible
   table cell that is a standalone vertex link.
+- :func:`visible_bare_asset_vertices` — the same display scoping, filtered to bare
+  :class:`~guffin.model.vertex.AssetVertex` vertices (assets of unspecified kind).
 - :func:`root_vertex` — return the single root :data:`~guffin.model.vertex.Vertex` of a :class:`VertexTree`.
 - :func:`map_vertices` — return a new :class:`VertexTree` with a mapping function applied to every vertex in both
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
@@ -32,8 +34,8 @@ Public symbols:
   preamble (children preceding its first heading child) pruned.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
   :attr:`~guffin.model.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
-- :func:`enrich_pdf_file_names` — return a new :class:`VertexTree` with
-  :attr:`~guffin.model.vertex.PdfVertex.file_name` populated from a UID→filename map.
+- :func:`enrich_asset_file_names` — return a new :class:`VertexTree` with PDF and
+  bare-asset ``file_name`` fields populated from a UID→filename map.
 """
 
 import logging
@@ -50,6 +52,7 @@ from guffin.model.attribute import Attribute
 from guffin.model.attribute_assignment import AttributeAssignment, is_assignment_for
 from guffin.model.primitives import Uid
 from guffin.model.vertex import (
+    AssetVertex,
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
@@ -58,6 +61,7 @@ from guffin.model.vertex import (
     TableVertex,
     TextVertex,
     Vertex,
+    is_bare_asset_vertex,
     is_embed_vertex,
     is_renderable_asset_vertex,
 )
@@ -308,15 +312,62 @@ def visible_asset_vertices(tree: VertexTree) -> list[RenderableAssetVertex]:
     """
     displayed: Final[list[RenderableAssetVertex]] = []
     seen: Final[set[Uid]] = set()
+    for candidate in _displayed_candidates(tree):
+        if not is_renderable_asset_vertex(candidate) or candidate.uid in seen:
+            continue
+        seen.add(candidate.uid)
+        displayed.append(candidate)
+    return displayed
+
+
+def _displayed_candidates(tree: VertexTree) -> Iterator[Vertex]:
+    """Yield every vertex the render-visible document displays, standalone-link destinations included.
+
+    In render-visible walk order: each render-visible vertex, then its standalone-link
+    destination, then — for a table — each cell's standalone-link destination.  A vertex
+    displayed more than once is yielded each time; callers deduplicate as needed.
+    """
     for vertex in transcluded_vertices(tree):
-        candidates: list[Vertex | None] = [vertex, standalone_link_target(vertex, tree)]
-        if isinstance(vertex, TableVertex):
-            candidates.extend(standalone_link_target_of_text(cell, tree) for row in vertex.table.rows for cell in row)
-        for candidate in candidates:
-            if candidate is None or not is_renderable_asset_vertex(candidate) or candidate.uid in seen:
-                continue
-            seen.add(candidate.uid)
-            displayed.append(candidate)
+        yield vertex
+        target: Vertex | None = standalone_link_target(vertex, tree)
+        if target is not None:
+            yield target
+        if not isinstance(vertex, TableVertex):
+            continue
+        for row in vertex.table.rows:
+            for cell in row:
+                cell_target: Vertex | None = standalone_link_target_of_text(cell, tree)
+                if cell_target is not None:
+                    yield cell_target
+
+
+@validate_call
+def visible_bare_asset_vertices(tree: VertexTree) -> list[AssetVertex]:
+    """Return every bare :class:`~guffin.model.vertex.AssetVertex` the render-visible document displays.
+
+    The same display scoping as :func:`visible_asset_vertices` — render-visible
+    vertices, standalone-link destinations, and standalone table-cell links — filtered
+    to *bare* assets (assets of unspecified kind, per
+    :func:`~guffin.model.vertex.is_bare_asset_vertex`).  Kept separate from the
+    renderable-asset scope because bare assets are a distinct fetch population: their
+    content cannot be reproduced in output, so fetching one is worthwhile only when the
+    output carries files.
+
+    Args:
+        tree: The :class:`VertexTree` to walk.
+
+    Returns:
+        The displayed bare asset vertices, each appearing once (deduplicated by UID),
+        in render-visible walk order with each standalone-link destination following
+        its referrer.
+    """
+    displayed: Final[list[AssetVertex]] = []
+    seen: Final[set[Uid]] = set()
+    for candidate in _displayed_candidates(tree):
+        if not is_bare_asset_vertex(candidate) or candidate.uid in seen:
+            continue
+        seen.add(candidate.uid)
+        displayed.append(candidate)
     return displayed
 
 
@@ -508,27 +559,28 @@ def enrich_image_original_sizes(tree: VertexTree, sizes: dict[Uid, ImageSize]) -
 
 
 @validate_call
-def enrich_pdf_file_names(tree: VertexTree, names: dict[Uid, str]) -> VertexTree:
-    """Return a new :class:`VertexTree` with :attr:`~guffin.model.vertex.PdfVertex.file_name` populated.
+def enrich_asset_file_names(tree: VertexTree, names: dict[Uid, str]) -> VertexTree:
+    """Return a new :class:`VertexTree` with PDF and bare-asset ``file_name`` fields populated.
 
-    Each :class:`~guffin.model.vertex.PdfVertex` whose UID appears in *names* receives a copy with
-    :attr:`~guffin.model.vertex.PdfVertex.file_name` set to the corresponding name.  All
-    other vertices — including PDF vertices absent from *names*, whose filename is simply
-    unknown — pass through unchanged.
+    Each :class:`~guffin.model.vertex.PdfVertex` or bare
+    :class:`~guffin.model.vertex.AssetVertex` whose UID appears in *names* receives a copy
+    with :attr:`~guffin.model.vertex.AssetVertex.file_name` set to the corresponding name —
+    the asset kinds whose filename names the file itself in output.  All other vertices —
+    image vertices (whose display is served by alt text and pixel content), and asset
+    vertices absent from *names*, whose filename is simply unknown — pass through unchanged.
 
     Args:
         tree: The source :class:`VertexTree`.
-        names: Mapping from :class:`~guffin.model.vertex.PdfVertex` UID to the filename the PDF
-            was originally uploaded under.
+        names: Mapping from asset vertex UID to the filename the asset was originally
+            uploaded under.
 
     Returns:
-        A new :class:`VertexTree` with
-        :attr:`~guffin.model.vertex.PdfVertex.file_name` populated for all UIDs present
-        in *names*.
+        A new :class:`VertexTree` with ``file_name`` populated on the PDF and bare-asset
+        vertices whose UIDs are present in *names*.
     """
 
     def _enrich(vtx: Vertex) -> Vertex:
-        if isinstance(vtx, PdfVertex) and vtx.uid in names:
+        if (isinstance(vtx, PdfVertex) or is_bare_asset_vertex(vtx)) and vtx.uid in names:
             return vtx.model_copy(update={"file_name": names[vtx.uid]})
         return vtx
 

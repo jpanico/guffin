@@ -139,9 +139,12 @@
   text: an asset is a BLOB stored by Roam in Firebase Storage; usually a file dragged
     into the Roam UI. The Roam Markdown representation of the asset is just the Firebase
     Storage URL.
-- vertex_type: guffin/text
+- vertex_type: guffin/asset
   uid: Wlzl_dhg_
-  text: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
+    store_type: firebase-storage
+    is_encrypted: true
 - vertex_type: guffin/heading
   uid: yFUau9Cpg
   children:

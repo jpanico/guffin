@@ -127,6 +127,7 @@ from guffin.model.publishing_semantics import (
     resolved_matter,
 )
 from guffin.model.vertex import (
+    AssetVertex,
     BlockEmbedVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -144,6 +145,7 @@ from guffin.model.vertex import (
     TodoVertex,
     Vertex,
     VertexChildren,
+    is_bare_asset_vertex,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex_tree import (
@@ -631,6 +633,79 @@ def _is_reference_placed_pdf(vertex: Vertex) -> bool:
     return _resolved_pdf_placement(vertex) not in {PdfRenderPlacement.INLINE_NATIVE, PdfRenderPlacement.INLINE_IMAGE}
 
 
+def _asset_vertex_to_blocks(vertex: AssetVertex, asset_files: dict[Uid, Path]) -> list[pf.Block]:
+    """Render one display occurrence of a bare :class:`~guffin.vertex.AssetVertex` to Pandoc blocks.
+
+    Produces a :class:`~panflute.Para` holding a :class:`~panflute.Link` to the asset's
+    local file when *asset_files* has an entry for the vertex — an output that carries
+    files, so the link resolves inside it — else the asset's name as plain text with no
+    link (name-only): the one faithful rendering for content no format can reproduce.
+    The label is the vertex's ``file_name`` when known, else the storage-decoded name
+    with the encryption suffix stripped, else the storage location.
+
+    Args:
+        vertex: The bare asset vertex to render.
+        asset_files: Mapping from asset vertex UID to local asset file path.
+
+    Returns:
+        A single-element list containing the :class:`~panflute.Para`.
+    """
+    stored_name: Final[str | None] = url_file_name(vertex.storage.location)
+    storage_label: Final[str] = (
+        stored_name.removesuffix(".enc") if stored_name is not None else str(vertex.storage.location)
+    )
+    label_text: Final[str] = vertex.file_name or storage_label
+    asset_path: Final[Path | None] = asset_files.get(vertex.uid)
+    if asset_path is None:
+        return [pf.Para(pf.Str(label_text))]
+    return [pf.Para(pf.Link(pf.Str(label_text), url=str(asset_path), title=label_text))]
+
+
+def _asset_list_item(
+    vertex: AssetVertex,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
+    depth: int,
+) -> pf.ListItem:
+    """Build a Pandoc :class:`~panflute.ListItem` from a bare asset display occurrence.
+
+    The item body is the asset's paragraph (see :func:`_asset_vertex_to_blocks`); any
+    children (or folded attribute assignments) are rendered recursively via
+    :func:`build_child_blocks` using the vertex's effective children layout and appended
+    as nested blocks inside the item.
+
+    Args:
+        vertex: The bare :class:`~guffin.vertex.AssetVertex` to render.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID to local asset file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The parent's effective children layout (see :func:`_effective_layout`).
+        depth: Tree depth of the occurrence.
+
+    Returns:
+        A :class:`~panflute.ListItem` wrapping the paragraph and any nested children and
+        attribute pills.
+    """
+    content: Final[list[pf.Block]] = _asset_vertex_to_blocks(vertex, asset_files)
+    content.extend(
+        build_child_blocks(
+            vertex.children or [],
+            vertex_tree,
+            asset_files,
+            inline_map,
+            view_map,
+            _effective_layout(vertex.uid, view_map, inherited_layout),
+            depth + 1,
+            vertex.attribute_assignments,
+        )
+    )
+    return pf.ListItem(*content)
+
+
 def _pdf_link_list_item(
     vertex: PdfVertex,
     vertex_tree: VertexTree,
@@ -818,6 +893,11 @@ def build_child_blocks(
             # A reference-placed PDF embed reads as a line of the outline, so it lists with its siblings.
             pending_items.append(
                 _pdf_link_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, layout, depth)
+            )
+        elif is_bare_asset_vertex(vertex) and layout is not ChildrenLayout.DOCUMENT:
+            # A bare asset block reads as a line of the outline, so it lists with its siblings.
+            pending_items.append(
+                _asset_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, layout, depth)
             )
         else:
             flush_pending()
@@ -1564,6 +1644,8 @@ def _vertex_to_blocks(
             return _image_vertex_to_blocks(vertex, asset_files, inline_map)
         case PdfVertex():
             return _pdf_vertex_to_blocks(vertex, asset_files, _resolved_pdf_placement(vertex))
+        case AssetVertex():
+            return _asset_vertex_to_blocks(vertex, asset_files)
         case CalloutVertex():
             return _callout_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
@@ -1867,7 +1949,8 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
       :class:`~guffin.vertex.QuoteBlockVertex` — the destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
       embed, otherwise a :class:`~panflute.Link` to the image source.
-    - :class:`~guffin.vertex.PdfVertex` — a :class:`~panflute.Link` to the PDF source.
+    - :class:`~guffin.vertex.PdfVertex`, :class:`~guffin.vertex.AssetVertex` — a
+      :class:`~panflute.Link` to the asset's storage location.
     - :class:`~guffin.vertex.CodeBlockVertex` — inline :class:`~panflute.Code` (a
       block-level code reference is handled earlier, in :func:`build_child_blocks`).
     - :class:`~guffin.vertex.CalloutVertex`, :class:`~guffin.vertex.TableVertex` — the
@@ -1909,7 +1992,7 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
                 return [pf.Image(*display, url=str(vertex.storage.location), title="")]
             case ImageVertex():
                 return [pf.Link(*display, url=str(vertex.storage.location))]
-            case PdfVertex():
+            case PdfVertex() | AssetVertex():
                 return [pf.Link(*display, url=str(vertex.storage.location))]
             case CodeBlockVertex():
                 return [pf.Code(vertex.code, classes=[code_language_token(vertex.language)])]

@@ -241,9 +241,10 @@ def render(
         bundle_dir.mkdir(parents=True, exist_ok=True)
         logger.info("Created bundle directory: %s", bundle_dir)
 
-        # the Paths in the returned AssetRefs are absolute
+        # the Paths in the returned AssetRefs are absolute; the bundle carries files, so the
+        # displayed bare assets are fetched too and travel inside it
         fetched: Final[tuple[VertexTree, dict[Uid, AssetRef]]] = fetch_and_enrich_assets(
-            content, api_endpoint, bundle_dir, cache_dir
+            content, api_endpoint, bundle_dir, cache_dir, include_bare_assets=True
         )
         enriched_tree: Final[VertexTree] = fetched[0]
         asset_refs: Final[dict[Uid, AssetRef]] = fetched[1]

@@ -26,6 +26,7 @@ from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
 from guffin.model.vertex import (
+    AssetVertex,
     BlockEmbedVertex,
     CalloutVertex,
     CodeBlockVertex,
@@ -1050,6 +1051,55 @@ class TestVertexTreeToPandocPdfVertex:
         blocks = list(doc.content)
         assert len(blocks) == 1
         assert isinstance(blocks[0], pf.Para)
+
+
+# ---------------------------------------------------------------------------
+# TestVertexTreeToPandocAssetVertex
+# ---------------------------------------------------------------------------
+
+
+class TestVertexTreeToPandocAssetVertex:
+    """vertex_tree_to_pandoc() — bare AssetVertex rendering: a local link when fetched, else name-only."""
+
+    _PKPASS_URL: str = "https://example.com/files/fJoSdh65Ry.pkpass.enc"
+
+    def _tree(self, file_name: str | None = None) -> VertexTree:
+        """Build a page-rooted tree containing a single bare AssetVertex."""
+        page = PageVertex(uid="page00001", title="P", children=["asset0001"])
+        asset = AssetVertex(uid="asset0001", storage=asset_storage(self._PKPASS_URL), file_name=file_name)
+        return VertexTree(tree_vertices=[page, asset])
+
+    @staticmethod
+    def _bulleted_para(doc: pf.Doc) -> pf.Para:
+        """Extract the asset paragraph from the single bulleted list item it renders inside."""
+        blocks = list(doc.content)
+        assert len(blocks) == 1
+        bullet = blocks[0]
+        assert isinstance(bullet, pf.BulletList)
+        para = list(list(bullet.content)[0].content)[0]
+        assert isinstance(para, pf.Para)
+        return para
+
+    def test_unfetched_asset_renders_name_only(self) -> None:
+        """Without an asset_files entry, the asset is its name as plain text — no link at all."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(), {}, {})
+        para = self._bulleted_para(doc)
+        assert not any(isinstance(inline, pf.Link) for inline in para.content)
+        assert pf.stringify(para).strip() == "fJoSdh65Ry.pkpass"
+
+    def test_fetched_asset_links_to_local_path(self, tmp_path: Path) -> None:
+        """With an asset_files entry, the asset links its local file — the file travels with the output."""
+        local = tmp_path / "boarding-pass.pkpass"
+        local.write_bytes(b"")
+        doc, _ = vertex_tree_to_pandoc(self._tree(), {"asset0001": local}, {})
+        inline = list(self._bulleted_para(doc).content)[0]
+        assert isinstance(inline, pf.Link)
+        assert inline.url == str(local)
+
+    def test_label_prefers_file_name(self) -> None:
+        """A known file_name labels the occurrence, outranking the storage-decoded name."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(file_name="boarding-pass.pkpass"), {}, {})
+        assert pf.stringify(self._bulleted_para(doc)).strip() == "boarding-pass.pkpass"
 
 
 # ---------------------------------------------------------------------------
