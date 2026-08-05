@@ -12,7 +12,7 @@ from typing import assert_never
 
 from pydantic import validate_call
 
-from guffin.common.date import ENGLISH_MONTH_ABBREVIATIONS
+from guffin.common.date import EnglishMonth
 from guffin.roam.primitives import daily_note_title
 
 
@@ -50,6 +50,6 @@ def format_date(value: datetime.date, date_format: DateFormat) -> str:
         case DateFormat.ISO:
             return value.isoformat()
         case DateFormat.ABBREV_MONTH_DAY:
-            return f"{ENGLISH_MONTH_ABBREVIATIONS[value.month - 1]} {value.day}"
+            return f"{EnglishMonth(value.month).abbreviation} {value.day}"
         case _ as unreachable:
             assert_never(unreachable)

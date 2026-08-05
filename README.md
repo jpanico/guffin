@@ -169,7 +169,7 @@ guffin/
 │       │   └── problem_details.py           # RFC 9457 application/problem+json responses
 │       │
 │       ├── common/                        # Cross-cutting helpers (no guffin dependencies)
-│       │   ├── date.py                      # English month names, ordinal suffixes, UTC timestamps
+│       │   ├── date.py                      # EnglishMonth enum, ordinal suffixes, UTC timestamps
 │       │   ├── filenames.py                 # POSIX filename normalization (shell_safe_filename)
 │       │   ├── geometry.py                  # Generic 2D geometry types (ImageSize)
 │       │   ├── github_fetch.py              # GitHub ref resolution + commit-pinned file retrieval

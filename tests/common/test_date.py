@@ -3,39 +3,45 @@
 import pytest
 
 from guffin.common.date import (
-    ENGLISH_MONTH_ABBREVIATIONS,
-    ENGLISH_MONTHS,
+    EnglishMonth,
     ordinal_suffix,
 )
 
 
-class TestEnglishMonths:
-    """ENGLISH_MONTHS is the twelve month names in calendar order, 0-indexed at January."""
+class TestEnglishMonth:
+    """EnglishMonth is the twelve months valued 1-12, each carrying its English spellings."""
 
-    def test_has_twelve_months_january_first(self) -> None:
-        """There are twelve names, January at index 0 and December at index 11."""
-        assert len(ENGLISH_MONTHS) == 12
-        assert ENGLISH_MONTHS[0] == "January"
-        assert ENGLISH_MONTHS[11] == "December"
+    def test_has_twelve_months_in_calendar_order(self) -> None:
+        """There are twelve members, January valued 1 and December valued 12."""
+        assert len(EnglishMonth) == 12
+        assert EnglishMonth.JANUARY == 1
+        assert EnglishMonth.DECEMBER == 12
 
-    def test_month_number_indexing(self) -> None:
-        """ENGLISH_MONTHS[month - 1] names the given 1-based month number."""
-        assert ENGLISH_MONTHS[8 - 1] == "August"
+    def test_month_number_lookup(self) -> None:
+        """EnglishMonth(month) resolves a 1-based month number to its member."""
+        assert EnglishMonth(8) is EnglishMonth.AUGUST
 
+    @pytest.mark.parametrize("month_number", [0, 13])
+    def test_month_number_lookup_rejects_out_of_range(self, month_number: int) -> None:
+        """A number outside 1-12 is rejected rather than resolved to a month."""
+        with pytest.raises(ValueError, match=str(month_number)):
+            EnglishMonth(month_number)
 
-class TestEnglishMonthAbbreviations:
-    """ENGLISH_MONTH_ABBREVIATIONS is the twelve month abbreviations in calendar order."""
+    def test_full_name(self) -> None:
+        """full_name is the month's English name."""
+        assert EnglishMonth.JANUARY.full_name == "January"
+        assert EnglishMonth.AUGUST.full_name == "August"
+        assert EnglishMonth.DECEMBER.full_name == "December"
 
-    def test_has_twelve_three_letter_abbreviations_january_first(self) -> None:
-        """There are twelve three-letter abbreviations, Jan at index 0 and Dec at index 11."""
-        assert len(ENGLISH_MONTH_ABBREVIATIONS) == 12
-        assert all(len(abbreviation) == 3 for abbreviation in ENGLISH_MONTH_ABBREVIATIONS)
-        assert ENGLISH_MONTH_ABBREVIATIONS[0] == "Jan"
-        assert ENGLISH_MONTH_ABBREVIATIONS[11] == "Dec"
+    def test_abbreviation(self) -> None:
+        """Abbreviation is the month's three-letter English abbreviation."""
+        assert EnglishMonth.JANUARY.abbreviation == "Jan"
+        assert EnglishMonth.SEPTEMBER.abbreviation == "Sep"
+        assert EnglishMonth.DECEMBER.abbreviation == "Dec"
 
-    def test_month_number_indexing(self) -> None:
-        """ENGLISH_MONTH_ABBREVIATIONS[month - 1] abbreviates the given 1-based month number."""
-        assert ENGLISH_MONTH_ABBREVIATIONS[9 - 1] == "Sep"
+    def test_every_abbreviation_is_three_letters(self) -> None:
+        """Every member's abbreviation is exactly three letters (the truncation convention holds)."""
+        assert all(len(month.abbreviation) == 3 for month in EnglishMonth)
 
 
 class TestOrdinalSuffix:

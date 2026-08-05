@@ -25,7 +25,7 @@ from typing import Annotated, Final, Literal
 import regex
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, validate_call
 
-from guffin.common.date import ENGLISH_MONTHS, ordinal_suffix
+from guffin.common.date import EnglishMonth, ordinal_suffix
 
 SYNTHETIC_UID_PATTERN: Final[str] = r"[A-Za-z0-9_-]{9}"
 """Regex for a Roam-generated node UID: nine alphanumeric/dash/underscore characters (the common case).
@@ -193,7 +193,7 @@ def daily_note_title(note_date: datetime.date) -> str:
 
     The title is the verbose date Roam fixes a daily-note page's title to: the English month name,
     the day-of-month with its ordinal suffix, and the year.  Built from the fixed
-    :data:`~guffin.common.date.ENGLISH_MONTHS` and :func:`~guffin.common.date.ordinal_suffix` (not
+    :class:`~guffin.common.date.EnglishMonth` and :func:`~guffin.common.date.ordinal_suffix` (not
     ``strftime``, whose ``%B`` is locale-dependent and which has no ordinal-suffix directive).
 
     Args:
@@ -202,4 +202,5 @@ def daily_note_title(note_date: datetime.date) -> str:
     Returns:
         The verbose title, e.g. ``January 1st, 2026``.
     """
-    return f"{ENGLISH_MONTHS[note_date.month - 1]} {note_date.day}{ordinal_suffix(note_date.day)}, {note_date.year}"
+    month_name: Final[str] = EnglishMonth(note_date.month).full_name
+    return f"{month_name} {note_date.day}{ordinal_suffix(note_date.day)}, {note_date.year}"
