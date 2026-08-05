@@ -19,6 +19,12 @@ class MediaType(enum.StrEnum):
     (used for string comparison and Pydantic validation) is the MIME type string.
     Use :attr:`extension` to get the corresponding file extension, or
     :meth:`from_extension` to look up a member by extension.
+
+    The vocabulary is deliberately confined to IANA-registered types.  A de facto
+    vendor type with no IANA registration — e.g. ``application/vnd.apple.pkpass``,
+    the unregistered MIME type Apple specifies for ``.pkpass`` Wallet passes — has
+    no member, so a file of such a type resolves to ``None`` rather than to an
+    unofficial name.
     """
 
     def __new__(cls, mime: str, ext: str) -> MediaType:
