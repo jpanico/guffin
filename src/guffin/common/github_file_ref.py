@@ -27,7 +27,7 @@ Public symbols:
 """
 
 from typing import Annotated, Final
-from urllib.parse import urlsplit
+from urllib.parse import SplitResult, urlsplit
 
 import regex
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, validate_call
@@ -194,7 +194,7 @@ def parse_blob_github_url(url: str) -> GitHubFileRef:
             string, lacks the ``blob`` path segment, has too few or empty path segments, or
             carries a fragment that is not a line range.
     """
-    split_url: Final = urlsplit(url)
+    split_url: Final[SplitResult] = urlsplit(url)
     if split_url.scheme != "https":
         raise ValueError(f"GitHub blob URL {url!r} must use the https scheme")
     if split_url.hostname != GITHUB_HOST:

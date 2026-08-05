@@ -8,6 +8,7 @@ from guffin.render.project import (
     ManuscriptProfile,
     ProjectProfile,
     ProjectType,
+    StructuralPolicy,
     TopLevelDivision,
     profile_for,
 )
@@ -37,7 +38,7 @@ class TestStructuralPolicy:
 
     def test_default_is_article_like(self) -> None:
         """Default: sections, no title page, no ToC, unnumbered, no abstract, preamble kept, breaks honored."""
-        policy: Final = ArticleProfile().structural_policy
+        policy: Final[StructuralPolicy] = ArticleProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.SECTION
         assert not policy.emit_title_page
         assert not policy.emit_toc
@@ -48,7 +49,7 @@ class TestStructuralPolicy:
 
     def test_book_uses_chapters(self) -> None:
         """Book: chapters, title page, generated ToC, numbered, preamble dropped, breaks fixed."""
-        policy: Final = BookProfile().structural_policy
+        policy: Final[StructuralPolicy] = BookProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.CHAPTER
         assert policy.emit_title_page
         assert policy.emit_toc
@@ -58,12 +59,12 @@ class TestStructuralPolicy:
 
     def test_book_with_parts_promotes_top_level(self) -> None:
         """A book with parts makes the top-level division a part."""
-        policy: Final = BookProfile(with_parts=True).structural_policy
+        policy: Final[StructuralPolicy] = BookProfile(with_parts=True).structural_policy
         assert policy.top_level_division is TopLevelDivision.PART
 
     def test_manuscript_emits_abstract(self) -> None:
         """Manuscript: sections, title block, no ToC, unnumbered, abstract, preamble kept, breaks honored."""
-        policy: Final = ManuscriptProfile().structural_policy
+        policy: Final[StructuralPolicy] = ManuscriptProfile().structural_policy
         assert policy.top_level_division is TopLevelDivision.SECTION
         assert policy.emit_abstract
         assert not policy.emit_toc
@@ -83,7 +84,7 @@ class TestProfileDiscriminator:
 
     def test_shared_metadata_fields(self) -> None:
         """Bibliographic metadata lives on the base and is carried by every subclass."""
-        profile: Final = BookProfile(title="My Book", authors=("Ada", "Babbage"), identifier="ISBN-1")
+        profile: Final[BookProfile] = BookProfile(title="My Book", authors=("Ada", "Babbage"), identifier="ISBN-1")
         assert profile.title == "My Book"
         assert profile.authors == ("Ada", "Babbage")
         assert profile.identifier == "ISBN-1"
@@ -111,6 +112,6 @@ class TestProfileFor:
         def accept(profile: ProjectProfile) -> ProjectProfile:
             return profile
 
-        result: Final = accept(profile_for(ProjectType.BOOK))
+        result: Final[ProjectProfile] = accept(profile_for(ProjectType.BOOK))
         assert isinstance(result, BookProfile)
         assert result.structural_policy.top_level_division is TopLevelDivision.CHAPTER
