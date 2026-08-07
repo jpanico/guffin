@@ -55,12 +55,18 @@
   h1-size: 1.3,
   h2-size: 1.1,
   h3-size: 1.0,
+  h4-size: 1.0,
+  h5-size: 1.0,
   h1-weight: "bold",
   h2-weight: "bold",
   h3-weight: "bold",
+  h4-weight: "bold",
+  h5-weight: "bold",
   h1-style: "normal",
   h2-style: "normal",
   h3-style: "normal",
+  h4-style: "normal",
+  h5-style: "normal",
   // Titlepage
   // Whether the document renders a standalone title page (set from the pandoc `titlepage`
   // variable); without one the title opens the document flow as a heading, and a title-bearing

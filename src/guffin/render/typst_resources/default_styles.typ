@@ -242,6 +242,12 @@
 #show heading.where(level: 3): set text(fontsize * cfg.h3-size, weight: cfg.h3-weight, style: cfg.h3-style)
 #show heading.where(level: 3): set block(above: 2em, below: 1em)
 
+#show heading.where(level: 4): set text(fontsize * cfg.h4-size, weight: cfg.h4-weight, style: cfg.h4-style)
+#show heading.where(level: 4): set block(above: 2em, below: 1em)
+
+#show heading.where(level: 5): set text(fontsize * cfg.h5-size, weight: cfg.h5-weight, style: cfg.h5-style)
+#show heading.where(level: 5): set block(above: 2em, below: 1em)
+
 // set figure styles
 #show figure: set block(above: 2em, below: 2em)
 
