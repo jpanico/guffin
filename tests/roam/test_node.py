@@ -661,10 +661,27 @@ class TestImageSize:
         fixture_node: RoamNode = next(n for n in nodes if n.uid == "zZG-BfWvs")
         assert image_size(fixture_node) == ImageSize(width=257, height=None)
 
+    def test_rounds_fractional_dimensions_to_whole_pixels(self) -> None:
+        """Test that image_size rounds a fractional recorded dimension to whole pixels.
+
+        Roam records fractional ``image-size`` values for a drag-resized image
+        (e.g. ``width: 382.0241241455078``); the returned ImageSize carries the
+        nearest whole pixel.
+        """
+        node = RoamNode(
+            uid="imageuid1",
+            id=101,
+            string=_IMAGE_STRING,
+            parents=[IdObject(id=99)],
+            page=IdObject(id=99),
+            props={"image-size": {"https://example.test/img.png": {"width": 382.0241241455078, "height": 120.5}}},
+        )
+        assert image_size(node) == ImageSize(width=382, height=120)
+
     def test_raises_validation_error_for_invalid_image_size_prop(self) -> None:
         """Test that image_size raises ValidationError when image-size prop has an invalid structure.
 
-        The expected structure is ``dict[str, dict[str, int | None]]``; passing a plain
+        The expected structure is ``dict[str, dict[str, float | None]]``; passing a plain
         string value triggers ``IMAGE_SIZE_PROP_ADAPTER.validate_python`` to raise
         ``ValidationError``.
         """

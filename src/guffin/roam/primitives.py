@@ -107,13 +107,15 @@ class ChildrenViewType(enum.StrEnum):
 DEFAULT_CHILDREN_VIEW_TYPE: Final[ChildrenViewType] = ChildrenViewType.BULLET
 """Fallback :class:`ChildrenViewType` for a block whose ``:children/view-type`` is unset."""
 
-IMAGE_SIZE_PROP_ADAPTER: Final[TypeAdapter[dict[str, dict[str, int | None]]]] = TypeAdapter(
-    dict[str, dict[str, int | None]]
+IMAGE_SIZE_PROP_ADAPTER: Final[TypeAdapter[dict[str, dict[str, float | None]]]] = TypeAdapter(
+    dict[str, dict[str, float | None]]
 )
 """Pydantic :class:`~pydantic.TypeAdapter` for validating the ``image-size`` block prop.
 
-The ``image-size`` prop maps an image URL string to a ``{"width": int|None, "height": int|None}``
-dict; validating through the adapter extracts dimensions without Unknown-type propagation.
+The ``image-size`` prop maps an image URL string to a ``{"width": float|None, "height": float|None}``
+dict; validating through the adapter extracts dimensions without Unknown-type propagation.  The
+dimensions are typed as floats because Roam records fractional values for a drag-resized image
+(e.g. ``382.0241241455078``); integer values validate unchanged.
 """
 
 

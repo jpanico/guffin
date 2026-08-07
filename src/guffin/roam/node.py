@@ -401,7 +401,8 @@ def image_size(node: RoamNode) -> ImageSize | None:
         An :class:`~guffin.common.geometry.ImageSize` with both dimensions ``None``
         if the node has no ``image-size`` prop or the prop is an empty map.
         Otherwise an :class:`~guffin.common.geometry.ImageSize` populated from the
-        first URL entry in the ``image-size`` map.
+        first URL entry in the ``image-size`` map, each recorded dimension rounded
+        to whole pixels (Roam records fractional values for a drag-resized image).
 
     Raises:
         ValidationError: If the ``image-size`` prop exists but does not match the
@@ -414,13 +415,15 @@ def image_size(node: RoamNode) -> ImageSize | None:
     raw: Final[object | None] = node.props.get("image-size")
     if raw is None:
         return ImageSize()
-    size_map: Final[dict[str, dict[str, int | None]]] = IMAGE_SIZE_PROP_ADAPTER.validate_python(raw)
-    first_entry: Final[dict[str, int | None] | None] = next(iter(size_map.values()), None)
+    size_map: Final[dict[str, dict[str, float | None]]] = IMAGE_SIZE_PROP_ADAPTER.validate_python(raw)
+    first_entry: Final[dict[str, float | None] | None] = next(iter(size_map.values()), None)
     if first_entry is None:
         return ImageSize()
+    width: Final[float | None] = first_entry.get("width")
+    height: Final[float | None] = first_entry.get("height")
     return ImageSize(
-        width=first_entry.get("width"),
-        height=first_entry.get("height"),
+        width=round(width) if width is not None else None,
+        height=round(height) if height is not None else None,
     )
 
 

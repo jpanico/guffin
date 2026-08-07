@@ -1191,7 +1191,9 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         try:
             ref_table_vertex, ref_nodes_consumed = to_table_vertex(ref_node, node_tree)
         except (NotImplementedError, ValueError) as exc:
-            logger.debug("skipping ref table node uid=%r: %s", ref_node.uid, exc)
+            logger.warning(
+                "skipping ref table node uid=%r — links to it will render as display text: %s", ref_node.uid, exc
+            )
             continue
         ref_consumed.update(ref_nodes_consumed)
         ref_vertices.append(ref_table_vertex)
@@ -1208,7 +1210,7 @@ def transcribe(node_tree: NodeTree) -> VertexTree:
         try:
             ref_vertices.append(transcribe_standalone_node(ref_node, node_tree))
         except (NotImplementedError, ValueError) as exc:
-            logger.debug("skipping ref node uid=%r: %s", ref_node.uid, exc)
+            logger.warning("skipping ref node uid=%r — links to it will render as display text: %s", ref_node.uid, exc)
     return VertexTree(tree_vertices=vertices, ref_vertices=ref_vertices)
 
 
