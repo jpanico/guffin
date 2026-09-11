@@ -35,7 +35,7 @@ Public symbols:
 - :func:`convert_italics` — convert ``__italic__`` → ``*italic*``.
 - :func:`convert_highlights` — convert ``^^text^^`` → ``[text]{.mark}``.
 - :func:`convert_page_link_aliases` — convert ``[display]([[Page Name]])``
-  → ``[display](Page Name)``.
+  → ``display``: an aliased page reference renders as its display text.
 - :func:`convert_page_link` — convert Roam page references ``[[Page Name]]`` to
   Pandoc Markdown vertex links ``[Page Name](x-guffin:vertex/<uid>)``, falling
   back to delimiter-stripped text when the page is not resolvable.
@@ -358,24 +358,35 @@ def convert_highlights(roam_string: str) -> str:
 
 @validate_call
 def convert_page_link_aliases(roam_string: str) -> str:
-    """Convert Roam page-link aliases to Pandoc Markdown inline links.
+    """Convert Roam page-link aliases to their display text.
 
-    Roam supports ``[display text]([[Page Name]])`` to create an aliased link
-    to a page.  This function converts each such construct to the Pandoc
-    Markdown inline link ``[display text](Page Name)``, removing the
-    ``[[``/``]]`` delimiters and using the page name as the link destination.
+    Roam supports ``[display text]([[Page Name]])`` to reference a page under a
+    label of the author's choosing — the graph still records the reference, but
+    the reader sees ``display text``.  This function reduces each such construct
+    to its display text alone.
 
-    Must be applied before :func:`convert_page_link` so that the ``[[…]]``
-    target is identified and converted rather than blindly stripped.
+    The page target is deliberately dropped rather than carried as a link.  A
+    plain page reference (see :func:`convert_page_link`) renders in every output
+    format as its bare title — the render-side resolver flattens the vertex link
+    to text — so the rendered form of an alias is likewise bare text, and the
+    author's display text is that text.  (Before this reduction, an alias became
+    the Pandoc inline link ``[display text](Page Name)``, whose destination is not
+    an ``x-guffin`` vertex URL and so survived resolution as a hyperlink to a
+    dangling relative URL.)  The display text is left in place as ordinary inline
+    Markdown, so any styling inside it (``^^highlight^^``, ``__italic__``) is
+    converted by the later passes exactly as it would be outside an alias.
+
+    Must be applied before :func:`convert_page_link` so that the alias's ``[[…]]``
+    target is consumed here rather than treated as a free-standing page reference.
 
     Args:
         roam_string: A Roam block string, possibly containing alias patterns.
 
     Returns:
-        The string with all ``[display]([[Page Name]])`` patterns replaced by
-        ``[display](Page Name)``.
+        The string with every ``[display]([[Page Name]])`` pattern replaced by
+        ``display``.
     """
-    return PAGE_LINK_ALIAS_RE.sub(r"[\1](\2)", roam_string)
+    return PAGE_LINK_ALIAS_RE.sub(r"\1", roam_string)
 
 
 @validate_call

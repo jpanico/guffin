@@ -124,15 +124,23 @@ class TestConvertHighlights:
 
 
 class TestConvertPageLinkAliases:
-    """Tests for convert_page_link_aliases — [display]([[Page Name]]) → [display](Page Name)."""
+    """Tests for convert_page_link_aliases — [display]([[Page Name]]) → display."""
 
     def test_basic(self) -> None:
-        """Test that a simple alias is converted to a Pandoc Markdown inline link."""
-        assert convert_page_link_aliases("[display]([[Page Name]])") == "[display](Page Name)"
+        """Test that a simple alias is reduced to its display text."""
+        assert convert_page_link_aliases("[display]([[Page Name]])") == "display"
 
     def test_multi_word_display_and_page(self) -> None:
-        """Test that multi-word display text and page name are both handled correctly."""
-        assert convert_page_link_aliases("[display text]([[Multi Word Page]])") == "[display text](Multi Word Page)"
+        """Test that multi-word display text survives intact and the multi-word page name is dropped."""
+        assert convert_page_link_aliases("[display text]([[Multi Word Page]])") == "display text"
+
+    def test_display_case_wins_over_page_title(self) -> None:
+        """A lowercase alias of a capitalized page title renders in the author's case, not the title's."""
+        assert convert_page_link_aliases("about [modularity]([[Modularity]]) here") == "about modularity here"
+
+    def test_no_link_survives(self) -> None:
+        """The reduction leaves no Markdown link behind — nothing for a renderer to turn into a dangling hyperlink."""
+        assert "](" not in convert_page_link_aliases("[display]([[Page Name]])")
 
     def test_plain_page_link_unchanged(self) -> None:
         """Test that a plain [[Page Name]] without alias prefix is left unchanged."""
@@ -144,7 +152,7 @@ class TestConvertPageLinkAliases:
 
     def test_multiple_aliases(self) -> None:
         """Test that multiple aliases in one string are all converted."""
-        assert convert_page_link_aliases("[a]([[P1]]) and [b]([[P2]])") == "[a](P1) and [b](P2)"
+        assert convert_page_link_aliases("[a]([[P1]]) and [b]([[P2]])") == "a and b"
 
     def test_no_alias(self) -> None:
         """Test that plain text with no alias pattern is returned unchanged."""
@@ -190,8 +198,8 @@ class TestConvertPageLink:
         """Test that an unresolved reference embedded in surrounding text falls back to text."""
         assert convert_page_link("See [[Page Name]] for details.", _empty_tree()) == "See Page Name for details."
 
-    def test_pandoc_link_after_alias_conversion(self) -> None:
-        """Test that [display](Page Name) produced by alias conversion is left unchanged."""
+    def test_ordinary_pandoc_link_unchanged(self) -> None:
+        """Test that an ordinary Pandoc inline link (no [[…]] in it) is left unchanged."""
         assert convert_page_link("[display](Page Name)", _empty_tree()) == "[display](Page Name)"
 
     def test_resolves_to_vertex_link(self) -> None:
@@ -495,9 +503,13 @@ class TestToPandocMd:
         """Test that bold is preserved while an unresolved page link falls back to text."""
         assert to_pandoc_md("**bold** [[page]]", _empty_tree()) == "**bold** page"
 
-    def test_alias_converted_to_link(self) -> None:
-        """Test that a page-link alias becomes a Pandoc Markdown inline link."""
-        assert to_pandoc_md("[display]([[Page Name]])", _empty_tree()) == "[display](Page Name)"
+    def test_alias_reduced_to_display_text(self) -> None:
+        """Test that a page-link alias renders as its display text, with no link left behind."""
+        assert to_pandoc_md("[display]([[Page Name]])", _empty_tree()) == "display"
+
+    def test_alias_to_resolvable_page_still_display_text(self) -> None:
+        """An alias whose target page is in the tree is still reduced to display text, never a vertex link."""
+        assert to_pandoc_md("[my page]([[My Page]])", _page_tree("My Page", "pageuid01")) == "my page"
 
     def test_highlight_converted_to_span(self) -> None:
         """Test that a Roam highlight becomes a Pandoc bracketed span."""
@@ -513,9 +525,9 @@ class TestToPandocMd:
 
     def test_alias_and_highlight_combined(self) -> None:
         """Test that alias and highlight conversions compose: highlight inside display text becomes a span."""
-        # convert_page_link runs before convert_highlights, so the [[ produced by
-        # [bright]{.mark} inside the link display text is never treated as a page-link delimiter.
-        assert to_pandoc_md("[^^bright^^]([[Page]])", _empty_tree()) == "[[bright]{.mark}](Page)"
+        # The alias is reduced to its display text first; the highlight inside that text is
+        # then converted by the later highlight pass exactly as it would be outside an alias.
+        assert to_pandoc_md("[^^bright^^]([[Page]])", _empty_tree()) == "[bright]{.mark}"
 
     def test_non_breaking_spaces_normalized(self) -> None:
         """Non-ASCII space separators (e.g. no-break spaces) are folded to ordinary spaces."""
