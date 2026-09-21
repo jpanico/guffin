@@ -48,7 +48,7 @@
   attribution-font: "libertinus serif",
   // The quotation's size as a ratio of the ambient body size (like the hN-size keys) and its
   // weight.  The oversize opening mark scales with quote-size, so the two stay in proportion.
-  quote-size: 1.5,
+  quote-size: 1.2,
   quote-weight: "bold",
   fontsize: 11pt,
   leading: 0.65em,

@@ -337,7 +337,7 @@
 }
 
 // Pull quote (Roam [[>]] [[!QUOTE]]): a pull-quote treatment — the quotation reads at
-// cfg.quote-size (default 1.5x body size) and cfg.quote-weight (default bold) in the quote-font,
+// cfg.quote-size (default 1.2x body size) and cfg.quote-weight (default bold) in the quote-font,
 // led by an oversize opening quotation mark, and the attribution
 // line(s) are set italic in the attribution-font.  Deliberately carries NO left bar (unlike a plain
 // block quote): the oversize mark and large type carry the "quote" signal on their own, which also
@@ -346,7 +346,7 @@
 // text lines are left-justified in a column that begins past the mark.  typst_quote.lua marshals
 // the quotation and attribution content into a call to this helper.
 #let fancy-quote(quote: [], attribution: none) = context {
-  // The opening mark: 2.4x the quotation text (3.6x body at the default quote-size of 1.5), always
+  // The opening mark: 2.4x the quotation text (2.88x body at the default quote-size of 1.2), always
   // bold whatever the quote-weight.  Measured so the text column can be indented by exactly the
   // mark's width plus one space, giving the hanging-mark layout.
   let mark = text(font: cfg.quote-font, weight: "bold", size: 2.4 * cfg.quote-size * 1em)[\u{201C}]
