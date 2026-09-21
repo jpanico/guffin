@@ -46,6 +46,10 @@
   // font).  Libertinus Serif ships embedded with Typst, so it needs no system font.
   quote-font: "libertinus serif",
   attribution-font: "libertinus serif",
+  // The quotation's size as a ratio of the ambient body size (like the hN-size keys) and its
+  // weight.  The oversize opening mark scales with quote-size, so the two stay in proportion.
+  quote-size: 1.5,
+  quote-weight: "bold",
   fontsize: 11pt,
   leading: 0.65em,
   spacing: 1.2em,
