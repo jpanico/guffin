@@ -100,7 +100,7 @@ _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 # Lua-filter filenames, resolved against the bundled typst_resources directory at render time.
 _TYPST_BULLET_FILTER: Final[str] = "typst_bullet.lua"
 _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
-_TYPST_CODE_SOURCE_FILTER: Final[str] = "typst_code_source.lua"
+_TYPST_CAPTION_FILTER: Final[str] = "typst_caption.lua"
 _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
 _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 _TYPST_PAGE_BREAK_FILTER: Final[str] = "typst_page_break.lua"
@@ -160,7 +160,7 @@ def _typst_filter_args(bundled_dir: Path) -> list[str]:
         f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_TODO_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
-        f"--lua-filter={bundled_dir / _TYPST_CODE_SOURCE_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_CAPTION_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_BULLET_FILTER}",
     ]

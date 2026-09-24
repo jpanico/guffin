@@ -583,7 +583,7 @@ class TestVertexTreeToPandocCodeSource:
         assert isinstance(blocks[0], pf.CodeBlock)
         attribution = blocks[1]
         assert isinstance(attribution, pf.Div)
-        assert attribution.classes == ["code-source"]
+        assert attribution.classes == ["code-source", "caption"]
         paragraph = attribution.content[0]
         assert isinstance(paragraph, pf.Para)
         emphasis = paragraph.content[0]
@@ -600,6 +600,108 @@ class TestVertexTreeToPandocCodeSource:
         blocks = self._doc_blocks(None)
         assert isinstance(blocks[0], pf.CodeBlock)
         assert not any(isinstance(b, pf.Div) for b in blocks)
+
+
+class TestVertexTreeToPandocCaption:
+    """Tests for vertex_tree_to_pandoc() — an image's or code block's children render as its caption Div."""
+
+    _SOURCE: Final[CodeSource] = CodeSource(
+        url="https://github.com/psf/requests/blob/main/src/requests/api.py#L14-L60",
+        commit_sha="0d9ca427f7d7dbe92694284d4a6249178255036e",
+        fetched_date="2026-07-17",
+    )
+
+    @staticmethod
+    def _image(children: list[str] | None) -> ImageVertex:
+        return ImageVertex(
+            uid="img00001a",
+            storage=asset_storage(_IMAGE_URL),
+            alt_text="A flower",
+            media_type=MediaType.JPEG,
+            scaled_image_size=ImageSize(),
+            children=children,
+        )
+
+    def test_code_block_children_become_caption_div(self) -> None:
+        """A code block's children follow the CodeBlock as flowing paragraphs in a caption Div."""
+        page = PageVertex(uid="page00001", title="P", children=["code00001"])
+        code = CodeBlockVertex(uid="code00001", code="print(1)", language="python", children=["txt00001a"])
+        text = TextVertex(uid="txt00001a", text="a Program")
+        tree = VertexTree(tree_vertices=[page, code, text])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(doc.content)
+        assert len(blocks) == 2
+        assert isinstance(blocks[0], pf.CodeBlock)
+        caption = blocks[1]
+        assert isinstance(caption, pf.Div)
+        assert caption.classes == ["caption"]
+        assert len(caption.content) == 1
+        assert isinstance(caption.content[0], pf.Para)
+        assert pf.stringify(caption).strip() == "a Program"
+
+    def test_caption_precedes_source_attribution(self) -> None:
+        """A sourced listing's caption sits directly below the code, ahead of the attribution Div."""
+        page = PageVertex(uid="page00001", title="P", children=["code00001"])
+        code = CodeBlockVertex(
+            uid="code00001", code="print(1)", language="python", code_source=self._SOURCE, children=["txt00001a"]
+        )
+        text = TextVertex(uid="txt00001a", text="a Program")
+        tree = VertexTree(tree_vertices=[page, code, text])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        blocks = list(doc.content)
+        assert [type(b) for b in blocks] == [pf.CodeBlock, pf.Div, pf.Div]
+        assert blocks[1].classes == ["caption"]
+        assert blocks[2].classes == ["code-source", "caption"]
+
+    def test_image_children_become_caption_div(self, tmp_path: Path) -> None:
+        """An image's children follow the image paragraph in a caption Div."""
+        fake_img = tmp_path / "photo.jpg"
+        fake_img.write_bytes(b"")
+        page = PageVertex(uid="page00001", title="P", children=["img00001a"])
+        text = TextVertex(uid="txt00001a", text="Biological and artificial neurons")
+        tree = VertexTree(tree_vertices=[page, self._image(["txt00001a"]), text])
+        doc, _ = vertex_tree_to_pandoc(tree, {"img00001a": fake_img}, {})
+        blocks = list(doc.content)
+        assert len(blocks) == 2
+        assert isinstance(blocks[0], pf.Para)
+        assert isinstance(list(blocks[0].content)[0], pf.Image)
+        caption = blocks[1]
+        assert isinstance(caption, pf.Div)
+        assert caption.classes == ["caption"]
+        assert pf.stringify(caption).strip() == "Biological and artificial neurons"
+
+    def test_caption_is_flowing_even_under_bullet_layout(self) -> None:
+        """Caption children render as paragraphs, never as a list, whatever the ambient layout."""
+        page = PageVertex(uid="page00001", title="P", children=["code00001"])
+        code = CodeBlockVertex(uid="code00001", code="print(1)", language="python", children=["txt00001a", "txt00001b"])
+        first = TextVertex(uid="txt00001a", text="first line")
+        second = TextVertex(uid="txt00001b", text="second line")
+        tree = VertexTree(tree_vertices=[page, code, first, second])
+        view_map: ViewMap = {"page00001": VertexView(children_layout=ChildrenLayout.BULLET)}
+        doc, _ = vertex_tree_to_pandoc(tree, {}, view_map)
+        caption = list(doc.content)[1]
+        assert isinstance(caption, pf.Div)
+        assert [type(b) for b in caption.content] == [pf.Para, pf.Para]
+
+    def test_childless_image_and_code_block_have_no_caption(self, tmp_path: Path) -> None:
+        """Without children, neither an image nor a code block gains a caption Div."""
+        fake_img = tmp_path / "photo.jpg"
+        fake_img.write_bytes(b"")
+        page = PageVertex(uid="page00001", title="P", children=["img00001a", "code00001"])
+        code = CodeBlockVertex(uid="code00001", code="print(1)", language="python")
+        tree = VertexTree(tree_vertices=[page, self._image(None), code])
+        doc, _ = vertex_tree_to_pandoc(tree, {"img00001a": fake_img}, {})
+        assert [type(b) for b in doc.content] == [pf.Para, pf.CodeBlock]
+
+    def test_referenced_code_block_carries_no_caption(self) -> None:
+        """A standalone reference to a captioned listing renders the listing alone — a reference strips children."""
+        page = PageVertex(uid="page00001", title="P", children=["txt00001r"])
+        site = TextVertex(uid="txt00001r", text=f"[x]({vertex_link_url('code00001', VertexLinkKind.REFERENCE)})")
+        code = CodeBlockVertex(uid="code00001", code="print(1)", language="python", children=["txt00001a"])
+        text = TextVertex(uid="txt00001a", text="a Program")
+        tree = VertexTree(tree_vertices=[page, site], ref_vertices=[code, text])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        assert [type(b) for b in doc.content] == [pf.CodeBlock]
 
 
 class TestVertexTreeToPandocCodeBlockLanguage:

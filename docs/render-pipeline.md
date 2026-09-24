@@ -225,6 +225,18 @@ The line holds across both rendering shapes a reference can take:
   kind-agnostic (`REFERENCE` and `EMBED` alike), scoped to images only. Any other cell
   renders as its parsed inline content.
 
+**Captions.** An `ImageVertex` or `CodeBlockVertex` has no place *inside* itself for nested
+content, so the children an author nests beneath one render as its **caption**
+(`_caption_blocks`): flowing blocks — always the `DOCUMENT` layout, whatever the ambient
+layout, since a caption is prose beneath its subject rather than an outline — wrapped in a
+`caption`-classed `Div` placed directly below the image or listing. A sourced listing's
+caption precedes its `code-source` attribution, which is itself a caption Div (it carries
+both classes), so the two share one per-format treatment: `typst_caption.lua` (a small,
+muted raw block pulled up toward its subject), `gfm_caption.lua` (unwrapped to its bare
+paragraphs), and `epub.css` (`div.caption`). The block-level reference path above strips a
+target's children, so a *referenced* image or listing carries no caption — consistent with a
+reference never transcluding descendants.
+
 The same line scopes semantics: `transcluded_vertices()` (the render-visible set that
 `assignments_for`, `has_parts`, and the element-number validators walk) includes
 embed-transcluded content and excludes merely-referenced vertices — consistent with what each

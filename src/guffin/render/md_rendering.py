@@ -28,7 +28,7 @@ _GFM_RESOURCES_PACKAGE: Final[str] = "guffin.render.gfm_resources"
 _GFM_BRACKET_FILTER: Final[str] = "gfm_bracket.lua"
 _GFM_BULLET_FILTER: Final[str] = "gfm_bullet.lua"
 _GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
-_GFM_CODE_SOURCE_FILTER: Final[str] = "gfm_code_source.lua"
+_GFM_CAPTION_FILTER: Final[str] = "gfm_caption.lua"
 _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
 _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
@@ -285,7 +285,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_CODE_SOURCE_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
@@ -332,7 +332,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_CODE_SOURCE_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",

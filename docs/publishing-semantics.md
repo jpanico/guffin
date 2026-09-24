@@ -199,10 +199,12 @@ ToC faithful to the matter division the tag declares.
   GitHub blob URL, snapshot commit SHA, fetch date) lands on `CodeBlockVertex.code_source` at
   transcription. The shared Doc build follows a sourced code block with a `code-source`-classed
   `Div` — one emphasized line linking the `github.com` blob page **pinned at the recorded SHA**
-  (immutable even after the branch moves) plus the abbreviated SHA and fetch date — and each
-  format styles the class itself, on the fancy-quote pattern: `typst_code_source.lua` (a
-  caption-styled raw block), `gfm_code_source.lua` (unwraps to the bare italic line), and
-  `epub.css` (`div.code-source`, no filter). Whether the attribution appears at all is decided
+  (immutable even after the branch moves) plus the abbreviated SHA and fetch date. The Div is a
+  caption (it also carries the `caption` class, like the caption an image's or listing's own
+  nested content becomes; see `docs/render-pipeline.md`, *Captions*), and each format styles
+  that class itself, on the fancy-quote pattern: `typst_caption.lua` (a caption-styled raw
+  block), `gfm_caption.lua` (unwraps to the bare italic line), and `epub.css` (`div.caption`,
+  no filter). Whether the attribution appears at all is decided
   **upstream of the Doc build**: attributions are authoring metadata, so every renderer clears
   the field via `model/vertex_tree.drop_code_sources` unless `RenderOptions.emit_code_sources`
   is set (the `--code-sources` flag) — the same drop-by-default shape as element numbers.

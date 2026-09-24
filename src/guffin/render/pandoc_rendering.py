@@ -44,7 +44,10 @@ Rendering rules:
   :class:`~panflute.CodeBlock`.
 - :class:`~guffin.vertex.ImageVertex` — embedded as a :class:`~panflute.Image`
   element pointing at the local path from *asset_files*; falls back to a
-  :class:`~panflute.Link` when *asset_files* has no entry for the vertex.
+  :class:`~panflute.Link` when *asset_files* has no entry for the vertex.  The
+  vertex's children, when it has any, follow the image as its **caption**: rendered
+  as flowing blocks inside a ``caption`` :class:`~panflute.Div` (see
+  :func:`_caption_blocks`).
 - :class:`~guffin.vertex.PdfVertex` — rendered as a :class:`~panflute.Link`
   labelled with the PDF's filename, pointing at the local path from
   *asset_files* when present, else at the remote Firebase Storage source URL.
@@ -56,7 +59,9 @@ Rendering rules:
 - :class:`~guffin.vertex.CodeBlockVertex` — rendered as a
   :class:`~panflute.CodeBlock` whose class is the vertex's language's
   :func:`~guffin.render.code_language_token.code_language_token`, so Pandoc applies
-  language-specific syntax highlighting.
+  language-specific syntax highlighting.  As for an image, the vertex's children follow
+  the listing as its ``caption`` :class:`~panflute.Div`; a source attribution, when the
+  vertex carries one, follows the caption.
 
 Public symbols:
 
@@ -95,7 +100,7 @@ alias — live in :mod:`guffin.render.pandoc_ast`.
 
 import html
 import logging
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Final
 
@@ -1311,8 +1316,53 @@ def _callout_vertex_to_blocks(
     return [pf.Div(*title_blocks, *body_blocks, classes=classes)]
 
 
+_CAPTION_CLASS: Final[str] = "caption"
+"""The class tagging a caption :class:`~panflute.Div` — the block-level annotation directly below the
+image or code listing it captions, which each output format styles as a caption."""
+
 _CODE_SOURCE_CLASS: Final[str] = "code-source"
-"""The class tagging the source-attribution :class:`~panflute.Div` below a sourced code block."""
+"""The class identifying the source-attribution :class:`~panflute.Div` below a sourced code block (a
+caption Div that also carries :data:`_CAPTION_CLASS`)."""
+
+
+def _caption_blocks(
+    vertex: ImageVertex | CodeBlockVertex,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    depth: int,
+) -> list[pf.Block]:
+    """Render a captionable vertex's children as its caption.
+
+    An image or code listing has no place *inside* itself for nested content, so the children
+    an author nests beneath one read as its caption.  They are rendered via
+    :func:`build_child_blocks` as flowing blocks — always the ``DOCUMENT`` layout, whatever
+    the ambient layout, since a caption is prose beneath its subject, not an outline — and
+    wrapped in a single :class:`~panflute.Div` carrying :data:`_CAPTION_CLASS`.  Beyond that
+    class the Div carries no styling of its own — each output format styles ``caption`` itself
+    (Typst ``typst_caption.lua``, GFM ``gfm_caption.lua``, or EPUB CSS on ``div.caption``).
+    The vertex's own attribute assignments are not part of the caption.
+
+    Args:
+        vertex: The image or code block vertex whose children form the caption.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID (image or PDF) to local
+            asset file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        depth: Tree depth of *vertex* (1 = direct page child).
+
+    Returns:
+        A one-element list holding the ``caption`` :class:`~panflute.Div`, or an empty list
+        when the vertex has no children.
+    """
+    if not vertex.children:
+        return []
+    caption_content: Final[list[pf.Block]] = build_child_blocks(
+        vertex.children, vertex_tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth + 1
+    )
+    return [pf.Div(*caption_content, classes=[_CAPTION_CLASS])]
 
 
 def _code_source_block(source: CodeSource) -> pf.Div:
@@ -1322,10 +1372,10 @@ def _code_source_block(source: CodeSource) -> pf.Div:
     ``owner/repo/path`` (with the line range when the reference carries one), and the
     abbreviated commit SHA plus fetch date.  The link targets the ``github.com`` blob page
     **pinned at the recorded commit SHA**, so it shows the referenced version even after a
-    branch ref moves on.  Beyond the base emphasis the Div carries no styling of its own —
-    each output format styles the ``code-source`` class itself (Typst
-    ``typst_code_source.lua``, GFM ``gfm_code_source.lua``, or EPUB CSS on
-    ``div.code-source``).
+    branch ref moves on.  The Div is a caption — it carries :data:`_CAPTION_CLASS` beside the
+    identifying :data:`_CODE_SOURCE_CLASS` — so beyond the base emphasis it carries no styling
+    of its own: each output format styles the ``caption`` class itself (Typst
+    ``typst_caption.lua``, GFM ``gfm_caption.lua``, or EPUB CSS on ``div.caption``).
 
     Args:
         source: The source reference to render.
@@ -1361,11 +1411,11 @@ def _code_source_block(source: CodeSource) -> pf.Div:
                 pf.Str(source.fetched_date.isoformat()),
             )
         ),
-        classes=[_CODE_SOURCE_CLASS],
+        classes=[_CODE_SOURCE_CLASS, _CAPTION_CLASS],
     )
 
 
-def _code_block_vertex_to_blocks(vertex: CodeBlockVertex) -> list[pf.Block]:
+def _code_block_vertex_to_blocks(vertex: CodeBlockVertex, caption: Sequence[pf.Block] = ()) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.CodeBlockVertex` to a Pandoc :class:`~panflute.CodeBlock`.
 
     The vertex's :attr:`~guffin.vertex.CodeBlockVertex.language` is set as the
@@ -1373,23 +1423,25 @@ def _code_block_vertex_to_blocks(vertex: CodeBlockVertex) -> list[pf.Block]:
     :func:`~guffin.render.code_language_token.code_language_token`, since a
     space-bearing canonical id would corrupt a fenced info string — which Pandoc uses
     to apply language-specific syntax highlighting in the output.  The code content is
-    emitted verbatim.  A vertex carrying a
-    :attr:`~guffin.vertex.CodeBlockVertex.code_source` is followed by its source-attribution
+    emitted verbatim, followed by *caption* (the listing's already-rendered caption blocks,
+    see :func:`_caption_blocks`), then — for a vertex carrying a
+    :attr:`~guffin.vertex.CodeBlockVertex.code_source` — its source-attribution
     ``code-source`` :class:`~panflute.Div` (see :func:`_code_source_block`); rendering the
     attribution is therefore controlled upstream by clearing the field
     (:func:`~guffin.model.vertex_tree.drop_code_sources`), not by an option here.
 
     Args:
         vertex: The code block vertex to render.
+        caption: The listing's caption blocks, placed directly below it; empty for none.
 
     Returns:
-        The :class:`~panflute.CodeBlock`, followed by the attribution
+        The :class:`~panflute.CodeBlock`, followed by *caption*, followed by the attribution
         :class:`~panflute.Div` when the vertex carries a source reference.
     """
     code_block: Final[pf.CodeBlock] = pf.CodeBlock(vertex.code, classes=[code_language_token(vertex.language)])
     if vertex.code_source is None:
-        return [code_block]
-    return [code_block, _code_source_block(vertex.code_source)]
+        return [code_block, *caption]
+    return [code_block, *caption, _code_source_block(vertex.code_source)]
 
 
 def _quote_block_vertex_to_blocks(
@@ -1641,7 +1693,10 @@ def _vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
         case ImageVertex():
-            return _image_vertex_to_blocks(vertex, asset_files, inline_map)
+            return [
+                *_image_vertex_to_blocks(vertex, asset_files, inline_map),
+                *_caption_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth),
+            ]
         case PdfVertex():
             return _pdf_vertex_to_blocks(vertex, asset_files, _resolved_pdf_placement(vertex))
         case AssetVertex():
@@ -1651,7 +1706,9 @@ def _vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
         case CodeBlockVertex():
-            return _code_block_vertex_to_blocks(vertex)
+            return _code_block_vertex_to_blocks(
+                vertex, _caption_blocks(vertex, vertex_tree, asset_files, inline_map, view_map, depth)
+            )
         case QuoteBlockVertex():
             return _quote_block_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth

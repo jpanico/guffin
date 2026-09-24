@@ -39,9 +39,10 @@ Notes on GFM-pipeline constructs that are handled differently here:
   paragraph), and the italic body-size attribution. It carries **no** left bar (unlike the plain block
   quote), so the mark and large type carry the signal. Its serif `font-family` (shared with the callout
   body) is the customization point.
-- **code-source attribution** — likewise **no filter**: the `<div class="code-source">` below a sourced
-  code listing (the emphasized line naming the GitHub file it was snapshotted from) survives to XHTML,
-  and `epub.css` styles it as a caption — small, muted, pulled up toward the listing.
+- **captions** — likewise **no filter**: the `<div class="caption">` below an image or code listing
+  (the block's own nested content, or — also classed `code-source` — the emphasized line naming the
+  GitHub file a sourced listing was snapshotted from) survives to XHTML, and `epub.css` styles it as
+  a caption — small, muted, pulled up toward the block it annotates.
 - **authored page break** — likewise **no filter**: a heading tagged `page-break:: before` carries a
   `page-break-before` class that Pandoc propagates to the section wrapper, and `epub.css` applies
   `break-before: page` (plus the legacy `page-break-before: always`). Best-effort by nature —
