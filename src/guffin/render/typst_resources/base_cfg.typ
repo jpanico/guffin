@@ -125,6 +125,11 @@
   table-stroke-horizontal: 1pt + black,
   table-stroke-vertical: 1pt + black,
   table-inset: 6pt,
+  // Whether one row may be split across a page boundary.  Typst breaks any auto-height row by
+  // default, leaving a row's first lines on one page and the rest on the next; false moves the
+  // whole row to the next page instead (the table itself still breaks between rows).  A single
+  // row taller than a page would then overflow rather than split.
+  table-rows-breakable: false,
   // Other
   listings: false,
   equation-numbering: none,

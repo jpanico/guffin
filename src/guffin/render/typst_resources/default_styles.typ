@@ -313,6 +313,10 @@
   fill: table-fill,
 )
 
+// Row splitting across pages is governed per cell in Typst (a cell in an auto-height row is
+// breakable unless told otherwise), so the table-level policy is applied to every cell.
+#set table.cell(breakable: cfg.table-rows-breakable)
+
 #show table: set par(justify: false, linebreaks: "optimized")
 #show table: set text(hyphenate: true, costs: (hyphenation: 100000%))
 
