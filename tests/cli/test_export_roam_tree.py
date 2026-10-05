@@ -4,6 +4,7 @@ import importlib.metadata
 import logging
 import os
 import pathlib
+import zipfile
 from typing import Final
 from unittest.mock import MagicMock, patch
 
@@ -20,6 +21,7 @@ from conftest import (
     YamlFixtureLoader,
     article1_node_tree,
 )
+from pypdf import PdfReader
 from typer.testing import CliRunner, Result
 
 from guffin.cli.export_roam_tree import app
@@ -28,6 +30,7 @@ from guffin.common.validation import ValidationError, ValidationResult
 from guffin.model.code_source_diagnosis import CodeSourceDiagnosis, CodeSourceFinding
 from guffin.model.publishing_semantics import PdfRenderPlacement
 from guffin.model.render_bundle import RenderBundle
+from guffin.render.pandoc_rendering import heading_anchor
 from guffin.render.project import BookProfile, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import Response as LocalApiResponse
@@ -357,6 +360,113 @@ class TestExportRoamTreeEpubLive:
         actual: Final[pathlib.Path] = tmp_path / "The_Picture_of_Dorian_Gray.book.epub"
         assert actual.exists()
         assert actual.read_bytes() == baseline.read_bytes()
+
+
+def _invoke_live_export(args: list[str]) -> Result:
+    """Run export-roam-tree with *args*, detaching the root logging handlers for the invocation.
+
+    configure_logging() installs a StreamHandler on the root logger at import time; CliRunner closes
+    its captured stream after invoke, leaving a dangling handler that raises ValueError on the next
+    write.
+    """
+    runner: Final[CliRunner] = CliRunner()
+    saved_handlers = logging.root.handlers[:]
+    logging.root.handlers.clear()
+    try:
+        return runner.invoke(app, args)
+    finally:
+        logging.root.handlers = saved_handlers
+
+
+_TA3_INTERNAL_HEADING_UIDS: Final[tuple[str, ...]] = ("7XdTiY_ZF", "LfaVt18Iw", "ys3bY2GZa")
+"""[[Test Article]] 3's in-page headings that its Internal (in-page) links section references.
+
+``Feature Content``, ``Internal (in-page) links:``, and ``This header features a [[Test Article]] page
+link`` — the last a heading whose text is itself a page link.
+"""
+
+_TA3_PAGE_LINK_HEADING_UID: Final[str] = "ys3bY2GZa"
+"""The heading whose text is a page link, referenced inline by ``inline PAGE-LINK HEADER ref``."""
+
+_TA1_HEADING_UID: Final[str] = "0EgPyHSZi"
+"""Test Article 1's ``Section 1`` heading — referenced from Test Article 3 but outside its export."""
+
+
+@pytest.mark.live
+@pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
+class TestExportRoamTreeHeadingLinksLive:
+    """Live export of [[Test Article]] 3: references to its headings become working internal links.
+
+    Asserts the link structure itself rather than a byte baseline, so unrelated changes to the page's
+    rendering do not disturb it.
+    """
+
+    @pytest.fixture(scope="class")
+    def pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
+        """[[Test Article]] 3 exported as an article PDF."""
+        out_dir: Final[pathlib.Path] = tmp_path_factory.mktemp("ta3-pdf")
+        result: Final[Result] = _invoke_live_export(
+            ["[[Test Article]] 3", "--output-dir", str(out_dir), "--format", "pdf"]
+        )
+        assert result.exit_code == 0, result.output
+        return PdfReader(out_dir / "Test_Article_3.article.pdf")
+
+    @pytest.fixture(scope="class")
+    def epub_documents(self, tmp_path_factory: pytest.TempPathFactory) -> dict[str, str]:
+        """[[Test Article]] 3 exported as an article EPUB, as its XHTML documents keyed by file name."""
+        out_dir: Final[pathlib.Path] = tmp_path_factory.mktemp("ta3-epub")
+        result: Final[Result] = _invoke_live_export(
+            ["[[Test Article]] 3", "--output-dir", str(out_dir), "--format", "epub"]
+        )
+        assert result.exit_code == 0, result.output
+        with zipfile.ZipFile(out_dir / "Test_Article_3.article.epub") as archive:
+            return {
+                pathlib.Path(name).name: archive.read(name).decode("utf-8")
+                for name in archive.namelist()
+                if name.endswith(".xhtml")
+            }
+
+    @staticmethod
+    def _pdf_link_destinations(reader: PdfReader) -> list[str]:
+        """Return the named destination of every link annotation in *reader*, in page order."""
+        return [
+            str(annot.get_object().get("/Dest"))
+            for page in reader.pages
+            for annot in page.get("/Annots") or []
+            if annot.get_object().get("/Dest") is not None
+        ]
+
+    def test_pdf_links_each_internal_heading_reference(self, pdf: PdfReader) -> None:
+        """Every referenced in-page heading is a named destination with a link pointing to it."""
+        destinations: Final[list[str]] = self._pdf_link_destinations(pdf)
+        for uid in _TA3_INTERNAL_HEADING_UIDS:
+            assert heading_anchor(uid) in pdf.named_destinations, uid
+            assert heading_anchor(uid) in destinations, uid
+
+    def test_pdf_page_link_heading_destination_lands_on_the_heading(self, pdf: PdfReader) -> None:
+        """The page-link heading's destination is the page that sets the heading."""
+        destination = pdf.named_destinations[heading_anchor(_TA3_PAGE_LINK_HEADING_UID)]
+        page_text: Final[str] = pdf.pages[pdf.get_destination_page_number(destination)].extract_text() or ""
+        assert "This header features a Test Article page link" in page_text
+
+    def test_pdf_out_of_export_heading_reference_is_not_linked(self, pdf: PdfReader) -> None:
+        """A reference to a heading outside the export (Test Article 1) stays plain text."""
+        assert heading_anchor(_TA1_HEADING_UID) not in pdf.named_destinations
+        assert heading_anchor(_TA1_HEADING_UID) not in self._pdf_link_destinations(pdf)
+
+    def test_epub_links_each_internal_heading_reference(self, epub_documents: dict[str, str]) -> None:
+        """Every referenced in-page heading is linked from the content documents to the file that holds it."""
+        for uid in _TA3_INTERNAL_HEADING_UIDS:
+            anchor: str = heading_anchor(uid)
+            holder: str = next(name for name, xhtml in epub_documents.items() if f'id="{anchor}"' in xhtml)
+            assert any(
+                f'href="{holder}#{anchor}"' in xhtml or (name == holder and f'href="#{anchor}"' in xhtml)
+                for name, xhtml in epub_documents.items()
+            ), uid
+
+    def test_epub_out_of_export_heading_reference_is_not_linked(self, epub_documents: dict[str, str]) -> None:
+        """A reference to a heading outside the export (Test Article 1) stays plain text."""
+        assert all(heading_anchor(_TA1_HEADING_UID) not in xhtml for xhtml in epub_documents.values())
 
 
 class TestExportRoamTreeStrictSemantics:

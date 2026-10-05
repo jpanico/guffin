@@ -186,6 +186,7 @@
     - id: 15247
     - id: 15793
     - id: 15794
+    - id: 19389
     id: 11716
     uid: 7XdTiY_ZF
     parents:
@@ -193,18 +194,6 @@
     order: 1
     page:
       id: 4225
-- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
-    id: 4224
-    uid: 7MoH-wIQh
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
 - - string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
     children:
     - id: 11772
@@ -261,9 +250,34 @@
       id: 4225
     refs:
     - id: 3328
-- - children:
-    - id: 4224
+- - attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    children:
+    - id: 18202
+    - id: 18204
     id: 4223
+    lookup:
+    - id: 261
+    - id: 4223
+    - id: 6535
+    - id: 18204
     uid: LBFKibPIj
     title: Test Article
 - - heading: 3
@@ -285,7 +299,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 16
+    order: 17
     page:
       id: 4225
     refs:
@@ -314,6 +328,9 @@
     order: 0
     page:
       id: 4225
+- - id: 6535
+    uid: 9ZtPB2yY3
+    title: Publishing
 - - string: '[[>]] This is a Roam standard multi-line Block Quote
 
       this is the __2nd line__
@@ -355,6 +372,18 @@
       id: 4225
     refs:
     - id: 11758
+- - string: '#c:FUCHSIA **inline PAGE-LINK HEADER ref ⟶**  ((ys3bY2GZa))'
+    id: 19390
+    uid: uVAasvxug
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 9
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 19389
 - - string: Block 2.2 (children_layout=bullet)
     children:
     - id: 11966
@@ -466,7 +495,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 10
+    order: 11
     page:
       id: 4225
     refs:
@@ -751,7 +780,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 30
+    order: 31
     page:
       id: 4225
     refs:
@@ -860,6 +889,8 @@
       -- `block quotes` (Markdown and Roam native, single- and multi-line) and Roam
       `pull quotes`
 
+      -- a heading whose text is a page link
+
       - `Internal (in-page) links:` section: inline refs to the styled/colored targets,
       plus standalone refs to page / block / parent block / header and to every block-level
       target above, plus a block embed
@@ -951,7 +982,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 22
+    order: 23
     page:
       id: 4225
     refs:
@@ -1117,7 +1148,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 28
+    order: 29
     page:
       id: 4225
     refs:
@@ -1143,7 +1174,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 11
+    order: 12
     page:
       id: 4225
     refs:
@@ -1190,7 +1221,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 13
+    order: 14
     page:
       id: 4225
     refs:
@@ -1226,7 +1257,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 29
+    order: 30
     page:
       id: 4225
     refs:
@@ -1323,7 +1354,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 32
+    order: 33
     page:
       id: 4225
     refs:
@@ -1627,7 +1658,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 19
+    order: 20
     page:
       id: 4225
     refs:
@@ -1668,6 +1699,18 @@
       id: 11137
     refs:
     - id: 5450
+- - heading: 3
+    string: This header features a [[Test Article]] page link
+    id: 19389
+    uid: ys3bY2GZa
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 23
+    page:
+      id: 4225
+    refs:
+    - id: 4223
 - - string: '#c:FUCHSIA **standalone PAGE ref ↓** '
     children:
     - id: 11702
@@ -1676,7 +1719,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 17
+    order: 18
     page:
       id: 4225
     refs:
@@ -1773,7 +1816,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 14
+    order: 15
     page:
       id: 4225
     refs:
@@ -2027,7 +2070,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 18
+    order: 19
     page:
       id: 4225
     refs:
@@ -2093,6 +2136,7 @@
     - id: 15796
     - id: 15798
     - id: 15799
+    - id: 19390
     id: 4226
     uid: LfaVt18Iw
     parents:
@@ -2349,7 +2393,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 25
+    order: 26
     page:
       id: 4225
     refs:
@@ -2503,7 +2547,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 27
+    order: 28
     page:
       id: 4225
     refs:
@@ -2537,6 +2581,9 @@
     order: 0
     page:
       id: 12904
+- - id: 261
+    uid: RXwAqq0_T
+    title: tags
 - - attrs:
     - - source:
         - uid
@@ -2626,7 +2673,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 9
+    order: 10
     page:
       id: 4225
     refs:
@@ -2740,7 +2787,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 15
+    order: 16
     page:
       id: 4225
     refs:
@@ -2759,6 +2806,17 @@
     order: 0
     page:
       id: 11137
+- - string: 'tags:: #Publishing'
+    id: 18204
+    uid: JSrSVApJ_
+    parents:
+    - id: 4223
+    order: 1
+    page:
+      id: 4223
+    refs:
+    - id: 261
+    - id: 6535
 - - string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
     children:
     - id: 11765
@@ -2844,7 +2902,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 23
+    order: 24
     page:
       id: 4225
     refs:
@@ -2857,7 +2915,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 21
+    order: 22
     page:
       id: 4225
     refs:
@@ -2931,7 +2989,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 12
+    order: 13
     page:
       id: 4225
     refs:
@@ -3363,7 +3421,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 31
+    order: 32
     page:
       id: 4225
     refs:
@@ -3377,7 +3435,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 26
+    order: 27
     page:
       id: 4225
     refs:
@@ -3402,7 +3460,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 24
+    order: 25
     page:
       id: 4225
     refs:
@@ -3486,7 +3544,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 20
+    order: 21
     page:
       id: 4225
     refs:
@@ -3516,14 +3574,26 @@
       id: 4225
     refs:
     - id: 5844
-- - order: 1
-    page:
-      id: 3327
+- - string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
+    id: 15802
+    uid: Wlzl_dhg_
     parents:
     - id: 3327
     - id: 3329
     - id: 3332
     - id: 15800
-    string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
-    uid: Wlzl_dhg_
-    id: 15802
+    order: 1
+    page:
+      id: 3327
+- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
+    id: 18202
+    uid: lXi4SgSvz
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462

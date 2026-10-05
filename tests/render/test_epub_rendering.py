@@ -36,6 +36,7 @@ from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
 from guffin.render.epub_rendering import render
+from guffin.render.pandoc_rendering import heading_anchor
 from guffin.render.project import ArticleProfile, BookProfile, ProjectProfile
 from guffin.render.render_options import EpubRenderOptions
 from guffin.roam.code_language import CodeLanguage
@@ -641,15 +642,15 @@ class TestBodyDivisionRestoration:
 
     def test_element_type_overrides_pandoc_default(self, tagged_book_epub: Path) -> None:
         """An introduction (CMOS front matter) becomes frontmatter, not Pandoc's default bodymatter."""
-        assert _body_division_by_section_id(tagged_book_epub)["front-intro"] == "frontmatter"
+        assert _body_division_by_section_id(tagged_book_epub)[heading_anchor("head0001a")] == "frontmatter"
 
     def test_bespoke_matter_tag_sets_division(self, tagged_book_epub: Path) -> None:
         """A bespoke matter:: back-matter section (no epub:type) becomes backmatter."""
-        assert _body_division_by_section_id(tagged_book_epub)["back-notes"] == "backmatter"
+        assert _body_division_by_section_id(tagged_book_epub)[heading_anchor("head0002b")] == "backmatter"
 
     def test_body_matter_stays_bodymatter(self, tagged_book_epub: Path) -> None:
         """A body-matter chapter keeps the bodymatter division."""
-        assert _body_division_by_section_id(tagged_book_epub)["body-chapter"] == "bodymatter"
+        assert _body_division_by_section_id(tagged_book_epub)[heading_anchor("head0003c")] == "bodymatter"
 
     def test_scaffold_attribute_is_stripped(self, tagged_book_epub: Path) -> None:
         """The data-guffin-matter scaffold never reaches the packaged e-book."""
@@ -708,3 +709,28 @@ class TestCoverImage:
     def test_no_cover_no_manifest_entry(self, article5_book_epub: Path) -> None:
         """A coverless book manifests no cover-image entry."""
         assert 'properties="cover-image"' not in _opf(article5_book_epub)
+
+
+class TestHeadingLinkEpub:
+    """A reference to a heading in another chapter links into that chapter's content document."""
+
+    def test_link_targets_the_headings_content_document(self, tmp_path: Path) -> None:
+        """Pandoc's chapter split rewrites the internal link to the file holding the heading."""
+        ref_url = vertex_link_url("head0002b", VertexLinkKind.REFERENCE)
+        tree = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["head0001a", "head0002b"]),
+                HeadingVertex(uid="head0001a", text="First", heading_level=1, children=["prose0001"]),
+                TextVertex(uid="prose0001", text=f"As [Second]({ref_url}) explains.", refs=["head0002b"]),
+                HeadingVertex(uid="head0002b", text="Second", heading_level=1, children=["prose0002"]),
+                TextVertex(uid="prose0002", text="Target body."),
+            ]
+        )
+        epub = _render_epub(tmp_path, RenderBundle(content=tree), BookProfile(), "doc")
+        anchor = heading_anchor("head0002b")
+        with zipfile.ZipFile(epub) as archive:
+            documents = {
+                name: archive.read(name).decode("utf-8") for name in archive.namelist() if name.endswith(".xhtml")
+            }
+        target_doc = next(Path(name).name for name, xhtml in documents.items() if f'id="{anchor}"' in xhtml)
+        assert any(f'href="{target_doc}#{anchor}"' in xhtml for xhtml in documents.values())

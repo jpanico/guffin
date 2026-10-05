@@ -11,7 +11,8 @@
 > – styled text runs: plain, italics, bold, strikethrough, highlight, inline-code  
 > – `color spans`: text color, highlight color, underline, box  
 > – a fenced Python `code block`, a standalone `image`, a Roam `callout`, a native `{{table}}`  
-> – `block quotes` (Markdown and Roam native, single- and multi-line) and Roam `pull quotes`
+> – `block quotes` (Markdown and Roam native, single- and multi-line) and Roam `pull quotes`  
+> – a heading whose text is a page link
 >
 > - `Internal (in-page) links:` section: inline refs to the styled/colored targets, plus standalone refs to page / block / parent block / header and to every block-level target above, plus a block embed
 > - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed, and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render: "inline"` at the reference site (the site’s tag drives the PDF format’s inline placement)
@@ -93,6 +94,8 @@ def fizz_buzz(limit: int = 100):
 - the child block contains a Roam hosted PDF Asset (upload)
   - [dummy.pdf](dummy.pdf "dummy.pdf")
 
+### This header features a Test Article page link
+
 ## Internal (in-page) links:
 
 - <span style="color: fuchsia">**inline PAGE ref ⟶**</span> Test Article 3
@@ -104,6 +107,7 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**inline INLINE-CODE ref ⟶**</span> This para features `inline-code`
 - <span style="color: fuchsia">**inline PARENT BLOCK ref ⟶**</span> Internal (in-page) links:
 - <span style="color: fuchsia">**inline HEADER ref ⟶**</span> Feature Content
+- <span style="color: fuchsia">**inline PAGE-LINK HEADER ref ⟶**</span> This header features a Test Article page link
 - <span style="color: fuchsia">**inline BOLD ORANGE ref ⟶**</span> <span style="color: orange">**This span is BOLD orange text color**</span>. This span is not.
 - <span style="color: fuchsia">**inline HIGHLIGHTED ORANGE ref ⟶**</span> <mark style="background-color: orange">This span is highlighted orange.</mark> This span is not.
 - <span style="color: fuchsia">**inline UNDERLINED ORANGE ref ⟶**</span> <span style="text-decoration: underline; color: orange">This span is underlined orange.</span>This span is not.

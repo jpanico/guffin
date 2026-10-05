@@ -29,7 +29,10 @@ Rendering rules:
   heading demoted one level (clamped at H6) so the title contains them.  Children rendered at
   depth 1 in both cases.
 - :class:`~guffin.vertex.HeadingVertex` — rendered as a
-  :class:`~panflute.Header` at the vertex's recorded heading level.
+  :class:`~panflute.Header` at the vertex's recorded heading level, identified by its
+  :func:`heading_anchor` so an internal link can target it.  A heading transcluded more than once
+  is identified at its first occurrence only, so every identifier names exactly one place in the
+  document.
 - :class:`~guffin.vertex.TextVertex` — laid out per the parent's
   :class:`~guffin.model.vertex_view.ChildrenLayout`: ``BULLET`` coalesces consecutive
   text siblings into a :class:`~panflute.BulletList`, ``NUMBERED`` into a
@@ -76,12 +79,15 @@ Public symbols:
   author-declared revision name.
 - :data:`VertexLinkResolver` — type alias for the resolver callable accepted by
   :func:`resolve_vertex_links`.
+- :func:`heading_anchor` — the identifier a heading vertex's Header carries.
+- :func:`heading_anchors` — the heading identifiers a :class:`~panflute.Doc` defines.
 - :func:`make_resolver` — build a :data:`VertexLinkResolver` that renders each
   ``x-guffin`` link as its destination vertex's own converted content.
 - :func:`resolve_vertex_links` — walk a :class:`~panflute.Doc` in place and replace
   ``x-guffin`` :class:`~panflute.Link` elements using a caller-supplied resolver.
 - :data:`PDF_PLACEMENT_ATTRIBUTE` — scaffold attribute carrying a PDF embed link's
   resolved per-occurrence ``pdf-render`` placement.
+- :data:`HEADING_LINK_CLASS` — the class on an internal link to a heading.
 - :data:`SEMANTIC_ATTRIBUTE` / :data:`MARKER_GLYPH_ATTRIBUTE` — scaffold attributes naming
   a classified list item's semantic and carrying the glyph that stands where its marker was.
 - :func:`strip_pdf_placement` — remove the :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold
@@ -163,7 +169,7 @@ from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, Se
 from guffin.render.code_language_token import code_language_token
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
-from guffin.render.pandoc_ast import InlineMap, parse_block_md, parse_inline_md, strip_links
+from guffin.render.pandoc_ast import InlineMap, detached_copy, parse_block_md, parse_inline_md, strip_links
 from guffin.render.semantic_theme import BADGE_GLYPH_BY_SOURCE_CHANNEL, BULLET_GLYPH_BY_SEMANTIC
 from guffin.roam.primitives import Uid
 
@@ -1010,9 +1016,9 @@ def _heading_vertex_to_blocks(
 ) -> list[pf.Block]:
     """Render a :class:`~guffin.vertex.HeadingVertex` to Pandoc block elements.
 
-    Produces one :class:`~panflute.Header` at the vertex's heading level,
-    followed by the recursively rendered children (laid out per the heading's
-    effective children layout).
+    Produces one :class:`~panflute.Header` at the vertex's heading level, identified by
+    :func:`heading_anchor`, followed by the recursively rendered children (laid out per the
+    heading's effective children layout).
 
     Args:
         vertex: The heading vertex to render.
@@ -1029,7 +1035,15 @@ def _heading_vertex_to_blocks(
     """
     inlines: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
     classes, attributes = _heading_semantics(vertex)
-    blocks: list[pf.Block] = [pf.Header(*inlines, level=vertex.heading_level, classes=classes, attributes=attributes)]
+    blocks: list[pf.Block] = [
+        pf.Header(
+            *inlines,
+            level=vertex.heading_level,
+            identifier=heading_anchor(vertex.uid),
+            classes=classes,
+            attributes=attributes,
+        )
+    ]
     blocks.extend(
         build_child_blocks(
             vertex.children or [],
@@ -1983,10 +1997,83 @@ def vertex_tree_to_pandoc(
     doc: Final[pf.Doc] = pf.Doc(*blocks, metadata=metadata)
     if title_in_header:
         _demote_content_headings(doc)
+    _drop_repeated_heading_anchors(doc)
     return doc, inline_map
 
 
-def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> VertexLinkResolver:
+HEADING_LINK_CLASS: Final[str] = "heading-link"
+"""The class on an internal link to a heading, so a format's styling can mark it as a link.
+
+An internal link is otherwise indistinguishable from the text around it on a printed page.
+"""
+
+_HEADING_ANCHOR_PREFIX: Final[str] = "vertex-"
+"""The prefix of every :func:`heading_anchor`, keeping heading identifiers in their own namespace."""
+
+
+@validate_call
+def heading_anchor(uid: Uid) -> str:
+    """Return the identifier the Header rendered from the heading vertex *uid* carries.
+
+    Derived from the vertex's uid rather than its text, so it is unique, stable across exports,
+    and unaffected by renaming the heading.
+
+    Args:
+        uid: The heading vertex's uid.
+
+    Returns:
+        The heading's identifier, the target of an internal ``#<identifier>`` link.
+    """
+    return f"{_HEADING_ANCHOR_PREFIX}{uid}"
+
+
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def heading_anchors(doc: pf.Doc) -> frozenset[str]:
+    """Return the :func:`heading_anchor` identifiers *doc*'s Headers define.
+
+    Args:
+        doc: The document to scan.
+
+    Returns:
+        Every heading identifier present in *doc* — the only heading identifiers an internal
+        link may target without dangling.
+    """
+    anchors: Final[set[str]] = set()
+
+    def _collect(elem: pf.Element, doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Header) and elem.identifier.startswith(_HEADING_ANCHOR_PREFIX):
+            anchors.add(elem.identifier)
+
+    doc.walk(_collect)
+    return frozenset(anchors)
+
+
+def _drop_repeated_heading_anchors(doc: pf.Doc) -> None:
+    """Clear every heading identifier in *doc* after its first occurrence, in place.
+
+    A heading transcluded more than once renders more than once; an identifier must name one
+    place, so links to the heading land on its first occurrence.
+
+    Args:
+        doc: The document to rewrite.
+    """
+    seen: Final[set[str]] = set()
+
+    def _dedupe(elem: pf.Element, doc: pf.Doc) -> None:
+        if not isinstance(elem, pf.Header) or not elem.identifier.startswith(_HEADING_ANCHOR_PREFIX):
+            return
+        if elem.identifier in seen:
+            logger.debug("heading identifier=%r repeated; keeping its first occurrence", elem.identifier)
+            elem.identifier = ""
+        else:
+            seen.add(elem.identifier)
+
+    doc.walk(_dedupe)
+
+
+def make_resolver(
+    inline_map: InlineMap, daily_note_format: DateFormat, heading_targets: frozenset[str] = frozenset()
+) -> VertexLinkResolver:
     """Build a :data:`VertexLinkResolver` that renders each link as its destination's content.
 
     The returned resolver maps an ``x-guffin`` link's destination vertex to replacement
@@ -2002,8 +2089,12 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
       *daily_note_format* is not
       :attr:`~guffin.render.date_format.DateFormat.ROAM_LONG` renders its date in that
       format instead of the title (``ROAM_LONG`` *is* the title, so it falls through unchanged).
-    - :class:`~guffin.vertex.HeadingVertex`, :class:`~guffin.vertex.TextVertex`,
-      :class:`~guffin.vertex.QuoteBlockVertex` — the destination's converted text inlines.
+    - :class:`~guffin.vertex.HeadingVertex` — the heading's converted text inlines, wrapped in an
+      internal :class:`~panflute.Link` (class :data:`HEADING_LINK_CLASS`) to the heading when its
+      :func:`heading_anchor` is among *heading_targets*; bare otherwise, since a link to an absent
+      identifier would dangle.
+    - :class:`~guffin.vertex.TextVertex`, :class:`~guffin.vertex.QuoteBlockVertex` — the
+      destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
       embed, otherwise a :class:`~panflute.Link` to the image source.
     - :class:`~guffin.vertex.PdfVertex`, :class:`~guffin.vertex.AssetVertex` — a
@@ -2017,6 +2108,9 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
         inline_map: Mapping from text string to parsed panflute inline elements, used to
             look up a destination vertex's converted content.
         daily_note_format: How a reference to a daily-note page renders its date.
+        heading_targets: The heading identifiers a reference to a heading may link to (see
+            :func:`heading_anchors`).  Empty (the default) renders every heading reference as bare
+            text, for a format with no way to identify a heading.
 
     Returns:
         A resolver callable suitable for :func:`resolve_vertex_links`.
@@ -2034,7 +2128,11 @@ def make_resolver(inline_map: InlineMap, daily_note_format: DateFormat) -> Verte
                 # plain display text so the page reference renders as its bare title.
                 return strip_links(inline_map.get(vertex.title, [pf.Str(vertex.title)]))
             case HeadingVertex():
-                return inline_map.get(vertex.text, [pf.Str(vertex.text)])
+                heading_text: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
+                anchor: Final[str] = heading_anchor(vertex.uid)
+                if anchor not in heading_targets:
+                    return heading_text
+                return [pf.Link(*detached_copy(heading_text), url=f"#{anchor}", classes=[HEADING_LINK_CLASS])]
             case TextVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TodoVertex():

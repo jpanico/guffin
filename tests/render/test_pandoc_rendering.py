@@ -50,6 +50,7 @@ from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import pandoc_to_json, parse_inline_md
 from guffin.render.pandoc_rendering import (
+    HEADING_LINK_CLASS,
     MARKER_GLYPH_ATTRIBUTE,
     PDF_PLACEMENT_ATTRIBUTE,
     PDF_PLACEMENT_UNSET,
@@ -59,6 +60,8 @@ from guffin.render.pandoc_rendering import (
     _effective_layout,
     build_child_blocks,
     colophon_summary,
+    heading_anchor,
+    heading_anchors,
     make_resolver,
     resolve_vertex_links,
     strip_pdf_placement,
@@ -2171,3 +2174,118 @@ class TestResolveVertexLinksNested:
         tree = VertexTree(tree_vertices=[page, alpha], ref_vertices=[beta])
         doc = _resolved_doc(tree)
         assert _surviving_x_guffin_urls(doc) == []
+
+
+# ---------------------------------------------------------------------------
+# TestHeadingLinks
+# ---------------------------------------------------------------------------
+
+
+def _headers(doc: pf.Doc) -> list[pf.Header]:
+    """Collect every Header anywhere in *doc*, in document order."""
+    found: list[pf.Header] = []
+
+    def _find(elem: pf.Element, doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Header):
+            found.append(elem)
+
+    doc.walk(_find)
+    return found
+
+
+def _links(doc: pf.Doc) -> list[pf.Link]:
+    """Collect every Link anywhere in *doc*, in document order."""
+    found: list[pf.Link] = []
+
+    def _find(elem: pf.Element, doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Link):
+            found.append(elem)
+
+    doc.walk(_find)
+    return found
+
+
+class TestHeadingLinks:
+    """Headings carry uid-derived identifiers, and a reference to one can link to it."""
+
+    _HEADING_UID = "head0001a"
+
+    @classmethod
+    def _ref_text(cls) -> str:
+        """Prose holding an inline ``((uid))`` reference to the heading, as transcribed."""
+        return f"As [Why It Matters]({vertex_link_url(cls._HEADING_UID, VertexLinkKind.REFERENCE)}) explains."
+
+    @classmethod
+    def _tree(cls, *, heading_in_tree: bool = True) -> VertexTree:
+        """A page whose prose references a heading, in the document or only among the refs."""
+        heading = HeadingVertex(uid=cls._HEADING_UID, text="Why It Matters", heading_level=2)
+        prose = TextVertex(uid="prose0001", text=cls._ref_text(), refs=[cls._HEADING_UID])
+        if heading_in_tree:
+            page = PageVertex(uid="page00001", title="P", children=["prose0001", cls._HEADING_UID])
+            return VertexTree(tree_vertices=[page, prose, heading])
+        page = PageVertex(uid="page00001", title="P", children=["prose0001"])
+        return VertexTree(tree_vertices=[page, prose], ref_vertices=[heading])
+
+    @staticmethod
+    def _resolved(tree: VertexTree, *, link_headings: bool) -> pf.Doc:
+        """Build *tree*'s Doc and resolve its links, offering its heading anchors when *link_headings*."""
+        doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
+        targets = heading_anchors(doc) if link_headings else frozenset[str]()
+        resolve_vertex_links(doc, tree, make_resolver(inline_map, DateFormat.ROAM_LONG, targets))
+        return doc
+
+    def test_heading_anchor_derives_from_uid(self) -> None:
+        """The identifier is the uid under a fixed prefix."""
+        assert heading_anchor("head0001a") == "vertex-head0001a"
+
+    def test_heading_carries_its_anchor(self) -> None:
+        """A rendered heading is identified by its heading_anchor."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(), {}, {})
+        assert [header.identifier for header in _headers(doc)] == [heading_anchor(self._HEADING_UID)]
+
+    def test_heading_anchors_lists_the_documents_headings(self) -> None:
+        """heading_anchors reports exactly the heading identifiers present."""
+        doc, _ = vertex_tree_to_pandoc(self._tree(), {}, {})
+        assert heading_anchors(doc) == frozenset({heading_anchor(self._HEADING_UID)})
+
+    def test_reference_to_present_heading_becomes_internal_link(self) -> None:
+        """An inline reference to a heading in the document links to the heading, showing its text."""
+        doc = self._resolved(self._tree(), link_headings=True)
+        links = _links(doc)
+        assert len(links) == 1
+        assert links[0].url == f"#{heading_anchor(self._HEADING_UID)}"
+        assert HEADING_LINK_CLASS in links[0].classes
+        assert _collect_text(links[0]) == "Why It Matters"
+        assert "As Why It Matters explains." in pf.stringify(doc)
+
+    def test_reference_to_absent_heading_stays_bare_text(self) -> None:
+        """A heading outside the document has no anchor, so its reference stays unlinked."""
+        doc = self._resolved(self._tree(heading_in_tree=False), link_headings=True)
+        assert _links(doc) == []
+        assert "As Why It Matters explains." in pf.stringify(doc)
+
+    def test_no_heading_targets_keeps_references_bare(self) -> None:
+        """Without heading targets (the default), a heading reference renders as bare text."""
+        doc = self._resolved(self._tree(), link_headings=False)
+        assert _links(doc) == []
+        assert "As Why It Matters explains." in pf.stringify(doc)
+
+    def test_standalone_reference_becomes_linked_paragraph(self) -> None:
+        """A block that is solely a heading reference renders as a paragraph linking to the heading."""
+        ref_url = vertex_link_url(self._HEADING_UID, VertexLinkKind.REFERENCE)
+        page = PageVertex(uid="page00001", title="P", children=["reftext01", self._HEADING_UID])
+        ref = TextVertex(uid="reftext01", text=f"[Why It Matters]({ref_url})", refs=[self._HEADING_UID])
+        heading = HeadingVertex(uid=self._HEADING_UID, text="Why It Matters", heading_level=2)
+        doc = self._resolved(VertexTree(tree_vertices=[page, ref, heading]), link_headings=True)
+        assert [header.identifier for header in _headers(doc)] == [heading_anchor(self._HEADING_UID)]
+        assert [link.url for link in _links(doc)] == [f"#{heading_anchor(self._HEADING_UID)}"]
+
+    def test_repeated_transclusion_keeps_first_anchor_only(self) -> None:
+        """A heading embedded twice is identified at its first occurrence only."""
+        page = PageVertex(uid="page00001", title="P", children=["embed0001", "embed0002"])
+        first = BlockEmbedVertex(uid="embed0001", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="head0001a"))
+        second = BlockEmbedVertex(uid="embed0002", vertex_link=VertexLink(kind=VertexLinkKind.EMBED, uid="head0001a"))
+        heading = HeadingVertex(uid=self._HEADING_UID, text="Why It Matters", heading_level=2)
+        tree = VertexTree(tree_vertices=[page, first, second], ref_vertices=[heading])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        assert [header.identifier for header in _headers(doc)] == [heading_anchor(self._HEADING_UID), ""]

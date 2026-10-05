@@ -76,6 +76,7 @@ from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     PDF_PLACEMENT_ATTRIBUTE,
     colophon_summary,
+    heading_anchors,
     make_resolver,
     resolve_vertex_links,
     revision_line,
@@ -391,7 +392,9 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
+        resolve_vertex_links(
+            doc, enriched_tree, make_resolver(inline_map, options.daily_note_format, heading_anchors(doc))
+        )
         # Appendix-placed PDFs are rasterised into the asset directory and reproduced at the
         # back; every other placement is a reference.  Either way the scaffold must not reach the
         # XHTML output as a stray attribute.

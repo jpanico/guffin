@@ -146,6 +146,7 @@ tree_network:
   - id: 15247
   - id: 15793
   - id: 15794
+  - id: 19389
   refs: null
   page:
     id: 4225
@@ -212,7 +213,7 @@ tree_network:
 - uid: tU_piRCi2
   id: 15796
   string: '#c:FUCHSIA **inline Closed TODO ref ⟶**  ((I9tU2C5U6))'
-  order: 16
+  order: 17
   heading: null
   children: null
   refs:
@@ -298,6 +299,24 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: uVAasvxug
+  id: 19390
+  string: '#c:FUCHSIA **inline PAGE-LINK HEADER ref ⟶**  ((ys3bY2GZa))'
+  order: 9
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 19389
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
 - uid: PhA5dB4h0
   id: 13482
   string: ((GeE5zPJOv))
@@ -337,7 +356,7 @@ tree_network:
 - uid: JCyO1oiVt
   id: 11742
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
-  order: 10
+  order: 11
   heading: null
   children: null
   refs:
@@ -627,7 +646,7 @@ tree_network:
 - uid: 6cWeACALe
   id: 13492
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
-  order: 30
+  order: 31
   heading: null
   children:
   - id: 13493
@@ -770,6 +789,8 @@ tree_network:
     -- `block quotes` (Markdown and Roam native, single- and multi-line) and Roam
     `pull quotes`
 
+    -- a heading whose text is a page link
+
     - `Internal (in-page) links:` section: inline refs to the styled/colored targets,
     plus standalone refs to page / block / parent block / header and to every block-level
     target above, plus a block embed
@@ -887,7 +908,7 @@ tree_network:
 - uid: dYYKZExzI
   id: 4229
   string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
-  order: 22
+  order: 23
   heading: null
   children:
   - id: 4232
@@ -1016,7 +1037,7 @@ tree_network:
 - uid: bwfQEnrOi
   id: 13488
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 28
+  order: 29
   heading: null
   children:
   - id: 13489
@@ -1034,7 +1055,7 @@ tree_network:
 - uid: 7AR6910sJ
   id: 11744
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
-  order: 11
+  order: 12
   heading: null
   children: null
   refs:
@@ -1069,7 +1090,7 @@ tree_network:
 - uid: vDvc-tHMh
   id: 15798
   string: ((_aXU5hZqQ))
-  order: 13
+  order: 14
   heading: null
   children: null
   refs:
@@ -1121,7 +1142,7 @@ tree_network:
 - uid: -K5d4a_ew
   id: 13490
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
-  order: 29
+  order: 30
   heading: null
   children:
   - id: 13491
@@ -1210,7 +1231,7 @@ tree_network:
 - uid: SivJQaD8x
   id: 11802
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-  order: 32
+  order: 33
   heading: null
   children:
   - id: 11803
@@ -1392,7 +1413,7 @@ tree_network:
 - uid: HftouGiTA
   id: 11707
   string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
-  order: 19
+  order: 20
   heading: null
   children:
   - id: 11708
@@ -1441,10 +1462,27 @@ tree_network:
   props: null
   title: null
   attrs: null
+- uid: ys3bY2GZa
+  id: 19389
+  string: This header features a [[Test Article]] page link
+  order: 23
+  heading: 3
+  children: null
+  refs:
+  - id: 4223
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  attrs: null
 - uid: b8ob6GcbI
   id: 11701
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
-  order: 17
+  order: 18
   heading: null
   children:
   - id: 11702
@@ -1548,7 +1586,7 @@ tree_network:
 - uid: fR8I0SL7Z
   id: 15799
   string: ((I9tU2C5U6))
-  order: 14
+  order: 15
   heading: null
   children: null
   refs:
@@ -1816,7 +1854,7 @@ tree_network:
 - uid: ZT_EVUtHq
   id: 11704
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
-  order: 18
+  order: 19
   heading: null
   children:
   - id: 11705
@@ -1888,6 +1926,7 @@ tree_network:
   - id: 15796
   - id: 15798
   - id: 15799
+  - id: 19390
   refs: null
   page:
     id: 4225
@@ -2084,7 +2123,7 @@ tree_network:
 - uid: nVv4pq7Fd
   id: 13494
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 25
+  order: 26
   heading: null
   children:
   - id: 13495
@@ -2216,7 +2255,7 @@ tree_network:
 - uid: yTLZTltae
   id: 13486
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 27
+  order: 28
   heading: null
   children:
   - id: 13487
@@ -2234,7 +2273,7 @@ tree_network:
 - uid: 48ZQ-2b7U
   id: 11740
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((vk7Up544K))'
-  order: 9
+  order: 10
   heading: null
   children: null
   refs:
@@ -2289,7 +2328,7 @@ tree_network:
 - uid: KWFlp92fa
   id: 15795
   string: '#c:FUCHSIA **inline Open TODO ref ⟶**  ((_aXU5hZqQ))'
-  order: 15
+  order: 16
   heading: null
   children: null
   refs:
@@ -2361,7 +2400,7 @@ tree_network:
 - uid: Y0xFlk7y6
   id: 11733
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-  order: 23
+  order: 24
   heading: null
   children:
   - id: 11734
@@ -2379,7 +2418,7 @@ tree_network:
 - uid: OYxDubiuN
   id: 15242
   string: '#c:FUCHSIA **standalone PDF BLOCK ref↓**'
-  order: 21
+  order: 22
   heading: null
   children:
   - id: 15243
@@ -2469,7 +2508,7 @@ tree_network:
 - uid: 2IaJFXDZT
   id: 11746
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
-  order: 12
+  order: 13
   heading: null
   children: null
   refs:
@@ -2886,7 +2925,7 @@ tree_network:
 - uid: _kTRqm3O-
   id: 11769
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-  order: 31
+  order: 32
   heading: null
   children:
   - id: 11770
@@ -2904,7 +2943,7 @@ tree_network:
 - uid: J1jloW5z0
   id: 13484
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 26
+  order: 27
   heading: null
   children:
   - id: 13485
@@ -2940,7 +2979,7 @@ tree_network:
 - uid: fZr8Ve9SS
   id: 11735
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-  order: 24
+  order: 25
   heading: null
   children:
   - id: 11736
@@ -2958,7 +2997,7 @@ tree_network:
 - uid: AQqf7TbPh
   id: 11759
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
-  order: 20
+  order: 21
   heading: null
   children:
   - id: 11761
@@ -3127,6 +3166,7 @@ refs_by_id:
     - id: 15247
     - id: 15793
     - id: 15794
+    - id: 19389
     refs: null
     page:
       id: 4225
@@ -3171,14 +3211,33 @@ refs_by_id:
     order: null
     heading: null
     children:
-    - id: 4224
+    - id: 18202
+    - id: 18204
     refs: null
     page: null
     children_view_type: null
     parents: null
     props: null
     title: Test Article
-    attrs: null
+    attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
   '11193':
     uid: r09kXvUg-
     id: 11193
@@ -3699,6 +3758,24 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+  '19389':
+    uid: ys3bY2GZa
+    id: 19389
+    string: This header features a [[Test Article]] page link
+    order: 23
+    heading: 3
+    children: null
+    refs:
+    - id: 4223
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    attrs: null
   '11653':
     uid: 9a_6taJAn
     id: 11653
@@ -3907,6 +3984,7 @@ refs_by_id:
     - id: 15796
     - id: 15798
     - id: 15799
+    - id: 19390
     refs: null
     page:
       id: 4225
@@ -5420,7 +5498,7 @@ refs_by_id:
     uid: dYYKZExzI
     id: 4229
     string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
-    order: 22
+    order: 23
     heading: null
     children:
     - id: 4232
@@ -5497,7 +5575,7 @@ refs_by_id:
     uid: b8ob6GcbI
     id: 11701
     string: '#c:FUCHSIA **standalone PAGE ref ↓** '
-    order: 17
+    order: 18
     heading: null
     children:
     - id: 11702
@@ -5516,7 +5594,7 @@ refs_by_id:
     uid: ZT_EVUtHq
     id: 11704
     string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
-    order: 18
+    order: 19
     heading: null
     children:
     - id: 11705
@@ -5535,7 +5613,7 @@ refs_by_id:
     uid: HftouGiTA
     id: 11707
     string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
-    order: 19
+    order: 20
     heading: null
     children:
     - id: 11708
@@ -5668,7 +5746,7 @@ refs_by_id:
     uid: Y0xFlk7y6
     id: 11733
     string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-    order: 23
+    order: 24
     heading: null
     children:
     - id: 11734
@@ -5687,7 +5765,7 @@ refs_by_id:
     uid: fZr8Ve9SS
     id: 11735
     string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-    order: 24
+    order: 25
     heading: null
     children:
     - id: 11736
@@ -5706,7 +5784,7 @@ refs_by_id:
     uid: 48ZQ-2b7U
     id: 11740
     string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((vk7Up544K))'
-    order: 9
+    order: 10
     heading: null
     children: null
     refs:
@@ -5725,7 +5803,7 @@ refs_by_id:
     uid: JCyO1oiVt
     id: 11742
     string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
-    order: 10
+    order: 11
     heading: null
     children: null
     refs:
@@ -5744,7 +5822,7 @@ refs_by_id:
     uid: 7AR6910sJ
     id: 11744
     string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
-    order: 11
+    order: 12
     heading: null
     children: null
     refs:
@@ -5763,7 +5841,7 @@ refs_by_id:
     uid: 2IaJFXDZT
     id: 11746
     string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
-    order: 12
+    order: 13
     heading: null
     children: null
     refs:
@@ -5782,7 +5860,7 @@ refs_by_id:
     uid: AQqf7TbPh
     id: 11759
     string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
-    order: 20
+    order: 21
     heading: null
     children:
     - id: 11761
@@ -5801,7 +5879,7 @@ refs_by_id:
     uid: _kTRqm3O-
     id: 11769
     string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-    order: 31
+    order: 32
     heading: null
     children:
     - id: 11770
@@ -5820,7 +5898,7 @@ refs_by_id:
     uid: SivJQaD8x
     id: 11802
     string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-    order: 32
+    order: 33
     heading: null
     children:
     - id: 11803
@@ -5840,7 +5918,7 @@ refs_by_id:
     id: 13484
     string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref
       ↓**'
-    order: 26
+    order: 27
     heading: null
     children:
     - id: 13485
@@ -5859,7 +5937,7 @@ refs_by_id:
     uid: yTLZTltae
     id: 13486
     string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
-    order: 27
+    order: 28
     heading: null
     children:
     - id: 13487
@@ -5878,7 +5956,7 @@ refs_by_id:
     uid: bwfQEnrOi
     id: 13488
     string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
-    order: 28
+    order: 29
     heading: null
     children:
     - id: 13489
@@ -5897,7 +5975,7 @@ refs_by_id:
     uid: -K5d4a_ew
     id: 13490
     string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
-    order: 29
+    order: 30
     heading: null
     children:
     - id: 13491
@@ -5916,7 +5994,7 @@ refs_by_id:
     uid: 6cWeACALe
     id: 13492
     string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
-    order: 30
+    order: 31
     heading: null
     children:
     - id: 13493
@@ -5936,7 +6014,7 @@ refs_by_id:
     id: 13494
     string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref
       ↓**'
-    order: 25
+    order: 26
     heading: null
     children:
     - id: 13495
@@ -5955,7 +6033,7 @@ refs_by_id:
     uid: OYxDubiuN
     id: 15242
     string: '#c:FUCHSIA **standalone PDF BLOCK ref↓**'
-    order: 21
+    order: 22
     heading: null
     children:
     - id: 15243
@@ -5974,7 +6052,7 @@ refs_by_id:
     uid: KWFlp92fa
     id: 15795
     string: '#c:FUCHSIA **inline Open TODO ref ⟶**  ((_aXU5hZqQ))'
-    order: 15
+    order: 16
     heading: null
     children: null
     refs:
@@ -5993,7 +6071,7 @@ refs_by_id:
     uid: tU_piRCi2
     id: 15796
     string: '#c:FUCHSIA **inline Closed TODO ref ⟶**  ((I9tU2C5U6))'
-    order: 16
+    order: 17
     heading: null
     children: null
     refs:
@@ -6012,7 +6090,7 @@ refs_by_id:
     uid: vDvc-tHMh
     id: 15798
     string: ((_aXU5hZqQ))
-    order: 13
+    order: 14
     heading: null
     children: null
     refs:
@@ -6030,11 +6108,30 @@ refs_by_id:
     uid: fR8I0SL7Z
     id: 15799
     string: ((I9tU2C5U6))
-    order: 14
+    order: 15
     heading: null
     children: null
     refs:
     - id: 15794
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    attrs: null
+  '19390':
+    uid: uVAasvxug
+    id: 19390
+    string: '#c:FUCHSIA **inline PAGE-LINK HEADER ref ⟶**  ((ys3bY2GZa))'
+    order: 9
+    heading: null
+    children: null
+    refs:
+    - id: 5844
+    - id: 19389
     page:
       id: 4225
     children_view_type: null
@@ -6686,17 +6783,35 @@ refs_by_id:
     props: null
     title: null
     attrs: null
-  '4224':
-    uid: 7MoH-wIQh
-    id: 4224
-    string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
+  '18202':
+    uid: lXi4SgSvz
+    id: 18202
+    string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
     order: 0
     heading: null
     children: null
     refs:
     - id: 5450
     - id: 5462
+    page:
+      id: 4223
+    children_view_type: null
+    parents:
+    - id: 4223
+    props: null
+    title: null
+    attrs: null
+  '18204':
+    uid: JSrSVApJ_
+    id: 18204
+    string: 'tags:: #Publishing'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 261
+    - id: 6535
     page:
       id: 4223
     children_view_type: null
@@ -6973,6 +7088,8 @@ refs_by_id:
 
       -- `block quotes` (Markdown and Roam native, single- and multi-line) and Roam
       `pull quotes`
+
+      -- a heading whose text is a page link
 
       - `Internal (in-page) links:` section: inline refs to the styled/colored targets,
       plus standalone refs to page / block / parent block / header and to every block-level
@@ -8363,6 +8480,48 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+  '261':
+    uid: RXwAqq0_T
+    id: 261
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: tags
+    attrs: null
+  '6535':
+    uid: 9ZtPB2yY3
+    id: 6535
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: Publishing
+    attrs: null
+  '11932':
+    uid: vuPFRAwZI
+    id: 11932
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: the following block embeds a PDF with guffin-meta
+    attrs: null
   '11943':
     uid: Jv502NGK6
     id: 11943
@@ -8442,20 +8601,6 @@ refs_by_id:
         : width: 320
           height: null
     title: null
-    attrs: null
-  '11932':
-    uid: vuPFRAwZI
-    id: 11932
-    string: null
-    order: null
-    heading: null
-    children: null
-    refs: null
-    page: null
-    children_view_type: null
-    parents: null
-    props: null
-    title: the following block embeds a PDF with guffin-meta
     attrs: null
   '12925':
     uid: DPW-zEDaU

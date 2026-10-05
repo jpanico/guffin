@@ -14,16 +14,23 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 import pytest
 from conftest import FIXTURES_PDF_DIR, article3_node_tree, asset_storage
+from pypdf import PdfReader
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex, TodoState, TodoVertex
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView, ViewMap
 from guffin.render.asset_fetch import AssetRef, pdf_asset_paths
 from guffin.render.pandoc_ast import pandoc_to_json
-from guffin.render.pandoc_rendering import PDF_PLACEMENT_ATTRIBUTE, PDF_PLACEMENT_UNSET, vertex_tree_to_pandoc
+from guffin.render.pandoc_rendering import (
+    PDF_PLACEMENT_ATTRIBUTE,
+    PDF_PLACEMENT_UNSET,
+    heading_anchor,
+    vertex_tree_to_pandoc,
+)
 from guffin.render.pdf_rendering import (
     _apply_pdf_embeds,
     _prepare_title_metadata,
@@ -31,8 +38,11 @@ from guffin.render.pdf_rendering import (
     _typst_str,
     _typst_template_args,
     pdf_asset_paths,
+    render,
 )
-from guffin.render.project import ProjectType, TopLevelDivision
+from guffin.render.project import BookProfile, ProjectType, TopLevelDivision
+from guffin.render.render_options import PdfRenderOptions
+from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import transcribe
 
 _URL_A = "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/pdfs%2Fa.pdf.enc?alt=media&token=aaa"
@@ -605,3 +615,48 @@ class TestTypstPageBreakFilter:
     def test_untagged_heading_gains_no_pagebreak(self) -> None:
         """An untagged heading converts with no pagebreak."""
         assert "#pagebreak(weak: true)" not in self._typst_for(tagged=False)
+
+
+@pytest.mark.pandoc
+@pytest.mark.skipif(shutil.which("typst") is None, reason="requires typst on PATH")
+class TestHeadingLinkPdf:
+    """A reference to a heading renders as a working internal link in the compiled PDF."""
+
+    @pytest.fixture(scope="class")
+    def pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
+        """A two-chapter book whose first chapter's prose references the second chapter's heading."""
+        ref_url = vertex_link_url("head0002b", VertexLinkKind.REFERENCE)
+        tree = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["head0001a", "head0002b"]),
+                HeadingVertex(uid="head0001a", text="First", heading_level=1, children=["prose0001"]),
+                TextVertex(uid="prose0001", text=f"As [Second]({ref_url}) explains.", refs=["head0002b"]),
+                HeadingVertex(uid="head0002b", text="Second", heading_level=1, children=["prose0002"]),
+                TextVertex(uid="prose0002", text="Target body."),
+            ]
+        )
+        out_dir = tmp_path_factory.mktemp("heading-link")
+        render(
+            RenderBundle(content=tree),
+            profile=BookProfile(),
+            filename_stem="doc",
+            api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+            options=PdfRenderOptions(output_dir=out_dir),
+        )
+        return PdfReader(out_dir / "doc.pdf")
+
+    @staticmethod
+    def _page_index_containing(reader: PdfReader, text: str) -> int:
+        """Return the index of the last page whose extracted text contains *text*."""
+        return max(i for i, page in enumerate(reader.pages) if text in (page.extract_text() or ""))
+
+    def test_heading_anchor_is_a_named_destination_on_the_headings_page(self, pdf: PdfReader) -> None:
+        """The heading's identifier becomes a PDF named destination on the page the heading opens."""
+        destination = pdf.named_destinations[heading_anchor("head0002b")]
+        assert pdf.get_destination_page_number(destination) == self._page_index_containing(pdf, "Target body.")
+
+    def test_prose_page_links_to_the_heading(self, pdf: PdfReader) -> None:
+        """The page holding the referencing prose carries a link annotation to the heading's destination."""
+        prose_page = pdf.pages[self._page_index_containing(pdf, "As Second explains.")]
+        destinations = [annot.get_object().get("/Dest") for annot in prose_page.get("/Annots") or []]
+        assert heading_anchor("head0002b") in destinations

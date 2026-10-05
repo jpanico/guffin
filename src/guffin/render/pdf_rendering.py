@@ -72,8 +72,10 @@ from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enri
 from guffin.render.callout_theme import CALLOUT_ACCENT
 from guffin.render.pandoc_ast import InlineMap, detached_copy, pandoc_to_json
 from guffin.render.pandoc_rendering import (
+    HEADING_LINK_CLASS,
     PDF_PLACEMENT_ATTRIBUTE,
     colophon_summary,
+    heading_anchors,
     make_resolver,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
@@ -320,12 +322,12 @@ def _typst_raw_block(text: str) -> pf.RawBlock:
     return raw
 
 
-_APPENDIX_LINK_COLOR: Final[str] = 'rgb("#1A4F8A")'
-"""Typst fill for an appendix anchor, as a Typst colour expression.
+_INTERNAL_LINK_COLOR: Final[str] = 'rgb("#1A4F8A")'
+"""Typst fill for an internal link (an appendix anchor or a link to a heading), as a Typst colour expression.
 
 An internal link is otherwise indistinguishable from the text around it — its only affordance is
 the cursor, which a printed page does not have.  Colouring and underlining it gives the reader the
-conventional signal that the filename leads somewhere.
+conventional signal that the text leads somewhere.
 """
 
 _APPENDIX_FIRST_PAGE_HEIGHT: Final[str] = "85%"
@@ -447,7 +449,7 @@ def _apply_pdf_embeds(
             label: Final[list[pf.Inline]] = list(inline.content)
             identifier: Final[str] = entry_identifier(appendix, path, label)
             styled: Final[list[pf.Inline]] = [
-                pf.Span(*detached_copy(label), attributes={"underline-color": _APPENDIX_LINK_COLOR})
+                pf.Span(*detached_copy(label), attributes={"underline-color": _INTERNAL_LINK_COLOR})
             ]
             return [appendix_anchor(label, identifier, styled)]
         if placement is PdfRenderPlacement.EXTERNAL_LINK:
@@ -464,6 +466,24 @@ def _apply_pdf_embeds(
         prune_emptied_list_containers(doc)
     if appendix:
         doc.content.extend(appendix_section(appendix, lambda path: [_typst_raw_block(_pages_markup(path, True))]))
+
+
+def _style_heading_links(doc: pf.Doc) -> None:
+    """Colour and underline every internal link to a heading in *doc*, in place.
+
+    Wraps each :data:`~guffin.render.pandoc_rendering.HEADING_LINK_CLASS` link's content in the
+    ``underline-color`` span ``typst_color_span.lua`` maps to ``#underline[#text(fill: …)]`` — the
+    styling an appendix anchor gets, for the same reason (see :data:`_INTERNAL_LINK_COLOR`).
+
+    Args:
+        doc: The document to rewrite.
+    """
+
+    def _style(elem: pf.Element, doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Link) and HEADING_LINK_CLASS in elem.classes:
+            elem.content = [pf.Span(*list(elem.content), attributes={"underline-color": _INTERNAL_LINK_COLOR})]
+
+    doc.walk(_style)
 
 
 def _prepare_title_metadata(doc: pf.Doc) -> None:
@@ -669,7 +689,10 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
+        resolve_vertex_links(
+            doc, enriched_tree, make_resolver(inline_map, options.daily_note_format, heading_anchors(doc))
+        )
+        _style_heading_links(doc)
         _apply_pdf_embeds(doc, pdf_paths, profile.project_type, default_override=options.default_pdf_render)
         # Split the title into a plain string (PDF /Title + the running-header %title% string
         # machinery) and a rich `title-display` copy the header renders as content, so a bold
