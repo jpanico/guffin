@@ -786,14 +786,33 @@ refs_by_id:
     order: null
     heading: null
     children:
-    - id: 4224
+    - id: 18202
+    - id: 18204
     refs: null
     page: null
     children_view_type: null
     parents: null
     props: null
     title: Test Article
-    attrs: null
+    attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
   '12977':
     uid: ArmnLLo63
     id: 12977
@@ -2952,11 +2971,11 @@ refs_by_id:
     props: null
     title: null
     attrs: null
-  '4224':
-    uid: 7MoH-wIQh
-    id: 4224
-    string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
+  '18202':
+    uid: lXi4SgSvz
+    id: 18202
+    string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
     order: 0
     heading: null
     children: null
@@ -2970,4 +2989,50 @@ refs_by_id:
     - id: 4223
     props: null
     title: null
+    attrs: null
+  '18204':
+    uid: JSrSVApJ_
+    id: 18204
+    string: 'tags:: #Publishing'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 261
+    - id: 6535
+    page:
+      id: 4223
+    children_view_type: null
+    parents:
+    - id: 4223
+    props: null
+    title: null
+    attrs: null
+  '261':
+    uid: RXwAqq0_T
+    id: 261
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: tags
+    attrs: null
+  '6535':
+    uid: 9ZtPB2yY3
+    id: 6535
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: Publishing
     attrs: null

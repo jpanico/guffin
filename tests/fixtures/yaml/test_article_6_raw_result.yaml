@@ -175,18 +175,6 @@
     order: 59
     page:
       id: 12977
-- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
-    id: 4224
-    uid: 7MoH-wIQh
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
 - - string: Lord Henry elevated his eyebrows and looked at him in amazement through
       the thin blue wreaths of smoke that curled up in such fanciful whorls from his
       heavy, opium-tainted cigarette. “Not send it anywhere? My dear fellow, why?
@@ -211,9 +199,34 @@
     order: 69
     page:
       id: 12977
-- - children:
-    - id: 4224
+- - attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    children:
+    - id: 18202
+    - id: 18204
     id: 4223
+    lookup:
+    - id: 261
+    - id: 4223
+    - id: 6535
+    - id: 18204
     uid: LBFKibPIj
     title: Test Article
 - - string: “I hate the way you talk about your married life, Harry,” said Basil Hallward,
@@ -259,6 +272,9 @@
     refs:
     - id: 5450
     - id: 5462
+- - id: 6535
+    uid: 9ZtPB2yY3
+    title: Publishing
 - - string: “Harry,” said Basil Hallward, looking him straight in the face, “every
       portrait that is painted with feeling is a portrait of the artist, not of the
       sitter. The sitter is merely the accident, the occasion. It is not he who is
@@ -1564,6 +1580,9 @@
     order: 68
     page:
       id: 12977
+- - id: 261
+    uid: RXwAqq0_T
+    title: tags
 - - string: “What nonsense you talk!” said Lord Henry, smiling, and taking Hallward
       by the arm, he almost led him into the house.
     id: 13058
@@ -1608,6 +1627,17 @@
     order: 4
     page:
       id: 12961
+- - string: 'tags:: #Publishing'
+    id: 18204
+    uid: JSrSVApJ_
+    parents:
+    - id: 4223
+    order: 1
+    page:
+      id: 4223
+    refs:
+    - id: 261
+    - id: 6535
 - - string: Hallward got up from the seat and walked up and down the garden. After
       some time he came back. “Harry,” he said, “Dorian Gray is to me simply a motive
       in art. You might see nothing in him. I see everything in him. He is never more
@@ -1910,3 +1940,15 @@
 - - id: 13105
     uid: Dfe1hQedK
     title: revision
+- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
+    id: 18202
+    uid: lXi4SgSvz
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462

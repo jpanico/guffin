@@ -233,25 +233,6 @@ NSe1yG06w:
   props: null
   title: null
   attrs: null
-7MoH-wIQh:
-  uid: 7MoH-wIQh
-  id: 4224
-  string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST\
-    \ DATA – DO NOT REMOVE\n "
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
-  props: null
-  title: null
-  attrs: null
 lTQ8Jh_Yx:
   uid: lTQ8Jh_Yx
   id: 12984
@@ -299,14 +280,33 @@ LBFKibPIj:
   order: null
   heading: null
   children:
-  - id: 4224
+  - id: 18202
+  - id: 18204
   refs: null
   page: null
   children_view_type: null
   parents: null
   props: null
   title: Test Article
-  attrs: null
+  attrs:
+  - - source:
+      - uid
+      - LBFKibPIj
+      value:
+      - uid
+      - LBFKibPIj
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - 9ZtPB2yY3
 juB8uJwPk:
   uid: juB8uJwPk
   id: 12995
@@ -364,6 +364,20 @@ UBFOf9XVN:
   - id: 12842
   props: null
   title: null
+  attrs: null
+9ZtPB2yY3:
+  uid: 9ZtPB2yY3
+  id: 6535
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: Publishing
   attrs: null
 iHUTkW7zz:
   uid: iHUTkW7zz
@@ -2327,6 +2341,20 @@ AErgqaINz:
   props: null
   title: null
   attrs: null
+RXwAqq0_T:
+  uid: RXwAqq0_T
+  id: 261
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: tags
+  attrs: null
 otJucP6pl:
   uid: otJucP6pl
   id: 13058
@@ -2411,6 +2439,24 @@ QyPYjdiS1:
   children_view_type: null
   parents:
   - id: 12961
+  props: null
+  title: null
+  attrs: null
+JSrSVApJ_:
+  uid: JSrSVApJ_
+  id: 18204
+  string: 'tags:: #Publishing'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 261
+  - id: 6535
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
   props: null
   title: null
   attrs: null
@@ -2948,4 +2994,23 @@ Dfe1hQedK:
   parents: null
   props: null
   title: revision
+  attrs: null
+lXi4SgSvz:
+  uid: lXi4SgSvz
+  id: 18202
+  string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST
+    DATA – DO NOT REMOVE'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
+  props: null
+  title: null
   attrs: null
