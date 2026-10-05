@@ -622,9 +622,9 @@ class TestTypstPageBreakFilter:
 class TestHeadingLinkPdf:
     """A reference to a heading renders as a working internal link in the compiled PDF."""
 
-    @pytest.fixture(scope="class")
-    def pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
-        """A two-chapter book whose first chapter's prose references the second chapter's heading."""
+    @staticmethod
+    def _render_doc(tmp_path_factory: pytest.TempPathFactory, heading_links: bool) -> PdfReader:
+        """Render a two-chapter book whose first chapter's prose references the second chapter's heading."""
         ref_url = vertex_link_url("head0002b", VertexLinkKind.REFERENCE)
         tree = VertexTree(
             tree_vertices=[
@@ -641,9 +641,19 @@ class TestHeadingLinkPdf:
             profile=BookProfile(),
             filename_stem="doc",
             api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
-            options=PdfRenderOptions(output_dir=out_dir),
+            options=PdfRenderOptions(output_dir=out_dir, heading_links=heading_links),
         )
         return PdfReader(out_dir / "doc.pdf")
+
+    @pytest.fixture(scope="class")
+    def pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
+        """The two-chapter book rendered with heading links on (the default)."""
+        return self._render_doc(tmp_path_factory, heading_links=True)
+
+    @pytest.fixture(scope="class")
+    def unlinked_pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
+        """The two-chapter book rendered with heading links off."""
+        return self._render_doc(tmp_path_factory, heading_links=False)
 
     @staticmethod
     def _page_index_containing(reader: PdfReader, text: str) -> int:
@@ -660,3 +670,13 @@ class TestHeadingLinkPdf:
         prose_page = pdf.pages[self._page_index_containing(pdf, "As Second explains.")]
         destinations = [annot.get_object().get("/Dest") for annot in prose_page.get("/Annots") or []]
         assert heading_anchor("head0002b") in destinations
+
+    def test_heading_links_off_renders_bare_text(self, unlinked_pdf: PdfReader) -> None:
+        """With heading_links=False the prose keeps the heading's text but carries no link to the heading.
+
+        The heading's named destination may still exist (the table of contents links to it), so only
+        the prose page's link annotations are checked.
+        """
+        prose_page = unlinked_pdf.pages[self._page_index_containing(unlinked_pdf, "As Second explains.")]
+        destinations = [annot.get_object().get("/Dest") for annot in prose_page.get("/Annots") or []]
+        assert heading_anchor("head0002b") not in destinations

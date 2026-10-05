@@ -234,6 +234,18 @@ def main(
             ),
         ),
     ] = None,
+    heading_links: Annotated[
+        bool,
+        typer.Option(
+            "--heading-links/--no-heading-links",
+            envvar="GUFFIN_HEADING_LINKS",
+            help=(
+                "PDF and EPUB only. When enabled (default), a block reference to a heading renders "
+                "as a link that jumps to that heading. When disabled, it renders as the heading's "
+                "text in italics, without a link. Ignored when --format markdown, which never links them."
+            ),
+        ),
+    ] = True,
     element_numbers: Annotated[
         bool,
         typer.Option(
@@ -368,6 +380,7 @@ def main(
         emit_code_sources=code_sources,
         include_preamble=preamble,
         number_sections=numbering,
+        heading_links=heading_links,
         default_pdf_render=default_pdf_render,
         daily_note_format=daily_note_format,
     )

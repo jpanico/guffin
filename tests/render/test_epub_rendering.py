@@ -78,6 +78,7 @@ def _render_epub(
     include_preamble: bool | None = None,
     emit_colophon: bool = False,
     number_sections: bool | None = None,
+    heading_links: bool = True,
 ) -> Path:
     """Render *bundle* to ``<out_dir>/<stem>.epub`` and return the path."""
     render(
@@ -91,6 +92,7 @@ def _render_epub(
             include_preamble=include_preamble,
             emit_colophon=emit_colophon,
             number_sections=number_sections,
+            heading_links=heading_links,
         ),
     )
     return out_dir / f"{stem}.epub"
@@ -714,8 +716,9 @@ class TestCoverImage:
 class TestHeadingLinkEpub:
     """A reference to a heading in another chapter links into that chapter's content document."""
 
-    def test_link_targets_the_headings_content_document(self, tmp_path: Path) -> None:
-        """Pandoc's chapter split rewrites the internal link to the file holding the heading."""
+    @staticmethod
+    def _content_documents(tmp_path: Path, heading_links: bool) -> dict[str, str]:
+        """Render a two-chapter book whose first chapter references the second; return its XHTML by name."""
         ref_url = vertex_link_url("head0002b", VertexLinkKind.REFERENCE)
         tree = VertexTree(
             tree_vertices=[
@@ -726,11 +729,23 @@ class TestHeadingLinkEpub:
                 TextVertex(uid="prose0002", text="Target body."),
             ]
         )
-        epub = _render_epub(tmp_path, RenderBundle(content=tree), BookProfile(), "doc")
-        anchor = heading_anchor("head0002b")
+        epub = _render_epub(tmp_path, RenderBundle(content=tree), BookProfile(), "doc", heading_links=heading_links)
         with zipfile.ZipFile(epub) as archive:
-            documents = {
-                name: archive.read(name).decode("utf-8") for name in archive.namelist() if name.endswith(".xhtml")
-            }
+            return {name: archive.read(name).decode("utf-8") for name in archive.namelist() if name.endswith(".xhtml")}
+
+    def test_link_targets_the_headings_content_document(self, tmp_path: Path) -> None:
+        """Pandoc's chapter split rewrites the internal link to the file holding the heading."""
+        documents = self._content_documents(tmp_path, heading_links=True)
+        anchor = heading_anchor("head0002b")
         target_doc = next(Path(name).name for name, xhtml in documents.items() if f'id="{anchor}"' in xhtml)
         assert any(f'href="{target_doc}#{anchor}"' in xhtml for xhtml in documents.values())
+
+    def test_heading_links_off_renders_bare_text(self, tmp_path: Path) -> None:
+        """With heading_links=False the reference renders as the heading's text in italics, with no link to it."""
+        documents = self._content_documents(tmp_path, heading_links=False)
+        anchor = heading_anchor("head0002b")
+        # The navigation document's table of contents links every heading regardless; only the
+        # chapter content documents carry the prose.
+        chapters = [xhtml for name, xhtml in documents.items() if Path(name).name != "nav.xhtml"]
+        assert not any(f"#{anchor}" in xhtml for xhtml in chapters)
+        assert any("As <em>Second</em> explains." in xhtml for xhtml in chapters)

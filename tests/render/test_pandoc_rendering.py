@@ -2227,12 +2227,20 @@ class TestHeadingLinks:
         return VertexTree(tree_vertices=[page, prose], ref_vertices=[heading])
 
     @staticmethod
-    def _resolved(tree: VertexTree, *, link_headings: bool) -> pf.Doc:
+    def _resolved(tree: VertexTree, *, link_headings: bool, italicize: bool = False) -> pf.Doc:
         """Build *tree*'s Doc and resolve its links, offering its heading anchors when *link_headings*."""
         doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
         targets = heading_anchors(doc) if link_headings else frozenset[str]()
-        resolve_vertex_links(doc, tree, make_resolver(inline_map, DateFormat.ROAM_LONG, targets))
+        resolver = make_resolver(inline_map, DateFormat.ROAM_LONG, targets, italicize_heading_refs=italicize)
+        resolve_vertex_links(doc, tree, resolver)
         return doc
+
+    @staticmethod
+    def _emphs(doc: pf.Doc) -> list[pf.Emph]:
+        """Every Emph inline in *doc*, in document order."""
+        found: list[pf.Emph] = []
+        doc.walk(lambda elem, _doc: found.append(elem) if isinstance(elem, pf.Emph) else None)
+        return found
 
     def test_heading_anchor_derives_from_uid(self) -> None:
         """The identifier is the uid under a fixed prefix."""
@@ -2268,7 +2276,21 @@ class TestHeadingLinks:
         """Without heading targets (the default), a heading reference renders as bare text."""
         doc = self._resolved(self._tree(), link_headings=False)
         assert _links(doc) == []
+        assert self._emphs(doc) == []
         assert "As Why It Matters explains." in pf.stringify(doc)
+
+    def test_italicized_unlinked_reference(self) -> None:
+        """With italicize_heading_refs and no targets, the reference renders as the heading's text in italics."""
+        doc = self._resolved(self._tree(), link_headings=False, italicize=True)
+        assert _links(doc) == []
+        assert [_collect_text(emph) for emph in self._emphs(doc)] == ["Why It Matters"]
+        assert "As Why It Matters explains." in pf.stringify(doc)
+
+    def test_italicize_leaves_linked_reference_upright(self) -> None:
+        """A reference that links to its heading is not italicized, even with italicize_heading_refs."""
+        doc = self._resolved(self._tree(), link_headings=True, italicize=True)
+        assert len(_links(doc)) == 1
+        assert self._emphs(doc) == []
 
     def test_standalone_reference_becomes_linked_paragraph(self) -> None:
         """A block that is solely a heading reference renders as a paragraph linking to the heading."""

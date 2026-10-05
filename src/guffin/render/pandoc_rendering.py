@@ -2072,7 +2072,11 @@ def _drop_repeated_heading_anchors(doc: pf.Doc) -> None:
 
 
 def make_resolver(
-    inline_map: InlineMap, daily_note_format: DateFormat, heading_targets: frozenset[str] = frozenset()
+    inline_map: InlineMap,
+    daily_note_format: DateFormat,
+    heading_targets: frozenset[str] = frozenset(),
+    *,
+    italicize_heading_refs: bool = False,
 ) -> VertexLinkResolver:
     """Build a :data:`VertexLinkResolver` that renders each link as its destination's content.
 
@@ -2091,8 +2095,8 @@ def make_resolver(
       format instead of the title (``ROAM_LONG`` *is* the title, so it falls through unchanged).
     - :class:`~guffin.vertex.HeadingVertex` — the heading's converted text inlines, wrapped in an
       internal :class:`~panflute.Link` (class :data:`HEADING_LINK_CLASS`) to the heading when its
-      :func:`heading_anchor` is among *heading_targets*; bare otherwise, since a link to an absent
-      identifier would dangle.
+      :func:`heading_anchor` is among *heading_targets*; otherwise unlinked, since a link to an absent
+      identifier would dangle — italicized when *italicize_heading_refs* is set, bare when not.
     - :class:`~guffin.vertex.TextVertex`, :class:`~guffin.vertex.QuoteBlockVertex` — the
       destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
@@ -2111,6 +2115,9 @@ def make_resolver(
         heading_targets: The heading identifiers a reference to a heading may link to (see
             :func:`heading_anchors`).  Empty (the default) renders every heading reference as bare
             text, for a format with no way to identify a heading.
+        italicize_heading_refs: When ``True``, a heading reference that is not linked renders its text
+            in italics (:class:`~panflute.Emph`), marking it as a cross-reference; ``False`` (default)
+            leaves it bare.
 
     Returns:
         A resolver callable suitable for :func:`resolve_vertex_links`.
@@ -2130,9 +2137,11 @@ def make_resolver(
             case HeadingVertex():
                 heading_text: Final[list[pf.Inline]] = inline_map.get(vertex.text, [pf.Str(vertex.text)])
                 anchor: Final[str] = heading_anchor(vertex.uid)
-                if anchor not in heading_targets:
-                    return heading_text
-                return [pf.Link(*detached_copy(heading_text), url=f"#{anchor}", classes=[HEADING_LINK_CLASS])]
+                if anchor in heading_targets:
+                    return [pf.Link(*detached_copy(heading_text), url=f"#{anchor}", classes=[HEADING_LINK_CLASS])]
+                if italicize_heading_refs:
+                    return [pf.Emph(*detached_copy(heading_text))]
+                return heading_text
             case TextVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TodoVertex():

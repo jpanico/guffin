@@ -308,8 +308,8 @@ Fetches a Roam `Page` or `Node` subtree via the Local API, normalizes it, and wr
 export-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token <token> --output-dir <output_dir> \
   [--format markdown|pdf|epub] [--type article|book|manuscript] [--bundle|--no-bundle] \
   [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes] [--colophon|--no-colophon] \
-  [--preamble|--no-preamble] [--numbering|--no-numbering] [--element-numbers|--no-element-numbers] \
-  [--code-sources|--no-code-sources] [--verify-code-sources|--no-verify-code-sources] \
+  [--preamble|--no-preamble] [--numbering|--no-numbering] [--heading-links|--no-heading-links] \
+  [--element-numbers|--no-element-numbers] [--code-sources|--no-code-sources] [--verify-code-sources|--no-verify-code-sources] \
   [--default-pdf-render <placement>] [--daily-note-format roam-long|iso|abbrev-month-day]
 ```
 
@@ -374,6 +374,7 @@ The `--preamble/--no-preamble` and `--numbering/--no-numbering` flags (PDF/EPUB 
 | `--colophon/--no-colophon` | | all | Embed a provenance + revision colophon (on by default). |
 | `--preamble/--no-preamble` | | pdf, epub | Keep/drop the root's loose preamble; unset defers to the `--type` profile. |
 | `--numbering/--no-numbering` | | pdf, epub | Turn heading numbering on/off; unset defers to the `--type` profile. |
+| `--heading-links/--no-heading-links` | | pdf, epub | Render a block reference to a heading as a link that jumps to the heading (on by default) or as the heading's text in italics, without a link. Markdown never links them. |
 | `--element-numbers/--no-element-numbers` | | all | Keep/strip internal element numbers (a heading's `[1.2.3]` lead); stripped by default. |
 | `--code-sources/--no-code-sources` | | all | Render/omit each sourced code block's GitHub attribution line (from its `code-source::` tag); omitted by default. |
 | `--verify-code-sources/--no-verify-code-sources` | | all | Verify every `code-source::`-tagged code block against GitHub (**on by default**); any drift, local modification, or fetch failure aborts the export with exit 1. `--no-verify-code-sources` is the offline escape hatch. |
@@ -396,6 +397,7 @@ export GUFFIN_PDF_TEMPLATE_DIR=~/mytheme     # optional: user_cfg.typ override f
 export GUFFIN_EMIT_COLOPHON=0                # optional: omit the colophon (backs --no-colophon)
 export GUFFIN_INCLUDE_PREAMBLE=false         # optional: backs --preamble/--no-preamble (pdf/epub)
 export GUFFIN_NUMBER_SECTIONS=false          # optional: backs --numbering/--no-numbering (pdf/epub)
+export GUFFIN_HEADING_LINKS=false            # optional: backs --heading-links/--no-heading-links (pdf/epub)
 export GUFFIN_ELEMENT_NUMBERS=1              # optional: backs --element-numbers (keep the [1.2.3] leads)
 export GUFFIN_CODE_SOURCES=1                 # optional: backs --code-sources (render GitHub attribution lines)
 export GUFFIN_VERIFY_CODE_SOURCES=0          # optional: backs --no-verify-code-sources (the offline path)

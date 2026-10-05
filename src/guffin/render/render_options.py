@@ -6,8 +6,9 @@ end so the options can be constructed and passed without pulling in CLI dependen
 :class:`RenderOptions` holds the settings common to every output format (destination directory,
 asset cache, AST dump).  Each format then has its own subclass carrying only the switches that
 apply to it — :class:`MarkdownRenderOptions` (the ``should_bundle`` mode), :class:`PdfRenderOptions`
-(the Typst ``template_dir`` override and the ``include_preamble`` policy override), and
-:class:`EpubRenderOptions` (the ``include_preamble`` policy override) — tagged by an
+(the Typst ``template_dir`` override, the ``include_preamble`` policy override, and the
+``heading_links`` switch), and :class:`EpubRenderOptions` (the ``include_preamble`` policy override
+and the ``heading_links`` switch) — tagged by an
 ``output_format`` discriminator.  A renderer accepts its own subclass, so every field
 it receives is one it can act on.  :meth:`RenderOptions.for_format` is the factory that builds the
 right subclass for a given :class:`OutputFormat` from the full set of knobs.
@@ -125,6 +126,7 @@ class RenderOptions(BaseModel):
         emit_code_sources: bool = False,
         include_preamble: bool | None = None,
         number_sections: bool | None = None,
+        heading_links: bool = True,
         default_pdf_render: PdfRenderPlacement | None = None,
         daily_note_format: DateFormat = DateFormat.ROAM_LONG,
     ) -> RenderOptions:
@@ -132,8 +134,8 @@ class RenderOptions(BaseModel):
 
         The single place that assembles per-format options, so callers thread one object rather than a
         long parameter list.  Format-specific knobs apply only to the format that uses them
-        (``template_dir`` to PDF, ``should_bundle`` to Markdown, ``include_preamble`` and
-        ``number_sections`` to PDF and EPUB); the rest are common to every format.
+        (``template_dir`` to PDF, ``should_bundle`` to Markdown, ``include_preamble``,
+        ``number_sections``, and ``heading_links`` to PDF and EPUB); the rest are common to every format.
 
         Args:
             output_format: The output format whose options subclass to build.
@@ -153,6 +155,8 @@ class RenderOptions(BaseModel):
             number_sections: PDF/EPUB-only; number the headings (``True``), turn all heading
                 numbering off (``False``), or defer to the project profile's policy (``None``,
                 default).
+            heading_links: PDF/EPUB-only; render a block reference to a heading as a link to that
+                heading (``True``, default) or as the heading's text in italics (``False``).
             default_pdf_render: Placement an untagged PDF embed resolves to, or ``None``
                 (default) to defer to the built-in format/bundle/type default matrix.
             daily_note_format: How a daily-note-page reference renders its date.
@@ -175,6 +179,7 @@ class RenderOptions(BaseModel):
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
+                    heading_links=heading_links,
                 )
             case OutputFormat.EPUB:
                 return EpubRenderOptions(
@@ -189,6 +194,7 @@ class RenderOptions(BaseModel):
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
                     number_sections=number_sections,
+                    heading_links=heading_links,
                 )
             case OutputFormat.MARKDOWN:
                 return MarkdownRenderOptions(
@@ -239,6 +245,8 @@ class PdfRenderOptions(RenderOptions):
         number_sections: Whether headings are numbered.  ``None`` (default) defers to the project
             profile's :attr:`~guffin.render.project.StructuralPolicy.number_sections` directive;
             ``True`` forces numbering on, ``False`` forces all heading numbering off.
+        heading_links: When ``True`` (default), a block reference to a heading renders as an
+            internal link to that heading; ``False`` renders the heading's text in italics, unlinked.
     """
 
     output_format: Literal[OutputFormat.PDF] = Field(
@@ -252,6 +260,9 @@ class PdfRenderOptions(RenderOptions):
     )
     number_sections: bool | None = Field(
         default=None, description="Number the headings; None defers to the profile's policy."
+    )
+    heading_links: bool = Field(
+        default=True, description="Render a block reference to a heading as a link to that heading."
     )
 
 
@@ -270,6 +281,8 @@ class EpubRenderOptions(RenderOptions):
         number_sections: Whether headings are numbered.  ``None`` (default) defers to the project
             profile's :attr:`~guffin.render.project.StructuralPolicy.number_sections` directive;
             ``True`` forces numbering on, ``False`` forces all heading numbering off.
+        heading_links: When ``True`` (default), a block reference to a heading renders as an
+            internal link to that heading; ``False`` renders the heading's text in italics, unlinked.
     """
 
     output_format: Literal[OutputFormat.EPUB] = Field(
@@ -280,4 +293,7 @@ class EpubRenderOptions(RenderOptions):
     )
     number_sections: bool | None = Field(
         default=None, description="Number the headings; None defers to the profile's policy."
+    )
+    heading_links: bool = Field(
+        default=True, description="Render a block reference to a heading as a link to that heading."
     )

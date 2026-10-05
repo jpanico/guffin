@@ -82,11 +82,13 @@ def neutralize_render_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
     The tri-state flag overrides (``GUFFIN_INCLUDE_PREAMBLE``, ``GUFFIN_NUMBER_SECTIONS``) are
     removed so CLI-invoking tests always exercise the defer-to-profile default, regardless of
-    what the developer's shell exports.
+    what the developer's shell exports.  ``GUFFIN_HEADING_LINKS`` is removed likewise, so the live
+    heading-link tests always see the default (links on).
     """
     monkeypatch.setenv("GUFFIN_EMIT_COLOPHON", "0")
     monkeypatch.delenv("GUFFIN_INCLUDE_PREAMBLE", raising=False)
     monkeypatch.delenv("GUFFIN_NUMBER_SECTIONS", raising=False)
+    monkeypatch.delenv("GUFFIN_HEADING_LINKS", raising=False)
 
 
 @pytest.fixture
