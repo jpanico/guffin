@@ -4,7 +4,6 @@ import importlib.metadata
 import logging
 import os
 import pathlib
-import zipfile
 from typing import Final
 from unittest.mock import MagicMock, patch
 
@@ -395,10 +394,12 @@ _TA1_HEADING_UID: Final[str] = "0EgPyHSZi"
 @pytest.mark.live
 @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
 class TestExportRoamTreeHeadingLinksLive:
-    """Live export of [[Test Article]] 3: references to its headings become working internal links.
+    """Live PDF export of [[Test Article]] 3: references to its headings become working internal links.
 
     Asserts the link structure itself rather than a byte baseline, so unrelated changes to the page's
-    rendering do not disturb it.
+    rendering do not disturb it.  One export suffices: fetching, transcribing, and resolving references
+    against live uids is format-independent, and EPUB link routing is covered offline by
+    ``tests/render/test_epub_rendering.py::TestHeadingLinkEpub``.
     """
 
     @pytest.fixture(scope="class")
@@ -410,21 +411,6 @@ class TestExportRoamTreeHeadingLinksLive:
         )
         assert result.exit_code == 0, result.output
         return PdfReader(out_dir / "Test_Article_3.article.pdf")
-
-    @pytest.fixture(scope="class")
-    def epub_documents(self, tmp_path_factory: pytest.TempPathFactory) -> dict[str, str]:
-        """[[Test Article]] 3 exported as an article EPUB, as its XHTML documents keyed by file name."""
-        out_dir: Final[pathlib.Path] = tmp_path_factory.mktemp("ta3-epub")
-        result: Final[Result] = _invoke_live_export(
-            ["[[Test Article]] 3", "--output-dir", str(out_dir), "--format", "epub"]
-        )
-        assert result.exit_code == 0, result.output
-        with zipfile.ZipFile(out_dir / "Test_Article_3.article.epub") as archive:
-            return {
-                pathlib.Path(name).name: archive.read(name).decode("utf-8")
-                for name in archive.namelist()
-                if name.endswith(".xhtml")
-            }
 
     @staticmethod
     def _pdf_link_destinations(reader: PdfReader) -> list[str]:
@@ -453,20 +439,6 @@ class TestExportRoamTreeHeadingLinksLive:
         """A reference to a heading outside the export (Test Article 1) stays plain text."""
         assert heading_anchor(_TA1_HEADING_UID) not in pdf.named_destinations
         assert heading_anchor(_TA1_HEADING_UID) not in self._pdf_link_destinations(pdf)
-
-    def test_epub_links_each_internal_heading_reference(self, epub_documents: dict[str, str]) -> None:
-        """Every referenced in-page heading is linked from the content documents to the file that holds it."""
-        for uid in _TA3_INTERNAL_HEADING_UIDS:
-            anchor: str = heading_anchor(uid)
-            holder: str = next(name for name, xhtml in epub_documents.items() if f'id="{anchor}"' in xhtml)
-            assert any(
-                f'href="{holder}#{anchor}"' in xhtml or (name == holder and f'href="#{anchor}"' in xhtml)
-                for name, xhtml in epub_documents.items()
-            ), uid
-
-    def test_epub_out_of_export_heading_reference_is_not_linked(self, epub_documents: dict[str, str]) -> None:
-        """A reference to a heading outside the export (Test Article 1) stays plain text."""
-        assert all(heading_anchor(_TA1_HEADING_UID) not in xhtml for xhtml in epub_documents.values())
 
 
 class TestExportRoamTreeStrictSemantics:
