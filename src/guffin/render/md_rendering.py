@@ -54,7 +54,8 @@ from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
 from guffin.render.md_post_processing import indent_fenced_blank_lines, strip_list_separator_comments
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
-    make_resolver,
+    HEADING_LINK_CLASS,
+    make_doc_resolver,
     resolve_vertex_links,
     revision_line,
     vertex_tree_to_pandoc,
@@ -66,6 +67,35 @@ from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
+
+
+def _anchor_linked_headings(doc: pf.Doc) -> None:
+    """Precede each heading that a heading link targets with an empty HTML anchor carrying its identifier.
+
+    GFM has no syntax for a heading identifier, so the GFM writer drops the ``vertex-<uid>``
+    identifier a heading link points at.  An ``<a id="vertex-<uid>"></a>`` line above the heading
+    restores the target; it is honoured by GitHub, VS Code, and Typora alike.  Headings nothing links
+    to get no anchor, keeping the Markdown free of raw HTML they would not use.  Each heading link
+    also sheds its :data:`~guffin.render.pandoc_rendering.HEADING_LINK_CLASS`, which GFM cannot
+    express: a classed link would be written as a raw HTML ``<a>`` rather than a Markdown link.
+
+    Args:
+        doc: The document whose heading links are already resolved; modified in place.
+    """
+    targets: Final[set[str]] = set()
+
+    def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Link) and HEADING_LINK_CLASS in elem.classes:
+            targets.add(elem.url.removeprefix("#"))
+            elem.classes.remove(HEADING_LINK_CLASS)
+
+    def _anchor(elem: pf.Element, _doc: pf.Doc) -> list[pf.Block] | None:
+        if isinstance(elem, pf.Header) and elem.identifier in targets:
+            return [pf.RawBlock(f'<a id="{elem.identifier}"></a>', format="html"), elem]
+        return None
+
+    doc.walk(_collect)
+    doc.walk(_anchor)
 
 
 def _stamp_revision_metadata(doc: pf.Doc, revision: Revision | None) -> None:
@@ -261,7 +291,12 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        resolve_vertex_links(doc, enriched_tree, make_resolver(inline_map, options.daily_note_format))
+        resolve_vertex_links(
+            doc,
+            enriched_tree,
+            make_doc_resolver(doc, inline_map, options.daily_note_format, heading_links=options.heading_links),
+        )
+        _anchor_linked_headings(doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
         fully_stripped_urls: Final[frozenset[str]] = apply_reference_placements(
@@ -309,7 +344,14 @@ def render(
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
-        resolve_vertex_links(no_bundle_doc, content, make_resolver(no_bundle_inline_map, options.daily_note_format))
+        resolve_vertex_links(
+            no_bundle_doc,
+            content,
+            make_doc_resolver(
+                no_bundle_doc, no_bundle_inline_map, options.daily_note_format, heading_links=options.heading_links
+            ),
+        )
+        _anchor_linked_headings(no_bundle_doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
         apply_reference_placements(

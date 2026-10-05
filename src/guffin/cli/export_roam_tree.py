@@ -240,9 +240,10 @@ def main(
             "--heading-links/--no-heading-links",
             envvar="GUFFIN_HEADING_LINKS",
             help=(
-                "PDF and EPUB only. When enabled (default), a block reference to a heading renders "
-                "as a link that jumps to that heading. When disabled, it renders as the heading's "
-                "text in italics, without a link. Ignored when --format markdown, which never links them."
+                "When enabled (default), a block reference to a heading renders as a link that "
+                "jumps to that heading (in Markdown, to an empty HTML anchor placed above the "
+                "heading). When disabled, it renders as the heading's text in italics, without a "
+                "link. Applies to all formats."
             ),
         ),
     ] = True,

@@ -83,6 +83,8 @@ Public symbols:
 - :func:`heading_anchors` — the heading identifiers a :class:`~panflute.Doc` defines.
 - :func:`make_resolver` — build a :data:`VertexLinkResolver` that renders each
   ``x-guffin`` link as its destination vertex's own converted content.
+- :func:`make_doc_resolver` — the :func:`make_resolver` a renderer uses for a built
+  :class:`~panflute.Doc`, linking or italicizing heading references per its ``heading_links`` option.
 - :func:`resolve_vertex_links` — walk a :class:`~panflute.Doc` in place and replace
   ``x-guffin`` :class:`~panflute.Link` elements using a caller-supplied resolver.
 - :data:`PDF_PLACEMENT_ATTRIBUTE` — scaffold attribute carrying a PDF embed link's
@@ -2113,8 +2115,7 @@ def make_resolver(
             look up a destination vertex's converted content.
         daily_note_format: How a reference to a daily-note page renders its date.
         heading_targets: The heading identifiers a reference to a heading may link to (see
-            :func:`heading_anchors`).  Empty (the default) renders every heading reference as bare
-            text, for a format with no way to identify a heading.
+            :func:`heading_anchors`).  Empty (the default) leaves every heading reference unlinked.
         italicize_heading_refs: When ``True``, a heading reference that is not linked renders its text
             in italics (:class:`~panflute.Emph`), marking it as a cross-reference; ``False`` (default)
             leaves it bare.
@@ -2170,6 +2171,28 @@ def make_resolver(
                 return display
 
     return _resolve
+
+
+def make_doc_resolver(
+    doc: pf.Doc, inline_map: InlineMap, daily_note_format: DateFormat, *, heading_links: bool
+) -> VertexLinkResolver:
+    """Build the :func:`make_resolver` resolver for *doc*, treating heading references per *heading_links*.
+
+    With *heading_links*, a reference to a heading *doc* contains becomes an internal link to it.
+    Without, no heading is a link target, and every heading reference renders as the heading's text
+    in italics, marking it as a cross-reference.
+
+    Args:
+        doc: The document whose links will be resolved; supplies the heading identifiers to link to.
+        inline_map: Mapping from text string to parsed panflute inline elements (see :func:`make_resolver`).
+        daily_note_format: How a reference to a daily-note page renders its date.
+        heading_links: Whether a reference to a heading links to it.
+
+    Returns:
+        A resolver callable suitable for :func:`resolve_vertex_links`.
+    """
+    heading_targets: Final[frozenset[str]] = heading_anchors(doc) if heading_links else frozenset()
+    return make_resolver(inline_map, daily_note_format, heading_targets, italicize_heading_refs=not heading_links)
 
 
 _MAX_LINK_RESOLUTION_PASSES: Final[int] = 10

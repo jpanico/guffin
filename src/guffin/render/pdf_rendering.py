@@ -75,8 +75,7 @@ from guffin.render.pandoc_rendering import (
     HEADING_LINK_CLASS,
     PDF_PLACEMENT_ATTRIBUTE,
     colophon_summary,
-    heading_anchors,
-    make_resolver,
+    make_doc_resolver,
     resolve_vertex_links,
     vertex_tree_to_pandoc,
 )
@@ -689,18 +688,10 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        # With heading links off, no heading is a link target, so every heading reference renders as
-        # the heading's text, italicized to mark it as a cross-reference.
-        heading_targets: Final[frozenset[str]] = heading_anchors(doc) if options.heading_links else frozenset()
         resolve_vertex_links(
             doc,
             enriched_tree,
-            make_resolver(
-                inline_map,
-                options.daily_note_format,
-                heading_targets,
-                italicize_heading_refs=not options.heading_links,
-            ),
+            make_doc_resolver(doc, inline_map, options.daily_note_format, heading_links=options.heading_links),
         )
         _style_heading_links(doc)
         _apply_pdf_embeds(doc, pdf_paths, profile.project_type, default_override=options.default_pdf_render)

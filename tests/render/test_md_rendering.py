@@ -403,6 +403,54 @@ class TestElementNumberRendering:
         assert "&#91;1.1&#93; Chapter I" in result
 
 
+def _heading_ref_bundle() -> RenderBundle:
+    """A page whose first section's prose references the second section's heading."""
+    ref_url = vertex_link_url("head0002b", VertexLinkKind.REFERENCE)
+    page = PageVertex(uid="page00001", title="Doc", children=["head0001a", "head0002b"])
+    first = HeadingVertex(uid="head0001a", text="First", heading_level=1, children=["prose0001"])
+    prose = TextVertex(uid="prose0001", text=f"As [Second]({ref_url}) explains.", refs=["head0002b"])
+    second = HeadingVertex(uid="head0002b", text="Second", heading_level=1, children=["prose0002"])
+    body = TextVertex(uid="prose0002", text="Target body.")
+    return RenderBundle(content=VertexTree(tree_vertices=[page, first, prose, second, body]), view={})
+
+
+class TestHeadingLinkRendering:
+    """A reference to a heading links to an HTML anchor above it, or renders in italics when links are off."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, *, should_bundle: bool, heading_links: bool = True) -> str:
+        render(
+            _heading_ref_bundle(),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(
+                output_dir=tmp_path, should_bundle=should_bundle, heading_links=heading_links
+            ),
+        )
+        md_path = tmp_path / "doc.mdbundle" / "doc.md" if should_bundle else tmp_path / "doc.md"
+        return md_path.read_text(encoding="utf-8")
+
+    @pytest.mark.parametrize("should_bundle", [True, False])
+    def test_reference_links_to_anchor_above_heading(self, tmp_path: Path, should_bundle: bool) -> None:
+        """The referenced heading is preceded by its anchor, and the prose links to it."""
+        result = self._render(tmp_path, should_bundle=should_bundle)
+        assert '<a id="vertex-head0002b"></a>\n\n## Second' in result
+        assert "As [Second](#vertex-head0002b) explains." in result
+
+    def test_unreferenced_heading_gets_no_anchor(self, tmp_path: Path) -> None:
+        """Only a heading something links to carries an anchor."""
+        result = self._render(tmp_path, should_bundle=False)
+        assert "vertex-head0001a" not in result
+
+    def test_heading_links_off_italicizes_without_anchor(self, tmp_path: Path) -> None:
+        """With heading_links=False the reference renders as the heading's text in italics, and no anchor is emitted."""
+        result = self._render(tmp_path, should_bundle=False, heading_links=False)
+        assert "As *Second* explains." in result
+        assert "<a id=" not in result
+
+
 def _sourced_bundle() -> RenderBundle:
     """A page with one sourced Python code block."""
     page = PageVertex(uid="page00001", title="Sourced Doc", children=["code00001"])
