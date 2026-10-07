@@ -18,8 +18,6 @@
 > - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed, and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render: "inline"` at the reference site (the site’s tag drives the PDF format’s inline placement)
 > - this INFO `Callout box`, which contains Roam `page references`
 
-<a id="vertex-7XdTiY_ZF"></a>
-
 ## Feature Content
 
 - This para features plain text
@@ -96,11 +94,7 @@ def fizz_buzz(limit: int = 100):
 - the child block contains a Roam hosted PDF Asset (upload)
   - [u-F9pv-nvn.pdf](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03 "u-F9pv-nvn.pdf")
 
-<a id="vertex-ys3bY2GZa"></a>
-
 ### This header features a Test Article page link
-
-<a id="vertex-LfaVt18Iw"></a>
 
 ## Internal (in-page) links:
 
@@ -111,9 +105,9 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**inline STRIKETHROUGH ref ⟶**</span> This para features ~~strikethrough~~
 - <span style="color: fuchsia">**inline HIGHLIGHT ref ⟶**</span> This para features <mark>highlight</mark>
 - <span style="color: fuchsia">**inline INLINE-CODE ref ⟶**</span> This para features `inline-code`
-- <span style="color: fuchsia">**inline PARENT BLOCK ref ⟶**</span> [Internal (in-page) links:](#vertex-LfaVt18Iw)
-- <span style="color: fuchsia">**inline HEADER ref ⟶**</span> [Feature Content](#vertex-7XdTiY_ZF)
-- <span style="color: fuchsia">**inline PAGE-LINK HEADER ref ⟶**</span> [This header features a Test Article page link](#vertex-ys3bY2GZa)
+- <span style="color: fuchsia">**inline PARENT BLOCK ref ⟶**</span> [Internal (in-page) links:](#internal-in-page-links)
+- <span style="color: fuchsia">**inline HEADER ref ⟶**</span> [Feature Content](#feature-content)
+- <span style="color: fuchsia">**inline PAGE-LINK HEADER ref ⟶**</span> [This header features a Test Article page link](#this-header-features-a-test-article-page-link)
 - <span style="color: fuchsia">**inline BOLD ORANGE ref ⟶**</span> <span style="color: orange">**This span is BOLD orange text color**</span>. This span is not.
 - <span style="color: fuchsia">**inline HIGHLIGHTED ORANGE ref ⟶**</span> <mark style="background-color: orange">This span is highlighted orange.</mark> This span is not.
 - <span style="color: fuchsia">**inline UNDERLINED ORANGE ref ⟶**</span> <span style="text-decoration: underline; color: orange">This span is underlined orange.</span>This span is not.
@@ -127,7 +121,7 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone BLOCK ref ↓**</span>
   - Section 3
 - <span style="color: fuchsia">**standalone PARENT BLOCK ref ↓**</span>
-  - [Internal (in-page) links:](#vertex-LfaVt18Iw)
+  - [Internal (in-page) links:](#internal-in-page-links)
 - <span style="color: fuchsia">**standalone IMAGE BLOCK ref ↓**</span>
   [7rthRV4UHu.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)
 - <span style="color: fuchsia">**standalone PDF BLOCK ref↓**</span>
@@ -140,7 +134,7 @@ def fizz_buzz(limit: int = 100):
   - section 3.2
   - section 3.3
 - <span style="color: fuchsia">**standalone HEADER ref ↓**</span>
-  - [Feature Content](#vertex-7XdTiY_ZF)
+  - [Feature Content](#feature-content)
 - <span style="color: fuchsia">**standalone FENCED-CODE ref ↓**</span>
   ``` python
   def fizz_buzz(limit: int = 100):

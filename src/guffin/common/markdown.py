@@ -15,8 +15,11 @@ Public symbols:
 - :func:`unwrap_links` — replace each CommonMark inline link with its display text.
 - :func:`hard_broken_markdown` — rejoin a multi-line string so each line survives a Markdown
   parse: plain runs become one hard-broken paragraph, bullet lines stay list blocks.
+- :func:`gfm_heading_slug` — the identifier a GFM viewer derives from a heading's text, by
+  GitHub's slug algorithm.
 """
 
+import unicodedata
 from itertools import pairwise
 from typing import Annotated, Final, NamedTuple
 
@@ -244,3 +247,36 @@ def hard_broken_markdown(text: str) -> str:
         parts.append(separator)
         parts.append(current_line)
     return "".join(parts)
+
+
+_SLUG_KEPT_CATEGORIES: Final[frozenset[str]] = frozenset({"L", "M", "N"})
+"""The leading letter of every Unicode general category GitHub's slug algorithm keeps: letters, marks, numbers."""
+
+
+@validate_call
+def gfm_heading_slug(text: str) -> str:
+    """Return the identifier a GFM viewer derives from the heading text *text*.
+
+    GFM has no syntax for a heading identifier; viewers such as GitHub, VS Code, and Typora
+    derive one from the heading's rendered text with GitHub's slug algorithm, and an internal
+    link that targets it needs no HTML in the Markdown.  The algorithm: lowercase the text, drop
+    every character that is not a Unicode letter, mark, number, underscore, space, or hyphen,
+    then replace each space with a hyphen.  Nothing is collapsed or
+    trimmed, so adjacent dropped punctuation leaves adjacent hyphens exactly as GitHub does.
+
+    The result can be empty (a heading of nothing but punctuation or emoji), and two headings
+    with the same text yield the same slug: viewers disambiguate repeats with numeric suffixes
+    in ways that differ between them, so this function does not.
+
+    Args:
+        text: The heading's rendered text — plain text, with inline markup already resolved.
+
+    Returns:
+        The slug, possibly empty.
+    """
+    kept: Final[str] = "".join(
+        char
+        for char in text.lower()
+        if char in " -_" or unicodedata.category(char)[0] in _SLUG_KEPT_CATEGORIES
+    )
+    return kept.replace(" ", "-")

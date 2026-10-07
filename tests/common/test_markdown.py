@@ -4,6 +4,7 @@ import pytest
 
 from guffin.common.markdown import (
     contains_fenced_code_block,
+    gfm_heading_slug,
     hard_broken_markdown,
     is_fenced_code_block,
     parse_fenced_code_block,
@@ -178,3 +179,38 @@ class TestHardBrokenMarkdown:
     def test_blank_line_stays_a_paragraph_boundary(self) -> None:
         """An authored blank line remains a paragraph boundary, not a hard break."""
         assert hard_broken_markdown("para one\n\npara two") == "para one\n\npara two"
+
+
+class TestGfmHeadingSlug:
+    """Tests for gfm_heading_slug — GitHub's heading-identifier algorithm."""
+
+    def test_lowercases_and_hyphenates_spaces(self) -> None:
+        """Test that words are lowercased and joined with hyphens."""
+        assert gfm_heading_slug("The Story") == "the-story"
+
+    def test_drops_punctuation(self) -> None:
+        """Test that ASCII and Unicode punctuation drop out without leaving a separator."""
+        assert gfm_heading_slug("What is a Program (the thing)?") == "what-is-a-program-the-thing"
+        assert gfm_heading_slug("Brief–AI Character") == "briefai-character"
+        assert gfm_heading_slug("Program vs. AI / LLM") == "program-vs-ai--llm"
+
+    def test_keeps_hyphens_underscores_and_digits(self) -> None:
+        """Test that hyphens, underscores, and digits survive, as GitHub keeps them."""
+        assert gfm_heading_slug("Part 2: well-known_names") == "part-2-well-known_names"
+
+    def test_keeps_unicode_letters_and_marks(self) -> None:
+        """Test that non-ASCII letters, with their combining marks, are kept rather than transliterated."""
+        assert gfm_heading_slug("Café Résumé") == "café-résumé"
+        assert gfm_heading_slug("Cafe\u0301") == "cafe\u0301"
+
+    def test_drops_emoji(self) -> None:
+        """Test that emoji, being symbols, drop out."""
+        assert gfm_heading_slug("Done ✅ today") == "done--today"
+
+    def test_can_be_empty(self) -> None:
+        """Test that a heading of nothing but punctuation slugs to the empty string."""
+        assert gfm_heading_slug("???") == ""
+
+    def test_does_not_collapse_or_trim(self) -> None:
+        """Test that repeated and leading/trailing hyphens are left exactly as GitHub leaves them."""
+        assert gfm_heading_slug("  a  b  ") == "--a--b--"

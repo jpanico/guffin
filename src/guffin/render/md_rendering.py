@@ -41,6 +41,7 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
+from guffin.common.markdown import gfm_heading_slug
 from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import (
     drop_page_breaks,
@@ -69,32 +70,72 @@ from guffin.roam.primitives import Uid
 logger = logging.getLogger(__name__)
 
 
-def _anchor_linked_headings(doc: pf.Doc) -> None:
-    """Precede each heading that a heading link targets with an empty HTML anchor carrying its identifier.
+def _slug_targets(doc: pf.Doc) -> dict[str, str]:
+    """Return, per heading identifier in *doc*, the target a Markdown link to that heading should use.
+
+    A heading's target is its :func:`~guffin.common.markdown.gfm_heading_slug` — the identifier a
+    GFM viewer derives from the heading's text, reachable without any HTML in the Markdown — unless
+    that slug is empty or another heading in *doc* yields the same one (viewers disambiguate repeats
+    with suffixes that differ between them), in which case the target stays the heading's own
+    identifier, which only an explicit anchor can provide.
+
+    Args:
+        doc: The document whose headings to map.
+
+    Returns:
+        Mapping from each identified heading's identifier to its link target, without a ``#``.
+    """
+    slugs: Final[dict[str, str]] = {}
+    slug_counts: Final[dict[str, int]] = {}
+
+    def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
+        if not isinstance(elem, pf.Header):
+            return
+        slug: Final[str] = gfm_heading_slug(pf.stringify(elem))
+        slug_counts[slug] = slug_counts.get(slug, 0) + 1
+        if elem.identifier:
+            slugs[elem.identifier] = slug
+
+    doc.walk(_collect)
+    return {
+        identifier: slug if slug and slug_counts[slug] == 1 else identifier
+        for identifier, slug in slugs.items()
+    }
+
+
+def _link_headings(doc: pf.Doc) -> None:
+    """Retarget each heading link in *doc* at a target the GFM output can reach, in place.
 
     GFM has no syntax for a heading identifier, so the GFM writer drops the ``vertex-<uid>``
-    identifier a heading link points at.  An ``<a id="vertex-<uid>"></a>`` line above the heading
-    restores the target; it is honoured by GitHub, VS Code, and Typora alike.  Headings nothing links
-    to get no anchor, keeping the Markdown free of raw HTML they would not use.  Each heading link
-    also sheds its :data:`~guffin.render.pandoc_rendering.HEADING_LINK_CLASS`, which GFM cannot
-    express: a classed link would be written as a raw HTML ``<a>`` rather than a Markdown link.
+    identifier a heading link points at.  Each link is retargeted per :func:`_slug_targets`: at the
+    heading's text-derived slug where that is unambiguous, so the Markdown stays free of HTML, and
+    otherwise at the heading's identifier, restored by an empty ``<a id="vertex-<uid>"></a>`` line
+    placed above the heading — an anchor GitHub, VS Code, and Typora alike honour.  Headings nothing
+    links to get no anchor.  Each heading link also sheds its
+    :data:`~guffin.render.pandoc_rendering.HEADING_LINK_CLASS`, which GFM cannot express: a classed
+    link would be written as a raw HTML ``<a>`` rather than a Markdown link.
 
     Args:
         doc: The document whose heading links are already resolved; modified in place.
     """
-    targets: Final[set[str]] = set()
+    targets: Final[Mapping[str, str]] = _slug_targets(doc)
+    anchored: Final[set[str]] = set()
 
-    def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
+    def _retarget(elem: pf.Element, _doc: pf.Doc) -> None:
         if isinstance(elem, pf.Link) and HEADING_LINK_CLASS in elem.classes:
-            targets.add(elem.url.removeprefix("#"))
+            identifier: Final[str] = elem.url.removeprefix("#")
+            target: Final[str] = targets.get(identifier, identifier)
+            if target == identifier:
+                anchored.add(identifier)
+            elem.url = f"#{target}"
             elem.classes.remove(HEADING_LINK_CLASS)
 
     def _anchor(elem: pf.Element, _doc: pf.Doc) -> list[pf.Block] | None:
-        if isinstance(elem, pf.Header) and elem.identifier in targets:
+        if isinstance(elem, pf.Header) and elem.identifier in anchored:
             return [pf.RawBlock(f'<a id="{elem.identifier}"></a>', format="html"), elem]
         return None
 
-    doc.walk(_collect)
+    doc.walk(_retarget)
     doc.walk(_anchor)
 
 
@@ -296,7 +337,7 @@ def render(
             enriched_tree,
             make_doc_resolver(doc, inline_map, options.daily_note_format, heading_links=options.heading_links),
         )
-        _anchor_linked_headings(doc)
+        _link_headings(doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
         fully_stripped_urls: Final[frozenset[str]] = apply_reference_placements(
@@ -351,7 +392,7 @@ def render(
                 no_bundle_doc, no_bundle_inline_map, options.daily_note_format, heading_links=options.heading_links
             ),
         )
-        _anchor_linked_headings(no_bundle_doc)
+        _link_headings(no_bundle_doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
         apply_reference_placements(

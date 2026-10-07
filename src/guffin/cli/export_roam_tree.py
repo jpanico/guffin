@@ -241,9 +241,10 @@ def main(
             envvar="GUFFIN_HEADING_LINKS",
             help=(
                 "When enabled (default), a block reference to a heading renders as a link that "
-                "jumps to that heading (in Markdown, to an empty HTML anchor placed above the "
-                "heading). When disabled, it renders as the heading's text in italics, without a "
-                "link. Applies to all formats."
+                "jumps to that heading (in Markdown, to the GitHub-style slug of the heading's "
+                "text, or to an empty HTML anchor placed above the heading when that slug is "
+                "empty or shared with another heading). When disabled, it renders as the "
+                "heading's text in italics, without a link. Applies to all formats."
             ),
         ),
     ] = True,

@@ -403,25 +403,32 @@ class TestElementNumberRendering:
         assert "&#91;1.1&#93; Chapter I" in result
 
 
-def _heading_ref_bundle() -> RenderBundle:
+def _heading_ref_bundle(*, second_title: str = "Second", first_title: str = "First") -> RenderBundle:
     """A page whose first section's prose references the second section's heading."""
     ref_url = vertex_link_url("head0002b", VertexLinkKind.REFERENCE)
     page = PageVertex(uid="page00001", title="Doc", children=["head0001a", "head0002b"])
-    first = HeadingVertex(uid="head0001a", text="First", heading_level=1, children=["prose0001"])
+    first = HeadingVertex(uid="head0001a", text=first_title, heading_level=1, children=["prose0001"])
     prose = TextVertex(uid="prose0001", text=f"As [Second]({ref_url}) explains.", refs=["head0002b"])
-    second = HeadingVertex(uid="head0002b", text="Second", heading_level=1, children=["prose0002"])
+    second = HeadingVertex(uid="head0002b", text=second_title, heading_level=1, children=["prose0002"])
     body = TextVertex(uid="prose0002", text="Target body.")
     return RenderBundle(content=VertexTree(tree_vertices=[page, first, prose, second, body]), view={})
 
 
 class TestHeadingLinkRendering:
-    """A reference to a heading links to an HTML anchor above it, or renders in italics when links are off."""
+    """A reference to a heading links to its GitHub-style slug, or to an HTML anchor when the slug is unusable."""
 
     _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 
-    def _render(self, tmp_path: Path, *, should_bundle: bool, heading_links: bool = True) -> str:
+    def _render(
+        self,
+        tmp_path: Path,
+        *,
+        should_bundle: bool,
+        heading_links: bool = True,
+        render_bundle: RenderBundle | None = None,
+    ) -> str:
         render(
-            _heading_ref_bundle(),
+            render_bundle if render_bundle is not None else _heading_ref_bundle(),
             profile=ArticleProfile(),
             filename_stem="doc",
             api_endpoint=self._ENDPOINT,
@@ -433,22 +440,41 @@ class TestHeadingLinkRendering:
         return md_path.read_text(encoding="utf-8")
 
     @pytest.mark.parametrize("should_bundle", [True, False])
-    def test_reference_links_to_anchor_above_heading(self, tmp_path: Path, should_bundle: bool) -> None:
-        """The referenced heading is preceded by its anchor, and the prose links to it."""
+    def test_reference_links_to_heading_slug(self, tmp_path: Path, should_bundle: bool) -> None:
+        """The prose links to the heading's text-derived slug, and no anchor is emitted."""
         result = self._render(tmp_path, should_bundle=should_bundle)
+        assert "As [Second](#second) explains." in result
+        assert "<a id=" not in result
+        assert "vertex-" not in result
+
+    def test_slug_is_derived_from_rendered_heading_text(self, tmp_path: Path) -> None:
+        """Punctuation and inline markup drop out of the slug the way a GFM viewer drops them."""
+        result = self._render(
+            tmp_path, should_bundle=False, render_bundle=_heading_ref_bundle(second_title="What is a *Program*?")
+        )
+        assert "As [What is a *Program*?](#what-is-a-program) explains." in result
+
+    def test_ambiguous_slug_falls_back_to_anchor(self, tmp_path: Path) -> None:
+        """Two headings with the same slug keep the uid anchor above the referenced one."""
+        result = self._render(
+            tmp_path, should_bundle=False, render_bundle=_heading_ref_bundle(first_title="Second")
+        )
         assert '<a id="vertex-head0002b"></a>\n\n## Second' in result
         assert "As [Second](#vertex-head0002b) explains." in result
+        assert result.count("<a id=") == 1
 
-    def test_unreferenced_heading_gets_no_anchor(self, tmp_path: Path) -> None:
-        """Only a heading something links to carries an anchor."""
-        result = self._render(tmp_path, should_bundle=False)
-        assert "vertex-head0001a" not in result
+    def test_empty_slug_falls_back_to_anchor(self, tmp_path: Path) -> None:
+        """A heading whose text slugs to nothing keeps the uid anchor."""
+        result = self._render(tmp_path, should_bundle=False, render_bundle=_heading_ref_bundle(second_title="???"))
+        assert '<a id="vertex-head0002b"></a>\n\n## ???' in result
+        assert "As [???](#vertex-head0002b) explains." in result
 
-    def test_heading_links_off_italicizes_without_anchor(self, tmp_path: Path) -> None:
-        """With heading_links=False the reference renders as the heading's text in italics, and no anchor is emitted."""
+    def test_heading_links_off_italicizes_without_link(self, tmp_path: Path) -> None:
+        """With heading_links=False the reference renders as the heading's text in italics, with no link or anchor."""
         result = self._render(tmp_path, should_bundle=False, heading_links=False)
         assert "As *Second* explains." in result
         assert "<a id=" not in result
+        assert "(#second)" not in result
 
 
 def _sourced_bundle() -> RenderBundle:
