@@ -14,6 +14,7 @@ from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
+    CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
     PageVertex,
@@ -475,6 +476,51 @@ class TestHeadingLinkRendering:
         assert "As *Second* explains." in result
         assert "<a id=" not in result
         assert "(#second)" not in result
+
+
+def _callout_bundle(callout_type: CalloutVertex.CalloutType, title: str) -> RenderBundle:
+    """A page holding one callout of *callout_type* titled *title*."""
+    page = PageVertex(uid="page00001", title="Doc", children=["call00001"])
+    callout = CalloutVertex(uid="call00001", callout_type=callout_type, title=title, body="Body line.")
+    return RenderBundle(content=VertexTree(tree_vertices=[page, callout]), view={})
+
+
+class TestCalloutTitleRendering:
+    """A callout's title travels as a bold first line only when it says more than the alert's own label."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, callout_type: CalloutVertex.CalloutType, title: str) -> str:
+        render(
+            _callout_bundle(callout_type, title),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_informative_title_is_kept(self, tmp_path: Path) -> None:
+        """A title the author wrote stays as the bold line under the marker."""
+        result = self._render(tmp_path, CalloutVertex.CalloutType.INFO, "Read this first")
+        assert "> [!NOTE]\n> **Read this first**\n>\n> Body line." in result
+
+    def test_title_equal_to_type_keyword_is_dropped(self, tmp_path: Path) -> None:
+        """A title that is only the callout's type keyword adds nothing to the alert and is omitted."""
+        result = self._render(tmp_path, CalloutVertex.CalloutType.INFO, "INFO")
+        assert "> [!NOTE]\n>\n> Body line." in result
+        assert "**INFO**" not in result
+
+    def test_title_equal_to_alert_label_is_dropped(self, tmp_path: Path) -> None:
+        """A title that repeats the alert's own label, in any case, is omitted."""
+        result = self._render(tmp_path, CalloutVertex.CalloutType.NOTE, "Note")
+        assert "> [!NOTE]\n>\n> Body line." in result
+        assert "**Note**" not in result
+
+    def test_label_of_mapped_type_is_also_redundant(self, tmp_path: Path) -> None:
+        """A callout type that maps onto a different GFM type treats that type's label as redundant too."""
+        result = self._render(tmp_path, CalloutVertex.CalloutType.EXAMPLE, "note")
+        assert "> [!NOTE]\n>\n> Body line." in result
 
 
 def _sourced_bundle() -> RenderBundle:
