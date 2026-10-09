@@ -618,6 +618,104 @@ class TestTypstPageBreakFilter:
 
 
 @pytest.mark.pandoc
+class TestTypstKeepWithNextFilter:
+    """typst_keep_with_next.lua keeps a lead-in paragraph on the page of the image or table it introduces."""
+
+    _STICKY_OPEN = "#block(sticky: true)["
+
+    @staticmethod
+    def _typst_for(*blocks: pf.Block) -> str:
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(pf.Doc(*blocks)),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_keep_with_next.lua'}"],
+        )
+
+    @staticmethod
+    def _image_para() -> pf.Para:
+        return pf.Para(pf.Image(url="faces.png", title=""))
+
+    @staticmethod
+    def _table() -> pf.Table:
+        cell = pf.TableCell(pf.Plain(pf.Str("x")))
+        return pf.Table(pf.TableBody(pf.TableRow(cell)), head=pf.TableHead(), foot=pf.TableFoot())
+
+    def test_lead_in_before_image_is_wrapped_in_sticky_block(self) -> None:
+        """The paragraph ahead of an image paragraph is wrapped; the image follows the wrapper."""
+        lead_in = pf.Para(pf.Str("See"), pf.Space(), pf.Str("the"), pf.Space(), pf.Str("face:"))
+        typst = self._typst_for(lead_in, self._image_para())
+        assert typst.count(self._STICKY_OPEN) == 1
+        assert (
+            typst.index(self._STICKY_OPEN) < typst.index("See the face:") < typst.index("]") < typst.index("faces.png")
+        )
+
+    def test_lead_in_before_table_is_wrapped_in_sticky_block(self) -> None:
+        """A table counts as a figure-like block too."""
+        typst = self._typst_for(pf.Para(pf.Str("Compare:")), self._table())
+        assert typst.count(self._STICKY_OPEN) == 1
+        assert typst.index(self._STICKY_OPEN) < typst.index("Compare:") < typst.index("#table(")
+
+    def test_lead_in_inside_list_item_is_wrapped(self) -> None:
+        """A list item's leading text ahead of its image is wrapped inside the item."""
+        typst = self._typst_for(pf.BulletList(pf.ListItem(pf.Plain(pf.Str("APL")), self._image_para())))
+        assert typst.count(self._STICKY_OPEN) == 1
+        assert typst.index("- ") < typst.index(self._STICKY_OPEN) < typst.index("APL") < typst.index("faces.png")
+
+    def test_text_followed_by_text_is_untouched(self) -> None:
+        """Two text paragraphs in a row gain no wrapper."""
+        typst = self._typst_for(pf.Para(pf.Str("One.")), pf.Para(pf.Str("Two.")))
+        assert self._STICKY_OPEN not in typst
+
+    def test_image_followed_by_image_is_untouched(self) -> None:
+        """An image is never a lead-in, so a run of images is left free to break."""
+        typst = self._typst_for(self._image_para(), self._image_para())
+        assert self._STICKY_OPEN not in typst
+
+    def test_trailing_lead_in_item_of_a_list_is_split_off_and_wrapped(self) -> None:
+        """A list ending in a text-only item ahead of an image: that item alone goes in the sticky block."""
+        items = [pf.ListItem(pf.Plain(pf.Str("Hieroglyphs"))), pf.ListItem(pf.Plain(pf.Str("APL")))]
+        typst = self._typst_for(pf.BulletList(*items), self._image_para())
+        assert typst.count(self._STICKY_OPEN) == 1
+        assert (
+            typst.index("- Hieroglyphs")
+            < typst.index(self._STICKY_OPEN)
+            < typst.index("- APL")
+            < typst.index("faces.png")
+        )
+
+    def test_single_item_list_before_image_is_wrapped_whole(self) -> None:
+        """A one-item list ahead of an image is wrapped as it is."""
+        typst = self._typst_for(pf.BulletList(pf.ListItem(pf.Plain(pf.Str("APL")))), self._image_para())
+        assert typst.count(self._STICKY_OPEN) == 1
+        assert typst.index(self._STICKY_OPEN) < typst.index("- APL") < typst.index("faces.png")
+
+    def test_split_off_ordered_item_keeps_its_number(self) -> None:
+        """An ordered list's split-off last item continues the numbering."""
+        items = [
+            pf.ListItem(pf.Plain(pf.Str("one"))),
+            pf.ListItem(pf.Plain(pf.Str("two"))),
+            pf.ListItem(pf.Plain(pf.Str("three"))),
+        ]
+        typst = self._typst_for(pf.OrderedList(*items, start=4), self._image_para())
+        assert typst.count(self._STICKY_OPEN) == 1
+        assert "start: 6" in typst
+        assert typst.index("+ two") < typst.index(self._STICKY_OPEN) < typst.index("start: 6") < typst.index("+ three")
+
+    def test_list_whose_last_item_has_nested_content_is_untouched(self) -> None:
+        """A last item carrying more than its text (a sublist) is not a lead-in to what follows the list."""
+        last = pf.ListItem(pf.Plain(pf.Str("APL")), pf.BulletList(pf.ListItem(pf.Plain(pf.Str("sub")))))
+        typst = self._typst_for(pf.BulletList(last), self._image_para())
+        assert self._STICKY_OPEN not in typst
+
+    def test_only_the_paragraph_adjacent_to_the_image_is_wrapped(self) -> None:
+        """Of two paragraphs ahead of an image, only the one touching it is wrapped."""
+        typst = self._typst_for(pf.Para(pf.Str("First.")), pf.Para(pf.Str("Second.")), self._image_para())
+        assert typst.count(self._STICKY_OPEN) == 1
+        assert typst.index("First.") < typst.index(self._STICKY_OPEN) < typst.index("Second.")
+
+
+@pytest.mark.pandoc
 @pytest.mark.skipif(shutil.which("typst") is None, reason="requires typst on PATH")
 class TestHeadingLinkPdf:
     """A reference to a heading renders as a working internal link in the compiled PDF."""

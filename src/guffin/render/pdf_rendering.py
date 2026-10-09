@@ -103,6 +103,7 @@ _TYPST_BULLET_FILTER: Final[str] = "typst_bullet.lua"
 _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
 _TYPST_CAPTION_FILTER: Final[str] = "typst_caption.lua"
 _TYPST_COLOR_SPAN_FILTER: Final[str] = "typst_color_span.lua"
+_TYPST_KEEP_WITH_NEXT_FILTER: Final[str] = "typst_keep_with_next.lua"
 _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 _TYPST_PAGE_BREAK_FILTER: Final[str] = "typst_page_break.lua"
 _TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
@@ -144,10 +145,12 @@ def _callout_colors_env() -> str:
 def _typst_filter_args(bundled_dir: Path) -> list[str]:
     """Return the ``--lua-filter`` arguments applying the bundled Typst filters, in evaluation order.
 
-    The single declaration of the filter chain: the inline and structural transforms first, the
-    fancy-quote and code-source transforms after them (their content is serialized once
-    rewritten), and the semantic-bullet transform last — it serializes classified list items'
-    bodies to Typst, so every earlier transform must already have rewritten them.
+    The single declaration of the filter chain: the inline and structural transforms first (the
+    keep-with-next transform right after the list-paragraph one, so it sees a list item's
+    promoted lead-in paragraph), the fancy-quote and code-source transforms after them (their
+    content is serialized once rewritten), and the semantic-bullet transform last — it serializes
+    classified list items' bodies to Typst, so every earlier transform must already have
+    rewritten them.
 
     Args:
         bundled_dir: The bundled Typst resources directory holding the filter files.
@@ -159,6 +162,7 @@ def _typst_filter_args(bundled_dir: Path) -> list[str]:
         f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_KEEP_WITH_NEXT_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_TODO_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_PAGE_BREAK_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_CAPTION_FILTER}",
