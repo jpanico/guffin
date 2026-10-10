@@ -123,91 +123,93 @@ reverse references. Two consequences follow:
   The `[[Test Article]] 0` fixtures confirm this: no unselected version's uid and no
   group uid appears in any of the six files.
 
-An unselected version can still enter a fetch indirectly, if some fetched block
-references it by `((uid))`. It then arrives as a block claiming the page as its page
-and parent while being absent from that parent's children, which is exactly the shape
-the `all_children_present` / `all_parents_present` network validators are there to
-catch. This has not been exercised.
+That was the state of play until the fetch queries were taught to follow the group,
+as the next section describes. The tree-building and transcription stages still behave
+exactly as above: the anchor tree is extracted by walking `:block/children`, so the
+unselected versions never enter it and the export still renders the selected version
+alone. What changed is that the versions now *arrive*, in the flat node network, where
+a consumer can find them.
 
-Should a feature ever need the unselected versions (say, exporting every version, or
-flagging versioned blocks), the fetch queries can be extended to return them; the
-design is below. It is deliberately **not implemented**: nothing consumes the versions
-today, and the query change is the easy half of the work.
+## Fetching the versions
 
-## Fetching the versions (design, not implemented)
-
-The `FetchRoamNodes.Request` queries (`roam/node_fetch.py`) can be extended so that,
-for every node a query returns today, its sibling versions and their group entity come
-back too. The mechanism was verified live against `[[Test Article]] 0`.
+The `FetchRoamNodes.Request` queries (`roam/node_fetch.py`) return, for every node in
+scope of a fetch, its sibling versions as well, and stamp every version block with its
+group's uid. Verified live against `[[Test Article]] 0`.
 
 ### The pivot
 
-For a node `?member` the query already returns, its versions and group are one hop
-away through the reverse of `:vc/blocks`. Two `or-join` branches cover it:
+For a node `?member` the fetch would return anyway, its versions are one hop away
+through the reverse of `:vc/blocks`. One extra `or-join` branch covers it:
 
 ```clojure
 (and (in-scope ?anchor ?member)
-     [?vc :vc/blocks ?member]
-     [?vc :vc/blocks ?node])        ; every sibling version, ?member itself included
-(and (in-scope ?anchor ?member)
-     [?node :vc/blocks ?member])    ; the group entity
+     [?group :vc/blocks ?member]
+     [?group :vc/blocks ?node])     ; every sibling version, ?member itself included
 ```
 
-Run against `[[Test Article]] 0`, this shape returns exactly four extra rows: the
-three version blocks (string, order, and the rest of their attributes) and the group
-row, which after namespace stripping is `uid` plus a `blocks` list of the three version
-uids. Nothing else, and nothing twice. With `?member` bound, the
-`[?vc :vc/blocks ?member]` clause is a VAET index probe, so an unversioned graph pays
-almost nothing for the extra branches.
+Run against `[[Test Article]] 0`, the branch adds exactly the two unselected versions
+to the fetch: the selected one was already in scope through the parent's children, and
+the branch yields it again, which the `or-join` deduplicates. With `?member` bound, the
+`[?group :vc/blocks ?member]` clause is a VAET index probe, so an unversioned graph pays
+almost nothing for the branch.
 
-### Factor the existing branches into a rule
+### Scope lives in the rules
 
-"Every node returned today" means every branch of the with-refs query, including
-blocks reached through first- and second-hop references. Appending a version branch
-to each of its six branches would double them to twelve. Instead, move the existing
-branches into an `in-scope` rule in the rules vector:
+"Every node in scope" means every branch of the with-refs fetch, including blocks
+reached through first- and second-hop references. Appending a version branch to each of
+its six `or-join` branches would have doubled them to twelve. Instead, the scope moved
+out of the query and into an `in-scope` rule in the rules vector:
 
 ```clojure
 [(in-scope ?anchor ?node) [(identity ?anchor) ?node]]
 [(in-scope ?anchor ?node) (descendant ?anchor ?node)]
 [(in-scope ?anchor ?node) (page-ref ?anchor ?node)]
-;; … one clause per existing or-join branch
+;; … one clause per former or-join branch
 ```
 
-and the `or-join` collapses to three branches: `(in-scope ?anchor ?node)` plus the two
-pivots above. The two-branch no-refs queries get the same treatment with a two-clause
-rule. The `or-join` scoping rule still applies: `?anchor` stays in the join-variable
-list and is re-bound inside each branch, or the pivots would match every versioned
-block in the graph.
+so each query's `or-join` has two branches, `(in-scope ?anchor ?node)` and the pivot,
+and the with-refs choice selects the rules vector: `SCOPE_RULES` (anchor plus
+descendants, two clauses) or `SCOPE_WITH_REFS_RULES` (six clauses). There is now one
+query per anchor kind, `BY_PAGE_TITLE_QUERY` and `BY_NODE_UID_QUERY`. The `or-join`
+scoping rule still applies: `?anchor` stays in the join-variable list and is re-bound
+inside each branch, or the pivot would match every versioned block in the graph.
 
-### The alternative, and why not
+### The group rides on the versions, not as a row
 
-A reverse reference in the pull pattern, `{:vc/_blocks [:block/uid {:vc/blocks [*]}]}`
-beside the `[*]` wildcard, needs no query change and nests each node's versions inside
-its own row. But it breaks the flat-rows contract that the raw-result parsing and
-every recorded fixture rely on, so the branch design is preferred.
+The group entity is not fetched as a row. It has no string, page, or parents, so it is
+not a node, and the node parser would reject it. Its one useful fact, its uid, is pulled
+onto each version block instead, through a reverse reference in the shared pull
+pattern:
 
-### Downstream consequences
+```clojure
+[* … {(:vc/_blocks :as "version-group") [:block/uid]}]
+```
 
-The query change is the smaller part. Returning the rows commits the pipeline to
-decisions it does not have to make today:
+Every version of a versioned block, the selected one included, arrives with
+`"version-group": [{"uid": "<group uid>"}]`; a block that is not versioned carries no
+such key, because a reverse reference with no match is omitted from the pull. That is
+what ties the versions together on the wire, and what lets a consumer tell a versioned
+block from an ordinary one. Pulling only a uid stub keeps the rows flat; nesting the
+sibling versions themselves inside each row (`{:vc/_blocks [{:vc/blocks [*]}]}`) would
+have broken the flat-rows contract the raw-result parsing and every recorded fixture
+rely on.
+
+### What arrives downstream
 
 - **Version rows parse as ordinary nodes.** They carry page and parents but sit in no
   `:block/children` set, so `NodeTree.build` never reaches them and `nodes_by_uid` is
   where they land. The `all_children_present` / `all_parents_present` validators pass,
-  since the parent they name is present.
-- **The group row needs a model decision.** It is `uid`, `id`, and `blocks` (the
-  schema has no other `blocks` attribute, so there is no key collision). `RoamNode`
-  would validate it, since only `uid` and `id` are required and unknown keys are
-  ignored, but the result is a node with no string, page, or parents, and `node_type`
-  has no classification for it. Either a dedicated row model or a `blocks` field with
-  its own `NodeType` is needed.
+  since the parent they name is present. The `[[Test Article]] 0` fixtures show it:
+  the two unselected versions appear in `nodes_by_uid` and `raw_result`, and nowhere
+  else.
+- **`version-group` is on the wire, not yet on the model.** `RoamNode` ignores unknown
+  keys, so the stub is visible in `raw_result` only until a field is added for it; that
+  is the next step, together with whatever the consuming feature needs.
 - **Selection stays derivable.** Nothing on the group says which version is selected;
   the selected one is the version present in the parent's `:block/children`, so the
   model can compute it from data it already holds.
-- **The revision snapshot would move** when someone edits an unselected version,
-  because the hash covers every fetched row. Arguably correct, since the page's
-  content did change, but a behaviour change for the fixtures.
+- **The revision snapshot moves** when someone edits an unselected version, because the
+  hash covers every fetched row. That is correct: the page's content did change.
 
 ## No API creates a version
 

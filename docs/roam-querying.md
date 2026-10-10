@@ -100,21 +100,40 @@ names that one attribute unambiguously.
 
 ## Queries Used in This Project
 
-### 1. Page fetch — `FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY`
+### 1. Node fetch — `FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY` / `BY_NODE_UID_QUERY`
 
 ```datalog
-[:find (pull ?page [* [:block/view-type :as "block-view-type"]
-                      [:children/view-type :as "children-view-type"]])
- :in $ ?title
+[:find (pull ?node [* [:block/view-type :as "block-view-type"]
+                      [:children/view-type :as "children-view-type"]
+                      {(:vc/_blocks :as "version-group") [:block/uid]}])
+ :in $ ?title %
  :where
- [?page :node/title ?title]]
+ [?anchor :node/title ?title]
+ (or-join [?anchor ?node]
+   (and [?anchor :node/title ?title]
+        (in-scope ?anchor ?node))
+   (and [?anchor :node/title ?title]
+        (in-scope ?anchor ?member)
+        [?group :vc/blocks ?member]
+        [?group :vc/blocks ?node]))]
 ```
 
-- Input binding: `?title` — the exact page title string (passed as `args[1]`).
-- Finds the entity whose `:node/title` equals the title, then pulls all its attributes.
+- Input bindings: `?title` — the exact page title string (`args[1]`) — and `%`, the rules vector
+  (`args[2]`). The node-UID query is identical except that `?anchor` is bound by `:block/uid`.
+- `?anchor` is the page; everything else radiates from it through the `in-scope` rule, which is
+  where the fetch's scope is decided (see **Datalog Rules** below): `SCOPE_RULES` makes it the
+  anchor plus its descendants, `SCOPE_WITH_REFS_RULES` adds referenced nodes two hops deep with
+  their subtrees. The query text does not change with `include_refs`; only the rules do.
+- The second `or-join` branch pivots through Roam's Version Control group entity: for every
+  in-scope `?member`, every block sharing its `:vc/blocks` group is returned too, so a versioned
+  block's unselected versions arrive alongside the selected one that the parent's
+  `:block/children` names. See [roam-block-versions.md](roam-block-versions.md).
 - Returns `[row[0] for row in result]` — a `list[RoamNode]` where each `RoamNode` holds the full pull-block dict.
 - The pull pattern is `FetchRoamNodes.Request.PULL_PATTERN`, shared by every node query. The two
-  aliases are not decoration: without them the two `view-type` attributes collide (below).
+  `view-type` aliases are not decoration: without them the two attributes collide (below). The
+  `version-group` entry pulls a reverse reference — the group a block is a version of, as
+  `{"uid": …}` stubs — which the wildcard never includes; a block that is not versioned has no
+  such key.
 
 
 ### 2. Schema introspection — `FetchRoamSchema.Request.DATALOG_SCHEMA_QUERY`
@@ -204,6 +223,15 @@ A rule definition takes the following form:
 Rules are passed as an additional element of the `args` array and referenced in the
 `:where` clause by name. They are the mechanism used for recursive graph traversal: the
 `descendant` rule (transitive `:block/children` closure) and the `page-ref` rule
-(`:block/refs` targets of a node or any of its descendants) that back the with-refs fetch
-in [`roam/node_fetch.py`](../src/guffin/roam/node_fetch.py).
+(`:block/refs` targets of a node or any of its descendants) in
+[`roam/node_fetch.py`](../src/guffin/roam/node_fetch.py).
+
+They are also where that module keeps a fetch's *scope*. The `in-scope` rule names the
+nodes a fetch returns, one clause per kind of reachability, and the fetch ships one of
+two rules vectors: `SCOPE_RULES` (the anchor itself — bound through `[(identity ?anchor)
+?node]` — and its descendants) or `SCOPE_WITH_REFS_RULES` (those two clauses plus four
+more: referenced nodes, their subtrees, second-hop referenced nodes, and their subtrees).
+Keeping the scope in the rules means the query is one short `or-join` whose branches can
+be composed with the rule — the version pivot in query 1 covers every kind of in-scope
+node with a single branch — instead of being repeated per reachability kind.
 

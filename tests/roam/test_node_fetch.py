@@ -75,58 +75,83 @@ class TestFetchRoamNodesRequest:
         """Test that payload_by_page_title() produces action 'data.q'."""
         assert FetchRoamNodes.Request.payload_by_page_title("Any Page").action == "data.q"
 
-    def test_payload_args_contains_query_with_refs(self) -> None:
-        """Test that payload_by_page_title() uses BY_PAGE_TITLE_WITH_REFS_QUERY by default."""
+    def test_payload_args_with_refs_selects_with_refs_rules(self) -> None:
+        """payload_by_page_title(include_refs=True) ships BY_PAGE_TITLE_QUERY with SCOPE_WITH_REFS_RULES."""
         args: list[object] = FetchRoamNodes.Request.payload_by_page_title("Any Page", True).args
-        assert FetchRoamNodes.Request.BY_PAGE_TITLE_WITH_REFS_QUERY in args
-        assert FetchRoamNodes.Request.DESCENDANT_AND_PAGE_REF_RULES in args
+        assert FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY in args
+        assert FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES in args
+        assert FetchRoamNodes.Request.SCOPE_RULES not in args
 
-    def test_payload_args_contains_query_without_refs(self) -> None:
-        """Test that payload_by_page_title(include_refs=False) uses BY_PAGE_TITLE_QUERY."""
+    def test_payload_args_without_refs_selects_scope_rules(self) -> None:
+        """payload_by_page_title(include_refs=False) ships BY_PAGE_TITLE_QUERY with SCOPE_RULES."""
         args: list[object] = FetchRoamNodes.Request.payload_by_page_title("Any Page", include_refs=False).args
         assert FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY in args
-        assert FetchRoamNodes.Request.DESCENDANT_RULE in args
+        assert FetchRoamNodes.Request.SCOPE_RULES in args
+        assert FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES not in args
 
     def test_payload_args_contains_page_title(self) -> None:
         """Test that payload_by_page_title() includes the page title in args."""
         assert "My Page" in FetchRoamNodes.Request.payload_by_page_title("My Page").args
 
-    def test_payload_uid_args_contains_query_with_refs(self) -> None:
-        """Test that payload_by_node_uid(include_refs=True) uses BY_NODE_UID_WITH_REFS_QUERY."""
+    def test_payload_uid_args_with_refs_selects_with_refs_rules(self) -> None:
+        """payload_by_node_uid(include_refs=True) ships BY_NODE_UID_QUERY with SCOPE_WITH_REFS_RULES."""
         args: list[object] = FetchRoamNodes.Request.payload_by_node_uid("wdMgyBiP9", include_refs=True).args
-        assert FetchRoamNodes.Request.BY_NODE_UID_WITH_REFS_QUERY in args
-        assert FetchRoamNodes.Request.DESCENDANT_AND_PAGE_REF_RULES in args
+        assert FetchRoamNodes.Request.BY_NODE_UID_QUERY in args
+        assert FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES in args
 
-    def test_payload_uid_args_contains_query_without_refs(self) -> None:
-        """Test that payload_by_node_uid(include_refs=False) uses BY_NODE_UID_QUERY."""
+    def test_payload_uid_args_without_refs_selects_scope_rules(self) -> None:
+        """payload_by_node_uid(include_refs=False) ships BY_NODE_UID_QUERY with SCOPE_RULES."""
         args: list[object] = FetchRoamNodes.Request.payload_by_node_uid("wdMgyBiP9", include_refs=False).args
         assert FetchRoamNodes.Request.BY_NODE_UID_QUERY in args
-        assert FetchRoamNodes.Request.DESCENDANT_RULE in args
+        assert FetchRoamNodes.Request.SCOPE_RULES in args
 
     def test_payload_uid_args_contains_node_uid(self) -> None:
         """Test that payload_by_node_uid() includes the node UID in args."""
         assert "wdMgyBiP9" in FetchRoamNodes.Request.payload_by_node_uid("wdMgyBiP9").args
 
-    def test_with_refs_queries_pull_subtrees_of_all_page_refs(self) -> None:
-        """The subtree branch uses the page-ref rule, so anchor-self refs (e.g. a page-title.
+    def test_scope_is_decided_by_the_rules_not_the_query(self) -> None:
+        """The query traverses only through the in-scope rule; neither query names descendant or page-ref."""
+        for query in (FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY, FetchRoamNodes.Request.BY_NODE_UID_QUERY):
+            assert "(in-scope ?anchor ?node)" in query
+            assert "(in-scope ?anchor ?member)" in query
+            assert "(descendant " not in query
+            assert "(page-ref " not in query
+
+    def test_scope_rules_cover_anchor_and_descendants(self) -> None:
+        """SCOPE_RULES defines in-scope as the anchor itself plus its descendants, and nothing through refs."""
+        rules: Final[str] = FetchRoamNodes.Request.SCOPE_RULES
+        assert "[(identity ?anchor) ?node]" in rules
+        assert "(descendant ?anchor ?node)" in rules
+        assert "page-ref" not in rules
+
+    def test_with_refs_rules_pull_subtrees_of_all_page_refs(self) -> None:
+        """The subtree clause uses the page-ref rule, so anchor-self refs (e.g. a page-title.
 
         reference) get their full subtrees pulled, not only refs from descendant blocks.
         """
-        for query in (
-            FetchRoamNodes.Request.BY_PAGE_TITLE_WITH_REFS_QUERY,
-            FetchRoamNodes.Request.BY_NODE_UID_WITH_REFS_QUERY,
-        ):
-            assert "(page-ref ?anchor ?ref)\n" in query
-            assert "(descendant ?ref ?node)" in query
-            # The old descendant-block-only subtree branch must be gone.
-            assert "(descendant ?anchor ?block)" not in query
-            # Second ref hop: ref targets of ref targets (bare nodes).
-            assert "(page-ref ?anchor ?via)" in query
-            assert "(page-ref ?via ?node)" in query
-            # Second-hop ref subtrees: the full subtree of each two-hop ref target, so a
-            # multi-block construct referenced from within a first-hop ref (e.g. a table
-            # referenced inside an embedded page) arrives with its children.
-            assert "(page-ref ?via ?ref)" in query
+        rules: Final[str] = FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES
+        assert "[(identity ?anchor) ?node]" in rules
+        assert "(descendant ?anchor ?node)" in rules
+        assert "(page-ref ?anchor ?node)" in rules
+        assert "(page-ref ?anchor ?ref)\n" in rules
+        assert "(descendant ?ref ?node)" in rules
+        # Second ref hop: ref targets of ref targets (bare nodes).
+        assert "(page-ref ?anchor ?via)" in rules
+        assert "(page-ref ?via ?node)" in rules
+        # Second-hop ref subtrees: the full subtree of each two-hop ref target, so a
+        # multi-block construct referenced from within a first-hop ref (e.g. a table
+        # referenced inside an embedded page) arrives with its children.
+        assert "(page-ref ?via ?ref)" in rules
+
+    def test_queries_pivot_through_the_version_group(self) -> None:
+        """Both queries return every sibling version of an in-scope node by pivoting through :vc/blocks."""
+        for query in (FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY, FetchRoamNodes.Request.BY_NODE_UID_QUERY):
+            assert "[?group :vc/blocks ?member]" in query
+            assert "[?group :vc/blocks ?node]" in query
+
+    def test_pull_pattern_names_the_version_group(self) -> None:
+        """The pull pattern carries each block's version group as uid stubs under the version-group alias."""
+        assert '{(:vc/_blocks :as "version-group") [:block/uid]}' in FetchRoamNodes.Request.PULL_PATTERN
 
 
 class TestFetchRoamNodesResponsePayload:
@@ -451,6 +476,41 @@ class TestFetchRoamNodesFetchByPageTitle:
         assert [n.model_dump() for n in sorted(result.network, key=lambda n: n.uid)] == [
             n.model_dump() for n in sorted(fixture_nodes, key=lambda n: n.uid)
         ]
+
+    @pytest.mark.live
+    @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
+    def test_fetch_testarticle0_returns_every_version(self, live_api_endpoint: ApiEndpoint) -> None:
+        """Live test: a versioned block's unselected versions are fetched, outside the anchor tree.
+
+        ``[[Test Article]] 0``'s block 3.4 holds a child authored with three versions (uids
+        ``PUrwWBbbi`` / ``zHbMF7Ozq`` / ``YYysqBFqy``, grouped by ``e9j_vHjGQ``), the third of
+        which is selected.  Only the selected version sits in the parent's ``:block/children``,
+        so only it reaches the anchor tree; the other two are reached through the version group
+        and land in the network alone.  Every version — the selected one included — carries the
+        group's uid under the ``version-group`` pull key, and no other row does.
+        """
+        page_title = "[[Test Article]] 0"
+        version_uids: Final[set[str]] = {"PUrwWBbbi", "zHbMF7Ozq", "YYysqBFqy"}
+        selected_uid: Final[str] = "YYysqBFqy"
+        group_uid: Final[str] = "e9j_vHjGQ"
+
+        result: NodeFetchResult = FetchRoamNodes.fetch_by_page_title(
+            fetch_spec=NodeFetchSpec(anchor=NodeFetchAnchor(qualifier=page_title), include_refs=False),
+            api_endpoint=live_api_endpoint,
+        )
+        assert result.anchor_tree is not None
+        assert result.nodes_by_uid is not None
+        assert result.raw_result is not None
+
+        tree_uids: Final[set[str]] = {n.uid for n in result.anchor_tree.tree_network}
+        assert version_uids & tree_uids == {selected_uid}
+        assert version_uids <= set(result.nodes_by_uid)
+        assert set(result.nodes_by_uid) - tree_uids == version_uids - {selected_uid}
+
+        versioned_rows: Final[dict[object, object]] = {
+            row[0]["uid"]: row[0]["version-group"] for row in result.raw_result if "version-group" in row[0]
+        }
+        assert versioned_rows == {uid: [{"uid": group_uid}] for uid in version_uids}
 
 
 class TestFetchRoamNodesFetchByNodeUid:

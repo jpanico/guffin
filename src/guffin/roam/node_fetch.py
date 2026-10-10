@@ -74,10 +74,26 @@ class FetchRoamNodes:
         **Anchor node**: each query opens with a single data pattern clause that binds a
         variable named ``?anchor`` to the node whose attribute matches the caller-supplied
         input variable (``?title`` for page-title queries, ``?uid`` for node-UID queries).
-        All subsequent traversal — descendants via ``(descendant ?anchor ?node)`` and page
-        references via ``(page-ref ?anchor ?node)`` — radiates outward from ``?anchor``.
+        All traversal radiates outward from ``?anchor`` through the ``in-scope`` rule.
         The ``or-join`` join-variable list always includes ``?anchor`` to ensure Datomic
         treats it as the outer binding rather than a fresh free variable.
+
+        **Scope lives in the rules, not the query**: the set of nodes a fetch returns is
+        defined by the ``in-scope`` rule, so there is one query per anchor kind
+        (:attr:`BY_PAGE_TITLE_QUERY` / :attr:`BY_NODE_UID_QUERY`) and the caller's
+        ``include_refs`` choice selects the rules vector — :attr:`SCOPE_RULES` (the anchor and
+        its descendants) or :attr:`SCOPE_WITH_REFS_RULES` (plus referenced nodes, two ref hops
+        deep, with their subtrees).
+
+        **Block versions**: a block authored with Roam's Version Control feature is several
+        block entities, all at the same ``:block/order`` under the same parent, grouped by a
+        *version group* entity whose only attribute is a cardinality-many ``:vc/blocks`` ref to
+        each version.  The parent's ``:block/children`` names just the *selected* version; the
+        others dangle, reachable only through the group.  Every query therefore pivots through
+        the group: for each in-scope node it also returns every sibling version, and every
+        version block carries its group's uid in the ``version-group`` pull key.  The group
+        entity itself is not returned as a row — it has no string, page, or parents, so it is
+        not a node — but its uid on each version is what ties the versions together.
         """
 
         _DESCENDANT_CLAUSES: Final[str] = textwrap.indent(
@@ -98,36 +114,86 @@ class FetchRoamNodes:
                     [?member :block/refs ?node]]"""),
             "    ",
         )
-        DESCENDANT_RULE: Final[str] = f"[\n{_DESCENDANT_CLAUSES}\n]"
-        """Datalog rules vector defining a recursive transitive closure over ``:block/children``.
+        _IN_SCOPE_CLAUSES: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                [(in-scope ?anchor ?node)
+                    [(identity ?anchor) ?node]]
+                [(in-scope ?anchor ?node)
+                    (descendant ?anchor ?node)]"""),
+            "    ",
+        )
+        _IN_SCOPE_REF_CLAUSES: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                [(in-scope ?anchor ?node)
+                    (page-ref ?anchor ?node)]
+                [(in-scope ?anchor ?node)
+                    (page-ref ?anchor ?ref)
+                    (descendant ?ref ?node)]
+                [(in-scope ?anchor ?node)
+                    (page-ref ?anchor ?via)
+                    (page-ref ?via ?node)]
+                [(in-scope ?anchor ?node)
+                    (page-ref ?anchor ?via)
+                    (page-ref ?via ?ref)
+                    (descendant ?ref ?node)]"""),
+            "    ",
+        )
 
-        Query constants that reference ``(descendant ?parent ?child)`` pass this vector as
-        the ``%`` rules binding to resolve the rule at query time.
+        SCOPE_RULES: Final[str] = f"[\n{_DESCENDANT_CLAUSES}\n{_IN_SCOPE_CLAUSES}\n]"
+        """Datalog rules vector scoping a fetch to the anchor node and its descendants.
+
+        Defines two rules:
+
+        - ``(descendant ?parent ?child)`` — the recursive transitive closure over
+          ``:block/children``.
+        - ``(in-scope ?anchor ?node)`` — the nodes a fetch returns.  Two clauses:
+
+          1. The anchor node itself (``?node`` is ``?anchor``, bound through ``identity``).
+          2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth
+             (via ``descendant``).
+
+        Pass this as the ``%`` rules binding when referenced nodes are not wanted.
         """
 
-        PAGE_REF_RULE: Final[str] = f"[\n{_PAGE_REF_CLAUSES}\n]"
-        """Datalog rules vector defining the ``page-ref`` rule for ``:block/refs`` traversal.
+        SCOPE_WITH_REFS_RULES: Final[str] = (
+            f"[\n{_DESCENDANT_CLAUSES}\n{_PAGE_REF_CLAUSES}\n{_IN_SCOPE_CLAUSES}\n{_IN_SCOPE_REF_CLAUSES}\n]"
+        )
+        """Datalog rules vector scoping a fetch to the anchor, its descendants, and its references.
 
-        ``(page-ref ?root ?node)`` is satisfied when ``?node`` is referenced directly by
-        ``?root`` via ``:block/refs`` (clause 1), or when ``?node`` is referenced via
-        ``:block/refs`` by any descendant of ``?root`` (clause 2).
+        Defines three rules:
 
-        **Dependency**: the second clause calls ``(descendant ?root ?member)``, so
-        ``PAGE_REF_RULE`` cannot be used as a standalone rules vector.  Always combine it
-        with :attr:`DESCENDANT_RULE` by passing :attr:`DESCENDANT_AND_PAGE_REF_RULES` as the
-        ``%`` binding instead.
-        """
+        - ``(descendant ?parent ?child)`` — as in :attr:`SCOPE_RULES`.
+        - ``(page-ref ?root ?node)`` — ``?node`` is referenced via ``:block/refs`` by ``?root``
+          directly (clause 1) or by any descendant of ``?root`` (clause 2).  It calls
+          ``descendant``, so the two always ship together.
+        - ``(in-scope ?anchor ?node)`` — the nodes a fetch returns.  Six clauses:
 
-        DESCENDANT_AND_PAGE_REF_RULES: Final[str] = f"[\n{_DESCENDANT_CLAUSES}\n{_PAGE_REF_CLAUSES}\n]"
-        """Combined Datalog rules vector containing both :attr:`DESCENDANT_RULE` and :attr:`PAGE_REF_RULE` clauses.
+          1. The anchor node itself.
+          2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth.
+          3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
+             its descendants (via ``page-ref``).
+          4. Every block reachable through ``:block/children`` from any ``page-ref`` target of
+             the anchor — the full subtree of every referenced node, whether referenced by the
+             anchor itself (e.g. a page-title reference) or by any of its descendants.  With
+             clause 3 (the ref targets themselves), every referenced block arrives together
+             with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
+             arrive complete.
+          5. Second-hop ref targets: every node ``page-ref``-reachable from a (first-hop)
+             ``page-ref`` target of the anchor — pages referenced by a referenced node's own
+             subtree (e.g. a ``tags::`` attribute on a referenced page).  Fan-out is bounded at
+             two ref hops while still letting a referenced node's attributes resolve their own
+             page references.
+          6. Every block reachable through ``:block/children`` from any second-hop ``page-ref``
+             target (clause 5) — the full subtree of each two-hop referenced node, so a
+             multi-block construct referenced from within a first-hop ref (e.g. a ``{{table}}``
+             referenced from inside an embedded page) arrives with its cells.
 
-        Pass this as the ``%`` rules binding for any query that uses both ``(descendant ...)``
-        and ``(page-ref ...)``.  Because ``PAGE_REF_RULE`` depends on ``descendant``, the two
-        rule sets must be shipped together in a single vector.
+        Pass this as the ``%`` rules binding when referenced nodes are wanted.
         """
 
         PULL_PATTERN: Final[str] = (
-            '[* [:block/view-type :as "block-view-type"] [:children/view-type :as "children-view-type"]]'
+            '[* [:block/view-type :as "block-view-type"] [:children/view-type :as "children-view-type"]'
+            ' {(:vc/_blocks :as "version-group") [:block/uid]}]'
         )
         """The pull pattern every query in this namespace uses.
 
@@ -139,203 +205,83 @@ class FetchRoamNodes:
         ``numbered`` layout.  Aliasing both attributes gives each its own key and removes the
         ambiguous one entirely; :attr:`~guffin.roam.node.RoamNode.children_view_type` reads the
         unambiguous ``children-view-type``.
+
+        The wildcard also pulls no reverse references, so the version group a block belongs to
+        is pulled explicitly: ``:vc/_blocks`` (the reverse of the group's ``:vc/blocks`` ref)
+        under the ``version-group`` alias, as a list of ``{"uid": ...}`` stubs naming the group
+        entity.  Every version of a versioned block carries the same stub, the selected version
+        included; a block that is not versioned carries no ``version-group`` key at all, since a
+        reverse reference with no match is omitted from the pull.
         """
 
-        _BY_PAGE_TITLE_QUERY_BASE: Final[str] = textwrap.dedent(f"""\
+        _VERSIONS_PIVOT: Final[str] = "[?group :vc/blocks ?member]\n        [?group :vc/blocks ?node]"
+
+        BY_PAGE_TITLE_QUERY: Final[str] = textwrap.dedent(f"""\
             [:find (pull ?node {PULL_PATTERN})
              :in $ ?title %
              :where
              [?anchor :node/title ?title]
              (or-join [?anchor ?node]
                (and [?anchor :node/title ?title]
-                    [?node :node/title ?title])
+                    (in-scope ?anchor ?node))
                (and [?anchor :node/title ?title]
-                    (descendant ?anchor ?node))""")
-        _PAGE_REF_OR_JOIN_BRANCH: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :node/title ?title]
-                     (page-ref ?anchor ?node))"""),
-            "   ",
-        )
-        _REF_DESCENDANT_OR_JOIN_BRANCH: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :node/title ?title]
-                     (page-ref ?anchor ?ref)
-                     (descendant ?ref ?node))"""),
-            "   ",
-        )
-        _REF2_OR_JOIN_BRANCH: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :node/title ?title]
-                     (page-ref ?anchor ?via)
-                     (page-ref ?via ?node))"""),
-            "   ",
-        )
-        _REF2_DESCENDANT_OR_JOIN_BRANCH: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :node/title ?title]
-                     (page-ref ?anchor ?via)
-                     (page-ref ?via ?ref)
-                     (descendant ?ref ?node))"""),
-            "   ",
-        )
-        BY_PAGE_TITLE_QUERY: Final[str] = f"{_BY_PAGE_TITLE_QUERY_BASE})]"
-        """Datalog query fetching a page and all its descendant blocks by page title.
+                    (in-scope ?anchor ?member)
+                    {_VERSIONS_PIVOT}))]""")
+        """Datalog query fetching the nodes in scope of a page, anchored by page title.
 
         Input bindings: ``?title`` (page title string) and ``%`` (rules vector —
-        :attr:`DESCENDANT_RULE`).
+        :attr:`SCOPE_RULES` or :attr:`SCOPE_WITH_REFS_RULES`, which decides the scope).
 
         The ``or-join`` has two branches:
 
-        1. The anchor node itself (``?node = ?anchor``).
-        2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth
-           (via the ``descendant`` rule).
+        1. Every node ``in-scope`` of ``?anchor``, per the rules vector.
+        2. Every sibling version of an in-scope node: ``?member`` is any in-scope node, and
+           ``?node`` is any block sharing a version group with it (``?member`` itself
+           included, so the branch adds exactly the versions the parent's ``:block/children``
+           does not name).  With ``?member`` bound, the ``:vc/blocks`` lookup is an index probe,
+           so an unversioned graph pays nothing for the branch.
 
         ``or-join`` scoping: ``?anchor`` must appear in the join-variable list
         ``[?anchor ?node]`` *and* be re-bound inside each branch.  Variables from the outer
         ``:where`` clause absent from the join-variable list are treated as fresh free
         variables inside the ``or-join`` — not as the outer binding.  Omitting ``?anchor``
-        would cause ``(descendant ?anchor ?node)`` to match every descendant pair in the
-        entire graph, returning the full database instead of the target subtree.
-
-        To also include nodes referenced via ``:block/refs``, use
-        :attr:`BY_PAGE_TITLE_WITH_REFS_QUERY` instead.
+        would cause ``(in-scope ?anchor ?node)`` to match every node in the entire graph,
+        returning the full database instead of the target subtree.
         """
 
-        BY_PAGE_TITLE_WITH_REFS_QUERY: Final[str] = (
-            f"{_BY_PAGE_TITLE_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH}\n"
-            f"{_REF_DESCENDANT_OR_JOIN_BRANCH}\n{_REF2_OR_JOIN_BRANCH}\n"
-            f"{_REF2_DESCENDANT_OR_JOIN_BRANCH})]"
-        )
-        """Datalog query fetching a page, all its descendants, all ``:block/refs`` targets, and their descendants.
-
-        Input bindings: ``?title`` (page title string) and ``%`` (rules vector —
-        :attr:`DESCENDANT_AND_PAGE_REF_RULES`).  Must be paired with
-        :attr:`DESCENDANT_AND_PAGE_REF_RULES` (not :attr:`DESCENDANT_RULE` alone) because the
-        ``page-ref`` rule calls ``(descendant ...)`` internally.
-
-        The ``or-join`` has six branches:
-
-        1. The anchor node itself (``?node = ?anchor``).
-        2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth
-           (via the ``descendant`` rule).
-        3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
-           its descendants (via the ``page-ref`` rule).
-        4. Every block reachable through ``:block/children`` from any ``page-ref`` target of the
-           anchor — i.e. the full subtree of every referenced node, whether referenced by the anchor
-           node itself (e.g. a page-title reference) or by any of its descendants.  Combined with
-           branch 3 (which fetches the ref targets themselves), this pulls every referenced block
-           together with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
-           arrive complete.
-        5. Second-hop ref targets: every node ``page-ref``-reachable from a (first-hop) ``page-ref``
-           target of the anchor — i.e. pages referenced by a referenced node's own subtree (e.g. a
-           ``tags::`` attribute on a referenced page).  These arrive as bare nodes (no subtree pull),
-           bounding fan-out to two ref hops while still letting a referenced node's attributes resolve
-           their own page references.
-        6. Every block reachable through ``:block/children`` from any second-hop ``page-ref`` target
-           (branch 5) — i.e. the full subtree of each two-hop referenced node.  This upgrades the
-           branch-5 bare nodes to complete subtrees so that a multi-block construct referenced from
-           within a first-hop ref (e.g. a ``{{table}}`` referenced from inside an embedded page)
-           arrives with its cells and can be transcribed.  Fan-out stays bounded at two ref hops.
-        """
-
-        _BY_NODE_UID_QUERY_BASE: Final[str] = textwrap.dedent(f"""\
+        BY_NODE_UID_QUERY: Final[str] = textwrap.dedent(f"""\
             [:find (pull ?node {PULL_PATTERN})
              :in $ ?uid %
              :where
              [?anchor :block/uid ?uid]
              (or-join [?anchor ?node]
                (and [?anchor :block/uid ?uid]
-                    [?node :block/uid ?uid])
+                    (in-scope ?anchor ?node))
                (and [?anchor :block/uid ?uid]
-                    (descendant ?anchor ?node))""")
-        _PAGE_REF_OR_JOIN_BRANCH_UID: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :block/uid ?uid]
-                     (page-ref ?anchor ?node))"""),
-            "   ",
-        )
-        _REF_DESCENDANT_OR_JOIN_BRANCH_UID: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :block/uid ?uid]
-                     (page-ref ?anchor ?ref)
-                     (descendant ?ref ?node))"""),
-            "   ",
-        )
-        _REF2_OR_JOIN_BRANCH_UID: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :block/uid ?uid]
-                     (page-ref ?anchor ?via)
-                     (page-ref ?via ?node))"""),
-            "   ",
-        )
-        _REF2_DESCENDANT_OR_JOIN_BRANCH_UID: Final[str] = textwrap.indent(
-            textwrap.dedent("""\
-                (and [?anchor :block/uid ?uid]
-                     (page-ref ?anchor ?via)
-                     (page-ref ?via ?ref)
-                     (descendant ?ref ?node))"""),
-            "   ",
-        )
-        BY_NODE_UID_QUERY: Final[str] = f"{_BY_NODE_UID_QUERY_BASE})]"
-        """Datalog query fetching a node and all its descendant blocks by ``:block/uid``.
+                    (in-scope ?anchor ?member)
+                    {_VERSIONS_PIVOT}))]""")
+        """Datalog query fetching the nodes in scope of a node, anchored by ``:block/uid``.
 
-        Input bindings: ``?uid`` (``:block/uid`` string) and ``%`` (rules
-        vector — :attr:`DESCENDANT_RULE`).
+        Input bindings: ``?uid`` (``:block/uid`` string) and ``%`` (rules vector —
+        :attr:`SCOPE_RULES` or :attr:`SCOPE_WITH_REFS_RULES`, which decides the scope).
 
-        The ``or-join`` has two branches:
-
-        1. The anchor node itself (``?node = ?anchor``).
-        2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth
-           (via the ``descendant`` rule).
-
-        ``or-join`` scoping: ``?anchor`` must appear in the join-variable list
-        ``[?anchor ?node]`` *and* be re-bound inside each branch.  Variables from the outer
-        ``:where`` clause absent from the join-variable list are treated as fresh free
-        variables inside the ``or-join`` — not as the outer binding.  Omitting ``?anchor``
-        would cause ``(descendant ?anchor ?node)`` to match every descendant pair in the
-        entire graph, returning the full database instead of the target subtree.
-
-        To also include nodes referenced via ``:block/refs``, use
-        :attr:`BY_NODE_UID_WITH_REFS_QUERY` instead.
+        Identical to :attr:`BY_PAGE_TITLE_QUERY` except for the clause binding ``?anchor``;
+        see there for the two ``or-join`` branches and the scoping rule.
         """
 
-        BY_NODE_UID_WITH_REFS_QUERY: Final[str] = (
-            f"{_BY_NODE_UID_QUERY_BASE}\n{_PAGE_REF_OR_JOIN_BRANCH_UID}\n"
-            f"{_REF_DESCENDANT_OR_JOIN_BRANCH_UID}\n{_REF2_OR_JOIN_BRANCH_UID}\n"
-            f"{_REF2_DESCENDANT_OR_JOIN_BRANCH_UID})]"
-        )
-        """Datalog query fetching a node, all its descendants, all ``:block/refs`` targets, and their descendants.
+        @staticmethod
+        def rules_for(include_refs: bool) -> str:
+            """Return the rules vector that scopes a fetch.
 
-        Input bindings: ``?uid`` (``:block/uid`` string) and ``%`` (rules
-        vector — :attr:`DESCENDANT_AND_PAGE_REF_RULES`).  Must be paired with
-        :attr:`DESCENDANT_AND_PAGE_REF_RULES` (not :attr:`DESCENDANT_RULE` alone) because the
-        ``page-ref`` rule calls ``(descendant ...)`` internally.
+            Args:
+                include_refs: Whether referenced nodes (two ref hops deep, with their subtrees)
+                    are in scope alongside the anchor and its descendants.
 
-        The ``or-join`` has six branches:
-
-        1. The anchor node itself (``?node = ?anchor``).
-        2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth
-           (via the ``descendant`` rule).
-        3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
-           its descendants (via the ``page-ref`` rule).
-        4. Every block reachable through ``:block/children`` from any ``page-ref`` target of the
-           anchor — i.e. the full subtree of every referenced node, whether referenced by the anchor
-           node itself (e.g. a page-title reference) or by any of its descendants.  Combined with
-           branch 3 (which fetches the ref targets themselves), this pulls every referenced block
-           together with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
-           arrive complete.
-        5. Second-hop ref targets: every node ``page-ref``-reachable from a (first-hop) ``page-ref``
-           target of the anchor — i.e. pages referenced by a referenced node's own subtree (e.g. a
-           ``tags::`` attribute on a referenced page).  These arrive as bare nodes (no subtree pull),
-           bounding fan-out to two ref hops while still letting a referenced node's attributes resolve
-           their own page references.
-        6. Every block reachable through ``:block/children`` from any second-hop ``page-ref`` target
-           (branch 5) — i.e. the full subtree of each two-hop referenced node.  This upgrades the
-           branch-5 bare nodes to complete subtrees so that a multi-block construct referenced from
-           within a first-hop ref (e.g. a ``{{table}}`` referenced from inside an embedded page)
-           arrives with its cells and can be transcribed.  Fan-out stays bounded at two ref hops.
-        """
+            Returns:
+                :attr:`SCOPE_WITH_REFS_RULES` when *include_refs* is ``True``, else
+                :attr:`SCOPE_RULES`.
+            """
+            return FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES if include_refs else FetchRoamNodes.Request.SCOPE_RULES
 
         @staticmethod
         def payload_by_page_title(page_title: str, include_refs: bool = False) -> LocalApiRequest.Payload:
@@ -343,28 +289,25 @@ class FetchRoamNodes:
 
             Args:
                 page_title: The exact title of the Roam page to fetch.
-                include_refs: When ``True``, uses :attr:`BY_PAGE_TITLE_WITH_REFS_QUERY`
-                    paired with :attr:`DESCENDANT_AND_PAGE_REF_RULES` to also pull every node
-                    referenced via ``:block/refs`` from the page or any of its descendants.
-                    When ``False`` (default), uses :attr:`BY_PAGE_TITLE_QUERY` paired with
-                    :attr:`DESCENDANT_RULE` and returns only the page node and its descendants.
+                include_refs: When ``True``, pairs :attr:`BY_PAGE_TITLE_QUERY` with
+                    :attr:`SCOPE_WITH_REFS_RULES` to also pull every node referenced via
+                    ``:block/refs`` from the page or any of its descendants.  When ``False``
+                    (default), pairs it with :attr:`SCOPE_RULES` and returns only the page node
+                    and its descendants (plus, in either case, the sibling versions of every
+                    returned node).
 
             Returns:
                 A :class:`~guffin.roam.local_api.Request.Payload` with action ``"data.q"``
                 and args set according to *include_refs*.
             """
-            query, rules = (
-                (
-                    FetchRoamNodes.Request.BY_PAGE_TITLE_WITH_REFS_QUERY,
-                    FetchRoamNodes.Request.DESCENDANT_AND_PAGE_REF_RULES,
-                )
-                if include_refs
-                else (
+            return LocalApiRequest.Payload(
+                action="data.q",
+                args=[
                     FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY,
-                    FetchRoamNodes.Request.DESCENDANT_RULE,
-                )
+                    page_title,
+                    FetchRoamNodes.Request.rules_for(include_refs),
+                ],
             )
-            return LocalApiRequest.Payload(action="data.q", args=[query, page_title, rules])
 
         @staticmethod
         def payload_by_node_uid(node_uid: Uid, include_refs: bool = False) -> LocalApiRequest.Payload:
@@ -372,28 +315,25 @@ class FetchRoamNodes:
 
             Args:
                 node_uid: The ``:block/uid`` of the node to fetch.
-                include_refs: When ``True``, uses :attr:`BY_NODE_UID_WITH_REFS_QUERY`
-                    paired with :attr:`DESCENDANT_AND_PAGE_REF_RULES` to also pull every node
-                    referenced via ``:block/refs`` from the anchor or any of its descendants.
-                    When ``False`` (default), uses :attr:`BY_NODE_UID_QUERY` paired with
-                    :attr:`DESCENDANT_RULE` and returns only the anchor node and its descendants.
+                include_refs: When ``True``, pairs :attr:`BY_NODE_UID_QUERY` with
+                    :attr:`SCOPE_WITH_REFS_RULES` to also pull every node referenced via
+                    ``:block/refs`` from the anchor or any of its descendants.  When ``False``
+                    (default), pairs it with :attr:`SCOPE_RULES` and returns only the anchor node
+                    and its descendants (plus, in either case, the sibling versions of every
+                    returned node).
 
             Returns:
                 A :class:`~guffin.roam.local_api.Request.Payload` with action ``"data.q"``
                 and args set according to *include_refs*.
             """
-            query, rules = (
-                (
-                    FetchRoamNodes.Request.BY_NODE_UID_WITH_REFS_QUERY,
-                    FetchRoamNodes.Request.DESCENDANT_AND_PAGE_REF_RULES,
-                )
-                if include_refs
-                else (
+            return LocalApiRequest.Payload(
+                action="data.q",
+                args=[
                     FetchRoamNodes.Request.BY_NODE_UID_QUERY,
-                    FetchRoamNodes.Request.DESCENDANT_RULE,
-                )
+                    node_uid,
+                    FetchRoamNodes.Request.rules_for(include_refs),
+                ],
             )
-            return LocalApiRequest.Payload(action="data.q", args=[query, node_uid, rules])
 
     class Response:
         """Namespace for ``data.q`` page response types."""

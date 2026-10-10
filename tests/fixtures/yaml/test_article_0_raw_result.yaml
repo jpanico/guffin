@@ -308,6 +308,18 @@
     order: 0
     page:
       id: 11137
+- - string: This block has 3 versions. This is **version 2**.
+    version-group:
+    - uid: e9j_vHjGQ
+    id: 19963
+    uid: zHbMF7Ozq
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 19958
+    order: 0
+    page:
+      id: 11137
 - - string: '> This is a Markdown standard multi-line Block Quote
 
       this is the __2nd line__
@@ -590,6 +602,18 @@
     refs:
     - id: 1371
     - id: 11454
+- - string: This block has 3 versions. This is __version 1__.
+    version-group:
+    - uid: e9j_vHjGQ
+    id: 19957
+    uid: PUrwWBbbi
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 19958
+    order: 0
+    page:
+      id: 11137
 - - string: block 1.1
     children:
     - id: 11152
@@ -948,6 +972,8 @@
     page:
       id: 11137
 - - string: This block has 3 versions. This is version 3.
+    version-group:
+    - uid: e9j_vHjGQ
     id: 19965
     uid: YYysqBFqy
     parents:

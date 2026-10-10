@@ -517,18 +517,41 @@ See [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) for detailed instructions a
 
 ## Documentation
 
+### Architecture and design
+
 - [docs/processing_pipeline.md](docs/processing_pipeline.md) — High-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages
 - [docs/render-pipeline.md](docs/render-pipeline.md) — The render layer (model → output four-phase pipeline: prepare → build → convert → post-process) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`)
-- [docs/publishing-semantics.md](docs/publishing-semantics.md) — The format-independent `PublishingSemantics` vocabulary and how it maps to each output format (companion to `render-pipeline.md`)
+- [docs/publishing-semantics.md](docs/publishing-semantics.md) — The format-independent `PublishingSemantics` vocabulary (`guffin-meta::` metadata, `element-type::`/`matter::`/`page-break::`/`pdf-render::`/`code-language::`/`code-source::`/`publish::` tags, internal element numbering) and how it maps to each output format (companion to `render-pipeline.md`)
 - [docs/pdf-render.md](docs/pdf-render.md) — What each `pdf-render` placement renders in each output format, and whether the PDF file travels with the output
-- [docs/server-mode.md](docs/server-mode.md) — Server mode: the ratified HTTP command-endpoint protocol, API design, in-process invocation design, and decision log (Phase 1 implemented)
+- [docs/server-mode.md](docs/server-mode.md) — Server mode (`guffin-server`): the ratified HTTP command-endpoint protocol, API design, in-process invocation design, and decision log (Phase 1, the synchronous v1, implemented; phases 2–3 planned)
 - [docs/quarto-borrowing-analysis.md](docs/quarto-borrowing-analysis.md) — Design backlog from an examination of Quarto: concepts worth borrowing, and what was deliberately not borrowed
+- [CLAUDE.md](CLAUDE.md) — Exhaustive per-module index, sub-package dependency rules, and coding conventions
+
+### Roam Research reference
+
 - [docs/roam-local-api.md](docs/roam-local-api.md) — Roam Local API reference (JSON over HTTP)
 - [docs/roam-md.md](docs/roam-md.md) — Roam-flavored Markdown vs. CommonMark differences
-- [docs/roam-querying.md](docs/roam-querying.md) — Datalog query language, query structure, and all queries used in this project
+- [docs/roam-querying.md](docs/roam-querying.md) — Datalog query language, query structure, the node-fetch query and its scope rules, and pull-result normalization
 - [docs/roam-schema.md](docs/roam-schema.md) — Full Roam attribute schema (kept in sync with the `SchemaAttribute` enum)
-- [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) — macOS `.mdbundle` integration guide
-- [CLAUDE.md](CLAUDE.md) — Exhaustive per-module index, sub-package dependency rules, and coding conventions
+- [docs/roam-block-versions.md](docs/roam-block-versions.md) — How Roam's built-in Block Versions (Version Control) are stored, how the fetch returns a block's versions, and why versions can be created only in the Roam UI
+
+### Plans
+
+- [docs/companion-extension-plan.md](docs/companion-extension-plan.md) — The Guffin Companion Roam extension, an in-Roam client for `guffin-server` (phases 0–3 complete, living in its own repository; phase 4 on hold)
+- [docs/server-packaging-plan.md](docs/server-packaging-plan.md) — Packaging `guffin-server` for consumers (PyInstaller bundles with Pandoc and Typst; unimplemented)
+- [docs/code-source-display-plan.md](docs/code-source-display-plan.md) — A Roam-side display extension for `code-source::` tags (unimplemented; no guffin code changes)
+
+### Setup guides
+
+- [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) — macOS `.mdbundle` integration guide (auto-open in Typora)
+
+### Bundled resources and fixtures
+
+- [src/guffin/render/typst_resources/README.md](src/guffin/render/typst_resources/README.md) — The Bergfink Typst template (`user_cfg.typ` is the customization point), the `typst_*.lua` Pandoc filters, and the bundled syntax grammars for PDF output
+- [src/guffin/render/gfm_resources/README.md](src/guffin/render/gfm_resources/README.md) — The `gfm_*.lua` Pandoc filters for Markdown output
+- [src/guffin/render/epub_resources/README.md](src/guffin/render/epub_resources/README.md) — The `epub_*.lua` Pandoc filters and `epub.css` for EPUB output
+- [src/guffin/render/callout_icons/README.md](src/guffin/render/callout_icons/README.md) — The SVG callout badge icons shared by the PDF and EPUB paths
+- [tests/fixtures/README.md](tests/fixtures/README.md) — The test fixtures: the nine live `[[Test Article]]` source pages, the feature each exercises, and the six fixture files recorded per article
 
 ## License
 
