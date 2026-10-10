@@ -9,6 +9,13 @@ can only be exercised through the Roam UI. The findings were verified empiricall
 against a live graph (October 2026) and are backed by the `[[Test Article]] 0`
 fixtures, whose `block 3.4` holds a block with three versions.
 
+Roam's own name for the feature is **Version Control**, which is where the `vc`
+attribute namespace below comes from. The official help page,
+[Version Control](https://roamresearch.com/#/app/help/page/JsFdrvAde) in the public
+`help` graph, is two sentences and a demo block: it says the feature "helps you create
+different versions of the same block" for multiple drafts, and shows a three-version
+example. Nothing there describes the storage, which is why this document exists.
+
 See [roam-querying.md](roam-querying.md) for the Datalog background and
 [roam-schema.md](roam-schema.md) for the full attribute table.
 
