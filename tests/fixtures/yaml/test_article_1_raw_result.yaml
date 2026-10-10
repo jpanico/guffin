@@ -48,18 +48,6 @@
     refs:
     - id: 321
     - id: 11839
-- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
-    id: 4224
-    uid: 7MoH-wIQh
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
 - - string: 'pdf-render:: inline-native'
     id: 11931
     uid: EWMNZcPZX
@@ -74,9 +62,34 @@
       id: 3327
     refs:
     - id: 11933
-- - children:
-    - id: 4224
+- - attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    children:
+    - id: 18202
+    - id: 18204
     id: 4223
+    lookup:
+    - id: 261
+    - id: 4223
+    - id: 6535
+    - id: 18204
     uid: LBFKibPIj
     title: Test Article
 - - heading: 3
@@ -92,6 +105,9 @@
     order: 2
     page:
       id: 3327
+- - id: 6535
+    uid: 9ZtPB2yY3
+    title: Publishing
 - - id: 11933
     uid: Jy_Ee6w8E
     title: pdf-render
@@ -489,6 +505,9 @@
     order: 0
     page:
       id: 12904
+- - id: 261
+    uid: RXwAqq0_T
+    title: tags
 - - attrs:
     - - source:
         - uid
@@ -636,6 +655,17 @@
     title: '[[Test Article]] 1'
     refs:
     - id: 4223
+- - string: 'tags:: #Publishing'
+    id: 18204
+    uid: JSrSVApJ_
+    parents:
+    - id: 4223
+    order: 1
+    page:
+      id: 4223
+    refs:
+    - id: 261
+    - id: 6535
 - - id: 11932
     uid: vuPFRAwZI
     title: the following block embeds a PDF with guffin-meta
@@ -771,14 +801,26 @@
     order: 0
     page:
       id: 3327
-- - order: 1
-    page:
-      id: 3327
+- - string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
+    id: 15802
+    uid: Wlzl_dhg_
     parents:
     - id: 3327
     - id: 3329
     - id: 3332
     - id: 15800
-    string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
-    uid: Wlzl_dhg_
-    id: 15802
+    order: 1
+    page:
+      id: 3327
+- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
+    id: 18202
+    uid: lXi4SgSvz
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462
