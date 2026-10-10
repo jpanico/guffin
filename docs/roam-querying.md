@@ -200,6 +200,15 @@ Two rules for the queries follow:
    Stubs that point *outside* the fetch's scope — a node-UID anchor's own `parents`, `refs`
    beyond the two-hop boundary — are fine; they are not join steps.
 
+The principle carries one step up, into the parsed form. `RoamNode` models the source data in
+its most canonical form, as the database sees it, without transformation: every field is one
+`SchemaAttribute` member (the attribute each field's description leads with), no two fields
+share a member, and the sole exception is `id`, Datomic's built-in `:db/id`, which is an
+entity's identity rather than an attribute asserted on it and so has no schema member. The
+model is a *subset* of the schema — attributes the pipeline never reads, such as
+`:block/text-align`, stay in `raw_result` and are dropped at parse time — but never a
+*reshaping* of it. Anything derived belongs in the vertex model the transcriber builds.
+
 ### Stripping makes distinct attributes collide
 
 Namespaces carry meaning, and dropping them can merge two attributes into one key. Roam's schema

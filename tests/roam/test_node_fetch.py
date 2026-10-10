@@ -3,10 +3,12 @@
 import json
 import logging
 import os
+from pathlib import Path
 from typing import Final
 from unittest.mock import MagicMock, patch
 
 import pytest
+import regex
 import requests
 import yaml
 from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader, article1_node_tree
@@ -18,8 +20,12 @@ from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_fetch import FetchRoamNodes, RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 from guffin.roam.primitives import IdObject
+from guffin.roam.schema import SchemaAttribute
 
 logger = logging.getLogger(__name__)
+
+RAW_RESULT_FIXTURES: Final[tuple[Path, ...]] = tuple(sorted(FIXTURES_YAML_DIR.glob("*_raw_result.yaml")))
+"""Every recorded raw-result fixture — one per live test article."""
 
 
 @pytest.fixture
@@ -708,3 +714,62 @@ class TestFetchTestarticle2WithRefs:
             uid: node.model_dump(mode="json") for uid, node in fetch_result.nodes_by_uid.items()
         }
         assert actual == expected
+
+
+class TestRawResultKeys:
+    """Every key of a raw-result row is accounted for by the schema or the pull pattern.
+
+    ``raw_result`` is a faithful picture of the database, so the vocabulary of its row keys
+    must be fully explained: each key is one of
+
+    1. a :class:`~guffin.roam.schema.SchemaAttribute` member's ``attr_name`` — the attribute's
+       namespace stripped by the Local API (``:block/string`` → ``string``);
+    2. ``id`` — Datomic's built-in ``:db/id``, which is not a schema attribute and so has no
+       member; or
+    3. an alias the pull pattern asks for by ``:as`` — a renamed attribute
+       (``children-view-type``) or a reverse reference (``version-group``).
+
+    The alias set is parsed from :attr:`FetchRoamNodes.Request.PULL_PATTERN` itself, so a new
+    alias is admitted by declaring it there and nowhere else, while a key of any other kind —
+    one the pull did not ask for, or an attribute missing from the schema enum — fails here.
+    """
+
+    _ALIAS_RE: Final[regex.Pattern[str]] = regex.compile(r':as\s+"([^"]+)"')
+
+    @staticmethod
+    def _raw_rows(prefix: str) -> list[dict[str, object]]:
+        rows: list[list[dict[str, object]]] = yaml.load(
+            (FIXTURES_YAML_DIR / f"{prefix}_raw_result.yaml").read_text(), Loader=YamlFixtureLoader
+        )
+        return [row[0] for row in rows]
+
+    def test_pull_pattern_declares_the_expected_aliases(self) -> None:
+        """The alias set parsed from the pull pattern is the one the raw-key rule relies on."""
+        assert set(self._ALIAS_RE.findall(FetchRoamNodes.Request.PULL_PATTERN)) == {
+            "block-view-type",
+            "children-view-type",
+            "version-group",
+        }
+
+    @pytest.mark.parametrize("prefix", sorted(p.name.removesuffix("_raw_result.yaml") for p in RAW_RESULT_FIXTURES))
+    def test_every_raw_row_key_is_a_schema_attribute_db_id_or_pull_alias(self, prefix: str) -> None:
+        """No recorded raw row carries a key outside the three accounted-for kinds."""
+        attribute_names: Final[set[str]] = {member.attr_name for member in SchemaAttribute}
+        aliases: Final[set[str]] = set(self._ALIAS_RE.findall(FetchRoamNodes.Request.PULL_PATTERN))
+        allowed: Final[set[str]] = attribute_names | {"id"} | aliases
+        unexplained: Final[dict[str, set[str]]] = {
+            str(row["uid"]): set(row) - allowed for row in self._raw_rows(prefix) if set(row) - allowed
+        }
+        assert (
+            not unexplained
+        ), f"{prefix}: raw row keys outside the schema, :db/id, and the pull aliases: {unexplained}"
+
+    def test_rule_rejects_a_key_the_pull_did_not_ask_for(self) -> None:
+        """A key that is neither a schema attribute, :db/id, nor a declared alias is caught."""
+        attribute_names: Final[set[str]] = {member.attr_name for member in SchemaAttribute}
+        aliases: Final[set[str]] = set(self._ALIAS_RE.findall(FetchRoamNodes.Request.PULL_PATTERN))
+        allowed: Final[set[str]] = attribute_names | {"id"} | aliases
+        assert "version-group" in allowed
+        assert "blocks" in allowed
+        assert "versions" not in allowed
+        assert "_blocks" not in allowed

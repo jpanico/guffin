@@ -147,6 +147,15 @@ class RoamNode(BaseModel):
     This is the *un-normalized* form — property names mirror the raw Datomic
     attribute names, and nested refs are still IdObject stubs rather than resolved UIDs.
 
+    **Every field is a schema attribute, except ``id``.**  A pull-block models the source data
+    in its most canonical form — as the database sees it, without transformation — so each
+    field corresponds to exactly one :class:`~guffin.roam.schema.SchemaAttribute` member, named
+    first in the field's description (``:block/string — …``), and no two fields share one.
+    The one exception is ``id``, Datomic's built-in ``:db/id``: an entity's identity rather
+    than an attribute asserted on it, so it has no schema member.  A field that would carry a
+    derived or reshaped value does not belong here; it belongs in the model the transcriber
+    builds from this one.
+
     Every pull-block is one of three mutually exclusive entity types, discriminated by
     ``title`` and then ``string``.  The following invariants are enforced at construction time
     by :meth:`_validate_entity_type`:

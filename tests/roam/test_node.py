@@ -1,6 +1,9 @@
 """Tests for the roam_node module."""
 
+from typing import Final
+
 import pytest
+import regex
 import yaml
 from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader
 from pydantic import ValidationError
@@ -17,6 +20,7 @@ from guffin.roam.node import (
     node_type,
 )
 from guffin.roam.primitives import DEFAULT_CHILDREN_VIEW_TYPE, ChildrenViewType, IdObject
+from guffin.roam.schema import SchemaAttribute
 
 _FIREBASE_STORAGE_URL = (
     "https://firebasestorage.googleapis.com/v0/b/test.appspot.com" "/o/imgs%2Fphoto.jpeg?alt=media&token=abc123"
@@ -987,3 +991,51 @@ class TestRoamNodeVersionGroup:
         """A node with neither title, string, nor blocks is rejected, naming the three entity kinds."""
         with pytest.raises(ValidationError, match="Page .*, a Block .*, or a Version group"):
             RoamNode(uid="badnode01", id=999)
+
+
+class TestRoamNodeFieldsAreSchemaAttributes:
+    """Every RoamNode field is one SchemaAttribute member, except ``id``.
+
+    ``RoamNode`` models the source data in its most canonical form — as the database sees it,
+    without transformation — so each field corresponds to exactly one schema attribute and no
+    two fields share one.  The one exception is ``id``: Datomic's built-in ``:db/id`` is an
+    entity's identity, not an attribute asserted on it, so it has no schema member.
+
+    The link is read off each field's description, which by convention leads with the source
+    attribute (``:block/string — …``), so the test holds no second copy of the mapping: a field
+    declares its attribute where it is defined, and this test checks the declaration is real.
+    """
+
+    _LEADING_ATTRIBUTE_RE: Final[regex.Pattern[str]] = regex.compile(r"^(:[a-z]+/[a-z?-]+) — ")
+
+    @staticmethod
+    def _declared_attribute(field_name: str) -> str:
+        description: str | None = RoamNode.model_fields[field_name].description
+        assert description is not None, f"{field_name}: no description"
+        match: regex.Match[str] | None = TestRoamNodeFieldsAreSchemaAttributes._LEADING_ATTRIBUTE_RE.match(description)
+        assert match is not None, f"{field_name}: description does not lead with its source attribute: {description!r}"
+        return match.group(1)
+
+    def test_id_is_the_datomic_entity_id(self) -> None:
+        """``id`` declares ``:db/id``, which is deliberately outside the schema enum."""
+        assert self._declared_attribute("id") == ":db/id"
+        assert not any(str(member) == ":db/id" for member in SchemaAttribute)
+
+    def test_every_other_field_declares_a_schema_attribute(self) -> None:
+        """Each field other than ``id`` leads its description with an attribute the schema enum has."""
+        members_by_name: Final[dict[str, SchemaAttribute]] = {str(member): member for member in SchemaAttribute}
+        unexplained: Final[dict[str, str]] = {
+            field_name: declared
+            for field_name in RoamNode.model_fields
+            if field_name != "id"
+            if (declared := self._declared_attribute(field_name)) not in members_by_name
+        }
+        assert not unexplained, f"RoamNode fields declaring an attribute absent from SchemaAttribute: {unexplained}"
+
+    def test_no_two_fields_share_a_schema_attribute(self) -> None:
+        """The field-to-attribute correspondence is one to one."""
+        declared: Final[list[str]] = [
+            self._declared_attribute(field_name) for field_name in RoamNode.model_fields if field_name != "id"
+        ]
+        duplicates: Final[set[str]] = {attribute for attribute in declared if declared.count(attribute) > 1}
+        assert not duplicates, f"schema attributes declared by more than one RoamNode field: {duplicates}"
