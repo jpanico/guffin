@@ -328,6 +328,7 @@ All code written or modified by Claude MUST follow these conventions — no exce
 - `docs/roam-local-api.md` — Roam Local API reference (endpoints, request/response shapes)
 - `docs/roam-querying.md` — Datalog query patterns used to fetch Roam nodes
 - `docs/roam-schema.md` — Roam Datomic schema reference (attributes, value types, cardinality)
+- `docs/roam-block-versions.md` — how Roam's built-in Block Versions are stored (sibling block entities grouped by a `:vc/blocks` entity; the selected version is the one in the parent's `:block/children`), why a fetch sees only the selected version, and why versions can be created only in the Roam UI
 - `docs/processing_pipeline.md` — high-level overview of the whole pipeline (fetch → transcribe → render) as a directional flow across sub-packages; the render stage is detailed in `render-pipeline.md`
 - `docs/render-pipeline.md` — the render layer (model → output four-phase pipeline: prepare → build → convert → post-process) and the project-type model (`ProjectType`/`ProjectProfile`/`StructuralPolicy`); where the profile is consumed and why it is separate from `RenderOptions`
 - `docs/publishing-semantics.md` — the format-independent `PublishingSemantics` vocabulary (the semantic identity of a document's pieces) and how it maps to each output format; companion to `render-pipeline.md`
