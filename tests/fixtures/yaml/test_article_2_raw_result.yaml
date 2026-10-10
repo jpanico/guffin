@@ -7,23 +7,39 @@
     order: 2
     page:
       id: 11674
-- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
-    id: 4224
-    uid: 7MoH-wIQh
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
-- - children:
-    - id: 4224
+- - attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    children:
+    - id: 18202
+    - id: 18204
     id: 4223
+    lookup:
+    - id: 261
+    - id: 4223
+    - id: 6535
+    - id: 18204
     uid: LBFKibPIj
     title: Test Article
+- - id: 6535
+    uid: 9ZtPB2yY3
+    title: Publishing
 - - string: Block 2.2 (children_layout=bullet)
     children:
     - id: 11966
@@ -158,6 +174,9 @@
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
+- - id: 261
+    uid: RXwAqq0_T
+    title: tags
 - - string: Block 1.2.1
     id: 11680
     uid: KUi_6ooZj
@@ -168,6 +187,17 @@
     order: 0
     page:
       id: 11674
+- - string: 'tags:: #Publishing'
+    id: 18204
+    uid: JSrSVApJ_
+    parents:
+    - id: 4223
+    order: 1
+    page:
+      id: 4223
+    refs:
+    - id: 261
+    - id: 6535
 - - string: Block 2.2.1
     id: 11966
     uid: cxJA2xr-u
@@ -238,3 +268,15 @@
     order: 0
     page:
       id: 11674
+- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
+    id: 18202
+    uid: lXi4SgSvz
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462

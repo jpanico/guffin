@@ -212,6 +212,9 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
         case NodeType.ATTRIBUTE_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
+        case NodeType.VERSION_GROUP:
+            assert node.blocks is not None
+            title_text = f"{len(node.blocks)} version(s)"
         case _ as unreachable:
             assert_never(unreachable)
     title: Final[str] = (

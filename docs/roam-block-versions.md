@@ -174,20 +174,28 @@ query per anchor kind, `BY_PAGE_TITLE_QUERY` and `BY_NODE_UID_QUERY`. The `or-jo
 scoping rule still applies: `?anchor` stays in the join-variable list and is re-bound
 inside each branch, or the pivot would match every versioned block in the graph.
 
-### The group rides on the versions, not as a row
+### The group is a row, and rides on the versions too
 
-> **Open issue.** This arrangement violates the `raw_result` design principle recorded in
-> [roam-querying.md](roam-querying.md#raw_result-is-a-faithful-picture-of-the-database):
-> every entity a fetch joins through must itself be a row, and the group is joined through
-> as `?group` without ever being returned. It is the one current exception and is to be
-> brought into line by returning the group as a row — the first probe in this work showed
-> a third `or-join` branch binding `?node` to the group does exactly that — together with
-> the model decision that row requires (a uid-and-ref-only entity is not a `RoamNode` today).
+The pivot joins through the group entity, and the `raw_result` design principle
+([roam-querying.md](roam-querying.md#raw_result-is-a-faithful-picture-of-the-database))
+requires every entity a fetch joins through to be a row. So a third `or-join` branch
+returns it:
 
-The group entity is not fetched as a row. It has no string, page, or parents, so it is
-not a node, and the node parser would reject it. Its one useful fact, its uid, is pulled
-onto each version block instead, through a reverse reference in the shared pull
-pattern:
+```clojure
+(and (in-scope ?anchor ?member)
+     [?node :vc/blocks ?member])    ; the group entity itself
+```
+
+On the wire the group row is `uid`, `id`, and `blocks` (the namespace-stripped
+`:vc/blocks`), a list of id stubs naming the versions. The schema has no other `blocks`
+attribute, so the stripped key is unambiguous. It parses as a `RoamNode` of the third
+entity kind, **version group**: `title` and `string` are `None`, `blocks` is set, and
+`node_type` classifies it as `NodeType.VERSION_GROUP`. It has no `page` or `parents`, so
+it sits in the fetched network without belonging to any tree, and the transcriber refuses
+to make a vertex of it, since it has no content of its own.
+
+The group's uid also rides on each version block, through a reverse reference in the
+shared pull pattern:
 
 ```clojure
 [* … {(:vc/_blocks :as "version-group") [:block/uid]}]
@@ -195,12 +203,12 @@ pattern:
 
 Every version of a versioned block, the selected one included, arrives with
 `"version-group": [{"uid": "<group uid>"}]`; a block that is not versioned carries no
-such key, because a reverse reference with no match is omitted from the pull. That is
-what ties the versions together on the wire, and what lets a consumer tell a versioned
-block from an ordinary one. Pulling only a uid stub keeps the rows flat; nesting the
-sibling versions themselves inside each row (`{:vc/_blocks [{:vc/blocks [*]}]}`) would
-have broken the flat-rows contract the raw-result parsing and every recorded fixture
-rely on.
+such key, because a reverse reference with no match is omitted from the pull. The two
+views are complementary: the group row answers "which blocks are the versions" in one
+place, and the stub answers "is this block versioned, and by what" without a scan.
+Pulling only a uid stub keeps the rows flat; nesting the sibling versions themselves
+inside each row (`{:vc/_blocks [{:vc/blocks [*]}]}`) would have broken the flat-rows
+contract the raw-result parsing and every recorded fixture rely on.
 
 ### What arrives downstream
 
@@ -208,11 +216,13 @@ rely on.
   `:block/children` set, so `NodeTree.build` never reaches them and `nodes_by_uid` is
   where they land. The `all_children_present` / `all_parents_present` validators pass,
   since the parent they name is present. The `[[Test Article]] 0` fixtures show it:
-  the two unselected versions appear in `nodes_by_uid` and `raw_result`, and nowhere
-  else.
-- **`version-group` is on the wire, not yet on the model.** `RoamNode` ignores unknown
-  keys, so the stub is visible in `raw_result` only until a field is added for it; that
-  is the next step, together with whatever the consuming feature needs.
+  the two unselected versions and the group row appear in `nodes_by_uid` and
+  `raw_result`, and nowhere else.
+- **The group row is a `VERSION_GROUP` node.** Its `blocks` field holds the id stubs of
+  the versions, so "which blocks are the versions of this group" is answered by the row
+  itself. The `version-group` stub on each version is on the wire only; `RoamNode`
+  ignores unknown keys, so it is visible in `raw_result` until a field is added for it,
+  which is for the consuming feature to decide.
 - **Selection stays derivable.** Nothing on the group says which version is selected;
   the selected one is the version present in the parent's `:block/children`, so the
   model can compute it from data it already holds.

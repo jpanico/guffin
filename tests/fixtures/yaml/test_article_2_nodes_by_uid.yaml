@@ -15,25 +15,7 @@ InqcJLiuz:
   props: null
   title: null
   attrs: null
-7MoH-wIQh:
-  uid: 7MoH-wIQh
-  id: 4224
-  string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST\
-    \ DATA – DO NOT REMOVE\n "
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
-  props: null
-  title: null
-  attrs: null
+  blocks: null
 LBFKibPIj:
   uid: LBFKibPIj
   id: 4223
@@ -41,14 +23,49 @@ LBFKibPIj:
   order: null
   heading: null
   children:
-  - id: 4224
+  - id: 18202
+  - id: 18204
   refs: null
   page: null
   children_view_type: null
   parents: null
   props: null
   title: Test Article
+  attrs:
+  - - source:
+      - uid
+      - LBFKibPIj
+      value:
+      - uid
+      - LBFKibPIj
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - 9ZtPB2yY3
+  blocks: null
+9ZtPB2yY3:
+  uid: 9ZtPB2yY3
+  id: 6535
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: Publishing
   attrs: null
+  blocks: null
 d_3REDRrO:
   uid: d_3REDRrO
   id: 11684
@@ -68,6 +85,7 @@ d_3REDRrO:
   props: null
   title: null
   attrs: null
+  blocks: null
 sD1C9ifkG:
   uid: sD1C9ifkG
   id: 11677
@@ -87,6 +105,7 @@ sD1C9ifkG:
   props: null
   title: null
   attrs: null
+  blocks: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -101,6 +120,7 @@ OexZiLR_O:
   props: null
   title: '>'
   attrs: null
+  blocks: null
 fv5nh7u81:
   uid: fv5nh7u81
   id: 11809
@@ -118,6 +138,7 @@ fv5nh7u81:
   props: null
   title: null
   attrs: null
+  blocks: null
 YyeRpjbFD:
   uid: YyeRpjbFD
   id: 11679
@@ -136,6 +157,7 @@ YyeRpjbFD:
   props: null
   title: null
   attrs: null
+  blocks: null
 DsogfVzX9:
   uid: DsogfVzX9
   id: 11682
@@ -155,6 +177,7 @@ DsogfVzX9:
   props: null
   title: null
   attrs: null
+  blocks: null
 FVou-DBMP:
   uid: FVou-DBMP
   id: 11969
@@ -173,6 +196,7 @@ FVou-DBMP:
   props: null
   title: null
   attrs: null
+  blocks: null
 sPZ2xmBBS:
   uid: sPZ2xmBBS
   id: 11807
@@ -192,6 +216,7 @@ sPZ2xmBBS:
   props: null
   title: null
   attrs: null
+  blocks: null
 MmvJZhQNJ:
   uid: MmvJZhQNJ
   id: 11675
@@ -212,6 +237,7 @@ MmvJZhQNJ:
   props: null
   title: null
   attrs: null
+  blocks: null
 lDYWYqYSL:
   uid: lDYWYqYSL
   id: 11674
@@ -231,6 +257,7 @@ lDYWYqYSL:
   props: null
   title: '[[Test Article]] 2'
   attrs: null
+  blocks: null
 Bb49MOLyE:
   uid: Bb49MOLyE
   id: 11686
@@ -250,6 +277,7 @@ Bb49MOLyE:
   props: null
   title: null
   attrs: null
+  blocks: null
 gmLJbWZYp:
   uid: gmLJbWZYp
   id: 11681
@@ -267,6 +295,7 @@ gmLJbWZYp:
   props: null
   title: null
   attrs: null
+  blocks: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
   id: 5462
@@ -281,6 +310,22 @@ ZgUWBRb7j:
   props: null
   title: '!INFO'
   attrs: null
+  blocks: null
+RXwAqq0_T:
+  uid: RXwAqq0_T
+  id: 261
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: tags
+  attrs: null
+  blocks: null
 KUi_6ooZj:
   uid: KUi_6ooZj
   id: 11680
@@ -299,6 +344,26 @@ KUi_6ooZj:
   props: null
   title: null
   attrs: null
+  blocks: null
+JSrSVApJ_:
+  uid: JSrSVApJ_
+  id: 18204
+  string: 'tags:: #Publishing'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 261
+  - id: 6535
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 cxJA2xr-u:
   uid: cxJA2xr-u
   id: 11966
@@ -317,6 +382,7 @@ cxJA2xr-u:
   props: null
   title: null
   attrs: null
+  blocks: null
 D7gYVJoVj:
   uid: D7gYVJoVj
   id: 11967
@@ -335,6 +401,7 @@ D7gYVJoVj:
   props: null
   title: null
   attrs: null
+  blocks: null
 99rZhIPZW:
   uid: 99rZhIPZW
   id: 11683
@@ -352,6 +419,7 @@ D7gYVJoVj:
   props: null
   title: null
   attrs: null
+  blocks: null
 UQQwogj1M:
   uid: UQQwogj1M
   id: 11808
@@ -370,6 +438,7 @@ UQQwogj1M:
   props: null
   title: null
   attrs: null
+  blocks: null
 VH0mXM0rw:
   uid: VH0mXM0rw
   id: 11678
@@ -387,6 +456,7 @@ VH0mXM0rw:
   props: null
   title: null
   attrs: null
+  blocks: null
 1O4yGV-Tq:
   uid: 1O4yGV-Tq
   id: 11968
@@ -405,6 +475,7 @@ VH0mXM0rw:
   props: null
   title: null
   attrs: null
+  blocks: null
 2jjY8-fQz:
   uid: 2jjY8-fQz
   id: 11970
@@ -423,3 +494,24 @@ VH0mXM0rw:
   props: null
   title: null
   attrs: null
+  blocks: null
+lXi4SgSvz:
+  uid: lXi4SgSvz
+  id: 18202
+  string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST
+    DATA – DO NOT REMOVE'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
+  props: null
+  title: null
+  attrs: null
+  blocks: null

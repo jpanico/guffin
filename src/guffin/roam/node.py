@@ -117,6 +117,11 @@ class NodeType(enum.StrEnum):
     - **ATTRIBUTE_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam
       attribute assignment ``<attribute>:: <value>[, <value>]…`` (matched in full by
       :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`).
+    - **VERSION_GROUP**: ``blocks`` is set (``title`` and ``string`` are ``None``) — the entity
+      Roam's Version Control feature creates to group the alternative versions of one block.
+      It has no content of its own: a uid, and a ``:vc/blocks`` ref to each version block.  The
+      versions it groups are ordinary blocks, all at one ``order`` under one parent; the parent's
+      ``children`` names just the selected one.
     """
 
     PAGE = "roam/page"
@@ -133,6 +138,7 @@ class NodeType(enum.StrEnum):
     PDF_BLOCK = "roam/pdf-block"
     ASSET_BLOCK = "roam/asset-block"
     ATTRIBUTE_BLOCK = "roam/attribute-block"
+    VERSION_GROUP = "roam/version-group"
 
 
 class RoamNode(BaseModel):
@@ -141,12 +147,14 @@ class RoamNode(BaseModel):
     This is the *un-normalized* form — property names mirror the raw Datomic
     attribute names, and nested refs are still IdObject stubs rather than resolved UIDs.
 
-    Every pull-block is one of two mutually exclusive entity types, discriminated by
-    ``title``.  The following invariants are enforced at construction time by
-    :meth:`_validate_entity_type`:
+    Every pull-block is one of three mutually exclusive entity types, discriminated by
+    ``title`` and then ``string``.  The following invariants are enforced at construction time
+    by :meth:`_validate_entity_type`:
 
-    - **Page**: ``title`` set, so ``string`` and ``page`` are ``None``.
-    - **Block**: ``title`` ``None``, so ``string`` and ``page`` are set.
+    - **Page**: ``title`` set, so ``string``, ``page``, and ``blocks`` are ``None``.
+    - **Block**: ``title`` ``None`` and ``string`` set, so ``page`` is set and ``blocks`` is ``None``.
+    - **Version group**: ``title`` and ``string`` ``None`` and ``blocks`` set, so ``page`` is
+      ``None`` — the content-less entity grouping the versions of one block.
 
     A further invariant, enforced by :meth:`_validate_daily_note_title`: a **daily-note page** —
     one whose ``uid`` is an ``MM-DD-YYYY`` date (:data:`~guffin.roam.primitives.DAILY_NOTE_UID_PATTERN`)
@@ -181,6 +189,8 @@ class RoamNode(BaseModel):
         props: Block property key-value map (BLOCK_PROPS). Present only on Blocks that have block
             properties set (e.g. ``ah-level`` from the Augmented Headings extension).
         attrs: Structured attribute assertions (ENTITY_ATTRS).
+        blocks: IdObject stubs for the version blocks a version group groups (VC_BLOCKS).
+            Present only on Version group entities.
     """
 
     model_config = ConfigDict(frozen=True, validate_by_name=True)
@@ -235,6 +245,15 @@ class RoamNode(BaseModel):
         default=None, description=f"{SchemaAttribute.ENTITY_ATTRS} — structured attribute assertions"
     )
 
+    # Version-group-only field
+    blocks: list[IdObject] | None = Field(
+        default=None,
+        description=(
+            f"{SchemaAttribute.VC_BLOCKS} — the version blocks a version group groups; "
+            "present only on Version group entities"
+        ),
+    )
+
     @field_validator("heading", mode="before")
     @classmethod
     def _coerce_zero_heading(cls, val: object) -> object:
@@ -255,19 +274,23 @@ class RoamNode(BaseModel):
 
     @model_validator(mode="after")
     def _validate_entity_type(self) -> RoamNode:
-        """Enforce the Page/Block entity-type invariants.
+        """Enforce the Page/Block/Version-group entity-type invariants.
 
-        A pull-block is exactly one of two entity types, discriminated by ``title``:
+        A pull-block is exactly one of three entity types, discriminated by ``title`` and then
+        ``string``:
 
-        - **Page** — ``title`` is set, so ``string`` and ``page`` are ``None``.
-        - **Block** — ``title`` is ``None``, so ``string`` and ``page`` are set.
+        - **Page** — ``title`` is set, so ``string``, ``page``, and ``blocks`` are ``None``.
+        - **Block** — ``title`` is ``None`` and ``string`` is set, so ``page`` is set and
+          ``blocks`` is ``None``.
+        - **Version group** — ``title`` and ``string`` are ``None`` and ``blocks`` is set, so
+          ``page`` is ``None``.
 
         Returns:
             The validated instance.
 
         Raises:
-            ValueError: If the instance violates the Page or Block field invariants, or if
-                neither ``title`` nor ``string`` is set.
+            ValueError: If the instance violates its entity type's field invariants, or if none
+                of ``title``, ``string``, or ``blocks`` is set.
         """
         if self.title is not None:
             page_violations: Final[list[str]] = []
@@ -275,15 +298,27 @@ class RoamNode(BaseModel):
                 page_violations.append(f"string must be None; got {self.string!r}")
             if self.page is not None:
                 page_violations.append("page must be None")
+            if self.blocks is not None:
+                page_violations.append("blocks must be None")
             if page_violations:
                 raise ValueError(f"Page entity (uid={self.uid!r}) constraint violations: {'; '.join(page_violations)}")
         elif self.string is not None:
+            block_violations: Final[list[str]] = []
             if self.page is None:
-                raise ValueError(f"Block entity (uid={self.uid!r}) constraint violations: page must be set")
+                block_violations.append("page must be set")
+            if self.blocks is not None:
+                block_violations.append("blocks must be None")
+            if block_violations:
+                raise ValueError(
+                    f"Block entity (uid={self.uid!r}) constraint violations: {'; '.join(block_violations)}"
+                )
+        elif self.blocks is not None:
+            if self.page is not None:
+                raise ValueError(f"Version group entity (uid={self.uid!r}) constraint violations: page must be None")
         else:
             raise ValueError(
-                f"RoamNode (uid={self.uid!r}) must be a Page (title set) or a Block (string set); "
-                "got title=None, string=None"
+                f"RoamNode (uid={self.uid!r}) must be a Page (title set), a Block (string set), or a "
+                "Version group (blocks set); got title=None, string=None, blocks=None"
             )
         return self
 
@@ -525,7 +560,8 @@ def node_type(node: RoamNode) -> NodeType:
     """Return the :class:`NodeType` of *node*.
 
     Discriminates first on :attr:`~RoamNode.title`: returns :attr:`NodeType.PAGE` when
-    ``title`` is a non-``None`` string.  For title-less nodes (blocks), returns
+    ``title`` is a non-``None`` string.  Then on :attr:`~RoamNode.blocks`: returns
+    :attr:`NodeType.VERSION_GROUP` when ``blocks`` is set.  For the remaining nodes (blocks), returns
     :attr:`NodeType.IMAGE_BLOCK` when ``string`` is a standalone Markdown image link — the
     link as the string's entire content (as matched by :data:`~guffin.roam.markdown.IMAGE_LINK_RE`),
     :attr:`NodeType.HEADING_BLOCK` when :func:`effective_heading_level` is non-``None``,
@@ -558,6 +594,7 @@ def node_type(node: RoamNode) -> NodeType:
 
     Returns:
         :attr:`NodeType.PAGE` if ``title`` is set;
+        :attr:`NodeType.VERSION_GROUP` if ``blocks`` is set;
         :attr:`NodeType.IMAGE_BLOCK` if ``string`` is a standalone Markdown image link;
         :attr:`NodeType.HEADING_BLOCK` if ``heading`` or ``props['ah-level']`` is set;
         :attr:`NodeType.CALLOUT_BLOCK` if ``string`` matches ``[[>]] [[!<TYPE>]]``;
@@ -575,7 +612,10 @@ def node_type(node: RoamNode) -> NodeType:
     """
     if node.title is not None:
         return NodeType.PAGE
-    # A title-less pull-block is a Block, so its string is set (enforced by _validate_entity_type).
+    if node.blocks is not None:
+        return NodeType.VERSION_GROUP
+    # A pull-block with neither title nor blocks is a Block, so its string is set (enforced by
+    # _validate_entity_type).
     assert node.string is not None
     string: Final[str] = node.string
     if IMAGE_LINK_RE.fullmatch(string.strip()):

@@ -17,6 +17,7 @@ root_node:
   props: null
   title: '[[Test Article]] 0'
   attrs: null
+  blocks: null
 tree_network:
 - uid: wjN-kVF3B
   id: 11225
@@ -37,6 +38,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xfq7UYRb2
   id: 14465
   string: 'code-language:: FORTRAN'
@@ -57,6 +59,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: r09kXvUg-
   id: 11193
   string: '[[>]] This is a Roam standard multi-line Block Quote
@@ -78,6 +81,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: jVQvHi40O
   id: 11147
   string: block 3
@@ -97,6 +101,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hLpHeEto9
   id: 14464
   string: 'guffin-meta:: #.rm-g'
@@ -134,6 +139,7 @@ tree_network:
       - uid
       - xfq7UYRb2
       value: ' FORTRAN'
+  blocks: null
 - uid: fUle3zmFp
   id: 14659
   string: '[[>]] [[!EXAMPLE]] This is the callout title
@@ -158,6 +164,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: iXrVW8EGw
   id: 11199
   string: 'the next block is a basic Roam-native table: 3x3. No column/row/col resizing
@@ -175,6 +182,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vLs9O1JFB
   id: 13093
   string: r1.c1
@@ -193,6 +201,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MRKYttxrM
   id: 11149
   string: block 1
@@ -224,6 +233,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: g9mXrLNQd
   id: 11156
   string: block 3.1.1
@@ -243,6 +253,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: u8XjAL7_K
   id: 13090
   string: Header 1
@@ -261,6 +272,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qnCiceZgk
   id: 11148
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -323,6 +335,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2yQYaKIEV
   id: 11157
   string: This [para] features [__italics__]
@@ -339,6 +352,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: WtrddPBAt
   id: 11153
   string: block 1.2
@@ -355,6 +369,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 6NS-Qw4Mm
   id: 11226
   string: Header 1
@@ -373,6 +388,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 6bcyfVpL2
   id: 11187
   string: '> This is a Markdown standard multi-line Block Quote
@@ -393,6 +409,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Odbqghm-D
   id: 11150
   string: block 2
@@ -412,6 +429,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Yz0pqYfBh
   id: 11186
   string: '> This is a __Markdown standard__ single line **Block Quote**'
@@ -428,6 +446,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4BL7hTjHS
   id: 11227
   string: Header 2
@@ -447,6 +466,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ooVLwinzV
   id: 13455
   string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
@@ -465,6 +485,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ETesnk4Zi
   id: 11172
   string: This para features `inline-code`
@@ -481,6 +502,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: X2GQc9xlb
   id: 14558
   string: The child of this block is an isolated fenced code block whose `code-source`
@@ -500,6 +522,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0hoWxyjNR
   id: 11232
   string: r2.c1
@@ -518,6 +541,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qXV6E7HV8
   id: 13086
   string: 'the next block is a basic Roam-native table: 3x3, but has no values in
@@ -535,6 +559,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9XUHIOSY0
   id: 11231
   string: r1.c3
@@ -554,6 +579,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: CgaFSZKa9
   id: 14462
   string: 'The child of this block is an isolated fenced code block whose fence language
@@ -573,6 +599,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hD2qvZqjh
   id: 11234
   string: r2.c3
@@ -592,6 +619,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5JwQ2Fea-
   id: 11230
   string: r1.c2
@@ -611,6 +639,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GeE5zPJOv
   id: 13454
   string: '[[>]] [[!QUOTE]] This is a Roam multi-line Pull Quote
@@ -634,6 +663,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _oNY-uWg-
   id: 14463
   string: "```plain text\nC     FIZZBUZZ FOR IBM 704 FORTRAN\n      DO 100 I = 1,\
@@ -677,6 +707,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: gq_29_H-7
   id: 11188
   string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
@@ -694,6 +725,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HJu1OIKOr
   id: 15780
   string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
@@ -714,6 +746,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TfYw_AaIH
   id: 13092
   string: Header 3
@@ -733,6 +766,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: R6Dm4usgJ
   id: 15781
   string: '{{[[DONE]]}} a short #c:ORANGE __ref closed todo__'
@@ -753,6 +787,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: mGk4VnMT3
   id: 11151
   string: block 1.1
@@ -770,6 +805,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: S3NNepskY
   id: 13096
   string: r2.c1
@@ -788,6 +824,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0mRpQNEC-
   id: 13091
   string: Header 2
@@ -807,6 +844,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xPUIusgqA
   id: 19958
   string: block 3.4
@@ -824,6 +862,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8FeLZHNMW
   id: 11174
   string: The child of this block is an isolated fenced code block
@@ -841,6 +880,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5aBgeXBbU
   id: 13095
   string: r1.c3
@@ -860,6 +900,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Sz76xTH3N
   id: 14660
   string: block 3.3
@@ -877,6 +918,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 6AFKj93ma
   id: 14562
   string: 'guffin-meta:: #.rm-g'
@@ -916,6 +958,7 @@ tree_network:
       - fAKwzdSzg
       value: ' https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py
         , 272ad8d16d9e32c98cfaccdf346787754eeebd2b, 2026-07-20'
+  blocks: null
 - uid: VvbwbLchA
   id: 11171
   string: This para features ^^highlight^^
@@ -932,6 +975,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fAKwzdSzg
   id: 14563
   string: 'code-source:: https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py
@@ -954,6 +998,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QB8DChDBs
   id: 11158
   string: This para features **bold**
@@ -970,6 +1015,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: H_9tvN3-X
   id: 14559
   string: "```python\n\"\"\"Generic accumulator-pipeline validation framework.\n\n\
@@ -1042,6 +1088,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: tzwIznt_u
   id: 13094
   string: ''
@@ -1061,6 +1108,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: PZsiyXDGs
   id: 14661
   string: '[[>]] [[!EXAMPLE]] This is a callout with only a title-- no body.'
@@ -1080,6 +1128,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: E_Nsc0SmT
   id: 11173
   string: "This para features includes a fenced code block: ```python\ndef fizz_buzz(limit:\
@@ -1100,6 +1149,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9M36YWLn7
   id: 13089
   string: '{{table}}'
@@ -1119,6 +1169,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: C6xVTMnsh
   id: 11175
   string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
@@ -1139,6 +1190,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: iAxwSSBmi
   id: 11228
   string: Header 3
@@ -1158,6 +1210,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d6b4AGFrG
   id: 11154
   string: block 3.1
@@ -1175,6 +1228,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5N_QAEc3C
   id: 11155
   string: block 3.2
@@ -1192,6 +1246,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YYysqBFqy
   id: 19965
   string: This block has 3 versions. This is version 3.
@@ -1209,6 +1264,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: L7iQsWlWT
   id: 11137
   string: null
@@ -1227,6 +1283,7 @@ tree_network:
   props: null
   title: '[[Test Article]] 0'
   attrs: null
+  blocks: null
 - uid: bwUBoF2ee
   id: 11229
   string: r1.c1
@@ -1245,6 +1302,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: jrIkVSHfA
   id: 11233
   string: r2.c2
@@ -1264,6 +1322,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2IDW6tZJ4
   id: 11152
   string: block 1.1.1
@@ -1281,6 +1340,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7dBusjzDA
   id: 11170
   string: This para features ~~strikethrough~~
@@ -1297,6 +1357,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fY4nP4RUv
   id: 13097
   string: r2.c2
@@ -1315,6 +1376,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 refs_by_id:
   '11454':
     uid: iF2Ey_unj
@@ -1330,6 +1392,7 @@ refs_by_id:
     props: null
     title: c:ORANGE
     attrs: null
+    blocks: null
   '5456':
     uid: Q-T5fKOEq
     id: 5456
@@ -1344,6 +1407,7 @@ refs_by_id:
     props: null
     title: '!QUOTE'
     attrs: null
+    blocks: null
   '4223':
     uid: LBFKibPIj
     id: 4223
@@ -1378,6 +1442,7 @@ refs_by_id:
         value:
         - uid
         - 9ZtPB2yY3
+    blocks: null
   '14555':
     uid: C8y7bMPpW
     id: 14555
@@ -1392,6 +1457,7 @@ refs_by_id:
     props: null
     title: code-source
     attrs: null
+    blocks: null
   '5450':
     uid: OexZiLR_O
     id: 5450
@@ -1406,6 +1472,7 @@ refs_by_id:
     props: null
     title: '>'
     attrs: null
+    blocks: null
   '1371':
     uid: 7koyf_Urx
     id: 1371
@@ -1420,6 +1487,7 @@ refs_by_id:
     props: null
     title: DONE
     attrs: null
+    blocks: null
   '5458':
     uid: lS4kg-3mw
     id: 5458
@@ -1434,6 +1502,7 @@ refs_by_id:
     props: null
     title: '!EXAMPLE'
     attrs: null
+    blocks: null
   '14466':
     uid: SEtRXQkX7
     id: 14466
@@ -1448,6 +1517,7 @@ refs_by_id:
     props: null
     title: code-language
     attrs: null
+    blocks: null
   '321':
     uid: BxGxeeGk1
     id: 321
@@ -1462,6 +1532,7 @@ refs_by_id:
     props: null
     title: .rm-g
     attrs: null
+    blocks: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
@@ -1476,6 +1547,7 @@ refs_by_id:
     props: null
     title: '!INFO'
     attrs: null
+    blocks: null
   '329':
     uid: 20E2gCz7h
     id: 329
@@ -1491,6 +1563,7 @@ refs_by_id:
     props: null
     title: TODO
     attrs: null
+    blocks: null
   '11839':
     uid: 2xY4zCjId
     id: 11839
@@ -1505,6 +1578,7 @@ refs_by_id:
     props: null
     title: guffin-meta
     attrs: null
+    blocks: null
   '1348':
     uid: jntuNAGBs
     id: 1348
@@ -1521,6 +1595,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '18202':
     uid: lXi4SgSvz
     id: 18202
@@ -1540,6 +1615,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '18204':
     uid: JSrSVApJ_
     id: 18204
@@ -1558,6 +1634,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '261':
     uid: RXwAqq0_T
     id: 261
@@ -1572,6 +1649,7 @@ refs_by_id:
     props: null
     title: tags
     attrs: null
+    blocks: null
   '6535':
     uid: 9ZtPB2yY3
     id: 6535
@@ -1586,3 +1664,4 @@ refs_by_id:
     props: null
     title: Publishing
     attrs: null
+    blocks: null

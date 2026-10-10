@@ -17,6 +17,7 @@ root_node:
   props: null
   title: '[[Test Article]] 2'
   attrs: null
+  blocks: null
 tree_network:
 - uid: InqcJLiuz
   id: 11810
@@ -34,6 +35,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d_3REDRrO
   id: 11684
   string: Block 2.2 (children_layout=bullet)
@@ -52,6 +54,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: sD1C9ifkG
   id: 11677
   string: Block 1 (children_layout=bullet)
@@ -70,6 +73,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fv5nh7u81
   id: 11809
   string: Block 3.2
@@ -86,6 +90,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YyeRpjbFD
   id: 11679
   string: Block 1.2
@@ -103,6 +108,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: DsogfVzX9
   id: 11682
   string: Block 2 (children_layout=document)
@@ -121,6 +127,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FVou-DBMP
   id: 11969
   string: Block 2.3.2
@@ -138,6 +145,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: sPZ2xmBBS
   id: 11807
   string: Block 3 (children_layout=numbered)
@@ -156,6 +164,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MmvJZhQNJ
   id: 11675
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
@@ -175,6 +184,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lDYWYqYSL
   id: 11674
   string: null
@@ -193,6 +203,7 @@ tree_network:
   props: null
   title: '[[Test Article]] 2'
   attrs: null
+  blocks: null
 - uid: Bb49MOLyE
   id: 11686
   string: Block 2.3 (children_layout=bullet)
@@ -211,6 +222,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gmLJbWZYp
   id: 11681
   string: Block 1.3
@@ -227,6 +239,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: KUi_6ooZj
   id: 11680
   string: Block 1.2.1
@@ -244,6 +257,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: cxJA2xr-u
   id: 11966
   string: Block 2.2.1
@@ -261,6 +275,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: D7gYVJoVj
   id: 11967
   string: Block 2.2.2
@@ -278,6 +293,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 99rZhIPZW
   id: 11683
   string: Block 2.1
@@ -294,6 +310,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: UQQwogj1M
   id: 11808
   string: Block 3.1 (children_layout=document)
@@ -311,6 +328,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VH0mXM0rw
   id: 11678
   string: Block 1.1
@@ -327,6 +345,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1O4yGV-Tq
   id: 11968
   string: Block 2.3.1
@@ -344,6 +363,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2jjY8-fQz
   id: 11970
   string: Block 3.1.1
@@ -361,6 +381,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 refs_by_id:
   '4223':
     uid: LBFKibPIj
@@ -369,14 +390,34 @@ refs_by_id:
     order: null
     heading: null
     children:
-    - id: 4224
+    - id: 18202
+    - id: 18204
     refs: null
     page: null
     children_view_type: null
     parents: null
     props: null
     title: Test Article
-    attrs: null
+    attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    blocks: null
   '5450':
     uid: OexZiLR_O
     id: 5450
@@ -391,6 +432,7 @@ refs_by_id:
     props: null
     title: '>'
     attrs: null
+    blocks: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
@@ -405,11 +447,12 @@ refs_by_id:
     props: null
     title: '!INFO'
     attrs: null
-  '4224':
-    uid: 7MoH-wIQh
-    id: 4224
-    string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
+    blocks: null
+  '18202':
+    uid: lXi4SgSvz
+    id: 18202
+    string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
     order: 0
     heading: null
     children: null
@@ -424,3 +467,53 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
+  '18204':
+    uid: JSrSVApJ_
+    id: 18204
+    string: 'tags:: #Publishing'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 261
+    - id: 6535
+    page:
+      id: 4223
+    children_view_type: null
+    parents:
+    - id: 4223
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '261':
+    uid: RXwAqq0_T
+    id: 261
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: tags
+    attrs: null
+    blocks: null
+  '6535':
+    uid: 9ZtPB2yY3
+    id: 6535
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: Publishing
+    attrs: null
+    blocks: null

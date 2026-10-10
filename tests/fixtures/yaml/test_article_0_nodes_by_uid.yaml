@@ -18,6 +18,7 @@ wjN-kVF3B:
   props: null
   title: null
   attrs: null
+  blocks: null
 xfq7UYRb2:
   uid: xfq7UYRb2
   id: 14465
@@ -39,6 +40,7 @@ xfq7UYRb2:
   props: null
   title: null
   attrs: null
+  blocks: null
 iF2Ey_unj:
   uid: iF2Ey_unj
   id: 11454
@@ -53,6 +55,7 @@ iF2Ey_unj:
   props: null
   title: c:ORANGE
   attrs: null
+  blocks: null
 Q-T5fKOEq:
   uid: Q-T5fKOEq
   id: 5456
@@ -67,6 +70,7 @@ Q-T5fKOEq:
   props: null
   title: '!QUOTE'
   attrs: null
+  blocks: null
 LBFKibPIj:
   uid: LBFKibPIj
   id: 4223
@@ -101,6 +105,7 @@ LBFKibPIj:
       value:
       - uid
       - 9ZtPB2yY3
+  blocks: null
 9ZtPB2yY3:
   uid: 9ZtPB2yY3
   id: 6535
@@ -115,6 +120,7 @@ LBFKibPIj:
   props: null
   title: Publishing
   attrs: null
+  blocks: null
 r09kXvUg-:
   uid: r09kXvUg-
   id: 11193
@@ -137,6 +143,7 @@ r09kXvUg-:
   props: null
   title: null
   attrs: null
+  blocks: null
 jVQvHi40O:
   uid: jVQvHi40O
   id: 11147
@@ -157,6 +164,7 @@ jVQvHi40O:
   props: null
   title: null
   attrs: null
+  blocks: null
 hLpHeEto9:
   uid: hLpHeEto9
   id: 14464
@@ -195,6 +203,7 @@ hLpHeEto9:
       - uid
       - xfq7UYRb2
       value: ' FORTRAN'
+  blocks: null
 fUle3zmFp:
   uid: fUle3zmFp
   id: 14659
@@ -220,6 +229,7 @@ fUle3zmFp:
   props: null
   title: null
   attrs: null
+  blocks: null
 iXrVW8EGw:
   uid: iXrVW8EGw
   id: 11199
@@ -238,6 +248,7 @@ iXrVW8EGw:
   props: null
   title: null
   attrs: null
+  blocks: null
 C8y7bMPpW:
   uid: C8y7bMPpW
   id: 14555
@@ -252,6 +263,7 @@ C8y7bMPpW:
   props: null
   title: code-source
   attrs: null
+  blocks: null
 vLs9O1JFB:
   uid: vLs9O1JFB
   id: 13093
@@ -271,6 +283,7 @@ vLs9O1JFB:
   props: null
   title: null
   attrs: null
+  blocks: null
 MRKYttxrM:
   uid: MRKYttxrM
   id: 11149
@@ -303,6 +316,25 @@ MRKYttxrM:
   props: null
   title: null
   attrs: null
+  blocks: null
+e9j_vHjGQ:
+  uid: e9j_vHjGQ
+  id: 19964
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: null
+  attrs: null
+  blocks:
+  - id: 19957
+  - id: 19963
+  - id: 19965
 g9mXrLNQd:
   uid: g9mXrLNQd
   id: 11156
@@ -323,6 +355,7 @@ g9mXrLNQd:
   props: null
   title: null
   attrs: null
+  blocks: null
 u8XjAL7_K:
   uid: u8XjAL7_K
   id: 13090
@@ -342,6 +375,7 @@ u8XjAL7_K:
   props: null
   title: null
   attrs: null
+  blocks: null
 qnCiceZgk:
   uid: qnCiceZgk
   id: 11148
@@ -405,6 +439,7 @@ qnCiceZgk:
   props: null
   title: null
   attrs: null
+  blocks: null
 2yQYaKIEV:
   uid: 2yQYaKIEV
   id: 11157
@@ -422,6 +457,7 @@ qnCiceZgk:
   props: null
   title: null
   attrs: null
+  blocks: null
 WtrddPBAt:
   uid: WtrddPBAt
   id: 11153
@@ -439,6 +475,7 @@ WtrddPBAt:
   props: null
   title: null
   attrs: null
+  blocks: null
 6NS-Qw4Mm:
   uid: 6NS-Qw4Mm
   id: 11226
@@ -458,6 +495,7 @@ WtrddPBAt:
   props: null
   title: null
   attrs: null
+  blocks: null
 zHbMF7Ozq:
   uid: zHbMF7Ozq
   id: 19963
@@ -476,6 +514,7 @@ zHbMF7Ozq:
   props: null
   title: null
   attrs: null
+  blocks: null
 6bcyfVpL2:
   uid: 6bcyfVpL2
   id: 11187
@@ -497,6 +536,7 @@ zHbMF7Ozq:
   props: null
   title: null
   attrs: null
+  blocks: null
 Odbqghm-D:
   uid: Odbqghm-D
   id: 11150
@@ -517,6 +557,7 @@ Odbqghm-D:
   props: null
   title: null
   attrs: null
+  blocks: null
 Yz0pqYfBh:
   uid: Yz0pqYfBh
   id: 11186
@@ -534,6 +575,7 @@ Yz0pqYfBh:
   props: null
   title: null
   attrs: null
+  blocks: null
 4BL7hTjHS:
   uid: 4BL7hTjHS
   id: 11227
@@ -554,6 +596,7 @@ Yz0pqYfBh:
   props: null
   title: null
   attrs: null
+  blocks: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -568,6 +611,7 @@ OexZiLR_O:
   props: null
   title: '>'
   attrs: null
+  blocks: null
 ooVLwinzV:
   uid: ooVLwinzV
   id: 13455
@@ -587,6 +631,7 @@ ooVLwinzV:
   props: null
   title: null
   attrs: null
+  blocks: null
 ETesnk4Zi:
   uid: ETesnk4Zi
   id: 11172
@@ -604,6 +649,7 @@ ETesnk4Zi:
   props: null
   title: null
   attrs: null
+  blocks: null
 X2GQc9xlb:
   uid: X2GQc9xlb
   id: 14558
@@ -624,6 +670,7 @@ X2GQc9xlb:
   props: null
   title: null
   attrs: null
+  blocks: null
 0hoWxyjNR:
   uid: 0hoWxyjNR
   id: 11232
@@ -643,6 +690,7 @@ X2GQc9xlb:
   props: null
   title: null
   attrs: null
+  blocks: null
 qXV6E7HV8:
   uid: qXV6E7HV8
   id: 13086
@@ -661,6 +709,7 @@ qXV6E7HV8:
   props: null
   title: null
   attrs: null
+  blocks: null
 9XUHIOSY0:
   uid: 9XUHIOSY0
   id: 11231
@@ -681,6 +730,7 @@ qXV6E7HV8:
   props: null
   title: null
   attrs: null
+  blocks: null
 CgaFSZKa9:
   uid: CgaFSZKa9
   id: 14462
@@ -701,6 +751,7 @@ CgaFSZKa9:
   props: null
   title: null
   attrs: null
+  blocks: null
 7koyf_Urx:
   uid: 7koyf_Urx
   id: 1371
@@ -715,6 +766,7 @@ CgaFSZKa9:
   props: null
   title: DONE
   attrs: null
+  blocks: null
 hD2qvZqjh:
   uid: hD2qvZqjh
   id: 11234
@@ -735,6 +787,7 @@ hD2qvZqjh:
   props: null
   title: null
   attrs: null
+  blocks: null
 5JwQ2Fea-:
   uid: 5JwQ2Fea-
   id: 11230
@@ -755,6 +808,7 @@ hD2qvZqjh:
   props: null
   title: null
   attrs: null
+  blocks: null
 GeE5zPJOv:
   uid: GeE5zPJOv
   id: 13454
@@ -779,6 +833,7 @@ GeE5zPJOv:
   props: null
   title: null
   attrs: null
+  blocks: null
 _oNY-uWg-:
   uid: _oNY-uWg-
   id: 14463
@@ -823,6 +878,7 @@ _oNY-uWg-:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 lS4kg-3mw:
   uid: lS4kg-3mw
   id: 5458
@@ -837,6 +893,7 @@ lS4kg-3mw:
   props: null
   title: '!EXAMPLE'
   attrs: null
+  blocks: null
 gq_29_H-7:
   uid: gq_29_H-7
   id: 11188
@@ -855,6 +912,7 @@ gq_29_H-7:
   props: null
   title: null
   attrs: null
+  blocks: null
 jntuNAGBs:
   uid: jntuNAGBs
   id: 1348
@@ -871,6 +929,7 @@ jntuNAGBs:
   props: null
   title: null
   attrs: null
+  blocks: null
 HJu1OIKOr:
   uid: HJu1OIKOr
   id: 15780
@@ -892,6 +951,7 @@ HJu1OIKOr:
   props: null
   title: null
   attrs: null
+  blocks: null
 TfYw_AaIH:
   uid: TfYw_AaIH
   id: 13092
@@ -912,6 +972,7 @@ TfYw_AaIH:
   props: null
   title: null
   attrs: null
+  blocks: null
 R6Dm4usgJ:
   uid: R6Dm4usgJ
   id: 15781
@@ -933,6 +994,7 @@ R6Dm4usgJ:
   props: null
   title: null
   attrs: null
+  blocks: null
 PUrwWBbbi:
   uid: PUrwWBbbi
   id: 19957
@@ -951,6 +1013,7 @@ PUrwWBbbi:
   props: null
   title: null
   attrs: null
+  blocks: null
 mGk4VnMT3:
   uid: mGk4VnMT3
   id: 11151
@@ -969,6 +1032,7 @@ mGk4VnMT3:
   props: null
   title: null
   attrs: null
+  blocks: null
 S3NNepskY:
   uid: S3NNepskY
   id: 13096
@@ -988,6 +1052,7 @@ S3NNepskY:
   props: null
   title: null
   attrs: null
+  blocks: null
 0mRpQNEC-:
   uid: 0mRpQNEC-
   id: 13091
@@ -1008,6 +1073,7 @@ S3NNepskY:
   props: null
   title: null
   attrs: null
+  blocks: null
 xPUIusgqA:
   uid: xPUIusgqA
   id: 19958
@@ -1026,6 +1092,7 @@ xPUIusgqA:
   props: null
   title: null
   attrs: null
+  blocks: null
 8FeLZHNMW:
   uid: 8FeLZHNMW
   id: 11174
@@ -1044,6 +1111,7 @@ xPUIusgqA:
   props: null
   title: null
   attrs: null
+  blocks: null
 5aBgeXBbU:
   uid: 5aBgeXBbU
   id: 13095
@@ -1064,6 +1132,7 @@ xPUIusgqA:
   props: null
   title: null
   attrs: null
+  blocks: null
 Sz76xTH3N:
   uid: Sz76xTH3N
   id: 14660
@@ -1082,6 +1151,7 @@ Sz76xTH3N:
   props: null
   title: null
   attrs: null
+  blocks: null
 6AFKj93ma:
   uid: 6AFKj93ma
   id: 14562
@@ -1122,6 +1192,7 @@ Sz76xTH3N:
       - fAKwzdSzg
       value: ' https://github.com/jpanico/guffin/blob/refs/heads/main/src/guffin/common/validation.py
         , 272ad8d16d9e32c98cfaccdf346787754eeebd2b, 2026-07-20'
+  blocks: null
 SEtRXQkX7:
   uid: SEtRXQkX7
   id: 14466
@@ -1136,6 +1207,7 @@ SEtRXQkX7:
   props: null
   title: code-language
   attrs: null
+  blocks: null
 BxGxeeGk1:
   uid: BxGxeeGk1
   id: 321
@@ -1150,6 +1222,7 @@ BxGxeeGk1:
   props: null
   title: .rm-g
   attrs: null
+  blocks: null
 VvbwbLchA:
   uid: VvbwbLchA
   id: 11171
@@ -1167,6 +1240,7 @@ VvbwbLchA:
   props: null
   title: null
   attrs: null
+  blocks: null
 fAKwzdSzg:
   uid: fAKwzdSzg
   id: 14563
@@ -1190,6 +1264,7 @@ fAKwzdSzg:
   props: null
   title: null
   attrs: null
+  blocks: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
   id: 5462
@@ -1204,6 +1279,7 @@ ZgUWBRb7j:
   props: null
   title: '!INFO'
   attrs: null
+  blocks: null
 QB8DChDBs:
   uid: QB8DChDBs
   id: 11158
@@ -1221,6 +1297,7 @@ QB8DChDBs:
   props: null
   title: null
   attrs: null
+  blocks: null
 H_9tvN3-X:
   uid: H_9tvN3-X
   id: 14559
@@ -1294,6 +1371,7 @@ H_9tvN3-X:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 RXwAqq0_T:
   uid: RXwAqq0_T
   id: 261
@@ -1308,6 +1386,7 @@ RXwAqq0_T:
   props: null
   title: tags
   attrs: null
+  blocks: null
 tzwIznt_u:
   uid: tzwIznt_u
   id: 13094
@@ -1328,6 +1407,7 @@ tzwIznt_u:
   props: null
   title: null
   attrs: null
+  blocks: null
 PZsiyXDGs:
   uid: PZsiyXDGs
   id: 14661
@@ -1348,6 +1428,7 @@ PZsiyXDGs:
   props: null
   title: null
   attrs: null
+  blocks: null
 E_Nsc0SmT:
   uid: E_Nsc0SmT
   id: 11173
@@ -1369,6 +1450,7 @@ E_Nsc0SmT:
   props: null
   title: null
   attrs: null
+  blocks: null
 9M36YWLn7:
   uid: 9M36YWLn7
   id: 13089
@@ -1389,6 +1471,7 @@ E_Nsc0SmT:
   props: null
   title: null
   attrs: null
+  blocks: null
 C6xVTMnsh:
   uid: C6xVTMnsh
   id: 11175
@@ -1410,6 +1493,7 @@ C6xVTMnsh:
   props: null
   title: null
   attrs: null
+  blocks: null
 JSrSVApJ_:
   uid: JSrSVApJ_
   id: 18204
@@ -1428,6 +1512,7 @@ JSrSVApJ_:
   props: null
   title: null
   attrs: null
+  blocks: null
 iAxwSSBmi:
   uid: iAxwSSBmi
   id: 11228
@@ -1448,6 +1533,7 @@ iAxwSSBmi:
   props: null
   title: null
   attrs: null
+  blocks: null
 d6b4AGFrG:
   uid: d6b4AGFrG
   id: 11154
@@ -1466,6 +1552,7 @@ d6b4AGFrG:
   props: null
   title: null
   attrs: null
+  blocks: null
 5N_QAEc3C:
   uid: 5N_QAEc3C
   id: 11155
@@ -1484,6 +1571,7 @@ d6b4AGFrG:
   props: null
   title: null
   attrs: null
+  blocks: null
 YYysqBFqy:
   uid: YYysqBFqy
   id: 19965
@@ -1502,6 +1590,7 @@ YYysqBFqy:
   props: null
   title: null
   attrs: null
+  blocks: null
 L7iQsWlWT:
   uid: L7iQsWlWT
   id: 11137
@@ -1521,6 +1610,7 @@ L7iQsWlWT:
   props: null
   title: '[[Test Article]] 0'
   attrs: null
+  blocks: null
 20E2gCz7h:
   uid: 20E2gCz7h
   id: 329
@@ -1536,6 +1626,7 @@ L7iQsWlWT:
   props: null
   title: TODO
   attrs: null
+  blocks: null
 bwUBoF2ee:
   uid: bwUBoF2ee
   id: 11229
@@ -1555,6 +1646,7 @@ bwUBoF2ee:
   props: null
   title: null
   attrs: null
+  blocks: null
 jrIkVSHfA:
   uid: jrIkVSHfA
   id: 11233
@@ -1575,6 +1667,7 @@ jrIkVSHfA:
   props: null
   title: null
   attrs: null
+  blocks: null
 2IDW6tZJ4:
   uid: 2IDW6tZJ4
   id: 11152
@@ -1593,6 +1686,7 @@ jrIkVSHfA:
   props: null
   title: null
   attrs: null
+  blocks: null
 7dBusjzDA:
   uid: 7dBusjzDA
   id: 11170
@@ -1610,6 +1704,7 @@ jrIkVSHfA:
   props: null
   title: null
   attrs: null
+  blocks: null
 2xY4zCjId:
   uid: 2xY4zCjId
   id: 11839
@@ -1624,6 +1719,7 @@ jrIkVSHfA:
   props: null
   title: guffin-meta
   attrs: null
+  blocks: null
 fY4nP4RUv:
   uid: fY4nP4RUv
   id: 13097
@@ -1643,6 +1739,7 @@ fY4nP4RUv:
   props: null
   title: null
   attrs: null
+  blocks: null
 lXi4SgSvz:
   uid: lXi4SgSvz
   id: 18202
@@ -1662,3 +1759,4 @@ lXi4SgSvz:
   props: null
   title: null
   attrs: null
+  blocks: null

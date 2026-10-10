@@ -183,8 +183,8 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_exactly_fourteen_members(self) -> None:
-        """Test that NodeType has exactly fourteen members."""
+    def test_exactly_fifteen_members(self) -> None:
+        """Test that NodeType has exactly fifteen members."""
         assert set(NodeType) == {
             NodeType.PAGE,
             NodeType.TEXT_BLOCK,
@@ -200,6 +200,7 @@ class TestNodeType:
             NodeType.PDF_BLOCK,
             NodeType.ASSET_BLOCK,
             NodeType.ATTRIBUTE_BLOCK,
+            NodeType.VERSION_GROUP,
         }
 
 
@@ -932,3 +933,57 @@ class TestDailyNoteTitleValidation:
         """A page with a synthetic UID may carry any title."""
         node = RoamNode(uid="abc123xyz", id=1, title="An Arbitrary Page Title")
         assert node.title == "An Arbitrary Page Title"
+
+
+class TestRoamNodeVersionGroup:
+    """Tests for the Version group entity type: ``blocks`` set, ``title`` and ``string`` None."""
+
+    def _make_group(self, **overrides: object) -> RoamNode:
+        fields: dict[str, object] = {"uid": "vgroup001", "id": 300, "blocks": [IdObject(id=301), IdObject(id=302)]}
+        fields.update(overrides)
+        return RoamNode.model_validate(fields)
+
+    def test_group_is_accepted(self) -> None:
+        """A node with only uid, id, and blocks is a valid version group."""
+        node = self._make_group()
+        assert node.blocks == [IdObject(id=301), IdObject(id=302)]
+        assert node.title is None
+        assert node.string is None
+        assert node.page is None
+
+    def test_group_classifies_as_version_group(self) -> None:
+        """node_type() returns VERSION_GROUP for a blocks-bearing node."""
+        assert node_type(self._make_group()) is NodeType.VERSION_GROUP
+
+    def test_group_parses_from_raw_wire_shape(self) -> None:
+        """The raw pull-block shape (vc/blocks stripped to 'blocks') parses as a version group."""
+        node = RoamNode.model_validate({"uid": "e9j_vHjGQ", "id": 19932, "blocks": [{"id": 1}, {"id": 2}, {"id": 3}]})
+        assert node_type(node) is NodeType.VERSION_GROUP
+        assert [b.id for b in node.blocks or []] == [1, 2, 3]
+
+    def test_group_with_page_rejected(self) -> None:
+        """A version group has no containing page."""
+        with pytest.raises(ValidationError, match="Version group entity .* page must be None"):
+            self._make_group(page=IdObject(id=99))
+
+    def test_page_with_blocks_rejected(self) -> None:
+        """A page cannot carry version blocks."""
+        with pytest.raises(ValidationError, match="Page entity .* blocks must be None"):
+            RoamNode(uid="page00001", id=1, title="My Page", blocks=[IdObject(id=301)])
+
+    def test_block_with_blocks_rejected(self) -> None:
+        """A block cannot carry version blocks; the versions are grouped by a separate entity."""
+        with pytest.raises(ValidationError, match="Block entity .* blocks must be None"):
+            RoamNode(
+                uid="block0001",
+                id=2,
+                string="text",
+                parents=[IdObject(id=99)],
+                page=IdObject(id=99),
+                blocks=[IdObject(id=301)],
+            )
+
+    def test_node_with_nothing_set_names_all_three_kinds(self) -> None:
+        """A node with neither title, string, nor blocks is rejected, naming the three entity kinds."""
+        with pytest.raises(ValidationError, match="Page .*, a Block .*, or a Version group"):
+            RoamNode(uid="badnode01", id=999)

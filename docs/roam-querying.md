@@ -115,7 +115,10 @@ names that one attribute unambiguously.
    (and [?anchor :node/title ?title]
         (in-scope ?anchor ?member)
         [?group :vc/blocks ?member]
-        [?group :vc/blocks ?node]))]
+        [?group :vc/blocks ?node])
+   (and [?anchor :node/title ?title]
+        (in-scope ?anchor ?member)
+        [?node :vc/blocks ?member]))]
 ```
 
 - Input bindings: `?title` — the exact page title string (`args[1]`) — and `%`, the rules vector
@@ -124,10 +127,11 @@ names that one attribute unambiguously.
   where the fetch's scope is decided (see **Datalog Rules** below): `SCOPE_RULES` makes it the
   anchor plus its descendants, `SCOPE_WITH_REFS_RULES` adds referenced nodes two hops deep with
   their subtrees. The query text does not change with `include_refs`; only the rules do.
-- The second `or-join` branch pivots through Roam's Version Control group entity: for every
-  in-scope `?member`, every block sharing its `:vc/blocks` group is returned too, so a versioned
-  block's unselected versions arrive alongside the selected one that the parent's
-  `:block/children` names. See [roam-block-versions.md](roam-block-versions.md).
+- The second and third `or-join` branches pivot through Roam's Version Control group entity:
+  for every in-scope `?member`, every block sharing its `:vc/blocks` group is returned too, so a
+  versioned block's unselected versions arrive alongside the selected one that the parent's
+  `:block/children` names, and the group entity itself is returned as a row (a `VERSION_GROUP`
+  node whose `blocks` stubs name the versions). See [roam-block-versions.md](roam-block-versions.md).
 - Returns `[row[0] for row in result]` — a `list[RoamNode]` where each `RoamNode` holds the full pull-block dict.
 - The pull pattern is `FetchRoamNodes.Request.PULL_PATTERN`, shared by every node query. The two
   `view-type` aliases are not decoration: without them the two attributes collide (below). The
@@ -191,14 +195,10 @@ Two rules for the queries follow:
    to reach a returned row must itself be a returned row, so a reader can follow each join
    step in the rows rather than infer it from a stub. The `descendant` and `page-ref` rules
    satisfy this by construction: every intermediate `?mid`, `?member`, `?via`, and `?ref` is
-   also matched by an `in-scope` clause. Stubs that point *outside* the fetch's scope — a
-   node-UID anchor's own `parents`, `refs` beyond the two-hop boundary — are fine; they are
-   not join steps.
-
-The version pivot in query 1 is the one current exception to rule 2: the Version Control
-group entity is joined through as `?group` but is not bound to `?node`, so it reaches
-`raw_result` only as the `version-group` uid stub on each version row. It is to be brought
-into line; see [roam-block-versions.md](roam-block-versions.md).
+   also matched by an `in-scope` clause. The version pivot in query 1 joins through the
+   Version Control group entity as `?group`, so a third branch returns that entity as a row.
+   Stubs that point *outside* the fetch's scope — a node-UID anchor's own `parents`, `refs`
+   beyond the two-hop boundary — are fine; they are not join steps.
 
 ### Stripping makes distinct attributes collide
 

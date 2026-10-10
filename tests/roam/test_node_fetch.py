@@ -14,7 +14,7 @@ from pydantic import ValidationError
 
 from guffin.roam.local_api import ApiEndpoint
 from guffin.roam.local_api import Response as LocalApiResponse
-from guffin.roam.node import RoamNode
+from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_fetch import FetchRoamNodes, RoamNodeNotFoundError
 from guffin.roam.node_fetch_result import NodeFetchAnchor, NodeFetchResult, NodeFetchSpec
 from guffin.roam.primitives import IdObject
@@ -148,6 +148,9 @@ class TestFetchRoamNodesRequest:
         for query in (FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY, FetchRoamNodes.Request.BY_NODE_UID_QUERY):
             assert "[?group :vc/blocks ?member]" in query
             assert "[?group :vc/blocks ?node]" in query
+            # The group entity itself is returned as a row too, keeping the result closed under
+            # its own traversal (every entity the query joins through is itself a row).
+            assert "[?node :vc/blocks ?member]" in query
 
     def test_pull_pattern_names_the_version_group(self) -> None:
         """The pull pattern carries each block's version group as uid stubs under the version-group alias."""
@@ -487,7 +490,9 @@ class TestFetchRoamNodesFetchByPageTitle:
         which is selected.  Only the selected version sits in the parent's ``:block/children``,
         so only it reaches the anchor tree; the other two are reached through the version group
         and land in the network alone.  Every version — the selected one included — carries the
-        group's uid under the ``version-group`` pull key, and no other row does.
+        group's uid under the ``version-group`` pull key, and no other row does.  The group
+        entity is a row of its own — a ``VERSION_GROUP`` node whose ``blocks`` stubs name exactly
+        the three versions — so the result is closed under its own traversal.
         """
         page_title = "[[Test Article]] 0"
         version_uids: Final[set[str]] = {"PUrwWBbbi", "zHbMF7Ozq", "YYysqBFqy"}
@@ -504,8 +509,12 @@ class TestFetchRoamNodesFetchByPageTitle:
 
         tree_uids: Final[set[str]] = {n.uid for n in result.anchor_tree.tree_network}
         assert version_uids & tree_uids == {selected_uid}
-        assert version_uids <= set(result.nodes_by_uid)
-        assert set(result.nodes_by_uid) - tree_uids == version_uids - {selected_uid}
+        assert version_uids.issubset(result.nodes_by_uid)
+        assert set(result.nodes_by_uid) - tree_uids == (version_uids - {selected_uid}) | {group_uid}
+
+        group: Final[RoamNode] = result.nodes_by_uid[group_uid]
+        assert node_type(group) is NodeType.VERSION_GROUP
+        assert {stub.id for stub in group.blocks or []} == {result.nodes_by_uid[uid].id for uid in version_uids}
 
         versioned_rows: Final[dict[object, object]] = {
             row[0]["uid"]: row[0]["version-group"] for row in result.raw_result if "version-group" in row[0]

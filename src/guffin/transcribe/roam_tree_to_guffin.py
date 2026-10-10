@@ -424,6 +424,10 @@ def vertex_type(node: RoamNode) -> VertexType:
             # Attribute blocks are not transcribed as standalone vertices; they are folded into
             # their parent vertex's attribute_assignments field (see _resolve_attribute_assignments).
             raise ValueError(f"RoamNode uid={node.uid!r} is an attribute block; it has no standalone VertexType")
+        case NodeType.VERSION_GROUP:
+            # A version group has no content of its own: it only groups the version blocks, which
+            # are ordinary blocks and transcribe on their own.
+            raise ValueError(f"RoamNode uid={node.uid!r} is a version group; it has no standalone VertexType")
 
 
 @validate_call

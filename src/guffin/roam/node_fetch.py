@@ -90,10 +90,12 @@ class FetchRoamNodes:
         *version group* entity whose only attribute is a cardinality-many ``:vc/blocks`` ref to
         each version.  The parent's ``:block/children`` names just the *selected* version; the
         others dangle, reachable only through the group.  Every query therefore pivots through
-        the group: for each in-scope node it also returns every sibling version, and every
-        version block carries its group's uid in the ``version-group`` pull key.  The group
-        entity itself is not returned as a row — it has no string, page, or parents, so it is
-        not a node — but its uid on each version is what ties the versions together.
+        the group: for each in-scope node it also returns every sibling version and the group
+        entity itself (a :attr:`~guffin.roam.node.NodeType.VERSION_GROUP` node, whose ``blocks``
+        stubs name the versions), and every version block carries its group's uid in the
+        ``version-group`` pull key.  Returning the group as a row keeps the result closed under
+        its own traversal — every entity a query joins through is itself a row — so the rows
+        alone show how the versions relate.
         """
 
         _DESCENDANT_CLAUSES: Final[str] = textwrap.indent(
@@ -215,6 +217,7 @@ class FetchRoamNodes:
         """
 
         _VERSIONS_PIVOT: Final[str] = "[?group :vc/blocks ?member]\n        [?group :vc/blocks ?node]"
+        _VERSION_GROUP_PIVOT: Final[str] = "[?node :vc/blocks ?member]"
 
         BY_PAGE_TITLE_QUERY: Final[str] = textwrap.dedent(f"""\
             [:find (pull ?node {PULL_PATTERN})
@@ -226,13 +229,16 @@ class FetchRoamNodes:
                     (in-scope ?anchor ?node))
                (and [?anchor :node/title ?title]
                     (in-scope ?anchor ?member)
-                    {_VERSIONS_PIVOT}))]""")
+                    {_VERSIONS_PIVOT})
+               (and [?anchor :node/title ?title]
+                    (in-scope ?anchor ?member)
+                    {_VERSION_GROUP_PIVOT}))]""")
         """Datalog query fetching the nodes in scope of a page, anchored by page title.
 
         Input bindings: ``?title`` (page title string) and ``%`` (rules vector —
         :attr:`SCOPE_RULES` or :attr:`SCOPE_WITH_REFS_RULES`, which decides the scope).
 
-        The ``or-join`` has two branches:
+        The ``or-join`` has three branches:
 
         1. Every node ``in-scope`` of ``?anchor``, per the rules vector.
         2. Every sibling version of an in-scope node: ``?member`` is any in-scope node, and
@@ -240,6 +246,9 @@ class FetchRoamNodes:
            included, so the branch adds exactly the versions the parent's ``:block/children``
            does not name).  With ``?member`` bound, the ``:vc/blocks`` lookup is an index probe,
            so an unversioned graph pays nothing for the branch.
+        3. The version group of an in-scope node: ``?node`` is the entity whose ``:vc/blocks``
+           names ``?member``.  Branch 2 joins through this entity, and returning it keeps the
+           result closed under its own traversal.
 
         ``or-join`` scoping: ``?anchor`` must appear in the join-variable list
         ``[?anchor ?node]`` *and* be re-bound inside each branch.  Variables from the outer
@@ -259,14 +268,17 @@ class FetchRoamNodes:
                     (in-scope ?anchor ?node))
                (and [?anchor :block/uid ?uid]
                     (in-scope ?anchor ?member)
-                    {_VERSIONS_PIVOT}))]""")
+                    {_VERSIONS_PIVOT})
+               (and [?anchor :block/uid ?uid]
+                    (in-scope ?anchor ?member)
+                    {_VERSION_GROUP_PIVOT}))]""")
         """Datalog query fetching the nodes in scope of a node, anchored by ``:block/uid``.
 
         Input bindings: ``?uid`` (``:block/uid`` string) and ``%`` (rules vector —
         :attr:`SCOPE_RULES` or :attr:`SCOPE_WITH_REFS_RULES`, which decides the scope).
 
         Identical to :attr:`BY_PAGE_TITLE_QUERY` except for the clause binding ``?anchor``;
-        see there for the two ``or-join`` branches and the scoping rule.
+        see there for the three ``or-join`` branches and the scoping rule.
         """
 
         @staticmethod
