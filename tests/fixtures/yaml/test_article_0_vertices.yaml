@@ -59,6 +59,9 @@
 
     - Roam-native table (3x3)
 
+    - a block with three Roam-native `Block Versions` (block 3.4): only the selected
+    version is in the parent''s children, so only it is fetched and exported
+
     - this INFO `Callout box`, which contains Roam `page references`'
 - vertex_type: guffin/text
   uid: MRKYttxrM
@@ -322,6 +325,7 @@
   - d6b4AGFrG
   - 5N_QAEc3C
   - Sz76xTH3N
+  - xPUIusgqA
   text: block 3
 - vertex_type: guffin/text
   uid: d6b4AGFrG
@@ -377,3 +381,11 @@
   callout_type: example
   title: This is a callout with only a title-- no body.
   body: ''
+- vertex_type: guffin/text
+  uid: xPUIusgqA
+  children:
+  - YYysqBFqy
+  text: block 3.4
+- vertex_type: guffin/text
+  uid: YYysqBFqy
+  text: This block has 3 versions. This is version 3.

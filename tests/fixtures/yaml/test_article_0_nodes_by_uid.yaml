@@ -39,25 +39,6 @@ xfq7UYRb2:
   props: null
   title: null
   attrs: null
-7MoH-wIQh:
-  uid: 7MoH-wIQh
-  id: 4224
-  string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST\
-    \ DATA – DO NOT REMOVE\n "
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
-  props: null
-  title: null
-  attrs: null
 iF2Ey_unj:
   uid: iF2Ey_unj
   id: 11454
@@ -93,13 +74,46 @@ LBFKibPIj:
   order: null
   heading: null
   children:
-  - id: 4224
+  - id: 18202
+  - id: 18204
   refs: null
   page: null
   children_view_type: null
   parents: null
   props: null
   title: Test Article
+  attrs:
+  - - source:
+      - uid
+      - LBFKibPIj
+      value:
+      - uid
+      - LBFKibPIj
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - 9ZtPB2yY3
+9ZtPB2yY3:
+  uid: 9ZtPB2yY3
+  id: 6535
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: Publishing
   attrs: null
 r09kXvUg-:
   uid: r09kXvUg-
@@ -133,6 +147,7 @@ jVQvHi40O:
   - id: 11154
   - id: 11155
   - id: 14660
+  - id: 19958
   refs: null
   page:
     id: 11137
@@ -371,6 +386,9 @@ qnCiceZgk:
     - Roam-native TODO item (open and done)
 
     - Roam-native table (3x3)
+
+    - a block with three Roam-native `Block Versions` (block 3.4): only the selected
+    version is in the parent''s children, so only it is fetched and exported
 
     - this INFO `Callout box`, which contains Roam `page references`'
   order: 0
@@ -954,6 +972,24 @@ S3NNepskY:
   props: null
   title: null
   attrs: null
+xPUIusgqA:
+  uid: xPUIusgqA
+  id: 19958
+  string: block 3.4
+  order: 3
+  heading: null
+  children:
+  - id: 19965
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11147
+  props: null
+  title: null
+  attrs: null
 8FeLZHNMW:
   uid: 8FeLZHNMW
   id: 11174
@@ -1222,6 +1258,20 @@ H_9tvN3-X:
       value:
       - uid
       - BxGxeeGk1
+RXwAqq0_T:
+  uid: RXwAqq0_T
+  id: 261
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: tags
+  attrs: null
 tzwIznt_u:
   uid: tzwIznt_u
   id: 13094
@@ -1324,6 +1374,24 @@ C6xVTMnsh:
   props: null
   title: null
   attrs: null
+JSrSVApJ_:
+  uid: JSrSVApJ_
+  id: 18204
+  string: 'tags:: #Publishing'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 261
+  - id: 6535
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
+  props: null
+  title: null
+  attrs: null
 iAxwSSBmi:
   uid: iAxwSSBmi
   id: 11228
@@ -1377,6 +1445,24 @@ d6b4AGFrG:
   parents:
   - id: 11137
   - id: 11147
+  props: null
+  title: null
+  attrs: null
+YYysqBFqy:
+  uid: YYysqBFqy
+  id: 19965
+  string: This block has 3 versions. This is version 3.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11147
+  - id: 19958
   props: null
   title: null
   attrs: null
@@ -1518,6 +1604,25 @@ fY4nP4RUv:
   - id: 11150
   - id: 13089
   - id: 13096
+  props: null
+  title: null
+  attrs: null
+lXi4SgSvz:
+  uid: lXi4SgSvz
+  id: 18202
+  string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST
+    DATA – DO NOT REMOVE'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
   props: null
   title: null
   attrs: null

@@ -25,29 +25,45 @@
       id: 11137
     refs:
     - id: 14466
-- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
-    id: 4224
-    uid: 7MoH-wIQh
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
 - - id: 11454
     uid: iF2Ey_unj
     title: c:ORANGE
 - - id: 5456
     uid: Q-T5fKOEq
     title: '!QUOTE'
-- - children:
-    - id: 4224
+- - attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    children:
+    - id: 18202
+    - id: 18204
     id: 4223
+    lookup:
+    - id: 261
+    - id: 4223
+    - id: 6535
+    - id: 18204
     uid: LBFKibPIj
     title: Test Article
+- - id: 6535
+    uid: 9ZtPB2yY3
+    title: Publishing
 - - string: '[[>]] This is a Roam standard multi-line Block Quote
 
       this is the __2nd line__
@@ -68,6 +84,7 @@
     - id: 11154
     - id: 11155
     - id: 14660
+    - id: 19958
     id: 11147
     uid: jVQvHi40O
     parents:
@@ -246,6 +263,9 @@
       - Roam-native TODO item (open and done)
 
       - Roam-native table (3x3)
+
+      - a block with three Roam-native `Block Versions` (block 3.4): only the selected
+      version is in the parent''s children, so only it is fetched and exported
 
       - this INFO `Callout box`, which contains Roam `page references`'
     id: 11148
@@ -606,6 +626,17 @@
     order: 0
     page:
       id: 11137
+- - string: block 3.4
+    children:
+    - id: 19965
+    id: 19958
+    uid: xPUIusgqA
+    parents:
+    - id: 11137
+    - id: 11147
+    order: 3
+    page:
+      id: 11137
 - - string: The child of this block is an isolated fenced code block
     children:
     - id: 11175
@@ -803,6 +834,9 @@
     order: 0
     page:
       id: 11137
+- - id: 261
+    uid: RXwAqq0_T
+    title: tags
 - - string: ''
     children:
     - id: 13095
@@ -868,6 +902,17 @@
     order: 0
     page:
       id: 11137
+- - string: 'tags:: #Publishing'
+    id: 18204
+    uid: JSrSVApJ_
+    parents:
+    - id: 4223
+    order: 1
+    page:
+      id: 4223
+    refs:
+    - id: 261
+    - id: 6535
 - - string: Header 3
     id: 11228
     uid: iAxwSSBmi
@@ -900,6 +945,16 @@
     - id: 11137
     - id: 11147
     order: 1
+    page:
+      id: 11137
+- - string: This block has 3 versions. This is version 3.
+    id: 19965
+    uid: YYysqBFqy
+    parents:
+    - id: 11137
+    - id: 11147
+    - id: 19958
+    order: 0
     page:
       id: 11137
 - - children:
@@ -975,3 +1030,15 @@
     order: 0
     page:
       id: 11137
+- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
+    id: 18202
+    uid: lXi4SgSvz
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462

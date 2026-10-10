@@ -74,6 +74,7 @@
   - id: 11154
   - id: 11155
   - id: 14660
+  - id: 19958
   refs: null
   page:
     id: 11137
@@ -290,6 +291,9 @@
     - Roam-native TODO item (open and done)
 
     - Roam-native table (3x3)
+
+    - a block with three Roam-native `Block Versions` (block 3.4): only the selected
+    version is in the parent''s children, so only it is fetched and exported
 
     - this INFO `Callout box`, which contains Roam `page references`'
   order: 0
@@ -790,6 +794,23 @@
   props: null
   title: null
   attrs: null
+- uid: xPUIusgqA
+  id: 19958
+  string: block 3.4
+  order: 3
+  heading: null
+  children:
+  - id: 19965
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11147
+  props: null
+  title: null
+  attrs: null
 - uid: 8FeLZHNMW
   id: 11174
   string: The child of this block is an isolated fenced code block
@@ -1155,6 +1176,23 @@
   parents:
   - id: 11137
   - id: 11147
+  props: null
+  title: null
+  attrs: null
+- uid: YYysqBFqy
+  id: 19965
+  string: This block has 3 versions. This is version 3.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11147
+  - id: 19958
   props: null
   title: null
   attrs: null
