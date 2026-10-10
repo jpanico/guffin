@@ -97,10 +97,7 @@ def _slug_targets(doc: pf.Doc) -> dict[str, str]:
             slugs[elem.identifier] = slug
 
     doc.walk(_collect)
-    return {
-        identifier: slug if slug and slug_counts[slug] == 1 else identifier
-        for identifier, slug in slugs.items()
-    }
+    return {identifier: slug if slug and slug_counts[slug] == 1 else identifier for identifier, slug in slugs.items()}
 
 
 def _link_headings(doc: pf.Doc) -> None:

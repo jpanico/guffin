@@ -275,8 +275,6 @@ def gfm_heading_slug(text: str) -> str:
         The slug, possibly empty.
     """
     kept: Final[str] = "".join(
-        char
-        for char in text.lower()
-        if char in " -_" or unicodedata.category(char)[0] in _SLUG_KEPT_CATEGORIES
+        char for char in text.lower() if char in " -_" or unicodedata.category(char)[0] in _SLUG_KEPT_CATEGORIES
     )
     return kept.replace(" ", "-")

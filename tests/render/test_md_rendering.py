@@ -457,9 +457,7 @@ class TestHeadingLinkRendering:
 
     def test_ambiguous_slug_falls_back_to_anchor(self, tmp_path: Path) -> None:
         """Two headings with the same slug keep the uid anchor above the referenced one."""
-        result = self._render(
-            tmp_path, should_bundle=False, render_bundle=_heading_ref_bundle(first_title="Second")
-        )
+        result = self._render(tmp_path, should_bundle=False, render_bundle=_heading_ref_bundle(first_title="Second"))
         assert '<a id="vertex-head0002b"></a>\n\n## Second' in result
         assert "As [Second](#vertex-head0002b) explains." in result
         assert result.count("<a id=") == 1

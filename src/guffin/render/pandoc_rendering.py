@@ -1333,12 +1333,17 @@ def _callout_vertex_to_blocks(
 
 
 _CAPTION_CLASS: Final[str] = "caption"
-"""The class tagging a caption :class:`~panflute.Div` — the block-level annotation directly below the
-image or code listing it captions, which each output format styles as a caption."""
+"""The class tagging a caption :class:`~panflute.Div`.
+
+A caption is the block-level annotation directly below the image or code listing it captions,
+which each output format styles as a caption.
+"""
 
 _CODE_SOURCE_CLASS: Final[str] = "code-source"
-"""The class identifying the source-attribution :class:`~panflute.Div` below a sourced code block (a
-caption Div that also carries :data:`_CAPTION_CLASS`)."""
+"""The class identifying the source-attribution :class:`~panflute.Div` below a sourced code block.
+
+The attribution is itself a caption Div, so it also carries :data:`_CAPTION_CLASS`.
+"""
 
 
 def _caption_blocks(
