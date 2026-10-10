@@ -158,6 +158,11 @@ class NodeFetchResult(BaseModel):
             :class:`~guffin.roam.node.RoamNode` parsing.  Each outer list element is a
             single-element row (Datalog ``[:find (pull ...)]`` always wraps each tuple in a
             list); the inner dict is the raw pull-block attribute map as returned by Roam.
+            A debugging and comprehension tool, not an intermediate: it is a faithful picture
+            of the raw information in the database, stored without transformation or
+            modification, from which it must be possible, in principle, to understand how
+            :attr:`anchor_tree` was constructed — so every entity the fetch joined through to
+            reach a row is itself a row.
         network: All :class:`~guffin.roam.node.RoamNode` instances fetched by this result,
             as a flat :data:`~guffin.roam.node_network.NodeNetwork` list.  Empty when
             :attr:`~NodeFetchSpec.include_node_tree` is ``False``.
@@ -178,8 +183,10 @@ class NodeFetchResult(BaseModel):
     )
     raw_result: list[list[dict[str, object]]] = Field(
         description=(
-            "Raw Datalog query result before RoamNode parsing.  Each outer element is a single-element row "
-            "(Datalog :find wraps each tuple in a list); the inner dict is the raw pull-block attribute map."
+            "Raw Datalog query result before RoamNode parsing, stored verbatim as a faithful picture of the "
+            "database from which the tree's construction can be understood.  Each outer element is a "
+            "single-element row (Datalog :find wraps each tuple in a list); the inner dict is the raw "
+            "pull-block attribute map."
         ),
     )
 

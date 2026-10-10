@@ -176,6 +176,14 @@ inside each branch, or the pivot would match every versioned block in the graph.
 
 ### The group rides on the versions, not as a row
 
+> **Open issue.** This arrangement violates the `raw_result` design principle recorded in
+> [roam-querying.md](roam-querying.md#raw_result-is-a-faithful-picture-of-the-database):
+> every entity a fetch joins through must itself be a row, and the group is joined through
+> as `?group` without ever being returned. It is the one current exception and is to be
+> brought into line by returning the group as a row — the first probe in this work showed
+> a third `or-join` branch binding `?node` to the group does exactly that — together with
+> the model decision that row requires (a uid-and-ref-only entity is not a `RoamNode` today).
+
 The group entity is not fetched as a row. It has no string, page, or parents, so it is
 not a node, and the node parser would reject it. Its one useful fact, its uid, is pulled
 onto each version block instead, through a reverse reference in the shared pull

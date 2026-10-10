@@ -174,6 +174,32 @@ Nested references (`:block/children`, `:block/refs`, `:block/page`, `:block/pare
 returned as **`IdObject` stubs** — `{"id": <db-id>}` — not fully pulled sub-entities.
 Resolving stubs to stable UIDs requires a second query pass or a recursive pull pattern.
 
+### `raw_result` is a faithful picture of the database
+
+The rows a node fetch returns are kept verbatim on `NodeFetchResult.raw_result`, before any
+`RoamNode` parsing, and that field is governed by a design principle: it is a **debugging and
+comprehension tool**. It must present the raw information in the database without
+transformation or modification, and from it alone it must be possible, in principle, to
+understand how the `NodeTree` was constructed.
+
+Two rules for the queries follow:
+
+1. **No reshaping between the wire and `raw_result`.** Rows are stored exactly as the Local API
+   returned them: no filtering, no synthesis, no key renaming beyond what the pull pattern's
+   own `:as` aliases ask the database for.
+2. **`raw_result` is closed under its own traversal.** Every entity the query *joins through*
+   to reach a returned row must itself be a returned row, so a reader can follow each join
+   step in the rows rather than infer it from a stub. The `descendant` and `page-ref` rules
+   satisfy this by construction: every intermediate `?mid`, `?member`, `?via`, and `?ref` is
+   also matched by an `in-scope` clause. Stubs that point *outside* the fetch's scope — a
+   node-UID anchor's own `parents`, `refs` beyond the two-hop boundary — are fine; they are
+   not join steps.
+
+The version pivot in query 1 is the one current exception to rule 2: the Version Control
+group entity is joined through as `?group` but is not bound to `?node`, so it reaches
+`raw_result` only as the `version-group` uid stub on each version row. It is to be brought
+into line; see [roam-block-versions.md](roam-block-versions.md).
+
 ### Stripping makes distinct attributes collide
 
 Namespaces carry meaning, and dropping them can merge two attributes into one key. Roam's schema
