@@ -18,6 +18,7 @@ from guffin.roam.version_group import (
     all_version_members_share_node_type,
     all_version_members_share_placement,
     exactly_one_version_selected,
+    no_version_member_has_children,
     validate_version_groups,
     version_group_by_member_id,
     version_groups_of,
@@ -134,6 +135,7 @@ class TestValidators:
         assert all_version_members_share_placement(network) is None
         assert all_version_members_share_node_type(network) is None
         assert exactly_one_version_selected(network) is None
+        assert no_version_member_has_children(network) is None
         assert validate_version_groups(network).is_valid
 
     def test_network_without_groups_is_vacuously_valid(self) -> None:
@@ -155,6 +157,7 @@ class TestValidators:
         assert all_version_members_share_placement(network) is None
         assert all_version_members_share_node_type(network) is None
         assert exactly_one_version_selected(network) is None
+        assert no_version_member_has_children(network) is None
         result: Final[ValidationResult] = validate_version_groups(network)
         assert [error.validator for error in result.errors] == [all_version_members_present]
 
@@ -199,6 +202,38 @@ class TestValidators:
         assert "roam/heading-block" in error.message
         assert "roam/text-block" in error.message
         assert [e.validator for e in validate_version_groups(mixed).errors] == [all_version_members_share_node_type]
+
+    def test_unselected_member_with_children_is_reported(self) -> None:
+        """A group is flat: an unselected member heading a subtree fails no_version_member_has_children."""
+        network: Final[NodeNetwork] = _versioned_network()
+        child: Final[RoamNode] = _block("child0001", 40, 0, [_PAGE_ID, _PARENT_ID, _V1_ID])
+        parented: Final[RoamNode] = _block("version01", _V1_ID, 0, [_PAGE_ID, _PARENT_ID], children=[40])
+        flattened_out: Final[NodeNetwork] = [*(parented if n.id == _V1_ID else n for n in network), child]
+        error = no_version_member_has_children(flattened_out)
+        assert error is not None
+        assert f"group {_GROUP_ID}: members with children: [{_V1_ID}]" in error.message
+
+    def test_selected_member_with_children_is_reported_too(self) -> None:
+        """The rule binds the selected member as well: a versioned block never heads a subtree."""
+        network: Final[NodeNetwork] = _versioned_network()
+        child: Final[RoamNode] = _block("child0001", 40, 0, [_PAGE_ID, _PARENT_ID, _V3_ID])
+        parented: Final[RoamNode] = _block("version03", _V3_ID, 0, [_PAGE_ID, _PARENT_ID], children=[40])
+        with_section: Final[NodeNetwork] = [*(parented if n.id == _V3_ID else n for n in network), child]
+        error = no_version_member_has_children(with_section)
+        assert error is not None
+        assert f"[{_V3_ID}]" in error.message
+        assert [e.validator for e in validate_version_groups(with_section).errors] == [no_version_member_has_children]
+
+    def test_flatness_failure_blocks_derivation(self) -> None:
+        """A network whose version member has children cannot derive groups, nor build a tree."""
+        network: Final[NodeNetwork] = _versioned_network()
+        child: Final[RoamNode] = _block("child0001", 40, 0, [_PAGE_ID, _PARENT_ID, _V3_ID])
+        parented: Final[RoamNode] = _block("version03", _V3_ID, 0, [_PAGE_ID, _PARENT_ID], children=[40])
+        with_section: Final[NodeNetwork] = [*(parented if n.id == _V3_ID else n for n in network), child]
+        with pytest.raises(ValueError, match="members with children"):
+            version_groups_of(with_section)
+        with pytest.raises(ValueError, match="members with children"):
+            NodeTree.build(root_node=with_section[0], super_network=with_section)
 
     def test_no_selected_member_is_reported(self) -> None:
         """A group none of whose members any node's children names fails exactly_one_version_selected."""

@@ -234,12 +234,29 @@ fixture rely on.
   `NodeTree.build` holds them in two derived maps, `version_groups` by group id and
   `version_group_by_member_id` by version id, scoped like `refs_by_id` to groups with a
   member in the tree or its refs, and excluded from dumps like the other derived maps.
-  Four validators guard the reading, in the network's accumulator style: every member
+  Five validators guard the reading, in the network's accumulator style: every member
   id resolves, members are blocks sharing one order and one parents set, members share
   one node type (a group is *homogeneous*: its versions are alternatives of one kind of
   content, never a change of kind, and the `VersionGroup` records that kind once as
-  `node_type`), and exactly one member is selected. A network that fails them cannot
-  build a tree.
+  `node_type`), exactly one member is selected, and no member has children (a group is
+  *flat*, see below). A network that fails them cannot build a tree.
+
+### Children belong to each version, so a group must be flat
+
+Each version is a full block entity with its own `children`, and Roam displays the
+selected version's subtree: cycling to another version shows *that* version's children,
+not the previous one's (observed live, 2026-10-11). Roam's versions are therefore
+whole-subtree alternatives. For a document that is the wrong unit: a heading with
+alternative wordings would carry its section under one wording only, and switching
+wording would detach the section.
+
+guffin resolves this by narrowing, in the Roam validation layer, to the one case that is
+coherent: **a version group is flat**. No member, the selected one included, may have
+children. A version is a wording of one block, and a block that heads a subtree is not a
+block whose text may be versioned. The fifth validator enforces it, so a page whose
+versioned block has children fails to build a tree, naming the group and the members.
+Alternative wordings for a *heading* cannot be expressed with Roam's version groups at
+all under this rule; they are a different mechanism, not yet designed.
 - **Selection stays derivable.** Nothing on the group says which version is selected;
   the selected one is the version present in the parent's `:block/children`, so the
   model can compute it from data it already holds.

@@ -23,6 +23,8 @@ Public symbols:
   group's members to share one :class:`~guffin.roam.node.NodeType`: a group is homogeneous.
 - :func:`exactly_one_version_selected` — :data:`~guffin.common.validation.Validator` requiring exactly
   one member of each group to appear in some node's ``children``.
+- :func:`no_version_member_has_children` — :data:`~guffin.common.validation.Validator` requiring every
+  member of every group to be childless: a group is flat, its versions wordings of one block.
 - :func:`validate_version_groups` — run every version-group validator over a network, accumulating a
   :class:`~guffin.common.validation.ValidationResult`.
 - :func:`version_groups_of` — derive every :class:`VersionGroup` in a network, keyed by group id,
@@ -226,13 +228,45 @@ def exactly_one_version_selected(network: _TrustedNetwork) -> ValidationError | 
 
 
 @validate_call
+def no_version_member_has_children(network: _TrustedNetwork) -> ValidationError | None:
+    """Return ``None`` when no member of any version group has children.
+
+    A version group is *flat*: its versions are alternative wordings of one block, and a
+    wording has no subtree of its own.  The rule binds every member, the selected one
+    included — a block that heads a subtree is not a block whose text may be versioned.  A
+    group with a member absent from *network* is skipped here;
+    :func:`all_version_members_present` reports it.
+
+    Args:
+        network: The collection of nodes to examine.
+
+    Returns:
+        ``None`` if every member of every group is childless; a
+        :class:`~guffin.common.validation.ValidationError` naming each group and the members
+        that have children otherwise.
+    """
+    by_id: Final[dict[Id, RoamNode]] = {node.id: node for node in network}
+    findings: Final[list[str]] = []
+    for group in _group_nodes(network):
+        members: list[RoamNode] = [by_id[member_id] for member_id in _member_ids(group) if member_id in by_id]
+        if len(members) != len(_member_ids(group)):
+            continue
+        with_children: list[Id] = [member.id for member in members if member.children]
+        if with_children:
+            findings.append(f"group {group.id}: members with children: {sorted(with_children)}")
+    if not findings:
+        return None
+    return ValidationError(message="; ".join(findings), validator=no_version_member_has_children)
+
+
+@validate_call
 def validate_version_groups(network: _TrustedNetwork) -> ValidationResult:
     """Run every version-group validator over *network* and return the accumulated result.
 
     Runs :func:`all_version_members_present`, :func:`all_version_members_share_placement`,
-    :func:`all_version_members_share_node_type`, and :func:`exactly_one_version_selected` via
-    :func:`~guffin.common.validation.validate_all`; all run regardless of prior failures.  A
-    network with no version groups is vacuously valid.
+    :func:`all_version_members_share_node_type`, :func:`exactly_one_version_selected`, and
+    :func:`no_version_member_has_children` via :func:`~guffin.common.validation.validate_all`;
+    all run regardless of prior failures.  A network with no version groups is vacuously valid.
 
     Args:
         network: The collection of nodes to validate.
@@ -248,6 +282,7 @@ def validate_version_groups(network: _TrustedNetwork) -> ValidationResult:
             all_version_members_share_placement,
             all_version_members_share_node_type,
             exactly_one_version_selected,
+            no_version_member_has_children,
         ],
     )
 
