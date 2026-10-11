@@ -533,7 +533,7 @@ See [docs/MDBUNDLE_SETUP.md](docs/MDBUNDLE_SETUP.md) for detailed instructions a
 
 ### Plans
 
-- [docs/companion-extension-plan.md](docs/companion-extension-plan.md) — The Guffin Companion Roam extension, an in-Roam client for `guffin-server` (phases 0–3 complete, living in its own repository; phase 4 on hold)
+- [docs/companion-extension-plan.md](docs/companion-extension-plan.md) — The Guffin Companion Roam extension, an in-Roam client for `guffin-server` (phases 0–3 complete, living in its own repository; phase 4 on hold; phase 5, multi-graph routing, planned)
 - [docs/server-packaging-plan.md](docs/server-packaging-plan.md) — Packaging `guffin-server` for consumers (PyInstaller bundles with Pandoc and Typst; unimplemented)
 - [docs/code-source-display-plan.md](docs/code-source-display-plan.md) — A Roam-side display extension for `code-source::` tags (unimplemented; no guffin code changes)
 

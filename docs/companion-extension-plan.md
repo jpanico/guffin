@@ -1,5 +1,8 @@
 # Plan: the Guffin Companion Roam extension
 
+> **Phase 5 (multi-graph routing) planned 2026-10-11** — see its section; an interim second
+> server per graph covers `hippo` until then.
+>
 > **Status: phases 0–3 complete** (drafted 2026-07-30; phase-0 spike run 2026-07-30, findings
 > recorded below — every unknown settled favorably; phase 1 implemented 2026-07-30 —
 > `server/cors.py` wired to a repeatable `guffin-server --allow-origin`; phase 2 implemented
@@ -196,6 +199,66 @@ Repo with a `README` prominently documenting the prerequisite (a locally running
 `Roam-Research/roam-depot`, updates via `source_commit` bumps. Review posture is clean: no
 remote code, no bundler, all traffic to a user-configured loopback service. Until then,
 developer mode covers personal use indefinitely — this phase is genuinely severable.
+
+## Phase 5 — multi-graph routing
+
+> **Status: planned** (2026-10-11). Prompted by an export attempted from the `hippo` graph that
+> the server ran against `SCFH` and failed with "Node … not found in Roam graph 'SCFH'".
+> Interim arrangement in place the same day: a second LaunchAgent, `dev.guffin.server.hippo`,
+> serving `hippo` on port 8078, with the companion's per-graph `server-url` setting pointing
+> the hippo window at it. That works but scales as one process per graph; this phase makes one
+> server serve every graph.
+
+### The problem
+
+The extension sends `target`, `output_format`, `project_type`, and the extra fields — never
+the graph. By design ("all Roam connection specifics live in the server's environment"), an
+omitted request field defers to Typer's env fallback, so every request resolves
+`graph_name` to `GUFFIN_ROAM_GRAPH_NAME` and the token to `GUFFIN_ROAM_API_TOKEN`: the one
+graph the server was started for. A request from any other graph's window is silently an
+export of the wrong graph, and the only symptom is a not-found error naming the wrong graph.
+
+Sending the graph alone cannot fix it: Local API bearer tokens are per graph, and the server
+holds exactly one.
+
+### The design
+
+Two small changes, one per repository, keeping every token on the machine that runs Roam:
+
+1. **Extension: name the graph.** Add `graph_name: window.roamAlphaAPI.graph.name` to every
+   export and dump request body. The graph name is not a secret, and it is the one connection
+   fact the extension has that the server does not. Nothing else in the body changes, and a
+   server that has not been upgraded ignores no field — `extra="forbid"` means an old server
+   rejects the new field with a `400`, which is the right failure: it names the mismatch.
+2. **Server: resolve the token per graph.** Teach `guffin-server` a server-side token source
+   keyed by graph name, consulted when a request names a graph: first choice a
+   `GUFFIN_ROAM_API_TOKENS` env var (`<graph>=<token>`, space-separated, mirroring
+   `--allow-origin`'s space-separated convention), with `~/.roam-tools.json` as a documented
+   alternative since it already holds every graph's token under its name. The existing
+   single-graph `GUFFIN_ROAM_GRAPH_NAME` / `GUFFIN_ROAM_API_TOKEN` pair stays as the default
+   for a request that names no graph, so the CLI and any older client keep working unchanged.
+   Resolution lives in the server (`server/app.py` or a new `server/graph_tokens.py`), not in
+   the CLI: it is a serving-layer concern — which credential this request may use — and the
+   CLI's own `--token` is unaffected.
+
+### What does not change
+
+- The request vocabulary stays derived from the CLI signature; `graph_name` is already a field
+  of it (it mirrors `--graph`), so the extension is filling a field that exists, not adding one.
+- `GUFFIN_CACHE_DIR` is per server today and would be shared across graphs; asset cache files
+  are content-addressed (`<sha256(url)>.<ext>`), so sharing is safe. A per-graph cache
+  directory is a later nicety, not a requirement.
+- CORS, the integrity digest, and the download flow are graph-independent.
+
+### Steps
+
+1. Server: the token source and its resolution, with a `422` problem body naming the graph
+   when a request names one the server has no token for. Unit tests over the env-var form
+   and the file form; the live test asserts a `hippo` dump through the one server.
+2. Extension: the one-line body addition, a `CHANGELOG` entry, and a `README` note that the
+   server must now carry a token per graph it should serve.
+3. Retire the interim second LaunchAgent and the hippo window's `server-url` override once a
+   `hippo` export succeeds through port 8077.
 
 ## Risks
 
