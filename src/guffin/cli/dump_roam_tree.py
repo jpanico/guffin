@@ -116,8 +116,9 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     :func:`~guffin.render.rich_rendering.build_node_panel` panel per node in
     :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` (omitted when empty), then a
     ``version groups`` box showing every version of each group in
-    :attr:`~guffin.roam.node_tree.NodeTree.version_groups` with the selected one marked
-    (omitted when the tree has no version groups).
+    :attr:`~guffin.roam.node_tree.NodeTree.version_groups`, radio-button style — ``◉``
+    beside the selected version, ``○`` beside the others (omitted when the tree has no
+    version groups).
 
     Args:
         fetch_result: Fetch result whose :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.anchor_tree`

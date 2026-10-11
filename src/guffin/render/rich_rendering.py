@@ -4,6 +4,10 @@ Public symbols:
 
 - :data:`DEFAULT_NODE_PANEL_PROPS` — the node property names rendered in a panel body by default.
 - :data:`DEFAULT_VERTEX_PANEL_PROPS` — the vertex property names rendered in a panel body by default.
+- :data:`VERSION_GROUP_GLYPH` — the glyph marking versioning (``⎇``, the alternative-key symbol): in orange,
+  it leads a version group's title and the panel title of every node that has versions.
+- :data:`SELECTED_VERSION_MARKER` / :data:`UNSELECTED_VERSION_MARKER` — the radio-button pair marking a
+  group's members (``◉`` for the selected version, ``○`` for the others).
 - :func:`build_node_panel` — render a :class:`~guffin.roam.node.RoamNode` as a Rich
   :class:`~rich.panel.Panel`.
 - :func:`build_rich_node_tree` — build a Rich :class:`~rich.tree.Tree` from a
@@ -26,6 +30,7 @@ Public symbols:
 """
 
 import logging
+from collections.abc import Set
 from typing import Final, TypeGuard, assert_never
 
 import regex
@@ -68,6 +73,22 @@ from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator
 from guffin.roam.primitives import Id, IdObject, Uid
 
 logger = logging.getLogger(__name__)
+
+VERSION_GROUP_GLYPH: Final[str] = "⎇"
+"""The glyph marking versioning: ``⎇`` (ALTERNATIVE KEY SYMBOL), "alternatives" in one character.
+
+Rendered in orange, it leads a version group's title and the panel title of every node that has
+versions, so a versioned node is recognizable wherever its panel appears.
+"""
+
+_VERSIONING_MARK: Final[str] = f"[orange1]{VERSION_GROUP_GLYPH}[/orange1]"
+"""The :data:`VERSION_GROUP_GLYPH` in its one colour, as Rich markup."""
+
+SELECTED_VERSION_MARKER: Final[str] = "◉"
+"""The marker beside a group's selected version: ``◉`` (FISHEYE), the filled half of a radio-button pair."""
+
+UNSELECTED_VERSION_MARKER: Final[str] = "○"
+"""The marker beside each of a group's other versions: ``○`` (WHITE CIRCLE), the empty half of the pair."""
 
 DEFAULT_NODE_PANEL_PROPS: Final[list[str]] = [
     "heading",
@@ -143,11 +164,14 @@ def _trunc(val: str, max_len: int = 40, *, truncate: bool = True) -> str:
 
 
 @validate_call
-def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS, *, truncate: bool = True) -> Panel:
+def build_node_panel(
+    node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS, *, truncate: bool = True, versioned: bool = False
+) -> Panel:
     """Render *node* as a Rich Panel for display in a terminal tree.
 
     The panel title has the form ``<node_type> title_text (id)`` where
-    ``node_type`` is the :attr:`~guffin.roam.node.NodeType` value string.
+    ``node_type`` is the :attr:`~guffin.roam.node.NodeType` value string, led by an orange
+    :data:`VERSION_GROUP_GLYPH` when *versioned*.
     ``title_text`` is determined by :func:`~guffin.roam.node.node_type`:
 
     - :attr:`~guffin.roam.node.NodeType.IMAGE_BLOCK` — ``[<alt>](<firebase_storage_url>)``.
@@ -169,11 +193,13 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             never written to the body).  Defaults to :data:`DEFAULT_NODE_PANEL_PROPS`.
         truncate: When ``True`` (default), long title strings are shortened with an
             ellipsis; when ``False``, they are rendered in full.
+        versioned: When ``True``, *node* has versions — it is a member of a version group —
+            and its title is led by an orange :data:`VERSION_GROUP_GLYPH`.
 
     Returns:
         A :class:`~rich.panel.Panel` with a labelled title and metadata body.
     """
-    logger.debug("node=%r, props=%r", node, props)
+    logger.debug("node=%r, props=%r, versioned=%r", node, props, versioned)
     nt: Final[NodeType] = node_type(node)
     title_text: str
     match nt:
@@ -220,8 +246,9 @@ def build_node_panel(node: RoamNode, props: list[str] = DEFAULT_NODE_PANEL_PROPS
             title_text = f"{len(node.blocks)} version(s)"
         case _ as unreachable:
             assert_never(unreachable)
+    lead: Final[str] = f"{_VERSIONING_MARK} " if versioned else ""
     title: Final[str] = (
-        f"[#00aa00]<{nt.value}> [bold reverse]{markup_escape(title_text)}[/bold reverse] ({node.id})[/#00aa00]"
+        f"{lead}[#00aa00]<{nt.value}> [bold reverse]{markup_escape(title_text)}[/bold reverse] ({node.id})[/#00aa00]"
     )
     content: Final[str] = "  ".join(_format_node_prop(node, p) for p in props)
     return Panel(Text(content), title=title, expand=False)
@@ -235,7 +262,9 @@ def build_rich_node_tree(
 
     Iterates *tree* in pre-order depth-first order via
     :meth:`~guffin.roam.node_tree.NodeTree.dfs`, attaching each node as a Rich
-    panel under its parent in the rendered tree.
+    panel under its parent in the rendered tree.  A node that has versions — a member of a
+    group in :attr:`~guffin.roam.node_tree.NodeTree.version_group_by_member_id` — renders
+    with the orange :data:`VERSION_GROUP_GLYPH` leading its panel title.
 
     Args:
         tree: The :class:`~guffin.roam.node_tree.NodeTree` to render.
@@ -252,11 +281,16 @@ def build_rich_node_tree(
     rich_node_map: Final[dict[Id, RichTree]] = {}
     dfs_iter: Final[NodeTreeDFSIterator] = tree.dfs()
     root_node: Final[RoamNode] = next(dfs_iter)
-    root_rich: Final[RichTree] = RichTree(build_node_panel(root_node, props, truncate=truncate))
+    versioned_ids: Final[Set[Id]] = tree.version_group_by_member_id.keys()
+    root_rich: Final[RichTree] = RichTree(
+        build_node_panel(root_node, props, truncate=truncate, versioned=root_node.id in versioned_ids)
+    )
     rich_node_map[root_node.id] = root_rich
     for node in dfs_iter:
         parent_rich: RichTree = rich_node_map[child_to_parent[node.id]]
-        rich_node_map[node.id] = parent_rich.add(build_node_panel(node, props, truncate=truncate))
+        rich_node_map[node.id] = parent_rich.add(
+            build_node_panel(node, props, truncate=truncate, versioned=node.id in versioned_ids)
+        )
     return root_rich
 
 
@@ -299,7 +333,10 @@ def build_rich_refs_box(
         row: Table = Table.grid(padding=(0, 1))
         row.add_column()
         row.add_column()
-        row.add_row(build_node_panel(ref_node, props, truncate=truncate), back_refs_panel)
+        ref_panel: Panel = build_node_panel(
+            ref_node, props, truncate=truncate, versioned=ref_node.id in tree.version_group_by_member_id
+        )
+        row.add_row(ref_panel, back_refs_panel)
         ref_rows.append(row)
     return Panel(Group(*ref_rows), title="refs")
 
@@ -311,11 +348,13 @@ def build_rich_version_groups_box(
     """Build a Rich :class:`~rich.panel.Panel` summarising the version groups in *tree*.
 
     For each group in :attr:`~guffin.roam.node_tree.NodeTree.version_groups`, renders a
-    two-column grid row: on the left a panel naming the group (uid and id) and bodying its
-    parent id, selected id, and member count; on the right one :func:`build_node_panel` per
-    member, in the group's membership order, each led by a marker — ``selected`` for the
-    version the parent's ``children`` names, ``version`` for the others.  All rows are
-    collected into a single ``version groups`` panel.
+    two-column grid row: on the left a panel titled with the orange :data:`VERSION_GROUP_GLYPH`
+    and the group's uid and id, bodying its parent id, selected id, and member count; on the
+    right one :func:`build_node_panel` per member (each versioned, so each title carries the
+    glyph too), in the group's membership order, each led by a radio-button marker —
+    :data:`SELECTED_VERSION_MARKER` for the version the parent's ``children`` names,
+    :data:`UNSELECTED_VERSION_MARKER` for the others.  All rows are collected into a single
+    ``version groups`` panel.
 
     Returns ``None`` when :attr:`~guffin.roam.node_tree.NodeTree.version_groups` is empty.
 
@@ -338,16 +377,21 @@ def build_rich_version_groups_box(
     for group in tree.version_groups.values():
         summary: Panel = Panel(
             f"parent: {group.parent_id}  selected: {group.selected_id}  members: {len(group.member_ids)}",
-            title=f"version group [bold]{markup_escape(group.uid)}[/bold] ({group.id})",
+            title=f"{_VERSIONING_MARK} version group [bold]{markup_escape(group.uid)}[/bold] ({group.id})",
         )
         members: Table = Table.grid(padding=(0, 1))
         members.add_column()
         members.add_column()
         for member_id in group.member_ids:
             marker: str = (
-                "[bold green]selected[/bold green]" if member_id == group.selected_id else "[dim]version[/dim]"
+                f"[bold green]{SELECTED_VERSION_MARKER}[/bold green]"
+                if member_id == group.selected_id
+                else f"[dim]{UNSELECTED_VERSION_MARKER}[/dim]"
             )
-            members.add_row(marker, build_node_panel(tree.version_members_by_id[member_id], props, truncate=truncate))
+            member_panel: Panel = build_node_panel(
+                tree.version_members_by_id[member_id], props, truncate=truncate, versioned=True
+            )
+            members.add_row(marker, member_panel)
         row: Table = Table.grid(padding=(0, 1))
         row.add_column()
         row.add_column()

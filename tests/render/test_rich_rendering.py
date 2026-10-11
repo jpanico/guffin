@@ -3,6 +3,7 @@
 import io
 
 from conftest import article0_node_tree, article1_node_tree
+from rich.cells import cell_len
 from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.tree import Tree as RichTree
@@ -11,6 +12,11 @@ from guffin.model.vertex import HeadingVertex, PageVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
 from guffin.render.rich_rendering import (
+    SELECTED_VERSION_MARKER,
+    UNSELECTED_VERSION_MARKER,
+    VERSION_GROUP_GLYPH,
+    build_node_panel,
+    build_rich_node_tree,
     build_rich_raw_table,
     build_rich_version_groups_box,
     build_rich_view_map_tree,
@@ -154,15 +160,15 @@ class TestBuildRichVersionGroupsBox:
         assert isinstance(box, Panel)
         text = _rendered(box)
         assert "version groups" in text
-        assert "e9j_vHjGQ" in text
+        assert f"{VERSION_GROUP_GLYPH} version group e9j_vHjGQ" in text
         assert "members: 3" in text
         for version in ("version 1", "version 2", "version 3"):
             assert f"This is {version}" in text or f"This is __{version}__" in text or f"This is **{version}**" in text
-        assert text.count("selected") == 2  # once in the summary's "selected: <id>", once as a member marker
-        assert text.count("version ") >= 2  # the two unselected members' markers, at least
+        assert text.count(SELECTED_VERSION_MARKER) == 1
+        assert text.count(UNSELECTED_VERSION_MARKER) == 2
 
     def test_selected_marker_sits_beside_the_selected_version(self) -> None:
-        """The member marked selected is the one the group's selected_id names."""
+        """The member marked ◉ is the one the group's selected_id names; the others are marked ○."""
         tree = article0_node_tree()
         box = build_rich_version_groups_box(tree, truncate=False)
         assert box is not None
@@ -170,6 +176,56 @@ class TestBuildRichVersionGroupsBox:
         selected_string = tree.version_members_by_id[group.selected_id].string
         assert selected_string is not None
         lines = _rendered(box).splitlines()
-        selected_lines = [line for line in lines if "selected" in line and "selected:" not in line]
+        selected_lines = [line for line in lines if SELECTED_VERSION_MARKER in line]
         assert len(selected_lines) == 1
         assert selected_string in selected_lines[0]
+        unselected_lines = [line for line in lines if UNSELECTED_VERSION_MARKER in line]
+        assert len(unselected_lines) == 2
+        assert all(selected_string not in line for line in unselected_lines)
+
+    def test_markers_are_single_width_so_the_grid_stays_aligned(self) -> None:
+        """Every glyph is one terminal cell wide, keeping the marker column and panel edges aligned."""
+        assert cell_len(VERSION_GROUP_GLYPH) == 1
+        assert cell_len(SELECTED_VERSION_MARKER) == 1
+        assert cell_len(UNSELECTED_VERSION_MARKER) == 1
+
+    def test_every_member_panel_carries_the_versioning_glyph(self) -> None:
+        """Each member's panel title leads with ⎇, as does the group's: four in the Test Article 0 box."""
+        box = build_rich_version_groups_box(article0_node_tree(), truncate=False)
+        assert box is not None
+        assert _rendered(box).count(VERSION_GROUP_GLYPH) == 4
+
+
+class TestVersionedNodePanels:
+    """A node that has versions carries the orange ⎇ before its panel title, wherever its panel appears."""
+
+    def test_panel_is_unmarked_by_default(self) -> None:
+        """Without the versioned flag a node panel's title has no glyph."""
+        tree = article1_node_tree()
+        assert VERSION_GROUP_GLYPH not in _rendered(build_node_panel(tree.root_node))
+
+    def test_versioned_panel_leads_with_the_glyph_in_orange(self) -> None:
+        """With the flag the glyph leads the title, styled orange."""
+        tree = article1_node_tree()
+        panel = build_node_panel(tree.root_node, versioned=True)
+        plain = _rendered(panel)
+        assert VERSION_GROUP_GLYPH in plain
+        assert plain.index(VERSION_GROUP_GLYPH) < plain.index("<roam/page>")
+        buffer = io.StringIO()
+        Console(file=buffer, width=240, force_terminal=True, color_system="256").print(panel)
+        assert f"\x1b[38;5;214m{VERSION_GROUP_GLYPH}" in buffer.getvalue()  # orange1 is ANSI 256-colour 214
+
+    def test_node_tree_marks_only_the_versioned_node(self) -> None:
+        """In the Test Article 0 node tree exactly one panel, the selected version's, carries the glyph."""
+        tree = article0_node_tree()
+        group = next(iter(tree.version_groups.values()))
+        selected_string = tree.version_members_by_id[group.selected_id].string
+        assert selected_string is not None
+        lines = _rendered(build_rich_node_tree(tree, truncate=False)).splitlines()
+        marked = [line for line in lines if VERSION_GROUP_GLYPH in line]
+        assert len(marked) == 1
+        assert selected_string in marked[0]
+
+    def test_unversioned_tree_has_no_glyph(self) -> None:
+        """A tree with no version groups renders no glyph anywhere."""
+        assert VERSION_GROUP_GLYPH not in _rendered(build_rich_node_tree(article1_node_tree()))
