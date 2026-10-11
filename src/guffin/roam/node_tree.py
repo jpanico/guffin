@@ -42,6 +42,7 @@ from guffin.roam.node_network import (
     refs_ids,
 )
 from guffin.roam.primitives import Id, Uid
+from guffin.roam.version_group import VersionGroup, version_group_by_member_id, version_groups_of
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +123,19 @@ class NodeTree(BaseModel):
         exclude=True,
         description="Map of title → RoamNode for every PAGE node in tree_network or refs_by_id.",
     )
+    version_groups: Annotated[dict[Id, VersionGroup], SkipValidation] = Field(
+        ...,
+        exclude=True,
+        description=(
+            "Map of group id → VersionGroup for every version group in super_network with at least one "
+            "member in tree_network or refs_by_id; may be empty."
+        ),
+    )
+    version_group_by_member_id: Annotated[dict[Id, VersionGroup], SkipValidation] = Field(
+        ...,
+        exclude=True,
+        description="Map of member id → VersionGroup for every member of every group in version_groups.",
+    )
 
     @classmethod
     def build(cls, root_node: RoamNode, super_network: NodeNetwork) -> NodeTree:
@@ -133,7 +147,10 @@ class NodeTree(BaseModel):
         ref targets of those (each with its transitive descendants) available in *super_network*,
         derives :attr:`id_map`,
         :attr:`uid_map`, and :attr:`page_name_map`
-        from the combined node pool, then delegates to the Pydantic constructor (which runs
+        from the combined node pool, reads the version groups of that pool's nodes off
+        *super_network* into :attr:`version_groups` and :attr:`version_group_by_member_id`
+        (via :func:`~guffin.roam.version_group.version_groups_of`, scoped to groups with a
+        member in the pool), then delegates to the Pydantic constructor (which runs
         all validators including :meth:`_validate_is_tree`).
 
         Args:
@@ -153,8 +170,9 @@ class NodeTree(BaseModel):
         Raises:
             ValueError: If *root_node* is not present in *super_network*, if any child
                 id encountered during tree extraction cannot be resolved within
-                *super_network*, or if any direct refs id from :attr:`tree_network` cannot
-                be resolved within *super_network*.
+                *super_network*, if any direct refs id from :attr:`tree_network` cannot
+                be resolved within *super_network*, or if *super_network*'s version groups
+                fail :func:`~guffin.roam.version_group.validate_version_groups`.
             pydantic.ValidationError: If the extracted :attr:`tree_network` violates any
                 tree invariant.
         """
@@ -166,6 +184,7 @@ class NodeTree(BaseModel):
         page_name_map: Final[dict[str, RoamNode]] = {
             n.title: n for n in id_map.values() if node_type(n) == NodeType.PAGE and n.title is not None
         }
+        version_groups: Final[dict[Id, VersionGroup]] = version_groups_of(super_network, scope_ids=set(id_map))
         cls._creating = True
         try:
             return cls(
@@ -175,6 +194,8 @@ class NodeTree(BaseModel):
                 id_map=id_map,
                 uid_map=uid_map,
                 page_name_map=page_name_map,
+                version_groups=version_groups,
+                version_group_by_member_id=version_group_by_member_id(version_groups),
             )
         finally:
             cls._creating = False

@@ -12,6 +12,7 @@ from guffin.roam.node_network import (
     has_unique_ids,
     is_acyclic,
     min_effective_heading_level,
+    parent_by_child_id,
     refs_ids,
 )
 from guffin.roam.primitives import IdObject
@@ -993,3 +994,61 @@ class TestMinEffectiveHeadingLevel:
             page=IdObject(id=1),
         )
         assert min_effective_heading_level([page, h3, ah4]) == 3
+
+
+class TestParentByChildId:
+    """Tests for parent_by_child_id."""
+
+    @staticmethod
+    def _block(uid: str, node_id: int, children: list[int] | None = None) -> RoamNode:
+        return RoamNode(
+            uid=uid,
+            id=node_id,
+            string=f"block {uid}",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            children=[IdObject(id=c) for c in children] if children is not None else None,
+        )
+
+    def test_empty_network_returns_empty_map(self) -> None:
+        """Test that an empty network returns an empty map."""
+        assert parent_by_child_id([]) == {}
+
+    def test_network_with_no_children_returns_empty_map(self) -> None:
+        """Test that nodes with no children, or children None, contribute nothing."""
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[])
+        assert parent_by_child_id([page, self._block("block0001", 10)]) == {}
+
+    def test_maps_each_child_to_the_node_listing_it(self) -> None:
+        """Test that every listed child id maps to the id of the node whose children names it."""
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10), IdObject(id=11)])
+        parent = self._block("block0001", 10, children=[20, 21])
+        assert parent_by_child_id([page, parent, self._block("block0002", 11)]) == {10: 1, 11: 1, 20: 10, 21: 10}
+
+    def test_unlisted_nodes_have_no_entry(self) -> None:
+        """Test that a node present in the network but named in no children list is absent from the map."""
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
+        orphan = self._block("block0002", 11)
+        mapping = parent_by_child_id([page, self._block("block0001", 10), orphan])
+        assert 11 not in mapping
+        assert 1 not in mapping
+
+    def test_child_ids_need_not_resolve(self) -> None:
+        """Test that a listed child id maps even when no node in the network carries it."""
+        page = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=99)])
+        assert parent_by_child_id([page]) == {99: 1}
+
+    def test_last_listing_wins_when_an_id_is_listed_twice(self) -> None:
+        """Test the documented tie-break: an id listed by two nodes maps to the later node in network order."""
+        first = self._block("block0001", 10, children=[30])
+        second = self._block("block0002", 11, children=[30])
+        assert parent_by_child_id([first, second]) == {30: 11}
+        assert parent_by_child_id([second, first]) == {30: 10}
+
+    def test_article1_fixture_inverts_every_child_edge(self) -> None:
+        """Test that over the Test Article 1 tree the map inverts exactly the children edges."""
+        tree = article1_node_tree()
+        mapping = parent_by_child_id(tree.tree_network)
+        expected = {child.id: n.id for n in tree.tree_network if n.children for child in n.children}
+        assert mapping == expected
+        assert tree.root_node.id not in mapping

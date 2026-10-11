@@ -219,6 +219,15 @@ fixture rely on.
 - **The group row is a `VERSION_GROUP` node.** Its `blocks` field holds the id stubs of
   the versions, so "which blocks are the versions of this group" is answered by the row
   itself, and it is the only place in the result the relationship appears.
+- **The relationship is read into a `VersionGroup`.** `roam/version_group.py` derives one
+  explicit value per group from the raw rows: its members in the row's order, the
+  selected member (the one some node's `children` names), and that node as the parent.
+  `NodeTree.build` holds them in two derived maps, `version_groups` by group id and
+  `version_group_by_member_id` by version id, scoped like `refs_by_id` to groups with a
+  member in the tree or its refs, and excluded from dumps like the other derived maps.
+  Three validators guard the reading, in the network's accumulator style: every member
+  id resolves, members are blocks sharing one order and one parents set, and exactly one
+  member is selected. A network that fails them cannot build a tree.
 - **Selection stays derivable.** Nothing on the group says which version is selected;
   the selected one is the version present in the parent's `:block/children`, so the
   model can compute it from data it already holds.

@@ -15,6 +15,8 @@ Public symbols:
 - :func:`all_descendants` — collect all nodes reachable from an ancestor via child edges.
 - :func:`refs_ids` — return the set of all :attr:`~guffin.roam.node.RoamNode.refs` ids across every
   node in a :data:`NodeNetwork`.
+- :func:`parent_by_child_id` — map each id listed in some node's ``children`` to the id of the node
+  listing it: the child edges of a :data:`NodeNetwork`, inverted.
 - :func:`min_effective_heading_level` — return the minimum effective heading level across all
   nodes in a :data:`NodeNetwork`, or ``None`` if no node is a heading.
 """
@@ -273,6 +275,30 @@ def refs_ids(network: _TrustedNetwork) -> set[Id]:
         in *network* has any ``refs``.
     """
     return {ref.id for n in network if n.refs for ref in n.refs}
+
+
+@validate_call
+def parent_by_child_id(network: _TrustedNetwork) -> dict[Id, Id]:
+    """Map each id that appears in some node's ``children`` to the id of the node listing it.
+
+    Inverts the child edges of *network*: every :attr:`~guffin.roam.primitives.IdObject.id` found
+    in any node's :attr:`~guffin.roam.node.RoamNode.children` becomes a key, and the listing
+    node's :attr:`~guffin.roam.node.RoamNode.id` its value.  Ids never listed as a child — a
+    root, or a node present in *network* but attached to nothing — have no entry.  Nodes whose
+    ``children`` field is ``None`` contribute nothing.  An empty *network* returns an empty map.
+
+    The map is well-defined when each id is listed by at most one node, which
+    :func:`is_acyclic` together with a single-parent structure guarantees; should an id be
+    listed by several nodes, the last listing in *network* order wins.
+
+    Args:
+        network: The collection of nodes to examine.
+
+    Returns:
+        A ``dict[Id, Id]`` mapping each listed child id to the id of the node whose ``children``
+        names it; empty if no node in *network* has any ``children``.
+    """
+    return {child.id: n.id for n in network if n.children for child in n.children}
 
 
 @validate_call
