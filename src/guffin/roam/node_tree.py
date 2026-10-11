@@ -136,6 +136,14 @@ class NodeTree(BaseModel):
         exclude=True,
         description="Map of member id → VersionGroup for every member of every group in version_groups.",
     )
+    version_members_by_id: Annotated[dict[Id, RoamNode], SkipValidation] = Field(
+        ...,
+        exclude=True,
+        description=(
+            "Map of id → RoamNode for every member of every group in version_groups — the selected version "
+            "(also in tree_network or refs_by_id) and the unselected ones, which the tree holds nowhere else."
+        ),
+    )
 
     @classmethod
     def build(cls, root_node: RoamNode, super_network: NodeNetwork) -> NodeTree:
@@ -185,6 +193,7 @@ class NodeTree(BaseModel):
             n.title: n for n in id_map.values() if node_type(n) == NodeType.PAGE and n.title is not None
         }
         version_groups: Final[dict[Id, VersionGroup]] = version_groups_of(super_network, scope_ids=set(id_map))
+        member_ids: Final[set[Id]] = {member_id for group in version_groups.values() for member_id in group.member_ids}
         cls._creating = True
         try:
             return cls(
@@ -196,6 +205,7 @@ class NodeTree(BaseModel):
                 page_name_map=page_name_map,
                 version_groups=version_groups,
                 version_group_by_member_id=version_group_by_member_id(version_groups),
+                version_members_by_id={n.id: n for n in super_network if n.id in member_ids},
             )
         finally:
             cls._creating = False

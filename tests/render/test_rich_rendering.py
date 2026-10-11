@@ -2,7 +2,9 @@
 
 import io
 
-from rich.console import Console
+from conftest import article0_node_tree, article1_node_tree
+from rich.console import Console, RenderableType
+from rich.panel import Panel
 from rich.tree import Tree as RichTree
 
 from guffin.model.vertex import HeadingVertex, PageVertex, TextVertex
@@ -10,6 +12,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
 from guffin.render.rich_rendering import (
     build_rich_raw_table,
+    build_rich_version_groups_box,
     build_rich_view_map_tree,
     build_vertex_panel,
     build_view_panel,
@@ -129,3 +132,44 @@ class TestBuildViewPanel:
         connector = build_view_panel(vertex, None)
         assert connector.border_style == "dim"
         assert connector.title == f"[dim]{build_vertex_panel(vertex).title}[/dim]"
+
+
+def _rendered(renderable: RenderableType) -> str:
+    """Render *renderable* to plain text at a width wide enough that nothing wraps away."""
+    buffer = io.StringIO()
+    Console(file=buffer, width=240, force_terminal=False, color_system=None).print(renderable)
+    return buffer.getvalue()
+
+
+class TestBuildRichVersionGroupsBox:
+    """Tests for build_rich_version_groups_box."""
+
+    def test_tree_without_version_groups_yields_none(self) -> None:
+        """A tree with no version groups renders no box at all."""
+        assert build_rich_version_groups_box(article1_node_tree()) is None
+
+    def test_article0_box_lists_every_version_and_marks_the_selected_one(self) -> None:
+        """The [[Test Article]] 0 tree's one group renders with all three versions, the third marked selected."""
+        box = build_rich_version_groups_box(article0_node_tree(), truncate=False)
+        assert isinstance(box, Panel)
+        text = _rendered(box)
+        assert "version groups" in text
+        assert "e9j_vHjGQ" in text
+        assert "members: 3" in text
+        for version in ("version 1", "version 2", "version 3"):
+            assert f"This is {version}" in text or f"This is __{version}__" in text or f"This is **{version}**" in text
+        assert text.count("selected") == 2  # once in the summary's "selected: <id>", once as a member marker
+        assert text.count("version ") >= 2  # the two unselected members' markers, at least
+
+    def test_selected_marker_sits_beside_the_selected_version(self) -> None:
+        """The member marked selected is the one the group's selected_id names."""
+        tree = article0_node_tree()
+        box = build_rich_version_groups_box(tree, truncate=False)
+        assert box is not None
+        group = next(iter(tree.version_groups.values()))
+        selected_string = tree.version_members_by_id[group.selected_id].string
+        assert selected_string is not None
+        lines = _rendered(box).splitlines()
+        selected_lines = [line for line in lines if "selected" in line and "selected:" not in line]
+        assert len(selected_lines) == 1
+        assert selected_string in selected_lines[0]

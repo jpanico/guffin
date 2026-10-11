@@ -73,6 +73,7 @@ from guffin.render.rich_rendering import (
     build_rich_node_tree,
     build_rich_raw_table,
     build_rich_refs_box,
+    build_rich_version_groups_box,
     build_rich_vertex_tree,
     build_rich_view_map_tree,
 )
@@ -113,7 +114,10 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.anchor_tree` is ``None``.
     After the tree, prints a ``refs`` box containing one
     :func:`~guffin.render.rich_rendering.build_node_panel` panel per node in
-    :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` (omitted when empty).
+    :attr:`~guffin.roam.node_tree.NodeTree.refs_by_id` (omitted when empty), then a
+    ``version groups`` box showing every version of each group in
+    :attr:`~guffin.roam.node_tree.NodeTree.version_groups` with the selected one marked
+    (omitted when the tree has no version groups).
 
     Args:
         fetch_result: Fetch result whose :attr:`~guffin.roam.node_fetch_result.NodeFetchResult.anchor_tree`
@@ -137,6 +141,11 @@ def _dump_node_tree(fetch_result: NodeFetchResult, node_props: str | None, conso
     refs_box: Final[Panel | None] = build_rich_refs_box(fetch_result.anchor_tree, effective_props, truncate=truncate)
     if refs_box is not None:
         console.print(refs_box)
+    version_groups_box: Final[Panel | None] = build_rich_version_groups_box(
+        fetch_result.anchor_tree, effective_props, truncate=truncate
+    )
+    if version_groups_box is not None:
+        console.print(version_groups_box)
     console.print(
         f"{len(fetch_result.anchor_tree.tree_network)} node(s) in anchor tree, "
         f"{len(fetch_result.network)} total node(s) in fetch result"

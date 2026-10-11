@@ -262,6 +262,16 @@ class TestNodeTreeVersionGroups:
         assert set(tree.version_group_by_member_id) == {by_uid[uid].id for uid in _VERSION_UIDS}
         assert tree.version_groups[by_uid[_GROUP_UID].id].selected_id == by_uid[_SELECTED_UID].id
 
+    def test_tree_holds_every_member_node(self) -> None:
+        """The tree keeps every version node reachable by id, the unselected ones included."""
+        network: Final[NodeNetwork] = _versioned_network()
+        tree: Final[NodeTree] = NodeTree.build(root_node=network[0], super_network=network)
+        assert set(tree.version_members_by_id) == {_V1_ID, _V2_ID, _V3_ID}
+        assert tree.version_members_by_id[_V1_ID].uid == "version01"
+        # The unselected versions are held here and nowhere else on the tree.
+        assert _V1_ID not in tree.id_map
+        assert _V3_ID in tree.id_map
+
     def test_maps_are_excluded_from_dumps(self) -> None:
         """The derived maps never reach a serialized tree, like the other derived maps."""
         network: Final[NodeNetwork] = _versioned_network()
@@ -269,3 +279,4 @@ class TestNodeTreeVersionGroups:
         dumped: Final[dict[str, object]] = tree.model_dump(mode="json")
         assert "version_groups" not in dumped
         assert "version_group_by_member_id" not in dumped
+        assert "version_members_by_id" not in dumped

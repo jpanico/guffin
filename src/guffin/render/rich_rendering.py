@@ -10,6 +10,9 @@ Public symbols:
   :class:`~guffin.roam.node_tree.NodeTree` using a depth-first traversal.
 - :func:`build_rich_refs_box` — build a Rich :class:`~rich.panel.Panel` summarising the
   back-reference nodes in a :class:`~guffin.roam.node_tree.NodeTree`.
+- :func:`build_rich_version_groups_box` — build a Rich :class:`~rich.panel.Panel` summarising the
+  version groups in a :class:`~guffin.roam.node_tree.NodeTree`, every version shown and the
+  selected one marked.
 - :func:`build_vertex_panel` — render a :data:`~guffin.vertex.Vertex` as a Rich
   :class:`~rich.panel.Panel`.
 - :func:`build_rich_vertex_tree` — build a Rich :class:`~rich.tree.Tree` from a
@@ -299,6 +302,58 @@ def build_rich_refs_box(
         row.add_row(build_node_panel(ref_node, props, truncate=truncate), back_refs_panel)
         ref_rows.append(row)
     return Panel(Group(*ref_rows), title="refs")
+
+
+@validate_call
+def build_rich_version_groups_box(
+    tree: NodeTree, props: list[str] = DEFAULT_NODE_PANEL_PROPS, *, truncate: bool = True
+) -> Panel | None:
+    """Build a Rich :class:`~rich.panel.Panel` summarising the version groups in *tree*.
+
+    For each group in :attr:`~guffin.roam.node_tree.NodeTree.version_groups`, renders a
+    two-column grid row: on the left a panel naming the group (uid and id) and bodying its
+    parent id, selected id, and member count; on the right one :func:`build_node_panel` per
+    member, in the group's membership order, each led by a marker — ``selected`` for the
+    version the parent's ``children`` names, ``version`` for the others.  All rows are
+    collected into a single ``version groups`` panel.
+
+    Returns ``None`` when :attr:`~guffin.roam.node_tree.NodeTree.version_groups` is empty.
+
+    Args:
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` whose
+            :attr:`~guffin.roam.node_tree.NodeTree.version_groups` and
+            :attr:`~guffin.roam.node_tree.NodeTree.version_members_by_id` are used.
+        props: Ordered list of :class:`~guffin.roam.node.RoamNode` field names
+            to include in each member panel body.  Defaults to :data:`DEFAULT_NODE_PANEL_PROPS`.
+        truncate: When ``True`` (default), long panel strings are shortened with an
+            ellipsis; when ``False``, they are rendered in full.
+
+    Returns:
+        A :class:`~rich.panel.Panel` titled ``version groups`` grouping one row per version
+        group, or ``None`` when *tree* has none.
+    """
+    if not tree.version_groups:
+        return None
+    group_rows: Final[list[Table]] = []
+    for group in tree.version_groups.values():
+        summary: Panel = Panel(
+            f"parent: {group.parent_id}  selected: {group.selected_id}  members: {len(group.member_ids)}",
+            title=f"version group [bold]{markup_escape(group.uid)}[/bold] ({group.id})",
+        )
+        members: Table = Table.grid(padding=(0, 1))
+        members.add_column()
+        members.add_column()
+        for member_id in group.member_ids:
+            marker: str = (
+                "[bold green]selected[/bold green]" if member_id == group.selected_id else "[dim]version[/dim]"
+            )
+            members.add_row(marker, build_node_panel(tree.version_members_by_id[member_id], props, truncate=truncate))
+        row: Table = Table.grid(padding=(0, 1))
+        row.add_column()
+        row.add_column()
+        row.add_row(summary, members)
+        group_rows.append(row)
+    return Panel(Group(*group_rows), title="version groups")
 
 
 def _format_vertex_table_style_prop(vertex: TableVertex) -> Text:
