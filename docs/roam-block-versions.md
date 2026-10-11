@@ -19,6 +19,15 @@ example. Nothing there describes the storage, which is why this document exists.
 See [roam-querying.md](roam-querying.md) for the Datalog background and
 [roam-schema.md](roam-schema.md) for the full attribute table.
 
+**A note on the word.** This document and the `roam/` layer say *version* and *version group*
+because that is Roam's name for the feature. The terminology stops at the transcription
+boundary: in `model/` and above, these are **alternatives** — an *alternatives group*, with a
+*selected alternative*. "Version" is strongly bound to source-control revision history, a
+sequence of successive states of one thing, and the project already uses *revision* for that
+sense (`common/revision.py`, the `revision::` tag). Roam's versions are not that; they are
+coexisting peers of one piece of content, one of which is selected, and the model names them
+for what they are. (Decided 2026-10-11; see the Conventions in `CLAUDE.md`.)
+
 ## Storage model
 
 A "block with three versions" is not one block with three strings. It is **three
