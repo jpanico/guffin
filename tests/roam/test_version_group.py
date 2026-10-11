@@ -8,13 +8,14 @@ from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader
 from pydantic import ValidationError
 
 from guffin.common.validation import ValidationResult
-from guffin.roam.node import RoamNode
+from guffin.roam.node import NodeType, RoamNode
 from guffin.roam.node_network import NodeNetwork
 from guffin.roam.node_tree import NodeTree
 from guffin.roam.primitives import IdObject
 from guffin.roam.version_group import (
     VersionGroup,
     all_version_members_present,
+    all_version_members_share_node_type,
     all_version_members_share_placement,
     exactly_one_version_selected,
     validate_version_groups,
@@ -88,27 +89,37 @@ class TestVersionGroupModel:
 
     def test_valid_group(self) -> None:
         """A group with a selected member among its members is accepted, and exposes the rest."""
-        group = VersionGroup(uid="group0000", id=20, parent_id=2, member_ids=(11, 12, 13), selected_id=12)
+        group = VersionGroup(
+            uid="group0000", id=20, parent_id=2, member_ids=(11, 12, 13), selected_id=12, node_type=NodeType.TEXT_BLOCK
+        )
         assert group.unselected_ids == (11, 13)
 
     def test_selected_must_be_a_member(self) -> None:
         """The selected id must be one of the member ids."""
         with pytest.raises(ValidationError, match="is not a member"):
-            VersionGroup(uid="group0000", id=20, parent_id=2, member_ids=(11, 12), selected_id=13)
+            VersionGroup(
+                uid="group0000", id=20, parent_id=2, member_ids=(11, 12), selected_id=13, node_type=NodeType.TEXT_BLOCK
+            )
 
     def test_members_never_empty(self) -> None:
         """A group with no members is rejected."""
         with pytest.raises(ValidationError, match="has no members"):
-            VersionGroup(uid="group0000", id=20, parent_id=2, member_ids=(), selected_id=11)
+            VersionGroup(
+                uid="group0000", id=20, parent_id=2, member_ids=(), selected_id=11, node_type=NodeType.TEXT_BLOCK
+            )
 
     def test_members_never_repeat(self) -> None:
         """A member listed twice is rejected."""
         with pytest.raises(ValidationError, match="more than once"):
-            VersionGroup(uid="group0000", id=20, parent_id=2, member_ids=(11, 11), selected_id=11)
+            VersionGroup(
+                uid="group0000", id=20, parent_id=2, member_ids=(11, 11), selected_id=11, node_type=NodeType.TEXT_BLOCK
+            )
 
     def test_frozen(self) -> None:
         """The model is immutable."""
-        group = VersionGroup(uid="group0000", id=20, parent_id=2, member_ids=(11, 12), selected_id=11)
+        group = VersionGroup(
+            uid="group0000", id=20, parent_id=2, member_ids=(11, 12), selected_id=11, node_type=NodeType.TEXT_BLOCK
+        )
         with pytest.raises(ValidationError):
             group.selected_id = 12  # type: ignore[misc]
 
@@ -121,6 +132,7 @@ class TestValidators:
         network: Final[NodeNetwork] = _versioned_network()
         assert all_version_members_present(network) is None
         assert all_version_members_share_placement(network) is None
+        assert all_version_members_share_node_type(network) is None
         assert exactly_one_version_selected(network) is None
         assert validate_version_groups(network).is_valid
 
@@ -141,6 +153,7 @@ class TestValidators:
         """Placement and selection are not judged for a group with an absent member."""
         network: Final[NodeNetwork] = _versioned_network(member_ids=[_V1_ID, _V2_ID, _V3_ID, 99])
         assert all_version_members_share_placement(network) is None
+        assert all_version_members_share_node_type(network) is None
         assert exactly_one_version_selected(network) is None
         result: Final[ValidationResult] = validate_version_groups(network)
         assert [error.validator for error in result.errors] == [all_version_members_present]
@@ -166,6 +179,26 @@ class TestValidators:
         error = all_version_members_share_placement(network)
         assert error is not None
         assert "not blocks" in error.message
+
+    def test_mixed_node_types_are_reported(self) -> None:
+        """A group whose members classify differently fails all_version_members_share_node_type."""
+        network: Final[NodeNetwork] = _versioned_network()
+        heading: Final[RoamNode] = RoamNode(
+            uid="version02",
+            id=_V2_ID,
+            string="block version02",
+            heading=1,
+            order=0,
+            page=IdObject(id=_PAGE_ID),
+            parents=[IdObject(id=_PAGE_ID), IdObject(id=_PARENT_ID)],
+        )
+        mixed: Final[NodeNetwork] = [heading if n.id == _V2_ID else n for n in network]
+        error = all_version_members_share_node_type(mixed)
+        assert error is not None
+        assert "mixed node types" in error.message
+        assert "roam/heading-block" in error.message
+        assert "roam/text-block" in error.message
+        assert [e.validator for e in validate_version_groups(mixed).errors] == [all_version_members_share_node_type]
 
     def test_no_selected_member_is_reported(self) -> None:
         """A group none of whose members any node's children names fails exactly_one_version_selected."""
@@ -193,6 +226,7 @@ class TestVersionGroupsOf:
         assert group.selected_id == _V3_ID
         assert group.unselected_ids == (_V1_ID, _V2_ID)
         assert group.parent_id == _PARENT_ID
+        assert group.node_type is NodeType.TEXT_BLOCK
 
     def test_network_without_groups_yields_nothing(self) -> None:
         """A network with no version group derives an empty map."""
@@ -230,6 +264,7 @@ class TestVersionGroupsOf:
         assert group.member_ids == tuple(by_uid[uid].id for uid in _VERSION_UIDS)
         assert group.selected_id == by_uid[_SELECTED_UID].id
         assert group.parent_id == by_uid[_PARENT_UID].id
+        assert group.node_type is NodeType.TEXT_BLOCK
 
 
 class TestNodeTreeVersionGroups:

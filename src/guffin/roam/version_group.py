@@ -19,6 +19,8 @@ Public symbols:
   member id a group names to resolve to a node in the network.
 - :func:`all_version_members_share_placement` — :data:`~guffin.common.validation.Validator` requiring a
   group's members to be blocks sharing one ``order`` and one set of ``parents``.
+- :func:`all_version_members_share_node_type` — :data:`~guffin.common.validation.Validator` requiring a
+  group's members to share one :class:`~guffin.roam.node.NodeType`: a group is homogeneous.
 - :func:`exactly_one_version_selected` — :data:`~guffin.common.validation.Validator` requiring exactly
   one member of each group to appear in some node's ``children``.
 - :func:`validate_version_groups` — run every version-group validator over a network, accumulating a
@@ -43,7 +45,11 @@ _TrustedNetwork = Annotated[NodeNetwork, SkipValidation]
 
 
 class VersionGroup(BaseModel):
-    """One block's version group: the versions, the selected one, and the parent selecting it.
+    """One block's version group: the versions, the selected one, the parent selecting it, and their kind.
+
+    A group is *homogeneous*: every member is a node of one and the same
+    :class:`~guffin.roam.node.NodeType`, recorded here once as *node_type*, so the versions of a
+    block are alternatives of one kind of content rather than a change of kind.
 
     Attributes:
         uid: The group entity's stable identifier.
@@ -53,6 +59,7 @@ class VersionGroup(BaseModel):
         member_ids: The ids of the version blocks, in the order the group entity lists them.
             Never empty, never repeating.
         selected_id: The member the parent's ``children`` names; always one of *member_ids*.
+        node_type: The :class:`~guffin.roam.node.NodeType` every member has.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -62,6 +69,7 @@ class VersionGroup(BaseModel):
     parent_id: Id = Field(description="The id of the node whose children names the selected version.")
     member_ids: tuple[Id, ...] = Field(description="The version blocks' ids, in the group entity's order.")
     selected_id: Id = Field(description="The member the parent's children names; one of member_ids.")
+    node_type: NodeType = Field(description="The NodeType every member has; a group is homogeneous.")
 
     @model_validator(mode="after")
     def _validate_membership(self) -> VersionGroup:
@@ -157,6 +165,36 @@ def all_version_members_share_placement(network: _TrustedNetwork) -> ValidationE
 
 
 @validate_call
+def all_version_members_share_node_type(network: _TrustedNetwork) -> ValidationError | None:
+    """Return ``None`` when each group's members share one :class:`~guffin.roam.node.NodeType`.
+
+    A version group is homogeneous: its versions are alternatives of one kind of content, so
+    every member classifies as the same :func:`~guffin.roam.node.node_type`.  A group with a
+    member absent from *network* is skipped here; :func:`all_version_members_present` reports it.
+
+    Args:
+        network: The collection of nodes to examine.
+
+    Returns:
+        ``None`` if every group's members share one node type; a
+        :class:`~guffin.common.validation.ValidationError` naming each mixed group and the
+        types its members have otherwise.
+    """
+    by_id: Final[dict[Id, RoamNode]] = {node.id: node for node in network}
+    findings: Final[list[str]] = []
+    for group in _group_nodes(network):
+        members: list[RoamNode] = [by_id[member_id] for member_id in _member_ids(group) if member_id in by_id]
+        if len(members) != len(_member_ids(group)):
+            continue
+        types: set[NodeType] = {node_type(member) for member in members}
+        if len(types) > 1:
+            findings.append(f"group {group.id}: members of mixed node types: {sorted(t.value for t in types)}")
+    if not findings:
+        return None
+    return ValidationError(message="; ".join(findings), validator=all_version_members_share_node_type)
+
+
+@validate_call
 def exactly_one_version_selected(network: _TrustedNetwork) -> ValidationError | None:
     """Return ``None`` when exactly one member of each version group appears in some node's ``children``.
 
@@ -191,9 +229,10 @@ def exactly_one_version_selected(network: _TrustedNetwork) -> ValidationError | 
 def validate_version_groups(network: _TrustedNetwork) -> ValidationResult:
     """Run every version-group validator over *network* and return the accumulated result.
 
-    Runs :func:`all_version_members_present`, :func:`all_version_members_share_placement`, and
-    :func:`exactly_one_version_selected` via :func:`~guffin.common.validation.validate_all`; all
-    run regardless of prior failures.  A network with no version groups is vacuously valid.
+    Runs :func:`all_version_members_present`, :func:`all_version_members_share_placement`,
+    :func:`all_version_members_share_node_type`, and :func:`exactly_one_version_selected` via
+    :func:`~guffin.common.validation.validate_all`; all run regardless of prior failures.  A
+    network with no version groups is vacuously valid.
 
     Args:
         network: The collection of nodes to validate.
@@ -207,6 +246,7 @@ def validate_version_groups(network: _TrustedNetwork) -> ValidationResult:
         [
             all_version_members_present,
             all_version_members_share_placement,
+            all_version_members_share_node_type,
             exactly_one_version_selected,
         ],
     )
@@ -216,8 +256,9 @@ def validate_version_groups(network: _TrustedNetwork) -> ValidationResult:
 def version_groups_of(network: _TrustedNetwork, scope_ids: Set[Id] | None = None) -> dict[Id, VersionGroup]:
     """Derive every :class:`VersionGroup` in *network*, keyed by group id.
 
-    Reads each version-group node's membership off its ``blocks`` and its selection off the one
-    member some node's ``children`` names; that node is the group's parent.  With *scope_ids*,
+    Reads each version-group node's membership off its ``blocks``, its selection off the one
+    member some node's ``children`` names — that node is the group's parent — and its node type
+    off the members, which all share it.  With *scope_ids*,
     only groups with at least one member in the scope are returned, so a tree can keep the
     groups of its own and its referenced nodes while a wider network holds more.
 
@@ -237,6 +278,7 @@ def version_groups_of(network: _TrustedNetwork, scope_ids: Set[Id] | None = None
     if not result.is_valid:
         raise ValueError("version group validation failed: " + "; ".join(str(error) for error in result.errors))
     parent_by_child: Final[dict[Id, Id]] = parent_by_child_id(network)
+    by_id: Final[dict[Id, RoamNode]] = {node.id: node for node in network}
     groups: Final[dict[Id, VersionGroup]] = {}
     for group in _group_nodes(network):
         member_ids: tuple[Id, ...] = _member_ids(group)
@@ -249,6 +291,7 @@ def version_groups_of(network: _TrustedNetwork, scope_ids: Set[Id] | None = None
             parent_id=parent_by_child[selected_id],
             member_ids=member_ids,
             selected_id=selected_id,
+            node_type=node_type(by_id[selected_id]),
         )
     return groups
 
