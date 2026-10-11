@@ -315,8 +315,6 @@
     page:
       id: 11137
 - - string: This block has 3 versions. This is **version 2**.
-    version-group:
-    - uid: e9j_vHjGQ
     id: 19963
     uid: zHbMF7Ozq
     parents:
@@ -609,8 +607,6 @@
     - id: 1371
     - id: 11454
 - - string: This block has 3 versions. This is __version 1__.
-    version-group:
-    - uid: e9j_vHjGQ
     id: 19957
     uid: PUrwWBbbi
     parents:
@@ -978,8 +974,6 @@
     page:
       id: 11137
 - - string: This block has 3 versions. This is version 3.
-    version-group:
-    - uid: e9j_vHjGQ
     id: 19965
     uid: YYysqBFqy
     parents:

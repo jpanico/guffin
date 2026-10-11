@@ -174,7 +174,7 @@ query per anchor kind, `BY_PAGE_TITLE_QUERY` and `BY_NODE_UID_QUERY`. The `or-jo
 scoping rule still applies: `?anchor` stays in the join-variable list and is re-bound
 inside each branch, or the pivot would match every versioned block in the graph.
 
-### The group is a row, and rides on the versions too
+### The group is a row
 
 The pivot joins through the group entity, and the `raw_result` design principle
 ([roam-querying.md](roam-querying.md#raw_result-is-a-faithful-picture-of-the-database))
@@ -194,21 +194,19 @@ entity kind, **version group**: `title` and `string` are `None`, `blocks` is set
 it sits in the fetched network without belonging to any tree, and the transcriber refuses
 to make a vertex of it, since it has no content of its own.
 
-The group's uid also rides on each version block, through a reverse reference in the
-shared pull pattern:
+The version rows themselves carry nothing extra. Nothing marks a version block as
+versioned on its own row: a block's membership in a group is one `:vc/blocks` datom, and
+the fetch presents it once, on the group's row, rather than a second time from the value
+side as a `:vc/_blocks` stub on the version. Reading it that way would have needed a
+pull alias for a reverse reference, which no schema attribute names, and would have put
+the same fact on the wire twice. So "is this block versioned, and by what" is answered
+by scanning the fetched group rows for the one whose `blocks` contains the block's id,
+and a consumer that needs that direction often can build the lookup once at parse time.
 
-```clojure
-[* … {(:vc/_blocks :as "version-group") [:block/uid]}]
-```
-
-Every version of a versioned block, the selected one included, arrives with
-`"version-group": [{"uid": "<group uid>"}]`; a block that is not versioned carries no
-such key, because a reverse reference with no match is omitted from the pull. The two
-views are complementary: the group row answers "which blocks are the versions" in one
-place, and the stub answers "is this block versioned, and by what" without a scan.
-Pulling only a uid stub keeps the rows flat; nesting the sibling versions themselves
-inside each row (`{:vc/_blocks [{:vc/blocks [*]}]}`) would have broken the flat-rows
-contract the raw-result parsing and every recorded fixture rely on.
+Nesting the sibling versions inside each version's row
+(`{:vc/_blocks [{:vc/blocks [*]}]}`) was rejected for the same reason and one more: it
+would have broken the flat-rows contract the raw-result parsing and every recorded
+fixture rely on.
 
 ### What arrives downstream
 
@@ -220,9 +218,7 @@ contract the raw-result parsing and every recorded fixture rely on.
   `raw_result`, and nowhere else.
 - **The group row is a `VERSION_GROUP` node.** Its `blocks` field holds the id stubs of
   the versions, so "which blocks are the versions of this group" is answered by the row
-  itself. The `version-group` stub on each version is on the wire only; `RoamNode`
-  ignores unknown keys, so it is visible in `raw_result` until a field is added for it,
-  which is for the consuming feature to decide.
+  itself, and it is the only place in the result the relationship appears.
 - **Selection stays derivable.** Nothing on the group says which version is selected;
   the selected one is the version present in the parent's `:block/children`, so the
   model can compute it from data it already holds.

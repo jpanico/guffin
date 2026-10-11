@@ -92,10 +92,10 @@ class FetchRoamNodes:
         others dangle, reachable only through the group.  Every query therefore pivots through
         the group: for each in-scope node it also returns every sibling version and the group
         entity itself (a :attr:`~guffin.roam.node.NodeType.VERSION_GROUP` node, whose ``blocks``
-        stubs name the versions), and every version block carries its group's uid in the
-        ``version-group`` pull key.  Returning the group as a row keeps the result closed under
+        stubs name the versions).  Returning the group as a row keeps the result closed under
         its own traversal — every entity a query joins through is itself a row — so the rows
-        alone show how the versions relate.
+        alone show how the versions relate: the group's ``blocks`` is the one place the
+        relationship is recorded, and the version rows carry nothing extra.
         """
 
         _DESCENDANT_CLAUSES: Final[str] = textwrap.indent(
@@ -194,8 +194,7 @@ class FetchRoamNodes:
         """
 
         PULL_PATTERN: Final[str] = (
-            '[* [:block/view-type :as "block-view-type"] [:children/view-type :as "children-view-type"]'
-            ' {(:vc/_blocks :as "version-group") [:block/uid]}]'
+            '[* [:block/view-type :as "block-view-type"] [:children/view-type :as "children-view-type"]]'
         )
         """The pull pattern every query in this namespace uses.
 
@@ -208,12 +207,12 @@ class FetchRoamNodes:
         ambiguous one entirely; :attr:`~guffin.roam.node.RoamNode.children_view_type` reads the
         unambiguous ``children-view-type``.
 
-        The wildcard also pulls no reverse references, so the version group a block belongs to
-        is pulled explicitly: ``:vc/_blocks`` (the reverse of the group's ``:vc/blocks`` ref)
-        under the ``version-group`` alias, as a list of ``{"uid": ...}`` stubs naming the group
-        entity.  Every version of a versioned block carries the same stub, the selected version
-        included; a block that is not versioned carries no ``version-group`` key at all, since a
-        reverse reference with no match is omitted from the pull.
+        Nothing else is pulled: the two aliases exist only to resolve that collision, so every
+        other key on a row is an attribute the database stores on that very entity, under its
+        own (namespace-stripped) name, plus Datomic's ``:db/id`` as ``id``.  In particular no
+        reverse reference is pulled — a version block's membership in its version group is read
+        from the group's own row (its ``blocks``), which the queries return, not from a
+        ``:vc/_blocks`` stub on the version.
         """
 
         _VERSIONS_PIVOT: Final[str] = "[?group :vc/blocks ?member]\n        [?group :vc/blocks ?node]"

@@ -158,9 +158,16 @@ class TestFetchRoamNodesRequest:
             # its own traversal (every entity the query joins through is itself a row).
             assert "[?node :vc/blocks ?member]" in query
 
-    def test_pull_pattern_names_the_version_group(self) -> None:
-        """The pull pattern carries each block's version group as uid stubs under the version-group alias."""
-        assert '{(:vc/_blocks :as "version-group") [:block/uid]}' in FetchRoamNodes.Request.PULL_PATTERN
+    def test_pull_pattern_pulls_no_reverse_references(self) -> None:
+        """Beyond the two collision-resolving aliases, the pull is the bare wildcard.
+
+        A version block's membership in its group is read from the group's own row (``blocks``),
+        never from a ``:vc/_blocks`` stub on the version — that would present one datom twice,
+        under an alias no schema attribute names.
+        """
+        assert "_blocks" not in FetchRoamNodes.Request.PULL_PATTERN
+        assert "/_" not in FetchRoamNodes.Request.PULL_PATTERN
+        assert FetchRoamNodes.Request.PULL_PATTERN.count(":as") == 2
 
 
 class TestFetchRoamNodesResponsePayload:
@@ -495,10 +502,10 @@ class TestFetchRoamNodesFetchByPageTitle:
         ``PUrwWBbbi`` / ``zHbMF7Ozq`` / ``YYysqBFqy``, grouped by ``e9j_vHjGQ``), the third of
         which is selected.  Only the selected version sits in the parent's ``:block/children``,
         so only it reaches the anchor tree; the other two are reached through the version group
-        and land in the network alone.  Every version — the selected one included — carries the
-        group's uid under the ``version-group`` pull key, and no other row does.  The group
-        entity is a row of its own — a ``VERSION_GROUP`` node whose ``blocks`` stubs name exactly
-        the three versions — so the result is closed under its own traversal.
+        and land in the network alone.  The group entity is a row of its own — a
+        ``VERSION_GROUP`` node whose ``blocks`` stubs name exactly the three versions — so the
+        result is closed under its own traversal, and that row is the only place the
+        relationship appears: the version rows carry nothing marking them as versioned.
         """
         page_title = "[[Test Article]] 0"
         version_uids: Final[set[str]] = {"PUrwWBbbi", "zHbMF7Ozq", "YYysqBFqy"}
@@ -522,10 +529,11 @@ class TestFetchRoamNodesFetchByPageTitle:
         assert node_type(group) is NodeType.VERSION_GROUP
         assert {stub.id for stub in group.blocks or []} == {result.nodes_by_uid[uid].id for uid in version_uids}
 
-        versioned_rows: Final[dict[object, object]] = {
-            row[0]["uid"]: row[0]["version-group"] for row in result.raw_result if "version-group" in row[0]
-        }
-        assert versioned_rows == {uid: [{"uid": group_uid}] for uid in version_uids}
+        version_rows: Final[list[dict[str, object]]] = [
+            row[0] for row in result.raw_result if row[0]["uid"] in version_uids
+        ]
+        assert len(version_rows) == 3
+        assert all("blocks" not in row and "version-group" not in row for row in version_rows)
 
 
 class TestFetchRoamNodesFetchByNodeUid:
@@ -726,8 +734,8 @@ class TestRawResultKeys:
        namespace stripped by the Local API (``:block/string`` → ``string``);
     2. ``id`` — Datomic's built-in ``:db/id``, which is not a schema attribute and so has no
        member; or
-    3. an alias the pull pattern asks for by ``:as`` — a renamed attribute
-       (``children-view-type``) or a reverse reference (``version-group``).
+    3. an alias the pull pattern asks for by ``:as`` — today only the two renamed ``view-type``
+       attributes, which would otherwise collide on one stripped key.
 
     The alias set is parsed from :attr:`FetchRoamNodes.Request.PULL_PATTERN` itself, so a new
     alias is admitted by declaring it there and nowhere else, while a key of any other kind —
@@ -748,7 +756,6 @@ class TestRawResultKeys:
         assert set(self._ALIAS_RE.findall(FetchRoamNodes.Request.PULL_PATTERN)) == {
             "block-view-type",
             "children-view-type",
-            "version-group",
         }
 
     @pytest.mark.parametrize("prefix", sorted(p.name.removesuffix("_raw_result.yaml") for p in RAW_RESULT_FIXTURES))
@@ -769,7 +776,7 @@ class TestRawResultKeys:
         attribute_names: Final[set[str]] = {member.attr_name for member in SchemaAttribute}
         aliases: Final[set[str]] = set(self._ALIAS_RE.findall(FetchRoamNodes.Request.PULL_PATTERN))
         allowed: Final[set[str]] = attribute_names | {"id"} | aliases
-        assert "version-group" in allowed
         assert "blocks" in allowed
-        assert "versions" not in allowed
+        assert "children-view-type" in allowed
+        assert "version-group" not in allowed
         assert "_blocks" not in allowed

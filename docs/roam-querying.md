@@ -104,8 +104,7 @@ names that one attribute unambiguously.
 
 ```datalog
 [:find (pull ?node [* [:block/view-type :as "block-view-type"]
-                      [:children/view-type :as "children-view-type"]
-                      {(:vc/_blocks :as "version-group") [:block/uid]}])
+                      [:children/view-type :as "children-view-type"]])
  :in $ ?title %
  :where
  [?anchor :node/title ?title]
@@ -134,10 +133,10 @@ names that one attribute unambiguously.
   node whose `blocks` stubs name the versions). See [roam-block-versions.md](roam-block-versions.md).
 - Returns `[row[0] for row in result]` — a `list[RoamNode]` where each `RoamNode` holds the full pull-block dict.
 - The pull pattern is `FetchRoamNodes.Request.PULL_PATTERN`, shared by every node query. The two
-  `view-type` aliases are not decoration: without them the two attributes collide (below). The
-  `version-group` entry pulls a reverse reference — the group a block is a version of, as
-  `{"uid": …}` stubs — which the wildcard never includes; a block that is not versioned has no
-  such key.
+  `view-type` aliases are not decoration: without them the two attributes collide (below). They
+  are also the only additions to the wildcard — no reverse references are pulled — so every
+  other key on a row is an attribute the database stores on that entity, under its stripped
+  name, plus `:db/id` as `id`.
 
 
 ### 2. Schema introspection — `FetchRoamSchema.Request.DATALOG_SCHEMA_QUERY`
