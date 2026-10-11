@@ -64,11 +64,7 @@ hatch run test-medium   # the full offline suite
 hatch run test-heavy    # everything, live tests included (requires Roam Desktop running locally)
 ```
 
-To run the plain offline suite directly:
-
-```bash
-pytest
-```
+Run a whole-suite pass through a tier rather than a bare `pytest`: each tier runs the tests in parallel across cores (`pytest -n auto --dist loadscope`), while a bare `pytest` runs them serially and takes more than twice as long for the same result. Bare `pytest` is the right tool for targeting a single file or a `-k` expression while iterating, where startup dominates.
 
 The `tests/` tree mirrors `src/guffin/` — each test module lives in the sub-package of the module it covers (e.g. `tests/roam/test_asset_fetch.py` covers `guffin/roam/asset_fetch.py`). To run one file:
 

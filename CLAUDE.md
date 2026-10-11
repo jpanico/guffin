@@ -77,11 +77,15 @@ pydocstringformatter --write src/ # reflow docstring content (PEP 257)
 black .                           # format code
 ruff check --fix src/ tests/      # lint + fix docstring style (Google convention)
 pyright                           # type check (strict)
-pytest                            # run tests (excludes live tests)
+hatch run test-medium             # run tests (excludes live tests) — see the tiers below
 
-# Test tiers (defined as hatch scripts in pyproject.toml), lightest to heaviest:
+# Test tiers (defined as hatch scripts in pyproject.toml), lightest to heaviest.  Always run a
+# whole-suite pass through a tier: each is `pytest -n auto --dist loadscope`, parallel across cores,
+# whereas a bare `pytest` runs serially (`addopts` carries no `-n`) and takes more than twice as long
+# (measured 2026-10-11: ~8s via test-medium vs 16–19s bare, same 2386 tests).  Bare `pytest` is for
+# targeting one file or a `-k` expression while iterating, where startup dominates.
 hatch run test-light   # skips pandoc-subprocess-bound integration tests (marked `pandoc`); the fast inner loop (~2.5s)
-hatch run test-medium  # the full offline suite
+hatch run test-medium  # the full offline suite (~8s)
 hatch run test-heavy   # everything, live tests included; requires Roam Desktop running locally; the tier `check` runs
 
 # Live tests only, directly (requires Roam Desktop running locally):
