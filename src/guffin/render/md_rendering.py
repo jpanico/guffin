@@ -25,6 +25,7 @@ from typing import Final
 
 _GFM_RESOURCES_PACKAGE: Final[str] = "guffin.render.gfm_resources"
 # Lua-filter filenames, resolved against the bundled gfm_resources directory at render time.
+_GFM_ALTERNATIVES_FILTER: Final[str] = "gfm_alternatives.lua"
 _GFM_BRACKET_FILTER: Final[str] = "gfm_bracket.lua"
 _GFM_BULLET_FILTER: Final[str] = "gfm_bullet.lua"
 _GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
@@ -294,11 +295,9 @@ def render(
     numbered: Final[VertexTree] = attributed if options.emit_element_numbers else strip_element_numbers(attributed)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
-    # Markdown does not present alternative wordings yet: each block shows its selected wording
-    # alone, and a request for alternatives is reported rather than silently ignored.
-    if options.render_alternatives:
-        logger.warning("render_alternatives is not yet supported for Markdown output; rendering selected wordings only")
-    alternated: Final[VertexTree] = drop_alternatives(sourced)
+    # Alternative wordings render only on explicit request; otherwise each block shows its
+    # selected wording alone.
+    alternated: Final[VertexTree] = sourced if options.render_alternatives else drop_alternatives(sourced)
     # Authored page-break directives are honored only when the profile's policy says so; a
     # policy that fixes its own pagination has the tags dropped (each drop logged).  GFM output
     # expresses no page break either way — the gate is kept for policy uniformity across formats.
@@ -367,6 +366,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
@@ -421,6 +421,7 @@ def render(
                 f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
+                f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
                 f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",

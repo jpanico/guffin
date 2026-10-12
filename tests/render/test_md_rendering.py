@@ -1,6 +1,5 @@
 """Unit tests for guffin.render.md_rendering."""
 
-import logging
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final
@@ -28,7 +27,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
+from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.md_rendering import _remove_stripped_bundle_assets, render
 from guffin.render.project import ArticleProfile, BookProfile
@@ -571,20 +570,30 @@ class TestCodeSourceRendering:
         assert "<div" not in result
 
 
-class TestAlternativesNotYetRendered:
-    """Markdown does not present alternatives yet: each block shows its selected wording alone."""
+class TestAlternatives:
+    """Versioned blocks render their wordings as one glyph-led, line-per-wording block on request."""
 
     _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+    _MUTED: Final[str] = '<span style="color: #737373; font-size: 0.93em">'
 
-    def _render(self, tmp_path: Path, render_alternatives: bool) -> str:
+    def _render(
+        self,
+        tmp_path: Path,
+        render_alternatives: bool,
+        page_layout: ChildrenLayout = ChildrenLayout.DOCUMENT,
+        alternative_text: str = "another *emphasized* wording",
+    ) -> str:
         page = PageVertex(uid="page00001", title="Doc", children=["versed001"])
         versed = TextVertex(
             uid="versed001",
             text="the selected wording",
-            alternatives=(Alternative(uid="altuid001", text="another wording"),),
+            alternatives=(Alternative(uid="altuid001", text=alternative_text),),
         )
         render(
-            RenderBundle(content=VertexTree(tree_vertices=[page, versed]), view={}),
+            RenderBundle(
+                content=VertexTree(tree_vertices=[page, versed]),
+                view={"page00001": VertexView(children_layout=page_layout)},
+            ),
             profile=ArticleProfile(),
             filename_stem="doc",
             api_endpoint=self._ENDPOINT,
@@ -595,18 +604,31 @@ class TestAlternativesNotYetRendered:
         return (tmp_path / "doc.md").read_text(encoding="utf-8")
 
     def test_default_renders_selected_wording_only(self, tmp_path: Path) -> None:
-        """By default only the selected wording renders, with no group scaffold."""
+        """By default only the selected wording renders, with no glyph or group scaffold."""
         result = self._render(tmp_path, render_alternatives=False)
         assert "the selected wording" in result
-        assert "another wording" not in result
+        assert "another" not in result
+        assert "◉" not in result
         assert "<div" not in result
 
-    def test_request_is_reported_not_silently_ignored(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
-        """Asking for alternatives warns that Markdown cannot present them yet, and renders the selected wording."""
-        with caplog.at_level(logging.WARNING):
-            result = self._render(tmp_path, render_alternatives=True)
-        assert "another wording" not in result
-        assert any("render_alternatives is not yet supported for Markdown" in r.getMessage() for r in caplog.records)
+    def test_paragraph_group_is_one_block_of_glyph_led_lines(self, tmp_path: Path) -> None:
+        """In flow the wordings form one paragraph, a hard break between lines, the alternative muted."""
+        result = self._render(tmp_path, render_alternatives=True)
+        expected = f"◉ the selected wording  \n{self._MUTED}○ another *emphasized* wording</span>\n"
+        assert expected in result
+        assert "<div" not in result
+
+    def test_list_item_group_continues_the_item(self, tmp_path: Path) -> None:
+        """In a bullet list the wordings are the item's lines, the alternatives indented as its continuation."""
+        result = self._render(tmp_path, render_alternatives=True, page_layout=ChildrenLayout.BULLET)
+        assert f"- ◉ the selected wording  \n  {self._MUTED}○ another *emphasized* wording</span>\n" in result
+
+    def test_non_inline_wording_falls_back_to_blocks(self, tmp_path: Path) -> None:
+        """A wording holding a fenced code block cannot join one block, so the wordings render in sequence."""
+        result = self._render(tmp_path, render_alternatives=True, alternative_text="see\n\n```python\nprint(1)\n```")
+        assert "◉ the selected wording\n" in result
+        assert f"{self._MUTED}○ see</span>" in result
+        assert "print(1)" in result
 
 
 def _parts_book_bundle() -> RenderBundle:
