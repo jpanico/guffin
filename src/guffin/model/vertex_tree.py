@@ -28,6 +28,8 @@ Public symbols:
   :attr:`VertexTree.tree_vertices` and :attr:`VertexTree.ref_vertices`.
 - :func:`drop_attribute_assignments` — return a new :class:`VertexTree` with every vertex's
   :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` cleared.
+- :func:`drop_alternatives` — return a new :class:`VertexTree` with every vertex's alternative
+  wordings cleared.
 - :func:`drop_code_sources` — return a new :class:`VertexTree` with every code block's
   :attr:`~guffin.model.vertex.CodeBlockVertex.code_source` cleared.
 - :func:`drop_root_preamble` — return a new :class:`VertexTree` with the root vertex's loose
@@ -438,6 +440,30 @@ def drop_attribute_assignments(tree: VertexTree) -> VertexTree:
         if len(kept) == len(vtx.attribute_assignments):
             return vtx
         return vtx.model_copy(update={"attribute_assignments": kept or None})
+
+    return map_vertices(tree, _clear)
+
+
+@validate_call
+def drop_alternatives(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`VertexTree` with every vertex's alternative wordings cleared.
+
+    Each vertex carrying alternatives (today a :class:`~guffin.model.vertex.TextVertex`) has
+    them set to ``None`` — tree and referenced vertices alike — so only the selected wording,
+    the vertex's own text, can surface in rendered output.  All other fields are preserved and
+    the original *tree* is not modified.
+
+    Args:
+        tree: The source :class:`VertexTree`.
+
+    Returns:
+        A new :class:`VertexTree` whose vertices carry no alternatives.
+    """
+
+    def _clear(vtx: Vertex) -> Vertex:
+        if isinstance(vtx, TextVertex) and vtx.alternatives is not None:
+            return vtx.model_copy(update={"alternatives": None})
+        return vtx
 
     return map_vertices(tree, _clear)
 

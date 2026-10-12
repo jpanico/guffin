@@ -44,7 +44,8 @@ Rendering rules:
   — falling back to :data:`~guffin.model.vertex_view.DEFAULT_CHILDREN_LAYOUT` at the parentless
   recursion root.  Text
   containing a fenced code block is parsed at block level so the fence becomes a
-  :class:`~panflute.CodeBlock`.
+  :class:`~panflute.CodeBlock`.  A text vertex still carrying alternatives renders its body as an
+  :data:`ALTERNATIVES_CLASS` group of its wordings, selected first, for each format to style.
 - :class:`~guffin.vertex.ImageVertex` — embedded as a :class:`~panflute.Image`
   element pointing at the local path from *asset_files*; falls back to a
   :class:`~panflute.Link` when *asset_files* has no entry for the vertex.  The
@@ -92,6 +93,8 @@ Public symbols:
 - :data:`HEADING_LINK_CLASS` — the class on an internal link to a heading.
 - :data:`SEMANTIC_ATTRIBUTE` / :data:`MARKER_GLYPH_ATTRIBUTE` — scaffold attributes naming
   a classified list item's semantic and carrying the glyph that stands where its marker was.
+- :data:`ALTERNATIVES_CLASS` / :data:`SELECTED_WORDING_CLASS` / :data:`ALTERNATIVE_WORDING_CLASS` —
+  scaffold classes grouping a text vertex's wordings: its selected text, then its alternatives.
 - :func:`strip_pdf_placement` — remove the :data:`PDF_PLACEMENT_ATTRIBUTE` scaffold
   from every Link in a :class:`~panflute.Doc`, for conversions that do not consume it.
 
@@ -122,6 +125,7 @@ from guffin.common.markdown import contains_fenced_code_block, hard_broken_markd
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.common.table import HAlign
+from guffin.model.alternative import Alternative
 from guffin.model.attribute import (
     ReferenceValue,
     attribute_value_text,
@@ -267,6 +271,23 @@ by source channel alone — that channel's badge
 so a format pass can render it in the marker's place without knowing either classification
 vocabulary.
 """
+
+ALTERNATIVES_CLASS: Final[str] = "alternatives"
+"""Class of the scaffold ``Div`` grouping a vertex's wordings — its selected text and its alternatives.
+
+The group holds one ``Div`` per wording, in order: the selected wording first
+(:data:`SELECTED_WORDING_CLASS`), then each alternative (:data:`ALTERNATIVE_WORDING_CLASS`) in
+source order.  Emitted only for a vertex that still carries alternatives when the Doc is built — a
+renderer that does not present alternatives clears them beforehand
+(:func:`~guffin.model.vertex_tree.drop_alternatives`), so the group never reaches its output.  Each
+format that presents alternatives maps the group to its own styling.
+"""
+
+SELECTED_WORDING_CLASS: Final[str] = "selected-wording"
+"""Class of the ``Div`` holding the selected wording within an :data:`ALTERNATIVES_CLASS` group."""
+
+ALTERNATIVE_WORDING_CLASS: Final[str] = "alternative-wording"
+"""Class of a ``Div`` holding one alternative wording within an :data:`ALTERNATIVES_CLASS` group."""
 
 CHECKBOX_GLYPH_BY_TODO_STATE: Final[Mapping[TodoState, str]] = {
     TodoState.TODO: "☐",
@@ -510,6 +531,67 @@ def _block_ref_target(
     return dest if isinstance(dest, _BLOCK_LEVEL_VERTEX_TYPES) else None
 
 
+def _wording_blocks(text: str, inline_map: InlineMap, *, in_list: bool) -> list[pf.Block]:
+    """Render one wording of a text vertex — its own text or an alternative — to Pandoc blocks.
+
+    The blocks from a full block-level parse via :func:`parse_block_md` when *text* contains a
+    fenced code block; otherwise one inline block of *text*'s parsed inlines — a
+    :class:`~panflute.Plain` in a list item, a :class:`~panflute.Para` in document flow — wrapped
+    in a ``bg-color`` :class:`~panflute.Div` when the whole line is one background-colour span.
+
+    Args:
+        text: The wording's normalized Pandoc Markdown.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        in_list: Whether the wording renders inside a list item (``Plain``) rather than in
+            document flow (``Para``).
+
+    Returns:
+        The wording's blocks.
+    """
+    if contains_fenced_code_block(text):
+        return parse_block_md(text)
+    block_type: Final[type[pf.Plain] | type[pf.Para]] = pf.Plain if in_list else pf.Para
+    # An unparsed empty text is an empty item body in a list, but an empty-string paragraph in flow.
+    fallback: Final[list[pf.Inline]] = [] if in_list and not text else [pf.Str(text)]
+    inlines: Final[list[pf.Inline]] = inline_map.get(text, fallback)
+    bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(inlines)
+    if bg is not None:
+        bg_color, inner = bg
+        return [pf.Div(block_type(*inner), attributes={"bg-color": bg_color})]
+    return [block_type(*inlines)]
+
+
+def _alternatives_group(
+    selected: Sequence[pf.Block],
+    alternatives: Sequence[Alternative],
+    inline_map: InlineMap,
+    *,
+    in_list: bool,
+) -> pf.Div:
+    """Return the :data:`ALTERNATIVES_CLASS` scaffold grouping a vertex's wordings.
+
+    The group holds the *selected* wording's blocks in a :data:`SELECTED_WORDING_CLASS`
+    :class:`~panflute.Div`, followed by one :data:`ALTERNATIVE_WORDING_CLASS`
+    :class:`~panflute.Div` per alternative, in order, each rendered exactly as the selected
+    wording is (see :func:`_wording_blocks`).
+
+    Args:
+        selected: The selected wording's already-rendered blocks.
+        alternatives: The vertex's alternatives, in source order.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        in_list: Whether the group renders inside a list item rather than in document flow.
+
+    Returns:
+        The group :class:`~panflute.Div`.
+    """
+    wordings: Final[list[pf.Div]] = [pf.Div(*selected, classes=[SELECTED_WORDING_CLASS])]
+    wordings.extend(
+        pf.Div(*_wording_blocks(alternative.text, inline_map, in_list=in_list), classes=[ALTERNATIVE_WORDING_CLASS])
+        for alternative in alternatives
+    )
+    return pf.Div(*wordings, classes=[ALTERNATIVES_CLASS])
+
+
 def _build_list_item(
     vertex: TextVertex | TodoVertex,
     vertex_tree: VertexTree,
@@ -545,6 +627,12 @@ def _build_list_item(
     inline content instead.  Under a ``NUMBERED`` layout the item renders undecorated
     (numbering is the marker).
 
+    A text vertex carrying alternatives renders its own body as an :data:`ALTERNATIVES_CLASS`
+    group (see :func:`_alternatives_group`): its selected wording, then each alternative.  The
+    group's selected-wording marker stands where the item's marker was, so the item takes no
+    classification scaffold; its semantic bullet glyph and its badge, when declared, both lead
+    the selected wording's inline content instead, in that order.
+
     Args:
         vertex: The :class:`~guffin.vertex.TextVertex` or :class:`~guffin.model.vertex.TodoVertex`
             to render as a list item.
@@ -570,10 +658,23 @@ def _build_list_item(
         if view is not None and view.source_channel is not None
         else None
     )
+    alternatives: Final[tuple[Alternative, ...] | None] = (
+        vertex.alternatives if isinstance(vertex, TextVertex) and vertex.has_alternatives else None
+    )
+    semantic_glyph: Final[str | None] = BULLET_GLYPH_BY_SEMANTIC[semantic] if semantic is not None else None
     # The semantic holds the marker when there is one, leaving the badge to lead the content;
-    # a lone badge holds the marker itself, so nothing leads the content.
-    marker_glyph: Final[str | None] = BULLET_GLYPH_BY_SEMANTIC[semantic] if semantic is not None else badge
-    badge_glyph: Final[str | None] = badge if semantic is not None else None
+    # a lone badge holds the marker itself, so nothing leads the content.  An item with
+    # alternatives gives the marker to its selected-wording radio marker instead, so every
+    # classification glyph leads the selected wording: the semantic bullet, then the badge.
+    marker_glyph: Final[str | None] = None if alternatives is not None else (semantic_glyph or badge)
+    leading_glyphs: Final[list[str]] = (
+        [glyph for glyph in (semantic_glyph, badge) if glyph is not None]
+        if alternatives is not None
+        else ([badge] if semantic is not None and badge is not None else [])
+    )
+    leading_inlines: Final[list[pf.Inline]] = [
+        inline for glyph in leading_glyphs for inline in (pf.Str(glyph), pf.Space())
+    ]
     text: Final[str] = vertex.text
     content: list[pf.Block]
     if contains_fenced_code_block(text):
@@ -582,22 +683,23 @@ def _build_list_item(
             content = [pf.Plain(pf.Str(checkbox)), *content]
     else:
         inlines: list[pf.Inline] = inline_map.get(text, [pf.Str(text)] if text else [])
-        # The whole-line bg-color span is recognized before the badge leads the content, so a
-        # badge decorates a background-colored line rather than defeating its recognition.
+        # The whole-line bg-color span is recognized before the glyphs lead the content, so a
+        # glyph decorates a background-colored line rather than defeating its recognition.
         bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(inlines)
         if bg is not None:
             bg_color, inner = bg
-            if badge_glyph is not None:
-                inner = [pf.Str(badge_glyph), pf.Space(), *inner]
+            inner = [*leading_inlines, *inner]
             if checkbox is not None:
                 inner = [pf.Str(checkbox), pf.Space(), *inner]
             content = [pf.Div(pf.Plain(*inner), attributes={"bg-color": bg_color})]
         else:
-            if badge_glyph is not None:
-                inlines = [pf.Str(badge_glyph), pf.Space(), *inlines]
+            inlines = [*leading_inlines, *inlines]
             if checkbox is not None:
                 inlines = [pf.Str(checkbox), pf.Space(), *inlines]
             content = [pf.Plain(*inlines)]
+    if alternatives is not None:
+        # The group wraps only the item's own body: nested children appended below sit outside it.
+        content = [_alternatives_group(content, alternatives, inline_map, in_list=True)]
     if marker_glyph is not None:
         # The scaffold wraps only the item's own body: the nested children appended below sit
         # outside it, so the classification decorates this item's line alone.
@@ -1095,18 +1197,12 @@ def _text_vertex_to_blocks(
     Returns:
         A :class:`~panflute.Para` (or block-parsed elements) followed by any child and pill blocks.
     """
-    text: Final[str] = vertex.text
-    para_blocks: list[pf.Block]
-    if contains_fenced_code_block(text):
-        para_blocks = parse_block_md(text)
-    else:
-        text_inlines: Final[list[pf.Inline]] = inline_map.get(text, [pf.Str(text)])
-        bg: Final[tuple[str, list[pf.Inline]] | None] = _extract_bg_color(text_inlines)
-        if bg is not None:
-            bg_color, inner = bg
-            para_blocks = [pf.Div(pf.Para(*inner), attributes={"bg-color": bg_color})]
-        else:
-            para_blocks = [pf.Para(*text_inlines)]
+    selected_blocks: Final[list[pf.Block]] = _wording_blocks(vertex.text, inline_map, in_list=False)
+    para_blocks: Final[list[pf.Block]] = (
+        [_alternatives_group(selected_blocks, vertex.alternatives, inline_map, in_list=False)]
+        if vertex.alternatives
+        else selected_blocks
+    )
     para_blocks.extend(
         build_child_blocks(
             vertex.children or [],
@@ -1747,8 +1843,8 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
     """Collect all text strings from *vertex_tree* and return their parsed inline elements.
 
     Gathers every text string that requires inline Pandoc Markdown parsing —
-    page titles, heading text, block text, image alt text, callout titles, and
-    table cell text — across both :attr:`~guffin.vertex_tree.VertexTree.tree_vertices`
+    page titles, heading text, block text (with its alternatives' texts), image alt text,
+    callout titles, and table cell text — across both :attr:`~guffin.vertex_tree.VertexTree.tree_vertices`
     and :attr:`~guffin.vertex_tree.VertexTree.ref_vertices`, then delegates to
     :func:`parse_inline_md` for a single batch Pandoc subprocess call.  Including
     the referenced (stub) vertices ensures the title or text used as a link's
@@ -1772,6 +1868,7 @@ def build_inline_map(vertex_tree: VertexTree) -> InlineMap:
                 texts.append(t)
             case TextVertex(text=t):
                 texts.append(t)
+                texts.extend(alternative.text for alternative in vertex.alternatives or ())
             case TodoVertex(text=t) if t:
                 texts.append(t)
             case ImageVertex(alt_text=t) if t is not None:

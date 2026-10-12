@@ -1,5 +1,6 @@
 """Unit tests for guffin.render.md_rendering."""
 
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final
@@ -9,6 +10,7 @@ from conftest import FIXTURES_MD_DIR, article1_node_tree
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.revision import Revision
+from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
@@ -567,6 +569,44 @@ class TestCodeSourceRendering:
         assert "Source:" in result
         assert "https://github.com/psf/requests/blob/0d9ca427f7d7dbe92694284d4a6249178255036e/" in result
         assert "<div" not in result
+
+
+class TestAlternativesNotYetRendered:
+    """Markdown does not present alternatives yet: each block shows its selected wording alone."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+
+    def _render(self, tmp_path: Path, render_alternatives: bool) -> str:
+        page = PageVertex(uid="page00001", title="Doc", children=["versed001"])
+        versed = TextVertex(
+            uid="versed001",
+            text="the selected wording",
+            alternatives=(Alternative(uid="altuid001", text="another wording"),),
+        )
+        render(
+            RenderBundle(content=VertexTree(tree_vertices=[page, versed]), view={}),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(
+                output_dir=tmp_path, should_bundle=False, render_alternatives=render_alternatives
+            ),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_default_renders_selected_wording_only(self, tmp_path: Path) -> None:
+        """By default only the selected wording renders, with no group scaffold."""
+        result = self._render(tmp_path, render_alternatives=False)
+        assert "the selected wording" in result
+        assert "another wording" not in result
+        assert "<div" not in result
+
+    def test_request_is_reported_not_silently_ignored(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+        """Asking for alternatives warns that Markdown cannot present them yet, and renders the selected wording."""
+        with caplog.at_level(logging.WARNING):
+            result = self._render(tmp_path, render_alternatives=True)
+        assert "another wording" not in result
+        assert any("render_alternatives is not yet supported for Markdown" in r.getMessage() for r in caplog.records)
 
 
 def _parts_book_bundle() -> RenderBundle:

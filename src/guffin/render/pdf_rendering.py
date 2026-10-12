@@ -64,6 +64,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import (
     VertexTree,
+    drop_alternatives,
     drop_attribute_assignments,
     drop_code_sources,
     drop_root_preamble,
@@ -99,6 +100,7 @@ _CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.render.callout_icons"
 _TEMPLATE_ENTRY: Final[str] = "bergfink.typst"
 _USER_CFG_FILENAME: Final[str] = "user_cfg.typ"
 # Lua-filter filenames, resolved against the bundled typst_resources directory at render time.
+_TYPST_ALTERNATIVES_FILTER: Final[str] = "typst_alternatives.lua"
 _TYPST_BULLET_FILTER: Final[str] = "typst_bullet.lua"
 _TYPST_CALLOUT_FILTER: Final[str] = "typst_callout.lua"
 _TYPST_CAPTION_FILTER: Final[str] = "typst_caption.lua"
@@ -145,12 +147,14 @@ def _callout_colors_env() -> str:
 def _typst_filter_args(bundled_dir: Path) -> list[str]:
     """Return the ``--lua-filter`` arguments applying the bundled Typst filters, in evaluation order.
 
-    The single declaration of the filter chain: the inline and structural transforms first (the
-    keep-with-next transform right after the list-paragraph one, so it sees a list item's
+    The single declaration of the filter chain: the alternatives transform first (it wraps each
+    in-flow alternatives group's native wordings in raw Typst, so it must reach a group before
+    any transform serializes the container holding it), then the inline and structural transforms
+    (the keep-with-next transform right after the list-paragraph one, so it sees a list item's
     promoted lead-in paragraph), the fancy-quote and code-source transforms after them (their
     content is serialized once rewritten), and the semantic-bullet transform last — it serializes
-    classified list items' bodies to Typst, so every earlier transform must already have
-    rewritten them.
+    classified and alternatives-bearing list items' bodies to Typst, so every earlier transform
+    must already have rewritten them.
 
     Args:
         bundled_dir: The bundled Typst resources directory holding the filter files.
@@ -159,6 +163,7 @@ def _typst_filter_args(bundled_dir: Path) -> list[str]:
         One ``--lua-filter=<path>`` argument per bundled filter, in application order.
     """
     return [
+        f"--lua-filter={bundled_dir / _TYPST_ALTERNATIVES_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_CALLOUT_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_COLOR_SPAN_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_LIST_PARA_FILTER}",
@@ -593,9 +598,14 @@ def render(
     numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # Alternative wordings render only on explicit request; otherwise each block shows its
+    # selected wording alone.
+    alternated: Final[VertexTree] = sourced if options.render_alternatives else drop_alternatives(sourced)
     # Authored page-break directives are honored only when the profile's policy says so; a
     # policy that fixes its own pagination has the tags dropped (each drop logged).
-    paginated: Final[VertexTree] = sourced if profile.structural_policy.honor_page_breaks else drop_page_breaks(sourced)
+    paginated: Final[VertexTree] = (
+        alternated if profile.structural_policy.honor_page_breaks else drop_page_breaks(alternated)
+    )
     # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
     # promoted to part level so the Typst outline (nested by heading level) cannot adopt them
     # into the preceding part.

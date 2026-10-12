@@ -50,7 +50,7 @@ from guffin.model.publishing_semantics import (
     strip_element_numbers,
 )
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex_tree import VertexTree, drop_attribute_assignments, drop_code_sources
+from guffin.model.vertex_tree import VertexTree, drop_alternatives, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
 from guffin.render.md_post_processing import indent_fenced_blank_lines, strip_list_separator_comments
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
@@ -294,10 +294,17 @@ def render(
     numbered: Final[VertexTree] = attributed if options.emit_element_numbers else strip_element_numbers(attributed)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # Markdown does not present alternative wordings yet: each block shows its selected wording
+    # alone, and a request for alternatives is reported rather than silently ignored.
+    if options.render_alternatives:
+        logger.warning("render_alternatives is not yet supported for Markdown output; rendering selected wordings only")
+    alternated: Final[VertexTree] = drop_alternatives(sourced)
     # Authored page-break directives are honored only when the profile's policy says so; a
     # policy that fixes its own pagination has the tags dropped (each drop logged).  GFM output
     # expresses no page break either way — the gate is kept for policy uniformity across formats.
-    paginated: Final[VertexTree] = sourced if profile.structural_policy.honor_page_breaks else drop_page_breaks(sourced)
+    paginated: Final[VertexTree] = (
+        alternated if profile.structural_policy.honor_page_breaks else drop_page_breaks(alternated)
+    )
     # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
     # promoted to part level so a ToC built from heading levels cannot nest them under the
     # preceding part.

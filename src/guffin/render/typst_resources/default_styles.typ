@@ -372,3 +372,49 @@
     }
   ]
 }
+
+// Alternatives (export-roam-tree --render-alternatives): a block's selected wording and its
+// alternative wordings, rendered as one group.  A thin dashed rail binds the group —
+// deliberately unlike the block quote's solid 3pt bar — and a radio marker leads each wording,
+// filled for the selected one and hollow for each alternative, so which wording is in force never
+// rests on colour alone.  The selected wording reads as ordinary body text; each alternative is
+// muted and set a touch smaller, and never italic, so emphasis inside it survives.
+// typst_alternatives.lua marshals a group in flow into alternatives-group; typst_bullet.lua lays
+// out a list holding a versioned item as a grid built from the same pieces.
+#let alternative-rail = (paint: luma(185), thickness: 0.8pt, dash: (2pt, 2pt))
+#let alternative-muted = luma(115)
+
+// The radio marker, drawn from primitives (no font glyph, so no tofu): a ring with a centre dot
+// for the selected wording, a muted bare ring for an alternative.
+#let alternative-marker(selected) = box(baseline: 0.12em, {
+  let diameter = 0.62em
+  if selected {
+    circle(radius: diameter / 2, stroke: 0.7pt + black, inset: 0pt,
+      align(center + horizon, circle(radius: diameter / 4.2, fill: black, stroke: none)))
+  } else {
+    circle(radius: diameter / 2, stroke: 0.7pt + alternative-muted)
+  }
+})
+
+// An alternative wording's text treatment.
+#let alternative-wording(body) = text(size: 0.93em, fill: alternative-muted, body)
+
+// A group in the document flow: the selected wording, then each alternative, stacked, each led
+// by its marker.  With hang (a group in the body's own flow), the rail and markers hang into the
+// left margin so the selected wording keeps the body's left edge; without it (a group nested in a
+// list item or another container, whose margin belongs to that container), the whole group sits
+// inside the text column.
+#let alternatives-group(hang: true, selected, ..alternatives) = {
+  let group = block(
+    width: 100%,
+    stroke: (left: alternative-rail),
+    inset: (left: 0.35em, y: 0.15em),
+    grid(
+      columns: (1.25em, 1fr),
+      row-gutter: 0.55em,
+      alternative-marker(true), selected,
+      ..alternatives.pos().map(wording => (alternative-marker(false), alternative-wording(wording))).flatten(),
+    ),
+  )
+  if hang { pad(left: -1.6em, group) } else { group }
+}

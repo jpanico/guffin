@@ -22,6 +22,7 @@ from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.common.table import Table, TableStyle
+from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
@@ -50,10 +51,13 @@ from guffin.render.date_format import DateFormat
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import pandoc_to_json, parse_inline_md
 from guffin.render.pandoc_rendering import (
+    ALTERNATIVE_WORDING_CLASS,
+    ALTERNATIVES_CLASS,
     HEADING_LINK_CLASS,
     MARKER_GLYPH_ATTRIBUTE,
     PDF_PLACEMENT_ATTRIBUTE,
     PDF_PLACEMENT_UNSET,
+    SELECTED_WORDING_CLASS,
     SEMANTIC_ATTRIBUTE,
     _attribute_assignment_text,
     _block_ref_target,
@@ -1466,6 +1470,87 @@ class TestSemanticBulletStamping:
         item_head = list(list(blocks[0].content)[0].content)[0]
         assert isinstance(item_head, pf.Plain)
         assert pf.stringify(item_head) == "the classified block"
+
+
+# ---------------------------------------------------------------------------
+# TestAlternativesGroup
+# ---------------------------------------------------------------------------
+
+
+class TestAlternativesGroup:
+    """A text vertex carrying alternatives renders its body as a scaffold group of its wordings."""
+
+    _ALTERNATIVES: tuple[Alternative, ...] = (
+        Alternative(uid="altuid001", text="the *first* other wording"),
+        Alternative(uid="altuid002", text="the **second** other wording"),
+    )
+
+    @classmethod
+    def _doc(cls, page_layout: ChildrenLayout | None = None, view: VertexView | None = None) -> pf.Doc:
+        page = PageVertex(uid="page00001", title="P", children=["plain0001", "versed001"])
+        plain = TextVertex(uid="plain0001", text="a plain sibling")
+        versed = TextVertex(uid="versed001", text="the selected wording", alternatives=cls._ALTERNATIVES)
+        views: ViewMap = {}
+        if page_layout is not None:
+            views["page00001"] = VertexView(children_layout=page_layout)
+        if view is not None:
+            views["versed001"] = view
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, plain, versed]), {}, views)
+        return doc
+
+    @staticmethod
+    def _wordings(group: pf.Div) -> list[tuple[str, str]]:
+        """Each wording Div's class and text, in order."""
+        return [(div.classes[0], pf.stringify(div).strip()) for div in group.content]
+
+    def test_document_flow_groups_selected_then_alternatives(self) -> None:
+        """In document flow the group holds the selected wording, then each alternative, as paragraphs."""
+        blocks = list(self._doc(ChildrenLayout.DOCUMENT).content)
+        group = blocks[1]
+        assert isinstance(group, pf.Div)
+        assert group.classes == [ALTERNATIVES_CLASS]
+        assert self._wordings(group) == [
+            (SELECTED_WORDING_CLASS, "the selected wording"),
+            (ALTERNATIVE_WORDING_CLASS, "the first other wording"),
+            (ALTERNATIVE_WORDING_CLASS, "the second other wording"),
+        ]
+        assert all(isinstance(list(div.content)[0], pf.Para) for div in group.content)
+
+    def test_alternatives_inline_markup_is_parsed(self) -> None:
+        """An alternative's Markdown is parsed like the selected text's, not left literal."""
+        group = list(self._doc(ChildrenLayout.DOCUMENT).content)[1]
+        first_alternative = list(group.content)[1]
+        assert any(isinstance(element, pf.Emph) for element in list(first_alternative.content)[0].content)
+
+    def test_list_item_body_is_the_group(self) -> None:
+        """In a bullet list the versioned item's body is the group, its wordings as plain item text."""
+        bullet_list = list(self._doc().content)[0]
+        assert isinstance(bullet_list, pf.BulletList)
+        group = list(list(bullet_list.content)[1].content)[0]
+        assert isinstance(group, pf.Div)
+        assert group.classes == [ALTERNATIVES_CLASS]
+        assert all(isinstance(list(div.content)[0], pf.Plain) for div in group.content)
+
+    def test_classification_glyphs_lead_the_selected_wording(self) -> None:
+        """The radio marker holds the item's marker, so the semantic glyph then the badge lead the text."""
+        bullet_list = list(
+            self._doc(view=VertexView(semantic=Semantic.RESULT, source_channel=SourceChannel.EMAIL)).content
+        )[0]
+        group = list(list(bullet_list.content)[1].content)[0]
+        assert isinstance(group, pf.Div)
+        assert MARKER_GLYPH_ATTRIBUTE not in group.attributes
+        assert self._wordings(group)[0] == (SELECTED_WORDING_CLASS, "⇒ 📨 the selected wording")
+        # The alternatives carry no classification glyph.
+        assert self._wordings(group)[1] == (ALTERNATIVE_WORDING_CLASS, "the first other wording")
+
+    def test_vertex_without_alternatives_renders_no_group(self) -> None:
+        """A vertex with no alternatives renders exactly as before — no group scaffold anywhere."""
+        page = PageVertex(uid="page00001", title="P", children=["plain0001"])
+        tree = VertexTree(tree_vertices=[page, TextVertex(uid="plain0001", text="a plain sibling")])
+        doc, _ = vertex_tree_to_pandoc(tree, {}, {})
+        found: list[pf.Div] = []
+        doc.walk(lambda elem, _doc: found.append(elem) if isinstance(elem, pf.Div) else None)
+        assert found == []
 
 
 # ---------------------------------------------------------------------------

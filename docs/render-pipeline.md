@@ -47,7 +47,9 @@ flowchart LR
   `suppress_attributes` option), `strip_element_numbers()` (unless `emit_element_numbers` — a
   heading's `[1.2.3]` lead is authoring bookkeeping, not content, so exported output hides it by
   default), `drop_code_sources()` (unless `emit_code_sources` — clears each code block's provenance
-  so no attribution line renders), `drop_page_breaks()` (the profile's `honor_page_breaks`
+  so no attribution line renders), `drop_alternatives()` (unless `render_alternatives` and the
+  format presents alternatives — today PDF only; EPUB and Markdown always clear them, warning when
+  asked), `drop_page_breaks()` (the profile's `honor_page_breaks`
   directive, when it declines), `promote_non_body_sections()` (parts books only), and
   `fetch_and_enrich_assets()` (Firebase Storage assets + `enrich_image_original_sizes()` /
   `enrich_pdf_original_file_names()`); the two paginated renderers additionally apply
@@ -448,6 +450,7 @@ is selected by the content itself: `cli/common.resolve_profile` upgrades a `--ty
 | `honor_page_breaks` (profile policy) + `page-break:: before` (**content**) | 0 (prepare) gate, 1 (build) class stamp, 2 (convert) mapping | all renderers → `drop_page_breaks` when declined; `_heading_semantics` → `typst_page_break.lua` / `epub.css` | yes (minimal) |
 | `publish:: false` (**content**) | 0 (prepare) | all renderers → `drop_unpublished` | no |
 | element numbers, code-source attributions (**options**: `emit_element_numbers` / `emit_code_sources`) | 0 (prepare) | all renderers → `strip_element_numbers` / `drop_code_sources` | no |
+| alternative wordings (**option** `render_alternatives` + **content**: a vertex's `alternatives`) | 0 (prepare) gate, 1 (build) scaffold, 2 (convert) mapping | all renderers → `drop_alternatives` unless presented; `pandoc_rendering` → `typst_alternatives.lua` / `typst_bullet.lua` (PDF only) | yes (PDF: two filters + template helpers) |
 | `Semantic` / `SourceChannel` classification (**content**: the `ViewMap`) | 1 (build) badge + scaffold, 2 (convert) mapping | `pandoc_rendering` → `gfm_bullet.lua` / `typst_bullet.lua` / `epub_bullet.lua` | yes (one filter each) |
 
 

@@ -9,6 +9,7 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
@@ -25,6 +26,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLink, VertexLinkKind
 from guffin.model.vertex_tree import (
     VertexTree,
+    drop_alternatives,
     drop_attribute_assignments,
     drop_code_sources,
     drop_root_preamble,
@@ -140,6 +142,31 @@ class TestDropAttributeAssignments:
         assert new_root.attribute_assignments is None
         assert new_root.children == ["keep00001"]
         assert isinstance(new_root, TextVertex) and new_root.text == "root"
+
+
+class TestDropAlternatives:
+    """Tests for drop_alternatives()."""
+
+    _ALTERNATIVES: Final[tuple[Alternative, ...]] = (Alternative(uid="altuid001", text="another wording"),)
+
+    def test_clears_alternatives_in_tree_and_ref_vertices(self) -> None:
+        """Text vertices lose their alternatives in both vertex collections; the selected text survives."""
+        tree_text: Final[TextVertex] = TextVertex(uid="text00001", text="selected", alternatives=self._ALTERNATIVES)
+        ref_text: Final[TextVertex] = TextVertex(uid="text00002", text="also selected", alternatives=self._ALTERNATIVES)
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[tree_text], ref_vertices=[ref_text])
+        result: Final[VertexTree] = drop_alternatives(tree)
+        cleared_tree_text = result.tree_vertices[0]
+        cleared_ref_text = result.ref_vertices[0]
+        assert isinstance(cleared_tree_text, TextVertex) and cleared_tree_text.alternatives is None
+        assert isinstance(cleared_ref_text, TextVertex) and cleared_ref_text.alternatives is None
+        assert cleared_tree_text.text == "selected"
+
+    def test_vertices_without_alternatives_pass_through(self) -> None:
+        """Text vertices without alternatives, and other vertex types, are untouched."""
+        text: Final[TextVertex] = TextVertex(uid="text00001", text="prose")
+        code: Final[CodeBlockVertex] = CodeBlockVertex(uid="code00001", code="print(1)", language="python")
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[text, code])
+        assert drop_alternatives(tree) == tree
 
 
 class TestDropCodeSources:

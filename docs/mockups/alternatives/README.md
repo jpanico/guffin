@@ -2,8 +2,9 @@
 
 Standalone mockups, made outside the guffin code, of how `export-roam-tree --render-alternatives`
 should render a text block's alternative wordings (Roam's block versions) in each output format.
-The option is already plumbed onto `RenderOptions.render_alternatives`, but no renderer acts on it
-yet. These files are the visual reference for that implementation. Each mockup shows every
+The option is plumbed onto `RenderOptions.render_alternatives`. The PDF renderer implements the
+chosen treatment (variant C in flow, L1 in bullet lists); EPUB and Markdown don't present
+alternatives yet. These files are the visual reference for the implementations. Each mockup shows every
 variant considered, including the rejected ones, between ordinary paragraphs or list items. The
 chosen variant is recorded below.
 

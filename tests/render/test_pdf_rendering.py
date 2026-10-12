@@ -16,6 +16,7 @@ import pytest
 from conftest import FIXTURES_PDF_DIR, article3_node_tree, asset_storage
 from pypdf import PdfReader
 
+from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
@@ -517,6 +518,79 @@ class TestTypstBulletFilter:
 
 
 @pytest.mark.pandoc
+class TestTypstAlternativesFilters:
+    """typst_alternatives.lua and typst_bullet.lua render alternatives groups per their placement.
+
+    A group in the body's own flow hangs its rail and markers into the margin; a group nested in
+    another container sits inside the text column; a bullet-list item's group takes the item's
+    marker slot, its list rebuilt as a grid.  The filters run in their production order.
+    """
+
+    _ALTERNATIVES: tuple[Alternative, ...] = (
+        Alternative(uid="altuid001", text="the *first* other wording"),
+        Alternative(uid="altuid002", text="the second other wording"),
+    )
+
+    @classmethod
+    def _typst_for(cls, page_layout: ChildrenLayout | None) -> str:
+        page = PageVertex(uid="page00001", title="Doc", children=["plain0001", "versed001", "plain0002"])
+        tree = VertexTree(
+            tree_vertices=[
+                page,
+                TextVertex(uid="plain0001", text="before the group"),
+                TextVertex(uid="versed001", text="the selected wording", alternatives=cls._ALTERNATIVES),
+                TextVertex(uid="plain0002", text="after the group"),
+            ]
+        )
+        views: ViewMap = {} if page_layout is None else {"page00001": VertexView(children_layout=page_layout)}
+        doc, _ = vertex_tree_to_pandoc(tree, {}, views)
+        resources = _typst_resources_dir()
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[
+                f"--lua-filter={resources / 'typst_alternatives.lua'}",
+                f"--lua-filter={resources / 'typst_bullet.lua'}",
+            ],
+        )
+
+    def test_group_in_flow_hangs_into_the_margin(self) -> None:
+        """A top-level group calls the template helper with hang on, selected wording first."""
+        typst = self._typst_for(ChildrenLayout.DOCUMENT)
+        assert "#alternatives-group(hang: true, [" in typst
+        assert typst.index("the selected wording") < typst.index("first") < typst.index("the second other wording")
+        assert typst.count("], [") == 2
+        # The wordings stay native content, so their markup is Typst emphasis, not literal asterisks.
+        assert "#emph[first]" in typst
+
+    def test_group_in_a_numbered_list_sits_inside_the_column(self) -> None:
+        """A group nested in a numbered item keeps the number as its marker and does not hang."""
+        typst = self._typst_for(ChildrenLayout.NUMBERED)
+        assert "#alternatives-group(hang: false, [" in typst
+        assert "hang: true" not in typst
+
+    def test_group_in_a_bullet_list_takes_the_marker_slot(self) -> None:
+        """A bullet item's group becomes radio-marked grid rows under a rail; siblings keep the bullet."""
+        typst = self._typst_for(None)
+        assert "#alternatives-group" not in typst
+        assert "columns: (3pt, 3pt, auto, 1fr)" in typst
+        assert 'none, none, "•", [before the group' in typst
+        assert "none, none, alternative-marker(true), [the selected wording" in typst
+        assert typst.count("alternative-marker(false), alternative-wording[") == 2
+        # The rail spans exactly the group's three rows (rows 1-3; the siblings are rows 0 and 4).
+        assert "grid.vline(x: 1, start: 1, end: 4, stroke: alternative-rail)" in typst
+        assert "row-gutter: (0.65em, 0.4em, 0.4em, 0.65em,)" in typst
+
+    def test_scaffold_never_reaches_the_output(self) -> None:
+        """No scaffold class survives into the Typst source, whatever the placement."""
+        for layout in (ChildrenLayout.DOCUMENT, ChildrenLayout.NUMBERED, None):
+            typst = self._typst_for(layout)
+            assert "selected-wording" not in typst
+            assert 'alternative-wording"' not in typst
+
+
+@pytest.mark.pandoc
 class TestTypstTodoFilter:
     """typst_todo.lua replaces a TODO item's leading checkbox glyph with a drawn Typst box.
 
@@ -778,3 +852,48 @@ class TestHeadingLinkPdf:
         prose_page = unlinked_pdf.pages[self._page_index_containing(unlinked_pdf, "As Second explains.")]
         destinations = [annot.get_object().get("/Dest") for annot in prose_page.get("/Annots") or []]
         assert heading_anchor("head0002b") not in destinations
+
+
+@pytest.mark.pandoc
+@pytest.mark.skipif(shutil.which("typst") is None, reason="requires typst on PATH")
+class TestAlternativesPdf:
+    """Alternatives render in the compiled PDF only on explicit request, in flow and in a bullet list."""
+
+    @staticmethod
+    def _text(tmp_path_factory: pytest.TempPathFactory, render_alternatives: bool) -> str:
+        """Render a page holding one versioned paragraph and one versioned list item; return the PDF's text."""
+        alternatives = (Alternative(uid="altuid001", text="another wording"),)
+        tree = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["versed001", "host00001"]),
+                TextVertex(uid="versed001", text="the selected paragraph", alternatives=alternatives),
+                TextVertex(uid="host00001", text="A list:", children=["versed002"]),
+                TextVertex(uid="versed002", text="the selected item", alternatives=alternatives),
+            ]
+        )
+        views: ViewMap = {
+            "page00001": VertexView(children_layout=ChildrenLayout.DOCUMENT),
+            "host00001": VertexView(children_layout=ChildrenLayout.BULLET),
+        }
+        out_dir = tmp_path_factory.mktemp("alternatives")
+        render(
+            RenderBundle(content=tree, view=views),
+            profile=BookProfile(),
+            filename_stem="doc",
+            api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+            options=PdfRenderOptions(output_dir=out_dir, render_alternatives=render_alternatives),
+        )
+        return "\n".join(page.extract_text() or "" for page in PdfReader(out_dir / "doc.pdf").pages)
+
+    def test_requested_alternatives_render(self, tmp_path_factory: pytest.TempPathFactory) -> None:
+        """With render_alternatives each versioned block shows its alternative after its selected wording."""
+        text = self._text(tmp_path_factory, render_alternatives=True)
+        assert text.count("another wording") == 2
+        assert text.index("the selected paragraph") < text.index("another wording")
+
+    def test_default_renders_selected_wordings_only(self, tmp_path_factory: pytest.TempPathFactory) -> None:
+        """By default only the selected wordings render."""
+        text = self._text(tmp_path_factory, render_alternatives=False)
+        assert "the selected paragraph" in text
+        assert "the selected item" in text
+        assert "another wording" not in text

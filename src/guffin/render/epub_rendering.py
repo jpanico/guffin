@@ -58,6 +58,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import ImageVertex
 from guffin.model.vertex_tree import (
     VertexTree,
+    drop_alternatives,
     drop_attribute_assignments,
     drop_code_sources,
     drop_root_preamble,
@@ -344,9 +345,16 @@ def render(
     numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
+    # EPUB does not present alternative wordings yet: each block shows its selected wording alone,
+    # and a request for alternatives is reported rather than silently ignored.
+    if options.render_alternatives:
+        logger.warning("render_alternatives is not yet supported for EPUB output; rendering selected wordings only")
+    alternated: Final[VertexTree] = drop_alternatives(sourced)
     # Authored page-break directives are honored only when the profile's policy says so; a
     # policy that fixes its own pagination has the tags dropped (each drop logged).
-    paginated: Final[VertexTree] = sourced if profile.structural_policy.honor_page_breaks else drop_page_breaks(sourced)
+    paginated: Final[VertexTree] = (
+        alternated if profile.structural_policy.honor_page_breaks else drop_page_breaks(alternated)
+    )
     # In a parts book, explicit front-/back-matter sections at the root stand outside the parts:
     # promoted to part level so the nav (nested by heading level) cannot adopt them into the
     # preceding part.

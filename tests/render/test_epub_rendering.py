@@ -6,6 +6,7 @@ tests, so the (slow) Pandoc subprocess is spawned per artifact rather than per a
 
 import hashlib
 import json
+import logging
 import zipfile
 from pathlib import Path
 from typing import Final
@@ -20,6 +21,7 @@ from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
+from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
@@ -749,3 +751,28 @@ class TestHeadingLinkEpub:
         chapters = [xhtml for name, xhtml in documents.items() if Path(name).name != "nav.xhtml"]
         assert not any(f"#{anchor}" in xhtml for xhtml in chapters)
         assert any("As <em>Second</em> explains." in xhtml for xhtml in chapters)
+
+
+class TestAlternativesNotYetRendered:
+    """EPUB does not present alternatives yet: each block shows its selected wording alone."""
+
+    def test_request_is_reported_not_silently_ignored(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+        """Asking for alternatives warns that EPUB cannot present them yet, and renders the selected wording."""
+        page = PageVertex(uid="page00001", title="Doc", children=["versed001"])
+        versed = TextVertex(
+            uid="versed001",
+            text="the selected wording",
+            alternatives=(Alternative(uid="altuid001", text="another wording"),),
+        )
+        with caplog.at_level(logging.WARNING):
+            render(
+                RenderBundle(content=VertexTree(tree_vertices=[page, versed])),
+                profile=ArticleProfile(),
+                filename_stem="doc",
+                api_endpoint=_ENDPOINT,
+                options=EpubRenderOptions(output_dir=tmp_path, render_alternatives=True),
+            )
+        text = _all_text(tmp_path / "doc.epub")
+        assert "the selected wording" in text
+        assert "another wording" not in text
+        assert any("render_alternatives is not yet supported for EPUB" in r.getMessage() for r in caplog.records)
