@@ -305,7 +305,8 @@ export-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token 
   [--format markdown|pdf|epub] [--type article|book|manuscript] [--bundle|--no-bundle] \
   [--cache-dir <dir>] [--template-dir <dir>] [--suppress-attributes] [--colophon|--no-colophon] \
   [--preamble|--no-preamble] [--numbering|--no-numbering] [--heading-links|--no-heading-links] \
-  [--element-numbers|--no-element-numbers] [--code-sources|--no-code-sources] [--verify-code-sources|--no-verify-code-sources] \
+  [--element-numbers|--no-element-numbers] [--code-sources|--no-code-sources] [--render-alternatives|--no-render-alternatives] \
+  [--verify-code-sources|--no-verify-code-sources] \
   [--default-pdf-render <placement>] [--daily-note-format roam-long|iso|abbrev-month-day]
 ```
 
@@ -373,6 +374,7 @@ The `--preamble/--no-preamble` and `--numbering/--no-numbering` flags (PDF/EPUB 
 | `--heading-links/--no-heading-links` | | all | Render a block reference to a heading as a link that jumps to the heading (on by default) or as the heading's text in italics, without a link. In Markdown, where GFM has no heading-ID syntax, the link targets the GitHub-style slug of the heading's text (the identifier GitHub, VS Code, and Typora derive themselves), falling back to an empty `<a id="vertex-<uid>"></a>` line placed above the heading only when that slug is empty or shared with another heading. |
 | `--element-numbers/--no-element-numbers` | | all | Keep/strip internal element numbers (a heading's `[1.2.3]` lead); stripped by default. |
 | `--code-sources/--no-code-sources` | | all | Render/omit each sourced code block's GitHub attribution line (from its `code-source::` tag); omitted by default. |
+| `--render-alternatives/--no-render-alternatives` | | all | Render each block's alternative wordings (its other Roam versions) alongside its selected wording; only the selected wording by default. |
 | `--verify-code-sources/--no-verify-code-sources` | | all | Verify every `code-source::`-tagged code block against GitHub (**on by default**); any drift, local modification, or fetch failure aborts the export with exit 1. `--no-verify-code-sources` is the offline escape hatch. |
 | `--default-pdf-render` | | all | Placement an *untagged* PDF embed resolves to (e.g. `external-link`), overriding the built-in format/type default; an embed's own `pdf-render::` tag still wins. |
 | `--daily-note-format` | | all | How a daily-note-page reference renders its date: `roam-long` (default), `iso`, `abbrev-month-day`. |
@@ -396,6 +398,7 @@ export GUFFIN_NUMBER_SECTIONS=false          # optional: backs --numbering/--no-
 export GUFFIN_HEADING_LINKS=false            # optional: backs --heading-links/--no-heading-links
 export GUFFIN_ELEMENT_NUMBERS=1              # optional: backs --element-numbers (keep the [1.2.3] leads)
 export GUFFIN_CODE_SOURCES=1                 # optional: backs --code-sources (render GitHub attribution lines)
+export GUFFIN_RENDER_ALTERNATIVES=1          # optional: backs --render-alternatives (render alternative wordings)
 export GUFFIN_VERIFY_CODE_SOURCES=0          # optional: backs --no-verify-code-sources (the offline path)
 export GUFFIN_GITHUB_TOKEN=<token>           # optional: raises the GitHub API rate limit for verification
 export GUFFIN_DAILY_NOTE_FORMAT=iso          # optional: backs --daily-note-format

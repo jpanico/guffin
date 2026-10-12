@@ -88,7 +88,8 @@ each is a different axis:
 make them the same kind of thing:
 
 - `RenderOptions` base fields (`output_dir`, `cache_dir`, `dump_pandoc_ast`, `suppress_attributes`,
-  `emit_colophon`, `emit_element_numbers`, `emit_code_sources`, `daily_note_format`)
+  `emit_colophon`, `emit_element_numbers`, `emit_code_sources`, `render_alternatives`,
+  `daily_note_format`)
   are render-**operation** knobs — they only exist *because* you are rendering.
 - `ProjectProfile` describes the **work itself** (its kind plus bibliographic identity), which is
   invariant across formats and across render operations. A book is a book whether you render it to

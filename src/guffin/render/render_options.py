@@ -72,6 +72,8 @@ class RenderOptions(BaseModel):
             authoring bookkeeping, not content.
         emit_code_sources: When ``True``, render each sourced code block's GitHub attribution
             line below it; ``False`` (default) omits the attributions.
+        render_alternatives: When ``True``, render the alternative wordings a vertex carries
+            alongside its selected wording; ``False`` (default) renders the selected wording only.
         default_pdf_render: The placement an *untagged* PDF embed resolves to, overriding the
             built-in format/bundle/type default matrix
             (:func:`~guffin.render.pdf_placement.default_pdf_render`); ``None`` (default) defers
@@ -105,6 +107,9 @@ class RenderOptions(BaseModel):
     emit_code_sources: bool = Field(
         default=False, description="Render each sourced code block's GitHub attribution line below it."
     )
+    render_alternatives: bool = Field(
+        default=False, description="Render a vertex's alternative wordings alongside its selected wording."
+    )
     default_pdf_render: PdfRenderPlacement | None = Field(
         default=None, description="Placement an untagged PDF embed resolves to; None defers to the built-in default."
     )
@@ -128,6 +133,7 @@ class RenderOptions(BaseModel):
         emit_colophon: bool = False,
         emit_element_numbers: bool = False,
         emit_code_sources: bool = False,
+        render_alternatives: bool = False,
         include_preamble: bool | None = None,
         number_sections: bool | None = None,
         heading_links: bool = True,
@@ -154,6 +160,8 @@ class RenderOptions(BaseModel):
                 output; ``False`` (default) strips them.
             emit_code_sources: Render each sourced code block's GitHub attribution line below it;
                 ``False`` (default) omits the attributions.
+            render_alternatives: Render a vertex's alternative wordings alongside its selected
+                wording; ``False`` (default) renders the selected wording only.
             include_preamble: PDF/EPUB-only; keep the export root's loose preamble (``True``), drop
                 it (``False``), or defer to the project profile's policy (``None``, default).
             number_sections: PDF/EPUB-only; number the headings (``True``), turn all heading
@@ -179,6 +187,7 @@ class RenderOptions(BaseModel):
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
                     emit_code_sources=emit_code_sources,
+                    render_alternatives=render_alternatives,
                     default_pdf_render=default_pdf_render,
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
@@ -194,6 +203,7 @@ class RenderOptions(BaseModel):
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
                     emit_code_sources=emit_code_sources,
+                    render_alternatives=render_alternatives,
                     default_pdf_render=default_pdf_render,
                     daily_note_format=daily_note_format,
                     include_preamble=include_preamble,
@@ -210,6 +220,7 @@ class RenderOptions(BaseModel):
                     emit_colophon=emit_colophon,
                     emit_element_numbers=emit_element_numbers,
                     emit_code_sources=emit_code_sources,
+                    render_alternatives=render_alternatives,
                     default_pdf_render=default_pdf_render,
                     daily_note_format=daily_note_format,
                     heading_links=heading_links,

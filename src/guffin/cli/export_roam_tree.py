@@ -272,6 +272,18 @@ def main(
             ),
         ),
     ] = False,
+    render_alternatives: Annotated[
+        bool,
+        typer.Option(
+            "--render-alternatives/--no-render-alternatives",
+            envvar="GUFFIN_RENDER_ALTERNATIVES",
+            help=(
+                "When enabled, renders the alternative wordings a block carries (its other "
+                "versions) alongside its selected wording. Disabled by default: only the "
+                "selected wording appears in every format's output."
+            ),
+        ),
+    ] = False,
     verify_code_sources_enabled: Annotated[
         bool,
         typer.Option(
@@ -380,6 +392,7 @@ def main(
         emit_colophon=colophon,
         emit_element_numbers=element_numbers,
         emit_code_sources=code_sources,
+        render_alternatives=render_alternatives,
         include_preamble=preamble,
         number_sections=numbering,
         heading_links=heading_links,

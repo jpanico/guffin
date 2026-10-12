@@ -609,6 +609,18 @@ class TestExportRoamTreeCodeSources:
         assert _options_for_flags(tmp_path).emit_code_sources is False
 
 
+class TestExportRoamTreeRenderAlternatives:
+    """The --render-alternatives/--no-render-alternatives flag plumbs render_alternatives onto the options."""
+
+    def test_render_alternatives_flag_sets_option(self, tmp_path: pathlib.Path) -> None:
+        """--render-alternatives sets render_alternatives on the options."""
+        assert _options_for_flags(tmp_path, "--render-alternatives").render_alternatives is True
+
+    def test_default_omits_alternatives(self, tmp_path: pathlib.Path) -> None:
+        """Without the flag, render_alternatives defaults off."""
+        assert _options_for_flags(tmp_path).render_alternatives is False
+
+
 class TestExportRoamTreeDefaultPdfRender:
     """The --default-pdf-render flag plumbs the untagged-embed placement override onto the options.
 
