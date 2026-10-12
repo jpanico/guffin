@@ -104,17 +104,17 @@ blocks:
 - uid: PUrwWBbbi                      # version 1
   string: This block has 3 versions. This is __version 1__.
   order: 0
-- uid: zHbMF7Ozq                      # version 2
+- uid: zHbMF7Ozq                      # version 2 — the selected one
   string: This block has 3 versions. This is **version 2**.
-  order: 0
-- uid: YYysqBFqy                      # version 3 — the selected one
-  string: This block has 3 versions. This is version 3.
   order: 0
   _children:
   - uid: xPUIusgqA                    # block 3.4, the parent
+- uid: YYysqBFqy                      # version 3
+  string: This block has 3 versions. This is version 3.
+  order: 0
 ```
 
-All three share order 0 under the same parent; only version 3 appears in that
+All three share order 0 under the same parent; only version 2 appears in that
 parent's `:block/children`.
 
 ## What guffin sees

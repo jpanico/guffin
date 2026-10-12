@@ -2004,10 +2004,10 @@ class TestAlternatives:
     def test_article0_fixture_block_3_4_has_two_alternatives(self) -> None:
         """The recorded [[Test Article]] 0 tree transcribes block 3.4's child with its two other versions."""
         vertex_tree = transcribe(article0_node_tree())
-        vertex = vertex_tree.uid_map["YYysqBFqy"]
+        vertex = vertex_tree.uid_map["zHbMF7Ozq"]
         assert isinstance(vertex, TextVertex)
-        assert vertex.text == "This block has 3 versions. This is version 3."
+        assert vertex.text == "This block has 3 versions. This is **version 2**."
         assert vertex.alternatives == (
             Alternative(uid="PUrwWBbbi", text="This block has 3 versions. This is *version 1*."),
-            Alternative(uid="zHbMF7Ozq", text="This block has 3 versions. This is **version 2**."),
+            Alternative(uid="YYysqBFqy", text="This block has 3 versions. This is version 3."),
         )

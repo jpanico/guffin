@@ -389,6 +389,24 @@ tree_network:
   title: null
   attrs: null
   blocks: null
+- uid: zHbMF7Ozq
+  id: 19963
+  string: This block has 3 versions. This is **version 2**.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11147
+  - id: 19958
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: 6bcyfVpL2
   id: 11187
   string: '> This is a Markdown standard multi-line Block Quote
@@ -851,7 +869,7 @@ tree_network:
   order: 3
   heading: null
   children:
-  - id: 19965
+  - id: 19963
   refs: null
   page:
     id: 11137
@@ -1243,24 +1261,6 @@ tree_network:
   parents:
   - id: 11137
   - id: 11147
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-- uid: YYysqBFqy
-  id: 19965
-  string: This block has 3 versions. This is version 3.
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11137
-  children_view_type: null
-  parents:
-  - id: 11137
-  - id: 11147
-  - id: 19958
   props: null
   title: null
   attrs: null

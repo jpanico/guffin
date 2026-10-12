@@ -499,7 +499,7 @@ class TestFetchRoamNodesFetchByPageTitle:
         """Live test: a versioned block's unselected versions are fetched, outside the anchor tree.
 
         ``[[Test Article]] 0``'s block 3.4 holds a child authored with three versions (uids
-        ``PUrwWBbbi`` / ``zHbMF7Ozq`` / ``YYysqBFqy``, grouped by ``e9j_vHjGQ``), the third of
+        ``PUrwWBbbi`` / ``zHbMF7Ozq`` / ``YYysqBFqy``, grouped by ``e9j_vHjGQ``), the second of
         which is selected.  Only the selected version sits in the parent's ``:block/children``,
         so only it reaches the anchor tree; the other two are reached through the version group
         and land in the network alone.  The group entity is a row of its own — a
@@ -509,7 +509,7 @@ class TestFetchRoamNodesFetchByPageTitle:
         """
         page_title = "[[Test Article]] 0"
         version_uids: Final[set[str]] = {"PUrwWBbbi", "zHbMF7Ozq", "YYysqBFqy"}
-        selected_uid: Final[str] = "YYysqBFqy"
+        selected_uid: Final[str] = "zHbMF7Ozq"
         group_uid: Final[str] = "e9j_vHjGQ"
 
         result: NodeFetchResult = FetchRoamNodes.fetch_by_page_title(

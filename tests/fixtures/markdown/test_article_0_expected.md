@@ -235,4 +235,4 @@
     > [!NOTE]
     > **This is a callout with only a title– no body.**
   - block 3.4
-    - This block has 3 versions. This is version 3.
+    - This block has 3 versions. This is **version 2**.

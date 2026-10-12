@@ -24,11 +24,11 @@ from guffin.roam.version_group import (
     version_groups_of,
 )
 
-# [[Test Article]] 0, block 3.4: a child authored with three versions, the third selected.
+# [[Test Article]] 0, block 3.4: a child authored with three versions, the second selected.
 _GROUP_UID: Final[str] = "e9j_vHjGQ"
 _PARENT_UID: Final[str] = "xPUIusgqA"
 _VERSION_UIDS: Final[tuple[str, str, str]] = ("PUrwWBbbi", "zHbMF7Ozq", "YYysqBFqy")
-_SELECTED_UID: Final[str] = "YYysqBFqy"
+_SELECTED_UID: Final[str] = "zHbMF7Ozq"
 
 
 def _article0_network() -> NodeNetwork:
