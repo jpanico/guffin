@@ -878,7 +878,8 @@ class TestToCalloutVertex:
             "- Roam-native TODO item (open and done)\n"
             "- Roam-native table (3x3)\n"
             "- a block with three Roam-native `Block Versions` (block 3.4): only the selected version is in the "
-            "parent's children, so only it is fetched and exported\n"
+            "parent's children, but all three are fetched; the selected one exports as the block's text, and with "
+            "`--render-alternatives` the other two export beside it as alternatives\n"
             "- this INFO `Callout box`, which contains Roam `page references`"
         )
         assert to_callout_vertex(fixture_node, tree).body == expected

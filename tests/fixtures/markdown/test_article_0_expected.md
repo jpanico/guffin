@@ -23,7 +23,7 @@
 > - Roam-native multi-line pull quote
 > - Roam-native TODO item (open and done)
 > - Roam-native table (3x3)
-> - a block with three Roam-native `Block Versions` (block 3.4): only the selected version is in the parent’s children, so only it is fetched and exported
+> - a block with three Roam-native `Block Versions` (block 3.4): only the selected version is in the parent’s children, but all three are fetched; the selected one exports as the block’s text, and with `--render-alternatives` the other two export beside it as alternatives
 > - this INFO `Callout box`, which contains Roam `page references`
 
 - block 1
