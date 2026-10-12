@@ -198,9 +198,8 @@
 
   > **❝ This is a Roam single line Pull Quote**
 
-  > **❝ This is a Roam multi-line Pull Quote**
-  >
-  > *this is the 2nd line*
+  > **❝ This is a Roam multi-line Pull Quote  
+  > this is the 2nd line**
 
   - block 1.1
     - block 1.1.1

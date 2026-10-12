@@ -86,9 +86,8 @@ def fizz_buzz(limit: int = 100):
 
   - this is a child block of Pull Quote
 - the child block contains a Roam native multiline Pull Quote
-  > **❝ This is a Roam multi-line Pull Quote**
-  >
-  > *this is the 2nd line*
+  > **❝ This is a Roam multi-line Pull Quote  
+  > this is the 2nd line**
 
   - this is a child block of Pull Quote
 - the child block contains a Roam hosted PDF Asset (upload)
@@ -165,9 +164,8 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**</span>
   > **❝ This is a Roam single line Pull Quote**
 - <span style="color: fuchsia">**standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**</span>
-  > **❝ This is a Roam multi-line Pull Quote**
-  >
-  > *this is the 2nd line*
+  > **❝ This is a Roam multi-line Pull Quote  
+  > this is the 2nd line**
 - <span style="color: fuchsia">**standalone CALLOUT ref ↓**</span>
   > [!NOTE]
   > **This is the callout title**
@@ -262,9 +260,8 @@ def fizz_buzz(limit: int = 100):
 - <span style="color: fuchsia">**standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**</span>
   > **❝ This is a Roam single line Pull Quote**
 - <span style="color: fuchsia">**standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**</span>
-  > **❝ This is a Roam multi-line Pull Quote**
-  >
-  > *this is the 2nd line*
+  > **❝ This is a Roam multi-line Pull Quote  
+  > this is the 2nd line**
 - <span style="color: fuchsia">**standalone CALLOUT ref ↓**</span>
   > [!NOTE]
   > **This is the callout title**

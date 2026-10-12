@@ -34,12 +34,15 @@ Notes on GFM-pipeline constructs that are handled differently here:
   images into the package, so content images must reach the writer as Pandoc `Image` elements rather
   than raw `<img>` HTML.
 - **fancy quote** — the pull quote ([[>]] [[!QUOTE]]) needs **no filter** at all: Pandoc's EPUB
-  writer renders the `<div class="fancy-quote">` (with its `fancy-quote-text` / `fancy-quote-attribution`
-  sub-`div`s) natively, and `epub.css` supplies the whole pull-quote treatment (mirroring the PDF) — the
-  serif register, the bold 1.5x quotation with an oversize opening quote (a `::before` glyph on the first
-  paragraph), and the italic body-size attribution. It carries **no** left bar (unlike the plain block
-  quote), so the mark and large type carry the signal. Its serif `font-family` (shared with the callout
-  body) is the customization point.
+  writer renders the `<div class="fancy-quote">` (with its `fancy-quote-text` sub-`div`) natively, and
+  `epub.css` supplies the whole pull-quote treatment (mirroring the PDF) — the serif register and the bold
+  1.5x quotation with an oversize opening quote (a `::before` glyph on the first paragraph). A pull quote
+  carries no attribution: its source is the work itself. It carries **no** left bar (unlike the plain
+  block quote), so the mark and large type carry the signal. Its serif `font-family` (shared with the
+  callout body) is the customization point.
+- **block-quote attribution** — likewise **no filter**: a block quotation's source line arrives as a
+  `<div class="quote-attribution">` closing its `<blockquote>`, led by an em dash, and `epub.css` sets it
+  upright against the quote's italic, on its own line left-aligned with the quotation.
 - **captions** — likewise **no filter**: the `<div class="caption">` below an image or code listing
   (the block's own nested content, or — also classed `code-source` — the emphasized line naming the
   GitHub file a sourced listing was snapshotted from) survives to XHTML, and `epub.css` styles it as

@@ -1579,13 +1579,17 @@ def _quote_block_vertex_to_blocks(
     semantics), while embedded list items and blank-line paragraph boundaries stay distinct blocks —
     then parsed at block level via :func:`parse_block_md` inside the :class:`~panflute.BlockQuote`.
 
+    A block quotation's ``attribution``, when present, closes the :class:`~panflute.BlockQuote` as a
+    ``quote-attribution`` :class:`~panflute.Div` (:data:`_QUOTE_ATTRIBUTION_CLASS`): the source line,
+    led by an em dash whatever dash was authored, which each format sets on a line of its own
+    beneath the quotation, left-aligned with it.
+
     A pull quote (:attr:`~guffin.vertex.QuoteType.PULL`) instead produces a class-tagged
     :class:`~panflute.Div` for the decorated treatment: the vertex's ``quote`` becomes a
-    ``fancy-quote-text`` sub-:class:`~panflute.Div` and its ``attribution`` (when present) a
-    ``fancy-quote-attribution`` sub-:class:`~panflute.Div`, inside an outer ``fancy-quote``
-    :class:`~panflute.Div`.  The Div carries no emphasis or glyph of its own — each output format
-    applies its own styling (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``, or EPUB CSS on
-    ``div.fancy-quote``).
+    ``fancy-quote-text`` sub-:class:`~panflute.Div` inside an outer ``fancy-quote``
+    :class:`~panflute.Div`.  A pull quote carries no attribution — its source is the work itself.
+    The Div carries no emphasis or glyph of its own — each output format applies its own styling
+    (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``, or EPUB CSS on ``div.fancy-quote``).
 
     In both forms the quotation contains only the vertex's own ``quote`` (and ``attribution``)
     content.  Child vertices are outline descendants, not quotation content: they render
@@ -1618,16 +1622,47 @@ def _quote_block_vertex_to_blocks(
         vertex.attribute_assignments,
     )
     if vertex.quote_type is QuoteType.PULL:
-        fancy_blocks: list[pf.Block] = [
-            pf.Div(*parse_block_md(hard_broken_markdown(vertex.quote)), classes=["fancy-quote-text"])
-        ]
-        if vertex.attribution is not None:
-            fancy_blocks.append(
-                pf.Div(*parse_block_md(hard_broken_markdown(vertex.attribution)), classes=["fancy-quote-attribution"])
-            )
-        return [pf.Div(*fancy_blocks, classes=["fancy-quote"]), *child_blocks]
+        quotation: Final[pf.Div] = pf.Div(
+            *parse_block_md(hard_broken_markdown(vertex.quote)), classes=["fancy-quote-text"]
+        )
+        return [pf.Div(quotation, classes=["fancy-quote"]), *child_blocks]
     inner_blocks: Final[list[pf.Block]] = parse_block_md(hard_broken_markdown(vertex.quote))
+    if vertex.attribution is not None:
+        inner_blocks.append(_quote_attribution_div(vertex.attribution))
     return [pf.BlockQuote(*inner_blocks), *child_blocks]
+
+
+_QUOTE_ATTRIBUTION_CLASS: Final[str] = "quote-attribution"
+"""Class of the :class:`~panflute.Div` holding a block quotation's attribution, its source line."""
+
+_ATTRIBUTION_DASH: Final[str] = "—"
+"""The em dash that leads a rendered attribution, per the conventional source line beneath a block.
+
+quotation — whichever dash the source authored.
+"""
+
+
+def _quote_attribution_div(attribution: str) -> pf.Div:
+    """Return the :data:`_QUOTE_ATTRIBUTION_CLASS` Div presenting a block quotation's *attribution*.
+
+    The attribution (its normalized Pandoc Markdown, leading dash already removed) is parsed at block
+    level — a multi-line credit keeps its line breaks — and its first inline block is led by
+    :data:`_ATTRIBUTION_DASH` and a space.
+
+    Args:
+        attribution: The block quotation's attribution text.
+
+    Returns:
+        The attribution Div.
+    """
+    blocks: Final[list[pf.Block]] = parse_block_md(hard_broken_markdown(attribution))
+    dash: Final[list[pf.Inline]] = [pf.Str(_ATTRIBUTION_DASH), pf.Space()]
+    first: Final[pf.Block | None] = blocks[0] if blocks else None
+    if isinstance(first, (pf.Para, pf.Plain)):
+        blocks[0] = pf.Para(*dash, *first.content)
+    else:
+        blocks.insert(0, pf.Para(*dash))
+    return pf.Div(*blocks, classes=[_QUOTE_ATTRIBUTION_CLASS])
 
 
 def _halign_to_pandoc_str(align: HAlign) -> str:

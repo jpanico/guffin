@@ -253,8 +253,9 @@
   - OexZiLR_O
   - Q-T5fKOEq
   quote_type: pull
-  quote: This is a Roam multi-line Pull Quote
-  attribution: 'this is the 2nd line
+  quote: 'This is a Roam multi-line Pull Quote
+
+    this is the 2nd line
 
 
     '

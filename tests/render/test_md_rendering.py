@@ -287,7 +287,7 @@ class TestBracketEntities:
 
 
 class TestPullQuoteRendering:
-    """A pull quote ([[!QUOTE]]) renders best-effort GFM: bold ❝-led quote, italic attribution."""
+    """A pull quote renders best-effort GFM (a bold ❝-led quotation); a block quote ends with its source line."""
 
     _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 
@@ -309,18 +309,34 @@ class TestPullQuoteRendering:
             uid="quote0001",
             quote_type=QuoteType.PULL,
             quote="In the long run every program becomes rococo.",
-            attribution="— Alan Perlis",
         )
         result = self._render(tmp_path, vtx)
         assert "> **❝ In the long run every program becomes rococo.**" in result
 
-    def test_pull_quote_italicizes_attribution(self, tmp_path: Path) -> None:
-        """The attribution renders as an italic block-quote line."""
+    def test_pull_quote_keeps_every_paragraph(self, tmp_path: Path) -> None:
+        """Every paragraph of a pull quote is bold quotation; only the first is led by the ornament."""
         vtx = QuoteBlockVertex(
-            uid="quote0001", quote_type=QuoteType.PULL, quote="The quotation.", attribution="The attribution."
+            uid="quote0001", quote_type=QuoteType.PULL, quote="First paragraph.\n\nSecond paragraph."
         )
         result = self._render(tmp_path, vtx)
-        assert "> *The attribution.*" in result
+        assert "> **❝ First paragraph.**" in result
+        assert "> **Second paragraph.**" in result
+
+    def test_block_quote_ends_with_its_source_line(self, tmp_path: Path) -> None:
+        """A block quotation's attribution is its last line, led by an em dash, its emphasis intact."""
+        vtx = QuoteBlockVertex(
+            uid="quote0001",
+            quote_type=QuoteType.BLOCK,
+            quote="I wish to God these calculations had been executed by steam!",
+            attribution="*Charles Babbage*, c. 1821",
+        )
+        result = self._render(tmp_path, vtx)
+        # Pandoc's smart parsing binds the abbreviation "c." to the year with a no-break space.
+        assert (
+            "> I wish to God these calculations had been executed by steam!\n>\n> — *Charles Babbage*, c. 1821"
+            in result
+        )
+        assert "<div" not in result
 
     def test_block_quote_is_unchanged(self, tmp_path: Path) -> None:
         """A plain BLOCK quote gets no glyph, bold, or forced italic."""

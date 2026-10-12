@@ -34,9 +34,9 @@ Public symbols:
   (an :class:`AssetVertex` subclass).
 - :class:`CalloutVertex` — a callout (admonition) with a category, title, and body.
 - :class:`CodeBlockVertex` — a fenced code listing.
-- :class:`QuoteType` — how a quote block is presented (``BLOCK`` vs ``PULL``).
-- :class:`QuoteBlockVertex` — a quotation, presented as a plain block quote or a
-  decorated pull quote.
+- :class:`QuoteType` — what kind of quotation a quote block is (``BLOCK`` vs ``PULL``).
+- :class:`QuoteBlockVertex` — a quotation: a block quotation of another source (optionally
+  attributed) or a pull quote of the work's own text (never attributed).
 - :class:`TableVertex` — a table: a cell grid plus its styling overlay.
 - :class:`BlockEmbedVertex` — a transclusion of another block at this position.
 - :class:`PageEmbedVertex` — a transclusion of a whole page at this position.
@@ -62,7 +62,7 @@ import datetime
 from enum import StrEnum
 from typing import Annotated, Final, Literal, TypeIs, get_args
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, validate_call
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator, validate_call
 
 from guffin.common.geometry import ImageSize
 from guffin.common.markdown import HeadingLevel
@@ -98,8 +98,8 @@ class VertexType(StrEnum):
         CALLOUT: A callout (admonition) — a categorised aside with a title and
             body.
         CODE_BLOCK: A fenced code listing.
-        QUOTE_BLOCK: A quotation — presented as a plain block quote or a
-            decorated pull quote.
+        QUOTE_BLOCK: A quotation — a block quotation of another source, or a
+            pull quote of the work's own text.
         TABLE: A table — a cell grid whose rows come from the vertex's child
             subtree.
         BLOCK_EMBED: A transclusion of another block at this position.
@@ -522,13 +522,15 @@ class CodeBlockVertex(_BaseVertex[Literal[VertexType.CODE_BLOCK]]):
 
 
 class QuoteType(StrEnum):
-    """How a quote block is presented — the source-agnostic rendering intent.
+    """What kind of quotation a quote block is, per the publishing (CMOS) sense of each term.
 
     Attributes:
-        BLOCK: A plain block quote, rendered with the conventional left rule.
-        PULL: A pull quote, rendered with the decorated treatment — an oversize
-            opening quotation mark, a bold quotation, and an optional italic
-            attribution.
+        BLOCK: A block quotation (an *extract*) — another source's words set off from the running
+            text, rendered with the conventional left rule.  It may carry an attribution: the
+            source line conventionally set beneath it.
+        PULL: A pull quote — a passage of the work's own text, promoted for display and rendered
+            with the decorated treatment (an oversize opening quotation mark and a bold
+            quotation).  It never carries an attribution: its source is the work itself.
     """
 
     BLOCK = "block"
@@ -536,19 +538,20 @@ class QuoteType(StrEnum):
 
 
 class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
-    """A quotation — a plain block quote or a decorated pull quote.
+    """A quotation — a block quotation of another source, or a pull quote of the work's own text.
 
-    :attr:`quote_type` records which presentation applies; the source's quote
-    markers are translated away at transcription.
+    :attr:`quote_type` records which kind it is; the source's quote markers are translated away at
+    transcription.  Only a block quotation may carry an :attr:`attribution`; a pull quote with one
+    is rejected at construction.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.QUOTE_BLOCK`.
             Serialized as ``'vertex-type'``.
-        quote_type: :attr:`QuoteType.BLOCK` for a plain block quote, :attr:`QuoteType.PULL` for a
-            pull quote (the decorated treatment).
+        quote_type: :attr:`QuoteType.BLOCK` for a block quotation, :attr:`QuoteType.PULL` for a pull
+            quote.
         quote: The quotation text, marker-free.
-        attribution: The attribution text — a pull quote's body lines after the first — or ``None``;
-            always ``None`` for a plain block quote.
+        attribution: A block quotation's source line, without its leading dash — the credit for
+            whose words these are — or ``None`` when it has none; always ``None`` for a pull quote.
     """
 
     vertex_type: Literal[VertexType.QUOTE_BLOCK] = Field(
@@ -563,8 +566,14 @@ class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
     quote: str = Field(..., description="The quotation text, marker-free.")
     attribution: str | None = Field(
         default=None,
-        description="The attribution text (pull quotes only), or None.",
+        description="A block quotation's source line, without its leading dash; None when absent or a pull quote.",
     )
+
+    @model_validator(mode="after")
+    def _pull_quote_has_no_attribution(self) -> QuoteBlockVertex:
+        if self.quote_type is QuoteType.PULL and self.attribution is not None:
+            raise ValueError(f"pull quote uid={self.uid!r} carries an attribution; only a block quotation may")
+        return self
 
 
 class TableVertex(_BaseVertex[Literal[VertexType.TABLE]]):

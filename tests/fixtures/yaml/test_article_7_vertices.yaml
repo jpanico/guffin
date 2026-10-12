@@ -201,7 +201,7 @@
     values:
     - kind: literal
       value: front-matter
-  text: '[0.2] [Who is this Book for?](x-guffin:vertex/GuHqKi9Y_)'
+  text: '[0.2] [Who Is This Book For?](x-guffin:vertex/GuHqKi9Y_)'
   heading_level: 2
 - vertex_type: guffin/text
   uid: v_yb2JFwl
@@ -2068,12 +2068,10 @@
   refs:
   - OexZiLR_O
   quote_type: block
-  quote: 'Go thou and slay So and So; and when thou returnest my Angels shall bear
+  quote: Go thou and slay So and So; and when thou returnest my Angels shall bear
     thee into Paradise. And shouldst thou die, natheless even so will I send my Angels
     to carry thee back into Paradise.
-
-
-    – The Old Man'
+  attribution: The Old Man
 - vertex_type: guffin/heading
   uid: _v0DthR5H
   children:
@@ -4111,12 +4109,10 @@
   refs:
   - OexZiLR_O
   quote_type: block
-  quote: 'Go thou and slay So and So; and when thou returnest my Angels shall bear
+  quote: Go thou and slay So and So; and when thou returnest my Angels shall bear
     thee into Paradise. And shouldst thou die, natheless even so will I send my Angels
     to carry thee back into Paradise.
-
-
-    – The Old Man'
+  attribution: The Old Man
 - vertex_type: guffin/text
   uid: OJNyixw2o
   text: When therefore they awoke, and found themselves in a place so charming, they

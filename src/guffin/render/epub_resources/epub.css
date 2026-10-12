@@ -75,18 +75,27 @@ blockquote {
 }
 
 /*
- * Pull quote (Roam [[>]] [[!QUOTE]]). guffin emits
- * <div class="fancy-quote"> with an inner <div class="fancy-quote-text"> (the quotation) and,
- * when present, <div class="fancy-quote-attribution"> (the attribution). A pull-quote treatment
- * (mirroring the PDF): the quotation is bold at 1.5x body size in a serif register (matching the
- * callout body), led by an oversize opening quotation mark; the attribution stays at body size,
- * italic, in the same serif. Deliberately carries NO left bar (unlike a plain block quote) — the
- * oversize mark and large type carry the "quote" signal and keep it distinct from the plain block
- * quote. The serif font-family is the customization point (matches the callout body stack).
+ * A block quotation's attribution: the em-dash-led source line guffin emits as
+ * <div class="quote-attribution">, closing the blockquote. On its own line beneath the quotation,
+ * left-aligned with it, and upright against the quotation's italic, so an authored emphasis inside
+ * it (a work's title, say) still shows.
+ */
+div.quote-attribution {
+  font-style: normal;
+}
+
+/*
+ * Pull quote (Roam [[>]] [[!QUOTE]]): a passage of the work's own text promoted for display, so it
+ * carries no attribution. guffin emits <div class="fancy-quote"> with an inner
+ * <div class="fancy-quote-text"> (the quotation). A pull-quote treatment (mirroring the PDF): the
+ * quotation is bold at 1.5x body size in a serif register (matching the callout body), led by an
+ * oversize opening quotation mark. Deliberately carries NO left bar (unlike a plain block quote) —
+ * the oversize mark and large type carry the "quote" signal and keep it distinct from the plain
+ * block quote. The serif font-family is the customization point (matches the callout body stack).
  */
 /* padding-left is the text-column gutter; the opening mark hangs into it (positioned absolutely
-   against this relatively-positioned container), so the quotation and attribution below share one
-   left edge just to the right of the mark. */
+   against this relatively-positioned container), so the quotation's lines share one left edge just
+   to the right of the mark. */
 div.fancy-quote {
   position: relative;
   margin: 1em 0;
@@ -108,11 +117,6 @@ div.fancy-quote-text > p:first-child::before {
   top: 0.12em;
   font-size: 2.4em;
   line-height: 1;
-}
-
-div.fancy-quote-attribution {
-  font-style: italic;
-  margin-top: 0.4em;
 }
 
 /*

@@ -340,16 +340,15 @@
   )[#it.body]
 }
 
-// Pull quote (Roam [[>]] [[!QUOTE]]): a pull-quote treatment — the quotation reads at
-// cfg.quote-size (default 1.2x body size) and cfg.quote-weight (default bold) in the quote-font,
-// led by an oversize opening quotation mark, and the attribution
-// line(s) are set italic in the attribution-font.  Deliberately carries NO left bar (unlike a plain
-// block quote): the oversize mark and large type carry the "quote" signal on their own, which also
-// keeps it visually distinct from the plain block quote.  The mark HANGS in a left gutter (placed
-// out of flow), and the quotation and attribution share a left edge just to its right — so both
-// text lines are left-justified in a column that begins past the mark.  typst_quote.lua marshals
-// the quotation and attribution content into a call to this helper.
-#let fancy-quote(quote: [], attribution: none) = context {
+// Pull quote (Roam [[>]] [[!QUOTE]]): a passage of the work's own text promoted for display — the
+// quotation reads at cfg.quote-size (default 1.2x body size) and cfg.quote-weight (default bold) in
+// the quote-font, led by an oversize opening quotation mark.  It carries no attribution: its source
+// is the work itself.  Deliberately carries NO left bar (unlike a plain block quote): the oversize
+// mark and large type carry the "quote" signal on their own, which also keeps it visually distinct
+// from the plain block quote.  The mark HANGS in a left gutter (placed out of flow), and the
+// quotation is left-justified in a column that begins just past it.  typst_quote.lua marshals the
+// quotation into a call to this helper.
+#let fancy-quote(quote: []) = context {
   // The opening mark: 2.4x the quotation text (2.88x body at the default quote-size of 1.2), always
   // bold whatever the quote-weight.  Measured so the text column can be indented by exactly the
   // mark's width plus one space, giving the hanging-mark layout.
@@ -360,16 +359,10 @@
     // height); dy nudges it down so its ink sits centred-erring-high against the first line.  The
     // nudge was tuned at quote-size 1.5 and scales with it.
     #place(left, dx: -gutter, dy: 0.34em * cfg.quote-size / 1.5)[#mark]
-    #block(below: if attribution == none { 0em } else { 0.5em })[
+    #block(below: 0em)[
       #set text(font: cfg.quote-font, weight: cfg.quote-weight, size: cfg.quote-size * 1em)
       #quote
     ]
-    #if attribution != none {
-      block[
-        #set text(font: cfg.attribution-font, style: "italic")
-        #attribution
-      ]
-    }
   ]
 }
 

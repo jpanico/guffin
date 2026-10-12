@@ -42,6 +42,7 @@ root_node:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 tree_network:
 - uid: 5nOiuIwRg
   id: 12601
@@ -79,6 +80,7 @@ tree_network:
       - uid
       - n5V8rN1Kg
       value: ' chapter'
+  blocks: null
 - uid: ZdongWVef
   id: 12769
   string: ''
@@ -98,6 +100,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EwJ_S--R4
   id: 12518
   string: 'Now am I come to that part of our Book in which I shall tell you of the
@@ -139,6 +142,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ZPsd8xzfa
   id: 12512
   string: CHAPTER II. Concerning the Revolt of Nayan, who was Uncle to the Great Kaan
@@ -157,6 +161,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aIPqy4neT
   id: 11891
   string: 'matter:: front-matter'
@@ -175,6 +180,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vEdP4FH4H
   id: 12736
   string: '**Description & Function in The Travels**'
@@ -196,6 +202,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4PUfPgyEm
   id: 12000
   string: '**The Oath of the Assassin:** The Old Man would interrogate the youths
@@ -217,6 +224,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: rSuhodwCG
   id: 12294
   string: 'Now that I have told you of those scoundrels and their history, I must
@@ -263,6 +271,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yoDIZS8Cq
   id: 12692
   string: '[1.2.12] CHAPTER XII. How the Great Kaan Maintains a Guard of Twelve Thousand
@@ -310,6 +319,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: zOGZPKXuS
   id: 12087
   string: Ruins of Bolghar.
@@ -327,6 +337,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FHM7PM1Wq
   id: 12170
   string: The story alluded to by Polo is found in the mediæval romances of Alexander,
@@ -354,6 +365,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: snXG7pnjI
   id: 11870
   string: '**Unto the Honorable, Prudent, and Wise Magistrates of the Free Imperial
@@ -371,6 +383,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kwMdW-Srm
   id: 12370
   string: '[1.1.29] Chapter 29: Of the Province of Badashan.'
@@ -422,6 +435,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: UYcjqzssQ
   id: 12191
   string: Note 5.—Ramusio here, as in all passages where other texts have Bucherami
@@ -449,6 +463,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Z8u6qOGCa
   id: 12253
   string: '[1] The Encyc. Britann., article “Money,” gives the livre tournois of this
@@ -473,6 +488,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Ovs3Xbxg0
   id: 12624
   string: Where I have used the Venetian term saggio, the French texts have here and
@@ -497,6 +513,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BZ3DpfPyY
   id: 12279
   string: 'Note 5.—Parez is famous for its falcons still, and so are the districts
@@ -528,6 +545,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ibJZdYkyW
   id: 12662
   string: Note 9.—“As all that one sees of these palaces is varnished in those colours,
@@ -549,6 +567,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: NeWGnX34G
   id: 12409
   string: 'element-type:: chapter'
@@ -568,6 +587,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lHI-6fxnB
   id: 12638
   string: Note 2.—According to Hammer’s authority (Rashid?) Kúblái had seven wives;
@@ -604,6 +624,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: rFMXsFeR7
   id: 12091
   string: 'Ponent: “You shall understande that this mightie kingdome is the Orientalest
@@ -623,6 +644,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gQobo3eGL
   id: 12209
   string: 'element-type:: chapter'
@@ -642,6 +664,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -T6mHbtA4
   id: 12587
   string: 'guffin-meta:: #.rm-g'
@@ -678,6 +701,7 @@ tree_network:
       - uid
       - xj1qpLeNc
       value: ' chapter'
+  blocks: null
 - uid: x1VJlTBXE
   id: 12606
   string: 'guffin-meta:: #.rm-g'
@@ -714,6 +738,7 @@ tree_network:
       - uid
       - lLlXjDOl5
       value: ' chapter'
+  blocks: null
 - uid: AUSSulQd_
   id: 12728
   string: 'guffin-meta:: #.rm-g'
@@ -750,6 +775,7 @@ tree_network:
       - uid
       - 5fk3jOXT0
       value: ' chapter'
+  blocks: null
 - uid: UxbbPSjHd
   id: 12220
   string: 'The moving of a mountain is one of the miracles ascribed to Gregory Thaumaturgus.
@@ -797,6 +823,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5r0qrjn10
   id: 12671
   string: '[1] Some years ago, in Calcutta, I learned that a large store of charcoal
@@ -818,6 +845,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gyylNawdH
   id: 12515
   string: Note 1.—There is no doubt that Kúblái was proclaimed Kaan in 1260 (4th month),
@@ -839,6 +867,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gwF7vyF17
   id: 12539
   string: 'Now you must know that Nayan was a baptized Christian, and bore the cross
@@ -873,6 +902,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: l7HCn5r30
   id: 12650
   string: Between the two walls of the enclosure which I have described, there are
@@ -899,6 +929,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _jLqpzZQw
   id: 12659
   string: A. Housselin d. Palace at Khan-baligh. (From the Livre des Merveilles.)
@@ -916,6 +947,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: S7EU7O92J
   id: 12086
   string: Russian chroniclers speak of an earlier capital of the Bulgarian kingdom,
@@ -941,6 +973,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FwvqbfWO6
   id: 12207
   string: '[1.1.10] Chapter 10: How the Prayer of the One-eyed Cobler caused the Mountain
@@ -987,6 +1020,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: Jc7qWj0Vy
   id: 12761
   string: ''
@@ -1006,6 +1040,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: y6Sb4knJU
   id: 12403
   string: Badashan is a Province inhabited by people who worship Mahommet, and have
@@ -1053,6 +1088,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XsJBIlRJx
   id: 12631
   string: Note 4.—I have not been able to find any allusion, except in our author,
@@ -1082,6 +1118,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YKIfOxGfE
   id: 12257
   string: '[1.1.17] Chapter 17: Concerning the Kingdom of Kerman.'
@@ -1133,6 +1170,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: C11Yi8g90
   id: 12663
   string: Note 10.—[This is the Ling yu or “Divine Park,” to the east of the Wan-sui
@@ -1171,6 +1209,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: mZJ6qXSlY
   id: 12196
   string: 'Note 3.—The name is Bascra in the MSS., but this is almost certainly the
@@ -1226,6 +1265,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2YbfA0bK3
   id: 12632
   string: Sculptured Gerfalcon. (From the Gate of Iconium.)
@@ -1243,6 +1283,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -NSRdlEhN
   id: 12103
   string: 'guffin-meta:: #.rm-g'
@@ -1279,6 +1320,7 @@ tree_network:
       - uid
       - bMg6ybr4X
       value: ' chapter'
+  blocks: null
 - uid: qo9gGnpFz
   id: 12637
   string: The word has generally been interpreted bluish-grey, but in the passage
@@ -1302,6 +1344,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ocP0HUdgE
   id: 12579
   string: Barskul, “Leopard-Lake,” is named in Sanang Setsen (p. 217), but seems there
@@ -1363,6 +1406,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: G_w7PUYjt
   id: 12536
   string: And what shall I tell you next? The Kaan was there on the hill, mounted
@@ -1385,6 +1429,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Ppgn6uhjL
   id: 12537
   string: '{2} were disposed of); and the whole plain seemed to be covered with his
@@ -1415,6 +1460,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: n5V8rN1Kg
   id: 12602
   string: 'element-type:: chapter'
@@ -1434,6 +1480,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2NCor-ApB
   id: 12788
   string: A Venetian silver coin Polo frequently used as a comparative baseline to
@@ -1456,6 +1503,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2n4fwDbsN
   id: 12200
   string: Note 7.—
@@ -1473,6 +1521,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JJ7IVrlYU
   id: 12456
   string: Note 7.—Coral is still a very popular adornment in the Himalayan countries.
@@ -1493,6 +1542,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TC38EVhnx
   id: 12362
   string: 'William de Nangis thus speaks of the Syrian Shaikh, who alone was known
@@ -1529,6 +1579,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: pP2SoMp2M
   id: 12194
   string: '{7} to death as he was. Howbeit, since that time, there has been never
@@ -1570,6 +1621,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: IL2MlFT1d
   id: 12169
   string: “I may observe that I have seen it lately pointed out that Koluga is a Mongol
@@ -1590,6 +1642,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ITnYe3VUU
   id: 12661
   string: The Ch’ue keng lu, translated by Bretschneider, 25, contains long articles
@@ -1609,6 +1662,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3TO924yvu
   id: 11974
   string: 'element-type:: chapter'
@@ -1628,6 +1682,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FY7NOL4Hq
   id: 12397
   string: Yakut (✛1229), stating that this mountainous country is famed for its precious
@@ -1659,6 +1714,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kDGHDeio0
   id: 12657
   string: 'Note 6.—Ramusio’s version here diverges from the old MSS. It makes the
@@ -1699,6 +1755,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: iA1oEeam_
   id: 12246
   string: III. Lúr or Lúristán. [On Lúristán, see Curzon, Persia, II. pp. 273–303,
@@ -1730,6 +1787,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hSMMtN77B
   id: 12552
   string: 'Note 5.—“Car il estoit homme au Grant Kaan.” (See note 2, ch. xiv., in
@@ -1782,6 +1840,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: a9DPEgUSR
   id: 12408
   string: 'guffin-meta:: #.rm-g'
@@ -1818,6 +1877,7 @@ tree_network:
       - uid
       - NeWGnX34G
       value: ' chapter'
+  blocks: null
 - uid: 4BX8rx8M3
   id: 12643
   string: 'The Great Kaan hath also twenty-five other sons by his concubines; and
@@ -1867,6 +1927,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qm3fmnT4X
   id: 12550
   string: And again:— “The eorthe quaked heom undur, No scholde mon have herd the
@@ -1885,6 +1946,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XRU-URUwP
   id: 12525
   string: So he marched with his army, and after advancing for 20 days they arrived
@@ -1910,6 +1972,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -EG-YIteh
   id: 12148
   string: Note 1.—✛ The appearance of the Great Kaan’s letter may be illustrated by
@@ -1965,6 +2028,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YuFNpxA5T
   id: 12646
   string: Note 2.—The Chinese Annals, according to Pauthier and Gaubil, give only
@@ -2014,6 +2078,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: iFVr31gOp
   id: 12724
   string: 'Note 4.—[“The accounts given by Marco Polo regarding the feasts of the
@@ -2048,6 +2113,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2OcoizB28
   id: 12346
   string: 'Note 2.—A spirit is still distilled from dates in Persia, Mekran, Sind,
@@ -2080,6 +2146,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XrSrdTBZH
   id: 12633
   string: '[1] “In anno Simiae, octavâ lunâ, die quarto exeunte, juxta fluvium Cobam
@@ -2099,6 +2166,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: k6Zws1oot
   id: 12180
   string: And in the Sfera of Lionardo Dati (circa 1390):— “Da Tramontana di quest’Asia
@@ -2118,6 +2186,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: NS19XW9sL
   id: 11893
   string: 'subtitle:: "Wonders of the World and the Court of the Great Khan"'
@@ -2135,6 +2204,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qJaRL-jAa
   id: 12746
   string: Weight / Unit
@@ -2155,6 +2225,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -k00SRaFO
   id: 12719
   string: 'And thus, as I have related, is celebrated the joyous feast of the Kaan’s
@@ -2188,6 +2259,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: S7IQGtzYp
   id: 12759
   string: '**Salt Money**'
@@ -2209,6 +2281,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OT99Ns7qL
   id: 12634
   string: The personal appearance of the Great Kaan, Lord of Lords, whose name is
@@ -2252,6 +2325,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aIY_Rvrpe
   id: 12446
   string: 'Now we will quit this country, and not go any further in the same direction;
@@ -2273,6 +2347,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: J9TjIP5NU
   id: 12735
   string: '**Term Used**'
@@ -2294,6 +2369,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: V9rDBg7i2
   id: 12546
   string: In French, it gives nacaire and gnacare from the Italian gnacare. “Quatre
@@ -2313,6 +2389,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: k65aKssJh
   id: 12675
   string: Polo correctly explains the name Cambaluc, i.e. Kaan-baligh, “The City of
@@ -2331,6 +2408,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Orkbzp_7K
   id: 12140
   string: 'guffin-meta:: #.rm-g'
@@ -2367,6 +2445,7 @@ tree_network:
       - uid
       - LUcgNYY1S
       value: ' chapter'
+  blocks: null
 - uid: X6mc9AhMW
   id: 12359
   string: The Plain of which we have spoken extends in a southerly direction for five
@@ -2406,6 +2485,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: mofEWOJlW
   id: 12635
   string: Portrait of Kúblái Kaan. (From a Chinese Engraving.)
@@ -2423,6 +2503,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yJzrsNJog
   id: 12163
   string: There is in this country a certain Convent of Nuns called St. Leonard’s,
@@ -2447,6 +2528,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 94qR0DJ8Z
   id: 12678
   string: Note 3.—This height is from Pauthier’s Text; the G. Text has, “twenty paces,”
@@ -2473,6 +2555,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 44FHkkJ_O
   id: 14552
   string: '**Rustichello da Pisa**, also known as **Rusticiano** (fl. late 13th century),
@@ -2497,6 +2580,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: eJw3wMeFK
   id: 12613
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -2518,6 +2602,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: pYixFClXS
   id: 12093
   string: (Fraehn, Ueber die ehemalige Mong. Stadt Ukek, etc., Petersb. 1835; Gold.
@@ -2539,6 +2624,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: bFb67Ji4-
   id: 12152
   string: 'element-type:: chapter'
@@ -2558,6 +2644,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d8C3mV9Zz
   id: 12771
   string: '**Coral**'
@@ -2579,6 +2666,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: bAeKvTD8i
   id: 12763
   string: '**Unminted Gold & Silver**'
@@ -2600,6 +2688,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EASTGFcQx
   id: 12146
   string: 'element-type:: chapter'
@@ -2619,6 +2708,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: WYGzjjH1T
   id: 12707
   string: '[1] One of the nearest readings is that of the Brandenburg Latin collated
@@ -2637,6 +2727,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 257oOi1IS
   id: 12344
   string: Approximate Section from Yazd to Hormuz
@@ -2654,6 +2745,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: nRcJlKqf4
   id: 12094
   string: Note 5.—The great River Tigeri or Tigris is the Volga, as Pauthier rightly
@@ -2680,6 +2772,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9MFeNpuVz
   id: 12247
   string: Baron de Bode have visited other parts, but the country is still very imperfectly
@@ -2737,6 +2830,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Nt9obFYPS
   id: 11879
   string: 'element-type:: introduction'
@@ -2755,6 +2849,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 08HJProcI
   id: 12195
   string: Mr. Badger, in a postscript to his translation of the History of Omán (Hak.
@@ -2782,6 +2877,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5VUxa0UiB
   id: 12394
   string: And it is said to have still colloquial existence in that sense in some
@@ -2803,6 +2899,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: x5yAlBdXL
   id: 12147
   string: 'When that Prince, whose name was Cublay Kaan, Lord of the Tartars all over
@@ -2840,6 +2937,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wZGFmE3k2
   id: 12508
   string: 'element-type:: chapter'
@@ -2859,6 +2957,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VV5R3dLjR
   id: 12595
   string: 'guffin-meta:: #.rm-g'
@@ -2895,6 +2994,7 @@ tree_network:
       - uid
       - 3TKl0eM15
       value: ' chapter'
+  blocks: null
 - uid: icYzlHriz
   id: 12017
   string: '**Tartar Encampments:** Polo mentions that during the summer months, the
@@ -2915,6 +3015,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 90akSRzHl
   id: 12516
   string: Note 2.—Kúblái was born in the eighth month of the year corresponding to
@@ -2945,6 +3046,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: r2dpLG9oZ
   id: 12199
   string: 'Note 5.—[Bretschneider (Med. Res. I. p. 114) says: “Hulagu left Karakorum,
@@ -2976,6 +3078,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xbTM4hjMd
   id: 12490
   string: 'As to the pasture, Timkowski heard that “the pasturage of Pamir is so luxuriant
@@ -3027,6 +3130,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AMNkR8Ldh
   id: 12285
   string: 'guffin-meta:: #.rm-g'
@@ -3063,6 +3167,7 @@ tree_network:
       - uid
       - 4r9LUeZ4l
       value: ' chapter'
+  blocks: null
 - uid: U_BOJn4ug
   id: 12649
   string: The Hall of the Palace is so large that it could easily dine 6000 people;
@@ -3091,6 +3196,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: KCN2HndAD
   id: 12236
   string: And when the Three Kings beheld this marvel they were sore amazed, and it
@@ -3122,6 +3228,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7ae_Djurk
   id: 12644
   string: Teimur, according to the same authority, was the third son of Chimkin; but
@@ -3141,6 +3248,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: UgVY8OwiC
   id: 12278
   string: There is, or was in Pottinger’s time, still a great manufacture of matchlocks
@@ -3184,6 +3292,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: S0iCYu_cE
   id: 12487
   string: (Cf. Rockhill, Rubruck, p. 69; Chasses et Explorations dans la Région des
@@ -3209,6 +3318,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VhPKv0Wzj
   id: 12488
   string: Ovis Poli, the Great Sheep of Pamir. (After Severtsof.) “Il hi a grant moutitude
@@ -3227,6 +3337,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 09l1XWuD3
   id: 11874
   string: '**The Cartographer and Cosmographer:** If you are tasked with updating
@@ -3246,6 +3357,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9268mh6hr
   id: 12653
   string: Note 3.—[“It seems to me [Dr. Bretschneider] that Polo took the towers,
@@ -3272,6 +3384,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: i8m_qcu2R
   id: 11875
   string: '**The Theologian and the Friar:** For those tracking the spread of Christendom
@@ -3291,6 +3404,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zS5Hs21W2
   id: 12739
   string: '**Paper Money (__Chao__)**'
@@ -3312,6 +3426,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2gJ7AJ9VF
   id: 11909
   string: 'guffin-meta:: #.rm-g'
@@ -3347,6 +3462,7 @@ tree_network:
       - uid
       - kRO2pVBCU
       value: ' part'
+  blocks: null
 - uid: 3YeflnVhs
   id: 12493
   string: 'The name of Bolor in later days has been in a manner a symbol of controversy.
@@ -3396,6 +3512,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _iMxUBd57
   id: 12544
   string: The privilege of employing the Nakkara in personal state was one granted
@@ -3418,6 +3535,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VUkL4I2fu
   id: 11859
   string: 'identifier:: ISTC ip00901000'
@@ -3435,6 +3553,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JaFjTsazv
   id: 12630
   string: (Murat. Dissert. II. 229; Archiv. Storic. Ital. VIII. 274, 560; Klapr. Mém.
@@ -3460,6 +3579,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EiTwSpY9z
   id: 12167
   string: 'Bretschneider (II. p. 117) observes: “Yule complains that he was not able
@@ -3524,6 +3644,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Wavi0FOP5
   id: 12757
   string: ''
@@ -3543,6 +3664,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ug4gocNdp
   id: 12511
   string: Some remarks on Kúblái and his government by a Chinese author, in a more
@@ -3564,6 +3686,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5JC5GBgrh
   id: 12449
   string: Note 2.—The Kashmirian conjurers had made a great impression on Marco, who
@@ -3621,6 +3744,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: bFYi5U_xl
   id: 11920
   string: 'This is loose matter that is immediately under Part 1 (Book I: Account
@@ -3639,6 +3763,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ucshJ6TST
   id: 12517
   string: Note 4.—Nayan was no “uncle” of Kúblái’s, but a cousin in a junior generation.
@@ -3687,6 +3812,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -aN9Kuehn
   id: 12226
   string: Persia is a great country, which was in old times very illustrious and powerful;
@@ -3734,6 +3860,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VC29QMh5p
   id: 12779
   string: '**Ting** (or __Ding__)'
@@ -3755,6 +3882,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HHU3ny3uw
   id: 12548
   string: Note 4.—This description of a fight will recur again and again till we are
@@ -3779,6 +3907,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qIIkDOB-x
   id: 12174
   string: Note 4.—The box-wood of the Abkhasian forests was so abundant, and formed
@@ -3807,6 +3936,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Dqzg-JWIB
   id: 12612
   string: 'element-type:: chapter'
@@ -3826,6 +3956,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: CkQY5wrAv
   id: 12486
   string: 'Wood speaks of the numerous wolves in this region. And the great sheep
@@ -3866,6 +3997,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FJwHaSvEQ
   id: 12626
   string: 'Rubruquis (Rockhill’s ed. pp. 153–154) says:—“And whenever the principal
@@ -3898,6 +4030,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MYh8tSij3
   id: 12592
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -3919,6 +4052,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: n2ky_AJzs
   id: 12667
   string: '[“Near the eastern end of the bridge (Kin-ao yü-tung which crosses the
@@ -3960,6 +4094,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wFSbgQId3
   id: 12647
   string: You must know that for three months of the year, to wit December, January,
@@ -3996,6 +4131,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3l5HkwPk6
   id: 12212
   string: '**The Oath of the Assassin:** The Old Man would interrogate the youths
@@ -4017,6 +4153,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Bnwecs4ck
   id: 12351
   string: And again, when about to enter a port, it is needful to be on the alert
@@ -4037,6 +4174,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ybQyyVAso
   id: 12031
   string: '**Zaiton (Quanzhou):** A massive Chinese port city, described as one of
@@ -4058,6 +4196,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GW0a1qLts
   id: 11998
   string: '**The Awakening:** When the young men awoke, they found themselves surrounded
@@ -4078,6 +4217,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oUtEaVgwV
   id: 11880
   string: 'guffin-meta:: #.rm-g'
@@ -4113,6 +4253,7 @@ tree_network:
       - uid
       - Nt9obFYPS
       value: ' introduction'
+  blocks: null
 - uid: 3tYM4fGbR
   id: 12341
   string: '113 of Kermán to this descent the cold in winter is very great,” that is,
@@ -4192,6 +4333,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _3-JxKhbr
   id: 12774
   string: Currency
@@ -4212,6 +4354,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hiJOL_Qz5
   id: 12681
   string: A.D. 1290.
@@ -4254,6 +4397,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: BRrTcrJW1
   id: 12240
   string: 'And in the “Hymns, Ancient and Modern”:— “Sacred gifts of mystic meaning:
@@ -4273,6 +4417,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Zc197Ll6d
   id: 12189
   string: (Assemani, vol. ii.; Le Quien, II. 1596; Mas’udi, II. 329–330; Per. Quat.
@@ -4291,6 +4436,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: a-OnsfFjN
   id: 12364
   string: (Cathay, 153; Rémusat, Nouv. Mél. I. 178; Mines de l’Orient, III. 201 seqq.;
@@ -4326,6 +4472,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HVV5x-cix
   id: 12271
   string: Note 2.—A MS. treatise on precious stones cited by Ouseley mentions Shebavek
@@ -4363,6 +4510,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: t5T98lcjv
   id: 12268
   string: 'Note 1.—Kermán is mentioned by Ptolemy, and also by Ammianus amongst the
@@ -4386,6 +4534,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: k7uEUMoYr
   id: 12088
   string: Bolghar was first captured by the Mongols in 1225. It seems to have perished
@@ -4432,6 +4581,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wrsUJQ1Ka
   id: 12669
   string: Note 15.—[“Marco Polo’s bridge, crossing the lake from one side to the other,
@@ -4456,6 +4606,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3ZlryH8kY
   id: 12179
   string: Note 8.—The Caspian is termed by Vincent of Beauvais Mare Seruanicum, the
@@ -4477,6 +4628,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: WePDYlF3-
   id: 12295
   string: Note 2.—Abbott mentions the humped (though small) oxen in this part of Persia,
@@ -4502,6 +4654,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3YPJUlBcO
   id: 12673
   string: As regards the size of this (new) city you must know that it has a compass
@@ -4539,6 +4692,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3iIt_b2ZP
   id: 12297
   string: Humped Oxen from the Assyrian Sculptures at Koyunjik.
@@ -4556,6 +4710,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oCV75jtai
   id: 12742
   string: Weight / Unit
@@ -4576,6 +4731,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: tUOKjGPDW
   id: 12545
   string: 'On the other hand, Nacchera, in Italian, seems always to have retained
@@ -4608,6 +4764,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JndkLSFC-
   id: 12308
   string: 'The Magical darkness which Marco ascribes to the evil arts of the Karaunas
@@ -4653,6 +4810,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: PxIz9TwI8
   id: 12768
   string: Similar to Yunnan, small loaves of salt served as small change. Their value
@@ -4675,6 +4833,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TvJMiL79t
   id: 12721
   string: M. Michel thinks that in a stuff so termed the gold wire was beaten out
@@ -4699,6 +4858,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 58dRC7DXV
   id: 12350
   string: 'Note 3.—The stitched vessels of Kermán (πλοιάρια ῥαπτὰ) are noticed in
@@ -4759,6 +4919,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kf7g_JrMB
   id: 12166
   string: Note 2.—This fashion of tonsure is mentioned by Barbaro and Chardin. The
@@ -4808,6 +4969,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uLiALiJCp
   id: 12753
   string: '**Kara-jang & Zardandan (Yunnan Province)**'
@@ -4827,6 +4989,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 79GXz7DWQ
   id: 12402
   string: 'Note 6.—These wild sheep are probably the kind called Kachkár, mentioned
@@ -4886,6 +5049,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: X30XeVcFj
   id: 12521
   string: '[1.2.3] Chapter 3: How the Great Kaan marched against Nayan.'
@@ -4925,6 +5089,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: nGIAATY3T
   id: 12452
   string: 'Note 4.—The people of Káshmir retain their beauty, but they are morally
@@ -4956,6 +5121,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _4peNegpP
   id: 12229
   string: Hexaglot Inscription on the West side of the Kiu-Yong Kwan.
@@ -4973,6 +5139,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: N-SyzJ3ai
   id: 12039
   string: '[1.1.4] Chapter 4: Code Listing'
@@ -5034,6 +5201,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: d9uIclIp7
   id: 12780
   string: A high-value measure of account for imperial revenue and taxation, equal
@@ -5056,6 +5224,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: J9J6AIJ_P
   id: 12197
   string: 'The London prices of Chermisi and Baldacchini in the early part of the
@@ -5097,6 +5266,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Lo-2ftdb7
   id: 11878
   string: '[0.3] An Epistle to the Reader, from the Printer'
@@ -5139,6 +5309,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: rJmEPmgcw
   id: 12642
   string: The Emperor hath, by those four wives of his, twenty-two male children;
@@ -5163,6 +5334,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: WM9mjgmUj
   id: 11866
   string: First and foremost, let boundless thanks be rendered unto Almighty God,
@@ -5182,6 +5354,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Km6R0SnrB
   id: 12710
   string: In a certain part of the hall near where the Great Kaan holds his table,
@@ -5212,6 +5385,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8smwpgB-3
   id: 12725
   string: '[1] There are thirteen months to the Chinese year in seven out of every
@@ -5234,6 +5408,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hEsI-P9i4
   id: 12299
   string: Note 3.—The word rendered banditti is in Pauthier Carans, in G. Text Caraunes,
@@ -5253,6 +5428,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: G-gVrlBmM
   id: 12241
   string: Note 2.—“Feruntque (Magi), si justum est credi, etiam ignem caelitus lapsum
@@ -5300,6 +5476,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GjsevlHlu
   id: 12363
   string: to Bauduin and his friends, and on their assenting he makes the signal to
@@ -5321,6 +5498,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XEToYEzri
   id: 12102
   string: '[1.1.5] Chapter 5: Of the Kingdom of Mausul.'
@@ -5364,6 +5542,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: Oe0-1hxw5
   id: 12454
   string: We see from the Dabistan that in the 17th century Káshmir continued to be
@@ -5386,6 +5565,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: IugoKcVLw
   id: 12300
   string: Note 4.—This is a knotty subject, and needs a long note. The Ḳaraunahs are
@@ -5434,6 +5614,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lLlXjDOl5
   id: 12607
   string: 'element-type:: chapter'
@@ -5453,6 +5634,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _bFry3a1Y
   id: 12738
   string: Currency
@@ -5473,6 +5655,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2Lhm2gBqv
   id: 12603
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -5494,6 +5677,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yBBotE59L
   id: 14550
   string: 'matter:: back-matter'
@@ -5512,6 +5696,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: t3KZEIxj8
   id: 14548
   string: '[2.1] [[About the Author]]'
@@ -5548,6 +5733,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: iA9v_0ZbK
   id: 12495
   string: In leaving Badashan you ride twelve days between east and north-east, ascending
@@ -5573,6 +5759,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VG0xxycaG
   id: 12741
   string: ''
@@ -5592,6 +5779,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _Fc0usIj8
   id: 12740
   string: Banknotes manufactured from the black bark of mulberry trees. Stamped with
@@ -5615,6 +5803,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3SFFV08OI
   id: 12734
   string: '**Category**'
@@ -5635,6 +5824,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JdToFRz_G
   id: 12513
   string: Now this Cublay Kaan is of the right Imperial lineage, being descended from
@@ -5665,6 +5855,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -cStchkqq
   id: 12137
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FYT8W1P6jTQ.jpeg.enc?alt=media&token=24628986-cdbd-452e-a434-ab236c054db3)'
@@ -5682,6 +5873,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2TUIE_aMN
   id: 12655
   string: Note 4.—The stores are now outside the walls of the “Prohibited City,” corresponding
@@ -5701,6 +5893,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0BjjpdOfj
   id: 12523
   string: 'element-type:: chapter'
@@ -5720,6 +5913,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: w1wDG7KzT
   id: 12208
   string: 'guffin-meta:: #.rm-g'
@@ -5756,6 +5950,7 @@ tree_network:
       - uid
       - gQobo3eGL
       value: ' chapter'
+  blocks: null
 - uid: UU52OcnaE
   id: 12024
   string: '**Kaisariah (Kayseri):** Another prominent trade and craftsmanship city
@@ -5776,6 +5971,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qLnEJdFA5
   id: 12035
   string: This para features ^^highlight^^
@@ -5794,6 +5990,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: p0TBkaGnD
   id: 12242
   string: 'As regards the Legend itself, which shows such a curious mixture of Christian
@@ -5866,6 +6063,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LWP5sl53w
   id: 11897
   string: 'rights:: Cum Privilegio'
@@ -5883,6 +6081,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TzYokFCH-
   id: 12549
   string: “Now rist grete tabour betyng, Blaweyng of pypes, and ek trumpyng, Stedes
@@ -5908,6 +6107,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qqnt1TH5A
   id: 12203
   string: 'Wassáf’s narrative is interesting:—“Two days after his capture the Khalif
@@ -5944,6 +6144,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: szzpIHHrU
   id: 12353
   string: 12th Century Illumination. (After Pertz.)
@@ -5961,6 +6162,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -gF_cuE5v
   id: 12702
   string: How the Great Kaan Maintains a Guard of Twelve Thousand Horse, which are
@@ -5979,6 +6181,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wps9VKUCW
   id: 12605
   string: '[1.2.9] CHAPTER IX. Concerning the Great Kaan’s Sons.'
@@ -6020,6 +6223,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: ZXKzZIDeL
   id: 12090
   string: Note 3.—Alau is Polo’s representation of the name of Hulákú, brother of
@@ -6052,6 +6256,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ff4xkJQQl
   id: 12284
   string: '[1.1.18] Chapter 18: Of the City of Camadi and its Ruins; also touching
@@ -6107,6 +6312,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: xDKLRbrkD
   id: 12722
   string: Note 3.—The number of these festivals and distributions of dresses is thirteen
@@ -6138,6 +6344,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: luePet9FQ
   id: 12355
   string: After Spinello Aretini at Siena.
@@ -6155,6 +6362,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uN_MwuWeZ
   id: 11858
   string: 'date:: 1477-01-01'
@@ -6172,6 +6380,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4gIAfmpNj
   id: 12482
   string: Note 2.—This chapter is one of the most interesting in the book, and contains
@@ -6233,6 +6442,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7o-Klx3P6
   id: 11850
   string: null
@@ -6276,6 +6486,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: kBmKYNQdA
   id: 12022
   string: '**Layas (Ayas):** The bustling port city on the Mediterranean coast of
@@ -6296,6 +6507,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lbrV-zSr9
   id: 12623
   string: “TABLE D’OR DE COMMANDEMENT,” THE PAÏZA OF THE MONGOLS from a specimen found
@@ -6314,6 +6526,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JgVxyITAK
   id: 12748
   string: A Venetian weight (about 1/6 of an ounce) Polo used to translate Chinese
@@ -6337,6 +6550,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: V27vVj9s0
   id: 12330
   string: 5 1 2 — 17
@@ -6354,6 +6568,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yVckKIYxT
   id: 12767
   string: '**Salt Money**'
@@ -6375,6 +6590,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: X1Rp-LLc6
   id: 12312
   string: After you have ridden down hill those two days, you find yourself in a vast
@@ -6438,6 +6654,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ufcFVSn5-
   id: 12520
   string: 'Now am I come to that part of our Book in which I shall tell you of the
@@ -6479,6 +6696,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -YnOCfmzO
   id: 12175
   string: Note 5.—Jerome Cardan notices that “the best and biggest goshawks come from
@@ -6521,6 +6739,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AAE6Eb6fs
   id: 12750
   string: Weight
@@ -6541,6 +6760,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ApcbPG6t7
   id: 12178
   string: The dimensions assigned to the Caspian in the text would be very correct
@@ -6561,6 +6781,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aB8RXjgat
   id: 12390
   string: In this kingdom there are many strait and perilous passes, so difficult
@@ -6586,6 +6807,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: CnG6fOf_E
   id: 12029
   string: '**Baudas (Baghdad):** The ancient city whose siege, capture, and destruction
@@ -6606,6 +6828,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: UD9SkuxoE
   id: 12694
   string: 'element-type:: chapter'
@@ -6625,6 +6848,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: S0oRYfduk
   id: 12717
   string: ou must know that the Tartars keep high festival yearly on their birthdays.
@@ -6645,6 +6869,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gMhyk9tMl
   id: 12192
   string: 'Baudas is a great city, which used to be the seat of the Calif of all the
@@ -6685,6 +6910,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -nszFX8FP
   id: 12365
   string: And in 1174 and 1176 attempts to murder the great Saladin. 1271. Attempt
@@ -6708,6 +6934,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oKfvBYY2i
   id: 12277
   string: Note 4.—Paulus Jovius in the 16th century says, I know not on what authority,
@@ -6731,6 +6958,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: NLMrjV2AB
   id: 11863
   string: 'element-type:: acknowledgments'
@@ -6749,6 +6977,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XEvauvTi8
   id: 12361
   string: '143 it in the Law. This of course gave the others who stood by, and who
@@ -6802,6 +7031,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ntMDtY4Q-
   id: 12531
   string: 'element-type:: chapter'
@@ -6821,6 +7051,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: y4yvyS7Cp
   id: 12794
   string: '[1.3.35] CHAPTER XXXV. Here begins the Description of the Interior of Cathay,
@@ -6838,6 +7069,7 @@ tree_network:
   props: null
   title: null
   attrs: []
+  blocks: null
 - uid: pkmNYqweM
   id: 12542
   string: 'Joinville also speaks of the Nakkara as the signal for action: “So he was
@@ -6862,6 +7094,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: bSmLs9TR2
   id: 12161
   string: In Georgiania there is a King called David Melic, which is as much as to
@@ -6900,6 +7133,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wUeKNObXg
   id: 12025
   string: '**Kinsay (Hangzhou):** Described by Polo as the most splendid and magnificent
@@ -6920,6 +7154,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OJNyixw2o
   id: 12368
   string: When therefore they awoke, and found themselves in a place so charming,
@@ -6950,6 +7185,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ORwln1Ci1
   id: 12326
   string: 'I should tell you first, however, that King Ruomedam Ahomet of Hormos,
@@ -7019,6 +7255,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zKeRylwWT
   id: 12695
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -7040,6 +7277,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oAeFWGoaQ
   id: 12752
   string: A heavy weight measure for bulk commodities (like silk or spices), equivalent
@@ -7062,6 +7300,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qo6ofbTzj
   id: 12352
   string: “L’un timon leva suso L’altro leggier tien giuso, Ma convien levar mano
@@ -7080,6 +7319,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MQo4ub4XQ
   id: 12036
   string: This para features `inline-code`
@@ -7098,6 +7338,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9Ys5bSAIh
   id: 12296
   string: 'A letter from Agassiz, printed in the Proc. As. Soc. Bengal (1865), refers
@@ -7136,6 +7377,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4GZFNJcwy
   id: 12139
   string: '[1.1.6] Chapter 6: How the Great Kaan asked all about the manners of the
@@ -7187,6 +7429,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: rgXFVADWt
   id: 12225
   string: 'element-type:: chapter'
@@ -7206,6 +7449,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: WeyBfoK1R
   id: 12708
   string: CHAPTER XIII. The Fashion of the Great Kaan’s Table at his High Feasts.
@@ -7223,6 +7467,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: O45015U8p
   id: 12718
   string: Now, on his birthday, the Great Kaan dresses in the best of his robes, all
@@ -7263,6 +7508,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: tOCycdC-K
   id: 12306
   string: As regards the route taken by Prince Nogodar in his incursion into India,
@@ -7328,6 +7574,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: RuBMlPDAm
   id: 12764
   string: 'In regions without paper money, larger transactions used weighed bullion.
@@ -7351,6 +7598,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 24R3MJ1pP
   id: 11884
   string: It is natural for the mind to rebel against such claims, to assume them
@@ -7371,6 +7619,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QmjUsvftA
   id: 12754
   string: Currency
@@ -7391,6 +7640,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 04k1NPUkf
   id: 12400
   string: 'Note 5.—The huskless barley of the text is thus mentioned by Burnes in
@@ -7426,6 +7676,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: bE8oVPyGl
   id: 12551
   string: 'Also in a contemporary account of the fall of Acre (1291): “Renovatur ergo
@@ -7446,6 +7697,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dWZysFvt5
   id: 12009
   string: 'element-type:: chapter'
@@ -7465,6 +7717,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vJM7ZDLAX
   id: 12730
   string: Now that I have told you in detail of the splendour of this City of the
@@ -7509,6 +7762,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BGHaRyokb
   id: 12715
   string: 'element-type:: chapter'
@@ -7528,6 +7782,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LXK0lBAaL
   id: 12237
   string: Note 1.—“Mire.” This was in old French the popular word for a Leech; the
@@ -7550,6 +7805,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: rZJIBxWwD
   id: 12248
   string: VII. Shawánkára or Shabánkára. The G. T. has Soucara, but the Crusca gives
@@ -7588,6 +7844,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JUsffnSbz
   id: 12085
   string: Note 2.—Bolghar, our author’s Bolgara, was the capital of the region sometimes
@@ -7616,6 +7873,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1LGsSe98X
   id: 12716
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -7637,6 +7895,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7-9IKKibh
   id: 11990
   string: 'guffin-meta:: #.rm-g'
@@ -7673,6 +7932,7 @@ tree_network:
       - uid
       - y2gMBU71D
       value: ' chapter'
+  blocks: null
 - uid: 4nmDcSocA
   id: 11885
   string: Therefore, do not attempt to swallow this book whole. Read it measure by
@@ -7692,6 +7952,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: K-LnFnNio
   id: 12553
   string: What shall I say about it? When day had well broken, there was the Kaan
@@ -7717,6 +7978,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ajPObbpUi
   id: 12522
   string: 'guffin-meta:: #.rm-g'
@@ -7753,6 +8015,7 @@ tree_network:
       - uid
       - 0BjjpdOfj
       value: ' chapter'
+  blocks: null
 - uid: RA-ODtU4d
   id: 12479
   string: Note 1.—[“The length of Little Pamir, according to Trotter, is 68 miles....
@@ -7777,6 +8040,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: j0PKWKZiT
   id: 12080
   string: Part of the Remains of the CITY of SARAI near TZAREV North of the AKHTUBA
@@ -7795,6 +8059,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ILABBAdxD
   id: 12348
   string: The date and dry-fish diet of the Gulf people is noticed by most travellers,
@@ -7818,6 +8083,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: rLblML_h5
   id: 12686
   string: Note 7.—“Nevertheless,” adds the Ramusian, “there does exist I know not
@@ -7837,6 +8103,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0jZ460wWL
   id: 12398
   string: Note 3.—The mines of Lájwurd (whence l’Azur and Lazuli) have been, like
@@ -7865,6 +8132,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ck3MF45GB
   id: 12252
   string: 'Note 3.—The character of the nomad and semi-nomad tribes of Persia in those
@@ -7901,6 +8169,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MBPht6SsD
   id: 12337
   string: 'In the previous edition of this work I was inclined to identify Marco’s
@@ -7949,6 +8218,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9KK1IoiM0
   id: 12393
   string: “I am, till God me better minde send, At dulcarnon, right at my wittes end.”
@@ -7966,6 +8236,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yVoGbTEa3
   id: 11857
   string: 'title:: "The Travels of Marco Polo"'
@@ -7983,6 +8254,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ekbkysmV2
   id: 12489
   string: Colonel Gordon, the head of the exploring party detached by Sir Douglas
@@ -8014,6 +8286,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BSgF_I3eC
   id: 12781
   string: '**India & The Spice Islands**'
@@ -8033,6 +8306,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: PH5mz7cnp
   id: 12187
   string: 14th century; during the 15th it fell into the hands of the Turkomans, and
@@ -8053,6 +8327,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: rjcXZJ1jV
   id: 12689
   string: 'guffin-meta:: #.rm-g'
@@ -8090,6 +8365,7 @@ tree_network:
       - uid
       - 1B-UqOFme
       value: ' section'
+  blocks: null
 - uid: LMf_YBKmS
   id: 11895
   string: 'publisher:: Friedrich Creussner, Nuremberg,'
@@ -8107,6 +8383,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 70Q5dMrfV
   id: 12340
   string: The Sárdú road enters the Jíruft plain at the ruins of the old city, the
@@ -8128,6 +8405,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xDLdP7phb
   id: 11882
   string: Before you embark upon the text that follows, it is proper that you are
@@ -8149,6 +8427,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: K57NPhdI9
   id: 12389
   string: Ancient Silver Patera of debased Greek art, formerly in the possession of
@@ -8167,6 +8446,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Yi2bjreab
   id: 12756
   string: White sea shells imported from India used as everyday small change. Polo
@@ -8189,6 +8469,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: a2cA9YFVP
   id: 12007
   string: '[1.1.3] Chapter 3: How the Two Brothers, after crossing a desert, came
@@ -8232,6 +8513,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: IqRghC0ch
   id: 12113
   string: When the Two Brothers got to the Great Kaan, he received them with great
@@ -8254,6 +8536,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: RoZyY87Nr
   id: 11888
   string: __— F.C., Nuremberg.__
@@ -8270,6 +8553,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: CMgZLSHqM
   id: 12164
   string: 'That sea whereof I spoke as coming so near the mountains is called the
@@ -8310,6 +8594,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lSrjeyDaT
   id: 11902
   string: '[1.1] **Book I**: Account of Regions Visited or Heard of on the Journey
@@ -8363,6 +8648,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: -AVWJV2Dm
   id: 12334
   string: Marches.
@@ -8380,6 +8666,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qJhXeD3o_
   id: 12336
   string: 1 2 — 17
@@ -8397,6 +8684,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GthyBx53K
   id: 12455
   string: Note 6.—The first precept of the Buddhist Decalogue, or Ten Obligations
@@ -8429,6 +8717,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: m-dJcoMVs
   id: 12514
   string: 'There was a great Tartar Chief, whose name was Nayan,{4} a young man [of
@@ -8465,6 +8754,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Bdk3fWOFU
   id: 12784
   string: A regional spice weight. Polo describes the taxation and weighing of pepper
@@ -8487,6 +8777,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kwOHWFSr2
   id: 12227
   string: '28 learn about all kinds of different matters in the countries which he
@@ -8561,6 +8852,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QUB_je_gL
   id: 12150
   string: '[1.1.15] Chapter 15: Of the Eight Kingdoms of Persia, and how they are
@@ -8609,6 +8901,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: J8TZ7Q40V
   id: 12460
   string: 'guffin-meta:: #.rm-g'
@@ -8645,6 +8938,7 @@ tree_network:
       - uid
       - 8jy0-vnoh
       value: ' chapter'
+  blocks: null
 - uid: 6fZb-QcW2
   id: 12234
   string: CHAPTER XIV. What befell when the Three Kings returned to their own Country.
@@ -8662,6 +8956,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vGvlpmqcc
   id: 11973
   string: 'guffin-meta:: #.rm-g'
@@ -8698,6 +8993,7 @@ tree_network:
       - uid
       - 3TO924yvu
       value: ' chapter'
+  blocks: null
 - uid: IpvhvPgDJ
   id: 12528
   string: '[1.2.4] Chapter 4: Of the Battle that the Great Kaan fought with Nayan.'
@@ -8751,6 +9047,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: QqSawZNiQ
   id: 12622
   string: Hammer gives regulations of Ghazan Khan’s on the subject of the Paizah,
@@ -8782,6 +9079,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ucBp3c6e8
   id: 12231
   string: 'Note 2.—[Ramusio here adds: “Ad und città, detta Carazan,” which, as we
@@ -8807,6 +9105,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: S7JAsjnfd
   id: 12188
   string: 'Note 2.—The Nestorian Church was at this time and in the preceding centuries
@@ -8855,6 +9154,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: jLaqoa3sn
   id: 12744
   string: Originally a Byzantine gold coin, Polo used this as a standard translation
@@ -8878,6 +9178,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: s1SmW50RL
   id: 12790
   string: 'guffin-meta:: #.rm-g'
@@ -8913,6 +9214,7 @@ tree_network:
       - uid
       - 2zNvexiSo
       value: ' part'
+  blocks: null
 - uid: TYm_fnFxk
   id: 12540
   string: Note 2.—This circumstance is mentioned in the extract below from Gaubil.
@@ -8933,6 +9235,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: RbM-trDdE
   id: 11912
   string: 'guffin-meta:: #.rm-g'
@@ -8968,6 +9271,7 @@ tree_network:
       - uid
       - vSGgmBM_w
       value: ' part'
+  blocks: null
 - uid: h4mHiKeQf
   id: 12706
   string: 381 guard by turns; a corps on tour of duty. Keshik is one of the archaisms
@@ -8999,6 +9303,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: CYmWuUAH_
   id: 12786
   string: Currency
@@ -9019,6 +9324,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Z1us-vib2
   id: 12751
   string: '**Picul**'
@@ -9040,6 +9346,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8NHUfOXgQ
   id: 12214
   string: '**The Deception:** The Old Man of the Mountain maintained a beautiful,
@@ -9060,6 +9367,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: shFahtwt3
   id: 11855
   string: 'guffin-meta:: #.rm-g'
@@ -9196,6 +9504,7 @@ tree_network:
       - uid
       - LWP5sl53w
       value: ' Cum Privilegio'
+  blocks: null
 - uid: RUYYZHERS
   id: 12251
   string: The livre tournois at this period was equivalent to a little over 18 francs
@@ -9234,6 +9543,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kc925l2V-
   id: 12347
   string: The Double or Latin Rudder, as shown in the Navicella of Giotto. (From Eastlake.)
@@ -9251,6 +9561,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: c180mlQ5N
   id: 12543
   string: Nakkaras. (From a Chinese original.)
@@ -9268,6 +9579,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: t0c4q5FAN
   id: 12672
   string: Now there was on that spot in old times a great and noble city called Cambaluc,
@@ -9293,6 +9605,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: simj5rkis
   id: 12682
   string: The existing Tartar city of Peking (technically Neï-ch’ing, “The Interior
@@ -9329,6 +9642,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dpVdMLUCK
   id: 12668
   string: Note 14.—For son, read grandson. But the G. T. actually names the Emperor’s
@@ -9347,6 +9661,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yBXShA3po
   id: 12245
   string: 'In this country there are many cruel and murderous people, so that no day
@@ -9389,6 +9704,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YOpkUGkoq
   id: 12665
   string: Mei Shan.
@@ -9406,6 +9722,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: db-j_aGpw
   id: 12243
   string: '[Just before going to press we have read Major Sykes’ new book on Persia.
@@ -9427,6 +9744,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3TKl0eM15
   id: 12596
   string: 'element-type:: chapter'
@@ -9446,6 +9764,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LgvruSCLu
   id: 12329
   string: 7 2
@@ -9463,6 +9782,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YACmNpmW1
   id: 12092
   string: Note 4.—Ucaca or Ukek was a town on the right bank of the Volga, nearly
@@ -9504,6 +9824,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AyYZmSD81
   id: 12019
   string: '**A Vast Land:** He describes Greater Hermenia as an enormous country,
@@ -9523,6 +9844,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: mwRFIaxIs
   id: 11887
   string: God preserve you in your reading.
@@ -9539,6 +9861,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: A660uW2U-
   id: 12082
   string: But in the end Barca, the Lord of the Tartars of the Ponent, was defeated,
@@ -9583,6 +9906,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: T4TCsniLR
   id: 12396
   string: Some account of the Balakhsh from Oriental sources will be found in J. As.
@@ -9606,6 +9930,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Xgly0LOgl
   id: 12190
   string: Note 3.—We see here that mosolin or muslin had a very different meaning
@@ -9649,6 +9974,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4r9LUeZ4l
   id: 12286
   string: 'element-type:: chapter'
@@ -9668,6 +9994,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TxzUuIjvZ
   id: 12399
   string: Note 4.—The Kataghan breed of horses from Badakhshan and Kunduz has still
@@ -9695,6 +10022,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aAimDzV9X
   id: 11917
   string: 'element-type:: part'
@@ -9713,6 +10041,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HNGnXbA3_
   id: 12033
   string: This para features **bold**
@@ -9731,6 +10060,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gz_yErmDu
   id: 12621
   string: 'These golden bulls of the Mongol Kaans appear to have been originally tokens
@@ -9780,6 +10110,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HG-eNczlj
   id: 12099
   string: 'After they had passed the desert, they arrived at a very great and noble
@@ -9807,6 +10138,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VHTk1hJqV
   id: 12491
   string: 'Note 3.—Bolor is a subject which it would take several pages to discuss
@@ -9845,6 +10177,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: DDP39vx_z
   id: 12027
   string: '**Ciandu / Shangtu (Xanadu):** The famous summer capital of Kublai Khan''s
@@ -9865,6 +10198,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zdQJ48f88
   id: 12221
   string: And now you have heard in what wise took place this great miracle. And marvel
@@ -9888,6 +10222,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MBlUgsNlI
   id: 12392
   string: In Badakhshan Proper the story seems now to have died out. Indeed, though
@@ -9926,6 +10261,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3GQXF_Yy3
   id: 12711
   string: Kaan has such a quantity of this kind of plate, and of gold and silver in
@@ -9959,6 +10295,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oag3DZjNS
   id: 12081
   string: Lit. Frauenfelder, Palermo
@@ -9976,6 +10313,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: eXk2e2_GL
   id: 12230
   string: 'The orders of the Great Kaan are stated to have been published habitually
@@ -10028,6 +10366,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oZzBsgN89
   id: 12577
   string: 'And so thenceforward no more was heard of the floutings of the unbelievers
@@ -10058,6 +10397,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QweAqpt_r
   id: 12677
   string: South Gate of Imperial City at Peking. “Elle a douze portes, et sor chascune
@@ -10076,6 +10416,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: a7KLc-cV2
   id: 12145
   string: 'guffin-meta:: #.rm-g'
@@ -10112,6 +10453,7 @@ tree_network:
       - uid
       - EASTGFcQx
       value: ' chapter'
+  blocks: null
 - uid: GCn1By0vf
   id: 12395
   string: 'Note 2.—I have adopted in the text for the name of the country that one
@@ -10146,6 +10488,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BKgWeBS0X
   id: 12676
   string: Note 2.—The river that ran between the old and new city must have been the
@@ -10167,6 +10510,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LYJA4khHL
   id: 12302
   string: Portrait of a Hazára.
@@ -10184,6 +10528,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QOfNkBTdX
   id: 12640
   string: The seat of the Ḳungurats was near the Great Wall. Their name is still applied
@@ -10233,6 +10578,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: RYAmU5o3o
   id: 12367
   string: '[1] This story has been transferred to Peter the Great, who is alleged
@@ -10253,6 +10599,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vKia5BRKR
   id: 12276
   string: Texture, with Animals, etc., from a Cashmere Scarf in the Indian Museum.
@@ -10271,6 +10618,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: nI0AyNaQK
   id: 12259
   string: 'element-type:: chapter'
@@ -10290,6 +10638,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: THnQSpmq5
   id: 12254
   string: Now you must know that Persia is a very great country, and contains eight
@@ -10308,6 +10657,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wuedDMpZ3
   id: 12594
   string: '[1.2.7] CHAPTER VII.: How the Kaan rewarded the Valour of his Captains.'
@@ -10359,6 +10709,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: xR2SkX0dj
   id: 12083
   string: '[“Mesalek-al-absar (285, 287), says Sarai, meaning ‘the Palace,’ was founded
@@ -10384,6 +10735,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: emxLujzkH
   id: 12185
   string: On the frontier of Armenia towards the south-east is the kingdom of Mausul.
@@ -10430,6 +10782,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lwB1NmQHY
   id: 12608
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -10451,6 +10804,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TCbvFDhkL
   id: 12448
   string: “The Cashmeerians,” says Abu’l Fazl, “have a language of their own, but
@@ -10479,6 +10833,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: t1hVtf82l
   id: 12785
   string: ''
@@ -10498,6 +10853,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SaO7N17e6
   id: 12026
   string: '**Cambaluc (Beijing):** The grand winter capital of Kublai Khan''s vast
@@ -10518,6 +10874,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YGoODHoSM
   id: 11890
   string: 'guffin-meta:: #.rm-g'
@@ -10553,6 +10910,7 @@ tree_network:
       - uid
       - aIPqy4neT
       value: ' front-matter'
+  blocks: null
 - uid: ChlIfjFoZ
   id: 12003
   string: '[[>]] Go thou and slay So and So; and when thou returnest my Angels shall
@@ -10576,6 +10934,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: eAd0SHsPQ
   id: 14549
   string: 'guffin-meta:: #.rm-g'
@@ -10611,6 +10970,7 @@ tree_network:
       - uid
       - yBBotE59L
       value: ' back-matter'
+  blocks: null
 - uid: EfCCAg-iA
   id: 12298
   string: '[Rabelais says (Bk. I. ch. xvi.): “Si de ce vous efmerveillez, efmerveillez
@@ -10632,6 +10992,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OPAjTYc1n
   id: 11867
   string: I must humbly acknowledge the labor of the learned Master Heinrich, who
@@ -10651,6 +11012,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _Aea4kPt1
   id: 12034
   string: This para features ~~strikethrough~~
@@ -10669,6 +11031,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5V75M372y
   id: 12770
   string: Currency
@@ -10689,6 +11052,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zXQgVSnob
   id: 12371
   string: 'guffin-meta:: #.rm-g'
@@ -10725,6 +11089,7 @@ tree_network:
       - uid
       - MlAqO5wQx
       value: ' chapter'
+  blocks: null
 - uid: fQ10GqUny
   id: 12582
   string: '[According to their oral tradition, the Jews came to China from Si Yĭh
@@ -10746,6 +11111,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TxUDbIpA3
   id: 12324
   string: Their ships are wretched affairs, and many of them get lost; for they have
@@ -10794,6 +11160,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YFE0iG-1T
   id: 12162
   string: Mediæval Georgian Fortress, from a drawing dated 1634. “La provence est
@@ -10812,6 +11179,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d2r0m-pwA
   id: 11862
   string: 'guffin-meta:: #.rm-g'
@@ -10847,6 +11215,7 @@ tree_network:
       - uid
       - NLMrjV2AB
       value: ' acknowledgments'
+  blocks: null
 - uid: KgveNeL1b
   id: 12315
   string: 'guffin-meta:: #.rm-g'
@@ -10883,6 +11252,7 @@ tree_network:
       - uid
       - tY1X3vZsE
       value: ' chapter'
+  blocks: null
 - uid: rffhIZOXn
   id: 12333
   string: 2 6
@@ -10900,6 +11270,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JTYREHPDa
   id: 12198
   string: A modern Kashmír example of such work is shown under ch. xvii. (D’Avezac,
@@ -10921,6 +11292,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LNLrKUqgP
   id: 12173
   string: These legends are referred to by Rabbi Benjamin, Hayton, Rubruquis, Ricold,
@@ -10958,6 +11330,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AvsdnVMvS
   id: 12100
   string: So when the Two Brothers had made their arrangements, they set out on their
@@ -10980,6 +11353,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xaR-gKVQ4
   id: 12301
   string: '(Gold. Horde, 214; Ilch. I. 17, 344, etc.; Erdmann, 168, 199, etc.; J.
@@ -11020,6 +11394,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gXVxIg-yg
   id: 12600
   string: '[1.2.8] CHAPTER VIII.: Concerning the Person of the Great Kaan.'
@@ -11064,6 +11439,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: zz4cSSKHy
   id: 12084
   string: The upper site exhibits by far the most extensive traces of former population,
@@ -11125,6 +11501,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5qCU5BpM5
   id: 12492
   string: MARCO POLO’S ITINERARIES No. III. Regions on and near the Upper Oxus
@@ -11142,6 +11519,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: o_TNcm-9o
   id: 12008
   string: 'guffin-meta:: #.rm-g'
@@ -11178,6 +11556,7 @@ tree_network:
       - uid
       - dWZysFvt5
       value: ' chapter'
+  blocks: null
 - uid: LZ2nMx2H0
   id: 12314
   string: '[1.1.24] Chapter 24: Of the Descent to the City of Hormos.'
@@ -11249,6 +11628,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: doB1NIOh9
   id: 11889
   string: To the curious and patient reader, greetings.
@@ -11265,6 +11645,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8yTdJQhAW
   id: 12444
   string: There are also a number of idolatrous abbeys and monasteries. [The people
@@ -11286,6 +11667,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MGvH7SY4M
   id: 11905
   string: '[1.4] **Book IV**: Wars Among the Tartar Princes and Some Account of the
@@ -11321,6 +11703,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: tONBeCHIv
   id: 12182
   string: Note 9.—[The enormous quantity of fish found in the Caspian Sea is ascribed
@@ -11340,6 +11723,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YvnIYqoV0
   id: 12451
   string: It is notable that the historian Firishta, in a passage quoted by Tod, uses
@@ -11360,6 +11744,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kf2mWxo36
   id: 12186
   string: Coin of Badruddín of Mausul.
@@ -11377,6 +11762,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -2kc3puea
   id: 12478
   string: There are numbers of wild beasts of all sorts in this region. And when you
@@ -11419,6 +11805,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: t6D9n9-z7
   id: 12233
   string: Note 1.—Kala’ Atishparastán, meaning as in the text. (Marsden.) Note 2.—According
@@ -11439,6 +11826,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oT2WP2x_v
   id: 12583
   string: 'Hwui or Hwui-tzŭ; the common name of their religion was Tiao kin kiao,
@@ -11499,6 +11887,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kaKxCS13r
   id: 12224
   string: 'guffin-meta:: #.rm-g'
@@ -11535,6 +11924,7 @@ tree_network:
       - uid
       - rgXFVADWt
       value: ' chapter'
+  blocks: null
 - uid: 6yQMbdz2s
   id: 12505
   string: '[1.2.1] Chapter 1: Of Cublay Kaan, the Great Kaan now Reigning, and of
@@ -11579,6 +11969,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: kQ9V7JV9P
   id: 12325
   string: But when they laid hold of them by the arms to drag them to the pits, the
@@ -11611,6 +12002,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2GCyOKHqV
   id: 12762
   string: Weight / Trade
@@ -11631,6 +12023,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: PaVDjs_S8
   id: 12526
   string: Note 1.—I am afraid Marco, in his desire to impress on his readers the great
@@ -11670,6 +12063,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: T-KT5WlpA
   id: 12709
   string: And when the Great Kaan sits at table on any great court occasion, it is
@@ -11701,6 +12095,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1c-n1cPA_
   id: 12215
   string: '[[>]] Go thou and slay So and So; and when thou returnest my Angels shall
@@ -11724,6 +12119,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1B-UqOFme
   id: 12690
   string: 'element-type:: section'
@@ -11744,6 +12140,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XUiel8zJU
   id: 12783
   string: '**Bahar**'
@@ -11765,6 +12162,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _JenzCGN1
   id: 12749
   string: ''
@@ -11784,6 +12182,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9FXkcVU9u
   id: 12737
   string: '**Cathay (Northern China & Khanbaliq)**'
@@ -11803,6 +12202,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fnF6lC-Q-
   id: 12615
   string: '[1.2.11] CHAPTER XI. Concerning the City of Cambaluc.'
@@ -11849,6 +12249,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: AWHGsLkFB
   id: 12345
   string: The name Formosa is probably only Rusticiano’s misunderstanding of Harmuza,
@@ -11891,6 +12292,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: T2nbILGCj
   id: 12556
   string: 'guffin-meta:: #.rm-g'
@@ -11927,6 +12329,7 @@ tree_network:
       - uid
       - 5452n_et3
       value: ' chapter'
+  blocks: null
 - uid: XE5cHpBNa
   id: 12541
   string: 'Note 3.—The specification of the Tartar instrument of two strings is peculiar
@@ -11963,6 +12366,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4XR3sR72m
   id: 12269
   string: Kermán, on the fall of the Beni Búya Dynasty, in the middle of the 11th
@@ -12021,6 +12425,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 64POjWeCr
   id: 12331
   string: No European traveller, so far as I know, has described the most direct road
@@ -12048,6 +12453,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hgLbm-xBU
   id: 12641
   string: Adyrmachidae, the Libyan tribe next Egypt. Old Eden too relates it of the
@@ -12067,6 +12473,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: IyIuh_JZP
   id: 12775
   string: '**Paper Money**'
@@ -12088,6 +12495,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: DZwV0sSKU
   id: 11911
   string: 'element-type:: chapter'
@@ -12107,6 +12515,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: KyOwjR5nT
   id: 12705
   string: 'We find Kishik still used at the court of Hindustan, under the great kings
@@ -12170,6 +12579,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lnnmSQv8m
   id: 12030
   string: '**Samarcan (Samarkand):** A major, heavily populated trade hub along the
@@ -12190,6 +12600,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: jG4bD-kWh
   id: 12670
   string: Yüan ch’eng.
@@ -12207,6 +12618,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3g17AnfDf
   id: 12459
   string: '[1.1.32] Chapter 32: Of the Great River of Badashan.'
@@ -12260,6 +12672,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: R2Vp_85ad
   id: 12037
   string: This para features __italics__
@@ -12278,6 +12691,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _v0DthR5H
   id: 12223
   string: '[1.1.13] Chapter 13: Of the Great Country of Persia; with some account
@@ -12332,6 +12746,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: 3xs7n7qWg
   id: 12651
   string: From that corner of the enclosure which is towards the north-west there
@@ -12371,6 +12786,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dFSNRjYuk
   id: 12666
   string: '[The “Green Mount” was an island called K’iung-hua at the time of the Kin;
@@ -12399,6 +12815,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ZVvaN-_mA
   id: 12135
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FDbVuSC4qn6.jpeg.enc?alt=media&token=e87ba4b9-8faf-4243-99d6-4757d99116d6)'
@@ -12416,6 +12833,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: H9ufxblxi
   id: 12211
   string: '**The Return to Court:** After a few days of indulging in the garden''s
@@ -12436,6 +12854,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EF6nyb1vF
   id: 12176
   string: 'Like circumstances would produce the same effect in a variety of lakes,
@@ -12469,6 +12888,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vALZLA1Jn
   id: 11868
   string: Likewise, my gratitude is bound to the worshipful Herr Sebaldus of the Merchant
@@ -12489,6 +12909,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 09KMheZHg
   id: 12792
   string: '[1.3] **Book III**: Journey to the West and South-West of Cathay.'
@@ -12524,6 +12945,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: xR14qUwGY
   id: 12244
   string: The first kingdom is that at the beginning of Persia, and it is called Casvin;
@@ -12554,6 +12976,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: G4mDptqPB
   id: 12228
   string: Hexaglot Inscription on the East side of the Kiu-Yong Kwan.
@@ -12571,6 +12994,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zXhYsKp5A
   id: 12727
   string: '[1.2.24] CHAPTER XXIV. How the Great Kaan causeth the Bark of Trees, made
@@ -12609,6 +13033,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: bMg6ybr4X
   id: 12104
   string: 'element-type:: chapter'
@@ -12628,6 +13053,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: pZmzyz_3x
   id: 12450
   string: In the account which the Mahawanso gives of the consecration of the great
@@ -12654,6 +13080,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: al7uzI8-L
   id: 12773
   string: '**Manzi (Southern China / Kinsay)**'
@@ -12673,6 +13100,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4RTujrUSC
   id: 12401
   string: “Hawking is the favourite sport of Central Asian Lords,” says G. Capus.
@@ -12695,6 +13123,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: z26IaDo-5
   id: 12144
   string: '[1.1.7] Chapter 7: How the Great Kaan sent the Two Brothers as his Envoys
@@ -12733,6 +13162,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: 8jy0-vnoh
   id: 12461
   string: 'element-type:: chapter'
@@ -12752,6 +13182,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YgVtn14fW
   id: 12193
   string: The Calif wist not what to answer, and said never a word. So the Prince
@@ -12777,6 +13208,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Zmj8N0TYR
   id: 11914
   string: 'guffin-meta:: #.rm-g'
@@ -12812,6 +13244,7 @@ tree_network:
       - uid
       - aAimDzV9X
       value: ' part'
+  blocks: null
 - uid: nMlnFSLg3
   id: 12089
   string: 'With reference to the early Christianity of the Bulgarians, to which Yule
@@ -12855,6 +13288,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FCbCaEI9W
   id: 12628
   string: Second Example of a Mongol Païza, with Superscription in the Uighúr Character,
@@ -12873,6 +13307,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GVyI2I8fM
   id: 12204
   string: Note 8.—Nevertheless Froissart brings the Khalif to life again one hundred
@@ -12891,6 +13326,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Jjl5RBynj
   id: 12777
   string: ''
@@ -12910,6 +13346,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fshziNUoV
   id: 12685
   string: 'Note 5.—The French writer cited under note 3 says of the city as it stands:
@@ -12958,6 +13395,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: RWty-q5wD
   id: 12040
   string: 'guffin-meta:: #.rm-g'
@@ -12994,6 +13432,7 @@ tree_network:
       - uid
       - FO2_-TXJR
       value: ' chapter'
+  blocks: null
 - uid: twpddhZKC
   id: 12538
   string: So then, as they were thus singing and playing, though ordered and ready
@@ -13034,6 +13473,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: X-pmrTONW
   id: 12723
   string: 'Something like the changes of costume here spoken of is mentioned by Rubruquis
@@ -13064,6 +13504,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Q38ZYFtvW
   id: 12235
   string: 'And when they had ridden many days they said they would see what the Child
@@ -13091,6 +13532,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9oAXgAgz-
   id: 12453
   string: Note 5.—In the time of Hiuen Tsang, who spent two years studying in Káshmir
@@ -13129,6 +13571,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 690wmxtJx
   id: 12714
   string: 'guffin-meta:: #.rm-g'
@@ -13165,6 +13608,7 @@ tree_network:
       - uid
       - BGHaRyokb
       value: ' chapter'
+  blocks: null
 - uid: jpKgJ_vWt
   id: 12639
   string: Note 3.—Ungrat, the reading of the Crusca, seems to be that to which the
@@ -13191,6 +13635,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2zNvexiSo
   id: 12791
   string: 'element-type:: part'
@@ -13209,6 +13654,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: tY1X3vZsE
   id: 12316
   string: 'element-type:: chapter'
@@ -13228,6 +13674,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: DTnbH4lgW
   id: 12524
   string: 'When the Great Kaan heard what was afoot, he made his preparations in right
@@ -13263,6 +13710,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: J72XYqXFY
   id: 12620
   string: 'I should mention too that an officer who holds the chief command of 100,000
@@ -13304,6 +13752,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0mz4OgApl
   id: 12311
   string: '[1] Khajlak is mentioned as a leader of the Mongol raids in India by the
@@ -13326,6 +13775,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dnaYsDqv8
   id: 12743
   string: '**Bezant**'
@@ -13347,6 +13797,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: rhPsF4zq3
   id: 11852
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -13391,6 +13842,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aDIkVUQdu
   id: 12142
   string: And then he inquired about the Pope and the Church, and about all that is
@@ -13430,6 +13882,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qA3qSVISz
   id: 12095
   string: Having stayed a while at Soldaia, they considered the matter, and thought
@@ -13458,6 +13911,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: A9Norxk2a
   id: 12388
   string: 'The mountains of this country also supply Saker falcons of excellent flight,
@@ -13492,6 +13946,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4mH2LuYAn
   id: 12303
   string: Let us turn now to the name of Nogodar. Contemporaneously with the Ḳaraunahs
@@ -13511,6 +13966,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vK5kBX3Dr
   id: 11886
   string: We have placed this volume before you so that the boundaries of your world
@@ -13529,6 +13985,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ROYjinXfM
   id: 11883
   string: You will find no familiar landmarks here. The author speaks of kingdoms
@@ -13547,6 +14004,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: q9asjPtXv
   id: 12617
   string: 'element-type:: chapter'
@@ -13566,6 +14024,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qjaCoUDM7
   id: 12787
   string: '**Grosso** (Groat)'
@@ -13587,6 +14046,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: g9ifwFqvG
   id: 12219
   string: Now I have told you something of Baudas. I could easily indeed have told
@@ -13614,9 +14074,10 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: jqAiDA6IM
   id: 11871
-  string: '[0.2] [[Who is this Book for?]]'
+  string: '[0.2] [[Who Is This Book For?]]'
   order: 3
   heading: 2
   children:
@@ -13653,6 +14114,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: 6XANyGEAN
   id: 12407
   string: '[1.1.31] Chapter 31: Of the Province of Keshimur.'
@@ -13703,6 +14165,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: f5oHh-EjV
   id: 12507
   string: 'guffin-meta:: #.rm-g'
@@ -13739,6 +14202,7 @@ tree_network:
       - uid
       - wZGFmE3k2
       value: ' chapter'
+  blocks: null
 - uid: z_LsdQDTl
   id: 12281
   string: '[1] A learned friend objects to Johnson’s Hundwáníy = “Indian Steel,” as
@@ -13768,6 +14232,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0tjZENdFG
   id: 12720
   string: Note 2.—The expression “à or batuz” as here applied to robes, is common
@@ -13788,6 +14253,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Ogyy0txny
   id: 12305
   string: 'So far, excepting as to the doubtful point of the relation between Ḳaráunahs
@@ -13849,6 +14315,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: c8ji9GQyF
   id: 12687
   string: '[1] Mr. Wylie confirms my assumption: “Whilst in Peking I traced the old
@@ -13872,6 +14339,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XTruep-9v
   id: 11999
   string: '**The Return to Court:** After a few days of indulging in the garden''s
@@ -13892,6 +14360,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JHZh0W3D_
   id: 12578
   string: Note 2.—Chorcha is the Manchu country, Niuché of the Chinese. (Supra, note
@@ -13922,6 +14391,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yXBTPjfOT
   id: 12636
   string: 'Note 1.—We are left in some doubt as to the colour of Kúblái’s eyes, for
@@ -13943,6 +14413,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dpoX6c0Pl
   id: 11861
   string: '[0.1] [[Acknowledgments]]'
@@ -13984,6 +14455,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: LUcgNYY1S
   id: 12141
   string: 'element-type:: chapter'
@@ -14003,6 +14475,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: L0xspxsKt
   id: 11989
   string: '[1.1.25] Chapter 25: How the Old Man Used to Train His Assassins.'
@@ -14052,6 +14525,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: -J7tcnbYv
   id: 12328
   string: 1. From Kermán across a plain to the top of a mountain-pass, where extreme
@@ -14075,6 +14549,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3io6AajdE
   id: 12485
   string: Horns of Ovis Poli.
@@ -14092,6 +14567,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TbcQ8_-Pp
   id: 12217
   string: 'And when the appointed day was come, all the Christians got up early, men
@@ -14136,6 +14612,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JRKK4tzAV
   id: 12332
   string: '1. From Kermán to the caravanserai of Deh Bakri in the pass so called.
@@ -14167,6 +14644,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d4ZvZv8W3
   id: 12611
   string: 'guffin-meta:: #.rm-g'
@@ -14203,6 +14681,7 @@ tree_network:
       - uid
       - Dqzg-JWIB
       value: ' chapter'
+  blocks: null
 - uid: ybIBJ7Ulr
   id: 12648
   string: Inside of this wall there is a second, enclosing a space that is somewhat
@@ -14241,6 +14720,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: DAJDZt9it
   id: 12275
   string: 'In the histories, even of the Mahomedan conquest of India, the Hindu infidels
@@ -14309,6 +14789,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AgVhfYLCC
   id: 12765
   string: '**Tebet (Tibet)**'
@@ -14328,6 +14809,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GLIaxOwDt
   id: 12530
   string: 'guffin-meta:: #.rm-g'
@@ -14364,6 +14846,7 @@ tree_network:
       - uid
       - ntMDtY4Q-
       value: ' chapter'
+  blocks: null
 - uid: gN8LMc5jG
   id: 12267
   string: In the mountains of Kerman are found the best falcons in the world. They
@@ -14393,6 +14876,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JQVKcYJKO
   id: 12443
   string: The men are brown and lean, but the women, taking them as brunettes, are
@@ -14419,6 +14903,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VidLsMnx2
   id: 12327
   string: I now proceed to recapitulate the main features of Polo’s Itinerary from
@@ -14437,6 +14922,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2ng_oL_k5
   id: 12356
   string: Seal of Winchelsea.
@@ -14454,6 +14940,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OHNvkW7pD
   id: 12205
   string: '[1] Not that Alaü (pace Mr. Longfellow) ever did see Cambalu.'
@@ -14471,6 +14958,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Wvt7hoBdn
   id: 12704
   string: Amírs of the four Keshik, or Corps of the Body Guard; (4) the officers of
@@ -14496,6 +14984,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2eBv9J8n5
   id: 12061
   string: "```python\n@validate_call\ndef transcribe(node_tree: NodeTree) -> VertexTree:\n\
@@ -14570,6 +15059,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: RSphw4iFq
   id: 12358
   string: From Monument of St. Peter Martyr.
@@ -14587,6 +15077,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: tljWl5ZoV
   id: 11906
   string: '[1.1.1] CHAPTER I. Here the Book begins; and first it speaks of the Lesser
@@ -14625,6 +15116,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: fut-ebfVb
   id: 12778
   string: Weight / Revenue
@@ -14645,6 +15137,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: P70zMrRa1
   id: 12584
   string: 'And when the Great Kaan learned that Nayan was taken right glad was he,
@@ -14691,6 +15184,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EmObjv89g
   id: 12210
   string: '**The Awakening:** When the young men awoke, they found themselves surrounded
@@ -14711,6 +15205,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: jYi3QvhTN
   id: 11856
   string: 'authors:: Marco Polo, Rustichello da Pisa'
@@ -14728,6 +15223,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: eiAZVhVrz
   id: 11869
   string: Finally, I commend the diligent journeymen of my workshop, who stood long
@@ -14745,6 +15241,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MlAqO5wQx
   id: 12372
   string: 'element-type:: chapter'
@@ -14764,6 +15261,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xk9a5a8bM
   id: 12171
   string: 'Among the questions that the Jews are said to have put, in order to test
@@ -14805,6 +15303,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Gn10okg1P
   id: 11873
   string: '**The Sovereign and the Statesman:** For kings, princes, and dukes who
@@ -14825,6 +15324,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: G3pZzZ1Wa
   id: 12183
   string: According to Reclus, the Caspian fisheries bring in fish to the annual value
@@ -14843,6 +15343,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OvGR5WgKV
   id: 12755
   string: '**Cowrie Shells (__Porcelaine__)**'
@@ -14864,6 +15365,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -fUy43LIL
   id: 12097
   string: 10 thereof.” So they replied that they would be right glad to learn how.
@@ -14892,6 +15394,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lO0g-Xa8m
   id: 12733
   string: '**Region / Land**'
@@ -14911,6 +15414,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zXai0oMEW
   id: 12745
   string: ''
@@ -14930,6 +15434,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: l77yyFKzC
   id: 12684
   string: The “Great Palaces” over the gates and at the corner bastions are no doubt
@@ -14951,6 +15456,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: g9CM7k81s
   id: 12282
   string: Kerman is a kingdom which is also properly in Persia, and formerly it had
@@ -14980,6 +15486,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: mqh8viyXo
   id: 12238
   string: And the Paris Liturgy:—
@@ -14997,6 +15504,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vSGgmBM_w
   id: 11915
   string: 'element-type:: part'
@@ -15015,6 +15523,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LZJSmETBX
   id: 11972
   string: '[1.1.2] Chapter 2: How the Two Brothers went on beyond Soldaia.'
@@ -15069,6 +15578,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: y6pLmW1tO
   id: 11984
   string: '[[>]] [[!INFO]] Lesser Hermenia (Cilician Armenia) vs. Turkomania (Anatolia)
@@ -15095,6 +15605,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qONAkcn_A
   id: 12610
   string: '[1.2.10] CHAPTER X. Concerning the Palace of the Great Kaan.'
@@ -15156,6 +15667,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: Y0tWjmMvS
   id: 12270
   string: There does not seem any doubt as to the identity of Bardashir with the present
@@ -15178,6 +15690,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1nwbKgqjM
   id: 12213
   string: '**The Resulting Terror:** Believing wholeheartedly in this promise, the
@@ -15197,6 +15710,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: r4VyxaF6Y
   id: 12349
   string: '[Friar Odoric (Cathay, I. pp. 55–56) says: “And there you find (before
@@ -15216,6 +15730,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fOib-j1pH
   id: 12232
   string: Unfortunately, both the late M. Devéria and Dr. S. W. Bushell have deciphered
@@ -15234,6 +15749,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5ejVDmAxL
   id: 12165
   string: '1308).—H. C.] There were two princes of that name, David, who shared Georgia
@@ -15269,6 +15785,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zxqTXX6jZ
   id: 12679
   string: Note 4.—Our attempted plan of Cambaluc, as in 1290, differs somewhat from
@@ -15287,6 +15804,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JNl3Y_Xx7
   id: 12309
   string: Richthofen’s remarkable exposition of the phenomena of the löss in North
@@ -15312,6 +15830,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lLSoMElKq
   id: 12766
   string: Currency
@@ -15332,6 +15851,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: omBq45PhN
   id: 12239
   string: “Offert Aurum Caritas, Et Myrrham Austeritas, Et Thus Desiderium. Auro Rex
@@ -15350,6 +15870,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FO2_-TXJR
   id: 12041
   string: 'element-type:: chapter'
@@ -15369,6 +15890,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hwLhBpDja
   id: 12772
   string: Polo notes that red coral imported from the Mediterranean was highly prized
@@ -15391,6 +15913,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fCIMicK3P
   id: 12310
   string: 'Note 5.—The specification that only seven were saved from Marco’s company
@@ -15442,6 +15965,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: NpUnOxvu-
   id: 12023
   string: '**Kogni (Konya):** A major inland city on the Anatolian plateau (Turkomania)
@@ -15462,6 +15986,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lJffCYxqN
   id: 12366
   string: Note 2.—Hammer mentions as what he chooses to call “Grand Priors” under
@@ -15488,6 +16013,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1UJc1G_8D
   id: 12177
   string: Note 7.—The name assigned by Marco to the Caspian, “Mer de Gheluchelan”
@@ -15536,6 +16062,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: E5I_NXV5d
   id: 12153
   string: ''
@@ -15553,6 +16080,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VEk5Kb5DM
   id: 12168
   string: View of Derbend. “Alexandre ne poit paser quand il vost aler au Ponent ...
@@ -15572,6 +16100,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Ym52_F-P2
   id: 12273
   string: '[“Marco Polo’s steel mines are probably the Parpa iron mines on the road
@@ -15632,6 +16161,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dKvno8SCl
   id: 12625
   string: 'I do not know if any gold Paizah has been discovered, but several of silver
@@ -15700,6 +16230,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Y21sX9xK7
   id: 12307
   string: 'Mung. These two sites, Diláwar-Dárápúr on the west bank, and Mung on the
@@ -15752,6 +16283,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: txnHAH8bw
   id: 12703
   string: You must know that the Great Kaan, to maintain his state, hath a guard of
@@ -15790,6 +16322,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Ee4-D9SSG
   id: 12627
   string: Note 3.—Umbrella. The phrase in Pauthier’s text is “Palieque que on dit
@@ -15836,6 +16369,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AonYk0x--
   id: 12354
   string: 12th Century Illumination. (After Pertz.)
@@ -15853,6 +16387,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SGPVZag6N
   id: 12001
   string: '**The Resulting Terror:** Believing wholeheartedly in this promise, the
@@ -15872,6 +16407,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BejZVxBcX
   id: 12457
   string: Keshimur also is a Province inhabited by a people who are Idolaters and
@@ -15896,6 +16432,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XEXppTHQE
   id: 12758
   string: Currency
@@ -15916,6 +16453,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: faeKau1gd
   id: 12151
   string: 'guffin-meta:: #.rm-g'
@@ -15952,6 +16490,7 @@ tree_network:
       - uid
       - bFb67Ji4-
       value: ' chapter'
+  blocks: null
 - uid: P9pd0pX4y
   id: 12732
   string: '{{[[table]]}}'
@@ -15984,6 +16523,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lWiE7gy3a
   id: 12483
   string: 'The Pamir Steppe was crossed by Benedict Goës late in the autumn of 1603,
@@ -16051,6 +16591,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vf0E7bSFT
   id: 12028
   string: '**Ormuz (Hormuz):** A wealthy, strategically important port city on the
@@ -16071,6 +16612,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7jR4UgJfE
   id: 12618
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -16092,6 +16634,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FJ42n05XS
   id: 12652
   string: You must know that beside the Palace (that we have been describing), i.e.
@@ -16129,6 +16672,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8jdnheysF
   id: 12250
   string: Note 2.—The horses exported to India, of which we shall hear more hereafter,
@@ -16152,6 +16696,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xj1qpLeNc
   id: 12588
   string: 'element-type:: chapter'
@@ -16171,6 +16716,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: L-BHFco0z
   id: 12480
   string: '“Therefore he must have left the Aksu Valley to cross the Pass of Tagharma,
@@ -16220,6 +16766,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fw8b2HyAE
   id: 12693
   string: 'guffin-meta:: #.rm-g'
@@ -16256,6 +16803,7 @@ tree_network:
       - uid
       - UD9SkuxoE
       value: ' chapter'
+  blocks: null
 - uid: BhkxYuvuD
   id: 12201
   string: '“I said to the Kalif: ‘Thou art old, Thou hast no need of so much gold.
@@ -16282,6 +16830,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: nsNSMSU8i
   id: 12674
   string: Moreover, in the middle of the city there is a great clock—that is to say,
@@ -16325,6 +16874,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2GuxTiNnf
   id: 12713
   string: '[1.2.14] CHAPTER XIV. Concerning the Great Feast held by the Grand Kaan
@@ -16371,6 +16921,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: wC5qlnsBS
   id: 12760
   string: Brine boiled into solid cakes or loaves and stamped with the Great Khan’s
@@ -16393,6 +16944,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LtjlwI_Xz
   id: 12481
   string: 'Wakhán was restored to geography by Macartney, in the able map which he
@@ -16463,6 +17015,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0CiFrZbxC
   id: 12079
   string: Map to illustrate the Geographical Position of the City of Sarai
@@ -16480,6 +17033,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lZKsMSgZX
   id: 11903
   string: '[1.2] **Book II**: The Kaan, His Court and Capital'
@@ -16527,6 +17081,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: 56wP0Aq2m
   id: 12680
   string: Peking As it is and As it was, about 1290
@@ -16544,6 +17099,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MpvoU-Iw6
   id: 12258
   string: 'guffin-meta:: #.rm-g'
@@ -16580,6 +17136,7 @@ tree_network:
       - uid
       - nI0AyNaQK
       value: ' chapter'
+  blocks: null
 - uid: sLpu_Qk2h
   id: 12629
   string: An Indian prince, in a Sanskrit inscription of the 9th century, boasts of
@@ -16618,6 +17175,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uVXLy10u8
   id: 12098
   string: Note 2.—The language of the envoys seems rather to imply that they were
@@ -16643,6 +17201,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: IioymiceP
   id: 12181
   string: This name is introduced in Ramusio, but probably by interpolation, as well
@@ -16675,6 +17234,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GJ-Y_OXdC
   id: 12136
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FU73wJbltGF.jpeg.enc?alt=media&token=f7203ec3-c64d-4e35-a5d9-49f8fc4288ff)'
@@ -16692,6 +17252,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5fk3jOXT0
   id: 12729
   string: 'element-type:: chapter'
@@ -16711,6 +17272,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zO6VlUygf
   id: 12018
   string: '**Mount Ararat and Noah''s Ark:** The most famous detail in this chapter
@@ -16736,6 +17298,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: o0VN-NN3k
   id: 11910
   string: 'guffin-meta:: #.rm-g'
@@ -16772,6 +17335,7 @@ tree_network:
       - uid
       - DZwV0sSKU
       value: ' chapter'
+  blocks: null
 - uid: kRO2pVBCU
   id: 11907
   string: 'element-type:: part'
@@ -16790,6 +17354,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5OuCt3i2H
   id: 12484
   string: 'Lieutenant-Colonel Gordon (Forsyth’s Mission, p. 231) says also: “Regarding
@@ -16825,6 +17390,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: v_yb2JFwl
   id: 11872
   string: '**The Enterprising Merchant:** If your trade involves the acquisition of
@@ -16846,6 +17412,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: iSKrnI_9K
   id: 12304
   string: Ḳaraunahs, but had a like character for truculence. Their headquarters were
@@ -16891,6 +17458,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d66O3vRkn
   id: 12782
   string: Weight
@@ -16911,6 +17479,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qD1Vc32__
   id: 12280
   string: Note 6.—We defer geographical remarks till the traveller reaches Hormuz.
@@ -16928,6 +17497,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wVuAR5ZWY
   id: 12342
   string: '[Major Sykes (Geog. Journal, 1902, p. 130) heard of robbers, some five
@@ -16981,6 +17551,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4wwZFHVJt
   id: 12654
   string: IDEAL PLAN of the ANCIENT PALACES of the MONGOL EMPERORS AT KHANBALIGH according
@@ -16999,6 +17570,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JX3VNYBzn
   id: 12338
   string: The Sárdú route, which seems to me to be the one followed by Marco Polo,
@@ -17023,6 +17595,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: y2gMBU71D
   id: 11991
   string: 'element-type:: chapter'
@@ -17042,6 +17615,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AMbc4pNsu
   id: 12172
   string: According to some chroniclers, the Emperor Heraclius had already let loose
@@ -17064,6 +17638,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8cpd4BAfL
   id: 12581
   string: 'Note 3.—This passage, and the extract from Ramusio’s version attached to
@@ -17102,6 +17677,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: lhL1QJTXU
   id: 12447
   string: Note 1.—I apprehend that in this chapter Marco represents Buddhism (which
@@ -17126,6 +17702,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 6e3m16kSg
   id: 12660
   string: Winter Palace at Peking.
@@ -17143,6 +17720,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7AzRFFeEC
   id: 12597
   string: And after the Great Kaan had defeated Nayan in the way you have heard, he
@@ -17164,6 +17742,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aohLw8r4Q
   id: 12274
   string: “Albi (gladii) Indici meo in sanguine abluuntur.”
@@ -17181,6 +17760,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EAKXqJmAv
   id: 12494
   string: '[1] “Yet this barren and inaccessible upland, with its scanty handful of
@@ -17216,6 +17796,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3gplE69LF
   id: 12586
   string: '[1.2.6] CHAPTER VI.: How the Great Kaan went back to the City of Cambaluc.'
@@ -17252,6 +17833,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: WAFXG2Y_5
   id: 12249
   string: Runiz and Gauristan near Bandar Abbas; (2) to a village near Maiman, in
@@ -17293,6 +17875,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: B2hqepv_V
   id: 12580
   string: 346 belonged to Nayan. As the Kweilei and Toro appear on our maps and also
@@ -17346,6 +17929,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: eFec2eq5P
   id: 12272
   string: Note 3.—Edrisi says that excellent iron was produced in the “cold mountains”
@@ -17369,6 +17953,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 87HpA1p5c
   id: 12021
   string: 'Here is a list of 10 cities mentioned by Marco Polo in __The Travels__,
@@ -17398,6 +17983,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: PI66v7qPU
   id: 11963
   string: There are two Hermenias, the Greater and the Less. The Lesser Hermenia is
@@ -17429,6 +18015,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d6qCF4DeD
   id: 12184
   string: '[1] See Letter of Frederic to the Roman Senate, of 20th June, 1241, in
@@ -17451,6 +18038,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FaN0uCYBo
   id: 12776
   string: Polo documented the spread of the Khan's paper currency system into the
@@ -17473,6 +18061,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VBmdO2ZbP
   id: 12357
   string: From Leaning Tower. (After Jal.)
@@ -17490,6 +18079,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yjegewveP
   id: 12747
   string: '**Saggio** (pl. __saggi__)'
@@ -17511,6 +18101,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: NKu0uhm6E
   id: 12002
   string: '**The Deception:** The Old Man of the Mountain maintained a beautiful,
@@ -17531,6 +18122,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gx8zD2YQD
   id: 12683
   string: '377 have laid the latter down from such data as could be had) together,
@@ -17587,6 +18179,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kvnvvH3Zd
   id: 12445
   string: Ancient Buddhist Temple at Pandrethan in Káshmir.
@@ -17604,6 +18197,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -N9qLUjfo
   id: 12343
   string: MARCO POLO’S ITINERARIES No. II. Kerman to Hormuz (Bᵏ. I. Ch. 19.)
@@ -17621,6 +18215,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TnIQ-fsxe
   id: 12202
   string: 'The story of the death of Mosta’sim Billah, the last of the Abbaside Khalifs,
@@ -17671,6 +18266,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: WZV2wpzK8
   id: 12391
   string: Note 1.—“The population of Badakhshan Proper is composed of Tajiks, Turks,
@@ -17703,6 +18299,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: KoZsBS4x6
   id: 12335
   string: January to March, after which a luxuriant crop of grass.” Across this plain
@@ -17725,6 +18322,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: N2YuIgMDN
   id: 12619
   string: 'So we will have done with this matter of Nayan, and go on with our account
@@ -17766,6 +18364,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: pCGpX6Ckz
   id: 12547
   string: Nakkaras. (From an Indian original.)
@@ -17783,6 +18382,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QTm37UX2K
   id: 12555
   string: '[1.2.5] CHAPTER V: How the Great Kaan caused Nayan to be put to death.'
@@ -17826,6 +18426,7 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: tPZRHnWUs
   id: 12656
   string: Note 5.—The two gates near the corners apparently do not exist in the Palace
@@ -17855,6 +18456,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5452n_et3
   id: 12557
   string: 'element-type:: chapter'
@@ -17874,6 +18476,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ySH10svbr
   id: 12616
   string: 'guffin-meta:: #.rm-g'
@@ -17910,6 +18513,7 @@ tree_network:
       - uid
       - q9asjPtXv
       value: ' chapter'
+  blocks: null
 - uid: SuncpJj9l
   id: 12339
   string: 5 1 2 6 1 2 — 17
@@ -17927,6 +18531,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: IACS5F7wi
   id: 11865
   string: Herein is completed the noble and wondrous Book of the magnificent Venetian,
@@ -17945,6 +18550,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: bAXw6eV0R
   id: 12664
   string: 'Note 12.—The expression here is in the Geog. Text, “Roze de l’açur,” and
@@ -17986,6 +18592,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EIYjf1AE9
   id: 12645
   string: 'was rickety in constitution; and on the death of the old Kaan (1294) Teimur
@@ -18022,6 +18629,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uMCb0ordG
   id: 12658
   string: 'Note 7.—[“Near the southern face of the wall are barracks for the Life
@@ -18058,6 +18666,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 refs_by_id:
   '4223':
     uid: LBFKibPIj
@@ -18066,14 +18675,34 @@ refs_by_id:
     order: null
     heading: null
     children:
-    - id: 4224
+    - id: 18202
+    - id: 18204
     refs: null
     page: null
     children_view_type: null
     parents: null
     props: null
     title: Test Article
-    attrs: null
+    attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    blocks: null
   '11845':
     uid: ZyUTn2I17
     id: 11845
@@ -18088,6 +18717,7 @@ refs_by_id:
     props: null
     title: date
     attrs: null
+    blocks: null
   '11847':
     uid: 2_S3ySs7O
     id: 11847
@@ -18102,6 +18732,7 @@ refs_by_id:
     props: null
     title: identifier
     attrs: null
+    blocks: null
   '5450':
     uid: OexZiLR_O
     id: 5450
@@ -18116,6 +18747,7 @@ refs_by_id:
     props: null
     title: '>'
     attrs: null
+    blocks: null
   '11876':
     uid: asCh2FQQp
     id: 11876
@@ -18130,6 +18762,7 @@ refs_by_id:
     props: null
     title: element-type
     attrs: null
+    blocks: null
   '11894':
     uid: MKBTy5omz
     id: 11894
@@ -18144,6 +18777,7 @@ refs_by_id:
     props: null
     title: subtitle
     attrs: null
+    blocks: null
   '11896':
     uid: HZFZjnFeu
     id: 11896
@@ -18158,6 +18792,7 @@ refs_by_id:
     props: null
     title: publisher
     attrs: null
+    blocks: null
   '2216':
     uid: xFhfCd8lJ
     id: 2216
@@ -18172,6 +18807,7 @@ refs_by_id:
     props: null
     title: table
     attrs: null
+    blocks: null
   '4338':
     uid: qmplSzgnD
     id: 4338
@@ -18187,6 +18823,7 @@ refs_by_id:
     props: null
     title: Acknowledgments
     attrs: []
+    blocks: null
   '321':
     uid: BxGxeeGk1
     id: 321
@@ -18201,6 +18838,7 @@ refs_by_id:
     props: null
     title: .rm-g
     attrs: null
+    blocks: null
   '4588':
     uid: R9gPO6rxP
     id: 4588
@@ -18215,6 +18853,7 @@ refs_by_id:
     props: null
     title: About the Author
     attrs: null
+    blocks: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
@@ -18229,6 +18868,7 @@ refs_by_id:
     props: null
     title: '!INFO'
     attrs: null
+    blocks: null
   '11842':
     uid: MhnnPhnTB
     id: 11842
@@ -18243,6 +18883,7 @@ refs_by_id:
     props: null
     title: authors
     attrs: null
+    blocks: null
   '11898':
     uid: br-LT4oUD
     id: 11898
@@ -18257,6 +18898,7 @@ refs_by_id:
     props: null
     title: rights
     attrs: null
+    blocks: null
   '11892':
     uid: eYctDQDaV
     id: 11892
@@ -18271,6 +18913,7 @@ refs_by_id:
     props: null
     title: matter
     attrs: null
+    blocks: null
   '4384':
     uid: GuHqKi9Y_
     id: 4384
@@ -18286,8 +18929,9 @@ refs_by_id:
     children_view_type: null
     parents: null
     props: null
-    title: Who is this Book for?
+    title: Who Is This Book For?
     attrs: []
+    blocks: null
   '11839':
     uid: 2xY4zCjId
     id: 11839
@@ -18302,6 +18946,7 @@ refs_by_id:
     props: null
     title: guffin-meta
     attrs: null
+    blocks: null
   '11843':
     uid: PZyg8sHJZ
     id: 11843
@@ -18316,6 +18961,7 @@ refs_by_id:
     props: null
     title: title
     attrs: null
+    blocks: null
   '4427':
     uid: GJKWwLPSj
     id: 4427
@@ -18337,6 +18983,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4597':
     uid: Wwn_ElnkO
     id: 4597
@@ -18355,6 +19002,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4600':
     uid: Bl5IgRIYf
     id: 4600
@@ -18373,6 +19021,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4601':
     uid: oaDIyA-Js
     id: 4601
@@ -18390,6 +19039,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4602':
     uid: 39_RTkGv-
     id: 4602
@@ -18409,6 +19059,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4598':
     uid: YESkCZ8tW
     id: 4598
@@ -18427,6 +19078,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4599':
     uid: fQV20MHbZ
     id: 4599
@@ -18444,6 +19096,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4387':
     uid: PjkhzuQ8m
     id: 4387
@@ -18462,6 +19115,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4388':
     uid: kPcAk-Bw1
     id: 4388
@@ -18483,6 +19137,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4391':
     uid: xLG8Ir4vl
     id: 4391
@@ -18503,6 +19158,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4392':
     uid: N60tgmwap
     id: 4392
@@ -18522,6 +19178,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4389':
     uid: TPRmrrxwE
     id: 4389
@@ -18542,6 +19199,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4390':
     uid: zpV7AGpCS
     id: 4390
@@ -18562,6 +19220,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11901':
     uid: sDUbCET-K
     id: 11901
@@ -18578,11 +19237,12 @@ refs_by_id:
     props: null
     title: null
     attrs: null
-  '4224':
-    uid: 7MoH-wIQh
-    id: 4224
-    string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
+    blocks: null
+  '18202':
+    uid: lXi4SgSvz
+    id: 18202
+    string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
     order: 0
     heading: null
     children: null
@@ -18597,6 +19257,26 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
+  '18204':
+    uid: JSrSVApJ_
+    id: 18204
+    string: 'tags:: #Publishing'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 261
+    - id: 6535
+    page:
+      id: 4223
+    children_view_type: null
+    parents:
+    - id: 4223
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '8657':
     uid: ZsFRjGDDy
     id: 8657
@@ -18633,6 +19313,37 @@ refs_by_id:
         value:
         - uid
         - ExJBKbXY2
+    blocks: null
+  '261':
+    uid: RXwAqq0_T
+    id: 261
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: tags
+    attrs: null
+    blocks: null
+  '6535':
+    uid: 9ZtPB2yY3
+    id: 6535
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: Publishing
+    attrs: null
+    blocks: null
   '4428':
     uid: TWqtTA-9e
     id: 4428
@@ -18647,6 +19358,7 @@ refs_by_id:
     props: null
     title: Claude
     attrs: null
+    blocks: null
   '8662':
     uid: eb6oOgGOt
     id: 8662
@@ -18685,6 +19397,7 @@ refs_by_id:
       type: equal
     title: null
     attrs: null
+    blocks: null
   '8670':
     uid: XyG4ILJOo
     id: 8670
@@ -18714,6 +19427,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '8676':
     uid: ABHkVeu8O
     id: 8676
@@ -18736,6 +19450,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '8677':
     uid: HrLHMMak9
     id: 8677
@@ -18754,3 +19469,4 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null

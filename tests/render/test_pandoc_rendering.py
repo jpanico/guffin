@@ -1805,18 +1805,18 @@ class TestPullQuoteRendering:
     """A pull quote renders to a class-tagged fancy-quote Div; a plain block quote stays a BlockQuote."""
 
     @staticmethod
-    def _render_pull(quote: str, attribution: str | None) -> pf.Doc:
+    def _render_pull(quote: str) -> pf.Doc:
         """Render a one-quote tree with a PULL quote block."""
         page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
-        vtx = QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.PULL, quote=quote, attribution=attribution)
+        vtx = QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.PULL, quote=quote)
         doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, vtx]), {}, {})
         return doc
 
     @staticmethod
-    def _render_block(quote: str) -> pf.Doc:
+    def _render_block(quote: str, attribution: str | None = None) -> pf.Doc:
         """Render a one-quote tree with a plain BLOCK quote block."""
         page = PageVertex(uid="pageroot1", title="Doc", children=["quote0001"])
-        vtx = QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.BLOCK, quote=quote)
+        vtx = QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.BLOCK, quote=quote, attribution=attribution)
         doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, vtx]), {}, {})
         return doc
 
@@ -1843,25 +1843,39 @@ class TestPullQuoteRendering:
 
     def test_pull_quote_emits_fancy_quote_div(self) -> None:
         """A PULL quote renders to a fancy-quote Div rather than a BlockQuote."""
-        doc = self._render_pull("In the long run every program becomes rococo.", "— Alan Perlis")
+        doc = self._render_pull("In the long run every program becomes rococo.")
         assert not any(isinstance(block, pf.BlockQuote) for block in doc.content)
         assert self._first_div(doc, "fancy-quote") is not None
 
-    def test_pull_quote_has_quote_and_attribution_divs(self) -> None:
-        """The quote becomes fancy-quote-text; the attribution becomes fancy-quote-attribution."""
-        doc = self._render_pull("The quotation itself.", "The attribution line.")
-        quote_div = self._first_div(doc, "fancy-quote-text")
-        attribution_div = self._first_div(doc, "fancy-quote-attribution")
-        assert "quotation itself" in pf.stringify(quote_div)
-        assert "attribution line" in pf.stringify(attribution_div)
+    def test_pull_quote_holds_only_its_quotation(self) -> None:
+        """A pull quote's fancy-quote Div holds only its quotation — a pull quote is never attributed."""
+        doc = self._render_pull("The quotation itself.")
+        fancy = self._first_div(doc, "fancy-quote")
+        assert [div.classes for div in fancy.content] == [["fancy-quote-text"]]
+        assert "quotation itself" in pf.stringify(fancy)
 
-    def test_pull_quote_without_attribution_omits_attribution_div(self) -> None:
-        """A pull quote with no attribution emits only the quotation sub-Div."""
-        doc = self._render_pull("only the quotation", None)
-        assert self._first_div(doc, "fancy-quote-text") is not None
+    def test_pull_quote_with_attribution_is_rejected(self) -> None:
+        """The model refuses a pull quote carrying an attribution."""
+        with pytest.raises(ValueError, match="only a block quotation may"):
+            QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.PULL, quote="q", attribution="Someone")
+
+    def test_block_quote_attribution_closes_the_quote(self) -> None:
+        """A block quotation's attribution is the quote's last block: an em-dash-led quote-attribution Div."""
+        doc = self._render_block("I wish to God these calculations had been executed by steam!", "*Babbage*, c. 1821")
+        quote = next(block for block in doc.content if isinstance(block, pf.BlockQuote))
+        last = list(quote.content)[-1]
+        assert isinstance(last, pf.Div)
+        assert last.classes == ["quote-attribution"]
+        # Pandoc's smart parsing binds the abbreviation "c." to the year with a no-break space.
+        assert pf.stringify(last).strip() == "— Babbage, c. 1821"
+        assert any(isinstance(element, pf.Emph) for element in list(last.content)[0].content)
+
+    def test_block_quote_without_attribution_has_no_attribution_div(self) -> None:
+        """A block quotation with no attribution renders its quotation alone."""
+        doc = self._render_block("just a quote")
         divs: list[pf.Div] = []
         doc.walk(lambda elem, _doc: divs.append(elem) if isinstance(elem, pf.Div) else None)
-        assert not any("fancy-quote-attribution" in div.classes for div in divs)
+        assert divs == []
 
     @staticmethod
     def _render_with_child(quote_type: QuoteType) -> pf.Doc:

@@ -20,7 +20,16 @@ from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
-from guffin.model.vertex import HeadingVertex, PageVertex, PdfVertex, TextVertex, TodoState, TodoVertex
+from guffin.model.vertex import (
+    HeadingVertex,
+    PageVertex,
+    PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
+    TextVertex,
+    TodoState,
+    TodoVertex,
+)
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView, ViewMap
@@ -588,6 +597,40 @@ class TestTypstAlternativesFilters:
             typst = self._typst_for(layout)
             assert "selected-wording" not in typst
             assert 'alternative-wording"' not in typst
+
+
+@pytest.mark.pandoc
+class TestTypstQuoteFilter:
+    """typst_quote.lua: a pull quote calls fancy-quote with its quotation; a block quote's source line follows it."""
+
+    @staticmethod
+    def _typst_for(quote: QuoteBlockVertex) -> str:
+        page = PageVertex(uid="page00001", title="Doc", children=[quote.uid])
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, quote]), {}, {})
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_quote.lua'}"],
+        )
+
+    def test_pull_quote_calls_fancy_quote_with_quotation_only(self) -> None:
+        """The fancy-quote helper receives the quotation and no attribution argument."""
+        typst = self._typst_for(QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.PULL, quote="Promoted words."))
+        assert "#fancy-quote(quote: [" in typst
+        assert "Promoted words." in typst
+        assert "attribution" not in typst
+
+    def test_block_quote_attribution_follows_left_aligned(self) -> None:
+        """A block quotation's em-dash-led source line is its own paragraph after the quotation, not realigned."""
+        typst = self._typst_for(
+            QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.BLOCK, quote="Quoted words.", attribution="Someone")
+        )
+        assert "#quote(block: true)" in typst
+        # The Typst writer spells the em dash with its markup shorthand, ---.
+        assert "Quoted words.\n\n--- Someone" in typst
+        assert "align(" not in typst
+        assert "#block[" not in typst
 
 
 @pytest.mark.pandoc

@@ -1138,13 +1138,14 @@ class TestToQuoteBlockVertex:
         node = _make_block_quote(string="[[>]] Hello, world!")
         assert to_quote_block_vertex(node, _node_tree(node)).quote_type is QuoteType.BLOCK
 
-    def test_pull_quote_is_pull_with_quote_and_attribution(self) -> None:
-        """Test that a [[>]] [[!QUOTE]] block is QuoteType.PULL with split quote/attribution."""
-        node = _make_block_quote(string="[[>]] [[!QUOTE]] The quotation\n— Someone")
+    def test_pull_quote_is_all_quotation(self) -> None:
+        """A [[>]] [[!QUOTE]] block is QuoteType.PULL whose every line is quotation, never attribution."""
+        node = _make_block_quote(string="[[>]] [[!QUOTE]] The quotation\nits second line\n\n— not a credit")
         vtx = to_quote_block_vertex(node, _node_tree(node))
         assert vtx.quote_type is QuoteType.PULL
-        assert vtx.quote == "The quotation"
-        assert vtx.attribution == "— Someone"
+        assert vtx.quote.startswith("The quotation")
+        assert "not a credit" in vtx.quote
+        assert vtx.attribution is None
 
     def test_pull_quote_without_attribution(self) -> None:
         """Test that a single-line pull quote has no attribution."""
@@ -1153,6 +1154,19 @@ class TestToQuoteBlockVertex:
         assert vtx.quote_type is QuoteType.PULL
         assert vtx.quote == "Just the quote"
         assert vtx.attribution is None
+
+    def test_block_quote_dash_paragraph_is_attribution(self) -> None:
+        """A block quote's dash-led final paragraph, after a blank line, becomes its attribution, dash removed."""
+        node = _make_block_quote(
+            string=(
+                "[[>]] I wish to God these calculations had been executed by steam!\n\n"
+                "— __Charles Babbage__, c. 1821"
+            )
+        )
+        vtx = to_quote_block_vertex(node, _node_tree(node))
+        assert vtx.quote_type is QuoteType.BLOCK
+        assert vtx.quote == "I wish to God these calculations had been executed by steam!"
+        assert vtx.attribution == "*Charles Babbage*, c. 1821"
 
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""

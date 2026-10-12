@@ -108,10 +108,11 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView, ViewMap
 from guffin.roam.better_bullet import BetterBulletProvenance, BetterBulletType
 from guffin.roam.blockquote import (
+    RoamBlockQuote,
     RoamCallout,
+    parse_block_quote,
     parse_callout,
     parse_pull_quote,
-    strip_block_quote_marker,
 )
 from guffin.roam.code_language import CodeLanguage, canonical_id_for
 from guffin.roam.markdown import (
@@ -856,11 +857,12 @@ def to_quote_block_vertex(node: RoamNode, tree: NodeTree) -> QuoteBlockVertex:
     boundary:
 
     - a Roam pull quote (``[[>]] [[!QUOTE]]``, per :func:`~guffin.roam.blockquote.parse_pull_quote`)
-      becomes :attr:`~guffin.vertex.QuoteType.PULL`, its first line the ``quote`` and any following
-      lines the ``attribution`` (the decorated pull-quote treatment);
-    - a standard ``>`` or Roam-native ``[[>]]`` block quote becomes
-      :attr:`~guffin.vertex.QuoteType.BLOCK`, the marker-stripped content the ``quote`` and
-      ``attribution`` ``None`` (a plain block quote).
+      becomes :attr:`~guffin.vertex.QuoteType.PULL`, everything after its marker the ``quote`` and
+      ``attribution`` ``None`` — a pull quote's source is the work itself;
+    - a standard ``>`` or Roam-native ``[[>]]`` block quote (per
+      :func:`~guffin.roam.blockquote.parse_block_quote`) becomes
+      :attr:`~guffin.vertex.QuoteType.BLOCK`, its quotation the ``quote`` and its dash-led final
+      paragraph, when present, the ``attribution`` (the source line, dash removed).
 
     Each text part is normalized to Pandoc Markdown via :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md`.
 
@@ -881,13 +883,17 @@ def to_quote_block_vertex(node: RoamNode, tree: NodeTree) -> QuoteBlockVertex:
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
-    pull: Final[tuple[str, str | None] | None] = parse_pull_quote(node.string)
-    if pull is not None:
+    pull_quote: Final[str | None] = parse_pull_quote(node.string)
+    block_quote: Final[RoamBlockQuote | None] = parse_block_quote(node.string) if pull_quote is None else None
+    if pull_quote is not None:
         quote_type: QuoteType = QuoteType.PULL
-        quote_raw, attribution_raw = pull
-    else:
+        quote_raw: str = pull_quote
+        attribution_raw: str | None = None
+    elif block_quote is not None:
         quote_type = QuoteType.BLOCK
-        quote_raw, attribution_raw = strip_block_quote_marker(node.string), None
+        quote_raw, attribution_raw = block_quote.quote, block_quote.attribution
+    else:
+        raise ValueError(f"RoamNode uid={node.uid!r} is not a quote block: {node.string!r}")
     return QuoteBlockVertex(
         uid=node.uid,
         quote_type=quote_type,

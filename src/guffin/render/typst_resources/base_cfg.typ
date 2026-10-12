@@ -41,11 +41,10 @@
   // Typst, so it renders without a system-font dependency.  (Only the callout body uses this;
   // the callout title keeps the ambient `font`.)
   callout-font: "libertinus serif",
-  // Pull quote (Roam [[>]] [[!QUOTE]]): the quotation line and the attribution line(s)
-  // each get an assignable face, set as a serif register against the sans body (like the callout
-  // font).  Libertinus Serif ships embedded with Typst, so it needs no system font.
+  // Pull quote (Roam [[>]] [[!QUOTE]]): the quotation gets an assignable face, set as a serif
+  // register against the sans body (like the callout font).  Libertinus Serif ships embedded with
+  // Typst, so it needs no system font.  (A pull quote carries no attribution, so it has no face.)
   quote-font: "libertinus serif",
-  attribution-font: "libertinus serif",
   // The quotation's size as a ratio of the ambient body size (like the hN-size keys) and its
   // weight.  The oversize opening mark scales with quote-size, so the two stay in proportion.
   quote-size: 1.2,

@@ -897,18 +897,6 @@
     order: 12
     page:
       id: 11850
-- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
-    id: 4224
-    uid: 7MoH-wIQh
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
 - - string: Note 10.—[This is the Ling yu or “Divine Park,” to the east of the Wan-sui
       shan, “in which rare birds and beasts are kept. Before the Emperor goes to Shangtu,
       the officers are accustomed to be entertained at this place.” (Ch’ue keng lu,
@@ -1145,9 +1133,34 @@
     order: 3
     page:
       id: 11850
-- - children:
-    - id: 4224
+- - attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    children:
+    - id: 18202
+    - id: 18204
     id: 4223
+    lookup:
+    - id: 261
+    - id: 4223
+    - id: 6535
+    - id: 18204
     uid: LBFKibPIj
     title: Test Article
 - - string: 'element-type:: chapter'
@@ -1302,6 +1315,9 @@
       id: 11850
     refs:
     - id: 11876
+- - id: 6535
+    uid: 9ZtPB2yY3
+    title: Publishing
 - - string: Yakut (✛1229), stating that this mountainous country is famed for its
       precious stones, and especially rubies, called Balakhsh.” (Bretschneider, Med.
       Res. II. p. 66.)—H. C.] The account of the royal monopoly in working the mines,
@@ -11211,7 +11227,7 @@
         - uid
         - BxGxeeGk1
     heading: 2
-    string: '[0.2] [[Who is this Book for?]]'
+    string: '[0.2] [[Who Is This Book For?]]'
     children:
     - id: 11872
     - id: 11873
@@ -11448,6 +11464,9 @@
     order: 3
     page:
       id: 11850
+- - id: 261
+    uid: RXwAqq0_T
+    title: tags
 - - string: Note 2.—Chorcha is the Manchu country, Niuché of the Chinese. (Supra,
       note 2, ch. xlvi. Bk. I.) [“Chorcha is Churchin.—Nayan, as vassal of the Mongol
       khans, had the commission to keep in obedience the people of Manchuria (subdued
@@ -11912,6 +11931,17 @@
     order: 2
     page:
       id: 11850
+- - string: 'tags:: #Publishing'
+    id: 18204
+    uid: JSrSVApJ_
+    parents:
+    - id: 4223
+    order: 1
+    page:
+      id: 4223
+    refs:
+    - id: 261
+    - id: 6535
 - - string: I now proceed to recapitulate the main features of Polo’s Itinerary from
       Kermán to Hormuz. We have:— Marches.
     id: 12327
@@ -13787,7 +13817,7 @@
     - id: 4600
     id: 4384
     uid: GuHqKi9Y_
-    title: Who is this Book for?
+    title: Who Is This Book For?
 - - string: This name is introduced in Ramusio, but probably by interpolation, as
       well as the correction of the statement regarding Euphrates, which is perhaps
       a branch of the notion alluded to in Prologue, ch. ii. note 5. In a later chapter
@@ -14949,3 +14979,15 @@
     order: 13
     page:
       id: 11850
+- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
+    id: 18202
+    uid: lXi4SgSvz
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462

@@ -2,19 +2,29 @@
 
 In Roam's Markdown model ``[[>]]`` is the block-quote marker.  A **callout** is a styled subtype
 whose marker is ``[[>]] [[!<TYPE>]]`` (``<TYPE>`` one of the eleven callout keywords).  The
-``[[>]] [[!QUOTE]]`` marker is treated separately, as a **pull quote** (quotation + attribution),
-not a callout.
+``[[>]] [[!QUOTE]]`` marker is treated separately, as a **pull quote** — a passage of the work's
+own text promoted for display — not a callout.
+
+A plain block quote (``>`` or ``[[>]]``) reproduces another source's words, so it may carry an
+**attribution**: the source line conventionally set beneath a block quotation.  It is written as
+the quote's final paragraph — after a blank line — led by an em dash (``—``) or en dash (``–``).
+A pull quote never carries one: its source is the work itself, so all its text is quotation.
 
 Public symbols:
 
 - **Pattern constants**: :data:`ROAM_BLOCK_QUOTE_PREFIX` — string prefix for a Roam block
   quote (and callout / pull quote); :data:`CALLOUT_RE` — compiled regex that matches and decomposes
-  a full callout block string; :data:`PULL_QUOTE_RE` — compiled regex that matches and decomposes a
-  ``[[>]] [[!QUOTE]]`` pull-quote block string.
+  a full callout block string; :data:`PULL_QUOTE_RE` — compiled regex that matches a
+  ``[[>]] [[!QUOTE]]`` pull-quote block string and captures its quotation;
+  :data:`ATTRIBUTION_DASHES` — the dashes that may lead a block quote's attribution;
+  :data:`BLOCK_QUOTE_ATTRIBUTION_RE` — compiled regex splitting a block quote's content into its
+  quotation and attribution.
 - **Enumerations**: :class:`CalloutType` — the eleven Roam callout type keywords.
-- **Callout model**: :class:`RoamCallout` — parsed decomposition of a callout block string.
+- **Models**: :class:`RoamCallout` — parsed decomposition of a callout block string;
+  :class:`RoamBlockQuote` — parsed decomposition of a plain block-quote string.
 - **Parsers**: :func:`parse_callout` — parse a raw block string as a :class:`RoamCallout`;
-  :func:`parse_pull_quote` — parse a ``[[>]] [[!QUOTE]]`` block string into its ``(quote, attribution)``.
+  :func:`parse_pull_quote` — the quotation of a ``[[>]] [[!QUOTE]]`` block string;
+  :func:`parse_block_quote` — parse a plain block-quote string as a :class:`RoamBlockQuote`.
 - **Quote-block predicate**: :func:`is_quote_block` — return ``True`` when a string is any of the
   three quote-block forms (standard ``>``, Roam-native ``[[>]]``, or ``[[>]] [[!QUOTE]]`` pull quote).
 - **Block-quote marker stripper**: :func:`strip_block_quote_marker` — strip the leading block-quote
@@ -87,17 +97,40 @@ Named groups:
 
 
 PULL_QUOTE_RE: Final[regex.Pattern[str]] = regex.compile(
-    rf"{regex.escape(ROAM_BLOCK_QUOTE_PREFIX)} \[\[!QUOTE\]\]" r"\s*(?P<quote>[^\n]*)(?:\n(?P<attribution>.*))?",
+    rf"{regex.escape(ROAM_BLOCK_QUOTE_PREFIX)} \[\[!QUOTE\]\]" r"\s*(?P<quote>.*)",
     regex.DOTALL,
 )
-"""Compiled regex matching and decomposing a Roam ``[[>]] [[!QUOTE]]`` pull-quote block string.
+"""Compiled regex matching a Roam ``[[>]] [[!QUOTE]]`` pull-quote block string.
 
-Structurally the same as :data:`CALLOUT_RE` (marker + first line + rest), but keyed to the
-``QUOTE`` marker and named for its pull-quote roles.  Named groups:
+A pull quote promotes a passage of the work's own text, so it carries no attribution: everything
+after the marker is quotation.  Named group:
 
-- ``quote`` — the quotation: the remainder of the first line after the marker (may be empty).
-- ``attribution`` — everything after the first newline (the attribution line(s)); ``None`` when the
-  string contains no newline.  ``regex.DOTALL`` is set so ``.`` matches embedded newlines.
+- ``quote`` — the quotation: everything after the marker and any intervening whitespace, every
+  line of it (may be empty).  ``regex.DOTALL`` is set so ``.`` matches embedded newlines.
+"""
+
+ATTRIBUTION_DASHES: Final[frozenset[str]] = frozenset({"—", "–"})
+"""The dashes that may lead a block quote's attribution paragraph: the em dash (``—``, U+2014).
+
+and the en dash (``–``, U+2013).
+"""
+
+BLOCK_QUOTE_ATTRIBUTION_RE: Final[regex.Pattern[str]] = regex.compile(
+    r"(?P<quote>.*\S)\n[ \t]*\n[ \t]*"
+    rf"[{''.join(sorted(ATTRIBUTION_DASHES))}]"
+    r"[ \t]*(?P<attribution>(?:[^\n]|\n(?![ \t]*\n))*\S)\s*",
+    regex.DOTALL,
+)
+"""Compiled regex splitting a plain block quote's content into its quotation and attribution.
+
+Matches content (the marker already stripped) whose **final paragraph** — the run after its last
+blank line — is led by one of the :data:`ATTRIBUTION_DASHES`.  The required blank line keeps a
+dash-led line *inside* the quotation (verse, dialogue) from being taken for a credit.  Use with
+``fullmatch``.  Named groups:
+
+- ``quote`` — the quotation: everything before that blank line (never empty).
+- ``attribution`` — the final paragraph's text after its leading dash and spacing (one or more
+  lines, never containing a blank line, never empty).
 """
 
 
@@ -155,26 +188,65 @@ def parse_callout(block_string: str) -> RoamCallout | None:
     )
 
 
+class RoamBlockQuote(BaseModel):
+    """Parsed decomposition of a plain block-quote string (``>`` or ``[[>]]``, not a pull quote).
+
+    Attributes:
+        quote: The quotation — the content after the marker, less any attribution paragraph.
+        attribution: The source line's text, after its leading dash — the quote's final
+            paragraph, when it follows a blank line and is led by one of the
+            :data:`ATTRIBUTION_DASHES` — or ``None`` when the quote carries none.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    quote: str = Field(..., description="The quotation — the content after the marker, less any attribution.")
+    attribution: str | None = Field(
+        default=None, description="The source line's text after its leading dash; None when absent."
+    )
+
+
 @validate_call
-def parse_pull_quote(block_string: str) -> tuple[str, str | None] | None:
-    """Parse a ``[[>]] [[!QUOTE]]`` pull quote into its ``(quote, attribution)``, or ``None``.
+def parse_pull_quote(block_string: str) -> str | None:
+    """Return the quotation of a ``[[>]] [[!QUOTE]]`` pull quote, or ``None``.
 
     Returns ``None`` when *block_string* is not a ``[[>]] [[!QUOTE]]`` block (see
-    :data:`PULL_QUOTE_RE`).  The quotation is the first line after the marker; the attribution is
-    everything after the first newline, or ``None`` when the block has no further lines.
+    :data:`PULL_QUOTE_RE`).  A pull quote carries no attribution, so the quotation is everything
+    after the marker, every line of it.
 
     Args:
         block_string: The raw block string to parse.
 
     Returns:
-        A ``(quote, attribution)`` tuple when *block_string* is a pull quote — ``attribution`` is
-        ``None`` when absent — or ``None`` when it is not a pull quote.
+        The quotation when *block_string* is a pull quote, else ``None``.
     """
     match: Final[regex.Match[str] | None] = PULL_QUOTE_RE.match(block_string)
-    if match is None:
+    return match.group("quote") if match is not None else None
+
+
+@validate_call
+def parse_block_quote(block_string: str) -> RoamBlockQuote | None:
+    """Parse a plain block-quote string as a :class:`RoamBlockQuote`, or return ``None``.
+
+    Returns ``None`` when *block_string* is not a plain block quote — not a quote block at all
+    (:func:`is_quote_block`), or a pull quote (:func:`parse_pull_quote`).  Otherwise strips the
+    marker (:func:`strip_block_quote_marker`) and splits off the attribution: the content's final
+    paragraph, when it follows a blank line and is led by one of the :data:`ATTRIBUTION_DASHES`
+    (:data:`BLOCK_QUOTE_ATTRIBUTION_RE`).  Content with no such paragraph is all quotation.
+
+    Args:
+        block_string: The raw block string to parse.
+
+    Returns:
+        The :class:`RoamBlockQuote` when *block_string* is a plain block quote, else ``None``.
+    """
+    if not is_quote_block(block_string) or parse_pull_quote(block_string) is not None:
         return None
-    attribution: Final[str | None] = match.group("attribution")
-    return (match.group("quote"), attribution if attribution else None)
+    content: Final[str] = strip_block_quote_marker(block_string)
+    match: Final[regex.Match[str] | None] = BLOCK_QUOTE_ATTRIBUTION_RE.fullmatch(content)
+    if match is None:
+        return RoamBlockQuote(quote=content)
+    return RoamBlockQuote(quote=match.group("quote"), attribution=match.group("attribution"))
 
 
 @validate_call
@@ -192,7 +264,7 @@ def is_quote_block(block_string: str) -> bool:
 
     A typed callout (``[[>]] [[!INFO]]`` …) returns ``False``.  The three quote forms all map to a
     single ``QUOTE_BLOCK`` node type; the pull quote is distinguished later via
-    :func:`parse_pull_quote`.
+    :func:`parse_pull_quote`, a plain block quote's parts via :func:`parse_block_quote`.
 
     Args:
         block_string: The string to test.

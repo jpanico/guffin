@@ -8,7 +8,9 @@ from pydantic import ValidationError
 from guffin.roam.blockquote import (
     CALLOUT_RE,
     CalloutType,
+    RoamBlockQuote,
     RoamCallout,
+    parse_block_quote,
     parse_callout,
     parse_pull_quote,
 )
@@ -231,17 +233,17 @@ class TestCallout:
 class TestParsePullQuote:
     """Tests for parse_pull_quote()."""
 
-    def test_quote_only(self) -> None:
-        """A single-line pull quote returns the quote with no attribution."""
-        assert parse_pull_quote("[[>]] [[!QUOTE]] The quotation") == ("The quotation", None)
+    def test_single_line_quotation(self) -> None:
+        """A single-line pull quote returns its quotation."""
+        assert parse_pull_quote("[[>]] [[!QUOTE]] The quotation") == "The quotation"
 
-    def test_quote_and_attribution(self) -> None:
-        """A pull quote's first line is the quote; the rest is the attribution."""
-        assert parse_pull_quote("[[>]] [[!QUOTE]] The quotation\n— Someone") == ("The quotation", "— Someone")
+    def test_every_line_is_quotation(self) -> None:
+        """A pull quote carries no attribution: every line after the marker is quotation."""
+        assert parse_pull_quote("[[>]] [[!QUOTE]] Q\nline 1\nline 2") == "Q\nline 1\nline 2"
 
-    def test_multiline_attribution(self) -> None:
-        """Attribution captures every line after the first, embedded newlines preserved."""
-        assert parse_pull_quote("[[>]] [[!QUOTE]] Q\nline 1\nline 2") == ("Q", "line 1\nline 2")
+    def test_dash_led_paragraph_is_still_quotation(self) -> None:
+        """Even a dash-led final paragraph is quotation in a pull quote — only a block quote is attributed."""
+        assert parse_pull_quote("[[>]] [[!QUOTE]] The quotation\n\n— Someone") == "The quotation\n\n— Someone"
 
     def test_none_for_plain_roam_block_quote(self) -> None:
         """A plain [[>]] block quote is not a pull quote."""
@@ -259,3 +261,57 @@ class TestParsePullQuote:
         """Raises ValidationError when None is passed."""
         with pytest.raises(ValidationError):
             parse_pull_quote(None)  # type: ignore[arg-type]
+
+
+class TestParseBlockQuote:
+    """Tests for parse_block_quote() — a plain block quote and its dash-led attribution paragraph."""
+
+    @pytest.mark.parametrize(
+        ("block_string", "expected"),
+        [
+            pytest.param(
+                "[[>]] I wish to God these calculations had been executed by steam!\n\n— __Charles Babbage__, c. 1821",
+                RoamBlockQuote(
+                    quote="I wish to God these calculations had been executed by steam!",
+                    attribution="__Charles Babbage__, c. 1821",
+                ),
+                id="em-dash-credit",
+            ),
+            pytest.param(
+                "> Go thou and slay.\n\n– The Old Man",
+                RoamBlockQuote(quote="Go thou and slay.", attribution="The Old Man"),
+                id="en-dash-credit-markdown-marker",
+            ),
+            pytest.param(
+                "[[>]] Quote.\n\n—   Author Name,\n*Work Title*\n",
+                RoamBlockQuote(quote="Quote.", attribution="Author Name,\n*Work Title*"),
+                id="multi-line-credit",
+            ),
+            pytest.param(
+                "[[>]] A quote with no credit.\nsecond line",
+                RoamBlockQuote(quote="A quote with no credit.\nsecond line"),
+                id="no-credit",
+            ),
+            pytest.param(
+                "[[>]] Verse line one\n— a dash-led verse line",
+                RoamBlockQuote(quote="Verse line one\n— a dash-led verse line"),
+                id="dash-line-without-blank-line-is-quotation",
+            ),
+            pytest.param(
+                "[[>]] Para one.\n\n— an inner dash paragraph\n\nPara three ends it.",
+                RoamBlockQuote(quote="Para one.\n\n— an inner dash paragraph\n\nPara three ends it."),
+                id="dash-paragraph-not-last-is-quotation",
+            ),
+        ],
+    )
+    def test_parses(self, block_string: str, expected: RoamBlockQuote) -> None:
+        """The quotation and attribution split only at a dash-led final paragraph after a blank line."""
+        assert parse_block_quote(block_string) == expected
+
+    @pytest.mark.parametrize(
+        "block_string",
+        ["[[>]] [[!QUOTE]] A pull quote\n\n— Someone", "[[>]] [[!INFO]] a callout", "plain text"],
+    )
+    def test_none_for_anything_but_a_plain_block_quote(self, block_string: str) -> None:
+        """A pull quote, a callout, or ordinary text is not a plain block quote."""
+        assert parse_block_quote(block_string) is None
