@@ -1,0 +1,45 @@
+/*
+ * Mockup: PDF variant L1 in EPUB — an alternatives group whose host block is a LIST ITEM.
+ * The radio marker replaces the item's bullet: the list's native markers are suppressed
+ * (list-style: none, as guffin's semantic bullets already do — no ::marker, no :has()), and
+ * every item hangs a drawn marker into the list's own indent via a negative text-indent, so
+ * all text — siblings and every wording — shares one edge.  Siblings get a drawn dot rather
+ * than a "•" glyph: a glyph's width varies by font, a drawn marker's does not, and equal
+ * widths are what make the edges line up.  The dashed rail sits in the list indent just left
+ * of the markers: inside the text column, so nothing can clip it.  Kindle-safe throughout.
+ */
+
+div.alternatives-list > ul {
+  list-style: none;
+}
+
+div.alternatives-list li {
+  text-indent: -1.25em;           /* hang the marker into the ul's own padding */
+}
+
+/* every marker, dot or radio: 0.62em drawn + 0.63em gap = the 1.25em hang */
+div.alternatives-list svg {
+  width: 0.62em;
+  height: 0.62em;
+  margin-right: 0.63em;
+  vertical-align: 0.05em;
+}
+
+/* the group inside the versioned item: the rail 0.35em left of the marker column.  The
+   border is sized in em so margin + border + padding cancel exactly (-1.6em + 0.06em +
+   1.54em = 0): the wordings' text edge is the siblings', with no calc() needed. */
+div.alternatives.in-list {
+  margin: 0 0 0 -1.6em;
+  padding-left: 1.54em;
+  border-left: 0.06em dashed #b9b9b9;
+}
+
+div.alternatives.in-list > p {
+  margin: 0;
+  padding-left: 0;
+  text-indent: -1.25em;
+}
+
+div.alternatives.in-list > p + p {
+  margin-top: 0;                   /* a tight list's items touch; so do a group's wordings */
+}

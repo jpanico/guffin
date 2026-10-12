@@ -1,0 +1,48 @@
+/*
+ * Mockup: an alternatives group in EPUB, translating PDF variant C (dashed rail, hanging radio
+ * markers, muted smaller alternatives, no label). Kindle-safe: no position, no inline-block,
+ * no :has(), no ::marker. The marker hangs through a negative text-indent; its column width is
+ * the SVG's own width plus its right margin, which equals the indent.
+ *
+ * The hang is measured on the <p> at body size; the smaller alternative text is an inner span,
+ * so every member's marker column lines up.
+ */
+
+div.alternatives {
+  margin: 1em 0;
+  border-left: 1px dashed #b9b9b9;   /* luma(185), as in the PDF */
+  padding-left: 0.35em;
+}
+
+div.alternatives > p {
+  margin: 0;
+  padding-left: 1.25em;
+  text-indent: -1.25em;
+}
+
+div.alternatives > p + p {
+  margin-top: 0.45em;
+}
+
+/* the marker: 0.62em drawn circle + 0.63em gap = the 1.25em hang */
+div.alternatives svg.alternative-marker {
+  width: 0.62em;
+  height: 0.62em;
+  margin-right: 0.63em;
+  vertical-align: 0.05em;
+}
+
+/* alternatives: muted (luma(115)) and a touch smaller; never italic, so authored emphasis survives */
+div.alternatives span.alternative-text {
+  color: #737373;
+  font-size: 0.93em;
+}
+
+/*
+ * C1 — faithful to the PDF: the rail and markers hang into the page margin so the selected
+ * wording keeps the body's left edge. Relies on the reading system not clipping content
+ * pulled outside the text column.
+ */
+div.alternatives.hang-into-margin {
+  margin-left: -1.6em;
+}
