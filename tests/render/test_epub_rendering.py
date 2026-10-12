@@ -6,7 +6,6 @@ tests, so the (slow) Pandoc subprocess is spawned per artifact rather than per a
 
 import hashlib
 import json
-import logging
 import zipfile
 from pathlib import Path
 from typing import Final
@@ -36,7 +35,7 @@ from guffin.model.vertex import (
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
-from guffin.model.vertex_view import Semantic, SourceChannel, VertexView
+from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
 from guffin.render.epub_rendering import render
 from guffin.render.pandoc_rendering import heading_anchor
 from guffin.render.project import ArticleProfile, BookProfile, ProjectProfile
@@ -753,26 +752,80 @@ class TestHeadingLinkEpub:
         assert any("As <em>Second</em> explains." in xhtml for xhtml in chapters)
 
 
-class TestAlternativesNotYetRendered:
-    """EPUB does not present alternatives yet: each block shows its selected wording alone."""
+def _alternatives_epub(out_dir: Path, render_alternatives: bool) -> Path:
+    """Render a page holding a versioned paragraph and a bullet list with a versioned item."""
+    alternatives = (Alternative(uid="altuid001", text="another *emphasized* wording"),)
+    tree = VertexTree(
+        tree_vertices=[
+            PageVertex(uid="page00001", title="Doc", children=["versed001", "host00001"]),
+            TextVertex(uid="versed001", text="the selected paragraph", alternatives=alternatives),
+            TextVertex(uid="host00001", text="A list:", children=["plain0001", "versed002"]),
+            TextVertex(uid="plain0001", text="an ordinary item"),
+            TextVertex(uid="versed002", text="the selected item", alternatives=alternatives),
+        ]
+    )
+    views = {
+        "page00001": VertexView(children_layout=ChildrenLayout.DOCUMENT),
+        "host00001": VertexView(children_layout=ChildrenLayout.BULLET),
+    }
+    render(
+        RenderBundle(content=tree, view=views),
+        profile=ArticleProfile(),
+        filename_stem="doc",
+        api_endpoint=_ENDPOINT,
+        options=EpubRenderOptions(output_dir=out_dir, render_alternatives=render_alternatives),
+    )
+    return out_dir / "doc.epub"
 
-    def test_request_is_reported_not_silently_ignored(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
-        """Asking for alternatives warns that EPUB cannot present them yet, and renders the selected wording."""
-        page = PageVertex(uid="page00001", title="Doc", children=["versed001"])
-        versed = TextVertex(
-            uid="versed001",
-            text="the selected wording",
-            alternatives=(Alternative(uid="altuid001", text="another wording"),),
+
+@pytest.fixture(scope="module")
+def alternatives_epub(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The alternatives page rendered with render_alternatives on."""
+    return _alternatives_epub(tmp_path_factory.mktemp("alternatives_on"), render_alternatives=True)
+
+
+class TestAlternatives:
+    """Versioned blocks render their wordings as a railed, radio-marked group on explicit request."""
+
+    def test_paragraph_group_inside_the_column(self, alternatives_epub: Path) -> None:
+        """A versioned paragraph renders as a plain alternatives group, selected wording first."""
+        xhtml = _chapter_xhtml(alternatives_epub)
+        assert '<div class="alternatives">' in xhtml
+        assert xhtml.index("the selected paragraph") < xhtml.index("another")
+        assert 'aria-label="selected wording"' in xhtml
+        assert 'aria-label="alternative wording"' in xhtml
+
+    def test_alternative_text_is_muted_and_keeps_its_emphasis(self, alternatives_epub: Path) -> None:
+        """An alternative's text sits in span.alternative-text, its own emphasis intact."""
+        xhtml = _chapter_xhtml(alternatives_epub)
+        assert '<span class="alternative-text">another <em>emphasized</em> wording</span>' in xhtml
+
+    def test_list_item_group_takes_the_bullet(self, alternatives_epub: Path) -> None:
+        """A versioned bullet item renders in-list, its list wrapped and its siblings led by a drawn dot."""
+        xhtml = _chapter_xhtml(alternatives_epub)
+        assert '<div class="alternatives-list">' in xhtml
+        assert '<div class="alternatives in-list">' in xhtml
+        assert regex.search(
+            r'<li><svg class="alternative-marker"[^>]*aria-hidden="true">.*?</svg>an ordinary item', xhtml
         )
-        with caplog.at_level(logging.WARNING):
-            render(
-                RenderBundle(content=VertexTree(tree_vertices=[page, versed])),
-                profile=ArticleProfile(),
-                filename_stem="doc",
-                api_endpoint=_ENDPOINT,
-                options=EpubRenderOptions(output_dir=tmp_path, render_alternatives=True),
-            )
-        text = _all_text(tmp_path / "doc.epub")
-        assert "the selected wording" in text
-        assert "another wording" not in text
-        assert any("render_alternatives is not yet supported for EPUB" in r.getMessage() for r in caplog.records)
+
+    def test_markers_declare_svg_in_the_manifest(self, alternatives_epub: Path) -> None:
+        """A content document carrying the inline SVG markers is declared with the svg property."""
+        with zipfile.ZipFile(alternatives_epub) as archive:
+            opf = next(archive.read(name).decode("utf-8") for name in archive.namelist() if name.endswith(".opf"))
+        assert 'properties="svg"' in opf
+
+    def test_stylesheet_styles_the_group(self, alternatives_epub: Path) -> None:
+        """The bundled stylesheet carries the rail, the hang, and the muted alternative text."""
+        text = _all_text(alternatives_epub)
+        assert "div.alternatives {" in text
+        assert "span.alternative-text {" in text
+        assert "div.alternatives-list > ul {" in text
+
+    def test_default_renders_selected_wordings_only(self, tmp_path: Path) -> None:
+        """Without render_alternatives only the selected wordings render, with no group or marker."""
+        xhtml = _chapter_xhtml(_alternatives_epub(tmp_path, render_alternatives=False))
+        assert "the selected paragraph" in xhtml
+        assert "the selected item" in xhtml
+        assert "another" not in xhtml
+        assert "alternative-marker" not in xhtml

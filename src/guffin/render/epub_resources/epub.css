@@ -292,6 +292,82 @@ span.bullet-glyph.classified {
 }
 
 /*
+ * Alternatives (export-roam-tree --render-alternatives). epub_alternatives.lua renders a versioned
+ * block's wordings as marker-led paragraphs in a Div.alternatives: the selected wording first, led
+ * by a filled radio marker, then each alternative, led by a hollow one, its text muted and a touch
+ * smaller (never italic, so its own emphasis survives). A thin dashed rail binds the group,
+ * deliberately unlike the block quote's solid bar. The group sits inside the text column, never in
+ * the page margin, which a reading system may clip. Each marker hangs through a negative
+ * text-indent: an SVG 0.62em wide plus a 0.63em right margin makes exactly the 1.25em hang, so
+ * every wording's text shares one edge. No position, inline-block, calc(), :has(), or ::marker,
+ * which the Kindle app's renderer does not support.
+ */
+div.alternatives {
+  margin: 1em 0;
+  border-left: 1px dashed #b9b9b9;
+  padding-left: 0.35em;
+}
+
+div.alternatives > p {
+  margin: 0;
+  padding-left: 1.25em;
+  text-indent: -1.25em;
+}
+
+div.alternatives > p + p {
+  margin-top: 0.45em;
+}
+
+svg.alternative-marker {
+  width: 0.62em;
+  height: 0.62em;
+  margin-right: 0.63em;
+  vertical-align: 0.05em;
+}
+
+span.alternative-text {
+  color: #737373;
+  font-size: 0.93em;
+}
+
+/*
+ * A bullet list holding a versioned item (Div.alternatives-list): the radio marker replaces that
+ * item's bullet. The list's native markers are suppressed, every item hangs a drawn marker into the
+ * list's own indent — an ordinary item a drawn dot, the same width as the radio markers, so every
+ * text edge lines up — and the versioned item's group puts its rail in that indent, 0.35em left of
+ * the markers. The rail's border is sized in em so margin, border, and padding cancel exactly
+ * (-1.6em + 0.06em + 1.54em = 0). text-indent is inherited, so every block after an item's first
+ * (a nested list, a child paragraph) resets it.
+ */
+div.alternatives-list > ul {
+  list-style: none;
+}
+
+div.alternatives-list > ul > li {
+  text-indent: -1.25em;
+}
+
+div.alternatives-list > ul > li > * + * {
+  text-indent: 0;
+}
+
+div.alternatives.in-list {
+  margin: 0 0 0 -1.6em;
+  padding-left: 1.54em;
+  border-left: 0.06em dashed #b9b9b9;
+}
+
+div.alternatives.in-list > p {
+  margin: 0;
+  padding-left: 0;
+  text-indent: -1.25em;
+}
+
+div.alternatives.in-list > p + p {
+  margin-top: 0;
+}
+
+/*
  * An appendix entry's pages belong under its own heading. Three requests together:
  *
  * 1. Each entry opens a new page — except the first, which shares the page with the "Appendix"

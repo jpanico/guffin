@@ -107,6 +107,7 @@ logger = logging.getLogger(__name__)
 _EPUB_RESOURCES_PACKAGE: Final[str] = "guffin.render.epub_resources"
 _CALLOUT_ICONS_PACKAGE: Final[str] = "guffin.render.callout_icons"
 # Lua-filter filenames, resolved against the bundled epub_resources directory at render time.
+_EPUB_ALTERNATIVES_FILTER: Final[str] = "epub_alternatives.lua"
 _EPUB_BULLET_FILTER: Final[str] = "epub_bullet.lua"
 _EPUB_COLOR_SPAN_FILTER: Final[str] = "epub_color_span.lua"
 _EPUB_MARK_FILTER: Final[str] = "epub_mark.lua"
@@ -345,11 +346,9 @@ def render(
     numbered: Final[VertexTree] = stripped if options.emit_element_numbers else strip_element_numbers(stripped)
     # Code-source attributions likewise render only on explicit request.
     sourced: Final[VertexTree] = numbered if options.emit_code_sources else drop_code_sources(numbered)
-    # EPUB does not present alternative wordings yet: each block shows its selected wording alone,
-    # and a request for alternatives is reported rather than silently ignored.
-    if options.render_alternatives:
-        logger.warning("render_alternatives is not yet supported for EPUB output; rendering selected wordings only")
-    alternated: Final[VertexTree] = drop_alternatives(sourced)
+    # Alternative wordings render only on explicit request; otherwise each block shows its
+    # selected wording alone.
+    alternated: Final[VertexTree] = sourced if options.render_alternatives else drop_alternatives(sourced)
     # Authored page-break directives are honored only when the profile's policy says so; a
     # policy that fixes its own pagination has the tags dropped (each drop logged).
     paginated: Final[VertexTree] = (
@@ -428,6 +427,9 @@ def render(
         callout_colors_css.write_text(_callout_colors_css(), encoding="utf-8")
 
         extra_args: list[str] = [
+            # Alternatives first: a bullet list holding a versioned item is laid out whole there,
+            # classified siblings included, before the semantic-bullet pass sees it.
+            f"--lua-filter={epub_dir / _EPUB_ALTERNATIVES_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_BULLET_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_CALLOUT_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_COLOR_SPAN_FILTER}",
