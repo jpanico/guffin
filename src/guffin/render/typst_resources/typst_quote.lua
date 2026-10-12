@@ -10,8 +10,9 @@
 -- quotation, left-aligned with it, and renders like any other text in the quote.
 --
 -- And transforms the Div.epigraph (from a Roam [[>]] [[!EPIGRAPH]] block) into a call to the
--- template's #epigraph helper, which sets the quotation (Div.epigraph-text) in a narrow column at
--- the right of the text block and the attribution (Div.epigraph-attribution) flush right beneath it.
+-- template's #epigraph helper, which sets the quotation (Div.epigraph-text) flush left in a narrowed
+-- measure and the attribution (Div.epigraph-attribution) beneath it, flush right against the
+-- quotation's longest line.
 --
 -- Registered LAST among the Typst filters so that any inline transforms (e.g. color spans) have
 -- already rewritten the quote and epigraph content before it is serialized to Typst here.

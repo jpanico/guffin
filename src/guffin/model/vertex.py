@@ -534,8 +534,9 @@ class QuoteType(StrEnum):
             with the decorated treatment (an oversize opening quotation mark and a bold
             quotation).  It never carries an attribution: its source is the work itself.
         EPIGRAPH: An epigraph — a quotation set at the opening of a work, part, or chapter, ahead of
-            its text, to sound a theme the text does not discuss.  Set off in a narrow column with
-            its source beneath, flush right.  It may carry an attribution, and conventionally does.
+            its text, to sound a theme the text does not discuss.  Set off from the text by its type
+            and spacing, with its source beneath, flush right.  It may carry an attribution, and
+            conventionally does.
     """
 
     BLOCK = "block"

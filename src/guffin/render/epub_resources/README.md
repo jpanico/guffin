@@ -49,8 +49,11 @@ Notes on GFM-pipeline constructs that are handled differently here:
 - **epigraph** — likewise **no filter**: the epigraph ([[>]] [[!EPIGRAPH]]) arrives as
   `<div class="epigraph" epub:type="epigraph">` (Pandoc's EPUB writer keeps the `epub:type`), holding a
   `<div class="epigraph-text">` and, when attributed, a `<div class="epigraph-attribution">` led by an em
-  dash, and `epub.css` sets it as the PDF does: a narrow column at the right of the text block, slightly
-  smaller than body text, the quotation italic and ragged, the source flush right and upright.
+  dash, and `epub.css` sets it as the PDF does: slightly smaller than body text, the quotation italic,
+  flush left and ragged, the source upright beneath it, flush right against the quotation's right
+  edge (the div is an `inline-block` with `max-width: 75%`, shrinking to fit; a quotation long enough
+  to wrap aligns its source at that 75% edge, since CSS cannot narrow a wrapped paragraph to its
+  longest line).
 - **captions** — likewise **no filter**: the `<div class="caption">` below an image or code listing
   (the block's own nested content, or — also classed `code-source` — the emphasized line naming the
   GitHub file a sourced listing was snapshotted from) survives to XHTML, and `epub.css` styles it as

@@ -1595,9 +1595,10 @@ def _quote_block_vertex_to_blocks(
     :class:`~panflute.Div`: an outer ``epigraph`` :class:`~panflute.Div` (:data:`_EPIGRAPH_CLASS`)
     carrying ``epub:type="epigraph"``, holding the vertex's ``quote`` in an ``epigraph-text``
     sub-:class:`~panflute.Div` and, when present, its ``attribution`` in an ``epigraph-attribution``
-    sub-:class:`~panflute.Div` led by an em dash.  Each format sets it as an epigraph — a narrow
-    column with the source flush right beneath it (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``,
-    or EPUB CSS on ``div.epigraph``); the ``epub:type`` rides along harmlessly in the other formats.
+    sub-:class:`~panflute.Div` led by an em dash.  Each format sets it as an epigraph — the
+    quotation set off by its type, the source flush right beneath it (Typst ``typst_quote.lua``, GFM
+    ``gfm_quote.lua``, or EPUB CSS on ``div.epigraph``); the ``epub:type`` rides along harmlessly in
+    the other formats.
 
     In every form the quotation contains only the vertex's own ``quote`` (and ``attribution``)
     content.  Child vertices are outline descendants, not quotation content: they render

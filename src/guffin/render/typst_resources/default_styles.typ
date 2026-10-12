@@ -367,29 +367,32 @@
 }
 
 // Epigraph (Roam [[>]] [[!EPIGRAPH]]): a quotation set at the opening of a work, part, or chapter.
-// The quotation reads in a narrow column (cfg.epigraph-width of the text block) placed at the
-// block's right, its lines left-aligned and ragged, at cfg.epigraph-size of the body size in
-// cfg.epigraph-style; the attribution sits flush right beneath it, upright.  No rule or mark: the
-// narrow measure and the space around it carry the signal.  typst_quote.lua marshals the
-// quotation and attribution into a call to this helper.
-#let epigraph(quote: [], attribution: none) = {
-  block(width: 100%, above: 1.5em, below: 2em)[
-    #set par(justify: false)
-    #set text(size: cfg.epigraph-size * 1em)
-    #align(right)[
-      #block(width: cfg.epigraph-width)[
-        #set align(left)
-        #text(style: cfg.epigraph-style)[#quote]
-        #if attribution != none {
-          block(above: 0.8em, width: 100%)[
-            #set align(right)
-            #attribution
-          ]
-        }
-      ]
-    ]
-  ]
-}
+// It takes the alignment of the headings above it, which this template sets flush left: the
+// quotation starts at the left margin, its lines ragged, wrapping at cfg.epigraph-width of the text
+// block, at cfg.epigraph-size of the body size in cfg.epigraph-style.  The attribution sits beneath
+// it, upright, flush right against the quotation's own longest line rather than the page margin, so
+// the source stays with a short quotation instead of drifting to the far edge: the epigraph is
+// measured and set in a block exactly as wide as its widest line (quotation or attribution), capped
+// at the wrap width.  No rule or indent, unlike a block quote: the type and the space around it
+// carry the signal.  typst_quote.lua marshals the quotation and attribution into a call to this
+// helper.
+#let epigraph(quote: [], attribution: none) = block(width: 100%, above: 1.5em, below: 2em, {
+  set par(justify: false)
+  set text(size: cfg.epigraph-size * 1em)
+  layout(region => {
+    let limit = cfg.epigraph-width * region.width
+    let body = text(style: cfg.epigraph-style, quote)
+    // measure with a width constrains the layout, so a wrapping quotation reports its widest line.
+    let quote-width = measure(body, width: limit).width
+    let source-width = if attribution == none { 0pt } else { measure(attribution, width: limit).width }
+    block(width: calc.max(quote-width, source-width), {
+      body
+      if attribution != none {
+        block(above: 0.8em, width: 100%, align(right, attribution))
+      }
+    })
+  })
+})
 
 // Alternatives (export-roam-tree --render-alternatives): a block's selected wording and its
 // alternative wordings, rendered as one group.  A thin dashed rail binds the group —
