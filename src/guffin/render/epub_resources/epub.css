@@ -120,6 +120,36 @@ div.fancy-quote-text > p:first-child::before {
 }
 
 /*
+ * Kindle-only drop-cap treatment of the opening mark. The Kindle app's renderer ignores `position`,
+ * so the absolutely placed mark above falls back inline, ahead of the first word; it honors `float`
+ * but not a negative margin on one, so the mark cannot hang in a gutter either. Under Amazon's
+ * proprietary `amzn-kf8` media query (honored by the Kindle conversion pipeline, ignored per spec by
+ * every other reading system) the gutter is dropped and the mark floats at the column's left edge,
+ * the quotation flowing beside it — and, past the mark's height, beneath it, as beside a drop cap.
+ * The mark stands taller than a one-line quotation, so each pull quote clears floats on both sides:
+ * on entry (no earlier mark can push this one rightward) and on exit (the trailing ::after
+ * block keeps this mark from protruding into whatever follows).
+ */
+@media amzn-kf8 {
+  div.fancy-quote {
+    padding-left: 0;
+    clear: both;
+  }
+
+  div.fancy-quote::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  div.fancy-quote-text > p:first-child::before {
+    position: static;
+    float: left;
+    margin: 0.12em 0.1em 0 0;
+  }
+}
+
+/*
  * Captions. guffin emits <div class="caption"> directly below the block it annotates: an image's
  * or code listing's own nested content, or (also classed code-source) the emphasized line naming
  * the GitHub file a sourced listing was snapshotted from. Small and muted, pulled up toward the

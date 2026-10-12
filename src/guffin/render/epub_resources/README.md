@@ -36,7 +36,10 @@ Notes on GFM-pipeline constructs that are handled differently here:
 - **fancy quote** — the pull quote ([[>]] [[!QUOTE]]) needs **no filter** at all: Pandoc's EPUB
   writer renders the `<div class="fancy-quote">` (with its `fancy-quote-text` sub-`div`) natively, and
   `epub.css` supplies the whole pull-quote treatment (mirroring the PDF) — the serif register and the bold
-  1.5x quotation with an oversize opening quote (a `::before` glyph on the first paragraph). A pull quote
+  1.5x quotation with an oversize opening quote (a `::before` glyph on the first paragraph, hung in the
+  left gutter by absolute positioning — except in the Kindle app, whose renderer ignores `position` and
+  negative float margins, where an `amzn-kf8` media query floats it at the column edge as a drop cap the
+  quotation flows beside). A pull quote
   carries no attribution: its source is the work itself. It carries **no** left bar (unlike the plain
   block quote), so the mark and large type carry the signal. Its serif `font-family` (shared with the
   callout body) is the customization point.
