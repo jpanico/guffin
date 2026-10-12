@@ -51,9 +51,13 @@ Notes on GFM-pipeline constructs that are handled differently here:
   `<div class="epigraph-text">` and, when attributed, a `<div class="epigraph-attribution">` led by an em
   dash, and `epub.css` sets it as the PDF does: a little larger than body text and more openly leaded, the quotation italic,
   flush left and ragged, the source upright beneath it, flush right against the quotation's right
-  edge (the div is an `inline-block` with `max-width: 75%`, shrinking to fit; a quotation long enough
-  to wrap aligns its source at that 75% edge, since CSS cannot narrow a wrapped paragraph to its
-  longest line).
+  edge (the div is an `inline-block` with no width limit, shrinking to fit: a one-line quotation keeps
+  its source under the line's end, and a quotation that wraps — the usual case on a reader's narrow
+  column — fills the column, its lines running nearly to the right margin with the source flush right
+  at that margin, as on Brooks's own chapter openings, since CSS cannot narrow a wrapped paragraph to
+  its longest line; the lines are deliberately not balanced, which would pull them away from the
+  source; the paragraphs' margins are zeroed so the reading system's default paragraph spacing opens
+  no gaps inside the epigraph).
 - **captions** — likewise **no filter**: the `<div class="caption">` below an image or code listing
   (the block's own nested content, or — also classed `code-source` — the emphasized line naming the
   GitHub file a sourced listing was snapshotted from) survives to XHTML, and `epub.css` styles it as

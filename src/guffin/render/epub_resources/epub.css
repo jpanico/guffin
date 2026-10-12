@@ -90,21 +90,26 @@ div.quote-attribution {
  * quotation) and, when present, <div class="epigraph-attribution"> (the em-dash-led source line).
  * Mirroring the PDF: it takes the headings' flush-left alignment, a little larger and more openly
  * leaded than body text (display type, after Brooks's The Mythical Man-Month), the quotation italic
- * and ragged, the source upright and flush right beneath it. The div is an
- * inline-block, so it shrinks to fit its content up to max-width: the source then ends at the
- * quotation's own right edge rather than the page margin, staying with a short quotation. (CSS
- * shrink-to-fit cannot narrow a wrapped paragraph to its longest line, so a quotation long enough
- * to wrap aligns its source at the max-width edge.) No rule or indent, unlike a block quote: the
- * type and the space around it carry the signal.
+ * and ragged, the source upright and flush right beneath it. The div is an inline-block, so it
+ * shrinks to fit its content: a quotation that fits on one line keeps its source under the line's
+ * end rather than at the page margin. A quotation that wraps, which on a reader's narrow column is
+ * the usual case, makes the box as wide as the column (CSS shrink-to-fit cannot narrow a wrapped
+ * paragraph to its longest line), so its lines run nearly to the right margin and the source sits
+ * flush right at that margin, directly under the text's right edge: the layout of Brooks's own
+ * chapter openings. The box therefore has no width limit, unlike the PDF's 75%, and the lines are
+ * not balanced, since text-wrap: balance deliberately shortens them and would pull the text away
+ * from the source. The paragraphs' own margins are zeroed, since reading systems give p a full line
+ * of space above and below, which would open wide gaps inside the epigraph. No rule or indent,
+ * unlike a block quote: the type and the space around it carry the signal.
  */
 div.epigraph {
   display: inline-block;
-  max-width: 75%;
-  margin: 1.5em 0 2em 0;
+  margin: 0.75em 0 1.5em 0;
   font-size: 1.1em;
 }
 
 div.epigraph p {
+  margin: 0;
   text-align: left;
   text-indent: 0;
 }
@@ -115,7 +120,7 @@ div.epigraph-text {
 }
 
 div.epigraph-attribution {
-  margin-top: 0.8em;
+  margin-top: 0.3em;
 }
 
 div.epigraph-attribution p {
