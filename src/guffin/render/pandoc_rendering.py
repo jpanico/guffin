@@ -1666,7 +1666,8 @@ _EPIGRAPH_ATTRIBUTION_CLASS: Final[str] = "epigraph-attribution"
 _ATTRIBUTION_DASH: Final[str] = "—"
 """The em dash that leads a rendered attribution, whichever dash the source authored.
 
-The conventional lead of the source line beneath a block quotation or an epigraph.
+The conventional lead of the source line beneath a block quotation or an epigraph, closed up to the
+source with no space between, per Chicago ("—Charles Babbage").
 """
 
 
@@ -1675,7 +1676,7 @@ def _attribution_div(attribution: str, class_name: str) -> pf.Div:
 
     The attribution (its normalized Pandoc Markdown, leading dash already removed) is parsed at block
     level — a multi-line credit keeps its line breaks — and its first inline block is led by
-    :data:`_ATTRIBUTION_DASH` and a space.
+    :data:`_ATTRIBUTION_DASH`, closed up to the source.
 
     Args:
         attribution: The quotation's attribution text.
@@ -1685,7 +1686,7 @@ def _attribution_div(attribution: str, class_name: str) -> pf.Div:
         The attribution Div.
     """
     blocks: Final[list[pf.Block]] = parse_block_md(hard_broken_markdown(attribution))
-    dash: Final[list[pf.Inline]] = [pf.Str(_ATTRIBUTION_DASH), pf.Space()]
+    dash: Final[list[pf.Inline]] = [pf.Str(_ATTRIBUTION_DASH)]
     first: Final[pf.Block | None] = blocks[0] if blocks else None
     if isinstance(first, (pf.Para, pf.Plain)):
         blocks[0] = pf.Para(*dash, *first.content)

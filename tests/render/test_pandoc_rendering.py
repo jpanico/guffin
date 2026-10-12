@@ -1867,7 +1867,7 @@ class TestPullQuoteRendering:
         assert isinstance(last, pf.Div)
         assert last.classes == ["quote-attribution"]
         # Pandoc's smart parsing binds the abbreviation "c." to the year with a no-break space.
-        assert pf.stringify(last).strip() == "— Babbage, c. 1821"
+        assert pf.stringify(last).strip() == "—Babbage, c. 1821"
         assert any(isinstance(element, pf.Emph) for element in list(last.content)[0].content)
 
     def test_block_quote_without_attribution_has_no_attribution_div(self) -> None:
@@ -1943,7 +1943,7 @@ class TestEpigraphRendering:
         parts = list(epigraph.content)
         assert [div.classes for div in parts] == [["epigraph-text"], ["epigraph-attribution"]]
         assert pf.stringify(parts[0]).strip() == "The medium is the message."
-        assert pf.stringify(parts[1]).strip() == "— Marshall McLuhan"
+        assert pf.stringify(parts[1]).strip() == "—Marshall McLuhan"
 
     def test_without_attribution_holds_only_the_quotation(self) -> None:
         """An unattributed epigraph's Div holds its quotation alone."""

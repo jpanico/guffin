@@ -364,7 +364,7 @@ The moving of a mountain is one of the miracles ascribed to Gregory Thaumaturgus
 
 > Go thou and slay So and So; and when thou returnest my Angels shall bear thee into Paradise. And shouldst thou die, natheless even so will I send my Angels to carry thee back into Paradise.
 >
-> — The Old Man
+> —The Old Man
 
 ### Chapter 13: Of the Great Country of Persia; with some account of the Three Kings.
 
@@ -590,7 +590,7 @@ From Monument of St. Peter Martyr.
 
 > Go thou and slay So and So; and when thou returnest my Angels shall bear thee into Paradise. And shouldst thou die, natheless even so will I send my Angels to carry thee back into Paradise.
 >
-> — The Old Man
+> —The Old Man
 
 When therefore they awoke, and found themselves in a place so charming, they deemed that it was Paradise in very truth. And the ladies and damsels dallied with them to their hearts’ content, so that they had what young men would have; and with their own good will they never would have quitted the place. Now this Prince whom we call the Old One kept his Court in grand and noble style, and made those simple hill-folks about him believe firmly that he was a great Prophet. And when he wanted one of his Ashishin to send on any mission, he would cause that potion whereof I spoke to be given to one of the youths in the garden, and then had him carried into his Palace. So when the young man awoke, he found himself in the Castle, and no longer in that Paradise; whereat he was not over well pleased. He was then conducted to the Old Man’s presence, and bowed before him with great veneration as believing himself to be in the presence of a true Prophet. The Prince would then ask whence he came, and he would reply that he came from Paradise! and that it was exactly such as Mahommet had described
 

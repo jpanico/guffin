@@ -333,8 +333,7 @@ class TestPullQuoteRendering:
         result = self._render(tmp_path, vtx)
         # Pandoc's smart parsing binds the abbreviation "c." to the year with a no-break space.
         assert (
-            "> I wish to God these calculations had been executed by steam!\n>\n> — *Charles Babbage*, c. 1821"
-            in result
+            "> I wish to God these calculations had been executed by steam!\n>\n> —*Charles Babbage*, c. 1821" in result
         )
         assert "<div" not in result
 
@@ -347,7 +346,7 @@ class TestPullQuoteRendering:
             attribution="*Understanding Media*",
         )
         result = self._render(tmp_path, vtx)
-        assert "> *The medium is the message.*\n>\n> — *Understanding Media*" in result
+        assert "> *The medium is the message.*\n>\n> —*Understanding Media*" in result
         assert "<div" not in result
 
     def test_block_quote_is_unchanged(self, tmp_path: Path) -> None:

@@ -628,7 +628,7 @@ class TestTypstQuoteFilter:
         )
         assert "#quote(block: true)" in typst
         # The Typst writer spells the em dash with its markup shorthand, ---.
-        assert "Quoted words.\n\n--- Someone" in typst
+        assert "Quoted words.\n\n---Someone" in typst
         assert "align(" not in typst
         assert "#block[" not in typst
 
@@ -643,7 +643,7 @@ class TestTypstQuoteFilter:
             )
         )
         assert typst.startswith("#epigraph(quote: [The medium is the message.")
-        assert "attribution: [--- McLuhan" in typst
+        assert "attribution: [---McLuhan" in typst
         assert "epub:type" not in typst
 
     def test_unattributed_epigraph_passes_no_attribution(self) -> None:
