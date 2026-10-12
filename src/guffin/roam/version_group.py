@@ -29,7 +29,7 @@ Public symbols:
   :class:`~guffin.common.validation.ValidationResult`.
 - :func:`version_groups_of` — derive every :class:`VersionGroup` in a network, keyed by group id,
   optionally scoped to groups touching a given set of node ids.
-- :func:`version_group_by_member_id` — pivot a group map to one keyed by member id.
+- :func:`version_groups_by_member_id` — pivot a group map to one keyed by member id.
 """
 
 from collections.abc import Mapping, Set
@@ -332,7 +332,7 @@ def version_groups_of(network: _TrustedNetwork, scope_ids: Set[Id] | None = None
 
 
 @validate_call
-def version_group_by_member_id(groups: Mapping[Id, VersionGroup]) -> dict[Id, VersionGroup]:
+def version_groups_by_member_id(groups: Mapping[Id, VersionGroup]) -> dict[Id, VersionGroup]:
     """Pivot *groups* to a map from each member id to the group it is a version in.
 
     Args:

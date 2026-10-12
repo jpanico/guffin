@@ -8,6 +8,7 @@ from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.tree import Tree as RichTree
 
+from guffin.model.alternative import Alternative
 from guffin.model.vertex import HeadingVertex, PageVertex, TextVertex
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView, ViewMap
@@ -172,7 +173,7 @@ class TestBuildRichVersionGroupsBox:
         tree = article0_node_tree()
         box = build_rich_version_groups_box(tree, truncate=False)
         assert box is not None
-        group = next(iter(tree.version_groups.values()))
+        group = next(iter(tree.version_groups_by_id.values()))
         selected_string = tree.version_members_by_id[group.selected_id].string
         assert selected_string is not None
         lines = _rendered(box).splitlines()
@@ -218,7 +219,7 @@ class TestVersionedNodePanels:
     def test_node_tree_marks_only_the_versioned_node(self) -> None:
         """In the Test Article 0 node tree exactly one panel, the selected version's, carries the glyph."""
         tree = article0_node_tree()
-        group = next(iter(tree.version_groups.values()))
+        group = next(iter(tree.version_groups_by_id.values()))
         selected_string = tree.version_members_by_id[group.selected_id].string
         assert selected_string is not None
         lines = _rendered(build_rich_node_tree(tree, truncate=False)).splitlines()
@@ -229,3 +230,30 @@ class TestVersionedNodePanels:
     def test_unversioned_tree_has_no_glyph(self) -> None:
         """A tree with no version groups renders no glyph anywhere."""
         assert VERSION_GROUP_GLYPH not in _rendered(build_rich_node_tree(article1_node_tree()))
+
+
+class TestVertexPanelAlternatives:
+    """A text vertex with alternatives is marked ⎇ and lists them in its panel body."""
+
+    def test_plain_text_vertex_is_unmarked(self) -> None:
+        """A text vertex without alternatives carries neither the glyph nor an alternatives line."""
+        text = _rendered(build_vertex_panel(TextVertex(uid="textuid01", text="one wording")))
+        assert VERSION_GROUP_GLYPH not in text
+        assert "alternatives=" not in text
+
+    def test_text_vertex_with_alternatives_is_marked_and_lists_them(self) -> None:
+        """The glyph leads the title and the body lists each alternative behind the unselected marker."""
+        vertex = TextVertex(
+            uid="textuid01",
+            text="selected wording",
+            alternatives=(
+                Alternative(uid="altuid001", text="first other"),
+                Alternative(uid="altuid002", text="second other"),
+            ),
+        )
+        text = _rendered(build_vertex_panel(vertex, truncate=False))
+        assert text.count(VERSION_GROUP_GLYPH) == 1
+        assert text.index(VERSION_GROUP_GLYPH) < text.index("selected wording")
+        assert "alternatives=" in text
+        assert f"{UNSELECTED_VERSION_MARKER} first other" in text
+        assert f"{UNSELECTED_VERSION_MARKER} second other" in text

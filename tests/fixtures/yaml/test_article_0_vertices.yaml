@@ -388,4 +388,9 @@
   text: block 3.4
 - vertex_type: guffin/text
   uid: YYysqBFqy
+  alternatives:
+  - uid: PUrwWBbbi
+    text: This block has 3 versions. This is *version 1*.
+  - uid: zHbMF7Ozq
+    text: This block has 3 versions. This is **version 2**.
   text: This block has 3 versions. This is version 3.

@@ -3,12 +3,14 @@
 import datetime
 import json
 import logging
+from typing import Final
 
 import pytest
 import yaml
 from pydantic import ValidationError
 
 from guffin.common.media_type import MediaType
+from guffin.model.alternative import Alternative
 from guffin.model.attribute import AttributeDomain, LiteralValue, ReferenceValue
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
@@ -1898,3 +1900,114 @@ class TestToRenderBundle:
         assert isinstance(render_bundle, RenderBundle)
         assert render_bundle.content == transcribe(tree)
         assert render_bundle.view == build_view_map(tree)
+
+
+# ---------------------------------------------------------------------------
+# TestAlternatives — version groups become a text vertex's alternatives
+# ---------------------------------------------------------------------------
+
+
+_ALT_PAGE_ID: Final[int] = 300
+_ALT_PARENT_ID: Final[int] = 301
+_ALT_V1_ID: Final[int] = 311
+_ALT_V2_ID: Final[int] = 312
+_ALT_V3_ID: Final[int] = 313
+_ALT_GROUP_ID: Final[int] = 320
+
+
+def _versioned_text_tree(*, heading: bool = False) -> NodeTree:
+    """A page → parent → three-version arrangement, the third selected; text blocks, or headings."""
+
+    def _member(uid: str, node_id: int, string: str) -> RoamNode:
+        return RoamNode(
+            uid=uid,
+            id=node_id,
+            string=string,
+            heading=1 if heading else None,
+            order=0,
+            page=IdObject(id=_ALT_PAGE_ID),
+            parents=[IdObject(id=_ALT_PAGE_ID), IdObject(id=_ALT_PARENT_ID)],
+        )
+
+    page: Final[RoamNode] = RoamNode(
+        uid="altpage01", id=_ALT_PAGE_ID, title="Alt", children=[IdObject(id=_ALT_PARENT_ID)]
+    )
+    parent: Final[RoamNode] = RoamNode(
+        uid="altparent",
+        id=_ALT_PARENT_ID,
+        string="parent",
+        order=0,
+        page=IdObject(id=_ALT_PAGE_ID),
+        parents=[IdObject(id=_ALT_PAGE_ID)],
+        children=[IdObject(id=_ALT_V3_ID)],
+    )
+    group: Final[RoamNode] = RoamNode(
+        uid="altgroup1",
+        id=_ALT_GROUP_ID,
+        blocks=[IdObject(id=_ALT_V1_ID), IdObject(id=_ALT_V2_ID), IdObject(id=_ALT_V3_ID)],
+    )
+    network: Final[list[RoamNode]] = [
+        page,
+        parent,
+        _member("altvers01", _ALT_V1_ID, "This is __version 1__."),
+        _member("altvers02", _ALT_V2_ID, "This is **version 2**."),
+        _member("altvers03", _ALT_V3_ID, "This is version 3."),
+        group,
+    ]
+    return NodeTree.build(root_node=page, super_network=network)
+
+
+class TestAlternatives:
+    """A text block's version group transcribes to its alternatives; other types refuse."""
+
+    def test_selected_text_carries_the_unselected_versions_as_alternatives(self) -> None:
+        """The selected version's vertex lists the other versions, in group order, as alternatives."""
+        tree = _versioned_text_tree()
+        selected = tree.version_members_by_id[_ALT_V3_ID]
+        vertex = to_text_vertex(selected, tree)
+        assert vertex.text == "This is version 3."
+        assert vertex.has_alternatives
+        assert vertex.alternatives == (
+            Alternative(uid="altvers01", text="This is *version 1*."),
+            Alternative(uid="altvers02", text="This is **version 2**."),
+        )
+
+    def test_alternative_texts_are_normalized_like_the_text(self) -> None:
+        """Source markup in an alternative goes through the same normalization as the vertex's own text."""
+        tree = _versioned_text_tree()
+        vertex = to_text_vertex(tree.version_members_by_id[_ALT_V3_ID], tree)
+        assert vertex.alternatives is not None
+        assert vertex.alternatives[0].text == "This is *version 1*."  # __x__ → *x*
+
+    def test_unversioned_text_has_no_alternatives(self) -> None:
+        """A text block in no version group transcribes with alternatives None."""
+        node = _make_text()
+        assert to_text_vertex(node, _node_tree(node)).alternatives is None
+
+    def test_whole_tree_transcribes_only_the_selected_version(self) -> None:
+        """transcribe() yields the selected version (with alternatives) and never the unselected ones."""
+        tree = _versioned_text_tree()
+        vertex_tree = transcribe(tree)
+        uids = {vertex.uid for vertex in vertex_tree.tree_vertices}
+        assert "altvers03" in uids
+        assert not {"altvers01", "altvers02"} & uids
+        selected = vertex_tree.uid_map["altvers03"]
+        assert isinstance(selected, TextVertex)
+        assert selected.has_alternatives
+
+    def test_versioned_heading_is_refused(self) -> None:
+        """A version group of a type without alternatives support fails transcription, naming the block."""
+        tree = _versioned_text_tree(heading=True)
+        with pytest.raises(ValueError, match="altvers03.*has versions.*guffin/heading"):
+            transcribe_standalone_node(tree.version_members_by_id[_ALT_V3_ID], tree)
+
+    def test_article0_fixture_block_3_4_has_two_alternatives(self) -> None:
+        """The recorded [[Test Article]] 0 tree transcribes block 3.4's child with its two other versions."""
+        vertex_tree = transcribe(article0_node_tree())
+        vertex = vertex_tree.uid_map["YYysqBFqy"]
+        assert isinstance(vertex, TextVertex)
+        assert vertex.text == "This block has 3 versions. This is version 3."
+        assert vertex.alternatives == (
+            Alternative(uid="PUrwWBbbi", text="This block has 3 versions. This is *version 1*."),
+            Alternative(uid="zHbMF7Ozq", text="This block has 3 versions. This is **version 2**."),
+        )

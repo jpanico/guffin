@@ -6,6 +6,7 @@ from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.model.alternative import Alternative
 from guffin.model.asset_storage import AssetStorage, StoreType
 from guffin.model.attribute import Attribute, AttributeInstance, LiteralValue, ReferenceValue
 from guffin.model.attribute_assignment import AttributeAssignment
@@ -286,3 +287,59 @@ class TestIsEmbedVertex:
         """Page and text vertices are not transcluding."""
         assert not is_embed_vertex(PageVertex(uid="page00001", title="P"))
         assert not is_embed_vertex(TextVertex(uid="txt00001a", text="hello"))
+
+
+class TestAlternatives:
+    """Tests for the alternatives affordance: TextVertex carries them, nothing else does."""
+
+    def test_only_text_supports_alternatives(self) -> None:
+        """VertexType.supports_alternatives is True for TEXT alone."""
+        assert {vertex_type for vertex_type in VertexType if vertex_type.supports_alternatives} == {VertexType.TEXT}
+
+    def test_support_is_derived_from_the_class(self) -> None:
+        """The property answers from the vertex class, so it agrees with the field's presence."""
+        assert "alternatives" in TextVertex.model_fields
+        assert "alternatives" not in PageVertex.model_fields
+        assert "alternatives" not in TodoVertex.model_fields
+        assert VertexType.TEXT.supports_alternatives
+        assert not VertexType.TODO.supports_alternatives
+
+    def test_text_vertex_has_no_alternatives_by_default(self) -> None:
+        """A text written one way carries None and reports no alternatives."""
+        vertex = TextVertex(uid="textuid01", text="the one wording")
+        assert vertex.alternatives is None
+        assert not vertex.has_alternatives
+
+    def test_text_vertex_with_alternatives(self) -> None:
+        """Alternatives are kept in the given order and has_alternatives reports them."""
+        alternatives = (Alternative(uid="altuid001", text="first"), Alternative(uid="altuid002", text="second"))
+        vertex = TextVertex(uid="textuid01", text="selected", alternatives=alternatives)
+        assert vertex.alternatives == alternatives
+        assert vertex.has_alternatives
+
+    def test_empty_alternatives_means_none(self) -> None:
+        """An empty tuple is allowed and reports no alternatives, like None."""
+        assert not TextVertex(uid="textuid01", text="x", alternatives=()).has_alternatives
+
+    def test_alternatives_are_omitted_from_a_none_excluding_dump(self) -> None:
+        """Without alternatives the field vanishes from an exclude_none dump, so unversioned fixtures are unchanged."""
+        dumped = TextVertex(uid="textuid01", text="x").model_dump(mode="json", exclude_none=True)
+        assert "alternatives" not in dumped
+
+    def test_alternatives_round_trip_through_the_adapter(self) -> None:
+        """A dumped text vertex with alternatives validates back to an equal vertex."""
+        vertex = TextVertex(
+            uid="textuid01", text="selected", alternatives=(Alternative(uid="altuid001", text="other"),)
+        )
+        dumped = vertex.model_dump(mode="json", exclude_none=True)
+        assert dumped["alternatives"] == [{"uid": "altuid001", "text": "other"}]
+        restored = vertex_adapter.validate_python(dumped)
+        assert isinstance(restored, TextVertex)
+        assert restored == vertex
+
+    def test_no_other_vertex_carries_alternatives(self) -> None:
+        """A vertex type without the affordance has no alternatives field and no has_alternatives property."""
+        page = PageVertex(uid="pageuid01", title="P")
+        assert "alternatives" not in PageVertex.model_fields
+        assert not hasattr(page, "alternatives")
+        assert not hasattr(page, "has_alternatives")

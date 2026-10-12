@@ -263,7 +263,7 @@ def build_rich_node_tree(
     Iterates *tree* in pre-order depth-first order via
     :meth:`~guffin.roam.node_tree.NodeTree.dfs`, attaching each node as a Rich
     panel under its parent in the rendered tree.  A node that has versions — a member of a
-    group in :attr:`~guffin.roam.node_tree.NodeTree.version_group_by_member_id` — renders
+    group in :attr:`~guffin.roam.node_tree.NodeTree.version_groups_by_member_id` — renders
     with the orange :data:`VERSION_GROUP_GLYPH` leading its panel title.
 
     Args:
@@ -281,7 +281,7 @@ def build_rich_node_tree(
     rich_node_map: Final[dict[Id, RichTree]] = {}
     dfs_iter: Final[NodeTreeDFSIterator] = tree.dfs()
     root_node: Final[RoamNode] = next(dfs_iter)
-    versioned_ids: Final[Set[Id]] = tree.version_group_by_member_id.keys()
+    versioned_ids: Final[Set[Id]] = tree.version_groups_by_member_id.keys()
     root_rich: Final[RichTree] = RichTree(
         build_node_panel(root_node, props, truncate=truncate, versioned=root_node.id in versioned_ids)
     )
@@ -334,7 +334,7 @@ def build_rich_refs_box(
         row.add_column()
         row.add_column()
         ref_panel: Panel = build_node_panel(
-            ref_node, props, truncate=truncate, versioned=ref_node.id in tree.version_group_by_member_id
+            ref_node, props, truncate=truncate, versioned=ref_node.id in tree.version_groups_by_member_id
         )
         row.add_row(ref_panel, back_refs_panel)
         ref_rows.append(row)
@@ -347,7 +347,7 @@ def build_rich_version_groups_box(
 ) -> Panel | None:
     """Build a Rich :class:`~rich.panel.Panel` summarising the version groups in *tree*.
 
-    For each group in :attr:`~guffin.roam.node_tree.NodeTree.version_groups`, renders a
+    For each group in :attr:`~guffin.roam.node_tree.NodeTree.version_groups_by_id`, renders a
     two-column grid row: on the left a panel titled with the orange :data:`VERSION_GROUP_GLYPH`
     and the group's uid and id, bodying its parent id, selected id, and member count; on the
     right one :func:`build_node_panel` per member (each versioned, so each title carries the
@@ -356,11 +356,11 @@ def build_rich_version_groups_box(
     :data:`UNSELECTED_VERSION_MARKER` for the others.  All rows are collected into a single
     ``version groups`` panel.
 
-    Returns ``None`` when :attr:`~guffin.roam.node_tree.NodeTree.version_groups` is empty.
+    Returns ``None`` when :attr:`~guffin.roam.node_tree.NodeTree.version_groups_by_id` is empty.
 
     Args:
         tree: The :class:`~guffin.roam.node_tree.NodeTree` whose
-            :attr:`~guffin.roam.node_tree.NodeTree.version_groups` and
+            :attr:`~guffin.roam.node_tree.NodeTree.version_groups_by_id` and
             :attr:`~guffin.roam.node_tree.NodeTree.version_members_by_id` are used.
         props: Ordered list of :class:`~guffin.roam.node.RoamNode` field names
             to include in each member panel body.  Defaults to :data:`DEFAULT_NODE_PANEL_PROPS`.
@@ -371,10 +371,10 @@ def build_rich_version_groups_box(
         A :class:`~rich.panel.Panel` titled ``version groups`` grouping one row per version
         group, or ``None`` when *tree* has none.
     """
-    if not tree.version_groups:
+    if not tree.version_groups_by_id:
         return None
     group_rows: Final[list[Table]] = []
-    for group in tree.version_groups.values():
+    for group in tree.version_groups_by_id.values():
         summary: Panel = Panel(
             f"parent: {group.parent_id}  selected: {group.selected_id}  members: {len(group.member_ids)}",
             title=f"{_VERSIONING_MARK} version group [bold]{markup_escape(group.uid)}[/bold] ({group.id})",
@@ -459,6 +459,14 @@ def _format_vertex_prop(vertex: Vertex, prop: str) -> Text | Table:
             return Text.assemble("vertex_type=", (vertex.vertex_type.value.split("/", 1)[-1], "bold orange1"))
         case "uid":
             return Text(f"uid={vertex.uid}")
+        case "alternatives":
+            if not isinstance(vertex, TextVertex) or not vertex.has_alternatives:
+                return Text("alternatives=N/A")
+            listed: Final[Text] = Text("  ").join(
+                Text.assemble((f"{UNSELECTED_VERSION_MARKER} ", "dim"), alternative.text)
+                for alternative in vertex.alternatives or ()
+            )
+            return Text.assemble("alternatives=", listed)
         case "title":
             return Text(f"title={vertex.title}" if isinstance(vertex, PageVertex) else "title=N/A")
         case "text":
@@ -671,7 +679,8 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
             )
         case _ as unreachable:
             assert_never(unreachable)
-    return f"{title_content} [dim]({vertex.uid})[/dim]"
+    lead: Final[str] = f"{_VERSIONING_MARK} " if isinstance(vertex, TextVertex) and vertex.has_alternatives else ""
+    return f"{lead}{title_content} [dim]({vertex.uid})[/dim]"
 
 
 @validate_call
@@ -698,9 +707,15 @@ def build_vertex_panel(
     """
     logger.debug("vertex=%r", vertex)
     title: Final[str] = _vertex_panel_title(vertex, truncate=truncate)
-    effective_props: Final[list[str]] = (
-        [*props, "table"] if isinstance(vertex, TableVertex) and "table" not in props else props
-    )
+    extra_props: Final[list[str]] = [
+        *(["table"] if isinstance(vertex, TableVertex) and "table" not in props else []),
+        *(
+            ["alternatives"]
+            if isinstance(vertex, TextVertex) and vertex.has_alternatives and "alternatives" not in props
+            else []
+        ),
+    ]
+    effective_props: Final[list[str]] = [*props, *extra_props]
     prop_renderings: Final[list[Text | Table]] = [_format_vertex_prop(vertex, p) for p in effective_props]
     text_props: Final[list[Text]] = [ren for ren in prop_renderings if isinstance(ren, Text)]
     table_props: Final[list[Table]] = [ren for ren in prop_renderings if isinstance(ren, Table)]

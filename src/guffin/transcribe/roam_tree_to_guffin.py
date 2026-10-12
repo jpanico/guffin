@@ -68,6 +68,7 @@ from guffin.common.markdown import FencedCodeBlock, HeadingLevel, parse_fenced_c
 from guffin.common.media_type import MediaType
 from guffin.common.programming_language import CodeLanguageId
 from guffin.common.table import Table, TableStyle
+from guffin.model.alternative import Alternative
 from guffin.model.asset_storage import AssetStorage, StoreType
 from guffin.model.attribute import (
     Attribute,
@@ -137,6 +138,7 @@ from guffin.roam.node_tree import NodeTree, to_table
 from guffin.roam.primitives import Id, Uid, parse_daily_note_uid
 from guffin.roam.todo import RoamTodo, parse_todo
 from guffin.roam.todo import TodoState as RoamTodoState
+from guffin.roam.version_group import VersionGroup
 from guffin.transcribe.roam_md_to_pandoc_md import to_pandoc_md
 
 logger = logging.getLogger(__name__)
@@ -670,6 +672,34 @@ def to_text_vertex(node: RoamNode, tree: NodeTree) -> TextVertex:
         children=_resolve_children(node, tree.id_map),
         refs=_resolve_refs(node, tree.id_map),
         attribute_assignments=_resolve_attribute_assignments(node, tree),
+        alternatives=_resolve_alternatives(node, tree),
+    )
+
+
+def _resolve_alternatives(node: RoamNode, tree: NodeTree) -> tuple[Alternative, ...] | None:
+    """Return the alternatives of *node* — the other versions of its version group — or ``None``.
+
+    A node that is a member of one of *tree*'s version groups is the group's selected
+    version (only the selected version is reachable through ``children``, so only it is
+    transcribed); its alternatives are the group's unselected versions, in the group's order,
+    each normalized exactly as the node's own text is.  A node in no version group has none.
+
+    Args:
+        node: The node whose alternatives to resolve.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to.
+
+    Returns:
+        The alternatives as :class:`~guffin.model.alternative.Alternative` values, or ``None``
+        when *node* is in no version group.
+    """
+    group: Final[VersionGroup | None] = tree.version_groups_by_member_id.get(node.id)
+    if group is None:
+        return None
+    members: Final[list[RoamNode]] = [tree.version_members_by_id[member_id] for member_id in group.unselected_ids]
+    return tuple(
+        Alternative(uid=member.uid, text=to_pandoc_md(member.string, tree))
+        for member in members
+        if member.string is not None
     )
 
 
@@ -1072,10 +1102,18 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
 
     Raises:
         ValidationError: If *node* or *tree* is ``None`` or invalid.
-        ValueError: If *node* has neither a ``title`` nor a ``string`` field set.
+        ValueError: If *node* has neither a ``title`` nor a ``string`` field set, or if *node*
+            is a member of one of *tree*'s version groups but its vertex type does not
+            support alternatives (:attr:`~guffin.model.vertex.VertexType.supports_alternatives`),
+            so its other versions would have nowhere to go.
     """
     logger.debug("node=%r, tree root uid=%r, heading_offset=%d", node, tree.root_node.uid, heading_offset)
-    match vertex_type(node):
+    node_vertex_type: Final[VertexType] = vertex_type(node)
+    if node.id in tree.version_groups_by_member_id and not node_vertex_type.supports_alternatives:
+        raise ValueError(
+            f"RoamNode uid={node.uid!r} has versions, but a {node_vertex_type.value} vertex carries no alternatives"
+        )
+    match node_vertex_type:
         case VertexType.PAGE:
             return to_page_vertex(node, tree)
         case VertexType.IMAGE:

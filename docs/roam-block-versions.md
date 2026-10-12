@@ -231,9 +231,12 @@ fixture rely on.
 - **The relationship is read into a `VersionGroup`.** `roam/version_group.py` derives one
   explicit value per group from the raw rows: its members in the row's order, the
   selected member (the one some node's `children` names), and that node as the parent.
-  `NodeTree.build` holds them in two derived maps, `version_groups` by group id and
-  `version_group_by_member_id` by version id, scoped like `refs_by_id` to groups with a
-  member in the tree or its refs, and excluded from dumps like the other derived maps.
+  `NodeTree.build` holds them in three derived maps — `version_groups_by_id` (group id →
+  group), `version_groups_by_member_id` (version id → its group), and
+  `version_members_by_id` (version id → the version's node, the unselected versions'
+  only home on the tree, since the children walk never reaches them) — scoped like
+  `refs_by_id` to groups with a member in the tree or its refs, and excluded from dumps
+  like the other derived maps.
   Five validators guard the reading, in the network's accumulator style: every member
   id resolves, members are blocks sharing one order and one parents set, members share
   one node type (a group is *homogeneous*: its versions are alternatives of one kind of
@@ -260,6 +263,17 @@ all under this rule; they are a different mechanism, not yet designed.
 - **Selection stays derivable.** Nothing on the group says which version is selected;
   the selected one is the version present in the parent's `:block/children`, so the
   model can compute it from data it already holds.
+- **The model calls them alternatives, and carries them as texts.** The transcriber
+  (`transcribe/roam_tree_to_guffin.py`) turns a text block's version group into the
+  `alternatives` of the one `TextVertex` it transcribes — the selected version's — each
+  `model/alternative.Alternative` being an unselected version's uid and its string put
+  through the same normalization as the vertex's own text, in group order. An
+  alternative is a wording only (the group is flat, so there is nothing else it could
+  be), and `TEXT` is the one vertex type that supports it today
+  (`VertexType.supports_alternatives`); a versioned block of any other type is a
+  transcription error naming the block. The unselected versions are never transcribed
+  as vertices, since the walk follows `children`. The `[[Test Article]] 0` vertices
+  fixture shows the result: block 3.4's child carries its two other wordings.
 - **The revision snapshot moves** when someone edits an unselected version, because the
   hash covers every fetched row. That is correct: the page's content did change.
 

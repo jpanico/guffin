@@ -17,10 +17,12 @@ Public symbols:
 - :data:`VertexChildren` — a vertex's ordered child UIDs.
 - :data:`VertexRefs` — a vertex's referenced UIDs.
 - :class:`VertexType` — string enum classifying each vertex by the kind of content it
-  carries.
+  carries; its :attr:`~VertexType.supports_alternatives` property says whether vertices of
+  that type can carry alternative wordings (today: ``TEXT`` only).
 - :class:`PageVertex` — a titled page, the top-level container vertex.
 - :class:`HeadingVertex` — a section heading (levels 1–6).
-- :class:`TextVertex` — plain body text.
+- :class:`TextVertex` — plain body text; the one vertex type that can carry alternative
+  wordings (``alternatives`` / ``has_alternatives``).
 - :class:`TodoState` — the two states of a TODO item (``TODO`` open, ``DONE`` completed).
 - :class:`TodoVertex` — a checkbox (TODO) item: a state plus the item text.
 - :class:`AssetVertex` — a hosted asset: the general asset vertex (an asset of
@@ -67,6 +69,7 @@ from guffin.common.markdown import HeadingLevel
 from guffin.common.media_type import MediaType, is_image_type
 from guffin.common.programming_language import CodeLanguageId
 from guffin.common.table import Table, TableStyle
+from guffin.model.alternative import Alternative
 from guffin.model.asset_storage import AssetStorage
 from guffin.model.attribute import Attribute
 from guffin.model.attribute_assignment import AttributeAssignment, find_assignment_for
@@ -116,6 +119,19 @@ class VertexType(StrEnum):
     TABLE = "guffin/table"
     BLOCK_EMBED = "guffin/block-embed"
     PAGE_EMBED = "guffin/page-embed"
+
+    @property
+    def supports_alternatives(self) -> bool:
+        """Whether vertices of this type can carry alternative wordings.
+
+        Derived from the type's vertex class — ``True`` exactly when that class carries the
+        ``alternatives`` field — so the one declaration of support is the class itself, and
+        this property can never disagree with it.
+
+        Returns:
+            ``True`` for a type whose vertices carry alternatives; ``False`` otherwise.
+        """
+        return issubclass(_VERTEX_CLASS_BY_TYPE[self], _AlternativesCarrier)
 
 
 type VertexChildren = list[Uid]
@@ -216,13 +232,40 @@ class HeadingVertex(_BaseVertex[Literal[VertexType.HEADING]]):
     heading_level: HeadingLevel = Field(..., description="Effective heading level (1–6).")
 
 
-class TextVertex(_BaseVertex[Literal[VertexType.TEXT]]):
+class _AlternativesCarrier(BaseModel):
+    """The alternatives affordance: the other wordings a vertex's content could have.
+
+    Mixed into the vertex types whose content can be written several ways.  The vertex's
+    own text is the selected wording; *alternatives* are the others, peers that coexist
+    with it.  An alternative is a wording only, never a subtree, so whichever is selected
+    the vertex's children, references, and attributes are the same.
+
+    Attributes:
+        alternatives: The other wordings, in source order. ``None`` when the content was
+            written one way only.
+    """
+
+    alternatives: tuple[Alternative, ...] | None = Field(
+        default=None, description="The other wordings of this vertex's content, in source order; None if none."
+    )
+
+    @property
+    def has_alternatives(self) -> bool:
+        """Whether this vertex's content was written more than one way."""
+        return bool(self.alternatives)
+
+
+class TextVertex(_AlternativesCarrier, _BaseVertex[Literal[VertexType.TEXT]]):
     """Plain body text — a vertex whose content is ordinary prose.
+
+    The one vertex type that carries alternative wordings: see
+    :attr:`~_AlternativesCarrier.alternatives` and :attr:`~_AlternativesCarrier.has_alternatives`.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.TEXT`.
             Serialized as ``'vertex-type'``.
-        text: The body text.
+        text: The body text — the selected wording.
+        alternatives: The other wordings of the text, in source order; ``None`` if none.
     """
 
     vertex_type: Literal[VertexType.TEXT] = Field(
@@ -230,7 +273,7 @@ class TextVertex(_BaseVertex[Literal[VertexType.TEXT]]):
         serialization_alias="vertex-type",
         description="Always VertexType.TEXT (serialized as 'vertex-type').",
     )
-    text: str = Field(..., description="The body text.")
+    text: str = Field(..., description="The body text — the selected wording.")
 
 
 class TodoState(StrEnum):
@@ -660,6 +703,15 @@ _EMBED_VERTEX_CLASSES: Final[tuple[type[BlockEmbedVertex] | type[PageEmbedVertex
     EmbedVertex.__value__
 )
 """The :data:`EmbedVertex` union members as a runtime tuple, derived from the union itself."""
+
+_VERTEX_CLASS_BY_TYPE: Final[dict[VertexType, type[Vertex]]] = {
+    cls.model_fields["vertex_type"].default: cls for cls in get_args(Vertex.__value__)
+}
+"""Each :class:`VertexType` member's concrete class, derived from the :data:`Vertex` union's members.
+
+Every member class fixes its ``vertex_type`` as a field default, so the map is read off the
+union rather than declared beside it.
+"""
 
 vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discriminator="vertex_type")])
 """Pydantic :class:`~pydantic.TypeAdapter` for validating a raw dict into the correct :data:`Vertex` subtype.

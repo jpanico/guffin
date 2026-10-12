@@ -20,7 +20,7 @@ from guffin.roam.version_group import (
     exactly_one_version_selected,
     no_version_member_has_children,
     validate_version_groups,
-    version_group_by_member_id,
+    version_groups_by_member_id,
     version_groups_of,
 )
 
@@ -281,9 +281,9 @@ class TestVersionGroupsOf:
             version_groups_of(_versioned_network(selected=[_V1_ID, _V3_ID]))
 
     def test_pivot_by_member_id(self) -> None:
-        """version_group_by_member_id maps every member of every group to its group."""
+        """version_groups_by_member_id maps every member of every group to its group."""
         groups: Final[dict[int, VersionGroup]] = version_groups_of(_versioned_network())
-        by_member: Final[dict[int, VersionGroup]] = version_group_by_member_id(groups)
+        by_member: Final[dict[int, VersionGroup]] = version_groups_by_member_id(groups)
         assert set(by_member) == {_V1_ID, _V2_ID, _V3_ID}
         assert all(group is groups[_GROUP_ID] for group in by_member.values())
 
@@ -309,9 +309,9 @@ class TestNodeTreeVersionGroups:
         """A tree whose parent block is versioned exposes the group both ways."""
         network: Final[NodeNetwork] = _versioned_network()
         tree: Final[NodeTree] = NodeTree.build(root_node=network[0], super_network=network)
-        assert set(tree.version_groups) == {_GROUP_ID}
-        assert set(tree.version_group_by_member_id) == {_V1_ID, _V2_ID, _V3_ID}
-        assert tree.version_group_by_member_id[_V1_ID].selected_id == _V3_ID
+        assert set(tree.version_groups_by_id) == {_GROUP_ID}
+        assert set(tree.version_groups_by_member_id) == {_V1_ID, _V2_ID, _V3_ID}
+        assert tree.version_groups_by_member_id[_V1_ID].selected_id == _V3_ID
         # Only the selected version is in the tree; the group is reachable through the maps alone.
         assert {n.id for n in tree.tree_network} == {_PAGE_ID, _PARENT_ID, _V3_ID}
 
@@ -320,17 +320,17 @@ class TestNodeTreeVersionGroups:
         network: Final[NodeNetwork] = _versioned_network()
         other_page: Final[RoamNode] = RoamNode(uid="page00001", id=50, title="Other", children=[])
         tree: Final[NodeTree] = NodeTree.build(root_node=other_page, super_network=[*network, other_page])
-        assert tree.version_groups == {}
-        assert tree.version_group_by_member_id == {}
+        assert tree.version_groups_by_id == {}
+        assert tree.version_groups_by_member_id == {}
 
     def test_article0_tree(self) -> None:
         """The recorded [[Test Article]] 0 tree exposes block 3.4's group, keyed by every version."""
         network: Final[NodeNetwork] = _article0_network()
         by_uid: Final[dict[str, RoamNode]] = {node.uid: node for node in network}
         tree: Final[NodeTree] = NodeTree.build(root_node=by_uid["L7iQsWlWT"], super_network=network)
-        assert set(tree.version_groups) == {by_uid[_GROUP_UID].id}
-        assert set(tree.version_group_by_member_id) == {by_uid[uid].id for uid in _VERSION_UIDS}
-        assert tree.version_groups[by_uid[_GROUP_UID].id].selected_id == by_uid[_SELECTED_UID].id
+        assert set(tree.version_groups_by_id) == {by_uid[_GROUP_UID].id}
+        assert set(tree.version_groups_by_member_id) == {by_uid[uid].id for uid in _VERSION_UIDS}
+        assert tree.version_groups_by_id[by_uid[_GROUP_UID].id].selected_id == by_uid[_SELECTED_UID].id
 
     def test_tree_holds_every_member_node(self) -> None:
         """The tree keeps every version node reachable by id, the unselected ones included."""
@@ -347,6 +347,6 @@ class TestNodeTreeVersionGroups:
         network: Final[NodeNetwork] = _versioned_network()
         tree: Final[NodeTree] = NodeTree.build(root_node=network[0], super_network=network)
         dumped: Final[dict[str, object]] = tree.model_dump(mode="json")
-        assert "version_groups" not in dumped
-        assert "version_group_by_member_id" not in dumped
+        assert "version_groups_by_id" not in dumped
+        assert "version_groups_by_member_id" not in dumped
         assert "version_members_by_id" not in dumped

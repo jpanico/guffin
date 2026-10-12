@@ -42,7 +42,7 @@ from guffin.roam.node_network import (
     refs_ids,
 )
 from guffin.roam.primitives import Id, Uid
-from guffin.roam.version_group import VersionGroup, version_group_by_member_id, version_groups_of
+from guffin.roam.version_group import VersionGroup, version_groups_by_member_id, version_groups_of
 
 logger = logging.getLogger(__name__)
 
@@ -123,7 +123,7 @@ class NodeTree(BaseModel):
         exclude=True,
         description="Map of title → RoamNode for every PAGE node in tree_network or refs_by_id.",
     )
-    version_groups: Annotated[dict[Id, VersionGroup], SkipValidation] = Field(
+    version_groups_by_id: Annotated[dict[Id, VersionGroup], SkipValidation] = Field(
         ...,
         exclude=True,
         description=(
@@ -131,16 +131,16 @@ class NodeTree(BaseModel):
             "member in tree_network or refs_by_id; may be empty."
         ),
     )
-    version_group_by_member_id: Annotated[dict[Id, VersionGroup], SkipValidation] = Field(
+    version_groups_by_member_id: Annotated[dict[Id, VersionGroup], SkipValidation] = Field(
         ...,
         exclude=True,
-        description="Map of member id → VersionGroup for every member of every group in version_groups.",
+        description="Map of member id → VersionGroup for every member of every group in version_groups_by_id.",
     )
     version_members_by_id: Annotated[dict[Id, RoamNode], SkipValidation] = Field(
         ...,
         exclude=True,
         description=(
-            "Map of id → RoamNode for every member of every group in version_groups — the selected version "
+            "Map of id → RoamNode for every member of every group in version_groups_by_id — the selected version "
             "(also in tree_network or refs_by_id) and the unselected ones, which the tree holds nowhere else."
         ),
     )
@@ -156,9 +156,11 @@ class NodeTree(BaseModel):
         derives :attr:`id_map`,
         :attr:`uid_map`, and :attr:`page_name_map`
         from the combined node pool, reads the version groups of that pool's nodes off
-        *super_network* into :attr:`version_groups` and :attr:`version_group_by_member_id`
+        *super_network* into :attr:`version_groups_by_id` and :attr:`version_groups_by_member_id`
         (via :func:`~guffin.roam.version_group.version_groups_of`, scoped to groups with a
-        member in the pool), then delegates to the Pydantic constructor (which runs
+        member in the pool), gathers every member of those groups — the unselected versions
+        included, which the children walk never reaches — into :attr:`version_members_by_id`,
+        then delegates to the Pydantic constructor (which runs
         all validators including :meth:`_validate_is_tree`).
 
         Args:
@@ -192,8 +194,10 @@ class NodeTree(BaseModel):
         page_name_map: Final[dict[str, RoamNode]] = {
             n.title: n for n in id_map.values() if node_type(n) == NodeType.PAGE and n.title is not None
         }
-        version_groups: Final[dict[Id, VersionGroup]] = version_groups_of(super_network, scope_ids=set(id_map))
-        member_ids: Final[set[Id]] = {member_id for group in version_groups.values() for member_id in group.member_ids}
+        version_groups_by_id: Final[dict[Id, VersionGroup]] = version_groups_of(super_network, scope_ids=set(id_map))
+        member_ids: Final[set[Id]] = {
+            member_id for group in version_groups_by_id.values() for member_id in group.member_ids
+        }
         cls._creating = True
         try:
             return cls(
@@ -203,8 +207,8 @@ class NodeTree(BaseModel):
                 id_map=id_map,
                 uid_map=uid_map,
                 page_name_map=page_name_map,
-                version_groups=version_groups,
-                version_group_by_member_id=version_group_by_member_id(version_groups),
+                version_groups_by_id=version_groups_by_id,
+                version_groups_by_member_id=version_groups_by_member_id(version_groups_by_id),
                 version_members_by_id={n.id: n for n in super_network if n.id in member_ids},
             )
         finally:
