@@ -49,7 +49,7 @@ Notes on GFM-pipeline constructs that are handled differently here:
 - **epigraph** — likewise **no filter**: the epigraph ([[>]] [[!EPIGRAPH]]) arrives as
   `<div class="epigraph" epub:type="epigraph">` (Pandoc's EPUB writer keeps the `epub:type`), holding a
   `<div class="epigraph-text">` and, when attributed, a `<div class="epigraph-attribution">` led by an em
-  dash, and `epub.css` sets it as the PDF does: slightly smaller than body text, the quotation italic,
+  dash, and `epub.css` sets it as the PDF does: a little larger than body text and more openly leaded, the quotation italic,
   flush left and ragged, the source upright beneath it, flush right against the quotation's right
   edge (the div is an `inline-block` with `max-width: 75%`, shrinking to fit; a quotation long enough
   to wrap aligns its source at that 75% edge, since CSS cannot narrow a wrapped paragraph to its

@@ -88,8 +88,9 @@ div.quote-attribution {
  * Epigraph (Roam [[>]] [[!EPIGRAPH]]): a quotation set at the opening of a work, part, or chapter.
  * guffin emits <div class="epigraph" epub:type="epigraph"> holding <div class="epigraph-text"> (the
  * quotation) and, when present, <div class="epigraph-attribution"> (the em-dash-led source line).
- * Mirroring the PDF: it takes the headings' flush-left alignment, slightly smaller than body text,
- * the quotation italic and ragged, the source upright and flush right beneath it. The div is an
+ * Mirroring the PDF: it takes the headings' flush-left alignment, a little larger and more openly
+ * leaded than body text (display type, after Brooks's The Mythical Man-Month), the quotation italic
+ * and ragged, the source upright and flush right beneath it. The div is an
  * inline-block, so it shrinks to fit its content up to max-width: the source then ends at the
  * quotation's own right edge rather than the page margin, staying with a short quotation. (CSS
  * shrink-to-fit cannot narrow a wrapped paragraph to its longest line, so a quotation long enough
@@ -100,7 +101,7 @@ div.epigraph {
   display: inline-block;
   max-width: 75%;
   margin: 1.5em 0 2em 0;
-  font-size: 0.9em;
+  font-size: 1.1em;
 }
 
 div.epigraph p {
@@ -110,6 +111,7 @@ div.epigraph p {
 
 div.epigraph-text {
   font-style: italic;
+  line-height: 1.6;
 }
 
 div.epigraph-attribution {

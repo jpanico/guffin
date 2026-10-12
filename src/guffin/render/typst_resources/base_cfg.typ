@@ -51,10 +51,13 @@
   quote-weight: "bold",
   // Epigraph (Roam [[>]] [[!EPIGRAPH]]): the width at which the quotation wraps, as a share of the
   // text block (it starts at the left margin, like the headings), its size as a ratio of the
-  // ambient body size, and the quotation's style (the attribution beneath it is always upright,
-  // flush right against the quotation's longest line).
+  // ambient body size, the leading between its lines, and the quotation's style (the attribution
+  // beneath it is always upright, flush right against the quotation's longest line).  Set a little
+  // larger and more openly leaded than the body, as display type, after Brooks's The Mythical
+  // Man-Month, whose epigraphs run about 1.2x his body size at about 1.5x its line spacing.
   epigraph-width: 75%,
-  epigraph-size: 0.9,
+  epigraph-size: 1.1,
+  epigraph-leading: 0.9em,
   epigraph-style: "italic",
   fontsize: 11pt,
   leading: 0.65em,

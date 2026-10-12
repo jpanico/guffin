@@ -369,7 +369,8 @@
 // Epigraph (Roam [[>]] [[!EPIGRAPH]]): a quotation set at the opening of a work, part, or chapter.
 // It takes the alignment of the headings above it, which this template sets flush left: the
 // quotation starts at the left margin, its lines ragged, wrapping at cfg.epigraph-width of the text
-// block, at cfg.epigraph-size of the body size in cfg.epigraph-style.  The attribution sits beneath
+// block, at cfg.epigraph-size of the body size with cfg.epigraph-leading between its lines, in
+// cfg.epigraph-style.  The attribution sits beneath
 // it, upright, flush right against the quotation's own longest line rather than the page margin, so
 // the source stays with a short quotation instead of drifting to the far edge: the epigraph is
 // measured and set in a block exactly as wide as its widest line (quotation or attribution), capped
@@ -377,7 +378,7 @@
 // carry the signal.  typst_quote.lua marshals the quotation and attribution into a call to this
 // helper.
 #let epigraph(quote: [], attribution: none) = block(width: 100%, above: 1.5em, below: 2em, {
-  set par(justify: false)
+  set par(justify: false, leading: cfg.epigraph-leading)
   set text(size: cfg.epigraph-size * 1em)
   layout(region => {
     let limit = cfg.epigraph-width * region.width
