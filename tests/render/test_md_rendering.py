@@ -338,6 +338,18 @@ class TestPullQuoteRendering:
         )
         assert "<div" not in result
 
+    def test_epigraph_is_an_italic_block_quote_ending_with_its_source_line(self, tmp_path: Path) -> None:
+        """An epigraph renders as a block quote: the quotation italic, the em-dash-led source line upright."""
+        vtx = QuoteBlockVertex(
+            uid="quote0001",
+            quote_type=QuoteType.EPIGRAPH,
+            quote="The medium is *the* message.",
+            attribution="*Understanding Media*",
+        )
+        result = self._render(tmp_path, vtx)
+        assert "> *The medium is the message.*\n>\n> — *Understanding Media*" in result
+        assert "<div" not in result
+
     def test_block_quote_is_unchanged(self, tmp_path: Path) -> None:
         """A plain BLOCK quote gets no glyph, bold, or forced italic."""
         vtx = QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.BLOCK, quote="Just a plain quote.")

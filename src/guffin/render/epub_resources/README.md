@@ -46,6 +46,11 @@ Notes on GFM-pipeline constructs that are handled differently here:
 - **block-quote attribution** — likewise **no filter**: a block quotation's source line arrives as a
   `<div class="quote-attribution">` closing its `<blockquote>`, led by an em dash, and `epub.css` sets it
   upright against the quote's italic, on its own line left-aligned with the quotation.
+- **epigraph** — likewise **no filter**: the epigraph ([[>]] [[!EPIGRAPH]]) arrives as
+  `<div class="epigraph" epub:type="epigraph">` (Pandoc's EPUB writer keeps the `epub:type`), holding a
+  `<div class="epigraph-text">` and, when attributed, a `<div class="epigraph-attribution">` led by an em
+  dash, and `epub.css` sets it as the PDF does: a narrow column at the right of the text block, slightly
+  smaller than body text, the quotation italic and ragged, the source flush right and upright.
 - **captions** — likewise **no filter**: the `<div class="caption">` below an image or code listing
   (the block's own nested content, or — also classed `code-source` — the emphasized line naming the
   GitHub file a sourced listing was snapshotted from) survives to XHTML, and `epub.css` styles it as

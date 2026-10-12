@@ -1591,9 +1591,17 @@ def _quote_block_vertex_to_blocks(
     The Div carries no emphasis or glyph of its own — each output format applies its own styling
     (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``, or EPUB CSS on ``div.fancy-quote``).
 
-    In both forms the quotation contains only the vertex's own ``quote`` (and ``attribution``)
+    An epigraph (:attr:`~guffin.vertex.QuoteType.EPIGRAPH`) likewise produces a class-tagged
+    :class:`~panflute.Div`: an outer ``epigraph`` :class:`~panflute.Div` (:data:`_EPIGRAPH_CLASS`)
+    carrying ``epub:type="epigraph"``, holding the vertex's ``quote`` in an ``epigraph-text``
+    sub-:class:`~panflute.Div` and, when present, its ``attribution`` in an ``epigraph-attribution``
+    sub-:class:`~panflute.Div` led by an em dash.  Each format sets it as an epigraph — a narrow
+    column with the source flush right beneath it (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``,
+    or EPUB CSS on ``div.epigraph``); the ``epub:type`` rides along harmlessly in the other formats.
+
+    In every form the quotation contains only the vertex's own ``quote`` (and ``attribution``)
     content.  Child vertices are outline descendants, not quotation content: they render
-    recursively *after* the :class:`~panflute.BlockQuote` / ``fancy-quote``
+    recursively *after* the :class:`~panflute.BlockQuote` / ``fancy-quote`` / ``epigraph``
     :class:`~panflute.Div`, outside the quotation, so the quote never absorbs material the
     quoted source did not say.
 
@@ -1608,8 +1616,8 @@ def _quote_block_vertex_to_blocks(
         depth: Tree depth of *vertex*.
 
     Returns:
-        The :class:`~panflute.BlockQuote` (BLOCK) or ``fancy-quote`` :class:`~panflute.Div`
-        (PULL), followed by the blocks of any child vertices.
+        The :class:`~panflute.BlockQuote` (BLOCK), ``fancy-quote`` :class:`~panflute.Div` (PULL), or
+        ``epigraph`` :class:`~panflute.Div` (EPIGRAPH), followed by the blocks of any child vertices.
     """
     child_blocks: Final[list[pf.Block]] = build_child_blocks(
         vertex.children or [],
@@ -1626,31 +1634,51 @@ def _quote_block_vertex_to_blocks(
             *parse_block_md(hard_broken_markdown(vertex.quote)), classes=["fancy-quote-text"]
         )
         return [pf.Div(quotation, classes=["fancy-quote"]), *child_blocks]
+    if vertex.quote_type is QuoteType.EPIGRAPH:
+        epigraph_blocks: Final[list[pf.Block]] = [
+            pf.Div(*parse_block_md(hard_broken_markdown(vertex.quote)), classes=[_EPIGRAPH_TEXT_CLASS])
+        ]
+        if vertex.attribution is not None:
+            epigraph_blocks.append(_attribution_div(vertex.attribution, _EPIGRAPH_ATTRIBUTION_CLASS))
+        return [
+            pf.Div(*epigraph_blocks, classes=[_EPIGRAPH_CLASS], attributes={"epub:type": EpubType.EPIGRAPH.value}),
+            *child_blocks,
+        ]
     inner_blocks: Final[list[pf.Block]] = parse_block_md(hard_broken_markdown(vertex.quote))
     if vertex.attribution is not None:
-        inner_blocks.append(_quote_attribution_div(vertex.attribution))
+        inner_blocks.append(_attribution_div(vertex.attribution, _QUOTE_ATTRIBUTION_CLASS))
     return [pf.BlockQuote(*inner_blocks), *child_blocks]
 
 
 _QUOTE_ATTRIBUTION_CLASS: Final[str] = "quote-attribution"
 """Class of the :class:`~panflute.Div` holding a block quotation's attribution, its source line."""
 
-_ATTRIBUTION_DASH: Final[str] = "—"
-"""The em dash that leads a rendered attribution, per the conventional source line beneath a block.
+_EPIGRAPH_CLASS: Final[str] = "epigraph"
+"""Class of the :class:`~panflute.Div` holding an epigraph: its quotation and optional attribution."""
 
-quotation — whichever dash the source authored.
+_EPIGRAPH_TEXT_CLASS: Final[str] = "epigraph-text"
+"""Class of the :class:`~panflute.Div` holding an epigraph's quotation."""
+
+_EPIGRAPH_ATTRIBUTION_CLASS: Final[str] = "epigraph-attribution"
+"""Class of the :class:`~panflute.Div` holding an epigraph's attribution, its source line."""
+
+_ATTRIBUTION_DASH: Final[str] = "—"
+"""The em dash that leads a rendered attribution, whichever dash the source authored.
+
+The conventional lead of the source line beneath a block quotation or an epigraph.
 """
 
 
-def _quote_attribution_div(attribution: str) -> pf.Div:
-    """Return the :data:`_QUOTE_ATTRIBUTION_CLASS` Div presenting a block quotation's *attribution*.
+def _attribution_div(attribution: str, class_name: str) -> pf.Div:
+    """Return a Div of class *class_name* presenting a quotation's *attribution*.
 
     The attribution (its normalized Pandoc Markdown, leading dash already removed) is parsed at block
     level — a multi-line credit keeps its line breaks — and its first inline block is led by
     :data:`_ATTRIBUTION_DASH` and a space.
 
     Args:
-        attribution: The block quotation's attribution text.
+        attribution: The quotation's attribution text.
+        class_name: The Div's class, naming which kind of quotation the attribution closes.
 
     Returns:
         The attribution Div.
@@ -1662,7 +1690,7 @@ def _quote_attribution_div(attribution: str) -> pf.Div:
         blocks[0] = pf.Para(*dash, *first.content)
     else:
         blocks.insert(0, pf.Para(*dash))
-    return pf.Div(*blocks, classes=[_QUOTE_ATTRIBUTION_CLASS])
+    return pf.Div(*blocks, classes=[class_name])
 
 
 def _halign_to_pandoc_str(align: HAlign) -> str:

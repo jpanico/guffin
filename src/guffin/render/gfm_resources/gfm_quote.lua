@@ -10,6 +10,11 @@
 -- Also unwraps a block quotation's attribution — the Div.quote-attribution closing its BlockQuote,
 -- the em-dash-led source line — to its bare paragraph, the quote's last line, left-aligned with the
 -- quotation; a raw <div> wrapper would be noise.
+--
+-- And transforms the Div.epigraph (from a Roam [[>]] [[!EPIGRAPH]] block) into a best-effort GFM
+-- block quote: the quotation (Div.epigraph-text) italic, then the em-dash-led attribution
+-- (Div.epigraph-attribution) upright as its last line.  Markdown can neither narrow the column nor
+-- set the source flush right, so the italic is the epigraph's only mark against a block quotation.
 
 -- Remove every wrapper of type `tag` (e.g. "Strong") from an inline list, promoting its children.
 -- Wrapping the whole line in `tag` makes the entire line that style, so any inner same-type wrapper
@@ -22,9 +27,39 @@ local function unwrap(inlines, tag)
   return pandoc.walk_inline(pandoc.Span(inlines), filter).content
 end
 
+-- The Div.epigraph as a block quote: each quotation paragraph italic (inner Emph dropped, as
+-- `unwrap` explains), any other quotation block (e.g. a list) unchanged, then the attribution's
+-- blocks; any other block (a child vertex rendered inside it, which is rare) is kept last.
+local function epigraph(el)
+  local quotation = pandoc.List()
+  local attribution = pandoc.List()
+  local extra = pandoc.List()
+  for _, block in ipairs(el.content) do
+    if block.t == "Div" and block.classes:includes("epigraph-text") then
+      for _, inner in ipairs(block.content) do
+        if inner.t == "Para" or inner.t == "Plain" then
+          quotation:insert(pandoc.Para({ pandoc.Emph(unwrap(inner.content, "Emph")) }))
+        else
+          quotation:insert(inner)
+        end
+      end
+    elseif block.t == "Div" and block.classes:includes("epigraph-attribution") then
+      attribution:extend(block.content)
+    else
+      extra:insert(block)
+    end
+  end
+  quotation:extend(attribution)
+  quotation:extend(extra)
+  return pandoc.BlockQuote(quotation)
+end
+
 function Div(el)
   if el.classes:includes("quote-attribution") then
     return el.content
+  end
+  if el.classes:includes("epigraph") then
+    return epigraph(el)
   end
   if not el.classes:includes("fancy-quote") then
     return nil

@@ -33,7 +33,7 @@ Public symbols:
 - :func:`drop_code_sources` — return a new :class:`VertexTree` with every code block's
   :attr:`~guffin.model.vertex.CodeBlockVertex.code_source` cleared.
 - :func:`drop_root_preamble` — return a new :class:`VertexTree` with the root vertex's loose
-  preamble (children preceding its first heading child) pruned.
+  preamble (children preceding its first heading child, epigraphs excepted) pruned.
 - :func:`enrich_image_original_sizes` — return a new :class:`VertexTree` with
   :attr:`~guffin.model.vertex.ImageVertex.original_image_size` populated from a UID→ImageSize map.
 - :func:`enrich_asset_file_names` — return a new :class:`VertexTree` with PDF and
@@ -59,6 +59,8 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
     RenderableAssetVertex,
     TableVertex,
     TextVertex,
@@ -492,6 +494,11 @@ def drop_code_sources(tree: VertexTree) -> VertexTree:
     return map_vertices(tree, _clear)
 
 
+def _is_epigraph(vertex: Vertex) -> bool:
+    """Return whether *vertex* is an epigraph: a :class:`QuoteBlockVertex` of :attr:`QuoteType.EPIGRAPH`."""
+    return isinstance(vertex, QuoteBlockVertex) and vertex.quote_type is QuoteType.EPIGRAPH
+
+
 @validate_call
 def drop_root_preamble(tree: VertexTree) -> VertexTree:
     """Return a new :class:`VertexTree` with the root vertex's loose preamble pruned.
@@ -500,7 +507,10 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
     :class:`~guffin.model.vertex.HeadingVertex` child — content that belongs
     to no titled division.  Those children (and their entire subtrees) are removed from
     :attr:`~VertexTree.tree_vertices` and from the root's
-    :attr:`~guffin.model.vertex._BaseVertex.children` list.  The rule is root-type-independent:
+    :attr:`~guffin.model.vertex._BaseVertex.children` list.  An epigraph among them
+    (a :class:`~guffin.model.vertex.QuoteBlockVertex` of :attr:`~guffin.model.vertex.QuoteType.EPIGRAPH`)
+    is not loose: it belongs to the opening of the document the root contains, ahead of its first
+    division, so it is kept in place with its subtree.  The rule is root-type-independent:
     whether the tree roots at a page or at a subtree export's heading or block, the root is the
     document's container and its children are the document's top-level run.  The original *tree*
     is not modified.
@@ -509,7 +519,8 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
     prune to:
 
     - the root has no children;
-    - the root's first child is already a heading (no preamble);
+    - the root's first child is already a heading (no preamble), or every child ahead of the first
+      heading is an epigraph;
     - the root has no heading children at all (every child would be preamble; the content is
       retained and a warning is logged instead).
 
@@ -530,12 +541,13 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
     if heading_index is None:
         logger.warning("root vertex uid=%r has no heading children; loose preamble retained", root.uid)
         return tree
-    if heading_index == 0:
+    kept_uids: Final[list[Uid]] = [vtx.uid for vtx in child_vertices[:heading_index] if _is_epigraph(vtx)]
+    if len(kept_uids) == heading_index:
         return tree
 
-    # Collect the preamble children and every descendant beneath them.
+    # Collect the preamble children (epigraphs excepted) and every descendant beneath them.
     preamble_uids: Final[set[Uid]] = set()
-    pending: Final[list[Uid]] = list(root.children[:heading_index])
+    pending: Final[list[Uid]] = [uid for uid in root.children[:heading_index] if uid not in kept_uids]
     while pending:
         uid = pending.pop()
         preamble_uids.add(uid)
@@ -548,7 +560,7 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
         root.uid,
     )
 
-    pruned_root: Final[Vertex] = root.model_copy(update={"children": list(root.children[heading_index:])})
+    pruned_root: Final[Vertex] = root.model_copy(update={"children": [*kept_uids, *root.children[heading_index:]]})
     return VertexTree(
         tree_vertices=[
             pruned_root if vtx.uid == root.uid else vtx for vtx in tree.tree_vertices if vtx.uid not in preamble_uids

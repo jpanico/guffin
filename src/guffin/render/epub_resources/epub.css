@@ -85,6 +85,37 @@ div.quote-attribution {
 }
 
 /*
+ * Epigraph (Roam [[>]] [[!EPIGRAPH]]): a quotation set at the opening of a work, part, or chapter.
+ * guffin emits <div class="epigraph" epub:type="epigraph"> holding <div class="epigraph-text"> (the
+ * quotation) and, when present, <div class="epigraph-attribution"> (the em-dash-led source line).
+ * Mirroring the PDF: a narrow column at the right of the text block (the left margin takes the
+ * rest), slightly smaller than body text, the quotation italic and ragged, the source flush right
+ * beneath it and upright. No rule or mark: the narrow measure and the space around it carry the
+ * signal.
+ */
+div.epigraph {
+  margin: 1.5em 0 2em 40%;
+  font-size: 0.9em;
+}
+
+div.epigraph p {
+  text-align: left;
+  text-indent: 0;
+}
+
+div.epigraph-text {
+  font-style: italic;
+}
+
+div.epigraph-attribution {
+  margin-top: 0.8em;
+}
+
+div.epigraph-attribution p {
+  text-align: right;
+}
+
+/*
  * Pull quote (Roam [[>]] [[!QUOTE]]): a passage of the work's own text promoted for display, so it
  * carries no attribution. guffin emits <div class="fancy-quote"> with an inner
  * <div class="fancy-quote-text"> (the quotation). A pull-quote treatment (mirroring the PDF): the

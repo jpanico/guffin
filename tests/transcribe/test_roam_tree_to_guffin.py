@@ -1168,6 +1168,22 @@ class TestToQuoteBlockVertex:
         assert vtx.quote == "I wish to God these calculations had been executed by steam!"
         assert vtx.attribution == "*Charles Babbage*, c. 1821"
 
+    def test_epigraph_dash_paragraph_is_attribution(self) -> None:
+        """A [[>]] [[!EPIGRAPH]] block is QuoteType.EPIGRAPH, its dash-led final paragraph the attribution."""
+        node = _make_block_quote(string="[[>]] [[!EPIGRAPH]]\nThe medium is the message.\n\n— __Marshall McLuhan__")
+        vtx = to_quote_block_vertex(node, _node_tree(node))
+        assert vtx.quote_type is QuoteType.EPIGRAPH
+        assert vtx.quote == "The medium is the message."
+        assert vtx.attribution == "*Marshall McLuhan*"
+
+    def test_epigraph_without_attribution(self) -> None:
+        """An epigraph with no dash-led final paragraph is all quotation."""
+        node = _make_block_quote(string="[[>]] [[!EPIGRAPH]]\nJust the epigraph")
+        vtx = to_quote_block_vertex(node, _node_tree(node))
+        assert vtx.quote_type is QuoteType.EPIGRAPH
+        assert vtx.quote == "Just the epigraph"
+        assert vtx.attribution is None
+
     def test_children_none_when_no_children(self) -> None:
         """Test that children is None when the node has no children."""
         node = _make_block_quote()

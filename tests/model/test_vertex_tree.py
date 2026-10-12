@@ -20,6 +20,8 @@ from guffin.model.vertex import (
     ImageVertex,
     PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
     TextVertex,
     Vertex,
 )
@@ -296,6 +298,39 @@ class TestDropRootPreamble:
         with_refs: Final[VertexTree] = VertexTree(tree_vertices=tree.tree_vertices, ref_vertices=[stub])
         result: Final[VertexTree] = drop_root_preamble(with_refs)
         assert [v.uid for v in result.ref_vertices] == ["refstub01"]
+
+    def test_epigraph_kept_in_place_with_its_subtree(self) -> None:
+        """An epigraph ahead of the first heading is not loose: it stays with its children; other preamble goes."""
+        page: Final[PageVertex] = PageVertex(
+            uid="pageroot1", title="Doc", children=["pre000001", "epigr0001", "chap00001"]
+        )
+        pre: Final[TextVertex] = TextVertex(uid="pre000001", text="loose lead-in")
+        epigraph: Final[QuoteBlockVertex] = QuoteBlockVertex(
+            uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote="An epigraph", children=["epichild1"]
+        )
+        epi_child: Final[TextVertex] = TextVertex(uid="epichild1", text="under the epigraph")
+        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        result: Final[VertexTree] = drop_root_preamble(VertexTree(tree_vertices=[page, pre, epigraph, epi_child, chap]))
+        assert sorted(v.uid for v in result.tree_vertices) == ["chap00001", "epichild1", "epigr0001", "pageroot1"]
+        assert result.uid_map["pageroot1"].children == ["epigr0001", "chap00001"]
+
+    def test_noop_when_only_epigraphs_precede_first_heading(self) -> None:
+        """A root whose only preamble is an epigraph passes through as the same tree object."""
+        page: Final[PageVertex] = PageVertex(uid="pageroot1", title="Doc", children=["epigr0001", "chap00001"])
+        epigraph: Final[QuoteBlockVertex] = QuoteBlockVertex(
+            uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote="An epigraph"
+        )
+        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page, epigraph, chap])
+        assert drop_root_preamble(tree) is tree
+
+    def test_block_quotation_in_preamble_is_still_dropped(self) -> None:
+        """Only an epigraph is exempt: a block quotation ahead of the first heading is loose preamble."""
+        page: Final[PageVertex] = PageVertex(uid="pageroot1", title="Doc", children=["quote0001", "chap00001"])
+        quote: Final[QuoteBlockVertex] = QuoteBlockVertex(uid="quote0001", quote="A block quotation")
+        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        result: Final[VertexTree] = drop_root_preamble(VertexTree(tree_vertices=[page, quote, chap]))
+        assert result.uid_map["pageroot1"].children == ["chap00001"]
 
 
 class TestEnrichImageOriginalSizes:

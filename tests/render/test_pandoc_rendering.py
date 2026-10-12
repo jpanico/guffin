@@ -1856,7 +1856,7 @@ class TestPullQuoteRendering:
 
     def test_pull_quote_with_attribution_is_rejected(self) -> None:
         """The model refuses a pull quote carrying an attribution."""
-        with pytest.raises(ValueError, match="only a block quotation may"):
+        with pytest.raises(ValueError, match="only a block quotation or an epigraph may"):
             QuoteBlockVertex(uid="quote0001", quote_type=QuoteType.PULL, quote="q", attribution="Someone")
 
     def test_block_quote_attribution_closes_the_quote(self) -> None:
@@ -1907,6 +1907,54 @@ class TestPullQuoteRendering:
         fancy = self._first_div(doc, "fancy-quote")
         assert "child block" not in pf.stringify(fancy)
         assert "child block" in pf.stringify(doc)  # the child still renders, outside the decoration
+
+
+class TestEpigraphRendering:
+    """An epigraph renders to an epub:type-stamped epigraph Div holding its quotation and attribution."""
+
+    @staticmethod
+    def _render(quote: str, attribution: str | None = None, children: list[str] | None = None) -> pf.Doc:
+        """Render a one-epigraph tree, the epigraph optionally carrying one child text vertex."""
+        page = PageVertex(uid="pageroot1", title="Doc", children=["epigr0001"])
+        vtx = QuoteBlockVertex(
+            uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote=quote, attribution=attribution, children=children
+        )
+        child = TextVertex(uid="epichild1", text="a child block of the epigraph")
+        vertices = [page, vtx, child] if children else [page, vtx]
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=vertices), {}, {})
+        return doc
+
+    @staticmethod
+    def _epigraph_div(doc: pf.Doc) -> pf.Div:
+        """Return the document's single top-level epigraph Div."""
+        divs = [block for block in doc.content if isinstance(block, pf.Div) and "epigraph" in block.classes]
+        assert len(divs) == 1
+        return divs[0]
+
+    def test_epigraph_div_carries_epub_type(self) -> None:
+        """The epigraph Div is stamped epub:type="epigraph" and is not a BlockQuote."""
+        doc = self._render("The medium is the message.")
+        assert not any(isinstance(block, pf.BlockQuote) for block in doc.content)
+        assert self._epigraph_div(doc).attributes["epub:type"] == "epigraph"
+
+    def test_quotation_then_em_dash_attribution(self) -> None:
+        """The Div holds the quotation, then the attribution led by an em dash."""
+        epigraph = self._epigraph_div(self._render("The medium is the message.", "*Marshall McLuhan*"))
+        parts = list(epigraph.content)
+        assert [div.classes for div in parts] == [["epigraph-text"], ["epigraph-attribution"]]
+        assert pf.stringify(parts[0]).strip() == "The medium is the message."
+        assert pf.stringify(parts[1]).strip() == "— Marshall McLuhan"
+
+    def test_without_attribution_holds_only_the_quotation(self) -> None:
+        """An unattributed epigraph's Div holds its quotation alone."""
+        epigraph = self._epigraph_div(self._render("Just the epigraph"))
+        assert [div.classes for div in epigraph.content] == [["epigraph-text"]]
+
+    def test_child_renders_outside_the_epigraph_div(self) -> None:
+        """An epigraph's outline child renders after the epigraph Div, never inside it."""
+        doc = self._render("The quotation", children=["epichild1"])
+        assert "child block" not in pf.stringify(self._epigraph_div(doc))
+        assert "child block" in pf.stringify(doc)
 
 
 class TestCalloutNoBodyMarker:

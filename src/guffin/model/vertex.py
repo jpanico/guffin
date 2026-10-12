@@ -34,9 +34,10 @@ Public symbols:
   (an :class:`AssetVertex` subclass).
 - :class:`CalloutVertex` — a callout (admonition) with a category, title, and body.
 - :class:`CodeBlockVertex` — a fenced code listing.
-- :class:`QuoteType` — what kind of quotation a quote block is (``BLOCK`` vs ``PULL``).
+- :class:`QuoteType` — what kind of quotation a quote block is (``BLOCK``, ``PULL``, or ``EPIGRAPH``).
 - :class:`QuoteBlockVertex` — a quotation: a block quotation of another source (optionally
-  attributed) or a pull quote of the work's own text (never attributed).
+  attributed), a pull quote of the work's own text (never attributed), or an epigraph (optionally
+  attributed).
 - :class:`TableVertex` — a table: a cell grid plus its styling overlay.
 - :class:`BlockEmbedVertex` — a transclusion of another block at this position.
 - :class:`PageEmbedVertex` — a transclusion of a whole page at this position.
@@ -98,8 +99,8 @@ class VertexType(StrEnum):
         CALLOUT: A callout (admonition) — a categorised aside with a title and
             body.
         CODE_BLOCK: A fenced code listing.
-        QUOTE_BLOCK: A quotation — a block quotation of another source, or a
-            pull quote of the work's own text.
+        QUOTE_BLOCK: A quotation — a block quotation of another source, a pull
+            quote of the work's own text, or an epigraph.
         TABLE: A table — a cell grid whose rows come from the vertex's child
             subtree.
         BLOCK_EMBED: A transclusion of another block at this position.
@@ -460,8 +461,9 @@ class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
     class CalloutType(StrEnum):
         """Callout category keyword — the eleven recognised callout categories.
 
-        Note ``quote`` is deliberately absent: a quote-marked block is a pull quote,
-        transcribed to a :class:`QuoteBlockVertex` (see :class:`QuoteType`), not a callout.
+        Note ``quote`` and ``epigraph`` are deliberately absent: a quote-marked block is a pull
+        quote and an epigraph-marked one an epigraph, each transcribed to a :class:`QuoteBlockVertex`
+        (see :class:`QuoteType`), not a callout.
         """
 
         INFO = "info"
@@ -531,27 +533,32 @@ class QuoteType(StrEnum):
         PULL: A pull quote — a passage of the work's own text, promoted for display and rendered
             with the decorated treatment (an oversize opening quotation mark and a bold
             quotation).  It never carries an attribution: its source is the work itself.
+        EPIGRAPH: An epigraph — a quotation set at the opening of a work, part, or chapter, ahead of
+            its text, to sound a theme the text does not discuss.  Set off in a narrow column with
+            its source beneath, flush right.  It may carry an attribution, and conventionally does.
     """
 
     BLOCK = "block"
     PULL = "pull"
+    EPIGRAPH = "epigraph"
 
 
 class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
-    """A quotation — a block quotation of another source, or a pull quote of the work's own text.
+    """A quotation — a block quotation of another source, a pull quote of the work's own text, or an epigraph.
 
     :attr:`quote_type` records which kind it is; the source's quote markers are translated away at
-    transcription.  Only a block quotation may carry an :attr:`attribution`; a pull quote with one
-    is rejected at construction.
+    transcription.  A block quotation or an epigraph may carry an :attr:`attribution`; a pull quote
+    with one is rejected at construction.
 
     Attributes:
         vertex_type: Always :attr:`~VertexType.QUOTE_BLOCK`.
             Serialized as ``'vertex-type'``.
         quote_type: :attr:`QuoteType.BLOCK` for a block quotation, :attr:`QuoteType.PULL` for a pull
-            quote.
+            quote, :attr:`QuoteType.EPIGRAPH` for an epigraph.
         quote: The quotation text, marker-free.
-        attribution: A block quotation's source line, without its leading dash — the credit for
-            whose words these are — or ``None`` when it has none; always ``None`` for a pull quote.
+        attribution: A block quotation's or epigraph's source line, without its leading dash — the
+            credit for whose words these are — or ``None`` when it has none; always ``None`` for a
+            pull quote.
     """
 
     vertex_type: Literal[VertexType.QUOTE_BLOCK] = Field(
@@ -561,18 +568,21 @@ class QuoteBlockVertex(_BaseVertex[Literal[VertexType.QUOTE_BLOCK]]):
     )
     quote_type: QuoteType = Field(
         default=QuoteType.BLOCK,
-        description="Whether this is a plain block quote (BLOCK) or a pull quote (PULL).",
+        description="Whether this is a block quotation (BLOCK), a pull quote (PULL), or an epigraph (EPIGRAPH).",
     )
     quote: str = Field(..., description="The quotation text, marker-free.")
     attribution: str | None = Field(
         default=None,
-        description="A block quotation's source line, without its leading dash; None when absent or a pull quote.",
+        description="A block quotation's or epigraph's source line, without its leading dash; None when absent "
+        "or a pull quote.",
     )
 
     @model_validator(mode="after")
     def _pull_quote_has_no_attribution(self) -> QuoteBlockVertex:
         if self.quote_type is QuoteType.PULL and self.attribution is not None:
-            raise ValueError(f"pull quote uid={self.uid!r} carries an attribution; only a block quotation may")
+            raise ValueError(
+                f"pull quote uid={self.uid!r} carries an attribution; only a block quotation or an epigraph may"
+            )
         return self
 
 

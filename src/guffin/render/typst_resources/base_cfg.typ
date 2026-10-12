@@ -49,6 +49,12 @@
   // weight.  The oversize opening mark scales with quote-size, so the two stay in proportion.
   quote-size: 1.2,
   quote-weight: "bold",
+  // Epigraph (Roam [[>]] [[!EPIGRAPH]]): the width of its column as a share of the text block (the
+  // column sits at the block's right), its size as a ratio of the ambient body size, and the
+  // quotation's style (the attribution beneath it is always upright).
+  epigraph-width: 60%,
+  epigraph-size: 0.9,
+  epigraph-style: "italic",
   fontsize: 11pt,
   leading: 0.65em,
   spacing: 1.2em,

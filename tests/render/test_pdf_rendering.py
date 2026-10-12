@@ -632,6 +632,26 @@ class TestTypstQuoteFilter:
         assert "align(" not in typst
         assert "#block[" not in typst
 
+    def test_epigraph_calls_epigraph_with_quotation_and_attribution(self) -> None:
+        """The epigraph helper receives the quotation and the em-dash-led attribution."""
+        typst = self._typst_for(
+            QuoteBlockVertex(
+                uid="epigr0001",
+                quote_type=QuoteType.EPIGRAPH,
+                quote="The medium is the message.",
+                attribution="McLuhan",
+            )
+        )
+        assert typst.startswith("#epigraph(quote: [The medium is the message.")
+        assert "attribution: [--- McLuhan" in typst
+        assert "epub:type" not in typst
+
+    def test_unattributed_epigraph_passes_no_attribution(self) -> None:
+        """An epigraph with no attribution calls the helper with its quotation alone."""
+        typst = self._typst_for(QuoteBlockVertex(uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote="Words."))
+        assert "#epigraph(quote: [Words." in typst
+        assert "attribution" not in typst
+
 
 @pytest.mark.pandoc
 class TestTypstTodoFilter:

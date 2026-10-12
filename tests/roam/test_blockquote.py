@@ -10,8 +10,10 @@ from guffin.roam.blockquote import (
     CalloutType,
     RoamBlockQuote,
     RoamCallout,
+    is_quote_block,
     parse_block_quote,
     parse_callout,
+    parse_epigraph,
     parse_pull_quote,
 )
 
@@ -310,8 +312,72 @@ class TestParseBlockQuote:
 
     @pytest.mark.parametrize(
         "block_string",
-        ["[[>]] [[!QUOTE]] A pull quote\n\n— Someone", "[[>]] [[!INFO]] a callout", "plain text"],
+        [
+            "[[>]] [[!QUOTE]] A pull quote\n\n— Someone",
+            "[[>]] [[!EPIGRAPH]]\nAn epigraph\n\n— Someone",
+            "[[>]] [[!INFO]] a callout",
+            "plain text",
+        ],
     )
     def test_none_for_anything_but_a_plain_block_quote(self, block_string: str) -> None:
-        """A pull quote, a callout, or ordinary text is not a plain block quote."""
+        """A pull quote, an epigraph, a callout, or ordinary text is not a plain block quote."""
         assert parse_block_quote(block_string) is None
+
+
+class TestParseEpigraph:
+    """Tests for parse_epigraph() — a [[>]] [[!EPIGRAPH]] quotation and its dash-led attribution paragraph."""
+
+    @pytest.mark.parametrize(
+        ("block_string", "expected"),
+        [
+            pytest.param(
+                "[[>]] [[!EPIGRAPH]]\nThe medium is the message.\n\n— Marshall McLuhan",
+                RoamBlockQuote(quote="The medium is the message.", attribution="Marshall McLuhan"),
+                id="credit-after-blank-line",
+            ),
+            pytest.param(
+                "[[>]] [[!EPIGRAPH]] On the marker line.\n\n– __Someone__, *A Work*",
+                RoamBlockQuote(quote="On the marker line.", attribution="__Someone__, *A Work*"),
+                id="quotation-on-marker-line-en-dash-credit",
+            ),
+            pytest.param(
+                "[[>]] [[!EPIGRAPH]]\nVerse line one\nverse line two",
+                RoamBlockQuote(quote="Verse line one\nverse line two"),
+                id="no-credit",
+            ),
+            pytest.param(
+                "[[>]] [[!EPIGRAPH]]\nA line\n— a dash-led verse line",
+                RoamBlockQuote(quote="A line\n— a dash-led verse line"),
+                id="dash-line-without-blank-line-is-quotation",
+            ),
+            pytest.param("[[>]] [[!EPIGRAPH]]", RoamBlockQuote(quote=""), id="marker-only"),
+        ],
+    )
+    def test_parses(self, block_string: str, expected: RoamBlockQuote) -> None:
+        """Everything after the marker is content, split at a dash-led final paragraph after a blank line."""
+        assert parse_epigraph(block_string) == expected
+
+    @pytest.mark.parametrize(
+        "block_string",
+        [
+            "[[>]] a plain block quote",
+            "> a plain block quote",
+            "[[>]] [[!QUOTE]] A pull quote",
+            "[[>]] [[!INFO]] a callout",
+            "[[>]] [[!epigraph]] lowercase keyword",
+            "plain text",
+        ],
+    )
+    def test_none_for_anything_but_an_epigraph(self, block_string: str) -> None:
+        """Only the uppercase [[>]] [[!EPIGRAPH]] marker makes an epigraph."""
+        assert parse_epigraph(block_string) is None
+
+    def test_is_a_quote_block(self) -> None:
+        """An epigraph is a quote block, not a callout."""
+        assert is_quote_block("[[>]] [[!EPIGRAPH]]\nAn epigraph")
+        assert CALLOUT_RE.match("[[>]] [[!EPIGRAPH]]\nAn epigraph") is None
+
+    def test_raises_validation_error_for_null_input(self) -> None:
+        """Raises ValidationError when None is passed."""
+        with pytest.raises(ValidationError):
+            parse_epigraph(None)  # type: ignore[arg-type]

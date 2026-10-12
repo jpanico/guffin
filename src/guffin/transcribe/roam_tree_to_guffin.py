@@ -112,6 +112,7 @@ from guffin.roam.blockquote import (
     RoamCallout,
     parse_block_quote,
     parse_callout,
+    parse_epigraph,
     parse_pull_quote,
 )
 from guffin.roam.code_language import CodeLanguage, canonical_id_for
@@ -859,6 +860,9 @@ def to_quote_block_vertex(node: RoamNode, tree: NodeTree) -> QuoteBlockVertex:
     - a Roam pull quote (``[[>]] [[!QUOTE]]``, per :func:`~guffin.roam.blockquote.parse_pull_quote`)
       becomes :attr:`~guffin.vertex.QuoteType.PULL`, everything after its marker the ``quote`` and
       ``attribution`` ``None`` — a pull quote's source is the work itself;
+    - a Roam epigraph (``[[>]] [[!EPIGRAPH]]``, per :func:`~guffin.roam.blockquote.parse_epigraph`)
+      becomes :attr:`~guffin.vertex.QuoteType.EPIGRAPH`, its quotation the ``quote`` and its dash-led
+      final paragraph, when present, the ``attribution`` (the source line, dash removed);
     - a standard ``>`` or Roam-native ``[[>]]`` block quote (per
       :func:`~guffin.roam.blockquote.parse_block_quote`) becomes
       :attr:`~guffin.vertex.QuoteType.BLOCK`, its quotation the ``quote`` and its dash-led final
@@ -868,7 +872,7 @@ def to_quote_block_vertex(node: RoamNode, tree: NodeTree) -> QuoteBlockVertex:
 
     Args:
         node: A quote-block node whose ``string`` starts with a recognised quote marker
-            (``>``, ``[[>]]``, or ``[[>]] [[!QUOTE]]``).
+            (``>``, ``[[>]]``, ``[[>]] [[!QUOTE]]``, or ``[[>]] [[!EPIGRAPH]]``).
         tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
             its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
             child and ref stubs to UIDs.
@@ -884,11 +888,15 @@ def to_quote_block_vertex(node: RoamNode, tree: NodeTree) -> QuoteBlockVertex:
     if node.string is None:
         raise ValueError(f"RoamNode uid={node.uid!r} has no 'string'")
     pull_quote: Final[str | None] = parse_pull_quote(node.string)
-    block_quote: Final[RoamBlockQuote | None] = parse_block_quote(node.string) if pull_quote is None else None
+    epigraph: Final[RoamBlockQuote | None] = parse_epigraph(node.string)
+    block_quote: Final[RoamBlockQuote | None] = parse_block_quote(node.string)
     if pull_quote is not None:
         quote_type: QuoteType = QuoteType.PULL
         quote_raw: str = pull_quote
         attribution_raw: str | None = None
+    elif epigraph is not None:
+        quote_type = QuoteType.EPIGRAPH
+        quote_raw, attribution_raw = epigraph.quote, epigraph.attribution
     elif block_quote is not None:
         quote_type = QuoteType.BLOCK
         quote_raw, attribution_raw = block_quote.quote, block_quote.attribution
