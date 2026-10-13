@@ -36,6 +36,34 @@ Shared across formats:
 Still open: whether alternatives always follow the selected wording or keep their source order.
 The mockups put the selected wording first.
 
+## Epigraph alternatives (decided 2026-10-13, not yet implemented)
+
+A block whose wordings are epigraphs, each a quotation with its own source line. The sample is
+Test Article 3's group of standalone block references to three epigraphs: the Dijkstra one
+selected, two by Alan Perlis as alternatives. Each wording keeps the full epigraph form, unlike
+a compact one-line candidate list, so the alternatives read as interchangeable epigraphs.
+
+| Format | Decision |
+|---|---|
+| PDF | **E1**: the paragraph treatment C applied whole. The dashed rail and radio markers hang in the left margin, so the selected epigraph keeps exactly the position it has without alternatives. Each wording is a full epigraph, flush left and italic, with its source flush right under its own longest line; the alternatives are muted at 0.93× |
+| EPUB | **E1**, inset like C2: rail and markers inside the text column; each wording its own block, so the shrink-to-fit epigraph boxes stack; the marker hangs from the quotation's first line through a negative text-indent, sized in the epigraph's 1.1em |
+| Markdown | **ME1b**: the whole group is one block quote, whose bar binds the candidates as the rail does elsewhere; each wording is one paragraph, the quotation then a hard break then its source; ◉/○ markers as in M1; the alternatives muted to `#a0a0a0` |
+
+Two departures from the shared rules above:
+
+- **Alternatives stay italic.** Italic is the epigraph's own form, not authored emphasis, so the
+  never-italic rule doesn't apply (E2 tried upright alternatives; only the selected epigraph then
+  read as an epigraph).
+- **Markdown mutes a step lighter.** GitHub and Typora's default theme already set block-quote
+  text grey (GitHub `#59636e`), so inside a block quote M1's `#737373` barely separates the
+  alternatives from the selected wording; `#a0a0a0` does. Like every fixed grey, it is tuned for
+  light themes.
+
+Known limits: each source ends under its own longest line, so the sources of stacked wordings sit
+at different horizontal positions. In the Kindle app, which doesn't support the epigraph's
+shrink-to-fit box, each source would sit at the right margin instead, as it does for an epigraph
+today. The EPUB mockup has been checked in Chrome only.
+
 ## Files
 
 | File | What it shows |
@@ -46,6 +74,9 @@ The mockups put the selected wording first.
 | `epub/alternatives-list.md` + `alternatives-list.css` | EPUB L1 at two depths, beside an ordinary list |
 | `epub/measure.js` | Chrome alignment check: the x of every marker and text edge |
 | `markdown/alternatives.md` | Markdown variants M1–M3 (M1 chosen), each as paragraph and list item |
+| `pdf/epigraph-alternatives.typ` | PDF epigraph variants E1–E3 (E1 chosen) under a chapter heading, beside today's epigraph |
+| `epub/epigraph-alternatives.md` + `epigraph-alternatives.css` | EPUB epigraph variant E1 (inset), beside today's epigraph |
+| `markdown/epigraph-alternatives.md` | Markdown epigraph variants ME1, ME1b, ME2 (ME1b chosen), as paragraph and list item |
 | `markdown/preview.css` | GitHub-like stylesheet for previewing the Markdown in a browser |
 
 ## Building
@@ -66,6 +97,10 @@ typst compile pdf/alternatives.typ out/alternatives.pdf
 typst compile pdf/alternatives-list.typ out/alternatives-list.pdf
 ```
 
+```bash
+typst compile pdf/epigraph-alternatives.typ out/epigraph-alternatives.pdf
+```
+
 EPUB, built against guffin's own `epub.css` the way the renderer builds it:
 
 ```bash
@@ -76,7 +111,11 @@ pandoc epub/alternatives.md -t epub3 --css ../../../src/guffin/render/epub_resou
 pandoc epub/alternatives-list.md -t epub3 --css ../../../src/guffin/render/epub_resources/epub.css --css epub/alternatives.css --css epub/alternatives-list.css --split-level=1 -o out/alternatives-list.epub
 ```
 
-Markdown: open `markdown/alternatives.md` in Typora, which applies the inline styles. To preview
+```bash
+pandoc epub/epigraph-alternatives.md -t epub3 --css ../../../src/guffin/render/epub_resources/epub.css --css epub/epigraph-alternatives.css --split-level=1 -o out/epigraph-alternatives.epub
+```
+
+Markdown: open `markdown/alternatives.md` (or `markdown/epigraph-alternatives.md`) in Typora, which applies the inline styles. To preview
 how GitHub shows it, render it with `pandoc -f gfm -t html5 -s --css markdown/preview.css` and
 strip the `style` attributes from the result.
 

@@ -1,0 +1,39 @@
+/*
+ * Mockup: an epigraph's alternatives group in EPUB, translating PDF variant E1 the way C2
+ * translated C: the dashed rail and radio markers sit inside the text column (a reading system may
+ * clip its page margin), every wording keeps the full epigraph form, and the alternatives are
+ * muted and a touch smaller but stay italic — italic is the epigraph's form, not authored emphasis.
+ *
+ * Each wording is its own block (div.wording), so the epigraphs' shrink-to-fit inline-blocks stack
+ * rather than sitting side by side. The marker leads the quotation's first line and hangs through a
+ * negative text-indent equal to the epigraph's left margin. The epigraph is set at 1.1em, so the
+ * body-size hang (1.25em: a 0.62em marker plus a 0.63em gap) is 1.136em here, the marker 0.564em,
+ * the gap 0.573em. A negative first-line indent cancels the marker's own width in the inline-block's
+ * shrink-to-fit width, so the box, and the source flush right in it, still measures the quotation's
+ * text alone. The muting is an inner span (as for text alternatives), so every row's marker column
+ * is measured at one size.
+ */
+
+div.alternatives.epigraph-alternatives {
+  margin: 0.75em 0 1.5em 0;
+}
+
+div.epigraph-alternatives > div.wording + div.wording {
+  margin-top: 0.9em;
+}
+
+/* The group, not the epigraph, owns the opening's spacing. */
+div.epigraph-alternatives div.epigraph {
+  margin: 0 0 0 1.136em;
+}
+
+div.epigraph-alternatives div.epigraph-text > p:first-child {
+  text-indent: -1.136em;
+}
+
+div.epigraph-alternatives svg.alternative-marker {
+  width: 0.564em;
+  height: 0.564em;
+  margin-right: 0.573em;
+  vertical-align: 0.05em;
+}
