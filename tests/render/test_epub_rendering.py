@@ -29,6 +29,8 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PageVertex,
+    QuoteBlockVertex,
+    QuoteType,
     TextVertex,
     TodoState,
     TodoVertex,
@@ -829,3 +831,77 @@ class TestAlternatives:
         assert "the selected item" in xhtml
         assert "another" not in xhtml
         assert "alternative-marker" not in xhtml
+
+
+@pytest.fixture(scope="module")
+def epigraph_alternatives_xhtml(tmp_path_factory: pytest.TempPathFactory) -> str:
+    """The content document of a page whose one block is a versioned reference to epigraphs.
+
+    The selected wording references one epigraph; the two alternatives reference two others.
+    """
+
+    def reference(uid: str) -> str:
+        return f"[> {uid}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+    epigraphs = [
+        QuoteBlockVertex(uid=f"epigr000{n}", quote_type=QuoteType.EPIGRAPH, quote=quote, attribution=source)
+        for n, quote, source in (
+            (1, "Selected *words*.", "Dijkstra"),
+            (2, "Other words.", "Perlis"),
+            (3, "More words.", "Perlis"),
+        )
+    ]
+    versed = TextVertex(
+        uid="versed001",
+        text=reference("epigr0001"),
+        alternatives=(
+            Alternative(uid="altuid001", text=reference("epigr0002")),
+            Alternative(uid="altuid002", text=reference("epigr0003")),
+        ),
+    )
+    out_dir: Final[Path] = tmp_path_factory.mktemp("epigraph_alternatives")
+    render(
+        RenderBundle(
+            content=VertexTree(
+                tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["versed001"]), versed],
+                ref_vertices=epigraphs,
+            ),
+            view={},
+        ),
+        profile=ArticleProfile(),
+        filename_stem="doc",
+        api_endpoint=_ENDPOINT,
+        options=EpubRenderOptions(output_dir=out_dir, render_alternatives=True),
+    )
+    return _chapter_xhtml(out_dir / "doc.epub")
+
+
+class TestEpigraphAlternatives:
+    """A versioned reference to epigraphs renders each wording as a full, marker-led epigraph."""
+
+    def test_group_holds_one_wording_div_per_epigraph(self, epigraph_alternatives_xhtml: str) -> None:
+        """The group is classed epigraph-alternatives, each epigraph in a div.wording, selected first."""
+        xhtml = epigraph_alternatives_xhtml
+        assert '<div class="alternatives epigraph-alternatives">' in xhtml
+        assert xhtml.count('<div class="wording">') == 3
+        assert xhtml.count('<div class="epigraph" epub:type="epigraph">') == 3
+        assert xhtml.index("Selected") < xhtml.index("Other words.") < xhtml.index("More words.")
+
+    def test_marker_leads_the_quotation_first_line(self, epigraph_alternatives_xhtml: str) -> None:
+        """Each marker opens its epigraph's quotation paragraph, not a paragraph of its own."""
+        xhtml = epigraph_alternatives_xhtml
+        assert regex.search(
+            r'<div class="epigraph-text">\s*<p><svg class="alternative-marker"[^>]*aria-label="selected wording">',
+            xhtml,
+        )
+        assert len(regex.findall(r'<div class="epigraph-text">\s*<p><svg class="alternative-marker"', xhtml)) == 3
+        assert not regex.search(r"<p><svg[^>]*>(?:(?!</svg>).)*</svg></p>", xhtml)
+
+    def test_alternative_quotation_and_source_are_muted(self, epigraph_alternatives_xhtml: str) -> None:
+        """An alternative's quotation and its source line are muted; the selected epigraph is not."""
+        xhtml = epigraph_alternatives_xhtml
+        assert '<span class="alternative-text">Other words.</span>' in xhtml
+        assert '<span class="alternative-text">—Perlis</span>' in xhtml
+        assert "<p>—Dijkstra</p>" in xhtml
+        assert "Selected <em>words</em>." in xhtml
+        assert '<span class="alternative-text">Selected' not in xhtml

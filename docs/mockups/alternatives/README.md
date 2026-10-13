@@ -36,7 +36,7 @@ Shared across formats:
 Still open: whether alternatives always follow the selected wording or keep their source order.
 The mockups put the selected wording first.
 
-## Epigraph alternatives (decided 2026-10-13; implemented for PDF)
+## Epigraph alternatives (decided 2026-10-13; implemented for PDF and EPUB)
 
 A block whose wordings are epigraphs, each a quotation with its own source line. The sample is
 Test Article 3's group of standalone block references to three epigraphs: the Dijkstra one
@@ -62,8 +62,10 @@ Two departures from the shared rules above:
 PDF implements E1. A versioned standalone reference renders each wording as the block it
 references, so the group's wordings are the epigraphs themselves. The existing alternative
 muting applies to their italic display type, and the group spaces display wordings with the wider
-`alternative-display-gutter` (1.1em). EPUB and Markdown don't implement their treatments yet; they
-show such a group's markers as separate lines beside unstyled epigraphs.
+`alternative-display-gutter` (1.1em). EPUB implements E1 inset: `epub_alternatives.lua` emits the
+mockup's markup (a `div.wording` per epigraph, the marker leading each quotation), and `epub.css`
+carries the mockup's rules. Markdown doesn't implement ME1b yet; it shows such a group's markers
+as separate lines beside unstyled epigraphs.
 
 Known limits: each source ends under its own longest line, so the sources of stacked wordings sit
 at different horizontal positions. In the Kindle app, which doesn't support the epigraph's

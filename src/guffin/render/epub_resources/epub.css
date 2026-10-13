@@ -408,6 +408,46 @@ span.alternative-text {
 }
 
 /*
+ * A group whose wordings are epigraphs (a versioned reference to an epigraph renders each wording
+ * as the epigraph it references). Every wording keeps the full epigraph form, the alternatives
+ * muted but still italic, since italic is the epigraph's own form rather than authored emphasis.
+ * Each wording is a div.wording of its own, so the epigraphs' shrink-to-fit inline-blocks stack;
+ * the group, not the epigraph, owns the opening's spacing. Each marker leads its quotation's first
+ * line and hangs through a negative text-indent equal to the epigraph's left margin: the epigraph
+ * is set at 1.1em, so the body-size 1.25em hang (a 0.62em marker plus a 0.63em gap) is 1.136em
+ * there, the marker 0.564em, the gap 0.573em. A negative first-line indent cancels the marker's own
+ * width in the shrink-to-fit width, so the box, and the source flush right in it, still measures
+ * the quotation's text alone. A wording that is not an epigraph hangs its marker as in any group.
+ */
+div.alternatives.epigraph-alternatives {
+  margin: 0.75em 0 1.5em 0;
+}
+
+div.epigraph-alternatives > div.wording + div.wording {
+  margin-top: 0.9em;
+}
+
+div.epigraph-alternatives div.epigraph {
+  margin: 0 0 0 1.136em;
+}
+
+div.epigraph-alternatives div.epigraph-text > p:first-child {
+  text-indent: -1.136em;
+}
+
+div.epigraph-alternatives div.epigraph svg.alternative-marker {
+  width: 0.564em;
+  height: 0.564em;
+  margin-right: 0.573em;
+}
+
+div.epigraph-alternatives > div.wording > p {
+  margin: 0;
+  padding-left: 1.25em;
+  text-indent: -1.25em;
+}
+
+/*
  * A bullet list holding a versioned item (Div.alternatives-list): the radio marker replaces that
  * item's bullet. The list's native markers are suppressed, every item hangs a drawn marker into the
  * list's own indent — an ordinary item a drawn dot, the same width as the radio markers, so every

@@ -16,6 +16,12 @@
 --   * anywhere else, the group sits inside the text column, the rail at the column's edge.  It
 --     never hangs into the page margin: reading systems own that margin and may clip into it.
 --
+-- A wording may be a whole epigraph: a versioned reference to an epigraph renders each wording as
+-- the epigraph it references.  Such a group keeps every wording the full epigraph (quotation, then
+-- its source flush right), each in a Div.wording of its own, with the marker leading the
+-- quotation's first line and an alternative's quotation and source muted (its italic, the
+-- epigraph's own form, kept); the group is classed epigraph-alternatives for epub.css.
+--
 -- The wordings stay native Pandoc blocks (only the markers are raw), so every later filter still
 -- reaches their content.  Registered FIRST among the EPUB filters: a bullet list holding a group
 -- is laid out here whole — classified siblings included — before epub_bullet.lua sees it.
@@ -24,6 +30,9 @@ local GROUP_CLASS = "alternatives"
 local SELECTED_CLASS = "selected-wording"
 local ALTERNATIVE_CLASS = "alternative-wording"
 local GLYPH_ATTRIBUTE = "data-guffin-marker-glyph"
+local EPIGRAPH_CLASS = "epigraph"
+local EPIGRAPH_TEXT_CLASS = "epigraph-text"
+local EPIGRAPH_ATTRIBUTION_CLASS = "epigraph-attribution"
 
 local SVG_OPEN = '<svg class="alternative-marker" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"'
 local SELECTED_MARKER = SVG_OPEN .. ' role="img" aria-label="selected wording">'
@@ -69,17 +78,91 @@ local function muted(blocks)
   return out
 end
 
--- The group's wordings as marker-led paragraphs, selected first, in a Div with *classes*.
-local function group_div(group, classes)
-  local blocks = pandoc.List()
+local function is_wording(block)
+  return block.t == "Div" and (block.classes:includes(SELECTED_CLASS) or block.classes:includes(ALTERNATIVE_CLASS))
+end
+
+local function is_epigraph(block)
+  return block ~= nil and block.t == "Div" and block.classes:includes(EPIGRAPH_CLASS)
+end
+
+-- Whether any of the group's wordings is an epigraph — as when a versioned block's wordings are
+-- references to epigraphs, each rendered as the epigraph it references.
+local function holds_epigraph(group)
   for _, wording in ipairs(group.content) do
-    if wording.t == "Div" and wording.classes:includes(SELECTED_CLASS) then
-      blocks:extend(led_by(wording.content, { pandoc.RawInline("html", SELECTED_MARKER) }, true))
-    elseif wording.t == "Div" and wording.classes:includes(ALTERNATIVE_CLASS) then
-      blocks:extend(led_by(muted(wording.content), { pandoc.RawInline("html", ALTERNATIVE_MARKER) }, true))
+    if is_wording(wording) and is_epigraph(wording.content[1]) then
+      return true
     end
   end
-  return pandoc.Div(blocks, pandoc.Attr("", classes))
+  return false
+end
+
+-- Every inline block of *blocks* muted (span.alternative-text), not only the first: an epigraph's
+-- quotation may run to several paragraphs, and its source line is muted with it.  Built on a clone.
+local function all_muted(blocks)
+  return pandoc.List(blocks):clone():map(function(block)
+    if block.t == "Plain" or block.t == "Para" then
+      return pandoc.Para({ pandoc.Span(block.content, pandoc.Attr("", { "alternative-text" })) })
+    end
+    return block
+  end)
+end
+
+-- An epigraph wording: the epigraph with *marker* leading its quotation's first line, the
+-- quotation and source muted when *alternative*.  Built on a clone.
+local function epigraph_wording(epigraph, marker, alternative)
+  local parts = pandoc.List()
+  for _, part in ipairs(epigraph.content) do
+    if part.t == "Div" and part.classes:includes(EPIGRAPH_TEXT_CLASS) then
+      local text = alternative and all_muted(part.content) or part.content
+      parts:insert(pandoc.Div(led_by(text, { pandoc.RawInline("html", marker) }, true), part.attr))
+    elseif part.t == "Div" and part.classes:includes(EPIGRAPH_ATTRIBUTION_CLASS) and alternative then
+      parts:insert(pandoc.Div(all_muted(part.content), part.attr))
+    else
+      parts:insert(part)
+    end
+  end
+  return pandoc.Div(parts, epigraph.attr)
+end
+
+-- A wording of a group holding epigraphs, in a Div.wording of its own, so that the epigraphs'
+-- shrink-to-fit boxes stack rather than sitting side by side.  An epigraph is led and muted inside
+-- its own structure; any other wording is a marker-led paragraph, as in an ordinary group.
+local function display_wording(wording, marker, alternative)
+  local first = wording.content[1]
+  local blocks
+  if is_epigraph(first) then
+    blocks = pandoc.List({ epigraph_wording(first, marker, alternative) })
+    for index = 2, #wording.content do
+      blocks:insert(wording.content[index])
+    end
+  else
+    blocks = led_by(alternative and muted(wording.content) or wording.content, { pandoc.RawInline("html", marker) }, true)
+  end
+  return pandoc.Div(blocks, pandoc.Attr("", { "wording" }))
+end
+
+-- The group's wordings as marker-led paragraphs, selected first, in a Div with *classes*; a group
+-- holding epigraphs keeps each wording an epigraph instead, in a Div classed epigraph-alternatives.
+local function group_div(group, classes)
+  local display = holds_epigraph(group)
+  local blocks = pandoc.List()
+  for _, wording in ipairs(group.content) do
+    if is_wording(wording) then
+      local alternative = wording.classes:includes(ALTERNATIVE_CLASS)
+      local marker = alternative and ALTERNATIVE_MARKER or SELECTED_MARKER
+      if display then
+        blocks:insert(display_wording(wording, marker, alternative))
+      else
+        blocks:extend(led_by(alternative and muted(wording.content) or wording.content, { pandoc.RawInline("html", marker) }, true))
+      end
+    end
+  end
+  local group_classes = pandoc.List(classes)
+  if display then
+    group_classes:insert("epigraph-alternatives")
+  end
+  return pandoc.Div(blocks, pandoc.Attr("", group_classes))
 end
 
 -- An ordinary item's blocks led by its marker: its classification glyph (the semantic-bullet
