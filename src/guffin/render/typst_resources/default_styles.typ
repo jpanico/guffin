@@ -421,19 +421,26 @@
 // An alternative wording's text treatment.
 #let alternative-wording(body) = text(size: 0.93em, fill: alternative-muted, body)
 
+// The space between a group's wordings: a line's worth for wordings of running text, and wider for
+// display wordings such as epigraphs, which set their own space around themselves in the flow but
+// lose it inside the group's grid, where nothing would separate one wording's source line from the
+// next wording's quotation.
+#let alternative-gutter = 0.55em
+#let alternative-display-gutter = 1.1em
+
 // A group in the document flow: the selected wording, then each alternative, stacked, each led
 // by its marker.  With hang (a group in the body's own flow), the rail and markers hang into the
 // left margin so the selected wording keeps the body's left edge; without it (a group nested in a
 // list item or another container, whose margin belongs to that container), the whole group sits
-// inside the text column.
-#let alternatives-group(hang: true, selected, ..alternatives) = {
+// inside the text column.  gutter is the space between wordings.
+#let alternatives-group(hang: true, gutter: alternative-gutter, selected, ..alternatives) = {
   let group = block(
     width: 100%,
     stroke: (left: alternative-rail),
     inset: (left: 0.35em, y: 0.15em),
     grid(
       columns: (1.25em, 1fr),
-      row-gutter: 0.55em,
+      row-gutter: gutter,
       alternative-marker(true), selected,
       ..alternatives.pos().map(wording => (alternative-marker(false), alternative-wording(wording))).flatten(),
     ),

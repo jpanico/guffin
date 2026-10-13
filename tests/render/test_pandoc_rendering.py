@@ -1553,6 +1553,79 @@ class TestAlternativesGroup:
         assert found == []
 
 
+class TestReferenceAlternativesGroup:
+    """A versioned standalone reference to a block-level vertex groups the blocks its wordings reference.
+
+    Each wording of such a block is itself a reference — here, to an epigraph — so the selected
+    wording renders as the epigraph it references and so does each alternative that references a
+    block-level vertex; an alternative that references nothing block-level stays a line of text.
+    """
+
+    @staticmethod
+    def _reference(uid: str) -> str:
+        return f"[> {uid}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+    @classmethod
+    def _group(cls, *alternative_texts: str) -> pf.Div:
+        epigraphs = [
+            QuoteBlockVertex(
+                uid=f"epigr000{n}", quote_type=QuoteType.EPIGRAPH, quote=f"Quotation {n}.", attribution=f"Source {n}"
+            )
+            for n in (1, 2, 3)
+        ]
+        versed = TextVertex(
+            uid="versed001",
+            text=cls._reference("epigr0001"),
+            alternatives=tuple(
+                Alternative(uid=f"altuid00{n}", text=text) for n, text in enumerate(alternative_texts, start=1)
+            ),
+        )
+        page = PageVertex(uid="page00001", title="P", children=["versed001"])
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, versed], ref_vertices=epigraphs), {}, {})
+        group = list(doc.content)[0]
+        assert isinstance(group, pf.Div)
+        return group
+
+    @staticmethod
+    def _wording_kinds(group: pf.Div) -> list[tuple[str, str]]:
+        """Each wording Div's class and the class (or type) of its first block."""
+        kinds: list[tuple[str, str]] = []
+        for wording in group.content:
+            first = list(wording.content)[0]
+            kinds.append((wording.classes[0], first.classes[0] if isinstance(first, pf.Div) else type(first).__name__))
+        return kinds
+
+    def test_selected_and_alternatives_render_as_referenced_epigraphs(self) -> None:
+        """The group's wordings are the three epigraphs, selected first, each with its own source."""
+        group = self._group(self._reference("epigr0002"), self._reference("epigr0003"))
+        assert group.classes == [ALTERNATIVES_CLASS]
+        assert self._wording_kinds(group) == [
+            (SELECTED_WORDING_CLASS, "epigraph"),
+            (ALTERNATIVE_WORDING_CLASS, "epigraph"),
+            (ALTERNATIVE_WORDING_CLASS, "epigraph"),
+        ]
+        assert [pf.stringify(wording).split() for wording in group.content] == [
+            ["Quotation", "1.", "—Source", "1"],
+            ["Quotation", "2.", "—Source", "2"],
+            ["Quotation", "3.", "—Source", "3"],
+        ]
+
+    def test_alternative_referencing_nothing_block_level_stays_text(self) -> None:
+        """An alternative that is plain text renders as a paragraph beside the referenced epigraph."""
+        group = self._group("a plain other wording")
+        assert self._wording_kinds(group) == [(SELECTED_WORDING_CLASS, "epigraph"), (ALTERNATIVE_WORDING_CLASS, "Para")]
+
+    def test_unversioned_reference_renders_the_bare_epigraph(self) -> None:
+        """Without alternatives the reference renders as the epigraph itself, with no group."""
+        page = PageVertex(uid="page00001", title="P", children=["site00001"])
+        epigraph = QuoteBlockVertex(uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote="Q.")
+        site = TextVertex(uid="site00001", text=self._reference("epigr0001"))
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, site], ref_vertices=[epigraph]), {}, {})
+        first = list(doc.content)[0]
+        assert isinstance(first, pf.Div)
+        assert first.classes == ["epigraph"]
+
+
 # ---------------------------------------------------------------------------
 # TestBuildBlocksCoalescing
 # ---------------------------------------------------------------------------

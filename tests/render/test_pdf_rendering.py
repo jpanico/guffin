@@ -567,7 +567,7 @@ class TestTypstAlternativesFilters:
     def test_group_in_flow_hangs_into_the_margin(self) -> None:
         """A top-level group calls the template helper with hang on, selected wording first."""
         typst = self._typst_for(ChildrenLayout.DOCUMENT)
-        assert "#alternatives-group(hang: true, [" in typst
+        assert "#alternatives-group(hang: true, gutter: alternative-gutter, [" in typst
         assert typst.index("the selected wording") < typst.index("first") < typst.index("the second other wording")
         assert typst.count("], [") == 2
         # The wordings stay native content, so their markup is Typst emphasis, not literal asterisks.
@@ -576,7 +576,7 @@ class TestTypstAlternativesFilters:
     def test_group_in_a_numbered_list_sits_inside_the_column(self) -> None:
         """A group nested in a numbered item keeps the number as its marker and does not hang."""
         typst = self._typst_for(ChildrenLayout.NUMBERED)
-        assert "#alternatives-group(hang: false, [" in typst
+        assert "#alternatives-group(hang: false, gutter: alternative-gutter, [" in typst
         assert "hang: true" not in typst
 
     def test_group_in_a_bullet_list_takes_the_marker_slot(self) -> None:
@@ -597,6 +597,59 @@ class TestTypstAlternativesFilters:
             typst = self._typst_for(layout)
             assert "selected-wording" not in typst
             assert 'alternative-wording"' not in typst
+
+    @staticmethod
+    def _epigraph_group_typst(page_layout: ChildrenLayout) -> str:
+        """A versioned reference to one epigraph, its alternatives references to two others."""
+
+        def reference(uid: str) -> str:
+            return f"[> {uid}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+        epigraphs = [
+            QuoteBlockVertex(
+                uid=f"epigr000{n}", quote_type=QuoteType.EPIGRAPH, quote=f"Quotation {n}.", attribution=f"Source {n}"
+            )
+            for n in (1, 2, 3)
+        ]
+        versed = TextVertex(
+            uid="versed001",
+            text=reference("epigr0001"),
+            alternatives=(
+                Alternative(uid="altuid001", text=reference("epigr0002")),
+                Alternative(uid="altuid002", text=reference("epigr0003")),
+            ),
+        )
+        page = PageVertex(uid="page00001", title="Doc", children=["versed001"])
+        doc, _ = vertex_tree_to_pandoc(
+            VertexTree(tree_vertices=[page, versed], ref_vertices=epigraphs),
+            {},
+            {"page00001": VertexView(children_layout=page_layout)},
+        )
+        resources = _typst_resources_dir()
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[
+                f"--lua-filter={resources / 'typst_alternatives.lua'}",
+                f"--lua-filter={resources / 'typst_quote.lua'}",
+                f"--lua-filter={resources / 'typst_bullet.lua'}",
+            ],
+        )
+
+    def test_epigraph_wordings_are_epigraphs_in_a_display_spaced_group(self) -> None:
+        """Each wording of a versioned reference to epigraphs is an epigraph call, spaced as display type."""
+        typst = self._epigraph_group_typst(ChildrenLayout.DOCUMENT)
+        assert typst.startswith("#alternatives-group(hang: true, gutter: alternative-display-gutter, [")
+        assert typst.count("#epigraph(quote: [") == 3
+        assert typst.index("Quotation 1.") < typst.index("Quotation 2.") < typst.index("Quotation 3.")
+        assert typst.count("attribution: [---Source") == 3
+
+    def test_epigraph_group_in_a_bullet_layout_is_flow_not_a_grid_row(self) -> None:
+        """A block-level reference leaves its list, so in a bullet layout the group is flow, not a grid row."""
+        typst = self._epigraph_group_typst(ChildrenLayout.BULLET)
+        assert "#alternatives-group(hang: true, gutter: alternative-display-gutter, [" in typst
+        assert "columns: (3pt, 3pt, auto, 1fr)" not in typst
 
 
 @pytest.mark.pandoc
@@ -960,3 +1013,37 @@ class TestAlternativesPdf:
         assert "the selected paragraph" in text
         assert "the selected item" in text
         assert "another wording" not in text
+
+    def test_epigraph_alternatives_compile(self, tmp_path_factory: pytest.TempPathFactory) -> None:
+        """A versioned reference to epigraphs compiles, every wording an epigraph with its source, in order."""
+
+        def reference(uid: str) -> str:
+            return f"[> {uid}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+        epigraphs = [
+            QuoteBlockVertex(uid=f"epigr000{n}", quote_type=QuoteType.EPIGRAPH, quote=quote, attribution=source)
+            for n, quote, source in ((1, "Selected words.", "Dijkstra"), (2, "Other words.", "Perlis"))
+        ]
+        tree = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["versed001"]),
+                TextVertex(
+                    uid="versed001",
+                    text=reference("epigr0001"),
+                    alternatives=(Alternative(uid="altuid001", text=reference("epigr0002")),),
+                ),
+            ],
+            ref_vertices=epigraphs,
+        )
+        out_dir = tmp_path_factory.mktemp("epigraph-alternatives")
+        render(
+            RenderBundle(content=tree, view={}),
+            profile=BookProfile(),
+            filename_stem="doc",
+            api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+            options=PdfRenderOptions(output_dir=out_dir, render_alternatives=True),
+        )
+        text = "\n".join(page.extract_text() or "" for page in PdfReader(out_dir / "doc.pdf").pages)
+        assert (
+            text.index("Selected words.") < text.index("Dijkstra") < text.index("Other words.") < text.index("Perlis")
+        )

@@ -12,6 +12,11 @@
 --   * as the leading block of a bullet-list item it is left untouched: the radio marker replaces
 --     that item's bullet, which takes laying out the whole list as a grid — typst_bullet.lua's job.
 --
+-- A wording may be a display block rather than running text: a versioned reference to an epigraph
+-- renders each wording as the epigraph it references, which typst_quote.lua later turns into an
+-- #epigraph call.  The alternative-wording muting then greys and shrinks the epigraph's own italic
+-- display type, and the group spaces its wordings with the wider display gutter.
+--
 -- The group's wordings stay native Pandoc blocks between raw Typst fragments, rather than being
 -- serialized here, so every later filter still reaches their content (colour spans, TODO boxes,
 -- marks).  Registered FIRST among the Typst filters for the same reason: the filters that
@@ -21,6 +26,7 @@
 local GROUP_CLASS = "alternatives"
 local SELECTED_CLASS = "selected-wording"
 local ALTERNATIVE_CLASS = "alternative-wording"
+local EPIGRAPH_CLASS = "epigraph"
 
 local function is_group(block)
   return block ~= nil and block.t == "Div" and block.classes:includes(GROUP_CLASS)
@@ -30,11 +36,31 @@ local function is_wording(block)
   return block.t == "Div" and (block.classes:includes(SELECTED_CLASS) or block.classes:includes(ALTERNATIVE_CLASS))
 end
 
+-- Whether a wording is a display block that sets its own space around itself in the flow — an
+-- epigraph, as when a versioned block's wordings are references to epigraphs.
+local function is_display_wording(wording)
+  local first = wording.content[1]
+  return first ~= nil and first.t == "Div" and first.classes:includes(EPIGRAPH_CLASS)
+end
+
+-- The space between the group's wordings: the display gutter when any wording is a display block,
+-- since inside the group's grid nothing else would separate it from its neighbours.
+local function gutter(group)
+  for _, wording in ipairs(group.content) do
+    if is_wording(wording) and is_display_wording(wording) then
+      return "alternative-display-gutter"
+    end
+  end
+  return "alternative-gutter"
+end
+
 -- The group's raw-fragment rendering: the helper call opens, each wording's native blocks become
 -- one content argument (selected first, as the scaffold orders them), and the call closes.
 local function group_blocks(group, hang)
   local out = pandoc.List()
-  out:insert(pandoc.RawBlock("typst", string.format("#alternatives-group(hang: %s, [", tostring(hang))))
+  out:insert(
+    pandoc.RawBlock("typst", string.format("#alternatives-group(hang: %s, gutter: %s, [", tostring(hang), gutter(group)))
+  )
   local first = true
   for _, wording in ipairs(group.content) do
     if is_wording(wording) then

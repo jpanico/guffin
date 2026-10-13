@@ -531,6 +531,71 @@ def _block_ref_target(
     return dest if isinstance(dest, _BLOCK_LEVEL_VERTEX_TYPES) else None
 
 
+def _referenced_block_blocks(
+    target: Vertex,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
+    depth: int,
+) -> list[pf.Block]:
+    """Render the block-level vertex a standalone reference displays, as the referenced block itself.
+
+    A ``REFERENCE`` includes only the target vertex itself: its descendants (children, and the
+    attribute assignments folded from child blocks) are not transcluded — full transclusion is
+    ``EMBED``'s job — so they are stripped before rendering.
+
+    Args:
+        target: The referenced block-level vertex.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID (image or PDF) to local asset file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The reference site's parent's effective children layout.
+        depth: Tree depth of the reference site.
+
+    Returns:
+        The referenced vertex's blocks.
+    """
+    stripped: Final[Vertex] = target.model_copy(update={"children": None, "attribute_assignments": None})
+    return _vertex_to_blocks(stripped, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth)
+
+
+def _referencing_wording_blocks(
+    text: str,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    inherited_layout: ChildrenLayout,
+    depth: int,
+) -> list[pf.Block]:
+    """Render one alternative wording of a standalone reference to a block-level vertex.
+
+    A wording that is itself a standalone reference to a block-level vertex other than a PDF
+    renders as the referenced block (see :func:`_referenced_block_blocks`), as the selected wording
+    does; any other wording renders in document flow (see :func:`_wording_blocks`).  A PDF target is
+    left to the inline form, since where a PDF's pages go is resolved per reference site.
+
+    Args:
+        text: The wording's normalized Pandoc Markdown.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID (image or PDF) to local asset file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        inherited_layout: The reference site's parent's effective children layout.
+        depth: Tree depth of the reference site.
+
+    Returns:
+        The wording's blocks.
+    """
+    target: Final[Vertex | None] = standalone_link_target_of_text(text, vertex_tree)
+    if not isinstance(target, _BLOCK_LEVEL_VERTEX_TYPES) or isinstance(target, PdfVertex):
+        return _wording_blocks(text, inline_map, in_list=False)
+    return _referenced_block_blocks(target, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth)
+
+
 def _wording_blocks(text: str, inline_map: InlineMap, *, in_list: bool) -> list[pf.Block]:
     """Render one wording of a text vertex — its own text or an alternative — to Pandoc blocks.
 
@@ -561,35 +626,39 @@ def _wording_blocks(text: str, inline_map: InlineMap, *, in_list: bool) -> list[
     return [block_type(*inlines)]
 
 
-def _alternatives_group(
-    selected: Sequence[pf.Block],
-    alternatives: Sequence[Alternative],
-    inline_map: InlineMap,
-    *,
-    in_list: bool,
-) -> pf.Div:
+def _alternatives_group(selected: Sequence[pf.Block], alternatives: Sequence[Sequence[pf.Block]]) -> pf.Div:
     """Return the :data:`ALTERNATIVES_CLASS` scaffold grouping a vertex's wordings.
 
     The group holds the *selected* wording's blocks in a :data:`SELECTED_WORDING_CLASS`
     :class:`~panflute.Div`, followed by one :data:`ALTERNATIVE_WORDING_CLASS`
-    :class:`~panflute.Div` per alternative, in order, each rendered exactly as the selected
-    wording is (see :func:`_wording_blocks`).
+    :class:`~panflute.Div` per alternative, in order.
 
     Args:
-        selected: The selected wording's already-rendered blocks.
-        alternatives: The vertex's alternatives, in source order.
-        inline_map: Mapping from text string to parsed panflute inline elements.
-        in_list: Whether the group renders inside a list item rather than in document flow.
+        selected: The selected wording's rendered blocks.
+        alternatives: Each alternative's rendered blocks, in source order.
 
     Returns:
         The group :class:`~panflute.Div`.
     """
     wordings: Final[list[pf.Div]] = [pf.Div(*selected, classes=[SELECTED_WORDING_CLASS])]
-    wordings.extend(
-        pf.Div(*_wording_blocks(alternative.text, inline_map, in_list=in_list), classes=[ALTERNATIVE_WORDING_CLASS])
-        for alternative in alternatives
-    )
+    wordings.extend(pf.Div(*blocks, classes=[ALTERNATIVE_WORDING_CLASS]) for blocks in alternatives)
     return pf.Div(*wordings, classes=[ALTERNATIVES_CLASS])
+
+
+def _inline_alternatives_blocks(
+    alternatives: Sequence[Alternative], inline_map: InlineMap, *, in_list: bool
+) -> list[list[pf.Block]]:
+    """Render each alternative as a wording of a text vertex, exactly as its selected text is.
+
+    Args:
+        alternatives: The vertex's alternatives, in source order.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        in_list: Whether the wordings render inside a list item rather than in document flow.
+
+    Returns:
+        Each alternative's blocks (see :func:`_wording_blocks`), in order.
+    """
+    return [_wording_blocks(alternative.text, inline_map, in_list=in_list) for alternative in alternatives]
 
 
 def _build_list_item(
@@ -699,7 +768,7 @@ def _build_list_item(
             content = [pf.Plain(*inlines)]
     if alternatives is not None:
         # The group wraps only the item's own body: nested children appended below sit outside it.
-        content = [_alternatives_group(content, alternatives, inline_map, in_list=True)]
+        content = [_alternatives_group(content, _inline_alternatives_blocks(alternatives, inline_map, in_list=True))]
     if marker_glyph is not None:
         # The scaffold wraps only the item's own body: the nested children appended below sit
         # outside it, so the classification decorates this item's line alone.
@@ -911,7 +980,11 @@ def build_child_blocks(
     inline-placed PDF — is likewise flushed
     and rendered as the referenced block *itself* — stripped of its descendants (children
     and folded attribute assignments), since a ``REFERENCE`` never transcludes the target's
-    subtree (that is ``EMBED`` semantics).  Each vertex's own children are rendered using *its* effective layout — its
+    subtree (that is ``EMBED`` semantics).  Such a reference carrying alternatives renders as an
+    :data:`ALTERNATIVES_CLASS` group whose selected wording is the referenced block, each
+    alternative that likewise references a block-level vertex rendering as its own referenced
+    block (see :func:`_referencing_wording_blocks`) — so a group of references to epigraphs is a
+    group of epigraphs.  Each vertex's own children are rendered using *its* effective layout — its
     explicit *view_map* entry, else *layout* inherited from the parent (see
     :func:`_effective_layout`).
 
@@ -981,10 +1054,24 @@ def build_child_blocks(
                     _pdf_vertex_to_blocks(ref_pdf, asset_files, _resolved_pdf_placement(ref_pdf, site=vertex))
                 )
             else:
-                referenced: Vertex = ref_target.model_copy(update={"children": None, "attribute_assignments": None})
-                result.extend(
-                    _vertex_to_blocks(referenced, vertex_tree, asset_files, inline_map, view_map, layout, depth)
+                referenced: list[pf.Block] = _referenced_block_blocks(
+                    ref_target, vertex_tree, asset_files, inline_map, view_map, layout, depth
                 )
+                if isinstance(vertex, TextVertex) and vertex.alternatives:
+                    # Each wording of a versioned reference renders the way the selected one does:
+                    # an alternative that references a block-level vertex renders as that block.
+                    referenced = [
+                        _alternatives_group(
+                            referenced,
+                            [
+                                _referencing_wording_blocks(
+                                    alternative.text, vertex_tree, asset_files, inline_map, view_map, layout, depth
+                                )
+                                for alternative in vertex.alternatives
+                            ],
+                        )
+                    ]
+                result.extend(referenced)
             if isinstance(vertex, TextVertex) and (vertex.children or vertex.attribute_assignments):
                 result.extend(
                     build_child_blocks(
@@ -1199,7 +1286,11 @@ def _text_vertex_to_blocks(
     """
     selected_blocks: Final[list[pf.Block]] = _wording_blocks(vertex.text, inline_map, in_list=False)
     para_blocks: Final[list[pf.Block]] = (
-        [_alternatives_group(selected_blocks, vertex.alternatives, inline_map, in_list=False)]
+        [
+            _alternatives_group(
+                selected_blocks, _inline_alternatives_blocks(vertex.alternatives, inline_map, in_list=False)
+            )
+        ]
         if vertex.alternatives
         else selected_blocks
     )

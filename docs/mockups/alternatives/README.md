@@ -36,7 +36,7 @@ Shared across formats:
 Still open: whether alternatives always follow the selected wording or keep their source order.
 The mockups put the selected wording first.
 
-## Epigraph alternatives (decided 2026-10-13, not yet implemented)
+## Epigraph alternatives (decided 2026-10-13; implemented for PDF)
 
 A block whose wordings are epigraphs, each a quotation with its own source line. The sample is
 Test Article 3's group of standalone block references to three epigraphs: the Dijkstra one
@@ -58,6 +58,12 @@ Two departures from the shared rules above:
   text grey (GitHub `#59636e`), so inside a block quote M1's `#737373` barely separates the
   alternatives from the selected wording; `#a0a0a0` does. Like every fixed grey, it is tuned for
   light themes.
+
+PDF implements E1. A versioned standalone reference renders each wording as the block it
+references, so the group's wordings are the epigraphs themselves. The existing alternative
+muting applies to their italic display type, and the group spaces display wordings with the wider
+`alternative-display-gutter` (1.1em). EPUB and Markdown don't implement their treatments yet; they
+show such a group's markers as separate lines beside unstyled epigraphs.
 
 Known limits: each source ends under its own longest line, so the sources of stacked wordings sit
 at different horizontal positions. In the Kindle app, which doesn't support the epigraph's
