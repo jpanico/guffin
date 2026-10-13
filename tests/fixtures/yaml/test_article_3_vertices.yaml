@@ -803,6 +803,8 @@
   - QnqMI7-2J
   - xkmJLzW3G
   - 1HipLqaCb
+  - _o9v3JjHm
+  - Jn7ckh-Cx
   text: 'External (out-of-page) links:'
   heading_level: 1
 - vertex_type: guffin/text
@@ -1150,6 +1152,56 @@
   vertex_link:
   - vertex-embed
   - fUle3zmFp
+- vertex_type: guffin/text
+  uid: _o9v3JjHm
+  children:
+  - nYbnXviuu
+  refs:
+  - lF-qY0Xrs
+  text: '[**VERSION GROUP of standalone BLOCK ref (text)↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: nYbnXviuu
+  refs:
+  - QB8DChDBs
+  alternatives:
+  - uid: mH5nlHuSj
+    text: '[This [para] features [*italics*]](x-guffin:vertex/2yQYaKIEV)'
+  - uid: 1fBX-8o-F
+    text: '[This para features ~~strikethrough~~](x-guffin:vertex/7dBusjzDA)'
+  text: '[This para features **bold**](x-guffin:vertex/QB8DChDBs)'
+- vertex_type: guffin/text
+  uid: Jn7ckh-Cx
+  children:
+  - 3EkSTJBAu
+  refs:
+  - lF-qY0Xrs
+  text: '[**VERSION GROUP of standalone BLOCK ref (epigraph)↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: 3EkSTJBAu
+  refs:
+  - tyiBN5ns6
+  alternatives:
+  - uid: hxD1wSkTG
+    text: '[[[>]] [[!EPIGRAPH]]
+
+      Simplicity is prerequisite for reliability.
+
+
+      —Edsger Dijkstra](x-guffin:vertex/MFNKg5Uth)'
+  - uid: RH4kJuB9d
+    text: '[[[>]] [[!EPIGRAPH]]
+
+      A language that doesn''t affect the way you think about programming is not worth
+      knowing.
+
+
+      —Alan Perlis](x-guffin:vertex/rrfGS1l0S)'
+  text: '[[[>]] [[!EPIGRAPH]]
+
+    Premature optimization is the root of all evil.
+
+
+    —Donald Knuth](x-guffin:vertex/tyiBN5ns6)'
 - vertex_type: guffin/text
   uid: LfXmNr-tV
   children:

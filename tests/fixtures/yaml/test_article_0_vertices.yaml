@@ -15,6 +15,7 @@
 - vertex_type: guffin/callout
   uid: qnCiceZgk
   refs:
+  - LBFKibPIj
   - OexZiLR_O
   - ZgUWBRb7j
   callout_type: info
@@ -59,6 +60,9 @@
 
     - Roam-native table (3x3)
 
+    - three Roam-native epigraphs (block 1), the out-of-page targets of [Test Article](x-guffin:vertex/LBFKibPIj)
+    3''s epigraph version group
+
     - a block with three Roam-native `Block Versions` (block 3.4): only the selected
     version is in the parent''s children, but all three are fetched; the selected
     one exports as the block''s text, and with `--render-alternatives` the other two
@@ -82,6 +86,7 @@
   - r09kXvUg-
   - ooVLwinzV
   - GeE5zPJOv
+  - 9umpflMZw
   - mGk4VnMT3
   - WtrddPBAt
   text: block 1
@@ -259,6 +264,38 @@
 
 
     '
+- vertex_type: guffin/text
+  uid: 9umpflMZw
+  children:
+  - MFNKg5Uth
+  - rrfGS1l0S
+  - tyiBN5ns6
+  text: each child block contains an Epigraph
+- vertex_type: guffin/quote-block
+  uid: MFNKg5Uth
+  refs:
+  - OexZiLR_O
+  - l2jkAMxGu
+  quote_type: epigraph
+  quote: Simplicity is prerequisite for reliability.
+  attribution: Edsger Dijkstra
+- vertex_type: guffin/quote-block
+  uid: rrfGS1l0S
+  refs:
+  - OexZiLR_O
+  - l2jkAMxGu
+  quote_type: epigraph
+  quote: A language that doesn't affect the way you think about programming is not
+    worth knowing.
+  attribution: Alan Perlis
+- vertex_type: guffin/quote-block
+  uid: tyiBN5ns6
+  refs:
+  - OexZiLR_O
+  - l2jkAMxGu
+  quote_type: epigraph
+  quote: Premature optimization is the root of all evil.
+  attribution: Donald Knuth
 - vertex_type: guffin/text
   uid: mGk4VnMT3
   children:

@@ -107,12 +107,26 @@ class FetchRoamNodes:
                     (descendant ?mid ?child)]"""),
             "    ",
         )
+        _VERSION_CLAUSES: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                [(version-of ?block ?version)
+                    [?group :vc/blocks ?block]
+                    [?group :vc/blocks ?version]]"""),
+            "    ",
+        )
         _PAGE_REF_CLAUSES: Final[str] = textwrap.indent(
             textwrap.dedent("""\
                 [(page-ref ?root ?node)
                     [?root :block/refs ?node]]
                 [(page-ref ?root ?node)
                     (descendant ?root ?member)
+                    [?member :block/refs ?node]]
+                [(page-ref ?root ?node)
+                    (version-of ?root ?member)
+                    [?member :block/refs ?node]]
+                [(page-ref ?root ?node)
+                    (descendant ?root ?block)
+                    (version-of ?block ?member)
                     [?member :block/refs ?node]]"""),
             "    ",
         )
@@ -158,22 +172,30 @@ class FetchRoamNodes:
         """
 
         SCOPE_WITH_REFS_RULES: Final[str] = (
-            f"[\n{_DESCENDANT_CLAUSES}\n{_PAGE_REF_CLAUSES}\n{_IN_SCOPE_CLAUSES}\n{_IN_SCOPE_REF_CLAUSES}\n]"
+            f"[\n{_DESCENDANT_CLAUSES}\n{_VERSION_CLAUSES}\n{_PAGE_REF_CLAUSES}\n{_IN_SCOPE_CLAUSES}\n{_IN_SCOPE_REF_CLAUSES}\n]"
         )
         """Datalog rules vector scoping a fetch to the anchor, its descendants, and its references.
 
-        Defines three rules:
+        Defines four rules:
 
         - ``(descendant ?parent ?child)`` — as in :attr:`SCOPE_RULES`.
+        - ``(version-of ?block ?version)`` — ``?version`` shares a version group with ``?block``
+          (``?block`` itself included).  An unversioned block belongs to no group and so has no
+          versions under this rule; ``page-ref`` adds its own refs separately.
         - ``(page-ref ?root ?node)`` — ``?node`` is referenced via ``:block/refs`` by ``?root``
-          directly (clause 1) or by any descendant of ``?root`` (clause 2).  It calls
-          ``descendant``, so the two always ship together.
+          directly (clause 1), by any descendant of ``?root`` (clause 2), or by any version of
+          ``?root`` (clause 3) or of one of its descendants (clause 4).  Clauses 3 and 4 exist
+          because the parent's ``:block/children`` names only the selected version: without
+          them, a block referenced only from an unselected version — e.g. the alternative
+          epigraph of a versioned reference to one — would be missing from the fetch, and the
+          alternative would render as its raw ``((uid))``.  It calls ``descendant`` and
+          ``version-of``, so the three always ship together.
         - ``(in-scope ?anchor ?node)`` — the nodes a fetch returns.  Six clauses:
 
           1. The anchor node itself.
           2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth.
-          3. Every node referenced via ``:block/refs`` from ``?anchor`` directly or from any of
-             its descendants (via ``page-ref``).
+          3. Every node referenced via ``:block/refs`` from ``?anchor`` directly, from any of
+             its descendants, or from any version of either (via ``page-ref``).
           4. Every block reachable through ``:block/children`` from any ``page-ref`` target of
              the anchor — the full subtree of every referenced node, whether referenced by the
              anchor itself (e.g. a page-title reference) or by any of its descendants.  With

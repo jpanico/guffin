@@ -5,6 +5,25 @@
 #
 # The transient 'open' field is excluded from live-test comparisons and is
 # omitted entirely here so it defaults to None on model_validate.
+- uid: Jn7ckh-Cx
+  id: 20224
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+  order: 32
+  heading: null
+  children:
+  - id: 20223
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: oVvEsh7dx
   id: 11737
   string: section 3.2
@@ -410,6 +429,25 @@
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: 3EkSTJBAu
+  id: 20223
+  string: ((tyiBN5ns6))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20219
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20224
   props: null
   title: null
   attrs: null
@@ -1196,6 +1234,25 @@
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: nYbnXviuu
+  id: 20221
+  string: ((QB8DChDBs))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11158
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20222
   props: null
   title: null
   attrs: null
@@ -2372,6 +2429,25 @@
   title: null
   attrs: null
   blocks: null
+- uid: _o9v3JjHm
+  id: 20222
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+  order: 31
+  heading: null
+  children:
+  - id: 20221
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: nVv4pq7Fd
   id: 13494
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -3187,6 +3263,8 @@
   - id: 13479
   - id: 13481
   - id: 15114
+  - id: 20222
+  - id: 20224
   refs: null
   page:
     id: 4225

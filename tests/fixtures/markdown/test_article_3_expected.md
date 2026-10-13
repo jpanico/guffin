@@ -299,6 +299,12 @@ def fizz_buzz(limit: int = 100):
   > This is line 1 of the callout body
   >
   > This is line 2 of the callout body
+- <span style="color: fuchsia">**VERSION GROUP of standalone BLOCK ref (text)↓**</span>
+  - This para features **bold**
+- <span style="color: fuchsia">**VERSION GROUP of standalone BLOCK ref (epigraph)↓**</span>
+  > *Premature optimization is the root of all evil.*
+  >
+  > —Donald Knuth
 
 - Section 3
   - section 3.1

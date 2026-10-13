@@ -393,6 +393,67 @@ class TestNodeTreeExternalRefsIds:
 
 
 # ---------------------------------------------------------------------------
+# TestNodeTreeVersionRefs
+# ---------------------------------------------------------------------------
+
+
+def _version(uid: str, node_id: int, parent_id: int, page_id: int, ref_id: int) -> RoamNode:
+    """A version block at order 0 under *parent_id* whose text references *ref_id*."""
+    return RoamNode(
+        uid=uid,
+        id=node_id,
+        string=f"(({uid}))",
+        order=0,
+        parents=[IdObject(id=parent_id)],
+        page=IdObject(id=page_id),
+        refs=[IdObject(id=ref_id)],
+    )
+
+
+class TestNodeTreeVersionRefs:
+    """Tests that refs_by_id follows the refs of every version, not only the selected one.
+
+    A parent's ``children`` names only the selected version, so a block referenced only from an
+    unselected version is reached through the version group or not at all.
+    """
+
+    def test_ref_from_unselected_version_is_resolved(self) -> None:
+        """A node referenced only by an unselected version of a tree node lands in refs_by_id."""
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
+        selected = _version("selected1", 10, 1, 1, ref_id=99)
+        unselected = _version("unselectd", 11, 1, 1, ref_id=98)
+        group = RoamNode(uid="group0001", id=20, blocks=[IdObject(id=10), IdObject(id=11)])
+        ref_a = RoamNode(uid="refpage01", id=99, title="RefA", children=[])
+        ref_b = RoamNode(uid="refpage02", id=98, title="RefB", children=[])
+        tree = NodeTree.build(super_network=[root, selected, unselected, group, ref_a, ref_b], root_node=root)
+        assert {98, 99} <= tree.refs_by_id.keys()
+        assert tree.uid_map["refpage02"] is ref_b
+
+    def test_second_hop_ref_from_unselected_version_is_resolved(self) -> None:
+        """A first-hop target's unselected version contributes its refs to the second hop."""
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10)])
+        block = RoamNode(
+            uid="block0001",
+            id=10,
+            string="((target001))",
+            order=0,
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=50)],
+        )
+        other_page = RoamNode(uid="page00060", id=60, title="Other", children=[IdObject(id=50)])
+        target = _version("target001", 50, 60, 60, ref_id=97)
+        target_alt = _version("target002", 51, 60, 60, ref_id=98)
+        group = RoamNode(uid="group0001", id=20, blocks=[IdObject(id=50), IdObject(id=51)])
+        hop_a = RoamNode(uid="refpage01", id=97, title="HopA", children=[])
+        hop_b = RoamNode(uid="refpage02", id=98, title="HopB", children=[])
+        tree = NodeTree.build(
+            super_network=[root, block, other_page, target, target_alt, group, hop_a, hop_b], root_node=root
+        )
+        assert {50, 97, 98} <= tree.refs_by_id.keys()
+
+
+# ---------------------------------------------------------------------------
 # TestNodeTreeIdMap
 # ---------------------------------------------------------------------------
 

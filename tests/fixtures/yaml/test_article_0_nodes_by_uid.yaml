@@ -41,6 +41,27 @@ xfq7UYRb2:
   title: null
   attrs: null
   blocks: null
+9umpflMZw:
+  uid: 9umpflMZw
+  id: 20220
+  string: each child block contains an Epigraph
+  order: 14
+  heading: null
+  children:
+  - id: 20217
+  - id: 20218
+  - id: 20219
+  refs: null
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 iF2Ey_unj:
   uid: iF2Ey_unj
   id: 11454
@@ -307,6 +328,7 @@ MRKYttxrM:
   - id: 13454
   - id: 13455
   - id: 14462
+  - id: 20220
   refs: null
   page:
     id: 11137
@@ -421,6 +443,9 @@ qnCiceZgk:
 
     - Roam-native table (3x3)
 
+    - three Roam-native epigraphs (block 1), the out-of-page targets of [[Test Article]]
+    3''s epigraph version group
+
     - a block with three Roam-native `Block Versions` (block 3.4): only the selected
     version is in the parent''s children, but all three are fetched; the selected
     one exports as the block''s text, and with `--render-alternatives` the other two
@@ -431,6 +456,7 @@ qnCiceZgk:
   heading: null
   children: null
   refs:
+  - id: 4223
   - id: 5450
   - id: 5462
   page:
@@ -464,7 +490,7 @@ WtrddPBAt:
   uid: WtrddPBAt
   id: 11153
   string: block 1.2
-  order: 15
+  order: 16
   heading: null
   children: null
   refs: null
@@ -612,6 +638,32 @@ OexZiLR_O:
   parents: null
   props: null
   title: '>'
+  attrs: null
+  blocks: null
+MFNKg5Uth:
+  uid: MFNKg5Uth
+  id: 20217
+  string: '[[>]] [[!EPIGRAPH]]
+
+    Simplicity is prerequisite for reliability.
+
+
+    —Edsger Dijkstra'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 20220
+  props: null
+  title: null
   attrs: null
   blocks: null
 ooVLwinzV:
@@ -932,6 +984,21 @@ jntuNAGBs:
   title: null
   attrs: null
   blocks: null
+l2jkAMxGu:
+  uid: l2jkAMxGu
+  id: 20036
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: '!EPIGRAPH'
+  attrs: null
+  blocks: null
 HJu1OIKOr:
   uid: HJu1OIKOr
   id: 15780
@@ -1020,7 +1087,7 @@ mGk4VnMT3:
   uid: mGk4VnMT3
   id: 11151
   string: block 1.1
-  order: 14
+  order: 15
   heading: null
   children:
   - id: 11152
@@ -1389,6 +1456,33 @@ RXwAqq0_T:
   title: tags
   attrs: null
   blocks: null
+rrfGS1l0S:
+  uid: rrfGS1l0S
+  id: 20218
+  string: '[[>]] [[!EPIGRAPH]]
+
+    A language that doesn''t affect the way you think about programming is not worth
+    knowing.
+
+
+    —Alan Perlis'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 20220
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 tzwIznt_u:
   uid: tzwIznt_u
   id: 13094
@@ -1720,6 +1814,32 @@ jrIkVSHfA:
   parents: null
   props: null
   title: guffin-meta
+  attrs: null
+  blocks: null
+tyiBN5ns6:
+  uid: tyiBN5ns6
+  id: 20219
+  string: '[[>]] [[!EPIGRAPH]]
+
+    Premature optimization is the root of all evil.
+
+
+    —Donald Knuth'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 20220
+  props: null
+  title: null
   attrs: null
   blocks: null
 fY4nP4RUv:

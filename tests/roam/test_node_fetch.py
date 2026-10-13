@@ -149,6 +149,19 @@ class TestFetchRoamNodesRequest:
         # referenced inside an embedded page) arrives with its children.
         assert "(page-ref ?via ?ref)" in rules
 
+    def test_with_refs_rules_follow_refs_from_every_version(self) -> None:
+        """page-ref follows the refs of every version of the root and of its descendants.
+
+        The parent's ``:block/children`` names only the selected version, so without these
+        clauses a block referenced only from an unselected version is never fetched.
+        """
+        rules: Final[str] = FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES
+        assert "[(version-of ?block ?version)" in rules
+        assert "(version-of ?root ?member)" in rules
+        assert "(descendant ?root ?block)\n" in rules
+        assert "(version-of ?block ?member)" in rules
+        assert "version-of" not in FetchRoamNodes.Request.SCOPE_RULES
+
     def test_queries_pivot_through_the_version_group(self) -> None:
         """Both queries return every sibling version of an in-scope node by pivoting through :vc/blocks."""
         for query in (FetchRoamNodes.Request.BY_PAGE_TITLE_QUERY, FetchRoamNodes.Request.BY_NODE_UID_QUERY):

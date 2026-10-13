@@ -1,3 +1,23 @@
+Jn7ckh-Cx:
+  uid: Jn7ckh-Cx
+  id: 20224
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+  order: 32
+  heading: null
+  children:
+  - id: 20223
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 CwYpKBCiQ:
   uid: CwYpKBCiQ
   id: 12811
@@ -810,6 +830,26 @@ fUle3zmFp:
   - id: 11137
   - id: 11147
   - id: 11155
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+3EkSTJBAu:
+  uid: 3EkSTJBAu
+  id: 20223
+  string: ((tyiBN5ns6))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20219
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20224
   props: null
   title: null
   attrs: null
@@ -1947,6 +1987,26 @@ kwybAuoGM:
   title: null
   attrs: null
   blocks: null
+mH5nlHuSj:
+  uid: mH5nlHuSj
+  id: 20225
+  string: ((2yQYaKIEV))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11157
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20222
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 _EtYSMJNn:
   uid: _EtYSMJNn
   id: 11664
@@ -2027,6 +2087,52 @@ LFOf7Pdvc:
   children_view_type: null
   parents:
   - id: 12803
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+MFNKg5Uth:
+  uid: MFNKg5Uth
+  id: 20217
+  string: '[[>]] [[!EPIGRAPH]]
+
+    Simplicity is prerequisite for reliability.
+
+
+    —Edsger Dijkstra'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 20220
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+nYbnXviuu:
+  uid: nYbnXviuu
+  id: 20221
+  string: ((QB8DChDBs))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11158
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20222
   props: null
   title: null
   attrs: null
@@ -3038,6 +3144,26 @@ DZsnC1-jM:
   title: null
   attrs: null
   blocks: null
+RH4kJuB9d:
+  uid: RH4kJuB9d
+  id: 20231
+  string: ((rrfGS1l0S))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20218
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20224
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 9a_6taJAn:
   uid: 9a_6taJAn
   id: 11653
@@ -3355,6 +3481,24 @@ xGhF9KiwL:
   title: null
   attrs: null
   blocks: null
+jqjuyYH3z:
+  uid: jqjuyYH3z
+  id: 20226
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: null
+  attrs: null
+  blocks:
+  - id: 20221
+  - id: 20225
+  - id: 20227
 Ma5KGUH9O:
   uid: Ma5KGUH9O
   id: 4758
@@ -3823,6 +3967,24 @@ OaTXPl93p:
   title: null
   attrs: null
   blocks: null
+uYM_ZbGJN:
+  uid: uYM_ZbGJN
+  id: 20229
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: null
+  attrs: null
+  blocks:
+  - id: 20223
+  - id: 20228
+  - id: 20231
 Z2d9G4m4V:
   uid: Z2d9G4m4V
   id: 11800
@@ -3862,6 +4024,26 @@ Z2d9G4m4V:
   - id: 3330
   - id: 11936
   - id: 11941
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+1fBX-8o-F:
+  uid: 1fBX-8o-F
+  id: 20227
+  string: ((7dBusjzDA))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11170
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20222
   props: null
   title: null
   attrs: null
@@ -4130,6 +4312,26 @@ _6Z-gzw6R:
   parents:
   - id: 4225
   - id: 11716
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+_o9v3JjHm:
+  uid: _o9v3JjHm
+  id: 20222
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+  order: 31
+  heading: null
+  children:
+  - id: 20221
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
   props: null
   title: null
   attrs: null
@@ -4526,6 +4728,33 @@ RXwAqq0_T:
   title: tags
   attrs: null
   blocks: null
+rrfGS1l0S:
+  uid: rrfGS1l0S
+  id: 20218
+  string: '[[>]] [[!EPIGRAPH]]
+
+    A language that doesn''t affect the way you think about programming is not worth
+    knowing.
+
+
+    —Alan Perlis'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 20220
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 J4TkjuhVB:
   uid: J4TkjuhVB
   id: 11934
@@ -4564,6 +4793,26 @@ J4TkjuhVB:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
+hxD1wSkTG:
+  uid: hxD1wSkTG
+  id: 20228
+  string: ((MFNKg5Uth))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20217
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20224
+  props: null
+  title: null
+  attrs: null
   blocks: null
 cNW8lmXIM:
   uid: cNW8lmXIM
@@ -5798,6 +6047,8 @@ d3T1YpYig:
   - id: 13479
   - id: 13481
   - id: 15114
+  - id: 20222
+  - id: 20224
   refs: null
   page:
     id: 4225
@@ -6018,6 +6269,32 @@ GvRO438Ze:
   parents: null
   props: null
   title: guffin-meta
+  attrs: null
+  blocks: null
+tyiBN5ns6:
+  uid: tyiBN5ns6
+  id: 20219
+  string: '[[>]] [[!EPIGRAPH]]
+
+    Premature optimization is the root of all evil.
+
+
+    —Donald Knuth'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 11137
+  children_view_type: null
+  parents:
+  - id: 11137
+  - id: 11149
+  - id: 20220
+  props: null
+  title: null
   attrs: null
   blocks: null
 2jjY8-fQz:

@@ -229,6 +229,12 @@ class NodeTree(BaseModel):
         with-refs fetch query.  Missing child ids are skipped silently — the fetch query
         intentionally omits subtrees beyond the second ref hop.
 
+        At each hop a node's refs include those of its other versions: a parent's ``children``
+        names only the selected version, so a block referenced only from an unselected one (e.g.
+        the alternative epigraph of a versioned reference to one) would otherwise be missing, and
+        its alternative would render as the raw ``((uid))``.  The with-refs fetch query follows
+        the same edges.
+
         Args:
             tree_network: The constituent nodes of the tree.
             super_network: Source node pool; searched for direct ref targets and their transitive
@@ -240,7 +246,25 @@ class NodeTree(BaseModel):
             (e.g. when the fetch was run with ``include_refs=False``).
         """
         super_by_id: Final[dict[Id, RoamNode]] = {n.id: n for n in super_network}
-        tree_refs_ids: Final[set[Id]] = refs_ids(tree_network)
+        groups_by_member_id: Final[dict[Id, VersionGroup]] = version_groups_by_member_id(
+            version_groups_of(super_network)
+        )
+
+        def with_versions(nodes: Iterable[RoamNode]) -> list[RoamNode]:
+            """*nodes* plus every other version of each versioned one available in the pool."""
+            pool: Final[dict[Id, RoamNode]] = {n.id: n for n in nodes}
+            version_ids: Final[set[Id]] = {
+                version_id
+                for node_id in pool
+                if node_id in groups_by_member_id
+                for version_id in groups_by_member_id[node_id].member_ids
+            }
+            pool.update(
+                {version_id: super_by_id[version_id] for version_id in version_ids if version_id in super_by_id}
+            )
+            return list(pool.values())
+
+        tree_refs_ids: Final[set[Id]] = refs_ids(with_versions(tree_network))
         direct_refs: Final[dict[Id, RoamNode]] = {n.id: n for n in super_network if n.id in tree_refs_ids}
         unresolvable_refs: Final[set[Id]] = tree_refs_ids - direct_refs.keys()
         if unresolvable_refs:
@@ -258,7 +282,7 @@ class NodeTree(BaseModel):
         # query.  Pulling the subtrees (not just bare nodes) lets a multi-block construct referenced
         # from within a first-hop ref (e.g. a `{{table}}` referenced inside an embedded page) also
         # arrive complete, while a referenced node's own attributes still resolve their page references.
-        second_hop_ids: Final[set[Id]] = refs_ids(list(refs_by_id.values())) - refs_by_id.keys()
+        second_hop_ids: Final[set[Id]] = refs_ids(with_versions(refs_by_id.values())) - refs_by_id.keys()
         second_hop_refs: Final[dict[Id, RoamNode]] = {
             ref_id: super_by_id[ref_id] for ref_id in second_hop_ids if ref_id in super_by_id
         }

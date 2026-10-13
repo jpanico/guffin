@@ -1,3 +1,16 @@
+- - string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+    children:
+    - id: 20223
+    id: 20224
+    uid: Jn7ckh-Cx
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 32
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: When you leave the Bridge, and ride towards the west, finding all the
       way excellent hostelries for travellers, with fine vineyards, fields, and gardens,
       and springs of water, you come after 30 miles to a fine large city called Juju,
@@ -509,6 +522,18 @@
     refs:
     - id: 5450
     - id: 5458
+- - string: ((tyiBN5ns6))
+    id: 20223
+    uid: 3EkSTJBAu
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20224
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 20219
 - - string: '[La Curne, Dict., s.v. Sendaus has: Silk stuff: “Somme de la delivrance
       des sendaus.” (Nouv. Compt. de l’Arg. p. 19).—Godefroy, Dict., gives: “Sendain,
       adj., made with the stuff called cendal: Drap d’or sendains (1392, Test. de
@@ -1191,6 +1216,18 @@
     order: 0
     page:
       id: 4225
+- - string: ((2yQYaKIEV))
+    id: 20225
+    uid: mH5nlHuSj
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20222
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11157
 - - string: '#c:ORANGE __This span is underlined orange. __This span is not.'
     id: 11664
     uid: _EtYSMJNn
@@ -1243,6 +1280,36 @@
     order: 5
     page:
       id: 12803
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      Simplicity is prerequisite for reliability.
+
+
+      —Edsger Dijkstra'
+    id: 20217
+    uid: MFNKg5Uth
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 20036
+- - string: ((QB8DChDBs))
+    id: 20221
+    uid: nYbnXviuu
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20222
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11158
 - - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
     id: 11744
     uid: 7AR6910sJ
@@ -1859,6 +1926,18 @@
     refs:
     - id: 5844
     - id: 11158
+- - string: ((rrfGS1l0S))
+    id: 20231
+    uid: RH4kJuB9d
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20224
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 20218
 - - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
     id: 11653
     uid: 9a_6taJAn
@@ -2042,6 +2121,12 @@
       id: 4225
     refs:
     - id: 11193
+- - uid: jqjuyYH3z
+    id: 20226
+    blocks:
+    - id: 20221
+    - id: 20225
+    - id: 20227
 - - heading: 0
     string: 'AI assistant (Claude Opus 4.6): '
     id: 4758
@@ -2340,6 +2425,12 @@
     order: 0
     page:
       id: 3327
+- - uid: uYM_ZbGJN
+    id: 20229
+    blocks:
+    - id: 20223
+    - id: 20228
+    - id: 20231
 - - string: r2.c2
     children:
     - id: 11801
@@ -2367,6 +2458,18 @@
       id: 3327
     refs:
     - id: 11943
+- - string: ((7dBusjzDA))
+    id: 20227
+    uid: 1fBX-8o-F
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20222
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11170
 - - string: ((C6xVTMnsh))
     id: 11777
     uid: T5pku1yrU
@@ -2531,6 +2634,19 @@
     order: 13
     page:
       id: 4225
+- - string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+    children:
+    - id: 20221
+    id: 20222
+    uid: _o9v3JjHm
+    parents:
+    - id: 4225
+    - id: 4227
+    order: 31
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref
       ↓**'
     children:
@@ -2750,6 +2866,25 @@
 - - id: 261
     uid: RXwAqq0_T
     title: tags
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      A language that doesn''t affect the way you think about programming is not worth
+      knowing.
+
+
+      —Alan Perlis'
+    id: 20218
+    uid: rrfGS1l0S
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    order: 1
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 20036
 - - attrs:
     - - source:
         - uid
@@ -2788,6 +2923,18 @@
       id: 3327
     refs:
     - id: 246
+- - string: ((MFNKg5Uth))
+    id: 20228
+    uid: hxD1wSkTG
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20224
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 20217
 - - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
       – DO NOT REMOVE
 
@@ -3557,6 +3704,8 @@
     - id: 13479
     - id: 13481
     - id: 15114
+    - id: 20222
+    - id: 20224
     id: 4227
     uid: d3T1YpYig
     parents:
@@ -3699,6 +3848,24 @@
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      Premature optimization is the root of all evil.
+
+
+      —Donald Knuth'
+    id: 20219
+    uid: tyiBN5ns6
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    order: 2
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 20036
 - - string: Block 3.1.1
     id: 11970
     uid: 2jjY8-fQz

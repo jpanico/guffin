@@ -25,6 +25,19 @@
       id: 11137
     refs:
     - id: 14466
+- - string: each child block contains an Epigraph
+    children:
+    - id: 20217
+    - id: 20218
+    - id: 20219
+    id: 20220
+    uid: 9umpflMZw
+    parents:
+    - id: 11137
+    - id: 11149
+    order: 14
+    page:
+      id: 11137
 - - id: 11454
     uid: iF2Ey_unj
     title: c:ORANGE
@@ -190,6 +203,7 @@
     - id: 13454
     - id: 13455
     - id: 14462
+    - id: 20220
     id: 11149
     uid: MRKYttxrM
     parents:
@@ -270,6 +284,9 @@
 
       - Roam-native table (3x3)
 
+      - three Roam-native epigraphs (block 1), the out-of-page targets of [[Test Article]]
+      3''s epigraph version group
+
       - a block with three Roam-native `Block Versions` (block 3.4): only the selected
       version is in the parent''s children, but all three are fetched; the selected
       one exports as the block''s text, and with `--render-alternatives` the other
@@ -284,6 +301,7 @@
     page:
       id: 11137
     refs:
+    - id: 4223
     - id: 5450
     - id: 5462
 - - string: This [para] features [__italics__]
@@ -301,7 +319,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 15
+    order: 16
     page:
       id: 11137
 - - string: Header 1
@@ -377,6 +395,24 @@
 - - id: 5450
     uid: OexZiLR_O
     title: '>'
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      Simplicity is prerequisite for reliability.
+
+
+      —Edsger Dijkstra'
+    id: 20217
+    uid: MFNKg5Uth
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    order: 0
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 20036
 - - string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
     id: 13455
     uid: ooVLwinzV
@@ -568,6 +604,9 @@
     order: 0
     page:
       id: 329
+- - id: 20036
+    uid: l2jkAMxGu
+    title: '!EPIGRAPH'
 - - string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
     id: 15780
     uid: HJu1OIKOr
@@ -626,7 +665,7 @@
     parents:
     - id: 11137
     - id: 11149
-    order: 14
+    order: 15
     page:
       id: 11137
 - - string: r2.c1
@@ -865,6 +904,25 @@
 - - id: 261
     uid: RXwAqq0_T
     title: tags
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      A language that doesn''t affect the way you think about programming is not worth
+      knowing.
+
+
+      —Alan Perlis'
+    id: 20218
+    uid: rrfGS1l0S
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    order: 1
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 20036
 - - string: ''
     children:
     - id: 13095
@@ -1047,6 +1105,24 @@
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      Premature optimization is the root of all evil.
+
+
+      —Donald Knuth'
+    id: 20219
+    uid: tyiBN5ns6
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    order: 2
+    page:
+      id: 11137
+    refs:
+    - id: 5450
+    - id: 20036
 - - string: r2.c2
     id: 13097
     uid: fY4nP4RUv

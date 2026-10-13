@@ -23,6 +23,7 @@
 > - Roam-native multi-line pull quote
 > - Roam-native TODO item (open and done)
 > - Roam-native table (3x3)
+> - three Roam-native epigraphs (block 1), the out-of-page targets of Test Article 3’s epigraph version group
 > - a block with three Roam-native `Block Versions` (block 3.4): only the selected version is in the parent’s children, but all three are fetched; the selected one exports as the block’s text, and with `--render-alternatives` the other two export beside it as alternatives
 > - this INFO `Callout box`, which contains Roam `page references`
 
@@ -201,6 +202,18 @@
   > **❝ This is a Roam multi-line Pull Quote  
   > this is the 2nd line**
 
+  - each child block contains an Epigraph
+    > *Simplicity is prerequisite for reliability.*
+    >
+    > —Edsger Dijkstra
+
+    > *A language that doesn’t affect the way you think about programming is not worth knowing.*
+    >
+    > —Alan Perlis
+
+    > *Premature optimization is the root of all evil.*
+    >
+    > —Donald Knuth
   - block 1.1
     - block 1.1.1
   - block 1.2

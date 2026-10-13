@@ -20,6 +20,25 @@ root_node:
   attrs: null
   blocks: null
 tree_network:
+- uid: Jn7ckh-Cx
+  id: 20224
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+  order: 32
+  heading: null
+  children:
+  - id: 20223
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: oVvEsh7dx
   id: 11737
   string: section 3.2
@@ -425,6 +444,25 @@ tree_network:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: 3EkSTJBAu
+  id: 20223
+  string: ((tyiBN5ns6))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20219
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20224
   props: null
   title: null
   attrs: null
@@ -1211,6 +1249,25 @@ tree_network:
   parents:
   - id: 4225
   - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: nYbnXviuu
+  id: 20221
+  string: ((QB8DChDBs))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11158
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  - id: 20222
   props: null
   title: null
   attrs: null
@@ -2387,6 +2444,25 @@ tree_network:
   title: null
   attrs: null
   blocks: null
+- uid: _o9v3JjHm
+  id: 20222
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+  order: 31
+  heading: null
+  children:
+  - id: 20221
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: nVv4pq7Fd
   id: 13494
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -3202,6 +3278,8 @@ tree_network:
   - id: 13479
   - id: 13481
   - id: 15114
+  - id: 20222
+  - id: 20224
   refs: null
   page:
     id: 4225
@@ -3760,6 +3838,32 @@ refs_by_id:
     title: null
     attrs: null
     blocks: null
+  '20051':
+    uid: WPG0VtvZe
+    id: 20051
+    string: '[[>]] [[!EPIGRAPH]]
+
+      Programming is an unnatural act.
+
+
+      —Alan Perlis'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '11186':
     uid: Yz0pqYfBh
     id: 11186
@@ -3774,6 +3878,32 @@ refs_by_id:
     parents:
     - id: 11137
     - id: 11149
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20050':
+    uid: 2_nzS4DSZ
+    id: 20050
+    string: '[[>]] [[!EPIGRAPH]]
+
+      Within a computer natural language is unnatural.
+
+
+      —Alan Perlis'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
     props: null
     title: null
     attrs: null
@@ -3907,6 +4037,32 @@ refs_by_id:
     children_view_type: null
     parents:
     - id: 4225
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20217':
+    uid: MFNKg5Uth
+    id: 20217
+    string: '[[>]] [[!EPIGRAPH]]
+
+      Simplicity is prerequisite for reliability.
+
+
+      —Edsger Dijkstra'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 11137
+    children_view_type: null
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
     props: null
     title: null
     attrs: null
@@ -4553,6 +4709,33 @@ refs_by_id:
     title: null
     attrs: null
     blocks: null
+  '20218':
+    uid: rrfGS1l0S
+    id: 20218
+    string: '[[>]] [[!EPIGRAPH]]
+
+      A language that doesn''t affect the way you think about programming is not worth
+      knowing.
+
+
+      —Alan Perlis'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 11137
+    children_view_type: null
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '5844':
     uid: lF-qY0Xrs
     id: 5844
@@ -4799,6 +4982,32 @@ refs_by_id:
     parents: null
     props: null
     title: guffin-meta
+    attrs: null
+    blocks: null
+  '20219':
+    uid: tyiBN5ns6
+    id: 20219
+    string: '[[>]] [[!EPIGRAPH]]
+
+      Premature optimization is the root of all evil.
+
+
+      —Donald Knuth'
+    order: 2
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 11137
+    children_view_type: null
+    parents:
+    - id: 11137
+    - id: 11149
+    - id: 20220
+    props: null
+    title: null
     attrs: null
     blocks: null
   '11167':
@@ -7681,58 +7890,6 @@ refs_by_id:
     title: null
     attrs: null
     blocks: null
-  '20050':
-    uid: 2_nzS4DSZ
-    id: 20050
-    string: '[[>]] [[!EPIGRAPH]]
-
-      Within a computer natural language is unnatural.
-
-
-      —Alan Perlis'
-    order: 0
-    heading: null
-    children: null
-    refs:
-    - id: 5450
-    - id: 20036
-    page:
-      id: 4225
-    children_view_type: null
-    parents:
-    - id: 4225
-    - id: 11716
-    - id: 20046
-    props: null
-    title: null
-    attrs: null
-    blocks: null
-  '20051':
-    uid: WPG0VtvZe
-    id: 20051
-    string: '[[>]] [[!EPIGRAPH]]
-
-      Programming is an unnatural act.
-
-
-      —Alan Perlis'
-    order: 1
-    heading: null
-    children: null
-    refs:
-    - id: 5450
-    - id: 20036
-    page:
-      id: 4225
-    children_view_type: null
-    parents:
-    - id: 4225
-    - id: 11716
-    - id: 20046
-    props: null
-    title: null
-    attrs: null
-    blocks: null
   '15248':
     uid: v2l4ZwcCw
     id: 15248
@@ -7791,6 +7948,8 @@ refs_by_id:
     - id: 13479
     - id: 13481
     - id: 15114
+    - id: 20222
+    - id: 20224
     refs: null
     page:
       id: 4225
@@ -8476,6 +8635,86 @@ refs_by_id:
     parents:
     - id: 4225
     - id: 4227
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20222':
+    uid: _o9v3JjHm
+    id: 20222
+    string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+    order: 31
+    heading: null
+    children:
+    - id: 20221
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20224':
+    uid: Jn7ckh-Cx
+    id: 20224
+    string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+    order: 32
+    heading: null
+    children:
+    - id: 20223
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4227
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20223':
+    uid: 3EkSTJBAu
+    id: 20223
+    string: ((tyiBN5ns6))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 20219
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20224
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20221':
+    uid: nYbnXviuu
+    id: 20221
+    string: ((QB8DChDBs))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11158
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4227
+    - id: 20222
     props: null
     title: null
     attrs: null
