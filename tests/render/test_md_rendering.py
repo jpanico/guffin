@@ -658,6 +658,64 @@ class TestAlternatives:
         assert "print(1)" in result
 
 
+class TestEpigraphAlternatives:
+    """A versioned reference to epigraphs renders as ONE block quote, a glyph-led paragraph per epigraph."""
+
+    _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
+    _MUTED: Final[str] = '<span style="color: #a0a0a0; font-size: 0.93em">'
+
+    @staticmethod
+    def _reference(uid: str) -> str:
+        return f"[> {uid}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+    def _render(self, tmp_path: Path, alternative_text: str | None = None) -> str:
+        epigraphs = [
+            QuoteBlockVertex(uid=f"epigr000{n}", quote_type=QuoteType.EPIGRAPH, quote=quote, attribution=source)
+            for n, quote, source in ((1, "Selected words.", "Dijkstra"), (2, "Other words.", "Perlis"))
+        ]
+        versed = TextVertex(
+            uid="versed001",
+            text=self._reference("epigr0001"),
+            alternatives=(
+                Alternative(
+                    uid="altuid001",
+                    text=self._reference("epigr0002") if alternative_text is None else alternative_text,
+                ),
+            ),
+        )
+        render(
+            RenderBundle(
+                content=VertexTree(
+                    tree_vertices=[PageVertex(uid="page00001", title="Doc", children=["versed001"]), versed],
+                    ref_vertices=epigraphs,
+                ),
+                view={},
+            ),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=self._ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False, render_alternatives=True),
+        )
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_group_is_one_block_quote_of_glyph_led_epigraphs(self, tmp_path: Path) -> None:
+        """Each epigraph is one paragraph of the quote: glyph and italic quotation, a hard break, its source."""
+        expected = (
+            "> ◉ *Selected words.*  \n"
+            "> —Dijkstra\n"
+            ">\n"
+            f"> {self._MUTED}○ *Other words.*</span>  \n"
+            f"> {self._MUTED}—Perlis</span>\n"
+        )
+        assert expected in self._render(tmp_path)
+
+    def test_plain_alternative_falls_back_to_blocks(self, tmp_path: Path) -> None:
+        """An alternative that is not a quotation leaves the group as glyph-led blocks in sequence."""
+        result = self._render(tmp_path, alternative_text="a plain other wording")
+        assert "> *Selected words.*" in result
+        assert '<span style="color: #737373; font-size: 0.93em">○ a plain other wording</span>' in result
+
+
 def _parts_book_bundle() -> RenderBundle:
     """A parts book: one part (with a chapter) followed by a root-level back-matter section."""
     link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="metapage1")
