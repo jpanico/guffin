@@ -18,6 +18,7 @@ root_node:
   props: null
   title: '[[Test Article]] 3'
   attrs: null
+  blocks: null
 tree_network:
 - uid: oVvEsh7dx
   id: 11737
@@ -35,6 +36,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zpSBqgxe4
   id: 11767
   string: '[[>]] [[!EXAMPLE]] This is the callout title
@@ -60,6 +62,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ljzh6p2pP
   id: 11950
   string: '[[January 1st, 2026]]'
@@ -78,6 +81,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yvlvNZwPC
   id: 11792
   string: '{{table}}'
@@ -98,6 +102,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SYZfEd44O
   id: 4225
   string: null
@@ -117,6 +122,7 @@ tree_network:
   props: null
   title: '[[Test Article]] 3'
   attrs: null
+  blocks: null
 - uid: 7XdTiY_ZF
   id: 11716
   string: Feature Content
@@ -147,6 +153,7 @@ tree_network:
   - id: 15793
   - id: 15794
   - id: 19389
+  - id: 20046
   refs: null
   page:
     id: 4225
@@ -156,6 +163,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QnqMI7-2J
   id: 11771
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
@@ -174,6 +182,45 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: KyGcFtLZ6
+  id: 20045
+  string: ((iiSioG0Ut))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11719
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 20041
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: gWrTHfYIn
+  id: 20041
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+  order: 34
+  heading: null
+  children:
+  - id: 20045
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: 5Zw9xiCRu
   id: 13497
   string: this is a child block of Block Quote
@@ -192,6 +239,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: CCrsgAEQ-
   id: 11775
   string: ((0EgPyHSZi))
@@ -210,6 +258,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: tU_piRCi2
   id: 15796
   string: '#c:FUCHSIA **inline Closed TODO ref ⟶**  ((I9tU2C5U6))'
@@ -228,6 +277,26 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: HnL3GnkY1
+  id: 20053
+  string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+  order: 35
+  heading: null
+  children:
+  - id: 20180
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: BlXTE6Z3J
   id: 13485
   string: ((kwybAuoGM))
@@ -246,6 +315,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: A7r0inxrX
   id: 13501
   string: this is a child block of Pull Quote
@@ -264,6 +334,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: l2hbop1R_
   id: 15247
   string: the child block contains a Roam hosted PDF Asset (upload)
@@ -281,6 +352,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: S81O4tG9t
   id: 11761
   string: ((J_Vt5_C6p))
@@ -299,6 +371,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uVAasvxug
   id: 19390
   string: '#c:FUCHSIA **inline PAGE-LINK HEADER ref ⟶**  ((ys3bY2GZa))'
@@ -317,6 +390,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: PhA5dB4h0
   id: 13482
   string: ((GeE5zPJOv))
@@ -335,6 +409,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: cKCA_EwGZ
   id: 11729
   string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((JRU5IhUB-))'
@@ -353,6 +428,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JCyO1oiVt
   id: 11742
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((zmb1Uac0S))'
@@ -371,6 +447,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 78w6MjSqo
   id: 11726
   string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((msKBuys0a))'
@@ -389,6 +466,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: I7pBlEhyE
   id: 11766
   string: the child block contains a Roam native callout
@@ -406,6 +484,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LKHCU5I3z
   id: 11755
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
@@ -424,6 +503,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BuP4ifx3v
   id: 11722
   string: This para features `inline-code`
@@ -440,6 +520,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _9zoxTAJt
   id: 11797
   string: r1.c2
@@ -460,6 +541,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yECzsUNPC
   id: 11725
   string: "```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
@@ -479,6 +561,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: NE6Bd_bdv
   id: 13472
   string: ((Yz0pqYfBh))
@@ -497,6 +580,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: nmFudOFkf
   id: 11713
   string: ((tWkumkdUE))
@@ -515,6 +599,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3N6vwGYd7
   id: 13491
   string: ((GVQMV2rff))
@@ -533,6 +618,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: poU5xk1rO
   id: 15113
   string: ((pTvGGeTlB))
@@ -552,6 +638,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vk7Up544K
   id: 11739
   string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
@@ -569,6 +656,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: chSSa7hfQ
   id: 11753
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((Rjt1IvrVq))'
@@ -587,6 +675,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xkmJLzW3G
   id: 11804
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
@@ -605,6 +694,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aVVGVVPLE
   id: 4234
   string: '{{embed: ((drtANJYTg))}}'
@@ -623,6 +713,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uTV8PLeSZ
   id: 11795
   string: Header 3
@@ -643,6 +734,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 6cWeACALe
   id: 13492
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
@@ -661,6 +753,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FWULkh5nm
   id: 11731
   string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((BuP4ifx3v))'
@@ -679,6 +772,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SYAWArc3S
   id: 11756
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((T6cykqu88))'
@@ -697,6 +791,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1AL7o_fUs
   id: 13463
   string: the child block contains a Roam native single-line block quote
@@ -714,6 +809,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8VCtZe0gi
   id: 13479
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
@@ -732,6 +828,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2Zo0HNy5o
   id: 11705
   string: ((LfXmNr-tV))
@@ -750,6 +847,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OegKTVVNv
   id: 13468
   string: the child block contains a Roam native multiline Pull Quote
@@ -767,6 +865,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: I1QOMCtdJ
   id: 11133
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -816,6 +915,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4kdWXzDjz
   id: 11790
   string: the child block contains a Roam native table
@@ -833,6 +933,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BXNgBxGq1
   id: 13481
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
@@ -851,6 +952,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3PA_Y7Osp
   id: 11770
   string: ((zpSBqgxe4))
@@ -869,6 +971,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Frzso359j
   id: 11803
   string: ((yvlvNZwPC))
@@ -887,6 +990,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kTP7bM3mT
   id: 13473
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**'
@@ -905,6 +1009,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dYYKZExzI
   id: 4229
   string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
@@ -923,6 +1028,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2yzYmXmgB
   id: 12818
   string: '#c:FUCHSIA **standalone PAGE EMBED ↓**'
@@ -941,6 +1047,57 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: WPG0VtvZe
+  id: 20051
+  string: '[[>]] [[!EPIGRAPH]]
+
+    Programming is an unnatural act.
+
+
+    —Alan Perlis'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  - id: 20046
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: 2_nzS4DSZ
+  id: 20050
+  string: '[[>]] [[!EPIGRAPH]]
+
+    Within a computer natural language is unnatural.
+
+
+    —Alan Perlis'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  - id: 20046
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: v2l4ZwcCw
   id: 15248
   string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
@@ -959,6 +1116,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: l7f2Qf90W
   id: 4230
   string: section 3.1
@@ -976,6 +1134,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FvK1_5iaO
   id: 13480
   string: ((ooVLwinzV))
@@ -994,6 +1153,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kwybAuoGM
   id: 13462
   string: '> This is a Markdown standard multi-line Block Quote
@@ -1016,6 +1176,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LfXmNr-tV
   id: 4228
   string: Section 3
@@ -1034,6 +1195,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: bwfQEnrOi
   id: 13488
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
@@ -1052,6 +1214,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7AR6910sJ
   id: 11744
   string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((GK_iI79mV))'
@@ -1070,6 +1233,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9uT8Z9xNJ
   id: 13467
   string: the child block contains a Roam native single line Pull Quote
@@ -1087,6 +1251,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vDvc-tHMh
   id: 15798
   string: ((_aXU5hZqQ))
@@ -1104,6 +1269,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uiBphM2Fb
   id: 15243
   string: ((pTvGGeTlB))
@@ -1122,6 +1288,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QB2Ym3btB
   id: 13456
   string: the child block contains a standard markdown single-line block quote
@@ -1139,6 +1306,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -K5d4a_ew
   id: 13490
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
@@ -1157,6 +1325,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5f-Isz9_x
   id: 15112
   string: 'guffin-meta:: #.rm-g'
@@ -1194,6 +1363,7 @@ tree_network:
       - uid
       - 10pBwqT7Q
       value: ' inline-native'
+  blocks: null
 - uid: Q-nJAf9KK
   id: 11721
   string: This para features ^^highlight^^
@@ -1210,6 +1380,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: t62Kwufzm
   id: 11749
   string: '#c:FUCHSIA **inline STRIKETHROUGH ref ⟶** ((7dBusjzDA))'
@@ -1228,6 +1399,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SivJQaD8x
   id: 11802
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
@@ -1246,6 +1418,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: j1_LH6NTQ
   id: 13495
   string: ((EOXU_iAwJ))
@@ -1264,6 +1437,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MbQObdYBx
   id: 11727
   string: '#c:FUCHSIA **inline BOLD ref ⟶** ((iiSioG0Ut))'
@@ -1282,6 +1456,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AS_i0QDod
   id: 13500
   string: this is a child block of Pull Quote
@@ -1300,6 +1475,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: nUhQLzz5a
   id: 13496
   string: this is a child block of Block Quote
@@ -1318,6 +1494,26 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: WjcMV3hOE
+  id: 20180
+  string: ((0gIQWqXJ1))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20052
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 20053
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: aM4rXqHLf
   id: 11793
   string: Header 1
@@ -1337,6 +1533,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1HipLqaCb
   id: 13263
   string: '#c:FUCHSIA **standalone CALLOUT EMBED ↓**'
@@ -1355,6 +1552,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XkSI5xwe5
   id: 4232
   string: '{{embed: ((LfXmNr-tV))}}'
@@ -1373,6 +1571,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8YtNUz59e
   id: 13477
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
@@ -1391,6 +1590,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ot5dpySxp
   id: 11709
   string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
@@ -1410,6 +1610,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HftouGiTA
   id: 11707
   string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
@@ -1428,6 +1629,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JRU5IhUB-
   id: 11720
   string: This para features ~~strikethrough~~
@@ -1444,6 +1646,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wta7y8AlI
   id: 11774
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
@@ -1462,10 +1665,11 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ys3bY2GZa
   id: 19389
   string: This header features a [[Test Article]] page link
-  order: 23
+  order: 24
   heading: 3
   children: null
   refs:
@@ -1479,6 +1683,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: b8ob6GcbI
   id: 11701
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
@@ -1497,6 +1702,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: DZsnC1-jM
   id: 11748
   string: '#c:FUCHSIA **inline BOLD ref ⟶** ((QB8DChDBs))'
@@ -1515,6 +1721,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: I9tU2C5U6
   id: 15794
   string: '{{[[DONE]]}} a short #c:ORANGE __ref closed todo__'
@@ -1533,6 +1740,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zAIxMFBIB
   id: 11745
   string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
@@ -1550,6 +1758,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zmb1Uac0S
   id: 11741
   string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
@@ -1567,6 +1776,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: iiSioG0Ut
   id: 11719
   string: This para features **bold**
@@ -1583,6 +1793,33 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: 0gIQWqXJ1
+  id: 20052
+  string: '[[>]] [[!EPIGRAPH]]
+
+    The question of whether Machines Can Think ... is about as relevant as the question
+    of whether Submarines Can Swim.
+
+
+    —Edsger Dijkstra'
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 20036
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  - id: 20046
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: fR8I0SL7Z
   id: 15799
   string: ((I9tU2C5U6))
@@ -1600,6 +1837,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 49jaaCtfI
   id: 13498
   string: this is a child block of Block Quote
@@ -1618,6 +1856,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: U_3KjJyqe
   id: 13458
   string: the child block contains a standard markdown multi-line block quote
@@ -1635,6 +1874,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: R1rSN0xY_
   id: 15114
   string: '#c:FUCHSIA **standalone PDF BLOCK ref, site-tagged pdf-render: "inline"
@@ -1656,6 +1896,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ZP4r7M_bw
   id: 13471
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -1674,6 +1915,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SCzzQaVai
   id: 11752
   string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((0EgPyHSZi))'
@@ -1692,6 +1934,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xGhF9KiwL
   id: 13478
   string: ((r09kXvUg-))
@@ -1710,6 +1953,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: H3vh9eS_F
   id: 11738
   string: section 3.3
@@ -1726,6 +1970,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vLxyRJcr2
   id: 11712
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
@@ -1744,6 +1989,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ipvsMyx77
   id: 11776
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
@@ -1762,6 +2008,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kfm7Kk_B3
   id: 13464
   string: the child block contains a Roam native multi-line block quote
@@ -1779,6 +2026,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 88ny0VOH4
   id: 11750
   string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((VvbwbLchA))'
@@ -1797,6 +2045,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: F9TXbzC0K
   id: 13465
   string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
@@ -1816,6 +2065,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GK_iI79mV
   id: 11743
   string: '#c:ORANGE __This span is underlined orange. __This span is not.'
@@ -1833,6 +2083,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8n19o7ito
   id: 11751
   string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((ETesnk4Zi))'
@@ -1851,6 +2102,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ZT_EVUtHq
   id: 11704
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
@@ -1869,6 +2121,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -w_qPso7p
   id: 12819
   string: '{{embed: [[CHAPTER XXXVI. Account of the City of Juju.]]}}'
@@ -1887,6 +2140,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: LfaVt18Iw
   id: 4226
   string: 'Internal (in-page) links:'
@@ -1927,6 +2181,8 @@ tree_network:
   - id: 15798
   - id: 15799
   - id: 19390
+  - id: 20041
+  - id: 20053
   refs: null
   page:
     id: 4225
@@ -1936,6 +2192,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vH2I8xRLZ
   id: 4231
   string: section 3.1.1
@@ -1953,6 +2210,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Ep6xoSIzu
   id: 11799
   string: r2.c1
@@ -1972,6 +2230,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: J185WLn64
   id: 11946
   string: '#c:FUCHSIA **inline DAILY NOTES PAGE ref ⟶** [[January 1st, 2026]]'
@@ -1990,6 +2249,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Z2d9G4m4V
   id: 11800
   string: r2.c2
@@ -2010,6 +2270,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: T5pku1yrU
   id: 11777
   string: ((C6xVTMnsh))
@@ -2028,6 +2289,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: cCYHqUNs8
   id: 11736
   string: ((yECzsUNPC))
@@ -2046,6 +2308,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: qj0DTMyzl
   id: 11692
   string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
@@ -2065,6 +2328,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kWNhvv437
   id: 11801
   string: r2.c3
@@ -2085,6 +2349,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oQP-qdCN_
   id: 13489
   string: ((kyagWLAKA))
@@ -2103,6 +2368,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _6Z-gzw6R
   id: 11757
   string: the child block contains a standalone image
@@ -2120,6 +2386,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: nVv4pq7Fd
   id: 13494
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -2138,6 +2405,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HB9MEj5W8
   id: 11754
   string: '#c:FUCHSIA **inline HIGHLIGHTED ORANGE ref ⟶**  ((9a_6taJAn))'
@@ -2156,6 +2424,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TlfIEaYF3
   id: 13470
   string: '[[>]] [[!QUOTE]] This is a Roam multi-line Pull Quote
@@ -2178,6 +2447,27 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: bLrC_kX_s
+  id: 20046
+  string: each child block contain and Epigraph
+  order: 23
+  heading: null
+  children:
+  - id: 20050
+  - id: 20051
+  - id: 20052
+  refs: null
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 11716
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: AaB6F4c0F
   id: 11747
   string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((2yQYaKIEV))'
@@ -2196,6 +2486,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dDNfZQ62b
   id: 11805
   string: ((wjN-kVF3B))
@@ -2214,6 +2505,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hWsG-ExLV
   id: 11700
   string: '#c:FUCHSIA **inline PARENT BLOCK ref ⟶**  ((LfaVt18Iw))'
@@ -2232,6 +2524,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 10pBwqT7Q
   id: 15111
   string: 'pdf-render:: inline-native'
@@ -2252,6 +2545,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yTLZTltae
   id: 13486
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -2270,6 +2564,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 48ZQ-2b7U
   id: 11740
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((vk7Up544K))'
@@ -2288,6 +2583,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: amzmDdIn3
   id: 11796
   string: r1.c1
@@ -2307,6 +2603,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: HbJZh5mTY
   id: 11730
   string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((Q-nJAf9KK))'
@@ -2325,6 +2622,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: KWFlp92fa
   id: 15795
   string: '#c:FUCHSIA **inline Open TODO ref ⟶**  ((_aXU5hZqQ))'
@@ -2343,6 +2641,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GQSLJp92S
   id: 11764
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
@@ -2361,6 +2660,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _aXU5hZqQ
   id: 15793
   string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
@@ -2379,6 +2679,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8g2Zv1RjH
   id: 13474
   string: ((6bcyfVpL2))
@@ -2397,6 +2698,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Y0xFlk7y6
   id: 11733
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
@@ -2415,6 +2717,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OYxDubiuN
   id: 15242
   string: '#c:FUCHSIA **standalone PDF BLOCK ref↓**'
@@ -2433,6 +2736,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: n528kYv5_
   id: 11710
   string: '#c:FUCHSIA **inline BLOCK ref ⟶** ((tWkumkdUE))'
@@ -2451,6 +2755,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SsmyWLZij
   id: 11732
   string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((7XdTiY_ZF))'
@@ -2469,6 +2774,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: tyOSwiz6l
   id: 11734
   string: ((7XdTiY_ZF))
@@ -2487,6 +2793,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: MYwGv0l_h
   id: 13487
   string: ((F9TXbzC0K))
@@ -2505,6 +2812,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 2IaJFXDZT
   id: 11746
   string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
@@ -2523,6 +2831,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Wq2dXafRn
   id: 11772
   string: ((fUle3zmFp))
@@ -2541,6 +2850,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: SnpYMTuWc
   id: 11798
   string: r1.c3
@@ -2561,6 +2871,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GVQMV2rff
   id: 13469
   string: '[[>]] [[!QUOTE]] This is a Roam single line Pull Quote'
@@ -2581,6 +2892,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: J_Vt5_C6p
   id: 11758
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)'
@@ -2598,6 +2910,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kyagWLAKA
   id: 13466
   string: '[[>]] This is a Roam standard multi-line Block Quote
@@ -2621,6 +2934,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8jkmASa1c
   id: 4233
   string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
@@ -2641,6 +2955,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 7os6rKZvg
   id: 11794
   string: Header 2
@@ -2661,6 +2976,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xc_eQjqyE
   id: 11702
   string: '[[[[Test Article]] 3]]'
@@ -2680,6 +2996,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: riLVzfX-6
   id: 11717
   string: This para features plain text
@@ -2696,6 +3013,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: msKBuys0a
   id: 11718
   string: This para features __italics__
@@ -2712,6 +3030,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: eUpKQiTiM
   id: 11765
   string: ((uj8YolCoE))
@@ -2730,6 +3049,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gxcUrCGPT
   id: 11135
   string: '#c:FUCHSIA **inline PLAIN TEXT ref ⟶** ((riLVzfX-6))'
@@ -2748,6 +3068,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EOXU_iAwJ
   id: 13457
   string: '> This is a __Markdown standard__ single line **Block Quote**'
@@ -2766,6 +3087,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: sjk6dh9FX
   id: 11949
   string: '#c:FUCHSIA **standalone DAILY NOTES PAGE ref ↓** '
@@ -2784,6 +3106,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: aGe-4YuyS
   id: 13264
   string: '{{[[embed]]: ((fUle3zmFp))}}'
@@ -2803,6 +3126,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JpKqqwnAJ
   id: 11708
   string: ((LfaVt18Iw))
@@ -2821,6 +3145,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 9ixJaPK7A
   id: 13475
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -2839,6 +3164,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d3T1YpYig
   id: 4227
   string: 'External (out-of-page) links:'
@@ -2885,6 +3211,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: acAIiueY_
   id: 11715
   string: '[[[[Test Article]] 2]]'
@@ -2904,6 +3231,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: f9sFZsg4A
   id: 13499
   string: this is a child block of Block Quote
@@ -2922,6 +3250,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: _kTRqm3O-
   id: 11769
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
@@ -2940,6 +3269,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: J1jloW5z0
   id: 13484
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**'
@@ -2958,6 +3288,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: sRZrRot81
   id: 13493
   string: ((TlfIEaYF3))
@@ -2976,6 +3307,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fZr8Ve9SS
   id: 11735
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
@@ -2994,6 +3326,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: AQqf7TbPh
   id: 11759
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
@@ -3012,6 +3345,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: l4BV03n4W
   id: 13476
   string: ((gq_29_H-7))
@@ -3030,6 +3364,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Dt8evi7AW
   id: 11714
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
@@ -3048,6 +3383,7 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
 refs_by_id:
   '11225':
     uid: wjN-kVF3B
@@ -3069,6 +3405,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11767':
     uid: zpSBqgxe4
     id: 11767
@@ -3095,6 +3432,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11792':
     uid: yvlvNZwPC
     id: 11792
@@ -3116,6 +3454,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4225':
     uid: SYZfEd44O
     id: 4225
@@ -3136,6 +3475,7 @@ refs_by_id:
     props: null
     title: '[[Test Article]] 3'
     attrs: null
+    blocks: null
   '11716':
     uid: 7XdTiY_ZF
     id: 11716
@@ -3167,6 +3507,7 @@ refs_by_id:
     - id: 15793
     - id: 15794
     - id: 19389
+    - id: 20046
     refs: null
     page:
       id: 4225
@@ -3176,6 +3517,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11454':
     uid: iF2Ey_unj
     id: 11454
@@ -3190,6 +3532,7 @@ refs_by_id:
     props: null
     title: c:ORANGE
     attrs: null
+    blocks: null
   '5456':
     uid: Q-T5fKOEq
     id: 5456
@@ -3204,6 +3547,7 @@ refs_by_id:
     props: null
     title: '!QUOTE'
     attrs: null
+    blocks: null
   '4223':
     uid: LBFKibPIj
     id: 4223
@@ -3238,6 +3582,7 @@ refs_by_id:
         value:
         - uid
         - 9ZtPB2yY3
+    blocks: null
   '11193':
     uid: r09kXvUg-
     id: 11193
@@ -3260,6 +3605,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11933':
     uid: Jy_Ee6w8E
     id: 11933
@@ -3274,6 +3620,7 @@ refs_by_id:
     props: null
     title: pdf-render
     attrs: null
+    blocks: null
   '14659':
     uid: fUle3zmFp
     id: 14659
@@ -3299,6 +3646,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '246':
     uid: q3JUnfC1_
     id: 246
@@ -3313,6 +3661,7 @@ refs_by_id:
     props: null
     title: pdf
     attrs: null
+    blocks: null
   '11722':
     uid: BuP4ifx3v
     id: 11722
@@ -3330,6 +3679,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11725':
     uid: yECzsUNPC
     id: 11725
@@ -3350,6 +3700,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11739':
     uid: vk7Up544K
     id: 11739
@@ -3368,6 +3719,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11157':
     uid: 2yQYaKIEV
     id: 11157
@@ -3385,6 +3737,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11187':
     uid: 6bcyfVpL2
     id: 11187
@@ -3406,6 +3759,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11186':
     uid: Yz0pqYfBh
     id: 11186
@@ -3423,6 +3777,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '5450':
     uid: OexZiLR_O
     id: 5450
@@ -3437,6 +3792,7 @@ refs_by_id:
     props: null
     title: '>'
     attrs: null
+    blocks: null
   '3328':
     uid: 0EgPyHSZi
     id: 3328
@@ -3455,6 +3811,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11667':
     uid: T6cykqu88
     id: 11667
@@ -3474,6 +3831,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11947':
     uid: 01-01-2026
     id: 11947
@@ -3488,6 +3846,7 @@ refs_by_id:
     props: null
     title: January 1st, 2026
     attrs: null
+    blocks: null
   '13462':
     uid: kwybAuoGM
     id: 13462
@@ -3511,6 +3870,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11664':
     uid: _EtYSMJNn
     id: 11664
@@ -3530,6 +3890,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4228':
     uid: LfXmNr-tV
     id: 4228
@@ -3549,6 +3910,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13455':
     uid: ooVLwinzV
     id: 13455
@@ -3568,6 +3930,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11721':
     uid: Q-nJAf9KK
     id: 11721
@@ -3585,6 +3948,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11172':
     uid: ETesnk4Zi
     id: 11172
@@ -3602,6 +3966,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11648':
     uid: Rjt1IvrVq
     id: 11648
@@ -3621,6 +3986,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11922':
     uid: pTvGGeTlB
     id: 11922
@@ -3657,6 +4023,7 @@ refs_by_id:
         value:
         - uid
         - BxGxeeGk1
+    blocks: null
   '867':
     uid: o2hTH3dbf
     id: 867
@@ -3671,6 +4038,7 @@ refs_by_id:
     props: null
     title: embed
     attrs: null
+    blocks: null
   '1371':
     uid: 7koyf_Urx
     id: 1371
@@ -3685,6 +4053,7 @@ refs_by_id:
     props: null
     title: DONE
     attrs: null
+    blocks: null
   '13454':
     uid: GeE5zPJOv
     id: 13454
@@ -3709,6 +4078,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11720':
     uid: JRU5IhUB-
     id: 11720
@@ -3726,6 +4096,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '5458':
     uid: lS4kg-3mw
     id: 5458
@@ -3740,6 +4111,7 @@ refs_by_id:
     props: null
     title: '!EXAMPLE'
     attrs: null
+    blocks: null
   '11188':
     uid: gq_29_H-7
     id: 11188
@@ -3758,11 +4130,12 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '19389':
     uid: ys3bY2GZa
     id: 19389
     string: This header features a [[Test Article]] page link
-    order: 23
+    order: 24
     heading: 3
     children: null
     refs:
@@ -3776,6 +4149,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11653':
     uid: 9a_6taJAn
     id: 11653
@@ -3795,6 +4169,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15794':
     uid: I9tU2C5U6
     id: 15794
@@ -3814,6 +4189,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11745':
     uid: zAIxMFBIB
     id: 11745
@@ -3832,6 +4208,22 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
+  '20036':
+    uid: l2jkAMxGu
+    id: 20036
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: '!EPIGRAPH'
+    attrs: null
+    blocks: null
   '11741':
     uid: zmb1Uac0S
     id: 11741
@@ -3850,6 +4242,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11719':
     uid: iiSioG0Ut
     id: 11719
@@ -3867,6 +4260,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12803':
     uid: TXGdKldN6
     id: 12803
@@ -3887,6 +4281,34 @@ refs_by_id:
     props: null
     title: CHAPTER XXXVI. Account of the City of Juju.
     attrs: []
+    blocks: null
+  '20052':
+    uid: 0gIQWqXJ1
+    id: 20052
+    string: '[[>]] [[!EPIGRAPH]]
+
+      The question of whether Machines Can Think ... is about as relevant as the question
+      of whether Submarines Can Swim.
+
+
+      —Edsger Dijkstra'
+    order: 2
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '13465':
     uid: F9TXbzC0K
     id: 13465
@@ -3907,6 +4329,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11743':
     uid: GK_iI79mV
     id: 11743
@@ -3925,6 +4348,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11124':
     uid: uj8YolCoE
     id: 11124
@@ -3944,6 +4368,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4226':
     uid: LfaVt18Iw
     id: 4226
@@ -3985,6 +4410,8 @@ refs_by_id:
     - id: 15798
     - id: 15799
     - id: 19390
+    - id: 20041
+    - id: 20053
     refs: null
     page:
       id: 4225
@@ -3994,6 +4421,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11674':
     uid: lDYWYqYSL
     id: 11674
@@ -4013,6 +4441,7 @@ refs_by_id:
     props: null
     title: '[[Test Article]] 2'
     attrs: null
+    blocks: null
   '321':
     uid: BxGxeeGk1
     id: 321
@@ -4027,6 +4456,7 @@ refs_by_id:
     props: null
     title: .rm-g
     attrs: null
+    blocks: null
   '13470':
     uid: TlfIEaYF3
     id: 13470
@@ -4050,6 +4480,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11171':
     uid: VvbwbLchA
     id: 11171
@@ -4067,6 +4498,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '5462':
     uid: ZgUWBRb7j
     id: 5462
@@ -4081,6 +4513,7 @@ refs_by_id:
     props: null
     title: '!INFO'
     attrs: null
+    blocks: null
   '11158':
     uid: QB8DChDBs
     id: 11158
@@ -4098,6 +4531,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '3332':
     uid: drtANJYTg
     id: 3332
@@ -4118,6 +4552,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '5844':
     uid: lF-qY0Xrs
     id: 5844
@@ -4132,6 +4567,7 @@ refs_by_id:
     props: null
     title: c:FUCHSIA
     attrs: null
+    blocks: null
   '3327':
     uid: 6olpFWiw1
     id: 3327
@@ -4151,6 +4587,7 @@ refs_by_id:
     props: null
     title: '[[Test Article]] 1'
     attrs: null
+    blocks: null
   '11175':
     uid: C6xVTMnsh
     id: 11175
@@ -4172,6 +4609,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15793':
     uid: _aXU5hZqQ
     id: 15793
@@ -4191,6 +4629,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13469':
     uid: GVQMV2rff
     id: 13469
@@ -4212,6 +4651,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11758':
     uid: J_Vt5_C6p
     id: 11758
@@ -4230,6 +4670,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13466':
     uid: kyagWLAKA
     id: 13466
@@ -4254,6 +4695,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11717':
     uid: riLVzfX-6
     id: 11717
@@ -4271,6 +4713,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11718':
     uid: msKBuys0a
     id: 11718
@@ -4288,6 +4731,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '329':
     uid: 20E2gCz7h
     id: 329
@@ -4303,6 +4747,7 @@ refs_by_id:
     props: null
     title: TODO
     attrs: null
+    blocks: null
   '13457':
     uid: EOXU_iAwJ
     id: 13457
@@ -4322,6 +4767,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11170':
     uid: 7dBusjzDA
     id: 11170
@@ -4339,6 +4785,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11839':
     uid: 2xY4zCjId
     id: 11839
@@ -4353,6 +4800,7 @@ refs_by_id:
     props: null
     title: guffin-meta
     attrs: null
+    blocks: null
   '11167':
     uid: tWkumkdUE
     id: 11167
@@ -4372,6 +4820,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13496':
     uid: nUhQLzz5a
     id: 13496
@@ -4391,6 +4840,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '1348':
     uid: jntuNAGBs
     id: 1348
@@ -4407,6 +4857,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13499':
     uid: f9sFZsg4A
     id: 13499
@@ -4426,6 +4877,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13500':
     uid: AS_i0QDod
     id: 13500
@@ -4445,6 +4897,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '3329':
     uid: wdMgyBiP9
     id: 3329
@@ -4463,6 +4916,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '3330':
     uid: 40bvW14UU
     id: 3330
@@ -4482,6 +4936,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11113':
     uid: cNW8lmXIM
     id: 11113
@@ -4531,6 +4986,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '3333':
     uid: JW5PswS6v
     id: 3333
@@ -4550,6 +5006,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11927':
     uid: NEINf57lK
     id: 11927
@@ -4585,6 +5042,7 @@ refs_by_id:
         - uid
         - YCexI8mL4
         value: ' pdf-render: "inline"'
+    blocks: null
   '11936':
     uid: zE0QjA3N9
     id: 11936
@@ -4623,6 +5081,7 @@ refs_by_id:
         value:
         - uid
         - BxGxeeGk1
+    blocks: null
   '11938':
     uid: 5baESCL4s
     id: 11938
@@ -4645,6 +5104,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11939':
     uid: dR1TZ3P8J
     id: 11939
@@ -4670,6 +5130,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11941':
     uid: ivTC6d-rG
     id: 11941
@@ -4707,6 +5168,7 @@ refs_by_id:
         - uid
         - 8zcad3VSa
         value: ' false'
+    blocks: null
   '11942':
     uid: 8zcad3VSa
     id: 11942
@@ -4727,6 +5189,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11928':
     uid: YCexI8mL4
     id: 11928
@@ -4746,6 +5209,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11934':
     uid: J4TkjuhVB
     id: 11934
@@ -4784,6 +5248,7 @@ refs_by_id:
         value:
         - uid
         - BxGxeeGk1
+    blocks: null
   '11930':
     uid: GvRO438Ze
     id: 11930
@@ -4822,6 +5287,7 @@ refs_by_id:
         - uid
         - EWMNZcPZX
         value: ' inline-native'
+    blocks: null
   '11931':
     uid: EWMNZcPZX
     id: 11931
@@ -4843,6 +5309,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11921':
     uid: 4ahwZimtO
     id: 11921
@@ -4861,6 +5328,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4026':
     uid: 5f1ahOFdp
     id: 4026
@@ -4879,6 +5347,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '14457':
     uid: nhX6sTxSE
     id: 14457
@@ -4905,6 +5374,7 @@ refs_by_id:
             width: 349
     title: null
     attrs: null
+    blocks: null
   '14458':
     uid: BeDkLXjgQ
     id: 14458
@@ -4926,6 +5396,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '14460':
     uid: 8VPJRGOt4
     id: 14460
@@ -4947,6 +5418,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '14461':
     uid: 1NasQjcTQ
     id: 14461
@@ -4968,6 +5440,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '14459':
     uid: mfYCtWH-T
     id: 14459
@@ -4989,6 +5462,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4025':
     uid: yFUau9Cpg
     id: 4025
@@ -5008,6 +5482,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11163':
     uid: OaTXPl93p
     id: 11163
@@ -5028,6 +5503,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15800':
     uid: oTrZWi_EL
     id: 15800
@@ -5048,6 +5524,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15801':
     uid: it3wsZ7-H
     id: 15801
@@ -5069,6 +5546,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15802':
     uid: Wlzl_dhg_
     id: 15802
@@ -5088,6 +5566,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11164':
     uid: zZG-BfWvs
     id: 11164
@@ -5111,6 +5590,7 @@ refs_by_id:
           height: null
     title: null
     attrs: null
+    blocks: null
   '4028':
     uid: bxkcECGwN
     id: 4028
@@ -5131,6 +5611,7 @@ refs_by_id:
       ah-level: h4
     title: null
     attrs: null
+    blocks: null
   '13501':
     uid: A7r0inxrX
     id: 13501
@@ -5150,6 +5631,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11675':
     uid: MmvJZhQNJ
     id: 11675
@@ -5170,6 +5652,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11677':
     uid: sD1C9ifkG
     id: 11677
@@ -5189,6 +5672,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11682':
     uid: DsogfVzX9
     id: 11682
@@ -5208,6 +5692,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11807':
     uid: sPZ2xmBBS
     id: 11807
@@ -5227,6 +5712,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11808':
     uid: UQQwogj1M
     id: 11808
@@ -5245,6 +5731,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11809':
     uid: fv5nh7u81
     id: 11809
@@ -5262,6 +5749,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11810':
     uid: InqcJLiuz
     id: 11810
@@ -5279,6 +5767,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11970':
     uid: 2jjY8-fQz
     id: 11970
@@ -5297,6 +5786,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11683':
     uid: 99rZhIPZW
     id: 11683
@@ -5314,6 +5804,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11684':
     uid: d_3REDRrO
     id: 11684
@@ -5333,6 +5824,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11686':
     uid: Bb49MOLyE
     id: 11686
@@ -5352,6 +5844,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11968':
     uid: 1O4yGV-Tq
     id: 11968
@@ -5370,6 +5863,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11969':
     uid: FVou-DBMP
     id: 11969
@@ -5388,6 +5882,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11966':
     uid: cxJA2xr-u
     id: 11966
@@ -5406,6 +5901,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11967':
     uid: D7gYVJoVj
     id: 11967
@@ -5424,6 +5920,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11678':
     uid: VH0mXM0rw
     id: 11678
@@ -5441,6 +5938,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11679':
     uid: YyeRpjbFD
     id: 11679
@@ -5459,6 +5957,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11681':
     uid: gmLJbWZYp
     id: 11681
@@ -5476,6 +5975,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11680':
     uid: KUi_6ooZj
     id: 11680
@@ -5494,6 +5994,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4229':
     uid: dYYKZExzI
     id: 4229
@@ -5513,6 +6014,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11135':
     uid: gxcUrCGPT
     id: 11135
@@ -5532,6 +6034,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11692':
     uid: qj0DTMyzl
     id: 11692
@@ -5552,6 +6055,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11700':
     uid: hWsG-ExLV
     id: 11700
@@ -5571,6 +6075,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11701':
     uid: b8ob6GcbI
     id: 11701
@@ -5590,6 +6095,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11704':
     uid: ZT_EVUtHq
     id: 11704
@@ -5609,6 +6115,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11707':
     uid: HftouGiTA
     id: 11707
@@ -5628,6 +6135,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11726':
     uid: 78w6MjSqo
     id: 11726
@@ -5647,6 +6155,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11727':
     uid: MbQObdYBx
     id: 11727
@@ -5666,6 +6175,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11729':
     uid: cKCA_EwGZ
     id: 11729
@@ -5685,6 +6195,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11730':
     uid: HbJZh5mTY
     id: 11730
@@ -5704,6 +6215,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11731':
     uid: FWULkh5nm
     id: 11731
@@ -5723,6 +6235,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11732':
     uid: SsmyWLZij
     id: 11732
@@ -5742,6 +6255,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11733':
     uid: Y0xFlk7y6
     id: 11733
@@ -5761,6 +6275,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11735':
     uid: fZr8Ve9SS
     id: 11735
@@ -5780,6 +6295,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11740':
     uid: 48ZQ-2b7U
     id: 11740
@@ -5799,6 +6315,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11742':
     uid: JCyO1oiVt
     id: 11742
@@ -5818,6 +6335,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11744':
     uid: 7AR6910sJ
     id: 11744
@@ -5837,6 +6355,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11746':
     uid: 2IaJFXDZT
     id: 11746
@@ -5856,6 +6375,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11759':
     uid: AQqf7TbPh
     id: 11759
@@ -5875,6 +6395,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11769':
     uid: _kTRqm3O-
     id: 11769
@@ -5894,6 +6415,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11802':
     uid: SivJQaD8x
     id: 11802
@@ -5913,6 +6435,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13484':
     uid: J1jloW5z0
     id: 13484
@@ -5933,6 +6456,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13486':
     uid: yTLZTltae
     id: 13486
@@ -5952,6 +6476,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13488':
     uid: bwfQEnrOi
     id: 13488
@@ -5971,6 +6496,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13490':
     uid: -K5d4a_ew
     id: 13490
@@ -5990,6 +6516,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13492':
     uid: 6cWeACALe
     id: 13492
@@ -6009,6 +6536,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13494':
     uid: nVv4pq7Fd
     id: 13494
@@ -6029,6 +6557,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15242':
     uid: OYxDubiuN
     id: 15242
@@ -6048,6 +6577,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15795':
     uid: KWFlp92fa
     id: 15795
@@ -6067,6 +6597,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15796':
     uid: tU_piRCi2
     id: 15796
@@ -6086,6 +6617,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15798':
     uid: vDvc-tHMh
     id: 15798
@@ -6104,6 +6636,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15799':
     uid: fR8I0SL7Z
     id: 15799
@@ -6122,6 +6655,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '19390':
     uid: uVAasvxug
     id: 19390
@@ -6141,6 +6675,87 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
+  '20041':
+    uid: gWrTHfYIn
+    id: 20041
+    string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+    order: 34
+    heading: null
+    children:
+    - id: 20045
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20053':
+    uid: HnL3GnkY1
+    id: 20053
+    string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+    order: 35
+    heading: null
+    children:
+    - id: 20180
+    refs:
+    - id: 5844
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4226
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20180':
+    uid: WjcMV3hOE
+    id: 20180
+    string: ((0gIQWqXJ1))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 20052
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20053
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20045':
+    uid: KyGcFtLZ6
+    id: 20045
+    string: ((iiSioG0Ut))
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 11719
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20041
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '15243':
     uid: uiBphM2Fb
     id: 15243
@@ -6160,6 +6775,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13495':
     uid: j1_LH6NTQ
     id: 13495
@@ -6179,6 +6795,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13493':
     uid: sRZrRot81
     id: 13493
@@ -6198,6 +6815,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13491':
     uid: 3N6vwGYd7
     id: 13491
@@ -6217,6 +6835,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13489':
     uid: oQP-qdCN_
     id: 13489
@@ -6236,6 +6855,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13487':
     uid: MYwGv0l_h
     id: 13487
@@ -6255,6 +6875,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13485':
     uid: BlXTE6Z3J
     id: 13485
@@ -6274,6 +6895,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11803':
     uid: Frzso359j
     id: 11803
@@ -6293,6 +6915,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11770':
     uid: 3PA_Y7Osp
     id: 11770
@@ -6312,6 +6935,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11761':
     uid: S81O4tG9t
     id: 11761
@@ -6331,6 +6955,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11736':
     uid: cCYHqUNs8
     id: 11736
@@ -6350,6 +6975,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11734':
     uid: tyOSwiz6l
     id: 11734
@@ -6369,6 +6995,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11708':
     uid: JpKqqwnAJ
     id: 11708
@@ -6388,6 +7015,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11705':
     uid: 2Zo0HNy5o
     id: 11705
@@ -6407,6 +7035,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11702':
     uid: xc_eQjqyE
     id: 11702
@@ -6427,6 +7056,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4232':
     uid: XkSI5xwe5
     id: 4232
@@ -6446,6 +7076,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13498':
     uid: 49jaaCtfI
     id: 13498
@@ -6465,6 +7096,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12806':
     uid: iohUB9lvw
     id: 12806
@@ -6483,6 +7115,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12807':
     uid: lLFPOPmLr
     id: 12807
@@ -6500,6 +7133,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12808':
     uid: noRek_x_o
     id: 12808
@@ -6516,6 +7150,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12809':
     uid: d9f4W5Rfl
     id: 12809
@@ -6543,6 +7178,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12810':
     uid: LFOf7Pdvc
     id: 12810
@@ -6566,6 +7202,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12811':
     uid: CwYpKBCiQ
     id: 12811
@@ -6599,6 +7236,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4230':
     uid: l7f2Qf90W
     id: 4230
@@ -6617,6 +7255,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11737':
     uid: oVvEsh7dx
     id: 11737
@@ -6634,6 +7273,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11738':
     uid: H3vh9eS_F
     id: 11738
@@ -6651,6 +7291,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4231':
     uid: vH2I8xRLZ
     id: 4231
@@ -6669,6 +7310,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13497':
     uid: 5Zw9xiCRu
     id: 13497
@@ -6688,6 +7330,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '3331':
     uid: 3BX-iWc-p
     id: 3331
@@ -6706,6 +7349,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4758':
     uid: Ma5KGUH9O
     id: 4758
@@ -6723,6 +7367,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '3334':
     uid: TaN67WqnA
     id: 3334
@@ -6743,6 +7388,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11165':
     uid: 4_GrZ9su6
     id: 11165
@@ -6763,6 +7409,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11806':
     uid: pfkKREU_Y
     id: 11806
@@ -6783,6 +7430,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '18202':
     uid: lXi4SgSvz
     id: 18202
@@ -6802,6 +7450,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '18204':
     uid: JSrSVApJ_
     id: 18204
@@ -6820,6 +7469,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11757':
     uid: _6Z-gzw6R
     id: 11757
@@ -6838,6 +7488,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11766':
     uid: I7pBlEhyE
     id: 11766
@@ -6856,6 +7507,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11790':
     uid: 4kdWXzDjz
     id: 11790
@@ -6874,6 +7526,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13456':
     uid: QB2Ym3btB
     id: 13456
@@ -6892,6 +7545,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13458':
     uid: U_3KjJyqe
     id: 13458
@@ -6910,6 +7564,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13463':
     uid: 1AL7o_fUs
     id: 13463
@@ -6928,6 +7583,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13464':
     uid: kfm7Kk_B3
     id: 13464
@@ -6946,6 +7602,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13467':
     uid: 9uT8Z9xNJ
     id: 13467
@@ -6964,6 +7621,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13468':
     uid: OegKTVVNv
     id: 13468
@@ -6982,6 +7640,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15247':
     uid: l2hbop1R_
     id: 15247
@@ -7000,6 +7659,80 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
+  '20046':
+    uid: bLrC_kX_s
+    id: 20046
+    string: each child block contain and Epigraph
+    order: 23
+    heading: null
+    children:
+    - id: 20050
+    - id: 20051
+    - id: 20052
+    refs: null
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20050':
+    uid: 2_nzS4DSZ
+    id: 20050
+    string: '[[>]] [[!EPIGRAPH]]
+
+      Within a computer natural language is unnatural.
+
+
+      —Alan Perlis'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20051':
+    uid: WPG0VtvZe
+    id: 20051
+    string: '[[>]] [[!EPIGRAPH]]
+
+      Programming is an unnatural act.
+
+
+      —Alan Perlis'
+    order: 1
+    heading: null
+    children: null
+    refs:
+    - id: 5450
+    - id: 20036
+    page:
+      id: 4225
+    children_view_type: null
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '15248':
     uid: v2l4ZwcCw
     id: 15248
@@ -7019,6 +7752,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4227':
     uid: d3T1YpYig
     id: 4227
@@ -7066,6 +7800,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11133':
     uid: I1QOMCtdJ
     id: 11133
@@ -7116,6 +7851,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4233':
     uid: 8jkmASa1c
     id: 4233
@@ -7137,6 +7873,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11709':
     uid: ot5dpySxp
     id: 11709
@@ -7157,6 +7894,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11710':
     uid: n528kYv5_
     id: 11710
@@ -7176,6 +7914,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11712':
     uid: vLxyRJcr2
     id: 11712
@@ -7195,6 +7934,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11714':
     uid: Dt8evi7AW
     id: 11714
@@ -7214,6 +7954,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11747':
     uid: AaB6F4c0F
     id: 11747
@@ -7233,6 +7974,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11748':
     uid: DZsnC1-jM
     id: 11748
@@ -7252,6 +7994,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11749':
     uid: t62Kwufzm
     id: 11749
@@ -7271,6 +8014,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11750':
     uid: 88ny0VOH4
     id: 11750
@@ -7290,6 +8034,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11751':
     uid: 8n19o7ito
     id: 11751
@@ -7309,6 +8054,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11752':
     uid: SCzzQaVai
     id: 11752
@@ -7328,6 +8074,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11753':
     uid: chSSa7hfQ
     id: 11753
@@ -7347,6 +8094,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11754':
     uid: HB9MEj5W8
     id: 11754
@@ -7366,6 +8114,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11755':
     uid: LKHCU5I3z
     id: 11755
@@ -7385,6 +8134,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11756':
     uid: SYAWArc3S
     id: 11756
@@ -7404,6 +8154,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11764':
     uid: GQSLJp92S
     id: 11764
@@ -7423,6 +8174,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11771':
     uid: QnqMI7-2J
     id: 11771
@@ -7442,6 +8194,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11774':
     uid: wta7y8AlI
     id: 11774
@@ -7461,6 +8214,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11776':
     uid: ipvsMyx77
     id: 11776
@@ -7480,6 +8234,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11804':
     uid: xkmJLzW3G
     id: 11804
@@ -7499,6 +8254,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11946':
     uid: J185WLn64
     id: 11946
@@ -7518,6 +8274,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11949':
     uid: sjk6dh9FX
     id: 11949
@@ -7537,6 +8294,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12818':
     uid: 2yzYmXmgB
     id: 12818
@@ -7556,6 +8314,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13263':
     uid: 1HipLqaCb
     id: 13263
@@ -7575,6 +8334,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13471':
     uid: ZP4r7M_bw
     id: 13471
@@ -7595,6 +8355,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13473':
     uid: kTP7bM3mT
     id: 13473
@@ -7615,6 +8376,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13475':
     uid: 9ixJaPK7A
     id: 13475
@@ -7634,6 +8396,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13477':
     uid: 8YtNUz59e
     id: 13477
@@ -7653,6 +8416,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13479':
     uid: 8VCtZe0gi
     id: 13479
@@ -7672,6 +8436,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13481':
     uid: BXNgBxGq1
     id: 13481
@@ -7691,6 +8456,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15114':
     uid: R1rSN0xY_
     id: 15114
@@ -7713,6 +8479,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15113':
     uid: poU5xk1rO
     id: 15113
@@ -7733,6 +8500,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '15112':
     uid: 5f-Isz9_x
     id: 15112
@@ -7771,6 +8539,7 @@ refs_by_id:
         - uid
         - 10pBwqT7Q
         value: ' inline-native'
+    blocks: null
   '15111':
     uid: 10pBwqT7Q
     id: 15111
@@ -7792,6 +8561,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13482':
     uid: PhA5dB4h0
     id: 13482
@@ -7811,6 +8581,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13480':
     uid: FvK1_5iaO
     id: 13480
@@ -7830,6 +8601,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13478':
     uid: xGhF9KiwL
     id: 13478
@@ -7849,6 +8621,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13476':
     uid: l4BV03n4W
     id: 13476
@@ -7868,6 +8641,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13474':
     uid: 8g2Zv1RjH
     id: 13474
@@ -7887,6 +8661,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13472':
     uid: NE6Bd_bdv
     id: 13472
@@ -7906,6 +8681,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '13264':
     uid: aGe-4YuyS
     id: 13264
@@ -7926,6 +8702,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '12819':
     uid: -w_qPso7p
     id: 12819
@@ -7945,6 +8722,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11950':
     uid: ljzh6p2pP
     id: 11950
@@ -7964,6 +8742,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11805':
     uid: dDNfZQ62b
     id: 11805
@@ -7983,6 +8762,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11777':
     uid: T5pku1yrU
     id: 11777
@@ -8002,6 +8782,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11775':
     uid: CCrsgAEQ-
     id: 11775
@@ -8021,6 +8802,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11772':
     uid: Wq2dXafRn
     id: 11772
@@ -8040,6 +8822,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11765':
     uid: eUpKQiTiM
     id: 11765
@@ -8059,6 +8842,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11715':
     uid: acAIiueY_
     id: 11715
@@ -8079,6 +8863,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11713':
     uid: nmFudOFkf
     id: 11713
@@ -8098,6 +8883,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '4234':
     uid: aVVGVVPLE
     id: 4234
@@ -8117,6 +8903,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11793':
     uid: aM4rXqHLf
     id: 11793
@@ -8137,6 +8924,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11796':
     uid: amzmDdIn3
     id: 11796
@@ -8157,6 +8945,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11799':
     uid: Ep6xoSIzu
     id: 11799
@@ -8177,6 +8966,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11800':
     uid: Z2d9G4m4V
     id: 11800
@@ -8198,6 +8988,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11801':
     uid: kWNhvv437
     id: 11801
@@ -8219,6 +9010,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11797':
     uid: _9zoxTAJt
     id: 11797
@@ -8240,6 +9032,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11798':
     uid: SnpYMTuWc
     id: 11798
@@ -8261,6 +9054,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11794':
     uid: 7os6rKZvg
     id: 11794
@@ -8282,6 +9076,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11795':
     uid: uTV8PLeSZ
     id: 11795
@@ -8303,6 +9098,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11226':
     uid: 6NS-Qw4Mm
     id: 11226
@@ -8322,6 +9118,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11229':
     uid: bwUBoF2ee
     id: 11229
@@ -8341,6 +9138,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11232':
     uid: 0hoWxyjNR
     id: 11232
@@ -8360,6 +9158,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11233':
     uid: jrIkVSHfA
     id: 11233
@@ -8380,6 +9179,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11234':
     uid: hD2qvZqjh
     id: 11234
@@ -8400,6 +9200,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11230':
     uid: 5JwQ2Fea-
     id: 11230
@@ -8420,6 +9221,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11231':
     uid: 9XUHIOSY0
     id: 11231
@@ -8440,6 +9242,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11227':
     uid: 4BL7hTjHS
     id: 11227
@@ -8460,6 +9263,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '11228':
     uid: iAxwSSBmi
     id: 11228
@@ -8480,6 +9284,7 @@ refs_by_id:
     props: null
     title: null
     attrs: null
+    blocks: null
   '261':
     uid: RXwAqq0_T
     id: 261
@@ -8494,6 +9299,7 @@ refs_by_id:
     props: null
     title: tags
     attrs: null
+    blocks: null
   '6535':
     uid: 9ZtPB2yY3
     id: 6535
@@ -8508,6 +9314,7 @@ refs_by_id:
     props: null
     title: Publishing
     attrs: null
+    blocks: null
   '11932':
     uid: vuPFRAwZI
     id: 11932
@@ -8522,6 +9329,7 @@ refs_by_id:
     props: null
     title: the following block embeds a PDF with guffin-meta
     attrs: null
+    blocks: null
   '11943':
     uid: Jv502NGK6
     id: 11943
@@ -8536,6 +9344,7 @@ refs_by_id:
     props: null
     title: publish
     attrs: null
+    blocks: null
   '12916':
     uid: DaltU9ClP
     id: 12916
@@ -8558,6 +9367,7 @@ refs_by_id:
           height: null
     title: null
     attrs: null
+    blocks: null
   '12919':
     uid: jN4ClkAEl
     id: 12919
@@ -8580,6 +9390,7 @@ refs_by_id:
           height: null
     title: null
     attrs: null
+    blocks: null
   '12920':
     uid: VxYhmVTG3
     id: 12920
@@ -8602,6 +9413,7 @@ refs_by_id:
           height: null
     title: null
     attrs: null
+    blocks: null
   '12925':
     uid: DPW-zEDaU
     id: 12925
@@ -8624,3 +9436,4 @@ refs_by_id:
           height: null
     title: null
     attrs: null
+    blocks: null

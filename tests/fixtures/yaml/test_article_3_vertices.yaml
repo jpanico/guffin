@@ -77,6 +77,7 @@
   - 9uT8Z9xNJ
   - OegKTVVNv
   - l2hbop1R_
+  - bLrC_kX_s
   - ys3bY2GZa
   text: Feature Content
   heading_level: 1
@@ -310,6 +311,38 @@
     store_type: firebase-storage
     is_encrypted: true
   media_type: application/pdf
+- vertex_type: guffin/text
+  uid: bLrC_kX_s
+  children:
+  - 2_nzS4DSZ
+  - WPG0VtvZe
+  - 0gIQWqXJ1
+  text: each child block contain and Epigraph
+- vertex_type: guffin/quote-block
+  uid: 2_nzS4DSZ
+  refs:
+  - OexZiLR_O
+  - l2jkAMxGu
+  quote_type: epigraph
+  quote: Within a computer natural language is unnatural.
+  attribution: Alan Perlis
+- vertex_type: guffin/quote-block
+  uid: WPG0VtvZe
+  refs:
+  - OexZiLR_O
+  - l2jkAMxGu
+  quote_type: epigraph
+  quote: Programming is an unnatural act.
+  attribution: Alan Perlis
+- vertex_type: guffin/quote-block
+  uid: 0gIQWqXJ1
+  refs:
+  - OexZiLR_O
+  - l2jkAMxGu
+  quote_type: epigraph
+  quote: The question of whether Machines Can Think ... is about as relevant as the
+    question of whether Submarines Can Swim.
+  attribution: Edsger Dijkstra
 - vertex_type: guffin/heading
   uid: ys3bY2GZa
   refs:
@@ -353,6 +386,8 @@
   - 6cWeACALe
   - _kTRqm3O-
   - SivJQaD8x
+  - gWrTHfYIn
+  - HnL3GnkY1
   text: 'Internal (in-page) links:'
   heading_level: 1
 - vertex_type: guffin/text
@@ -684,6 +719,56 @@
   refs:
   - yvlvNZwPC
   text: '[{{table}}](x-guffin:vertex/yvlvNZwPC)'
+- vertex_type: guffin/text
+  uid: gWrTHfYIn
+  children:
+  - KyGcFtLZ6
+  refs:
+  - lF-qY0Xrs
+  text: '[**VERSION GROUP of standalone BLOCK ref (text)↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: KyGcFtLZ6
+  refs:
+  - iiSioG0Ut
+  alternatives:
+  - uid: VsKJpNrBs
+    text: '[This para features plain text](x-guffin:vertex/riLVzfX-6)'
+  - uid: 0TqFzRSv7
+    text: '[This para features *italics*](x-guffin:vertex/msKBuys0a)'
+  text: '[This para features **bold**](x-guffin:vertex/iiSioG0Ut)'
+- vertex_type: guffin/text
+  uid: HnL3GnkY1
+  children:
+  - WjcMV3hOE
+  refs:
+  - lF-qY0Xrs
+  text: '[**VERSION GROUP of standalone BLOCK ref (epigraph)↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: WjcMV3hOE
+  refs:
+  - 0gIQWqXJ1
+  alternatives:
+  - uid: jR6oLEa8r
+    text: '[[[>]] [[!EPIGRAPH]]
+
+      Within a computer natural language is unnatural.
+
+
+      —Alan Perlis](x-guffin:vertex/2_nzS4DSZ)'
+  - uid: v8xVeZhTr
+    text: '[[[>]] [[!EPIGRAPH]]
+
+      Programming is an unnatural act.
+
+
+      —Alan Perlis](x-guffin:vertex/WPG0VtvZe)'
+  text: '[[[>]] [[!EPIGRAPH]]
+
+    The question of whether Machines Can Think ... is about as relevant as the question
+    of whether Submarines Can Swim.
+
+
+    —Edsger Dijkstra](x-guffin:vertex/0gIQWqXJ1)'
 - vertex_type: guffin/heading
   uid: d3T1YpYig
   children:

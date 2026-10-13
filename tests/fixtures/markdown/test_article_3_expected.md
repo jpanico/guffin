@@ -92,6 +92,18 @@ def fizz_buzz(limit: int = 100):
   - this is a child block of Pull Quote
 - the child block contains a Roam hosted PDF Asset (upload)
   - [u-F9pv-nvn.pdf](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03 "u-F9pv-nvn.pdf")
+- each child block contain and Epigraph
+  > *Within a computer natural language is unnatural.*
+  >
+  > —Alan Perlis
+
+  > *Programming is an unnatural act.*
+  >
+  > —Alan Perlis
+
+  > *The question of whether Machines Can Think … is about as relevant as the question of whether Submarines Can Swim.*
+  >
+  > —Edsger Dijkstra
 
 ### This header features a Test Article page link
 
@@ -177,6 +189,12 @@ def fizz_buzz(limit: int = 100):
   |----------|----------|----------|
   | r1.c1    | r1.c2    | r1.c3    |
   | r2.c1    | r2.c2    | r2.c3    |
+- <span style="color: fuchsia">**VERSION GROUP of standalone BLOCK ref (text)↓**</span>
+  - This para features **bold**
+- <span style="color: fuchsia">**VERSION GROUP of standalone BLOCK ref (epigraph)↓**</span>
+  > *The question of whether Machines Can Think … is about as relevant as the question of whether Submarines Can Swim.*
+  >
+  > —Edsger Dijkstra
 
 ## External (out-of-page) links:
 

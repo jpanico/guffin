@@ -187,6 +187,7 @@
     - id: 15793
     - id: 15794
     - id: 19389
+    - id: 20046
     id: 11716
     uid: 7XdTiY_ZF
     parents:
@@ -207,6 +208,18 @@
       id: 4225
     refs:
     - id: 5844
+- - string: ((iiSioG0Ut))
+    id: 20045
+    uid: KyGcFtLZ6
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20041
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11719
 - - id: 11454
     uid: iF2Ey_unj
     title: c:ORANGE
@@ -227,6 +240,19 @@
       id: 3327
     refs:
     - id: 11933
+- - string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
+    children:
+    - id: 20045
+    id: 20041
+    uid: gWrTHfYIn
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 34
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: this is a child block of Block Quote
     id: 13497
     uid: 5Zw9xiCRu
@@ -305,6 +331,19 @@
     refs:
     - id: 5844
     - id: 15794
+- - string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
+    children:
+    - id: 20180
+    id: 20053
+    uid: HnL3GnkY1
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 35
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: ((kwybAuoGM))
     id: 13485
     uid: BlXTE6Z3J
@@ -1000,6 +1039,24 @@
       id: 4225
     refs:
     - id: 5844
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      Programming is an unnatural act.
+
+
+      —Alan Perlis'
+    id: 20051
+    uid: WPG0VtvZe
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
+    order: 1
+    page:
+      id: 4225
+    refs:
+    - id: 5450
+    - id: 20036
 - - string: '> This is a __Markdown standard__ single line **Block Quote**'
     id: 11186
     uid: Yz0pqYfBh
@@ -1009,6 +1066,24 @@
     order: 8
     page:
       id: 11137
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      Within a computer natural language is unnatural.
+
+
+      —Alan Perlis'
+    id: 20050
+    uid: 2_nzS4DSZ
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 5450
+    - id: 20036
 - - string: Header 2
     children:
     - id: 11228
@@ -1382,6 +1457,18 @@
       id: 3327
     refs:
     - id: 12925
+- - string: ((WPG0VtvZe))
+    id: 20179
+    uid: v8xVeZhTr
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20053
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 20051
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)'
     id: 12920
     uid: VxYhmVTG3
@@ -1527,6 +1614,18 @@
     order: 0
     page:
       id: 4225
+- - string: ((0gIQWqXJ1))
+    id: 20180
+    uid: WjcMV3hOE
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20053
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 20052
 - - string: Block 1.2
     children:
     - id: 11680
@@ -1637,6 +1736,18 @@
     refs:
     - id: 5450
     - id: 5456
+- - string: ((riLVzfX-6))
+    id: 20042
+    uid: VsKJpNrBs
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20041
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11717
 - - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
     id: 11709
     uid: ot5dpySxp
@@ -1688,6 +1799,18 @@
       id: 4225
     refs:
     - id: 5844
+- - string: ((2_nzS4DSZ))
+    id: 20054
+    uid: jR6oLEa8r
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20053
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 20050
 - - string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
     id: 11188
     uid: gq_29_H-7
@@ -1706,7 +1829,7 @@
     parents:
     - id: 4225
     - id: 11716
-    order: 23
+    order: 24
     page:
       id: 4225
     refs:
@@ -1779,6 +1902,9 @@
       id: 4225
     refs:
     - id: 11454
+- - id: 20036
+    uid: l2jkAMxGu
+    title: '!EPIGRAPH'
 - - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
     id: 11741
     uid: zmb1Uac0S
@@ -1810,6 +1936,25 @@
     id: 12803
     uid: TXGdKldN6
     title: CHAPTER XXXVI. Account of the City of Juju.
+- - string: '[[>]] [[!EPIGRAPH]]
+
+      The question of whether Machines Can Think ... is about as relevant as the question
+      of whether Submarines Can Swim.
+
+
+      —Edsger Dijkstra'
+    id: 20052
+    uid: 0gIQWqXJ1
+    parents:
+    - id: 4225
+    - id: 11716
+    - id: 20046
+    order: 2
+    page:
+      id: 4225
+    refs:
+    - id: 5450
+    - id: 20036
 - - string: ((I9tU2C5U6))
     id: 15799
     uid: fR8I0SL7Z
@@ -2137,6 +2282,8 @@
     - id: 15798
     - id: 15799
     - id: 19390
+    - id: 20041
+    - id: 20053
     id: 4226
     uid: LfaVt18Iw
     parents:
@@ -2465,9 +2612,28 @@
     order: 1
     page:
       id: 3327
+- - string: each child block contain and Epigraph
+    children:
+    - id: 20050
+    - id: 20051
+    - id: 20052
+    id: 20046
+    uid: bLrC_kX_s
+    parents:
+    - id: 4225
+    - id: 11716
+    order: 23
+    page:
+      id: 4225
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
+- - uid: TUaBhKomt
+    id: 20044
+    blocks:
+    - id: 20042
+    - id: 20043
+    - id: 20045
 - - string: '#c:FUCHSIA **inline ITALICS ref ⟶** ((2yQYaKIEV))'
     id: 11747
     uid: AaB6F4c0F
@@ -2664,6 +2830,12 @@
     refs:
     - id: 5450
     - id: 5462
+- - uid: eSeTzM6Yl
+    id: 20057
+    blocks:
+    - id: 20054
+    - id: 20179
+    - id: 20180
 - - id: 5844
     uid: lF-qY0Xrs
     title: c:FUCHSIA
@@ -2932,6 +3104,18 @@
     refs:
     - id: 5844
     - id: 11167
+- - string: ((msKBuys0a))
+    id: 20043
+    uid: 0TqFzRSv7
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 20041
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11718
 - - string: '#c:FUCHSIA **inline HEADER ref ⟶**  ((7XdTiY_ZF))'
     id: 11732
     uid: SsmyWLZij
