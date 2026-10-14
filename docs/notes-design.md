@@ -203,8 +203,8 @@ anchor's page.
 
 ### Q7 — EPUB behavior
 
-Popup footnotes versus linked endnotes, and for invisible notes, whether each note links back to
-an anchor in its passage (one-way: the text carries no mark to link from).
+*Decided, with two tests open (see [Decisions](#decisions)).* Popup footnotes versus linked
+endnotes, and for invisible notes, whether each note links back to an anchor in its passage.
 
 ### Q8 — Markdown behavior
 
@@ -225,7 +225,9 @@ Resolved 2026-10-14:
   come later.
 - **Invisible endnotes only, initially.** The first implementation supports only invisible
   endnotes: no reference mark in the text, each note keyed by its lead-in. Endnotes with
-  reference marks may come later. With a single style, R3 and Q3 are deferred.
+  reference marks may come later. With a single style, R3 and Q3 are deferred. (In electronic
+  formats the lead-in itself may be a link to its note, styled so it does not distract; that
+  adds no mark to the text. See Q7.)
 - **One authored Notes section (Q4).** Endnotes appear in a dedicated back-matter section. The
   author must create it explicitly, as a heading tagged `element-type:: endnotes` in the back
   matter, and Guffin fills that heading with the notes. Without such a heading, no endnotes
@@ -343,6 +345,38 @@ Resolved 2026-10-14:
   whole run of text from the start of the sentence, so a paragraph crossing a page break could
   report the wrong page; hence the explicit zero-width anchor at the start of the lead-in
   rather than Pandoc's label.
+- **Notes and passages link both ways in electronic formats (Q7).** The reason for invisible
+  notes is print, where any mark at the passage is visible on the page; an electronic format
+  can link without distracting. So:
+  - **Note → passage.** In each Notes entry the locator and lead-in link to the passage's
+    anchor (`guffin-note-<uid>`): in EPUB the italic lead-in, in PDF the page number. The
+    reading app's own Back command returns to the notes. Verified 2026-10-14 (Pandoc 3.8.3):
+    in a two-chapter EPUB, Pandoc rewrote `#guffin-note-<uid>` to `ch001.xhtml#guffin-note-<uid>`
+    by itself, so links across chapter files need no work in Guffin.
+  - **Passage → note.** The lead-in in the running text links to its Notes entry, which
+    carries the id or label `guffin-endnote-<uid>`.
+  - **PDF styling.** Both links are unstyled by default. A PDF link is an annotation laid over
+    the page, not ink, so an unstyled link is invisible on screen and in print yet clickable;
+    one PDF serves print and screen. Guffin's template styles only links to URLs
+    (`abstract.typ`), so internal links are unstyled already. An export option adds the EPUB's
+    subtle style to the passage → note link for digital-only PDFs (never for print); its name
+    is settled at implementation.
+  - **EPUB styling.** The passage → note link is styled to hint, not to look like a hyperlink:
+    the text keeps its normal color, with a thin dotted underline in a muted gray set slightly
+    below the baseline.
+  - **No special EPUB semantics on entries, for now.** The Notes section is already
+    `epub:type="endnotes"`; each entry is a plain `div`, not an `aside`, with no
+    `epub:type="footnote"` or `"endnote"`, because some reading apps hide elements so marked
+    from the normal flow.
+
+  Open items, to be tested in Apple Books (and any other reading app that matters) before the
+  EPUB treatment is final:
+  1. **Link styling survives.** Whether the reading app keeps the subtle style or applies its
+     own link color or underline over the publisher's CSS (Kindle notably does).
+  2. **Pop-up notes.** Whether marking the passage → note link `epub:type="noteref"` and the
+     entry as a note makes the app show the note in a pop-up in place, and whether doing so
+     hides the entries from the Notes section. If pop-ups work and the section stays visible,
+     they replace the plain link.
 - **Validation rules (Q9).** "Error" follows Guffin's existing posture for vocabulary checks: it
   fails `export-roam-tree` (and the server's `/v1/export`) and is logged as a warning by
   `dump-roam-tree`. "Warning" is logged and never fails anything.
