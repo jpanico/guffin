@@ -185,10 +185,9 @@ footnotes|endnotes|invisible`), a project-type default, or a combination with a 
 
 ### Q4 — Endnote placement
 
-Partly decided (see [Decisions](#decisions)): endnotes only, in one back-matter section that
-the author creates as an `element-type:: endnotes` heading and Guffin fills. Still open: how
-the notes inside that section are grouped and headed (by chapter, and with what heading text and
-level), and whether PDF running heads carry "Notes to Pages …".
+*Decided (see [Decisions](#decisions)).* Endnotes only, in one back-matter section that the
+author creates as an `element-type:: endnotes` heading and Guffin fills; how the notes inside
+that section are grouped and headed; whether PDF running heads carry "Notes to Pages …".
 
 ### Q5 — Short and full forms
 
@@ -231,6 +230,32 @@ Resolved 2026-10-14:
   author must create it explicitly, as a heading tagged `element-type:: endnotes` in the back
   matter, and Guffin fills that heading with the notes. Without such a heading, no endnotes
   appear in the output.
+- **Grouping inside the Notes section varies by format (Q4).** The grouping follows the key each
+  format uses to locate a note:
+
+  | | `book` | `article` |
+  |---|---|---|
+  | **PDF** (key: page number + lead-in) | a group per chapter | one ungrouped list |
+  | **EPUB, Markdown** (key: section + lead-in) | a group per chapter, then a subgroup per section | a group per section |
+
+  In PDF the page number locates the passage, so chapter groups suffice (Chicago's usual
+  layout). In EPUB and Markdown there are no pages: the section subheading carries the section
+  half of the key once for all its notes, and each entry under it needs only its lead-in. In
+  Markdown the subheading can link to the section itself (Q8).
+- **What a group heading says and where it sits (Q4).** A group heading repeats the rendered
+  text of the chapter or section heading it stands for, unchanged; Guffin generates no new
+  numbering or names. Groups follow document order, and a chapter or section with no notes gets
+  no group. Group headings sit one level below the Notes heading (sections one below chapters)
+  and are kept out of the table of contents and the EPUB navigation (Pandoc's `unlisted` class;
+  whether the Typst path honors it is to be verified).
+- **"Section" means the heading one level below the chapter (Q4).** In a `book`, that is
+  Guffin's `section` level; in an `article`, the top-level heading. A note inside a deeper
+  subsection belongs to the section that contains it, and a note before a chapter's first
+  section belongs to the chapter itself, listed under the chapter heading ahead of its section
+  subgroups. This is also the unit of Q9 rule 4 (a lead-in must be unique within its section).
+- **Running heads unchanged (Q4).** Guffin's PDF header today is the same on every page (title
+  and revision); it has no section-aware running heads. The Notes pages keep that header.
+  Section-aware running heads, including "Notes to Pages 112–118", are deferred.
 - **Authoring syntax: option (d′) (Q1).** A note's call site is an aliased block reference
   whose label, in parentheses, is the lead-in phrase: `[(a 52-minute run)](((uid)))`. The words
   of the label are part of the sentence; the note is the referenced block, under the Footnotes
