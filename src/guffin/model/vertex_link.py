@@ -30,6 +30,8 @@ Public symbols:
   Pandoc-Markdown-form vertex link (``[<display>](<x-guffin-url>)`` as the text's
   entire content) into its :class:`VertexLink`, or ``None`` when the text is
   anything else.
+- :func:`vertex_links_in_text` — every Pandoc-Markdown-form vertex link anywhere in a
+  text, as ``(display, VertexLink)`` pairs in text order.
 """
 
 import enum
@@ -122,6 +124,19 @@ raw string, which may span paragraphs.
 """
 
 
+_IN_TEXT_VERTEX_LINK_MD_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"\[(?P<display>[^\[\]]*)\]\((?P<url>{_VERTEX_LINK_URL_RE.pattern})\)"
+)
+"""A Pandoc-Markdown-form vertex link anywhere in a text, its display free of square brackets.
+
+The in-text sibling of :data:`_STANDALONE_VERTEX_LINK_MD_RE`: the same ``[<display>](<x-guffin-url>)``
+form with :data:`_VERTEX_LINK_URL_RE` as its URL chunk, so the encodings cannot drift (shape only —
+the stem still needs :meth:`VertexLinkKind.by_path_stem` validation).  Unanchored, so it finds
+every link in a text.  A link whose display contains square brackets (such as a reference whose
+display reproduces a destination's raw text) is not matched.
+"""
+
+
 @validate_call
 def vertex_link_url(uid: Uid, kind: VertexLinkKind) -> str:
     """Build an ``x-guffin`` URL pointing at the vertex identified by *uid*.
@@ -204,3 +219,24 @@ def parse_standalone_vertex_link(text: str) -> VertexLink | None:
     if match is None or f"{GUFFIN_SCHEME}:" in match.group("display"):
         return None
     return parse_vertex_link(match.group("url"))
+
+
+@validate_call
+def vertex_links_in_text(text: str) -> list[tuple[str, VertexLink]]:
+    """Return every Pandoc-Markdown-form vertex link in *text*, with its display text, in text order.
+
+    Finds each ``[<display>](<x-guffin-url>)`` link wherever it sits in *text*, keeping those whose
+    URL parses as a :class:`VertexLink` (per :func:`parse_vertex_link`).  A link whose display
+    contains square brackets is not found.
+
+    Args:
+        text: The text to search.
+
+    Returns:
+        One ``(display, link)`` pair per vertex link; empty when *text* has none.
+    """
+    return [
+        (match.group("display"), link)
+        for match in _IN_TEXT_VERTEX_LINK_MD_RE.finditer(text)
+        if (link := parse_vertex_link(match.group("url"))) is not None
+    ]

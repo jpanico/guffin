@@ -29,7 +29,15 @@ Public symbols:
   number's matter agrees with the heading's resolved tags), :func:`all_element_numbers_unique`
   (no duplicates), :func:`all_element_numbers_ordered` (document order is strictly increasing
   number order), and :func:`all_element_numbers_nested` (a number under a numbered ancestor
-  extends it as a strict prefix);
+  extends it as a strict prefix); the note :data:`~guffin.common.validation.Validator` functions
+  over the render-visible note links (see :mod:`~guffin.model.notes`):
+  :func:`all_note_lead_ins_present` (every note link's display is a lead-in, not blank or only a
+  number), :func:`all_note_targets_present` (no dangling note link),
+  :func:`all_notes_cited_once` (no note cited by two links), and
+  :func:`all_note_targets_in_notes_containers` (every note link points at a child of a
+  :class:`~guffin.model.vertex.NotesVertex`); :func:`lead_ins_unique_within_sections` — the
+  note check that needs the section's heading level, which the tree alone does not say (no two
+  notes in one section share a lead-in);
   :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
   :class:`~guffin.common.validation.ValidationResult`.
@@ -44,6 +52,7 @@ depend on it.
 from collections.abc import Callable
 from typing import Final
 
+import regex
 from pydantic import validate_call
 
 from guffin.common.programming_language import CodeLanguageId
@@ -60,6 +69,7 @@ from guffin.model.element_number import (
     leads_with_element_number_shape,
     parse_element_number,
 )
+from guffin.model.notes import contained_note_uids, note_citations, placed_note_citations
 from guffin.model.primitives import Uid
 from guffin.model.publishing_semantics import (
     PageBreak,
@@ -772,6 +782,170 @@ def all_element_numbers_nested(tree: VertexTree) -> ValidationError | None:
     )
 
 
+_NUMERIC_LEAD_IN_RE: Final[regex.Pattern[str]] = regex.compile(r"\d+")
+"""A lead-in that is only digits — a note number, not a phrase of the passage."""
+
+
+@validate_call
+def all_note_lead_ins_present(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every note link to carry a lead-in.
+
+    A note link's display text is the note's lead-in, the phrase of the passage the note is keyed
+    to.  A display that is blank, or only a number (a numbered marker such as ``(1)`` whose label
+    was never replaced by a phrase), carries no lead-in.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every note link in the render-visible document has a lead-in; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"note link to uid={citation.note_uid!r} in vertex uid={citation.citing_uid!r} has "
+        f"{'no lead-in' if not citation.lead_in.strip() else f'only a number ({citation.lead_in.strip()!r})'}"
+        for citation in note_citations(tree)
+        if not citation.lead_in.strip() or _NUMERIC_LEAD_IN_RE.fullmatch(citation.lead_in.strip())
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="note links without a lead-in: " + "; ".join(violations),
+        validator=all_note_lead_ins_present,
+    )
+
+
+@validate_call
+def all_note_targets_present(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every note link's note to exist.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every note link in the render-visible document points at a vertex in
+        *tree*; a :class:`~guffin.common.validation.ValidationError` listing every dangling link
+        otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"note link {citation.lead_in!r} in vertex uid={citation.citing_uid!r} points at "
+        f"uid={citation.note_uid!r}, absent from the tree"
+        for citation in note_citations(tree)
+        if citation.note_uid not in tree.uid_map
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="dangling note links: " + "; ".join(violations),
+        validator=all_note_targets_present,
+    )
+
+
+@validate_call
+def all_notes_cited_once(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring each note to be cited by one note link only.
+
+    An invisible note annotates exactly one passage, so a note pointed at by two or more note
+    links is ambiguous.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when no note is cited more than once in the render-visible document; a
+        :class:`~guffin.common.validation.ValidationError` listing every repeatedly cited note
+        otherwise.
+    """
+    lead_ins_by_note: Final[dict[Uid, list[str]]] = {}
+    for citation in note_citations(tree):
+        lead_ins_by_note.setdefault(citation.note_uid, []).append(citation.lead_in)
+    violations: Final[list[str]] = [
+        f"note uid={note_uid!r} is cited {len(lead_ins)} times ({', '.join(repr(lead_in) for lead_in in lead_ins)})"
+        for note_uid, lead_ins in lead_ins_by_note.items()
+        if len(lead_ins) > 1
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="notes cited more than once: " + "; ".join(violations),
+        validator=all_notes_cited_once,
+    )
+
+
+@validate_call
+def all_note_targets_in_notes_containers(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every note link to point at a contained note.
+
+    A note is a child of a :class:`~guffin.model.vertex.NotesVertex`.  A note link pointing at
+    any other vertex would file an ordinary block as a note.  Links whose target is absent from
+    the tree are left to :func:`all_note_targets_present`.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every present note link target is held by a notes container; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    contained: Final[frozenset[Uid]] = contained_note_uids(tree)
+    violations: Final[list[str]] = [
+        f"note link {citation.lead_in!r} in vertex uid={citation.citing_uid!r} points at "
+        f"uid={citation.note_uid!r}, which is not a note in a notes container"
+        for citation in note_citations(tree)
+        if citation.note_uid in tree.uid_map and citation.note_uid not in contained
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="note links to blocks that are not notes: " + "; ".join(violations),
+        validator=all_note_targets_in_notes_containers,
+    )
+
+
+@validate_call
+def lead_ins_unique_within_sections(tree: VertexTree, section_level: int) -> ValidationError | None:
+    """Return an error when two note links in one section share a lead-in, else ``None``.
+
+    A note is keyed by its section and its lead-in, so two notes in the same section with the
+    same lead-in cannot be told apart.  A note link's section is the deepest heading governing
+    its position at *section_level* or above (per
+    :meth:`~guffin.model.notes.PlacedNoteCitation.group_heading`): the section itself, or the
+    chapter for a link before its chapter's first section, or none before any heading.  Lead-ins
+    are compared with runs of whitespace collapsed.
+
+    Not a :data:`~guffin.common.validation.Validator`: the section level depends on the kind of
+    work being produced, which the tree alone does not say.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+        section_level: The heading level of a section.
+
+    Returns:
+        ``None`` when every lead-in is unique within its section; a
+        :class:`~guffin.common.validation.ValidationError` listing every clash otherwise.
+    """
+    note_uids_by_key: Final[dict[tuple[Uid | None, str], list[Uid]]] = {}
+    for placed in placed_note_citations(tree):
+        section: HeadingVertex | None = placed.group_heading(section_level)
+        key: tuple[Uid | None, str] = (
+            None if section is None else section.uid,
+            " ".join(placed.citation.lead_in.split()),
+        )
+        note_uids_by_key.setdefault(key, []).append(placed.citation.note_uid)
+    violations: Final[list[str]] = [
+        f"lead-in {lead_in!r} is shared by notes {', '.join(repr(uid) for uid in note_uids)} "
+        + ("before any section heading" if section_uid is None else f"in the section uid={section_uid!r}")
+        for (section_uid, lead_in), note_uids in note_uids_by_key.items()
+        if len(note_uids) > 1
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="lead-ins repeated within a section: " + "; ".join(violations),
+        validator=lead_ins_unique_within_sections,
+    )
+
+
 @validate_call
 def validate_semantics(tree: VertexTree) -> ValidationResult:
     """Return a :class:`~guffin.common.validation.ValidationResult` for the vocabulary invariants on *tree*.
@@ -786,10 +960,12 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
     :func:`all_element_numbers_well_formed`, :func:`all_element_numbers_in_headings_only`,
     :func:`all_element_number_matters_legal`, :func:`all_element_number_matters_agree`,
     :func:`all_element_numbers_unique`, :func:`all_element_numbers_ordered`, and
-    :func:`all_element_numbers_nested` — via :func:`~guffin.common.validation.validate_all`.  Every
-    attribute validator covers both the tree vertices and the referenced-vertex stubs
-    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`); the numbering validators cover the
-    render-visible vertices (embed-transcluded content included).  All validators run regardless of
+    :func:`all_element_numbers_nested` — and every note validator — :func:`all_note_lead_ins_present`,
+    :func:`all_note_targets_present`, :func:`all_notes_cited_once`, and
+    :func:`all_note_targets_in_notes_containers` — via :func:`~guffin.common.validation.validate_all`.
+    Every attribute validator covers both the tree vertices and the referenced-vertex stubs
+    (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`); the numbering and note validators
+    cover the render-visible vertices (embed-transcluded content included).  All validators run regardless of
     prior failures; the result accumulates every error found.
 
     Args:
@@ -821,5 +997,9 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_element_numbers_unique,
             all_element_numbers_ordered,
             all_element_numbers_nested,
+            all_note_lead_ins_present,
+            all_note_targets_present,
+            all_notes_cited_once,
+            all_note_targets_in_notes_containers,
         ],
     )

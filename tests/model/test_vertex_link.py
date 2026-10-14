@@ -11,6 +11,7 @@ from guffin.model.vertex_link import (
     parse_standalone_vertex_link,
     parse_vertex_link,
     vertex_link_url,
+    vertex_links_in_text,
 )
 
 # A representative valid 9-character UID.
@@ -238,3 +239,27 @@ class TestParseStandaloneVertexLink:
     def test_empty_string_is_none(self) -> None:
         """The empty string is not a sole link."""
         assert parse_standalone_vertex_link("") is None
+
+
+class TestVertexLinksInText:
+    """Tests for vertex_links_in_text — every vertex link anywhere in a text."""
+
+    def test_finds_links_of_every_kind_in_order(self) -> None:
+        """Links of each kind come back with their display text, in text order."""
+        text = "See [a](x-guffin:vertex/abc123xyz), then [b](x-guffin:vertex-note/ab_cd-ef1)."
+        assert vertex_links_in_text(text) == [
+            ("a", VertexLink(VertexLinkKind.REFERENCE, _UID)),
+            ("b", VertexLink(VertexLinkKind.NOTE, _UID_DASH_UNDERSCORE)),
+        ]
+
+    def test_unknown_stem_is_skipped(self) -> None:
+        """A link whose stem names no kind is not a vertex link."""
+        assert vertex_links_in_text("[a](x-guffin:page/abc123xyz)") == []
+
+    def test_ordinary_link_is_skipped(self) -> None:
+        """A link to an ordinary URL is not a vertex link."""
+        assert vertex_links_in_text("[a](https://example.com)") == []
+
+    def test_display_with_brackets_is_not_found(self) -> None:
+        """A display containing square brackets is not matched."""
+        assert vertex_links_in_text("[[x] y](x-guffin:vertex/abc123xyz)") == []

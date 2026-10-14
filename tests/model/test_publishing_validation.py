@@ -36,9 +36,14 @@ from guffin.model.publishing_validation import (
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
+    all_note_lead_ins_present,
+    all_note_targets_in_notes_containers,
+    all_note_targets_present,
+    all_notes_cited_once,
     all_page_break_values_legal,
     all_pdf_render_values_legal,
     all_publish_values_legal,
+    lead_ins_unique_within_sections,
     validate_semantics,
 )
 from guffin.model.vertex import (
@@ -46,12 +51,13 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    NotesVertex,
     PageVertex,
     PdfVertex,
     TextVertex,
     vertex_adapter,
 )
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
@@ -938,3 +944,146 @@ class TestAllElementNumbersNested:
         error = all_element_numbers_nested(tree)
         assert error is not None
         assert "chaphead1" in error.message
+
+
+def _note_link(lead_in: str, uid: str) -> str:
+    """Return a Pandoc-Markdown note link with *lead_in* as its display, pointing at *uid*."""
+    return f"[{lead_in}]({vertex_link_url(uid, VertexLinkKind.NOTE)})"
+
+
+def _noted_page(*texts: str, notes: tuple[str, ...] = ("note00001",), extra: tuple[TextVertex, ...] = ()) -> VertexTree:
+    """A page whose prose blocks are *texts*, with a notes container holding the notes *notes*."""
+    prose_uids: list[str] = [f"text0000{index}" for index in range(1, len(texts) + 1)]
+    page = PageVertex(uid="page00001", title="Doc", children=[*prose_uids, "notes0001"])
+    prose = [TextVertex(uid=uid, text=text) for uid, text in zip(prose_uids, texts, strict=True)]
+    container = NotesVertex(uid="notes0001", children=list(notes))
+    note_vertices = [TextVertex(uid=uid, text=f"Note {uid}.") for uid in notes]
+    return VertexTree(tree_vertices=[page, *prose, container, *note_vertices, *extra])
+
+
+class TestAllNoteLeadInsPresent:
+    """all_note_lead_ins_present rejects a note link whose display is blank or only a number."""
+
+    def test_phrase_lead_in_passes(self) -> None:
+        """A phrase is a lead-in."""
+        assert all_note_lead_ins_present(_noted_page(_note_link("a 52-minute run", "note00001"))) is None
+
+    def test_numbered_marker_fails(self) -> None:
+        """A number left from a numbered marker carries no lead-in."""
+        error = all_note_lead_ins_present(_noted_page(_note_link("1", "note00001")))
+        assert error is not None
+        assert "only a number ('1')" in error.message
+
+    def test_blank_lead_in_fails(self) -> None:
+        """A blank display carries no lead-in."""
+        error = all_note_lead_ins_present(_noted_page(_note_link(" ", "note00001")))
+        assert error is not None
+        assert "no lead-in" in error.message
+
+
+class TestAllNoteTargetsPresent:
+    """all_note_targets_present rejects a note link whose note is absent."""
+
+    def test_present_target_passes(self) -> None:
+        """A link to a note in the tree passes."""
+        assert all_note_targets_present(_noted_page(_note_link("lead", "note00001"))) is None
+
+    def test_dangling_link_fails(self) -> None:
+        """A link to a uid absent from the tree is dangling."""
+        error = all_note_targets_present(_noted_page(_note_link("lead", "gone00001")))
+        assert error is not None
+        assert "gone00001" in error.message
+
+
+class TestAllNotesCitedOnce:
+    """all_notes_cited_once rejects a note cited by more than one note link."""
+
+    def test_single_citation_passes(self) -> None:
+        """A note cited once passes."""
+        assert all_notes_cited_once(_noted_page(_note_link("lead", "note00001"))) is None
+
+    def test_double_citation_fails(self) -> None:
+        """A note cited from two passages is ambiguous."""
+        error = all_notes_cited_once(_noted_page(_note_link("first", "note00001"), _note_link("second", "note00001")))
+        assert error is not None
+        assert "cited 2 times" in error.message
+
+
+class TestAllNoteTargetsInNotesContainers:
+    """all_note_targets_in_notes_containers rejects a note link to a block outside any notes container."""
+
+    def test_contained_note_passes(self) -> None:
+        """A link to a child of a notes container passes."""
+        assert all_note_targets_in_notes_containers(_noted_page(_note_link("lead", "note00001"))) is None
+
+    def test_ordinary_block_fails(self) -> None:
+        """A link to an ordinary block would file it as a note."""
+        tree = _noted_page(_note_link("lead", "loose0001"), extra=(TextVertex(uid="loose0001", text="Body."),))
+        error = all_note_targets_in_notes_containers(tree)
+        assert error is not None
+        assert "loose0001" in error.message
+
+    def test_dangling_link_is_left_to_targets_present(self) -> None:
+        """A link to an absent uid is not reported here."""
+        assert all_note_targets_in_notes_containers(_noted_page(_note_link("lead", "gone00001"))) is None
+
+
+class TestLeadInsUniqueWithinSections:
+    """lead_ins_unique_within_sections rejects two notes in one section sharing a lead-in."""
+
+    @staticmethod
+    def _chapter_tree(*, same_section: bool) -> VertexTree:
+        """A chapter (level 1) with sections (level 2) whose prose cites two notes with one lead-in."""
+        page = PageVertex(uid="page00001", title="Doc", children=["chap00001", "notes0001"])
+        sections: list[str] = ["sect00001"] if same_section else ["sect00001", "sect00002"]
+        chapter = HeadingVertex(uid="chap00001", text="Chapter", heading_level=1, children=sections)
+        first_children: list[str] = ["texta0001", "textb0001"] if same_section else ["texta0001"]
+        vertices = [
+            page,
+            chapter,
+            HeadingVertex(uid="sect00001", text="A", heading_level=2, children=first_children),
+            TextVertex(uid="texta0001", text=_note_link("the phrase", "note00001")),
+            TextVertex(uid="textb0001", text=_note_link("the  phrase", "note00002")),
+        ]
+        if not same_section:
+            vertices.append(HeadingVertex(uid="sect00002", text="B", heading_level=2, children=["textb0001"]))
+        container = NotesVertex(uid="notes0001", children=["note00001", "note00002"])
+        notes = [TextVertex(uid=uid, text="Note.") for uid in ("note00001", "note00002")]
+        return VertexTree(tree_vertices=[*vertices, container, *notes])
+
+    def test_same_lead_in_in_one_section_fails(self) -> None:
+        """Two notes in one section with the same lead-in (whitespace aside) clash."""
+        error = lead_ins_unique_within_sections(self._chapter_tree(same_section=True), section_level=2)
+        assert error is not None
+        assert "'the phrase'" in error.message
+        assert "sect00001" in error.message
+
+    def test_same_lead_in_in_different_sections_passes(self) -> None:
+        """The same lead-in in two sections is keyed apart by the section."""
+        assert lead_ins_unique_within_sections(self._chapter_tree(same_section=False), section_level=2) is None
+
+    def test_coarser_section_level_merges_the_sections(self) -> None:
+        """At section level 1 (an article), both sections fall under one heading and clash."""
+        error = lead_ins_unique_within_sections(self._chapter_tree(same_section=False), section_level=1)
+        assert error is not None
+        assert "chap00001" in error.message
+
+
+class TestValidateSemanticsNotes:
+    """validate_semantics runs the note validators."""
+
+    def test_numbered_marker_is_reported(self) -> None:
+        """A numbered marker's link fails the whole validation."""
+        result = validate_semantics(_noted_page(_note_link("1", "note00001")))
+        assert not result.is_valid
+        assert [error.validator for error in result.errors] == [all_note_lead_ins_present]
+
+    def test_article4_fixture_reports_its_numbered_markers(self) -> None:
+        """[[Test Article]] 4's two numbered Footnotes markers carry no lead-in."""
+        raw = yaml.load((FIXTURES_YAML_DIR / "test_article_4_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
+        tree = VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
+        result = validate_semantics(tree)
+        assert [error.validator for error in result.errors] == [all_note_lead_ins_present]
+        assert "Mc-JWCvWX" in result.errors[0].message
+        assert "AxMU9z6fm" in result.errors[0].message
+        assert "Tk7FpgzQa" not in result.errors[0].message

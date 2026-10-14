@@ -71,6 +71,21 @@ class TopLevelDivision(enum.StrEnum):
     CHAPTER = "chapter"
     PART = "part"
 
+    @property
+    def section_heading_level(self) -> int:
+        """The heading level of a section: the division one below a chapter, or the top level.
+
+        Level 1 when top-level headings are sections; level 2 under level-1 chapters; level 3
+        under level-2 chapters in a parts book.
+        """
+        match self:
+            case TopLevelDivision.SECTION:
+                return 1
+            case TopLevelDivision.CHAPTER:
+                return 2
+            case TopLevelDivision.PART:
+                return 3
+
 
 class StructuralPolicy(BaseModel):
     """Format-independent structural directives derived from a :class:`ProjectProfile`.

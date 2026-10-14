@@ -27,6 +27,7 @@ from guffin.common.filenames import shell_safe_filename
 from guffin.common.markdown import unwrap_links
 from guffin.common.validation import ValidationResult
 from guffin.model.code_source_diagnosis import CodeSourceFinding
+from guffin.model.notes import note_citations, orphan_note_uids
 from guffin.model.publishing_semantics import (
     effective_title,
     has_parts,
@@ -180,6 +181,10 @@ def fetch_roam_trees(
     # failing the fetch — a misplaced tag simply has no effect.
     for validation_error in validation_result.errors:
         logger.warning("guffin semantics validation: %s", validation_error)
+    # An uncited note is harmless to a reader (it is simply left out), so it is advisory at every
+    # posture: edits routinely leave one behind.
+    for orphan_uid in orphan_note_uids(transcribed.content, note_citations(transcribed.content)):
+        logger.warning("note uid=%r is cited by no note link; it is left out of the notes", orphan_uid)
     _gate_code_sources(transcribed.content, strict, verify_code_sources)
     # The content revision is captured on every fetch: the snapshot hash and edit bookkeeping
     # come from the raw wire response, the optional revision name from the root vertex's

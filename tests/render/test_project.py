@@ -73,6 +73,22 @@ class TestStructuralPolicy:
         assert policy.honor_page_breaks
 
 
+class TestSectionHeadingLevel:
+    """A section sits one level below a chapter, or at the top level when there are no chapters."""
+
+    def test_by_division(self) -> None:
+        """Sections at level 1, 2, and 3 for section, chapter, and part top-level divisions."""
+        assert TopLevelDivision.SECTION.section_heading_level == 1
+        assert TopLevelDivision.CHAPTER.section_heading_level == 2
+        assert TopLevelDivision.PART.section_heading_level == 3
+
+    def test_by_profile(self) -> None:
+        """An article's sections are top-level; a book's sit below its chapters, deeper with parts."""
+        assert ArticleProfile().structural_policy.top_level_division.section_heading_level == 1
+        assert BookProfile().structural_policy.top_level_division.section_heading_level == 2
+        assert BookProfile(with_parts=True).structural_policy.top_level_division.section_heading_level == 3
+
+
 class TestProfileDiscriminator:
     """Each subclass carries its own project_type discriminator and shared metadata."""
 

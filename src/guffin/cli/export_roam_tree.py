@@ -84,7 +84,9 @@ from guffin.cli.common import (
 from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption, VersionOption
 from guffin.common.provenance import Provenance, gather_provenance
+from guffin.common.validation import ValidationError
 from guffin.model.publishing_semantics import PdfRenderPlacement
+from guffin.model.publishing_validation import lead_ins_unique_within_sections
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
 from guffin.render.epub_rendering import render as render_epub
@@ -381,6 +383,15 @@ def main(
     # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
     # parts book; the content itself, not a CLI switch, is the source of that structure.
     profile: Final[ProjectProfile] = resolve_profile(project_type, render_bundle.content)
+    # A note is keyed by its section and lead-in, and what counts as a section depends on the
+    # resolved profile, so this one note check runs here rather than in the fetch pipeline's gate.
+    lead_in_error: Final[ValidationError | None] = lead_ins_unique_within_sections(
+        render_bundle.content, profile.structural_policy.top_level_division.section_heading_level
+    )
+    if lead_in_error is not None:
+        logger.error("guffin semantics validation: %s", lead_in_error)
+        logger.error("aborting export of %r: two notes in one section share a lead-in (see above)", target)
+        raise typer.Exit(code=1)
     options: Final[RenderOptions] = RenderOptions.for_format(
         output_format,
         output_dir=output_dir,
