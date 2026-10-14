@@ -44,6 +44,7 @@ from pydantic import validate_call
 
 from guffin.common.markdown import gfm_heading_slug
 from guffin.common.revision import Revision
+from guffin.model.notes import with_notes_section
 from guffin.model.publishing_semantics import (
     drop_other_note_forms,
     drop_page_breaks,
@@ -298,7 +299,11 @@ def render(
     # fetch nor the rendered output.
     unpublished_dropped: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Blocks limited to the other form of the notes (note-form::) are pruned the same way.
-    published: Final[VertexTree] = drop_other_note_forms(unpublished_dropped, options.note_form)
+    formed: Final[VertexTree] = drop_other_note_forms(unpublished_dropped, options.note_form)
+    # A work whose policy provides for it gets a Notes section when it cites notes but has none.
+    published: Final[VertexTree] = (
+        with_notes_section(formed) if profile.structural_policy.add_missing_notes_section else formed
+    )
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     attributed: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Internal element numbers are authoring bookkeeping; they render only on explicit request.

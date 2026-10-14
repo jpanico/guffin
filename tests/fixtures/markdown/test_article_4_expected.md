@@ -62,3 +62,11 @@
   - This block has a footnote anchor right here. This is a sentence immediately following the footnote anchor.
   - This block has a footnote that uses a *named anchor*. This is the lead-in to the anchor-\>ANCHOR NAME
   - This block has a footnote that was created by first selecting the text, and then **⌘⇧F**. The anchor comes before the following sentence.
+
+## Notes
+
+*footnote anchor*: This is the prose of the footnote.
+
+*ANCHOR NAME*: This is the footnote corresponding to the *named anchor*.
+
+*The anchor*: This block has a footnote that was created with text selected first.

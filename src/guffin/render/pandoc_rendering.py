@@ -2108,8 +2108,36 @@ def _colophon_blocks(provenance: Provenance | None, revision: Revision | None) -
     PDF routes the colophon to its page footer instead.
     """
     summary: Final[str] = html.escape(colophon_summary(provenance, revision))
-    paragraph: Final[str] = f'<p style="font-size: {_COLOPHON_FONT_SIZE}"><em>{summary}</em></p>'
+    paragraph: Final[str] = f"{_COLOPHON_PARAGRAPH_OPENING}<em>{summary}</em></p>"
     return [pf.HorizontalRule(), pf.RawBlock(paragraph, format="html")]
+
+
+_COLOPHON_PARAGRAPH_OPENING: Final[str] = f'<p style="font-size: {_COLOPHON_FONT_SIZE}">'
+"""The opening of the colophon's raw-HTML paragraph, by which :func:`trailing_colophon_length` knows it."""
+
+
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def trailing_colophon_length(doc: pf.Doc) -> int:
+    """Return how many of *doc*'s last top-level blocks are the end-of-document colophon.
+
+    The colophon :func:`vertex_tree_to_pandoc` appends is a :class:`~panflute.HorizontalRule`
+    followed by a raw-HTML paragraph; content added to the end of the body belongs before it.
+
+    Args:
+        doc: The document to inspect.
+
+    Returns:
+        ``2`` when *doc* ends with the colophon, ``0`` otherwise.
+    """
+    blocks: Final[list[pf.Block]] = list(doc.content)
+    if (
+        len(blocks) >= 2
+        and isinstance(blocks[-2], pf.HorizontalRule)
+        and isinstance(blocks[-1], pf.RawBlock)
+        and blocks[-1].text.startswith(_COLOPHON_PARAGRAPH_OPENING)
+    ):
+        return 2
+    return 0
 
 
 def _demote_content_headings(doc: pf.Doc) -> None:

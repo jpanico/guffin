@@ -31,7 +31,7 @@ from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
 from guffin.render.asset_fetch import AssetRef
 from guffin.render.md_rendering import _remove_stripped_bundle_assets, render
-from guffin.render.project import ArticleProfile, BookProfile
+from guffin.render.project import ArticleProfile, BookProfile, ProjectProfile
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import build_view_map, transcribe
@@ -516,21 +516,33 @@ def _noted_bundle() -> RenderBundle:
 
 
 class TestNotesInRunningText:
-    """A note's lead-in stays plain running text, and the notes container renders nothing where it sits."""
+    """A note's lead-in stays plain running text; the notes container renders nothing where it sits."""
 
-    def test_lead_in_is_plain_text_and_note_is_absent(self, tmp_path: Path) -> None:
-        """The lead-in renders as plain text with no link, and neither the note nor its container appears."""
+    @staticmethod
+    def _render(tmp_path: Path, profile: ProjectProfile) -> str:
         render(
             _noted_bundle(),
-            profile=ArticleProfile(),
+            profile=profile,
             filename_stem="doc",
             api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
             options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
         )
-        result = (tmp_path / "doc.md").read_text(encoding="utf-8")
+        return (tmp_path / "doc.md").read_text(encoding="utf-8")
+
+    def test_article_without_notes_section_gets_one(self, tmp_path: Path) -> None:
+        """An article citing notes without a Notes section gets one at its end, holding the note."""
+        result: Final[str] = self._render(tmp_path, ArticleProfile())
         assert "It ran for a 52-minute run and stopped." in result
-        assert "Williams and Kilburn" not in result
+        assert result.index("## Notes") > result.index("It ran for")
+        assert "*a 52-minute run*: Williams and Kilburn, 1948." in result[result.index("## Notes") :]
         assert "x-guffin" not in result
+
+    def test_book_without_notes_section_gets_none(self, tmp_path: Path) -> None:
+        """A book's policy adds no Notes section: the lead-in stays plain and the note is absent."""
+        result: Final[str] = self._render(tmp_path, BookProfile())
+        assert "It ran for a 52-minute run and stopped." in result
+        assert "Notes" not in result
+        assert "Williams and Kilburn" not in result
 
 
 def _callout_bundle(callout_type: CalloutVertex.CalloutType, title: str) -> RenderBundle:

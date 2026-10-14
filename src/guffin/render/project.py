@@ -127,6 +127,11 @@ class StructuralPolicy(BaseModel):
             pagination is fixed by its own structural conventions (a book: chapters and parts open
             pages by ritual, not by tag) does not honor them; a work whose pagination is the
             author's to shape does.
+        add_missing_notes_section: Whether a work that cites notes but has no Notes section (no
+            heading tagged ``element-type:: endnotes``) gets one added at its end.  A smaller work
+            does: its notes need a home and the author may not have made one.  A book does not: its
+            Notes section is part of its designed back matter, so a missing one is the author's to
+            supply.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -138,6 +143,9 @@ class StructuralPolicy(BaseModel):
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
     drop_preamble: bool = Field(..., description="Drop the root's children preceding its first heading.")
     honor_page_breaks: bool = Field(..., description="Honor authored page-break directives.")
+    add_missing_notes_section: bool = Field(
+        ..., description="Add a Notes section to a work that cites notes but has none."
+    )
 
 
 class ProjectProfile(BaseModel):
@@ -193,6 +201,7 @@ class ArticleProfile(ProjectProfile):
             emit_abstract=False,
             drop_preamble=False,
             honor_page_breaks=True,
+            add_missing_notes_section=True,
         )
 
 
@@ -228,6 +237,7 @@ class BookProfile(ProjectProfile):
             emit_abstract=False,
             drop_preamble=True,
             honor_page_breaks=False,
+            add_missing_notes_section=False,
         )
 
 
@@ -260,6 +270,7 @@ class ManuscriptProfile(ProjectProfile):
             emit_abstract=True,
             drop_preamble=False,
             honor_page_breaks=True,
+            add_missing_notes_section=True,
         )
 
 

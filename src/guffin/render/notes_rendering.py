@@ -50,7 +50,13 @@ from guffin.model.vertex_tree import VertexTree, transcluded_vertices
 from guffin.model.vertex_view import ChildrenLayout, ViewMap
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 from guffin.render.pandoc_ast import InlineMap, detached_copy, strip_links
-from guffin.render.pandoc_rendering import HEADING_LINK_CLASS, NoteLeadInRenderer, build_child_blocks, heading_anchor
+from guffin.render.pandoc_rendering import (
+    HEADING_LINK_CLASS,
+    NoteLeadInRenderer,
+    build_child_blocks,
+    heading_anchor,
+    trailing_colophon_length,
+)
 from guffin.render.project import TopLevelDivision
 from guffin.render.render_options import OutputFormat
 
@@ -423,13 +429,13 @@ def insert_notes_section(
             )
         )
         previous_path = path
-    # The section runs from its Header to the next Header at its level or above among its siblings.
+    # The section runs from its Header to the next Header at its level or above among its siblings,
+    # and never past the end-of-document colophon, which follows the body.
     siblings: Final[pf.ListContainer] = notes_header.parent.content
+    limit: Final[int] = len(siblings) - (trailing_colophon_length(doc) if notes_header.parent is doc else 0)
     start: Final[int] = notes_header.index
     end: int = start + 1
-    while end < len(siblings) and not (
-        isinstance(siblings[end], pf.Header) and siblings[end].level <= notes_header.level
-    ):
+    while end < limit and not (isinstance(siblings[end], pf.Header) and siblings[end].level <= notes_header.level):
         end += 1
     for offset, block in enumerate(blocks):
         siblings.insert(end + offset, block)

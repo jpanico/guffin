@@ -73,6 +73,17 @@ class TestStructuralPolicy:
         assert policy.honor_page_breaks
 
 
+class TestAddMissingNotesSection:
+    """Only a book leaves a missing Notes section to its author."""
+
+    def test_by_profile(self) -> None:
+        """An article and a manuscript get a Notes section added; a book, with or without parts, does not."""
+        assert ArticleProfile().structural_policy.add_missing_notes_section
+        assert ManuscriptProfile().structural_policy.add_missing_notes_section
+        assert not BookProfile().structural_policy.add_missing_notes_section
+        assert not BookProfile(with_parts=True).structural_policy.add_missing_notes_section
+
+
 class TestSectionHeadingLevel:
     """A section sits one level below a chapter, or at the top level when there are no chapters."""
 

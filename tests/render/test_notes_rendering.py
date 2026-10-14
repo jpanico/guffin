@@ -8,6 +8,7 @@ import panflute as pf  # type: ignore[import-untyped]
 import pytest
 from pypdf import PdfReader
 
+from guffin.common.provenance import Provenance
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.publishing_semantics import NoteForm
@@ -151,6 +152,25 @@ def _entry_text(doc: pf.Doc, note_uid: str) -> str:
             if isinstance(block, pf.Div) and block.identifier == endnote_identifier(note_uid)
         )
     ).strip()
+
+
+class TestColophon:
+    """The Notes section ends before the end-of-document colophon."""
+
+    def test_entries_precede_the_colophon(self) -> None:
+        """With a colophon appended, the entries are inserted before it, which stays last."""
+        tree: Final[VertexTree] = _noted_book()
+        doc, inline_map = vertex_tree_to_pandoc(
+            tree, {}, {}, provenance=Provenance(version="1.2.3", commit="abc123def456")
+        )
+        insert_notes_section(
+            doc, tree, inline_map, {}, {}, TopLevelDivision.CHAPTER, OutputFormat.EPUB, heading_links=True
+        )
+        blocks: Final[list[pf.Block]] = list(doc.content)
+        assert isinstance(blocks[-2], pf.HorizontalRule)
+        assert isinstance(blocks[-1], pf.RawBlock)
+        assert isinstance(blocks[-3], pf.Div)
+        assert blocks[-3].identifier == endnote_identifier("note00005")
 
 
 class TestNoteForms:

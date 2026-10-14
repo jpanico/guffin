@@ -422,30 +422,31 @@ def main(
         logger.error("guffin semantics validation: %s", lead_in_error)
         logger.error("aborting export of %r: two notes in one section share a lead-in (see above)", target)
         raise typer.Exit(code=1)
-    # Notes appear only in an authored Notes section.  A book without one would lose its notes with
-    # no visible sign (a server export returns no warnings on success), so that is fatal; a smaller
-    # work, such as a single chapter exported as an article, legitimately has none.  A notes-only
-    # export has nothing else to show, so there it is fatal whatever the project type.
-    has_notes_section: Final[bool] = has_element_type(render_bundle.content, StructuralElement.ENDNOTES)
-    if notes_only and not has_notes_section:
+    # Notes appear in a Notes section (a heading tagged element-type:: endnotes).  A work whose
+    # policy adds a missing one (an article, a manuscript) gets it at render time; a book does not,
+    # since its Notes section is part of its designed back matter, so a book that cites notes
+    # without one is fatal: it would otherwise lose its notes with no visible sign (a server export
+    # returns no warnings on success).  A notes-only export with no Notes section to show is fatal
+    # too.
+    cites_notes: Final[bool] = bool(note_citations(render_bundle.content))
+    authored_notes_section: Final[bool] = has_element_type(render_bundle.content, StructuralElement.ENDNOTES)
+    adds_notes_section: Final[bool] = profile.structural_policy.add_missing_notes_section
+    if cites_notes and not authored_notes_section:
+        if not adds_notes_section:
+            logger.error(
+                "aborting export of %r: it cites notes but has no Notes section "
+                "(a back-matter heading tagged element-type:: endnotes), and a %s does not get one added",
+                target,
+                project_type.value,
+            )
+            raise typer.Exit(code=1)
+        logger.info("%r cites notes but has no Notes section; one is added at its end", target)
+    if notes_only and not (authored_notes_section or (cites_notes and adds_notes_section)):
         logger.error(
             "aborting notes-only export of %r: it has no Notes section (a heading tagged element-type:: endnotes)",
             target,
         )
         raise typer.Exit(code=1)
-    if note_citations(render_bundle.content) and not has_notes_section:
-        if project_type is ProjectType.BOOK:
-            logger.error(
-                "aborting export of %r: the book cites notes but has no Notes section "
-                "(a back-matter heading tagged element-type:: endnotes)",
-                target,
-            )
-            raise typer.Exit(code=1)
-        logger.warning(
-            "%r cites notes but has no Notes section (a heading tagged element-type:: endnotes); "
-            "the notes are left out",
-            target,
-        )
     options: Final[RenderOptions] = RenderOptions.for_format(
         output_format,
         output_dir=output_dir,

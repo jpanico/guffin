@@ -3,7 +3,10 @@
 from typing import Final
 
 from guffin.common.table import Table, TableStyle
+from guffin.model.chicago_structure import StructuralElement
 from guffin.model.notes import (
+    ADDED_NOTES_HEADING_UID,
+    NOTES_SECTION_TITLE,
     NoteCitation,
     contained_note_uids,
     note_citations,
@@ -12,7 +15,9 @@ from guffin.model.notes import (
     orphan_note_uids,
     placed_note_citations,
     vertex_texts,
+    with_notes_section,
 )
+from guffin.model.publishing_semantics import element_type_of_vertex, has_element_type
 from guffin.model.vertex import (
     BlockEmbedVertex,
     CalloutVertex,
@@ -191,3 +196,50 @@ class TestNotesContainers:
         """A note no citation points at is an orphan."""
         tree: Final[VertexTree] = _noted_tree()
         assert orphan_note_uids(tree, note_citations(tree)) == ["note00004"]
+
+
+class TestWithNotesSection:
+    """with_notes_section adds a Notes heading to a tree that cites notes but has none."""
+
+    @staticmethod
+    def _cited_tree(*, heading_level: int | None = None) -> VertexTree:
+        """A page citing one note, optionally under a heading of *heading_level*."""
+        children: list[str] = ["head00001"] if heading_level is not None else ["text00001"]
+        vertices: list[Vertex] = [PageVertex(uid="page00001", title="Doc", children=[*children, "notes0001"])]
+        if heading_level is not None:
+            vertices.append(
+                HeadingVertex(uid="head00001", text="Section", heading_level=heading_level, children=["text00001"])
+            )
+        vertices += [
+            TextVertex(uid="text00001", text=_note_link("lead", "note00001")),
+            NotesVertex(uid="notes0001", children=["note00001"]),
+            TextVertex(uid="note00001", text="The note."),
+        ]
+        return VertexTree(tree_vertices=vertices)
+
+    def test_adds_a_tagged_heading_at_the_end_of_the_root(self) -> None:
+        """The heading is the root's last child, titled Notes, tagged element-type:: endnotes."""
+        added: Final[VertexTree] = with_notes_section(self._cited_tree())
+        heading = added.uid_map[ADDED_NOTES_HEADING_UID]
+        assert isinstance(heading, HeadingVertex)
+        assert heading.text == NOTES_SECTION_TITLE
+        assert element_type_of_vertex(heading) is StructuralElement.ENDNOTES
+        assert added.uid_map["page00001"].children == ["text00001", "notes0001", ADDED_NOTES_HEADING_UID]
+        assert has_element_type(added, StructuralElement.ENDNOTES)
+
+    def test_heading_takes_the_shallowest_level_in_use(self) -> None:
+        """The heading sits at the shallowest heading level the document uses, else level 1."""
+        assert with_notes_section(self._cited_tree()).uid_map[ADDED_NOTES_HEADING_UID].heading_level == 1
+        deep: Final[VertexTree] = with_notes_section(self._cited_tree(heading_level=2))
+        assert deep.uid_map[ADDED_NOTES_HEADING_UID].heading_level == 2
+
+    def test_tree_with_notes_section_is_unchanged(self) -> None:
+        """A tree that already has a Notes heading passes through unchanged."""
+        added: Final[VertexTree] = with_notes_section(self._cited_tree())
+        assert with_notes_section(added) is added
+
+    def test_tree_citing_no_notes_is_unchanged(self) -> None:
+        """A tree that cites no notes passes through unchanged."""
+        page = PageVertex(uid="page00001", title="Doc", children=["text00001"])
+        tree: Final[VertexTree] = VertexTree(tree_vertices=[page, TextVertex(uid="text00001", text="Plain.")])
+        assert with_notes_section(tree) is tree

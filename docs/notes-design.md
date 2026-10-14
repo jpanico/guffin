@@ -236,7 +236,9 @@ Built in phases, each a commit.
 - **Rendering**: `render/notes_rendering.py` builds the Notes section into the shared Pandoc
   document (`insert_notes_section`) and renders each lead-in in the running text per format
   (`note_lead_in_renderer`, passed to the link resolver as `make_doc_resolver(note_lead_in=…)`);
-  rule 5 runs in `export-roam-tree` beside rule 4. The PDF template opens a page at a chapter or
+  rule 5 runs in `export-roam-tree` beside rule 4. A Notes section at the end of the document ends
+  before the end-of-document colophon (`pandoc_rendering.trailing_colophon_length`), which is
+  appended when the document is built and so is already there when the notes are inserted. The PDF template opens a page at a chapter or
   part heading only when the heading is in the outline, so an unlisted group heading opens none;
   the EPUB stylesheet styles `a.guffin-note-ref` and `a.guffin-note-backlink`; the Markdown slug
   check leaves the generated group headings out of its collision count.
@@ -246,8 +248,11 @@ Built in phases, each a commit.
   `insert_notes_section` builds each entry from the note's `short` child in a short export. The
   render options `note_form` and `notes_only` are the CLI's `--note-form` and
   `--notes-only/--no-notes-only`, and so the server's `note_form` and `notes_only` request
-  fields. A notes-only export's filename gains a `.notes` segment, and it aborts without a Notes
-  heading whatever the project type.
+  fields. A notes-only export's filename gains a `.notes` segment, and it aborts when there is no
+  Notes heading and none to be added.
+- **Missing Notes section**: `StructuralPolicy.add_missing_notes_section` (on for `article` and
+  `manuscript`) has each renderer apply `model/notes.with_notes_section` after pruning, adding a
+  tagged "Notes" heading at the end of the root when the document cites notes but has none.
 
 Departures from the decisions, and behavior found while building:
 
@@ -452,8 +457,19 @@ Resolved 2026-10-14:
   `note_form`), the group headings, and the entries. Section group headings are plain text,
   since the sections they would link to are not in the output. In a `notes_only` export a
   missing `element-type:: endnotes` heading is an error whatever the project type, since there
-  is nothing else to output. The option applies to every format; its first use is a Markdown
+  is nothing else to output (amended below: only when no Notes section is added either). The option applies to every format; its first use is a Markdown
   export of a book's complete notes for publishing beside the book's code.
+- **A missing Notes section is added, except in a book (rule 5 amended).** Rule 5 first had an
+  `article` or `manuscript` export warn and leave its notes out. Instead, the project profile's
+  `StructuralPolicy` carries `add_missing_notes_section`: on for `article` and `manuscript`, off
+  for `book`. When it is on and the document cites notes but has no `element-type:: endnotes`
+  heading, each renderer adds one before rendering (`model/notes.with_notes_section`): a heading
+  titled "Notes" at the end of the root, at the shallowest heading level the document uses,
+  carrying the `element-type:: endnotes` assignment a `guffin-meta::` child would make. It goes
+  through the ordinary heading path, so it is back matter and unnumbered like an authored one. A
+  book's Notes section is part of its designed back matter, so a book still fails without one. A
+  notes-only export aborts only when it would have nothing to show: no Notes heading and none to
+  be added. (Decided 2026-10-14.)
 - **Validation rules (Q9).** "Error" follows Guffin's existing posture for vocabulary checks: it
   fails `export-roam-tree` (and the server's `/v1/export`) and is logged as a warning by
   `dump-roam-tree`. "Warning" is logged and never fails anything.
@@ -464,15 +480,14 @@ Resolved 2026-10-14:
   | 2 | A dangling reference: the marker's target block does not exist | error |
   | 3 | An orphan note: a note block no marker references (the note is dropped) | warning |
   | 4 | Two notes in the same section with the same lead-in | error |
-  | 5 | Notes present but no `element-type:: endnotes` heading | error in a `book` export, warning otherwise |
+  | 5 | Notes present but no `element-type:: endnotes` heading | error in a `book` export; otherwise Guffin adds a Notes section (amended below) |
   | 6 | One note block cited by more than one marker | error |
   | 7 | A marker whose target is not a child of a notes header block | error |
 
   Rule 5 is an error for `book` because a server export returns no warnings on success
-  (server-mode v1), so a book's notes would otherwise vanish without a visible sign; a
-  single-page `article` export legitimately has no Notes section, so there it only warns. It
-  depends on the project type, so it runs where that is known (the render phase), not in the
-  vocabulary pass. Rule 6 exists because an invisible note annotates exactly one passage, while
+  (server-mode v1), so a book's notes would otherwise vanish without a visible sign. It
+  depends on the project type, so it runs where that is known (after the profile resolves), not in
+  the vocabulary pass. Rule 6 exists because an invisible note annotates exactly one passage, while
   the Footnotes extension lets a named note be cited repeatedly. Rule 7 keeps a body paragraph
   from being filed as a note; the notes header is recognized by its text, the extension's
   default `#footnotes`, and making that configurable is deferred. Lead-in uniqueness is checked

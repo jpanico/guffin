@@ -897,11 +897,21 @@ class TestExportNoteChecks:
         assert render.call_args.args[5].note_form is NoteForm.FULL
         assert not render.call_args.args[5].notes_only
 
-    def test_notes_only_without_notes_section_aborts(self, tmp_path: pathlib.Path) -> None:
-        """A notes-only export with no Notes section aborts, even for an article."""
-        result, render = self._export(_noted_bundle(with_notes_heading=False), "article", tmp_path, "--notes-only")
+    def test_notes_only_without_notes_aborts(self, tmp_path: pathlib.Path) -> None:
+        """A notes-only export of a work with no notes and no Notes section has nothing to show, and aborts."""
+        page: Final[PageVertex] = PageVertex(uid="page00001", title="Noted", children=["text00001"])
+        bundle: Final[RenderBundle] = RenderBundle(
+            content=VertexTree(tree_vertices=[page, TextVertex(uid="text00001", text="No notes here.")]), view={}
+        )
+        result, render = self._export(bundle, "article", tmp_path, "--notes-only")
         assert result.exit_code == 1
         render.assert_not_called()
+
+    def test_notes_only_article_without_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
+        """A notes-only article that cites notes gets its Notes section added, so it renders."""
+        result, render = self._export(_noted_bundle(with_notes_heading=False), "article", tmp_path, "--notes-only")
+        assert result.exit_code == 0, result.output
+        render.assert_called_once()
 
     def test_noted_book_with_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
         """A book whose notes have a Notes section passes both checks."""
@@ -922,8 +932,10 @@ class TestExportNoteChecks:
         assert result.exit_code == 1
         render.assert_not_called()
 
-    def test_article_without_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
-        """An article without a Notes section only warns, and renders without its notes."""
-        result, render = self._export(_noted_bundle(with_notes_heading=False), "article", tmp_path)
+    @pytest.mark.parametrize("project_type", ["article", "manuscript"])
+    def test_smaller_work_without_notes_section_renders(self, tmp_path: pathlib.Path, project_type: str) -> None:
+        """An article or manuscript citing notes without a Notes section renders; one is added at render time."""
+        result, render = self._export(_noted_bundle(with_notes_heading=False), project_type, tmp_path)
         assert result.exit_code == 0, result.output
         render.assert_called_once()
+        assert render.call_args.args[1].structural_policy.add_missing_notes_section
