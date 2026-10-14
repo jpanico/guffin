@@ -92,7 +92,8 @@ full in the digital editions and shortened in print; those requirements are mark
 
 ### Q1 — Authoring syntax
 
-How a note and its call site are written in Roam. Options:
+*Decided: option (d′) (see [Decisions](#decisions)).* How a note and its call site are written
+in Roam. Options:
 
 - **(a) The Footnotes extension's form:** an aliased block reference at the call site, the note
   block under a `#footnotes` header on the same page. Familiar to Roam users and tool-assisted;
@@ -173,7 +174,8 @@ their markers in the text, never by their order under the header.**
 
 ### Q2 — The lead-in
 
-For invisible notes: where the lead-in phrase comes from. Stated by the author in the note,
+*Decided with Q1: the lead-in is the marker's label (see [Decisions](#decisions)).* For
+invisible notes: where the lead-in phrase comes from. Stated by the author in the note,
 derived from the call site's surrounding text, or carried by the call site itself (Q1 (d)).
 
 ### Q3 — Choosing the style
@@ -229,3 +231,16 @@ Resolved 2026-10-14:
   author must create it explicitly, as a heading tagged `element-type:: endnotes` in the back
   matter, and Guffin fills that heading with the notes. Without such a heading, no endnotes
   appear in the output.
+- **Authoring syntax: option (d′) (Q1).** A note's call site is an aliased block reference
+  whose label, in parentheses, is the lead-in phrase: `[(a 52-minute run)](((uid)))`. The words
+  of the label are part of the sentence; the note is the referenced block, under the Footnotes
+  extension's header. The parentheses identify the marker as a note (not an ordinary aliased
+  block reference), and the extension treats it as a named note, ordering and deleting it.
+  Chosen over (a) because a numbered marker carries no lead-in, which would then have to be
+  guessed from the preceding words or copied into the note, where it goes stale; over (d)
+  because (d) needs a second rule to recognize a marker and loses the extension's bookkeeping.
+  Accepted cost: Roam shows the parentheses in the running text.
+- **The lead-in is the label (Q2).** In the output the label's text, without its parentheses,
+  is set as plain text in the sentence and quoted as the note's lead-in in the Notes section.
+  Still open: what Guffin does with an all-digit label such as `(1)`, which carries no lead-in
+  (an error, a warning, or a derived lead-in; part of Q9).
