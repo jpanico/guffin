@@ -141,8 +141,8 @@ What Guffin would need for option (a):
 
 - recognize the marker `[(label)](((uid)))` (today it becomes a malformed nested link; see
   [Current state](#current-state-as-of-93344d1));
-- recognize note blocks and keep them out of the running text, identifying a note as a block
-  referenced by a marker rather than by the header's text, which is configurable;
+- recognize note blocks and keep them out of the running text: a note is a block referenced by a
+  marker (Q9 rule 7 also requires it to sit under a notes header, recognized by its text);
 - drop the header blocks, wherever an embedded page brings one in;
 - take the lead-in from elsewhere (Q2): the marker carries none. For note 1, the natural
   lead-in is the words just before the marker.
@@ -214,8 +214,8 @@ sections there (heading links, as block references to headings already do).
 
 ### Q9 — Validation rules
 
-Which conditions are errors and which warnings (R7), and whether a lead-in must be unique on its
-page or in its section.
+*Decided (see [Decisions](#decisions)).* Which conditions are errors and which warnings (R7),
+and whether a lead-in must be unique on its page or in its section.
 
 
 ## Decisions
@@ -242,5 +242,28 @@ Resolved 2026-10-14:
   Accepted cost: Roam shows the parentheses in the running text.
 - **The lead-in is the label (Q2).** In the output the label's text, without its parentheses,
   is set as plain text in the sentence and quoted as the note's lead-in in the Notes section.
-  Still open: what Guffin does with an all-digit label such as `(1)`, which carries no lead-in
-  (an error, a warning, or a derived lead-in; part of Q9).
+  An all-digit label such as `(1)` carries no lead-in; Q9 makes it an error.
+- **Validation rules (Q9).** "Error" follows Guffin's existing posture for vocabulary checks: it
+  fails `export-roam-tree` (and the server's `/v1/export`) and is logged as a warning by
+  `dump-roam-tree`. "Warning" is logged and never fails anything.
+
+  | # | Condition | Severity |
+  |---|---|---|
+  | 1 | A marker label with no lead-in: all digits (`(1)`) or empty (`()`) | error |
+  | 2 | A dangling reference: the marker's target block does not exist | error |
+  | 3 | An orphan note: a note block no marker references (the note is dropped) | warning |
+  | 4 | Two notes in the same section with the same lead-in | error |
+  | 5 | Notes present but no `element-type:: endnotes` heading | error in a `book` export, warning otherwise |
+  | 6 | One note block cited by more than one marker | error |
+  | 7 | A marker whose target is not a child of a notes header block | error |
+
+  Rule 5 is an error for `book` because a server export returns no warnings on success
+  (server-mode v1), so a book's notes would otherwise vanish without a visible sign; a
+  single-page `article` export legitimately has no Notes section, so there it only warns. It
+  depends on the project type, so it runs where that is known (the render phase), not in the
+  vocabulary pass. Rule 6 exists because an invisible note annotates exactly one passage, while
+  the Footnotes extension lets a named note be cited repeatedly. Rule 7 keeps a body paragraph
+  from being filed as a note; the notes header is recognized by its text, the extension's
+  default `#footnotes`, and making that configurable is deferred. Lead-in uniqueness is checked
+  per section only; two passages in different sections that land on the same PDF page with the
+  same lead-in are not detected (a known gap, detectable only after layout).
