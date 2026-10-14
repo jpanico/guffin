@@ -277,7 +277,7 @@
   blocks: null
 - uid: 3JYOglfRf
   id: 20614
-  string: This block has a footnote anchor right here->[(1)](((Mc-JWCvWX))) This is
+  string: This block has a [(footnote anchor)](((Mc-JWCvWX))) right here. This is
     a sentence immediately following the footnote anchor.
   order: 0
   heading: null
@@ -1016,7 +1016,7 @@
 - uid: 10a5HNGxp
   id: 20618
   string: This block has a footnote that was created by first selecting the text,
-    and then **⌘⇧F**. The anchor->[(2)](((AxMU9z6fm))) The following sentence.
+    and then **⌘⇧F**. [(The anchor)](((AxMU9z6fm))) comes before the following sentence.
   order: 2
   heading: null
   children: null

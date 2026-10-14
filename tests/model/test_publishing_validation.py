@@ -14,6 +14,7 @@ from guffin.model.attribute import (
 )
 from guffin.model.attribute_anchor import AttributeAnchor
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.notes import note_citations
 from guffin.model.publishing_semantics import (
     PublishingAttribute,
     PublishingSemantics,
@@ -1100,12 +1101,14 @@ class TestValidateSemanticsNotes:
         assert not result.is_valid
         assert [error.validator for error in result.errors] == [all_note_lead_ins_present]
 
-    def test_article4_fixture_reports_its_numbered_markers(self) -> None:
-        """[[Test Article]] 4's two numbered Footnotes markers carry no lead-in."""
+    def test_article4_fixture_notes_validate(self) -> None:
+        """[[Test Article]] 4's three Footnotes markers all carry phrase lead-ins, so the fixture validates."""
         raw = yaml.load((FIXTURES_YAML_DIR / "test_article_4_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
         tree = VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
+        assert sorted(citation.lead_in for citation in note_citations(tree)) == [
+            "ANCHOR NAME",
+            "The anchor",
+            "footnote anchor",
+        ]
         result = validate_semantics(tree)
-        assert [error.validator for error in result.errors] == [all_note_lead_ins_present]
-        assert "Mc-JWCvWX" in result.errors[0].message
-        assert "AxMU9z6fm" in result.errors[0].message
-        assert "Tk7FpgzQa" not in result.errors[0].message
+        assert result.errors == ()

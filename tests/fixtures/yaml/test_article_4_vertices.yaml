@@ -279,7 +279,7 @@
   uid: 3JYOglfRf
   refs:
   - Mc-JWCvWX
-  text: This block has a footnote anchor right here->[1](x-guffin:vertex-note/Mc-JWCvWX)
+  text: This block has a [footnote anchor](x-guffin:vertex-note/Mc-JWCvWX) right here.
     This is a sentence immediately following the footnote anchor.
 - vertex_type: guffin/text
   uid: AW551UYJf
@@ -292,7 +292,8 @@
   refs:
   - AxMU9z6fm
   text: This block has a footnote that was created by first selecting the text, and
-    then **⌘⇧F**. The anchor->[2](x-guffin:vertex-note/AxMU9z6fm) The following sentence.
+    then **⌘⇧F**. [The anchor](x-guffin:vertex-note/AxMU9z6fm) comes before the following
+    sentence.
 - vertex_type: guffin/notes
   uid: tRCn6eEI7
   children:

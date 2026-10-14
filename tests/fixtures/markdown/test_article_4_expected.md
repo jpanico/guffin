@@ -59,6 +59,6 @@
     - = 📅 Equal / definition, Calendar event -\> `=`📅
     - ? 💬 Chat Message, Question -\> ?💬
 - Children blocks exercise *Footnotes* (Roam Extension)
-  - This block has a footnote anchor right here-\>1 This is a sentence immediately following the footnote anchor.
+  - This block has a footnote anchor right here. This is a sentence immediately following the footnote anchor.
   - This block has a footnote that uses a *named anchor*. This is the lead-in to the anchor-\>ANCHOR NAME
-  - This block has a footnote that was created by first selecting the text, and then **⌘⇧F**. The anchor-\>2 The following sentence.
+  - This block has a footnote that was created by first selecting the text, and then **⌘⇧F**. The anchor comes before the following sentence.

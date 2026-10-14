@@ -207,8 +207,8 @@
     order: 0
     page:
       id: 11643
-- - string: This block has a footnote anchor right here->[(1)](((Mc-JWCvWX))) This
-      is a sentence immediately following the footnote anchor.
+- - string: This block has a [(footnote anchor)](((Mc-JWCvWX))) right here. This is
+      a sentence immediately following the footnote anchor.
     id: 20614
     uid: 3JYOglfRf
     parents:
@@ -720,7 +720,7 @@
     page:
       id: 11643
 - - string: This block has a footnote that was created by first selecting the text,
-      and then **⌘⇧F**. The anchor->[(2)](((AxMU9z6fm))) The following sentence.
+      and then **⌘⇧F**. [(The anchor)](((AxMU9z6fm))) comes before the following sentence.
     id: 20618
     uid: 10a5HNGxp
     parents:
