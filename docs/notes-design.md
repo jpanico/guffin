@@ -1,6 +1,7 @@
 # Notes: footnotes and endnotes
 
-**Status: design in progress; nothing implemented.** This is the working design document for
+**Status: designed, nothing implemented.** Every open question is decided except Q3, deferred
+with R3; Q7 has two reading-app tests open. This is the working design document for
 *notes* in Guffin: footnotes, endnotes, and invisible endnotes, authored in Roam and rendered in
 every output format. It records the current state, the requirements, the open design questions,
 and the decision log. Decisions are recorded in [Decisions](#decisions) as they are made; until a
@@ -86,6 +87,9 @@ full in the digital editions and shortened in print; those requirements are mark
   output without rewriting their notes. (Proposed; see Q1.)
 - **R7 — Validation.** Dangling references, orphan notes, and ambiguous lead-ins are reported, in
   keeping with Guffin's existing validation passes.
+- **R8 — Notes-only export.** *(book)* An export can produce the Notes section alone, gathered
+  from the whole target, so the complete notes can be published without the text they annotate
+  (the book's public repository holds the notes but not the prose). Added 2026-10-14 with Q8.
 
 
 ## Open questions
@@ -208,7 +212,7 @@ endnotes, and for invisible notes, whether each note links back to an anchor in 
 
 ### Q8 — Markdown behavior
 
-Whether GFM output uses GitHub's `[^1]` footnotes for every style, and how invisible notes key to
+*Decided (see [Decisions](#decisions)).* Whether GFM output uses GitHub's `[^1]` footnotes for every style, and how invisible notes key to
 sections there (heading links, as block references to headings already do).
 
 ### Q9 — Validation rules
@@ -377,6 +381,28 @@ Resolved 2026-10-14:
      entry as a note makes the app show the note in a pop-up in place, and whether doing so
      hides the entries from the Notes section. If pop-ups work and the section stays visible,
      they replace the plain link.
+- **Markdown links a note to its section only (Q8).** In a Markdown export of a whole document:
+  - **No GitHub footnotes.** GFM's `[^1]` renders a visible superscript number and a list at
+    the end of the file, a visible-marker style that invisible notes exclude.
+  - **Grouping as Q4:** by chapter, then by section.
+  - **Each section group heading links to its section,** by the GitHub-style slug Guffin
+    already uses for links to headings (`[The First Program](#the-first-program)`), with no
+    HTML.
+  - **No passage anchors and no passage → note links.** GitHub strips styling, so a lead-in
+    link in the prose would show as a plain blue link: the mark invisible notes avoid. The EPUB
+    and PDF are the reading editions; Markdown keys a note to its section and no further.
+
+  Implementation note: a group heading repeats its section's title, so the same heading text
+  appears twice in one file. Guffin treats two headings with the same slug as a collision and
+  falls back to HTML `vertex-<uid>` anchors for both; the generated group headings must be
+  left out of that check, or every noted section heading would gain an HTML anchor.
+- **A `notes_only` export option (Q8, R8).** The export reads the whole target as usual, gathers
+  its notes, and outputs only the Notes section: the endnotes heading, its intro blocks (by
+  `note_form`), the group headings, and the entries. Section group headings are plain text,
+  since the sections they would link to are not in the output. In a `notes_only` export a
+  missing `element-type:: endnotes` heading is an error whatever the project type, since there
+  is nothing else to output. The option applies to every format; its first use is a Markdown
+  export of a book's complete notes for publishing beside the book's code.
 - **Validation rules (Q9).** "Error" follows Guffin's existing posture for vocabulary checks: it
   fails `export-roam-tree` (and the server's `/v1/export`) and is logged as a warning by
   `dump-roam-tree`. "Warning" is logged and never fails anything.
