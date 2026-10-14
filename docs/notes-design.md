@@ -281,9 +281,12 @@ Departures from the decisions, and behavior found while building:
   colophon is therefore placed after the writer runs: Markdown includes it with
   `--include-after-body`, which puts it after the footnote definitions, and EPUB appends it to the
   last document in reading order after packaging, since an after-body include is repeated in every
-  EPUB content document. GitHub and VS Code's preview gather a Markdown file's footnotes at the
-  bottom of the rendered page wherever the definitions sit, so there the colophon still renders
-  above the notes; only notes Guffin numbered itself could avoid that.
+  EPUB content document. GitHub, VS Code's preview, and Typora's HTML and PDF export gather a
+  Markdown file's footnotes at the bottom of the rendered page wherever the definitions sit, each
+  under a rule of its own, so there the colophon still renders above the notes; only notes Guffin
+  numbered itself could avoid that. Typora's editor shows the definitions where they sit, after the
+  body with no rule between. A rule written into the file was considered and rejected (Joe,
+  2026-10-14): in the gathering viewers it would land on the colophon's own rule.
 - **In a parts book, the EPUB gives each chapter's notes a file of its own.** Pandoc splits an EPUB
   at the chapter level, level 2 in a parts book, and a Notes heading promoted to part level puts its
   chapter groups at level 2. Each file is back matter, the links between files resolve, and the
