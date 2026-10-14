@@ -81,7 +81,7 @@ full in the digital editions and shortened in print; those requirements are mark
 - **R4 — Invisible keys.** *(book)* In PDF an invisible note is keyed by page number and lead-in;
   in formats without pages, by section title and lead-in.
 - **R5 — Short and full forms.** *(book)* A note may carry a short form; an export chooses which
-  form to render.
+  form to render. *Decided as Q5.*
 - **R6 — Interoperate with the Footnotes extension.** An author using the extension gets correct
   output without rewriting their notes. (Proposed; see Q1.)
 - **R7 — Validation.** Dangling references, orphan notes, and ambiguous lead-ins are reported, in
@@ -191,7 +191,7 @@ that section are grouped and headed; whether PDF running heads carry "Notes to P
 
 ### Q5 — Short and full forms
 
-How a short form is authored (a child of the note block, an attribute, a convention within the
+*Decided (see [Decisions](#decisions)).* How a short form is authored (a child of the note block, an attribute, a convention within the
 note's text) and how an export selects it (per format, per request).
 
 ### Q6 — Pandoc model
@@ -268,6 +268,31 @@ Resolved 2026-10-14:
 - **The lead-in is the label (Q2).** In the output the label's text, without its parentheses,
   is set as plain text in the sentence and quoted as the note's lead-in in the Notes section.
   An all-digit label such as `(1)` carries no lead-in; Q9 makes it an error.
+- **A short form is a marked child of the note (Q5).** The note block holds the full form. Its
+  short form, when it has one, is a child block marked through Guffin's existing `guffin-meta::`
+  mechanism (the pattern of `pdf-render::` and `code-language::`):
+
+  ```
+  - F. C. Williams and T. Kilburn, "Electronic Digital Computers," Nature 162 (1948): 487.
+    - Williams and Kilburn, "Electronic Digital Computers," 487.
+      - guffin-meta::
+        - note-form:: short
+  ```
+
+  The note's other children are continuation paragraphs of the full form. Rejected
+  alternatives: Roam block versions (versions carry no names, so Guffin could not tell short
+  from full); a `short::` attribute (ordinary attribute values must be slugs, and
+  `guffin-meta::` values cannot contain commas, which citations are full of); generating short
+  forms from structured citations (citation management, a separate and much larger project).
+- **The export chooses the form (Q5).** A request option `note_form`, `full` or `short`
+  (default `full`), chosen per export rather than per format, since a PDF may be a print
+  edition or a reviewer copy. In a `short` export, a note without a short form prints its full
+  form, without a warning: many notes are already short.
+- **The Notes section may carry an intro (Q5).** Blocks the author writes directly under the
+  `element-type:: endnotes` heading are kept, ahead of the generated groups. An intro block
+  marked `note-form:: short` or `note-form:: full` (through `guffin-meta::`, as above) appears
+  only in exports of that form, so a print edition can say where the complete notes are
+  without the digital edition repeating it.
 - **Validation rules (Q9).** "Error" follows Guffin's existing posture for vocabulary checks: it
   fails `export-roam-tree` (and the server's `/v1/export`) and is logged as a warning by
   `dump-roam-tree`. "Warning" is logged and never fails anything.
