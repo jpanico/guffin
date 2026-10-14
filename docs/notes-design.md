@@ -196,7 +196,7 @@ note's text) and how an export selects it (per format, per request).
 
 ### Q6 — Pandoc model
 
-Visible notes map to Pandoc's `Note`. Invisible notes have no Pandoc element: an anchor in the
+*Decided (see [Decisions](#decisions)).* Visible notes map to Pandoc's `Note`. Invisible notes have no Pandoc element: an anchor in the
 text (an empty `Span` with an id) plus a generated Notes section, finished per format by a Lua
 filter or post-processing. Which layer builds the Notes section, and how the PDF learns each
 anchor's page.
@@ -293,6 +293,56 @@ Resolved 2026-10-14:
   marked `note-form:: short` or `note-form:: full` (through `guffin-meta::`, as above) appears
   only in exports of that form, so a print edition can say where the complete notes are
   without the digital edition repeating it.
+- **A marker transcribes to a `NOTE` vertex link (Q6).** A new `VertexLinkKind.NOTE`, path stem
+  `vertex-note`, joins `REFERENCE` and `EMBED` in `model/vertex_link.py`. A new inline converter
+  rewrites the marker, label without its parentheses as the display:
+
+  ```
+  [(a 52-minute run)](((Tk7FpgzQa)))   →   [a 52-minute run](x-guffin:vertex-note/Tk7FpgzQa)
+  ```
+
+  It runs in `to_pandoc_md` before `convert_block_link`, as `convert_page_link_aliases` runs
+  before `convert_page_link`, so the inner `((uid))` is never rewritten into a nested link.
+  Transcription records only the meaning (this phrase is the lead-in of note X); what it becomes
+  is decided per format in the render phase, as for the other two kinds. Chosen over emitting a
+  Pandoc span with an id at transcription, which would have put a rendering choice into
+  transcription.
+- **The notes header becomes a `NOTES` container vertex (Q6).** A new `VertexType.NOTES`
+  classifies the header block (recognized by its text, `#footnotes`; see rule 7): its content is
+  a set of notes, as a `TABLE` vertex's children are its rows. The notes themselves stay
+  ordinary vertices (`TEXT` and so on), since what makes a block a note is its role, not its
+  content; a per-note vertex type would flatten or duplicate the existing content types. The
+  renderer renders nothing for a `NOTES` vertex where it sits, which takes the header and its
+  notes out of the running text wherever an embedded page brings one in. The model has no
+  separate list of notes: the notes are the `NOTES` children, reached through the `NOTE` links.
+- **Validation hooks (Q6).** Rules 1, 2, 4, 6, and 7 run on the model, finding markers by
+  parsing `x-guffin` URLs: rule 7 is "a `NOTE` link's target is a child of a `NOTES` vertex",
+  and rule 3 is "a `NOTES` child no `NOTE` link targets". Rule 5 runs in the render phase.
+- **The render phase resolves `NOTE` links and builds the Notes section (Q6).**
+  - **Order.** `resolve_vertex_links` resolves links after embeds are expanded, so walking the
+    `NOTE` links of the built document yields the notes in reading order across every embedded
+    page, which is the order the decisions above require.
+  - **Anchors.** A `NOTE` resolver replaces each link with the lead-in as plain text plus a
+    format-specific anchor at its start: in Typst, a zero-width `#metadata(none)` carrying the
+    label `<guffin-note-<uid>>`; in EPUB, an element with the id `guffin-note-<uid>`; in
+    Markdown, per Q8.
+  - **The section.** In the shared Pandoc document, the `element-type:: endnotes` heading is
+    filled with the intro blocks (filtered by `note_form`), the group headings (unnumbered and
+    unlisted, grouped by format), and one entry per note: a `Div` (class `guffin-endnote`)
+    holding a locator placeholder, the lead-in in italics, ": ", and the note in the chosen
+    form.
+  - **Locators.** The Typst filter turns each placeholder into
+    `#context counter(page).at(<guffin-note-<uid>>).first()`, the displayed page number of the
+    passage; the other formats drop it.
+  - **No Pandoc `Note`.** Pandoc's `Note` element is always a visible note, which these are
+    not; it remains the path for footnotes or visible endnotes later.
+
+  Verified 2026-10-14 (Pandoc 3.8.3, Typst 0.14.2): Pandoc writes a span's id as a Typst label,
+  and `counter(page).at(<label>)` in a later Notes section returns the labelled passage's
+  displayed page number. Typst attaches a label to the element before it, which can be the
+  whole run of text from the start of the sentence, so a paragraph crossing a page break could
+  report the wrong page; hence the explicit zero-width anchor at the start of the lead-in
+  rather than Pandoc's label.
 - **Validation rules (Q9).** "Error" follows Guffin's existing posture for vocabulary checks: it
   fails `export-roam-tree` (and the server's `/v1/export`) and is logged as a warning by
   `dump-roam-tree`. "Warning" is logged and never fails anything.
