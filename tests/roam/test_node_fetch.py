@@ -130,24 +130,43 @@ class TestFetchRoamNodesRequest:
         assert "(descendant ?anchor ?node)" in rules
         assert "page-ref" not in rules
 
-    def test_with_refs_rules_pull_subtrees_of_all_page_refs(self) -> None:
-        """The subtree clause uses the page-ref rule, so anchor-self refs (e.g. a page-title.
-
-        reference) get their full subtrees pulled, not only refs from descendant blocks.
-        """
+    def test_with_refs_rules_bring_every_ref_target_as_a_node(self) -> None:
+        """Every ref target, the anchor's own (e.g. a page-title reference) included, is in scope as a node."""
         rules: Final[str] = FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES
         assert "[(identity ?anchor) ?node]" in rules
         assert "(descendant ?anchor ?node)" in rules
-        assert "(page-ref ?anchor ?node)" in rules
-        assert "(page-ref ?anchor ?ref)\n" in rules
+        assert "(page-ref ?anchor ?node)]" in rules
+
+    def test_with_refs_rules_expand_blocks_and_embedded_pages_only(self) -> None:
+        """Only an expand-ref target brings its subtree: a block, or a page a block embeds.
+
+        A merely linked page renders as its title, so its content, and whatever that content links,
+        stays out of the fetch.
+        """
+        rules: Final[str] = FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES
+        assert "(expand-ref ?anchor ?ref)\n" in rules
         assert "(descendant ?ref ?node)" in rules
-        # Second ref hop: ref targets of ref targets (bare nodes).
-        assert "(page-ref ?anchor ?via)" in rules
-        assert "(page-ref ?via ?node)" in rules
-        # Second-hop ref subtrees: the full subtree of each two-hop ref target, so a
-        # multi-block construct referenced from within a first-hop ref (e.g. a table
-        # referenced inside an embedded page) arrives with its children.
-        assert "(page-ref ?via ?ref)" in rules
+        assert "[(missing? $ ?node :node/title)]" in rules
+        assert '[(clojure.string/includes? ?string "embed")]' in rules
+        # No subtree, and no second hop, through a plain page-ref target.
+        assert "(page-ref ?anchor ?ref)" not in rules
+        assert "(page-ref ?anchor ?via)" not in rules
+
+    def test_with_refs_rules_second_hop_starts_from_expanded_content(self) -> None:
+        """The second hop follows refs from within expanded targets, and expands its own blocks and embeds.
+
+        So a multi-block construct referenced from within a first-hop ref (e.g. a table referenced
+        inside an embedded page) still arrives with its children.
+        """
+        rules: Final[str] = FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES
+        assert "(expand-ref ?anchor ?via)\n        (page-ref ?via ?node)]" in rules
+        assert "(expand-ref ?via ?ref)\n        (descendant ?ref ?node)]" in rules
+
+    def test_embeds_follow_every_version(self) -> None:
+        """A page embedded only from an unselected version, or a descendant's, is still expanded."""
+        rules: Final[str] = FetchRoamNodes.Request.SCOPE_WITH_REFS_RULES
+        assert "(version-of ?root ?block)\n        (embeds ?block ?node)]" in rules
+        assert "(version-of ?member ?block)\n        (embeds ?block ?node)]" in rules
 
     def test_with_refs_rules_follow_refs_from_every_version(self) -> None:
         """page-ref follows the refs of every version of the root and of its descendants.
@@ -547,6 +566,31 @@ class TestFetchRoamNodesFetchByPageTitle:
         ]
         assert len(version_rows) == 3
         assert all("blocks" not in row and "version-group" not in row for row in version_rows)
+
+    @pytest.mark.live
+    @pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
+    def test_fetch_testarticle6_expands_embedded_pages_not_linked_ones(self, live_api_endpoint: ApiEndpoint) -> None:
+        """Live test: an embedded page arrives with its content; a merely linked page arrives alone.
+
+        ``[[Test Article]] 6`` embeds ``[[Dorian Preface]]`` (``{{embed: [[Dorian Preface]]}}``), whose
+        content the export renders.  Its title links ``[[Test Article]]``, a page with content of its
+        own that the export never shows, since a link renders as the page's title.
+        """
+        result: Final[NodeFetchResult] = FetchRoamNodes.fetch_by_page_title(
+            fetch_spec=NodeFetchSpec(anchor=NodeFetchAnchor(qualifier="[[Test Article]] 6"), include_refs=True),
+            api_endpoint=live_api_endpoint,
+        )
+        assert result.nodes_by_uid is not None
+        by_title: Final[dict[str, RoamNode]] = {n.title: n for n in result.nodes_by_uid.values() if n.title}
+        fetched_ids: Final[set[int]] = {n.id for n in result.nodes_by_uid.values()}
+
+        embedded: Final[RoamNode] = by_title["Dorian Preface"]
+        assert embedded.children
+        assert {child.id for child in embedded.children} <= fetched_ids
+
+        linked: Final[RoamNode] = by_title["Test Article"]
+        assert linked.children
+        assert not {child.id for child in linked.children} & fetched_ids
 
 
 class TestFetchRoamNodesFetchByNodeUid:

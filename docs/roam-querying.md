@@ -124,8 +124,9 @@ names that one attribute unambiguously.
   (`args[2]`). The node-UID query is identical except that `?anchor` is bound by `:block/uid`.
 - `?anchor` is the page; everything else radiates from it through the `in-scope` rule, which is
   where the fetch's scope is decided (see **Datalog Rules** below): `SCOPE_RULES` makes it the
-  anchor plus its descendants, `SCOPE_WITH_REFS_RULES` adds referenced nodes two hops deep with
-  their subtrees. The query text does not change with `include_refs`; only the rules do.
+  anchor plus its descendants, `SCOPE_WITH_REFS_RULES` adds referenced nodes two hops deep, each
+  block and each embedded page with its subtree, a merely linked page as its own node alone. The
+  query text does not change with `include_refs`; only the rules do.
 - The second and third `or-join` branches pivot through Roam's Version Control group entity:
   for every in-scope `?member`, every block sharing its `:vc/blocks` group is returned too, so a
   versioned block's unselected versions arrive alongside the selected one that the parent's
@@ -265,6 +266,18 @@ nodes a fetch returns, one clause per kind of reachability, and the fetch ships 
 two rules vectors: `SCOPE_RULES` (the anchor itself — bound through `[(identity ?anchor)
 ?node]` — and its descendants) or `SCOPE_WITH_REFS_RULES` (those two clauses plus four
 more: referenced nodes, their subtrees, second-hop referenced nodes, and their subtrees).
+
+Only some references bring a subtree. The `expand-ref` rule picks them: a block target (no
+`:node/title`), since a note's body, a table's cells, and a block's attribute and version
+children are its descendants; and a page that a block embeds. Roam records an embed as an
+ordinary `:block/refs` entry, so the `embeds` rule recognizes one by its string, which contains
+`embed` (`{{embed: …}}`, `{{[[embed]]: …}}`, `embed-children`, `embed-path`), using
+`clojure.string/includes?`, which Roam's query engine supports. A page that is merely linked,
+whether from the text or from the anchor page's own title, renders as its title, so it arrives
+as its own node alone, and the second hop starts only from content that was expanded. Before
+this rule, every linked page brought its whole content and the pages it linked: chapter 1 of
+the SCFH book, 56 nodes, fetched 1,098, and the `draft-2` book export took 13.6 s instead of
+3.4 s, with identical output.
 Keeping the scope in the rules means the query is one short `or-join` whose branches can
 be composed with the rule — the version pivot in query 1 covers every kind of in-scope
 node with a single branch — instead of being repeated per reachability kind.

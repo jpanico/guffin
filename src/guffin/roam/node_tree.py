@@ -172,7 +172,8 @@ class NodeTree(BaseModel):
                 searched for :attr:`refs_by_id` — both direct ref targets and their
                 transitive descendants.  Child ids of ref nodes absent from
                 *super_network* are skipped silently: the fetch query intentionally omits
-                the subtrees of non-embed refs.
+                the subtrees of pages that are linked rather than embedded, and everything
+                beyond the second ref hop.
 
         Returns:
             A fully validated :class:`NodeTree`.
@@ -226,8 +227,9 @@ class NodeTree(BaseModel):
         attributes (e.g. a ``tags::`` attribute on a referenced page) resolve their page references
         *and* a multi-block construct referenced from within a first-hop ref (e.g. a ``{{table}}``
         referenced inside an embedded page) arrives complete.  Matches the two-hop reach of the
-        with-refs fetch query.  Missing child ids are skipped silently — the fetch query
-        intentionally omits subtrees beyond the second ref hop.
+        with-refs fetch query, taking whatever that query returned: missing child ids are skipped
+        silently, since the query intentionally omits the subtrees of pages that are linked rather
+        than embedded, and everything beyond the second ref hop.
 
         At each hop a node's refs include those of its other versions: a parent's ``children``
         names only the selected version, so a block referenced only from an unselected one (e.g.

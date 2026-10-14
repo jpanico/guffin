@@ -83,7 +83,8 @@ class FetchRoamNodes:
         (:attr:`BY_PAGE_TITLE_QUERY` / :attr:`BY_NODE_UID_QUERY`) and the caller's
         ``include_refs`` choice selects the rules vector — :attr:`SCOPE_RULES` (the anchor and
         its descendants) or :attr:`SCOPE_WITH_REFS_RULES` (plus referenced nodes, two ref hops
-        deep, with their subtrees).
+        deep, each block and each embedded page with its subtree, a merely linked page as its
+        own node alone).
 
         **Block versions**: a block authored with Roam's Version Control feature is several
         block entities, all at the same ``:block/order`` under the same parent, grouped by a
@@ -130,6 +131,29 @@ class FetchRoamNodes:
                     [?member :block/refs ?node]]"""),
             "    ",
         )
+        _EXPAND_REF_CLAUSES: Final[str] = textwrap.indent(
+            textwrap.dedent("""\
+                [(embeds ?block ?node)
+                    [?block :block/refs ?node]
+                    [?block :block/string ?string]
+                    [(clojure.string/includes? ?string "embed")]]
+                [(expand-ref ?root ?node)
+                    (page-ref ?root ?node)
+                    [(missing? $ ?node :node/title)]]
+                [(expand-ref ?root ?node)
+                    (embeds ?root ?node)]
+                [(expand-ref ?root ?node)
+                    (descendant ?root ?block)
+                    (embeds ?block ?node)]
+                [(expand-ref ?root ?node)
+                    (version-of ?root ?block)
+                    (embeds ?block ?node)]
+                [(expand-ref ?root ?node)
+                    (descendant ?root ?member)
+                    (version-of ?member ?block)
+                    (embeds ?block ?node)]"""),
+            "    ",
+        )
         _IN_SCOPE_CLAUSES: Final[str] = textwrap.indent(
             textwrap.dedent("""\
                 [(in-scope ?anchor ?node)
@@ -143,14 +167,14 @@ class FetchRoamNodes:
                 [(in-scope ?anchor ?node)
                     (page-ref ?anchor ?node)]
                 [(in-scope ?anchor ?node)
-                    (page-ref ?anchor ?ref)
+                    (expand-ref ?anchor ?ref)
                     (descendant ?ref ?node)]
                 [(in-scope ?anchor ?node)
-                    (page-ref ?anchor ?via)
+                    (expand-ref ?anchor ?via)
                     (page-ref ?via ?node)]
                 [(in-scope ?anchor ?node)
-                    (page-ref ?anchor ?via)
-                    (page-ref ?via ?ref)
+                    (expand-ref ?anchor ?via)
+                    (expand-ref ?via ?ref)
                     (descendant ?ref ?node)]"""),
             "    ",
         )
@@ -172,11 +196,21 @@ class FetchRoamNodes:
         """
 
         SCOPE_WITH_REFS_RULES: Final[str] = (
-            f"[\n{_DESCENDANT_CLAUSES}\n{_VERSION_CLAUSES}\n{_PAGE_REF_CLAUSES}\n{_IN_SCOPE_CLAUSES}\n{_IN_SCOPE_REF_CLAUSES}\n]"
+            f"[\n{_DESCENDANT_CLAUSES}\n{_VERSION_CLAUSES}\n{_PAGE_REF_CLAUSES}\n{_EXPAND_REF_CLAUSES}\n"
+            f"{_IN_SCOPE_CLAUSES}\n{_IN_SCOPE_REF_CLAUSES}\n]"
         )
         """Datalog rules vector scoping a fetch to the anchor, its descendants, and its references.
 
-        Defines four rules:
+        A reference brings its target's subtree only where rendering reads it.  A block target
+        arrives with its subtree: a note's body and short form, a table's cells, and the block's
+        attribute and version children are all its descendants.  A page target arrives with its
+        subtree only when a block embeds it.  A page that is merely linked — a ``[[Page]]`` in the
+        text, or in the anchor page's own title — renders as its title (or, for a daily-note page,
+        its date), so it arrives as its own node alone, and nothing is reached through it.  Before
+        this distinction, a linked page brought its whole content and the pages *it* linked, and
+        a chapter exported alone fetched some twenty times its own size.
+
+        Defines six rules:
 
         - ``(descendant ?parent ?child)`` — as in :attr:`SCOPE_RULES`.
         - ``(version-of ?block ?version)`` — ``?version`` shares a version group with ``?block``
@@ -190,27 +224,36 @@ class FetchRoamNodes:
           epigraph of a versioned reference to one — would be missing from the fetch, and the
           alternative would render as its raw ``((uid))``.  It calls ``descendant`` and
           ``version-of``, so the three always ship together.
+        - ``(embeds ?block ?node)`` — ``?block`` references ``?node`` and its string contains
+          ``embed``.  Roam records an embed as an ordinary ``:block/refs`` entry, so the string is
+          the only sign of one; the test covers ``{{embed: …}}``, ``{{[[embed]]: …}}``, and the
+          ``embed-children`` and ``embed-path`` forms.  A block that merely mentions the word and
+          links a page counts too, which fetches that page's content needlessly but changes no
+          output.  (Roam's query engine supports ``clojure.string/includes?``.)
+        - ``(expand-ref ?root ?node)`` — ``?node`` is a ``page-ref`` target of ``?root`` whose
+          subtree the fetch needs: any block (no ``:node/title``; clause 1), or a page embedded
+          by ``?root`` itself (clause 2), by one of its descendants (clause 3), or by a version of
+          either (clauses 4 and 5, for the reason ``page-ref`` gives).
         - ``(in-scope ?anchor ?node)`` — the nodes a fetch returns.  Six clauses:
 
           1. The anchor node itself.
           2. Every block reachable from ``?anchor`` through ``:block/children`` at any depth.
           3. Every node referenced via ``:block/refs`` from ``?anchor`` directly, from any of
-             its descendants, or from any version of either (via ``page-ref``).
-          4. Every block reachable through ``:block/children`` from any ``page-ref`` target of
-             the anchor — the full subtree of every referenced node, whether referenced by the
-             anchor itself (e.g. a page-title reference) or by any of its descendants.  With
-             clause 3 (the ref targets themselves), every referenced block arrives together
-             with its full subtree, so referenced multi-block constructs (e.g. a ``{{table}}``)
-             arrive complete.
+             its descendants, or from any version of either (via ``page-ref``) — every page
+             among them as its own node, which is all a link to it needs.
+          4. Every block reachable through ``:block/children`` from any ``expand-ref`` target of
+             the anchor, so every referenced block, and every embedded page, arrives with its
+             full subtree, and referenced multi-block constructs (e.g. a ``{{table}}``) arrive
+             complete.
           5. Second-hop ref targets: every node ``page-ref``-reachable from a (first-hop)
-             ``page-ref`` target of the anchor — pages referenced by a referenced node's own
-             subtree (e.g. a ``tags::`` attribute on a referenced page).  Fan-out is bounded at
-             two ref hops while still letting a referenced node's attributes resolve their own
-             page references.
-          6. Every block reachable through ``:block/children`` from any second-hop ``page-ref``
-             target (clause 5) — the full subtree of each two-hop referenced node, so a
-             multi-block construct referenced from within a first-hop ref (e.g. a ``{{table}}``
-             referenced from inside an embedded page) arrives with its cells.
+             ``expand-ref`` target of the anchor — the nodes referenced from within content the
+             fetch expanded (e.g. a ``tags::`` attribute under a referenced block, or a block
+             reference inside an embedded page).  Fan-out is bounded at two ref hops.
+          6. Every block reachable through ``:block/children`` from any second-hop
+             ``expand-ref`` target — the full subtree of each two-hop referenced block or
+             embedded page, so a multi-block construct referenced from within a first-hop ref
+             (e.g. a ``{{table}}`` referenced from inside an embedded page) arrives with its
+             cells.
 
         Pass this as the ``%`` rules binding when referenced nodes are wanted.
         """
@@ -307,8 +350,9 @@ class FetchRoamNodes:
             """Return the rules vector that scopes a fetch.
 
             Args:
-                include_refs: Whether referenced nodes (two ref hops deep, with their subtrees)
-                    are in scope alongside the anchor and its descendants.
+                include_refs: Whether referenced nodes (two ref hops deep; blocks and embedded
+                    pages with their subtrees, linked pages alone) are in scope alongside the
+                    anchor and its descendants.
 
             Returns:
                 :attr:`SCOPE_WITH_REFS_RULES` when *include_refs* is ``True``, else
@@ -324,7 +368,8 @@ class FetchRoamNodes:
                 page_title: The exact title of the Roam page to fetch.
                 include_refs: When ``True``, pairs :attr:`BY_PAGE_TITLE_QUERY` with
                     :attr:`SCOPE_WITH_REFS_RULES` to also pull every node referenced via
-                    ``:block/refs`` from the page or any of its descendants.  When ``False``
+                    ``:block/refs`` from the page or any of its descendants (with the subtrees
+                    it needs; see :attr:`SCOPE_WITH_REFS_RULES`).  When ``False``
                     (default), pairs it with :attr:`SCOPE_RULES` and returns only the page node
                     and its descendants (plus, in either case, the sibling versions of every
                     returned node).
@@ -350,7 +395,8 @@ class FetchRoamNodes:
                 node_uid: The ``:block/uid`` of the node to fetch.
                 include_refs: When ``True``, pairs :attr:`BY_NODE_UID_QUERY` with
                     :attr:`SCOPE_WITH_REFS_RULES` to also pull every node referenced via
-                    ``:block/refs`` from the anchor or any of its descendants.  When ``False``
+                    ``:block/refs`` from the anchor or any of its descendants (with the subtrees
+                    it needs; see :attr:`SCOPE_WITH_REFS_RULES`).  When ``False``
                     (default), pairs it with :attr:`SCOPE_RULES` and returns only the anchor node
                     and its descendants (plus, in either case, the sibling versions of every
                     returned node).
