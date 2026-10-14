@@ -36,6 +36,7 @@ from guffin.model.publishing_validation import (
     all_element_type_values_legal,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
+    all_note_form_values_legal,
     all_note_lead_ins_present,
     all_note_targets_in_notes_containers,
     all_note_targets_present,
@@ -252,6 +253,27 @@ class TestValidateSemanticsArticle3Fixture:
         result = validate_semantics(tree)
         assert result.errors == ()
         assert result.is_valid
+
+
+class TestAllNoteFormValuesLegal:
+    """all_note_form_values_legal() rejects unrecognised note-form values across a tree."""
+
+    def test_legal_values_pass(self) -> None:
+        """Both recognised forms validate, on any block."""
+        page = PageVertex(uid="page00001", title="Doc", children=["text00001", "text00002"])
+        short = TextVertex(uid="text00001", text="Short.", attribute_assignments=[_assignment("note-form", "short")])
+        full = TextVertex(uid="text00002", text="Full.", attribute_assignments=[_assignment("note-form", "full")])
+        tree = VertexTree(tree_vertices=[page, short, full])
+        assert all_note_form_values_legal(tree) is None
+        assert validate_semantics(tree).is_valid
+
+    def test_illegal_value_reported(self) -> None:
+        """An unrecognised note-form value is reported with the vertex uid."""
+        page = PageVertex(uid="page00001", title="Doc", children=["text00001"])
+        text = TextVertex(uid="text00001", text="Odd.", attribute_assignments=[_assignment("note-form", "medium")])
+        error = all_note_form_values_legal(VertexTree(tree_vertices=[page, text]))
+        assert error is not None
+        assert "text00001" in error.message
 
 
 class TestAllPageBreakValuesLegal:

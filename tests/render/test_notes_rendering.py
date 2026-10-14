@@ -10,6 +10,7 @@ from pypdf import PdfReader
 
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
+from guffin.model.publishing_semantics import NoteForm
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import HeadingVertex, NotesVertex, PageVertex, TextVertex, Vertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
@@ -42,15 +43,13 @@ pytestmark = pytest.mark.pandoc
 _ENDPOINT: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test")
 
 
-def _endnotes_tag() -> list[AttributeAssignment]:
-    """Return an ``element-type:: endnotes`` guffin-domain tag."""
+def _tag(name: str, value: str) -> list[AttributeAssignment]:
+    """Return a single ``<name>:: <value>`` guffin-domain tag."""
     link: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
     return [
         AttributeAssignment(
-            attribute=AttributeInstance(
-                definition=Attribute(name="element-type", domain=AttributeDomain.GUFFIN), link=link
-            ),
-            values=(LiteralValue(value="endnotes"),),
+            attribute=AttributeInstance(definition=Attribute(name=name, domain=AttributeDomain.GUFFIN), link=link),
+            values=(LiteralValue(value=value),),
         )
     ]
 
@@ -67,7 +66,8 @@ def _noted_book(*, with_notes_heading: bool = True) -> VertexTree:
     """A two-chapter book: notes cited before, in, and between sections, and a Notes section.
 
     The notes live in a container per chapter; one note is cited by nothing (an orphan), and two
-    notes in different sections share a lead-in.
+    notes in different sections share a lead-in.  One note has a short form, and the Notes
+    section's intro has a block limited to the short notes.
     """
     root_children: Final[list[str]] = ["chap00001", "chap00002", *(["notesh001"] if with_notes_heading else [])]
     vertices: Final[list[Vertex]] = [
@@ -85,7 +85,8 @@ def _noted_book(*, with_notes_heading: bool = True) -> VertexTree:
         ),
         NotesVertex(uid="notes0001", children=["note00001", "note00002", "note00003"]),
         TextVertex(uid="note00001", text="Williams and Kilburn, *Nature* 162 (1948): 487."),
-        TextVertex(uid="note00002", text="Lavington, *A History*, 12.", children=["cont00001"]),
+        TextVertex(uid="note00002", text="Lavington, *A History*, 12.", children=["short0001", "cont00001"]),
+        TextVertex(uid="short0001", text="Lavington, 12.", attribute_assignments=_tag("note-form", "short")),
         TextVertex(uid="cont00001", text="A continuation of the second note."),
         TextVertex(uid="note00003", text="An orphan note."),
         HeadingVertex(uid="sect00002", text="The Reconstruction", heading_level=2, children=["textb0001"]),
@@ -103,22 +104,112 @@ def _noted_book(*, with_notes_heading: bool = True) -> VertexTree:
                     uid="notesh001",
                     text="Notes",
                     heading_level=1,
-                    children=["intro0001"],
-                    attribute_assignments=_endnotes_tag(),
+                    children=["intro0001", "intro0002"],
+                    attribute_assignments=_tag("element-type", "endnotes"),
                 ),
                 TextVertex(uid="intro0001", text="The complete notes are online."),
+                TextVertex(
+                    uid="intro0002", text="Only in the short notes.", attribute_assignments=_tag("note-form", "short")
+                ),
             ]
         )
     return VertexTree(tree_vertices=vertices)
 
 
-def _built(tree: VertexTree, output_format: OutputFormat) -> tuple[pf.Doc, frozenset[str]]:
+def _built(
+    tree: VertexTree,
+    output_format: OutputFormat,
+    *,
+    note_form: NoteForm = NoteForm.FULL,
+    notes_only: bool = False,
+    title_header: bool = False,
+) -> tuple[pf.Doc, frozenset[str]]:
     """Build *tree*'s document and its Notes section for *output_format*."""
-    doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
+    doc, inline_map = vertex_tree_to_pandoc(tree, {}, {}, title_in_header=title_header)
     entered: Final[frozenset[str]] = insert_notes_section(
-        doc, tree, inline_map, {}, {}, TopLevelDivision.CHAPTER, output_format, heading_links=True
+        doc,
+        tree,
+        inline_map,
+        {},
+        {},
+        TopLevelDivision.CHAPTER,
+        output_format,
+        heading_links=True,
+        note_form=note_form,
+        notes_only=notes_only,
+        title_header=title_header,
     )
     return doc, entered
+
+
+def _entry_text(doc: pf.Doc, note_uid: str) -> str:
+    """Return the stringified entry for *note_uid* (a PDF or EPUB entry ``Div``)."""
+    return pf.stringify(
+        next(
+            block
+            for block in doc.content
+            if isinstance(block, pf.Div) and block.identifier == endnote_identifier(note_uid)
+        )
+    ).strip()
+
+
+class TestNoteForms:
+    """insert_notes_section renders each note in the requested form."""
+
+    def test_full_form_leaves_out_the_short_form(self) -> None:
+        """The full form is the note and its continuation, without the child tagged short."""
+        doc, _entered = _built(_noted_book(), OutputFormat.PDF)
+        entry: Final[str] = _entry_text(doc, "note00002")
+        assert "Lavington, A History, 12." in entry
+        assert "A continuation of the second note." in entry
+        assert "Lavington, 12." not in entry
+
+    def test_short_form_replaces_the_note(self) -> None:
+        """The short form is the child tagged short, without the note's continuation."""
+        doc, _entered = _built(_noted_book(), OutputFormat.PDF, note_form=NoteForm.SHORT)
+        entry: Final[str] = _entry_text(doc, "note00002")
+        assert entry.endswith("a 52-minute run: Lavington, 12.")
+        assert "A History" not in entry
+        assert "continuation" not in entry
+
+    def test_short_export_of_a_note_without_short_form_is_full(self) -> None:
+        """A note with no short form renders in full in a short export."""
+        doc, _entered = _built(_noted_book(), OutputFormat.PDF, note_form=NoteForm.SHORT)
+        assert _entry_text(doc, "note00001").endswith("Williams and Kilburn, Nature 162 (1948): 487.")
+
+
+class TestNotesOnly:
+    """With notes_only, the document is cut down to the Notes section, which links to nothing."""
+
+    def test_document_is_only_the_notes_section(self) -> None:
+        """Only the title Header and the Notes section remain."""
+        doc, _entered = _built(_noted_book(), OutputFormat.MARKDOWN, notes_only=True, title_header=True)
+        headers: Final[list[str]] = [pf.stringify(block) for block in doc.content if isinstance(block, pf.Header)]
+        assert headers[:2] == ["Noted Book", "Notes"]
+        assert "It ran for" not in pf.stringify(doc)
+        assert "Lavington, A History, 12." in pf.stringify(doc)
+
+    def test_group_headings_and_entries_carry_no_links(self) -> None:
+        """No group heading links to its section, and no entry has a locator or a back-link."""
+        for output_format in (OutputFormat.MARKDOWN, OutputFormat.EPUB, OutputFormat.PDF):
+            doc, _entered = _built(_noted_book(), output_format, notes_only=True)
+            links: list[pf.Link] = []
+            raws: list[pf.RawInline] = []
+
+            def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
+                if isinstance(elem, pf.Link):
+                    links.append(elem)
+                elif isinstance(elem, pf.RawInline):
+                    raws.append(elem)
+
+            doc.walk(_collect)
+            assert links == [], output_format
+            assert raws == [], output_format
+
+    def test_without_notes_heading_raises(self) -> None:
+        """A notes-only build of a tree with no Notes heading has nothing to export."""
+        with pytest.raises(ValueError, match="notes-only"):
+            _built(_noted_book(with_notes_heading=False), OutputFormat.MARKDOWN, notes_only=True)
 
 
 def _notes_blocks(doc: pf.Doc) -> list[pf.Block]:
@@ -274,8 +365,27 @@ class TestRenderedNotes:
         assert "#### [The First Program](#the-first-program)\n\n*a 52-minute run*: Lavington" in notes
         assert "A continuation of the second note." in notes
         assert "An orphan note." not in text
+        assert "Only in the short notes." not in text
         assert "<div" not in text
         assert "<a id=" not in text
+
+    def test_markdown_short_notes_only(self, tmp_path: Path) -> None:
+        """Markdown, short and notes only: the short-only intro block, short forms, and no running text."""
+        render_md(
+            self._bundle(),
+            profile=BookProfile(),
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=MarkdownRenderOptions(
+                output_dir=tmp_path, should_bundle=False, note_form=NoteForm.SHORT, notes_only=True
+            ),
+        )
+        text: Final[str] = (tmp_path / "noted.md").read_text(encoding="utf-8")
+        assert "Only in the short notes." in text
+        assert "*a 52-minute run*: Lavington, 12." in text
+        assert "#### The First Program\n" in text
+        assert "It ran for" not in text
+        assert "](#" not in text
 
     def test_epub(self, tmp_path: Path) -> None:
         """EPUB: passage and entry link to each other across chapter files; the Notes file is back matter."""

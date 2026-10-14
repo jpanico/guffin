@@ -22,6 +22,7 @@ from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     DEFAULT_PUBLISH,
     PDF_RENDER_FALLBACK,
+    NoteForm,
     PageBreak,
     PdfRenderPlacement,
     PublishingAttribute,
@@ -33,6 +34,7 @@ from guffin.model.publishing_semantics import (
     cover_image_of,
     cover_image_vertex,
     date_of,
+    drop_other_note_forms,
     drop_page_breaks,
     drop_unpublished,
     effective_title,
@@ -44,6 +46,8 @@ from guffin.model.publishing_semantics import (
     illustrators_of_vertex,
     matter_of,
     matter_of_vertex,
+    note_form_of,
+    note_form_of_vertex,
     page_break_of,
     page_break_of_vertex,
     pdf_render_of,
@@ -953,6 +957,58 @@ class TestDropUnpublished:
         tree = VertexTree(tree_vertices=[root])
         with pytest.raises(ValueError, match="export target"):
             drop_unpublished(tree)
+
+
+def _note_form_vertex(uid: str, note_form: str | None, children: list[str] | None = None) -> TextVertex:
+    """Build a TextVertex, optionally tagged note-form."""
+    return TextVertex(
+        uid=uid,
+        text=f"text {uid}",
+        children=children,
+        attribute_assignments=[_assignment("note-form", note_form)] if note_form is not None else None,
+    )
+
+
+class TestNoteForm:
+    """note_form_of / note_form_of_vertex read a note-form tag, and drop_other_note_forms prunes by it."""
+
+    def test_reads_each_form(self) -> None:
+        """Both legal values coerce to their NoteForm member."""
+        assert note_form_of(_assignment("note-form", "short")) is NoteForm.SHORT
+        assert note_form_of(_assignment("note-form", "full")) is NoteForm.FULL
+
+    def test_illegal_value_raises(self) -> None:
+        """A value that is no NoteForm is rejected."""
+        with pytest.raises(ValueError):
+            note_form_of(_assignment("note-form", "medium"))
+
+    def test_vertex_reader_tolerates_absence_and_illegal_values(self) -> None:
+        """An untagged or illegally tagged vertex resolves to None."""
+        assert note_form_of_vertex(_note_form_vertex("text00001", None)) is None
+        assert note_form_of_vertex(_note_form_vertex("text00001", "medium")) is None
+        assert note_form_of_vertex(_note_form_vertex("text00001", "short")) is NoteForm.SHORT
+
+    def test_drop_other_forms_keeps_untagged_and_matching(self) -> None:
+        """Exporting the short form drops full-tagged subtrees and keeps untagged and short-tagged ones."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["plain0001", "short0001", "full00001"])
+        tree = VertexTree(
+            tree_vertices=[
+                root,
+                _note_form_vertex("plain0001", None),
+                _note_form_vertex("short0001", "short"),
+                _note_form_vertex("full00001", "full", children=["nest00001"]),
+                _note_form_vertex("nest00001", None),
+            ]
+        )
+        pruned = drop_other_note_forms(tree, NoteForm.SHORT)
+        assert [vertex.uid for vertex in pruned.tree_vertices] == ["pageroot1", "plain0001", "short0001"]
+        assert pruned.uid_map["pageroot1"].children == ["plain0001", "short0001"]
+
+    def test_untagged_tree_passes_through(self) -> None:
+        """A tree with no note-form tags is returned unchanged (the same object)."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["plain0001"])
+        tree = VertexTree(tree_vertices=[root, _note_form_vertex("plain0001", None)])
+        assert drop_other_note_forms(tree, NoteForm.FULL) is tree
 
 
 class TestHasElementType:

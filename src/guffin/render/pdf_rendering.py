@@ -54,6 +54,7 @@ from guffin.common.revision import Revision
 from guffin.model.chicago_structure import StructuralElement
 from guffin.model.publishing_semantics import (
     PdfRenderPlacement,
+    drop_other_note_forms,
     drop_page_breaks,
     drop_unpublished,
     has_element_type,
@@ -592,7 +593,9 @@ def render(
     )
     # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
     # fetch nor any later structural decision.
-    published: Final[VertexTree] = drop_unpublished(render_bundle.content)
+    unpublished_dropped: Final[VertexTree] = drop_unpublished(render_bundle.content)
+    # Blocks limited to the other form of the notes (note-form::) are pruned the same way.
+    published: Final[VertexTree] = drop_other_note_forms(unpublished_dropped, options.note_form)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     stripped: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Internal element numbers are authoring bookkeeping; they render only on explicit request.
@@ -714,6 +717,9 @@ def render(
             profile.structural_policy.top_level_division,
             OutputFormat.PDF,
             heading_links=options.heading_links,
+            note_form=options.note_form,
+            notes_only=options.notes_only,
+            title_header=not profile.structural_policy.emit_title_page,
         )
         resolve_vertex_links(
             doc,

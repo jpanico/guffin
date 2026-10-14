@@ -1,9 +1,8 @@
 # Notes: footnotes and endnotes
 
-**Status: designed; implemented through rendering.** Every open question is decided except Q3,
-deferred with R3; Q7 has two reading-app tests open. Implemented: transcription, validation, and
-rendering in all three formats (see [Implementation](#implementation)); still to come: the
-`note_form` and `notes_only` options and the short-form marker (Q5, R8). This is the working design document for
+**Status: designed and implemented.** Every open question is decided except Q3, deferred with
+R3; Q7 has two reading-app tests open. See [Implementation](#implementation) for what was built
+and where it departs from the decisions. This is the working design document for
 *notes* in Guffin: footnotes, endnotes, and invisible endnotes, authored in Roam and rendered in
 every output format. It records the current state, the requirements, the open design questions,
 and the decision log. Decisions are recorded in [Decisions](#decisions) as they are made; until a
@@ -241,7 +240,14 @@ Built in phases, each a commit.
   part heading only when the heading is in the outline, so an unlisted group heading opens none;
   the EPUB stylesheet styles `a.guffin-note-ref` and `a.guffin-note-backlink`; the Markdown slug
   check leaves the generated group headings out of its collision count.
-- **Options** (to come): `note_form`, `notes_only`, and the `note-form::` marker (Q5, R8).
+- **Options**: `NoteForm` (`full`/`short`) and the `note-form::` block tag
+  (`PublishingSemantics.NOTE_FORM`, checked by `all_note_form_values_legal`); each renderer prunes
+  the blocks tagged with the other form (`drop_other_note_forms`, beside `drop_unpublished`), and
+  `insert_notes_section` builds each entry from the note's `short` child in a short export. The
+  render options `note_form` and `notes_only` are the CLI's `--note-form` and
+  `--notes-only/--no-notes-only`, and so the server's `note_form` and `notes_only` request
+  fields. A notes-only export's filename gains a `.notes` segment, and it aborts without a Notes
+  heading whatever the project type.
 
 Departures from the decisions, and behavior found while building:
 
@@ -255,6 +261,11 @@ Departures from the decisions, and behavior found while building:
   writes the output, after the group headings are built, so a group heading repeats the chapter's
   text but not its number. Unnumbered books, and books whose chapter titles carry their own number,
   are unaffected.
+- **The note-form tag works on any block, as `publish::` does.** Q5 framed it as marking a note's
+  short form and limiting an intro block; it is implemented generally (a block tagged with one form
+  appears only in exports of that form), so the two uses are the same rule.
+- **A notes-only export drops the end-of-document colophon.** The document is cut down to its
+  title and the Notes section; Markdown's revision line, inserted afterwards, still appears.
 - **In a parts book, the EPUB gives each chapter's notes a file of its own.** Pandoc splits an EPUB
   at the chapter level, level 2 in a parts book, and a Notes heading promoted to part level puts its
   chapter groups at level 2. Each file is back matter, the links between files resolve, and the

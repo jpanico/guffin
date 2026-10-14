@@ -29,7 +29,7 @@ from guffin.common.validation import ValidationError, ValidationResult
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source_diagnosis import CodeSourceDiagnosis, CodeSourceFinding
-from guffin.model.publishing_semantics import PdfRenderPlacement
+from guffin.model.publishing_semantics import NoteForm, PdfRenderPlacement
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import HeadingVertex, NotesVertex, PageVertex, TextVertex, Vertex
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
@@ -845,7 +845,9 @@ class TestExportNoteChecks:
     """export-roam-tree runs the note checks that need the project type before rendering."""
 
     @staticmethod
-    def _export(bundle: RenderBundle, project_type: str, tmp_path: pathlib.Path) -> tuple[Result, MagicMock]:
+    def _export(
+        bundle: RenderBundle, project_type: str, tmp_path: pathlib.Path, *extra_args: str
+    ) -> tuple[Result, MagicMock]:
         """Export *bundle* as *project_type* with the fetch stubbed and rendering mocked out."""
         render: Final[MagicMock] = MagicMock()
         with patch("guffin.cli.export_roam_tree.fetch_render_bundle", return_value=bundle):
@@ -868,11 +870,38 @@ class TestExportNoteChecks:
                             "--type",
                             project_type,
                             "--no-colophon",
+                            *extra_args,
                         ],
                     )
                 finally:
                     logging.root.handlers = saved_handlers
         return result, render
+
+    def test_note_options_reach_the_renderer(self, tmp_path: pathlib.Path) -> None:
+        """--note-form and --notes-only reach the render options; notes-only adds a '.notes' stem segment."""
+        result, render = self._export(
+            _noted_bundle(with_notes_heading=True), "book", tmp_path, "--note-form", "short", "--notes-only"
+        )
+        assert result.exit_code == 0, result.output
+        out_file_stem: Final[str] = render.call_args.args[2]
+        options: Final[MarkdownRenderOptions] = render.call_args.args[5]
+        assert out_file_stem == "Noted.book.notes"
+        assert options.note_form is NoteForm.SHORT
+        assert options.notes_only
+
+    def test_defaults_are_full_notes_and_the_whole_document(self, tmp_path: pathlib.Path) -> None:
+        """Without the options, the full notes render in the whole document, under the plain stem."""
+        result, render = self._export(_noted_bundle(with_notes_heading=True), "book", tmp_path)
+        assert result.exit_code == 0, result.output
+        assert render.call_args.args[2] == "Noted.book"
+        assert render.call_args.args[5].note_form is NoteForm.FULL
+        assert not render.call_args.args[5].notes_only
+
+    def test_notes_only_without_notes_section_aborts(self, tmp_path: pathlib.Path) -> None:
+        """A notes-only export with no Notes section aborts, even for an article."""
+        result, render = self._export(_noted_bundle(with_notes_heading=False), "article", tmp_path, "--notes-only")
+        assert result.exit_code == 1
+        render.assert_not_called()
 
     def test_noted_book_with_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
         """A book whose notes have a Notes section passes both checks."""

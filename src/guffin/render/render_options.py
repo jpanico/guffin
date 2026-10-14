@@ -30,7 +30,7 @@ from typing import Literal, assert_never
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from guffin.model.publishing_semantics import PdfRenderPlacement
+from guffin.model.publishing_semantics import NoteForm, PdfRenderPlacement
 from guffin.render.date_format import DateFormat
 
 
@@ -84,6 +84,10 @@ class RenderOptions(BaseModel):
             to :attr:`~guffin.render.date_format.DateFormat.ROAM_LONG` (the page's own title).
         heading_links: When ``True`` (default), a block reference to a heading renders as an
             internal link to that heading; ``False`` renders the heading's text in italics, unlinked.
+        note_form: Which form of the notes to render (see
+            :class:`~guffin.model.publishing_semantics.NoteForm`); defaults to the full notes.
+        notes_only: When ``True``, render the Notes section alone, without the text it annotates;
+            ``False`` (default) renders the whole document.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -119,6 +123,8 @@ class RenderOptions(BaseModel):
     heading_links: bool = Field(
         default=True, description="Render a block reference to a heading as a link to that heading."
     )
+    note_form: NoteForm = Field(default=NoteForm.FULL, description="Which form of the notes to render.")
+    notes_only: bool = Field(default=False, description="Render the Notes section alone.")
 
     @staticmethod
     def for_format(
@@ -139,6 +145,8 @@ class RenderOptions(BaseModel):
         heading_links: bool = True,
         default_pdf_render: PdfRenderPlacement | None = None,
         daily_note_format: DateFormat = DateFormat.ROAM_LONG,
+        note_form: NoteForm = NoteForm.FULL,
+        notes_only: bool = False,
     ) -> RenderOptions:
         """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
 
@@ -172,6 +180,9 @@ class RenderOptions(BaseModel):
             daily_note_format: How a daily-note-page reference renders its date.
             heading_links: Render a block reference to a heading as a link to that heading
                 (``True``, default) or as the heading's text in italics (``False``).
+            note_form: Which form of the notes to render; the full notes by default.
+            notes_only: Render the Notes section alone (``True``), or the whole document
+                (``False``, default).
 
         Returns:
             The :class:`RenderOptions` subclass matching *output_format*.
@@ -193,6 +204,8 @@ class RenderOptions(BaseModel):
                     include_preamble=include_preamble,
                     number_sections=number_sections,
                     heading_links=heading_links,
+                    note_form=note_form,
+                    notes_only=notes_only,
                 )
             case OutputFormat.EPUB:
                 return EpubRenderOptions(
@@ -209,6 +222,8 @@ class RenderOptions(BaseModel):
                     include_preamble=include_preamble,
                     number_sections=number_sections,
                     heading_links=heading_links,
+                    note_form=note_form,
+                    notes_only=notes_only,
                 )
             case OutputFormat.MARKDOWN:
                 return MarkdownRenderOptions(
@@ -224,6 +239,8 @@ class RenderOptions(BaseModel):
                     default_pdf_render=default_pdf_render,
                     daily_note_format=daily_note_format,
                     heading_links=heading_links,
+                    note_form=note_form,
+                    notes_only=notes_only,
                 )
             case _ as unreachable:
                 assert_never(unreachable)

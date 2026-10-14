@@ -9,7 +9,8 @@ Public symbols:
   :class:`~guffin.model.chicago_structure.StructuralElement`), :func:`all_matter_values_legal`
   (every ``matter`` value is a :class:`~guffin.model.chicago_structure.Matter`),
   :func:`all_page_break_values_legal` (every ``page-break`` value is a
-  :class:`~guffin.model.publishing_semantics.PageBreak`),
+  :class:`~guffin.model.publishing_semantics.PageBreak`), :func:`all_note_form_values_legal` (every
+  ``note-form`` value is a :class:`~guffin.model.publishing_semantics.NoteForm`),
   :func:`all_pdf_render_values_legal` (every ``pdf-render`` value is a
   :class:`~guffin.model.publishing_semantics.PdfRenderPlacement`), :func:`all_code_language_values_legal`
   (every ``code-language`` value names a language in the canonical vocabulary),
@@ -83,6 +84,7 @@ from guffin.model.publishing_semantics import (
     element_type_of,
     has_parts,
     matter_of,
+    note_form_of,
     page_break_of,
     pdf_render_of,
     publish_of,
@@ -301,6 +303,29 @@ def all_matter_values_legal(tree: VertexTree) -> ValidationError | None:
     return ValidationError(
         message="illegal matter values: " + "; ".join(violations),
         validator=all_matter_values_legal,
+    )
+
+
+@validate_call
+def all_note_form_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``note-form`` values.
+
+    Every :attr:`PublishingSemantics.NOTE_FORM` assignment in *tree* must carry exactly one value,
+    and that value must name a :class:`~guffin.model.publishing_semantics.NoteForm` member.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``note-form`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.NOTE_FORM, note_form_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal note-form values: " + "; ".join(violations),
+        validator=all_note_form_values_legal,
     )
 
 
@@ -952,7 +977,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
-    :func:`all_page_break_values_legal`,
+    :func:`all_note_form_values_legal`, :func:`all_page_break_values_legal`,
     :func:`all_pdf_render_values_legal`, :func:`all_code_source_values_legal`,
     :func:`all_publish_values_legal`,
     :func:`all_date_values_legal`, :func:`all_cover_image_values_legal`, and
@@ -982,6 +1007,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_attributes_anchored,
             all_element_type_values_legal,
             all_matter_values_legal,
+            all_note_form_values_legal,
             all_page_break_values_legal,
             all_pdf_render_values_legal,
             all_code_language_values_legal,

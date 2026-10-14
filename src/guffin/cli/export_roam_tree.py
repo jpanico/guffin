@@ -87,7 +87,7 @@ from guffin.common.provenance import Provenance, gather_provenance
 from guffin.common.validation import ValidationError
 from guffin.model.chicago_structure import StructuralElement
 from guffin.model.notes import note_citations
-from guffin.model.publishing_semantics import PdfRenderPlacement, has_element_type
+from guffin.model.publishing_semantics import NoteForm, PdfRenderPlacement, has_element_type
 from guffin.model.publishing_validation import lead_ins_unique_within_sections
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
@@ -329,6 +329,31 @@ def main(
             ),
         ),
     ] = None,
+    note_form: Annotated[
+        NoteForm,
+        typer.Option(
+            "--note-form",
+            envvar="GUFFIN_NOTE_FORM",
+            help=(
+                "Which form of the notes to render: 'full' (default) or 'short'. A note's short "
+                "form is a child block tagged note-form:: short (through guffin-meta::); a note "
+                "without one renders in full. Any block tagged note-form:: appears only in exports "
+                "of that form. Applies to all formats."
+            ),
+        ),
+    ] = NoteForm.FULL,
+    notes_only: Annotated[
+        bool,
+        typer.Option(
+            "--notes-only/--no-notes-only",
+            help=(
+                "Render the Notes section alone, without the text it annotates (default off): the "
+                "notes are gathered from the whole target, their group headings and entries carry "
+                "no links to the absent text, and the output filename gains a '.notes' segment "
+                "(<target>.<type>.notes.<ext>). Requires a heading tagged element-type:: endnotes."
+            ),
+        ),
+    ] = False,
     version: VersionOption = False,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
@@ -381,7 +406,10 @@ def main(
         logger.info("provenance: %s", provenance.summary())
     render_bundle: Final[RenderBundle] = fetched_bundle.with_provenance(provenance)
 
-    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type)
+    # A notes-only export gains a '.notes' segment, so it never overwrites the full export.
+    out_file_stem: Final[str] = deduce_out_file_stem(render_bundle.content, project_type) + (
+        ".notes" if notes_only else ""
+    )
     # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
     # parts book; the content itself, not a CLI switch, is the source of that structure.
     profile: Final[ProjectProfile] = resolve_profile(project_type, render_bundle.content)
@@ -396,10 +424,16 @@ def main(
         raise typer.Exit(code=1)
     # Notes appear only in an authored Notes section.  A book without one would lose its notes with
     # no visible sign (a server export returns no warnings on success), so that is fatal; a smaller
-    # work, such as a single chapter exported as an article, legitimately has none.
-    if note_citations(render_bundle.content) and not has_element_type(
-        render_bundle.content, StructuralElement.ENDNOTES
-    ):
+    # work, such as a single chapter exported as an article, legitimately has none.  A notes-only
+    # export has nothing else to show, so there it is fatal whatever the project type.
+    has_notes_section: Final[bool] = has_element_type(render_bundle.content, StructuralElement.ENDNOTES)
+    if notes_only and not has_notes_section:
+        logger.error(
+            "aborting notes-only export of %r: it has no Notes section (a heading tagged element-type:: endnotes)",
+            target,
+        )
+        raise typer.Exit(code=1)
+    if note_citations(render_bundle.content) and not has_notes_section:
         if project_type is ProjectType.BOOK:
             logger.error(
                 "aborting export of %r: the book cites notes but has no Notes section "
@@ -429,6 +463,8 @@ def main(
         heading_links=heading_links,
         default_pdf_render=default_pdf_render,
         daily_note_format=daily_note_format,
+        note_form=note_form,
+        notes_only=notes_only,
     )
 
     _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)

@@ -12,7 +12,8 @@ Public symbols:
   domain; :class:`PdfRenderPlacement` — how an embedded PDF asset is placed in output (reproduced at the
   embed or in an appendix, natively or as images; linked as a contained copy or an external URL;
   or named only); :class:`PageBreak` — where a page break is forced relative to the tagged heading
-  (``before``).  The anchoring affordances an attribute declares
+  (``before``); :class:`NoteForm` — the form of the notes an export renders (``full`` /
+  ``short``), the value a ``note-form`` block tag takes.  The anchoring affordances an attribute declares
   (:class:`~guffin.model.attribute_anchor.AttributeAnchor`,
   :class:`~guffin.model.attribute_anchor.TreePosition`) live in
   :mod:`~guffin.model.attribute_anchor`; the CMOS-aligned structural taxonomy the ``element-type`` and
@@ -31,8 +32,11 @@ Public symbols:
   case-insensitively); :func:`code_source_of` — read a ``code-source`` assignment's three
   ordered values (GitHub blob URL, commit SHA, fetch date) as a
   :class:`~guffin.model.code_source.CodeSource`; :func:`publish_of` — read a ``publish``
-  assignment's value as a boolean; :func:`date_of` — read a ``date`` assignment's value as a
-  parsed :class:`~guffin.common.w3cdtf_date.W3cdtfDate` (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
+  assignment's value as a boolean; :func:`note_form_of` — read a ``note-form`` assignment's value
+  as a :class:`NoteForm`, and :func:`note_form_of_vertex` — resolve a block's ``note-form`` tag,
+  tolerating absent or illegal assignments (``None``, warning); :func:`date_of` — read a
+  ``date`` assignment's value as a parsed :class:`~guffin.common.w3cdtf_date.W3cdtfDate`
+  (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
   :func:`cover_image_of` — read a ``cover-image`` assignment's value as the referenced image
   block's :data:`~guffin.model.primitives.Uid` (the value is a block reference
   ``((<uid>))``); :func:`cover_image_vertex` — resolve a tree's cover to the
@@ -61,6 +65,8 @@ Public symbols:
   :class:`~guffin.model.vertex_tree.VertexTree` is tagged with a given :class:`StructuralElement`;
   :func:`drop_unpublished` — prune every ``publish:: false`` subtree (embeds of pruned
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
+  :func:`drop_other_note_forms` — prune every subtree tagged with a ``note-form`` other than the
+  exported one, the same way;
   :func:`strip_element_numbers` — remove every heading's internal element number (the
   well-formed leading marker) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   :func:`drop_page_breaks` — remove every heading's ``page-break`` tag from a
@@ -190,6 +196,22 @@ class PageBreak(enum.StrEnum):
     BEFORE = "before"
 
 
+class NoteForm(enum.StrEnum):
+    """The form of a work's notes an export renders — the values a ``note-form`` tag takes.
+
+    A note may be written in two forms: its full form, and a short form for a printed edition that
+    publishes the full notes elsewhere.  An export renders one of them, and a block tagged with a
+    form appears only in exports of that form.  An untagged block appears in both.
+
+    Attributes:
+        FULL: The full notes.
+        SHORT: The short notes.
+    """
+
+    FULL = "full"
+    SHORT = "short"
+
+
 DEFAULT_PUBLISH: Final[bool] = True
 """The publication state of a vertex carrying no ``publish`` tag."""
 
@@ -246,7 +268,8 @@ class PublishingSemantics(enum.Enum):
       code listing: :attr:`CODE_LANGUAGE` declares the listing's language, overriding whatever
       language the source's fence records.
     - **Block tags** (:attr:`AttributeAnchor.BLOCK`) — applied to any block vertex: :attr:`PUBLISH`
-      declares whether the block, with its entire subtree, appears in rendered output.
+      declares whether the block, with its entire subtree, appears in rendered output;
+      :attr:`NOTE_FORM` limits the block, with its subtree, to exports of one :class:`NoteForm`.
 
     Attributes:
         TITLE: The document title.
@@ -281,6 +304,9 @@ class PublishingSemantics(enum.Enum):
             :class:`~guffin.model.code_source.CodeSource`).
         PUBLISH: Tags a block with its publication state; ``false`` omits the block and every
             descendant from all rendered output (absent, :data:`DEFAULT_PUBLISH` applies).
+        NOTE_FORM: Tags a block with a :class:`NoteForm`; the block and every descendant appear only
+            in exports of that form.  On a note's child it marks the note's short form; on a block
+            of the Notes section's intro it limits the block to one form of the notes.
     """
 
     _value_: PublishingAttribute
@@ -304,6 +330,7 @@ class PublishingSemantics(enum.Enum):
     CODE_LANGUAGE = PublishingAttribute(name="code-language", anchor=AttributeAnchor.CODE_BLOCK)
     CODE_SOURCE = PublishingAttribute(name="code-source", anchor=AttributeAnchor.CODE_BLOCK)
     PUBLISH = PublishingAttribute(name="publish", anchor=AttributeAnchor.BLOCK)
+    NOTE_FORM = PublishingAttribute(name="note-form", anchor=AttributeAnchor.BLOCK)
 
 
 @validate_call
@@ -693,6 +720,49 @@ def code_source_of_vertex(vertex: CodeBlockVertex) -> CodeSource | None:
 
 
 @validate_call
+def note_form_of(assignment: AttributeAssignment) -> NoteForm:
+    """Return the :class:`NoteForm` that a ``note-form`` assignment names.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.NOTE_FORM` attribute, then coerces
+    its sole value to a :class:`NoteForm`.
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.NOTE_FORM` attribute assignment (one value expected).
+
+    Returns:
+        The named :class:`NoteForm`.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``note-form`` attribute, does not carry exactly
+            one value, or its value is not a recognised :class:`NoteForm`.
+    """
+    return NoteForm(verified_sole_value_text(assignment, PublishingSemantics.NOTE_FORM.value))
+
+
+@validate_call
+def note_form_of_vertex(vertex: Vertex) -> NoteForm | None:
+    """Resolve *vertex*'s ``note-form`` tag to its :class:`NoteForm`, or ``None``.
+
+    ``None`` when *vertex* carries no ``note-form`` assignment, or when the assignment does not
+    coerce to a :class:`NoteForm` (ignored with a warning).
+
+    Args:
+        vertex: The vertex whose tag to resolve.
+
+    Returns:
+        The named :class:`NoteForm`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.NOTE_FORM)
+    if assignment is None:
+        return None
+    try:
+        return note_form_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring note-form on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
 def publish_of_vertex(vertex: Vertex) -> bool | None:
     """Resolve *vertex*'s ``publish`` tag to its publication state, or ``None``.
 
@@ -993,7 +1063,55 @@ def drop_unpublished(tree: VertexTree) -> VertexTree:
         ValueError: If the tree's root vertex is itself unpublished — the export target cannot
             be omitted from its own output.
     """
-    pending: list[Uid] = [vertex.uid for vertex in tree.uid_map.values() if publish_of_vertex(vertex) is False]
+    return _drop_subtrees(
+        tree,
+        [vertex.uid for vertex in tree.uid_map.values() if publish_of_vertex(vertex) is False],
+        "publish:: false",
+    )
+
+
+@validate_call
+def drop_other_note_forms(tree: VertexTree, note_form: NoteForm) -> VertexTree:
+    """Return a new :class:`VertexTree` without the subtrees limited to a form other than *note_form*.
+
+    A vertex tagged ``note-form`` with a form other than *note_form* is removed together with every
+    descendant, and an embed of it with it, exactly as :func:`drop_unpublished` removes an
+    unpublished subtree.  Assignments that do not coerce to a :class:`NoteForm` are ignored with a
+    warning (the vertex stays).  The original *tree* is not modified; it passes through unchanged
+    when nothing is tagged with another form.
+
+    Args:
+        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
+        note_form: The form being exported.
+
+    Returns:
+        A new :class:`~guffin.model.vertex_tree.VertexTree` without the other form's vertices, or
+        *tree* itself when no prune applies.
+
+    Raises:
+        ValueError: If the tree's root vertex is itself tagged with another form.
+    """
+    return _drop_subtrees(
+        tree,
+        [
+            vertex.uid
+            for vertex in tree.uid_map.values()
+            if (form := note_form_of_vertex(vertex)) is not None and form is not note_form
+        ],
+        f"note-form other than {note_form.value}",
+    )
+
+
+def _drop_subtrees(tree: VertexTree, seeds: list[Uid], reason: str) -> VertexTree:
+    """Return a new :class:`VertexTree` without the subtrees rooted at *seeds*, or *tree* when there are none.
+
+    Each seed is removed together with every descendant, from both the tree vertices and the
+    referenced vertices, and its uid is stripped from every surviving vertex's children list.  An
+    :data:`~guffin.model.vertex.EmbedVertex` whose transclusion target was removed is removed as
+    well (applied to a fixpoint).  *reason* names the tag that marked the seeds, for the log and for
+    the error raised when the root itself would go.
+    """
+    pending: list[Uid] = list(seeds)
     if not pending:
         return tree
     removed: Final[set[Uid]] = set()
@@ -1014,8 +1132,8 @@ def drop_unpublished(tree: VertexTree) -> VertexTree:
         ]
     root_uid: Final[Uid] = root_vertex(tree).uid
     if root_uid in removed:
-        raise ValueError(f"the export target itself (root vertex uid={root_uid!r}) is tagged 'publish:: false'")
-    logger.info("dropping %d unpublished vertices (publish:: false)", len(removed))
+        raise ValueError(f"the export target itself (root vertex uid={root_uid!r}) is tagged '{reason}'")
+    logger.info("dropping %d vertices (%s)", len(removed), reason)
 
     def _strip_children(vertex: Vertex) -> Vertex:
         if vertex.children and any(child_uid in removed for child_uid in vertex.children):

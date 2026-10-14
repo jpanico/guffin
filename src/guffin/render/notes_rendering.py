@@ -43,7 +43,7 @@ from pydantic import ConfigDict, validate_call
 from guffin.model.chicago_structure import StructuralElement
 from guffin.model.notes import PlacedNoteCitation, contained_note_uids, placed_note_citations
 from guffin.model.primitives import Uid
-from guffin.model.publishing_semantics import element_type_of_vertex
+from guffin.model.publishing_semantics import NoteForm, element_type_of_vertex, note_form_of_vertex
 from guffin.model.vertex import HeadingVertex, TextVertex, Vertex
 from guffin.model.vertex_link import VertexLinkKind, parse_vertex_link
 from guffin.model.vertex_tree import VertexTree, transcluded_vertices
@@ -242,6 +242,12 @@ def _group_header(
     )
 
 
+def _is_short_form(uid: Uid, tree: VertexTree) -> bool:
+    """Return whether the vertex *uid* is tagged ``note-form:: short``."""
+    vertex: Final[Vertex | None] = tree.uid_map.get(uid)
+    return vertex is not None and note_form_of_vertex(vertex) is NoteForm.SHORT
+
+
 def _entry(
     placed: PlacedNoteCitation,
     tree: VertexTree,
@@ -250,41 +256,56 @@ def _entry(
     inline_map: InlineMap,
     view_map: ViewMap,
     output_format: OutputFormat,
+    note_form: NoteForm,
+    *,
+    linked: bool,
 ) -> list[pf.Block]:
-    """Return the Notes-section entry for the note *placed* cites.
+    """Return the Notes-section entry for the note *placed* cites, in *note_form*.
 
     The entry opens with the locator (PDF: the passage's page number, linked to it), then the
-    lead-in in italics (EPUB: linked back to the passage), a colon, and the note's text; the note's
-    children follow as continuation paragraphs.  In PDF and EPUB the entry is a ``Div`` carrying
-    the note's :func:`endnote_identifier` (the target of the passage's link); Markdown, which links
-    no passage to its note, gets the bare blocks, since the GFM writer would emit a ``Div`` as HTML.
+    lead-in in italics (EPUB: linked back to the passage), a colon, and the note's text.  Without
+    *linked* (the passages are absent) there is no locator and no link.  The full form is the note
+    and its children, as continuation paragraphs, less any child tagged ``note-form:: short``; the
+    short form, when the note has such a child, is that child and its own children, and otherwise
+    the full form.  In PDF and EPUB the entry is a ``Div`` carrying the note's
+    :func:`endnote_identifier` (the target of the passage's link); Markdown, which links no passage
+    to its note, gets the bare blocks, since the GFM writer would emit a ``Div`` as HTML.
     """
     note_uid: Final[Uid] = placed.citation.note_uid
     note: Final[Vertex] = tree.uid_map[note_uid]
+    short_form_uid: Final[Uid | None] = next((uid for uid in note.children or () if _is_short_form(uid, tree)), None)
+    body: Final[Vertex] = (
+        tree.uid_map[short_form_uid] if note_form is NoteForm.SHORT and short_form_uid is not None else note
+    )
+    continuation: Final[list[Uid]] = [
+        uid for uid in body.children or () if body is not note or not _is_short_form(uid, tree)
+    ]
     lead_in: Final[list[pf.Inline]] = detached_copy(lead_ins.get(note_uid) or [pf.Str(placed.citation.lead_in)])
     emphasized: Final[pf.Inline] = pf.Emph(*lead_in)
     lead: Final[pf.Inline] = (
         pf.Link(emphasized, url=f"#{note_anchor(note_uid)}", classes=[NOTE_BACKLINK_CLASS])
-        if output_format is OutputFormat.EPUB
+        if linked and output_format is OutputFormat.EPUB
         else emphasized
     )
     locator: Final[list[pf.Inline]] = (
-        [_typst_raw_inline(_typst_page_locator(note_uid)), pf.Space()] if output_format is OutputFormat.PDF else []
+        [_typst_raw_inline(_typst_page_locator(note_uid)), pf.Space()]
+        if linked and output_format is OutputFormat.PDF
+        else []
     )
     opening: Final[list[pf.Inline]] = [*locator, lead, pf.Str(":")]
     blocks: list[pf.Block]
-    if isinstance(note, TextVertex):
-        text: Final[list[pf.Inline]] = detached_copy(inline_map.get(note.text, [pf.Str(note.text)]))
+    if isinstance(body, TextVertex):
+        text: Final[list[pf.Inline]] = detached_copy(inline_map.get(body.text, [pf.Str(body.text)]))
         blocks = [
             pf.Para(*opening, pf.Space(), *text),
             *build_child_blocks(
-                note.children or [], tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth=1
+                continuation, tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth=1
             ),
         ]
     else:
         blocks = [
             pf.Para(*opening),
-            *build_child_blocks([note_uid], tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth=1),
+            *build_child_blocks([body.uid], tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth=1),
         ]
     if output_format is OutputFormat.MARKDOWN:
         return blocks
@@ -302,21 +323,29 @@ def insert_notes_section(
     output_format: OutputFormat,
     *,
     heading_links: bool,
+    note_form: NoteForm = NoteForm.FULL,
+    notes_only: bool = False,
+    title_header: bool = False,
 ) -> frozenset[Uid]:
     """Build the Notes section into *doc*, in place, and return the UIDs of the notes it holds.
 
     The section's home is the first render-visible heading tagged ``element-type:: endnotes``; its
     Header must already be in *doc* (built from *tree*), and its own children render as the
     section's intro.  Its notes follow the intro: one entry per note link pointing at a note in a
-    notes container, in reading order (a note cited twice is entered once), grouped under
-    generated headings per *output_format* and *division* (see the module docstring).  A group's
-    heading sits one level below the Notes heading, and a section group's one level below its
-    chapter's; it repeats the rendered text of the heading it stands for, carries the Notes
+    notes container, in reading order (a note cited twice is entered once), in *note_form*, grouped
+    under generated headings per *output_format* and *division* (see the module docstring).  A
+    group's heading sits one level below the Notes heading, and a section group's one level below
+    its chapter's; it repeats the rendered text of the heading it stands for, carries the Notes
     heading's matter attribute, and is unnumbered and unlisted.  For Markdown with
     *heading_links*, a section group's heading links to its section.
 
+    With *notes_only*, *doc* is then cut down to the Notes section alone (after its leading title
+    Header, kept when *title_header* says *doc* opens with one), and since the text the notes
+    annotate is gone, no entry or group heading links to it and no PDF entry has a page locator.
+
     Must run before *doc*'s vertex links are resolved: each entry's lead-in is copied from the note
-    link's own display inlines.
+    link's own display inlines.  Blocks tagged with the other form are expected to be pruned from
+    *tree* already (see :func:`~guffin.model.publishing_semantics.drop_other_note_forms`).
 
     Args:
         doc: The document built from *tree*, with its vertex links still unresolved.
@@ -327,18 +356,29 @@ def insert_notes_section(
         division: The top-level division of the work, which fixes its chapter and section levels.
         output_format: The format *doc* will be rendered to.
         heading_links: Whether a reference to a heading links to it.
+        note_form: Which form of the notes to enter (default the full form).
+        notes_only: Whether to cut *doc* down to the Notes section (default ``False``).
+        title_header: Whether *doc* opens with a title Header to keep when *notes_only* cuts it
+            down (default ``False``).
 
     Returns:
         The UIDs of the notes given an entry; empty when *tree* has no Notes heading (or *doc* lacks
         its Header) or no note to enter.
+
+    Raises:
+        ValueError: If *notes_only* is set and *tree* has no Notes heading, or *doc* lacks its
+            Header, as there is then nothing to export.
     """
     notes_heading: Final[HeadingVertex | None] = _notes_heading(tree)
-    if notes_heading is None:
-        return frozenset()
     headers: Final[dict[str, pf.Header]] = _headers_by_identifier(doc)
-    notes_header: Final[pf.Header | None] = headers.get(heading_anchor(notes_heading.uid))
+    notes_header: Final[pf.Header | None] = (
+        None if notes_heading is None else headers.get(heading_anchor(notes_heading.uid))
+    )
     if notes_header is None:
-        logger.warning("the Notes heading uid=%r did not render; no notes are entered", notes_heading.uid)
+        if notes_only:
+            raise ValueError("a notes-only export needs a rendered heading tagged element-type:: endnotes")
+        if notes_heading is not None:
+            logger.warning("the Notes heading uid=%r did not render; no notes are entered", notes_heading.uid)
         return frozenset()
     citations: Final[list[PlacedNoteCitation]] = _entry_citations(tree)
     lead_ins: Final[dict[Uid, list[pf.Inline]]] = _note_lead_ins(doc)
@@ -363,22 +403,42 @@ def insert_notes_section(
                     headers,
                     inline_map,
                     attributes,
-                    link_to_heading=output_format is OutputFormat.MARKDOWN
+                    link_to_heading=not notes_only
+                    and output_format is OutputFormat.MARKDOWN
                     and heading_links
                     and depth == len(levels) - 1,
                 )
             )
-        blocks.extend(_entry(placed, tree, lead_ins, asset_files, inline_map, view_map, output_format))
+        blocks.extend(
+            _entry(
+                placed,
+                tree,
+                lead_ins,
+                asset_files,
+                inline_map,
+                view_map,
+                output_format,
+                note_form,
+                linked=not notes_only,
+            )
+        )
         previous_path = path
     # The section runs from its Header to the next Header at its level or above among its siblings.
     siblings: Final[pf.ListContainer] = notes_header.parent.content
-    end: int = notes_header.index + 1
+    start: Final[int] = notes_header.index
+    end: int = start + 1
     while end < len(siblings) and not (
         isinstance(siblings[end], pf.Header) and siblings[end].level <= notes_header.level
     ):
         end += 1
     for offset, block in enumerate(blocks):
         siblings.insert(end + offset, block)
+    if notes_only:
+        section: Final[list[pf.Block]] = list(siblings[start : end + len(blocks)])
+        leading: Final[list[pf.Block]] = [
+            block for block in list(doc.content)[:1] if title_header and isinstance(block, pf.Header)
+        ]
+        doc.content = [*leading, *section]
     return frozenset(placed.citation.note_uid for placed in citations)
 
 
