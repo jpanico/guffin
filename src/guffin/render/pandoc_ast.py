@@ -13,12 +13,16 @@ Public symbols:
   :func:`parse_inline_md` — batch-parse Pandoc Markdown strings into inline element lists;
   :func:`parse_block_md` — parse a Pandoc Markdown string into block elements; :func:`pandoc_to_json`
   — serialize a :class:`~panflute.Doc` to a Pandoc JSON string.
+
+Importing this module also makes pypandoc look up Pandoc's supported formats once per process
+rather than before every conversion (see the note above the logger).
 """
 
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false
 # Rationale: panflute has no type stubs, so all its symbols are typed as Unknown by pyright.
 # The four suppressed rules are triggered entirely by that Unknown propagation from that import.
 
+import functools
 import logging
 import uuid
 from copy import deepcopy
@@ -31,6 +35,15 @@ import pypandoc  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
 from guffin.render import pandoc_server
+
+# pypandoc validates every conversion's input and output formats against get_pandoc_formats(),
+# which runs `pandoc --list-input-formats` and `pandoc --list-output-formats` on every call, with no
+# caching: two process launches, about 60 ms, per conversion, some 0.4 s of a typical export.  The
+# lists depend only on the installed Pandoc, so they are looked up once per process.  Every Guffin
+# module that converts through pypandoc imports this one, so the cache is in place before any
+# conversion runs.  (Guffin's long-running server keeps it for its lifetime; a Pandoc upgrade
+# takes effect, as any code change does, when the server restarts.)
+pypandoc.get_pandoc_formats = functools.cache(pypandoc.get_pandoc_formats)
 
 logger = logging.getLogger(__name__)
 

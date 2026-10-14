@@ -1,12 +1,38 @@
 """Tests for guffin.render.pandoc_ast."""
 
+import subprocess
 from copy import deepcopy
+from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
+import pypandoc  # type: ignore[import-untyped]
 import pytest
 
 from guffin.model.vertex_link import VertexLinkKind, vertex_link_url
 from guffin.render.pandoc_ast import detached_copy, parse_inline_md
+
+_FORMAT_LISTINGS: Final[frozenset[str]] = frozenset({"--list-input-formats", "--list-output-formats"})
+
+
+@pytest.mark.pandoc
+def test_conversions_do_not_relist_pandoc_formats(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Once the formats are known, a pypandoc conversion launches Pandoc once, not three times.
+
+    pypandoc lists Pandoc's input and output formats before every conversion; importing
+    guffin.render.pandoc_ast caches that lookup for the life of the process.
+    """
+    pypandoc.get_pandoc_formats()
+    launched: Final[list[list[str]]] = []
+    real_popen: Final = subprocess.Popen
+
+    def recording_popen(args: list[str], *rest: object, **kwargs: object) -> subprocess.Popen[bytes]:
+        launched.append([str(arg) for arg in args])
+        return real_popen(args, *rest, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(subprocess, "Popen", recording_popen)
+    pypandoc.convert_text("*emphasis*", "json", format="markdown")
+    assert len(launched) == 1
+    assert not _FORMAT_LISTINGS & set(launched[0])
 
 
 def _deeply_nested_inline(depth: int) -> tuple[pf.Doc, pf.Str]:
