@@ -14,7 +14,8 @@ Public symbols:
 
 - **Enumerations**: :class:`ProjectType` — the supported project types (article / book / manuscript);
   :class:`TopLevelDivision` — the top-level structural division a project's highest headings
-  represent.
+  represent; :class:`NoteStyle` — how a work presents its notes (invisible endnotes or numbered
+  notes).
 - **Models**: :class:`StructuralPolicy` — the format-independent structural directives derived from a
   profile; :class:`ProjectProfile` — the format-independent base profile; and the per-type subclasses
   :class:`ArticleProfile`, :class:`BookProfile`, :class:`ManuscriptProfile`.
@@ -102,6 +103,22 @@ class TopLevelDivision(enum.StrEnum):
                 return 3
 
 
+class NoteStyle(enum.StrEnum):
+    """How a work presents its notes.
+
+    Attributes:
+        INVISIBLE_ENDNOTES: Endnotes with no mark in the running text, each keyed by its lead-in,
+            gathered in an authored Notes section (Chicago's notes keyed to page numbers; a trade
+            book's convention).
+        NUMBERED: Notes called by a superscript number in the running text, linked to the note and
+            placed the way the output format places its own notes: at the foot of the page in a PDF,
+            as endnotes in an EPUB, as GitHub footnotes in Markdown (a scholarly convention).
+    """
+
+    INVISIBLE_ENDNOTES = "invisible-endnotes"
+    NUMBERED = "numbered"
+
+
 class StructuralPolicy(BaseModel):
     """Format-independent structural directives derived from a :class:`ProjectProfile`.
 
@@ -127,11 +144,9 @@ class StructuralPolicy(BaseModel):
             pagination is fixed by its own structural conventions (a book: chapters and parts open
             pages by ritual, not by tag) does not honor them; a work whose pagination is the
             author's to shape does.
-        add_missing_notes_section: Whether a work that cites notes but has no Notes section (no
-            heading tagged ``element-type:: endnotes``) gets one added at its end.  A smaller work
-            does: its notes need a home and the author may not have made one.  A book does not: its
-            Notes section is part of its designed back matter, so a missing one is the author's to
-            supply.
+        note_style: How the work presents its notes (see :class:`NoteStyle`).  A book keeps
+            invisible endnotes in its designed back matter; an article or a manuscript numbers its
+            notes.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -143,9 +158,7 @@ class StructuralPolicy(BaseModel):
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
     drop_preamble: bool = Field(..., description="Drop the root's children preceding its first heading.")
     honor_page_breaks: bool = Field(..., description="Honor authored page-break directives.")
-    add_missing_notes_section: bool = Field(
-        ..., description="Add a Notes section to a work that cites notes but has none."
-    )
+    note_style: NoteStyle = Field(..., description="How the work presents its notes.")
 
 
 class ProjectProfile(BaseModel):
@@ -201,7 +214,7 @@ class ArticleProfile(ProjectProfile):
             emit_abstract=False,
             drop_preamble=False,
             honor_page_breaks=True,
-            add_missing_notes_section=True,
+            note_style=NoteStyle.NUMBERED,
         )
 
 
@@ -237,7 +250,7 @@ class BookProfile(ProjectProfile):
             emit_abstract=False,
             drop_preamble=True,
             honor_page_breaks=False,
-            add_missing_notes_section=False,
+            note_style=NoteStyle.INVISIBLE_ENDNOTES,
         )
 
 
@@ -270,7 +283,7 @@ class ManuscriptProfile(ProjectProfile):
             emit_abstract=True,
             drop_preamble=False,
             honor_page_breaks=True,
-            add_missing_notes_section=True,
+            note_style=NoteStyle.NUMBERED,
         )
 
 

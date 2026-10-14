@@ -25,12 +25,14 @@ from guffin.render.notes_rendering import (
     NOTES_GROUP_CLASS,
     endnote_identifier,
     insert_notes_section,
+    native_note_renderer,
     note_anchor,
     note_lead_in_renderer,
+    prepare_notes,
 )
 from guffin.render.pandoc_rendering import HEADING_LINK_CLASS, vertex_tree_to_pandoc
 from guffin.render.pdf_rendering import render as render_pdf
-from guffin.render.project import BookProfile, TopLevelDivision
+from guffin.render.project import ArticleProfile, BookProfile, TopLevelDivision
 from guffin.render.render_options import (
     EpubRenderOptions,
     MarkdownRenderOptions,
@@ -362,6 +364,68 @@ class TestNoteLeadInRenderer:
         assert note_lead_in_renderer(output_format, frozenset())("note00001", self._LEAD_IN) == self._LEAD_IN
 
 
+class TestNativeNoteRenderer:
+    """native_note_renderer renders each note link as its lead-in and a native Pandoc note."""
+
+    @staticmethod
+    def _render(uid: str, lead_in: str, note_form: NoteForm = NoteForm.FULL) -> list[pf.Inline]:
+        tree: Final[VertexTree] = _noted_book()
+        _doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
+        return native_note_renderer(tree, inline_map, {}, {}, note_form)(uid, [pf.Str(lead_in)])
+
+    def test_lead_in_then_note(self) -> None:
+        """The lead-in stays, followed by a Note holding the note's full form."""
+        rendered: Final[list[pf.Inline]] = self._render("note00002", "lead")
+        assert pf.stringify(rendered[0]) == "lead"
+        assert isinstance(rendered[1], pf.Note)
+        text: Final[str] = pf.stringify(rendered[1])
+        assert "Lavington, A History, 12." in text
+        assert "A continuation of the second note." in text
+        assert "Lavington, 12." not in text
+
+    def test_numbered_label_is_dropped(self) -> None:
+        """A lead-in that is only a number gives way to the format's own note number."""
+        rendered: Final[list[pf.Inline]] = self._render("note00001", "1")
+        assert len(rendered) == 1
+        assert isinstance(rendered[0], pf.Note)
+
+    def test_short_form(self) -> None:
+        """In the short form, the Note holds the child tagged short."""
+        rendered: Final[list[pf.Inline]] = self._render("note00002", "lead", NoteForm.SHORT)
+        assert pf.stringify(rendered[1]).strip() == "Lavington, 12."
+
+
+class TestPrepareNotes:
+    """prepare_notes follows the policy's note style."""
+
+    def test_numbered_style_builds_no_notes_section(self) -> None:
+        """With numbered notes, no entry is built and the document is left as it is."""
+        tree: Final[VertexTree] = _noted_book()
+        doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
+        before: Final[int] = len(list(doc.content))
+        prepare_notes(
+            doc, tree, inline_map, {}, {}, ArticleProfile().structural_policy, OutputFormat.PDF, heading_links=True
+        )
+        assert len(list(doc.content)) == before
+
+    def test_numbered_style_rejects_notes_only(self) -> None:
+        """Numbered notes have no Notes section to export alone."""
+        tree: Final[VertexTree] = _noted_book()
+        doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
+        with pytest.raises(ValueError, match="numbered"):
+            prepare_notes(
+                doc,
+                tree,
+                inline_map,
+                {},
+                {},
+                ArticleProfile().structural_policy,
+                OutputFormat.MARKDOWN,
+                heading_links=True,
+                notes_only=True,
+            )
+
+
 class TestRenderedNotes:
     """Each format renders the Notes section end to end."""
 
@@ -452,3 +516,18 @@ class TestRenderedNotes:
         # The page's displayed number is the last text on it, in the footer.
         displayed: Final[str] = passage_page.split()[-1]
         assert f"{displayed} a 52-minute run: Lavington" in notes_page
+
+    def test_article_pdf_footnotes(self, tmp_path: Path) -> None:
+        """An article PDF calls each note by a superscript number and sets it at the foot of the page."""
+        render_pdf(
+            self._bundle(),
+            profile=ArticleProfile(),
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=PdfRenderOptions(output_dir=tmp_path),
+        )
+        reader: Final[PdfReader] = PdfReader(tmp_path / "noted.pdf")
+        text: Final[str] = " ".join(" ".join((page.extract_text() or "").split()) for page in reader.pages)
+        assert "It ran for a 52-minute run2." in text
+        assert "2Lavington, A History, 12." in text
+        assert "Notes" in text

@@ -1,6 +1,11 @@
 """Rendering of notes: the Notes section, and each note's lead-in in the running text.
 
-The notes are invisible endnotes.  A note's call site carries no mark; its *lead-in*, a phrase
+A work presents its notes in one of two styles (:class:`~guffin.render.project.NoteStyle`).
+*Numbered* notes are each format's own: a superscript number after the lead-in, linked to a
+footnote, an endnote, or a GitHub footnote (see :func:`native_note_renderer`).  The rest of this
+module serves the other style, *invisible endnotes*.
+
+An invisible endnote's call site carries no mark; its *lead-in*, a phrase
 of the passage, is the key that ties the note to its passage.  The notes gather in the Notes
 section, the back-matter section an author opens with an ``element-type:: endnotes`` heading,
 grouped by the headings their passages fall under.  What the grouping is, and what links tie a
@@ -24,7 +29,8 @@ Public symbols:
 - **Functions**: :func:`note_anchor` — the identifier of a note's passage;
   :func:`endnote_identifier` — the identifier of a note's entry; :func:`insert_notes_section` —
   build the Notes section into a document; :func:`note_lead_in_renderer` — how a format renders a
-  lead-in in the running text.
+  lead-in in the running text; :func:`native_note_renderer` — how numbered notes render, as native
+  notes; :func:`prepare_notes` — prepare a document's notes in the style its policy sets.
 """
 
 # pyright: reportUnknownMemberType=false, reportUnknownVariableType=false, reportUnknownParameterType=false, reportUnknownArgumentType=false
@@ -57,7 +63,7 @@ from guffin.render.pandoc_rendering import (
     heading_anchor,
     trailing_colophon_length,
 )
-from guffin.render.project import TopLevelDivision
+from guffin.render.project import NoteStyle, StructuralPolicy, TopLevelDivision
 from guffin.render.render_options import OutputFormat
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
@@ -278,14 +284,6 @@ def _entry(
     to its note, gets the bare blocks, since the GFM writer would emit a ``Div`` as HTML.
     """
     note_uid: Final[Uid] = placed.citation.note_uid
-    note: Final[Vertex] = tree.uid_map[note_uid]
-    short_form_uid: Final[Uid | None] = next((uid for uid in note.children or () if _is_short_form(uid, tree)), None)
-    body: Final[Vertex] = (
-        tree.uid_map[short_form_uid] if note_form is NoteForm.SHORT and short_form_uid is not None else note
-    )
-    continuation: Final[list[Uid]] = [
-        uid for uid in body.children or () if body is not note or not _is_short_form(uid, tree)
-    ]
     lead_in: Final[list[pf.Inline]] = detached_copy(lead_ins.get(note_uid) or [pf.Str(placed.citation.lead_in)])
     emphasized: Final[pf.Inline] = pf.Emph(*lead_in)
     lead: Final[pf.Inline] = (
@@ -299,23 +297,53 @@ def _entry(
         else []
     )
     opening: Final[list[pf.Inline]] = [*locator, lead, pf.Str(":")]
-    blocks: list[pf.Block]
+    blocks: Final[list[pf.Block]] = _note_blocks(
+        note_uid, tree, asset_files, inline_map, view_map, note_form, opening=opening
+    )
+    if output_format is OutputFormat.MARKDOWN:
+        return blocks
+    return [pf.Div(*blocks, identifier=endnote_identifier(note_uid), classes=[ENDNOTE_CLASS])]
+
+
+def _note_blocks(
+    note_uid: Uid,
+    tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    note_form: NoteForm,
+    *,
+    opening: Sequence[pf.Inline] = (),
+) -> list[pf.Block]:
+    """Return the blocks of the note *note_uid* in *note_form*, its first paragraph led by *opening*.
+
+    The full form is the note and its children, as continuation paragraphs, less any child tagged
+    ``note-form:: short``; the short form, when the note has such a child, is that child and its own
+    children, and otherwise the full form.  A non-empty *opening* is followed by a space when the
+    note's text joins it in one paragraph; a note that is not a text block keeps *opening* as a
+    paragraph of its own (omitted when empty) and renders as its blocks after it.
+    """
+    note: Final[Vertex] = tree.uid_map[note_uid]
+    short_form_uid: Final[Uid | None] = next((uid for uid in note.children or () if _is_short_form(uid, tree)), None)
+    body: Final[Vertex] = (
+        tree.uid_map[short_form_uid] if note_form is NoteForm.SHORT and short_form_uid is not None else note
+    )
+    continuation: Final[list[Uid]] = [
+        uid for uid in body.children or () if body is not note or not _is_short_form(uid, tree)
+    ]
     if isinstance(body, TextVertex):
         text: Final[list[pf.Inline]] = detached_copy(inline_map.get(body.text, [pf.Str(body.text)]))
-        blocks = [
-            pf.Para(*opening, pf.Space(), *text),
+        separator: Final[list[pf.Inline]] = [pf.Space()] if opening else []
+        return [
+            pf.Para(*opening, *separator, *text),
             *build_child_blocks(
                 continuation, tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth=1
             ),
         ]
-    else:
-        blocks = [
-            pf.Para(*opening),
-            *build_child_blocks([body.uid], tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth=1),
-        ]
-    if output_format is OutputFormat.MARKDOWN:
-        return blocks
-    return [pf.Div(*blocks, identifier=endnote_identifier(note_uid), classes=[ENDNOTE_CLASS])]
+    return [
+        *([pf.Para(*opening)] if opening else []),
+        *build_child_blocks([body.uid], tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth=1),
+    ]
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -485,3 +513,107 @@ def note_lead_in_renderer(output_format: OutputFormat, entered: frozenset[Uid]) 
                 return lead_in
 
     return _render
+
+
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def native_note_renderer(
+    tree: VertexTree,
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    asset_files: dict[Uid, Path],
+    note_form: NoteForm,
+) -> NoteLeadInRenderer:
+    """Return the renderer of numbered notes: each note link becomes its lead-in and a native note.
+
+    The note is a Pandoc ``Note`` holding the note's blocks in *note_form* (see :func:`insert_notes_section`
+    for the forms), placed right after the lead-in, so each format renders its own numbered note
+    there: a superscript number linked to a footnote at the foot of the page in PDF, to an endnote
+    in EPUB, to a GitHub footnote in Markdown.  The lead-in stays in the running text; a lead-in that
+    is only a number (an unrenamed numbered marker, such as ``(1)``) is the extension's own note
+    number, so it is dropped and the format's number alone remains.  A link to a vertex absent from
+    *tree* keeps its bare lead-in.
+
+    Args:
+        tree: The vertex tree the document was built from, holding the notes.
+        inline_map: Mapping from text string to parsed inline elements, as the document was built with.
+        view_map: Presentation view map, as the document was built with.
+        asset_files: Mapping from asset vertex UID to local asset file, as the document was built with.
+        note_form: Which form of each note to render.
+
+    Returns:
+        The renderer, for :func:`~guffin.render.pandoc_rendering.make_doc_resolver`.
+    """
+
+    def _render(uid: Uid, lead_in: list[pf.Inline]) -> list[pf.Inline]:
+        if uid not in tree.uid_map:
+            return lead_in
+        note: Final[pf.Note] = pf.Note(*_note_blocks(uid, tree, asset_files, inline_map, view_map, note_form))
+        shown: Final[str] = "".join(pf.stringify(inline) for inline in lead_in).strip()
+        return [note] if shown.isdigit() else [*lead_in, note]
+
+    return _render
+
+
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+def prepare_notes(
+    doc: pf.Doc,
+    tree: VertexTree,
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    asset_files: dict[Uid, Path],
+    policy: StructuralPolicy,
+    output_format: OutputFormat,
+    *,
+    heading_links: bool,
+    note_form: NoteForm = NoteForm.FULL,
+    notes_only: bool = False,
+    title_header: bool = False,
+) -> NoteLeadInRenderer:
+    """Prepare *doc*'s notes in the style *policy* sets, and return how its note links render.
+
+    With :attr:`~guffin.render.project.NoteStyle.INVISIBLE_ENDNOTES`, the Notes section is built into
+    *doc* (see :func:`insert_notes_section`, which receives the remaining arguments) and the lead-ins
+    render per :func:`note_lead_in_renderer`.  With :attr:`~guffin.render.project.NoteStyle.NUMBERED`,
+    *doc* is left as it is and each note link renders as a native note (see
+    :func:`native_note_renderer`).  Must run before *doc*'s vertex links are resolved.
+
+    Args:
+        doc: The document built from *tree*, with its vertex links still unresolved.
+        tree: The vertex tree *doc* was built from.
+        inline_map: Mapping from text string to parsed inline elements, as *doc* was built with.
+        view_map: Presentation view map, as *doc* was built with.
+        asset_files: Mapping from asset vertex UID to local asset file, as *doc* was built with.
+        policy: The structural policy of the work, giving its note style and top-level division.
+        output_format: The format *doc* will be rendered to.
+        heading_links: Whether a reference to a heading links to it.
+        note_form: Which form of the notes to render (default the full form).
+        notes_only: Whether to cut *doc* down to the Notes section (invisible endnotes only).
+        title_header: Whether *doc* opens with a title Header to keep when *notes_only* cuts it down.
+
+    Returns:
+        The renderer of note links, for :func:`~guffin.render.pandoc_rendering.make_doc_resolver`.
+
+    Raises:
+        ValueError: If *notes_only* is set for numbered notes, which have no Notes section to export,
+            or for a tree with no Notes heading (see :func:`insert_notes_section`).
+    """
+    match policy.note_style:
+        case NoteStyle.INVISIBLE_ENDNOTES:
+            entered: Final[frozenset[Uid]] = insert_notes_section(
+                doc,
+                tree,
+                inline_map,
+                view_map,
+                asset_files,
+                policy.top_level_division,
+                output_format,
+                heading_links=heading_links,
+                note_form=note_form,
+                notes_only=notes_only,
+                title_header=title_header,
+            )
+            return note_lead_in_renderer(output_format, entered)
+        case NoteStyle.NUMBERED:
+            if notes_only:
+                raise ValueError("a notes-only export needs invisible endnotes, which numbered notes are not")
+            return native_note_renderer(tree, inline_map, view_map, asset_files, note_form)

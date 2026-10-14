@@ -44,7 +44,6 @@ from pydantic import validate_call
 
 from guffin.common.markdown import gfm_heading_slug
 from guffin.common.revision import Revision
-from guffin.model.notes import with_notes_section
 from guffin.model.publishing_semantics import (
     drop_other_note_forms,
     drop_page_breaks,
@@ -56,10 +55,11 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_alternatives, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
 from guffin.render.md_post_processing import indent_fenced_blank_lines, strip_list_separator_comments
-from guffin.render.notes_rendering import NOTES_GROUP_CLASS, insert_notes_section, note_lead_in_renderer
+from guffin.render.notes_rendering import NOTES_GROUP_CLASS, prepare_notes
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     HEADING_LINK_CLASS,
+    NoteLeadInRenderer,
     make_doc_resolver,
     resolve_vertex_links,
     revision_line,
@@ -299,11 +299,7 @@ def render(
     # fetch nor the rendered output.
     unpublished_dropped: Final[VertexTree] = drop_unpublished(render_bundle.content)
     # Blocks limited to the other form of the notes (note-form::) are pruned the same way.
-    formed: Final[VertexTree] = drop_other_note_forms(unpublished_dropped, options.note_form)
-    # A work whose policy provides for it gets a Notes section when it cites notes but has none.
-    published: Final[VertexTree] = (
-        with_notes_section(formed) if profile.structural_policy.add_missing_notes_section else formed
-    )
+    published: Final[VertexTree] = drop_other_note_forms(unpublished_dropped, options.note_form)
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     attributed: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Internal element numbers are authoring bookkeeping; they render only on explicit request.
@@ -350,15 +346,15 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
-        # The Notes section is built before the links resolve: its entries copy each note link's
-        # lead-in.
-        entered_notes: Final[frozenset[Uid]] = insert_notes_section(
+        # The notes are prepared before the links resolve: an invisible-endnotes Notes section copies
+        # each note link's lead-in, and the resolver needs to know how each note link renders.
+        note_lead_in: Final[NoteLeadInRenderer] = prepare_notes(
             doc,
             enriched_tree,
             inline_map,
             render_bundle.view,
             asset_files,
-            profile.structural_policy.top_level_division,
+            profile.structural_policy,
             OutputFormat.MARKDOWN,
             heading_links=options.heading_links,
             note_form=options.note_form,
@@ -373,7 +369,7 @@ def render(
                 inline_map,
                 options.daily_note_format,
                 heading_links=options.heading_links,
-                note_lead_in=note_lead_in_renderer(OutputFormat.MARKDOWN, entered_notes),
+                note_lead_in=note_lead_in,
             ),
         )
         _link_headings(doc)
@@ -425,13 +421,13 @@ def render(
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
-        no_bundle_entered_notes: Final[frozenset[Uid]] = insert_notes_section(
+        no_bundle_note_lead_in: Final[NoteLeadInRenderer] = prepare_notes(
             no_bundle_doc,
             content,
             no_bundle_inline_map,
             render_bundle.view,
             {},
-            profile.structural_policy.top_level_division,
+            profile.structural_policy,
             OutputFormat.MARKDOWN,
             heading_links=options.heading_links,
             note_form=options.note_form,
@@ -446,7 +442,7 @@ def render(
                 no_bundle_inline_map,
                 options.daily_note_format,
                 heading_links=options.heading_links,
-                note_lead_in=note_lead_in_renderer(OutputFormat.MARKDOWN, no_bundle_entered_notes),
+                note_lead_in=no_bundle_note_lead_in,
             ),
         )
         _link_headings(no_bundle_doc)

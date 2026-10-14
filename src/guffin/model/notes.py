@@ -7,8 +7,6 @@ the note: an ordinary vertex, one child of a :class:`~guffin.model.vertex.NotesV
 
 Public symbols:
 
-- **Constants**: :data:`NOTES_SECTION_TITLE` — the title of a Notes section Guffin adds;
-  :data:`ADDED_NOTES_HEADING_UID` — the UID of the heading it adds.
 - **Models**: :class:`NoteCitation` — one note link in the render-visible document: the vertex
   whose text carries it, its lead-in, and the note's UID; :class:`PlacedNoteCitation` — a note
   link with the headings governing its position, and its
@@ -19,8 +17,7 @@ Public symbols:
   :func:`placed_note_citations` — every note link in reading order, with its governing headings;
   :func:`notes_containers` — every :class:`~guffin.model.vertex.NotesVertex` in a tree;
   :func:`contained_note_uids` — the UIDs of every note held by a notes container;
-  :func:`orphan_note_uids` — the notes no note link cites; :func:`with_notes_section` — a tree that
-  cites notes but has no Notes heading, with one added at the end of its root.
+  :func:`orphan_note_uids` — the notes no note link cites.
 """
 
 from collections.abc import Sequence
@@ -28,11 +25,7 @@ from typing import Final, NamedTuple
 
 from pydantic import validate_call
 
-from guffin.model.attribute import AttributeInstance, LiteralValue
-from guffin.model.attribute_assignment import AttributeAssignment
-from guffin.model.chicago_structure import StructuralElement
 from guffin.model.primitives import Uid
-from guffin.model.publishing_semantics import PublishingSemantics, has_element_type
 from guffin.model.vertex import (
     CalloutVertex,
     HeadingVertex,
@@ -46,25 +39,8 @@ from guffin.model.vertex import (
     Vertex,
     is_embed_vertex,
 )
-from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_links_in_text
+from guffin.model.vertex_link import VertexLinkKind, vertex_links_in_text
 from guffin.model.vertex_tree import VertexTree, root_vertex, transcluded_vertices
-
-NOTES_SECTION_TITLE: Final[str] = "Notes"
-"""The title of a Notes section Guffin adds (see :func:`with_notes_section`), Chicago's own term."""
-
-ADDED_NOTES_HEADING_UID: Final[Uid] = "guffinNts"
-"""The UID of the Notes heading :func:`with_notes_section` adds.
-
-The heading comes from no source graph, so its UID is a fixed, recognisable value rather than one a
-source assigned.
-"""
-
-_ADDED_ATTRIBUTE_PAGE_UID: Final[Uid] = "guffinAtt"
-"""The UID the added heading's ``element-type`` assignment links to as its attribute page.
-
-An :class:`~guffin.model.attribute.AttributeInstance` links to its attribute's page in the graph it
-was read from; an assignment Guffin adds was read from no graph, so the link names no page.
-"""
 
 
 class NoteCitation(NamedTuple):
@@ -261,47 +237,3 @@ def orphan_note_uids(tree: VertexTree, citations: Sequence[NoteCitation]) -> lis
     """
     cited: Final[frozenset[Uid]] = frozenset(citation.note_uid for citation in citations)
     return [uid for container in notes_containers(tree) for uid in container.children or () if uid not in cited]
-
-
-@validate_call
-def with_notes_section(tree: VertexTree) -> VertexTree:
-    """Return *tree* with a Notes section added at its end, when it cites notes but has none.
-
-    When the render-visible document cites a note (per :func:`note_citations`) and no
-    render-visible heading is tagged ``element-type:: endnotes``, a heading titled
-    :data:`NOTES_SECTION_TITLE` and carrying that tag (the assignment a ``guffin-meta::`` child
-    would make) is appended as the root's last child, so the notes have a home.  It sits at the
-    shallowest heading level the document uses (level 1 when it has none) and has UID
-    :data:`ADDED_NOTES_HEADING_UID`.  Otherwise *tree* is returned unchanged.
-
-    Args:
-        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
-
-    Returns:
-        A new :class:`~guffin.model.vertex_tree.VertexTree` with the Notes heading added, or *tree*
-        itself when it cites no notes or already has a Notes heading.
-    """
-    if not note_citations(tree) or has_element_type(tree, StructuralElement.ENDNOTES):
-        return tree
-    levels: Final[list[int]] = [
-        vertex.heading_level for vertex in transcluded_vertices(tree) if isinstance(vertex, HeadingVertex)
-    ]
-    tag: Final[AttributeAssignment] = AttributeAssignment(
-        attribute=AttributeInstance(
-            definition=PublishingSemantics.ELEMENT_TYPE.value,
-            link=VertexLink(kind=VertexLinkKind.REFERENCE, uid=_ADDED_ATTRIBUTE_PAGE_UID),
-        ),
-        values=(LiteralValue(value=StructuralElement.ENDNOTES.value),),
-    )
-    heading: Final[HeadingVertex] = HeadingVertex(
-        uid=ADDED_NOTES_HEADING_UID,
-        text=NOTES_SECTION_TITLE,
-        heading_level=min(levels, default=1),
-        attribute_assignments=[tag],
-    )
-    root: Final[Vertex] = root_vertex(tree)
-    rooted: Final[Vertex] = root.model_copy(update={"children": [*(root.children or []), heading.uid]})
-    return VertexTree(
-        tree_vertices=[rooted if vertex.uid == root.uid else vertex for vertex in tree.tree_vertices] + [heading],
-        ref_vertices=tree.ref_vertices,
-    )

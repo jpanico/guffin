@@ -1,7 +1,8 @@
 # Notes: footnotes and endnotes
 
-**Status: designed and implemented.** Every open question is decided except Q3, deferred with
-R3; Q7 has two reading-app tests open. See [Implementation](#implementation) for what was built
+**Status: designed and implemented.** Every open question is decided; Q7 has two reading-app
+tests open. The note style is chosen per project type (see the note-style decision): a book keeps
+invisible endnotes, an article or a manuscript numbers its notes. See [Implementation](#implementation) for what was built
 and where it departs from the decisions. This is the working design document for
 *notes* in Guffin: footnotes, endnotes, and invisible endnotes, authored in Roam and rendered in
 every output format. It records the current state, the requirements, the open design questions,
@@ -78,8 +79,7 @@ full in the digital editions and shortened in print; those requirements are mark
   never exists only in an export.
 - **R2 — One note, every format.** The same authored note renders in PDF, EPUB, and Markdown.
 - **R3 — Selectable note style.** Footnotes, endnotes, or invisible endnotes, chosen per export
-  or per work, not per note. *Deferred: the first implementation has one style (see
-  [Decisions](#decisions)).*
+  or per work, not per note. *Met per project type: see the note-style decision.*
 - **R4 — Invisible keys.** *(book)* In PDF an invisible note is keyed by page number and lead-in;
   in formats without pages, by section title and lead-in.
 - **R5 — Short and full forms.** *(book)* A note may carry a short form; an export chooses which
@@ -250,9 +250,14 @@ Built in phases, each a commit.
   `--notes-only/--no-notes-only`, and so the server's `note_form` and `notes_only` request
   fields. A notes-only export's filename gains a `.notes` segment, and it aborts when there is no
   Notes heading and none to be added.
-- **Missing Notes section**: `StructuralPolicy.add_missing_notes_section` (on for `article` and
-  `manuscript`) has each renderer apply `model/notes.with_notes_section` after pruning, adding a
-  tagged "Notes" heading at the end of the root when the document cites notes but has none.
+- **Note style**: `StructuralPolicy.note_style` (`render/project.NoteStyle`) is
+  `invisible-endnotes` for `book` and `numbered` for `article` and `manuscript`.
+  `notes_rendering.prepare_notes` follows it: for invisible endnotes it builds the Notes section
+  (`insert_notes_section`) and renders lead-ins per `note_lead_in_renderer`; for numbered notes it
+  leaves the document alone and renders each note link as its lead-in and a native Pandoc `Note`
+  (`native_note_renderer`), dropping a lead-in that is only a number. `export-roam-tree` runs the
+  checks only invisible endnotes need (lead-ins present and unique, a Notes section present)
+  only for that style, and refuses a notes-only export of numbered notes.
 
 Departures from the decisions, and behavior found while building:
 
@@ -287,7 +292,7 @@ Resolved 2026-10-14:
   endnotes: no reference mark in the text, each note keyed by its lead-in. Endnotes with
   reference marks may come later. With a single style, R3 and Q3 are deferred. (In electronic
   formats the lead-in itself may be a link to its note, styled so it does not distract; that
-  adds no mark to the text. See Q7.)
+  adds no mark to the text. See Q7.) *Narrowed to books by the note-style decision below.*
 - **One authored Notes section (Q4).** Endnotes appear in a dedicated back-matter section. The
   author must create it explicitly, as a heading tagged `element-type:: endnotes` in the back
   matter, and Guffin fills that heading with the notes. Without such a heading, no endnotes
@@ -459,7 +464,9 @@ Resolved 2026-10-14:
   missing `element-type:: endnotes` heading is an error whatever the project type, since there
   is nothing else to output (amended below: only when no Notes section is added either). The option applies to every format; its first use is a Markdown
   export of a book's complete notes for publishing beside the book's code.
-- **A missing Notes section is added, except in a book (rule 5 amended).** Rule 5 first had an
+- **A missing Notes section is added, except in a book (rule 5 amended).** *Superseded the same
+  day by the note-style decision below: articles and manuscripts no longer keep invisible
+  endnotes, so they need no Notes section, and this mechanism was removed.* Rule 5 first had an
   `article` or `manuscript` export warn and leave its notes out. Instead, the project profile's
   `StructuralPolicy` carries `add_missing_notes_section`: on for `article` and `manuscript`, off
   for `book`. When it is on and the document cites notes but has no `element-type:: endnotes`
@@ -470,17 +477,28 @@ Resolved 2026-10-14:
   book's Notes section is part of its designed back matter, so a book still fails without one. A
   notes-only export aborts only when it would have nothing to show: no Notes heading and none to
   be added. (Decided 2026-10-14.)
+- **The note style follows the project type (supersedes the two decisions above).** A book keeps
+  invisible endnotes. An article and a manuscript number their notes, the scholarly convention
+  (Quarto's `manuscript` is a scholarly article): each note link renders as its lead-in followed by
+  a superscript number linked to the note, placed the way each format places its own notes, a
+  footnote at the foot of the page in PDF (Typst links the number and the note both ways), an
+  endnote in EPUB (`noteref` to a `footnote` aside, the pairing Apple Books shows as a pop-up), a
+  GitHub footnote in Markdown. A label that is only a number, the extension's own, gives way to
+  the format's number. The style is `StructuralPolicy.note_style`. With numbered notes, the checks
+  that exist only because invisible endnotes are keyed by lead-in (Q9 rules 1, 4, and 5) do not
+  apply, and a notes-only export, which exports a Notes section, is refused. Short and full forms
+  apply to both styles. (Decided 2026-10-14.)
 - **Validation rules (Q9).** "Error" follows Guffin's existing posture for vocabulary checks: it
   fails `export-roam-tree` (and the server's `/v1/export`) and is logged as a warning by
   `dump-roam-tree`. "Warning" is logged and never fails anything.
 
   | # | Condition | Severity |
   |---|---|---|
-  | 1 | A marker label with no lead-in: all digits (`(1)`) or empty (`()`) | error |
+  | 1 | A marker label with no lead-in: all digits (`(1)`) or empty (`()`) | error (invisible endnotes only) |
   | 2 | A dangling reference: the marker's target block does not exist | error |
   | 3 | An orphan note: a note block no marker references (the note is dropped) | warning |
-  | 4 | Two notes in the same section with the same lead-in | error |
-  | 5 | Notes present but no `element-type:: endnotes` heading | error in a `book` export; otherwise Guffin adds a Notes section (amended below) |
+  | 4 | Two notes in the same section with the same lead-in | error (invisible endnotes only) |
+  | 5 | Notes present but no `element-type:: endnotes` heading | error (invisible endnotes only, so a `book`; amended below) |
   | 6 | One note block cited by more than one marker | error |
   | 7 | A marker whose target is not a child of a notes header block | error |
 

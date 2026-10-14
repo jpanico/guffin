@@ -529,16 +529,16 @@ class TestNotesInRunningText:
         )
         return (tmp_path / "doc.md").read_text(encoding="utf-8")
 
-    def test_article_without_notes_section_gets_one(self, tmp_path: Path) -> None:
-        """An article citing notes without a Notes section gets one at its end, holding the note."""
+    def test_article_numbers_its_notes(self, tmp_path: Path) -> None:
+        """An article's note renders as a GitHub footnote called right after its lead-in."""
         result: Final[str] = self._render(tmp_path, ArticleProfile())
-        assert "It ran for a 52-minute run and stopped." in result
-        assert result.index("## Notes") > result.index("It ran for")
-        assert "*a 52-minute run*: Williams and Kilburn, 1948." in result[result.index("## Notes") :]
+        assert "It ran for a 52-minute run[^1] and stopped." in result
+        assert "[^1]: Williams and Kilburn, 1948." in result
+        assert "Notes" not in result
         assert "x-guffin" not in result
 
     def test_book_without_notes_section_gets_none(self, tmp_path: Path) -> None:
-        """A book's policy adds no Notes section: the lead-in stays plain and the note is absent."""
+        """A book keeps invisible endnotes, so with no Notes section the lead-in stays plain and the note is absent."""
         result: Final[str] = self._render(tmp_path, BookProfile())
         assert "It ran for a 52-minute run and stopped." in result
         assert "Notes" not in result

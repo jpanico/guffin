@@ -88,13 +88,14 @@ from guffin.common.validation import ValidationError
 from guffin.model.chicago_structure import StructuralElement
 from guffin.model.notes import note_citations
 from guffin.model.publishing_semantics import NoteForm, PdfRenderPlacement, has_element_type
-from guffin.model.publishing_validation import lead_ins_unique_within_sections
+from guffin.model.publishing_validation import all_note_lead_ins_present, lead_ins_unique_within_sections
 from guffin.model.render_bundle import RenderBundle
+from guffin.model.vertex_tree import VertexTree
 from guffin.render.date_format import DateFormat
 from guffin.render.epub_rendering import render as render_epub
 from guffin.render.md_rendering import render as render_md
 from guffin.render.pdf_rendering import render as render_pdf
-from guffin.render.project import ProjectProfile, ProjectType
+from guffin.render.project import NoteStyle, ProjectProfile, ProjectType
 from guffin.render.render_options import (
     EpubRenderOptions,
     MarkdownRenderOptions,
@@ -413,40 +414,9 @@ def main(
     # A book whose content declares parts (a level-1 `element-type:: part` heading) becomes a
     # parts book; the content itself, not a CLI switch, is the source of that structure.
     profile: Final[ProjectProfile] = resolve_profile(project_type, render_bundle.content)
-    # A note is keyed by its section and lead-in, and what counts as a section depends on the
-    # resolved profile, so this one note check runs here rather than in the fetch pipeline's gate.
-    lead_in_error: Final[ValidationError | None] = lead_ins_unique_within_sections(
-        render_bundle.content, profile.structural_policy.top_level_division.section_heading_level
-    )
-    if lead_in_error is not None:
-        logger.error("guffin semantics validation: %s", lead_in_error)
-        logger.error("aborting export of %r: two notes in one section share a lead-in (see above)", target)
-        raise typer.Exit(code=1)
-    # Notes appear in a Notes section (a heading tagged element-type:: endnotes).  A work whose
-    # policy adds a missing one (an article, a manuscript) gets it at render time; a book does not,
-    # since its Notes section is part of its designed back matter, so a book that cites notes
-    # without one is fatal: it would otherwise lose its notes with no visible sign (a server export
-    # returns no warnings on success).  A notes-only export with no Notes section to show is fatal
-    # too.
-    cites_notes: Final[bool] = bool(note_citations(render_bundle.content))
-    authored_notes_section: Final[bool] = has_element_type(render_bundle.content, StructuralElement.ENDNOTES)
-    adds_notes_section: Final[bool] = profile.structural_policy.add_missing_notes_section
-    if cites_notes and not authored_notes_section:
-        if not adds_notes_section:
-            logger.error(
-                "aborting export of %r: it cites notes but has no Notes section "
-                "(a back-matter heading tagged element-type:: endnotes), and a %s does not get one added",
-                target,
-                project_type.value,
-            )
-            raise typer.Exit(code=1)
-        logger.info("%r cites notes but has no Notes section; one is added at its end", target)
-    if notes_only and not (authored_notes_section or (cites_notes and adds_notes_section)):
-        logger.error(
-            "aborting notes-only export of %r: it has no Notes section (a heading tagged element-type:: endnotes)",
-            target,
-        )
-        raise typer.Exit(code=1)
+    # The note checks that depend on the work's note style run here, once the profile is resolved,
+    # rather than in the fetch pipeline's gate.
+    _check_notes(render_bundle.content, profile, target, notes_only=notes_only)
     options: Final[RenderOptions] = RenderOptions.for_format(
         output_format,
         output_dir=output_dir,
@@ -469,6 +439,60 @@ def main(
     )
 
     _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)
+
+
+def _check_notes(content: VertexTree, profile: ProjectProfile, target: str, *, notes_only: bool) -> None:
+    """Run the note checks that depend on *profile*'s note style, exiting with code 1 on a failure.
+
+    Invisible endnotes are keyed by their lead-ins and gathered in an authored Notes section (a
+    heading tagged ``element-type:: endnotes``), so with that style every note link must carry a
+    lead-in, no two notes in one section may share one, and a work that cites notes must have the
+    section: a book without it would lose its notes with no visible sign (a server export returns
+    no warnings on success).  Numbered notes need none of these.  A notes-only export needs
+    invisible endnotes and a Notes section to show.
+
+    Raises:
+        typer.Exit: With code 1 when a check fails.
+    """
+    style: Final[NoteStyle] = profile.structural_policy.note_style
+    if notes_only and style is not NoteStyle.INVISIBLE_ENDNOTES:
+        logger.error(
+            "aborting notes-only export of %r: a %s presents numbered notes, with no Notes section to export",
+            target,
+            profile.project_type.value,
+        )
+        raise typer.Exit(code=1)
+    if style is not NoteStyle.INVISIBLE_ENDNOTES:
+        return
+    lead_in_errors: Final[list[ValidationError]] = [
+        error
+        for error in (
+            all_note_lead_ins_present(content),
+            lead_ins_unique_within_sections(
+                content, profile.structural_policy.top_level_division.section_heading_level
+            ),
+        )
+        if error is not None
+    ]
+    if lead_in_errors:
+        for error in lead_in_errors:
+            logger.error("guffin semantics validation: %s", error)
+        logger.error("aborting export of %r: its invisible endnotes need distinct lead-ins (see above)", target)
+        raise typer.Exit(code=1)
+    has_notes_section: Final[bool] = has_element_type(content, StructuralElement.ENDNOTES)
+    if note_citations(content) and not has_notes_section:
+        logger.error(
+            "aborting export of %r: it cites notes but has no Notes section "
+            "(a back-matter heading tagged element-type:: endnotes)",
+            target,
+        )
+        raise typer.Exit(code=1)
+    if notes_only and not has_notes_section:
+        logger.error(
+            "aborting notes-only export of %r: it has no Notes section (a heading tagged element-type:: endnotes)",
+            target,
+        )
+        raise typer.Exit(code=1)
 
 
 @validate_call

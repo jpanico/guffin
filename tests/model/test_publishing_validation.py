@@ -1095,11 +1095,11 @@ class TestLeadInsUniqueWithinSections:
 class TestValidateSemanticsNotes:
     """validate_semantics runs the note validators."""
 
-    def test_numbered_marker_is_reported(self) -> None:
-        """A numbered marker's link fails the whole validation."""
-        result = validate_semantics(_noted_page(_note_link("1", "note00001")))
-        assert not result.is_valid
-        assert [error.validator for error in result.errors] == [all_note_lead_ins_present]
+    def test_numbered_marker_is_left_to_the_lead_in_check(self) -> None:
+        """validate_semantics does not require lead-ins, which only invisible endnotes need."""
+        tree = _noted_page(_note_link("1", "note00001"))
+        assert validate_semantics(tree).is_valid
+        assert all_note_lead_ins_present(tree) is not None
 
     def test_article4_fixture_notes_validate(self) -> None:
         """[[Test Article]] 4's three Footnotes markers all carry phrase lead-ins, so the fixture validates."""

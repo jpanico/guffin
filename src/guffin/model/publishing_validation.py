@@ -36,9 +36,11 @@ Public symbols:
   number), :func:`all_note_targets_present` (no dangling note link),
   :func:`all_notes_cited_once` (no note cited by two links), and
   :func:`all_note_targets_in_notes_containers` (every note link points at a child of a
-  :class:`~guffin.model.vertex.NotesVertex`); :func:`lead_ins_unique_within_sections` — the
-  note check that needs the section's heading level, which the tree alone does not say (no two
-  notes in one section share a lead-in);
+  :class:`~guffin.model.vertex.NotesVertex`), the last three run by :func:`validate_semantics` and
+  :func:`all_note_lead_ins_present` left to a caller whose notes are keyed by lead-in (invisible
+  endnotes); :func:`lead_ins_unique_within_sections` — the lead-in check that also needs the
+  section's heading level, which the tree alone does not say (no two notes in one section share a
+  lead-in);
   :func:`validate_semantics` — run every vocabulary validator over a
   :class:`~guffin.model.vertex_tree.VertexTree`, accumulating a
   :class:`~guffin.common.validation.ValidationResult`.
@@ -817,7 +819,8 @@ def all_note_lead_ins_present(tree: VertexTree) -> ValidationError | None:
 
     A note link's display text is the note's lead-in, the phrase of the passage the note is keyed
     to.  A display that is blank, or only a number (a numbered marker such as ``(1)`` whose label
-    was never replaced by a phrase), carries no lead-in.
+    was never replaced by a phrase), carries no lead-in.  Only notes keyed by their lead-ins
+    (invisible endnotes) need one; a numbered note may keep the extension's number as its label.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
@@ -985,7 +988,7 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
     :func:`all_element_numbers_well_formed`, :func:`all_element_numbers_in_headings_only`,
     :func:`all_element_number_matters_legal`, :func:`all_element_number_matters_agree`,
     :func:`all_element_numbers_unique`, :func:`all_element_numbers_ordered`, and
-    :func:`all_element_numbers_nested` — and every note validator — :func:`all_note_lead_ins_present`,
+    :func:`all_element_numbers_nested` — and the note validators every note style needs —
     :func:`all_note_targets_present`, :func:`all_notes_cited_once`, and
     :func:`all_note_targets_in_notes_containers` — via :func:`~guffin.common.validation.validate_all`.
     Every attribute validator covers both the tree vertices and the referenced-vertex stubs
@@ -1023,7 +1026,6 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_element_numbers_unique,
             all_element_numbers_ordered,
             all_element_numbers_nested,
-            all_note_lead_ins_present,
             all_note_targets_present,
             all_notes_cited_once,
             all_note_targets_in_notes_containers,

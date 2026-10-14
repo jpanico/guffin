@@ -35,7 +35,7 @@ from guffin.model.vertex import HeadingVertex, NotesVertex, PageVertex, TextVert
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.render.pandoc_rendering import heading_anchor
-from guffin.render.project import BookProfile, ProjectProfile, TopLevelDivision
+from guffin.render.project import BookProfile, NoteStyle, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
 from guffin.roam.local_api import Response as LocalApiResponse
 from guffin.roam.node_fetch import RoamNodeNotFoundError
@@ -810,20 +810,25 @@ class TestExportRoamTreeVersion:
         assert result.output.strip() == f"guffin {importlib.metadata.version('guffin')}"
 
 
-def _noted_bundle(*, with_notes_heading: bool, shared_lead_in: bool = False) -> RenderBundle:
-    """A one-chapter page citing two notes, with or without a Notes section."""
+def _noted_bundle(*, with_notes_heading: bool, shared_lead_in: bool = False, numbered: bool = False) -> RenderBundle:
+    """A one-chapter page citing two notes, with or without a Notes section.
+
+    With *shared_lead_in*, both notes share a lead-in; with *numbered*, their labels are the
+    Footnotes extension's numbers rather than phrases.
+    """
 
     def note_link(lead_in: str, uid: str) -> str:
         return f"[{lead_in}]({vertex_link_url(uid, VertexLinkKind.NOTE)})"
 
-    second_lead_in: Final[str] = "a phrase" if shared_lead_in else "another phrase"
+    first_lead_in: Final[str] = "1" if numbered else "a phrase"
+    second_lead_in: Final[str] = "2" if numbered else "a phrase" if shared_lead_in else "another phrase"
     root_children: Final[list[str]] = ["chap00001", *(["notesh001"] if with_notes_heading else [])]
     vertices: Final[list[Vertex]] = [
         PageVertex(uid="page00001", title="Noted", children=root_children),
         HeadingVertex(uid="chap00001", text="Chapter", heading_level=1, children=["text00001", "notes0001"]),
         TextVertex(
             uid="text00001",
-            text=f"{note_link('a phrase', 'note00001')} and {note_link(second_lead_in, 'note00002')}.",
+            text=f"{note_link(first_lead_in, 'note00001')} and {note_link(second_lead_in, 'note00002')}.",
         ),
         NotesVertex(uid="notes0001", children=["note00001", "note00002"]),
         TextVertex(uid="note00001", text="First note."),
@@ -907,11 +912,11 @@ class TestExportNoteChecks:
         assert result.exit_code == 1
         render.assert_not_called()
 
-    def test_notes_only_article_without_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
-        """A notes-only article that cites notes gets its Notes section added, so it renders."""
-        result, render = self._export(_noted_bundle(with_notes_heading=False), "article", tmp_path, "--notes-only")
-        assert result.exit_code == 0, result.output
-        render.assert_called_once()
+    def test_notes_only_numbered_notes_aborts(self, tmp_path: pathlib.Path) -> None:
+        """An article numbers its notes, so it has no Notes section to export alone."""
+        result, render = self._export(_noted_bundle(with_notes_heading=True), "article", tmp_path, "--notes-only")
+        assert result.exit_code == 1
+        render.assert_not_called()
 
     def test_noted_book_with_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
         """A book whose notes have a Notes section passes both checks."""
@@ -933,9 +938,21 @@ class TestExportNoteChecks:
         render.assert_not_called()
 
     @pytest.mark.parametrize("project_type", ["article", "manuscript"])
-    def test_smaller_work_without_notes_section_renders(self, tmp_path: pathlib.Path, project_type: str) -> None:
-        """An article or manuscript citing notes without a Notes section renders; one is added at render time."""
+    def test_numbered_notes_need_no_notes_section(self, tmp_path: pathlib.Path, project_type: str) -> None:
+        """An article or manuscript numbers its notes, so it renders without a Notes section."""
         result, render = self._export(_noted_bundle(with_notes_heading=False), project_type, tmp_path)
         assert result.exit_code == 0, result.output
         render.assert_called_once()
-        assert render.call_args.args[1].structural_policy.add_missing_notes_section
+        assert render.call_args.args[1].structural_policy.note_style is NoteStyle.NUMBERED
+
+    def test_numbered_labels_pass_for_numbered_notes(self, tmp_path: pathlib.Path) -> None:
+        """An article's notes need no lead-ins, so the extension's numbered labels pass."""
+        result, render = self._export(_noted_bundle(with_notes_heading=False, numbered=True), "article", tmp_path)
+        assert result.exit_code == 0, result.output
+        render.assert_called_once()
+
+    def test_numbered_labels_abort_a_book(self, tmp_path: pathlib.Path) -> None:
+        """A book's invisible endnotes are keyed by lead-in, so numbered labels abort the export."""
+        result, render = self._export(_noted_bundle(with_notes_heading=True, numbered=True), "book", tmp_path)
+        assert result.exit_code == 1
+        render.assert_not_called()

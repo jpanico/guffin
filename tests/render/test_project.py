@@ -6,6 +6,7 @@ from guffin.render.project import (
     ArticleProfile,
     BookProfile,
     ManuscriptProfile,
+    NoteStyle,
     ProjectProfile,
     ProjectType,
     StructuralPolicy,
@@ -73,15 +74,15 @@ class TestStructuralPolicy:
         assert policy.honor_page_breaks
 
 
-class TestAddMissingNotesSection:
-    """Only a book leaves a missing Notes section to its author."""
+class TestNoteStyle:
+    """A book keeps invisible endnotes; an article and a manuscript number their notes."""
 
     def test_by_profile(self) -> None:
-        """An article and a manuscript get a Notes section added; a book, with or without parts, does not."""
-        assert ArticleProfile().structural_policy.add_missing_notes_section
-        assert ManuscriptProfile().structural_policy.add_missing_notes_section
-        assert not BookProfile().structural_policy.add_missing_notes_section
-        assert not BookProfile(with_parts=True).structural_policy.add_missing_notes_section
+        """Article and manuscript notes are numbered; a book's, with or without parts, are invisible endnotes."""
+        assert ArticleProfile().structural_policy.note_style is NoteStyle.NUMBERED
+        assert ManuscriptProfile().structural_policy.note_style is NoteStyle.NUMBERED
+        assert BookProfile().structural_policy.note_style is NoteStyle.INVISIBLE_ENDNOTES
+        assert BookProfile(with_parts=True).structural_policy.note_style is NoteStyle.INVISIBLE_ENDNOTES
 
 
 class TestSectionHeadingLevel:
