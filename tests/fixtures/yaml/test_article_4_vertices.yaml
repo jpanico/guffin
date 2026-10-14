@@ -8,6 +8,8 @@
   - yd7MFbFou
   - K3nIwx36y
   - _eF-sDI9v
+  - ELAazx6FV
+  - tRCn6eEI7
   refs:
   - LBFKibPIj
   title: '[Test Article](x-guffin:vertex/LBFKibPIj) 4'
@@ -21,7 +23,8 @@
     – DO NOT REMOVE
   body: "Features:\n\n - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter:\
     \ Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)\n\
-    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
+    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)\n\
+    \ - **Footnotes** Roam Extension: [fbgallet/roam-extension-footnotes](https://github.com/fbgallet/roam-extension-footnotes)"
 - vertex_type: guffin/text
   uid: K3nIwx36y
   children:
@@ -265,3 +268,45 @@
 - vertex_type: guffin/text
   uid: XiH3AmC-L
   text: Chat Message, Question -> ?💬
+- vertex_type: guffin/text
+  uid: ELAazx6FV
+  children:
+  - 3JYOglfRf
+  - AW551UYJf
+  - 10a5HNGxp
+  text: Children blocks exercise *Footnotes*  (Roam Extension)
+- vertex_type: guffin/text
+  uid: 3JYOglfRf
+  refs:
+  - Mc-JWCvWX
+  text: This block has a footnote anchor right here->[1](x-guffin:vertex-note/Mc-JWCvWX)
+    This is a sentence immediately following the footnote anchor.
+- vertex_type: guffin/text
+  uid: AW551UYJf
+  refs:
+  - Tk7FpgzQa
+  text: This block has a footnote that uses a *named anchor*. This is the lead-in
+    to the anchor->[ANCHOR NAME](x-guffin:vertex-note/Tk7FpgzQa)
+- vertex_type: guffin/text
+  uid: 10a5HNGxp
+  refs:
+  - AxMU9z6fm
+  text: This block has a footnote that was created by first selecting the text, and
+    then **⌘⇧F**. The anchor->[2](x-guffin:vertex-note/AxMU9z6fm) The following sentence.
+- vertex_type: guffin/notes
+  uid: tRCn6eEI7
+  children:
+  - Mc-JWCvWX
+  - AxMU9z6fm
+  - Tk7FpgzQa
+  refs:
+  - yx87Sz9r7
+- vertex_type: guffin/text
+  uid: Mc-JWCvWX
+  text: This is the prose of the footnote.
+- vertex_type: guffin/text
+  uid: AxMU9z6fm
+  text: This block has a footnote that was created with text selected first.
+- vertex_type: guffin/text
+  uid: Tk7FpgzQa
+  text: This is the footnote corresponding to the *named anchor*.

@@ -5,6 +5,23 @@
 #
 # The transient 'open' field is excluded from live-test comparisons and is
 # omitted entirely here so it defaults to None on model_validate.
+- uid: Tk7FpgzQa
+  id: 20621
+  string: This is the footnote corresponding to the __named anchor__.
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20615
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: Jt4-6SLWM
   id: 11657
   string: ^^highlight^^ color
@@ -23,6 +40,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ju0ABeH0Y
   id: 11665
   string: '#c:FUCHSIA __This span is underlined fuchsia. __This span is not.'
@@ -41,6 +59,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0wrSU1U9e
   id: 15250
   string: '**This span is BOLD  uncolored**.'
@@ -58,6 +77,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: K3nIwx36y
   id: 15251
   string: Children blocks exercise __Color Highlighter__  (Roam Extension)
@@ -78,6 +98,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4LHkAnvZO
   id: 15287
   string: Equal / definition, Calendar event -> `=`📅
@@ -97,6 +118,7 @@
     provenance: calendar
   title: null
   attrs: null
+  blocks: null
 - uid: mkHZLUn8Q
   id: 11643
   string: null
@@ -106,6 +128,8 @@
   - id: 11647
   - id: 15251
   - id: 15252
+  - id: 20613
+  - id: 20615
   refs:
   - id: 4223
   page: null
@@ -114,6 +138,7 @@
   props: null
   title: '[[Test Article]] 4'
   attrs: null
+  blocks: null
 - uid: UlMMEdU3W
   id: 11672
   string: 'This entire line is an orange background box #.bg-FUCHSIA'
@@ -132,6 +157,27 @@
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: tRCn6eEI7
+  id: 20615
+  string: '#footnotes'
+  order: 4
+  heading: null
+  children:
+  - id: 20617
+  - id: 20619
+  - id: 20621
+  refs:
+  - id: 20616
+  page:
+    id: 11643
+  children_view_type: numbered
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: gdElvR3SM
   id: 15290
   string: Conclusion / synthesis -> `∴`
@@ -149,6 +195,7 @@
     type: conclusion
   title: null
   attrs: null
+  blocks: null
 - uid: NBEU8i91k
   id: 15264
   string: Provenance
@@ -171,6 +218,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GUiM9K-kR
   id: 11668
   string: '#c:FUCHSIA ~~This span has box color fuchsia.~~ This span does not.'
@@ -189,6 +237,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: VastJ7V3A
   id: 11670
   string: 'This entire line is an orange background box #.bg-ORANGE'
@@ -207,6 +256,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: s4E578cqU
   id: 15253
   string: Equal / definition -> `=`
@@ -224,6 +274,26 @@
     type: equal
   title: null
   attrs: null
+  blocks: null
+- uid: 3JYOglfRf
+  id: 20614
+  string: This block has a footnote anchor right here->[(1)](((Mc-JWCvWX))) This is
+    a sentence immediately following the footnote anchor.
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20617
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20613
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: u2Imp6gEk
   id: 15289
   string: Right-angle arrow -> `⤷`
@@ -241,12 +311,14 @@
     type: downRight90
   title: null
   attrs: null
+  blocks: null
 - uid: yd7MFbFou
   id: 11647
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
     \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter:\
     \ Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)\n\
-    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
+    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)\n\
+    \ - **Footnotes** Roam Extension: [fbgallet/roam-extension-footnotes](https://github.com/fbgallet/roam-extension-footnotes)"
   order: 0
   heading: null
   children: null
@@ -261,6 +333,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: T6cykqu88
   id: 11667
   string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
@@ -279,6 +352,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8A-YVZxaH
   id: 15266
   string: Email -> 📨
@@ -297,6 +371,7 @@
     provenance: email
   title: null
   attrs: null
+  blocks: null
 - uid: _EtYSMJNn
   id: 11664
   string: '#c:ORANGE __This span is underlined orange. __This span is not.'
@@ -315,6 +390,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xpWZZUv08
   id: 15286
   string: Mixed
@@ -333,6 +409,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ShnYeNIu5
   id: 11662
   string: underline color (Markdown does not have a standard underline markup, because
@@ -352,6 +429,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: c9kTivLOo
   id: 11654
   string: '**BOLD** text color'
@@ -376,6 +454,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: fZ3tjoLAK
   id: 15789
   string: '{{[[TODO]]}} #c:FUCHSIA **This is a BOLD fuchsia block turned into a TODO**'
@@ -395,6 +474,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: vEvZXUyix
   id: 15278
   string: Slack -> ＃
@@ -413,6 +493,24 @@
     provenance: slack
   title: null
   attrs: null
+  blocks: null
+- uid: AxMU9z6fm
+  id: 20619
+  string: This block has a footnote that was created with text selected first.
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20615
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: gcRT-AWUS
   id: 15260
   string: Evidence / support -> `▸`
@@ -430,6 +528,7 @@
     type: evidence
   title: null
   attrs: null
+  blocks: null
 - uid: ysm8EX8Gt
   id: 15276
   string: Chat message -> 💬
@@ -448,6 +547,7 @@
     provenance: chat
   title: null
   attrs: null
+  blocks: null
 - uid: Rjt1IvrVq
   id: 11648
   string: '#c:ORANGE **This span is BOLD orange text color**. This span is not.'
@@ -466,6 +566,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: rArYyVVBS
   id: 11658
   string: '#c:FUCHSIA ^^This span is highlighted fuchsia.^^ This span is not.'
@@ -484,6 +585,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: FskiJW6IV
   id: 15790
   string: '{{[[DONE]]}} #c:FUCHSIA **This is a BOLD fuchsia block turned into a DONE**'
@@ -503,6 +605,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Vu3azKD1d
   id: 15249
   string: '#c:FUCHSIA   **This span is BOLD fuchsia text color**. extra space'
@@ -521,6 +624,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: d1RJ3aT5i
   id: 15277
   string: Postal mail -> 📪
@@ -539,6 +643,7 @@
     provenance: mail
   title: null
   attrs: null
+  blocks: null
 - uid: zP-izykRs
   id: 15275
   string: Phone call -> 📞
@@ -557,6 +662,7 @@
     provenance: phone
   title: null
   attrs: null
+  blocks: null
 - uid: 9a_6taJAn
   id: 11653
   string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
@@ -575,6 +681,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: JAzMbb7Pd
   id: 15791
   string: '#c:FUCHSIA **{{[[TODO]]}} This block is a TODO turned into BOLD fuschia**'
@@ -594,6 +701,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TH55X8Rc_
   id: 11669
   string: box background color
@@ -612,6 +720,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: xKnaCfS21
   id: 15291
   string: Hypothesis / tentative -> `◊`
@@ -629,6 +738,7 @@
     type: hypothesis
   title: null
   attrs: null
+  blocks: null
 - uid: FUpfcXPED
   id: 15292
   string: Depends on / prerequisite -> `↤`
@@ -646,6 +756,26 @@
     type: depends
   title: null
   attrs: null
+  blocks: null
+- uid: AW551UYJf
+  id: 20620
+  string: This block has a footnote that uses a __named anchor__. This is the lead-in
+    to the anchor->[(ANCHOR NAME)](((Tk7FpgzQa)))
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 20621
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20613
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: -BBC2P-dl
   id: 15258
   string: Idea / addition -> `+`
@@ -663,6 +793,7 @@
     type: plus
   title: null
   attrs: null
+  blocks: null
 - uid: OB9ieYhhM
   id: 15261
   string: Decision / choice -> `⎇`
@@ -680,6 +811,7 @@
     type: decision
   title: null
   attrs: null
+  blocks: null
 - uid: AE3uVp_QL
   id: 11655
   string: '#c:FUCHSIA **This span is BOLD fuchsia text color**. This span is not.'
@@ -698,6 +830,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Km0_c28gQ
   id: 15254
   string: Leads to -> `→`
@@ -715,6 +848,7 @@
     type: arrow
   title: null
   attrs: null
+  blocks: null
 - uid: 2ezpm5AyA
   id: 15792
   string: '#c:FUCHSIA **{{[[DONE]]}} This block is a DONE turned into BOLD fuschia**'
@@ -734,6 +868,26 @@
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: ELAazx6FV
+  id: 20613
+  string: Children blocks exercise __Footnotes__  (Roam Extension)
+  order: 3
+  heading: null
+  children:
+  - id: 20614
+  - id: 20618
+  - id: 20620
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: S2yCBxWED
   id: 11666
   string: box color
@@ -752,6 +906,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: CG696Sg5n
   id: 15256
   string: Question -> `?`
@@ -769,6 +924,7 @@
     type: question
   title: null
   attrs: null
+  blocks: null
 - uid: XiH3AmC-L
   id: 15288
   string: Chat Message, Question -> ?💬
@@ -788,6 +944,24 @@
     type: question
   title: null
   attrs: null
+  blocks: null
+- uid: Mc-JWCvWX
+  id: 20617
+  string: This is the prose of the footnote.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20615
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: _eF-sDI9v
   id: 15252
   string: Children blocks exercise __Better Bullets__  (Roam Extension)
@@ -820,6 +994,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: W2MDdrb3g
   id: 15257
   string: Important / warning -> `!`
@@ -837,6 +1012,26 @@
     type: important
   title: null
   attrs: null
+  blocks: null
+- uid: 10a5HNGxp
+  id: 20618
+  string: This block has a footnote that was created by first selecting the text,
+    and then **⌘⇧F**. The anchor->[(2)](((AxMU9z6fm))) The following sentence.
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 20619
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20613
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: g84nBRdMI
   id: 15255
   string: Result -> `⇒`
@@ -854,6 +1049,7 @@
     type: doubleArrow
   title: null
   attrs: null
+  blocks: null
 - uid: AFS0kx5dj
   id: 15263
   string: Process / ongoing -> `↻`
@@ -871,6 +1067,7 @@
     type: process
   title: null
   attrs: null
+  blocks: null
 - uid: n-exvRYBw
   id: 15265
   string: Calendar event -> 📅
@@ -889,6 +1086,7 @@
     provenance: calendar
   title: null
   attrs: null
+  blocks: null
 - uid: ZS_mZaDxD
   id: 15259
   string: Contrast / however -> `≠`
@@ -906,6 +1104,7 @@
     type: contrast
   title: null
   attrs: null
+  blocks: null
 - uid: ForFtTYqy
   id: 15262
   string: Reference / related -> `↗`
@@ -923,3 +1122,4 @@
     type: reference
   title: null
   attrs: null
+  blocks: null

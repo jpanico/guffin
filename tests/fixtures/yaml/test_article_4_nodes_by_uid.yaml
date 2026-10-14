@@ -1,3 +1,21 @@
+Tk7FpgzQa:
+  uid: Tk7FpgzQa
+  id: 20621
+  string: This is the footnote corresponding to the __named anchor__.
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20615
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 Jt4-6SLWM:
   uid: Jt4-6SLWM
   id: 11657
@@ -17,6 +35,7 @@ Jt4-6SLWM:
   props: null
   title: null
   attrs: null
+  blocks: null
 ju0ABeH0Y:
   uid: ju0ABeH0Y
   id: 11665
@@ -36,25 +55,7 @@ ju0ABeH0Y:
   props: null
   title: null
   attrs: null
-7MoH-wIQh:
-  uid: 7MoH-wIQh
-  id: 4224
-  string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST\
-    \ DATA – DO NOT REMOVE\n "
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
-  props: null
-  title: null
-  attrs: null
+  blocks: null
 iF2Ey_unj:
   uid: iF2Ey_unj
   id: 11454
@@ -69,6 +70,7 @@ iF2Ey_unj:
   props: null
   title: c:ORANGE
   attrs: null
+  blocks: null
 LBFKibPIj:
   uid: LBFKibPIj
   id: 4223
@@ -76,14 +78,34 @@ LBFKibPIj:
   order: null
   heading: null
   children:
-  - id: 4224
+  - id: 18202
+  - id: 18204
   refs: null
   page: null
   children_view_type: null
   parents: null
   props: null
   title: Test Article
-  attrs: null
+  attrs:
+  - - source:
+      - uid
+      - LBFKibPIj
+      value:
+      - uid
+      - LBFKibPIj
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - RXwAqq0_T
+    - source:
+      - uid
+      - JSrSVApJ_
+      value:
+      - uid
+      - 9ZtPB2yY3
+  blocks: null
 0wrSU1U9e:
   uid: 0wrSU1U9e
   id: 15250
@@ -102,6 +124,22 @@ LBFKibPIj:
   props: null
   title: null
   attrs: null
+  blocks: null
+9ZtPB2yY3:
+  uid: 9ZtPB2yY3
+  id: 6535
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: Publishing
+  attrs: null
+  blocks: null
 1GLhru-f7:
   uid: 1GLhru-f7
   id: 11671
@@ -116,6 +154,7 @@ LBFKibPIj:
   props: null
   title: .bg-ORANGE
   attrs: null
+  blocks: null
 K3nIwx36y:
   uid: K3nIwx36y
   id: 15251
@@ -137,6 +176,7 @@ K3nIwx36y:
   props: null
   title: null
   attrs: null
+  blocks: null
 4LHkAnvZO:
   uid: 4LHkAnvZO
   id: 15287
@@ -157,6 +197,7 @@ K3nIwx36y:
     provenance: calendar
   title: null
   attrs: null
+  blocks: null
 mkHZLUn8Q:
   uid: mkHZLUn8Q
   id: 11643
@@ -167,6 +208,8 @@ mkHZLUn8Q:
   - id: 11647
   - id: 15251
   - id: 15252
+  - id: 20613
+  - id: 20615
   refs:
   - id: 4223
   page: null
@@ -175,6 +218,7 @@ mkHZLUn8Q:
   props: null
   title: '[[Test Article]] 4'
   attrs: null
+  blocks: null
 UlMMEdU3W:
   uid: UlMMEdU3W
   id: 11672
@@ -194,6 +238,28 @@ UlMMEdU3W:
   props: null
   title: null
   attrs: null
+  blocks: null
+tRCn6eEI7:
+  uid: tRCn6eEI7
+  id: 20615
+  string: '#footnotes'
+  order: 4
+  heading: null
+  children:
+  - id: 20617
+  - id: 20619
+  - id: 20621
+  refs:
+  - id: 20616
+  page:
+    id: 11643
+  children_view_type: numbered
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 gdElvR3SM:
   uid: gdElvR3SM
   id: 15290
@@ -212,6 +278,7 @@ gdElvR3SM:
     type: conclusion
   title: null
   attrs: null
+  blocks: null
 NBEU8i91k:
   uid: NBEU8i91k
   id: 15264
@@ -235,6 +302,7 @@ NBEU8i91k:
   props: null
   title: null
   attrs: null
+  blocks: null
 GUiM9K-kR:
   uid: GUiM9K-kR
   id: 11668
@@ -254,6 +322,7 @@ GUiM9K-kR:
   props: null
   title: null
   attrs: null
+  blocks: null
 VastJ7V3A:
   uid: VastJ7V3A
   id: 11670
@@ -273,6 +342,7 @@ VastJ7V3A:
   props: null
   title: null
   attrs: null
+  blocks: null
 s4E578cqU:
   uid: s4E578cqU
   id: 15253
@@ -291,6 +361,27 @@ s4E578cqU:
     type: equal
   title: null
   attrs: null
+  blocks: null
+3JYOglfRf:
+  uid: 3JYOglfRf
+  id: 20614
+  string: This block has a footnote anchor right here->[(1)](((Mc-JWCvWX))) This is
+    a sentence immediately following the footnote anchor.
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 20617
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20613
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 u2Imp6gEk:
   uid: u2Imp6gEk
   id: 15289
@@ -309,13 +400,15 @@ u2Imp6gEk:
     type: downRight90
   title: null
   attrs: null
+  blocks: null
 yd7MFbFou:
   uid: yd7MFbFou
   id: 11647
   string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
     \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter:\
     \ Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)\n\
-    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
+    \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)\n\
+    \ - **Footnotes** Roam Extension: [fbgallet/roam-extension-footnotes](https://github.com/fbgallet/roam-extension-footnotes)"
   order: 0
   heading: null
   children: null
@@ -330,6 +423,7 @@ yd7MFbFou:
   props: null
   title: null
   attrs: null
+  blocks: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -344,6 +438,7 @@ OexZiLR_O:
   props: null
   title: '>'
   attrs: null
+  blocks: null
 T6cykqu88:
   uid: T6cykqu88
   id: 11667
@@ -363,6 +458,7 @@ T6cykqu88:
   props: null
   title: null
   attrs: null
+  blocks: null
 8A-YVZxaH:
   uid: 8A-YVZxaH
   id: 15266
@@ -382,6 +478,7 @@ T6cykqu88:
     provenance: email
   title: null
   attrs: null
+  blocks: null
 _EtYSMJNn:
   uid: _EtYSMJNn
   id: 11664
@@ -401,6 +498,7 @@ _EtYSMJNn:
   props: null
   title: null
   attrs: null
+  blocks: null
 xpWZZUv08:
   uid: xpWZZUv08
   id: 15286
@@ -420,6 +518,7 @@ xpWZZUv08:
   props: null
   title: null
   attrs: null
+  blocks: null
 ShnYeNIu5:
   uid: ShnYeNIu5
   id: 11662
@@ -440,6 +539,7 @@ ShnYeNIu5:
   props: null
   title: null
   attrs: null
+  blocks: null
 c9kTivLOo:
   uid: c9kTivLOo
   id: 11654
@@ -465,6 +565,22 @@ c9kTivLOo:
   props: null
   title: null
   attrs: null
+  blocks: null
+yx87Sz9r7:
+  uid: yx87Sz9r7
+  id: 20616
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: footnotes
+  attrs: null
+  blocks: null
 fZ3tjoLAK:
   uid: fZ3tjoLAK
   id: 15789
@@ -485,6 +601,7 @@ fZ3tjoLAK:
   props: null
   title: null
   attrs: null
+  blocks: null
 vEvZXUyix:
   uid: vEvZXUyix
   id: 15278
@@ -504,6 +621,25 @@ vEvZXUyix:
     provenance: slack
   title: null
   attrs: null
+  blocks: null
+AxMU9z6fm:
+  uid: AxMU9z6fm
+  id: 20619
+  string: This block has a footnote that was created with text selected first.
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20615
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 gcRT-AWUS:
   uid: gcRT-AWUS
   id: 15260
@@ -522,6 +658,7 @@ gcRT-AWUS:
     type: evidence
   title: null
   attrs: null
+  blocks: null
 ysm8EX8Gt:
   uid: ysm8EX8Gt
   id: 15276
@@ -541,6 +678,7 @@ ysm8EX8Gt:
     provenance: chat
   title: null
   attrs: null
+  blocks: null
 Rjt1IvrVq:
   uid: Rjt1IvrVq
   id: 11648
@@ -560,6 +698,7 @@ Rjt1IvrVq:
   props: null
   title: null
   attrs: null
+  blocks: null
 rArYyVVBS:
   uid: rArYyVVBS
   id: 11658
@@ -579,6 +718,7 @@ rArYyVVBS:
   props: null
   title: null
   attrs: null
+  blocks: null
 7koyf_Urx:
   uid: 7koyf_Urx
   id: 1371
@@ -593,6 +733,7 @@ rArYyVVBS:
   props: null
   title: DONE
   attrs: null
+  blocks: null
 FskiJW6IV:
   uid: FskiJW6IV
   id: 15790
@@ -613,6 +754,7 @@ FskiJW6IV:
   props: null
   title: null
   attrs: null
+  blocks: null
 Vu3azKD1d:
   uid: Vu3azKD1d
   id: 15249
@@ -632,6 +774,7 @@ Vu3azKD1d:
   props: null
   title: null
   attrs: null
+  blocks: null
 d1RJ3aT5i:
   uid: d1RJ3aT5i
   id: 15277
@@ -651,6 +794,7 @@ d1RJ3aT5i:
     provenance: mail
   title: null
   attrs: null
+  blocks: null
 zP-izykRs:
   uid: zP-izykRs
   id: 15275
@@ -670,6 +814,7 @@ zP-izykRs:
     provenance: phone
   title: null
   attrs: null
+  blocks: null
 9a_6taJAn:
   uid: 9a_6taJAn
   id: 11653
@@ -689,6 +834,7 @@ zP-izykRs:
   props: null
   title: null
   attrs: null
+  blocks: null
 jntuNAGBs:
   uid: jntuNAGBs
   id: 1348
@@ -705,6 +851,7 @@ jntuNAGBs:
   props: null
   title: null
   attrs: null
+  blocks: null
 JAzMbb7Pd:
   uid: JAzMbb7Pd
   id: 15791
@@ -725,6 +872,7 @@ JAzMbb7Pd:
   props: null
   title: null
   attrs: null
+  blocks: null
 TH55X8Rc_:
   uid: TH55X8Rc_
   id: 11669
@@ -744,6 +892,7 @@ TH55X8Rc_:
   props: null
   title: null
   attrs: null
+  blocks: null
 xKnaCfS21:
   uid: xKnaCfS21
   id: 15291
@@ -762,6 +911,7 @@ xKnaCfS21:
     type: hypothesis
   title: null
   attrs: null
+  blocks: null
 FUpfcXPED:
   uid: FUpfcXPED
   id: 15292
@@ -780,6 +930,27 @@ FUpfcXPED:
     type: depends
   title: null
   attrs: null
+  blocks: null
+AW551UYJf:
+  uid: AW551UYJf
+  id: 20620
+  string: This block has a footnote that uses a __named anchor__. This is the lead-in
+    to the anchor->[(ANCHOR NAME)](((Tk7FpgzQa)))
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 20621
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20613
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 -BBC2P-dl:
   uid: -BBC2P-dl
   id: 15258
@@ -798,6 +969,7 @@ FUpfcXPED:
     type: plus
   title: null
   attrs: null
+  blocks: null
 OB9ieYhhM:
   uid: OB9ieYhhM
   id: 15261
@@ -816,6 +988,7 @@ OB9ieYhhM:
     type: decision
   title: null
   attrs: null
+  blocks: null
 AE3uVp_QL:
   uid: AE3uVp_QL
   id: 11655
@@ -835,6 +1008,7 @@ AE3uVp_QL:
   props: null
   title: null
   attrs: null
+  blocks: null
 Km0_c28gQ:
   uid: Km0_c28gQ
   id: 15254
@@ -853,6 +1027,7 @@ Km0_c28gQ:
     type: arrow
   title: null
   attrs: null
+  blocks: null
 2ezpm5AyA:
   uid: 2ezpm5AyA
   id: 15792
@@ -873,6 +1048,27 @@ Km0_c28gQ:
   props: null
   title: null
   attrs: null
+  blocks: null
+ELAazx6FV:
+  uid: ELAazx6FV
+  id: 20613
+  string: Children blocks exercise __Footnotes__  (Roam Extension)
+  order: 3
+  heading: null
+  children:
+  - id: 20614
+  - id: 20618
+  - id: 20620
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
   id: 5462
@@ -887,6 +1083,7 @@ ZgUWBRb7j:
   props: null
   title: '!INFO'
   attrs: null
+  blocks: null
 S2yCBxWED:
   uid: S2yCBxWED
   id: 11666
@@ -906,6 +1103,22 @@ S2yCBxWED:
   props: null
   title: null
   attrs: null
+  blocks: null
+RXwAqq0_T:
+  uid: RXwAqq0_T
+  id: 261
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: tags
+  attrs: null
+  blocks: null
 LnMn9Dq7S:
   uid: LnMn9Dq7S
   id: 11673
@@ -920,6 +1133,7 @@ LnMn9Dq7S:
   props: null
   title: .bg-FUCHSIA
   attrs: null
+  blocks: null
 lF-qY0Xrs:
   uid: lF-qY0Xrs
   id: 5844
@@ -934,6 +1148,7 @@ lF-qY0Xrs:
   props: null
   title: c:FUCHSIA
   attrs: null
+  blocks: null
 CG696Sg5n:
   uid: CG696Sg5n
   id: 15256
@@ -952,6 +1167,26 @@ CG696Sg5n:
     type: question
   title: null
   attrs: null
+  blocks: null
+JSrSVApJ_:
+  uid: JSrSVApJ_
+  id: 18204
+  string: 'tags:: #Publishing'
+  order: 1
+  heading: null
+  children: null
+  refs:
+  - id: 261
+  - id: 6535
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 XiH3AmC-L:
   uid: XiH3AmC-L
   id: 15288
@@ -972,6 +1207,25 @@ XiH3AmC-L:
     type: question
   title: null
   attrs: null
+  blocks: null
+Mc-JWCvWX:
+  uid: Mc-JWCvWX
+  id: 20617
+  string: This is the prose of the footnote.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20615
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 _eF-sDI9v:
   uid: _eF-sDI9v
   id: 15252
@@ -1005,6 +1259,7 @@ _eF-sDI9v:
   props: null
   title: null
   attrs: null
+  blocks: null
 W2MDdrb3g:
   uid: W2MDdrb3g
   id: 15257
@@ -1023,6 +1278,27 @@ W2MDdrb3g:
     type: important
   title: null
   attrs: null
+  blocks: null
+10a5HNGxp:
+  uid: 10a5HNGxp
+  id: 20618
+  string: This block has a footnote that was created by first selecting the text,
+    and then **⌘⇧F**. The anchor->[(2)](((AxMU9z6fm))) The following sentence.
+  order: 2
+  heading: null
+  children: null
+  refs:
+  - id: 20619
+  page:
+    id: 11643
+  children_view_type: null
+  parents:
+  - id: 11643
+  - id: 20613
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 g84nBRdMI:
   uid: g84nBRdMI
   id: 15255
@@ -1041,6 +1317,7 @@ g84nBRdMI:
     type: doubleArrow
   title: null
   attrs: null
+  blocks: null
 AFS0kx5dj:
   uid: AFS0kx5dj
   id: 15263
@@ -1059,6 +1336,7 @@ AFS0kx5dj:
     type: process
   title: null
   attrs: null
+  blocks: null
 20E2gCz7h:
   uid: 20E2gCz7h
   id: 329
@@ -1074,6 +1352,7 @@ AFS0kx5dj:
   props: null
   title: TODO
   attrs: null
+  blocks: null
 n-exvRYBw:
   uid: n-exvRYBw
   id: 15265
@@ -1093,6 +1372,7 @@ n-exvRYBw:
     provenance: calendar
   title: null
   attrs: null
+  blocks: null
 ZS_mZaDxD:
   uid: ZS_mZaDxD
   id: 15259
@@ -1111,6 +1391,7 @@ ZS_mZaDxD:
     type: contrast
   title: null
   attrs: null
+  blocks: null
 ForFtTYqy:
   uid: ForFtTYqy
   id: 15262
@@ -1129,3 +1410,24 @@ ForFtTYqy:
     type: reference
   title: null
   attrs: null
+  blocks: null
+lXi4SgSvz:
+  uid: lXi4SgSvz
+  id: 18202
+  string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST
+    DATA – DO NOT REMOVE'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 5450
+  - id: 5462
+  page:
+    id: 4223
+  children_view_type: null
+  parents:
+  - id: 4223
+  props: null
+  title: null
+  attrs: null
+  blocks: null

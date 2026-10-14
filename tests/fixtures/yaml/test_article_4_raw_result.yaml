@@ -1,3 +1,12 @@
+- - string: This is the footnote corresponding to the __named anchor__.
+    id: 20621
+    uid: Tk7FpgzQa
+    parents:
+    - id: 11643
+    - id: 20615
+    order: 2
+    page:
+      id: 11643
 - - string: ^^highlight^^ color
     children:
     - id: 11653
@@ -22,24 +31,37 @@
       id: 11643
     refs:
     - id: 5844
-- - string: "[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)\
-      \ TEST DATA – DO NOT REMOVE\n "
-    id: 4224
-    uid: 7MoH-wIQh
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
 - - id: 11454
     uid: iF2Ey_unj
     title: c:ORANGE
-- - children:
-    - id: 4224
+- - attrs:
+    - - source:
+        - uid
+        - LBFKibPIj
+        value:
+        - uid
+        - LBFKibPIj
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - RXwAqq0_T
+      - source:
+        - uid
+        - JSrSVApJ_
+        value:
+        - uid
+        - 9ZtPB2yY3
+    children:
+    - id: 18202
+    - id: 18204
     id: 4223
+    lookup:
+    - id: 261
+    - id: 4223
+    - id: 6535
+    - id: 18204
     uid: LBFKibPIj
     title: Test Article
 - - string: '**This span is BOLD  uncolored**.'
@@ -52,6 +74,9 @@
     order: 0
     page:
       id: 11643
+- - id: 6535
+    uid: 9ZtPB2yY3
+    title: Publishing
 - - id: 11671
     uid: 1GLhru-f7
     title: .bg-ORANGE
@@ -86,6 +111,8 @@
     - id: 11647
     - id: 15251
     - id: 15252
+    - id: 20613
+    - id: 20615
     id: 11643
     uid: mkHZLUn8Q
     title: '[[Test Article]] 4'
@@ -103,6 +130,21 @@
       id: 11643
     refs:
     - id: 11673
+- - string: '#footnotes'
+    children:
+    - id: 20617
+    - id: 20619
+    - id: 20621
+    id: 20615
+    uid: tRCn6eEI7
+    children-view-type: numbered
+    parents:
+    - id: 11643
+    order: 4
+    page:
+      id: 11643
+    refs:
+    - id: 20616
 - - string: Conclusion / synthesis -> `∴`
     id: 15290
     uid: gdElvR3SM
@@ -165,6 +207,18 @@
     order: 0
     page:
       id: 11643
+- - string: This block has a footnote anchor right here->[(1)](((Mc-JWCvWX))) This
+      is a sentence immediately following the footnote anchor.
+    id: 20614
+    uid: 3JYOglfRf
+    parents:
+    - id: 11643
+    - id: 20613
+    order: 0
+    page:
+      id: 11643
+    refs:
+    - id: 20617
 - - string: Right-angle arrow -> `⤷`
     id: 15289
     uid: u2Imp6gEk
@@ -179,7 +233,8 @@
 - - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
       \ – DO NOT REMOVE\nFeatures:\n\n - **Color Highlighter** Roam Extension: [fbgallet/roam-extension-color-highlighter:\
       \ Highlight with different color and color bold text](https://github.com/fbgallet/roam-extension-color-highlighter)\n\
-      \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)"
+      \ - **Better Bullets** Roam Extension: [mlava/better-bullets](https://github.com/mlava/better-bullets)\n\
+      \ - **Footnotes** Roam Extension: [fbgallet/roam-extension-footnotes](https://github.com/fbgallet/roam-extension-footnotes)"
     id: 11647
     uid: yd7MFbFou
     parents:
@@ -272,6 +327,9 @@
     order: 0
     page:
       id: 11643
+- - id: 20616
+    uid: yx87Sz9r7
+    title: footnotes
 - - string: '{{[[TODO]]}} #c:FUCHSIA **This is a BOLD fuchsia block turned into a
       TODO**'
     id: 15789
@@ -296,6 +354,15 @@
     props:
       provenance: slack
     order: 5
+    page:
+      id: 11643
+- - string: This block has a footnote that was created with text selected first.
+    id: 20619
+    uid: AxMU9z6fm
+    parents:
+    - id: 11643
+    - id: 20615
+    order: 1
     page:
       id: 11643
 - - string: Evidence / support -> `▸`
@@ -465,6 +532,18 @@
     order: 11
     page:
       id: 11643
+- - string: This block has a footnote that uses a __named anchor__. This is the lead-in
+      to the anchor->[(ANCHOR NAME)](((Tk7FpgzQa)))
+    id: 20620
+    uid: AW551UYJf
+    parents:
+    - id: 11643
+    - id: 20613
+    order: 1
+    page:
+      id: 11643
+    refs:
+    - id: 20621
 - - string: Idea / addition -> `+`
     id: 15258
     uid: -BBC2P-dl
@@ -523,6 +602,18 @@
     refs:
     - id: 1371
     - id: 5844
+- - string: Children blocks exercise __Footnotes__  (Roam Extension)
+    children:
+    - id: 20614
+    - id: 20618
+    - id: 20620
+    id: 20613
+    uid: ELAazx6FV
+    parents:
+    - id: 11643
+    order: 3
+    page:
+      id: 11643
 - - id: 5462
     uid: ZgUWBRb7j
     title: '!INFO'
@@ -538,6 +629,9 @@
     order: 3
     page:
       id: 11643
+- - id: 261
+    uid: RXwAqq0_T
+    title: tags
 - - id: 11673
     uid: LnMn9Dq7S
     title: .bg-FUCHSIA
@@ -555,6 +649,17 @@
     order: 3
     page:
       id: 11643
+- - string: 'tags:: #Publishing'
+    id: 18204
+    uid: JSrSVApJ_
+    parents:
+    - id: 4223
+    order: 1
+    page:
+      id: 4223
+    refs:
+    - id: 261
+    - id: 6535
 - - string: Chat Message, Question -> ?💬
     id: 15288
     uid: XiH3AmC-L
@@ -566,6 +671,15 @@
       provenance: chat
       type: question
     order: 1
+    page:
+      id: 11643
+- - string: This is the prose of the footnote.
+    id: 20617
+    uid: Mc-JWCvWX
+    parents:
+    - id: 11643
+    - id: 20615
+    order: 0
     page:
       id: 11643
 - - string: Children blocks exercise __Better Bullets__  (Roam Extension)
@@ -605,6 +719,18 @@
     order: 4
     page:
       id: 11643
+- - string: This block has a footnote that was created by first selecting the text,
+      and then **⌘⇧F**. The anchor->[(2)](((AxMU9z6fm))) The following sentence.
+    id: 20618
+    uid: 10a5HNGxp
+    parents:
+    - id: 11643
+    - id: 20613
+    order: 2
+    page:
+      id: 11643
+    refs:
+    - id: 20619
 - - string: Result -> `⇒`
     id: 15255
     uid: g84nBRdMI
@@ -666,3 +792,15 @@
     order: 13
     page:
       id: 11643
+- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
+      TEST DATA – DO NOT REMOVE'
+    id: 18202
+    uid: lXi4SgSvz
+    parents:
+    - id: 4223
+    order: 0
+    page:
+      id: 4223
+    refs:
+    - id: 5450
+    - id: 5462
