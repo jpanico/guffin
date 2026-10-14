@@ -68,6 +68,7 @@ from guffin.model.vertex_tree import (
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import callout_accent, callout_title_tint
 from guffin.render.epub_post_processing import (
+    append_colophon,
     bake_code_line_numbers,
     restore_matter_divisions,
     stamp_titlepage_illustrators,
@@ -79,6 +80,7 @@ from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     PDF_PLACEMENT_ATTRIBUTE,
     NoteLeadInRenderer,
+    colophon_html,
     colophon_summary,
     make_doc_resolver,
     resolve_vertex_links,
@@ -287,8 +289,10 @@ def render(
 
     When ``options.emit_colophon`` is set and the bundle carries provenance, its summary rides the
     foot of the generated title page when one is emitted (stamped after packaging via
-    :func:`~guffin.render.epub_post_processing.stamp_titlepage_provenance`), otherwise it is
-    appended as an end-of-document colophon block — mirroring the PDF placement rules.  When the
+    :func:`~guffin.render.epub_post_processing.stamp_titlepage_provenance`), otherwise it ends the
+    book, appended after packaging to the last document in reading order, after its footnotes (via
+    :func:`~guffin.render.epub_post_processing.append_colophon`) — mirroring the PDF placement
+    rules.  A notes-only export carries no end-of-document colophon.  When the
     bundle's revision carries an author-declared revision name, it renders independent of the
     colophon: stamped directly below the title on the generated title page when one is emitted
     (via :func:`~guffin.render.epub_post_processing.stamp_titlepage_revision`, mirroring the PDF
@@ -390,16 +394,15 @@ def render(
         # whatever the profile): Pandoc generates the cover document and manifest entry from it.
         cover_path: Final[Path | None] = cover_image_path(content, asset_refs)
         # The colophon (software provenance + content revision) rides the title page when one is
-        # emitted (stamped after packaging, below); otherwise it renders as an end-of-document
-        # colophon block — mirroring the PDF placement.
+        # emitted; otherwise it ends the book — mirroring the PDF placement.  Either way it is
+        # placed after packaging (below), so as an end-of-document colophon it follows the
+        # footnotes Pandoc writes after the body.  A notes-only export carries none at its end.
         provenance: Final[Provenance | None] = render_bundle.provenance if options.emit_colophon else None
         revision: Final[Revision | None] = render_bundle.revision if options.emit_colophon else None
         pandoc_result: Final[tuple[pf.Doc, InlineMap]] = vertex_tree_to_pandoc(
             enriched_tree,
             asset_files,
             render_bundle.view,
-            provenance=None if emit_title_page else provenance,
-            revision=None if emit_title_page else revision,
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
@@ -492,6 +495,8 @@ def render(
     bake_code_line_numbers(output_path)
     if emit_title_page and (provenance is not None or revision is not None):
         stamp_titlepage_provenance(output_path, colophon_summary(provenance, revision))
+    if not emit_title_page and not options.notes_only and (provenance is not None or revision is not None):
+        append_colophon(output_path, colophon_html(provenance, revision))
     # The authored revision name rides the title page directly below the title — content, not
     # origin bookkeeping, so independent of the colophon above (mirroring the PDF title page).
     if emit_title_page and render_bundle.revision is not None and render_bundle.revision.revision is not None:

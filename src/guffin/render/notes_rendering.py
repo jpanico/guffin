@@ -61,7 +61,6 @@ from guffin.render.pandoc_rendering import (
     NoteLeadInRenderer,
     build_child_blocks,
     heading_anchor,
-    trailing_colophon_length,
 )
 from guffin.render.project import NoteStyle, StructuralPolicy, TopLevelDivision
 from guffin.render.render_options import OutputFormat
@@ -457,13 +456,13 @@ def insert_notes_section(
             )
         )
         previous_path = path
-    # The section runs from its Header to the next Header at its level or above among its siblings,
-    # and never past the end-of-document colophon, which follows the body.
+    # The section runs from its Header to the next Header at its level or above among its siblings.
     siblings: Final[pf.ListContainer] = notes_header.parent.content
-    limit: Final[int] = len(siblings) - (trailing_colophon_length(doc) if notes_header.parent is doc else 0)
     start: Final[int] = notes_header.index
     end: int = start + 1
-    while end < limit and not (isinstance(siblings[end], pf.Header) and siblings[end].level <= notes_header.level):
+    while end < len(siblings) and not (
+        isinstance(siblings[end], pf.Header) and siblings[end].level <= notes_header.level
+    ):
         end += 1
     for offset, block in enumerate(blocks):
         siblings.insert(end + offset, block)

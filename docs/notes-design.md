@@ -236,9 +236,9 @@ Built in phases, each a commit.
 - **Rendering**: `render/notes_rendering.py` builds the Notes section into the shared Pandoc
   document (`insert_notes_section`) and renders each lead-in in the running text per format
   (`note_lead_in_renderer`, passed to the link resolver as `make_doc_resolver(note_lead_in=…)`);
-  rule 5 runs in `export-roam-tree` beside rule 4. A Notes section at the end of the document ends
-  before the end-of-document colophon (`pandoc_rendering.trailing_colophon_length`), which is
-  appended when the document is built and so is already there when the notes are inserted. The PDF template opens a page at a chapter or
+  rule 5 runs in `export-roam-tree` beside rule 4. The end-of-document colophon is never in the
+  Pandoc document: Markdown and EPUB place it after the writer runs, so it follows a Notes section
+  and the footnotes of numbered notes alike. The PDF template opens a page at a chapter or
   part heading only when the heading is in the outline, so an unlisted group heading opens none;
   the EPUB stylesheet styles `a.guffin-note-ref` and `a.guffin-note-backlink`; the Markdown slug
   check leaves the generated group headings out of its collision count.
@@ -276,6 +276,14 @@ Departures from the decisions, and behavior found while building:
   appears only in exports of that form), so the two uses are the same rule.
 - **A notes-only export drops the end-of-document colophon.** The document is cut down to its
   title and the Notes section; Markdown's revision line, inserted afterwards, still appears.
+- **The colophon is always last** (Joe, 2026-10-14). Pandoc's GFM and EPUB writers set numbered
+  notes after the body's last block, which put them below a colophon built into the document. The
+  colophon is therefore placed after the writer runs: Markdown includes it with
+  `--include-after-body`, which puts it after the footnote definitions, and EPUB appends it to the
+  last document in reading order after packaging, since an after-body include is repeated in every
+  EPUB content document. GitHub and VS Code's preview gather a Markdown file's footnotes at the
+  bottom of the rendered page wherever the definitions sit, so there the colophon still renders
+  above the notes; only notes Guffin numbered itself could avoid that.
 - **In a parts book, the EPUB gives each chapter's notes a file of its own.** Pandoc splits an EPUB
   at the chapter level, level 2 in a parts book, and a Notes heading promoted to part level puts its
   chapter groups at level 2. Each file is back matter, the links between files resolve, and the

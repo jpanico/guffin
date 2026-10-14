@@ -18,8 +18,10 @@ Public symbols:
 # The four suppressed rules are triggered entirely by that Unknown propagation — disabling them
 # here avoids dozens of cascading false-positive errors without relaxing any other strict checks.
 
+import contextlib
 import importlib.resources
 import logging
+import tempfile
 from pathlib import Path
 from typing import Final
 
@@ -35,8 +37,13 @@ _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
 _GFM_QUOTE_FILTER: Final[str] = "gfm_quote.lua"
 _GFM_TODO_FILTER: Final[str] = "gfm_todo.lua"
+_GFM_WRITER: Final[str] = "gfm"
+_GFM_WRITER_WITHOUT_FRONT_MATTER: Final[str] = "gfm-yaml_metadata_block"
+"""The GFM writer with its YAML metadata block off, so a standalone conversion writes no front matter."""
+_COLOPHON_INCLUDE: Final[str] = "colophon.html"
+"""Filename of the temporary file that carries the colophon to the writer's after-body include."""
 
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
@@ -60,6 +67,7 @@ from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     HEADING_LINK_CLASS,
     NoteLeadInRenderer,
+    colophon_html,
     make_doc_resolver,
     resolve_vertex_links,
     revision_line,
@@ -214,6 +222,31 @@ def _gfm_resources_dir() -> Path:
         return resources_path
 
 
+@contextlib.contextmanager
+def _after_body_include(colophon: str | None) -> Generator[list[str]]:
+    """Yield the Pandoc arguments that close the GFM output with *colophon*, if any.
+
+    Pandoc's ``--include-after-body`` writes a file's contents verbatim after everything else in
+    the output, the footnote definitions of numbered notes included, which no block of the
+    document can follow.  The file lives in a temporary directory for the conversion's duration.
+
+    Args:
+        colophon: The colophon to include (see :func:`~guffin.render.pandoc_rendering.colophon_html`),
+            or ``None`` for none.
+
+    Yields:
+        The ``--include-after-body`` argument naming the colophon file; empty when *colophon* is
+        ``None``.
+    """
+    if colophon is None:
+        yield []
+        return
+    with tempfile.TemporaryDirectory() as scratch:
+        include: Final[Path] = Path(scratch) / _COLOPHON_INCLUDE
+        include.write_text(f"{colophon}\n", encoding="utf-8")
+        yield [f"--include-after-body={include}"]
+
+
 @validate_call
 def render(
     render_bundle: RenderBundle,
@@ -237,8 +270,11 @@ def render(
     same split: a front-matter-emitting profile records the entire revision summary as a
     ``revision`` metadata entry in the YAML block (see :func:`_stamp_revision_metadata`),
     while a profile without front matter renders just the author-declared revision name as an
-    emphasized line directly below the title H1 (see :func:`_insert_revision_line`).  Writes
-    the result in one of two modes
+    emphasized line directly below the title H1 (see :func:`_insert_revision_line`).  With
+    ``options.emit_colophon`` set, the bundle's provenance and revision close the output as the
+    colophon (:func:`~guffin.render.pandoc_rendering.colophon_html`), included after everything
+    the writer emits, footnote definitions too (see :func:`_after_body_include`); a notes-only
+    export carries none.  Writes the result in one of two modes
     controlled by ``options.should_bundle``:
 
     - ``should_bundle=True`` (default) — fetches Firebase Storage image and PDF assets
@@ -280,6 +316,21 @@ def render(
     # --standalone engages Pandoc's GFM template, which serializes the document metadata (title,
     # authors, publisher, ...) as a YAML front-matter block — the format's bibliographic record.
     standalone_args: Final[list[str]] = ["--standalone"] if profile.structural_policy.emit_title_page else []
+    # The colophon (software provenance + content revision) is the last thing in the document, after
+    # even the footnote definitions the writer emits below the body, so it reaches the writer as an
+    # after-body include rather than as a block of the document.  The include implies --standalone,
+    # so a profile without front matter writes with the YAML metadata block off.  A notes-only
+    # export is the Notes section alone and carries none.
+    colophon: Final[str | None] = (
+        colophon_html(render_bundle.provenance, render_bundle.revision)
+        if options.emit_colophon
+        and not options.notes_only
+        and (render_bundle.provenance is not None or render_bundle.revision is not None)
+        else None
+    )
+    gfm_writer: Final[str] = (
+        _GFM_WRITER if profile.structural_policy.emit_title_page else _GFM_WRITER_WITHOUT_FRONT_MATTER
+    )
     # The authored revision name (the root's revision:: value) is bibliographic content, not
     # origin bookkeeping (that's the colophon's job): when the profile emits no front-matter
     # record to carry it (emit_title_page unset — the default profile), it renders as an
@@ -341,8 +392,6 @@ def render(
             asset_files,
             render_bundle.view,
             title_in_header=True,
-            provenance=render_bundle.provenance if options.emit_colophon else None,
-            revision=render_bundle.revision if options.emit_colophon else None,
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
@@ -386,25 +435,27 @@ def render(
         _insert_revision_line(doc, revision_name)
         _stamp_revision_metadata(doc, title_page_revision)
         bundle_json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
-        md_text: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
-            bundle_json_str,
-            "gfm",
-            format="json",
-            extra_args=[
-                "--wrap=none",
-                *standalone_args,
-                f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
-            ],
-        )
+        with _after_body_include(colophon) as colophon_args:
+            md_text: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
+                bundle_json_str,
+                gfm_writer,
+                format="json",
+                extra_args=[
+                    "--wrap=none",
+                    *standalone_args,
+                    *colophon_args,
+                    f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_IMAGE_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
+                ],
+            )
         output_file: Final[Path] = bundle_dir / f"{filename_stem}.md"
         output_file.write_text(indent_fenced_blank_lines(strip_list_separator_comments(md_text)), encoding="utf-8")
         logger.info("Wrote Markdown to: %s", output_file)
@@ -416,8 +467,6 @@ def render(
             {},
             render_bundle.view,
             title_in_header=True,
-            provenance=render_bundle.provenance if options.emit_colophon else None,
-            revision=render_bundle.revision if options.emit_colophon else None,
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
@@ -458,24 +507,26 @@ def render(
         _insert_revision_line(no_bundle_doc, revision_name)
         _stamp_revision_metadata(no_bundle_doc, title_page_revision)
         json_str: Final[str] = pandoc_to_json(no_bundle_doc, dump_pandoc_ast, output_dir, filename_stem)
-        no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
-            json_str,
-            "gfm",
-            format="json",
-            extra_args=[
-                "--wrap=none",
-                *standalone_args,
-                f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
-                f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
-            ],
-        )
+        with _after_body_include(colophon) as no_bundle_colophon_args:
+            no_bundle_md: Final[str] = pypandoc.convert_text(  # type: ignore[no-untyped-call]
+                json_str,
+                gfm_writer,
+                format="json",
+                extra_args=[
+                    "--wrap=none",
+                    *standalone_args,
+                    *no_bundle_colophon_args,
+                    f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_MARK_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_TODO_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_BRACKET_FILTER}",
+                ],
+            )
         output_path: Final[Path] = output_dir / f"{filename_stem}.md"
         output_path.write_text(indent_fenced_blank_lines(strip_list_separator_comments(no_bundle_md)), encoding="utf-8")
         logger.info("Wrote Markdown to %s", output_path)

@@ -535,6 +535,15 @@ class TestColophonPlacement:
         assert not _has_title_page(colophon_epubs["article"])
         assert _PROVENANCE_SUMMARY in _all_text(colophon_epubs["article"])
 
+    def test_article_colophon_ends_the_last_document(self, colophon_epubs: dict[str, Path]) -> None:
+        """The article splits into two documents; the colophon appears once, closing the second."""
+        with zipfile.ZipFile(colophon_epubs["article"]) as zf:
+            first: Final[str] = zf.read("EPUB/text/ch001.xhtml").decode("utf-8")
+            last: Final[str] = zf.read("EPUB/text/ch002.xhtml").decode("utf-8")
+        assert _PROVENANCE_SUMMARY not in first
+        assert last.endswith(f"<em>{_PROVENANCE_SUMMARY}</em></p>\n</body>\n</html>\n")
+        assert _all_text(colophon_epubs["article"]).count(_PROVENANCE_SUMMARY) == 1
+
 
 class TestRevisionPlacement:
     """The authored revision name rides the title page when one is emitted, else leads the reading flow."""

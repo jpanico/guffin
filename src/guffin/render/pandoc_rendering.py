@@ -78,6 +78,9 @@ Public symbols:
   :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
 - :func:`revision_line` — the emphasized ``revision: <name>`` paragraph presenting a document's
   author-declared revision name.
+- :func:`colophon_summary` — the one-line colophon text for a provenance and/or revision.
+- :func:`colophon_html` — the end-of-document colophon (a rule and the summary line) as HTML,
+  which the Markdown and EPUB renderers place after everything the writer emits.
 - :data:`VertexLinkResolver` — type alias for the resolver callable accepted by
   :func:`resolve_vertex_links`.
 - :func:`heading_anchor` — the identifier a heading vertex's Header carries.
@@ -2098,46 +2101,27 @@ def revision_line(revision_name: str) -> pf.Para:
     return pf.Para(pf.Emph(*inlines))
 
 
-def _colophon_blocks(provenance: Provenance | None, revision: Revision | None) -> list[pf.Block]:
-    """Return the end-of-document colophon blocks for *provenance* and/or *revision*.
+@validate_call
+def colophon_html(provenance: Provenance | None, revision: Revision | None) -> str:
+    """Return the end-of-document colophon for *provenance* and/or *revision*, as HTML.
 
-    A :class:`~panflute.HorizontalRule` followed by the :func:`colophon_summary` text (verbatim,
-    so it matches the PDF footer exactly) rendered as an inline-styled HTML paragraph at
-    :data:`_COLOPHON_FONT_SIZE` — the same text-size-to-body ratio as the PDF footer.  Emitted as
-    a raw-HTML block because only HTML-based writers (GFM, EPUB) consume the body colophon; the
-    PDF routes the colophon to its page footer instead.
-    """
-    summary: Final[str] = html.escape(colophon_summary(provenance, revision))
-    paragraph: Final[str] = f"{_COLOPHON_PARAGRAPH_OPENING}<em>{summary}</em></p>"
-    return [pf.HorizontalRule(), pf.RawBlock(paragraph, format="html")]
-
-
-_COLOPHON_PARAGRAPH_OPENING: Final[str] = f'<p style="font-size: {_COLOPHON_FONT_SIZE}">'
-"""The opening of the colophon's raw-HTML paragraph, by which :func:`trailing_colophon_length` knows it."""
-
-
-@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
-def trailing_colophon_length(doc: pf.Doc) -> int:
-    """Return how many of *doc*'s last top-level blocks are the end-of-document colophon.
-
-    The colophon :func:`vertex_tree_to_pandoc` appends is a :class:`~panflute.HorizontalRule`
-    followed by a raw-HTML paragraph; content added to the end of the body belongs before it.
+    A horizontal rule followed by the :func:`colophon_summary` text (verbatim, so it matches the
+    PDF footer exactly) as an emphasized, inline-styled paragraph at :data:`_COLOPHON_FONT_SIZE` —
+    the same text-size-to-body ratio as the PDF footer.  The colophon is the last thing in a
+    document, after anything the writer adds below the body (the footnotes of numbered notes), so
+    it is never a block of the Pandoc document: the Markdown renderer hands it to the writer as an
+    after-body include, and the EPUB renderer appends it to the packaged e-book's last content
+    document.  The PDF routes the colophon to its title page or page footer instead.
 
     Args:
-        doc: The document to inspect.
+        provenance: The software provenance to include, or ``None``.
+        revision: The content revision to include, or ``None``.
 
     Returns:
-        ``2`` when *doc* ends with the colophon, ``0`` otherwise.
+        The rule and paragraph, one per line; well-formed XHTML, so it serves EPUB as it is.
     """
-    blocks: Final[list[pf.Block]] = list(doc.content)
-    if (
-        len(blocks) >= 2
-        and isinstance(blocks[-2], pf.HorizontalRule)
-        and isinstance(blocks[-1], pf.RawBlock)
-        and blocks[-1].text.startswith(_COLOPHON_PARAGRAPH_OPENING)
-    ):
-        return 2
-    return 0
+    summary: Final[str] = html.escape(colophon_summary(provenance, revision))
+    return f'<hr />\n<p style="font-size: {_COLOPHON_FONT_SIZE}"><em>{summary}</em></p>'
 
 
 def _demote_content_headings(doc: pf.Doc) -> None:
@@ -2176,8 +2160,6 @@ def vertex_tree_to_pandoc(
     view_map: ViewMap,
     *,
     title_in_header: bool = False,
-    provenance: Provenance | None = None,
-    revision: Revision | None = None,
 ) -> tuple[pf.Doc, InlineMap]:
     """Convert a :class:`~guffin.vertex_tree.VertexTree` to a Panflute :class:`~panflute.Doc`.
 
@@ -2225,12 +2207,6 @@ def vertex_tree_to_pandoc(
             for formats whose writer drops or only optionally emits metadata), demoting
             every content heading one level so the title contains them.
             Defaults to ``False`` (metadata only, content heading levels untouched).
-        provenance: When set, contribute the software half of the end-of-document colophon (a
-            horizontal rule and an emphasized :func:`colophon_summary` line); ``None`` (default)
-            contributes nothing.
-        revision: When set, contribute the content-revision half of the same colophon line;
-            ``None`` (default) contributes nothing.  The colophon is appended when either record
-            is present.
 
     Returns:
         A two-tuple of the :class:`~panflute.Doc` ready for serialization via
@@ -2288,9 +2264,6 @@ def vertex_tree_to_pandoc(
             attribute_assignments=root.attribute_assignments,
         )
     )
-
-    if provenance is not None or revision is not None:
-        blocks.extend(_colophon_blocks(provenance, revision))
 
     doc: Final[pf.Doc] = pf.Doc(*blocks, metadata=metadata)
     if title_in_header:

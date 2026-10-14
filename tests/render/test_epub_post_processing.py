@@ -1,10 +1,14 @@
 """Tests for guffin.render.epub_post_processing."""
 
+import logging
 import zipfile
 from pathlib import Path
 from typing import Final
 
+import pytest
+
 from guffin.render.epub_post_processing import (
+    append_colophon,
     bake_code_line_numbers,
     restore_matter_divisions,
     stamp_titlepage_illustrators,
@@ -175,6 +179,116 @@ class TestStampTitlepageIllustrators:
         with zipfile.ZipFile(epub) as archive:
             xhtml: Final[str] = archive.read("EPUB/text/ch001.xhtml").decode("utf-8")
         assert "illustrators" not in xhtml
+
+
+_CONTAINER: Final[str] = (
+    '<?xml version="1.0" encoding="UTF-8"?>\n'
+    '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n'
+    '  <rootfiles><rootfile full-path="EPUB/content.opf" media-type="application/oebps-package+xml" /></rootfiles>\n'
+    "</container>\n"
+)
+
+_NOTED_DOC: Final[str] = (
+    '<?xml version="1.0" encoding="utf-8"?>\n'
+    '<html xmlns:epub="http://www.idpf.org/2007/ops">\n'
+    '<body epub:type="bodymatter">\n'
+    '<section id="ch2" class="level1"><h1>Chapter</h1><p>Text.<a href="#fn1" epub:type="noteref">1</a></p>'
+    "</section>\n"
+    '<section id="footnotes" class="footnotes footnotes-end-of-document" epub:type="footnotes">\n'
+    '<aside epub:type="footnote" id="fn1"><p>A note.</p></aside>\n'
+    "</section>\n</body>\n</html>\n"
+)
+
+_COLOPHON: Final[str] = '<hr />\n<p style="font-size: 0.7em"><em>guffin 1.2.3, commit: abc123d</em></p>'
+
+
+def _package(spine: str) -> str:
+    """Return a package document whose manifest names the nav and three chapters, with *spine* as its spine."""
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<package version="3.0" xmlns="http://www.idpf.org/2007/opf">\n'
+        "  <manifest>\n"
+        '    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />\n'
+        '    <item id="ch001_xhtml" href="text/ch001.xhtml" media-type="application/xhtml+xml" />\n'
+        '    <item id="ch002_xhtml" href="text/ch002.xhtml" media-type="application/xhtml+xml" />\n'
+        '    <item id="ch003_xhtml" href="text/ch003.xhtml" media-type="application/xhtml+xml" />\n'
+        "  </manifest>\n"
+        f"  <spine>{spine}</spine>\n"
+        "</package>\n"
+    )
+
+
+class TestAppendColophon:
+    """append_colophon ends the last document in reading order with the colophon, after its footnotes."""
+
+    def _appended(self, tmp_path: Path, spine: str) -> dict[str, str]:
+        """Package the nav and three chapters with *spine*, append the colophon, and return each XHTML document."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(
+            epub,
+            {
+                "META-INF/container.xml": _CONTAINER,
+                "EPUB/content.opf": _package(spine),
+                "EPUB/nav.xhtml": _PLAIN_DOC,
+                "EPUB/text/ch001.xhtml": _PLAIN_DOC,
+                "EPUB/text/ch002.xhtml": _NOTED_DOC,
+                "EPUB/text/ch003.xhtml": _PLAIN_DOC,
+            },
+        )
+        append_colophon(epub, _COLOPHON)
+        with zipfile.ZipFile(epub) as archive:
+            return {name: archive.read(name).decode("utf-8") for name in archive.namelist() if name.endswith(".xhtml")}
+
+    def test_colophon_follows_the_footnotes(self, tmp_path: Path) -> None:
+        """The last document in reading order ends with the colophon, after its footnotes section."""
+        documents: Final[dict[str, str]] = self._appended(
+            tmp_path, '<itemref idref="ch001_xhtml" /><itemref idref="ch002_xhtml" />'
+        )
+        assert documents["EPUB/text/ch002.xhtml"].endswith(f"</aside>\n</section>\n{_COLOPHON}\n</body>\n</html>\n")
+
+    def test_other_documents_are_untouched(self, tmp_path: Path) -> None:
+        """Earlier documents, the nav, and a document outside the spine keep no colophon."""
+        documents: Final[dict[str, str]] = self._appended(
+            tmp_path, '<itemref idref="ch001_xhtml" /><itemref idref="ch002_xhtml" />'
+        )
+        assert documents["EPUB/text/ch001.xhtml"] == _PLAIN_DOC
+        assert documents["EPUB/nav.xhtml"] == _PLAIN_DOC
+        assert documents["EPUB/text/ch003.xhtml"] == _PLAIN_DOC
+
+    def test_non_linear_items_are_passed_over(self, tmp_path: Path) -> None:
+        """A spine item outside the linear reading order does not count as the last document."""
+        documents: Final[dict[str, str]] = self._appended(
+            tmp_path, '<itemref idref="ch002_xhtml" /><itemref idref="ch003_xhtml" linear="no" />'
+        )
+        assert _COLOPHON in documents["EPUB/text/ch002.xhtml"]
+        assert documents["EPUB/text/ch003.xhtml"] == _PLAIN_DOC
+
+    def test_without_a_container_the_epub_is_unchanged(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+        """A package with no container document names no reading order: nothing is appended, with a warning."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(epub, {"EPUB/text/ch001.xhtml": _PLAIN_DOC})
+        with caplog.at_level(logging.WARNING):
+            append_colophon(epub, _COLOPHON)
+        with zipfile.ZipFile(epub) as archive:
+            assert archive.read("EPUB/text/ch001.xhtml").decode("utf-8") == _PLAIN_DOC
+        assert "colophon not appended" in caplog.text
+
+    def test_mimetype_stays_first_and_stored(self, tmp_path: Path) -> None:
+        """The rewrite keeps the mimetype entry first and uncompressed."""
+        epub: Final[Path] = tmp_path / "book.epub"
+        _write_epub(
+            epub,
+            {
+                "META-INF/container.xml": _CONTAINER,
+                "EPUB/content.opf": _package('<itemref idref="ch002_xhtml" />'),
+                "EPUB/text/ch002.xhtml": _NOTED_DOC,
+            },
+        )
+        append_colophon(epub, _COLOPHON)
+        with zipfile.ZipFile(epub) as archive:
+            infos: Final[list[zipfile.ZipInfo]] = archive.infolist()
+        assert infos[0].filename == "mimetype"
+        assert infos[0].compress_type == zipfile.ZIP_STORED
 
 
 _NUMBERED_LISTING_DOC: Final[str] = (

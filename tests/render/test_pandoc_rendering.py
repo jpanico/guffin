@@ -10,6 +10,8 @@
 import logging
 from datetime import UTC, date, datetime
 from pathlib import Path
+from typing import Final
+from xml.etree import ElementTree
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
@@ -63,6 +65,7 @@ from guffin.render.pandoc_rendering import (
     _block_ref_target,
     _effective_layout,
     build_child_blocks,
+    colophon_html,
     colophon_summary,
     heading_anchor,
     heading_anchors,
@@ -299,11 +302,39 @@ class TestVertexTreeToPandocSubtreeRootMetadata:
         assert isinstance(blocks[0], pf.BulletList)
 
 
-class TestVertexTreeToPandocColophon:
-    """vertex_tree_to_pandoc() appends a provenance colophon only when provenance is provided."""
+class TestColophonHtml:
+    """colophon_html() is a rule and the emphasized summary line, outside any Pandoc document."""
 
-    def test_no_colophon_without_provenance(self) -> None:
-        """With no provenance (the default), no horizontal-rule colophon is appended."""
+    def test_rule_then_summary_line(self) -> None:
+        """A rule, then the verbatim summary emphasized in a paragraph at a reduced (0.7em) size."""
+        provenance = Provenance(
+            version="1.2.3",
+            commit="abc123def456",
+            dirty=True,
+            committed_at=datetime(2026, 6, 29, 14, 2, 11, tzinfo=UTC),
+            exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
+        )
+        assert colophon_html(provenance, None).splitlines() == [
+            "<hr />",
+            f'<p style="font-size: 0.7em"><em>{provenance.summary()}</em></p>',
+        ]
+
+    def test_revision_alone(self) -> None:
+        """A content revision without software provenance still makes a colophon."""
+        revision = Revision(snapshot="d8666f090982" + "0" * 52, revision="draft-3")
+        colophon: Final[str] = colophon_html(None, revision)
+        assert "snapshot: d8666f090982" in colophon
+        assert "revision: draft-3" in colophon
+
+    def test_is_well_formed_xhtml(self) -> None:
+        """The colophon parses as XML, so the EPUB can insert it into a content document as it is."""
+        revision = Revision(snapshot="d8666f090982" + "0" * 52, revision="R&D <draft>")
+        colophon: Final[str] = colophon_html(None, revision)
+        assert "R&amp;D &lt;draft&gt;" in colophon
+        assert ElementTree.fromstring(f"<div>{colophon}</div>").find("p/em") is not None
+
+    def test_vertex_tree_to_pandoc_builds_none(self) -> None:
+        """The Pandoc document carries no colophon: the renderers place it after the writer runs."""
         tree = VertexTree(
             tree_vertices=[
                 PageVertex(uid="page00001", title="Doc", children=["head0001a"]),
@@ -312,43 +343,6 @@ class TestVertexTreeToPandocColophon:
         )
         doc, _ = vertex_tree_to_pandoc(tree, {}, {})
         assert not any(isinstance(block, pf.HorizontalRule) for block in doc.content)
-
-    def test_colophon_appended_with_provenance(self) -> None:
-        """Provenance appends a trailing HorizontalRule and an emphasized summary line."""
-        provenance = Provenance(
-            version="1.2.3",
-            commit="abc123def456",
-            dirty=True,
-            committed_at=datetime(2026, 6, 29, 14, 2, 11, tzinfo=UTC),
-            exported_at=datetime(2026, 6, 29, 22, 40, 3, tzinfo=UTC),
-        )
-        tree = VertexTree(
-            tree_vertices=[
-                PageVertex(uid="page00001", title="Doc", children=["head0001a"]),
-                HeadingVertex(uid="head0001a", text="Section", heading_level=2),
-            ]
-        )
-        doc, _ = vertex_tree_to_pandoc(tree, {}, {}, title_in_header=True, provenance=provenance)
-        blocks = list(doc.content)
-        # The body (H1 + H2) is followed by the colophon: a rule and an inline-styled HTML line
-        # carrying the verbatim summary at a reduced (0.7em) size.
-        assert isinstance(blocks[-2], pf.HorizontalRule)
-        colophon = blocks[-1]
-        assert isinstance(colophon, pf.RawBlock)
-        assert colophon.format == "html"
-        assert "font-size: 0.7em" in colophon.text
-        assert provenance.summary() in colophon.text
-
-    def test_colophon_appended_with_revision_alone(self) -> None:
-        """A content revision without software provenance still produces the colophon."""
-        revision = Revision(snapshot="d8666f090982" + "0" * 52, revision="draft-3")
-        tree = VertexTree(tree_vertices=[PageVertex(uid="page00001", title="Doc")])
-        doc, _ = vertex_tree_to_pandoc(tree, {}, {}, revision=revision)
-        blocks = list(doc.content)
-        assert isinstance(blocks[-2], pf.HorizontalRule)
-        assert isinstance(blocks[-1], pf.RawBlock)
-        assert "snapshot: d8666f090982" in blocks[-1].text
-        assert "revision: draft-3" in blocks[-1].text
 
 
 class TestColophonSummary:

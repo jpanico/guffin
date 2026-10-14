@@ -32,7 +32,7 @@ from guffin.render.notes_rendering import (
 )
 from guffin.render.pandoc_rendering import HEADING_LINK_CLASS, vertex_tree_to_pandoc
 from guffin.render.pdf_rendering import render as render_pdf
-from guffin.render.project import ArticleProfile, BookProfile, TopLevelDivision
+from guffin.render.project import ArticleProfile, BookProfile, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import (
     EpubRenderOptions,
     MarkdownRenderOptions,
@@ -154,25 +154,6 @@ def _entry_text(doc: pf.Doc, note_uid: str) -> str:
             if isinstance(block, pf.Div) and block.identifier == endnote_identifier(note_uid)
         )
     ).strip()
-
-
-class TestColophon:
-    """The Notes section ends before the end-of-document colophon."""
-
-    def test_entries_precede_the_colophon(self) -> None:
-        """With a colophon appended, the entries are inserted before it, which stays last."""
-        tree: Final[VertexTree] = _noted_book()
-        doc, inline_map = vertex_tree_to_pandoc(
-            tree, {}, {}, provenance=Provenance(version="1.2.3", commit="abc123def456")
-        )
-        insert_notes_section(
-            doc, tree, inline_map, {}, {}, TopLevelDivision.CHAPTER, OutputFormat.EPUB, heading_links=True
-        )
-        blocks: Final[list[pf.Block]] = list(doc.content)
-        assert isinstance(blocks[-2], pf.HorizontalRule)
-        assert isinstance(blocks[-1], pf.RawBlock)
-        assert isinstance(blocks[-3], pf.Div)
-        assert blocks[-3].identifier == endnote_identifier("note00005")
 
 
 class TestNoteForms:
@@ -531,3 +512,67 @@ class TestRenderedNotes:
         assert "It ran for a 52-minute run2." in text
         assert "2Lavington, A History, 12." in text
         assert "Notes" in text
+
+
+_PROVENANCE: Final[Provenance] = Provenance(version="1.2.3", commit="abc123def456")
+_COLOPHON_LINE: Final[str] = f'<p style="font-size: 0.7em"><em>{_PROVENANCE.summary()}</em></p>'
+
+
+class TestColophonComesLast:
+    """The colophon ends the document, after the notes, whichever way they are set."""
+
+    @staticmethod
+    def _markdown(tmp_path: Path, profile: ProjectProfile, *, notes_only: bool = False) -> str:
+        render_md(
+            RenderBundle(content=_noted_book(), view={}).with_provenance(_PROVENANCE),
+            profile=profile,
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=MarkdownRenderOptions(
+                output_dir=tmp_path, should_bundle=False, emit_colophon=True, notes_only=notes_only
+            ),
+        )
+        return (tmp_path / "noted.md").read_text(encoding="utf-8")
+
+    def test_markdown_article_after_the_footnotes(self, tmp_path: Path) -> None:
+        """An article's colophon follows the footnote definitions, and no front matter opens it."""
+        text: Final[str] = self._markdown(tmp_path, ArticleProfile())
+        assert text.rstrip("\n").endswith(f"<hr />\n{_COLOPHON_LINE}")
+        assert text.rindex("[^") < text.index("<hr />")
+        assert text.startswith("# Noted Book\n")
+
+    def test_markdown_book_after_the_notes_section(self, tmp_path: Path) -> None:
+        """A book's colophon follows its Notes section, and its front matter stays."""
+        text: Final[str] = self._markdown(tmp_path, BookProfile())
+        assert text.rstrip("\n").endswith(f"<hr />\n{_COLOPHON_LINE}")
+        assert text.index("## Notes") < text.index("<hr />")
+        assert text.startswith("---\n")
+
+    def test_markdown_notes_only_has_none(self, tmp_path: Path) -> None:
+        """A notes-only export is the Notes section alone, with no colophon."""
+        text: Final[str] = self._markdown(tmp_path, BookProfile(), notes_only=True)
+        assert "## Notes" in text
+        assert _PROVENANCE.summary() not in text
+
+    def test_epub_article_after_the_footnotes(self, tmp_path: Path) -> None:
+        """An article's colophon appears once, after the footnotes of the last document in reading order.
+
+        Pandoc sets each document's footnotes at its end, so the book is built without its Notes
+        heading, which would otherwise open a last document of its own with no footnotes in it.
+        """
+        render_epub(
+            RenderBundle(content=_noted_book(with_notes_heading=False), view={}).with_provenance(_PROVENANCE),
+            profile=ArticleProfile(),
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path, emit_colophon=True),
+        )
+        with zipfile.ZipFile(tmp_path / "noted.epub") as package:
+            chapters: Final[list[str]] = [
+                package.read(name).decode("utf-8")
+                for name in sorted(package.namelist())
+                if name.startswith("EPUB/text/ch") and name.endswith(".xhtml")
+            ]
+        assert sum(chapter.count(_COLOPHON_LINE) for chapter in chapters) == 1
+        assert chapters[-1].endswith(f"<hr />\n{_COLOPHON_LINE}\n</body>\n</html>\n")
+        assert chapters[-1].rindex("</aside>") < chapters[-1].index(_COLOPHON_LINE)

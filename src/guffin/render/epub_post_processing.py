@@ -1,6 +1,6 @@
 """EPUB post-processing: content rewrites applied to the packaged e-book.
 
-Five passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
+Six passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
 compression, so the ``mimetype`` entry stays first and uncompressed):
 
 - **CMOS division restoration.**  Pandoc assigns each content document's ``<body epub:type>``
@@ -24,6 +24,12 @@ compression, so the ``mimetype`` entry stays first and uncompressed):
   illustration credit line directly below the author paragraphs (below the title block when
   there are none) on the generated title page, which renders creators but not contributors.
 
+- **End-of-document colophon.**  Pandoc writes a content document's footnotes after the last
+  block of its body, so a colophon built into the document would sit above the notes; and an
+  ``--include-after-body`` file is repeated in every content document.  :func:`append_colophon`
+  appends the colophon to the end of the last document in reading order instead, after its
+  footnotes.
+
 - **Baked code line numbers.**  Skylighting's ``numberSource`` code listings draw each line
   number with CSS counters, ``position: relative`` offsets, and ``inline-block`` line spans —
   techniques several reading systems do not implement (notably the Kindle app, where the
@@ -41,15 +47,18 @@ Public symbols:
   title page; :func:`stamp_titlepage_revision` — inject the authored revision name directly
   below the title on the generated title page; :func:`stamp_titlepage_illustrators` — inject an
   illustration credit line directly below the authors on the generated title page;
+  :func:`append_colophon` — append the colophon to the end of the last document in reading order;
   :func:`bake_code_line_numbers` — rewrite every numbered code listing to literal-text line
   numbers.
 """
 
 import logging
+import posixpath
 import zipfile
 from collections.abc import Callable
 from pathlib import Path
 from typing import Final
+from xml.etree import ElementTree
 from xml.sax.saxutils import escape
 
 import regex
@@ -64,6 +73,11 @@ _MATTER_ATTRIBUTE_RE: Final[regex.Pattern[str]] = regex.compile(rf'\s*{regex.esc
 _BODY_DIVISION_RE: Final[regex.Pattern[str]] = regex.compile(r'(<body\b[^>]*\bepub:type=")[^"]*(")')
 _TITLE_PAGE_SUFFIX: Final[str] = "title_page.xhtml"
 _SECTION_CLOSE: Final[str] = "</section>"
+_BODY_CLOSE: Final[str] = "</body>"
+_CONTAINER_PATH: Final[str] = "META-INF/container.xml"
+"""The OCF container document, which names the package document (the OPF)."""
+_CONTAINER_NAMESPACES: Final[dict[str, str]] = {"container": "urn:oasis:names:tc:opendocument:xmlns:container"}
+_PACKAGE_NAMESPACES: Final[dict[str, str]] = {"opf": "http://www.idpf.org/2007/opf"}
 _TITLE_BLOCK_RE: Final[regex.Pattern[str]] = regex.compile(
     r'<h1 class="title">.*?</h1>(?:\s*<p class="subtitle">.*?</p>)?', regex.DOTALL
 )
@@ -263,6 +277,76 @@ def stamp_titlepage_illustrators(epub_path: Path, credit: str) -> None:
         logger.warning("No title-page anchor found in %s; illustration credit not stamped", epub_path)
 
 
+def _last_spine_document(epub_path: Path) -> str | None:
+    """Return the archive name of the last document in the reading order of the EPUB at *epub_path*.
+
+    Follows the OCF container document to the package document, takes the last spine item in the
+    linear reading order (``linear`` other than ``"no"``), and resolves its manifest ``href``
+    against the package document's directory.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to inspect.
+
+    Returns:
+        The document's archive name, or ``None`` when the package names no such document.
+    """
+    with zipfile.ZipFile(epub_path) as archive:
+        if _CONTAINER_PATH not in archive.namelist():
+            return None
+        rootfile: Final[ElementTree.Element | None] = ElementTree.fromstring(archive.read(_CONTAINER_PATH)).find(
+            "container:rootfiles/container:rootfile", _CONTAINER_NAMESPACES
+        )
+        package_path: Final[str | None] = None if rootfile is None else rootfile.get("full-path")
+        if package_path is None or package_path not in archive.namelist():
+            return None
+        package: Final[ElementTree.Element] = ElementTree.fromstring(archive.read(package_path))
+    hrefs: Final[dict[str | None, str | None]] = {
+        item.get("id"): item.get("href") for item in package.iterfind("opf:manifest/opf:item", _PACKAGE_NAMESPACES)
+    }
+    reading_order: Final[list[str | None]] = [
+        itemref.get("idref")
+        for itemref in package.iterfind("opf:spine/opf:itemref", _PACKAGE_NAMESPACES)
+        if itemref.get("linear") != "no"
+    ]
+    href: Final[str | None] = hrefs.get(reading_order[-1]) if reading_order else None
+    return None if href is None else posixpath.normpath(posixpath.join(posixpath.dirname(package_path), href))
+
+
+@validate_call
+def append_colophon(epub_path: Path, colophon: str) -> None:
+    """Append *colophon* to the end of the last document in the EPUB's reading order.
+
+    Rewrites the EPUB at *epub_path* in place: *colophon*, XHTML inserted verbatim, is placed
+    directly before the ``</body>`` of the last document in the spine's linear reading order, so it
+    follows everything Pandoc wrote there, that document's footnotes included, and ends the book.
+    Entry order, timestamps, and per-entry compression are preserved, so the ``mimetype`` entry
+    stays first and uncompressed.
+
+    When the package names no reading-order document, or that document has no ``</body>``, a
+    warning is logged and the EPUB is left unchanged.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+        colophon: The colophon, as XHTML (see :func:`~guffin.render.pandoc_rendering.colophon_html`).
+    """
+    last_document: Final[str | None] = _last_spine_document(epub_path)
+    appended_names: Final[list[str]] = []
+
+    def _append(filename: str, xhtml: str) -> str:
+        if filename != last_document or _BODY_CLOSE not in xhtml:
+            return xhtml
+        appended_names.append(filename)
+        body_close: Final[int] = xhtml.rindex(_BODY_CLOSE)
+        return f"{xhtml[:body_close]}{colophon}\n{xhtml[body_close:]}"
+
+    if last_document is not None:
+        _rewrite_xhtml_entries(epub_path, _append)
+    if appended_names:
+        logger.info("Appended the colophon to %s in %s", appended_names[0], epub_path)
+    else:
+        logger.warning("No reading-order document found in %s; colophon not appended", epub_path)
+
+
 def _without_class_tokens(class_attr: str, removed: frozenset[str]) -> str:
     """Return the class attribute value *class_attr* with every token in *removed* dropped."""
     return " ".join(token for token in class_attr.split() if token not in removed)
@@ -297,8 +381,7 @@ def _baked_block(pre_classes: str, code_classes: str, body: str) -> str:
     kept_code_classes: Final[str] = _without_class_tokens(code_classes, _CODE_CLASSES)
     code_class_attr: Final[str] = f' class="{kept_code_classes}"' if kept_code_classes else ""
     return (
-        f'<pre class="{_without_class_tokens(pre_classes, _GUTTER_CLASSES)}">'
-        f"<code{code_class_attr}>{baked_body}</code>"
+        f'<pre class="{_without_class_tokens(pre_classes, _GUTTER_CLASSES)}"><code{code_class_attr}>{baked_body}</code>'
     )
 
 

@@ -343,7 +343,13 @@ is emitted, the combined provenance + revision line sits at its foot (PDF Bergfi
 `titlepage-provenance`; EPUB `epub_post_processing.stamp_titlepage_provenance`, since Pandoc's
 generated title page is built from document metadata alone and cannot otherwise carry extra
 content); where none is, the PDF runs it on a line below the page footer (`footer-provenance`) and
-the EPUB emits an end-of-document block — which is also how Markdown always carries it. An authored
+the EPUB ends the book with it — which is also how Markdown always carries it. An end-of-document
+colophon is the last thing in the output, after even the footnotes the writer sets below the body,
+so it is never a block of the Pandoc document: Markdown hands it to the GFM writer as an
+`--include-after-body` file (writing with the YAML metadata block off where the profile has no front
+matter, since the include implies `--standalone`), and the EPUB appends it after packaging to the
+last document in reading order (`epub_post_processing.append_colophon`), because an after-body
+include would be repeated in every content document. A notes-only export carries none. An authored
 `revision::` *name* is separate and colophon-independent: it renders directly below the title block
 on a generated title page (and, in the PDF, in the running header's right slot, replacing the
 publication date), leads the reading flow as an emphasized line where there is no title page, and
