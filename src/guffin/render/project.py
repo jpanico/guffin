@@ -72,6 +72,21 @@ class TopLevelDivision(enum.StrEnum):
     PART = "part"
 
     @property
+    def chapter_heading_level(self) -> int | None:
+        """The heading level of a chapter, or ``None`` when the work has no chapters.
+
+        ``None`` when top-level headings are sections; level 1 when they are chapters; level 2 in
+        a parts book.
+        """
+        match self:
+            case TopLevelDivision.SECTION:
+                return None
+            case TopLevelDivision.CHAPTER:
+                return 1
+            case TopLevelDivision.PART:
+                return 2
+
+    @property
     def section_heading_level(self) -> int:
         """The heading level of a section: the division one below a chapter, or the top level.
 

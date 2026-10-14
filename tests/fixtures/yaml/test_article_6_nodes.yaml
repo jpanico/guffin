@@ -42,6 +42,7 @@
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: 050miQy0i
   id: 12902
   string: 'guffin-meta:: #.rm-g'
@@ -77,6 +78,7 @@
       - uid
       - Aa-q7QL7i
       value: ' copyright-page'
+  blocks: null
 - uid: 4rMMdHXiL
   id: 12852
   string: 'identifier:: OCLC 53071567'
@@ -94,6 +96,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: kmhD9g62Q
   id: 12972
   string: I
@@ -130,6 +133,7 @@
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: UBFOf9XVN
   id: 12846
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -167,6 +171,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: l35EHvZ3Z
   id: 13103
   string: 'cover-image:: ((-IHBfYM7I))'
@@ -185,6 +190,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: a9LW1J8BT
   id: 12900
   string: Uncopyright
@@ -221,6 +227,7 @@
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: tLgD4E9KV
   id: 12851
   string: 'date:: 1890'
@@ -238,6 +245,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: WLRZ6sK1M
   id: 12857
   string: Preface
@@ -274,6 +282,7 @@
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: JyBL3GL_G
   id: 12974
   string: 'element-type:: chapter'
@@ -292,6 +301,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: hHUE8oD5s
   id: 12848
   string: 'guffin-meta:: #.rm-g'
@@ -447,6 +457,7 @@
       - uid
       - EaBvMP-Ps
       value: ' draft-1'
+  blocks: null
 - uid: Aa-q7QL7i
   id: 12903
   string: 'element-type:: copyright-page'
@@ -465,6 +476,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: t2DXK-Slp
   id: 12854
   string: 'publisher:: Lippincott''s Monthly Magazine'
@@ -482,6 +494,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YIaDjPPUe
   id: 12859
   string: 'guffin-meta:: #.rm-g'
@@ -517,6 +530,7 @@
       - uid
       - gu4ybgVUx
       value: ' preface'
+  blocks: null
 - uid: xPlIk1L3D
   id: 12899
   string: '{{embed: [[Uncopyright]]}}'
@@ -534,6 +548,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uEYS1oQeC
   id: 12855
   string: 'rights:: Copyright J. B. Lippincott Company'
@@ -551,6 +566,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: EaBvMP-Ps
   id: 13104
   string: 'revision:: draft-1'
@@ -568,6 +584,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QvjDgd-ZA
   id: 12970
   string: '[[>]] [[!INFO]] The Preface Page embedded here has no `children_layout`
@@ -587,6 +604,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: XX2yV89Xk
   id: 12976
   string: '[[>]] [[!INFO]] The `chapter I` Page embedded here has `children_layout`
@@ -606,6 +624,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8F1npXph5
   id: 12850
   string: 'title:: "The Picture of Dorian Gray"'
@@ -623,6 +642,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: sbPcWffJo
   id: 12849
   string: 'authors:: Oscar Wilde'
@@ -640,6 +660,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: -zvFCYXWb
   id: 12868
   string: '{{embed: [[Dorian Preface]]}}'
@@ -657,6 +678,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 83g00A144
   id: 12975
   string: '{{embed: [[Dorian chapter I]]}}'
@@ -674,6 +696,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: QE6k_NSRx
   id: 12957
   string: '[[>]] [[!INFO]] The Uncopyright Page embedded here has `children_layout`
@@ -693,6 +716,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: gu4ybgVUx
   id: 12860
   string: 'element-type:: preface'
@@ -711,6 +735,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: GCcHuJCUc
   id: 12973
   string: 'guffin-meta:: #.rm-g'
@@ -746,3 +771,4 @@
       - uid
       - JyBL3GL_G
       value: ' chapter'
+  blocks: null

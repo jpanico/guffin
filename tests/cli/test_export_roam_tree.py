@@ -26,9 +26,14 @@ from typer.testing import CliRunner, Result
 from guffin.cli.export_roam_tree import app
 from guffin.common.provenance import Provenance
 from guffin.common.validation import ValidationError, ValidationResult
+from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
+from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source_diagnosis import CodeSourceDiagnosis, CodeSourceFinding
 from guffin.model.publishing_semantics import PdfRenderPlacement
 from guffin.model.render_bundle import RenderBundle
+from guffin.model.vertex import HeadingVertex, NotesVertex, PageVertex, TextVertex, Vertex
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
+from guffin.model.vertex_tree import VertexTree
 from guffin.render.pandoc_rendering import heading_anchor
 from guffin.render.project import BookProfile, ProjectProfile, TopLevelDivision
 from guffin.render.render_options import MarkdownRenderOptions
@@ -803,3 +808,93 @@ class TestExportRoamTreeVersion:
         result = CliRunner().invoke(app, ["--version"])
         assert result.exit_code == 0, result.output
         assert result.output.strip() == f"guffin {importlib.metadata.version('guffin')}"
+
+
+def _noted_bundle(*, with_notes_heading: bool, shared_lead_in: bool = False) -> RenderBundle:
+    """A one-chapter page citing two notes, with or without a Notes section."""
+
+    def note_link(lead_in: str, uid: str) -> str:
+        return f"[{lead_in}]({vertex_link_url(uid, VertexLinkKind.NOTE)})"
+
+    second_lead_in: Final[str] = "a phrase" if shared_lead_in else "another phrase"
+    root_children: Final[list[str]] = ["chap00001", *(["notesh001"] if with_notes_heading else [])]
+    vertices: Final[list[Vertex]] = [
+        PageVertex(uid="page00001", title="Noted", children=root_children),
+        HeadingVertex(uid="chap00001", text="Chapter", heading_level=1, children=["text00001", "notes0001"]),
+        TextVertex(
+            uid="text00001",
+            text=f"{note_link('a phrase', 'note00001')} and {note_link(second_lead_in, 'note00002')}.",
+        ),
+        NotesVertex(uid="notes0001", children=["note00001", "note00002"]),
+        TextVertex(uid="note00001", text="First note."),
+        TextVertex(uid="note00002", text="Second note."),
+    ]
+    if with_notes_heading:
+        link: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
+        tag: Final[AttributeAssignment] = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="element-type", domain=AttributeDomain.GUFFIN), link=link
+            ),
+            values=(LiteralValue(value="endnotes"),),
+        )
+        vertices.append(HeadingVertex(uid="notesh001", text="Notes", heading_level=1, attribute_assignments=[tag]))
+    return RenderBundle(content=VertexTree(tree_vertices=vertices), view={})
+
+
+class TestExportNoteChecks:
+    """export-roam-tree runs the note checks that need the project type before rendering."""
+
+    @staticmethod
+    def _export(bundle: RenderBundle, project_type: str, tmp_path: pathlib.Path) -> tuple[Result, MagicMock]:
+        """Export *bundle* as *project_type* with the fetch stubbed and rendering mocked out."""
+        render: Final[MagicMock] = MagicMock()
+        with patch("guffin.cli.export_roam_tree.fetch_render_bundle", return_value=bundle):
+            with patch("guffin.cli.export_roam_tree._render", render):
+                saved_handlers = logging.root.handlers[:]
+                logging.root.handlers.clear()
+                try:
+                    result: Result = CliRunner().invoke(
+                        app,
+                        [
+                            "Noted",
+                            "--port",
+                            "3333",
+                            "--graph",
+                            "SCFH",
+                            "--token",
+                            "tok",
+                            "--output-dir",
+                            str(tmp_path),
+                            "--type",
+                            project_type,
+                            "--no-colophon",
+                        ],
+                    )
+                finally:
+                    logging.root.handlers = saved_handlers
+        return result, render
+
+    def test_noted_book_with_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
+        """A book whose notes have a Notes section passes both checks."""
+        result, render = self._export(_noted_bundle(with_notes_heading=True), "book", tmp_path)
+        assert result.exit_code == 0, result.output
+        render.assert_called_once()
+
+    def test_shared_lead_in_in_one_section_aborts(self, tmp_path: pathlib.Path) -> None:
+        """Two notes in one section sharing a lead-in abort the export."""
+        bundle: Final[RenderBundle] = _noted_bundle(with_notes_heading=True, shared_lead_in=True)
+        result, render = self._export(bundle, "book", tmp_path)
+        assert result.exit_code == 1
+        render.assert_not_called()
+
+    def test_book_without_notes_section_aborts(self, tmp_path: pathlib.Path) -> None:
+        """A book that cites notes but has no Notes section aborts the export."""
+        result, render = self._export(_noted_bundle(with_notes_heading=False), "book", tmp_path)
+        assert result.exit_code == 1
+        render.assert_not_called()
+
+    def test_article_without_notes_section_renders(self, tmp_path: pathlib.Path) -> None:
+        """An article without a Notes section only warns, and renders without its notes."""
+        result, render = self._export(_noted_bundle(with_notes_heading=False), "article", tmp_path)
+        assert result.exit_code == 0, result.output
+        render.assert_called_once()

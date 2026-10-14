@@ -54,6 +54,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_alternatives, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
 from guffin.render.md_post_processing import indent_fenced_blank_lines, strip_list_separator_comments
+from guffin.render.notes_rendering import NOTES_GROUP_CLASS, insert_notes_section, note_lead_in_renderer
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     HEADING_LINK_CLASS,
@@ -80,6 +81,12 @@ def _slug_targets(doc: pf.Doc) -> dict[str, str]:
     with suffixes that differ between them), in which case the target stays the heading's own
     identifier, which only an explicit anchor can provide.
 
+    A heading the Notes section generates for a group of notes
+    (:data:`~guffin.render.notes_rendering.NOTES_GROUP_CLASS`) repeats the text of the chapter or
+    section heading it stands for, so it shares that heading's slug.  It is left out of the count:
+    the Notes section follows the text, so the original heading comes first, and a viewer gives
+    the first of several headings with one slug the bare slug.
+
     Args:
         doc: The document whose headings to map.
 
@@ -90,7 +97,7 @@ def _slug_targets(doc: pf.Doc) -> dict[str, str]:
     slug_counts: Final[dict[str, int]] = {}
 
     def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
-        if not isinstance(elem, pf.Header):
+        if not isinstance(elem, pf.Header) or NOTES_GROUP_CLASS in elem.classes:
             return
         slug: Final[str] = gfm_heading_slug(pf.stringify(elem))
         slug_counts[slug] = slug_counts.get(slug, 0) + 1
@@ -335,10 +342,28 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
+        # The Notes section is built before the links resolve: its entries copy each note link's
+        # lead-in.
+        entered_notes: Final[frozenset[Uid]] = insert_notes_section(
+            doc,
+            enriched_tree,
+            inline_map,
+            render_bundle.view,
+            asset_files,
+            profile.structural_policy.top_level_division,
+            OutputFormat.MARKDOWN,
+            heading_links=options.heading_links,
+        )
         resolve_vertex_links(
             doc,
             enriched_tree,
-            make_doc_resolver(doc, inline_map, options.daily_note_format, heading_links=options.heading_links),
+            make_doc_resolver(
+                doc,
+                inline_map,
+                options.daily_note_format,
+                heading_links=options.heading_links,
+                note_lead_in=note_lead_in_renderer(OutputFormat.MARKDOWN, entered_notes),
+            ),
         )
         _link_headings(doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
@@ -389,11 +414,25 @@ def render(
         )
         no_bundle_doc: Final[pf.Doc] = no_bundle_result[0]
         no_bundle_inline_map: Final[InlineMap] = no_bundle_result[1]
+        no_bundle_entered_notes: Final[frozenset[Uid]] = insert_notes_section(
+            no_bundle_doc,
+            content,
+            no_bundle_inline_map,
+            render_bundle.view,
+            {},
+            profile.structural_policy.top_level_division,
+            OutputFormat.MARKDOWN,
+            heading_links=options.heading_links,
+        )
         resolve_vertex_links(
             no_bundle_doc,
             content,
             make_doc_resolver(
-                no_bundle_doc, no_bundle_inline_map, options.daily_note_format, heading_links=options.heading_links
+                no_bundle_doc,
+                no_bundle_inline_map,
+                options.daily_note_format,
+                heading_links=options.heading_links,
+                note_lead_in=note_lead_in_renderer(OutputFormat.MARKDOWN, no_bundle_entered_notes),
             ),
         )
         _link_headings(no_bundle_doc)

@@ -210,6 +210,12 @@ def _effective_layout(uid: Uid, view_map: ViewMap, inherited_layout: ChildrenLay
 type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
 """Resolver: (parsed link, destination vertex, original display inlines) → replacement inlines."""
 
+type NoteLeadInRenderer = Callable[[Uid, list[pf.Inline]], list[pf.Inline]]
+"""Renders a note link in the running text: (note UID, lead-in inlines) → replacement inlines.
+
+The replacement is the lead-in, with whatever anchor or link a format places around it.
+"""
+
 
 def _extract_bg_color(inlines: list[pf.Inline]) -> tuple[str, list[pf.Inline]] | None:
     """Return ``(color, inner_inlines)`` when *inlines* is a single bg-color Span.
@@ -2341,6 +2347,7 @@ def make_resolver(
     heading_targets: frozenset[str] = frozenset(),
     *,
     italicize_heading_refs: bool = False,
+    note_lead_in: NoteLeadInRenderer | None = None,
 ) -> VertexLinkResolver:
     """Build a :data:`VertexLinkResolver` that renders each link as its destination's content.
 
@@ -2372,6 +2379,10 @@ def make_resolver(
     - :class:`~guffin.vertex.CalloutVertex`, :class:`~guffin.vertex.TableVertex` — the
       original display inlines (no inline-representable substitute).
 
+    A :attr:`~guffin.model.vertex_link.VertexLinkKind.NOTE` link, whatever its destination,
+    renders its own display text, the note's lead-in, which stays in the running text: through
+    *note_lead_in* when given, else as the bare display inlines.
+
     Args:
         inline_map: Mapping from text string to parsed panflute inline elements, used to
             look up a destination vertex's converted content.
@@ -2381,6 +2392,8 @@ def make_resolver(
         italicize_heading_refs: When ``True``, a heading reference that is not linked renders its text
             in italics (:class:`~panflute.Emph`), marking it as a cross-reference; ``False`` (default)
             leaves it bare.
+        note_lead_in: Renders a note link's lead-in in the running text; ``None`` (default) leaves
+            the bare lead-in.
 
     Returns:
         A resolver callable suitable for :func:`resolve_vertex_links`.
@@ -2390,7 +2403,7 @@ def make_resolver(
         if vertex_link.kind is VertexLinkKind.NOTE:
             # A note link's display is the note's lead-in, part of the running text; the note
             # itself is set apart, so only the lead-in renders here.
-            return display
+            return display if note_lead_in is None else note_lead_in(vertex_link.uid, display)
         match vertex:
             case PageVertex():
                 # A daily-note page reference renders its date in the chosen format; ROAM_LONG is the
@@ -2442,7 +2455,12 @@ def make_resolver(
 
 
 def make_doc_resolver(
-    doc: pf.Doc, inline_map: InlineMap, daily_note_format: DateFormat, *, heading_links: bool
+    doc: pf.Doc,
+    inline_map: InlineMap,
+    daily_note_format: DateFormat,
+    *,
+    heading_links: bool,
+    note_lead_in: NoteLeadInRenderer | None = None,
 ) -> VertexLinkResolver:
     """Build the :func:`make_resolver` resolver for *doc*, treating heading references per *heading_links*.
 
@@ -2455,12 +2473,19 @@ def make_doc_resolver(
         inline_map: Mapping from text string to parsed panflute inline elements (see :func:`make_resolver`).
         daily_note_format: How a reference to a daily-note page renders its date.
         heading_links: Whether a reference to a heading links to it.
+        note_lead_in: Renders a note link's lead-in in the running text (see :func:`make_resolver`).
 
     Returns:
         A resolver callable suitable for :func:`resolve_vertex_links`.
     """
     heading_targets: Final[frozenset[str]] = heading_anchors(doc) if heading_links else frozenset()
-    return make_resolver(inline_map, daily_note_format, heading_targets, italicize_heading_refs=not heading_links)
+    return make_resolver(
+        inline_map,
+        daily_note_format,
+        heading_targets,
+        italicize_heading_refs=not heading_links,
+        note_lead_in=note_lead_in,
+    )
 
 
 _MAX_LINK_RESOLUTION_PASSES: Final[int] = 10

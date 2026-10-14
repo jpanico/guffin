@@ -73,6 +73,7 @@ from guffin.render.epub_post_processing import (
     stamp_titlepage_provenance,
     stamp_titlepage_revision,
 )
+from guffin.render.notes_rendering import insert_notes_section, note_lead_in_renderer
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
     PDF_PLACEMENT_ATTRIBUTE,
@@ -398,10 +399,28 @@ def render(
         )
         doc: Final[pf.Doc] = pandoc_result[0]
         inline_map: Final[InlineMap] = pandoc_result[1]
+        # The Notes section is built before the links resolve: its entries copy each note link's
+        # lead-in, and the resolver needs to know which notes have an entry to link to.
+        entered_notes: Final[frozenset[Uid]] = insert_notes_section(
+            doc,
+            enriched_tree,
+            inline_map,
+            render_bundle.view,
+            asset_files,
+            profile.structural_policy.top_level_division,
+            OutputFormat.EPUB,
+            heading_links=options.heading_links,
+        )
         resolve_vertex_links(
             doc,
             enriched_tree,
-            make_doc_resolver(doc, inline_map, options.daily_note_format, heading_links=options.heading_links),
+            make_doc_resolver(
+                doc,
+                inline_map,
+                options.daily_note_format,
+                heading_links=options.heading_links,
+                note_lead_in=note_lead_in_renderer(OutputFormat.EPUB, entered_notes),
+            ),
         )
         # Appendix-placed PDFs are rasterised into the asset directory and reproduced at the
         # back; every other placement is a reference.  Either way the scaffold must not reach the

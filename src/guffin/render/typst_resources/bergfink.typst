@@ -246,13 +246,17 @@ $if(top-level-division)$
 // level-2 headings open on a new page as well.  When section numbering is enabled, headings are
 // numbered hierarchically from level 1 (1, 1.1, 1.1.1), matching the EPUB book output.  Emitted
 // only when the renderer passes top-level-division, so the default (section) layout is unchanged.
+// A heading kept out of the outline (an unlisted heading, such as a Notes section's group heading
+// for a chapter) is not a division of the book and opens no page.
 #let top-division = "$top-level-division$"
 #show heading.where(level: 1): it => {
-  pagebreak(weak: true)
+  if it.outlined {
+    pagebreak(weak: true)
+  }
   it
 }
 #show heading.where(level: 2): it => {
-  if top-division == "part" {
+  if top-division == "part" and it.outlined {
     pagebreak(weak: true)
   }
   it

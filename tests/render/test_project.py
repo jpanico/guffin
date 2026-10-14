@@ -82,6 +82,12 @@ class TestSectionHeadingLevel:
         assert TopLevelDivision.CHAPTER.section_heading_level == 2
         assert TopLevelDivision.PART.section_heading_level == 3
 
+    def test_chapter_level_by_division(self) -> None:
+        """No chapters at section division; chapters at level 1, or level 2 under parts."""
+        assert TopLevelDivision.SECTION.chapter_heading_level is None
+        assert TopLevelDivision.CHAPTER.chapter_heading_level == 1
+        assert TopLevelDivision.PART.chapter_heading_level == 2
+
     def test_by_profile(self) -> None:
         """An article's sections are top-level; a book's sit below its chapters, deeper with parts."""
         assert ArticleProfile().structural_policy.top_level_division.section_heading_level == 1

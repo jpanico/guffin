@@ -1,7 +1,9 @@
 # Notes: footnotes and endnotes
 
-**Status: designed, nothing implemented.** Every open question is decided except Q3, deferred
-with R3; Q7 has two reading-app tests open. This is the working design document for
+**Status: designed; implemented through rendering.** Every open question is decided except Q3,
+deferred with R3; Q7 has two reading-app tests open. Implemented: transcription, validation, and
+rendering in all three formats (see [Implementation](#implementation)); still to come: the
+`note_form` and `notes_only` options and the short-form marker (Q5, R8). This is the working design document for
 *notes* in Guffin: footnotes, endnotes, and invisible endnotes, authored in Roam and rendered in
 every output format. It records the current state, the requirements, the open design questions,
 and the decision log. Decisions are recorded in [Decisions](#decisions) as they are made; until a
@@ -219,6 +221,44 @@ sections there (heading links, as block references to headings already do).
 
 *Decided (see [Decisions](#decisions)).* Which conditions are errors and which warnings (R7),
 and whether a lead-in must be unique on its page or in its section.
+
+
+## Implementation
+
+Built in phases, each a commit.
+
+- **Transcription** (`c822db2`): `roam/markdown.FOOTNOTE_MARKER_RE` and `FOOTNOTES_HEADER`;
+  `NodeType.FOOTNOTES_BLOCK`; `transcribe/roam_md_to_pandoc_md.convert_footnote_markers` (before
+  `convert_block_link`); `VertexLinkKind.NOTE`; `VertexType.NOTES` / `NotesVertex`.
+- **Validation** (`0f6d531`): `model/notes.py` (note links in the render-visible document, and
+  `placed_note_citations`, every note link in reading order with the headings governing it);
+  rules 1, 2, 6, and 7 in `validate_semantics`; rule 3 as a warning in the fetch pipeline; rule 4
+  (`lead_ins_unique_within_sections`) in `export-roam-tree` after the profile resolves.
+- **Rendering**: `render/notes_rendering.py` builds the Notes section into the shared Pandoc
+  document (`insert_notes_section`) and renders each lead-in in the running text per format
+  (`note_lead_in_renderer`, passed to the link resolver as `make_doc_resolver(note_lead_in=…)`);
+  rule 5 runs in `export-roam-tree` beside rule 4. The PDF template opens a page at a chapter or
+  part heading only when the heading is in the outline, so an unlisted group heading opens none;
+  the EPUB stylesheet styles `a.guffin-note-ref` and `a.guffin-note-backlink`; the Markdown slug
+  check leaves the generated group headings out of its collision count.
+- **Options** (to come): `note_form`, `notes_only`, and the `note-form::` marker (Q5, R8).
+
+Departures from the decisions, and behavior found while building:
+
+- **Note order comes from the model.** Q6 has the render phase walk the `NOTE` links of the built
+  document. The Notes section is instead ordered by `placed_note_citations`, a reading-order walk of
+  the vertex tree that descends into an embed at its site, so it yields the same order across every
+  embedded page. The section has to be built *before* the links resolve anyway: each entry copies
+  its lead-in from the unresolved note link, and the resolver needs to know which notes have an
+  entry before it links a lead-in to one.
+- **A group heading in a numbered book lacks its chapter number.** Pandoc numbers headings when it
+  writes the output, after the group headings are built, so a group heading repeats the chapter's
+  text but not its number. Unnumbered books, and books whose chapter titles carry their own number,
+  are unaffected.
+- **In a parts book, the EPUB gives each chapter's notes a file of its own.** Pandoc splits an EPUB
+  at the chapter level, level 2 in a parts book, and a Notes heading promoted to part level puts its
+  chapter groups at level 2. Each file is back matter, the links between files resolve, and the
+  group headings stay out of the navigation, so each chapter's notes open on a fresh screen.
 
 
 ## Decisions

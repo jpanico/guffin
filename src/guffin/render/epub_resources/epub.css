@@ -519,3 +519,22 @@ img.pdf-page {
   max-width: 100%;
   max-height: 85vh;
 }
+
+/* Invisible endnotes (see docs/notes-design.md, Q7). A note has no mark in the running text; its
+ * lead-in, a phrase of the passage, links to the note's entry in the Notes section. The link is
+ * styled to hint rather than to read as a hyperlink: the text keeps its colour, with a thin dotted
+ * underline in a muted grey set a little below the baseline. Each entry's italic lead-in links
+ * back to the passage in the same quiet way. */
+a.guffin-note-ref,
+a.guffin-note-backlink {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: #9a9a9a;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+div.guffin-endnote p {
+  text-indent: 0;
+}

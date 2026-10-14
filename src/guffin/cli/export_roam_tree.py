@@ -85,7 +85,9 @@ from guffin.cli.logging_config import configure_logging
 from guffin.cli.params import CacheDirOption, GraphOption, PortOption, TargetArgument, TokenOption, VersionOption
 from guffin.common.provenance import Provenance, gather_provenance
 from guffin.common.validation import ValidationError
-from guffin.model.publishing_semantics import PdfRenderPlacement
+from guffin.model.chicago_structure import StructuralElement
+from guffin.model.notes import note_citations
+from guffin.model.publishing_semantics import PdfRenderPlacement, has_element_type
 from guffin.model.publishing_validation import lead_ins_unique_within_sections
 from guffin.model.render_bundle import RenderBundle
 from guffin.render.date_format import DateFormat
@@ -392,6 +394,24 @@ def main(
         logger.error("guffin semantics validation: %s", lead_in_error)
         logger.error("aborting export of %r: two notes in one section share a lead-in (see above)", target)
         raise typer.Exit(code=1)
+    # Notes appear only in an authored Notes section.  A book without one would lose its notes with
+    # no visible sign (a server export returns no warnings on success), so that is fatal; a smaller
+    # work, such as a single chapter exported as an article, legitimately has none.
+    if note_citations(render_bundle.content) and not has_element_type(
+        render_bundle.content, StructuralElement.ENDNOTES
+    ):
+        if project_type is ProjectType.BOOK:
+            logger.error(
+                "aborting export of %r: the book cites notes but has no Notes section "
+                "(a back-matter heading tagged element-type:: endnotes)",
+                target,
+            )
+            raise typer.Exit(code=1)
+        logger.warning(
+            "%r cites notes but has no Notes section (a heading tagged element-type:: endnotes); "
+            "the notes are left out",
+            target,
+        )
     options: Final[RenderOptions] = RenderOptions.for_format(
         output_format,
         output_dir=output_dir,
