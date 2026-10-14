@@ -151,6 +151,7 @@ from guffin.model.vertex import (
     EmbedVertex,
     HeadingVertex,
     ImageVertex,
+    NotesVertex,
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
@@ -1992,6 +1993,9 @@ def _vertex_to_blocks(
             return _embed_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
+        case NotesVertex():
+            # A notes container is set apart from the running text: nothing renders where it sits.
+            return []
 
 
 @validate_call(config=ConfigDict(arbitrary_types_allowed=True))
@@ -2383,6 +2387,10 @@ def make_resolver(
     """
 
     def _resolve(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
+        if vertex_link.kind is VertexLinkKind.NOTE:
+            # A note link's display is the note's lead-in, part of the running text; the note
+            # itself is set apart, so only the lead-in renders here.
+            return display
         match vertex:
             case PageVertex():
                 # A daily-note page reference renders its date in the chosen format; ROAM_LONG is the
@@ -2426,6 +2434,8 @@ def make_resolver(
             case TableVertex():
                 return display
             case BlockEmbedVertex() | PageEmbedVertex():
+                return display
+            case NotesVertex():
                 return display
 
     return _resolve

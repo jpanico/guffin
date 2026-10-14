@@ -187,8 +187,8 @@ class TestRoamNodeProps:
 class TestNodeType:
     """Tests for the NodeType enum."""
 
-    def test_exactly_fifteen_members(self) -> None:
-        """Test that NodeType has exactly fifteen members."""
+    def test_exactly_sixteen_members(self) -> None:
+        """Test that NodeType has exactly sixteen members."""
         assert set(NodeType) == {
             NodeType.PAGE,
             NodeType.TEXT_BLOCK,
@@ -204,6 +204,7 @@ class TestNodeType:
             NodeType.PDF_BLOCK,
             NodeType.ASSET_BLOCK,
             NodeType.ATTRIBUTE_BLOCK,
+            NodeType.FOOTNOTES_BLOCK,
             NodeType.VERSION_GROUP,
         }
 
@@ -440,6 +441,21 @@ class TestNodeTypeFunction:
     def test_table_marker_mixed_with_text_is_text_block(self) -> None:
         """Test that a table marker mixed with surrounding text is not a NATIVE_TABLE."""
         node = _make_text(string="see {{table}} here")
+        assert node_type(node) is NodeType.TEXT_BLOCK
+
+    def test_footnotes_header_returns_footnotes_block(self) -> None:
+        """Test that a block whose string is the Footnotes extension's header returns FOOTNOTES_BLOCK."""
+        node = _make_text(string="#footnotes")
+        assert node_type(node) is NodeType.FOOTNOTES_BLOCK
+
+    def test_footnotes_header_with_surrounding_whitespace_returns_footnotes_block(self) -> None:
+        """Test that surrounding whitespace around the notes header is tolerated."""
+        node = _make_text(string="  #footnotes ")
+        assert node_type(node) is NodeType.FOOTNOTES_BLOCK
+
+    def test_footnotes_tag_mixed_with_text_is_text_block(self) -> None:
+        """Test that the footnotes tag mixed with other text is an ordinary TEXT_BLOCK."""
+        node = _make_text(string="see #footnotes below")
         assert node_type(node) is NodeType.TEXT_BLOCK
 
     def test_open_todo_marker_returns_todo_block(self) -> None:

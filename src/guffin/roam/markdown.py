@@ -12,7 +12,8 @@ Public symbols:
   in either page-reference (``#[[…]]``) or bare-word (``#word``) form; :data:`ATTRIBUTE_ASSIGNMENT_RE`
   — compiled regex matching a line-anchored Roam attribute assignment ``attribute:: value, …``;
   :data:`BLOCK_REF_RE` — compiled regex matching a
-  Roam block reference ``((<uid>))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
+  Roam block reference ``((<uid>))``; :data:`FOOTNOTE_MARKER_RE` — compiled regex matching a
+  Footnotes extension marker ``[(<label>)](((<uid>)))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
   block embed ``{{embed: ((<uid>))}}`` (or ``{{[[embed]]: ((<uid>))}}``); :data:`PAGE_EMBED_RE` —
   compiled regex matching a Roam page embed ``{{embed: [[<page_name>]]}}`` (or
   ``{{[[embed]]: [[<page_name>]]}}``); :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
@@ -40,6 +41,8 @@ Public symbols:
   native table block; :data:`ROAM_NATIVE_TABLE_REF_MARKER` — the page-reference spelling of the marker;
   :data:`ROAM_NATIVE_TABLE_MARKERS` — every recognised spelling of the marker
   (``{{table}}`` and ``{{[[table]]}}``).
+- **Notes header**: :data:`FOOTNOTES_HEADER` — the block string of the Footnotes extension's
+  notes header, ``#footnotes``.
 """
 
 from typing import Final
@@ -367,6 +370,37 @@ Example match on ``((wdMgyBiP9))``:
 
 - ``match.group(0)`` — the full ``((wdMgyBiP9))`` string.
 - ``match.group("uid")`` — just ``wdMgyBiP9``.
+"""
+
+FOOTNOTE_MARKER_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"(?P<sup>#sup\^\^)?\[\((?P<label>[^()\[\]]+)\)\]\(\(\((?P<uid>{SYNTHETIC_UID_PATTERN})\)\)\)(?(sup)\^\^)"
+)
+"""Compiled regex matching a Footnotes extension marker ``[(<label>)](((<uid>)))``.
+
+The Roam Depot *Footnotes* extension marks a footnote's call site with an aliased block
+reference whose label is wrapped in parentheses: a number (``[(1)](((uid)))``) for a numbered
+note, any other text (``[(a 52-minute run)](((uid)))``) for a named note.  The parentheses are
+what distinguish a marker from an ordinary aliased block reference.  The label may not itself
+contain parentheses or square brackets.  With the extension's superscript setting on, the
+marker is wrapped as ``#sup^^[(<label>)](((<uid>)))^^``; the wrapper is matched only as a pair.
+
+Named groups:
+
+- ``label`` — the label between the parentheses.
+- ``uid`` — the referenced note block's synthetic UID.
+- ``sup`` — the ``#sup^^`` opener, present only for the superscript form.
+
+Example match on ``[(a 52-minute run)](((Tk7FpgzQa)))``:
+
+- ``match.group("label")`` — ``a 52-minute run``.
+- ``match.group("uid")`` — ``Tk7FpgzQa``.
+"""
+
+FOOTNOTES_HEADER: Final[str] = "#footnotes"
+"""The block string of the Footnotes extension's notes header (its default setting).
+
+The extension collects a page's notes as the children of a header block whose string is this
+text, placed as the page's last top-level block.
 """
 
 BLOCK_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(

@@ -18,6 +18,7 @@ from guffin.model.vertex import (
     CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
+    NotesVertex,
     PageVertex,
     QuoteBlockVertex,
     QuoteType,
@@ -502,6 +503,34 @@ class TestHeadingLinkRendering:
         assert "As *Second* explains." in result
         assert "<a id=" not in result
         assert "(#second)" not in result
+
+
+def _noted_bundle() -> RenderBundle:
+    """A page whose prose carries a note link, with the note under a notes container."""
+    note_url = vertex_link_url("note00001", VertexLinkKind.NOTE)
+    page = PageVertex(uid="page00001", title="Doc", children=["prose0001", "notes0001"])
+    prose = TextVertex(uid="prose0001", text=f"It ran for [a 52-minute run]({note_url}) and stopped.")
+    notes = NotesVertex(uid="notes0001", children=["note00001"])
+    note = TextVertex(uid="note00001", text="Williams and Kilburn, 1948.")
+    return RenderBundle(content=VertexTree(tree_vertices=[page, prose, notes, note]), view={})
+
+
+class TestNotesInRunningText:
+    """A note's lead-in stays plain running text, and the notes container renders nothing where it sits."""
+
+    def test_lead_in_is_plain_text_and_note_is_absent(self, tmp_path: Path) -> None:
+        """The lead-in renders as plain text with no link, and neither the note nor its container appears."""
+        render(
+            _noted_bundle(),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result = (tmp_path / "doc.md").read_text(encoding="utf-8")
+        assert "It ran for a 52-minute run and stopped." in result
+        assert "Williams and Kilburn" not in result
+        assert "x-guffin" not in result
 
 
 def _callout_bundle(callout_type: CalloutVertex.CalloutType, title: str) -> RenderBundle:

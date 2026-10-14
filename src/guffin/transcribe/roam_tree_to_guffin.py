@@ -41,6 +41,8 @@ Public symbols:
   block embed node.
 - :func:`to_page_embed_vertex` — build a :class:`~guffin.vertex.PageEmbedVertex` from a
   page embed node.
+- :func:`to_notes_vertex` — build a :class:`~guffin.vertex.NotesVertex` from a Footnotes
+  extension notes header node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node
   (via :func:`~guffin.roam.node_tree.to_table` + Markdown normalization), returning it together
   with the IDs of all consumed descendant nodes.
@@ -89,6 +91,7 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    NotesVertex,
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
@@ -120,6 +123,7 @@ from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     FIREBASE_STORAGE_URL_RE,
+    FOOTNOTES_HEADER,
     PAGE_EMBED_RE,
     TAG_RE,
     image_link_alt_text,
@@ -424,6 +428,8 @@ def vertex_type(node: RoamNode) -> VertexType:
             return VertexType.PAGE_EMBED
         case NodeType.ASSET_BLOCK:
             return VertexType.ASSET
+        case NodeType.FOOTNOTES_BLOCK:
+            return VertexType.NOTES
         case NodeType.ATTRIBUTE_BLOCK:
             # Attribute blocks are not transcribed as standalone vertices; they are folded into
             # their parent vertex's attribute_assignments field (see _resolve_attribute_assignments).
@@ -988,6 +994,37 @@ def to_page_embed_vertex(node: RoamNode, tree: NodeTree) -> PageEmbedVertex:
     )
 
 
+@validate_call
+def to_notes_vertex(node: RoamNode, tree: NodeTree) -> NotesVertex:
+    """Build a :class:`~guffin.vertex.NotesVertex` from a Footnotes extension notes header *node*.
+
+    The header's own text (:data:`~guffin.roam.markdown.FOOTNOTES_HEADER`) is translated away;
+    what remains is the container, whose children are the notes.
+
+    Args:
+        node: A notes header node whose trimmed ``string`` is exactly ``#footnotes``.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` the node belongs to;
+            its :attr:`~guffin.roam.node_tree.NodeTree.id_map` is used to resolve
+            child and ref stubs to UIDs.
+
+    Returns:
+        A :class:`~guffin.vertex.NotesVertex`.
+
+    Raises:
+        ValidationError: If *node* or *tree* is ``None`` or invalid.
+        ValueError: If ``node.string`` is not the notes header.
+    """
+    logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
+    if node.string is None or node.string.strip() != FOOTNOTES_HEADER:
+        raise ValueError(f"RoamNode uid={node.uid!r} is not a notes header: {node.string!r}")
+    return NotesVertex(
+        uid=node.uid,
+        children=_resolve_children(node, tree.id_map),
+        refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
+    )
+
+
 def _page_reference_link(page_name: str, tree: NodeTree) -> VertexLink | None:
     """Return a reference :class:`~guffin.model.vertex_link.VertexLink` to the page titled *page_name*.
 
@@ -1154,6 +1191,8 @@ def transcribe_standalone_node(node: RoamNode, tree: NodeTree, heading_offset: i
             return to_block_embed_vertex(node, tree)
         case VertexType.PAGE_EMBED:
             return to_page_embed_vertex(node, tree)
+        case VertexType.NOTES:
+            return to_notes_vertex(node, tree)
         case _ as unreachable:
             assert_never(unreachable)
 

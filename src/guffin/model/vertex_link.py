@@ -1,7 +1,7 @@
 """Custom ``x-guffin`` URL scheme for links between vertices.
 
 Inline content can point at a vertex using a URL in the ``x-guffin`` scheme.
-Two link kinds are distinguished by the URL path stem:
+Three link kinds are distinguished by the URL path stem:
 
 - **Reference** — ``x-guffin:vertex/<uid>``.  The anchor carries only the
   destination's UID; the rest of the destination is obtained by *following* the
@@ -10,11 +10,15 @@ Two link kinds are distinguished by the URL path stem:
 - **Embed** — ``x-guffin:vertex-embed/<uid>``.  The destination's contents are
   included/substituted at the anchor point, like a ``#include``.  These are the
   semantics of a source graph's block embed (transclusion).
+- **Note** — ``x-guffin:vertex-note/<uid>``.  The link's display text is the
+  *lead-in* of a note: a phrase of the running text that the destination vertex
+  annotates.  The destination is the note, set apart from the running text; the
+  display text stays in the running text.
 
 Public symbols:
 
 - :data:`GUFFIN_SCHEME` — the ``x-guffin`` URL scheme literal.
-- :class:`VertexLinkKind` — the two link kinds and the URL path stems encoding
+- :class:`VertexLinkKind` — the three link kinds and the URL path stems encoding
   them.
 - :class:`VertexLink` — a parsed ``x-guffin`` link: its kind and destination
   UID.
@@ -50,10 +54,14 @@ class VertexLinkKind(enum.StrEnum):
         EMBED: A pointer whose destination contents are substituted at the
             anchor point (``vertex-embed`` path stem); block-embed
             (transclusion) semantics.
+        NOTE: A pointer from a lead-in phrase of the running text to the note
+            annotating it (``vertex-note`` path stem); the display text is the
+            lead-in and stays in the running text, the destination is the note.
     """
 
     REFERENCE = "vertex"
     EMBED = "vertex-embed"
+    NOTE = "vertex-note"
 
     @classmethod
     def by_path_stem(cls, stem: str) -> VertexLinkKind | None:
@@ -78,7 +86,7 @@ class VertexLink(NamedTuple):
     """A parsed ``x-guffin`` vertex link.
 
     Attributes:
-        kind: Whether the link is a reference or an embed.
+        kind: Whether the link is a reference, an embed, or a note.
         uid: The destination vertex's UID.
     """
 
@@ -120,11 +128,12 @@ def vertex_link_url(uid: Uid, kind: VertexLinkKind) -> str:
 
     Args:
         uid: The destination vertex's UID.
-        kind: Whether to build a reference or an embed link.
+        kind: Whether to build a reference, an embed, or a note link.
 
     Returns:
-        The ``x-guffin`` URL — ``x-guffin:vertex/<uid>`` for a reference or
-        ``x-guffin:vertex-embed/<uid>`` for an embed.
+        The ``x-guffin`` URL — ``x-guffin:vertex/<uid>`` for a reference,
+        ``x-guffin:vertex-embed/<uid>`` for an embed, or ``x-guffin:vertex-note/<uid>``
+        for a note.
     """
     return f"{GUFFIN_SCHEME}:{kind.value}/{uid}"
 

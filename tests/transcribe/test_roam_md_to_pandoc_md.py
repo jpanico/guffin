@@ -11,6 +11,7 @@ from guffin.transcribe.roam_md_to_pandoc_md import (
     convert_color_box,
     convert_color_highlight,
     convert_color_underline,
+    convert_footnote_markers,
     convert_highlights,
     convert_italics,
     convert_page_link,
@@ -217,6 +218,47 @@ class TestConvertPageLink:
     def test_unknown_title_falls_back(self) -> None:
         """Test that a reference whose title is absent from the tree falls back to plain text."""
         assert convert_page_link("[[Other]]", _page_tree("My Page", "pageuid01")) == "Other"
+
+
+class TestConvertFootnoteMarkers:
+    """Tests for convert_footnote_markers — Footnotes extension markers to note links."""
+
+    def test_named_marker(self) -> None:
+        """Test that a named marker becomes a note link whose display is the label without parentheses."""
+        assert convert_footnote_markers("ran for [(a 52-minute run)](((Tk7FpgzQa))) and") == (
+            "ran for [a 52-minute run](x-guffin:vertex-note/Tk7FpgzQa) and"
+        )
+
+    def test_numbered_marker(self) -> None:
+        """Test that a numbered marker converts the same way, its number as the display."""
+        assert convert_footnote_markers("here[(1)](((Mc-JWCvWX)))") == "here[1](x-guffin:vertex-note/Mc-JWCvWX)"
+
+    def test_superscript_form(self) -> None:
+        """Test that the extension's #sup^^…^^ wrapper is consumed with the marker."""
+        assert convert_footnote_markers("x#sup^^[(1)](((Mc-JWCvWX)))^^y") == "x[1](x-guffin:vertex-note/Mc-JWCvWX)y"
+
+    def test_unpaired_highlight_delimiter_kept(self) -> None:
+        """Test that a highlight closing right after a plain marker keeps its ^^ delimiter."""
+        assert convert_footnote_markers("^^see [(1)](((Mc-JWCvWX)))^^") == (
+            "^^see [1](x-guffin:vertex-note/Mc-JWCvWX)^^"
+        )
+
+    def test_aliased_block_reference_without_parentheses_unchanged(self) -> None:
+        """Test that an ordinary aliased block reference is not a marker."""
+        assert convert_footnote_markers("[see this](((Mc-JWCvWX)))") == "[see this](((Mc-JWCvWX)))"
+
+    def test_multiple_markers(self) -> None:
+        """Test that every marker in a string is converted."""
+        assert convert_footnote_markers("[(a)](((aaaaaaaaa))) and [(b)](((bbbbbbbbb)))") == (
+            "[a](x-guffin:vertex-note/aaaaaaaaa) and [b](x-guffin:vertex-note/bbbbbbbbb)"
+        )
+
+    def test_to_pandoc_md_converts_marker_not_nested_link(self) -> None:
+        """Test that the full pipeline converts a marker before block references, leaving no nested link."""
+        tree: NodeTree = _block_tree("The note text.", "Tk7FpgzQa")
+        assert to_pandoc_md("ran for [(a 52-minute run)](((Tk7FpgzQa))) and", tree) == (
+            "ran for [a 52-minute run](x-guffin:vertex-note/Tk7FpgzQa) and"
+        )
 
 
 class TestConvertBlockLink:

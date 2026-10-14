@@ -38,6 +38,10 @@ class TestVertexLinkKind:
         """Test that EMBED encodes the 'vertex-embed' path stem."""
         assert VertexLinkKind.EMBED.value == "vertex-embed"
 
+    def test_note_value(self) -> None:
+        """Test that NOTE encodes the 'vertex-note' path stem."""
+        assert VertexLinkKind.NOTE.value == "vertex-note"
+
 
 class TestByPathStem:
     """Tests for VertexLinkKind.by_path_stem — path-stem-to-kind lookup."""
@@ -49,6 +53,10 @@ class TestByPathStem:
     def test_vertex_embed_stem(self) -> None:
         """Test that the 'vertex-embed' stem maps to EMBED."""
         assert VertexLinkKind.by_path_stem("vertex-embed") == VertexLinkKind.EMBED
+
+    def test_vertex_note_stem(self) -> None:
+        """Test that the 'vertex-note' stem maps to NOTE."""
+        assert VertexLinkKind.by_path_stem("vertex-note") == VertexLinkKind.NOTE
 
     def test_unknown_stem_is_none(self) -> None:
         """Test that an unrecognised stem yields None."""
@@ -73,6 +81,10 @@ class TestVertexLinkUrl:
     def test_embed(self) -> None:
         """Test that an embed link renders as x-guffin:vertex-embed/<uid>."""
         assert vertex_link_url(_UID, VertexLinkKind.EMBED) == "x-guffin:vertex-embed/abc123xyz"
+
+    def test_note(self) -> None:
+        """Test that a note link renders as x-guffin:vertex-note/<uid>."""
+        assert vertex_link_url(_UID, VertexLinkKind.NOTE) == "x-guffin:vertex-note/abc123xyz"
 
     def test_dash_underscore_uid(self) -> None:
         """Test that a UID containing a dash and underscore is rendered verbatim."""
@@ -99,6 +111,10 @@ class TestParseVertexLink:
     def test_embed(self) -> None:
         """Test that an embed URL parses to an EMBED VertexLink."""
         assert parse_vertex_link("x-guffin:vertex-embed/abc123xyz") == VertexLink(VertexLinkKind.EMBED, _UID)
+
+    def test_note(self) -> None:
+        """Test that a note URL parses to a NOTE VertexLink."""
+        assert parse_vertex_link("x-guffin:vertex-note/abc123xyz") == VertexLink(VertexLinkKind.NOTE, _UID)
 
     def test_dash_underscore_uid(self) -> None:
         """Test that a UID containing a dash and underscore parses correctly."""

@@ -111,6 +111,7 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    NotesVertex,
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
@@ -846,6 +847,8 @@ def _vertex_effective_title(vertex: Vertex, tree: VertexTree) -> str:
             return "_".join(vertex.table.rows[0])
         case BlockEmbedVertex() | PageEmbedVertex():
             return _vertex_effective_title(tree.uid_map[vertex.vertex_link.uid], tree)
+        case NotesVertex():
+            return "Notes"
 
 
 @validate_call

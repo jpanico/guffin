@@ -69,7 +69,7 @@ from guffin.model.vertex import (
     is_embed_vertex,
     is_renderable_asset_vertex,
 )
-from guffin.model.vertex_link import VertexLink, parse_standalone_vertex_link
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_standalone_vertex_link
 
 
 def _default_ref_vertices() -> list[Annotated[Vertex, Field(discriminator="vertex_type")]]:
@@ -252,16 +252,21 @@ def standalone_link_target_of_text(text: str, tree: VertexTree) -> Vertex | None
     displays nothing but its destination.  This resolves such a text to the destination,
     whatever container the text lives in (a vertex's body text, a table cell, …).
 
+    A :attr:`~guffin.model.vertex_link.VertexLinkKind.NOTE` link never qualifies: its display
+    text is a lead-in that stays in the running text, so the text does not display its
+    destination.
+
     Args:
         text: The text to inspect.
         tree: The :class:`VertexTree` providing the UID-to-vertex lookup.
 
     Returns:
         The destination :data:`~guffin.model.vertex.Vertex`, or ``None`` when *text* is not a
-        standalone vertex link or the destination is absent from :attr:`VertexTree.uid_map`.
+        standalone vertex link, the link is a note link, or the destination is absent from
+        :attr:`VertexTree.uid_map`.
     """
     link: Final[VertexLink | None] = parse_standalone_vertex_link(text)
-    if link is None:
+    if link is None or link.kind is VertexLinkKind.NOTE:
         return None
     return tree.uid_map.get(link.uid)
 

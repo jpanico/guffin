@@ -19,6 +19,7 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    NotesVertex,
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
@@ -52,6 +53,7 @@ from guffin.transcribe.roam_tree_to_guffin import (
     to_code_block_vertex,
     to_heading_vertex,
     to_image_vertex,
+    to_notes_vertex,
     to_page_embed_vertex,
     to_page_vertex,
     to_pdf_vertex,
@@ -1724,6 +1726,79 @@ class TestToPageEmbedVertex:
         )
         with pytest.raises(ValueError, match="unknown page"):
             to_page_embed_vertex(embed, _node_tree(root, embed))
+
+
+# ---------------------------------------------------------------------------
+# TestToNotesVertex
+# ---------------------------------------------------------------------------
+
+
+class TestToNotesVertex:
+    """to_notes_vertex builds a NotesVertex from the Footnotes extension's notes header."""
+
+    @staticmethod
+    def _page_tree() -> NodeTree:
+        """A page with one marked sentence and a #footnotes header holding the note."""
+        root = RoamNode(uid="rootpage1", id=1, title="Root", children=[IdObject(id=2), IdObject(id=3)])
+        sentence = RoamNode(
+            uid="sentence1",
+            id=2,
+            string="It ran for [(a 52-minute run)](((Tk7FpgzQa))) and stopped.",
+            page=IdObject(id=1),
+            parents=[IdObject(id=1)],
+            refs=[IdObject(id=4)],
+        )
+        header = RoamNode(
+            uid="notehead1",
+            id=3,
+            string="#footnotes",
+            page=IdObject(id=1),
+            parents=[IdObject(id=1)],
+            children=[IdObject(id=4)],
+        )
+        note = RoamNode(
+            uid="Tk7FpgzQa",
+            id=4,
+            string="Williams and Kilburn, Nature 162 (1948): 487.",
+            page=IdObject(id=1),
+            parents=[IdObject(id=1), IdObject(id=3)],
+        )
+        return _node_tree(root, sentence, header, note)
+
+    def test_header_classifies_as_notes(self) -> None:
+        """The #footnotes header block classifies as VertexType.NOTES."""
+        tree = self._page_tree()
+        assert vertex_type(tree.uid_map["notehead1"]) is VertexType.NOTES
+
+    def test_builds_a_notes_vertex_whose_children_are_the_notes(self) -> None:
+        """The header transcribes to a NotesVertex whose children are its note blocks."""
+        tree = self._page_tree()
+        vertex = to_notes_vertex(tree.uid_map["notehead1"], tree)
+        assert isinstance(vertex, NotesVertex)
+        assert vertex.children == ["Tk7FpgzQa"]
+
+    def test_dispatched_through_transcribe_standalone_node(self) -> None:
+        """transcribe_standalone_node routes a notes header to the notes builder."""
+        tree = self._page_tree()
+        assert isinstance(transcribe_standalone_node(tree.uid_map["notehead1"], tree), NotesVertex)
+
+    def test_marker_transcribes_to_a_note_link(self) -> None:
+        """The marked sentence carries a NOTE link whose display is the lead-in."""
+        tree = self._page_tree()
+        sentence = transcribe(tree).uid_map["sentence1"]
+        assert isinstance(sentence, TextVertex)
+        assert sentence.text == "It ran for [a 52-minute run](x-guffin:vertex-note/Tk7FpgzQa) and stopped."
+
+    def test_note_stays_an_ordinary_vertex(self) -> None:
+        """The note under the header stays an ordinary TextVertex."""
+        tree = self._page_tree()
+        assert isinstance(transcribe(tree).uid_map["Tk7FpgzQa"], TextVertex)
+
+    def test_non_header_raises(self) -> None:
+        """A block that is not the notes header is rejected."""
+        tree = self._page_tree()
+        with pytest.raises(ValueError, match="not a notes header"):
+            to_notes_vertex(tree.uid_map["sentence1"], tree)
 
 
 # ---------------------------------------------------------------------------

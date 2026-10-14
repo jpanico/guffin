@@ -41,7 +41,9 @@ Public symbols:
 - :class:`TableVertex` — a table: a cell grid plus its styling overlay.
 - :class:`BlockEmbedVertex` — a transclusion of another block at this position.
 - :class:`PageEmbedVertex` — a transclusion of a whole page at this position.
-- :data:`Vertex` — union of all thirteen concrete vertex types.
+- :class:`NotesVertex` — a notes container: a set of notes (its children), set apart from
+  the running text.
+- :data:`Vertex` — union of all fourteen concrete vertex types.
 - :data:`RenderableAssetVertex` — union of the renderable asset vertex types, those
   whose content a renderer can reproduce in the output
   (:class:`ImageVertex` | :class:`PdfVertex`).
@@ -105,6 +107,8 @@ class VertexType(StrEnum):
             subtree.
         BLOCK_EMBED: A transclusion of another block at this position.
         PAGE_EMBED: A transclusion of a whole page at this position.
+        NOTES: A notes container — a set of notes, each one of the vertex's children,
+            set apart from the running text.
     """
 
     PAGE = "guffin/page"
@@ -120,6 +124,7 @@ class VertexType(StrEnum):
     TABLE = "guffin/table"
     BLOCK_EMBED = "guffin/block-embed"
     PAGE_EMBED = "guffin/page-embed"
+    NOTES = "guffin/notes"
 
     @property
     def supports_alternatives(self) -> bool:
@@ -150,13 +155,13 @@ Resolved from the source's raw reference stubs to stable UID strings.
 
 
 class _BaseVertex[VT: VertexType](BaseModel):
-    """Shared fields inherited by all thirteen concrete vertex types.
+    """Shared fields inherited by all fourteen concrete vertex types.
 
     Not instantiated directly — use :class:`PageVertex`, :class:`HeadingVertex`,
     :class:`TextVertex`, :class:`TodoVertex`, :class:`ImageVertex`, :class:`PdfVertex`,
     :class:`AssetVertex`, :class:`CalloutVertex`, :class:`CodeBlockVertex`,
-    :class:`QuoteBlockVertex`, :class:`TableVertex`, :class:`BlockEmbedVertex`, or
-    :class:`PageEmbedVertex`.
+    :class:`QuoteBlockVertex`, :class:`TableVertex`, :class:`BlockEmbedVertex`,
+    :class:`PageEmbedVertex`, or :class:`NotesVertex`.
 
     Type Parameters:
         VT: The :class:`VertexType` literal for the concrete subtype (e.g.
@@ -666,6 +671,27 @@ class PageEmbedVertex(_BaseEmbedVertex[Literal[VertexType.PAGE_EMBED]]):
     )
 
 
+class NotesVertex(_BaseVertex[Literal[VertexType.NOTES]]):
+    """A notes container — a set of notes, set apart from the running text.
+
+    Each child is one note: an ordinary vertex whose content is the note's text.  A note is
+    tied to the passage it annotates by a :attr:`~guffin.model.vertex_link.VertexLinkKind.NOTE`
+    link in the running text, whose display text is the note's lead-in and whose destination
+    is the note.  The container carries no content of its own and is not part of the running
+    text at its position.
+
+    Attributes:
+        vertex_type: Always :attr:`~VertexType.NOTES`.
+            Serialized as ``'vertex-type'``.
+    """
+
+    vertex_type: Literal[VertexType.NOTES] = Field(
+        default=VertexType.NOTES,
+        serialization_alias="vertex-type",
+        description="Always VertexType.NOTES (serialized as 'vertex-type').",
+    )
+
+
 type Vertex = (
     PageVertex
     | HeadingVertex
@@ -680,8 +706,9 @@ type Vertex = (
     | TableVertex
     | BlockEmbedVertex
     | PageEmbedVertex
+    | NotesVertex
 )
-"""Union of all thirteen concrete, normalized vertex types.
+"""Union of all fourteen concrete, normalized vertex types.
 
 Use :data:`vertex_adapter` to validate a raw dict into the appropriate concrete
 subtype.  Use :class:`~guffin.model.vertex_tree.VertexTree` to hold a validated collection of vertices.
@@ -739,8 +766,8 @@ vertex_adapter: TypeAdapter[Vertex] = TypeAdapter(Annotated[Vertex, Field(discri
 Uses ``vertex_type`` as the discriminator field to select among :class:`PageVertex`,
 :class:`HeadingVertex`, :class:`TextVertex`, :class:`TodoVertex`, :class:`ImageVertex`,
 :class:`PdfVertex`, :class:`AssetVertex`, :class:`CalloutVertex`, :class:`CodeBlockVertex`,
-:class:`QuoteBlockVertex`, :class:`TableVertex`, :class:`BlockEmbedVertex`, and
-:class:`PageEmbedVertex`.
+:class:`QuoteBlockVertex`, :class:`TableVertex`, :class:`BlockEmbedVertex`,
+:class:`PageEmbedVertex`, and :class:`NotesVertex`.
 
 Example::
 

@@ -238,7 +238,7 @@ def build_node_panel(
             title_text = "{{pdf: <firebase_storage_url>}}"
         case NodeType.ASSET_BLOCK:
             title_text = "<firebase_storage_url>"
-        case NodeType.ATTRIBUTE_BLOCK:
+        case NodeType.ATTRIBUTE_BLOCK | NodeType.FOOTNOTES_BLOCK:
             assert node.string is not None
             title_text = _trunc(node.string, truncate=truncate)
         case NodeType.VERSION_GROUP:
@@ -676,6 +676,11 @@ def _vertex_panel_title(vertex: Vertex, *, truncate: bool = True) -> str:
             title_content = (
                 f"[bold orange1]{markup_escape('PAGE EMBED:')}[/bold orange1]"
                 f" [bold #00aa00]{markup_escape(vertex.vertex_link.uid)}[/bold #00aa00]"
+            )
+        case VertexType.NOTES:
+            title_content = (
+                f"[bold orange1]{markup_escape('NOTES')}[/bold orange1]"
+                f" [bold #00aa00]{markup_escape(f'({len(vertex.children or ())})')}[/bold #00aa00]"
             )
         case _ as unreachable:
             assert_never(unreachable)

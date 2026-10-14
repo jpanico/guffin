@@ -39,6 +39,9 @@ Public symbols:
 - :func:`convert_page_link` — convert Roam page references ``[[Page Name]]`` to
   Pandoc Markdown vertex links ``[Page Name](x-guffin:vertex/<uid>)``, falling
   back to delimiter-stripped text when the page is not resolvable.
+- :func:`convert_footnote_markers` — convert Footnotes extension markers
+  ``[(<label>)](((uid)))`` to Pandoc Markdown note links
+  ``[<label>](x-guffin:vertex-note/<uid>)``.
 - :func:`convert_block_link` — convert Roam block references ``((uid))`` to
   Pandoc Markdown vertex links ``[display](x-guffin:vertex/<uid>)``, falling
   back to the verbatim ``((uid))`` when the block is not resolvable.
@@ -59,6 +62,7 @@ from guffin.roam.markdown import (
     COLOR_BOX_RE,
     COLOR_HIGHLIGHT_RE,
     COLOR_UNDERLINE_RE,
+    FOOTNOTE_MARKER_RE,
     HIGHLIGHT_RE,
     ITALIC_RE,
     PAGE_LINK_ALIAS_RE,
@@ -110,6 +114,7 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
     result = convert_code_blocks(result)
     result = convert_page_link_aliases(result)
     result = convert_page_link(result, tree)
+    result = convert_footnote_markers(result)
     result = convert_block_link(result, tree)
     result = convert_italics(result)
     result = convert_highlights(result)
@@ -428,6 +433,33 @@ def convert_page_link(roam_string: str, tree: NodeTree) -> str:
         return f"[{display}]({vertex_link_url(tree.page_name_map[page_name].uid, VertexLinkKind.REFERENCE)})"
 
     return PAGE_REF_RE.sub(_replace, roam_string)
+
+
+@validate_call
+def convert_footnote_markers(roam_string: str) -> str:
+    """Convert Footnotes extension markers to Pandoc Markdown note links.
+
+    Each marker ``[(<label>)](((uid)))`` (as matched by
+    :data:`~guffin.roam.markdown.FOOTNOTE_MARKER_RE`, including its ``#sup^^…^^`` superscript
+    form) becomes an inline link whose display is the label, without its parentheses, and whose
+    destination is an ``x-guffin`` note URL (see :func:`~guffin.link.vertex_link_url`):
+    ``[<label>](x-guffin:vertex-note/<uid>)``.  The label is the note's lead-in, part of the
+    running text.
+
+    Must be applied before :func:`convert_block_link`, which would otherwise rewrite the
+    marker's inner ``((uid))`` into a nested link.
+
+    Args:
+        roam_string: A Roam block string, possibly containing Footnotes extension markers.
+
+    Returns:
+        The string with every marker replaced by a note link.
+    """
+
+    def _replace(match: regex.Match[str]) -> str:
+        return f"[{match.group('label')}]({vertex_link_url(match.group('uid'), VertexLinkKind.NOTE)})"
+
+    return FOOTNOTE_MARKER_RE.sub(_replace, roam_string)
 
 
 @validate_call

@@ -47,6 +47,7 @@ from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
     FIREBASE_STORAGE_URL_RE,
+    FOOTNOTES_HEADER,
     IMAGE_LINK_RE,
     PAGE_EMBED_RE,
     PDF_EMBED_RE,
@@ -117,6 +118,9 @@ class NodeType(enum.StrEnum):
     - **ATTRIBUTE_BLOCK**: ``string``, with surrounding whitespace trimmed, is wholly a Roam
       attribute assignment ``<attribute>:: <value>[, <value>]…`` (matched in full by
       :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`).
+    - **FOOTNOTES_BLOCK**: ``string``, with surrounding whitespace trimmed, is exactly the
+      Footnotes extension's notes header :data:`~guffin.roam.markdown.FOOTNOTES_HEADER`
+      (``#footnotes``); its child blocks are the page's notes.
     - **VERSION_GROUP**: ``blocks`` is set (``title`` and ``string`` are ``None``) — the entity
       Roam's Version Control feature creates to group the alternative versions of one block.
       It has no content of its own: a uid, and a ``:vc/blocks`` ref to each version block.  The
@@ -138,6 +142,7 @@ class NodeType(enum.StrEnum):
     PDF_BLOCK = "roam/pdf-block"
     ASSET_BLOCK = "roam/asset-block"
     ATTRIBUTE_BLOCK = "roam/attribute-block"
+    FOOTNOTES_BLOCK = "roam/footnotes-block"
     VERSION_GROUP = "roam/version-group"
 
 
@@ -596,6 +601,8 @@ def node_type(node: RoamNode) -> NodeType:
     URL (as matched in full by :data:`~guffin.roam.markdown.FIREBASE_STORAGE_URL_RE`),
     :attr:`NodeType.ATTRIBUTE_BLOCK` when the trimmed ``string`` is wholly a Roam attribute
     assignment (as matched in full by :data:`~guffin.roam.markdown.ATTRIBUTE_ASSIGNMENT_RE`),
+    :attr:`NodeType.FOOTNOTES_BLOCK` when the trimmed ``string`` is exactly the Footnotes
+    extension's notes header :data:`~guffin.roam.markdown.FOOTNOTES_HEADER`,
     and :attr:`NodeType.TEXT_BLOCK` otherwise.
 
     Args:
@@ -617,6 +624,7 @@ def node_type(node: RoamNode) -> NodeType:
         :attr:`NodeType.PDF_BLOCK` if the trimmed ``string`` is wholly a Roam PDF component;
         :attr:`NodeType.ASSET_BLOCK` if the trimmed ``string`` is wholly a bare Firebase Storage URL;
         :attr:`NodeType.ATTRIBUTE_BLOCK` if the trimmed ``string`` is wholly a Roam attribute assignment;
+        :attr:`NodeType.FOOTNOTES_BLOCK` if the trimmed ``string`` is exactly the notes header;
         :attr:`NodeType.TEXT_BLOCK` otherwise.
     """
     if node.title is not None:
@@ -651,4 +659,6 @@ def node_type(node: RoamNode) -> NodeType:
         return NodeType.ASSET_BLOCK
     if ATTRIBUTE_ASSIGNMENT_RE.fullmatch(string.strip()):
         return NodeType.ATTRIBUTE_BLOCK
+    if string.strip() == FOOTNOTES_HEADER:
+        return NodeType.FOOTNOTES_BLOCK
     return NodeType.TEXT_BLOCK
