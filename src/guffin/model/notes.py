@@ -17,12 +17,15 @@ Public symbols:
   :func:`placed_note_citations` — every note link in reading order, with its governing headings;
   :func:`notes_containers` — every :class:`~guffin.model.vertex.NotesVertex` in a tree;
   :func:`contained_note_uids` — the UIDs of every note held by a notes container;
-  :func:`orphan_note_uids` — the notes no note link cites.
+  :func:`orphan_note_uids` — the notes no note link cites; :func:`is_numbered_lead_in` —
+  whether a lead-in is only a number (an unrenamed numbered marker's label);
+  :func:`strip_note_links` — reduce every note link in a tree to plain text, for notes left out.
 """
 
 from collections.abc import Sequence
 from typing import Final, NamedTuple
 
+import regex
 from pydantic import validate_call
 
 from guffin.model.primitives import Uid
@@ -39,8 +42,8 @@ from guffin.model.vertex import (
     Vertex,
     is_embed_vertex,
 )
-from guffin.model.vertex_link import VertexLinkKind, vertex_links_in_text
-from guffin.model.vertex_tree import VertexTree, root_vertex, transcluded_vertices
+from guffin.model.vertex_link import VertexLinkKind, vertex_link_spans, vertex_links_in_text
+from guffin.model.vertex_tree import VertexTree, map_vertices, root_vertex, transcluded_vertices
 
 
 class NoteCitation(NamedTuple):
@@ -97,6 +100,26 @@ def note_links_in_text(text: str) -> list[tuple[str, Uid]]:
         One pair per note link; empty when *text* has none.
     """
     return [(display, link.uid) for display, link in vertex_links_in_text(text) if link.kind is VertexLinkKind.NOTE]
+
+
+_NUMBERED_LEAD_IN_RE: Final[regex.Pattern[str]] = regex.compile(r"\d+")
+"""A lead-in that is only digits: a note number, not a phrase of the passage."""
+
+
+@validate_call
+def is_numbered_lead_in(lead_in: str) -> bool:
+    """Whether *lead_in* is only a number, ignoring surrounding whitespace.
+
+    The Footnotes extension labels a new note with its number (``[(1)](((uid)))``), and until the
+    author renames it the label is the note's number rather than a phrase of the passage.
+
+    Args:
+        lead_in: A note link's display text.
+
+    Returns:
+        ``True`` when *lead_in* is one or more digits and nothing else.
+    """
+    return _NUMBERED_LEAD_IN_RE.fullmatch(lead_in.strip()) is not None
 
 
 @validate_call
@@ -237,3 +260,103 @@ def orphan_note_uids(tree: VertexTree, citations: Sequence[NoteCitation]) -> lis
     """
     cited: Final[frozenset[Uid]] = frozenset(citation.note_uid for citation in citations)
     return [uid for container in notes_containers(tree) for uid in container.children or () if uid not in cited]
+
+
+def _without_note_links(text: str) -> str:
+    """Return *text* with each note link reduced to its lead-in, and a numbered one removed.
+
+    A numbered lead-in (see :func:`is_numbered_lead_in`) or an empty one takes the spaces before it
+    along, unless a letter or digit follows the link directly, so no gap is left before the next
+    word or the punctuation.
+    """
+    pieces: Final[list[str]] = []
+    position: int = 0
+    for start, end, display, link in vertex_link_spans(text):
+        if link.kind is not VertexLinkKind.NOTE:
+            continue
+        before: str = text[position:start]
+        if not display.strip() or is_numbered_lead_in(display):
+            if not text[end : end + 1].isalnum():
+                before = before.rstrip(" \t")
+            pieces.append(before)
+        else:
+            pieces.extend((before, display))
+        position = end
+    pieces.append(text[position:])
+    return "".join(pieces)
+
+
+def _inline_texts(vertex: Vertex) -> tuple[str, ...]:
+    """Return every inline text *vertex* carries: :func:`vertex_texts` plus any alternative wordings."""
+    alternatives: Final[tuple[str, ...]] = (
+        tuple(alternative.text for alternative in vertex.alternatives or ()) if isinstance(vertex, TextVertex) else ()
+    )
+    return (*vertex_texts(vertex), *alternatives)
+
+
+def _with_note_links_stripped(vertex: Vertex) -> Vertex:
+    """Return *vertex* with the note links in each of its inline texts reduced (see :func:`_without_note_links`)."""
+    match vertex:
+        case TextVertex():
+            return vertex.model_copy(
+                update={
+                    "text": _without_note_links(vertex.text),
+                    "alternatives": (
+                        None
+                        if vertex.alternatives is None
+                        else tuple(
+                            alternative.model_copy(update={"text": _without_note_links(alternative.text)})
+                            for alternative in vertex.alternatives
+                        )
+                    ),
+                }
+            )
+        case HeadingVertex() | TodoVertex():
+            return vertex.model_copy(update={"text": _without_note_links(vertex.text)})
+        case PageVertex():
+            return vertex.model_copy(update={"title": _without_note_links(vertex.title)})
+        case CalloutVertex():
+            return vertex.model_copy(
+                update={"title": _without_note_links(vertex.title), "body": _without_note_links(vertex.body)}
+            )
+        case QuoteBlockVertex():
+            return vertex.model_copy(
+                update={
+                    "quote": _without_note_links(vertex.quote),
+                    "attribution": None if vertex.attribution is None else _without_note_links(vertex.attribution),
+                }
+            )
+        case TableVertex():
+            rows: Final[tuple[tuple[str, ...], ...]] = tuple(
+                tuple(_without_note_links(cell) for cell in row) for row in vertex.table.rows
+            )
+            return vertex.model_copy(update={"table": vertex.table.model_copy(update={"rows": rows})})
+        case ImageVertex():
+            return vertex.model_copy(
+                update={"alt_text": None if vertex.alt_text is None else _without_note_links(vertex.alt_text)}
+            )
+        case _:
+            return vertex
+
+
+@validate_call
+def strip_note_links(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`~guffin.model.vertex_tree.VertexTree` whose note links are reduced to plain text.
+
+    For a tree whose notes are left out.  Each note link in a vertex's inline texts (those
+    :func:`vertex_texts` names, and a text vertex's alternative wordings) becomes its lead-in as
+    plain text, so the passage reads as if it had never cited a note.  A lead-in that is only a
+    number (see :func:`is_numbered_lead_in`) names no phrase of the passage, so it is removed,
+    together with the spaces before it unless a letter or digit follows directly: ``a word (1)
+    here`` and ``a word(1) here`` both become ``a word here``.  Other vertex links are untouched.
+    The original *tree* is not modified; it passes through unchanged when it has no note links.
+
+    Args:
+        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
+
+    Returns:
+        A new tree without note links, or *tree* itself when it has none.
+    """
+    if not any(note_links_in_text(text) for vertex in tree.uid_map.values() for text in _inline_texts(vertex)):
+        return tree
+    return map_vertices(tree, _with_note_links_stripped)

@@ -2,7 +2,8 @@
 
 import logging
 import textwrap
-from unittest.mock import patch
+from typing import Final
+from unittest.mock import MagicMock, patch
 
 import pytest
 from conftest import article1_node_tree, asset_storage
@@ -289,6 +290,40 @@ class TestFetchRoamTreesStrictSemantics:
             result = self._fetch(strict=False)
         assert result is not None
         assert "synthetic violation" in caplog.text
+
+
+class TestFetchRoamTreesNoteChecks:
+    """fetch_roam_trees() runs the note checks unless told the notes will not be rendered."""
+
+    @staticmethod
+    def _fetch(**kwargs: bool) -> tuple[MagicMock, MagicMock]:
+        """Run fetch_roam_trees over the article1 fixture; return the validate_semantics and orphan mocks."""
+        fetch_spec = NodeFetchSpec(anchor=NodeFetchAnchor(qualifier="[[Test Article]] 1"), include_refs=True)
+        node_tree = article1_node_tree()
+        all_nodes = list(node_tree.tree_network) + list(node_tree.refs_by_id.values())
+        mock_result = NodeFetchResult.from_network(all_nodes, fetch_spec, raw_result=[[{}]])
+        endpoint = ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="tok")
+        validate: Final[MagicMock] = MagicMock(return_value=ValidationResult(errors=()))
+        orphans: Final[MagicMock] = MagicMock(return_value=[])
+        with (
+            patch("guffin.cli.common.FetchRoamNodes.fetch_roam_nodes", return_value=mock_result),
+            patch("guffin.cli.common.validate_semantics", validate),
+            patch("guffin.cli.common.orphan_note_uids", orphans),
+        ):
+            fetch_roam_trees(fetch_spec, True, endpoint, strict=True, **kwargs)
+        return validate, orphans
+
+    def test_note_checks_run_by_default(self) -> None:
+        """By default the note validators run and uncited notes are looked for."""
+        validate, orphans = self._fetch()
+        assert validate.call_args.kwargs["check_notes"] is True
+        orphans.assert_called_once()
+
+    def test_note_checks_skipped_when_asked(self) -> None:
+        """With check_notes=False, validation leaves out the note validators and no orphan is looked for."""
+        validate, orphans = self._fetch(check_notes=False)
+        assert validate.call_args.kwargs["check_notes"] is False
+        orphans.assert_not_called()
 
 
 def _drift_finding() -> CodeSourceFinding:

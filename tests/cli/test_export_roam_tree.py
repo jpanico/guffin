@@ -956,3 +956,46 @@ class TestExportNoteChecks:
         result, render = self._export(_noted_bundle(with_notes_heading=True, numbered=True), "book", tmp_path)
         assert result.exit_code == 1
         render.assert_not_called()
+
+    def test_suppressed_notes_skip_the_book_checks(self, tmp_path: pathlib.Path) -> None:
+        """With the notes suppressed, a book with numbered labels and no Notes section exports (Q10)."""
+        result, render = self._export(
+            _noted_bundle(with_notes_heading=False, numbered=True), "book", tmp_path, "--suppress-notes"
+        )
+        assert result.exit_code == 0, result.output
+        render.assert_called_once()
+        assert render.call_args.args[5].suppress_notes
+
+    def test_notes_are_rendered_by_default(self, tmp_path: pathlib.Path) -> None:
+        """Without the option, the notes are not suppressed."""
+        result, render = self._export(_noted_bundle(with_notes_heading=True), "book", tmp_path)
+        assert result.exit_code == 0, result.output
+        assert not render.call_args.args[5].suppress_notes
+
+    def test_suppress_notes_with_notes_only_aborts(self, tmp_path: pathlib.Path) -> None:
+        """A notes-only export that suppresses its notes would have nothing to show, so it aborts."""
+        result, render = self._export(
+            _noted_bundle(with_notes_heading=True), "book", tmp_path, "--notes-only", "--suppress-notes"
+        )
+        assert result.exit_code == 1
+        render.assert_not_called()
+
+    def test_suppressed_notes_skip_the_fetch_note_checks(self, tmp_path: pathlib.Path) -> None:
+        """The fetch pipeline is asked to skip its note checks when the notes are suppressed."""
+        fetch: Final[MagicMock] = MagicMock(return_value=_noted_bundle(with_notes_heading=True))
+        with patch("guffin.cli.export_roam_tree.fetch_render_bundle", fetch):
+            with patch("guffin.cli.export_roam_tree._render", MagicMock()):
+                saved_handlers = logging.root.handlers[:]
+                logging.root.handlers.clear()
+                try:
+                    result: Result = CliRunner().invoke(
+                        app,
+                        [
+                            *("Noted", "--port", "3333", "--graph", "SCFH", "--token", "tok"),
+                            *("--output-dir", str(tmp_path), "--no-colophon", "--suppress-notes"),
+                        ],
+                    )
+                finally:
+                    logging.root.handlers = saved_handlers
+        assert result.exit_code == 0, result.output
+        assert fetch.call_args.kwargs["check_notes"] is False

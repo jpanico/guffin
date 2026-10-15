@@ -55,11 +55,10 @@ depend on it.
 from collections.abc import Callable
 from typing import Final
 
-import regex
 from pydantic import validate_call
 
 from guffin.common.programming_language import CodeLanguageId
-from guffin.common.validation import ValidationError, ValidationResult, validate_all
+from guffin.common.validation import ValidationError, ValidationResult, Validator, validate_all
 from guffin.common.w3cdtf_date import W3cdtfDate
 from guffin.model.attribute import Attribute, AttributeDomain
 from guffin.model.attribute_anchor import AttributeAnchor, TreePosition
@@ -72,7 +71,7 @@ from guffin.model.element_number import (
     leads_with_element_number_shape,
     parse_element_number,
 )
-from guffin.model.notes import contained_note_uids, note_citations, placed_note_citations
+from guffin.model.notes import contained_note_uids, is_numbered_lead_in, note_citations, placed_note_citations
 from guffin.model.primitives import Uid
 from guffin.model.publishing_semantics import (
     PageBreak,
@@ -809,10 +808,6 @@ def all_element_numbers_nested(tree: VertexTree) -> ValidationError | None:
     )
 
 
-_NUMERIC_LEAD_IN_RE: Final[regex.Pattern[str]] = regex.compile(r"\d+")
-"""A lead-in that is only digits — a note number, not a phrase of the passage."""
-
-
 @validate_call
 def all_note_lead_ins_present(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every note link to carry a lead-in.
@@ -833,7 +828,7 @@ def all_note_lead_ins_present(tree: VertexTree) -> ValidationError | None:
         f"note link to uid={citation.note_uid!r} in vertex uid={citation.citing_uid!r} has "
         f"{'no lead-in' if not citation.lead_in.strip() else f'only a number ({citation.lead_in.strip()!r})'}"
         for citation in note_citations(tree)
-        if not citation.lead_in.strip() or _NUMERIC_LEAD_IN_RE.fullmatch(citation.lead_in.strip())
+        if not citation.lead_in.strip() or is_numbered_lead_in(citation.lead_in)
     ]
     if not violations:
         return None
@@ -975,7 +970,7 @@ def lead_ins_unique_within_sections(tree: VertexTree, section_level: int) -> Val
 
 
 @validate_call
-def validate_semantics(tree: VertexTree) -> ValidationResult:
+def validate_semantics(tree: VertexTree, *, check_notes: bool = True) -> ValidationResult:
     """Return a :class:`~guffin.common.validation.ValidationResult` for the vocabulary invariants on *tree*.
 
     Runs every vocabulary validator — :func:`all_attributes_anchored`,
@@ -994,16 +989,23 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
     Every attribute validator covers both the tree vertices and the referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`); the numbering and note validators
     cover the render-visible vertices (embed-transcluded content included).  All validators run regardless of
-    prior failures; the result accumulates every error found.
+    prior failures; the result accumulates every error found.  Without *check_notes*, the note
+    validators are left out, for a tree whose notes will not be rendered: they guard rendered notes.
+    :func:`all_note_form_values_legal` still runs, since a malformed ``note-form`` value is a
+    vocabulary error, not a note.
 
     Args:
         tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+        check_notes: Whether to run the note validators (default ``True``).
 
     Returns:
         A :class:`~guffin.common.validation.ValidationResult` that is valid when *tree* satisfies
         every vocabulary invariant, or contains one
         :class:`~guffin.common.validation.ValidationError` per failed validator otherwise.
     """
+    note_validators: Final[list[Validator[VertexTree]]] = (
+        [all_note_targets_present, all_notes_cited_once, all_note_targets_in_notes_containers] if check_notes else []
+    )
     return validate_all(
         tree,
         [
@@ -1026,8 +1028,6 @@ def validate_semantics(tree: VertexTree) -> ValidationResult:
             all_element_numbers_unique,
             all_element_numbers_ordered,
             all_element_numbers_nested,
-            all_note_targets_present,
-            all_notes_cited_once,
-            all_note_targets_in_notes_containers,
+            *note_validators,
         ],
     )

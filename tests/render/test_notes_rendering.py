@@ -1,5 +1,6 @@
 """Tests for guffin.render.notes_rendering, and the notes in each rendered format."""
 
+import logging
 import zipfile
 from pathlib import Path
 from typing import Final
@@ -576,3 +577,111 @@ class TestColophonComesLast:
         assert sum(chapter.count(_COLOPHON_LINE) for chapter in chapters) == 1
         assert chapters[-1].endswith(f"<hr />\n{_COLOPHON_LINE}\n</body>\n</html>\n")
         assert chapters[-1].rindex("</aside>") < chapters[-1].index(_COLOPHON_LINE)
+
+
+def _numbered_article() -> VertexTree:
+    """A page citing two notes by the Footnotes extension's numbers: one after a space, one right after a word."""
+    page: Final[PageVertex] = PageVertex(uid="page00001", title="Numbered", children=["text00001", "notes0001"])
+    text: Final[TextVertex] = TextVertex(
+        uid="text00001",
+        text=f"A word {_note_link('1', 'note00001')} here, a word{_note_link('2', 'note00002')} there.",
+    )
+    return VertexTree(
+        tree_vertices=[
+            page,
+            text,
+            NotesVertex(uid="notes0001", children=["note00001", "note00002"]),
+            TextVertex(uid="note00001", text="First note."),
+            TextVertex(uid="note00002", text="Second note."),
+        ]
+    )
+
+
+_BOTH_STYLES: Final[list[ProjectProfile]] = [BookProfile(), ArticleProfile()]
+"""A book (invisible endnotes) and an article (numbered notes): suppression covers either style."""
+
+
+class TestSuppressedNotes:
+    """With the notes suppressed, no format shows a note, a mark of one, or a Notes section."""
+
+    @staticmethod
+    def _bundle(tree: VertexTree) -> RenderBundle:
+        # The renderers prune the notes themselves; the bundle carries them, as a fetch would.
+        return RenderBundle(content=tree, view={})
+
+    @pytest.mark.parametrize("profile", _BOTH_STYLES, ids=["book", "article"])
+    def test_markdown(self, tmp_path: Path, profile: ProjectProfile, caplog: pytest.LogCaptureFixture) -> None:
+        """Markdown: the lead-ins stay as plain text; no footnote, Notes section, intro, or form block remains.
+
+        The note links are gone before rendering, so none is left dangling to warn about.
+        """
+        with caplog.at_level(logging.WARNING):
+            render_md(
+                self._bundle(_noted_book()),
+                profile=profile,
+                filename_stem="noted",
+                api_endpoint=_ENDPOINT,
+                options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False, suppress_notes=True),
+            )
+        assert "not found in vertex_tree" not in caplog.text
+        text: Final[str] = (tmp_path / "noted.md").read_text(encoding="utf-8")
+        assert "It ran for a 52-minute run." in text
+        assert "Tootill rebuilt the original version." in text
+        for absent in (
+            "Notes",
+            "[^",
+            "Williams and Kilburn",
+            "Lavington",
+            "The complete notes are online.",
+            "x-guffin",
+        ):
+            assert absent not in text
+        assert "Only in the short notes." not in text
+
+    def test_markdown_numbered_markers_leave_no_gap(self, tmp_path: Path) -> None:
+        """A numbered marker vanishes with the space before it, so the sentence reads on."""
+        render_md(
+            self._bundle(_numbered_article()),
+            profile=ArticleProfile(),
+            filename_stem="numbered",
+            api_endpoint=_ENDPOINT,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False, suppress_notes=True),
+        )
+        text: Final[str] = (tmp_path / "numbered.md").read_text(encoding="utf-8")
+        assert "A word here, a word there." in text
+        assert "First note." not in text
+
+    @pytest.mark.parametrize("profile", _BOTH_STYLES, ids=["book", "article"])
+    def test_epub(self, tmp_path: Path, profile: ProjectProfile) -> None:
+        """EPUB: no noteref, footnote aside, endnotes section, or lead-in link remains."""
+        render_epub(
+            self._bundle(_noted_book()),
+            profile=profile,
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path, suppress_notes=True),
+        )
+        with zipfile.ZipFile(tmp_path / "noted.epub") as package:
+            xhtml: Final[str] = "\n".join(
+                package.read(name).decode("utf-8") for name in package.namelist() if name.endswith(".xhtml")
+            )
+        assert "It ran for a 52-minute run." in xhtml
+        for absent in ('epub:type="noteref"', 'epub:type="footnote"', 'epub:type="endnotes"', NOTE_REF_CLASS):
+            assert absent not in xhtml
+        assert "Williams and Kilburn" not in xhtml
+
+    @pytest.mark.parametrize("profile", _BOTH_STYLES, ids=["book", "article"])
+    def test_pdf(self, tmp_path: Path, profile: ProjectProfile) -> None:
+        """PDF: the lead-ins read as plain text; no footnote or Notes section is set."""
+        render_pdf(
+            self._bundle(_noted_book()),
+            profile=profile,
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=PdfRenderOptions(output_dir=tmp_path, suppress_notes=True),
+        )
+        reader: Final[PdfReader] = PdfReader(tmp_path / "noted.pdf")
+        text: Final[str] = " ".join(" ".join((page.extract_text() or "").split()) for page in reader.pages)
+        assert "It ran for a 52-minute run." in text
+        for absent in ("Notes", "Williams and Kilburn", "Lavington"):
+            assert absent not in text

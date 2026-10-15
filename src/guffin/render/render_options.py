@@ -88,6 +88,10 @@ class RenderOptions(BaseModel):
             :class:`~guffin.model.publishing_semantics.NoteForm`); defaults to the full notes.
         notes_only: When ``True``, render the Notes section alone, without the text it annotates;
             ``False`` (default) renders the whole document.
+        suppress_notes: When ``True``, leave the notes out altogether, in every note style: each note
+            link renders as its bare lead-in, no note renders, and the authored Notes sections, the
+            notes containers, and every block tagged with a ``note-form`` are removed.  ``False``
+            (default) renders the notes.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -125,6 +129,7 @@ class RenderOptions(BaseModel):
     )
     note_form: NoteForm = Field(default=NoteForm.FULL, description="Which form of the notes to render.")
     notes_only: bool = Field(default=False, description="Render the Notes section alone.")
+    suppress_notes: bool = Field(default=False, description="Leave the notes out altogether.")
 
     @staticmethod
     def for_format(
@@ -147,6 +152,7 @@ class RenderOptions(BaseModel):
         daily_note_format: DateFormat = DateFormat.ROAM_LONG,
         note_form: NoteForm = NoteForm.FULL,
         notes_only: bool = False,
+        suppress_notes: bool = False,
     ) -> RenderOptions:
         """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
 
@@ -183,6 +189,8 @@ class RenderOptions(BaseModel):
             note_form: Which form of the notes to render; the full notes by default.
             notes_only: Render the Notes section alone (``True``), or the whole document
                 (``False``, default).
+            suppress_notes: Leave the notes out altogether (``True``), or render them (``False``,
+                default).
 
         Returns:
             The :class:`RenderOptions` subclass matching *output_format*.
@@ -206,6 +214,7 @@ class RenderOptions(BaseModel):
                     heading_links=heading_links,
                     note_form=note_form,
                     notes_only=notes_only,
+                    suppress_notes=suppress_notes,
                 )
             case OutputFormat.EPUB:
                 return EpubRenderOptions(
@@ -224,6 +233,7 @@ class RenderOptions(BaseModel):
                     heading_links=heading_links,
                     note_form=note_form,
                     notes_only=notes_only,
+                    suppress_notes=suppress_notes,
                 )
             case OutputFormat.MARKDOWN:
                 return MarkdownRenderOptions(
@@ -241,6 +251,7 @@ class RenderOptions(BaseModel):
                     heading_links=heading_links,
                     note_form=note_form,
                     notes_only=notes_only,
+                    suppress_notes=suppress_notes,
                 )
             case _ as unreachable:
                 assert_never(unreachable)

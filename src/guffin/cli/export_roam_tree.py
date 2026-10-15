@@ -355,6 +355,20 @@ def main(
             ),
         ),
     ] = False,
+    suppress_notes: Annotated[
+        bool,
+        typer.Option(
+            "--suppress-notes/--no-suppress-notes",
+            help=(
+                "When enabled, leaves the notes out altogether, for every project type and format: "
+                "each note marker renders as its plain lead-in (a marker labelled with only a number "
+                "renders as nothing), no footnote, endnote, or Notes section is rendered, and the "
+                "authored Notes sections (headings tagged element-type:: endnotes), the #footnotes "
+                "blocks, and every block tagged note-form:: are removed. No note check runs, so a draft "
+                "with unfinished notes exports. Cannot be combined with --notes-only."
+            ),
+        ),
+    ] = False,
     version: VersionOption = False,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
@@ -392,12 +406,21 @@ def main(
 
     api_endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(local_api_port, graph_name, api_bearer_token)
 
+    if notes_only and suppress_notes:
+        logger.error("aborting export of %r: --notes-only with --suppress-notes leaves nothing to export", target)
+        raise typer.Exit(code=1)
+
     # An export must not publish content that violates the guffin vocabulary, nor code that no
     # longer matches its declared source of truth, so the fetch pipeline runs with the strict
     # posture here (dump-roam-tree keeps both gates advisory); code-source verification is
-    # skippable when offline (--no-verify-code-sources).
+    # skippable when offline (--no-verify-code-sources).  The note checks guard rendered notes, so
+    # an export that suppresses its notes runs none of them.
     fetched_bundle: Final[RenderBundle] = fetch_render_bundle(
-        api_endpoint, target, strict=True, verify_code_sources=verify_code_sources_enabled
+        api_endpoint,
+        target,
+        strict=True,
+        verify_code_sources=verify_code_sources_enabled,
+        check_notes=not suppress_notes,
     )
 
     # The colophon's data (provenance) is stamped onto the bundle as origin metadata; whether to
@@ -415,8 +438,9 @@ def main(
     # parts book; the content itself, not a CLI switch, is the source of that structure.
     profile: Final[ProjectProfile] = resolve_profile(project_type, render_bundle.content)
     # The note checks that depend on the work's note style run here, once the profile is resolved,
-    # rather than in the fetch pipeline's gate.
-    _check_notes(render_bundle.content, profile, target, notes_only=notes_only)
+    # rather than in the fetch pipeline's gate; with the notes suppressed there are none to run.
+    if not suppress_notes:
+        _check_notes(render_bundle.content, profile, target, notes_only=notes_only)
     options: Final[RenderOptions] = RenderOptions.for_format(
         output_format,
         output_dir=output_dir,
@@ -436,6 +460,7 @@ def main(
         daily_note_format=daily_note_format,
         note_form=note_form,
         notes_only=notes_only,
+        suppress_notes=suppress_notes,
     )
 
     _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)
@@ -497,7 +522,11 @@ def _check_notes(content: VertexTree, profile: ProjectProfile, target: str, *, n
 
 @validate_call
 def fetch_render_bundle(
-    api_endpoint: ApiEndpoint, target: TargetArgument, strict: bool, verify_code_sources: bool = False
+    api_endpoint: ApiEndpoint,
+    target: TargetArgument,
+    strict: bool,
+    verify_code_sources: bool = False,
+    check_notes: bool = True,
 ) -> RenderBundle:
     """Fetch *target* from a Roam graph and return its transcribed render bundle.
 
@@ -513,6 +542,8 @@ def fetch_render_bundle(
             advisory (logged, not fatal).
         verify_code_sources: When ``True``, verify every ``code-source::``-tagged code block
             against GitHub; when ``False`` (default), skip the network check.
+        check_notes: When ``True`` (default), run the note checks among the content gates; when
+            ``False``, for content whose notes will not be rendered, skip them.
 
     Returns:
         The :class:`~guffin.model.render_bundle.RenderBundle` transcribed from *target*'s subtree.
@@ -529,6 +560,7 @@ def fetch_render_bundle(
             api_endpoint=api_endpoint,
             strict=strict,
             verify_code_sources=verify_code_sources,
+            check_notes=check_notes,
         )
     except RoamNodeNotFoundError as exc:
         kind_label: Final[str] = "Page" if exc.fetch_spec.anchor.kind == QueryAnchorKind.PAGE_TITLE else "Node"

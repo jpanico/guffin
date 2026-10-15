@@ -1,8 +1,7 @@
 # Notes: footnotes and endnotes
 
 **Status: designed and implemented.** Every open question is decided; Q7 has two reading-app
-tests open. Suppressing notes (R9) is designed but not built: see
-[Suppressing notes](#suppressing-notes). The note style is chosen per project type (see the note-style decision): a book keeps
+tests open. Suppressing notes (R9) is built too: see [Suppressing notes](#suppressing-notes). The note style is chosen per project type (see the note-style decision): a book keeps
 invisible endnotes, an article or a manuscript numbers its notes. See [Implementation](#implementation) for what was built
 and where it departs from the decisions. This is the working design document for
 *notes* in Guffin: footnotes, endnotes, and invisible endnotes, authored in Roam and rendered in
@@ -297,6 +296,10 @@ Built in phases, each a commit.
   (`native_note_renderer`), dropping a lead-in that is only a number. `export-roam-tree` runs the
   checks only invisible endnotes need (lead-ins present and unique, a Notes section present)
   only for that style, and refuses a notes-only export of numbered notes.
+- **Suppressing notes**: `RenderOptions.suppress_notes`, the CLI's
+  `--suppress-notes/--no-suppress-notes`; `publishing_semantics.drop_notes` with
+  `notes.strip_note_links`, and `check_notes=False` through the fetch pipeline to
+  `validate_semantics`. See [Suppressing notes](#suppressing-notes).
 
 Departures from the decisions, and behavior found while building:
 
@@ -334,7 +337,7 @@ Departures from the decisions, and behavior found while building:
 
 ## Suppressing notes
 
-*Designed 2026-10-15; not built.* R9's switch: an export that leaves the notes out altogether.
+*Designed and built 2026-10-15.* R9's switch: an export that leaves the notes out altogether.
 Everything here is decided (see [Decisions](#decisions)), including how it treats validation
 (Q10) and blocks limited to a note form (Q11).
 
@@ -348,9 +351,10 @@ style.
 
 1. **No sign of a note at its call site.** Each note marker renders as its lead-in alone, as
    plain running text: no number, footnote, endnote reference, link, span, or anchor. A lead-in
-   that is only a number, the Footnotes extension's default label, renders as nothing, and so does
-   a space directly before it, so no gap is left in the sentence. The superscript form
-   (`#sup^^…^^`) is a marker like any other.
+   that is only a number, the Footnotes extension's default label, renders as nothing, and so do
+   the spaces directly before it, so no gap is left in the sentence (unless a letter or digit
+   follows the marker directly, when one space stays so two words do not join). The superscript
+   form (`#sup^^…^^`) is a marker like any other.
 2. **No note is rendered.** Neither style runs: invisible endnotes build no entries, and numbered
    notes produce no Pandoc `Note`, so no format has footnotes or endnotes.
 3. **No Notes section is added.** Guffin adds a Notes section only by filling an authored one,
@@ -376,16 +380,16 @@ style.
   reference. With the notes pruned, it renders as its display text with a warning, as a reference
   to any pruned block does.
 
-**Where it would go.**
+**Where it lives.**
 
-- **Pruning:** `model/publishing_semantics.drop_notes(tree)`, beside `drop_unpublished` and
-  `drop_other_note_forms` and sharing their `_drop_subtrees`. Its seeds are every `NotesVertex`,
-  every heading of element type `endnotes`, and every block tagged with either note form. Each
-  renderer applies it when the option is set, in place of `drop_other_note_forms`.
-- **Call sites:** `notes_rendering.prepare_notes` takes the option. With it set, it leaves the
-  document alone and returns a third `NoteLeadInRenderer` that renders a note link as its bare
-  lead-in, or as nothing when the lead-in is only a number, plus a pass that removes the space
-  left before a dropped number.
+- **The model does it all:** `model/publishing_semantics.drop_notes(tree)`, beside
+  `drop_unpublished` and `drop_other_note_forms` and sharing their `_drop_subtrees`. Its seeds are
+  every `NotesVertex`, every heading of element type `endnotes`, and every block tagged with either
+  note form. Then `model/notes.strip_note_links` reduces every note link left in the text to plain
+  text: the lead-in stays, a numbered one goes. Each renderer applies `drop_notes` when the option
+  is set, in place of `drop_other_note_forms`, and the rest of rendering never sees a note link.
+- **One test for a numbered label:** `model/notes.is_numbered_lead_in`, which validation rule 1,
+  the numbered-notes renderer, and `strip_note_links` all use.
 - **Validation:** with the option set, `export-roam-tree` skips its note checks (Q9 rules 1, 4,
   and 5), the vocabulary pass skips the note validators (rules 2, 6, and 7), and the fetch
   pipeline skips the orphan warning (rule 3). `all_note_form_values_legal` still runs: a malformed
@@ -393,6 +397,15 @@ style.
 - **Tests:** each behavior above, for both note styles and all three formats; the notes-only
   refusal; a book with notes and no Notes heading exporting cleanly (Q10); and blocks of either
   note form dropped (Q11).
+
+**Departure from the design: the links are stripped in the model.** The design had
+`prepare_notes` take the option and return a third lead-in renderer that rendered each note link
+as its bare lead-in. That cannot work once the notes are pruned. A note link whose note is gone
+is dangling, and the link resolver leaves a dangling link as its display text with a warning
+without consulting any renderer. So a numbered label printed as its number, and every note link
+logged a warning. Reducing the links in the model, before the Pandoc document is built, removes
+both problems. It also covers a note link reached through a block reference, which the
+render-time pass could not see.
 
 
 ## Decisions

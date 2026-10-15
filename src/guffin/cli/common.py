@@ -28,6 +28,7 @@ from guffin.common.markdown import unwrap_links
 from guffin.common.validation import ValidationResult
 from guffin.model.code_source_diagnosis import CodeSourceFinding
 from guffin.model.notes import note_citations, orphan_note_uids
+from guffin.model.primitives import Uid
 from guffin.model.publishing_semantics import (
     effective_title,
     has_parts,
@@ -115,6 +116,7 @@ def fetch_roam_trees(
     api_endpoint: ApiEndpoint,
     strict: bool = False,
     verify_code_sources: bool = False,
+    check_notes: bool = True,
 ) -> tuple[NodeFetchResult, RenderBundle | None]:
     """Fetch Roam nodes for *fetch_spec* and build a gated node tree and render bundle.
 
@@ -147,6 +149,9 @@ def fetch_roam_trees(
             the fetch succeeds.
         verify_code_sources: When ``True``, verify every ``code-source::``-tagged code block
             against GitHub; when ``False`` (default), skip the network check entirely.
+        check_notes: When ``True`` (default), check the notes: semantics validation includes its
+            note validators, and an uncited note is reported.  When ``False``, for content whose
+            notes will not be rendered, neither runs.
 
     Returns:
         A ``(fetch_result, render_bundle)`` pair ready for rendering or further processing.
@@ -174,7 +179,7 @@ def fetch_roam_trees(
     ), "anchor_tree is None; fetch_spec has include_node_tree=False, which is unsupported here"
     anchor_tree: Final[NodeTree] = result.anchor_tree
     transcribed: Final[RenderBundle] = to_render_bundle(anchor_tree)
-    validation_result: Final[ValidationResult] = validate_semantics(transcribed.content)
+    validation_result: Final[ValidationResult] = validate_semantics(transcribed.content, check_notes=check_notes)
     if strict and not validation_result.is_valid:
         raise SemanticsValidationError(validation_result)
     # Without the strict posture, vocabulary violations are advisory: surfaced loudly but never
@@ -183,7 +188,10 @@ def fetch_roam_trees(
         logger.warning("guffin semantics validation: %s", validation_error)
     # An uncited note is harmless to a reader (it is simply left out), so it is advisory at every
     # posture: edits routinely leave one behind.
-    for orphan_uid in orphan_note_uids(transcribed.content, note_citations(transcribed.content)):
+    orphan_uids: Final[list[Uid]] = (
+        orphan_note_uids(transcribed.content, note_citations(transcribed.content)) if check_notes else []
+    )
+    for orphan_uid in orphan_uids:
         logger.warning("note uid=%r is cited by no note link; it is left out of the notes", orphan_uid)
     _gate_code_sources(transcribed.content, strict, verify_code_sources)
     # The content revision is captured on every fetch: the snapshot hash and edit bookkeeping

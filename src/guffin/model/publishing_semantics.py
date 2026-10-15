@@ -67,6 +67,8 @@ Public symbols:
   content vanishing with it) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   :func:`drop_other_note_forms` — prune every subtree tagged with a ``note-form`` other than the
   exported one, the same way;
+  :func:`drop_notes` — prune the notes altogether, the same way: the notes containers, the Notes
+  sections, and every subtree tagged with either ``note-form``;
   :func:`strip_element_numbers` — remove every heading's internal element number (the
   well-formed leading marker) from a :class:`~guffin.model.vertex_tree.VertexTree`;
   :func:`drop_page_breaks` — remove every heading's ``page-break`` tag from a
@@ -109,6 +111,7 @@ from guffin.model.attribute_assignment import (
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.code_source import CodeSource
 from guffin.model.element_number import stripped_element_number
+from guffin.model.notes import strip_note_links
 from guffin.model.primitives import UID_PATTERN, Uid
 from guffin.model.vertex import (
     AssetVertex,
@@ -1100,6 +1103,47 @@ def drop_other_note_forms(tree: VertexTree, note_form: NoteForm) -> VertexTree:
         ],
         f"note-form other than {note_form.value}",
     )
+
+
+@validate_call
+def drop_notes(tree: VertexTree) -> VertexTree:
+    """Return a new :class:`VertexTree` without its notes, for an export that leaves them out.
+
+    Removed, each together with every descendant and any embed of it, exactly as
+    :func:`drop_unpublished` removes an unpublished subtree:
+
+    - every :class:`~guffin.model.vertex.NotesVertex` (a notes container), with the notes under it;
+    - every heading tagged ``element-type:: endnotes`` (a Notes section), its intro included;
+    - every vertex tagged ``note-form`` with either form, since such a vertex belongs only to an
+      edition that has notes.
+
+    Then every note link in the remaining text is reduced to plain text (see
+    :func:`~guffin.model.notes.strip_note_links`): its lead-in stays, and a lead-in that is only a
+    number goes, so no passage shows a sign of a note.  The original *tree* is not modified; it
+    passes through unchanged when it has no notes.
+
+    Args:
+        tree: The source :class:`~guffin.model.vertex_tree.VertexTree`.
+
+    Returns:
+        A new :class:`~guffin.model.vertex_tree.VertexTree` without the notes, or *tree* itself when
+        no prune applies.
+
+    Raises:
+        ValueError: If the tree's root vertex is itself one of the vertices removed.
+    """
+    pruned: Final[VertexTree] = _drop_subtrees(
+        tree,
+        [
+            vertex.uid
+            for vertex in tree.uid_map.values()
+            if isinstance(vertex, NotesVertex)
+            or (isinstance(vertex, HeadingVertex) and element_type_of_vertex(vertex) is StructuralElement.ENDNOTES)
+            or note_form_of_vertex(vertex) is not None
+        ],
+        "suppressed notes",
+    )
+    return strip_note_links(pruned)
 
 
 def _drop_subtrees(tree: VertexTree, seeds: list[Uid], reason: str) -> VertexTree:

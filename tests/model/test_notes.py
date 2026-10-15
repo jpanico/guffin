@@ -3,14 +3,17 @@
 from typing import Final
 
 from guffin.common.table import Table, TableStyle
+from guffin.model.alternative import Alternative
 from guffin.model.notes import (
     NoteCitation,
     contained_note_uids,
+    is_numbered_lead_in,
     note_citations,
     note_links_in_text,
     notes_containers,
     orphan_note_uids,
     placed_note_citations,
+    strip_note_links,
     vertex_texts,
 )
 from guffin.model.vertex import (
@@ -191,3 +194,87 @@ class TestNotesContainers:
         """A note no citation points at is an orphan."""
         tree: Final[VertexTree] = _noted_tree()
         assert orphan_note_uids(tree, note_citations(tree)) == ["note00004"]
+
+
+class TestIsNumberedLeadIn:
+    """is_numbered_lead_in() recognizes an unrenamed numbered marker's label."""
+
+    def test_digits_are_numbered(self) -> None:
+        """One or more digits, whitespace aside, are a note number."""
+        assert is_numbered_lead_in("1")
+        assert is_numbered_lead_in(" 12 ")
+
+    def test_phrases_are_not(self) -> None:
+        """A phrase, a number within a phrase, or nothing at all is not a note number."""
+        assert not is_numbered_lead_in("a 52-minute run")
+        assert not is_numbered_lead_in("in 1948")
+        assert not is_numbered_lead_in("")
+
+
+def _stripped_text(text: str) -> str:
+    """Return *text* as a text vertex's after strip_note_links."""
+    page: Final[PageVertex] = PageVertex(uid="page00001", title="Doc", children=["text00001"])
+    stripped: Final[VertexTree] = strip_note_links(
+        VertexTree(tree_vertices=[page, TextVertex(uid="text00001", text=text)])
+    )
+    vertex = stripped.uid_map["text00001"]
+    assert isinstance(vertex, TextVertex)
+    return vertex.text
+
+
+class TestStripNoteLinks:
+    """strip_note_links() reduces every note link to plain text, for notes that are left out."""
+
+    def test_a_phrase_lead_in_stays_as_plain_text(self) -> None:
+        """The lead-in stays in the sentence, unlinked."""
+        assert (
+            _stripped_text(f"It ran for {_note_link('a 52-minute run', 'note00001')}.") == "It ran for a 52-minute run."
+        )
+
+    def test_a_numbered_marker_goes_with_the_space_before_it(self) -> None:
+        """A number names no phrase of the passage, so it goes, leaving no gap before a word or punctuation."""
+        assert _stripped_text(f"A word {_note_link('1', 'note00001')} here.") == "A word here."
+        assert _stripped_text(f"A word{_note_link('2', 'note00002')} here.") == "A word here."
+        assert _stripped_text(f"The end {_note_link('3', 'note00003')}.") == "The end."
+
+    def test_a_numbered_marker_between_letters_keeps_the_words_apart(self) -> None:
+        """When a letter follows the marker directly, the space before it stays, so two words do not join."""
+        assert _stripped_text(f"a {_note_link('1', 'note00001')}b") == "a b"
+
+    def test_other_links_are_untouched(self) -> None:
+        """A reference link is not a note link."""
+        reference: Final[str] = f"[Page]({vertex_link_url('page00002', VertexLinkKind.REFERENCE)})"
+        assert _stripped_text(f"See {reference}.") == f"See {reference}."
+
+    def test_every_inline_text_is_reduced(self) -> None:
+        """Alternative wordings and table cells lose their note links too."""
+        page = PageVertex(uid="page00001", title="Doc", children=["text00001", "tabl00001"])
+        text = TextVertex(
+            uid="text00001",
+            text=f"Main {_note_link('lead', 'note00001')}.",
+            alternatives=(Alternative(uid="altr00001", text=f"Other {_note_link('lead', 'note00001')}."),),
+        )
+        table = TableVertex(
+            uid="tabl00001",
+            table=Table(rows=((f"Cell {_note_link('7', 'note00002')}.", "b"),)),
+            table_style=TableStyle(),
+        )
+        stripped: Final[VertexTree] = strip_note_links(VertexTree(tree_vertices=[page, text, table]))
+        stripped_text = stripped.uid_map["text00001"]
+        stripped_table = stripped.uid_map["tabl00001"]
+        assert isinstance(stripped_text, TextVertex)
+        assert isinstance(stripped_table, TableVertex)
+        assert stripped_text.text == "Main lead."
+        assert stripped_text.alternatives is not None
+        assert stripped_text.alternatives[0].text == "Other lead."
+        assert stripped_table.table.rows == (("Cell.", "b"),)
+
+    def test_tree_without_note_links_passes_through(self) -> None:
+        """A tree with no note links is returned unchanged (the same object)."""
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["text00001"]),
+                TextVertex(uid="text00001", text="No notes here."),
+            ]
+        )
+        assert strip_note_links(tree) is tree

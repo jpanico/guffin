@@ -32,6 +32,8 @@ Public symbols:
   anything else.
 - :func:`vertex_links_in_text` — every Pandoc-Markdown-form vertex link anywhere in a
   text, as ``(display, VertexLink)`` pairs in text order.
+- :func:`vertex_link_spans` — the same links, each with the character range it occupies, so a
+  text can be rewritten around them.
 """
 
 import enum
@@ -235,8 +237,24 @@ def vertex_links_in_text(text: str) -> list[tuple[str, VertexLink]]:
     Returns:
         One ``(display, link)`` pair per vertex link; empty when *text* has none.
     """
+    return [(display, link) for _start, _end, display, link in vertex_link_spans(text)]
+
+
+@validate_call
+def vertex_link_spans(text: str) -> list[tuple[int, int, str, VertexLink]]:
+    """Return every Pandoc-Markdown-form vertex link in *text* with where it lies, in text order.
+
+    The located counterpart of :func:`vertex_links_in_text`: the same links, each with the half-open
+    range ``[start, end)`` of characters its ``[<display>](<x-guffin-url>)`` form occupies in *text*.
+
+    Args:
+        text: The text to search.
+
+    Returns:
+        One ``(start, end, display, link)`` tuple per vertex link; empty when *text* has none.
+    """
     return [
-        (match.group("display"), link)
+        (match.start(), match.end(), match.group("display"), link)
         for match in _IN_TEXT_VERTEX_LINK_MD_RE.finditer(text)
         if (link := parse_vertex_link(match.group("url"))) is not None
     ]

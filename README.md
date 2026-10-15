@@ -307,7 +307,8 @@ export-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token 
   [--preamble|--no-preamble] [--numbering|--no-numbering] [--heading-links|--no-heading-links] \
   [--element-numbers|--no-element-numbers] [--code-sources|--no-code-sources] [--render-alternatives|--no-render-alternatives] \
   [--verify-code-sources|--no-verify-code-sources] \
-  [--default-pdf-render <placement>] [--daily-note-format roam-long|iso|abbrev-month-day]
+  [--default-pdf-render <placement>] [--daily-note-format roam-long|iso|abbrev-month-day] \
+  [--note-form full|short] [--notes-only|--no-notes-only] [--suppress-notes|--no-suppress-notes]
 ```
 
 The output filename stem embeds the project type: `<target>.<type>.<ext>` (e.g. `Foo.article.epub`, `Foo.book.pdf`), so the same target exported under different types lands in distinct files.
@@ -378,6 +379,9 @@ The `--preamble/--no-preamble` and `--numbering/--no-numbering` flags (PDF/EPUB 
 | `--verify-code-sources/--no-verify-code-sources` | | all | Verify every `code-source::`-tagged code block against GitHub (**on by default**); any drift, local modification, or fetch failure aborts the export with exit 1. `--no-verify-code-sources` is the offline escape hatch. |
 | `--default-pdf-render` | | all | Placement an *untagged* PDF embed resolves to (e.g. `external-link`), overriding the built-in format/type default; an embed's own `pdf-render::` tag still wins. |
 | `--daily-note-format` | | all | How a daily-note-page reference renders its date: `roam-long` (default), `iso`, `abbrev-month-day`. |
+| `--note-form` | | all | Which form of the notes to render: `full` (default) or `short` (a note's child tagged `note-form:: short`, where it has one). |
+| `--notes-only/--no-notes-only` | | all | Render the Notes section alone, for a book's invisible endnotes; the filename gains a `.notes` segment. |
+| `--suppress-notes/--no-suppress-notes` | | all | Leave the notes out altogether, in every project type: each marker renders as its plain lead-in (a number-only label as nothing), no footnote, endnote, or Notes section is rendered, the authored Notes sections and `#footnotes` blocks are removed, and no note check runs. Off by default. |
 
 The `--colophon` provenance records the guffin package version, the source git commit (hash + commit time, marked `-dirty` for uncommitted changes), and the export time, plus the content revision (snapshot hash, edit/fetch times, and any authored `revision::` name), so any generated document can be traced back to the exact source and content snapshot that produced it. Placement differs by format: PDF renders it at the foot of the title page (or below the page footer when no title page is emitted); EPUB mirrors that; Markdown carries it as an end-of-document block.
 

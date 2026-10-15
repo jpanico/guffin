@@ -47,7 +47,7 @@ import panflute as pf  # type: ignore[import-untyped]
 from pydantic import ConfigDict, validate_call
 
 from guffin.model.chicago_structure import StructuralElement
-from guffin.model.notes import PlacedNoteCitation, contained_note_uids, placed_note_citations
+from guffin.model.notes import PlacedNoteCitation, contained_note_uids, is_numbered_lead_in, placed_note_citations
 from guffin.model.primitives import Uid
 from guffin.model.publishing_semantics import NoteForm, element_type_of_vertex, note_form_of_vertex
 from guffin.model.vertex import HeadingVertex, TextVertex, Vertex
@@ -547,8 +547,8 @@ def native_note_renderer(
         if uid not in tree.uid_map:
             return lead_in
         note: Final[pf.Note] = pf.Note(*_note_blocks(uid, tree, asset_files, inline_map, view_map, note_form))
-        shown: Final[str] = "".join(pf.stringify(inline) for inline in lead_in).strip()
-        return [note] if shown.isdigit() else [*lead_in, note]
+        shown: Final[str] = "".join(pf.stringify(inline) for inline in lead_in)
+        return [note] if is_numbered_lead_in(shown) else [*lead_in, note]
 
     return _render
 

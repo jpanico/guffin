@@ -34,6 +34,7 @@ from guffin.model.publishing_semantics import (
     cover_image_of,
     cover_image_vertex,
     date_of,
+    drop_notes,
     drop_other_note_forms,
     drop_page_breaks,
     drop_unpublished,
@@ -65,13 +66,14 @@ from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
+    NotesVertex,
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
     TextVertex,
     vertex_adapter,
 )
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree, VertexTreeDFSIterator
 
 _LINK = VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz")
@@ -1009,6 +1011,57 @@ class TestNoteForm:
         root = PageVertex(uid="pageroot1", title="Doc", children=["plain0001"])
         tree = VertexTree(tree_vertices=[root, _note_form_vertex("plain0001", None)])
         assert drop_other_note_forms(tree, NoteForm.FULL) is tree
+
+
+class TestDropNotes:
+    """drop_notes() prunes the notes containers, the Notes sections, and the blocks of either note form."""
+
+    @staticmethod
+    def _noted_tree() -> VertexTree:
+        """A page with prose citing a note, its notes container, a Notes section, and blocks of each form."""
+        root = PageVertex(
+            uid="pageroot1",
+            title="Doc",
+            children=["prose0001", "notes0001", "short0001", "full00001", "notesh001"],
+        )
+        note_link: str = vertex_link_url("note00001", VertexLinkKind.NOTE)
+        return VertexTree(
+            tree_vertices=[
+                root,
+                TextVertex(uid="prose0001", text=f"It ran for [a 52-minute run]({note_link})."),
+                NotesVertex(uid="notes0001", children=["note00001"]),
+                TextVertex(uid="note00001", text="Williams and Kilburn, 1948."),
+                _note_form_vertex("short0001", "short"),
+                _note_form_vertex("full00001", "full"),
+                HeadingVertex(
+                    uid="notesh001",
+                    text="Notes",
+                    heading_level=1,
+                    children=["intro0001"],
+                    attribute_assignments=[_assignment("element-type", "endnotes")],
+                ),
+                TextVertex(uid="intro0001", text="About these notes."),
+            ]
+        )
+
+    def test_prunes_every_kind_of_note_material(self) -> None:
+        """The notes container and its notes, both forms, and the Notes section with its intro all go."""
+        pruned: VertexTree = drop_notes(self._noted_tree())
+        assert [vertex.uid for vertex in pruned.tree_vertices] == ["pageroot1", "prose0001"]
+        assert pruned.uid_map["pageroot1"].children == ["prose0001"]
+
+    def test_reduces_the_note_links_to_their_lead_ins(self) -> None:
+        """The prose keeps its lead-in as plain text, with no link to the absent note."""
+        pruned: VertexTree = drop_notes(self._noted_tree())
+        prose = pruned.uid_map["prose0001"]
+        assert isinstance(prose, TextVertex)
+        assert prose.text == "It ran for a 52-minute run."
+
+    def test_tree_without_notes_passes_through(self) -> None:
+        """A tree with no notes is returned unchanged (the same object)."""
+        root = PageVertex(uid="pageroot1", title="Doc", children=["plain0001"])
+        tree = VertexTree(tree_vertices=[root, _note_form_vertex("plain0001", None)])
+        assert drop_notes(tree) is tree
 
 
 class TestHasElementType:

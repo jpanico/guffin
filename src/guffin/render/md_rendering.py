@@ -52,6 +52,7 @@ from pydantic import validate_call
 from guffin.common.markdown import gfm_heading_slug
 from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import (
+    drop_notes,
     drop_other_note_forms,
     drop_page_breaks,
     drop_unpublished,
@@ -349,8 +350,13 @@ def render(
     # Unpublished subtrees (publish:: false) are pruned first, so they feed neither the asset
     # fetch nor the rendered output.
     unpublished_dropped: Final[VertexTree] = drop_unpublished(render_bundle.content)
-    # Blocks limited to the other form of the notes (note-form::) are pruned the same way.
-    published: Final[VertexTree] = drop_other_note_forms(unpublished_dropped, options.note_form)
+    # Blocks limited to the other form of the notes (note-form::) are pruned the same way; with the
+    # notes suppressed, so are the notes, the Notes sections, and the blocks of either form.
+    published: Final[VertexTree] = (
+        drop_notes(unpublished_dropped)
+        if options.suppress_notes
+        else drop_other_note_forms(unpublished_dropped, options.note_form)
+    )
     # Attribute-assignment subtrees are pruned before the Panflute Doc build when suppressed.
     attributed: Final[VertexTree] = drop_attribute_assignments(published) if options.suppress_attributes else published
     # Internal element numbers are authoring bookkeeping; they render only on explicit request.

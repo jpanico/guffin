@@ -1101,6 +1101,21 @@ class TestValidateSemanticsNotes:
         assert validate_semantics(tree).is_valid
         assert all_note_lead_ins_present(tree) is not None
 
+    def test_dangling_link_fails_by_default(self) -> None:
+        """A note link whose note is absent fails the default validation."""
+        assert not validate_semantics(_noted_page(_note_link("lead", "gone00001"))).is_valid
+
+    def test_without_check_notes_the_note_validators_are_left_out(self) -> None:
+        """With check_notes=False, as for notes that will not be rendered, a dangling note link passes."""
+        assert validate_semantics(_noted_page(_note_link("lead", "gone00001")), check_notes=False).is_valid
+
+    def test_without_check_notes_a_malformed_note_form_still_fails(self) -> None:
+        """A malformed note-form value is a vocabulary error, not a note, so it is still reported."""
+        page = PageVertex(uid="page00001", title="Doc", children=["text00001"])
+        odd = TextVertex(uid="text00001", text="Odd.", attribute_assignments=[_assignment("note-form", "medium")])
+        result = validate_semantics(VertexTree(tree_vertices=[page, odd]), check_notes=False)
+        assert [error.validator for error in result.errors] == [all_note_form_values_legal]
+
     def test_article4_fixture_notes_validate(self) -> None:
         """[[Test Article]] 4's three Footnotes markers all carry phrase lead-ins, so the fixture validates."""
         raw = yaml.load((FIXTURES_YAML_DIR / "test_article_4_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
