@@ -1,7 +1,8 @@
 # Notes: footnotes and endnotes
 
 **Status: designed and implemented.** Every open question is decided; Q7 has two reading-app
-tests open. The note style is chosen per project type (see the note-style decision): a book keeps
+tests open. Suppressing notes (R9) is designed but not built: see
+[Suppressing notes](#suppressing-notes). The note style is chosen per project type (see the note-style decision): a book keeps
 invisible endnotes, an article or a manuscript numbers its notes. See [Implementation](#implementation) for what was built
 and where it departs from the decisions. This is the working design document for
 *notes* in Guffin: footnotes, endnotes, and invisible endnotes, authored in Roam and rendered in
@@ -91,6 +92,10 @@ full in the digital editions and shortened in print; those requirements are mark
 - **R8 — Notes-only export.** *(book)* An export can produce the Notes section alone, gathered
   from the whole target, so the complete notes can be published without the text they annotate
   (the book's public repository holds the notes but not the prose). Added 2026-10-14 with Q8.
+- **R9 — Notes can be suppressed.** An export can leave the notes out altogether, whatever the
+  project type, format, or note style: no sign of a note at its call site, no note rendered in
+  any form, no Notes section added, and an authored Notes section removed. Added 2026-10-15; see
+  [Suppressing notes](#suppressing-notes).
 
 
 ## Open questions
@@ -221,6 +226,40 @@ sections there (heading links, as block references to headings already do).
 *Decided (see [Decisions](#decisions)).* Which conditions are errors and which warnings (R7),
 and whether a lead-in must be unique on its page or in its section.
 
+### Q10 — Validation when notes are suppressed
+
+*Decided: (a) (see [Decisions](#decisions)).* Whether the Q9 rules still run in an export with
+`--suppress-notes`. Three choices:
+
+- **(a) Skip every note check**, rules 1–7 and the orphan warning. The switch is most useful
+  for a draft whose notes are unfinished, such as a book that cites notes before its Notes
+  heading exists (rule 5), and checking would refuse exactly that draft. A broken marker then
+  goes unreported in this export, but the next export with notes reports it.
+- **(b) Keep the rules about markers' structure** (2, 6, and 7: a dangling marker, a note cited
+  twice, a note outside a `#footnotes` block), and skip the rules that exist only to render
+  notes (1, 4, and 5: a lead-in present, unique, and a Notes heading to hold the notes).
+- **(c) Keep every rule**, so a suppressed export fails wherever the same export with notes
+  would.
+
+Recommendation: (a). The checks protect rendered notes, and a suppressed export renders none.
+(b) would still refuse a draft whose notes point at blocks not yet written, a case the switch
+should serve.
+
+### Q11 — Blocks limited to a note form
+
+*Decided: (a) (see [Decisions](#decisions)).* What happens, in a suppressed export, to a block
+tagged `note-form:: short` or `note-form:: full` that stands outside a Notes section. Inside one, it goes with the section.
+Three choices:
+
+- **(a) Drop both.** Such a block, like the repository line in a Notes intro, exists for an
+  edition that has notes, and a suppressed export has none.
+- **(b) Keep the `full` ones**, treating the suppressed export as the default (full) edition
+  without its notes.
+- **(c) Keep both**, ignoring the tag, as an export with no notes has no form to choose.
+
+Recommendation: (a). The tag means "only in the edition with these notes", and no edition with
+notes is being produced.
+
 
 ## Implementation
 
@@ -291,6 +330,69 @@ Departures from the decisions, and behavior found while building:
   at the chapter level, level 2 in a parts book, and a Notes heading promoted to part level puts its
   chapter groups at level 2. Each file is back matter, the links between files resolve, and the
   group headings stay out of the navigation, so each chapter's notes open on a fresh screen.
+
+
+## Suppressing notes
+
+*Designed 2026-10-15; not built.* R9's switch: an export that leaves the notes out altogether.
+Everything here is decided (see [Decisions](#decisions)), including how it treats validation
+(Q10) and blocks limited to a note form (Q11).
+
+**The switch.** `RenderOptions.suppress_notes`, default `False`, is the CLI's
+`--suppress-notes/--no-suppress-notes` and so the server's `suppress_notes` request field. It is
+named and shaped like `--suppress-attributes`: a plain switch, off by default, with no
+environment variable. It applies to every project type, every output format, and either note
+style.
+
+**What it removes.** With the switch on:
+
+1. **No sign of a note at its call site.** Each note marker renders as its lead-in alone, as
+   plain running text: no number, footnote, endnote reference, link, span, or anchor. A lead-in
+   that is only a number, the Footnotes extension's default label, renders as nothing, and so does
+   a space directly before it, so no gap is left in the sentence. The superscript form
+   (`#sup^^…^^`) is a marker like any other.
+2. **No note is rendered.** Neither style runs: invisible endnotes build no entries, and numbered
+   notes produce no Pandoc `Note`, so no format has footnotes or endnotes.
+3. **No Notes section is added.** Guffin adds a Notes section only by filling an authored one,
+   and with the switch on it fills nothing.
+4. **An authored Notes section is removed.** Every heading tagged `element-type:: endnotes` is
+   pruned with its whole subtree before rendering, as `publish:: false` prunes a block, so its
+   intro goes too. So are the `#footnotes` blocks and the notes under them. Those already render
+   nothing where they sit, but pruning them keeps a note's contents, such as an image, out of the
+   asset fetch.
+
+**How it meets the other options.**
+
+- With `--notes-only` it asks for nothing, and it is refused, as a notes-only export of numbered
+  notes is.
+- `--note-form` has no notes to choose a form of, and it is ignored. A block tagged with either
+  form (`note-form:: short` or `full`) is dropped wherever it stands (Q11).
+- No note check runs (Q10): not the Q9 rules, which would otherwise refuse a draft whose notes are
+  unfinished, and not the orphan-note warning. A broken marker goes unreported in a suppressed
+  export, and the next export with notes reports it.
+- The output filename does not change, as it does not for `--suppress-attributes`, so a
+  suppressed export replaces an unsuppressed one of the same target, type, and format.
+- A plain block reference `((uid))` to a note block, as opposed to a marker, is an ordinary
+  reference. With the notes pruned, it renders as its display text with a warning, as a reference
+  to any pruned block does.
+
+**Where it would go.**
+
+- **Pruning:** `model/publishing_semantics.drop_notes(tree)`, beside `drop_unpublished` and
+  `drop_other_note_forms` and sharing their `_drop_subtrees`. Its seeds are every `NotesVertex`,
+  every heading of element type `endnotes`, and every block tagged with either note form. Each
+  renderer applies it when the option is set, in place of `drop_other_note_forms`.
+- **Call sites:** `notes_rendering.prepare_notes` takes the option. With it set, it leaves the
+  document alone and returns a third `NoteLeadInRenderer` that renders a note link as its bare
+  lead-in, or as nothing when the lead-in is only a number, plus a pass that removes the space
+  left before a dropped number.
+- **Validation:** with the option set, `export-roam-tree` skips its note checks (Q9 rules 1, 4,
+  and 5), the vocabulary pass skips the note validators (rules 2, 6, and 7), and the fetch
+  pipeline skips the orphan warning (rule 3). `all_note_form_values_legal` still runs: a malformed
+  `note-form::` value is a vocabulary error, not a note.
+- **Tests:** each behavior above, for both note styles and all three formats; the notes-only
+  refusal; a book with notes and no Notes heading exporting cleanly (Q10); and blocks of either
+  note form dropped (Q11).
 
 
 ## Decisions
@@ -522,3 +624,19 @@ Resolved 2026-10-14:
   default `#footnotes`, and making that configurable is deferred. Lead-in uniqueness is checked
   per section only; two passages in different sections that land on the same PDF page with the
   same lead-in are not detected (a known gap, detectable only after layout).
+
+Resolved 2026-10-15:
+
+- **Notes can be suppressed (R9).** An export can leave the notes out altogether, with
+  `--suppress-notes/--no-suppress-notes` (the request field `suppress_notes`), named for
+  consistency with `--suppress-attributes`: off by default, and the same for every project type,
+  format, and note style. With it on, no call site shows any sign of a note, no note is rendered in
+  any form, no Notes section is added, and an authored Notes section (a heading tagged
+  `element-type:: endnotes`) is removed before rendering. See [Suppressing notes](#suppressing-notes).
+- **No note checks in a suppressed export (Q10, choice (a)).** None of the Q9 rules runs, nor the
+  orphan-note warning. The checks protect rendered notes, and a suppressed export renders none;
+  keeping even the marker-structure rules (2, 6, 7) would refuse a draft whose notes point at
+  blocks not yet written, a case the switch should serve.
+- **Both note forms dropped in a suppressed export (Q11, choice (a)).** A block tagged
+  `note-form:: short` or `note-form:: full` is dropped wherever it stands: the tag means "only in
+  the edition with these notes", and no edition with notes is being produced.
