@@ -19,12 +19,15 @@ from guffin.model.vertex import (
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
+    QuoteBlockVertex,
+    QuoteType,
     TextVertex,
     TodoState,
     TodoVertex,
     VertexType,
     find_attribute_assignment,
     is_embed_vertex,
+    is_epigraph,
     is_renderable_asset_vertex,
     vertex_adapter,
 )
@@ -287,6 +290,23 @@ class TestIsEmbedVertex:
         """Page and text vertices are not transcluding."""
         assert not is_embed_vertex(PageVertex(uid="page00001", title="P"))
         assert not is_embed_vertex(TextVertex(uid="txt00001a", text="hello"))
+
+
+class TestIsEpigraph:
+    """Tests for the is_epigraph() classification predicate."""
+
+    def test_epigraph_quote_block_is_an_epigraph(self) -> None:
+        """A quote block of quote type EPIGRAPH is an epigraph."""
+        assert is_epigraph(QuoteBlockVertex(uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote="Q."))
+
+    @pytest.mark.parametrize("quote_type", [QuoteType.BLOCK, QuoteType.PULL])
+    def test_other_quote_blocks_are_not(self, quote_type: QuoteType) -> None:
+        """A block quotation or a pull quote is not an epigraph."""
+        assert not is_epigraph(QuoteBlockVertex(uid="quote0001", quote_type=quote_type, quote="Q."))
+
+    def test_other_vertex_types_are_not(self) -> None:
+        """A vertex that is not a quote block is not an epigraph."""
+        assert not is_epigraph(TextVertex(uid="txt00001a", text="hello"))
 
 
 class TestAlternatives:

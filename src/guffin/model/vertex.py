@@ -57,6 +57,8 @@ Public symbols:
   narrowing it to :class:`AssetVertex`.
 - :func:`is_embed_vertex` — whether a vertex is transcluding, narrowing it to
   :data:`EmbedVertex`.
+- :func:`is_epigraph` — whether a vertex is an epigraph, narrowing it to
+  :class:`QuoteBlockVertex`.
 - :func:`find_attribute_assignment` — find a vertex's folded attribute assignment for an
   :class:`~guffin.model.attribute.Attribute`.
 """
@@ -832,6 +834,22 @@ def is_embed_vertex(vertex: Vertex) -> TypeIs[EmbedVertex]:
         narrowing it to :data:`EmbedVertex`.
     """
     return isinstance(vertex, _EMBED_VERTEX_CLASSES)
+
+
+@validate_call
+def is_epigraph(vertex: Vertex) -> TypeIs[QuoteBlockVertex]:
+    """Whether *vertex* is an epigraph.
+
+    An epigraph is a :class:`QuoteBlockVertex` whose ``quote_type`` is :attr:`QuoteType.EPIGRAPH`:
+    a quotation set at the opening of a work or one of its divisions.
+
+    Args:
+        vertex: The vertex to classify.
+
+    Returns:
+        ``True`` when *vertex* is an epigraph, narrowing it to :class:`QuoteBlockVertex`.
+    """
+    return isinstance(vertex, QuoteBlockVertex) and vertex.quote_type is QuoteType.EPIGRAPH
 
 
 @validate_call

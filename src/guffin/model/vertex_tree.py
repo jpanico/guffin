@@ -59,14 +59,13 @@ from guffin.model.vertex import (
     HeadingVertex,
     ImageVertex,
     PdfVertex,
-    QuoteBlockVertex,
-    QuoteType,
     RenderableAssetVertex,
     TableVertex,
     TextVertex,
     Vertex,
     is_bare_asset_vertex,
     is_embed_vertex,
+    is_epigraph,
     is_renderable_asset_vertex,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_standalone_vertex_link
@@ -499,11 +498,6 @@ def drop_code_sources(tree: VertexTree) -> VertexTree:
     return map_vertices(tree, _clear)
 
 
-def _is_epigraph(vertex: Vertex) -> bool:
-    """Return whether *vertex* is an epigraph: a :class:`QuoteBlockVertex` of :attr:`QuoteType.EPIGRAPH`."""
-    return isinstance(vertex, QuoteBlockVertex) and vertex.quote_type is QuoteType.EPIGRAPH
-
-
 @validate_call
 def drop_root_preamble(tree: VertexTree) -> VertexTree:
     """Return a new :class:`VertexTree` with the root vertex's loose preamble pruned.
@@ -512,10 +506,10 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
     :class:`~guffin.model.vertex.HeadingVertex` child — content that belongs
     to no titled division.  Those children (and their entire subtrees) are removed from
     :attr:`~VertexTree.tree_vertices` and from the root's
-    :attr:`~guffin.model.vertex._BaseVertex.children` list.  An epigraph among them
-    (a :class:`~guffin.model.vertex.QuoteBlockVertex` of :attr:`~guffin.model.vertex.QuoteType.EPIGRAPH`)
-    is not loose: it belongs to the opening of the document the root contains, ahead of its first
-    division, so it is kept in place with its subtree.  The rule is root-type-independent:
+    :attr:`~guffin.model.vertex._BaseVertex.children` list.  An epigraph among them (see
+    :func:`~guffin.model.vertex.is_epigraph`) is not loose: it belongs to the opening of the
+    document the root contains, ahead of its first division, so it is kept in place with its
+    subtree.  The rule is root-type-independent:
     whether the tree roots at a page or at a subtree export's heading or block, the root is the
     document's container and its children are the document's top-level run.  The original *tree*
     is not modified.
@@ -546,7 +540,7 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
     if heading_index is None:
         logger.warning("root vertex uid=%r has no heading children; loose preamble retained", root.uid)
         return tree
-    kept_uids: Final[list[Uid]] = [vtx.uid for vtx in child_vertices[:heading_index] if _is_epigraph(vtx)]
+    kept_uids: Final[list[Uid]] = [vtx.uid for vtx in child_vertices[:heading_index] if is_epigraph(vtx)]
     if len(kept_uids) == heading_index:
         return tree
 
