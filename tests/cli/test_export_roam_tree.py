@@ -4,6 +4,7 @@ import importlib.metadata
 import logging
 import os
 import pathlib
+import re
 from typing import Final
 from unittest.mock import MagicMock, patch
 
@@ -20,7 +21,7 @@ from conftest import (
     YamlFixtureLoader,
     article1_node_tree,
 )
-from pypdf import PdfReader
+from pypdf import PageObject, PdfReader
 from typer.testing import CliRunner, Result
 
 from guffin.cli.export_roam_tree import app
@@ -444,6 +445,130 @@ class TestExportRoamTreeHeadingLinksLive:
         """A reference to a heading outside the export (Test Article 1) stays plain text."""
         assert heading_anchor(_TA1_HEADING_UID) not in pdf.named_destinations
         assert heading_anchor(_TA1_HEADING_UID) not in self._pdf_link_destinations(pdf)
+
+
+_TA6_NOTE_LEAD_INS: Final[tuple[str, ...]] = (
+    "creator of beautiful things",
+    "the rage of Caliban",
+    "the Grosvenor",
+    "a Narcissus",
+    "the face of Antinous",
+)
+"""The lead-ins of Test Article 6's five notes, in reading order: two in the Preface, three in chapter I."""
+
+
+def _pdf_page_text(page: PageObject) -> str:
+    """Return *page*'s text as one line of single-spaced words, rejoining words hyphenated at a line end."""
+    return " ".join(re.sub(r"-\n", "", page.extract_text() or "").split())
+
+
+@pytest.mark.live
+@pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
+class TestExportRoamTreeNotesLive:
+    """Live book PDF export of [[Test Article]] 6: its invisible endnotes, gathered and linked both ways.
+
+    The five notes sit in ``#footnotes`` blocks on the embedded Preface and chapter I pages, and the
+    Notes section opens at TA6's back-matter heading tagged ``element-type:: endnotes``.  Asserts the
+    Notes page's content and the links rather than a byte baseline, so unrelated changes to the
+    template do not disturb it.  The EPUB rendering of the same notes is pinned byte-for-byte by
+    ``TestExportRoamTreeEpubLive``.
+    """
+
+    @staticmethod
+    def _export(out_dir: pathlib.Path, *flags: str) -> PdfReader:
+        """Export [[Test Article]] 6 as a book PDF into *out_dir*, with any extra CLI *flags*."""
+        result: Final[Result] = _invoke_live_export(
+            ["[[Test Article]] 6", "--output-dir", str(out_dir), "--format", "pdf", "--type", "book", *flags]
+        )
+        assert result.exit_code == 0, result.output
+        return PdfReader(out_dir / "The_Picture_of_Dorian_Gray.book.pdf")
+
+    @pytest.fixture(scope="class")
+    def pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
+        """[[Test Article]] 6 exported as a book PDF, its lead-ins underlined (the default)."""
+        return self._export(tmp_path_factory.mktemp("ta6-pdf"))
+
+    @pytest.fixture(scope="class")
+    def print_pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
+        """[[Test Article]] 6 exported as a book PDF for print, with ``--no-note-ref-underline``."""
+        return self._export(tmp_path_factory.mktemp("ta6-print-pdf"), "--no-note-ref-underline")
+
+    @staticmethod
+    def _notes_page(reader: PdfReader) -> int:
+        """Return the index of the one page holding every note's entry."""
+        pages: Final[list[int]] = [
+            index
+            for index, page in enumerate(reader.pages)
+            if all(f"{lead_in}:" in _pdf_page_text(page) for lead_in in _TA6_NOTE_LEAD_INS)
+        ]
+        assert len(pages) == 1, pages
+        return pages[0]
+
+    @staticmethod
+    def _passage_page(reader: PdfReader, lead_in: str) -> int:
+        """Return the index of the one page outside the Notes whose running text holds *lead_in*."""
+        notes_page: Final[int] = TestExportRoamTreeNotesLive._notes_page(reader)
+        pages: Final[list[int]] = [
+            index for index, page in enumerate(reader.pages) if index != notes_page and lead_in in _pdf_page_text(page)
+        ]
+        assert len(pages) == 1, (lead_in, pages)
+        return pages[0]
+
+    @staticmethod
+    def _link_targets(reader: PdfReader, index: int) -> list[int]:
+        """Return the index of the page each internal link on page *index* points to, in page order."""
+        by_object: Final[dict[int, int]] = {
+            page.indirect_reference.idnum: number
+            for number, page in enumerate(reader.pages)
+            if page.indirect_reference is not None
+        }
+        return [
+            by_object[annot.get_object()["/Dest"][0].idnum]
+            for annot in reader.pages[index].get("/Annots") or []
+            if annot.get_object().get("/Dest") is not None
+        ]
+
+    @staticmethod
+    def _dashed_strokes(page: PageObject) -> int:
+        """Return how many dash patterns (``[…] phase d``, the array non-empty) *page*'s content sets.
+
+        The dotted underline under a lead-in is the only dashed stroke on TA6's text pages.
+        """
+        contents: Final = page.get_contents()
+        data: Final[bytes] = contents.get_data() if contents is not None else b""
+        return len(re.findall(rb"\[[^\]]+\]\s*[\d.]+\s+d\b", data))
+
+    def test_notes_page_groups_the_entries_by_chapter(self, pdf: PdfReader) -> None:
+        """The Notes page groups the entries under Preface and I, each opening with a page number and its lead-in."""
+        text: Final[str] = _pdf_page_text(pdf.pages[self._notes_page(pdf)])
+        entries: Final[list[str]] = [rf"\d+ {re.escape(lead_in)}: .+" for lead_in in _TA6_NOTE_LEAD_INS]
+        assert re.search(rf"Notes Preface {entries[0]} {entries[1]} I {' '.join(entries[2:])}", text), text
+
+    def test_each_entry_gives_its_passage_page(self, pdf: PdfReader) -> None:
+        """Each entry's locator is the displayed page number of the page that sets its passage."""
+        text: Final[str] = _pdf_page_text(pdf.pages[self._notes_page(pdf)])
+        for lead_in in _TA6_NOTE_LEAD_INS:
+            # The page's displayed number is the last text on it, in the footer.
+            displayed: str = _pdf_page_text(pdf.pages[self._passage_page(pdf, lead_in)]).split()[-1]
+            assert f"{displayed} {lead_in}:" in text, lead_in
+
+    def test_lead_ins_and_entries_link_to_each_other(self, pdf: PdfReader) -> None:
+        """Every lead-in links to the Notes page, and every entry's locator links back to its passage page."""
+        notes_page: Final[int] = self._notes_page(pdf)
+        passage_pages: Final[list[int]] = [self._passage_page(pdf, lead_in) for lead_in in _TA6_NOTE_LEAD_INS]
+        to_notes: Final[int] = sum(
+            self._link_targets(pdf, page).count(notes_page) for page in sorted(set(passage_pages))
+        )
+        assert to_notes == len(_TA6_NOTE_LEAD_INS)
+        assert self._link_targets(pdf, notes_page) == passage_pages
+
+    def test_lead_ins_are_underlined_except_for_print(self, pdf: PdfReader, print_pdf: PdfReader) -> None:
+        """A lead-in's page carries the dotted underline by default, and none for print, where it still links."""
+        for lead_in in _TA6_NOTE_LEAD_INS:
+            page: int = self._passage_page(pdf, lead_in)
+            assert self._dashed_strokes(pdf.pages[page]) > 0, lead_in
+            assert self._dashed_strokes(print_pdf.pages[page]) == 0, lead_in
+            assert self._notes_page(print_pdf) in self._link_targets(print_pdf, page), lead_in
 
 
 class TestExportRoamTreeStrictSemantics:

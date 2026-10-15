@@ -16,6 +16,7 @@
   - id: 12857
   - id: 12900
   - id: 12972
+  - id: 20657
   refs:
   - id: 4223
   page: null
@@ -549,6 +550,41 @@
   title: null
   attrs: null
   blocks: null
+- uid: uYzUSUVw0
+  id: 20657
+  string: Notes
+  order: 5
+  heading: 2
+  children:
+  - id: 20656
+  refs: null
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - uYzUSUVw0
+      value:
+      - uid
+      - uYzUSUVw0
+    - source:
+      - uid
+      - o_8_ElTcZ
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - o_8_ElTcZ
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 - uid: uEYS1oQeC
   id: 12855
   string: 'rights:: Copyright J. B. Lippincott Company'
@@ -679,6 +715,25 @@
   title: null
   attrs: null
   blocks: null
+- uid: QGaojN4vM
+  id: 20655
+  string: 'element-type:: endnotes'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 20656
+  - id: 20657
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: 83g00A144
   id: 12975
   string: '{{embed: [[Dorian chapter I]]}}'
@@ -696,6 +751,42 @@
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: o_8_ElTcZ
+  id: 20656
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 20655
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 20657
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - o_8_ElTcZ
+      value:
+      - uid
+      - o_8_ElTcZ
+    - source:
+      - uid
+      - QGaojN4vM
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - QGaojN4vM
+      value: ' endnotes'
   blocks: null
 - uid: QE6k_NSRx
   id: 12957

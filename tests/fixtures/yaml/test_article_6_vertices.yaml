@@ -9,6 +9,7 @@
   - a9LW1J8BT
   - WLRZ6sK1M
   - kmhD9g62Q
+  - uYzUSUVw0
   refs:
   - LBFKibPIj
   attribute_assignments:
@@ -220,3 +221,18 @@
   vertex_link:
   - vertex-embed
   - ArmnLLo63
+- vertex_type: guffin/heading
+  uid: uYzUSUVw0
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: endnotes
+  text: Notes
+  heading_level: 1

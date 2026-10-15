@@ -10,6 +10,7 @@ root_node:
   - id: 12857
   - id: 12900
   - id: 12972
+  - id: 20657
   refs:
   - id: 4223
   page: null
@@ -49,6 +50,7 @@ tree_network:
   - id: 12857
   - id: 12900
   - id: 12972
+  - id: 20657
   refs:
   - id: 4223
   page: null
@@ -582,6 +584,41 @@ tree_network:
   title: null
   attrs: null
   blocks: null
+- uid: uYzUSUVw0
+  id: 20657
+  string: Notes
+  order: 5
+  heading: 2
+  children:
+  - id: 20656
+  refs: null
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - uYzUSUVw0
+      value:
+      - uid
+      - uYzUSUVw0
+    - source:
+      - uid
+      - o_8_ElTcZ
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - o_8_ElTcZ
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 - uid: uEYS1oQeC
   id: 12855
   string: 'rights:: Copyright J. B. Lippincott Company'
@@ -712,6 +749,25 @@ tree_network:
   title: null
   attrs: null
   blocks: null
+- uid: QGaojN4vM
+  id: 20655
+  string: 'element-type:: endnotes'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 20656
+  - id: 20657
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: 83g00A144
   id: 12975
   string: '{{embed: [[Dorian chapter I]]}}'
@@ -729,6 +785,42 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: o_8_ElTcZ
+  id: 20656
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 20655
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 12842
+  children_view_type: null
+  parents:
+  - id: 12842
+  - id: 20657
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - o_8_ElTcZ
+      value:
+      - uid
+      - o_8_ElTcZ
+    - source:
+      - uid
+      - QGaojN4vM
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - QGaojN4vM
+      value: ' endnotes'
   blocks: null
 - uid: QE6k_NSRx
   id: 12957
@@ -929,6 +1021,7 @@ refs_by_id:
     - id: 13057
     - id: 13058
     - id: 13059
+    - id: 20654
     refs: null
     page: null
     children_view_type: numbered
@@ -1000,6 +1093,7 @@ refs_by_id:
     - id: 12967
     - id: 12968
     - id: 12969
+    - id: 20650
     refs: null
     page: null
     children_view_type: null
@@ -1253,12 +1347,13 @@ refs_by_id:
   '12966':
     uid: QyPYjdiS1
     id: 12966
-    string: The nineteenth century dislike of realism is the rage of Caliban seeing
-      his own face in a glass.
+    string: The nineteenth century dislike of realism is [(the rage of Caliban)](((XVFzJSc39)))
+      seeing his own face in a glass.
     order: 4
     heading: null
     children: null
-    refs: null
+    refs:
+    - id: 20649
     page:
       id: 12961
     children_view_type: null
@@ -1321,9 +1416,49 @@ refs_by_id:
   '12969':
     uid: 5Q75qdi4F
     id: 12969
-    string: The artist is the creator of beautiful things. To reveal art and conceal
-      the artist is art’s aim. The critic is he who can translate into another manner
-      or a new material his impression of beautiful things.
+    string: The artist is the [(creator of beautiful things)](((0vaN5L-hQ))). To reveal
+      art and conceal the artist is art’s aim. The critic is he who can translate
+      into another manner or a new material his impression of beautiful things.
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 20648
+    page:
+      id: 12961
+    children_view_type: null
+    parents:
+    - id: 12961
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20650':
+    uid: s2T2oKXNn
+    id: 20650
+    string: '#footnotes'
+    order: 7
+    heading: null
+    children:
+    - id: 20648
+    - id: 20649
+    refs:
+    - id: 20616
+    page:
+      id: 12961
+    children_view_type: numbered
+    parents:
+    - id: 12961
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20648':
+    uid: 0vaN5L-hQ
+    id: 20648
+    string: Wilde first published the Preface in the __Fortnightly Review__ in March
+      1891, a month before the novel’s first book edition. It answered the reviewers
+      who had condemned the 1890 magazine version as immoral.
     order: 0
     heading: null
     children: null
@@ -1333,6 +1468,26 @@ refs_by_id:
     children_view_type: null
     parents:
     - id: 12961
+    - id: 20650
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20649':
+    uid: XVFzJSc39
+    id: 20649
+    string: Caliban is the brutish, misshapen servant of Prospero in Shakespeare’s
+      __The Tempest__.
+    order: 1
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 12961
+    children_view_type: null
+    parents:
+    - id: 12961
+    - id: 20650
     props: null
     title: null
     attrs: null
@@ -1509,7 +1664,7 @@ refs_by_id:
     uid: A3MnG4Vgl
     id: 12982
     string: “It is your best work, Basil, the best thing you have ever done,” said
-      Lord Henry languidly. “You must certainly send it next year to the Grosvenor.
+      Lord Henry languidly. “You must certainly send it next year to [(the Grosvenor)](((I-Cuu7TdT))).
       The Academy is too large and too vulgar. Whenever I have gone there, there have
       been either so many people that I have not been able to see the pictures, which
       was dreadful, or so many pictures that I have not been able to see the people,
@@ -1517,7 +1672,8 @@ refs_by_id:
     order: 4
     heading: null
     children: null
-    refs: null
+    refs:
+    - id: 20651
     page:
       id: 12977
     children_view_type: null
@@ -1629,7 +1785,7 @@ refs_by_id:
     string: '“Too much of yourself in it! Upon my word, Basil, I didn’t know you were
       so vain; and I really can’t see any resemblance between you, with your rugged
       strong face and your coal-black hair, and this young Adonis, who looks as if
-      he was made out of ivory and rose-leaves. Why, my dear Basil, he is a Narcissus,
+      he was made out of ivory and rose-leaves. Why, my dear Basil, he is [(a Narcissus)](((A-WhTGuDW))),
       and you⁠—well, of course you have an intellectual expression and all that. But
       beauty, real beauty, ends where an intellectual expression begins. Intellect
       is in itself a mode of exaggeration, and destroys the harmony of any face. The
@@ -1647,7 +1803,8 @@ refs_by_id:
     order: 10
     heading: null
     children: null
-    refs: null
+    refs:
+    - id: 20652
     page:
       id: 12977
     children_view_type: null
@@ -2551,35 +2708,36 @@ refs_by_id:
       Harry, that there are only two eras of any importance in the world’s history.
       The first is the appearance of a new medium for art, and the second is the appearance
       of a new personality for art also. What the invention of oil-painting was to
-      the Venetians, the face of Antinous was to late Greek sculpture, and the face
-      of Dorian Gray will some day be to me. It is not merely that I paint from him,
-      draw from him, sketch from him. Of course, I have done all that. But he is much
-      more to me than a model or a sitter. I won’t tell you that I am dissatisfied
-      with what I have done of him, or that his beauty is such that art cannot express
-      it. There is nothing that art cannot express, and I know that the work I have
-      done, since I met Dorian Gray, is good work, is the best work of my life. But
-      in some curious way⁠—I wonder will you understand me?⁠—his personality has suggested
-      to me an entirely new manner in art, an entirely new mode of style. I see things
-      differently, I think of them differently. I can now recreate life in a way that
-      was hidden from me before. ‘A dream of form in days of thought’⁠—who is it who
-      says that? I forget; but it is what Dorian Gray has been to me. The merely visible
-      presence of this lad⁠—for he seems to me little more than a lad, though he is
-      really over twenty⁠—his merely visible presence⁠—ah! I wonder can you realize
-      all that that means? Unconsciously he defines for me the lines of a fresh school,
-      a school that is to have in it all the passion of the romantic spirit, all the
-      perfection of the spirit that is Greek. The harmony of soul and body⁠—how much
-      that is! We in our madness have separated the two, and have invented a realism
-      that is vulgar, an ideality that is void. Harry! if you only knew what Dorian
-      Gray is to me! You remember that landscape of mine, for which Agnew offered
-      me such a huge price but which I would not part with? It is one of the best
-      things I have ever done. And why is it so? Because, while I was painting it,
-      Dorian Gray sat beside me. Some subtle influence passed from him to me, and
-      for the first time in my life I saw in the plain woodland the wonder I had always
-      looked for and always missed.”
+      the Venetians, [(the face of Antinous)](((GNyPIeQ9W))) was to late Greek sculpture,
+      and the face of Dorian Gray will some day be to me. It is not merely that I
+      paint from him, draw from him, sketch from him. Of course, I have done all that.
+      But he is much more to me than a model or a sitter. I won’t tell you that I
+      am dissatisfied with what I have done of him, or that his beauty is such that
+      art cannot express it. There is nothing that art cannot express, and I know
+      that the work I have done, since I met Dorian Gray, is good work, is the best
+      work of my life. But in some curious way⁠—I wonder will you understand me?⁠—his
+      personality has suggested to me an entirely new manner in art, an entirely new
+      mode of style. I see things differently, I think of them differently. I can
+      now recreate life in a way that was hidden from me before. ‘A dream of form
+      in days of thought’⁠—who is it who says that? I forget; but it is what Dorian
+      Gray has been to me. The merely visible presence of this lad⁠—for he seems to
+      me little more than a lad, though he is really over twenty⁠—his merely visible
+      presence⁠—ah! I wonder can you realize all that that means? Unconsciously he
+      defines for me the lines of a fresh school, a school that is to have in it all
+      the passion of the romantic spirit, all the perfection of the spirit that is
+      Greek. The harmony of soul and body⁠—how much that is! We in our madness have
+      separated the two, and have invented a realism that is vulgar, an ideality that
+      is void. Harry! if you only knew what Dorian Gray is to me! You remember that
+      landscape of mine, for which Agnew offered me such a huge price but which I
+      would not part with? It is one of the best things I have ever done. And why
+      is it so? Because, while I was painting it, Dorian Gray sat beside me. Some
+      subtle influence passed from him to me, and for the first time in my life I
+      saw in the plain woodland the wonder I had always looked for and always missed.”
     order: 55
     heading: null
     children: null
-    refs: null
+    refs:
+    - id: 20653
     page:
       id: 12977
     children_view_type: null
@@ -3108,63 +3266,91 @@ refs_by_id:
     title: null
     attrs: null
     blocks: null
-  '18202':
-    uid: lXi4SgSvz
-    id: 18202
-    string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
-      TEST DATA – DO NOT REMOVE'
+  '20654':
+    uid: gXg0zKHYY
+    id: 20654
+    string: '#footnotes'
+    order: 81
+    heading: null
+    children:
+    - id: 20651
+    - id: 20652
+    - id: 20653
+    refs:
+    - id: 20616
+    page:
+      id: 12977
+    children_view_type: numbered
+    parents:
+    - id: 12977
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '20651':
+    uid: I-Cuu7TdT
+    id: 20651
+    string: The Grosvenor Gallery in New Bond Street, opened in 1877 as an alternative
+      to the Royal Academy, the “Academy” of the next sentence. It was the showcase
+      of the Aesthetic Movement, hanging painters such as Edward Burne-Jones and James
+      McNeill Whistler.
     order: 0
     heading: null
     children: null
-    refs:
-    - id: 5450
-    - id: 5462
+    refs: null
     page:
-      id: 4223
+      id: 12977
     children_view_type: null
     parents:
-    - id: 4223
+    - id: 12977
+    - id: 20654
     props: null
     title: null
     attrs: null
     blocks: null
-  '18204':
-    uid: JSrSVApJ_
-    id: 18204
-    string: 'tags:: #Publishing'
+  '20652':
+    uid: A-WhTGuDW
+    id: 20652
+    string: In Greek myth Narcissus fell in love with his own reflection in a pool
+      and wasted away gazing at it, a first hint of the novel’s story.
     order: 1
     heading: null
     children: null
-    refs:
-    - id: 261
-    - id: 6535
+    refs: null
     page:
-      id: 4223
+      id: 12977
     children_view_type: null
     parents:
-    - id: 4223
+    - id: 12977
+    - id: 20654
     props: null
     title: null
     attrs: null
     blocks: null
-  '261':
-    uid: RXwAqq0_T
-    id: 261
-    string: null
-    order: null
+  '20653':
+    uid: GNyPIeQ9W
+    id: 20653
+    string: Antinous, a Greek youth from Bithynia, was the favorite of the Roman emperor
+      Hadrian. After he drowned in the Nile in 130 CE, Hadrian had him deified, and
+      his likeness was carved in statues across the empire, among the last great works
+      of classical sculpture.
+    order: 2
     heading: null
     children: null
     refs: null
-    page: null
+    page:
+      id: 12977
     children_view_type: null
-    parents: null
+    parents:
+    - id: 12977
+    - id: 20654
     props: null
-    title: tags
+    title: null
     attrs: null
     blocks: null
-  '6535':
-    uid: 9ZtPB2yY3
-    id: 6535
+  '20616':
+    uid: yx87Sz9r7
+    id: 20616
     string: null
     order: null
     heading: null
@@ -3174,6 +3360,6 @@ refs_by_id:
     children_view_type: null
     parents: null
     props: null
-    title: Publishing
+    title: footnotes
     attrs: null
     blocks: null
