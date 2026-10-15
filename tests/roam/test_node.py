@@ -955,6 +955,37 @@ class TestDailyNoteTitleValidation:
         assert node.title == "An Arbitrary Page Title"
 
 
+class TestValidationOnConstruction:
+    """The instance checks run when a node is built, and not again when it is validated as an argument."""
+
+    def test_checks_run_once_per_node(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Passing a node into a ``@validate_call`` function, or validating it again, skips the checks.
+
+        Pydantic reruns ``after`` validators on every instance passed into a ``@validate_call``
+        function; the checks run from a wrap validator that passes an existing node through.
+        """
+        checked: list[str] = []
+        names: Final[tuple[str, ...]] = (
+            "_validate_entity_type",
+            "_validate_daily_note_title",
+            "_validate_better_bullet_type",
+            "_validate_better_bullet_provenance",
+        )
+        for name in names:
+            original = getattr(RoamNode, name)
+
+            def counting_check(node: RoamNode, _name: str = name, _original: object = original) -> None:
+                checked.append(_name)
+                _original(node)  # type: ignore[operator]
+
+            monkeypatch.setattr(RoamNode, name, counting_check)
+        node: Final[RoamNode] = RoamNode(uid="abc123xyz", id=1, title="A Page")
+        assert checked == list(names)
+        node_type(node)  # @validate_call, taking a RoamNode
+        RoamNode.model_validate(node)
+        assert checked == list(names)
+
+
 class TestRoamNodeVersionGroup:
     """Tests for the Version group entity type: ``blocks`` set, ``title`` and ``string`` None."""
 

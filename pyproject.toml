@@ -67,9 +67,13 @@ check = [
 #   medium — the full offline suite.
 #   heavy  — everything, live tests included (requires the Roam Desktop app running locally);
 #            the tier `check` runs.
-test-light = "pytest -n auto --dist loadscope -m 'not pandoc'"
-test-medium = "pytest -n auto --dist loadscope"
-test-heavy = "GUFFIN_LIVE_TESTS=1 pytest -n auto --dist loadscope"
+# Four workers, not -n auto: on the development Mac (4 performance + 4 efficiency cores) auto starts
+# eight, and the medium tier then ran in 8.5 s against 7.7–8.0 s with four (2026-10-15).  Every
+# worker imports and collects the whole suite before running a test, and the efficiency cores add
+# less than that costs.  Revisit on a machine with more performance cores.
+test-light = "pytest -n 4 --dist loadscope -m 'not pandoc'"
+test-medium = "pytest -n 4 --dist loadscope"
+test-heavy = "GUFFIN_LIVE_TESTS=1 pytest -n 4 --dist loadscope"
 
 [tool.black]
 line-length = 120

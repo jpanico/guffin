@@ -203,6 +203,26 @@ class TestNodeTree:
         with pytest.raises(Exception, match="NodeTree.build"):
             NodeTree(tree_network=[root], root_node=root)  # type: ignore[call-arg]
 
+    def test_tree_check_runs_once_per_build(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The whole-tree check runs when a tree is built, not again when it is passed into a validated function.
+
+        Pydantic reruns ``after`` validators on every instance passed into a ``@validate_call``
+        function; the check runs from a wrap validator that passes an existing tree through.
+        """
+        checked: list[str] = []
+        original = NodeTree._validate_is_tree
+
+        def counting_check(tree: NodeTree) -> None:
+            checked.append(tree.root_node.uid)
+            original(tree)
+
+        monkeypatch.setattr(NodeTree, "_validate_is_tree", counting_check)
+        tree: NodeTree = _build_2x2_tree()
+        assert checked == ["tabluid01"]
+        to_table(tree)  # @validate_call, taking a NodeTree
+        NodeTree.model_validate(tree)
+        assert checked == ["tabluid01"]
+
 
 # ---------------------------------------------------------------------------
 # TestNodeTreeNodeIds

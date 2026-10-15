@@ -84,12 +84,15 @@ pyright                           # type check (strict)
 hatch run test-medium             # run tests (excludes live tests) — see the tiers below
 
 # Test tiers (defined as hatch scripts in pyproject.toml), lightest to heaviest.  Always run a
-# whole-suite pass through a tier: each is `pytest -n auto --dist loadscope`, parallel across cores,
-# whereas a bare `pytest` runs serially (`addopts` carries no `-n`) and takes more than twice as long
-# (measured 2026-10-11: ~8s via test-medium vs 16–19s bare, same 2386 tests).  Bare `pytest` is for
-# targeting one file or a `-k` expression while iterating, where startup dominates.
-hatch run test-light   # skips pandoc-subprocess-bound integration tests (marked `pandoc`); the fast inner loop (~2.5s)
-hatch run test-medium  # the full offline suite (~8s)
+# whole-suite pass through a tier: each is `pytest -n 4 --dist loadscope`, parallel across four
+# workers, whereas a bare `pytest` runs serially (`addopts` carries no `-n`) and takes more than twice
+# as long (measured 2026-10-11: ~8s via test-medium vs 16–19s bare, same 2386 tests).  Four, not
+# `-n auto`: on the development Mac (4 performance + 4 efficiency cores) auto starts eight workers,
+# each importing and collecting the whole suite first, and both tiers ran slower (2026-10-15: medium
+# 8.5s vs 7.1–7.3s, light 5.2s vs 4.0s).  Bare `pytest` is for targeting one file or a `-k`
+# expression while iterating, where startup dominates.
+hatch run test-light   # skips pandoc-subprocess-bound integration tests (marked `pandoc`); the fast inner loop (~4s)
+hatch run test-medium  # the full offline suite (~7s)
 hatch run test-heavy   # everything, live tests included; requires Roam Desktop running locally; the tier `check` runs
 
 # Live tests only, directly (requires Roam Desktop running locally):
@@ -295,6 +298,7 @@ for `[[Test Article]] 3` (mdbundle baseline — the live mdbundle export test's 
 - **Bash tool calls**: never chain multiple commands with `&&` in a single Bash tool call; use separate Bash tool calls instead. Never use heredoc embeds (`$(cat <<'EOF'...EOF)`) or ANSI-C quoting (`$'...'`) in Bash tool calls; both embed literal newlines in the command string, which prevents permission-pattern matching. For `git commit` messages that need multiple paragraphs, use repeated `-m` flags instead: `git commit -m "subject" -m "body" -m "Co-Authored-By: ..."` — each `-m` becomes a blank-line-separated paragraph.
 - **Logging format**: all `logger.*()` calls must use `%`-style format strings (e.g., `logger.info("x=%s", x)`) — never f-strings (e.g., `logger.info(f"x={x}")`); this enables lazy interpolation and better log aggregation in monitoring tools.
 - **`@validate_call`**: decorate every public function and method (non-`_`-prefixed, non-dunder) with `@validate_call`. Exceptions: `@property` methods (technically incompatible), Pydantic model lifecycle methods (`model_*`, field validators, `__init__`), CLI entry-point functions wired by argparse, methods overriding non-Pydantic framework interfaces, generic functions whose type variables cannot be resolved at runtime, and classmethods/staticmethods whose return-type annotation references the class being defined (pydantic eagerly evaluates type hints at decoration time, before the class is added to module globals, causing a `NameError`). For `@staticmethod` and `@classmethod` methods that qualify, `@validate_call` is placed innermost — just above `def`, below the `@staticmethod`/`@classmethod` line. When a function has panflute (or other arbitrary-type) parameters, use `@validate_call(config=ConfigDict(arbitrary_types_allowed=True))` instead of plain `@validate_call`.
+- **Model invariants run once, at construction**: Pydantic reruns a model's `mode="after"` validators every time an existing instance is passed into a `@validate_call` function (its fields are not revalidated, but those validators are). So for a model passed around often, the checks go in one `mode="wrap"` model validator that returns an existing instance unchanged and runs them only on a newly built one: `RoamNode._validate_on_construction` and `NodeTree._validate_on_construction` are the pattern. Before that change (2026-10-15), `RoamNode`'s checks ran 1.1 million times in one test-suite run and `NodeTree`'s whole-tree check 18,000 times for 400 trees built. An `after` validator is fine on a model that is rarely passed as an argument.
 - **Immutable bindings**: all local variables and module-level constants must be annotated `Final[T]` by default (e.g., `x: Final[int] = 1`, `MY_CONST: Final[str] = "value"`); only omit `Final` when the binding genuinely needs to be reassigned. Inside Pydantic models, use `ClassVar[T]` for class-level constants (Pydantic excludes these from model fields).
 - **Side-effect-free functions**: side-effect-free functions are very highly valued — a function computes and returns a value; it must never mutate its arguments. State updates (dict inserts, accumulator writes) belong at the call site that owns the state. Declare read-only intent in signatures with abstract types (`Mapping` not `dict`, `Sequence` not `list`) for parameters that are only read, and name value-producing helpers as values (`_resolved_file_name`), not actions (`_claim_file_name`). Functions whose *purpose* is an effect (I/O, caching, rendering) are of course legitimate — keep effects there, at the edges, and out of computation helpers.
 - **Parameter names**: function and method parameter names must be at least 3 characters long; single- and two-character names (e.g. `s`, `fn`, `cb`) are not allowed.

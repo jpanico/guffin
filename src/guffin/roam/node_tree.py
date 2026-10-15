@@ -27,7 +27,15 @@ import logging
 from collections.abc import Iterable, Iterator, Mapping, Set
 from typing import Annotated, ClassVar, Final
 
-from pydantic import BaseModel, ConfigDict, Field, SkipValidation, model_validator, validate_call
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ModelWrapValidatorHandler,
+    SkipValidation,
+    model_validator,
+    validate_call,
+)
 
 from guffin.common.table import Table
 from guffin.common.validation import ValidationError, ValidationResult, validate_all
@@ -340,8 +348,35 @@ class NodeTree(BaseModel):
             raise ValueError("NodeTree must be created via NodeTree.build(); direct construction is not supported.")
         return data
 
-    @model_validator(mode="after")
-    def _validate_is_tree(self) -> NodeTree:
+    @model_validator(mode="wrap")
+    @classmethod
+    def _validate_on_construction(cls, data: object, handler: ModelWrapValidatorHandler[NodeTree]) -> NodeTree:
+        """Check the tree invariants once, when a tree is built; pass an existing tree through.
+
+        Runs :meth:`_validate_is_tree` on a newly built tree.  It is not an ``after`` validator
+        because Pydantic reruns those whenever an existing instance is validated again, as it is
+        each time it is passed into a ``@validate_call`` function, though its fields are not
+        revalidated: the test suite reran the whole-tree check some 18,000 times for 400 trees
+        built.  A tree is frozen, so it cannot have changed since it was checked.
+
+        Args:
+            data: The input being validated: the field data :meth:`build` supplies, or an existing
+                :class:`NodeTree`.
+            handler: Pydantic's inner validator, which builds the tree from field data.
+
+        Returns:
+            The newly built and checked tree, or *data* itself when it is already a tree.
+
+        Raises:
+            ValueError: If a newly built tree violates a tree invariant.
+        """
+        if isinstance(data, cls):
+            return data
+        tree: Final[NodeTree] = handler(data)
+        tree._validate_is_tree()
+        return tree
+
+    def _validate_is_tree(self) -> None:
         """Validate all tree invariants on *network* at construction time.
 
         Raises:
@@ -351,7 +386,6 @@ class NodeTree(BaseModel):
         result: Final[ValidationResult] = is_tree(self.root_node, self.tree_network)
         if not result.is_valid:
             raise ValueError("NodeTree network validation failed: " + "; ".join(str(e) for e in result.errors))
-        return self
 
     def dfs(self) -> NodeTreeDFSIterator:
         """Return a pre-order depth-first iterator over this tree.

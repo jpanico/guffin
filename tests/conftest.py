@@ -1,5 +1,6 @@
 """Shared pytest configuration and test infrastructure for the guffin test suite."""
 
+import functools
 import os
 import pathlib
 from typing import Final
@@ -124,6 +125,13 @@ def live_cache_dir() -> pathlib.Path:
     return pathlib.Path(os.environ["GUFFIN_CACHE_DIR"])
 
 
+# The article fixture builders below load a YAML fixture and build its tree, which takes up to a
+# tenth of a second; some are called by dozens of tests.  Each tree is built once per process and
+# shared.  NodeTree and VertexTree are frozen models, and no test modifies one; a test that needs to
+# change a tree must build its own (model_copy), never edit a shared one's maps or lists in place.
+
+
+@functools.cache
 def article0_node_tree() -> NodeTree:
     """Load and return the ``[[Test Article]] 0`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
@@ -142,6 +150,7 @@ def article0_node_tree() -> NodeTree:
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
 
 
+@functools.cache
 def article1_node_tree() -> NodeTree:
     """Load and return the ``[[Test Article]] 1`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
@@ -160,6 +169,7 @@ def article1_node_tree() -> NodeTree:
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
 
 
+@functools.cache
 def article1_vertex_tree() -> VertexTree:
     """Load and return the ``[[Test Article]] 1`` :class:`~guffin.vertex_tree.VertexTree` from its YAML fixture."""
     raw: Final[list[dict[str, object]]] = yaml.load(
@@ -168,6 +178,7 @@ def article1_vertex_tree() -> VertexTree:
     return VertexTree(tree_vertices=[vertex_adapter.validate_python(r) for r in raw])
 
 
+@functools.cache
 def article3_node_tree() -> NodeTree:
     """Load and return the ``[[Test Article]] 3`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
@@ -186,6 +197,7 @@ def article3_node_tree() -> NodeTree:
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
 
 
+@functools.cache
 def article4_node_tree() -> NodeTree:
     """Load and return the ``[[Test Article]] 4`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
@@ -203,6 +215,7 @@ def article4_node_tree() -> NodeTree:
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
 
 
+@functools.cache
 def article5_node_tree() -> NodeTree:
     """Load and return the ``[[Test Article]] 5`` :class:`~guffin.roam.node_tree.NodeTree` from its YAML fixture.
 
@@ -220,6 +233,7 @@ def article5_node_tree() -> NodeTree:
     return NodeTree.build(super_network=all_nodes, root_node=root_node)
 
 
+@functools.cache
 def article8_vertex_tree() -> VertexTree:
     """Load and return the ``[[Test Article]] 8`` :class:`~guffin.vertex_tree.VertexTree` from its YAML fixture.
 

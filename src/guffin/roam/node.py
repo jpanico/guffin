@@ -34,6 +34,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    ModelWrapValidatorHandler,
     field_validator,
     model_validator,
     validate_call,
@@ -286,8 +287,39 @@ class RoamNode(BaseModel):
         logger.warning("ignoring unrecognized view-type %r (not a children view type)", val)
         return None
 
-    @model_validator(mode="after")
-    def _validate_entity_type(self) -> RoamNode:
+    @model_validator(mode="wrap")
+    @classmethod
+    def _validate_on_construction(cls, data: object, handler: ModelWrapValidatorHandler[RoamNode]) -> RoamNode:
+        """Check the instance invariants once, when a node is built; pass an existing node through.
+
+        Runs :meth:`_validate_entity_type`, :meth:`_validate_daily_note_title`,
+        :meth:`_validate_better_bullet_type`, and :meth:`_validate_better_bullet_provenance`, in
+        that order, on a newly built node.  They are not ``after`` validators because Pydantic
+        reruns those whenever an existing instance is validated again, as it is each time it is
+        passed into a ``@validate_call`` function, though its fields are not revalidated: an export
+        reran these checks hundreds of thousands of times.  A node is frozen, so it cannot have
+        changed since it was checked.
+
+        Args:
+            data: The input being validated: raw field data, or an existing :class:`RoamNode`.
+            handler: Pydantic's inner validator, which builds the node from raw data.
+
+        Returns:
+            The newly built and checked node, or *data* itself when it is already a node.
+
+        Raises:
+            ValueError: If a newly built node violates one of the invariants.
+        """
+        if isinstance(data, cls):
+            return data
+        node: Final[RoamNode] = handler(data)
+        node._validate_entity_type()
+        node._validate_daily_note_title()
+        node._validate_better_bullet_type()
+        node._validate_better_bullet_provenance()
+        return node
+
+    def _validate_entity_type(self) -> None:
         """Enforce the Page/Block/Version-group entity-type invariants.
 
         A pull-block is exactly one of three entity types, discriminated by ``title`` and then
@@ -298,9 +330,6 @@ class RoamNode(BaseModel):
           ``blocks`` is ``None``.
         - **Version group** — ``title`` and ``string`` are ``None`` and ``blocks`` is set, so
           ``page`` is ``None``.
-
-        Returns:
-            The validated instance.
 
         Raises:
             ValueError: If the instance violates its entity type's field invariants, or if none
@@ -334,10 +363,8 @@ class RoamNode(BaseModel):
                 f"RoamNode (uid={self.uid!r}) must be a Page (title set), a Block (string set), or a "
                 "Version group (blocks set); got title=None, string=None, blocks=None"
             )
-        return self
 
-    @model_validator(mode="after")
-    def _validate_daily_note_title(self) -> RoamNode:
+    def _validate_daily_note_title(self) -> None:
         """Require a daily-note-UID page's title to be the verbose date the UID encodes.
 
         A daily-note page's UID is ``MM-DD-YYYY``
@@ -345,41 +372,31 @@ class RoamNode(BaseModel):
         date's verbose form, e.g. ``01-01-2026`` → ``January 1st, 2026``.  Nodes with a synthetic
         UID carry no such constraint.
 
-        Returns:
-            The validated instance.
-
         Raises:
             ValueError: If *uid* is a daily-note UID whose encoded date is invalid, or whose page
                 title is not that date's verbose form.
         """
         note_date: Final[datetime.date | None] = parse_daily_note_uid(self.uid)
         if note_date is None:
-            return self
+            return
         expected: Final[str] = daily_note_title(note_date)
         if self.title != expected:
             raise ValueError(f"daily-note page uid={self.uid!r} must have title {expected!r}, got {self.title!r}")
-        return self
 
-    @model_validator(mode="after")
-    def _validate_better_bullet_type(self) -> RoamNode:
+    def _validate_better_bullet_type(self) -> None:
         """Require a ``type`` block property, when present, to be a recognized Better Bullets id.
 
         The Better Bullets extension persists an applied bullet kind in the block's ``type``
         property as a :class:`~guffin.roam.better_bullet.BetterBulletType` identifier.  Nodes
         with no property map, or none carrying a ``type`` entry, are unconstrained.
 
-        Returns:
-            The validated instance.
-
         Raises:
             ValueError: If the ``type`` property holds anything but a recognized
                 :class:`~guffin.roam.better_bullet.BetterBulletType` identifier.
         """
         _parsed_better_bullet_type(self.props, self.uid)
-        return self
 
-    @model_validator(mode="after")
-    def _validate_better_bullet_provenance(self) -> RoamNode:
+    def _validate_better_bullet_provenance(self) -> None:
         """Require a ``provenance`` block property, when present, to be a recognized provenance id.
 
         The Better Bullets extension persists an applied provenance badge in the block's
@@ -387,15 +404,11 @@ class RoamNode(BaseModel):
         :class:`~guffin.roam.better_bullet.BetterBulletProvenance` identifier.  Nodes with no
         property map, or none carrying a ``provenance`` entry, are unconstrained.
 
-        Returns:
-            The validated instance.
-
         Raises:
             ValueError: If the ``provenance`` property holds anything but a recognized
                 :class:`~guffin.roam.better_bullet.BetterBulletProvenance` identifier.
         """
         _parsed_better_bullet_provenance(self.props, self.uid)
-        return self
 
 
 @validate_call
