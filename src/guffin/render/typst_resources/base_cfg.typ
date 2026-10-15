@@ -59,6 +59,20 @@
   epigraph-size: 1.1,
   epigraph-leading: 0.9em,
   epigraph-style: "italic",
+  // Notes section (invisible endnotes): the headings that group its entries by chapter and section
+  // repeat those headings' text, so they are set as subheads of the Notes rather than as divisions
+  // of the book, whatever their level: at a ratio of the body size, in a weight and style, like
+  // the hN keys.
+  notes-group-size: 1.0,
+  notes-group-weight: "bold",
+  notes-group-style: "normal",
+  // A lead-in in the running text links to its note.  With note-ref-underline the link carries a
+  // thin dotted grey underline, the EPUB's style, so a reader on screen can see it is there.  A
+  // print export turns it off (the renderer does, for --no-note-ref-underline), since on paper
+  // the link does nothing and the underline would be a mark in the text.
+  note-ref-underline: true,
+  note-ref-stroke: (paint: luma(154), thickness: 0.6pt, dash: "dotted"),
+  note-ref-offset: 0.2em,
   fontsize: 11pt,
   leading: 0.65em,
   spacing: 1.2em,

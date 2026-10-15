@@ -308,7 +308,8 @@ export-roam-tree <page_title_or_node_uid> --port <port> --graph <graph> --token 
   [--element-numbers|--no-element-numbers] [--code-sources|--no-code-sources] [--render-alternatives|--no-render-alternatives] \
   [--verify-code-sources|--no-verify-code-sources] \
   [--default-pdf-render <placement>] [--daily-note-format roam-long|iso|abbrev-month-day] \
-  [--note-form full|short] [--notes-only|--no-notes-only] [--suppress-notes|--no-suppress-notes]
+  [--note-form full|short] [--notes-only|--no-notes-only] [--suppress-notes|--no-suppress-notes] \
+  [--note-ref-underline|--no-note-ref-underline]
 ```
 
 The output filename stem embeds the project type: `<target>.<type>.<ext>` (e.g. `Foo.article.epub`, `Foo.book.pdf`), so the same target exported under different types lands in distinct files.
@@ -382,6 +383,7 @@ The `--preamble/--no-preamble` and `--numbering/--no-numbering` flags (PDF/EPUB 
 | `--note-form` | | all | Which form of the notes to render: `full` (default) or `short` (a note's child tagged `note-form:: short`, where it has one). |
 | `--notes-only/--no-notes-only` | | all | Render the Notes section alone, for a book's invisible endnotes; the filename gains a `.notes` segment. |
 | `--suppress-notes/--no-suppress-notes` | | all | Leave the notes out altogether, in every project type: each marker renders as its plain lead-in (a number-only label as nothing), no footnote, endnote, or Notes section is rendered, the authored Notes sections and `#footnotes` blocks are removed, and no note check runs. Off by default. |
+| `--note-ref-underline/--no-note-ref-underline` | | pdf | Give each lead-in of a book's invisible endnotes, which links to its note, a thin dotted grey underline so a reader on screen can find it. On by default; turn it off for a print export. The EPUB always underlines; Markdown never links a lead-in. |
 
 The `--colophon` provenance records the guffin package version, the source git commit (hash + commit time, marked `-dirty` for uncommitted changes), and the export time, plus the content revision (snapshot hash, edit/fetch times, and any authored `revision::` name), so any generated document can be traced back to the exact source and content snapshot that produced it. Placement differs by format: PDF renders it at the foot of the title page (or below the page footer when no title page is emitted); EPUB mirrors that; Markdown carries it as an end-of-document block.
 

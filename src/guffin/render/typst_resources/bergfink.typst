@@ -164,6 +164,9 @@ $endif$
 $if(number-sections)$
 #(cfg.number-sections = true)
 $endif$
+$if(no-note-ref-underline)$
+#(cfg.note-ref-underline = false)
+$endif$
 $if(section-numbering)$
 #(cfg.section-numbering = "$section-numbering$")
 $endif$
@@ -239,6 +242,27 @@ $endif$
 
 $default_styles.typ()$
 $yamltable.typ()$
+
+// Notes section (invisible endnotes).  The renderer wraps each heading that groups the entries by
+// chapter or section in notes-group-heading, which sets it as a subhead of the Notes (the
+// cfg.notes-group-* keys) whatever its level: a chapter group sits at the chapter level and would
+// otherwise take the chapter heading's size and spacing.  It wraps each lead-in in the running
+// text, a link to its note, in note-ref, which gives it a thin dotted underline when
+// cfg.note-ref-underline is set, so a reader on screen can see the link.
+#let notes-group-heading(body) = {
+  show heading: set text(
+    fontsize * cfg.notes-group-size,
+    weight: cfg.notes-group-weight,
+    style: cfg.notes-group-style,
+  )
+  show heading: set block(above: 1.5em, below: 0.75em)
+  body
+}
+#let note-ref(body) = if cfg.note-ref-underline {
+  underline(stroke: cfg.note-ref-stroke, offset: cfg.note-ref-offset, body)
+} else {
+  body
+}
 
 $if(top-level-division)$
 // Book mode (top-level-division = chapter/part): level-1 headings are the top division and each

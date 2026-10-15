@@ -262,6 +262,22 @@ class TestInsertNotesSection:
         assert entries == [endnote_identifier(uid) for uid in ("note00001", "note00002", "note00004", "note00005")]
         assert "The complete notes are online." in pf.stringify(blocks[1])
 
+    def test_pdf_group_headings_are_wrapped_as_subheads(self) -> None:
+        """In PDF each group heading sits inside the template's notes-group-heading, so it is set as a subhead."""
+        doc, _entered = _built(_noted_book(), OutputFormat.PDF)
+        blocks: Final[list[pf.Block]] = _notes_blocks(doc)
+        for index, block in enumerate(blocks):
+            if isinstance(block, pf.Header) and NOTES_GROUP_CLASS in block.classes:
+                opening, closing = blocks[index - 1], blocks[index + 1]
+                assert isinstance(opening, pf.RawBlock) and isinstance(closing, pf.RawBlock)
+                assert (opening.format, opening.text) == ("typst", "#notes-group-heading[")
+                assert (closing.format, closing.text) == ("typst", "]")
+
+    def test_epub_group_headings_are_left_to_the_stylesheet(self) -> None:
+        """An EPUB group heading is a plain Header; the stylesheet styles it by its class."""
+        doc, _entered = _built(_noted_book(), OutputFormat.EPUB)
+        assert not any(isinstance(block, pf.RawBlock) for block in _notes_blocks(doc))
+
     def test_pdf_entry_opens_with_page_locator(self) -> None:
         """A PDF entry opens with a raw Typst page locator for its passage, then the italic lead-in."""
         doc, _entered = _built(_noted_book(), OutputFormat.PDF)
@@ -321,12 +337,14 @@ class TestNoteLeadInRenderer:
     _LEAD_IN: Final[list[pf.Inline]] = [pf.Str("lead")]
 
     def test_pdf_anchors_and_links(self) -> None:
-        """PDF: a zero-width Typst anchor, then the lead-in linked to its entry."""
+        """PDF: a zero-width Typst anchor, then the lead-in linked to its entry, inside the template's note-ref."""
         rendered = note_lead_in_renderer(OutputFormat.PDF, frozenset({"note00001"}))("note00001", self._LEAD_IN)
         assert rendered[0].format == "typst"
         assert rendered[0].text == f"#metadata(none)<{note_anchor('note00001')}>"
-        assert isinstance(rendered[1], pf.Link)
-        assert rendered[1].url == f"#{endnote_identifier('note00001')}"
+        assert (rendered[1].format, rendered[1].text) == ("typst", "#note-ref[")
+        assert isinstance(rendered[2], pf.Link)
+        assert rendered[2].url == f"#{endnote_identifier('note00001')}"
+        assert (rendered[3].format, rendered[3].text) == ("typst", "]")
 
     def test_epub_links_inside_an_anchored_span(self) -> None:
         """EPUB: the lead-in linked to its entry, inside a span carrying the passage's anchor."""
@@ -498,6 +516,22 @@ class TestRenderedNotes:
         # The page's displayed number is the last text on it, in the footer.
         displayed: Final[str] = passage_page.split()[-1]
         assert f"{displayed} a 52-minute run: Lavington" in notes_page
+
+    def test_pdf_for_print_keeps_its_links(self, tmp_path: Path) -> None:
+        """PDF without the lead-in underline, as for print: it still builds, and each lead-in still links."""
+        render_pdf(
+            self._bundle(),
+            profile=BookProfile(),
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=PdfRenderOptions(output_dir=tmp_path, note_ref_underline=False),
+        )
+        reader: Final[PdfReader] = PdfReader(tmp_path / "noted.pdf")
+        passage_index: Final[int] = next(
+            index for index, page in enumerate(reader.pages) if "52-minute run" in (page.extract_text() or "")
+        )
+        annotations: Final = reader.pages[passage_index].get("/Annots") or []
+        assert any(annotation.get_object().get("/Subtype") == "/Link" for annotation in annotations)
 
     def test_article_pdf_footnotes(self, tmp_path: Path) -> None:
         """An article PDF calls each note by a superscript number and sets it at the foot of the page."""

@@ -12,8 +12,10 @@ grouped by the headings their passages fall under.  What the grouping is, and wh
 note to its passage, depend on the output format:
 
 - **PDF** keys a note by page number and lead-in, so its notes are grouped by chapter only.  Each
-  entry opens with the passage's page number, linked to the passage; the lead-in in the running
-  text links to the entry.  Both links are unstyled, so a printed page shows neither.
+  entry opens with the passage's page number, linked to the passage, and the link is unstyled.
+  The lead-in in the running text links to the entry, with a thin dotted grey underline so a
+  reader on screen can see it; a print export turns the underline off, leaving no mark.  The
+  group headings are set as subheads of the Notes, whatever their level.
 - **EPUB** has no pages, so a note is keyed by its section and lead-in: grouped by chapter and
   then by section.  Each entry's lead-in links back to the passage, and the lead-in in the
   running text links to the entry (lightly styled by the EPUB stylesheet).
@@ -125,6 +127,29 @@ def _typst_raw_inline(text: str) -> pf.RawInline:
     raw: Final[pf.RawInline] = pf.RawInline(text, format="html")
     raw.format = "typst"
     return raw
+
+
+def _typst_raw_block(text: str) -> pf.RawBlock:
+    """Return a Pandoc raw block of Typst markup, passed through verbatim by the Typst writer only.
+
+    Built like :func:`_typst_raw_inline`, for the same reason.
+    """
+    raw: Final[pf.RawBlock] = pf.RawBlock(text, format="html")
+    raw.format = "typst"
+    return raw
+
+
+def _styled_group_header(header: pf.Header, output_format: OutputFormat) -> list[pf.Block]:
+    """Return the blocks that set the group *header* in *output_format*.
+
+    In PDF the header is wrapped in the template's ``notes-group-heading`` function, which sets it
+    as a subhead of the Notes rather than at the size and spacing of its heading level: a chapter
+    group sits at the chapter level, and would otherwise look like a chapter.  EPUB styles it by its
+    class, and Markdown leaves it to the viewer.
+    """
+    if output_format is OutputFormat.PDF:
+        return [_typst_raw_block("#notes-group-heading["), header, _typst_raw_block("]")]
+    return [header]
 
 
 def _typst_page_locator(uid: Uid) -> str:
@@ -429,17 +454,20 @@ def insert_notes_section(
         while shared < min(len(path), len(previous_path)) and path[shared].uid == previous_path[shared].uid:
             shared += 1
         for depth in range(shared, len(path)):
-            blocks.append(
-                _group_header(
-                    path[depth],
-                    notes_header.level + 1 + depth,
-                    headers,
-                    inline_map,
-                    attributes,
-                    link_to_heading=not notes_only
-                    and output_format is OutputFormat.MARKDOWN
-                    and heading_links
-                    and depth == len(levels) - 1,
+            blocks.extend(
+                _styled_group_header(
+                    _group_header(
+                        path[depth],
+                        notes_header.level + 1 + depth,
+                        headers,
+                        inline_map,
+                        attributes,
+                        link_to_heading=not notes_only
+                        and output_format is OutputFormat.MARKDOWN
+                        and heading_links
+                        and depth == len(levels) - 1,
+                    ),
+                    output_format,
                 )
             )
         blocks.extend(
@@ -480,8 +508,10 @@ def note_lead_in_renderer(output_format: OutputFormat, entered: frozenset[Uid]) 
     """Return how *output_format* renders a note's lead-in in the running text.
 
     - **PDF** — a zero-width Typst anchor at the start of the lead-in (the target of the entry's
-      page locator), then the lead-in as a link to the note's entry.  The template styles only
-      links to URLs, so the link is invisible on the page.
+      page locator), then the lead-in as a link to the note's entry, wrapped in the template's
+      ``note-ref`` function.  That function gives it the EPUB's thin dotted grey underline, so a
+      reader on screen can see the link is there, unless the template's ``note-ref-underline``
+      setting is off, as for print, where it leaves the link invisible on the page.
     - **EPUB** — the lead-in as a link (:data:`NOTE_REF_CLASS`) to the note's entry, inside a span
       carrying the passage's :func:`note_anchor` identifier.
     - **Markdown** — the bare lead-in.
@@ -504,7 +534,9 @@ def note_lead_in_renderer(output_format: OutputFormat, entered: frozenset[Uid]) 
             case OutputFormat.PDF:
                 return [
                     _typst_raw_inline(f"#metadata(none)<{note_anchor(uid)}>"),
+                    _typst_raw_inline("#note-ref["),
                     pf.Link(*lead_in, url=target),
+                    _typst_raw_inline("]"),
                 ]
             case OutputFormat.EPUB:
                 return [pf.Span(pf.Link(*lead_in, url=target, classes=[NOTE_REF_CLASS]), identifier=note_anchor(uid))]

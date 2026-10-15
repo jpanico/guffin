@@ -153,13 +153,15 @@ class RenderOptions(BaseModel):
         note_form: NoteForm = NoteForm.FULL,
         notes_only: bool = False,
         suppress_notes: bool = False,
+        note_ref_underline: bool = True,
     ) -> RenderOptions:
         """Build the :class:`RenderOptions` subclass for *output_format* from the given knobs.
 
         The single place that assembles per-format options, so callers thread one object rather than a
         long parameter list.  Format-specific knobs apply only to the format that uses them
-        (``template_dir`` to PDF, ``should_bundle`` to Markdown, ``include_preamble`` and
-        ``number_sections`` to PDF and EPUB); the rest are common to every format.
+        (``template_dir`` and ``note_ref_underline`` to PDF, ``should_bundle`` to Markdown,
+        ``include_preamble`` and ``number_sections`` to PDF and EPUB); the rest are common to every
+        format.
 
         Args:
             output_format: The output format whose options subclass to build.
@@ -191,6 +193,8 @@ class RenderOptions(BaseModel):
                 (``False``, default).
             suppress_notes: Leave the notes out altogether (``True``), or render them (``False``,
                 default).
+            note_ref_underline: PDF-only; underline each note's lead-in in the running text
+                (``True``, default), or leave it unmarked for print (``False``).
 
         Returns:
             The :class:`RenderOptions` subclass matching *output_format*.
@@ -201,6 +205,7 @@ class RenderOptions(BaseModel):
                     output_dir=output_dir,
                     cache_dir=cache_dir,
                     template_dir=template_dir,
+                    note_ref_underline=note_ref_underline,
                     suppress_attributes=suppress_attributes,
                     dump_pandoc_ast=dump_pandoc_ast,
                     emit_colophon=emit_colophon,
@@ -289,6 +294,9 @@ class PdfRenderOptions(RenderOptions):
         number_sections: Whether headings are numbered.  ``None`` (default) defers to the project
             profile's :attr:`~guffin.render.project.StructuralPolicy.number_sections` directive;
             ``True`` forces numbering on, ``False`` forces all heading numbering off.
+        note_ref_underline: Whether a note's lead-in in the running text, a link to its note, carries
+            a thin dotted grey underline so a reader on screen can see it (``True``, default).
+            ``False`` leaves the link unmarked, for print, where it does nothing and any mark shows.
     """
 
     output_format: Literal[OutputFormat.PDF] = Field(
@@ -302,6 +310,9 @@ class PdfRenderOptions(RenderOptions):
     )
     number_sections: bool | None = Field(
         default=None, description="Number the headings; None defers to the profile's policy."
+    )
+    note_ref_underline: bool = Field(
+        default=True, description="Underline each note's lead-in in the running text, for reading on screen."
     )
 
 

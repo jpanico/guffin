@@ -192,6 +192,8 @@ def _typst_template_args(
     revision: Revision | None,
     revision_name: str | None,
     cover_image: Path | None,
+    *,
+    note_ref_underline: bool = True,
 ) -> list[str]:
     """Build the Pandoc args that apply the Bergfink Typst template.
 
@@ -225,6 +227,9 @@ def _typst_template_args(
         cover_image: When set, passes the local image path as the template's ``cover-image``
             variable, so it renders as a full-bleed cover page ahead of the title page (the cover
             is exterior to the book interior); ``None`` passes nothing (no cover page).
+        note_ref_underline: When ``False``, passes the Bergfink ``no-note-ref-underline`` variable,
+            so a note's lead-in in the running text is left unmarked (for print); ``True`` (default)
+            passes nothing, and the template underlines it.
 
     Returns:
         The Pandoc ``extra_args`` that apply the template (filters, resource path, and variables).
@@ -268,6 +273,9 @@ def _typst_template_args(
     # The cover page renders only when the `cover-image` variable is set; pass nothing otherwise.
     if cover_image is not None:
         args.extend(["-V", f"cover-image={cover_image}"])
+    # A note's lead-in is underlined unless the request turns it off, as a print export does.
+    if not note_ref_underline:
+        args.extend(["-V", "no-note-ref-underline=true"])
     if template_dir is not None:
         args.extend(["-V", f"user-config={template_dir / _USER_CFG_FILENAME}"])
     return args
@@ -691,6 +699,7 @@ def render(
             render_bundle.revision if options.emit_colophon else None,
             render_bundle.revision.revision if render_bundle.revision is not None else None,
             cover_path,
+            note_ref_underline=options.note_ref_underline,
         )
         extra_args: list[str] = [*engine_args, *template_args]
         # Only image assets feed the document build: PDF vertices render as links to their

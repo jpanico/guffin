@@ -369,6 +369,18 @@ def main(
             ),
         ),
     ] = False,
+    note_ref_underline: Annotated[
+        bool,
+        typer.Option(
+            "--note-ref-underline/--no-note-ref-underline",
+            help=(
+                "Give each note's lead-in in the running text, a link to its note, a thin dotted "
+                "grey underline so a reader on screen can see it (default on). Turn it off for a "
+                "print export, where the link does nothing and the underline would be a mark in "
+                "the text. Applies to --format pdf only; EPUB always underlines, Markdown never."
+            ),
+        ),
+    ] = True,
     version: VersionOption = False,
 ) -> None:
     """Export a Roam Research page or node subtree to Markdown, PDF, or EPUB.
@@ -461,6 +473,7 @@ def main(
         note_form=note_form,
         notes_only=notes_only,
         suppress_notes=suppress_notes,
+        note_ref_underline=note_ref_underline,
     )
 
     _render(render_bundle, profile, out_file_stem, api_endpoint, target, options)

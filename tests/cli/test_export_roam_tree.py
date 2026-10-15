@@ -882,6 +882,15 @@ class TestExportNoteChecks:
                     logging.root.handlers = saved_handlers
         return result, render
 
+    def test_note_ref_underline_reaches_the_pdf_options(self, tmp_path: pathlib.Path) -> None:
+        """--no-note-ref-underline reaches the PDF render options; by default the lead-ins are underlined."""
+        bundle: Final[RenderBundle] = _noted_bundle(with_notes_heading=True)
+        _default, default_render = self._export(bundle, "book", tmp_path, "--format", "pdf")
+        result, render = self._export(bundle, "book", tmp_path, "--format", "pdf", "--no-note-ref-underline")
+        assert result.exit_code == 0, result.output
+        assert default_render.call_args.args[5].note_ref_underline
+        assert not render.call_args.args[5].note_ref_underline
+
     def test_note_options_reach_the_renderer(self, tmp_path: pathlib.Path) -> None:
         """--note-form and --notes-only reach the render options; notes-only adds a '.notes' stem segment."""
         result, render = self._export(

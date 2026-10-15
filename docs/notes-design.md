@@ -279,7 +279,13 @@ Built in phases, each a commit.
   and the footnotes of numbered notes alike. The PDF template opens a page at a chapter or
   part heading only when the heading is in the outline, so an unlisted group heading opens none;
   the EPUB stylesheet styles `a.guffin-note-ref` and `a.guffin-note-backlink`; the Markdown slug
-  check leaves the generated group headings out of its collision count.
+  check leaves the generated group headings out of its collision count. In the PDF, each lead-in
+  in the running text is wrapped in the template's `note-ref` function, which underlines it unless
+  `PdfRenderOptions.note_ref_underline` is off (the CLI's
+  `--note-ref-underline/--no-note-ref-underline`, passed to the template as the
+  `no-note-ref-underline` variable), and each group heading in its `notes-group-heading` function,
+  which sets it as a subhead; the `cfg.note-ref-*` and `cfg.notes-group-*` keys in `base_cfg.typ`
+  hold both styles. The EPUB stylesheet sets `h1`–`h6.guffin-notes-group` as the same subhead.
 - **Options**: `NoteForm` (`full`/`short`) and the `note-form::` block tag
   (`PublishingSemantics.NOTE_FORM`, checked by `all_note_form_values_legal`); each renderer prunes
   the blocks tagged with the other form (`drop_other_note_forms`, beside `drop_unpublished`), and
@@ -546,12 +552,14 @@ Resolved 2026-10-14:
     by itself, so links across chapter files need no work in Guffin.
   - **Passage → note.** The lead-in in the running text links to its Notes entry, which
     carries the id or label `guffin-endnote-<uid>`.
-  - **PDF styling.** Both links are unstyled by default. A PDF link is an annotation laid over
-    the page, not ink, so an unstyled link is invisible on screen and in print yet clickable;
-    one PDF serves print and screen. Guffin's template styles only links to URLs
-    (`abstract.typ`), so internal links are unstyled already. An export option adds the EPUB's
-    subtle style to the passage → note link for digital-only PDFs (never for print); its name
-    is settled at implementation.
+  - **PDF styling.** A PDF link is an annotation laid over the page, not ink, so an unstyled
+    link is invisible on screen and in print yet clickable. Guffin's template styles only links
+    to URLs (`abstract.typ`), so internal links are unstyled already. The note → passage link
+    (the page number) stays unstyled. The passage → note link takes the EPUB's subtle style by
+    default, and `--no-note-ref-underline` (the request field `note_ref_underline: false`)
+    leaves it unstyled for a print export; the link is still there, unseen. *Amended
+    2026-10-15:* this was decided the other way round, unstyled by default with an option to add
+    the style; see the decision of that date.
   - **EPUB styling.** The passage → note link is styled to hint, not to look like a hyperlink:
     the text keeps its normal color, with a thin dotted underline in a muted gray set slightly
     below the baseline.
@@ -653,3 +661,16 @@ Resolved 2026-10-15:
 - **Both note forms dropped in a suppressed export (Q11, choice (a)).** A block tagged
   `note-form:: short` or `note-form:: full` is dropped wherever it stands: the tag means "only in
   the edition with these notes", and no edition with notes is being produced.
+- **The PDF lead-in is underlined by default (amends Q7).** In a book PDF read on screen, a
+  lead-in with no mark at all is too cryptic: nothing shows the reader that it links to a note
+  until the pointer changes shape over it (Joe). So the passage → note link takes the EPUB's
+  style by default, a thin dotted underline in a muted gray set slightly below the baseline, and
+  `--no-note-ref-underline/--note-ref-underline` (request field `note_ref_underline`) turns it
+  off for a print export, where the link does nothing and the underline would be a mark in the
+  text. The option applies to the PDF only: the EPUB always underlines, and Markdown never links a
+  lead-in (Q8).
+- **Group headings are set as subheads (Q4).** A chapter's group heading sits at the chapter
+  level or one below it, so in the PDF and EPUB it took a chapter heading's display size, far too
+  large for a label over a few notes (Joe). Both formats now set every group heading at the body
+  size in bold, whatever its level, with space above it and kept with the entry below it.
+  Markdown has no sizes to set.

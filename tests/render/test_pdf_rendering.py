@@ -446,6 +446,28 @@ class TestTypstTemplateArgs:
         args = self._args(None, revision_name="draft-3", emit_title_page=False)
         assert "revision=draft-3" in args
 
+    def test_note_refs_are_underlined_by_default(self) -> None:
+        """By default nothing is passed, and the template underlines each note's lead-in."""
+        assert not any("note-ref-underline" in arg for arg in self._args(None))
+
+    def test_no_note_ref_underline_variable_passed(self) -> None:
+        """Turning the underline off, as for print, passes -V no-note-ref-underline=true."""
+        args = _typst_template_args(
+            bundled_dir=Path("/bundled"),
+            template_path=Path("/bundled/bergfink.typst"),
+            template_dir=None,
+            number_sections=False,
+            top_level_division=TopLevelDivision.SECTION,
+            emit_title_page=False,
+            emit_toc=False,
+            provenance=None,
+            revision=None,
+            revision_name=None,
+            cover_image=None,
+            note_ref_underline=False,
+        )
+        assert args[args.index("no-note-ref-underline=true") - 1] == "-V"
+
 
 # ---------------------------------------------------------------------------
 # TestTypstPageBreakFilter

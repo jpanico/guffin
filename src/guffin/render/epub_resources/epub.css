@@ -538,3 +538,20 @@ a.guffin-note-backlink {
 div.guffin-endnote p {
   text-indent: 0;
 }
+
+/* The headings that group the Notes entries by chapter and section repeat those headings' text,
+ * so they are set as subheads of the Notes, at the body size in bold, whatever their level: a
+ * chapter group is an h2 or h3, and would otherwise take a chapter heading's size. */
+h1.guffin-notes-group,
+h2.guffin-notes-group,
+h3.guffin-notes-group,
+h4.guffin-notes-group,
+h5.guffin-notes-group,
+h6.guffin-notes-group {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  break-after: avoid;
+  page-break-after: avoid;
+}
