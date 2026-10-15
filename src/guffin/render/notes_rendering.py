@@ -18,7 +18,8 @@ note to its passage, depend on the output format:
   group headings are set as subheads of the Notes, whatever their level.
 - **EPUB** has no pages, so a note is keyed by its section and lead-in: grouped by chapter and
   then by section.  Each entry's lead-in links back to the passage, and the lead-in in the
-  running text links to the entry (lightly styled by the EPUB stylesheet).
+  running text links to the entry (lightly styled by the EPUB stylesheet).  The group headings
+  and entries are held in one ``Div``, so the whole section stays in one content document.
 - **Markdown** groups like EPUB, and links each section group's heading to its section.  It
   places no anchors and no links between passage and note.
 
@@ -27,7 +28,8 @@ Public symbols:
 - **Constants**: :data:`ENDNOTE_CLASS` — the class of a note's entry in the Notes section;
   :data:`NOTE_REF_CLASS` — the class of a lead-in's link from the running text to its entry;
   :data:`NOTE_BACKLINK_CLASS` — the class of an entry's link back to its passage;
-  :data:`NOTES_GROUP_CLASS` — the class of a heading the Notes section generates for a group.
+  :data:`NOTES_GROUP_CLASS` — the class of a heading the Notes section generates for a group;
+  :data:`NOTES_ENTRIES_CLASS` — the class of the ``Div`` holding an EPUB Notes section's groups.
 - **Functions**: :func:`note_anchor` — the identifier of a note's passage;
   :func:`endnote_identifier` — the identifier of a note's entry; :func:`insert_notes_section` —
   build the Notes section into a document; :func:`note_lead_in_renderer` — how a format renders a
@@ -83,6 +85,9 @@ NOTES_GROUP_CLASS: Final[str] = "guffin-notes-group"
 
 Such a heading repeats the text of the chapter or section heading it stands for.
 """
+
+NOTES_ENTRIES_CLASS: Final[str] = "guffin-notes-entries"
+"""The class of the ``Div`` holding an EPUB Notes section's group headings and entries."""
 
 _NOTE_ANCHOR_PREFIX: Final[str] = "guffin-note-"
 """The prefix of every :func:`note_anchor`."""
@@ -150,6 +155,21 @@ def _styled_group_header(header: pf.Header, output_format: OutputFormat) -> list
     if output_format is OutputFormat.PDF:
         return [_typst_raw_block("#notes-group-heading["), header, _typst_raw_block("]")]
     return [header]
+
+
+def _kept_in_one_document(blocks: list[pf.Block], output_format: OutputFormat) -> list[pf.Block]:
+    """Return the Notes section's group headings and entry *blocks* as *output_format* inserts them.
+
+    Pandoc splits an EPUB into a new content document, which a reading app opens on a new page, at
+    each heading of the split level that sits directly in the document's flow.  In a parts book the
+    split level is the chapter level, where the chapter groups sit, so each group would open a page
+    of its own.  A heading nested in a ``Div`` is not split off, so in EPUB the *blocks* are held
+    in one (:data:`NOTES_ENTRIES_CLASS`), and the Notes section stays in one document.  The other
+    formats are not split, and take the *blocks* as they are.
+    """
+    if output_format is OutputFormat.EPUB and blocks:
+        return [pf.Div(*blocks, classes=[NOTES_ENTRIES_CLASS])]
+    return blocks
 
 
 def _typst_page_locator(uid: Uid) -> str:
@@ -492,10 +512,11 @@ def insert_notes_section(
         isinstance(siblings[end], pf.Header) and siblings[end].level <= notes_header.level
     ):
         end += 1
-    for offset, block in enumerate(blocks):
+    inserted: Final[list[pf.Block]] = _kept_in_one_document(blocks, output_format)
+    for offset, block in enumerate(inserted):
         siblings.insert(end + offset, block)
     if notes_only:
-        section: Final[list[pf.Block]] = list(siblings[start : end + len(blocks)])
+        section: Final[list[pf.Block]] = list(siblings[start : end + len(inserted)])
         leading: Final[list[pf.Block]] = [
             block for block in list(doc.content)[:1] if title_header and isinstance(block, pf.Header)
         ]

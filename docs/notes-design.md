@@ -335,10 +335,15 @@ Departures from the decisions, and behavior found while building:
   numbered itself could avoid that. Typora's editor shows the definitions where they sit, after the
   body with no rule between. A rule written into the file was considered and rejected (Joe,
   2026-10-14): in the gathering viewers it would land on the colophon's own rule.
-- **In a parts book, the EPUB gives each chapter's notes a file of its own.** Pandoc splits an EPUB
-  at the chapter level, level 2 in a parts book, and a Notes heading promoted to part level puts its
-  chapter groups at level 2. Each file is back matter, the links between files resolve, and the
-  group headings stay out of the navigation, so each chapter's notes open on a fresh screen.
+- **The EPUB Notes section is held in one content document.** Pandoc splits an EPUB at the chapter
+  level, level 2 in a parts book, and a Notes heading promoted to part level puts its chapter
+  groups at level 2, so at first each chapter's notes got a file of their own, and every reading
+  app opened each on a new page. Pandoc's `unlisted` class keeps a heading out of the navigation
+  but does not stop the split. Pandoc splits only at a section that sits directly in the
+  document's flow, though, so the EPUB's group headings and entries are held in one `Div`
+  (`guffin-notes-entries`) after the intro; they keep their levels and their `<section>`
+  elements, and the whole Notes section stays in the Notes heading's file. PDF and Markdown are
+  not split and are left unwrapped.
 
 
 ## Suppressing notes
@@ -674,3 +679,7 @@ Resolved 2026-10-15:
   large for a label over a few notes (Joe). Both formats now set every group heading at the body
   size in bold, whatever its level, with space above it and kept with the entry below it.
   Markdown has no sizes to set.
+- **A group heading never opens a new page (Q4).** The Notes run on continuously, a group
+  heading following the previous group's last entry on the same page, in every format. In a
+  parts-book EPUB each chapter group had opened a page of its own, in every reading app (Joe);
+  see the departure on the EPUB Notes section, held in one content document.

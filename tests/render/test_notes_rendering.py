@@ -23,6 +23,7 @@ from guffin.render.notes_rendering import (
     ENDNOTE_CLASS,
     NOTE_BACKLINK_CLASS,
     NOTE_REF_CLASS,
+    NOTES_ENTRIES_CLASS,
     NOTES_GROUP_CLASS,
     endnote_identifier,
     insert_notes_section,
@@ -66,24 +67,33 @@ def _note_link(lead_in: str, uid: str) -> str:
 _FILLER: Final[str] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " * 30
 
 
-def _noted_book(*, with_notes_heading: bool = True) -> VertexTree:
+def _noted_book(*, with_notes_heading: bool = True, with_part: bool = False) -> VertexTree:
     """A two-chapter book: notes cited before, in, and between sections, and a Notes section.
 
     The notes live in a container per chapter; one note is cited by nothing (an orphan), and two
     notes in different sections share a lead-in.  One note has a short form, and the Notes
-    section's intro has a block limited to the short notes.
+    section's intro has a block limited to the short notes.  With *with_part*, the two chapters
+    are held in a part, a level deeper, making a parts book.
     """
-    root_children: Final[list[str]] = ["chap00001", "chap00002", *(["notesh001"] if with_notes_heading else [])]
+    chapters: Final[list[str]] = ["chap00001", "chap00002"]
+    notes: Final[list[str]] = ["notesh001"] if with_notes_heading else []
+    root_children: Final[list[str]] = ["part00001", *notes] if with_part else [*chapters, *notes]
+    chapter_level: Final[int] = 2 if with_part else 1
     vertices: Final[list[Vertex]] = [
         PageVertex(uid="page00001", title="Noted Book", children=root_children),
         HeadingVertex(
             uid="chap00001",
             text="The Stored Program",
-            heading_level=1,
+            heading_level=chapter_level,
             children=["pre000001", "sect00001", "sect00002"],
         ),
         TextVertex(uid="pre000001", text=f"The Baby {_note_link('ran its first program', 'note00001')} in 1948."),
-        HeadingVertex(uid="sect00001", text="The First Program", heading_level=2, children=["texta0001", "notes0001"]),
+        HeadingVertex(
+            uid="sect00001",
+            text="The First Program",
+            heading_level=chapter_level + 1,
+            children=["texta0001", "notes0001"],
+        ),
         TextVertex(
             uid="texta0001", text=f"{_FILLER}It ran for {_note_link('a 52-minute run', 'note00002')}. {_FILLER}"
         ),
@@ -93,14 +103,28 @@ def _noted_book(*, with_notes_heading: bool = True) -> VertexTree:
         TextVertex(uid="short0001", text="Lavington, 12.", attribute_assignments=_tag("note-form", "short")),
         TextVertex(uid="cont00001", text="A continuation of the second note."),
         TextVertex(uid="note00003", text="An orphan note."),
-        HeadingVertex(uid="sect00002", text="The Reconstruction", heading_level=2, children=["textb0001"]),
+        HeadingVertex(
+            uid="sect00002", text="The Reconstruction", heading_level=chapter_level + 1, children=["textb0001"]
+        ),
         TextVertex(uid="textb0001", text=f"Tootill rebuilt {_note_link('the original version', 'note00004')}."),
-        HeadingVertex(uid="chap00002", text="Design Universals", heading_level=1, children=["textc0001", "notes0002"]),
+        HeadingVertex(
+            uid="chap00002", text="Design Universals", heading_level=chapter_level, children=["textc0001", "notes0002"]
+        ),
         TextVertex(uid="textc0001", text=f"Here is {_note_link('the original version', 'note00005')} again."),
         NotesVertex(uid="notes0002", children=["note00004", "note00005"]),
         TextVertex(uid="note00004", text="Tootill, *Resurrection* 20 (1998)."),
         TextVertex(uid="note00005", text="A note in chapter two."),
     ]
+    if with_part:
+        vertices.append(
+            HeadingVertex(
+                uid="part00001",
+                text="Origins",
+                heading_level=1,
+                children=chapters,
+                attribute_assignments=_tag("element-type", "part"),
+            )
+        )
     if with_notes_heading:
         vertices.extend(
             [
@@ -225,6 +249,14 @@ def _notes_blocks(doc: pf.Doc) -> list[pf.Block]:
     return blocks[start:]
 
 
+def _epub_notes_entries(doc: pf.Doc) -> list[pf.Block]:
+    """Return the group headings and entries of *doc*'s EPUB Notes section, held in its last block."""
+    held: Final[pf.Block] = _notes_blocks(doc)[-1]
+    assert isinstance(held, pf.Div)
+    assert held.classes == [NOTES_ENTRIES_CLASS]
+    return list(held.content)
+
+
 class TestIdentifiers:
     """note_anchor and endnote_identifier name a note's passage and entry."""
 
@@ -276,7 +308,21 @@ class TestInsertNotesSection:
     def test_epub_group_headings_are_left_to_the_stylesheet(self) -> None:
         """An EPUB group heading is a plain Header; the stylesheet styles it by its class."""
         doc, _entered = _built(_noted_book(), OutputFormat.EPUB)
-        assert not any(isinstance(block, pf.RawBlock) for block in _notes_blocks(doc))
+        assert not any(isinstance(block, pf.RawBlock) for block in _epub_notes_entries(doc))
+
+    def test_epub_groups_and_entries_are_held_in_one_div(self) -> None:
+        """In EPUB the groups and entries follow the intro inside one Div, so Pandoc splits off none of them."""
+        doc, _entered = _built(_noted_book(), OutputFormat.EPUB)
+        blocks: Final[list[pf.Block]] = _notes_blocks(doc)
+        assert "The complete notes are online." in pf.stringify(blocks[1])
+        assert not any(isinstance(block, pf.Header) for block in blocks[1:])
+        assert len([block for block in _epub_notes_entries(doc) if isinstance(block, pf.Div)]) == 4
+
+    @pytest.mark.parametrize("output_format", [OutputFormat.PDF, OutputFormat.MARKDOWN])
+    def test_other_formats_hold_no_div(self, output_format: OutputFormat) -> None:
+        """PDF and Markdown are not split, so their groups and entries are not held in a Div."""
+        doc, _entered = _built(_noted_book(), output_format)
+        assert not any(NOTES_ENTRIES_CLASS in getattr(block, "classes", []) for block in _notes_blocks(doc))
 
     def test_pdf_entry_opens_with_page_locator(self) -> None:
         """A PDF entry opens with a raw Typst page locator for its passage, then the italic lead-in."""
@@ -296,7 +342,7 @@ class TestInsertNotesSection:
     def test_epub_groups_by_chapter_and_section(self) -> None:
         """An EPUB groups notes by chapter and then section, a note before any section under its chapter."""
         doc, _entered = _built(_noted_book(), OutputFormat.EPUB)
-        headers: Final[list[pf.Header]] = [block for block in _notes_blocks(doc)[1:] if isinstance(block, pf.Header)]
+        headers: Final[list[pf.Header]] = [block for block in _epub_notes_entries(doc) if isinstance(block, pf.Header)]
         assert [(pf.stringify(header), header.level) for header in headers] == [
             ("The Stored Program", 2),
             ("The First Program", 3),
@@ -307,7 +353,7 @@ class TestInsertNotesSection:
     def test_epub_lead_in_links_back_to_passage(self) -> None:
         """An EPUB entry's italic lead-in links back to its passage."""
         doc, _entered = _built(_noted_book(), OutputFormat.EPUB)
-        entry: Final[pf.Div] = next(block for block in _notes_blocks(doc) if isinstance(block, pf.Div))
+        entry: Final[pf.Div] = next(block for block in _epub_notes_entries(doc) if isinstance(block, pf.Div))
         lead: Final[pf.Link] = entry.content[0].content[0]
         assert isinstance(lead, pf.Link)
         assert lead.url == f"#{note_anchor('note00001')}"
@@ -495,6 +541,31 @@ class TestRenderedNotes:
         assert f'href="{notes_file}#guffin-endnote-note00002" class="guffin-note-ref"' in documents[passage_name]
         assert f'href="{passage_file}#guffin-note-note00002" class="guffin-note-backlink"' in documents[notes_name]
         assert '<body epub:type="backmatter">' in documents[notes_name]
+
+    def test_epub_parts_book_keeps_the_notes_in_one_document(self, tmp_path: Path) -> None:
+        """EPUB parts book: split at the chapter level, it still opens no new document at a chapter group."""
+        render_epub(
+            RenderBundle(content=_noted_book(with_part=True), view={}),
+            profile=BookProfile(with_parts=True),
+            filename_stem="noted",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=tmp_path),
+        )
+        with zipfile.ZipFile(tmp_path / "noted.epub") as package:
+            documents: Final[dict[str, str]] = {
+                name: package.read(name).decode("utf-8")
+                for name in package.namelist()
+                if name.startswith("EPUB/text/ch") and name.endswith(".xhtml")
+            }
+        holding: Final[list[str]] = [
+            name for name, xhtml in documents.items() if 'epub:type="endnotes"' in xhtml or NOTES_GROUP_CLASS in xhtml
+        ]
+        assert len(holding) == 1
+        notes: Final[str] = documents[holding[0]]
+        assert notes.count(f'<h2 class="unnumbered unlisted {NOTES_GROUP_CLASS}"') == 2
+        assert all(
+            f'id="guffin-endnote-{uid}"' in notes for uid in ("note00001", "note00002", "note00004", "note00005")
+        )
 
     def test_pdf(self, tmp_path: Path) -> None:
         """PDF: one Notes page with chapter groups (no page break at a group) and passage page numbers."""
