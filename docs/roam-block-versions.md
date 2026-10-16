@@ -41,10 +41,16 @@ independent block entities plus one small grouping entity**:
 ### The version blocks
 
 Each version is a complete, self-standing block. It has its own uid, string, create
-and edit times, and user, and it can carry references and children of its own. All of
-a block's versions share the **same `:block/order`**, and each one's `:block/page` and
-`:block/parents` point at the host page and parent exactly as a normal child's would.
-Looking at any one version in isolation, nothing distinguishes it from an ordinary
+and edit times, and user, and it can carry references and children of its own. Each one's
+`:block/page` and `:block/parents` point at the host page and parent exactly as a normal
+child's would, and when a block's versions are created they all carry the **same
+`:block/order`**. That agreement does not last, though: Roam renumbers only the selected
+version when a sibling is inserted above or removed, because only the selected version is
+in the parent's `:block/children`; the unselected versions keep the order they had when
+last selected (seen 2026-10-16: a new first block on a page left the selected version at
+order 1 and its five unselected versions at 0). Guffin therefore reads a version's position
+from the parent's `:block/children` alone and does not require the versions' orders to
+agree. Looking at any one version in isolation, nothing distinguishes it from an ordinary
 block at that position.
 
 ### The version group

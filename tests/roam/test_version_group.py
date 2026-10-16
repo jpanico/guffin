@@ -161,11 +161,9 @@ class TestValidators:
         result: Final[ValidationResult] = validate_version_groups(network)
         assert [error.validator for error in result.errors] == [all_version_members_present]
 
-    def test_disagreeing_order_is_reported(self) -> None:
-        """Members at different orders fail all_version_members_share_placement."""
-        error = all_version_members_share_placement(_versioned_network(orders=(0, 1, 0)))
-        assert error is not None
-        assert "disagree on order" in error.message
+    def test_disagreeing_order_is_not_a_fault(self) -> None:
+        """Members at different orders pass: Roam renumbers only the selected version when a sibling is inserted."""
+        assert all_version_members_share_placement(_versioned_network(orders=(0, 1, 0))) is None
 
     def test_disagreeing_parents_is_reported(self) -> None:
         """Members under different parents fail all_version_members_share_placement."""

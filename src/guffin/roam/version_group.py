@@ -18,7 +18,8 @@ Public symbols:
 - :func:`all_version_members_present` — :data:`~guffin.common.validation.Validator` requiring every
   member id a group names to resolve to a node in the network.
 - :func:`all_version_members_share_placement` — :data:`~guffin.common.validation.Validator` requiring a
-  group's members to be blocks sharing one ``order`` and one set of ``parents``.
+  group's members to be blocks sharing one set of ``parents`` (not one ``order``: Roam renumbers
+  only the selected version when its siblings change, so the others' orders go stale).
 - :func:`all_version_members_share_node_type` — :data:`~guffin.common.validation.Validator` requiring a
   group's members to share one :class:`~guffin.roam.node.NodeType`: a group is homogeneous.
 - :func:`exactly_one_version_selected` — :data:`~guffin.common.validation.Validator` requiring exactly
@@ -132,11 +133,15 @@ def all_version_members_present(network: _TrustedNetwork) -> ValidationError | N
 
 @validate_call
 def all_version_members_share_placement(network: _TrustedNetwork) -> ValidationError | None:
-    """Return ``None`` when each group's members are blocks sharing one ``order`` and one ``parents`` set.
+    """Return ``None`` when each group's members are blocks sharing one ``parents`` set.
 
-    The versions of one block occupy one position: Roam gives every version the same ``order``
-    under the same ancestors, and only a block can be a version.  A group with a member absent
-    from *network* is skipped here; :func:`all_version_members_present` reports it.
+    The versions of one block occupy one position under the same ancestors, and only a block can be
+    a version.  Their ``order`` values are not compared: Roam keeps only the *selected* version in
+    its parent's ``children``, and renumbers only that one when a sibling is inserted or removed, so
+    the unselected versions keep the order they had when last selected.  Nothing downstream reads an
+    unselected version's order (children are what get sorted), so a disagreement there is noise, not
+    a fault.  A group with a member absent from *network* is skipped here;
+    :func:`all_version_members_present` reports it.
 
     Args:
         network: The collection of nodes to examine.
@@ -155,10 +160,7 @@ def all_version_members_share_placement(network: _TrustedNetwork) -> ValidationE
         if non_blocks:
             findings.append(f"group {group.id}: members that are not blocks: {sorted(non_blocks)}")
             continue
-        orders: set[int | None] = {member.order for member in members}
         parent_sets: set[frozenset[Id]] = {frozenset(stub.id for stub in member.parents or []) for member in members}
-        if len(orders) > 1:
-            findings.append(f"group {group.id}: members disagree on order: {sorted(orders, key=str)}")
         if len(parent_sets) > 1:
             findings.append(f"group {group.id}: members disagree on parents: {sorted(sorted(s) for s in parent_sets)}")
     if not findings:
