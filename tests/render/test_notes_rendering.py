@@ -67,13 +67,16 @@ def _note_link(lead_in: str, uid: str) -> str:
 _FILLER: Final[str] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " * 30
 
 
-def _noted_book(*, with_notes_heading: bool = True, with_part: bool = False) -> VertexTree:
+def _noted_book(
+    *, with_notes_heading: bool = True, with_part: bool = False, chapter_two_noted: bool = True
+) -> VertexTree:
     """A two-chapter book: notes cited before, in, and between sections, and a Notes section.
 
     The notes live in a container per chapter; one note is cited by nothing (an orphan), and two
     notes in different sections share a lead-in.  One note has a short form, and the Notes
     section's intro has a block limited to the short notes.  With *with_part*, the two chapters
-    are held in a part, a level deeper, making a parts book.
+    are held in a part, a level deeper, making a parts book.  With *chapter_two_noted* off, chapter
+    two cites no note, so the Notes have a single chapter group.
     """
     chapters: Final[list[str]] = ["chap00001", "chap00002"]
     notes: Final[list[str]] = ["notesh001"] if with_notes_heading else []
@@ -110,7 +113,14 @@ def _noted_book(*, with_notes_heading: bool = True, with_part: bool = False) -> 
         HeadingVertex(
             uid="chap00002", text="Design Universals", heading_level=chapter_level, children=["textc0001", "notes0002"]
         ),
-        TextVertex(uid="textc0001", text=f"Here is {_note_link('the original version', 'note00005')} again."),
+        TextVertex(
+            uid="textc0001",
+            text=(
+                f"Here is {_note_link('the original version', 'note00005')} again."
+                if chapter_two_noted
+                else "Here is the original version again."
+            ),
+        ),
         NotesVertex(uid="notes0002", children=["note00004", "note00005"]),
         TextVertex(uid="note00004", text="Tootill, *Resurrection* 20 (1998)."),
         TextVertex(uid="note00005", text="A note in chapter two."),
@@ -250,11 +260,13 @@ def _notes_blocks(doc: pf.Doc) -> list[pf.Block]:
 
 
 def _epub_notes_entries(doc: pf.Doc) -> list[pf.Block]:
-    """Return the group headings and entries of *doc*'s EPUB Notes section, held in its last block."""
+    """Return the group headings and entries of *doc*'s EPUB Notes section: its last block's inner Div."""
     held: Final[pf.Block] = _notes_blocks(doc)[-1]
     assert isinstance(held, pf.Div)
     assert held.classes == [NOTES_ENTRIES_CLASS]
-    return list(held.content)
+    (inner,) = held.content
+    assert isinstance(inner, pf.Div)
+    return list(inner.content)
 
 
 class TestIdentifiers:
@@ -311,11 +323,23 @@ class TestInsertNotesSection:
         assert not any(isinstance(block, pf.RawBlock) for block in _epub_notes_entries(doc))
 
     def test_epub_groups_and_entries_are_held_in_one_div(self) -> None:
-        """In EPUB the groups and entries follow the intro inside one Div, so Pandoc splits off none of them."""
+        """In EPUB the groups and entries follow the intro inside one Div, so Pandoc splits off none of them.
+
+        They sit in an attribute-less inner Div, so the holding Div never opens with a heading: Pandoc takes
+        a Div opening with a heading, with no later heading at its level or above, for that heading's own
+        section, which it then splits off; a book with notes in one chapter alone would hit that.
+        """
         doc, _entered = _built(_noted_book(), OutputFormat.EPUB)
         blocks: Final[list[pf.Block]] = _notes_blocks(doc)
         assert "The complete notes are online." in pf.stringify(blocks[1])
         assert not any(isinstance(block, pf.Header) for block in blocks[1:])
+        held: Final[pf.Block] = blocks[-1]
+        assert isinstance(held, pf.Div)
+        assert held.classes == [NOTES_ENTRIES_CLASS]
+        (inner,) = held.content
+        assert isinstance(inner, pf.Div)
+        assert (inner.identifier, inner.classes, dict(inner.attributes)) == ("", [], {})
+        assert isinstance(inner.content[0], pf.Header)
         assert len([block for block in _epub_notes_entries(doc) if isinstance(block, pf.Div)]) == 4
 
     @pytest.mark.parametrize("output_format", [OutputFormat.PDF, OutputFormat.MARKDOWN])
@@ -542,10 +566,18 @@ class TestRenderedNotes:
         assert f'href="{passage_file}#guffin-note-note00002" class="guffin-note-backlink"' in documents[notes_name]
         assert '<body epub:type="backmatter">' in documents[notes_name]
 
-    def test_epub_parts_book_keeps_the_notes_in_one_document(self, tmp_path: Path) -> None:
-        """EPUB parts book: split at the chapter level, it still opens no new document at a chapter group."""
+    @pytest.mark.parametrize(("chapter_two_noted", "groups"), [(True, 2), (False, 1)])
+    def test_epub_parts_book_keeps_the_notes_in_one_document(
+        self, tmp_path: Path, chapter_two_noted: bool, groups: int
+    ) -> None:
+        """EPUB parts book: split at the chapter level, it still opens no new document at a chapter group.
+
+        With a single group the holding Div would open with the group's heading, which Pandoc takes for a
+        section of its own and splits off (seen in draft-2, 2026-10-16), were the group not held in an inner
+        Div.
+        """
         render_epub(
-            RenderBundle(content=_noted_book(with_part=True), view={}),
+            RenderBundle(content=_noted_book(with_part=True, chapter_two_noted=chapter_two_noted), view={}),
             profile=BookProfile(with_parts=True),
             filename_stem="noted",
             api_endpoint=_ENDPOINT,
@@ -562,10 +594,10 @@ class TestRenderedNotes:
         ]
         assert len(holding) == 1
         notes: Final[str] = documents[holding[0]]
-        assert notes.count(f'<h2 class="unnumbered unlisted {NOTES_GROUP_CLASS}"') == 2
-        assert all(
-            f'id="guffin-endnote-{uid}"' in notes for uid in ("note00001", "note00002", "note00004", "note00005")
-        )
+        assert notes.count(f'<h2 class="unnumbered unlisted {NOTES_GROUP_CLASS}"') == groups
+        assert f'<div class="{NOTES_ENTRIES_CLASS}">' in notes
+        assert all(f'id="guffin-endnote-{uid}"' in notes for uid in ("note00001", "note00002", "note00004"))
+        assert ('id="guffin-endnote-note00005"' in notes) is chapter_two_noted
 
     def test_pdf(self, tmp_path: Path) -> None:
         """PDF: one Notes page with chapter groups (no page break at a group) and passage page numbers."""

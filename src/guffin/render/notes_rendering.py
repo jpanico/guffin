@@ -87,7 +87,11 @@ Such a heading repeats the text of the chapter or section heading it stands for.
 """
 
 NOTES_ENTRIES_CLASS: Final[str] = "guffin-notes-entries"
-"""The class of the ``Div`` holding an EPUB Notes section's group headings and entries."""
+"""The class of the ``Div`` holding an EPUB Notes section's group headings and entries.
+
+The headings and entries sit in an inner ``Div`` with no attributes, so that this one never opens
+with a heading (see :func:`_kept_in_one_document`).
+"""
 
 _NOTE_ANCHOR_PREFIX: Final[str] = "guffin-note-"
 """The prefix of every :func:`note_anchor`."""
@@ -166,9 +170,14 @@ def _kept_in_one_document(blocks: list[pf.Block], output_format: OutputFormat) -
     of its own.  A heading nested in a ``Div`` is not split off, so in EPUB the *blocks* are held
     in one (:data:`NOTES_ENTRIES_CLASS`), and the Notes section stays in one document.  The other
     formats are not split, and take the *blocks* as they are.
+
+    The held *blocks* sit in an inner ``Div`` of their own, so that the holding ``Div`` never opens
+    with a heading: Pandoc takes a ``Div`` whose first block is a heading, with no later heading at
+    that level or above, for that heading's own section, so a single chapter group would turn the
+    holding ``Div`` into the group's section and be split off after all.
     """
     if output_format is OutputFormat.EPUB and blocks:
-        return [pf.Div(*blocks, classes=[NOTES_ENTRIES_CLASS])]
+        return [pf.Div(pf.Div(*blocks), classes=[NOTES_ENTRIES_CLASS])]
     return blocks
 
 

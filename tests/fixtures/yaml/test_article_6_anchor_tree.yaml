@@ -1115,7 +1115,7 @@ refs_by_id:
     parents: null
     props: null
     title: '>'
-    attrs: null
+    attrs: []
     blocks: null
   '11876':
     uid: asCh2FQQp

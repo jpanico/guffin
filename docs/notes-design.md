@@ -342,8 +342,12 @@ Departures from the decisions, and behavior found while building:
   but does not stop the split. Pandoc splits only at a section that sits directly in the
   document's flow, though, so the EPUB's group headings and entries are held in one `Div`
   (`guffin-notes-entries`) after the intro; they keep their levels and their `<section>`
-  elements, and the whole Notes section stays in the Notes heading's file. PDF and Markdown are
-  not split and are left unwrapped.
+  elements, and the whole Notes section stays in the Notes heading's file. They sit in an inner
+  `Div` of their own, so that the holding `Div` never opens with a heading: Pandoc takes a `Div`
+  whose first block is a heading, with no later heading at that level or above, for that heading's
+  own section, and when only one chapter had notes (draft-2, 2026-10-16) the holding `Div` became
+  that group's section and was split off after all. PDF and Markdown are not split and are left
+  unwrapped.
 
 
 ## Suppressing notes
