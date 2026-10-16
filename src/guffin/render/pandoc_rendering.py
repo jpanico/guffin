@@ -1693,7 +1693,7 @@ def _quote_block_vertex_to_blocks(
     (Typst ``typst_quote.lua``, GFM ``gfm_quote.lua``, or EPUB CSS on ``div.fancy-quote``).
 
     An epigraph (:attr:`~guffin.vertex.QuoteType.EPIGRAPH`) likewise produces a class-tagged
-    :class:`~panflute.Div`: an outer ``epigraph`` :class:`~panflute.Div` (:data:`_EPIGRAPH_CLASS`)
+    :class:`~panflute.Div`: an outer ``epigraph`` :class:`~panflute.Div` (:data:`EPIGRAPH_CLASS`)
     carrying ``epub:type="epigraph"``, holding the vertex's ``quote`` in an ``epigraph-text``
     sub-:class:`~panflute.Div` and, when present, its ``attribution`` in an ``epigraph-attribution``
     sub-:class:`~panflute.Div` led by an em dash.  Each format sets it as an epigraph — the
@@ -1743,7 +1743,7 @@ def _quote_block_vertex_to_blocks(
         if vertex.attribution is not None:
             epigraph_blocks.append(_attribution_div(vertex.attribution, _EPIGRAPH_ATTRIBUTION_CLASS))
         return [
-            pf.Div(*epigraph_blocks, classes=[_EPIGRAPH_CLASS], attributes={"epub:type": EpubType.EPIGRAPH.value}),
+            pf.Div(*epigraph_blocks, classes=[EPIGRAPH_CLASS], attributes={"epub:type": EpubType.EPIGRAPH.value}),
             *child_blocks,
         ]
     inner_blocks: Final[list[pf.Block]] = parse_block_md(hard_broken_markdown(vertex.quote))
@@ -1755,7 +1755,7 @@ def _quote_block_vertex_to_blocks(
 _QUOTE_ATTRIBUTION_CLASS: Final[str] = "quote-attribution"
 """Class of the :class:`~panflute.Div` holding a block quotation's attribution, its source line."""
 
-_EPIGRAPH_CLASS: Final[str] = "epigraph"
+EPIGRAPH_CLASS: Final[str] = "epigraph"
 """Class of the :class:`~panflute.Div` holding an epigraph: its quotation and optional attribution."""
 
 _EPIGRAPH_TEXT_CLASS: Final[str] = "epigraph-text"

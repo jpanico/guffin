@@ -1,6 +1,6 @@
 """EPUB post-processing: content rewrites applied to the packaged e-book.
 
-Six passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
+Seven passes operate on the finished ``.epub`` (all preserve entry order, timestamps, and per-entry
 compression, so the ``mimetype`` entry stays first and uncompressed):
 
 - **CMOS division restoration.**  Pandoc assigns each content document's ``<body epub:type>``
@@ -30,6 +30,15 @@ compression, so the ``mimetype`` entry stays first and uncompressed):
   appends the colophon to the end of the last document in reading order instead, after its
   footnotes.
 
+- **The book epigraph's document.**  A book sets a leading epigraph in a content document of its
+  own directly after the title page (``docs/book-epigraph-design.md``).  Pandoc splits the
+  document's leading blocks into its first content document, but gives that document the book's
+  title as a heading, types its body ``bodymatter``, and lists it in the navigation.
+  :func:`set_epigraph_document` finds the document by the ``book-epigraph`` ``Div`` the renderer
+  wrapped the epigraphs in, drops the inserted heading, types the body ``frontmatter`` and the
+  section ``epigraph``, and removes the document's entries from the nav and the NCX, as a printed
+  contents would leave an epigraph unlisted.
+
 - **Baked code line numbers.**  Skylighting's ``numberSource`` code listings draw each line
   number with CSS counters, ``position: relative`` offsets, and ``inline-block`` line spans —
   techniques several reading systems do not implement (notably the Kindle app, where the
@@ -43,6 +52,8 @@ Public symbols:
 
 - **Functions**: :func:`restore_matter_divisions` — rewrite an ``.epub`` in place so each content
   document's ``<body>`` division matches its stamped CMOS matter;
+  :func:`set_epigraph_document` — finish the book epigraph's content document and unlist it from
+  the navigation;
   :func:`stamp_titlepage_provenance` — inject a provenance line at the foot of the generated
   title page; :func:`stamp_titlepage_revision` — inject the authored revision name directly
   below the title on the generated title page; :func:`stamp_titlepage_illustrators` — inject an
@@ -64,6 +75,7 @@ from xml.sax.saxutils import escape
 import regex
 from pydantic import validate_call
 
+from guffin.render.epigraph_page import BOOK_EPIGRAPH_CLASS
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE
 
 logger = logging.getLogger(__name__)
@@ -71,6 +83,13 @@ logger = logging.getLogger(__name__)
 _FIRST_SECTION_RE: Final[regex.Pattern[str]] = regex.compile(r"<section\b[^>]*>")
 _MATTER_ATTRIBUTE_RE: Final[regex.Pattern[str]] = regex.compile(rf'\s*{regex.escape(MATTER_DATA_ATTRIBUTE)}="([^"]*)"')
 _BODY_DIVISION_RE: Final[regex.Pattern[str]] = regex.compile(r'(<body\b[^>]*\bepub:type=")[^"]*(")')
+_BOOK_EPIGRAPH_DIV: Final[str] = f'<div class="{BOOK_EPIGRAPH_CLASS}"'
+"""The opening of the ``Div`` the renderer wraps the book's epigraphs in (Pandoc's HTML for it)."""
+_INSERTED_HEADING_RE: Final[regex.Pattern[str]] = regex.compile(r"\s*<h1\b[^>]*>.*?</h1>", regex.DOTALL)
+"""Matches the heading Pandoc gives a leading content document, made from the book's title."""
+_EPIGRAPH_SECTION_OPEN: Final[str] = '<section epub:type="epigraph">'
+_NAV_SUFFIX: Final[str] = "nav.xhtml"
+_NCX_SUFFIX: Final[str] = ".ncx"
 _TITLE_PAGE_SUFFIX: Final[str] = "title_page.xhtml"
 _SECTION_CLOSE: Final[str] = "</section>"
 _BODY_CLOSE: Final[str] = "</body>"
@@ -106,23 +125,24 @@ _CODE_CLASSES: Final[frozenset[str]] = frozenset({"sourceCode"})
 """The ``<code>`` class that skylighting's per-line-span layout rules key on."""
 
 
-def _rewrite_xhtml_entries(epub_path: Path, transform: Callable[[str, str], str]) -> None:
-    """Rewrite the EPUB at *epub_path* in place, applying *transform* to every XHTML entry.
+def _rewrite_entries(epub_path: Path, transform: Callable[[str, str], str], suffixes: tuple[str, ...]) -> None:
+    """Rewrite the EPUB at *epub_path* in place, applying *transform* to every entry named by *suffixes*.
 
-    *transform* receives each entry's filename and XHTML source and returns the (possibly
-    unchanged) replacement source.  Entry order, timestamps, and per-entry compression are
-    preserved, so the ``mimetype`` entry stays first and uncompressed.
+    *transform* receives each matching entry's filename and text and returns the (possibly
+    unchanged) replacement text.  Entry order, timestamps, and per-entry compression are preserved,
+    so the ``mimetype`` entry stays first and uncompressed.
 
     Args:
         epub_path: Path to the ``.epub`` file to rewrite.
-        transform: ``(filename, xhtml) -> xhtml`` mapping applied to each ``.xhtml`` entry.
+        transform: ``(filename, text) -> text`` mapping applied to each matching entry.
+        suffixes: The filename suffixes of the entries to transform (``".xhtml"``, ``".ncx"``, …).
     """
     with zipfile.ZipFile(epub_path) as source:
         infos: Final[list[zipfile.ZipInfo]] = source.infolist()
         payloads: Final[dict[str, bytes]] = {info.filename: source.read(info.filename) for info in infos}
 
     for info in infos:
-        if info.filename.endswith(".xhtml"):
+        if info.filename.endswith(suffixes):
             payloads[info.filename] = transform(info.filename, payloads[info.filename].decode("utf-8")).encode("utf-8")
 
     temp_path: Final[Path] = epub_path.with_name(f"{epub_path.name}.tmp")
@@ -130,6 +150,18 @@ def _rewrite_xhtml_entries(epub_path: Path, transform: Callable[[str, str], str]
         for info in infos:
             target.writestr(info, payloads[info.filename])
     temp_path.replace(epub_path)
+
+
+def _rewrite_xhtml_entries(epub_path: Path, transform: Callable[[str, str], str]) -> None:
+    """Rewrite the EPUB at *epub_path* in place, applying *transform* to every XHTML entry.
+
+    See :func:`_rewrite_entries`; this is that function for the ``.xhtml`` entries alone.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+        transform: ``(filename, xhtml) -> xhtml`` mapping applied to each ``.xhtml`` entry.
+    """
+    _rewrite_entries(epub_path, transform, (".xhtml",))
 
 
 def _rewrite_document(xhtml: str) -> str:
@@ -171,6 +203,101 @@ def restore_matter_divisions(epub_path: Path) -> None:
     """
     _rewrite_xhtml_entries(epub_path, lambda _filename, xhtml: _rewrite_document(xhtml))
     logger.info("Restored CMOS <body> divisions in %s", epub_path)
+
+
+def _finish_epigraph_document(xhtml: str) -> str:
+    """Return the book epigraph's content document *xhtml* in its front-matter form.
+
+    The body is typed ``frontmatter`` and the outermost section ``epigraph`` (its title-derived id
+    dropped with the rest of its attributes), and the heading Pandoc inserted ahead of the
+    epigraphs, made from the book's title, is removed.  Nothing after the epigraphs' ``Div`` is
+    touched.
+    """
+    division_set: Final[str] = _BODY_DIVISION_RE.sub(
+        lambda match: f"{match.group(1)}frontmatter{match.group(2)}", xhtml, count=1
+    )
+    div_at: Final[int] = division_set.find(_BOOK_EPIGRAPH_DIV)
+    if div_at < 0:
+        return division_set
+    head: str = division_set[:div_at]
+    head = _FIRST_SECTION_RE.sub(_EPIGRAPH_SECTION_OPEN, head, count=1)
+    head = _INSERTED_HEADING_RE.sub("", head, count=1)
+    return f"{head}{division_set[div_at:]}"
+
+
+def _unlisted_nav(nav: str, href: str) -> str:
+    """Return the nav document *nav* without the contents entry whose link targets *href*.
+
+    Only a leaf entry is removed — one whose ``<li>`` holds a single link and no nested list — which
+    is the shape Pandoc gives a document with no headings of its own.
+    """
+    entry: Final[regex.Pattern[str]] = regex.compile(
+        rf'\s*<li\b[^>]*>\s*<a href="{regex.escape(href)}(?:#[^"]*)?"[^>]*>(?:(?!</li>).)*?</a>\s*</li>',
+        regex.DOTALL,
+    )
+    return entry.sub("", nav, count=1)
+
+
+def _unlisted_ncx(ncx: str, href: str) -> str:
+    """Return the NCX *ncx* without the navigation point whose content targets *href*.
+
+    Only a leaf point is removed — one holding no nested ``navPoint``.  Pandoc writes its NCX
+    without ``playOrder`` attributes, so nothing needs renumbering.
+    """
+    point: Final[regex.Pattern[str]] = regex.compile(
+        r"\s*<navPoint\b[^>]*>(?:(?!</navPoint>|<navPoint\b).)*?"
+        rf'<content src="{regex.escape(href)}(?:#[^"]*)?"\s*/>\s*</navPoint>',
+        regex.DOTALL,
+    )
+    return point.sub("", ncx, count=1)
+
+
+@validate_call
+def set_epigraph_document(epub_path: Path) -> None:
+    """Finish the book epigraph's content document in the EPUB at *epub_path*, in place.
+
+    The renderer wraps a book's leading epigraphs in a ``Div`` of class ``book-epigraph`` at the
+    head of the document, and Pandoc splits them into the first content document after the title
+    page — but it gives that document the book's title as a heading, types its body ``bodymatter``,
+    and lists it in the nav and the NCX.  This pass finds the document holding the ``Div``, drops
+    the inserted heading, types the body ``frontmatter`` and its section ``epigraph``, and removes
+    the document's entries from the nav and the NCX, since a contents never lists an epigraph
+    (``docs/chicago-front-matter.md``).  The document stays in the spine, so a reader paging from
+    the title page meets it.  Entry order, timestamps, and per-entry compression are preserved.
+
+    When no content document holds the ``Div`` — the book has no leading epigraph, or the profile
+    keeps it in the flow — the EPUB is left unchanged.
+
+    Args:
+        epub_path: Path to the ``.epub`` file to rewrite.
+    """
+    with zipfile.ZipFile(epub_path) as archive:
+        names: Final[list[str]] = archive.namelist()
+        document: Final[str | None] = next(
+            (
+                name
+                for name in names
+                if name.endswith(".xhtml")
+                and not name.endswith(_NAV_SUFFIX)
+                and _BOOK_EPIGRAPH_DIV in archive.read(name).decode("utf-8")
+            ),
+            None,
+        )
+    if document is None:
+        logger.debug("No book epigraph document in %s; nothing to finish", epub_path)
+        return
+
+    def _transform(filename: str, text: str) -> str:
+        if filename == document:
+            return _finish_epigraph_document(text)
+        if filename.endswith(_NAV_SUFFIX):
+            return _unlisted_nav(text, posixpath.relpath(document, posixpath.dirname(filename)))
+        if filename.endswith(_NCX_SUFFIX):
+            return _unlisted_ncx(text, posixpath.relpath(document, posixpath.dirname(filename)))
+        return text
+
+    _rewrite_entries(epub_path, _transform, (".xhtml", _NCX_SUFFIX))
+    logger.info("Set %s as the book epigraph's front-matter document in %s", document, epub_path)
 
 
 @validate_call

@@ -370,6 +370,15 @@ $if(titlepage)$
 $titlepage.typ()$
 $endif$
 
+// The book epigraph's page, when the renderer lifted one: after the title page, before the
+// contents (Chicago 1.36).  Emits nothing otherwise.  The value is taken up here rather than with
+// the other variables above because its content calls the #epigraph helper, which
+// default_styles.typ defines; a content block evaluates where it is written.
+$if(book-epigraph)$
+#(cfg.book-epigraph = [$book-epigraph/nowrap$])
+$endif$
+$epigraph.typ()$
+
 $if(abstract)$
 $abstract.typ()$
 $elseif(thanks)$

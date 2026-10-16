@@ -68,10 +68,12 @@ from guffin.model.vertex_tree import (
 )
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import callout_accent, callout_title_tint
+from guffin.render.epigraph_page import BOOK_EPIGRAPH_CLASS, lift_leading_epigraphs
 from guffin.render.epub_post_processing import (
     append_colophon,
     bake_code_line_numbers,
     restore_matter_divisions,
+    set_epigraph_document,
     stamp_titlepage_illustrators,
     stamp_titlepage_provenance,
     stamp_titlepage_revision,
@@ -448,6 +450,14 @@ def render(
             Path(tmp),
             default_override=options.default_pdf_render,
         )
+        # A book sets a leading epigraph in a content document of its own, directly after the title
+        # page (Chicago 1.36).  Pandoc splits the document's leading blocks into its first content
+        # document; the book-epigraph Div marks them so set_epigraph_document can finish that
+        # document after packaging.  See docs/book-epigraph-design.md.
+        if profile.structural_policy.epigraph_page:
+            lifted: Final[list[pf.Block]] = lift_leading_epigraphs(doc)
+            if lifted:
+                doc.content.insert(0, pf.Div(*lifted, classes=[BOOK_EPIGRAPH_CLASS]))
         # Without a title page to stamp, the authored revision name leads the reading flow
         # instead — the first block a reader sees on opening the book (the EPUB body carries no
         # title of its own; dc:title lives in the package metadata).
@@ -498,6 +508,7 @@ def render(
         )
 
     restore_matter_divisions(output_path)
+    set_epigraph_document(output_path)
     bake_code_line_numbers(output_path)
     if emit_title_page and (provenance is not None or revision is not None):
         stamp_titlepage_provenance(output_path, colophon_summary(provenance, revision))

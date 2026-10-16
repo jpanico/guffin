@@ -73,6 +73,7 @@ from guffin.model.vertex_tree import (
 )
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import CALLOUT_ACCENT
+from guffin.render.epigraph_page import BOOK_EPIGRAPH_META_KEY, lift_leading_epigraphs
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, detached_copy, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -750,6 +751,14 @@ def render(
         )
         _style_heading_links(doc)
         _apply_pdf_embeds(doc, pdf_paths, profile.project_type, default_override=options.default_pdf_render)
+        # A book sets a leading epigraph on a page of its own ahead of the contents (Chicago 1.36),
+        # which only the template can place: the epigraphs leave the body for the book-epigraph
+        # metadata value, which Pandoc renders to Typst and the template's epigraph.typ sets between
+        # the title page and the outline.  See docs/book-epigraph-design.md.
+        if profile.structural_policy.epigraph_page:
+            lifted: Final[list[pf.Block]] = lift_leading_epigraphs(doc)
+            if lifted:
+                doc.metadata[BOOK_EPIGRAPH_META_KEY] = pf.MetaBlocks(*lifted)
         # Split the title into a plain string (PDF /Title + the running-header %title% string
         # machinery) and a rich `title-display` copy the header renders as content, so a bold
         # portion of the title shows as markup rather than leaking literal Typst source.

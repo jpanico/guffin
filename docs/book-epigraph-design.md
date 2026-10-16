@@ -1,9 +1,10 @@
 # The book epigraph: an epigraph page before the contents
 
-**Status: designed, not built** (draft of 2026-10-15). The open questions below await Joe's
-decisions; nothing is recorded under [Decisions](#decisions) yet beyond the request itself. This is
-the working design document for the *book epigraph*: an epigraph that belongs to the whole work
-rather than to a chapter, and the page it should get in a `book` export.
+**Status: designed and built** (designed 2026-10-15, built 2026-10-16 per the proposals under
+each open question, which Joe accepted as written; see [Decisions](#decisions)). This is the
+working design document for the *book epigraph*: an epigraph that belongs to the whole work rather
+than to a chapter, and the page it gets in a `book` export. The implementation follows the
+[sketch](#implementation-sketch) below; the one departure is noted there.
 
 Companion docs: [chicago-front-matter.md](chicago-front-matter.md) (Chicago's rules for the
 front matter and the epigraph, which this design applies), [notes-design.md](notes-design.md)
@@ -197,5 +198,14 @@ Per layer, assuming the proposals above:
 ## Decisions
 
 - **The book epigraph goes before the contents, per Chicago** (Joe, 2026-10-15), asked for after
-  the export of that day set it after them. The design above is the proposal; its questions are
-  open.
+  the export of that day set it after them.
+- **Built per the proposals** (Joe, 2026-10-16): Q1 the page as proposed (no header, footer, or
+  printed number; a sink of 0.3 of the page height, `cfg.epigraph-page-sink`; a break after); Q2
+  every leading epigraph on the one page; Q3 the EPUB document left out of the nav and the NCX; Q4
+  Pandoc's own chunk finished by post-processing, found by the `book-epigraph` class; Q5 the
+  metadata route, confirmed to carry the `#epigraph` call (Pandoc applies the Lua filters to
+  metadata blocks); Q7 the `epigraph_page` directive. Q6, the ordering of authored front-matter
+  sections, stays open. One departure from the sketch: the template takes the `book-epigraph`
+  value up next to the partial's emission rather than with the other variables at the top, because
+  a Typst content block evaluates where it is written and the value calls the `#epigraph` helper
+  that `default_styles.typ` defines further down.

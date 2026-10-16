@@ -128,6 +128,17 @@ div.epigraph-attribution p {
 }
 
 /*
+ * The book epigraph (docs/chicago-front-matter.md): an epigraph authored above the document's
+ * first heading, which a book sets in a content document of its own directly after the title
+ * page, holding nothing else. A top margin stands in for the sink of a printed epigraph page,
+ * whose text starts about a third of the way down; reading systems own the page, so ems, not a
+ * share of the screen.
+ */
+div.book-epigraph {
+  margin-top: 6em;
+}
+
+/*
  * Pull quote (Roam [[>]] [[!QUOTE]]): a passage of the work's own text promoted for display, so it
  * carries no attribution. guffin emits <div class="fancy-quote"> with an inner
  * <div class="fancy-quote-text"> (the quotation). A pull-quote treatment (mirroring the PDF): the

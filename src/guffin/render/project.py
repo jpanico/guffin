@@ -140,6 +140,11 @@ class StructuralPolicy(BaseModel):
         emit_abstract: Whether to render an abstract block from the profile.
         drop_preamble: Whether to drop the export root's loose preamble — children preceding its
             first heading child, content belonging to no titled division — from paginated output.
+        epigraph_page: Whether a leading epigraph — one authored ahead of the export root's first
+            heading, the work's own epigraph rather than a division's — is set in the front matter
+            on a page of its own, before the contents, as Chicago places a book's epigraph
+            (``docs/chicago-front-matter.md``).  A work without a title page or contents has no
+            front matter to set it in and keeps it in the flow.
         honor_page_breaks: Whether authored ``page-break`` directives are honored.  A work whose
             pagination is fixed by its own structural conventions (a book: chapters and parts open
             pages by ritual, not by tag) does not honor them; a work whose pagination is the
@@ -157,6 +162,9 @@ class StructuralPolicy(BaseModel):
     number_sections: bool = Field(..., description="Number the divisions.")
     emit_abstract: bool = Field(..., description="Render an abstract block from the profile.")
     drop_preamble: bool = Field(..., description="Drop the root's children preceding its first heading.")
+    epigraph_page: bool = Field(
+        ..., description="Set a leading epigraph on its own front-matter page, before the contents."
+    )
     honor_page_breaks: bool = Field(..., description="Honor authored page-break directives.")
     note_style: NoteStyle = Field(..., description="How the work presents its notes.")
 
@@ -213,6 +221,7 @@ class ArticleProfile(ProjectProfile):
             number_sections=False,
             emit_abstract=False,
             drop_preamble=False,
+            epigraph_page=False,
             honor_page_breaks=True,
             note_style=NoteStyle.NUMBERED,
         )
@@ -240,7 +249,9 @@ class BookProfile(ProjectProfile):
         chapter belongs to no division (and would otherwise surface as a spurious title-bearing
         chapter in paginated output), so it is dropped by default.  A book's pagination is
         likewise fixed by its structure — chapters and parts open pages by convention — so
-        authored ``page-break`` directives are not honored.
+        authored ``page-break`` directives are not honored.  An epigraph ahead of the first
+        chapter is the book's own and is set on a front-matter page of its own, before the
+        contents, where Chicago places it.
         """
         return StructuralPolicy(
             top_level_division=TopLevelDivision.PART if self.with_parts else TopLevelDivision.CHAPTER,
@@ -249,6 +260,7 @@ class BookProfile(ProjectProfile):
             number_sections=True,
             emit_abstract=False,
             drop_preamble=True,
+            epigraph_page=True,
             honor_page_breaks=False,
             note_style=NoteStyle.INVISIBLE_ENDNOTES,
         )
@@ -282,6 +294,7 @@ class ManuscriptProfile(ProjectProfile):
             number_sections=False,
             emit_abstract=True,
             drop_preamble=False,
+            epigraph_page=False,
             honor_page_breaks=True,
             note_style=NoteStyle.NUMBERED,
         )

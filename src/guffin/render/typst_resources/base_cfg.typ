@@ -59,6 +59,13 @@
   epigraph-size: 1.1,
   epigraph-leading: 0.9em,
   epigraph-style: "italic",
+  // The book epigraph (docs/chicago-front-matter.md): an epigraph authored above the document's
+  // first heading, which a book sets on a page of its own between the title page and the contents.
+  // The renderer fills book-epigraph; epigraph-page-sink is how far down the page the epigraph
+  // starts, as a share of the page height, after the usual practice of setting an epigraph page's
+  // text about a third of the way down.
+  book-epigraph: none,
+  epigraph-page-sink: 0.3,
   // Notes section (invisible endnotes): the headings that group its entries by chapter and section
   // repeat those headings' text, so they are set as subheads of the Notes rather than as divisions
   // of the book, whatever their level: at a ratio of the body size, in a weight and style, like
