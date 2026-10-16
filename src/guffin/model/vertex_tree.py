@@ -499,6 +499,12 @@ def drop_code_sources(tree: VertexTree) -> VertexTree:
 
 
 @validate_call
+def _links_to_epigraph(vertex: Vertex, tree: VertexTree) -> bool:
+    """Whether *vertex* is a standalone vertex link whose target in *tree* is an epigraph."""
+    target: Final[Vertex | None] = standalone_link_target(vertex, tree)
+    return target is not None and is_epigraph(target)
+
+
 def drop_root_preamble(tree: VertexTree) -> VertexTree:
     """Return a new :class:`VertexTree` with the root vertex's loose preamble pruned.
 
@@ -509,7 +515,10 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
     :attr:`~guffin.model.vertex._BaseVertex.children` list.  An epigraph among them (see
     :func:`~guffin.model.vertex.is_epigraph`) is not loose: it belongs to the opening of the
     document the root contains, ahead of its first division, so it is kept in place with its
-    subtree.  The rule is root-type-independent:
+    subtree.  A child that is a standalone vertex link to an epigraph (see
+    :func:`standalone_link_target`) counts as that epigraph, since it displays nothing but the
+    epigraph it points at — the usual way a page sets an epigraph kept on another page, such as
+    a collection of them.  The rule is root-type-independent:
     whether the tree roots at a page or at a subtree export's heading or block, the root is the
     document's container and its children are the document's top-level run.  The original *tree*
     is not modified.
@@ -540,7 +549,9 @@ def drop_root_preamble(tree: VertexTree) -> VertexTree:
     if heading_index is None:
         logger.warning("root vertex uid=%r has no heading children; loose preamble retained", root.uid)
         return tree
-    kept_uids: Final[list[Uid]] = [vtx.uid for vtx in child_vertices[:heading_index] if is_epigraph(vtx)]
+    kept_uids: Final[list[Uid]] = [
+        vtx.uid for vtx in child_vertices[:heading_index] if is_epigraph(vtx) or _links_to_epigraph(vtx, tree)
+    ]
     if len(kept_uids) == heading_index:
         return tree
 

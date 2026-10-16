@@ -25,7 +25,7 @@ from guffin.model.vertex import (
     TextVertex,
     Vertex,
 )
-from guffin.model.vertex_link import VertexLink, VertexLinkKind
+from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import (
     VertexTree,
     drop_alternatives,
@@ -330,6 +330,38 @@ class TestDropRootPreamble:
         quote: Final[QuoteBlockVertex] = QuoteBlockVertex(uid="quote0001", quote="A block quotation")
         chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
         result: Final[VertexTree] = drop_root_preamble(VertexTree(tree_vertices=[page, quote, chap]))
+        assert result.uid_map["pageroot1"].children == ["chap00001"]
+
+    def test_standalone_reference_to_an_epigraph_is_kept(self) -> None:
+        """A block reference to an epigraph on another page counts as the epigraph: it stays, other preamble goes."""
+        page: Final[PageVertex] = PageVertex(
+            uid="pageroot1", title="Doc", children=["pre000001", "epiref001", "chap00001"]
+        )
+        pre: Final[TextVertex] = TextVertex(uid="pre000001", text="loose lead-in")
+        reference: Final[TextVertex] = TextVertex(
+            uid="epiref001", text=f"[An epigraph]({vertex_link_url('epigr0001', VertexLinkKind.REFERENCE)})"
+        )
+        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        epigraph: Final[QuoteBlockVertex] = QuoteBlockVertex(
+            uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote="An epigraph on a collection page"
+        )
+        result: Final[VertexTree] = drop_root_preamble(
+            VertexTree(tree_vertices=[page, pre, reference, chap], ref_vertices=[epigraph])
+        )
+        assert result.uid_map["pageroot1"].children == ["epiref001", "chap00001"]
+        assert sorted(v.uid for v in result.tree_vertices) == ["chap00001", "epiref001", "pageroot1"]
+
+    def test_standalone_reference_to_a_block_quotation_is_dropped(self) -> None:
+        """A block reference whose target is not an epigraph is loose preamble like any other text."""
+        page: Final[PageVertex] = PageVertex(uid="pageroot1", title="Doc", children=["quoref001", "chap00001"])
+        reference: Final[TextVertex] = TextVertex(
+            uid="quoref001", text=f"[A block quotation]({vertex_link_url('quote0001', VertexLinkKind.REFERENCE)})"
+        )
+        chap: Final[HeadingVertex] = HeadingVertex(uid="chap00001", text="Chapter One", heading_level=1)
+        quote: Final[QuoteBlockVertex] = QuoteBlockVertex(uid="quote0001", quote="A block quotation")
+        result: Final[VertexTree] = drop_root_preamble(
+            VertexTree(tree_vertices=[page, reference, chap], ref_vertices=[quote])
+        )
         assert result.uid_map["pageroot1"].children == ["chap00001"]
 
 
