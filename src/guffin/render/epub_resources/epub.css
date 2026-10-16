@@ -222,6 +222,19 @@ div.caption {
  * Mirroring the gentle-clues callout in the PDF output, the title is a tinted header
  * band (the shared SVG icon prepended by epub_callout.lua, then the title text) and the
  * body sits on the white box background, with a colored left accent bar.
+ *
+ * A callout is asked to stay on one page. Paginating reading systems (Apple Books, the
+ * Readium apps, Kindle) otherwise break the box wherever it straddles a page boundary, title
+ * band on one page and body on the next. `break-inside: avoid` is the standard request, given
+ * with its CSS 2.1 spelling and WebKit's column alias for readers that know only those; a
+ * reading system that honors it carries the whole box to the next page when it fits there, and
+ * still breaks a box taller than a page, which is the behavior wanted. The request is
+ * best-effort, like the authored page break below: nothing in EPUB compels a reader to honor
+ * it. A truly unbreakable box (a scroll container, an inline-block, a one-cell table) was
+ * rejected: such a box is atomic for pagination, so a tall one is clipped to a single page with
+ * its tail unreachable, which is exactly what div.sourceCode above had to undo. The title band
+ * is kept with the first body block, so a box that must break never leaves its header stranded
+ * at a page foot.
  */
 div.callout {
   border: 1px solid #dddddd;
@@ -230,6 +243,9 @@ div.callout {
   margin: 1em 0;
   padding: 0 0.85em 0.7em;
   color: #000000;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
   /* Contrasting serif for the callout BODY (mirrors the PDF's callout-font), so callout
      content reads as a distinct register against the sans body. The generic `serif` fallback
      guarantees a serif on any reading system even where none of the named faces exist; the
@@ -249,6 +265,8 @@ div.callout-title {
   padding: 0.4em 0.85em;
   margin: 0 -0.85em;
   border-bottom: 1px solid #e0e0e0;
+  break-after: avoid;
+  page-break-after: avoid;
   /* Keep the title in the sans body face; only the callout body takes the contrasting serif. */
   font-family: "Optima", "Optima Nova", sans-serif;
 }

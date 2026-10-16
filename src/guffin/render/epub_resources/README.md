@@ -30,6 +30,11 @@ Notes on GFM-pipeline constructs that are handled differently here:
   **colours** (left accent bar + header-band tint) are **not** in `epub.css`: they are generated
   from the canonical single-source palette (`guffin/render/callout_theme.py`) by `epub_rendering.py`
   into a second stylesheet loaded after `epub.css`, so the same colour drives every output format.
+  A callout is asked to stay on one page (`break-inside: avoid` on `div.callout`, with its CSS 2.1 and
+  WebKit spellings, plus `break-after: avoid` on the title band so a box that must break keeps its
+  header with the first body block): best-effort, like every fragmentation hint in EPUB, and
+  deliberately not atomic, since an atomic box (a scroll container, an inline-block) taller than a
+  page is clipped, as `div.sourceCode` once was.
 - **image** — the GFM image filter is not applied: Pandoc's EPUB writer natively embeds local-path
   images into the package, so content images must reach the writer as Pandoc `Image` elements rather
   than raw `<img>` HTML.
