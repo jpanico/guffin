@@ -40,6 +40,8 @@ guffin the stricter of the two:
 
 ### 1. Typed cross-references (the biggest gap)
 
+*Taken up 2026-10-17: the design is [cross-references-design.md](cross-references-design.md).*
+
 Quarto gives every referenceable element a *typed identity* through its ID prefix
 (`#fig-elephant`, `#tbl-`, `#lst-`, `#sec-`, `#eq-`, the theorem family, the callout types); the
 prefix drives a numbering counter, a prefix word, and the reference rendering (`@fig-elephant` →
