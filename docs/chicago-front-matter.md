@@ -8,8 +8,9 @@ are silent, this is what governs.
 The section numbers below are cited from memory of the 17th edition and should be confirmed
 against the manual; the substance is settled. Companion docs:
 [book-epigraph-design.md](book-epigraph-design.md) (the design that applies these rules to the
-epigraph page) and [publishing-semantics.md](publishing-semantics.md) (the `element-type::`
-vocabulary that names the front-matter divisions an author can tag).
+epigraph page), [publishing-semantics.md](publishing-semantics.md) (the `element-type::`
+vocabulary that names the front-matter divisions an author can tag), and
+[chicago-back-matter.md](chicago-back-matter.md) (the other end of the book).
 
 
 ## The sequence of elements (1.4)
