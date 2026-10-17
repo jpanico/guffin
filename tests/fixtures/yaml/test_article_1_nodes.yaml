@@ -26,6 +26,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: ivTC6d-rG
   id: 11941
   string: 'guffin-meta:: #.rm-g'
@@ -62,6 +63,7 @@
       - uid
       - 8zcad3VSa
       value: ' false'
+  blocks: null
 - uid: EWMNZcPZX
   id: 11931
   string: 'pdf-render:: inline-native'
@@ -82,6 +84,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: yFUau9Cpg
   id: 4025
   string: Section 2.1.1
@@ -100,6 +103,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: dR1TZ3P8J
   id: 11939
   string: And yet, over the years a steady stream of researchers have stepped up with
@@ -123,6 +127,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: mfYCtWH-T
   id: 14459
   string: ((VxYhmVTG3))
@@ -143,6 +148,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8VPJRGOt4
   id: 14460
   string: ((jN4ClkAEl))
@@ -163,6 +169,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zZG-BfWvs
   id: 11164
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
@@ -185,6 +192,7 @@
         height: null
   title: null
   attrs: null
+  blocks: null
 - uid: 0EgPyHSZi
   id: 3328
   string: Section 1
@@ -202,6 +210,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 40bvW14UU
   id: 3330
   string: Section 3
@@ -220,6 +229,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: BeDkLXjgQ
   id: 14458
   string: ((DaltU9ClP))
@@ -240,6 +250,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: TaN67WqnA
   id: 3334
   string: illustration 1.1
@@ -259,6 +270,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 1NasQjcTQ
   id: 14461
   string: ((DPW-zEDaU))
@@ -279,6 +291,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: it3wsZ7-H
   id: 15801
   string: an asset is a BLOB stored by Roam in Firebase Storage; usually a file dragged
@@ -299,6 +312,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: pTvGGeTlB
   id: 11922
   string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
@@ -334,6 +348,7 @@
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: Ma5KGUH9O
   id: 4758
   string: 'AI assistant (Claude Opus 4.6): '
@@ -350,6 +365,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: wdMgyBiP9
   id: 3329
   string: Section 2
@@ -367,6 +383,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: uj8YolCoE
   id: 11124
   string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
@@ -385,6 +402,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4_GrZ9su6
   id: 11165
   string: this image **has not been resized** through the Roam UI.
@@ -404,6 +422,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: OaTXPl93p
   id: 11163
   string: illustration 2.1
@@ -423,6 +442,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 8zcad3VSa
   id: 11942
   string: 'publish:: false'
@@ -442,6 +462,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 3BX-iWc-p
   id: 3331
   string: Section 1.1
@@ -459,6 +480,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: nhX6sTxSE
   id: 14457
   string: '{{table}}'
@@ -484,6 +506,7 @@
           width: 349
   title: null
   attrs: null
+  blocks: null
 - uid: bxkcECGwN
   id: 4028
   string: Section 2.1.1.1
@@ -503,6 +526,7 @@
     ah-level: h4
   title: null
   attrs: null
+  blocks: null
 - uid: pfkKREU_Y
   id: 11806
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FmYFuvIq__9.jpeg.enc?alt=media&token=b5fa90b8-ec37-49ea-b0e9-157570fb91c4)'
@@ -522,6 +546,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: oTrZWi_EL
   id: 15800
   string: asset 2.1
@@ -541,6 +566,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: YCexI8mL4
   id: 11928
   string: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
@@ -559,6 +585,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: drtANJYTg
   id: 3332
   string: Section 2.1
@@ -578,6 +605,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: J4TkjuhVB
   id: 11934
   string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407}}'
@@ -615,6 +643,7 @@
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: cNW8lmXIM
   id: 11113
   string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
@@ -662,6 +691,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 4ahwZimtO
   id: 11921
   string: 'the following block contains the canonical w3.org "Dummy" PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
@@ -679,6 +709,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: 5f1ahOFdp
   id: 4026
   string: Section 2.2
@@ -696,6 +727,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: NEINf57lK
   id: 11927
   string: Section 3.2
@@ -730,6 +762,7 @@
       - uid
       - YCexI8mL4
       value: ' pdf-render: "inline"'
+  blocks: null
 - uid: 6olpFWiw1
   id: 3327
   string: null
@@ -748,6 +781,7 @@
   props: null
   title: '[[Test Article]] 1'
   attrs: null
+  blocks: null
 - uid: JW5PswS6v
   id: 3333
   string: Section 3.1
@@ -766,6 +800,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: zE0QjA3N9
   id: 11936
   string: Section 3.1_5
@@ -803,6 +838,7 @@
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 - uid: GvRO438Ze
   id: 11930
   string: 'guffin-meta:: #.rm-g'
@@ -840,6 +876,7 @@
       - uid
       - EWMNZcPZX
       value: ' inline-native'
+  blocks: null
 - uid: tWkumkdUE
   id: 11167
   string: this image **has been resized** through the Roam UI (width:257, height:None)
@@ -858,6 +895,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 - uid: Wlzl_dhg_
   id: 15802
   string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
@@ -876,3 +914,4 @@
   props: null
   title: null
   attrs: null
+  blocks: null

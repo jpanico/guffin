@@ -29,7 +29,7 @@ The `.typ` and `.typst` files in this directory are the **Bergfink** Pandoc/Typs
 |---|---|
 | `bergfink.typst` | Main template entry point — Pandoc injects variables and `$body$` here |
 | `base_cfg.typ` | Default configuration values (font, margins, colors, etc.) |
-| `user_cfg.typ` | Project-level overrides — edit this file to customize styling |
+| `user_cfg.typ` | Project-level overrides — edit this file to customize styling; its table keys set the tables to the visual design language in `docs/visual-design-language.md` (a rounded, framed card with a tinted header band) |
 | `default_styles.typ` | Typst `#set` and `#show` rules that apply the config to the document |
 | `titlepage.typ` | Title page layout |
 | `abstract.typ` | Abstract and acknowledgements page layout |

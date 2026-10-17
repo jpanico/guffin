@@ -155,6 +155,15 @@
   table-stroke-horizontal: 1pt + black,
   table-stroke-vertical: 1pt + black,
   table-inset: 6pt,
+  // The frame around the whole table: a stroke drawn around its rounded outline (the cells'
+  // own border strokes above stay available for a squared look), and the corner radius the
+  // outline and the header-row fill are clipped to.  A radius of 0pt and a frame of none keep
+  // the table square and frameless, as the cell strokes alone draw it.
+  table-radius: 0pt,
+  table-frame-stroke: none,
+  // The header row's text: its colour (auto keeps the ambient text colour) and weight.
+  table-header-ink: auto,
+  table-header-weight: "regular",
   // Whether one row may be split across a page boundary.  Typst breaks any auto-height row by
   // default, leaving a row's first lines on one page and the rest on the next; false moves the
   // whole row to the next page instead (the table itself still breaks between rows).  A single

@@ -313,6 +313,28 @@
   fill: table-fill,
 )
 
+// A horizontal rule placed in the table (Pandoc emits one under the header row) takes the
+// header's bottom stroke, so it never draws over the configured strokes in Typst's default black.
+#set table.hline(stroke: cfg.table-stroke-header-b)
+
+// The header row's text (row 0, the row the header fill also keys on).
+#show table.cell.where(y: 0): set text(weight: cfg.table-header-weight)
+#show table.cell.where(y: 0): it => if cfg.table-header-ink == auto { it } else {
+  set text(fill: cfg.table-header-ink)
+  it
+}
+
+// The frame: the whole table in a block clipped to the configured corner radius and stroked
+// around that outline, so the header fill's corners are rounded with it.  Breakable, like the
+// figure holding it, so a tall table still runs across pages, each fragment framed.
+#show table: it => block(
+  radius: cfg.table-radius,
+  clip: true,
+  stroke: cfg.table-frame-stroke,
+  breakable: true,
+  it,
+)
+
 // Row splitting across pages is governed per cell in Typst (a cell in an auto-height row is
 // breakable unless told otherwise), so the table-level policy is applied to every cell.
 #set table.cell(breakable: cfg.table-rows-breakable)

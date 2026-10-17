@@ -20,6 +20,7 @@
   props: null
   title: null
   attrs: null
+  blocks: null
 ivTC6d-rG:
   uid: ivTC6d-rG
   id: 11941
@@ -57,6 +58,7 @@ ivTC6d-rG:
       - uid
       - 8zcad3VSa
       value: ' false'
+  blocks: null
 EWMNZcPZX:
   uid: EWMNZcPZX
   id: 11931
@@ -78,6 +80,7 @@ EWMNZcPZX:
   props: null
   title: null
   attrs: null
+  blocks: null
 LBFKibPIj:
   uid: LBFKibPIj
   id: 4223
@@ -112,6 +115,7 @@ LBFKibPIj:
       value:
       - uid
       - 9ZtPB2yY3
+  blocks: null
 yFUau9Cpg:
   uid: yFUau9Cpg
   id: 4025
@@ -131,20 +135,7 @@ yFUau9Cpg:
   props: null
   title: null
   attrs: null
-9ZtPB2yY3:
-  uid: 9ZtPB2yY3
-  id: 6535
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: Publishing
-  attrs: null
+  blocks: null
 Jy_Ee6w8E:
   uid: Jy_Ee6w8E
   id: 11933
@@ -159,6 +150,7 @@ Jy_Ee6w8E:
   props: null
   title: pdf-render
   attrs: null
+  blocks: null
 dR1TZ3P8J:
   uid: dR1TZ3P8J
   id: 11939
@@ -183,6 +175,7 @@ dR1TZ3P8J:
   props: null
   title: null
   attrs: null
+  blocks: null
 mfYCtWH-T:
   uid: mfYCtWH-T
   id: 14459
@@ -204,6 +197,7 @@ mfYCtWH-T:
   props: null
   title: null
   attrs: null
+  blocks: null
 8VPJRGOt4:
   uid: 8VPJRGOt4
   id: 14460
@@ -225,6 +219,7 @@ mfYCtWH-T:
   props: null
   title: null
   attrs: null
+  blocks: null
 q3JUnfC1_:
   uid: q3JUnfC1_
   id: 246
@@ -239,6 +234,7 @@ q3JUnfC1_:
   props: null
   title: pdf
   attrs: null
+  blocks: null
 zZG-BfWvs:
   uid: zZG-BfWvs
   id: 11164
@@ -262,6 +258,7 @@ zZG-BfWvs:
         height: null
   title: null
   attrs: null
+  blocks: null
 Jv502NGK6:
   uid: Jv502NGK6
   id: 11943
@@ -276,6 +273,7 @@ Jv502NGK6:
   props: null
   title: publish
   attrs: null
+  blocks: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -289,7 +287,8 @@ OexZiLR_O:
   parents: null
   props: null
   title: '>'
-  attrs: null
+  attrs: []
+  blocks: null
 0EgPyHSZi:
   uid: 0EgPyHSZi
   id: 3328
@@ -308,6 +307,7 @@ OexZiLR_O:
   props: null
   title: null
   attrs: null
+  blocks: null
 40bvW14UU:
   uid: 40bvW14UU
   id: 3330
@@ -327,6 +327,7 @@ OexZiLR_O:
   props: null
   title: null
   attrs: null
+  blocks: null
 BeDkLXjgQ:
   uid: BeDkLXjgQ
   id: 14458
@@ -348,6 +349,7 @@ BeDkLXjgQ:
   props: null
   title: null
   attrs: null
+  blocks: null
 TaN67WqnA:
   uid: TaN67WqnA
   id: 3334
@@ -368,6 +370,7 @@ TaN67WqnA:
   props: null
   title: null
   attrs: null
+  blocks: null
 1NasQjcTQ:
   uid: 1NasQjcTQ
   id: 14461
@@ -389,6 +392,7 @@ TaN67WqnA:
   props: null
   title: null
   attrs: null
+  blocks: null
 VxYhmVTG3:
   uid: VxYhmVTG3
   id: 12920
@@ -411,6 +415,7 @@ VxYhmVTG3:
         height: null
   title: null
   attrs: null
+  blocks: null
 it3wsZ7-H:
   uid: it3wsZ7-H
   id: 15801
@@ -432,6 +437,7 @@ it3wsZ7-H:
   props: null
   title: null
   attrs: null
+  blocks: null
 pTvGGeTlB:
   uid: pTvGGeTlB
   id: 11922
@@ -468,6 +474,7 @@ pTvGGeTlB:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 Ma5KGUH9O:
   uid: Ma5KGUH9O
   id: 4758
@@ -485,6 +492,7 @@ Ma5KGUH9O:
   props: null
   title: null
   attrs: null
+  blocks: null
 wdMgyBiP9:
   uid: wdMgyBiP9
   id: 3329
@@ -503,6 +511,7 @@ wdMgyBiP9:
   props: null
   title: null
   attrs: null
+  blocks: null
 uj8YolCoE:
   uid: uj8YolCoE
   id: 11124
@@ -522,6 +531,7 @@ uj8YolCoE:
   props: null
   title: null
   attrs: null
+  blocks: null
 4_GrZ9su6:
   uid: 4_GrZ9su6
   id: 11165
@@ -542,6 +552,7 @@ uj8YolCoE:
   props: null
   title: null
   attrs: null
+  blocks: null
 OaTXPl93p:
   uid: OaTXPl93p
   id: 11163
@@ -562,6 +573,7 @@ OaTXPl93p:
   props: null
   title: null
   attrs: null
+  blocks: null
 8zcad3VSa:
   uid: 8zcad3VSa
   id: 11942
@@ -582,6 +594,7 @@ OaTXPl93p:
   props: null
   title: null
   attrs: null
+  blocks: null
 3BX-iWc-p:
   uid: 3BX-iWc-p
   id: 3331
@@ -600,6 +613,7 @@ OaTXPl93p:
   props: null
   title: null
   attrs: null
+  blocks: null
 nhX6sTxSE:
   uid: nhX6sTxSE
   id: 14457
@@ -626,6 +640,7 @@ nhX6sTxSE:
           width: 349
   title: null
   attrs: null
+  blocks: null
 bxkcECGwN:
   uid: bxkcECGwN
   id: 4028
@@ -646,6 +661,7 @@ bxkcECGwN:
     ah-level: h4
   title: null
   attrs: null
+  blocks: null
 pfkKREU_Y:
   uid: pfkKREU_Y
   id: 11806
@@ -666,6 +682,7 @@ pfkKREU_Y:
   props: null
   title: null
   attrs: null
+  blocks: null
 BxGxeeGk1:
   uid: BxGxeeGk1
   id: 321
@@ -680,6 +697,7 @@ BxGxeeGk1:
   props: null
   title: .rm-g
   attrs: null
+  blocks: null
 oTrZWi_EL:
   uid: oTrZWi_EL
   id: 15800
@@ -700,6 +718,7 @@ oTrZWi_EL:
   props: null
   title: null
   attrs: null
+  blocks: null
 ZgUWBRb7j:
   uid: ZgUWBRb7j
   id: 5462
@@ -714,6 +733,7 @@ ZgUWBRb7j:
   props: null
   title: '!INFO'
   attrs: null
+  blocks: null
 YCexI8mL4:
   uid: YCexI8mL4
   id: 11928
@@ -733,6 +753,7 @@ YCexI8mL4:
   props: null
   title: null
   attrs: null
+  blocks: null
 drtANJYTg:
   uid: drtANJYTg
   id: 3332
@@ -753,6 +774,7 @@ drtANJYTg:
   props: null
   title: null
   attrs: null
+  blocks: null
 DaltU9ClP:
   uid: DaltU9ClP
   id: 12916
@@ -775,20 +797,7 @@ DaltU9ClP:
         height: null
   title: null
   attrs: null
-RXwAqq0_T:
-  uid: RXwAqq0_T
-  id: 261
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: tags
-  attrs: null
+  blocks: null
 J4TkjuhVB:
   uid: J4TkjuhVB
   id: 11934
@@ -827,6 +836,7 @@ J4TkjuhVB:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 cNW8lmXIM:
   uid: cNW8lmXIM
   id: 11113
@@ -875,6 +885,7 @@ cNW8lmXIM:
   props: null
   title: null
   attrs: null
+  blocks: null
 4ahwZimtO:
   uid: 4ahwZimtO
   id: 11921
@@ -893,6 +904,7 @@ cNW8lmXIM:
   props: null
   title: null
   attrs: null
+  blocks: null
 5f1ahOFdp:
   uid: 5f1ahOFdp
   id: 4026
@@ -911,6 +923,7 @@ cNW8lmXIM:
   props: null
   title: null
   attrs: null
+  blocks: null
 NEINf57lK:
   uid: NEINf57lK
   id: 11927
@@ -946,6 +959,7 @@ NEINf57lK:
       - uid
       - YCexI8mL4
       value: ' pdf-render: "inline"'
+  blocks: null
 6olpFWiw1:
   uid: 6olpFWiw1
   id: 3327
@@ -965,24 +979,7 @@ NEINf57lK:
   props: null
   title: '[[Test Article]] 1'
   attrs: null
-JSrSVApJ_:
-  uid: JSrSVApJ_
-  id: 18204
-  string: 'tags:: #Publishing'
-  order: 1
-  heading: null
-  children: null
-  refs:
-  - id: 261
-  - id: 6535
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
-  props: null
-  title: null
-  attrs: null
+  blocks: null
 vuPFRAwZI:
   uid: vuPFRAwZI
   id: 11932
@@ -997,6 +994,7 @@ vuPFRAwZI:
   props: null
   title: the following block embeds a PDF with guffin-meta
   attrs: null
+  blocks: null
 jN4ClkAEl:
   uid: jN4ClkAEl
   id: 12919
@@ -1019,6 +1017,7 @@ jN4ClkAEl:
         height: null
   title: null
   attrs: null
+  blocks: null
 DPW-zEDaU:
   uid: DPW-zEDaU
   id: 12925
@@ -1041,6 +1040,7 @@ DPW-zEDaU:
         height: null
   title: null
   attrs: null
+  blocks: null
 JW5PswS6v:
   uid: JW5PswS6v
   id: 3333
@@ -1060,6 +1060,7 @@ JW5PswS6v:
   props: null
   title: null
   attrs: null
+  blocks: null
 zE0QjA3N9:
   uid: zE0QjA3N9
   id: 11936
@@ -1098,6 +1099,7 @@ zE0QjA3N9:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
 GvRO438Ze:
   uid: GvRO438Ze
   id: 11930
@@ -1136,6 +1138,7 @@ GvRO438Ze:
       - uid
       - EWMNZcPZX
       value: ' inline-native'
+  blocks: null
 2xY4zCjId:
   uid: 2xY4zCjId
   id: 11839
@@ -1150,6 +1153,7 @@ GvRO438Ze:
   props: null
   title: guffin-meta
   attrs: null
+  blocks: null
 tWkumkdUE:
   uid: tWkumkdUE
   id: 11167
@@ -1169,6 +1173,7 @@ tWkumkdUE:
   props: null
   title: null
   attrs: null
+  blocks: null
 Wlzl_dhg_:
   uid: Wlzl_dhg_
   id: 15802
@@ -1188,22 +1193,4 @@ Wlzl_dhg_:
   props: null
   title: null
   attrs: null
-lXi4SgSvz:
-  uid: lXi4SgSvz
-  id: 18202
-  string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST
-    DATA – DO NOT REMOVE'
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
-  props: null
-  title: null
-  attrs: null
+  blocks: null

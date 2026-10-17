@@ -105,9 +105,6 @@
     order: 2
     page:
       id: 3327
-- - id: 6535
-    uid: 9ZtPB2yY3
-    title: Publishing
 - - id: 11933
     uid: Jy_Ee6w8E
     title: pdf-render
@@ -179,7 +176,8 @@
 - - id: 11943
     uid: Jv502NGK6
     title: publish
-- - id: 5450
+- - attrs: []
+    id: 5450
     uid: OexZiLR_O
     title: '>'
 - - heading: 1
@@ -505,9 +503,6 @@
     order: 0
     page:
       id: 12904
-- - id: 261
-    uid: RXwAqq0_T
-    title: tags
 - - attrs:
     - - source:
         - uid
@@ -655,17 +650,6 @@
     title: '[[Test Article]] 1'
     refs:
     - id: 4223
-- - string: 'tags:: #Publishing'
-    id: 18204
-    uid: JSrSVApJ_
-    parents:
-    - id: 4223
-    order: 1
-    page:
-      id: 4223
-    refs:
-    - id: 261
-    - id: 6535
 - - id: 11932
     uid: vuPFRAwZI
     title: the following block embeds a PDF with guffin-meta
@@ -812,15 +796,3 @@
     order: 1
     page:
       id: 3327
-- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
-      TEST DATA – DO NOT REMOVE'
-    id: 18202
-    uid: lXi4SgSvz
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462
