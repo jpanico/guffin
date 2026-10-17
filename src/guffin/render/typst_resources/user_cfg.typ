@@ -16,8 +16,8 @@
   keywords: "",
   lang: "en",
   region: "US",
-  // Tables follow the visual design language (docs/visual-design-language.md): a table is a
-  // card.  Its table-* values are not set here: the renderer passes them from the language's
-  // single source, guffin/render/design_language.py, as the design-tokens variable the template
-  // joins before this file, so a table-* key set here would override the language.
+  // Tables and callouts follow the design tokens (docs/design-tokens.md): each is a card.
+  // Their table-* and callout-* values are not set here: the renderer passes them from the
+  // single source, guffin/render/design_language.py, as the design-tokens variables the
+  // template joins before this file, so such a key set here would override the tokens.
 )

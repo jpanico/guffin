@@ -29,7 +29,7 @@ The `.typ` and `.typst` files in this directory are the **Bergfink** Pandoc/Typs
 |---|---|
 | `bergfink.typst` | Main template entry point — Pandoc injects variables and `$body$` here |
 | `base_cfg.typ` | Default configuration values (font, margins, colors, etc.) |
-| `user_cfg.typ` | Project-level overrides — edit this file to customize styling. The table keys are not set here: the renderer passes them from `guffin/render/design_language.py` as the `design-tokens` variable, joined onto `cfg` after `base_cfg.typ` and before this file, so the tables follow `docs/visual-design-language.md` (a rounded, framed card with a tinted header band) and a key set here still overrides |
+| `user_cfg.typ` | Project-level overrides — edit this file to customize styling. The table keys are not set here: the renderer passes them from `guffin/render/design_language.py` as the `design-tokens` variable, joined onto `cfg` after `base_cfg.typ` and before this file, so the tables follow `docs/design-tokens.md` (a rounded, framed card with a tinted header band) and a key set here still overrides |
 | `default_styles.typ` | Typst `#set` and `#show` rules that apply the config to the document |
 | `titlepage.typ` | Title page layout |
 | `abstract.typ` | Abstract and acknowledgements page layout |

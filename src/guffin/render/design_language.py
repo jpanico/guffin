@@ -1,6 +1,6 @@
 """The visual design language's tokens — the single source of the values every format styles to.
 
-The language (``docs/visual-design-language.md``) gives every element a *colour family* with three
+The language (``docs/design-tokens.md``) gives every element a *colour family* with three
 members — a light *fill* for its background, a *stroke* for its outline, and a dark *ink* for the
 text that names it — plus a heavier *emphasis* stroke for the one element of its kind being pointed
 at, and sizes its radii, strokes, and padding in ems of the surrounding text so they scale with it.

@@ -21,7 +21,7 @@ One file per callout kind:
 Each icon is a filled badge with a white symbol, and the badge is drawn in `currentColor`: the icon
 carries no colour of its own, and takes the ink of the callout it sits in — the family colour the
 visual design language gives the callout's type (`guffin/render/callout_theme.py`, on
-`guffin/render/design_language.py`; see `docs/visual-design-language.md`) — so one set of files
+`guffin/render/design_language.py`; see `docs/design-tokens.md`) — so one set of files
 serves every family and a given callout type looks identical across formats.
 
 Consumed at render time by:

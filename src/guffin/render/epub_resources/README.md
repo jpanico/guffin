@@ -22,7 +22,7 @@ point for the e-book's typeface — edit its `font-family` declarations to contr
 Notes on GFM-pipeline constructs that are handled differently here:
 
 - **table** — Pandoc's `<table>` markup is styled to the visual design language
-  (`docs/visual-design-language.md`) as a rounded, framed card with a tinted header band, the same
+  (`docs/design-tokens.md`) as a rounded, framed card with a tinted header band, the same
   look as the PDF's tables. The rules are **not** in `epub.css`: `epub_rendering.py` generates them
   from the language's single source (`guffin/render/design_language.py`, `table_css()`) into
   `design_tokens.css`, a second stylesheet loaded after `epub.css`, so one token change moves every
