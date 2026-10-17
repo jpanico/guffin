@@ -3,7 +3,8 @@
 The design for numbered figures, tables, and code listings, the captions that make them, the
 references to them from the running text ("see figure 2.3"), and the lists of them in the front
 matter. Status: **designed, every question decided on 2026-10-17 but the deferred corner of Q3;
-nothing built yet.**
+the vocabulary, model, and validation are built (steps 1, 2, and 6 of the sketch); the policy
+directive, the rendering, and the lists are not.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest
@@ -353,13 +354,13 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
 
 ## Implementation sketch
 
-1. **Vocabulary.** `StructuralElement.LIST_OF_TABLES` (`list-of-tables`, front matter, EPUB
+1. **Vocabulary** *(built 2026-10-17)*. `StructuralElement.LIST_OF_TABLES` (`list-of-tables`, front matter, EPUB
    `lot`). A `FloatKind` StrEnum (`figure`/`table`/`listing`), each member carrying its label
    word (the caption's capitalized label, the reference's completed word, the list's name) and
    the vertex type it wraps, in `model/` beside the vocabulary. `PublishingSemantics.FLOAT`
    (`float:: <kind>`, anchored to the text block that is the wrapper), read by `float_of()` /
    `float_of_vertex()` like the other tags.
-2. **Model.** `model/floats.py`: `float_wrapper(vertex, tree)` (the wrapper's kind, caption text,
+2. **Model** *(built 2026-10-17; `model/floats.py`)*. `model/floats.py`: `float_wrapper(vertex, tree)` (the wrapper's kind, caption text,
    and the wrapped content vertex — the child whose type the kind names), `placed_floats(tree)`
    in reading order with each float's governing chapter heading (the `placed_note_citations`
    walk, generalized, descending embeds at their site), and `float_numbers(tree, policy)`
@@ -377,7 +378,7 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
    headings.
 5. **Lists.** `render/floats_rendering.py`: `insert_float_lists()` after `insert_notes_section()`
    in each renderer's prepare phase.
-6. **Validation.** The seven rules of Q10: the per-vertex ones in `publishing_validation`, the
+6. **Validation** *(the six fatal rules built 2026-10-17)*. The seven rules of Q10: the per-vertex ones in `publishing_validation`, the
    two display-walk ones beside the note rules that need the walk, the list warning in the
    renderer.
 7. **Fixtures.** A figure, a table, and a listing float (wrapper, tag, content), and references to

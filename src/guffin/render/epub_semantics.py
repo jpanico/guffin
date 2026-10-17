@@ -99,6 +99,7 @@ class EpubType(enum.StrEnum):
     INTRODUCTION = ("introduction", EpubDivision.BODYMATTER)  # CMOS: front matter
     TOC = ("toc", EpubDivision.BODYMATTER)  # CMOS: front matter
     LOI = ("loi", EpubDivision.BODYMATTER)  # CMOS: front matter
+    LOT = ("lot", EpubDivision.BODYMATTER)  # CMOS: front matter
     PROLOGUE = ("prologue", EpubDivision.FRONTMATTER)  # CMOS: body matter
     PART = ("part", EpubDivision.BODYMATTER)
     CHAPTER = ("chapter", EpubDivision.BODYMATTER)
@@ -122,6 +123,7 @@ _EPUB_TYPE_BY_STRUCTURAL_ELEMENT: Final[dict[StructuralElement, EpubType]] = {
     StructuralElement.INTRODUCTION: EpubType.INTRODUCTION,
     StructuralElement.TABLE_OF_CONTENTS: EpubType.TOC,
     StructuralElement.LIST_OF_ILLUSTRATIONS: EpubType.LOI,
+    StructuralElement.LIST_OF_TABLES: EpubType.LOT,
     StructuralElement.PROLOGUE: EpubType.PROLOGUE,
     StructuralElement.PART: EpubType.PART,
     StructuralElement.CHAPTER: EpubType.CHAPTER,

@@ -73,6 +73,7 @@ class StructuralElement(enum.StrEnum):
     INTRODUCTION = ("introduction", Matter.FRONT)
     TABLE_OF_CONTENTS = ("table-of-contents", Matter.FRONT)
     LIST_OF_ILLUSTRATIONS = ("list-of-illustrations", Matter.FRONT)
+    LIST_OF_TABLES = ("list-of-tables", Matter.FRONT)
     PROLOGUE = ("prologue", Matter.BODY)
     PART = ("part", Matter.BODY)
     CHAPTER = ("chapter", Matter.BODY)

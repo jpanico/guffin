@@ -71,9 +71,18 @@ from guffin.model.element_number import (
     leads_with_element_number_shape,
     parse_element_number,
 )
+from guffin.model.floats import (
+    Float,
+    float_content,
+    float_references,
+    floats_in,
+    kind_word_references,
+    placed_floats,
+)
 from guffin.model.notes import contained_note_uids, is_numbered_lead_in, note_citations, placed_note_citations
 from guffin.model.primitives import Uid
 from guffin.model.publishing_semantics import (
+    FloatKind,
     PageBreak,
     PdfRenderPlacement,
     PublishingAttribute,
@@ -83,6 +92,8 @@ from guffin.model.publishing_semantics import (
     cover_image_of,
     date_of,
     element_type_of,
+    float_of,
+    float_of_vertex,
     has_parts,
     matter_of,
     note_form_of,
@@ -235,7 +246,15 @@ def _illegal_value_violations(
     attribute: PublishingSemantics,
     value_coercer: Callable[
         [AttributeAssignment],
-        StructuralElement | Matter | PageBreak | PdfRenderPlacement | bool | W3cdtfDate | CodeLanguageId | CodeSource,
+        StructuralElement
+        | Matter
+        | PageBreak
+        | PdfRenderPlacement
+        | FloatKind
+        | bool
+        | W3cdtfDate
+        | CodeLanguageId
+        | CodeSource,
     ],
 ) -> list[str]:
     """Collect a violation description for each *attribute* assignment in *tree* that *value_coercer* rejects.
@@ -839,6 +858,183 @@ def all_note_lead_ins_present(tree: VertexTree) -> ValidationError | None:
 
 
 @validate_call
+def all_float_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``float`` values.
+
+    Every :attr:`PublishingSemantics.FLOAT` assignment in *tree* must carry exactly one value, and
+    that value must name a :class:`FloatKind` member (``figure``, ``table``, ``listing``).
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``float`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.FLOAT, float_of)
+    if not violations:
+        return None
+    return ValidationError(message="illegal float values: " + "; ".join(violations), validator=all_float_values_legal)
+
+
+@validate_call
+def all_float_captions_present(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every float wrapper to carry a caption.
+
+    A wrapper's text is its float's caption, so a ``float``-tagged text block whose text is blank
+    declares a float with no caption, which cannot be labelled or listed.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every wrapper in the render-visible document has a caption; a
+        :class:`~guffin.common.validation.ValidationError` listing every blank one otherwise.
+    """
+    violations: Final[list[str]] = [
+        f"float wrapper uid={vertex.uid!r} ({kind.value}) has no caption"
+        for vertex in transcluded_vertices(tree)
+        if isinstance(vertex, TextVertex) and (kind := float_of_vertex(vertex)) is not None and not vertex.text.strip()
+    ]
+    if not violations:
+        return None
+    return ValidationError(message="captionless floats: " + "; ".join(violations), validator=all_float_captions_present)
+
+
+@validate_call
+def all_float_contents_match(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring each wrapper's content to be of its kind.
+
+    A ``float``-tagged text block must have exactly one child, and that child must display (itself,
+    or through a standalone reference) a vertex of the kind's content type: an image under
+    ``float:: figure``, a table under ``float:: table``, a code block under ``float:: listing``.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every wrapper in the render-visible document wraps content of its kind; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = []
+    for vertex in transcluded_vertices(tree):
+        if not isinstance(vertex, TextVertex):
+            continue
+        kind: FloatKind | None = float_of_vertex(vertex)
+        if kind is None:
+            continue
+        content: Vertex | None = float_content(vertex, tree)
+        if content is None:
+            violations.append(
+                f"float wrapper uid={vertex.uid!r} ({kind.value}) must have exactly one child, the content it wraps"
+            )
+        elif content.vertex_type is not kind.content_type:
+            violations.append(
+                f"float wrapper uid={vertex.uid!r} ({kind.value}) wraps a {content.vertex_type.value} "
+                f"(uid={content.uid!r}), not the {kind.content_type.value} a {kind.value} wraps"
+            )
+    if not violations:
+        return None
+    return ValidationError(message="mismatched floats: " + "; ".join(violations), validator=all_float_contents_match)
+
+
+@validate_call
+def all_float_references_typed(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring each kind-word reference to name its target's kind.
+
+    A reference whose display text is a kind word (*figure*, *table*, *listing*) asks to be
+    completed with its target's number, so its target must be a float wrapper of that very kind:
+    ``[table](((uid)))`` on a figure, or on a vertex that is no wrapper at all, promises what the
+    output cannot deliver.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every kind-word reference in the render-visible document points at a wrapper
+        of its kind; a :class:`~guffin.common.validation.ValidationError` listing every other
+        otherwise.
+    """
+    floats: Final[dict[Uid, Float]] = floats_in(tree)
+    violations: Final[list[str]] = []
+    for reference in kind_word_references(tree):
+        target: Float | None = floats.get(reference.wrapper_uid)
+        if target is None:
+            violations.append(
+                f"reference {reference.display!r} in vertex uid={reference.citing_uid!r} points at "
+                f"uid={reference.wrapper_uid!r}, which is not a float wrapper"
+            )
+        elif target.kind is not reference.kind_word:
+            violations.append(
+                f"reference {reference.display!r} in vertex uid={reference.citing_uid!r} points at "
+                f"uid={reference.wrapper_uid!r}, a {target.kind.value}"
+            )
+    if not violations:
+        return None
+    return ValidationError(
+        message="mistyped float references: " + "; ".join(violations), validator=all_float_references_typed
+    )
+
+
+@validate_call
+def all_float_references_displayed(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring every referenced float to be displayed.
+
+    A float's number comes from its display in the document, so a reference to a float that is
+    never displayed has no number to resolve to.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every inline reference to a wrapper in the render-visible document points at
+        a displayed float; a :class:`~guffin.common.validation.ValidationError` listing every
+        reference to an undisplayed one otherwise.
+    """
+    floats: Final[dict[Uid, Float]] = floats_in(tree)
+    displayed: Final[frozenset[Uid]] = frozenset(placed.float.wrapper_uid for placed in placed_floats(tree))
+    violations: Final[list[str]] = [
+        f"reference {reference.display!r} in vertex uid={reference.citing_uid!r} points at "
+        f"{floats[reference.wrapper_uid].kind.value} uid={reference.wrapper_uid!r}, which is never displayed"
+        for reference in float_references(tree, floats)
+        if reference.wrapper_uid not in displayed
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="references to undisplayed floats: " + "; ".join(violations),
+        validator=all_float_references_displayed,
+    )
+
+
+@validate_call
+def all_floats_displayed_once(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring each float to be displayed at most once.
+
+    A float is numbered at its first display; a second display would show the same float again,
+    unnumbered, and a reference would be ambiguous between the two.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when no float is displayed more than once in the render-visible document; a
+        :class:`~guffin.common.validation.ValidationError` listing every repeated one otherwise.
+    """
+    displays: Final[dict[Uid, int]] = {}
+    for placed in placed_floats(tree):
+        displays[placed.float.wrapper_uid] = displays.get(placed.float.wrapper_uid, 0) + 1
+    violations: Final[list[str]] = [
+        f"float wrapper uid={uid!r} is displayed {count} times" for uid, count in displays.items() if count > 1
+    ]
+    if not violations:
+        return None
+    return ValidationError(
+        message="floats displayed more than once: " + "; ".join(violations), validator=all_floats_displayed_once
+    )
+
+
+@validate_call
 def all_note_targets_present(tree: VertexTree) -> ValidationError | None:
     """:data:`~guffin.common.validation.Validator` requiring every note link's note to exist.
 
@@ -983,9 +1179,13 @@ def validate_semantics(tree: VertexTree, *, check_notes: bool = True) -> Validat
     :func:`all_element_numbers_well_formed`, :func:`all_element_numbers_in_headings_only`,
     :func:`all_element_number_matters_legal`, :func:`all_element_number_matters_agree`,
     :func:`all_element_numbers_unique`, :func:`all_element_numbers_ordered`, and
-    :func:`all_element_numbers_nested` — and the note validators every note style needs —
-    :func:`all_note_targets_present`, :func:`all_notes_cited_once`, and
-    :func:`all_note_targets_in_notes_containers` — via :func:`~guffin.common.validation.validate_all`.
+    :func:`all_element_numbers_nested` — the float validators —
+    :func:`all_float_values_legal`, :func:`all_float_captions_present`,
+    :func:`all_float_contents_match`, :func:`all_float_references_typed`,
+    :func:`all_float_references_displayed`, and :func:`all_floats_displayed_once` — and the note
+    validators every note style needs — :func:`all_note_targets_present`,
+    :func:`all_notes_cited_once`, and :func:`all_note_targets_in_notes_containers` — via
+    :func:`~guffin.common.validation.validate_all`.
     Every attribute validator covers both the tree vertices and the referenced-vertex stubs
     (:attr:`~guffin.model.vertex_tree.VertexTree.ref_vertices`); the numbering and note validators
     cover the render-visible vertices (embed-transcluded content included).  All validators run regardless of
@@ -1028,6 +1228,12 @@ def validate_semantics(tree: VertexTree, *, check_notes: bool = True) -> Validat
             all_element_numbers_unique,
             all_element_numbers_ordered,
             all_element_numbers_nested,
+            all_float_values_legal,
+            all_float_captions_present,
+            all_float_contents_match,
+            all_float_references_typed,
+            all_float_references_displayed,
+            all_floats_displayed_once,
             *note_validators,
         ],
     )

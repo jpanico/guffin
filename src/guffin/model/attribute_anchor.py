@@ -91,6 +91,7 @@ class AttributeAnchor(enum.StrEnum):
 
     PAGE = ("page", frozenset({VertexType.PAGE}), TreePosition.ANYWHERE, False)
     HEADING = ("heading", frozenset({VertexType.HEADING}), TreePosition.ANYWHERE, False)
+    TEXT = ("text", frozenset({VertexType.TEXT}), TreePosition.ANYWHERE, False)
     PDF = ("pdf", frozenset({VertexType.PDF}), TreePosition.ANYWHERE, True)
     CODE_BLOCK = ("code-block", frozenset({VertexType.CODE_BLOCK}), TreePosition.ANYWHERE, False)
     BLOCK = ("block", frozenset(VertexType) - {VertexType.PAGE}, TreePosition.ANYWHERE, False)

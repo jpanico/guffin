@@ -35,6 +35,12 @@ from guffin.model.publishing_validation import (
     all_element_numbers_unique,
     all_element_numbers_well_formed,
     all_element_type_values_legal,
+    all_float_captions_present,
+    all_float_contents_match,
+    all_float_references_displayed,
+    all_float_references_typed,
+    all_float_values_legal,
+    all_floats_displayed_once,
     all_matter_tags_at_section_level,
     all_matter_values_legal,
     all_note_form_values_legal,
@@ -1127,3 +1133,120 @@ class TestValidateSemanticsNotes:
         ]
         result = validate_semantics(tree)
         assert result.errors == ()
+
+
+_FIGURE_URL = "https://firebasestorage.googleapis.com/v0/b/t/o/imgs%2Fdiagram.png?alt=media&token=d1"
+
+
+def _figure_image(uid: str = "imag00001") -> ImageVertex:
+    """An image for a figure to wrap."""
+    return ImageVertex(
+        uid=uid, storage=asset_storage(_FIGURE_URL), media_type=MediaType.PNG, scaled_image_size=ImageSize()
+    )
+
+
+def _float_wrapper(uid: str, kind: str, caption: str, content_uid: str) -> TextVertex:
+    """A float wrapper: a text block tagged ``float:: kind`` whose one child is *content_uid*."""
+    return TextVertex(uid=uid, text=caption, children=[content_uid], attribute_assignments=[_assignment("float", kind)])
+
+
+def _figure_tree(*extra: TextVertex, wrapper: TextVertex | None = None, displayed: bool = True) -> VertexTree:
+    """A page holding a figure float (displayed, or kept among the refs) and *extra* text blocks."""
+    the_wrapper = wrapper if wrapper is not None else _float_wrapper("wrap00001", "figure", "A diagram", "imag00001")
+    children = ([the_wrapper.uid] if displayed else []) + [vertex.uid for vertex in extra]
+    page = PageVertex(uid="page00001", title="Doc", children=children)
+    tree_vertices: list[PageVertex | TextVertex | ImageVertex] = [page, *extra]
+    refs: list[TextVertex | ImageVertex] = []
+    (tree_vertices if displayed else refs).extend([the_wrapper, _figure_image()])
+    return VertexTree(tree_vertices=tree_vertices, ref_vertices=refs)
+
+
+def _link_to(display: str, uid: str) -> str:
+    return f"[{display}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+
+class TestFloatValidators:
+    """The float validators: a wrapper's tag, caption, and content, and the references to it."""
+
+    def test_well_formed_figure_passes_every_rule(self) -> None:
+        """A tagged, captioned wrapper over an image, displayed once and referenced by kind word, is clean."""
+        tree = _figure_tree(TextVertex(uid="text00001", text=f"See {_link_to('figure', 'wrap00001')}."))
+        for validator in (
+            all_float_values_legal,
+            all_float_captions_present,
+            all_float_contents_match,
+            all_float_references_typed,
+            all_float_references_displayed,
+            all_floats_displayed_once,
+        ):
+            assert validator(tree) is None, validator
+
+    def test_illegal_kind_value(self) -> None:
+        """A float value that is not a kind is reported."""
+        tree = _figure_tree(wrapper=_float_wrapper("wrap00001", "diagram", "Cap", "imag00001"))
+        error = all_float_values_legal(tree)
+        assert error is not None
+        assert "wrap00001" in error.message
+
+    def test_blank_caption(self) -> None:
+        """A wrapper whose text is blank has no caption."""
+        tree = _figure_tree(wrapper=_float_wrapper("wrap00001", "figure", "  ", "imag00001"))
+        error = all_float_captions_present(tree)
+        assert error is not None
+        assert "no caption" in error.message
+
+    def test_content_of_the_wrong_kind(self) -> None:
+        """A table tag over an image is a mismatch."""
+        tree = _figure_tree(wrapper=_float_wrapper("wrap00001", "table", "Cap", "imag00001"))
+        error = all_float_contents_match(tree)
+        assert error is not None
+        assert "wraps a guffin/image" in error.message
+
+    def test_wrapper_without_a_single_child(self) -> None:
+        """A wrapper with no child has no content."""
+        wrapper = TextVertex(uid="wrap00001", text="Cap", attribute_assignments=[_assignment("float", "figure")])
+        page = PageVertex(uid="page00001", title="Doc", children=["wrap00001"])
+        error = all_float_contents_match(VertexTree(tree_vertices=[page, wrapper]))
+        assert error is not None
+        assert "exactly one child" in error.message
+
+    def test_kind_word_naming_the_wrong_kind(self) -> None:
+        """A table kind word on a figure wrapper is mistyped."""
+        tree = _figure_tree(TextVertex(uid="text00001", text=f"See {_link_to('table', 'wrap00001')}."))
+        error = all_float_references_typed(tree)
+        assert error is not None
+        assert "a figure" in error.message
+
+    def test_kind_word_on_a_non_wrapper(self) -> None:
+        """A kind word pointing at a bare image is mistyped: only a wrapper has a number."""
+        tree = _figure_tree(TextVertex(uid="text00001", text=f"See {_link_to('figure', 'imag00001')}."))
+        error = all_float_references_typed(tree)
+        assert error is not None
+        assert "not a float wrapper" in error.message
+
+    def test_authors_own_alias_is_never_mistyped(self) -> None:
+        """An alias that is not a kind word is the author's and passes."""
+        tree = _figure_tree(TextVertex(uid="text00001", text=f"See {_link_to('the diagram', 'imag00001')}."))
+        assert all_float_references_typed(tree) is None
+
+    def test_reference_to_an_undisplayed_float(self) -> None:
+        """A float kept among the refs and never displayed has no number for a reference to resolve to."""
+        tree = _figure_tree(
+            TextVertex(uid="text00001", text=f"See {_link_to('figure', 'wrap00001')}."), displayed=False
+        )
+        error = all_float_references_displayed(tree)
+        assert error is not None
+        assert "never displayed" in error.message
+
+    def test_float_displayed_twice(self) -> None:
+        """A second standalone reference to a wrapper displays it again."""
+        showing = TextVertex(uid="show00001", text=_link_to("", "wrap00001"))
+        tree = _figure_tree(showing)
+        error = all_floats_displayed_once(tree)
+        assert error is not None
+        assert "displayed 2 times" in error.message
+
+    def test_validate_semantics_runs_the_float_rules(self) -> None:
+        """validate_semantics includes the float validators."""
+        tree = _figure_tree(wrapper=_float_wrapper("wrap00001", "table", "Cap", "imag00001"))
+        assert all_float_contents_match in [error.validator for error in validate_semantics(tree).errors]

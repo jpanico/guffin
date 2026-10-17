@@ -36,6 +36,8 @@ class TestStructuralElement:
         """Member values are the spelled-out publishing names, not format abbreviations."""
         assert StructuralElement.TABLE_OF_CONTENTS.value == "table-of-contents"
         assert StructuralElement.LIST_OF_ILLUSTRATIONS.value == "list-of-illustrations"
+        assert StructuralElement.LIST_OF_TABLES.value == "list-of-tables"
+        assert StructuralElement.LIST_OF_TABLES.matter is Matter.FRONT
 
     def test_no_cover_member(self) -> None:
         """Per CMOS only the book interior is matter-classified: the exterior cover has no member."""

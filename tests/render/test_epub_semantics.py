@@ -91,6 +91,7 @@ class TestEpubTypeFor:
         """The label divergences the explicit (non name-equality) map exists to bridge."""
         assert epub_type_for(StructuralElement.TABLE_OF_CONTENTS) is EpubType.TOC
         assert epub_type_for(StructuralElement.LIST_OF_ILLUSTRATIONS) is EpubType.LOI
+        assert epub_type_for(StructuralElement.LIST_OF_TABLES) is EpubType.LOT
 
     def test_maps_a_same_named_element(self) -> None:
         """A directly-named element maps to the same-named EpubType."""

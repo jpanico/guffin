@@ -12,7 +12,9 @@ Public symbols:
   domain; :class:`PdfRenderPlacement` — how an embedded PDF asset is placed in output (reproduced at the
   embed or in an appendix, natively or as images; linked as a contained copy or an external URL;
   or named only); :class:`PageBreak` — where a page break is forced relative to the tagged heading
-  (``before``); :class:`NoteForm` — the form of the notes an export renders (``full`` /
+  (``before``); :class:`FloatKind` — the kinds of float a ``float`` tag declares (``figure`` /
+  ``table`` / ``listing``), each with its ``label`` and the vertex type it wraps
+  (``content_type``); :class:`NoteForm` — the form of the notes an export renders (``full`` /
   ``short``), the value a ``note-form`` block tag takes.  The anchoring affordances an attribute declares
   (:class:`~guffin.model.attribute_anchor.AttributeAnchor`,
   :class:`~guffin.model.attribute_anchor.TreePosition`) live in
@@ -34,7 +36,9 @@ Public symbols:
   :class:`~guffin.model.code_source.CodeSource`; :func:`publish_of` — read a ``publish``
   assignment's value as a boolean; :func:`note_form_of` — read a ``note-form`` assignment's value
   as a :class:`NoteForm`, and :func:`note_form_of_vertex` — resolve a block's ``note-form`` tag,
-  tolerating absent or illegal assignments (``None``, warning); :func:`date_of` — read a
+  tolerating absent or illegal assignments (``None``, warning); :func:`float_of` — read a
+  ``float`` assignment's value as a :class:`FloatKind`, and :func:`float_of_vertex` — resolve a
+  block's ``float`` tag the same tolerant way; :func:`date_of` — read a
   ``date`` assignment's value as a parsed :class:`~guffin.common.w3cdtf_date.W3cdtfDate`
   (``YYYY``, ``YYYY-MM``, or ``YYYY-MM-DD``);
   :func:`cover_image_of` — read a ``cover-image`` assignment's value as the referenced image
@@ -129,6 +133,7 @@ from guffin.model.vertex import (
     TextVertex,
     TodoVertex,
     Vertex,
+    VertexType,
     find_attribute_assignment,
     is_embed_vertex,
 )
@@ -213,6 +218,42 @@ class NoteForm(enum.StrEnum):
 
     FULL = "full"
     SHORT = "short"
+
+
+class FloatKind(enum.StrEnum):
+    """The kinds of *float* — the values a ``float`` tag takes.
+
+    A float is a captioned, numbered element the running text refers to by number rather than by
+    position: a figure, a table, or a listing.  Each kind is numbered in a series of its own, and
+    each wraps content of one vertex type.  A float is declared by tagging a text block, whose
+    text is the caption, with the kind; the wrapped content is that block's child.
+
+    Attributes:
+        FIGURE: A figure, wrapping an image.
+        TABLE: A table.
+        LISTING: A code listing, wrapping a code block.
+    """
+
+    FIGURE = "figure"
+    TABLE = "table"
+    LISTING = "listing"
+
+    @property
+    def label(self) -> str:
+        """The capitalized label the kind's number is set with (``Figure``, ``Table``, ``Listing``)."""
+        return self.value.capitalize()
+
+    @property
+    def content_type(self) -> VertexType:
+        """The :class:`~guffin.model.vertex.VertexType` of the content a float of this kind wraps."""
+        return _FLOAT_CONTENT_TYPE_BY_KIND[self]
+
+
+_FLOAT_CONTENT_TYPE_BY_KIND: Final[dict[FloatKind, VertexType]] = {
+    FloatKind.FIGURE: VertexType.IMAGE,
+    FloatKind.TABLE: VertexType.TABLE,
+    FloatKind.LISTING: VertexType.CODE_BLOCK,
+}
 
 
 DEFAULT_PUBLISH: Final[bool] = True
@@ -334,6 +375,7 @@ class PublishingSemantics(enum.Enum):
     CODE_SOURCE = PublishingAttribute(name="code-source", anchor=AttributeAnchor.CODE_BLOCK)
     PUBLISH = PublishingAttribute(name="publish", anchor=AttributeAnchor.BLOCK)
     NOTE_FORM = PublishingAttribute(name="note-form", anchor=AttributeAnchor.BLOCK)
+    FLOAT = PublishingAttribute(name="float", anchor=AttributeAnchor.TEXT)
 
 
 @validate_call
@@ -762,6 +804,49 @@ def note_form_of_vertex(vertex: Vertex) -> NoteForm | None:
         return note_form_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring note-form on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def float_of(assignment: AttributeAssignment) -> FloatKind:
+    """Return the :class:`FloatKind` that a ``float`` assignment names.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.FLOAT` attribute, then coerces its
+    sole value to a :class:`FloatKind` (``figure``, ``table``, ``listing``).
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.FLOAT` attribute assignment (one value expected).
+
+    Returns:
+        The named :class:`FloatKind`.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``float`` attribute, does not carry exactly one
+            value, or its value is not a recognised :class:`FloatKind`.
+    """
+    return FloatKind(verified_sole_value_text(assignment, PublishingSemantics.FLOAT.value))
+
+
+@validate_call
+def float_of_vertex(vertex: Vertex) -> FloatKind | None:
+    """Resolve *vertex*'s ``float`` tag to its :class:`FloatKind`, or ``None``.
+
+    ``None`` when *vertex* carries no ``float`` assignment, or when the assignment does not coerce
+    to a :class:`FloatKind` (ignored with a warning).  An untagged block is not a float.
+
+    Args:
+        vertex: The vertex whose tag to resolve.
+
+    Returns:
+        The named :class:`FloatKind`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.FLOAT)
+    if assignment is None:
+        return None
+    try:
+        return float_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring float on vertex uid=%r: %s", vertex.uid, exc)
         return None
 
 

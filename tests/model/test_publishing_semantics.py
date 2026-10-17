@@ -22,6 +22,7 @@ from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     DEFAULT_PUBLISH,
     PDF_RENDER_FALLBACK,
+    FloatKind,
     NoteForm,
     PageBreak,
     PdfRenderPlacement,
@@ -42,6 +43,8 @@ from guffin.model.publishing_semantics import (
     element_type_of,
     element_type_of_vertex,
     find_publishing_attribute,
+    float_of,
+    float_of_vertex,
     has_element_type,
     has_parts,
     illustrators_of_vertex,
@@ -1269,3 +1272,43 @@ class TestEffectiveTitle:
             attribute_assignments=[_assignment(PublishingSemantics.TITLE.value.name, "Overridden Title")],
         )
         assert effective_title(VertexTree(tree_vertices=[heading])) == "Overridden Title"
+
+
+class TestFloatOf:
+    """float_of reads a float assignment's value as a FloatKind; float_of_vertex tolerates absence and error."""
+
+    def test_reads_each_kind(self) -> None:
+        """Each kind word is read as its member."""
+        assert float_of(_assignment("float", "figure")) is FloatKind.FIGURE
+        assert float_of(_assignment("float", "table")) is FloatKind.TABLE
+        assert float_of(_assignment("float", "listing")) is FloatKind.LISTING
+
+    def test_rejects_a_non_kind(self) -> None:
+        """A value that is not a kind is a ValueError."""
+        with pytest.raises(ValueError, match="diagram"):
+            float_of(_assignment("float", "diagram"))
+
+    def test_rejects_another_attribute(self) -> None:
+        """An assignment for a different attribute is refused."""
+        with pytest.raises(ValueError):
+            float_of(_assignment("matter", "figure"))
+
+    def test_of_vertex_absent_is_none(self) -> None:
+        """An untagged block is not a float."""
+        assert float_of_vertex(TextVertex(uid="text00001", text="Caption")) is None
+
+    def test_of_vertex_reads_the_tag(self) -> None:
+        """A tagged block's kind is read."""
+        wrapper = TextVertex(uid="text00001", text="Caption", attribute_assignments=[_assignment("float", "table")])
+        assert float_of_vertex(wrapper) is FloatKind.TABLE
+
+    def test_of_vertex_illegal_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """An illegal value resolves to None and is logged."""
+        wrapper = TextVertex(uid="text00001", text="Caption", attribute_assignments=[_assignment("float", "diagram")])
+        with caplog.at_level("WARNING"):
+            assert float_of_vertex(wrapper) is None
+        assert "ignoring float" in caplog.text
+
+    def test_float_is_anchored_to_text_blocks(self) -> None:
+        """The float tag sits on the text block that is the wrapper, nowhere else."""
+        assert PublishingSemantics.FLOAT.value.anchor is AttributeAnchor.TEXT
