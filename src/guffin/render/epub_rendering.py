@@ -68,6 +68,7 @@ from guffin.model.vertex_tree import (
 )
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import callout_accent, callout_title_tint
+from guffin.render.design_language import table_css
 from guffin.render.epigraph_page import BOOK_EPIGRAPH_CLASS, lift_leading_epigraphs
 from guffin.render.epub_post_processing import (
     append_colophon,
@@ -470,6 +471,10 @@ def render(
         # stylesheet, loaded after epub.css so they win over its structural defaults.
         callout_colors_css: Final[Path] = Path(tmp) / "callout_colors.css"
         callout_colors_css.write_text(_callout_colors_css(), encoding="utf-8")
+        # The table rules are generated from the visual design language's single source, loaded
+        # after epub.css for the same reason; epub.css carries no table styling of its own.
+        design_tokens_css: Final[Path] = Path(tmp) / "design_tokens.css"
+        design_tokens_css.write_text(table_css(), encoding="utf-8")
 
         extra_args: list[str] = [
             # Alternatives first: a bullet list holding a versioned item is laid out whole there,
@@ -482,6 +487,7 @@ def render(
             f"--lua-filter={epub_dir / _EPUB_TODO_FILTER}",
             f"--lua-filter={epub_dir / _EPUB_NUMBER_LINES_FILTER}",
             f"--css={epub_dir / _EPUB_STYLESHEET}",
+            f"--css={design_tokens_css}",
             f"--css={callout_colors_css}",
             f"--split-level={split_level}",
             # Pandoc generates an EPUB title page from the metadata by default; gate it on the policy.

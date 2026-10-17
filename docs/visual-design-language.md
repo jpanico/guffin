@@ -105,27 +105,37 @@ Arrows are drawn last, over the panels.
    is a one-paragraph description of what it shows), the two font classes declared once in a
    `<style>`, and one `<g id>` per panel and per step.
 
-## PDF mapping
+## The tokens in code
 
-The PDF output styles its tables to this language; the values live in
-`src/guffin/render/typst_resources/user_cfg.typ`, guffin's own default overrides of the
-Bergfink template's `base_cfg.typ`, and the rules that apply them in `default_styles.typ`.
-A table is read as a **card** (white, framed, rounded) whose header row is a tinted band:
+The tokens are declared once, in `src/guffin/render/design_language.py`: `FAMILY_PALETTE`
+(every `DesignFamily` with its `ColorFamily` of fill, stroke, emphasis, and ink), the three
+neutral inks, and `TABLE_THEME`, a table's tokens as a card of the blue family, every length in
+ems of the table's text so the look scales with the type (1 px of the diagram's 15 px text is
+0.07 em, the hairline; 1.5 px is 0.1 em, the emphasis weight; the 9.25 px card radius is
+0.625 em).  Each format derives its own expression of them at render time, so no bundled
+resource carries a family colour of its own (`tests/render/test_design_language.py` checks):
 
-| Language element | `cfg` key | Value |
-|---|---|---|
-| Card outline: 1.5 px blue emphasis stroke | `table-frame-stroke` | `1pt + #AFC0DC` |
-| Card radius: 0.625 em | `table-radius` | `7pt` (0.625 of the 11 pt body) |
-| Header band: blue fill | `table-header-bg` | `#EDF2FA` |
-| Header text: blue ink, semibold | `table-header-ink`, `table-header-weight` | `#234279`, `semibold` |
-| Header's lower edge: the card stroke | `table-stroke-header-b` | `1pt + #AFC0DC` |
-| Row parting: a hairline in the blue stroke tint | `table-stroke-horizontal` | `0.75pt + #C8D5EA` |
-| Columns parted by space, not rules | `table-stroke-vertical`, `table-stroke-border-x`, `table-stroke-border-y` | `none` (the frame draws the outline) |
-| Row padding: 1 em across, ~0.55 em down | `table-inset` | `(x: 10pt, y: 6pt)` |
-| Striped rows (YAML tables only): the neutral fill | `table-striped-bg` | `#F5F5F3` |
+- **PDF.**  `typst_table_tokens()` renders the theme as a Typst dictionary of the Bergfink
+  table keys, which the renderer passes as the template's `design-tokens` variable; the template
+  joins it onto `cfg` after `base_cfg.typ` and before `user_cfg.typ`, so a user config can still
+  override any key.  `default_styles.typ` applies the keys: the rounded, clipped frame
+  (`table-radius`, `table-frame-stroke`), the header text (`table-header-ink`,
+  `table-header-weight`), the strokes, and the inset.
+- **EPUB.**  `table_css()` renders the same theme as stylesheet rules for Pandoc's
+  `table`/`thead`/`tbody` markup, written to `design_tokens.css` and loaded after `epub.css`,
+  which carries no table styling of its own.
 
-The pixel-to-point conversions take the diagram's 14–15 px text as the PDF's 11 pt body:
-1 px ≈ 0.75 pt, 1.5 px ≈ 1 pt, a 9.25 px radius ≈ 7 pt.
+| Language element | Token | PDF (`cfg` key) | EPUB (rule) |
+|---|---|---|---|
+| Card outline: the emphasis stroke | `frame_width_em` × family emphasis | `table-frame-stroke` | `table { border }` |
+| Card radius | `radius_em` | `table-radius` | `table { border-radius }` + the two top `th` corners |
+| Header band: the family fill | family fill | `table-header-bg` | `thead th { background-color }` |
+| Header text: the family ink, semibold | family ink, `header_weight` | `table-header-ink`, `table-header-weight` | `thead th { color; font-weight }` |
+| Header's lower edge: the emphasis stroke | as the frame | `table-stroke-header-b` | `thead th { border-bottom }` |
+| Row parting: the hairline in the family stroke | `rule_width_em` × family stroke | `table-stroke-horizontal` | `tbody tr + tr td { border-top }` |
+| Columns parted by space | — | the border and vertical strokes `none` | `th, td { border: 0 }` |
+| Cell padding | `inset_x_em`, `inset_y_em` | `table-inset` | `th, td { padding }` |
+| Striped rows (YAML tables, PDF only): the neutral fill | neutral family fill | `table-striped-bg` | — |
 
 Font sizes, faces, and the running text are not part of the mapping: a table is part of the
 running text and keeps its face and size.
@@ -138,5 +148,10 @@ running text and keeps its face and size.
   own faces and the typeset elements keep the body's.
 - **Vertical rules.**  The language parts columns by space, so tables draw none.  A wide table
   with many short columns may want them back: `table-stroke-vertical` is the one key to set.
+- **Headerless tables.**  The PDF tints row 0 whether or not it is a header (Bergfink's fill
+  keys on the row, as it always did); the EPUB tints only a real `<thead>`.  The EPUB's is the
+  truer reading, and the PDF could be brought to it.
+- **Reading systems.**  The EPUB's rounded corners rely on `border-radius` and `:last-child`;
+  a system without them (the Kindle app is the doubtful one) shows a squarer table.
 - **Other styled elements.**  Only tables are mapped so far.  Callouts (gentle-clues, coloured
   by `render/callout_theme.py`), code listings, and pull quotes keep their own styling.

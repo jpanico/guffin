@@ -1,6 +1,12 @@
 //load defaults cfg dict
 $base_cfg.typ()$
 
+// join the design-language tokens (guffin/render/design_language.py), which the renderer passes
+// as a Typst dictionary literal; a user cfg, joined next, still overrides any of them
+$if(design-tokens)$
+#(cfg = cfg + $design-tokens$)
+$endif$
+
 // load and join user cfg
 #let user_cfg = none
 $if(user-config)$

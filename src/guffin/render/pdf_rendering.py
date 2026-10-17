@@ -73,6 +73,7 @@ from guffin.model.vertex_tree import (
 )
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
 from guffin.render.callout_theme import CALLOUT_ACCENT
+from guffin.render.design_language import typst_table_tokens
 from guffin.render.epigraph_page import BOOK_EPIGRAPH_META_KEY, lift_leading_epigraphs
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, detached_copy, pandoc_to_json
@@ -246,6 +247,9 @@ def _typst_template_args(
     # (e.g. fixed-form FORTRAN); absolute paths, resolvable under the engine's --root=/.
     for syntax_filename in _SYNTAX_FILENAMES:
         args.extend(["-V", f"code-syntaxes={bundled_dir / syntax_filename}"])
+    # The table styling comes from the visual design language's single source, as the Typst
+    # dictionary the template joins onto its cfg ahead of any user cfg.
+    args.extend(["-V", f"design-tokens={typst_table_tokens()}"])
     # Bergfink reads section numbering from its own `number-sections` variable; Pandoc's
     # `--number-sections` flag does not set it, so pass it explicitly via -V.
     if number_sections:
