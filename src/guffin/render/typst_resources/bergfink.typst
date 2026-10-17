@@ -1,11 +1,12 @@
 //load defaults cfg dict
 $base_cfg.typ()$
 
-// join the design-language tokens (guffin/render/design_language.py), which the renderer passes
-// as a Typst dictionary literal; a user cfg, joined next, still overrides any of them
-$if(design-tokens)$
+// join the design-language tokens (guffin/render/design_language.py and the themes built on
+// it), which the renderer passes as Typst dictionary literals, one per theme; a user cfg,
+// joined next, still overrides any of them
+$for(design-tokens)$
 #(cfg = cfg + $design-tokens$)
-$endif$
+$endfor$
 
 // load and join user cfg
 #let user_cfg = none
@@ -353,8 +354,6 @@ $if(glossary)$
 
 #register-glossary(glossary-data)
 $endif$
-
-#import "@preview/gentle-clues:1.3.1": *
 
 $for(header-includes)$
 $header-includes$

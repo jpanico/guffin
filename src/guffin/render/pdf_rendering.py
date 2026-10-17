@@ -72,7 +72,7 @@ from guffin.model.vertex_tree import (
     drop_root_preamble,
 )
 from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enrich_assets, pdf_asset_paths
-from guffin.render.callout_theme import CALLOUT_ACCENT
+from guffin.render.callout_theme import typst_callout_tokens
 from guffin.render.design_language import typst_table_tokens
 from guffin.render.epigraph_page import BOOK_EPIGRAPH_META_KEY, lift_leading_epigraphs
 from guffin.render.notes_rendering import prepare_notes
@@ -138,16 +138,6 @@ def _callout_icons_dir() -> Path:
     # ``as_file`` gives a real filesystem path even for zipped wheels.
     with importlib.resources.as_file(pkg_files) as resources_path:
         return resources_path
-
-
-def _callout_colors_env() -> str:
-    """Serialize the canonical callout palette as ``type=hex;…`` for the ``GUFFIN_CALLOUT_COLORS`` env var.
-
-    ``typst_callout.lua`` parses this to set each gentle-clues callout's ``accent-color`` from the
-    single-source palette (:data:`~guffin.render.callout_theme.CALLOUT_ACCENT`), keyed by the callout
-    class suffix (the lowercased :class:`~guffin.roam.blockquote.CalloutType` value).
-    """
-    return ";".join(f"{callout_type.value.lower()}={color}" for callout_type, color in CALLOUT_ACCENT.items())
 
 
 def _typst_filter_args(bundled_dir: Path) -> list[str]:
@@ -247,9 +237,10 @@ def _typst_template_args(
     # (e.g. fixed-form FORTRAN); absolute paths, resolvable under the engine's --root=/.
     for syntax_filename in _SYNTAX_FILENAMES:
         args.extend(["-V", f"code-syntaxes={bundled_dir / syntax_filename}"])
-    # The table styling comes from the visual design language's single source, as the Typst
-    # dictionary the template joins onto its cfg ahead of any user cfg.
+    # The table and callout styling come from the visual design language's single source, as
+    # Typst dictionaries (one per theme) the template joins onto its cfg ahead of any user cfg.
     args.extend(["-V", f"design-tokens={typst_table_tokens()}"])
+    args.extend(["-V", f"design-tokens={typst_callout_tokens()}"])
     # Bergfink reads section numbering from its own `number-sections` variable; Pandoc's
     # `--number-sections` flag does not set it, so pass it explicitly via -V.
     if number_sections:
@@ -644,11 +635,8 @@ def render(
     bundled_dir: Final[Path] = _typst_resources_dir()
     template_path: Final[Path] = bundled_dir / _TEMPLATE_ENTRY
 
-    # typst_callout.lua reads this to inline the shared callout icons into gentle-clues.
+    # typst_callout.lua reads this to pass each callout's shared icon to the template's helper.
     os.environ["GUFFIN_CALLOUT_ICONS_DIR"] = str(_callout_icons_dir())
-    # typst_callout.lua reads this to set each callout's gentle-clues accent-color from the
-    # canonical palette, so PDF callout colours match every other format.
-    os.environ["GUFFIN_CALLOUT_COLORS"] = _callout_colors_env()
 
     # Validate the optional user-config override up front (the -V arg itself is added by
     # _typst_template_args).

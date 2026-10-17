@@ -37,12 +37,18 @@ alone.
 | Blue | the processor: the CPU, its steps, anything that acts | `#EDF2FA` | `#C8D5EA` | `#AFC0DC` | `#234279` |
 | Neutral | the container: memory, storage, a holder of other things | `#F5F5F3` | `#DADAD5` | — | `#3D4250` |
 | Amber | instructions and code: the program as text | `#FBEEE1` | `#EDD3B8` row `#E6C3A0`; current `#C96F2A` | `#C96F2A` | label `#8E4A12`; code `#3B2614` |
-| Teal | data: values the program reads and writes | `#E6F2EF` | `#BFDCD5` row `#AFD2CA` | — | label `#1E5F54`; code `#173F39` |
+| Teal | data: values the program reads and writes | `#E6F2EF` | `#BFDCD5` row `#AFD2CA` | `#8CC2B7` | label `#1E5F54`; code `#173F39` |
+| Green | success and advice: what went right, what to do | `#E9F3E6` | `#C6E0BF` | `#7DB873` | `#2F6B2A` |
+| Red | danger and failure: what went wrong, what must not be done | `#FBEBE9` | `#F0C9C4` | `#D4675B` | `#8E2A20` |
+| Violet | the example: a case shown | `#F1EDFA` | `#D6CCEF` | `#A896D9` | `#4B3A8C` |
 
 White `#FFFFFF` is the canvas and every card's fill.  A family's *emphasis stroke* is what
 the one highlighted element of its kind gets (the blue step cards, the current amber
-instruction); plain siblings get the ordinary stroke.  Badges (the numbered step discs) are a
-solid disc of the family's ink with white text.
+instruction), and what frames a *card* of the family (a table, a callout); plain siblings get
+the ordinary stroke.  Badges (the numbered step discs) are a solid disc of the family's ink
+with white text.  The first four families come from the chapter 1 diagram; the neutral and
+teal emphasis strokes and the green, red, and violet families were added for the callout
+boxes, at the same lightness as their peers.
 
 ### Typography
 
@@ -140,6 +146,27 @@ resource carries a family colour of its own (`tests/render/test_design_language.
 Font sizes, faces, and the running text are not part of the mapping: a table is part of the
 running text and keeps its face and size.
 
+### Callouts
+
+A callout box is a card too, and its *type* chooses the card's family, declared once in
+`src/guffin/render/callout_theme.py` (`CALLOUT_FAMILY`): info is blue, note neutral, example
+violet, summary teal, question and warning amber, tip and success green, danger, failure, and
+bug red.  `CALLOUT_THEME` in `design_language.py` holds the measures: the card radius and the
+emphasis-weight frame as for tables, a title band inset 0.9 × 0.55 em, a body inset
+0.9 × 0.7 em, the title at weight 600, the icon 1.15 em tall.  The title band is the family's
+fill carrying the icon and the title in the family's ink; the frame and the rule under the
+band are the emphasis stroke; a callout with no body is the band alone.  The icons
+(`render/callout_icons/`) are drawn in `currentColor`, so one set serves every family.
+
+- **PDF.**  `typst_callout_tokens()` gives the measures and a `callout-colors` dictionary
+  (per kind: `fill`, `frame`, `ink`) as a second `design-tokens` dictionary; the template's own
+  `callout` helper in `default_styles.typ` draws the card from them (gentle-clues, which drew a
+  left-bar box of its own design, is no longer used), replacing `currentColor` in the icon with
+  the ink, since Typst gives an image no text colour.
+- **EPUB.**  `callout_css()` gives the structural rules and one colour rule pair per type,
+  appended to `design_tokens.css`; the inline SVG icon inherits the band's `color`.
+- **Markdown.**  A callout is a GitHub alert, whose look GitHub owns; nothing maps.
+
 ## Known gaps
 
 - **Faces.**  The diagrams are drawn in IBM Plex Sans and IBM Plex Mono; the PDF's body face is
@@ -153,5 +180,5 @@ running text and keeps its face and size.
   truer reading, and the PDF could be brought to it.
 - **Reading systems.**  The EPUB's rounded corners rely on `border-radius` and `:last-child`;
   a system without them (the Kindle app is the doubtful one) shows a squarer table.
-- **Other styled elements.**  Only tables are mapped so far.  Callouts (gentle-clues, coloured
-  by `render/callout_theme.py`), code listings, and pull quotes keep their own styling.
+- **Other styled elements.**  Tables and callouts are mapped.  Code listings, pull quotes, and
+  epigraphs keep their own styling.

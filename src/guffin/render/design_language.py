@@ -13,16 +13,20 @@ Public symbols:
 - **Type aliases**: :data:`HexColor` — a ``#rrggbb`` colour string.
 - **Enums**: :class:`DesignFamily` — the colour families, each carrying the meaning it stands for.
 - **Models**: :class:`ColorFamily` — a family's fill, stroke, emphasis, and ink; :class:`TableTheme`
-  — a table's tokens, as a card of one family.
+  — a table's tokens, as a card of one family; :class:`CalloutTheme` — a callout box's tokens, a
+  card whose family each callout type chooses.
 - **Constants**: :data:`FAMILY_PALETTE` — the ``DesignFamily`` → ``ColorFamily`` map (covers every
   member); :data:`TEXT_INK` / :data:`LABEL_INK` / :data:`MUTED_INK` — the neutral inks for titles,
-  labels, and descriptions; :data:`TABLE_THEME` — the table tokens in force.
-- **Functions**: :func:`table_css` — the EPUB stylesheet rules styling a table to its theme;
+  labels, and descriptions; :data:`TABLE_THEME` / :data:`CALLOUT_THEME` — the tokens in force.
+- **Functions**: :func:`typst_dictionary` — a Typst dictionary literal from key → expression entries;
+  :func:`typst_rgb` / :func:`typst_stroke` — the Typst expressions for a colour and for a line;
+  :func:`table_css` — the EPUB stylesheet rules styling a table to its theme;
   :func:`typst_table_tokens` — the Bergfink ``cfg`` entries styling a PDF table to its theme, as a
   Typst dictionary literal.
 """
 
 import enum
+from collections.abc import Mapping
 from typing import Annotated, Final
 
 from pydantic import BaseModel, Field, validate_call
@@ -51,6 +55,9 @@ class DesignFamily(enum.StrEnum):
     NEUTRAL = "neutral"
     AMBER = "amber"
     TEAL = "teal"
+    GREEN = "green"
+    RED = "red"
+    VIOLET = "violet"
 
     @property
     def meaning(self) -> str:
@@ -63,6 +70,9 @@ _MEANING_BY_FAMILY: Final[dict[DesignFamily, str]] = {
     DesignFamily.NEUTRAL: "the container: whatever holds other things",
     DesignFamily.AMBER: "instructions and code: the program as text",
     DesignFamily.TEAL: "data: the values a program reads and writes",
+    DesignFamily.GREEN: "success and advice: what went right, what to do",
+    DesignFamily.RED: "danger and failure: what went wrong, what must not be done",
+    DesignFamily.VIOLET: "the example: a case shown",
 }
 
 
@@ -72,22 +82,25 @@ class ColorFamily(BaseModel, frozen=True):
     Attributes:
         fill: The light background of an element of the family.
         stroke: The hairline outline of such an element.
-        emphasis: The heavier, darker outline of the one element being pointed at, when the family
-            has one; ``None`` for a family nothing is ever emphasised in.
+        emphasis: The heavier, darker outline of the one element being pointed at, and the frame of
+            a card of the family.
         ink: The dark colour of the text that names the element.
     """
 
     fill: HexColor
     stroke: HexColor
-    emphasis: HexColor | None
+    emphasis: HexColor
     ink: HexColor
 
 
 FAMILY_PALETTE: Final[dict[DesignFamily, ColorFamily]] = {
     DesignFamily.BLUE: ColorFamily(fill="#EDF2FA", stroke="#C8D5EA", emphasis="#AFC0DC", ink="#234279"),
-    DesignFamily.NEUTRAL: ColorFamily(fill="#F5F5F3", stroke="#DADAD5", emphasis=None, ink="#3D4250"),
+    DesignFamily.NEUTRAL: ColorFamily(fill="#F5F5F3", stroke="#DADAD5", emphasis="#B5B5AF", ink="#3D4250"),
     DesignFamily.AMBER: ColorFamily(fill="#FBEEE1", stroke="#EDD3B8", emphasis="#C96F2A", ink="#8E4A12"),
-    DesignFamily.TEAL: ColorFamily(fill="#E6F2EF", stroke="#BFDCD5", emphasis=None, ink="#1E5F54"),
+    DesignFamily.TEAL: ColorFamily(fill="#E6F2EF", stroke="#BFDCD5", emphasis="#8CC2B7", ink="#1E5F54"),
+    DesignFamily.GREEN: ColorFamily(fill="#E9F3E6", stroke="#C6E0BF", emphasis="#7DB873", ink="#2F6B2A"),
+    DesignFamily.RED: ColorFamily(fill="#FBEBE9", stroke="#F0C9C4", emphasis="#D4675B", ink="#8E2A20"),
+    DesignFamily.VIOLET: ColorFamily(fill="#F1EDFA", stroke="#D6CCEF", emphasis="#A896D9", ink="#4B3A8C"),
 }
 """The colours of every ``DesignFamily``."""
 
@@ -127,14 +140,69 @@ class TableTheme(BaseModel, frozen=True):
     @property
     def frame_color(self) -> str:
         """The colour of the frame and of the rule under the header: the family's emphasis stroke."""
-        emphasis: Final[str | None] = self.colors.emphasis
-        if emphasis is None:
-            raise ValueError(f"a table cannot be a card of the {self.family} family, which has no emphasis stroke")
-        return emphasis
+        return self.colors.emphasis
 
 
 TABLE_THEME: Final[TableTheme] = TableTheme()
 """The table tokens in force."""
+
+
+class CalloutTheme(BaseModel, frozen=True):
+    """A callout box's tokens: a *card* whose family the callout's type chooses.
+
+    A callout is white, framed by its family's emphasis stroke on a rounded outline, with its title
+    a band of the family's fill carrying the icon and the title text in the family's ink at a
+    semibold weight, and its body beneath, parted from the band by the frame stroke.  A callout
+    with no body is the band alone.  Every length is in ems of the callout's text.
+
+    Attributes:
+        frame_width_em: The thickness of the frame and of the rule under the title band: the
+            emphasis weight.
+        radius_em: The corner radius of the frame: the card radius.
+        header_inset_x_em: The padding at either side of the title band's content.
+        header_inset_y_em: The padding above and below the title band's content.
+        body_inset_x_em: The padding at either side of the body.
+        body_inset_y_em: The padding above and below the body.
+        title_weight: The font weight of the title, as a CSS weight number.
+        icon_size_em: The height of the icon beside the title.
+    """
+
+    frame_width_em: float = 0.1
+    radius_em: float = 0.625
+    header_inset_x_em: float = 0.9
+    header_inset_y_em: float = 0.55
+    body_inset_x_em: float = 0.9
+    body_inset_y_em: float = 0.7
+    title_weight: int = 600
+    icon_size_em: float = 1.15
+
+
+CALLOUT_THEME: Final[CalloutTheme] = CalloutTheme()
+"""The callout tokens in force."""
+
+
+@validate_call
+def typst_rgb(color: HexColor) -> str:
+    """Return the Typst expression for *color*, a ``#rrggbb`` string."""
+    return f'rgb("{color}")'
+
+
+@validate_call
+def typst_stroke(width_em: float, color: HexColor) -> str:
+    """Return the Typst stroke expression for a *width_em* line in *color*."""
+    return f"{width_em}em + {typst_rgb(color)}"
+
+
+@validate_call
+def typst_dictionary(entries: Mapping[str, str]) -> str:
+    """Return the Typst dictionary literal ``(key: value, …)`` of *entries*, each value a Typst expression.
+
+    An empty mapping is the empty dictionary ``(:)``.
+    """
+    if not entries:
+        return "(:)"
+    body: Final[str] = ", ".join(f"{key}: {value}" for key, value in entries.items())
+    return f"({body})"
 
 
 @validate_call
@@ -184,11 +252,6 @@ def table_css(theme: TableTheme = TABLE_THEME) -> str:
     return "\n".join(rules) + "\n"
 
 
-def _typst_stroke(width_em: float, color: str) -> str:
-    """Return the Typst stroke expression for a *width_em* line in *color*."""
-    return f'{width_em}em + rgb("{color}")'
-
-
 @validate_call
 def typst_table_tokens(theme: TableTheme = TABLE_THEME) -> str:
     """Return the Bergfink ``cfg`` entries that style a PDF table to *theme*, as a Typst dictionary literal.
@@ -205,20 +268,20 @@ def typst_table_tokens(theme: TableTheme = TABLE_THEME) -> str:
         A ``(key: value, …)`` Typst dictionary literal, for the template to join onto its ``cfg``.
     """
     colors: Final[ColorFamily] = theme.colors
-    frame: Final[str] = _typst_stroke(theme.frame_width_em, theme.frame_color)
-    entries: Final[dict[str, str]] = {
-        "table-header-bg": f'rgb("{colors.fill}")',
-        "table-header-ink": f'rgb("{colors.ink}")',
-        "table-header-weight": str(theme.header_weight),
-        "table-striped-bg": f'rgb("{FAMILY_PALETTE[DesignFamily.NEUTRAL].fill}")',
-        "table-stroke-border-x": "none",
-        "table-stroke-border-y": "none",
-        "table-stroke-header-b": frame,
-        "table-stroke-vertical": "none",
-        "table-stroke-horizontal": _typst_stroke(theme.rule_width_em, colors.stroke),
-        "table-frame-stroke": frame,
-        "table-radius": f"{theme.radius_em}em",
-        "table-inset": f"(x: {theme.inset_x_em}em, y: {theme.inset_y_em}em)",
-    }
-    body: Final[str] = ", ".join(f"{key}: {value}" for key, value in entries.items())
-    return f"({body})"
+    frame: Final[str] = typst_stroke(theme.frame_width_em, theme.frame_color)
+    return typst_dictionary(
+        {
+            "table-header-bg": typst_rgb(colors.fill),
+            "table-header-ink": typst_rgb(colors.ink),
+            "table-header-weight": str(theme.header_weight),
+            "table-striped-bg": typst_rgb(FAMILY_PALETTE[DesignFamily.NEUTRAL].fill),
+            "table-stroke-border-x": "none",
+            "table-stroke-border-y": "none",
+            "table-stroke-header-b": frame,
+            "table-stroke-vertical": "none",
+            "table-stroke-horizontal": typst_stroke(theme.rule_width_em, colors.stroke),
+            "table-frame-stroke": frame,
+            "table-radius": f"{theme.radius_em}em",
+            "table-inset": f"(x: {theme.inset_x_em}em, y: {theme.inset_y_em}em)",
+        }
+    )

@@ -1,71 +1,86 @@
-"""Tests for guffin.render.callout_theme (the canonical callout colour palette)."""
+"""Tests for guffin.render.callout_theme (the callout look, built on the design language)."""
 
-from guffin.render.callout_theme import (
-    CALLOUT_ACCENT,
-    TITLE_TINT_LIGHTEN,
-    callout_accent,
-    callout_title_tint,
-    lighten,
-)
+from typing import Final
+
+import regex
+
+from guffin.render.callout_theme import CALLOUT_FAMILY, callout_colors, callout_css, typst_callout_tokens
+from guffin.render.design_language import CALLOUT_THEME, FAMILY_PALETTE, DesignFamily
 from guffin.roam.blockquote import CalloutType
 
+HEX_RE: Final[regex.Pattern[str]] = regex.compile(r"#[0-9A-Fa-f]{6}")
 
-class TestPalette:
-    """CALLOUT_ACCENT is the single source of truth and must cover every callout type."""
+
+class TestCalloutFamily:
+    """CALLOUT_FAMILY is the single declaration of each callout type's family and must cover every type."""
 
     def test_covers_every_callout_type(self) -> None:
-        """Every CalloutType member has a canonical accent colour (no type falls through)."""
-        assert set(CALLOUT_ACCENT) == set(CalloutType)
-
-    def test_accents_are_hex_colours(self) -> None:
-        """Each accent is a ``#rrggbb`` hex string."""
-        for color in CALLOUT_ACCENT.values():
-            assert len(color) == 7
-            assert color[0] == "#"
-            int(color[1:], 16)  # raises if not hex
+        """Every CalloutType member is a card of some family (no type falls through)."""
+        assert set(CALLOUT_FAMILY) == set(CalloutType)
 
     def test_note_is_neutral(self) -> None:
-        """Note is a neutral grey (red is reserved for danger/failure/bug)."""
-        red, green, blue = (int(CALLOUT_ACCENT[CalloutType.NOTE][i : i + 2], 16) for i in (1, 3, 5))
-        assert red == green == blue  # grey: equal channels
+        """A note is the neutral family: a note is not an alarm."""
+        assert CALLOUT_FAMILY[CalloutType.NOTE] is DesignFamily.NEUTRAL
+
+    def test_red_is_reserved_for_danger_failure_and_bug(self) -> None:
+        """Exactly the alarms are red."""
+        red: Final[set[CalloutType]] = {t for t, family in CALLOUT_FAMILY.items() if family is DesignFamily.RED}
+        assert red == {CalloutType.DANGER, CalloutType.FAILURE, CalloutType.BUG}
+
+    def test_colors_are_the_family_palette(self) -> None:
+        """A type's colours are its family's entry in the palette, not a copy."""
+        for callout_type, family in CALLOUT_FAMILY.items():
+            assert callout_colors(callout_type) == FAMILY_PALETTE[family]
 
 
-class TestLighten:
-    """lighten blends a colour toward white, matching Typst's color.lighten."""
+class TestCalloutCss:
+    """callout_css expresses the callout theme as stylesheet rules."""
 
-    def test_zero_amount_is_unchanged(self) -> None:
-        """Lightening by 0 returns the same colour."""
-        assert lighten("#4a90d9", 0.0) == "#4a90d9"
+    def test_frames_and_rounds_the_box(self) -> None:
+        """The box's own border is the frame, on the card radius, and the band rounds its top corners."""
+        css: Final[str] = callout_css()
+        radius: Final[str] = f"{CALLOUT_THEME.radius_em}em"
+        assert f"border: {CALLOUT_THEME.frame_width_em}em solid;" in css
+        assert f"border-radius: {radius};" in css
+        assert f"border-top-left-radius: {radius};" in css
 
-    def test_full_amount_is_white(self) -> None:
-        """Lightening by 1 returns white regardless of input."""
-        assert lighten("#000000", 1.0) == "#ffffff"
-        assert lighten("#4a90d9", 1.0) == "#ffffff"
+    def test_one_colour_rule_pair_per_type(self) -> None:
+        """Each type's box takes its family's emphasis as frame and its fill and ink on the band."""
+        css: Final[str] = callout_css()
+        for callout_type in CalloutType:
+            colors = callout_colors(callout_type)
+            selector: str = f"div.callout-{callout_type.value.lower()}"
+            assert f"{selector} {{ border-color: {colors.emphasis}; }}" in css
+            assert f"{selector} > div.callout-title {{ background-color: {colors.fill}; color: {colors.ink};" in css
 
-    def test_white_stays_white(self) -> None:
-        """Lightening white is a no-op at any amount."""
-        assert lighten("#ffffff", 0.5) == "#ffffff"
-
-    def test_known_midpoint(self) -> None:
-        """Half-lightening #000000 yields the rounded mid-grey #808080."""
-        assert lighten("#000000", 0.5) == "#808080"
-
-    def test_accepts_bare_hex_without_hash(self) -> None:
-        """A leading '#' is optional on the input."""
-        assert lighten("000000", 1.0) == "#ffffff"
+    def test_no_colour_outside_the_palette(self) -> None:
+        """Every colour in the rules is a member of some family."""
+        palette: Final[set[str]] = {
+            member.lower() for colors in FAMILY_PALETTE.values() for member in colors.model_dump().values()
+        }
+        assert {m.lower() for m in HEX_RE.findall(callout_css())} <= palette
 
 
-class TestAccessors:
-    """callout_accent and callout_title_tint read the palette and derive the tint."""
+class TestTypstCalloutTokens:
+    """typst_callout_tokens expresses the callout theme as the template's cfg entries."""
 
-    def test_accent_reads_palette(self) -> None:
-        """callout_accent returns the palette entry."""
-        assert callout_accent(CalloutType.INFO) == CALLOUT_ACCENT[CalloutType.INFO]
+    def test_sets_the_measures(self) -> None:
+        """The radius, frame width, insets, title weight, and icon size are all set."""
+        tokens: Final[str] = typst_callout_tokens()
+        assert f"callout-radius: {CALLOUT_THEME.radius_em}em" in tokens
+        assert f"callout-frame-width: {CALLOUT_THEME.frame_width_em}em" in tokens
+        assert "callout-header-inset: (x: " in tokens
+        assert "callout-body-inset: (x: " in tokens
+        assert f"callout-title-weight: {CALLOUT_THEME.title_weight}" in tokens
+        assert f"callout-icon-size: {CALLOUT_THEME.icon_size_em}em" in tokens
 
-    def test_title_tint_is_lightened_accent(self) -> None:
-        """The title tint is the accent lightened by TITLE_TINT_LIGHTEN."""
-        assert callout_title_tint(CalloutType.NOTE) == lighten(CALLOUT_ACCENT[CalloutType.NOTE], TITLE_TINT_LIGHTEN)
-
-    def test_grey_note_tint_matches_prior_hand_tuned_value(self) -> None:
-        """The derived note tint reproduces the previously hand-tuned #ededed."""
-        assert callout_title_tint(CalloutType.NOTE) == "#ededed"
+    def test_colours_per_kind(self) -> None:
+        """callout-colors holds every kind's fill, frame, and ink from its family."""
+        tokens: Final[str] = typst_callout_tokens()
+        for callout_type in CalloutType:
+            colors = callout_colors(callout_type)
+            kind: str = callout_type.value.lower()
+            assert (
+                f'{kind}: (fill: rgb("{colors.fill}"), frame: rgb("{colors.emphasis}"), ink: rgb("{colors.ink}"))'
+                in tokens
+            )

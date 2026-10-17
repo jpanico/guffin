@@ -3,7 +3,7 @@
 Bundled SVG badge icons for callout type indicators, **shared** by the PDF and EPUB output paths so
 both formats render the same icon set.
 
-One file per gentle-clues callout function:
+One file per callout kind:
 
 | File | guffin callout types |
 |---|---|
@@ -18,16 +18,20 @@ One file per gentle-clues callout function:
 | `danger.svg` | danger |
 | `error.svg` | failure, bug |
 
-Each icon is a filled accent-colored badge with a white symbol; the accent matches the callout's
-border color in `epub_resources/epub.css`. The icons are self-colored (they do not inherit the
-surrounding context), so a given callout type looks identical across formats.
+Each icon is a filled badge with a white symbol, and the badge is drawn in `currentColor`: the icon
+carries no colour of its own, and takes the ink of the callout it sits in — the family colour the
+visual design language gives the callout's type (`guffin/render/callout_theme.py`, on
+`guffin/render/design_language.py`; see `docs/visual-design-language.md`) — so one set of files
+serves every family and a given callout type looks identical across formats.
 
 Consumed at render time by:
 
-- `pipeline/pdf_rendering.py` → `typst_resources/typst_callout.lua` — inlines the SVG into the
-  gentle-clues `icon:` argument as `image(bytes(...), format: "svg")`.
-- `pipeline/epub_rendering.py` → `epub_resources/epub_callout.lua` — inlines the SVG into each
-  callout's `callout-title` header.
+- `render/pdf_rendering.py` → `typst_resources/typst_callout.lua` — passes the SVG source as a
+  string to the template's `callout` helper (`default_styles.typ`), which replaces `currentColor`
+  with the callout's ink and draws it with `image(bytes(...), format: "svg")`, since Typst gives
+  an image no text colour to inherit.
+- `render/epub_rendering.py` → `epub_resources/epub_callout.lua` — inlines the SVG into each
+  callout's `callout-title` header, where it inherits the band's `color`.
 
-Both filters locate this directory via the Pandoc metadata field `callout-icons-dir`, set by the
-respective renderer.
+Both filters locate this directory via the `GUFFIN_CALLOUT_ICONS_DIR` environment variable, set by
+the respective renderer.

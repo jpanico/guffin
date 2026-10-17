@@ -35,12 +35,17 @@ class TestPalette:
     def test_members_are_hex_colours(self) -> None:
         """A malformed colour is rejected at construction."""
         with pytest.raises(ValueError):
-            ColorFamily(fill="EDF2FA", stroke="#C8D5EA", emphasis=None, ink="#234279")
+            ColorFamily(fill="EDF2FA", stroke="#C8D5EA", emphasis="#AFC0DC", ink="#234279")
 
-    def test_fill_is_lighter_than_stroke_is_lighter_than_ink(self) -> None:
-        """The three members step from light to dark, as a background, an outline, and text."""
+    def test_members_step_from_light_to_dark(self) -> None:
+        """Fill, stroke, emphasis, and ink step from light to dark: a background, two outlines, and text."""
         for colors in FAMILY_PALETTE.values():
-            assert _luminance(colors.fill) > _luminance(colors.stroke) > _luminance(colors.ink)
+            assert (
+                _luminance(colors.fill)
+                > _luminance(colors.stroke)
+                > _luminance(colors.emphasis)
+                > _luminance(colors.ink)
+            )
 
 
 class TestTableTheme:
@@ -55,10 +60,10 @@ class TestTableTheme:
         """The frame takes the family's heavier emphasis stroke, not its hairline."""
         assert TABLE_THEME.frame_color == FAMILY_PALETTE[DesignFamily.BLUE].emphasis
 
-    def test_family_without_emphasis_cannot_frame_a_table(self) -> None:
-        """A family with no emphasis stroke has nothing to frame a card with."""
-        with pytest.raises(ValueError, match="no emphasis stroke"):
-            _ = TableTheme(family=DesignFamily.NEUTRAL).frame_color
+    def test_any_family_can_frame_a_table(self) -> None:
+        """Every family has an emphasis stroke, so a table can be a card of any of them."""
+        for family in DesignFamily:
+            assert TableTheme(family=family).frame_color == FAMILY_PALETTE[family].emphasis
 
 
 class TestTableCss:
@@ -83,7 +88,7 @@ class TestTableCss:
 
     def test_no_colour_outside_the_family(self) -> None:
         """Every colour in the rules is a member of the table's family."""
-        family_colors: Final[set[str]] = {c.lower() for c in TABLE_THEME.colors.model_dump().values() if c}
+        family_colors: Final[set[str]] = {c.lower() for c in TABLE_THEME.colors.model_dump().values()}
         assert {m.lower() for m in HEX_RE.findall(table_css())} <= family_colors
 
 
@@ -141,10 +146,7 @@ class TestSingleSource:
         with importlib.resources.as_file(importlib.resources.files(package) / filename) as path:
             text: Final[str] = Path(path).read_text(encoding="utf-8")
         family_colors: Final[set[str]] = {
-            member.lower()
-            for colors in FAMILY_PALETTE.values()
-            for member in colors.model_dump().values()
-            if member is not None
+            member.lower() for colors in FAMILY_PALETTE.values() for member in colors.model_dump().values()
         }
         assert {m.lower() for m in HEX_RE.findall(text)}.isdisjoint(family_colors)
 

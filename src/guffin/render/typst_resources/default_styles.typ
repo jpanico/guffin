@@ -324,6 +324,54 @@
   it
 }
 
+// A callout box: a card — white, framed on a rounded outline — whose title band carries the
+// icon and the title in the kind's ink, with the body beneath, parted from the band by the
+// frame stroke; a callout without a body is the band alone.  `kind` picks the colours from
+// cfg.callout-colors; `icon` is the SVG source as a string, drawn in currentColor, which is
+// replaced by the ink here since an image inherits no text colour.  The band is sticky, so a
+// box that breaks across pages never leaves its band stranded at a page foot.
+#let callout(kind: "note", title: none, icon: none, with-body: true, body) = {
+  let colors = cfg.callout-colors.at(kind, default: cfg.callout-default-colors)
+  let frame = cfg.callout-frame-width + colors.frame
+  let title-content = if title == none { none } else {
+    text(fill: colors.ink, weight: cfg.callout-title-weight, title)
+  }
+  let icon-content = if icon == none { none } else {
+    box(height: cfg.callout-icon-size, image(bytes(icon.replace("currentColor", colors.ink.to-hex())), format: "svg"))
+  }
+  let band = block(
+    sticky: true,
+    width: 100%,
+    fill: colors.fill,
+    inset: cfg.callout-header-inset,
+    below: 0pt,
+    stroke: if with-body { (bottom: frame) } else { none },
+    if icon-content == none { title-content } else if title-content == none { icon-content } else {
+      grid(columns: (auto, auto), align: (horizon, left + horizon), gutter: 0.6em, icon-content, title-content)
+    },
+  )
+  block(
+    width: 100%,
+    radius: cfg.callout-radius,
+    clip: true,
+    stroke: frame,
+    fill: white,
+    breakable: true,
+    above: 1em,
+    below: 1em,
+    {
+      set par(first-line-indent: 0pt, justify: false)
+      band
+      if with-body {
+        block(width: 100%, inset: cfg.callout-body-inset, below: 0pt, {
+          set text(font: cfg.callout-font)
+          body
+        })
+      }
+    },
+  )
+}
+
 // The frame: the whole table in a block clipped to the configured corner radius and stroked
 // around that outline, so the header fill's corners are rounded with it.  Breakable, like the
 // figure holding it, so a tall table still runs across pages, each fragment framed.
