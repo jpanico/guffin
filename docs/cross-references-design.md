@@ -10,8 +10,11 @@ in its PDF and mdbundle baselines), a listing float (Section 1.4, *Listing 1*) a
 float (Section 1.5, *Table 1*, its caption above the table), each its own series and each
 with a kind-word reference from the running text (rendered *figure 1*, *listing 1*, and
 *table 1*, linked); Test Article 3 carries the same three kinds with the content a standalone
-reference to a block elsewhere on the page; the generated lists (step 5), the empty-list
-warning (rule 7), and a fixture for a book's by-chapter numbering (the rest of step 7) are not.**
+reference to a block elsewhere on the page; Test Article 7, a parts book, floats every image,
+table, and listing (numbered by chapter: Figure 1.1–3.1, Listing 4.1, Table 30.1) and carries
+authored `list-of-illustrations` and `list-of-tables` headings in its front matter; the
+generated lists (step 5) and the empty-list warning (rule 7) are not built, so those headings
+render empty.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest
@@ -394,6 +397,14 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
 
 ## Decisions
 
+- **2026-10-18 — Every chapter counts toward a float's chapter number.** Test Article 7's table,
+  in the book's thirtieth chapter, came out as Table 5.1: `model/floats.float_numbers` gave a
+  chapter its ordinal only when a float was met in it, so it counted the chapters holding
+  floats. It now counts every body-matter heading at the chapter level in reading order, as the
+  rule above states. **Open:** in a parts book the count runs through the parts (Chicago's
+  consecutive chapter numbering), while a numbered PDF export labels a chapter by part and
+  chapter (Book II's thirteenth chapter is *2.13*), so the table's number and its chapter's
+  heading number disagree when headings are numbered.
 - **2026-10-17 — A labelled inline reference is not a standalone one.** Test Article 3's
   reference lines open with a coloured label span, so `[label]{color=...} see [figure](...)`
   begins with a bracket and ends with a vertex link, and

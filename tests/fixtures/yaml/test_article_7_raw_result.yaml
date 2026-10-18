@@ -34,6 +34,20 @@
     refs:
     - id: 321
     - id: 11839
+- - string: 'float:: figure'
+    id: 21211
+    uid: 619wcXH8B
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 12007
+    - id: 21212
+    - id: 21213
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 21162
 - - string: ''
     children:
     - id: 12770
@@ -44,35 +58,36 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 9
     page:
       id: 11850
 - - string: 'Now am I come to that part of our Book in which I shall tell you of the
-      great and wonderful magnificence of the Great Kaan now reigning, by name Cublay
-      Kaan; Kaan being a title which signifyeth “The Great Lord of Lords,” or Emperor.
-      And of a surety he hath good right to such a title, for all men know for a certain
-      truth that he is the most potent man, as regards forces and lands and treasure,
-      that existeth in the world, or ever hath existed from the time of our First
-      Father Adam until this day. All this I will make clear to you for truth, in
-      this book of ours, so that every one shall be fain to acknowledge that he is
-      the greatest Lord that is now in the world, or ever hath been. And now ye shall
-      hear how and wherefore.{1} Note 1.—According to Sanang Setzen, Chinghiz himself
-      discerned young Kúblái’s superiority. On his deathbed he said: “The words of
-      the lad Kúblái are well worth attention; see, all of you, that ye heed what
-      he says! One day he will sit in my seat and bring you good fortune such as you
-      have had in my day!” (p. 105). The Persian history of Wassáf thus exalts Kúblái:
-      “Although from the frontiers of this country (’Irák) to the Centre of Empire,
-      the Focus of the Universe, the genial abode of the ever-Fortunate Emperor and
-      Just Kaan, is a whole year’s journey, yet the stories that have been spread
-      abroad, even in these parts, of his glorious deeds, his institutes, his decisions,
-      his justice, the largeness and acuteness of his intellect, his correctness of
-      judgment, his great powers of administration, from the mouths of credible witnesses,
-      of well-known merchants and eminent travellers, are so surpassing, that one
-      beam of his glories, one fraction of his great qualities, suffices to eclipse
-      all that history tells of the Cæsars of Rome, of the Chosroes of Persia, of
-      the Khagans of China, of the (Himyarite) Kails of Arabia, of the Tobbas of Yemen,
-      and the Rajas of India, of the monarchs of the houses of Sassan and Búya, and
-      of the Seljukian Sultans.” (Hammer’s Wassaf, orig. p. 37.)'
+      great and wonderful magnificence of the Great Kaan now reigning, by name [(Cublay
+      Kaan)](((zCCYjDcSv))); Kaan being a title which signifyeth “The Great Lord of
+      Lords,” or Emperor. And of a surety he hath good right to such a title, for
+      all men know for a certain truth that he is the most potent man, as regards
+      forces and lands and treasure, that existeth in the world, or ever hath existed
+      from the time of our First Father Adam until this day. All this I will make
+      clear to you for truth, in this book of ours, so that every one shall be fain
+      to acknowledge that he is the greatest Lord that is now in the world, or ever
+      hath been. And now ye shall hear how and wherefore.{1} Note 1.—According to
+      Sanang Setzen, Chinghiz himself discerned young Kúblái’s superiority. On his
+      deathbed he said: “The words of the lad Kúblái are well worth attention; see,
+      all of you, that ye heed what he says! One day he will sit in my seat and bring
+      you good fortune such as you have had in my day!” (p. 105). The Persian history
+      of Wassáf thus exalts Kúblái: “Although from the frontiers of this country (’Irák)
+      to the Centre of Empire, the Focus of the Universe, the genial abode of the
+      ever-Fortunate Emperor and Just Kaan, is a whole year’s journey, yet the stories
+      that have been spread abroad, even in these parts, of his glorious deeds, his
+      institutes, his decisions, his justice, the largeness and acuteness of his intellect,
+      his correctness of judgment, his great powers of administration, from the mouths
+      of credible witnesses, of well-known merchants and eminent travellers, are so
+      surpassing, that one beam of his glories, one fraction of his great qualities,
+      suffices to eclipse all that history tells of the Cæsars of Rome, of the Chosroes
+      of Persia, of the Khagans of China, of the (Himyarite) Kails of Arabia, of the
+      Tobbas of Yemen, and the Rajas of India, of the monarchs of the houses of Sassan
+      and Búya, and of the Seljukian Sultans.” (Hammer’s Wassaf, orig. p. 37.)'
     id: 12518
     uid: EwJ_S--R4
     parents:
@@ -82,6 +97,8 @@
     order: 1
     page:
       id: 11850
+    refs:
+    - id: 20645
 - - string: CHAPTER II. Concerning the Revolt of Nayan, who was Uncle to the Great
       Kaan Cublay.
     id: 12512
@@ -116,6 +133,7 @@
     - id: 12733
     - id: 12734
     - id: 12735
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -248,6 +266,16 @@
     - id: 11902
     - id: 12039
     order: 12
+    page:
+      id: 11850
+- - string: 'Khanbaliq, Turkic for “City of the Khan”: Khubilai''s capital, known
+      in Chinese as Dadu, on the site of modern Beijing.'
+    id: 20646
+    uid: y6Cq0QnhI
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 9
     page:
       id: 11850
 - - string: '**Unto the Honorable, Prudent, and Wise Magistrates of the Free Imperial
@@ -405,6 +433,28 @@
     order: 17
     page:
       id: 11850
+- - string: '#footnotes'
+    children:
+    - id: 20637
+    - id: 20638
+    - id: 20639
+    - id: 20640
+    - id: 20641
+    - id: 20642
+    - id: 20643
+    - id: 20644
+    - id: 20645
+    - id: 20646
+    id: 20647
+    uid: 1B7Uj5Wna
+    children-view-type: numbered
+    parents:
+    - id: 11850
+    order: 13
+    page:
+      id: 11850
+    refs:
+    - id: 20616
 - - string: 'element-type:: chapter'
     id: 12409
     uid: NeWGnX34G
@@ -779,41 +829,43 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 7
     page:
       id: 11850
-- - string: Badashan is a Province inhabited by people who worship Mahommet, and have
-      a peculiar language. It forms a very great kingdom, and the royalty is hereditary.
-      All those of the royal blood are descended from King Alexander and the daughter
-      of King Darius, who was Lord of the vast Empire of Persia. And all these kings
-      call themselves in the Saracen tongue Zulcarniain, which is as much as to say
-      Alexander; and this out of regard for Alexander the Great.{1} It is in this
-      province that those fine and valuable gems the Balas Rubies are found. They
-      are got in certain rocks among the mountains, and in the search for them the
-      people dig great caves underground, just as is done by miners for silver. There
-      is but one special mountain that produces them, and it is called Syghinan. The
-      stones are dug on the king’s account, and no one else dares dig in that mountain
-      on pain of forfeiture of life as well as goods; nor may any one carry the stones
-      out of the kingdom. But the king amasses them all, and sends them to other kings
-      when he has tribute to render, or when he desires to offer a friendly present;
-      and such only as he pleases he causes to be sold. Thus he acts in order to keep
-      the Balas at a high value; for if he were to allow everybody to dig, they would
-      extract so many that the world would be glutted with them, and they would cease
-      to bear any value. Hence it is that he allows so few to be taken out, and is
-      so strict in the matter.{2} There is also in the same country another mountain,
-      in which azure is found; ’tis the finest in the world, and is got in a vein
-      like silver. There are also other mountains which contain a great amount of
-      silver ore, so that the country is a very rich one; but it is also (it must
-      be said) a very cold one.{3} It produces numbers of excellent horses, remarkable
-      for their speed. They are not shod at all, although constantly used in mountainous
-      country, and on very bad roads. [They go at a great pace even down steep descents,
-      where other horses neither would nor could do the like. And Messer Marco was
-      told that not long ago they possessed in that province a breed of horses from
-      the strain of Alexander’s horse Bucephalus, all of which had from their birth
-      a particular mark on the forehead. This breed was entirely in the hands of an
-      uncle of the king’s; and in consequence of his refusing to let the king have
-      any of them, the latter put him to death. The widow then, in despite, destroyed
-      the whole breed, and it is now extinct.{4}]
+- - string: '[(Badashan)](((gB85TpHu2))) is a Province inhabited by people who worship
+      Mahommet, and have a peculiar language. It forms a very great kingdom, and the
+      royalty is hereditary. All those of the royal blood are descended from King
+      Alexander and the daughter of King Darius, who was Lord of the vast Empire of
+      Persia. And all these kings call themselves in the Saracen tongue Zulcarniain,
+      which is as much as to say Alexander; and this out of regard for Alexander the
+      Great.{1} It is in this province that those fine and valuable gems the Balas
+      Rubies are found. They are got in certain rocks among the mountains, and in
+      the search for them the people dig great caves underground, just as is done
+      by miners for silver. There is but one special mountain that produces them,
+      and it is called Syghinan. The stones are dug on the king’s account, and no
+      one else dares dig in that mountain on pain of forfeiture of life as well as
+      goods; nor may any one carry the stones out of the kingdom. But the king amasses
+      them all, and sends them to other kings when he has tribute to render, or when
+      he desires to offer a friendly present; and such only as he pleases he causes
+      to be sold. Thus he acts in order to keep the Balas at a high value; for if
+      he were to allow everybody to dig, they would extract so many that the world
+      would be glutted with them, and they would cease to bear any value. Hence it
+      is that he allows so few to be taken out, and is so strict in the matter.{2}
+      There is also in the same country another mountain, in which azure is found;
+      ’tis the finest in the world, and is got in a vein like silver. There are also
+      other mountains which contain a great amount of silver ore, so that the country
+      is a very rich one; but it is also (it must be said) a very cold one.{3} It
+      produces numbers of excellent horses, remarkable for their speed. They are not
+      shod at all, although constantly used in mountainous country, and on very bad
+      roads. [They go at a great pace even down steep descents, where other horses
+      neither would nor could do the like. And Messer Marco was told that not long
+      ago they possessed in that province a breed of horses from the strain of Alexander’s
+      horse Bucephalus, all of which had from their birth a particular mark on the
+      forehead. This breed was entirely in the hands of an uncle of the king’s; and
+      in consequence of his refusing to let the king have any of them, the latter
+      put him to death. The widow then, in despite, destroyed the whole breed, and
+      it is now extinct.{4}]'
     id: 12403
     uid: y6Sb4knJU
     parents:
@@ -823,6 +875,8 @@
     order: 1
     page:
       id: 11850
+    refs:
+    - id: 20644
 - - string: Note 4.—I have not been able to find any allusion, except in our author,
       to tablets, with gerfalcons (shonḳár). The shonḳár appears, however, according
       to Erdmann, on certain coins of the Golden Horde, struck at Sarai. There is
@@ -895,6 +949,16 @@
     - id: 11850
     - id: 11902
     order: 12
+    page:
+      id: 11850
+- - string: Hormuz, a port that controlled sea trade through the Strait of Hormuz.
+      Around 1300 the town was moved from the mainland to an island just offshore.
+    id: 20643
+    uid: tZyqTonni
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 6
     page:
       id: 11850
 - - string: Note 10.—[This is the Ling yu or “Divine Park,” to the east of the Wan-sui
@@ -1023,6 +1087,16 @@
     refs:
     - id: 321
     - id: 11839
+- - string: In south-eastern Iran; the city of Kerman is still the capital of the
+      province of that name.
+    id: 20642
+    uid: ExR4qHuuC
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 5
+    page:
+      id: 11850
 - - string: The word has generally been interpreted bluish-grey, but in the passage
       just quoted, Fr.-Michel explains it by brillans. However, the evidence for noirs
       here seems strongest. Rashiduddin says that when Kúblái was born Chinghiz expressed
@@ -1188,6 +1262,7 @@
     - id: 12785
     - id: 12786
     - id: 12787
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -1302,6 +1377,16 @@
     order: 16
     page:
       id: 11850
+- - string: The source of the word muslin, though Mosul's looms turned out many kinds
+      of cloth.
+    id: 20640
+    uid: DE7kym__h
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 3
+    page:
+      id: 11850
 - - string: 'element-type:: chapter'
     id: 11974
     uid: 3TO924yvu
@@ -1315,9 +1400,6 @@
       id: 11850
     refs:
     - id: 11876
-- - id: 6535
-    uid: 9ZtPB2yY3
-    title: Publishing
 - - string: Yakut (✛1229), stating that this mountainous country is famed for its
       precious stones, and especially rubies, called Balakhsh.” (Bretschneider, Med.
       Res. II. p. 66.)—H. C.] The account of the royal monopoly in working the mines,
@@ -1342,6 +1424,43 @@
     order: 11
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - ENLc_W3QX
+        value:
+        - uid
+        - ENLc_W3QX
+      - source:
+        - uid
+        - _JH8OJUKv
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - _JH8OJUKv
+        value: ' figure'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21205
+    id: 21206
+    lookup:
+    - id: 21162
+    - id: 21205
+    - id: 21206
+    uid: ENLc_W3QX
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11906
+    - id: 21207
+    order: 1
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'Note 6.—Ramusio’s version here diverges from the old MSS. It makes the
       inner enclosure a mile square; and the second (the city of Taidu) six miles
       square, as here, but adds, at a mile interval, a third of eight miles square.
@@ -1445,18 +1564,6 @@
     order: 18
     page:
       id: 11850
-- - heading: 3
-    string: Intended Audience
-    children:
-    - id: 4601
-    - id: 4602
-    id: 4600
-    uid: Bl5IgRIYf
-    parents:
-    - id: 4384
-    order: 0
-    page:
-      id: 4384
 - - attrs:
     - - source:
         - uid
@@ -1613,17 +1720,6 @@
     order: 2
     page:
       id: 11850
-- - string: The main thing to avoid is burying it deep inside the introduction, where
-      a reader scanning the front matter to decide if the book is right for them might
-      miss it entirely.
-    id: 4392
-    uid: N60tgmwap
-    parents:
-    - id: 4384
-    - id: 4427
-    order: 3
-    page:
-      id: 4384
 - - string: Note 2.—The Chinese Annals, according to Pauthier and Gaubil, give only
       ten sons to Kúblái, at least by his legitimate wives; Hammer’s Table gives twelve.
       It is very probable that xxii. was an early clerical error in the texts of Polo
@@ -1754,6 +1850,20 @@
       id: 11850
     refs:
     - id: 11894
+- - string: 'float:: table'
+    id: 21217
+    uid: 4wD_Moq4W
+    parents:
+    - id: 11850
+    - id: 11903
+    - id: 12727
+    - id: 21218
+    - id: 21219
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 21162
 - - string: Weight / Unit
     children:
     - id: 12747
@@ -1765,6 +1875,7 @@
     - id: 12727
     - id: 12732
     - id: 12745
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -1807,6 +1918,7 @@
     - id: 12732
     - id: 12757
     - id: 12758
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -1873,6 +1985,7 @@
     - id: 12732
     - id: 12733
     - id: 12734
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -1944,21 +2057,21 @@
       and other fruit-trees. There are also many beautiful birds, francolins, popinjays,
       and other kinds such as we have none of in our country. When you have ridden
       these two days you come to the Ocean Sea, and on the shore you find a city with
-      a harbour which is called Hormos.{1} Merchants come thither from India, with
-      ships loaded with spicery and precious stones, pearls, cloths of silk and gold,
-      elephants’ teeth, and many other wares, which they sell to the merchants of
-      Hormos, and which these in turn carry all over the world to dispose of again.
-      In fact, ’tis a city of immense trade. There are plenty of towns and villages
-      under it, but it is the capital. The King is called Ruomedam Ahomet. It is a
-      very sickly place, and the heat of the sun is tremendous. If any foreign merchant
-      dies there, the King takes all his property. In this country they make a wine
-      of dates mixt with spices, which is very good. When any one not used to it first
-      drinks this wine, it causes repeated and violent purging, but afterwards he
-      is all the better for it, and gets fat upon it. The people never eat meat and
-      wheaten bread except when they are ill, and if they take such food when they
-      are in health it makes them ill. Their food when in health consists of dates
-      and salt-fish (tunny, to wit) and onions, and this kind of diet they maintain
-      in order to preserve their health.{2}
+      a harbour which is called [(Hormos)](((tZyqTonni))).{1} Merchants come thither
+      from India, with ships loaded with spicery and precious stones, pearls, cloths
+      of silk and gold, elephants’ teeth, and many other wares, which they sell to
+      the merchants of Hormos, and which these in turn carry all over the world to
+      dispose of again. In fact, ’tis a city of immense trade. There are plenty of
+      towns and villages under it, but it is the capital. The King is called Ruomedam
+      Ahomet. It is a very sickly place, and the heat of the sun is tremendous. If
+      any foreign merchant dies there, the King takes all his property. In this country
+      they make a wine of dates mixt with spices, which is very good. When any one
+      not used to it first drinks this wine, it causes repeated and violent purging,
+      but afterwards he is all the better for it, and gets fat upon it. The people
+      never eat meat and wheaten bread except when they are ill, and if they take
+      such food when they are in health it makes them ill. Their food when in health
+      consists of dates and salt-fish (tunny, to wit) and onions, and this kind of
+      diet they maintain in order to preserve their health.{2}
     id: 12359
     uid: X6mc9AhMW
     parents:
@@ -1968,6 +2081,8 @@
     order: 1
     page:
       id: 11850
+    refs:
+    - id: 20643
 - - string: Portrait of Kúblái Kaan. (From a Chinese Engraving.)
     id: 12635
     uid: mofEWOJlW
@@ -2084,6 +2199,7 @@
     - id: 12732
     - id: 12769
     - id: 12770
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -2099,6 +2215,7 @@
     - id: 12732
     - id: 12761
     - id: 12762
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -2632,21 +2749,6 @@
     order: 8
     page:
       id: 11850
-- - string: where does a section on "who this book is for" belong? [[Claude]]
-    children:
-    - id: 4387
-    - id: 4388
-    - id: 4391
-    - id: 4392
-    id: 4427
-    uid: GJKWwLPSj
-    parents:
-    - id: 4384
-    order: 2
-    page:
-      id: 4384
-    refs:
-    - id: 4428
 - - string: '**The Theologian and the Friar:** For those tracking the spread of Christendom
       or seeking alliances against the Saracens. You will find intelligence on the
       locations of Nestorian Christians, the religious tolerance of the Tartars, and
@@ -2671,6 +2773,7 @@
     - id: 12732
     - id: 12737
     - id: 12738
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -2865,6 +2968,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 6
     page:
       id: 11850
@@ -2987,36 +3091,36 @@
       id: 11850
 - - string: Persia is a great country, which was in old times very illustrious and
       powerful; but now the Tartars have wasted and destroyed it. In Persia is the
-      city of Saba, from which the Three Magi set out when they went to worship Jesus
-      Christ; and in this city they are buried, in three very large and beautiful
-      monuments, side by side. And above them there is a square building, carefully
-      kept. The bodies are still entire, with the hair and beard remaining. One of
-      these was called Jaspar, the second Melchior, and the third Balthasar. Messer
-      Marco Polo asked a great many questions of the people of that city as to those
-      Three Magi, but never one could he find that knew aught of the matter, except
-      that these were three kings who were buried there in days of old. However, at
-      a place three days’ journey distant he heard of what I am going to tell you.
-      He found a village there which goes by the name of Cala Ataperistan,{1} which
-      is as much as to say, “The Castle of the Fire-worshippers.” And the name is
-      rightly applied, for the people there do worship fire, and I will tell you why.
-      They relate that in old times three kings of that country went away to worship
-      a Prophet that was born, and they carried with them three manner of offerings,
-      Gold, and Frankincense, and Myrrh; in order to ascertain whether that Prophet
-      were God, or an earthly King, or a Physician. For, said they, if he take the
-      Gold, then he is an earthly King; if he take the Incense he is God; if he take
-      the Myrrh he is a Physician. So it came to pass when they had come to the place
-      where the Child was born, the youngest of the Three Kings went in first, and
-      found the Child apparently just of his own age; so he went forth again marvelling
-      greatly. The middle one entered next, and like the first he found the Child
-      seemingly of his own age; so he also went forth again and marvelled greatly.
-      Lastly, the eldest went in, and as it had befallen the other two, so it befell
-      him. And he went forth very pensive. And when the three had rejoined one another,
-      each told what he had seen; and then they all marvelled the more. So they agreed
-      to go in all three together, and on doing so they beheld the Child with the
-      appearance of its actual age, to wit, some thirteen days.{2} Then they adored,
-      and presented their Gold and Incense and Myrrh. And the Child took all the three
-      offerings, and then gave them a small closed box; whereupon the Kings departed
-      to return into their own land.
+      city of [(Saba)](((9YyTOObVi))), from which the Three Magi set out when they
+      went to worship Jesus Christ; and in this city they are buried, in three very
+      large and beautiful monuments, side by side. And above them there is a square
+      building, carefully kept. The bodies are still entire, with the hair and beard
+      remaining. One of these was called Jaspar, the second Melchior, and the third
+      Balthasar. Messer Marco Polo asked a great many questions of the people of that
+      city as to those Three Magi, but never one could he find that knew aught of
+      the matter, except that these were three kings who were buried there in days
+      of old. However, at a place three days’ journey distant he heard of what I am
+      going to tell you. He found a village there which goes by the name of Cala Ataperistan,{1}
+      which is as much as to say, “The Castle of the Fire-worshippers.” And the name
+      is rightly applied, for the people there do worship fire, and I will tell you
+      why. They relate that in old times three kings of that country went away to
+      worship a Prophet that was born, and they carried with them three manner of
+      offerings, Gold, and Frankincense, and Myrrh; in order to ascertain whether
+      that Prophet were God, or an earthly King, or a Physician. For, said they, if
+      he take the Gold, then he is an earthly King; if he take the Incense he is God;
+      if he take the Myrrh he is a Physician. So it came to pass when they had come
+      to the place where the Child was born, the youngest of the Three Kings went
+      in first, and found the Child apparently just of his own age; so he went forth
+      again marvelling greatly. The middle one entered next, and like the first he
+      found the Child seemingly of his own age; so he also went forth again and marvelled
+      greatly. Lastly, the eldest went in, and as it had befallen the other two, so
+      it befell him. And he went forth very pensive. And when the three had rejoined
+      one another, each told what he had seen; and then they all marvelled the more.
+      So they agreed to go in all three together, and on doing so they beheld the
+      Child with the appearance of its actual age, to wit, some thirteen days.{2}
+      Then they adored, and presented their Gold and Incense and Myrrh. And the Child
+      took all the three offerings, and then gave them a small closed box; whereupon
+      the Kings departed to return into their own land.
     id: 12226
     uid: -aN9Kuehn
     parents:
@@ -3026,6 +3130,8 @@
     order: 1
     page:
       id: 11850
+    refs:
+    - id: 20641
 - - string: '**Ting** (or __Ding__)'
     children:
     - id: 12780
@@ -3038,6 +3144,7 @@
     - id: 12732
     - id: 12777
     - id: 12778
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -3406,6 +3513,7 @@
     - id: 12727
     - id: 12732
     - id: 12773
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -3691,6 +3799,7 @@
     - id: 12727
     - id: 12732
     - id: 12741
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -3769,6 +3878,7 @@
     - id: 12765
     - id: 12766
     - id: 12767
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -3895,6 +4005,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 5
     page:
       id: 11850
@@ -4049,7 +4160,6 @@
     string: '[1.1.4] Chapter 4: Code Listing'
     children:
     - id: 12040
-    - id: 12061
     - id: 12100
     - id: 12161
     - id: 12162
@@ -4075,6 +4185,7 @@
     - id: 12182
     - id: 12183
     - id: 12184
+    - id: 21216
     id: 12039
     lookup:
     - id: 321
@@ -4100,6 +4211,7 @@
     - id: 12777
     - id: 12778
     - id: 12779
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -4157,7 +4269,7 @@
         - uid
         - BxGxeeGk1
     heading: 2
-    string: '[0.3] An Epistle to the Reader, from the Printer'
+    string: '[0.5] An Epistle to the Reader, from the Printer'
     children:
     - id: 11880
     - id: 11882
@@ -4178,7 +4290,7 @@
     children-view-type: document
     parents:
     - id: 11850
-    order: 4
+    order: 6
     page:
       id: 11850
 - - string: The Emperor hath, by those four wives of his, twenty-two male children;
@@ -4361,9 +4473,6 @@
     order: 6
     page:
       id: 11850
-- - id: 4428
-    uid: TWqtTA-9e
-    title: Claude
 - - string: We see from the Dabistan that in the 17th century Káshmir continued to
       be a great resort of Magian mystics and sages of various sects, professing great
       abstinence and credited with preternatural powers. And indeed Vámbéry tells
@@ -4445,6 +4554,7 @@
     - id: 12727
     - id: 12732
     - id: 12737
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -4494,7 +4604,7 @@
         - uid
         - BxGxeeGk1
     heading: 2
-    string: '[2.1] [[About the Author]]'
+    string: '[2.2] [[About the Author]]'
     children:
     - id: 14549
     - id: 14552
@@ -4507,7 +4617,7 @@
     uid: t3KZEIxj8
     parents:
     - id: 11850
-    order: 9
+    order: 12
     page:
       id: 11850
     refs:
@@ -4540,6 +4650,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 2
     page:
       id: 11850
@@ -4556,6 +4667,7 @@
     - id: 12737
     - id: 12738
     - id: 12739
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -4570,6 +4682,7 @@
     - id: 12727
     - id: 12732
     - id: 12733
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -4603,7 +4716,8 @@
     - id: 11850
     - id: 11902
     - id: 12007
-    order: 1
+    - id: 21213
+    order: 0
     page:
       id: 11850
 - - string: Note 4.—The stores are now outside the walls of the “Prohibited City,”
@@ -4631,18 +4745,6 @@
       id: 11850
     refs:
     - id: 11876
-- - string: '**As a standalone section between the preface and introduction**, sometimes
-      literally titled "Who This Book Is For" — O''Reilly books do this frequently
-      and it''s become something of a technical publishing convention'
-    id: 4390
-    uid: zpV7AGpCS
-    parents:
-    - id: 4384
-    - id: 4388
-    - id: 4427
-    order: 1
-    page:
-      id: 4384
 - - attrs:
     - - source:
         - uid
@@ -4917,7 +5019,8 @@
     order: 15
     page:
       id: 11850
-- - id: 5450
+- - attrs: []
+    id: 5450
     uid: OexZiLR_O
     title: '>'
 - - attrs:
@@ -5080,6 +5183,41 @@
 - - attrs:
     - - source:
         - uid
+        - mN76Wv85f
+        value:
+        - uid
+        - mN76Wv85f
+      - source:
+        - uid
+        - DvXruLSXk
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - DvXruLSXk
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: '[0.1] Illustrations'
+    children:
+    - id: 21221
+    id: 21222
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21221
+    - id: 21222
+    uid: mN76Wv85f
+    parents:
+    - id: 11850
+    order: 2
+    page:
+      id: 11850
+- - attrs:
+    - - source:
+        - uid
         - 7o-Klx3P6
         value:
         - uid
@@ -5107,6 +5245,10 @@
     - id: 11905
     - id: 12792
     - id: 14548
+    - id: 20636
+    - id: 20647
+    - id: 21222
+    - id: 21225
     id: 11850
     lookup:
     - id: 321
@@ -5156,6 +5298,7 @@
     - id: 12745
     - id: 12746
     - id: 12747
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -5181,6 +5324,7 @@
     - id: 12732
     - id: 12765
     - id: 12766
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -5322,6 +5466,7 @@
     - id: 12727
     - id: 12732
     - id: 12749
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -5370,6 +5515,9 @@
     order: 7
     page:
       id: 11850
+- - id: 20616
+    uid: yx87Sz9r7
+    title: footnotes
 - - string: 'element-type:: chapter'
     id: 12694
     uid: UD9SkuxoE
@@ -5394,6 +5542,16 @@
     - id: 11903
     - id: 12713
     order: 2
+    page:
+      id: 11850
+- - string: The Armenian Kingdom of Cilicia, on the southern coast of Anatolia, founded
+      in 1080 by Armenians fleeing the Seljuk conquest of Greater Armenia.
+    id: 20637
+    uid: y0iOT5hmC
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 0
     page:
       id: 11850
 - - string: 'Baudas is a great city, which used to be the seat of the Calif of all
@@ -5520,6 +5678,9 @@
     order: 8
     page:
       id: 11850
+- - id: 21226
+    uid: 1uaR5SRTT
+    title: Who Is This Book For?
 - - string: 'element-type:: chapter'
     id: 12531
     uid: ntMDtY4Q-
@@ -5606,6 +5767,20 @@
     order: 3
     page:
       id: 11850
+- - string: 'float:: listing'
+    id: 21214
+    uid: a51q0Wjbf
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 12039
+    - id: 21215
+    - id: 21216
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 21162
 - - string: When therefore they awoke, and found themselves in a place so charming,
       they deemed that it was Paradise in very truth. And the ladies and damsels dallied
       with them to their hearts’ content, so that they had what young men would have;
@@ -5718,6 +5893,7 @@
     - id: 12749
     - id: 12750
     - id: 12751
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -5840,6 +6016,16 @@
       id: 11850
     refs:
     - id: 11876
+- - string: Badakhshan, a historic region on the Silk Road, now divided between north-eastern
+      Afghanistan and south-eastern Tajikistan.
+    id: 20644
+    uid: gB85TpHu2
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 7
+    page:
+      id: 11850
 - - string: CHAPTER XIII. The Fashion of the Great Kaan’s Table at his High Feasts.
     id: 12708
     uid: WeyBfoK1R
@@ -5943,6 +6129,41 @@
     order: 14
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - YslnLujF9
+        value:
+        - uid
+        - YslnLujF9
+      - source:
+        - uid
+        - woowW3Deg
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - woowW3Deg
+        value: ' list-of-tables'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21223
+    id: 21224
+    lookup:
+    - id: 11876
+    - id: 21223
+    - id: 21224
+    uid: YslnLujF9
+    parents:
+    - id: 11850
+    - id: 21225
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'In regions without paper money, larger transactions used weighed bullion.
       Polo notes the regional exchange rate was highly favorable for Western merchants:
       1 weight of gold for 5 or 6 weights of silver.'
@@ -5956,6 +6177,7 @@
     - id: 12761
     - id: 12762
     - id: 12763
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -5984,6 +6206,7 @@
     - id: 12727
     - id: 12732
     - id: 12753
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -6016,16 +6239,6 @@
     order: 14
     page:
       id: 11850
-- - string: People with no understanding of computer programming, who want to learn
-      how to code
-    id: 4598
-    uid: YESkCZ8tW
-    parents:
-    - id: 4384
-    - id: 4597
-    order: 0
-    page:
-      id: 4384
 - - string: 'Also in a contemporary account of the fall of Acre (1291): “Renovatur
       ergo bellum terribile inter alterutros ... clamoribus interjectis hinc et inde
       ad terrorem; ita ut nec Deus tonans in sublime coaudiri potuisset.” (De Excidio
@@ -6087,7 +6300,7 @@
     - id: 11850
     - id: 11903
     - id: 12727
-    order: 1
+    order: 2
     page:
       id: 11850
 - - string: 'element-type:: chapter'
@@ -6103,6 +6316,44 @@
       id: 11850
     refs:
     - id: 11876
+- - attrs:
+    - - source:
+        - uid
+        - 6PuUG4pVE
+        value:
+        - uid
+        - 6PuUG4pVE
+      - source:
+        - uid
+        - ENLc_W3QX
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - ENLc_W3QX
+        value:
+        - uid
+        - BxGxeeGk1
+    string: 'The brothers'' first voyage, A.D. 1260: from Constantinople across the
+      Greater Sea to Soldaia.'
+    children:
+    - id: 12135
+    - id: 21206
+    id: 21207
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21206
+    - id: 21207
+    uid: 6PuUG4pVE
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11906
+    order: 1
+    page:
+      id: 11850
 - - string: Note 1.—“Mire.” This was in old French the popular word for a Leech; the
       politer word was Physicien. (N. et E. V. 505.) Chrysostom says that the Gold,
       Myrrh, and Frankincense were mystic gifts indicating King, Man, God; and this
@@ -6218,6 +6469,43 @@
     - id: 11902
     - id: 11989
     order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
+- - attrs:
+    - - source:
+        - uid
+        - QeNIBjBCk
+        value:
+        - uid
+        - QeNIBjBCk
+      - source:
+        - uid
+        - a51q0Wjbf
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - a51q0Wjbf
+        value: ' listing'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21214
+    id: 21215
+    lookup:
+    - id: 21162
+    - id: 21214
+    - id: 21215
+    uid: QeNIBjBCk
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 12039
+    - id: 21216
+    order: 1
     page:
       id: 11850
     refs:
@@ -6496,6 +6784,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 12
     page:
       id: 11850
@@ -6560,6 +6849,16 @@
       id: 11850
     refs:
     - id: 11896
+- - string: Sudak, in the Crimea. The Venetians, who knew it as Soldaia, controlled
+      it until 1365, when it passed to Genoa.
+    id: 20638
+    uid: 5J3yk8LQE
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 1
+    page:
+      id: 11850
 - - string: The Sárdú road enters the Jíruft plain at the ruins of the old city, the
       Deh Bekrí route does so at some distance to the eastward. The first six stages
       performed by Marco Polo in seven days go through fertile plains and past numerous
@@ -6574,6 +6873,43 @@
     order: 18
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - LwI_ZAQov
+        value:
+        - uid
+        - LwI_ZAQov
+      - source:
+        - uid
+        - 4wD_Moq4W
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - 4wD_Moq4W
+        value: ' table'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21217
+    id: 21218
+    lookup:
+    - id: 21162
+    - id: 21217
+    - id: 21218
+    uid: LwI_ZAQov
+    parents:
+    - id: 11850
+    - id: 11903
+    - id: 12727
+    - id: 21219
+    order: 1
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: Before you embark upon the text that follows, it is proper that you are
       given some instruction on how to receive it. We have labored at great length
       to strike these pages from metal type, bringing the words of the Venetian, Messer
@@ -6614,6 +6950,7 @@
     - id: 12753
     - id: 12754
     - id: 12755
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -6647,7 +6984,7 @@
     - id: 12097
     - id: 12098
     - id: 12099
-    - id: 12137
+    - id: 21213
     id: 12007
     lookup:
     - id: 321
@@ -6688,6 +7025,9 @@
     order: 8
     page:
       id: 11850
+- - id: 21162
+    uid: -mwo6HoFt
+    title: float
 - - string: 'That sea whereof I spoke as coming so near the mountains is called the
       Sea of Ghel or Ghelan, and extends about 700 miles.{7} It is twelve days’ journey
       distant from any other sea, and into it flows the great River Euphrates and
@@ -6774,7 +7114,7 @@
     children-view-type: document
     parents:
     - id: 11850
-    order: 5
+    order: 7
     page:
       id: 11850
 - - string: Marches.
@@ -6822,38 +7162,6 @@
     order: 14
     page:
       id: 11850
-- - attrs:
-    - - source:
-        - uid
-        - ZsFRjGDDy
-        value:
-        - uid
-        - ZsFRjGDDy
-      - source:
-        - uid
-        - HrLHMMak9
-        value:
-        - uid
-        - nA2eO0MzU
-      - source:
-        - uid
-        - HrLHMMak9
-        value:
-        - uid
-        - ExJBKbXY2
-    children:
-    - id: 8662
-    - id: 8670
-    - id: 8676
-    - id: 8677
-    id: 8657
-    lookup:
-    - id: 8599
-    - id: 8657
-    - id: 8677
-    - id: 8678
-    uid: ZsFRjGDDy
-    title: Programming Language
 - - string: 'There was a great Tartar Chief, whose name was Nayan,{4} a young man
       [of thirty], Lord over many lands and many provinces; and he was Uncle to the
       Emperor Cublay Kaan of whom we are speaking. And when he found himself in authority
@@ -6895,6 +7203,7 @@
     - id: 12781
     - id: 12782
     - id: 12783
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -7249,6 +7558,7 @@
     - id: 12741
     - id: 12742
     - id: 12743
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -7338,31 +7648,6 @@
     refs:
     - id: 321
     - id: 11839
-- - string: 'isa:: [[Formal Language]]'
-    id: 8677
-    uid: HrLHMMak9
-    parents:
-    - id: 8657
-    order: 3
-    page:
-      id: 8657
-    refs:
-    - id: 8599
-    - id: 8678
-- - string: 'If it''s **more substantial** (different reader types, prerequisite knowledge,
-      how different audiences might navigate the book differently), it works better
-      as its own short named section, typically placed either:'
-    children:
-    - id: 4389
-    - id: 4390
-    id: 4388
-    uid: kPcAk-Bw1
-    parents:
-    - id: 4384
-    - id: 4427
-    order: 1
-    page:
-      id: 4384
 - - string: 381 guard by turns; a corps on tour of duty. Keshik is one of the archaisms
       of the Mongol language, for now this word has another meaning in Mongol. Colonel
       Yule has brought together several explanations of the term. It seems to me that
@@ -7398,6 +7683,7 @@
     - id: 12727
     - id: 12732
     - id: 12785
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -7413,6 +7699,7 @@
     - id: 12732
     - id: 12749
     - id: 12750
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -7631,14 +7918,15 @@
     page:
       id: 11850
 - - string: Now there was on that spot in old times a great and noble city called
-      Cambaluc, which is as much as to say in our tongue “The city of the Emperor.”{1}
-      But the Great Kaan was informed by his Astrologers that this city would prove
-      rebellious, and raise great disorders against his imperial authority. So he
-      caused the present city to be built close beside the old one, with only a river
-      between them.{2} And he caused the people of the old city to be removed to the
-      new town that he had founded; and this is called Taidu. [However, he allowed
-      a portion of the people which he did not suspect to remain in the old city,
-      because the new one could not hold the whole of them, big as it is.]
+      [(Cambaluc)](((y6Cq0QnhI))), which is as much as to say in our tongue “The city
+      of the Emperor.”{1} But the Great Kaan was informed by his Astrologers that
+      this city would prove rebellious, and raise great disorders against his imperial
+      authority. So he caused the present city to be built close beside the old one,
+      with only a river between them.{2} And he caused the people of the old city
+      to be removed to the new town that he had founded; and this is called Taidu.
+      [However, he allowed a portion of the people which he did not suspect to remain
+      in the old city, because the new one could not hold the whole of them, big as
+      it is.]
     id: 12672
     uid: t0c4q5FAN
     parents:
@@ -7648,6 +7936,8 @@
     order: 2
     page:
       id: 11850
+    refs:
+    - id: 20646
 - - string: The existing Tartar city of Peking (technically Neï-ch’ing, “The Interior
       City,” or King-ch’ing, “City of the Court”) stands on the site of Taidu, and
       represents it. After the expulsion of the Mongols (1368) the new native Dynasty
@@ -7818,18 +8108,20 @@
     order: 2
     page:
       id: 11850
-- - string: 'Programmers, with at least a rudimentary understanding of computer programming,
-      in **any** [[Programming Language]] (addressable audience: ~40 million worldwide)'
-    id: 4602
-    uid: 39_RTkGv-
+- - string: 'float:: figure'
+    id: 21208
+    uid: hafI_rkld
     parents:
-    - id: 4384
-    - id: 4600
+    - id: 11850
+    - id: 11902
+    - id: 11972
+    - id: 21209
+    - id: 21210
     order: 0
     page:
-      id: 4384
+      id: 11850
     refs:
-    - id: 8657
+    - id: 21162
 - - string: God preserve you in your reading.
     id: 11887
     uid: mwRFIaxIs
@@ -8050,6 +8342,81 @@
     order: 5
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - 3-OcJkNyL
+        value:
+        - uid
+        - 3-OcJkNyL
+      - source:
+        - uid
+        - 619wcXH8B
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - 619wcXH8B
+        value: ' figure'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21211
+    id: 21212
+    lookup:
+    - id: 21162
+    - id: 21211
+    - id: 21212
+    uid: 3-OcJkNyL
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 12007
+    - id: 21213
+    order: 1
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
+- - attrs:
+    - - source:
+        - uid
+        - Wx3tPA-fI
+        value:
+        - uid
+        - Wx3tPA-fI
+      - source:
+        - uid
+        - Aj5x4KDkB
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - Aj5x4KDkB
+        value:
+        - uid
+        - BxGxeeGk1
+    string: 'The second leg, A.D. 1261–1262: from Soldaia into the Tartar lands, to
+      Sara and Bolgara, the residences of Barca Kaan.'
+    children:
+    - id: 12136
+    - id: 21209
+    id: 21210
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21209
+    - id: 21210
+    uid: Wx3tPA-fI
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11972
+    order: 1
+    page:
+      id: 11850
 - - string: 'Note 3.—Bolor is a subject which it would take several pages to discuss
       with fulness, and I must refer for such fuller discussion to a paper in the
       J. R. G. S. vol. xlii. p. 473. The name Bolor is very old, occurring in Hiuen
@@ -8231,6 +8598,18 @@
     order: 17
     page:
       id: 11850
+- - string: 'element-type:: list-of-illustrations'
+    id: 21220
+    uid: DEAkQGxFy
+    parents:
+    - id: 11850
+    - id: 21221
+    - id: 21222
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - string: 'And so thenceforward no more was heard of the floutings of the unbelievers
       against the Christians; for they heard very well what the Sovereign said to
       the latter about the Cross on Nayan’s banner, and its giving him no help. Note
@@ -8396,6 +8775,41 @@
     order: 8
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - qd_rPQczj
+        value:
+        - uid
+        - qd_rPQczj
+      - source:
+        - uid
+        - a-ciOHKA3
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - a-ciOHKA3
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: '[2.1] Notes'
+    children:
+    - id: 20635
+    id: 20636
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 20635
+    - id: 20636
+    uid: qd_rPQczj
+    parents:
+    - id: 11850
+    order: 11
+    page:
+      id: 11850
 - - string: '[1] This story has been transferred to Peter the Great, who is alleged
       to have exhibited the docility of his subjects in the same way to the King of
       Denmark, by ordering a Cossack to jump from the Round Tower at Copenhagen, on
@@ -8420,6 +8834,56 @@
     order: 11
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - S5r_5tiRB
+        value:
+        - uid
+        - S5r_5tiRB
+      - source:
+        - uid
+        - 3-OcJkNyL
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 3-OcJkNyL
+        value:
+        - uid
+        - BxGxeeGk1
+    string: 'The third leg, A.D. 1262–1265: across the great desert to Bocara, where
+      the brothers met the envoys of the Levant.'
+    children:
+    - id: 12137
+    - id: 21212
+    id: 21213
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21212
+    - id: 21213
+    uid: S5r_5tiRB
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 12007
+    order: 1
+    page:
+      id: 11850
+- - string: 'element-type:: endnotes'
+    id: 20634
+    uid: -JaXXr0-i
+    parents:
+    - id: 11850
+    - id: 20635
+    - id: 20636
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 11876
 - - string: 'element-type:: chapter'
     id: 12259
     uid: nI0AyNaQK
@@ -8433,6 +8897,15 @@
       id: 11850
     refs:
     - id: 11876
+- - string: Saveh, in north-western Iran, not far from Tehran.
+    id: 20641
+    uid: 9YyTOObVi
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 4
+    page:
+      id: 11850
 - - string: Now you must know that Persia is a very great country, and contains eight
       kingdoms. I will tell you the names of them all.
     id: 12254
@@ -8514,7 +8987,7 @@
     order: 8
     page:
       id: 11850
-- - string: On the frontier of Armenia towards the south-east is the kingdom of Mausul.
+- - string: On the frontier of Armenia towards the south-east is the kingdom of [(Mausul)](((TDJJZ9PaR))).
       It is a very great kingdom, and inhabited{1} by several different kinds of people
       whom we shall now describe. First there is a kind of people called Arabi, and
       these worship Mahommet. Then there is another description of people who are
@@ -8525,25 +8998,26 @@
       must know that though there is a very great number of Christians in those countries,
       they are all Jacobites and Nestorians; Christians indeed, but not in the fashion
       enjoined by the Pope of Rome, for they come short in several points of the Faith.{2}
-      All the cloths of gold and silk that are called Mosolins are made in this country;
-      and those great Merchants called Mosolins, who carry for sale such quantities
-      of spicery and pearls and cloths of silk and gold, are also from this kingdom.{3}
-      There is yet another race of people who inhabit the mountains in that quarter,
-      and are called Curds. Some of them are Christians, and some of them are Saracens;
-      but they are an evil generation, whose delight it is to plunder merchants.{4}
-      [Near this province is another called Mus and Merdin, producing an immense quantity
-      of cotton, from which they make a great deal of buckram{5} and other cloth.
-      The people are craftsmen and traders, and all are subject to the Tartar King.]
-      Note 1.—Polo could scarcely have been justified in calling Mosul a very great
-      kingdom. This is a bad habit of his, as we shall have to notice again. Badruddín
-      Lúlú, the last Atabeg of Mosul of the race of Zenghi had at the age of 96 taken
-      sides with Hulaku, and stood high in his favour. His son Malik Sálih, having
-      revolted, surrendered to the Mongols in 1261 on promise of life; which promise
-      they kept in Mongol fashion by torturing him to death. Since then the kingdom
-      had ceased to exist as such. Coins of Badruddín remain with the name and titles
-      of Mangku Kaan on their reverse, and some of his and of other atabegs exhibit
-      curious imitations of Greek art. (Quat. Rash. p. 389; Jour. As. IV. VI. 141.).
-      —H. Y. and H. C. [Mosul was pillaged by Timur at the end of the
+      All the cloths of gold and silk that are called [(Mosolins)](((DE7kym__h)))
+      are made in this country; and those great Merchants called Mosolins, who carry
+      for sale such quantities of spicery and pearls and cloths of silk and gold,
+      are also from this kingdom.{3} There is yet another race of people who inhabit
+      the mountains in that quarter, and are called Curds. Some of them are Christians,
+      and some of them are Saracens; but they are an evil generation, whose delight
+      it is to plunder merchants.{4} [Near this province is another called Mus and
+      Merdin, producing an immense quantity of cotton, from which they make a great
+      deal of buckram{5} and other cloth. The people are craftsmen and traders, and
+      all are subject to the Tartar King.] Note 1.—Polo could scarcely have been justified
+      in calling Mosul a very great kingdom. This is a bad habit of his, as we shall
+      have to notice again. Badruddín Lúlú, the last Atabeg of Mosul of the race of
+      Zenghi had at the age of 96 taken sides with Hulaku, and stood high in his favour.
+      His son Malik Sálih, having revolted, surrendered to the Mongols in 1261 on
+      promise of life; which promise they kept in Mongol fashion by torturing him
+      to death. Since then the kingdom had ceased to exist as such. Coins of Badruddín
+      remain with the name and titles of Mangku Kaan on their reverse, and some of
+      his and of other atabegs exhibit curious imitations of Greek art. (Quat. Rash.
+      p. 389; Jour. As. IV. VI. 141.). —H. Y. and H. C. [Mosul was pillaged by Timur
+      at the end of the
     id: 12185
     uid: emxLujzkH
     parents:
@@ -8553,6 +9027,9 @@
     order: 2
     page:
       id: 11850
+    refs:
+    - id: 20639
+    - id: 20640
 - - string: And after the Great Kaan had defeated Nayan in the way you have heard,
       he went back to his capital city of Cambaluc and abode there, taking his ease
       and making festivity. And the other Tartar Lord called Caydu was greatly troubled
@@ -8598,6 +9075,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 13
     page:
       id: 11850
@@ -8715,6 +9193,41 @@
     order: 6
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - DvXruLSXk
+        value:
+        - uid
+        - DvXruLSXk
+      - source:
+        - uid
+        - DEAkQGxFy
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - DEAkQGxFy
+        value: ' list-of-illustrations'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21220
+    id: 21221
+    lookup:
+    - id: 11876
+    - id: 21220
+    - id: 21221
+    uid: DvXruLSXk
+    parents:
+    - id: 11850
+    - id: 21222
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
 - - string: I must humbly acknowledge the labor of the learned Master Heinrich, who
       took it upon himself to turn this history from the Latin tongue into our own
       plain German, that the burghers and merchants of this city might read of the
@@ -8749,6 +9262,7 @@
     - id: 12727
     - id: 12732
     - id: 12769
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -8981,18 +9495,6 @@
     order: 15
     page:
       id: 11850
-- - heading: 3
-    string: Who this book is not for
-    children:
-    - id: 4598
-    - id: 4599
-    id: 4597
-    uid: Wwn_ElnkO
-    parents:
-    - id: 4384
-    order: 1
-    page:
-      id: 4384
 - - string: So when the Two Brothers had made their arrangements, they set out on
       their travels, in company with the Envoys, and journeyed for a whole year, going
       northward and northeastward, before they reached the Court of that Prince. And
@@ -9316,7 +9818,7 @@
     uid: MGvH7SY4M
     parents:
     - id: 11850
-    order: 8
+    order: 10
     page:
       id: 11850
 - - string: Note 9.—[The enormous quantity of fish found in the Caspian Sea is ascribed
@@ -9459,6 +9961,53 @@
 - - attrs:
     - - source:
         - uid
+        - Aj5x4KDkB
+        value:
+        - uid
+        - Aj5x4KDkB
+      - source:
+        - uid
+        - hafI_rkld
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - hafI_rkld
+        value: ' figure'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21208
+    id: 21209
+    lookup:
+    - id: 21162
+    - id: 21208
+    - id: 21209
+    uid: Aj5x4KDkB
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11972
+    - id: 21210
+    order: 1
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
+- - string: A principality centred on the city of Mosul, in what is now northern Iraq;
+      it came under Mongol rule in 1261.
+    id: 20639
+    uid: TDJJZ9PaR
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 2
+    page:
+      id: 11850
+- - attrs:
+    - - source:
+        - uid
         - kaKxCS13r
         value:
         - uid
@@ -9573,6 +10122,7 @@
     - id: 12727
     - id: 12732
     - id: 12761
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -9675,6 +10225,7 @@
     - id: 12732
     - id: 12781
     - id: 12782
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -9688,6 +10239,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 4
     page:
       id: 11850
@@ -9701,6 +10253,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 1
     page:
       id: 11850
@@ -9903,6 +10456,16 @@
     order: 4
     page:
       id: 11850
+- - string: Khubilai, the fifth Great Khan of the Mongol Empire and the first emperor
+      of China's Yuan dynasty.
+    id: 20645
+    uid: zCCYjDcSv
+    parents:
+    - id: 11850
+    - id: 20647
+    order: 8
+    page:
+      id: 11850
 - - string: No European traveller, so far as I know, has described the most direct
       road from Kermán to Hormuz, or rather to its nearest modern representative Bander
       Abbási,—I mean the road by Báft. But a line to the eastward of this, and leading
@@ -9947,6 +10510,7 @@
     - id: 12732
     - id: 12773
     - id: 12774
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -10223,7 +10787,8 @@
     - id: 11850
     - id: 11902
     - id: 11906
-    order: 1
+    - id: 21207
+    order: 0
     page:
       id: 11850
 - - string: '**The Return to Court:** After a few days of indulging in the garden''s
@@ -10312,7 +10877,7 @@
     uid: 09KMheZHg
     parents:
     - id: 11850
-    order: 7
+    order: 9
     page:
       id: 11850
 - - string: The first kingdom is that at the beginning of Persia, and it is called
@@ -10373,7 +10938,7 @@
     children:
     - id: 12728
     - id: 12730
-    - id: 12732
+    - id: 21219
     id: 12727
     lookup:
     - id: 321
@@ -10429,6 +10994,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 10
     page:
       id: 11850
@@ -10621,6 +11187,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 11
     page:
       id: 11850
@@ -10925,16 +11492,6 @@
 - - id: 4588
     uid: R9gPO6rxP
     title: About the Author
-- - string: If it's **a few sentences**, it fits naturally inside the introduction
-      — just fold it into the opening where you're framing the book's purpose.
-    id: 4387
-    uid: PjkhzuQ8m
-    parents:
-    - id: 4384
-    - id: 4427
-    order: 0
-    page:
-      id: 4384
 - - string: 'I should mention too that an officer who holds the chief command of 100,000
       men, or who is general-in-chief of a great host, is entitled to a tablet that
       weighs 300 saggi. It has an inscription thereon to the same purport that I have
@@ -10999,6 +11556,7 @@
     - id: 12732
     - id: 12741
     - id: 12742
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -11027,9 +11585,19 @@
       - front-matter headings whose text is a page reference (Acknowledgments; Who
       is this Book for?)
 
-      - a chapter whose body is a fenced Python `code block` (Chapter 4: Code Listing)
+      - every image, table, and code listing is a `float` wrapper (through its `guffin-meta::`
+      child) over the content block itself: three `float:: figure` maps (Book I chapters
+      I–III), one `float:: listing` (Chapter 4: Code Listing), and one `float:: table`
+      (Book II, Chapter XXIV) — a book numbers them by chapter, counting the chapters
+      consecutively through the parts, so they render as Figure 1.1, 2.1, 3.1, Listing
+      4.1, and Table 30.1
 
-      - this INFO `Callout box`'
+      - two front-matter headings, ahead of the acknowledgments as Chicago orders
+      them, tagged `element-type:: list-of-illustrations` (`[0.1] Illustrations`)
+      and `element-type:: list-of-tables` (`[0.2] Tables`), to hold the generated
+      lists of figures and tables; code listings get no list, by design
+
+      - this INFO `Callout box` '
     id: 11852
     uid: rhPsF4zq3
     parents:
@@ -11073,18 +11641,18 @@
     order: 1
     page:
       id: 11850
-- - string: Having stayed a while at Soldaia, they considered the matter, and thought
-      it well to extend their journey further. So they set forth from Soldaia and
-      travelled till they came to the Court of a certain Tartar Prince, Barca Kaan
-      by name, whose residences were at Sara{1} and at Bolgara [and who was esteemed
-      one of the most liberal and courteous Princes that ever was among the Tartars.]{2}
-      This Barca was delighted at the arrival of the Two Brothers, and treated them
-      with great honour; so they presented to him the whole of the jewels that they
-      had brought with them. The Prince was highly pleased with these, and accepted
-      the offering most graciously, causing the Brothers to receive at least twice
-      its value. After they had spent a twelvemonth at the court of this Prince there
-      broke out a great war between Barca and Aláu, the Lord of the Tartars of the
-      Levant, and great hosts were mustered on either side.{3}
+- - string: Having stayed a while at [(Soldaia)](((5J3yk8LQE))), they considered the
+      matter, and thought it well to extend their journey further. So they set forth
+      from Soldaia and travelled till they came to the Court of a certain Tartar Prince,
+      Barca Kaan by name, whose residences were at Sara{1} and at Bolgara [and who
+      was esteemed one of the most liberal and courteous Princes that ever was among
+      the Tartars.]{2} This Barca was delighted at the arrival of the Two Brothers,
+      and treated them with great honour; so they presented to him the whole of the
+      jewels that they had brought with them. The Prince was highly pleased with these,
+      and accepted the offering most graciously, causing the Brothers to receive at
+      least twice its value. After they had spent a twelvemonth at the court of this
+      Prince there broke out a great war between Barca and Aláu, the Lord of the Tartars
+      of the Levant, and great hosts were mustered on either side.{3}
     id: 12095
     uid: qA3qSVISz
     parents:
@@ -11094,6 +11662,8 @@
     order: 3
     page:
       id: 11850
+    refs:
+    - id: 20638
 - - id: 11842
     uid: MhnnPhnTB
     title: authors
@@ -11184,6 +11754,7 @@
     - id: 12732
     - id: 12785
     - id: 12786
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -11227,7 +11798,7 @@
         - uid
         - BxGxeeGk1
     heading: 2
-    string: '[0.2] [[Who Is This Book For?]]'
+    string: '[0.4] [[Who Is This Book For?]]'
     children:
     - id: 11872
     - id: 11873
@@ -11244,11 +11815,11 @@
     children-view-type: document
     parents:
     - id: 11850
-    order: 3
+    order: 5
     page:
       id: 11850
     refs:
-    - id: 4384
+    - id: 21226
 - - attrs:
     - - source:
         - uid
@@ -11303,6 +11874,41 @@
 - - attrs:
     - - source:
         - uid
+        - a-ciOHKA3
+        value:
+        - uid
+        - a-ciOHKA3
+      - source:
+        - uid
+        - -JaXXr0-i
+        value:
+        - uid
+        - asCh2FQQp
+      - source:
+        - uid
+        - -JaXXr0-i
+        value: ' endnotes'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 20634
+    id: 20635
+    lookup:
+    - id: 11876
+    - id: 20634
+    - id: 20635
+    uid: a-ciOHKA3
+    parents:
+    - id: 11850
+    - id: 20636
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 321
+    - id: 11839
+- - attrs:
+    - - source:
+        - uid
         - f5oHh-EjV
         value:
         - uid
@@ -11336,15 +11942,6 @@
     refs:
     - id: 321
     - id: 11839
-- - string: Experienced software engineers looking for specific
-    id: 4599
-    uid: fQV20MHbZ
-    parents:
-    - id: 4384
-    - id: 4597
-    order: 1
-    page:
-      id: 4384
 - - string: '[1] A learned friend objects to Johnson’s Hundwáníy = “Indian Steel,”
       as too absolute; some word for steel being wanted. Even if it be so, I observe
       that in three places where Polo uses Ondanique (here, ch. xxi., and ch. xlii.),
@@ -11464,9 +12061,6 @@
     order: 3
     page:
       id: 11850
-- - id: 261
-    uid: RXwAqq0_T
-    title: tags
 - - string: Note 2.—Chorcha is the Manchu country, Niuché of the Chinese. (Supra,
       note 2, ch. xlvi. Bk. I.) [“Chorcha is Churchin.—Nayan, as vassal of the Mongol
       khans, had the commission to keep in obedience the people of Manchuria (subdued
@@ -11525,7 +12119,7 @@
         - uid
         - BxGxeeGk1
     heading: 2
-    string: '[0.1] [[Acknowledgments]]'
+    string: '[0.3] [[Acknowledgments]]'
     children:
     - id: 11862
     - id: 11865
@@ -11544,7 +12138,7 @@
     children-view-type: document
     parents:
     - id: 11850
-    order: 2
+    order: 4
     page:
       id: 11850
     refs:
@@ -11679,14 +12273,6 @@
     order: 1
     page:
       id: 11850
-- - string: ''
-    id: 11901
-    uid: sDUbCET-K
-    parents:
-    - id: 4338
-    order: 0
-    page:
-      id: 4338
 - - string: '1. From Kermán to the caravanserai of Deh Bakri in the pass so called.
       “The ground as I ascended became covered with snow, and the weather bitterly
       cold” (Report) . . . 2. Two miles over very deep snow brought him to the top
@@ -11851,6 +12437,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 8
     page:
       id: 11850
@@ -11931,17 +12518,55 @@
     order: 2
     page:
       id: 11850
-- - string: 'tags:: #Publishing'
-    id: 18204
-    uid: JSrSVApJ_
+- - attrs:
+    - - source:
+        - uid
+        - sZSakvhFE
+        value:
+        - uid
+        - sZSakvhFE
+      - source:
+        - uid
+        - LwI_ZAQov
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - LwI_ZAQov
+        value:
+        - uid
+        - BxGxeeGk1
+    string: The currencies, weights, and measures Polo records, by region.
+    children:
+    - id: 12732
+    - id: 21218
+    id: 21219
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21218
+    - id: 21219
+    uid: sZSakvhFE
     parents:
-    - id: 4223
+    - id: 11850
+    - id: 11903
+    - id: 12727
     order: 1
     page:
-      id: 4223
+      id: 11850
+- - string: 'element-type:: list-of-tables'
+    id: 21223
+    uid: woowW3Deg
+    parents:
+    - id: 11850
+    - id: 21224
+    - id: 21225
+    order: 0
+    page:
+      id: 11850
     refs:
-    - id: 261
-    - id: 6535
+    - id: 11876
 - - string: I now proceed to recapitulate the main features of Polo’s Itinerary from
       Kermán to Hormuz. We have:— Marches.
     id: 12327
@@ -12059,7 +12684,8 @@
     - id: 11850
     - id: 11902
     - id: 12039
-    order: 1
+    - id: 21216
+    order: 0
     page:
       id: 11850
 - - string: From Monument of St. Peter Martyr.
@@ -12097,7 +12723,7 @@
     children:
     - id: 11910
     - id: 11963
-    - id: 12135
+    - id: 21207
     id: 11906
     lookup:
     - id: 321
@@ -12122,6 +12748,7 @@
     - id: 12727
     - id: 12732
     - id: 12777
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -12270,6 +12897,43 @@
     order: 25
     page:
       id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - hIcIxeUtA
+        value:
+        - uid
+        - hIcIxeUtA
+      - source:
+        - uid
+        - QeNIBjBCk
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - QeNIBjBCk
+        value:
+        - uid
+        - BxGxeeGk1
+    string: Guffin's transcribe function, which turns a node tree into a vertex tree.
+    children:
+    - id: 12061
+    - id: 21215
+    id: 21216
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21215
+    - id: 21216
+    uid: hIcIxeUtA
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 12039
+    order: 1
+    page:
+      id: 11850
 - - string: '**Cowrie Shells (__Porcelaine__)**'
     children:
     - id: 12756
@@ -12282,6 +12946,7 @@
     - id: 12732
     - id: 12753
     - id: 12754
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -12317,6 +12982,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -12330,6 +12996,7 @@
     - id: 11903
     - id: 12727
     - id: 12732
+    - id: 21219
     order: 3
     page:
       id: 11850
@@ -12347,20 +13014,20 @@
     order: 3
     page:
       id: 11850
-- - string: Kerman is a kingdom which is also properly in Persia, and formerly it
-      had a hereditary prince. Since the Tartars conquered the country the rule is
-      no longer hereditary, but the Tartar sends to administer whatever lord he pleases.{1}
-      In this kingdom are produced the stones called turquoises in great abundance;
-      they are found in the mountains, where they are extracted from the rocks.{2}
-      There are also plenty of veins of steel and Ondanique.{3} The people are very
-      skilful in making harness of war; their saddles, bridles, spurs, swords, bows,
-      quivers, and arms of every kind, are very well made indeed according to the
-      fashion of those parts. The ladies of the country and their daughters also produce
-      exquisite needlework in the embroidery of silk stuffs in different colours,
-      with figures of beasts and birds, trees and flowers, and a variety of other
-      patterns. They work hangings for the use of noblemen so deftly that they are
-      marvels to see, as well as cushions, pillows quilts, and all sorts of things.
-      {4}
+- - string: '[(Kerman)](((ExR4qHuuC))) is a kingdom which is also properly in Persia,
+      and formerly it had a hereditary prince. Since the Tartars conquered the country
+      the rule is no longer hereditary, but the Tartar sends to administer whatever
+      lord he pleases.{1} In this kingdom are produced the stones called turquoises
+      in great abundance; they are found in the mountains, where they are extracted
+      from the rocks.{2} There are also plenty of veins of steel and Ondanique.{3}
+      The people are very skilful in making harness of war; their saddles, bridles,
+      spurs, swords, bows, quivers, and arms of every kind, are very well made indeed
+      according to the fashion of those parts. The ladies of the country and their
+      daughters also produce exquisite needlework in the embroidery of silk stuffs
+      in different colours, with figures of beasts and birds, trees and flowers, and
+      a variety of other patterns. They work hangings for the use of noblemen so deftly
+      that they are marvels to see, as well as cushions, pillows quilts, and all sorts
+      of things. {4}'
     id: 12282
     uid: g9CM7k81s
     parents:
@@ -12370,6 +13037,8 @@
     order: 1
     page:
       id: 11850
+    refs:
+    - id: 20642
 - - string: And the Paris Liturgy:—
     id: 12238
     uid: mqh8viyXo
@@ -12433,7 +13102,7 @@
     - id: 12093
     - id: 12094
     - id: 12095
-    - id: 12136
+    - id: 21210
     id: 11972
     lookup:
     - id: 321
@@ -12649,6 +13318,7 @@
     - id: 12727
     - id: 12732
     - id: 12765
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -12689,6 +13359,7 @@
     - id: 12769
     - id: 12770
     - id: 12771
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -13116,41 +13787,10 @@
     - id: 12727
     - id: 12732
     - id: 12757
+    - id: 21219
     order: 0
     page:
       id: 11850
-- - string: '[[>]] [[!INFO]] Contextual Definition: Programming Language (Gemini)
-
-      A programming language is a **formal** system of rules, symbols, and syntax
-      used to provide instructions to a computer. It acts as a bridge between human
-      thought patterns and the binary operations of a processor, allowing developers
-      to define data structures, control flow, and algorithms.
-
-
-      Examples: [[Fortran]], [[ALGOL]], [[COBOL]], [[Pascal]], [[C]], [[C++]], [[Java]],
-      [[Visual Basic/VB.NET]], [[Python]], [[Rust]]'
-    id: 8662
-    uid: eb6oOgGOt
-    parents:
-    - id: 8657
-    props:
-      type: equal
-    order: 0
-    page:
-      id: 8657
-    refs:
-    - id: 4648
-    - id: 4649
-    - id: 4650
-    - id: 4654
-    - id: 4655
-    - id: 5450
-    - id: 5462
-    - id: 8723
-    - id: 8731
-    - id: 8732
-    - id: 8733
-    - id: 8931
 - - attrs:
     - - source:
         - uid
@@ -13209,7 +13849,8 @@
     - id: 11850
     - id: 11903
     - id: 12727
-    order: 2
+    - id: 21219
+    order: 0
     page:
       id: 11850
     refs:
@@ -13288,28 +13929,6 @@
     order: 6
     page:
       id: 11850
-- - string: '[[>]] [[!NOTE]] Contextual Core Components (Gemini)
-
-      **Syntax**: The specific set of rules that defines the combinations of symbols
-      that are considered to be correctly structured programs (the "grammar").
-
-
-      **Semantics:** The meaning or behavior of the code when executed.
-
-
-      **Abstraction:** The ability to hide complex hardware operations behind human-readable
-      commands (e.g., using `print()` instead of manually managing memory buffers
-      and CPU registers).'
-    id: 8670
-    uid: XyG4ILJOo
-    parents:
-    - id: 8657
-    order: 1
-    page:
-      id: 8657
-    refs:
-    - id: 5450
-    - id: 5455
 - - string: And after the Great Kaan had defeated Nayan in the way you have heard,
       he went back to his capital city of Cambaluc and abode there, taking his ease
       and making festivity. And the other Tartar Lord called Caydu was greatly troubled
@@ -13371,6 +13990,20 @@
     order: 9
     page:
       id: 11850
+- - string: 'float:: figure'
+    id: 21205
+    uid: _JH8OJUKv
+    parents:
+    - id: 11850
+    - id: 11902
+    - id: 11906
+    - id: 21206
+    - id: 21207
+    order: 0
+    page:
+      id: 11850
+    refs:
+    - id: 21162
 - - string: 'element-type:: chapter'
     id: 12588
     uid: xj1qpLeNc
@@ -13577,21 +14210,10 @@
     - id: 12757
     - id: 12758
     - id: 12759
+    - id: 21219
     order: 0
     page:
       id: 11850
-- - string: '**In the preface** — this is the most common home for it in technical
-      books, since "who this is for" is meta-information __about__ the book rather
-      than content __of__ the book'
-    id: 4389
-    uid: TPRmrrxwE
-    parents:
-    - id: 4384
-    - id: 4388
-    - id: 4427
-    order: 0
-    page:
-      id: 4384
 - - string: 'Wakhán was restored to geography by Macartney, in the able map which
       he compiled for Elphinstone’s Caubul, and was made known more accurately by
       Wood’s journey through it. [The district of Wakhán “comprises the valleys containing
@@ -13712,7 +14334,7 @@
     children-view-type: document
     parents:
     - id: 11850
-    order: 6
+    order: 8
     page:
       id: 11850
 - - string: Peking As it is and As it was, about 1290
@@ -13810,14 +14432,6 @@
     order: 7
     page:
       id: 11850
-- - attrs: []
-    children:
-    - id: 4427
-    - id: 4597
-    - id: 4600
-    id: 4384
-    uid: GuHqKi9Y_
-    title: Who Is This Book For?
 - - string: This name is introduced in Ramusio, but probably by interpolation, as
       well as the correction of the statement regarding Euphrates, which is perhaps
       a branch of the notion alluded to in Prologue, ch. ii. note 5. In a later chapter
@@ -13850,21 +14464,10 @@
     - id: 11850
     - id: 11902
     - id: 11972
-    order: 1
+    - id: 21210
+    order: 0
     page:
       id: 11850
-- - string: 'The O''Reilly pattern is worth knowing because it''s so widespread in
-      technical publishing: preface → who this book is for → (sometimes) conventions
-      used in this book → introduction. Readers have come to expect it in that genre,
-      which is itself a reason to follow it.'
-    id: 4391
-    uid: xLG8Ir4vl
-    parents:
-    - id: 4384
-    - id: 4427
-    order: 2
-    page:
-      id: 4384
 - - string: 'element-type:: chapter'
     id: 12729
     uid: 5fk3jOXT0
@@ -14039,6 +14642,7 @@
     - id: 12727
     - id: 12732
     - id: 12781
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -14099,21 +14703,6 @@
     order: 20
     page:
       id: 11850
-- - string: '[[>]] [[!NOTE]] The Translation Process
-
-      Because computers only understand machine code (1s and 0s), programming languages
-      rely on a **compiler** or an **interpreter** to translate the source code into
-      a format the hardware can execute.'
-    id: 8676
-    uid: ABHkVeu8O
-    parents:
-    - id: 8657
-    order: 2
-    page:
-      id: 8657
-    refs:
-    - id: 5450
-    - id: 5455
 - - string: IDEAL PLAN of the ANCIENT PALACES of the MONGOL EMPERORS AT KHANBALIGH
       according to Dr. Bretschneider
     id: 12654
@@ -14440,7 +15029,7 @@
     order: 0
     page:
       id: 11850
-- - string: There are two Hermenias, the Greater and the Less. The Lesser Hermenia
+- - string: There are two Hermenias, the Greater and the Less. The [(Lesser Hermenia)](((y0iOT5hmC)))
       is governed by a certain King, who maintains a just rule in his dominions, but
       is himself subject to the Tartar. {1} The country contains numerous towns and
       villages,{2} and has everything in plenty; moreover, it is a great country for
@@ -14465,6 +15054,8 @@
     order: 2
     page:
       id: 11850
+    refs:
+    - id: 20637
 - - string: '[1] See Letter of Frederic to the Roman Senate, of 20th June, 1241, in
       Bréholles. Mahommedan writers, contemporary with the Mongol invasions, regarded
       these as a manifest sign of the approaching end of the world. (See Elliot’s
@@ -14492,18 +15083,10 @@
     - id: 12773
     - id: 12774
     - id: 12775
+    - id: 21219
     order: 0
     page:
       id: 11850
-- - string: 'Software Engineering Managers (addressable audience: ~5 million worldwide)'
-    id: 4601
-    uid: oaDIyA-Js
-    parents:
-    - id: 4384
-    - id: 4600
-    order: 1
-    page:
-      id: 4384
 - - string: From Leaning Tower. (After Jal.)
     id: 12357
     uid: VBmdO2ZbP
@@ -14526,6 +15109,7 @@
     - id: 12732
     - id: 12745
     - id: 12746
+    - id: 21219
     order: 0
     page:
       id: 11850
@@ -14614,6 +15198,41 @@
     - id: 11902
     - id: 12314
     order: 21
+    page:
+      id: 11850
+- - attrs:
+    - - source:
+        - uid
+        - HNou_PbKI
+        value:
+        - uid
+        - HNou_PbKI
+      - source:
+        - uid
+        - YslnLujF9
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - YslnLujF9
+        value:
+        - uid
+        - BxGxeeGk1
+    heading: 2
+    string: '[0.2] Tables'
+    children:
+    - id: 21224
+    id: 21225
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21224
+    - id: 21225
+    uid: HNou_PbKI
+    parents:
+    - id: 11850
+    order: 3
     page:
       id: 11850
 - - string: 'The story of the death of Mosta’sim Billah, the last of the Abbaside
@@ -14979,15 +15598,3 @@
     order: 13
     page:
       id: 11850
-- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
-      TEST DATA – DO NOT REMOVE'
-    id: 18202
-    uid: lXi4SgSvz
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462

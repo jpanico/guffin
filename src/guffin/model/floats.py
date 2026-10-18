@@ -218,6 +218,55 @@ def floats_in(tree: VertexTree) -> dict[Uid, Float]:
     return floats
 
 
+class _Visit(NamedTuple):
+    """One step of the reading-order walk: a vertex met, the float it displays if any, and its headings."""
+
+    vertex: Vertex
+    float: Float | None
+    headings: tuple[HeadingVertex, ...]
+
+
+def _reading_order(tree: VertexTree) -> list[_Visit]:
+    """Return every vertex of *tree*'s rendered document as a reader meets it, with its governing headings.
+
+    Walks pre-order from the root: each vertex's children in order, an embed's target subtree
+    descending at the embed site, and a standalone reference to a wrapper descending into the
+    wrapper, since such a reference displays the float.  A wrapper is a leaf of the walk (its
+    content is the float's, not the running text's) and is met once per display; every other
+    vertex is met once (cycles terminate).  A heading governs everything after it until the next
+    heading at its level or above.  The notes containers are not part of the running text, so the
+    walk does not enter them.
+    """
+    visits: Final[list[_Visit]] = []
+    governing: dict[int, HeadingVertex] = {}
+    seen: Final[set[Uid]] = set()
+    stack: Final[list[Vertex]] = [root_vertex(tree)]
+    while stack:
+        vertex: Vertex = stack.pop()
+        if isinstance(vertex, NotesVertex):
+            continue
+        found: Float | None = float_of_wrapper(vertex, tree)
+        if found is None and vertex.uid in seen:
+            continue
+        seen.add(vertex.uid)
+        if isinstance(vertex, HeadingVertex):
+            governing = {level: heading for level, heading in governing.items() if level < vertex.heading_level}
+            governing[vertex.heading_level] = vertex
+        visits.append(
+            _Visit(vertex=vertex, float=found, headings=tuple(governing[level] for level in sorted(governing)))
+        )
+        if found is not None:
+            continue
+        frames: list[Vertex] = [tree.uid_map[uid] for uid in vertex.children or () if uid in tree.uid_map]
+        if is_embed_vertex(vertex) and vertex.vertex_link.uid in tree.uid_map:
+            frames.insert(0, tree.uid_map[vertex.vertex_link.uid])
+        displayed: Vertex | None = standalone_link_target(vertex, tree)
+        if displayed is not None and float_of_wrapper(displayed, tree) is not None:
+            frames.insert(0, displayed)
+        stack.extend(reversed(frames))
+    return visits
+
+
 @validate_call
 def placed_floats(tree: VertexTree) -> list[PlacedFloat]:
     """Return every display of a float in *tree*'s rendered document, in reading order, with its governing headings.
@@ -236,37 +285,21 @@ def placed_floats(tree: VertexTree) -> list[PlacedFloat]:
     Returns:
         One :class:`PlacedFloat` per display, in reading order.
     """
-    placed: Final[list[PlacedFloat]] = []
-    governing: dict[int, HeadingVertex] = {}
-    seen: Final[set[Uid]] = set()
-    stack: Final[list[Vertex]] = [root_vertex(tree)]
-    while stack:
-        vertex: Vertex = stack.pop()
-        if isinstance(vertex, NotesVertex):
-            continue
-        found: Float | None = float_of_wrapper(vertex, tree)
-        if found is None and vertex.uid in seen:
-            continue
-        seen.add(vertex.uid)
-        if isinstance(vertex, HeadingVertex):
-            governing = {level: heading for level, heading in governing.items() if level < vertex.heading_level}
-            governing[vertex.heading_level] = vertex
-        if found is not None:
-            placed.append(PlacedFloat(float=found, headings=tuple(governing[level] for level in sorted(governing))))
-            continue
-        frames: list[Vertex] = [tree.uid_map[uid] for uid in vertex.children or () if uid in tree.uid_map]
-        if is_embed_vertex(vertex) and vertex.vertex_link.uid in tree.uid_map:
-            frames.insert(0, tree.uid_map[vertex.vertex_link.uid])
-        displayed: Vertex | None = standalone_link_target(vertex, tree)
-        if displayed is not None and float_of_wrapper(displayed, tree) is not None:
-            frames.insert(0, displayed)
-        stack.extend(reversed(frames))
-    return placed
+    return [
+        PlacedFloat(float=visit.float, headings=visit.headings)
+        for visit in _reading_order(tree)
+        if visit.float is not None
+    ]
 
 
 def _is_chapter(heading: HeadingVertex) -> bool:
     """Return whether *heading* is a body-matter heading: one that counts as a chapter."""
     return resolved_matter(heading) in (None, Matter.BODY)
+
+
+def _is_chapter_at(vertex: Vertex, chapter_level: int) -> bool:
+    """Return whether *vertex* is a chapter: a body-matter heading at *chapter_level*."""
+    return isinstance(vertex, HeadingVertex) and vertex.heading_level == chapter_level and _is_chapter(vertex)
 
 
 @validate_call
@@ -276,8 +309,10 @@ def float_numbers(tree: VertexTree, chapter_level: int | None) -> FloatNumbering
     Each kind is numbered in its own series in reading order (:func:`placed_floats`).  With a
     *chapter_level*, the series restart at each body-matter heading of that level, and each
     number carries the ordinal of that heading among the body-matter headings of the level met
-    so far; a float displayed before any such heading, or under a front- or back-matter one,
-    carries no chapter and counts in a series of its own.  Without a *chapter_level* every series
+    so far — every such heading, whether or not it holds a float, so a figure in the fifth
+    chapter is 5.1 even when the chapters before it have none; a float displayed before any such
+    heading, or under a front- or back-matter one, carries no chapter and counts in a series of
+    its own.  Without a *chapter_level* every series
     runs straight through.  A float's number is assigned at its first display; later displays
     are reported as repeats.
 
@@ -291,22 +326,28 @@ def float_numbers(tree: VertexTree, chapter_level: int | None) -> FloatNumbering
     numbers: Final[dict[Uid, FloatNumber]] = {}
     repeated: Final[list[Uid]] = []
     ordinals: dict[tuple[FloatKind, int | None], int] = {}
+    # Every chapter counts, whether or not it holds a float: a chapter's ordinal is its place among
+    # all the body-matter headings of the chapter level the reader has met.
     chapter_of: Final[dict[Uid, int]] = {}
-    for placed in placed_floats(tree):
+    for visit in _reading_order(tree):
+        if chapter_level is not None and _is_chapter_at(visit.vertex, chapter_level):
+            chapter_of.setdefault(visit.vertex.uid, len(chapter_of) + 1)
+        if visit.float is None:
+            continue
         chapter: int | None = None
         if chapter_level is not None:
             heading: HeadingVertex | None = next(
-                (candidate for candidate in placed.headings if candidate.heading_level == chapter_level), None
+                (candidate for candidate in visit.headings if candidate.heading_level == chapter_level), None
             )
             if heading is not None and _is_chapter(heading):
-                chapter = chapter_of.setdefault(heading.uid, len(chapter_of) + 1)
-        wrapper_uid: Uid = placed.float.wrapper_uid
+                chapter = chapter_of[heading.uid]
+        wrapper_uid: Uid = visit.float.wrapper_uid
         if wrapper_uid in numbers:
             repeated.append(wrapper_uid)
             continue
-        series: tuple[FloatKind, int | None] = (placed.float.kind, chapter)
+        series: tuple[FloatKind, int | None] = (visit.float.kind, chapter)
         ordinals[series] = ordinals.get(series, 0) + 1
-        numbers[wrapper_uid] = FloatNumber(kind=placed.float.kind, chapter=chapter, ordinal=ordinals[series])
+        numbers[wrapper_uid] = FloatNumber(kind=visit.float.kind, chapter=chapter, ordinal=ordinals[series])
     return FloatNumbering(numbers=numbers, repeated=tuple(repeated))
 
 

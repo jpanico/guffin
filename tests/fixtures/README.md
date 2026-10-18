@@ -131,7 +131,8 @@ follows (here, `**bold**` emphasis on one portion of the page name).
 - internal element numbers leading the headings — `[0.x]` front matter, `[1.p]` parts, `[1.p.c]` chapters — exercising the numbering validators (well-formedness, matter agreement, uniqueness, ordering, nesting)
 - full `guffin-meta::` bibliographic metadata: `title::`, `subtitle::`, `authors::` (two), `date::` (full W3CDTF date), `publisher::`, `rights::`, `identifier::`
 - front-matter headings whose text is a page reference (Acknowledgments; Who is this Book for?)
-- a chapter whose body is a fenced Python `code block` (Chapter 4: Code Listing)
+- every image, table, and code listing is a `float` wrapper (through its `guffin-meta::` child) over the content block itself: three `float:: figure` maps (Book I chapters I–III), one `float:: listing` (Chapter 4: Code Listing), and one `float:: table` (Book II, Chapter XXIV) — a book numbers them by chapter, counting the chapters consecutively through the parts, so they render as Figure 1.1, 2.1, 3.1, Listing 4.1, and Table 30.1
+- two front-matter headings, ahead of the acknowledgments as Chicago orders them, tagged `element-type:: list-of-illustrations` (`[0.1] Illustrations`) and `element-type:: list-of-tables` (`[0.2] Tables`), to hold the generated lists of figures and tables; code listings get no list, by design
 - this INFO `Callout box`
 
 #### `[[Test Article]] 8 has a **bold** word`

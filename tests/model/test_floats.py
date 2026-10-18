@@ -2,7 +2,8 @@
 
 from typing import Final
 
-from conftest import article3_node_tree, asset_storage
+import yaml
+from conftest import FIXTURES_YAML_DIR, YamlFixtureLoader, article3_node_tree, asset_storage
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
@@ -33,6 +34,7 @@ from guffin.model.vertex import (
     TableVertex,
     TextVertex,
     Vertex,
+    vertex_adapter,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree, standalone_link_target
@@ -323,6 +325,19 @@ class TestFloatNumbers:
         }
         assert numbering.repeated == ("wrapc0001",)
 
+    def test_chapters_without_floats_still_count(self) -> None:
+        """A figure in the third chapter is 3.1 although the two chapters before it hold no float."""
+        page = PageVertex(uid="page00001", title="Doc", children=["chap00001", "chap00002", "chap00003"])
+        tree = _tree(
+            page,
+            HeadingVertex(uid="chap00001", text="One", heading_level=1),
+            HeadingVertex(uid="chap00002", text="Two", heading_level=1),
+            HeadingVertex(uid="chap00003", text="Three", heading_level=1, children=["wrapf0001"]),
+            _wrapper("wrapf0001", "figure", "Third-chapter figure", "imagf0001"),
+            _image("imagf0001"),
+        )
+        assert float_numbers(tree, chapter_level=1).numbers["wrapf0001"].text == "3.1"
+
     def test_straight_through(self) -> None:
         """Without a chapter level every series runs through the document."""
         numbering = float_numbers(_chaptered_tree(), chapter_level=None)
@@ -442,3 +457,30 @@ class TestArticle3FloatsByReference:
     def test_article_validates(self) -> None:
         """The article passes every vocabulary rule, the float rules included."""
         assert validate_semantics(self._tree()).errors == ()
+
+
+class TestArticle7BookFloats:
+    """Test Article 7, a parts book, numbers its floats by chapter, the chapters counted through the parts.
+
+    Its three maps (Book I, chapters I-III), its code listing (chapter 4), and its table (Book II,
+    the thirtieth chapter of the book) are float wrappers over the content blocks themselves;
+    chapters are its level-2 body-matter headings, and its front- and back-matter sections at
+    that level do not count.
+    """
+
+    @staticmethod
+    def _tree() -> VertexTree:
+        raw = yaml.load((FIXTURES_YAML_DIR / "test_article_7_vertices.yaml").read_text(), Loader=YamlFixtureLoader)
+        return VertexTree(tree_vertices=[vertex_adapter.validate_python(entry) for entry in raw])
+
+    def test_numbers_count_every_chapter_through_the_parts(self) -> None:
+        """Chapters without floats count too, so the table in the thirtieth chapter is Table 30.1."""
+        numbering = float_numbers(self._tree(), chapter_level=2)
+        assert {uid: (number.kind, number.text) for uid, number in numbering.numbers.items()} == {
+            "6PuUG4pVE": (FloatKind.FIGURE, "1.1"),
+            "Wx3tPA-fI": (FloatKind.FIGURE, "2.1"),
+            "S5r_5tiRB": (FloatKind.FIGURE, "3.1"),
+            "hIcIxeUtA": (FloatKind.LISTING, "4.1"),
+            "sZSakvhFE": (FloatKind.TABLE, "30.1"),
+        }
+        assert numbering.repeated == ()

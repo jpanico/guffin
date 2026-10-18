@@ -6,6 +6,8 @@
   uid: 7o-Klx3P6
   children:
   - rhPsF4zq3
+  - mN76Wv85f
+  - HNou_PbKI
   - dpoX6c0Pl
   - jqAiDA6IM
   - Lo-2ftdb7
@@ -13,7 +15,9 @@
   - lZKsMSgZX
   - 09KMheZHg
   - MGvH7SY4M
+  - qd_rPQczj
   - t3KZEIxj8
+  - 1B7Uj5Wna
   refs:
   - LBFKibPIj
   attribute_assignments:
@@ -122,9 +126,49 @@
     - front-matter headings whose text is a page reference (Acknowledgments; Who is
     this Book for?)
 
-    - a chapter whose body is a fenced Python `code block` (Chapter 4: Code Listing)
+    - every image, table, and code listing is a `float` wrapper (through its `guffin-meta::`
+    child) over the content block itself: three `float:: figure` maps (Book I chapters
+    I–III), one `float:: listing` (Chapter 4: Code Listing), and one `float:: table`
+    (Book II, Chapter XXIV) — a book numbers them by chapter, counting the chapters
+    consecutively through the parts, so they render as Figure 1.1, 2.1, 3.1, Listing
+    4.1, and Table 30.1
+
+    - two front-matter headings, ahead of the acknowledgments as Chicago orders them,
+    tagged `element-type:: list-of-illustrations` (`[0.1] Illustrations`) and `element-type::
+    list-of-tables` (`[0.2] Tables`), to hold the generated lists of figures and tables;
+    code listings get no list, by design
 
     - this INFO `Callout box`'
+- vertex_type: guffin/heading
+  uid: mN76Wv85f
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: list-of-illustrations
+  text: '[0.1] Illustrations'
+  heading_level: 2
+- vertex_type: guffin/heading
+  uid: HNou_PbKI
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: list-of-tables
+  text: '[0.2] Tables'
+  heading_level: 2
 - vertex_type: guffin/heading
   uid: dpoX6c0Pl
   children:
@@ -147,7 +191,7 @@
     values:
     - kind: literal
       value: acknowledgments
-  text: '[0.1] [Acknowledgments](x-guffin:vertex/qmplSzgnD)'
+  text: '[0.3] [Acknowledgments](x-guffin:vertex/qmplSzgnD)'
   heading_level: 2
 - vertex_type: guffin/text
   uid: snXG7pnjI
@@ -189,7 +233,7 @@
   - 09l1XWuD3
   - i8m_qcu2R
   refs:
-  - GuHqKi9Y_
+  - 1uaR5SRTT
   attribute_assignments:
   - attribute:
       definition:
@@ -201,7 +245,7 @@
     values:
     - kind: literal
       value: front-matter
-  text: '[0.2] [Who Is This Book For?](x-guffin:vertex/GuHqKi9Y_)'
+  text: '[0.4] [Who Is This Book For?](x-guffin:vertex/1uaR5SRTT)'
   heading_level: 2
 - vertex_type: guffin/text
   uid: v_yb2JFwl
@@ -252,7 +296,7 @@
     values:
     - kind: literal
       value: introduction
-  text: '[0.3] An Epistle to the Reader, from the Printer'
+  text: '[0.5] An Epistle to the Reader, from the Printer'
   heading_level: 2
 - vertex_type: guffin/text
   uid: doB1NIOh9
@@ -337,7 +381,7 @@
 - vertex_type: guffin/heading
   uid: tljWl5ZoV
   children:
-  - ZVvaN-_mA
+  - 6PuUG4pVE
   - PI66v7qPU
   attribute_assignments:
   - attribute:
@@ -353,6 +397,23 @@
   text: '[1.1.1] CHAPTER I. Here the Book begins; and first it speaks of the Lesser
     Hermenia.'
   heading_level: 2
+- vertex_type: guffin/text
+  uid: 6PuUG4pVE
+  children:
+  - ZVvaN-_mA
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: figure
+  text: 'The brothers'' first voyage, A.D. 1260: from Constantinople across the Greater
+    Sea to Soldaia.'
 - vertex_type: guffin/image
   uid: ZVvaN-_mA
   storage:
@@ -363,25 +424,28 @@
   scaled_image_size: {}
 - vertex_type: guffin/text
   uid: PI66v7qPU
-  text: There are two Hermenias, the Greater and the Less. The Lesser Hermenia is
-    governed by a certain King, who maintains a just rule in his dominions, but is
-    himself subject to the Tartar. {1} The country contains numerous towns and villages,{2}
-    and has everything in plenty; moreover, it is a great country for sport in the
-    chase of all manner of beasts and birds. It is, however, by no means a healthy
-    region, but grievously the reverse.{3} In days of old the nobles there were valiant
-    men, and did doughty deeds of arms; but nowadays they are poor creatures, and
-    good at nought, unless it be at boozing; they are great at that. Howbeit, they
-    have a city upon the sea, which is called Layas, at which there is a great trade.
-    For you must know that all the spicery, and the cloths of silk and gold, and the
-    other valuable wares that come from the interior, are brought to that city. And
-    the merchants of Venice and Genoa, and other countries, come thither to sell their
-    goods, and to buy what they lack. And whatsoever persons would travel to the interior
-    (of the East), merchants or others, they take their way by this city of Layas.{4}
-    Having now told you about the Lesser Hermenia, we shall next tell you about Turcomania.
+  refs:
+  - y0iOT5hmC
+  text: There are two Hermenias, the Greater and the Less. The [Lesser Hermenia](x-guffin:vertex-note/y0iOT5hmC)
+    is governed by a certain King, who maintains a just rule in his dominions, but
+    is himself subject to the Tartar. {1} The country contains numerous towns and
+    villages,{2} and has everything in plenty; moreover, it is a great country for
+    sport in the chase of all manner of beasts and birds. It is, however, by no means
+    a healthy region, but grievously the reverse.{3} In days of old the nobles there
+    were valiant men, and did doughty deeds of arms; but nowadays they are poor creatures,
+    and good at nought, unless it be at boozing; they are great at that. Howbeit,
+    they have a city upon the sea, which is called Layas, at which there is a great
+    trade. For you must know that all the spicery, and the cloths of silk and gold,
+    and the other valuable wares that come from the interior, are brought to that
+    city. And the merchants of Venice and Genoa, and other countries, come thither
+    to sell their goods, and to buy what they lack. And whatsoever persons would travel
+    to the interior (of the East), merchants or others, they take their way by this
+    city of Layas.{4} Having now told you about the Lesser Hermenia, we shall next
+    tell you about Turcomania.
 - vertex_type: guffin/heading
   uid: LZJSmETBX
   children:
-  - GJ-Y_OXdC
+  - Wx3tPA-fI
   - y6pLmW1tO
   - qA3qSVISz
   - 0CiFrZbxC
@@ -413,6 +477,23 @@
       value: chapter
   text: '[1.1.2] Chapter 2: How the Two Brothers went on beyond Soldaia.'
   heading_level: 2
+- vertex_type: guffin/text
+  uid: Wx3tPA-fI
+  children:
+  - GJ-Y_OXdC
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: figure
+  text: 'The second leg, A.D. 1261–1262: from Soldaia into the Tartar lands, to Sara
+    and Bolgara, the residences of Barca Kaan.'
 - vertex_type: guffin/image
   uid: GJ-Y_OXdC
   storage:
@@ -436,18 +517,20 @@
     to continue their journey east toward the Mongol Empire.
 - vertex_type: guffin/text
   uid: qA3qSVISz
-  text: Having stayed a while at Soldaia, they considered the matter, and thought
-    it well to extend their journey further. So they set forth from Soldaia and travelled
-    till they came to the Court of a certain Tartar Prince, Barca Kaan by name, whose
-    residences were at Sara{1} and at Bolgara [and who was esteemed one of the most
-    liberal and courteous Princes that ever was among the Tartars.]{2} This Barca
-    was delighted at the arrival of the Two Brothers, and treated them with great
-    honour; so they presented to him the whole of the jewels that they had brought
-    with them. The Prince was highly pleased with these, and accepted the offering
-    most graciously, causing the Brothers to receive at least twice its value. After
-    they had spent a twelvemonth at the court of this Prince there broke out a great
-    war between Barca and Aláu, the Lord of the Tartars of the Levant, and great hosts
-    were mustered on either side.{3}
+  refs:
+  - 5J3yk8LQE
+  text: Having stayed a while at [Soldaia](x-guffin:vertex-note/5J3yk8LQE), they considered
+    the matter, and thought it well to extend their journey further. So they set forth
+    from Soldaia and travelled till they came to the Court of a certain Tartar Prince,
+    Barca Kaan by name, whose residences were at Sara{1} and at Bolgara [and who was
+    esteemed one of the most liberal and courteous Princes that ever was among the
+    Tartars.]{2} This Barca was delighted at the arrival of the Two Brothers, and
+    treated them with great honour; so they presented to him the whole of the jewels
+    that they had brought with them. The Prince was highly pleased with these, and
+    accepted the offering most graciously, causing the Brothers to receive at least
+    twice its value. After they had spent a twelvemonth at the court of this Prince
+    there broke out a great war between Barca and Aláu, the Lord of the Tartars of
+    the Levant, and great hosts were mustered on either side.{3}
 - vertex_type: guffin/text
   uid: 0CiFrZbxC
   text: Map to illustrate the Geographical Position of the City of Sarai
@@ -706,7 +789,7 @@
 - vertex_type: guffin/heading
   uid: a2cA9YFVP
   children:
-  - -cStchkqq
+  - S5r_5tiRB
   - AyYZmSD81
   - icYzlHriz
   - zO6VlUygf
@@ -727,6 +810,23 @@
   text: '[1.1.3] Chapter 3: How the Two Brothers, after crossing a desert, came to
     the City of Bocara, and fell in with certain Envoys there.'
   heading_level: 2
+- vertex_type: guffin/text
+  uid: S5r_5tiRB
+  children:
+  - -cStchkqq
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: figure
+  text: 'The third leg, A.D. 1262–1265: across the great desert to Bocara, where the
+    brothers met the envoys of the Levant.'
 - vertex_type: guffin/image
   uid: -cStchkqq
   storage:
@@ -871,7 +971,7 @@
 - vertex_type: guffin/heading
   uid: N-SyzJ3ai
   children:
-  - 2eBv9J8n5
+  - hIcIxeUtA
   - AvsdnVMvS
   - bSmLs9TR2
   - YFE0iG-1T
@@ -910,6 +1010,22 @@
       value: chapter
   text: '[1.1.4] Chapter 4: Code Listing'
   heading_level: 2
+- vertex_type: guffin/text
+  uid: hIcIxeUtA
+  children:
+  - 2eBv9J8n5
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: listing
+  text: Guffin's transcribe function, which turns a node tree into a vertex tree.
 - vertex_type: guffin/code-block
   uid: 2eBv9J8n5
   code: "@validate_call\ndef transcribe(node_tree: NodeTree) -> VertexTree:\n    \"\
@@ -1413,7 +1529,10 @@
     and princes and other potentates.
 - vertex_type: guffin/text
   uid: emxLujzkH
-  text: On the frontier of Armenia towards the south-east is the kingdom of Mausul.
+  refs:
+  - TDJJZ9PaR
+  - DE7kym__h
+  text: On the frontier of Armenia towards the south-east is the kingdom of [Mausul](x-guffin:vertex-note/TDJJZ9PaR).
     It is a very great kingdom, and inhabited{1} by several different kinds of people
     whom we shall now describe. First there is a kind of people called Arabi, and
     these worship Mahommet. Then there is another description of people who are Nestorian
@@ -1424,25 +1543,25 @@
     there is a very great number of Christians in those countries, they are all Jacobites
     and Nestorians; Christians indeed, but not in the fashion enjoined by the Pope
     of Rome, for they come short in several points of the Faith.{2} All the cloths
-    of gold and silk that are called Mosolins are made in this country; and those
-    great Merchants called Mosolins, who carry for sale such quantities of spicery
-    and pearls and cloths of silk and gold, are also from this kingdom.{3} There is
-    yet another race of people who inhabit the mountains in that quarter, and are
-    called Curds. Some of them are Christians, and some of them are Saracens; but
-    they are an evil generation, whose delight it is to plunder merchants.{4} [Near
-    this province is another called Mus and Merdin, producing an immense quantity
-    of cotton, from which they make a great deal of buckram{5} and other cloth. The
-    people are craftsmen and traders, and all are subject to the Tartar King.] Note
-    1.—Polo could scarcely have been justified in calling Mosul a very great kingdom.
-    This is a bad habit of his, as we shall have to notice again. Badruddín Lúlú,
-    the last Atabeg of Mosul of the race of Zenghi had at the age of 96 taken sides
-    with Hulaku, and stood high in his favour. His son Malik Sálih, having revolted,
-    surrendered to the Mongols in 1261 on promise of life; which promise they kept
-    in Mongol fashion by torturing him to death. Since then the kingdom had ceased
-    to exist as such. Coins of Badruddín remain with the name and titles of Mangku
-    Kaan on their reverse, and some of his and of other atabegs exhibit curious imitations
-    of Greek art. (Quat. Rash. p. 389; Jour. As. IV. VI. 141.). —H. Y. and H. C. [Mosul
-    was pillaged by Timur at the end of the
+    of gold and silk that are called [Mosolins](x-guffin:vertex-note/DE7kym__h) are
+    made in this country; and those great Merchants called Mosolins, who carry for
+    sale such quantities of spicery and pearls and cloths of silk and gold, are also
+    from this kingdom.{3} There is yet another race of people who inhabit the mountains
+    in that quarter, and are called Curds. Some of them are Christians, and some of
+    them are Saracens; but they are an evil generation, whose delight it is to plunder
+    merchants.{4} [Near this province is another called Mus and Merdin, producing
+    an immense quantity of cotton, from which they make a great deal of buckram{5}
+    and other cloth. The people are craftsmen and traders, and all are subject to
+    the Tartar King.] Note 1.—Polo could scarcely have been justified in calling Mosul
+    a very great kingdom. This is a bad habit of his, as we shall have to notice again.
+    Badruddín Lúlú, the last Atabeg of Mosul of the race of Zenghi had at the age
+    of 96 taken sides with Hulaku, and stood high in his favour. His son Malik Sálih,
+    having revolted, surrendered to the Mongols in 1261 on promise of life; which
+    promise they kept in Mongol fashion by torturing him to death. Since then the
+    kingdom had ceased to exist as such. Coins of Badruddín remain with the name and
+    titles of Mangku Kaan on their reverse, and some of his and of other atabegs exhibit
+    curious imitations of Greek art. (Quat. Rash. p. 389; Jour. As. IV. VI. 141.).
+    —H. Y. and H. C. [Mosul was pillaged by Timur at the end of the
 - vertex_type: guffin/text
   uid: kf2mWxo36
   text: Coin of Badruddín of Mausul.
@@ -2109,8 +2228,10 @@
   heading_level: 2
 - vertex_type: guffin/text
   uid: -aN9Kuehn
+  refs:
+  - 9YyTOObVi
   text: Persia is a great country, which was in old times very illustrious and powerful;
-    but now the Tartars have wasted and destroyed it. In Persia is the city of Saba,
+    but now the Tartars have wasted and destroyed it. In Persia is the city of [Saba](x-guffin:vertex-note/9YyTOObVi),
     from which the Three Magi set out when they went to worship Jesus Christ; and
     in this city they are buried, in three very large and beautiful monuments, side
     by side. And above them there is a square building, carefully kept. The bodies
@@ -2704,19 +2825,21 @@
   heading_level: 2
 - vertex_type: guffin/text
   uid: g9CM7k81s
-  text: Kerman is a kingdom which is also properly in Persia, and formerly it had
-    a hereditary prince. Since the Tartars conquered the country the rule is no longer
-    hereditary, but the Tartar sends to administer whatever lord he pleases.{1} In
-    this kingdom are produced the stones called turquoises in great abundance; they
-    are found in the mountains, where they are extracted from the rocks.{2} There
-    are also plenty of veins of steel and Ondanique.{3} The people are very skilful
-    in making harness of war; their saddles, bridles, spurs, swords, bows, quivers,
-    and arms of every kind, are very well made indeed according to the fashion of
-    those parts. The ladies of the country and their daughters also produce exquisite
-    needlework in the embroidery of silk stuffs in different colours, with figures
-    of beasts and birds, trees and flowers, and a variety of other patterns. They
-    work hangings for the use of noblemen so deftly that they are marvels to see,
-    as well as cushions, pillows quilts, and all sorts of things. {4}
+  refs:
+  - ExR4qHuuC
+  text: '[Kerman](x-guffin:vertex-note/ExR4qHuuC) is a kingdom which is also properly
+    in Persia, and formerly it had a hereditary prince. Since the Tartars conquered
+    the country the rule is no longer hereditary, but the Tartar sends to administer
+    whatever lord he pleases.{1} In this kingdom are produced the stones called turquoises
+    in great abundance; they are found in the mountains, where they are extracted
+    from the rocks.{2} There are also plenty of veins of steel and Ondanique.{3} The
+    people are very skilful in making harness of war; their saddles, bridles, spurs,
+    swords, bows, quivers, and arms of every kind, are very well made indeed according
+    to the fashion of those parts. The ladies of the country and their daughters also
+    produce exquisite needlework in the embroidery of silk stuffs in different colours,
+    with figures of beasts and birds, trees and flowers, and a variety of other patterns.
+    They work hangings for the use of noblemen so deftly that they are marvels to
+    see, as well as cushions, pillows quilts, and all sorts of things. {4}'
 - vertex_type: guffin/text
   uid: gN8LMc5jG
   text: In the mountains of Kerman are found the best falcons in the world. They are
@@ -3548,6 +3671,8 @@
   heading_level: 2
 - vertex_type: guffin/text
   uid: X6mc9AhMW
+  refs:
+  - tZyqTonni
   text: The Plain of which we have spoken extends in a southerly direction for five
     days’ journey, and then you come to another descent some twenty miles in length,
     where the road is very bad and full of peril, for there are many robbers and bad
@@ -3557,20 +3682,21 @@
     There are also many beautiful birds, francolins, popinjays, and other kinds such
     as we have none of in our country. When you have ridden these two days you come
     to the Ocean Sea, and on the shore you find a city with a harbour which is called
-    Hormos.{1} Merchants come thither from India, with ships loaded with spicery and
-    precious stones, pearls, cloths of silk and gold, elephants’ teeth, and many other
-    wares, which they sell to the merchants of Hormos, and which these in turn carry
-    all over the world to dispose of again. In fact, ’tis a city of immense trade.
-    There are plenty of towns and villages under it, but it is the capital. The King
-    is called Ruomedam Ahomet. It is a very sickly place, and the heat of the sun
-    is tremendous. If any foreign merchant dies there, the King takes all his property.
-    In this country they make a wine of dates mixt with spices, which is very good.
-    When any one not used to it first drinks this wine, it causes repeated and violent
-    purging, but afterwards he is all the better for it, and gets fat upon it. The
-    people never eat meat and wheaten bread except when they are ill, and if they
-    take such food when they are in health it makes them ill. Their food when in health
-    consists of dates and salt-fish (tunny, to wit) and onions, and this kind of diet
-    they maintain in order to preserve their health.{2}
+    [Hormos](x-guffin:vertex-note/tZyqTonni).{1} Merchants come thither from India,
+    with ships loaded with spicery and precious stones, pearls, cloths of silk and
+    gold, elephants’ teeth, and many other wares, which they sell to the merchants
+    of Hormos, and which these in turn carry all over the world to dispose of again.
+    In fact, ’tis a city of immense trade. There are plenty of towns and villages
+    under it, but it is the capital. The King is called Ruomedam Ahomet. It is a very
+    sickly place, and the heat of the sun is tremendous. If any foreign merchant dies
+    there, the King takes all his property. In this country they make a wine of dates
+    mixt with spices, which is very good. When any one not used to it first drinks
+    this wine, it causes repeated and violent purging, but afterwards he is all the
+    better for it, and gets fat upon it. The people never eat meat and wheaten bread
+    except when they are ill, and if they take such food when they are in health it
+    makes them ill. Their food when in health consists of dates and salt-fish (tunny,
+    to wit) and onions, and this kind of diet they maintain in order to preserve their
+    health.{2}
 - vertex_type: guffin/text
   uid: TxUDbIpA3
   text: Their ships are wretched affairs, and many of them get lost; for they have
@@ -4279,37 +4405,40 @@
   heading_level: 2
 - vertex_type: guffin/text
   uid: y6Sb4knJU
-  text: Badashan is a Province inhabited by people who worship Mahommet, and have
-    a peculiar language. It forms a very great kingdom, and the royalty is hereditary.
-    All those of the royal blood are descended from King Alexander and the daughter
-    of King Darius, who was Lord of the vast Empire of Persia. And all these kings
-    call themselves in the Saracen tongue Zulcarniain, which is as much as to say
-    Alexander; and this out of regard for Alexander the Great.{1} It is in this province
-    that those fine and valuable gems the Balas Rubies are found. They are got in
-    certain rocks among the mountains, and in the search for them the people dig great
-    caves underground, just as is done by miners for silver. There is but one special
-    mountain that produces them, and it is called Syghinan. The stones are dug on
-    the king’s account, and no one else dares dig in that mountain on pain of forfeiture
-    of life as well as goods; nor may any one carry the stones out of the kingdom.
-    But the king amasses them all, and sends them to other kings when he has tribute
-    to render, or when he desires to offer a friendly present; and such only as he
-    pleases he causes to be sold. Thus he acts in order to keep the Balas at a high
-    value; for if he were to allow everybody to dig, they would extract so many that
-    the world would be glutted with them, and they would cease to bear any value.
-    Hence it is that he allows so few to be taken out, and is so strict in the matter.{2}
-    There is also in the same country another mountain, in which azure is found; ’tis
-    the finest in the world, and is got in a vein like silver. There are also other
-    mountains which contain a great amount of silver ore, so that the country is a
-    very rich one; but it is also (it must be said) a very cold one.{3} It produces
-    numbers of excellent horses, remarkable for their speed. They are not shod at
-    all, although constantly used in mountainous country, and on very bad roads. [They
-    go at a great pace even down steep descents, where other horses neither would
-    nor could do the like. And Messer Marco was told that not long ago they possessed
-    in that province a breed of horses from the strain of Alexander’s horse Bucephalus,
-    all of which had from their birth a particular mark on the forehead. This breed
-    was entirely in the hands of an uncle of the king’s; and in consequence of his
-    refusing to let the king have any of them, the latter put him to death. The widow
-    then, in despite, destroyed the whole breed, and it is now extinct.{4}]
+  refs:
+  - gB85TpHu2
+  text: '[Badashan](x-guffin:vertex-note/gB85TpHu2) is a Province inhabited by people
+    who worship Mahommet, and have a peculiar language. It forms a very great kingdom,
+    and the royalty is hereditary. All those of the royal blood are descended from
+    King Alexander and the daughter of King Darius, who was Lord of the vast Empire
+    of Persia. And all these kings call themselves in the Saracen tongue Zulcarniain,
+    which is as much as to say Alexander; and this out of regard for Alexander the
+    Great.{1} It is in this province that those fine and valuable gems the Balas Rubies
+    are found. They are got in certain rocks among the mountains, and in the search
+    for them the people dig great caves underground, just as is done by miners for
+    silver. There is but one special mountain that produces them, and it is called
+    Syghinan. The stones are dug on the king’s account, and no one else dares dig
+    in that mountain on pain of forfeiture of life as well as goods; nor may any one
+    carry the stones out of the kingdom. But the king amasses them all, and sends
+    them to other kings when he has tribute to render, or when he desires to offer
+    a friendly present; and such only as he pleases he causes to be sold. Thus he
+    acts in order to keep the Balas at a high value; for if he were to allow everybody
+    to dig, they would extract so many that the world would be glutted with them,
+    and they would cease to bear any value. Hence it is that he allows so few to be
+    taken out, and is so strict in the matter.{2} There is also in the same country
+    another mountain, in which azure is found; ’tis the finest in the world, and is
+    got in a vein like silver. There are also other mountains which contain a great
+    amount of silver ore, so that the country is a very rich one; but it is also (it
+    must be said) a very cold one.{3} It produces numbers of excellent horses, remarkable
+    for their speed. They are not shod at all, although constantly used in mountainous
+    country, and on very bad roads. [They go at a great pace even down steep descents,
+    where other horses neither would nor could do the like. And Messer Marco was told
+    that not long ago they possessed in that province a breed of horses from the strain
+    of Alexander’s horse Bucephalus, all of which had from their birth a particular
+    mark on the forehead. This breed was entirely in the hands of an uncle of the
+    king’s; and in consequence of his refusing to let the king have any of them, the
+    latter put him to death. The widow then, in despite, destroyed the whole breed,
+    and it is now extinct.{4}]'
 - vertex_type: guffin/text
   uid: A9Norxk2a
   text: 'The mountains of this country also supply Saker falcons of excellent flight,
@@ -5303,8 +5432,10 @@
   heading_level: 2
 - vertex_type: guffin/text
   uid: EwJ_S--R4
+  refs:
+  - zCCYjDcSv
   text: 'Now am I come to that part of our Book in which I shall tell you of the great
-    and wonderful magnificence of the Great Kaan now reigning, by name Cublay Kaan;
+    and wonderful magnificence of the Great Kaan now reigning, by name [Cublay Kaan](x-guffin:vertex-note/zCCYjDcSv);
     Kaan being a title which signifyeth “The Great Lord of Lords,” or Emperor. And
     of a surety he hath good right to such a title, for all men know for a certain
     truth that he is the most potent man, as regards forces and lands and treasure,
@@ -7112,7 +7243,9 @@
     for war; but he stood greatly in fear of being handled as Nayan had been.{1}
 - vertex_type: guffin/text
   uid: t0c4q5FAN
-  text: Now there was on that spot in old times a great and noble city called Cambaluc,
+  refs:
+  - y6Cq0QnhI
+  text: Now there was on that spot in old times a great and noble city called [Cambaluc](x-guffin:vertex-note/y6Cq0QnhI),
     which is as much as to say in our tongue “The city of the Emperor.”{1} But the
     Great Kaan was informed by his Astrologers that this city would prove rebellious,
     and raise great disorders against his imperial authority. So he caused the present
@@ -7706,8 +7839,8 @@
 - vertex_type: guffin/heading
   uid: zXhYsKp5A
   children:
+  - sZSakvhFE
   - vJM7ZDLAX
-  - P9pd0pX4y
   attribute_assignments:
   - attribute:
       definition:
@@ -7723,35 +7856,21 @@
     into something like Paper, to pass for Money over all his Country.'
   heading_level: 2
 - vertex_type: guffin/text
-  uid: vJM7ZDLAX
-  text: Now that I have told you in detail of the splendour of this City of the Emperor’s,
-    I shall proceed to tell you of the Mint which he hath in the same city, in the
-    which he hath his money coined and struck, as I shall relate to you. And in doing
-    so I shall make manifest to you how it is that the Great Lord may well be able
-    to accomplish even much more than I have told you, or am going to tell you, in
-    this Book. For, tell it how I might, you never would be satisfied that I was keeping
-    within truth and reason! The Emperor’s Mint then is in this same City of Cambaluc,
-    and the way it is wrought is such that you might say he hath the Secret of Alchemy
-    in perfection, and you would be right! For he makes his money after this fashion.
-    He makes them take of the bark of a certain tree, in fact of the Mulberry Tree,
-    the leaves of which are the food of the silkworms,—these trees being so numerous
-    that whole districts are full of them. What they take is a certain fine white
-    bast or skin which lies between the wood of the tree and the thick outer bark,
-    and this they make into something resembling sheets of paper, but black. When
-    these sheets have been prepared they are cut up into pieces of different sizes.
-    The smallest of these sizes is worth a half tornesel; the next, a little larger,
-    one tornesel; one, a little larger still, is worth half a silver groat of Venice;
-    another a whole groat; others yet two groats, five groats, and ten groats. There
-    is also a kind worth one Bezant of gold, and others of three Bezants, and so up
-    to ten. All these pieces of paper are [issued with as much solemnity and authority
-    as if they were of pure gold or silver; and on every piece a variety of officials,
-    whose duty it is, have to write their names, and to put their seals. And when
-    all is prepared duly, the chief officer deputed by the Kaan smears the Seal entrusted
-    to him with vermilion, and impresses it on the paper, so that the form of the
-    Seal remains printed upon it in red; the Money is then authentic. Any one forging
-    it would be punished with death.] And the Kaan causes every year to be made such
-    a vast quantity of this money, which costs him nothing, that it must equal in
-    amount all the treasure in the world.
+  uid: sZSakvhFE
+  children:
+  - P9pd0pX4y
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: table
+  text: The currencies, weights, and measures Polo records, by region.
 - vertex_type: guffin/table
   uid: P9pd0pX4y
   refs:
@@ -7837,6 +7956,36 @@
   table_style:
     cell_styles: {}
     column_widths: []
+- vertex_type: guffin/text
+  uid: vJM7ZDLAX
+  text: Now that I have told you in detail of the splendour of this City of the Emperor’s,
+    I shall proceed to tell you of the Mint which he hath in the same city, in the
+    which he hath his money coined and struck, as I shall relate to you. And in doing
+    so I shall make manifest to you how it is that the Great Lord may well be able
+    to accomplish even much more than I have told you, or am going to tell you, in
+    this Book. For, tell it how I might, you never would be satisfied that I was keeping
+    within truth and reason! The Emperor’s Mint then is in this same City of Cambaluc,
+    and the way it is wrought is such that you might say he hath the Secret of Alchemy
+    in perfection, and you would be right! For he makes his money after this fashion.
+    He makes them take of the bark of a certain tree, in fact of the Mulberry Tree,
+    the leaves of which are the food of the silkworms,—these trees being so numerous
+    that whole districts are full of them. What they take is a certain fine white
+    bast or skin which lies between the wood of the tree and the thick outer bark,
+    and this they make into something resembling sheets of paper, but black. When
+    these sheets have been prepared they are cut up into pieces of different sizes.
+    The smallest of these sizes is worth a half tornesel; the next, a little larger,
+    one tornesel; one, a little larger still, is worth half a silver groat of Venice;
+    another a whole groat; others yet two groats, five groats, and ten groats. There
+    is also a kind worth one Bezant of gold, and others of three Bezants, and so up
+    to ten. All these pieces of paper are [issued with as much solemnity and authority
+    as if they were of pure gold or silver; and on every piece a variety of officials,
+    whose duty it is, have to write their names, and to put their seals. And when
+    all is prepared duly, the chief officer deputed by the Kaan smears the Seal entrusted
+    to him with vermilion, and impresses it on the paper, so that the form of the
+    Seal remains printed upon it in red; the Money is then authentic. Any one forging
+    it would be punished with death.] And the Kaan causes every year to be made such
+    a vast quantity of this money, which costs him nothing, that it must equal in
+    amount all the treasure in the world.
 - vertex_type: guffin/heading
   uid: 09KMheZHg
   children:
@@ -7876,6 +8025,21 @@
     Northern Countries'
   heading_level: 1
 - vertex_type: guffin/heading
+  uid: qd_rPQczj
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: element-type
+        domain: guffin
+      link:
+      - vertex
+      - asCh2FQQp
+    values:
+    - kind: literal
+      value: endnotes
+  text: '[2.1] Notes'
+  heading_level: 2
+- vertex_type: guffin/heading
   uid: t3KZEIxj8
   children:
   - 44FHkkJ_O
@@ -7892,7 +8056,7 @@
     values:
     - kind: literal
       value: back-matter
-  text: '[2.1] [About the Author](x-guffin:vertex/R9gPO6rxP)'
+  text: '[2.2] [About the Author](x-guffin:vertex/R9gPO6rxP)'
   heading_level: 2
 - vertex_type: guffin/text
   uid: 44FHkkJ_O
@@ -7904,3 +8068,57 @@
     while they were in prison together in [Genoa](https://en.wikipedia.org/wiki/Genoa).
     Earlier, he wrote the *Roman de Roi Artus* (*Romance of King Arthur*), also known
     as the *Compilation*, the earliest known Arthurian romance by an Italian author.'
+- vertex_type: guffin/notes
+  uid: 1B7Uj5Wna
+  children:
+  - y0iOT5hmC
+  - 5J3yk8LQE
+  - TDJJZ9PaR
+  - DE7kym__h
+  - 9YyTOObVi
+  - ExR4qHuuC
+  - tZyqTonni
+  - gB85TpHu2
+  - zCCYjDcSv
+  - y6Cq0QnhI
+  refs:
+  - yx87Sz9r7
+- vertex_type: guffin/text
+  uid: y0iOT5hmC
+  text: The Armenian Kingdom of Cilicia, on the southern coast of Anatolia, founded
+    in 1080 by Armenians fleeing the Seljuk conquest of Greater Armenia.
+- vertex_type: guffin/text
+  uid: 5J3yk8LQE
+  text: Sudak, in the Crimea. The Venetians, who knew it as Soldaia, controlled it
+    until 1365, when it passed to Genoa.
+- vertex_type: guffin/text
+  uid: TDJJZ9PaR
+  text: A principality centred on the city of Mosul, in what is now northern Iraq;
+    it came under Mongol rule in 1261.
+- vertex_type: guffin/text
+  uid: DE7kym__h
+  text: The source of the word muslin, though Mosul's looms turned out many kinds
+    of cloth.
+- vertex_type: guffin/text
+  uid: 9YyTOObVi
+  text: Saveh, in north-western Iran, not far from Tehran.
+- vertex_type: guffin/text
+  uid: ExR4qHuuC
+  text: In south-eastern Iran; the city of Kerman is still the capital of the province
+    of that name.
+- vertex_type: guffin/text
+  uid: tZyqTonni
+  text: Hormuz, a port that controlled sea trade through the Strait of Hormuz. Around
+    1300 the town was moved from the mainland to an island just offshore.
+- vertex_type: guffin/text
+  uid: gB85TpHu2
+  text: Badakhshan, a historic region on the Silk Road, now divided between north-eastern
+    Afghanistan and south-eastern Tajikistan.
+- vertex_type: guffin/text
+  uid: zCCYjDcSv
+  text: Khubilai, the fifth Great Khan of the Mongol Empire and the first emperor
+    of China's Yuan dynasty.
+- vertex_type: guffin/text
+  uid: y6Cq0QnhI
+  text: 'Khanbaliq, Turkic for “City of the Khan”: Khubilai''s capital, known in Chinese
+    as Dadu, on the site of modern Beijing.'

@@ -36,6 +36,28 @@
       - n5V8rN1Kg
       value: ' chapter'
   blocks: null
+619wcXH8B:
+  uid: 619wcXH8B
+  id: 21211
+  string: 'float:: figure'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 21212
+  - id: 21213
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 ZdongWVef:
   uid: ZdongWVef
   id: 12769
@@ -53,6 +75,7 @@ ZdongWVef:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -61,34 +84,36 @@ EwJ_S--R4:
   uid: EwJ_S--R4
   id: 12518
   string: 'Now am I come to that part of our Book in which I shall tell you of the
-    great and wonderful magnificence of the Great Kaan now reigning, by name Cublay
-    Kaan; Kaan being a title which signifyeth “The Great Lord of Lords,” or Emperor.
-    And of a surety he hath good right to such a title, for all men know for a certain
-    truth that he is the most potent man, as regards forces and lands and treasure,
-    that existeth in the world, or ever hath existed from the time of our First Father
-    Adam until this day. All this I will make clear to you for truth, in this book
-    of ours, so that every one shall be fain to acknowledge that he is the greatest
-    Lord that is now in the world, or ever hath been. And now ye shall hear how and
-    wherefore.{1} Note 1.—According to Sanang Setzen, Chinghiz himself discerned young
-    Kúblái’s superiority. On his deathbed he said: “The words of the lad Kúblái are
-    well worth attention; see, all of you, that ye heed what he says! One day he will
-    sit in my seat and bring you good fortune such as you have had in my day!” (p.
-    105). The Persian history of Wassáf thus exalts Kúblái: “Although from the frontiers
-    of this country (’Irák) to the Centre of Empire, the Focus of the Universe, the
-    genial abode of the ever-Fortunate Emperor and Just Kaan, is a whole year’s journey,
-    yet the stories that have been spread abroad, even in these parts, of his glorious
-    deeds, his institutes, his decisions, his justice, the largeness and acuteness
-    of his intellect, his correctness of judgment, his great powers of administration,
-    from the mouths of credible witnesses, of well-known merchants and eminent travellers,
-    are so surpassing, that one beam of his glories, one fraction of his great qualities,
-    suffices to eclipse all that history tells of the Cæsars of Rome, of the Chosroes
-    of Persia, of the Khagans of China, of the (Himyarite) Kails of Arabia, of the
-    Tobbas of Yemen, and the Rajas of India, of the monarchs of the houses of Sassan
-    and Búya, and of the Seljukian Sultans.” (Hammer’s Wassaf, orig. p. 37.)'
+    great and wonderful magnificence of the Great Kaan now reigning, by name [(Cublay
+    Kaan)](((zCCYjDcSv))); Kaan being a title which signifyeth “The Great Lord of
+    Lords,” or Emperor. And of a surety he hath good right to such a title, for all
+    men know for a certain truth that he is the most potent man, as regards forces
+    and lands and treasure, that existeth in the world, or ever hath existed from
+    the time of our First Father Adam until this day. All this I will make clear to
+    you for truth, in this book of ours, so that every one shall be fain to acknowledge
+    that he is the greatest Lord that is now in the world, or ever hath been. And
+    now ye shall hear how and wherefore.{1} Note 1.—According to Sanang Setzen, Chinghiz
+    himself discerned young Kúblái’s superiority. On his deathbed he said: “The words
+    of the lad Kúblái are well worth attention; see, all of you, that ye heed what
+    he says! One day he will sit in my seat and bring you good fortune such as you
+    have had in my day!” (p. 105). The Persian history of Wassáf thus exalts Kúblái:
+    “Although from the frontiers of this country (’Irák) to the Centre of Empire,
+    the Focus of the Universe, the genial abode of the ever-Fortunate Emperor and
+    Just Kaan, is a whole year’s journey, yet the stories that have been spread abroad,
+    even in these parts, of his glorious deeds, his institutes, his decisions, his
+    justice, the largeness and acuteness of his intellect, his correctness of judgment,
+    his great powers of administration, from the mouths of credible witnesses, of
+    well-known merchants and eminent travellers, are so surpassing, that one beam
+    of his glories, one fraction of his great qualities, suffices to eclipse all that
+    history tells of the Cæsars of Rome, of the Chosroes of Persia, of the Khagans
+    of China, of the (Himyarite) Kails of Arabia, of the Tobbas of Yemen, and the
+    Rajas of India, of the monarchs of the houses of Sassan and Búya, and of the Seljukian
+    Sultans.” (Hammer’s Wassaf, orig. p. 37.)'
   order: 1
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20645
   page:
     id: 11850
   children_view_type: null
@@ -159,6 +184,7 @@ vEdP4FH4H:
   - id: 12733
   - id: 12734
   - id: 12735
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -327,6 +353,25 @@ FHM7PM1Wq:
   - id: 11850
   - id: 11902
   - id: 12039
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+y6Cq0QnhI:
+  uid: y6Cq0QnhI
+  id: 20646
+  string: 'Khanbaliq, Turkic for “City of the Khan”: Khubilai''s capital, known in
+    Chinese as Dadu, on the site of modern Beijing.'
+  order: 9
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
   props: null
   title: null
   attrs: null
@@ -536,6 +581,34 @@ ibJZdYkyW:
   - id: 11850
   - id: 11903
   - id: 12610
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+1B7Uj5Wna:
+  uid: 1B7Uj5Wna
+  id: 20647
+  string: '#footnotes'
+  order: 13
+  heading: null
+  children:
+  - id: 20637
+  - id: 20638
+  - id: 20639
+  - id: 20640
+  - id: 20641
+  - id: 20642
+  - id: 20643
+  - id: 20644
+  - id: 20645
+  - id: 20646
+  refs:
+  - id: 20616
+  page:
+    id: 11850
+  children_view_type: numbered
+  parents:
+  - id: 11850
   props: null
   title: null
   attrs: null
@@ -1025,6 +1098,7 @@ Jc7qWj0Vy:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -1032,41 +1106,43 @@ Jc7qWj0Vy:
 y6Sb4knJU:
   uid: y6Sb4knJU
   id: 12403
-  string: Badashan is a Province inhabited by people who worship Mahommet, and have
-    a peculiar language. It forms a very great kingdom, and the royalty is hereditary.
-    All those of the royal blood are descended from King Alexander and the daughter
-    of King Darius, who was Lord of the vast Empire of Persia. And all these kings
-    call themselves in the Saracen tongue Zulcarniain, which is as much as to say
-    Alexander; and this out of regard for Alexander the Great.{1} It is in this province
-    that those fine and valuable gems the Balas Rubies are found. They are got in
-    certain rocks among the mountains, and in the search for them the people dig great
-    caves underground, just as is done by miners for silver. There is but one special
-    mountain that produces them, and it is called Syghinan. The stones are dug on
-    the king’s account, and no one else dares dig in that mountain on pain of forfeiture
-    of life as well as goods; nor may any one carry the stones out of the kingdom.
-    But the king amasses them all, and sends them to other kings when he has tribute
-    to render, or when he desires to offer a friendly present; and such only as he
-    pleases he causes to be sold. Thus he acts in order to keep the Balas at a high
-    value; for if he were to allow everybody to dig, they would extract so many that
-    the world would be glutted with them, and they would cease to bear any value.
-    Hence it is that he allows so few to be taken out, and is so strict in the matter.{2}
-    There is also in the same country another mountain, in which azure is found; ’tis
-    the finest in the world, and is got in a vein like silver. There are also other
-    mountains which contain a great amount of silver ore, so that the country is a
-    very rich one; but it is also (it must be said) a very cold one.{3} It produces
-    numbers of excellent horses, remarkable for their speed. They are not shod at
-    all, although constantly used in mountainous country, and on very bad roads. [They
-    go at a great pace even down steep descents, where other horses neither would
-    nor could do the like. And Messer Marco was told that not long ago they possessed
-    in that province a breed of horses from the strain of Alexander’s horse Bucephalus,
-    all of which had from their birth a particular mark on the forehead. This breed
-    was entirely in the hands of an uncle of the king’s; and in consequence of his
-    refusing to let the king have any of them, the latter put him to death. The widow
-    then, in despite, destroyed the whole breed, and it is now extinct.{4}]
+  string: '[(Badashan)](((gB85TpHu2))) is a Province inhabited by people who worship
+    Mahommet, and have a peculiar language. It forms a very great kingdom, and the
+    royalty is hereditary. All those of the royal blood are descended from King Alexander
+    and the daughter of King Darius, who was Lord of the vast Empire of Persia. And
+    all these kings call themselves in the Saracen tongue Zulcarniain, which is as
+    much as to say Alexander; and this out of regard for Alexander the Great.{1} It
+    is in this province that those fine and valuable gems the Balas Rubies are found.
+    They are got in certain rocks among the mountains, and in the search for them
+    the people dig great caves underground, just as is done by miners for silver.
+    There is but one special mountain that produces them, and it is called Syghinan.
+    The stones are dug on the king’s account, and no one else dares dig in that mountain
+    on pain of forfeiture of life as well as goods; nor may any one carry the stones
+    out of the kingdom. But the king amasses them all, and sends them to other kings
+    when he has tribute to render, or when he desires to offer a friendly present;
+    and such only as he pleases he causes to be sold. Thus he acts in order to keep
+    the Balas at a high value; for if he were to allow everybody to dig, they would
+    extract so many that the world would be glutted with them, and they would cease
+    to bear any value. Hence it is that he allows so few to be taken out, and is so
+    strict in the matter.{2} There is also in the same country another mountain, in
+    which azure is found; ’tis the finest in the world, and is got in a vein like
+    silver. There are also other mountains which contain a great amount of silver
+    ore, so that the country is a very rich one; but it is also (it must be said)
+    a very cold one.{3} It produces numbers of excellent horses, remarkable for their
+    speed. They are not shod at all, although constantly used in mountainous country,
+    and on very bad roads. [They go at a great pace even down steep descents, where
+    other horses neither would nor could do the like. And Messer Marco was told that
+    not long ago they possessed in that province a breed of horses from the strain
+    of Alexander’s horse Bucephalus, all of which had from their birth a particular
+    mark on the forehead. This breed was entirely in the hands of an uncle of the
+    king’s; and in consequence of his refusing to let the king have any of them, the
+    latter put him to death. The widow then, in despite, destroyed the whole breed,
+    and it is now extinct.{4}]'
   order: 1
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20644
   page:
     id: 11850
   children_view_type: null
@@ -1161,6 +1237,25 @@ YKIfOxGfE:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
+tZyqTonni:
+  uid: tZyqTonni
+  id: 20643
+  string: Hormuz, a port that controlled sea trade through the Strait of Hormuz. Around
+    1300 the town was moved from the mainland to an island just offshore.
+  order: 6
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
+  props: null
+  title: null
+  attrs: null
   blocks: null
 C11Yi8g90:
   uid: C11Yi8g90
@@ -1315,6 +1410,25 @@ mZJ6qXSlY:
       - uid
       - bMg6ybr4X
       value: ' chapter'
+  blocks: null
+ExR4qHuuC:
+  uid: ExR4qHuuC
+  id: 20642
+  string: In south-eastern Iran; the city of Kerman is still the capital of the province
+    of that name.
+  order: 5
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
+  props: null
+  title: null
+  attrs: null
   blocks: null
 qo9gGnpFz:
   uid: qo9gGnpFz
@@ -1536,6 +1650,7 @@ n5V8rN1Kg:
   - id: 12785
   - id: 12786
   - id: 12787
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -1705,6 +1820,25 @@ ITnYe3VUU:
   title: null
   attrs: null
   blocks: null
+DE7kym__h:
+  uid: DE7kym__h
+  id: 20640
+  string: The source of the word muslin, though Mosul's looms turned out many kinds
+    of cloth.
+  order: 3
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 3TO924yvu:
   uid: 3TO924yvu
   id: 11974
@@ -1724,21 +1858,6 @@ ITnYe3VUU:
   - id: 11973
   props: null
   title: null
-  attrs: null
-  blocks: null
-9ZtPB2yY3:
-  uid: 9ZtPB2yY3
-  id: 6535
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: Publishing
   attrs: null
   blocks: null
 FY7NOL4Hq:
@@ -1773,6 +1892,45 @@ FY7NOL4Hq:
   props: null
   title: null
   attrs: null
+  blocks: null
+ENLc_W3QX:
+  uid: ENLc_W3QX
+  id: 21206
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21205
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11906
+  - id: 21207
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - ENLc_W3QX
+      value:
+      - uid
+      - ENLc_W3QX
+    - source:
+      - uid
+      - _JH8OJUKv
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - _JH8OJUKv
+      value: ' figure'
   blocks: null
 kDGHDeio0:
   uid: kDGHDeio0
@@ -1899,25 +2057,6 @@ hSMMtN77B:
   - id: 11850
   - id: 11903
   - id: 12528
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-Bl5IgRIYf:
-  uid: Bl5IgRIYf
-  id: 4600
-  string: Intended Audience
-  order: 0
-  heading: 3
-  children:
-  - id: 4601
-  - id: 4602
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
   props: null
   title: null
   attrs: null
@@ -2115,26 +2254,6 @@ XRU-URUwP:
   title: null
   attrs: null
   blocks: null
-N60tgmwap:
-  uid: N60tgmwap
-  id: 4392
-  string: The main thing to avoid is burying it deep inside the introduction, where
-    a reader scanning the front matter to decide if the book is right for them might
-    miss it entirely.
-  order: 3
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4427
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 YuFNpxA5T:
   uid: YuFNpxA5T
   id: 12646
@@ -2317,6 +2436,28 @@ NS19XW9sL:
   title: null
   attrs: null
   blocks: null
+4wD_Moq4W:
+  uid: 4wD_Moq4W
+  id: 21217
+  string: 'float:: table'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11903
+  - id: 12727
+  - id: 21218
+  - id: 21219
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 qJaRL-jAa:
   uid: qJaRL-jAa
   id: 12746
@@ -2335,6 +2476,7 @@ qJaRL-jAa:
   - id: 12727
   - id: 12732
   - id: 12745
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -2393,6 +2535,7 @@ S7IQGtzYp:
   - id: 12732
   - id: 12757
   - id: 12758
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -2484,6 +2627,7 @@ J9TjIP5NU:
   - id: 12732
   - id: 12733
   - id: 12734
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -2579,24 +2723,25 @@ X6mc9AhMW:
     There are also many beautiful birds, francolins, popinjays, and other kinds such
     as we have none of in our country. When you have ridden these two days you come
     to the Ocean Sea, and on the shore you find a city with a harbour which is called
-    Hormos.{1} Merchants come thither from India, with ships loaded with spicery and
-    precious stones, pearls, cloths of silk and gold, elephants’ teeth, and many other
-    wares, which they sell to the merchants of Hormos, and which these in turn carry
-    all over the world to dispose of again. In fact, ’tis a city of immense trade.
-    There are plenty of towns and villages under it, but it is the capital. The King
-    is called Ruomedam Ahomet. It is a very sickly place, and the heat of the sun
-    is tremendous. If any foreign merchant dies there, the King takes all his property.
-    In this country they make a wine of dates mixt with spices, which is very good.
-    When any one not used to it first drinks this wine, it causes repeated and violent
-    purging, but afterwards he is all the better for it, and gets fat upon it. The
-    people never eat meat and wheaten bread except when they are ill, and if they
-    take such food when they are in health it makes them ill. Their food when in health
-    consists of dates and salt-fish (tunny, to wit) and onions, and this kind of diet
-    they maintain in order to preserve their health.{2}
+    [(Hormos)](((tZyqTonni))).{1} Merchants come thither from India, with ships loaded
+    with spicery and precious stones, pearls, cloths of silk and gold, elephants’
+    teeth, and many other wares, which they sell to the merchants of Hormos, and which
+    these in turn carry all over the world to dispose of again. In fact, ’tis a city
+    of immense trade. There are plenty of towns and villages under it, but it is the
+    capital. The King is called Ruomedam Ahomet. It is a very sickly place, and the
+    heat of the sun is tremendous. If any foreign merchant dies there, the King takes
+    all his property. In this country they make a wine of dates mixt with spices,
+    which is very good. When any one not used to it first drinks this wine, it causes
+    repeated and violent purging, but afterwards he is all the better for it, and
+    gets fat upon it. The people never eat meat and wheaten bread except when they
+    are ill, and if they take such food when they are in health it makes them ill.
+    Their food when in health consists of dates and salt-fish (tunny, to wit) and
+    onions, and this kind of diet they maintain in order to preserve their health.{2}
   order: 1
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20643
   page:
     id: 11850
   children_view_type: null
@@ -2793,6 +2938,7 @@ d8C3mV9Zz:
   - id: 12732
   - id: 12769
   - id: 12770
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -2816,6 +2962,7 @@ bAeKvTD8i:
   - id: 12732
   - id: 12761
   - id: 12762
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -3555,28 +3702,6 @@ VhPKv0Wzj:
   title: null
   attrs: null
   blocks: null
-GJKWwLPSj:
-  uid: GJKWwLPSj
-  id: 4427
-  string: where does a section on "who this book is for" belong? [[Claude]]
-  order: 2
-  heading: null
-  children:
-  - id: 4387
-  - id: 4388
-  - id: 4391
-  - id: 4392
-  refs:
-  - id: 4428
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 i8m_qcu2R:
   uid: i8m_qcu2R
   id: 11875
@@ -3617,6 +3742,7 @@ zS5Hs21W2:
   - id: 12732
   - id: 12737
   - id: 12738
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -3862,6 +3988,7 @@ Wavi0FOP5:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -4022,7 +4149,7 @@ ucshJ6TST:
   uid: -aN9Kuehn
   id: 12226
   string: Persia is a great country, which was in old times very illustrious and powerful;
-    but now the Tartars have wasted and destroyed it. In Persia is the city of Saba,
+    but now the Tartars have wasted and destroyed it. In Persia is the city of [(Saba)](((9YyTOObVi))),
     from which the Three Magi set out when they went to worship Jesus Christ; and
     in this city they are buried, in three very large and beautiful monuments, side
     by side. And above them there is a square building, carefully kept. The bodies
@@ -4055,7 +4182,8 @@ ucshJ6TST:
   order: 1
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20641
   page:
     id: 11850
   children_view_type: null
@@ -4086,6 +4214,7 @@ VC29QMh5p:
   - id: 12732
   - id: 12777
   - id: 12778
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -4588,6 +4717,7 @@ _3-JxKhbr:
   - id: 12727
   - id: 12732
   - id: 12773
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -4978,6 +5108,7 @@ oCV75jtai:
   - id: 12727
   - id: 12732
   - id: 12741
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -5083,6 +5214,7 @@ PxIz9TwI8:
   - id: 12765
   - id: 12766
   - id: 12767
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -5243,6 +5375,7 @@ uLiALiJCp:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -5409,7 +5542,6 @@ N-SyzJ3ai:
   heading: 2
   children:
   - id: 12040
-  - id: 12061
   - id: 12100
   - id: 12161
   - id: 12162
@@ -5435,6 +5567,7 @@ N-SyzJ3ai:
   - id: 12182
   - id: 12183
   - id: 12184
+  - id: 21216
   refs: null
   page:
     id: 11850
@@ -5484,6 +5617,7 @@ d9uIclIp7:
   - id: 12777
   - id: 12778
   - id: 12779
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -5534,8 +5668,8 @@ J9J6AIJ_P:
 Lo-2ftdb7:
   uid: Lo-2ftdb7
   id: 11878
-  string: '[0.3] An Epistle to the Reader, from the Printer'
-  order: 4
+  string: '[0.5] An Epistle to the Reader, from the Printer'
+  order: 6
   heading: 2
   children:
   - id: 11880
@@ -5816,21 +5950,6 @@ XEToYEzri:
       - uid
       - BxGxeeGk1
   blocks: null
-TWqtTA-9e:
-  uid: TWqtTA-9e
-  id: 4428
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: Claude
-  attrs: null
-  blocks: null
 Oe0-1hxw5:
   uid: Oe0-1hxw5
   id: 12454
@@ -5944,6 +6063,7 @@ _bFry3a1Y:
   - id: 12727
   - id: 12732
   - id: 12737
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -5994,8 +6114,8 @@ yBBotE59L:
 t3KZEIxj8:
   uid: t3KZEIxj8
   id: 14548
-  string: '[2.1] [[About the Author]]'
-  order: 9
+  string: '[2.2] [[About the Author]]'
+  order: 12
   heading: 2
   children:
   - id: 14549
@@ -6073,6 +6193,7 @@ VG0xxycaG:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -6098,6 +6219,7 @@ _Fc0usIj8:
   - id: 12737
   - id: 12738
   - id: 12739
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -6120,6 +6242,7 @@ _Fc0usIj8:
   - id: 12727
   - id: 12732
   - id: 12733
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -6160,7 +6283,7 @@ JdToFRz_G:
   uid: -cStchkqq
   id: 12137
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FYT8W1P6jTQ.jpeg.enc?alt=media&token=24628986-cdbd-452e-a434-ab236c054db3)'
-  order: 1
+  order: 0
   heading: null
   children: null
   refs: null
@@ -6171,6 +6294,7 @@ JdToFRz_G:
   - id: 11850
   - id: 11902
   - id: 12007
+  - id: 21213
   props: null
   title: null
   attrs: null
@@ -6213,27 +6337,6 @@ JdToFRz_G:
   - id: 11903
   - id: 12521
   - id: 12522
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-zpV7AGpCS:
-  uid: zpV7AGpCS
-  id: 4390
-  string: '**As a standalone section between the preface and introduction**, sometimes
-    literally titled "Who This Book Is For" — O''Reilly books do this frequently and
-    it''s become something of a technical publishing convention'
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4388
-  - id: 4427
   props: null
   title: null
   attrs: null
@@ -6605,7 +6708,7 @@ OexZiLR_O:
   parents: null
   props: null
   title: '>'
-  attrs: null
+  attrs: []
   blocks: null
 ff4xkJQQl:
   uid: ff4xkJQQl
@@ -6798,6 +6901,42 @@ uN_MwuWeZ:
   title: null
   attrs: null
   blocks: null
+mN76Wv85f:
+  uid: mN76Wv85f
+  id: 21222
+  string: '[0.1] Illustrations'
+  order: 2
+  heading: 2
+  children:
+  - id: 21221
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - mN76Wv85f
+      value:
+      - uid
+      - mN76Wv85f
+    - source:
+      - uid
+      - DvXruLSXk
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - DvXruLSXk
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 7o-Klx3P6:
   uid: 7o-Klx3P6
   id: 11850
@@ -6815,6 +6954,10 @@ uN_MwuWeZ:
   - id: 11905
   - id: 12792
   - id: 14548
+  - id: 20636
+  - id: 20647
+  - id: 21222
+  - id: 21225
   refs:
   - id: 4223
   page: null
@@ -6906,6 +7049,7 @@ JgVxyITAK:
   - id: 12745
   - id: 12746
   - id: 12747
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -6948,6 +7092,7 @@ yVckKIYxT:
   - id: 12732
   - id: 12765
   - id: 12766
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -7122,6 +7267,7 @@ AAE6Eb6fs:
   - id: 12727
   - id: 12732
   - id: 12749
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -7197,6 +7343,21 @@ CnG6fOf_E:
   title: null
   attrs: null
   blocks: null
+yx87Sz9r7:
+  uid: yx87Sz9r7
+  id: 20616
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: footnotes
+  attrs: null
+  blocks: null
 UD9SkuxoE:
   uid: UD9SkuxoE
   id: 12694
@@ -7236,6 +7397,25 @@ S0oRYfduk:
   - id: 11850
   - id: 11903
   - id: 12713
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+y0iOT5hmC:
+  uid: y0iOT5hmC
+  id: 20637
+  string: The Armenian Kingdom of Cilicia, on the southern coast of Anatolia, founded
+    in 1080 by Armenians fleeing the Seljuk conquest of Greater Armenia.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
   props: null
   title: null
   attrs: null
@@ -7407,6 +7587,21 @@ XEvauvTi8:
   title: null
   attrs: null
   blocks: null
+1uaR5SRTT:
+  uid: 1uaR5SRTT
+  id: 21226
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: Who Is This Book For?
+  attrs: null
+  blocks: null
 ntMDtY4Q-:
   uid: ntMDtY4Q-
   id: 12531
@@ -7531,6 +7726,28 @@ wUeKNObXg:
   - id: 12007
   - id: 12019
   - id: 12021
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+a51q0Wjbf:
+  uid: a51q0Wjbf
+  id: 21214
+  string: 'float:: listing'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12039
+  - id: 21215
+  - id: 21216
   props: null
   title: null
   attrs: null
@@ -7681,6 +7898,7 @@ oAeFWGoaQ:
   - id: 12749
   - id: 12750
   - id: 12751
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -7839,6 +8057,25 @@ rgXFVADWt:
   title: null
   attrs: null
   blocks: null
+gB85TpHu2:
+  uid: gB85TpHu2
+  id: 20644
+  string: Badakhshan, a historic region on the Silk Road, now divided between north-eastern
+    Afghanistan and south-eastern Tajikistan.
+  order: 7
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 WeyBfoK1R:
   uid: WeyBfoK1R
   id: 12708
@@ -7967,6 +8204,43 @@ tOCycdC-K:
   title: null
   attrs: null
   blocks: null
+YslnLujF9:
+  uid: YslnLujF9
+  id: 21224
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 21223
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 21225
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - YslnLujF9
+      value:
+      - uid
+      - YslnLujF9
+    - source:
+      - uid
+      - woowW3Deg
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - woowW3Deg
+      value: ' list-of-tables'
+  blocks: null
 RuBMlPDAm:
   uid: RuBMlPDAm
   id: 12764
@@ -7988,6 +8262,7 @@ RuBMlPDAm:
   - id: 12761
   - id: 12762
   - id: 12763
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -8032,6 +8307,7 @@ QmjUsvftA:
   - id: 12727
   - id: 12732
   - id: 12753
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -8069,25 +8345,6 @@ QmjUsvftA:
   - id: 11850
   - id: 11902
   - id: 12370
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-YESkCZ8tW:
-  uid: YESkCZ8tW
-  id: 4598
-  string: People with no understanding of computer programming, who want to learn
-    how to code
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4597
   props: null
   title: null
   attrs: null
@@ -8166,7 +8423,7 @@ vJM7ZDLAX:
     authentic. Any one forging it would be punished with death.] And the Kaan causes
     every year to be made such a vast quantity of this money, which costs him nothing,
     that it must equal in amount all the treasure in the world.
-  order: 1
+  order: 2
   heading: null
   children: null
   refs: null
@@ -8201,6 +8458,46 @@ BGHaRyokb:
   props: null
   title: null
   attrs: null
+  blocks: null
+6PuUG4pVE:
+  uid: 6PuUG4pVE
+  id: 21207
+  string: 'The brothers'' first voyage, A.D. 1260: from Constantinople across the
+    Greater Sea to Soldaia.'
+  order: 1
+  heading: null
+  children:
+  - id: 12135
+  - id: 21206
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11906
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 6PuUG4pVE
+      value:
+      - uid
+      - 6PuUG4pVE
+    - source:
+      - uid
+      - ENLc_W3QX
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - ENLc_W3QX
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 LXK0lBAaL:
   uid: LXK0lBAaL
@@ -8371,6 +8668,45 @@ JUsffnSbz:
       - uid
       - y2gMBU71D
       value: ' chapter'
+  blocks: null
+QeNIBjBCk:
+  uid: QeNIBjBCk
+  id: 21215
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21214
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12039
+  - id: 21216
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - QeNIBjBCk
+      value:
+      - uid
+      - QeNIBjBCk
+    - source:
+      - uid
+      - a51q0Wjbf
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - a51q0Wjbf
+      value: ' listing'
   blocks: null
 4nmDcSocA:
   uid: 4nmDcSocA
@@ -8756,6 +9092,7 @@ BSgF_I3eC:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -8840,6 +9177,25 @@ LMf_YBKmS:
   title: null
   attrs: null
   blocks: null
+5J3yk8LQE:
+  uid: 5J3yk8LQE
+  id: 20638
+  string: Sudak, in the Crimea. The Venetians, who knew it as Soldaia, controlled
+    it until 1365, when it passed to Genoa.
+  order: 1
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 70Q5dMrfV:
   uid: 70Q5dMrfV
   id: 12340
@@ -8862,6 +9218,45 @@ LMf_YBKmS:
   props: null
   title: null
   attrs: null
+  blocks: null
+LwI_ZAQov:
+  uid: LwI_ZAQov
+  id: 21218
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21217
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11903
+  - id: 12727
+  - id: 21219
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - LwI_ZAQov
+      value:
+      - uid
+      - LwI_ZAQov
+    - source:
+      - uid
+      - 4wD_Moq4W
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - 4wD_Moq4W
+      value: ' table'
   blocks: null
 xDLdP7phb:
   uid: xDLdP7phb
@@ -8941,6 +9336,7 @@ Yi2bjreab:
   - id: 12753
   - id: 12754
   - id: 12755
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -8960,7 +9356,7 @@ a2cA9YFVP:
   - id: 12097
   - id: 12098
   - id: 12099
-  - id: 12137
+  - id: 21213
   refs: null
   page:
     id: 11850
@@ -9047,6 +9443,21 @@ RoZyY87Nr:
   title: null
   attrs: null
   blocks: null
+-mwo6HoFt:
+  uid: -mwo6HoFt
+  id: 21162
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: float
+  attrs: null
+  blocks: null
 CMgZLSHqM:
   uid: CMgZLSHqM
   id: 12164
@@ -9094,7 +9505,7 @@ lSrjeyDaT:
   id: 11902
   string: '[1.1] **Book I**: Account of Regions Visited or Heard of on the Journey
     from the Lesser Armenia to the Court of the Great Kaan'
-  order: 5
+  order: 7
   heading: 1
   children:
   - id: 11906
@@ -9216,43 +9627,6 @@ GthyBx53K:
   title: null
   attrs: null
   blocks: null
-ZsFRjGDDy:
-  uid: ZsFRjGDDy
-  id: 8657
-  string: null
-  order: null
-  heading: null
-  children:
-  - id: 8662
-  - id: 8670
-  - id: 8676
-  - id: 8677
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: Programming Language
-  attrs:
-  - - source:
-      - uid
-      - ZsFRjGDDy
-      value:
-      - uid
-      - ZsFRjGDDy
-    - source:
-      - uid
-      - HrLHMMak9
-      value:
-      - uid
-      - nA2eO0MzU
-    - source:
-      - uid
-      - HrLHMMak9
-      value:
-      - uid
-      - ExJBKbXY2
-  blocks: null
 m-dJcoMVs:
   uid: m-dJcoMVs
   id: 12514
@@ -9311,6 +9685,7 @@ Bdk3fWOFU:
   - id: 12781
   - id: 12782
   - id: 12783
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -9722,6 +10097,7 @@ jLaqoa3sn:
   - id: 12741
   - id: 12742
   - id: 12743
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -9837,47 +10213,6 @@ RbM-trDdE:
       - vSGgmBM_w
       value: ' part'
   blocks: null
-HrLHMMak9:
-  uid: HrLHMMak9
-  id: 8677
-  string: 'isa:: [[Formal Language]]'
-  order: 3
-  heading: null
-  children: null
-  refs:
-  - id: 8599
-  - id: 8678
-  page:
-    id: 8657
-  children_view_type: null
-  parents:
-  - id: 8657
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-kPcAk-Bw1:
-  uid: kPcAk-Bw1
-  id: 4388
-  string: 'If it''s **more substantial** (different reader types, prerequisite knowledge,
-    how different audiences might navigate the book differently), it works better
-    as its own short named section, typically placed either:'
-  order: 1
-  heading: null
-  children:
-  - id: 4389
-  - id: 4390
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4427
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 h4mHiKeQf:
   uid: h4mHiKeQf
   id: 12706
@@ -9929,6 +10264,7 @@ CYmWuUAH_:
   - id: 12727
   - id: 12732
   - id: 12785
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -9952,6 +10288,7 @@ Z1us-vib2:
   - id: 12732
   - id: 12749
   - id: 12750
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -10197,7 +10534,7 @@ c180mlQ5N:
 t0c4q5FAN:
   uid: t0c4q5FAN
   id: 12672
-  string: Now there was on that spot in old times a great and noble city called Cambaluc,
+  string: Now there was on that spot in old times a great and noble city called [(Cambaluc)](((y6Cq0QnhI))),
     which is as much as to say in our tongue “The city of the Emperor.”{1} But the
     Great Kaan was informed by his Astrologers that this city would prove rebellious,
     and raise great disorders against his imperial authority. So he caused the present
@@ -10209,7 +10546,8 @@ t0c4q5FAN:
   order: 2
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20646
   page:
     id: 11850
   children_view_type: null
@@ -10469,22 +10807,24 @@ AyYZmSD81:
   title: null
   attrs: null
   blocks: null
-39_RTkGv-:
-  uid: 39_RTkGv-
-  id: 4602
-  string: 'Programmers, with at least a rudimentary understanding of computer programming,
-    in **any** [[Programming Language]] (addressable audience: ~40 million worldwide)'
+hafI_rkld:
+  uid: hafI_rkld
+  id: 21208
+  string: 'float:: figure'
   order: 0
   heading: null
   children: null
   refs:
-  - id: 8657
+  - id: 21162
   page:
-    id: 4384
+    id: 11850
   children_view_type: null
   parents:
-  - id: 4384
-  - id: 4600
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  - id: 21209
+  - id: 21210
   props: null
   title: null
   attrs: null
@@ -10793,6 +11133,85 @@ HG-eNczlj:
   title: null
   attrs: null
   blocks: null
+3-OcJkNyL:
+  uid: 3-OcJkNyL
+  id: 21212
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21211
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  - id: 21213
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 3-OcJkNyL
+      value:
+      - uid
+      - 3-OcJkNyL
+    - source:
+      - uid
+      - 619wcXH8B
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - 619wcXH8B
+      value: ' figure'
+  blocks: null
+Wx3tPA-fI:
+  uid: Wx3tPA-fI
+  id: 21210
+  string: 'The second leg, A.D. 1261–1262: from Soldaia into the Tartar lands, to
+    Sara and Bolgara, the residences of Barca Kaan.'
+  order: 1
+  heading: null
+  children:
+  - id: 12136
+  - id: 21209
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - Wx3tPA-fI
+      value:
+      - uid
+      - Wx3tPA-fI
+    - source:
+      - uid
+      - Aj5x4KDkB
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - Aj5x4KDkB
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 VHTk1hJqV:
   uid: VHTk1hJqV
   id: 12491
@@ -11044,6 +11463,26 @@ eXk2e2_GL:
   title: null
   attrs: null
   blocks: null
+DEAkQGxFy:
+  uid: DEAkQGxFy
+  id: 21220
+  string: 'element-type:: list-of-illustrations'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 21221
+  - id: 21222
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 oZzBsgN89:
   uid: oZzBsgN89
   id: 12577
@@ -11263,6 +11702,42 @@ QOfNkBTdX:
   title: null
   attrs: null
   blocks: null
+qd_rPQczj:
+  uid: qd_rPQczj
+  id: 20636
+  string: '[2.1] Notes'
+  order: 11
+  heading: 2
+  children:
+  - id: 20635
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - qd_rPQczj
+      value:
+      - uid
+      - qd_rPQczj
+    - source:
+      - uid
+      - a-ciOHKA3
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - a-ciOHKA3
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 RYAmU5o3o:
   uid: RYAmU5o3o
   id: 12367
@@ -11305,6 +11780,66 @@ vKia5BRKR:
   title: null
   attrs: null
   blocks: null
+S5r_5tiRB:
+  uid: S5r_5tiRB
+  id: 21213
+  string: 'The third leg, A.D. 1262–1265: across the great desert to Bocara, where
+    the brothers met the envoys of the Levant.'
+  order: 1
+  heading: null
+  children:
+  - id: 12137
+  - id: 21212
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12007
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - S5r_5tiRB
+      value:
+      - uid
+      - S5r_5tiRB
+    - source:
+      - uid
+      - 3-OcJkNyL
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - 3-OcJkNyL
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
+-JaXXr0-i:
+  uid: -JaXXr0-i
+  id: 20634
+  string: 'element-type:: endnotes'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11876
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20635
+  - id: 20636
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 nI0AyNaQK:
   uid: nI0AyNaQK
   id: 12259
@@ -11322,6 +11857,24 @@ nI0AyNaQK:
   - id: 11902
   - id: 12257
   - id: 12258
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+9YyTOObVi:
+  uid: 9YyTOObVi
+  id: 20641
+  string: Saveh, in north-western Iran, not far from Tehran.
+  order: 4
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
   props: null
   title: null
   attrs: null
@@ -11429,7 +11982,7 @@ xR2SkX0dj:
 emxLujzkH:
   uid: emxLujzkH
   id: 12185
-  string: On the frontier of Armenia towards the south-east is the kingdom of Mausul.
+  string: On the frontier of Armenia towards the south-east is the kingdom of [(Mausul)](((TDJJZ9PaR))).
     It is a very great kingdom, and inhabited{1} by several different kinds of people
     whom we shall now describe. First there is a kind of people called Arabi, and
     these worship Mahommet. Then there is another description of people who are Nestorian
@@ -11440,13 +11993,13 @@ emxLujzkH:
     there is a very great number of Christians in those countries, they are all Jacobites
     and Nestorians; Christians indeed, but not in the fashion enjoined by the Pope
     of Rome, for they come short in several points of the Faith.{2} All the cloths
-    of gold and silk that are called Mosolins are made in this country; and those
-    great Merchants called Mosolins, who carry for sale such quantities of spicery
-    and pearls and cloths of silk and gold, are also from this kingdom.{3} There is
-    yet another race of people who inhabit the mountains in that quarter, and are
-    called Curds. Some of them are Christians, and some of them are Saracens; but
-    they are an evil generation, whose delight it is to plunder merchants.{4} [Near
-    this province is another called Mus and Merdin, producing an immense quantity
+    of gold and silk that are called [(Mosolins)](((DE7kym__h))) are made in this
+    country; and those great Merchants called Mosolins, who carry for sale such quantities
+    of spicery and pearls and cloths of silk and gold, are also from this kingdom.{3}
+    There is yet another race of people who inhabit the mountains in that quarter,
+    and are called Curds. Some of them are Christians, and some of them are Saracens;
+    but they are an evil generation, whose delight it is to plunder merchants.{4}
+    [Near this province is another called Mus and Merdin, producing an immense quantity
     of cotton, from which they make a great deal of buckram{5} and other cloth. The
     people are craftsmen and traders, and all are subject to the Tartar King.] Note
     1.—Polo could scarcely have been justified in calling Mosul a very great kingdom.
@@ -11462,7 +12015,9 @@ emxLujzkH:
   order: 2
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20639
+  - id: 20640
   page:
     id: 11850
   children_view_type: null
@@ -11544,6 +12099,7 @@ t1hVtf82l:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -11692,6 +12248,43 @@ EfCCAg-iA:
   title: null
   attrs: null
   blocks: null
+DvXruLSXk:
+  uid: DvXruLSXk
+  id: 21221
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 21220
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 21222
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - DvXruLSXk
+      value:
+      - uid
+      - DvXruLSXk
+    - source:
+      - uid
+      - DEAkQGxFy
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - DEAkQGxFy
+      value: ' list-of-illustrations'
+  blocks: null
 OPAjTYc1n:
   uid: OPAjTYc1n
   id: 11867
@@ -11751,6 +12344,7 @@ _Aea4kPt1:
   - id: 12727
   - id: 12732
   - id: 12769
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -12038,25 +12632,6 @@ LNLrKUqgP:
   - id: 11850
   - id: 11902
   - id: 12039
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-Wwn_ElnkO:
-  uid: Wwn_ElnkO
-  id: 4597
-  string: Who this book is not for
-  order: 1
-  heading: 3
-  children:
-  - id: 4598
-  - id: 4599
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
   props: null
   title: null
   attrs: null
@@ -12412,7 +12987,7 @@ MGvH7SY4M:
   id: 11905
   string: '[1.4] **Book IV**: Wars Among the Tartar Princes and Some Account of the
     Northern Countries'
-  order: 8
+  order: 10
   heading: 1
   children:
   - id: 11914
@@ -12634,6 +13209,64 @@ oT2WP2x_v:
   title: null
   attrs: null
   blocks: null
+Aj5x4KDkB:
+  uid: Aj5x4KDkB
+  id: 21209
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21208
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11972
+  - id: 21210
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - Aj5x4KDkB
+      value:
+      - uid
+      - Aj5x4KDkB
+    - source:
+      - uid
+      - hafI_rkld
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - hafI_rkld
+      value: ' figure'
+  blocks: null
+TDJJZ9PaR:
+  uid: TDJJZ9PaR
+  id: 20639
+  string: A principality centred on the city of Mosul, in what is now northern Iraq;
+    it came under Mongol rule in 1261.
+  order: 2
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 kaKxCS13r:
   uid: kaKxCS13r
   id: 12224
@@ -12770,6 +13403,7 @@ kQ9V7JV9P:
   - id: 12727
   - id: 12732
   - id: 12761
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -12914,6 +13548,7 @@ XUiel8zJU:
   - id: 12732
   - id: 12781
   - id: 12782
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -12935,6 +13570,7 @@ _JenzCGN1:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -12956,6 +13592,7 @@ _JenzCGN1:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -13188,6 +13825,25 @@ XE5cHpBNa:
   title: null
   attrs: null
   blocks: null
+zCCYjDcSv:
+  uid: zCCYjDcSv
+  id: 20645
+  string: Khubilai, the fifth Great Khan of the Mongol Empire and the first emperor
+    of China's Yuan dynasty.
+  order: 8
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20647
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 64POjWeCr:
   uid: 64POjWeCr
   id: 12331
@@ -13257,6 +13913,7 @@ IyIuh_JZP:
   - id: 12732
   - id: 12773
   - id: 12774
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -13594,7 +14251,7 @@ ZVvaN-_mA:
   uid: ZVvaN-_mA
   id: 12135
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FDbVuSC4qn6.jpeg.enc?alt=media&token=e87ba4b9-8faf-4243-99d6-4757d99116d6)'
-  order: 1
+  order: 0
   heading: null
   children: null
   refs: null
@@ -13605,6 +14262,7 @@ ZVvaN-_mA:
   - id: 11850
   - id: 11902
   - id: 11906
+  - id: 21207
   props: null
   title: null
   attrs: null
@@ -13692,7 +14350,7 @@ vALZLA1Jn:
   uid: 09KMheZHg
   id: 12792
   string: '[1.3] **Book III**: Journey to the West and South-West of Cathay.'
-  order: 7
+  order: 9
   heading: 1
   children:
   - id: 12790
@@ -13786,7 +14444,7 @@ zXhYsKp5A:
   children:
   - id: 12728
   - id: 12730
-  - id: 12732
+  - id: 21219
   refs: null
   page:
     id: 11850
@@ -13882,6 +14540,7 @@ al7uzI8-L:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -14137,6 +14796,7 @@ Jjl5RBynj:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -14546,25 +15206,6 @@ R9gPO6rxP:
   title: About the Author
   attrs: null
   blocks: null
-PjkhzuQ8m:
-  uid: PjkhzuQ8m
-  id: 4387
-  string: If it's **a few sentences**, it fits naturally inside the introduction —
-    just fold it into the opening where you're framing the book's purpose.
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4427
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 J72XYqXFY:
   uid: J72XYqXFY
   id: 12620
@@ -14666,6 +15307,7 @@ dnaYsDqv8:
   - id: 12732
   - id: 12741
   - id: 12742
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -14698,9 +15340,19 @@ rhPsF4zq3:
     - front-matter headings whose text is a page reference (Acknowledgments; Who is
     this Book for?)
 
-    - a chapter whose body is a fenced Python `code block` (Chapter 4: Code Listing)
+    - every image, table, and code listing is a `float` wrapper (through its `guffin-meta::`
+    child) over the content block itself: three `float:: figure` maps (Book I chapters
+    I–III), one `float:: listing` (Chapter 4: Code Listing), and one `float:: table`
+    (Book II, Chapter XXIV) — a book numbers them by chapter, counting the chapters
+    consecutively through the parts, so they render as Figure 1.1, 2.1, 3.1, Listing
+    4.1, and Table 30.1
 
-    - this INFO `Callout box`'
+    - two front-matter headings, ahead of the acknowledgments as Chicago orders them,
+    tagged `element-type:: list-of-illustrations` (`[0.1] Illustrations`) and `element-type::
+    list-of-tables` (`[0.2] Tables`), to hold the generated lists of figures and tables;
+    code listings get no list, by design
+
+    - this INFO `Callout box` '
   order: 0
   heading: null
   children: null
@@ -14760,22 +15412,23 @@ aDIkVUQdu:
 qA3qSVISz:
   uid: qA3qSVISz
   id: 12095
-  string: Having stayed a while at Soldaia, they considered the matter, and thought
-    it well to extend their journey further. So they set forth from Soldaia and travelled
-    till they came to the Court of a certain Tartar Prince, Barca Kaan by name, whose
-    residences were at Sara{1} and at Bolgara [and who was esteemed one of the most
-    liberal and courteous Princes that ever was among the Tartars.]{2} This Barca
-    was delighted at the arrival of the Two Brothers, and treated them with great
-    honour; so they presented to him the whole of the jewels that they had brought
-    with them. The Prince was highly pleased with these, and accepted the offering
-    most graciously, causing the Brothers to receive at least twice its value. After
-    they had spent a twelvemonth at the court of this Prince there broke out a great
-    war between Barca and Aláu, the Lord of the Tartars of the Levant, and great hosts
-    were mustered on either side.{3}
+  string: Having stayed a while at [(Soldaia)](((5J3yk8LQE))), they considered the
+    matter, and thought it well to extend their journey further. So they set forth
+    from Soldaia and travelled till they came to the Court of a certain Tartar Prince,
+    Barca Kaan by name, whose residences were at Sara{1} and at Bolgara [and who was
+    esteemed one of the most liberal and courteous Princes that ever was among the
+    Tartars.]{2} This Barca was delighted at the arrival of the Two Brothers, and
+    treated them with great honour; so they presented to him the whole of the jewels
+    that they had brought with them. The Prince was highly pleased with these, and
+    accepted the offering most graciously, causing the Brothers to receive at least
+    twice its value. After they had spent a twelvemonth at the court of this Prince
+    there broke out a great war between Barca and Aláu, the Lord of the Tartars of
+    the Levant, and great hosts were mustered on either side.{3}
   order: 3
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20638
   page:
     id: 11850
   children_view_type: null
@@ -14939,6 +15592,7 @@ qjaCoUDM7:
   - id: 12732
   - id: 12785
   - id: 12786
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -14975,8 +15629,8 @@ g9ifwFqvG:
 jqAiDA6IM:
   uid: jqAiDA6IM
   id: 11871
-  string: '[0.2] [[Who Is This Book For?]]'
-  order: 3
+  string: '[0.4] [[Who Is This Book For?]]'
+  order: 5
   heading: 2
   children:
   - id: 11872
@@ -14985,7 +15639,7 @@ jqAiDA6IM:
   - id: 11875
   - id: 11890
   refs:
-  - id: 4384
+  - id: 21226
   page:
     id: 11850
   children_view_type: document
@@ -15065,6 +15719,43 @@ jqAiDA6IM:
       - uid
       - BxGxeeGk1
   blocks: null
+a-ciOHKA3:
+  uid: a-ciOHKA3
+  id: 20635
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 20634
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 20636
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - a-ciOHKA3
+      value:
+      - uid
+      - a-ciOHKA3
+    - source:
+      - uid
+      - -JaXXr0-i
+      value:
+      - uid
+      - asCh2FQQp
+    - source:
+      - uid
+      - -JaXXr0-i
+      value: ' endnotes'
+  blocks: null
 f5oHh-EjV:
   uid: f5oHh-EjV
   id: 12507
@@ -15102,24 +15793,6 @@ f5oHh-EjV:
       - uid
       - wZGFmE3k2
       value: ' chapter'
-  blocks: null
-fQV20MHbZ:
-  uid: fQV20MHbZ
-  id: 4599
-  string: Experienced software engineers looking for specific
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4597
-  props: null
-  title: null
-  attrs: null
   blocks: null
 z_LsdQDTl:
   uid: z_LsdQDTl
@@ -15284,21 +15957,6 @@ XTruep-9v:
   title: null
   attrs: null
   blocks: null
-RXwAqq0_T:
-  uid: RXwAqq0_T
-  id: 261
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: tags
-  attrs: null
-  blocks: null
 JHZh0W3D_:
   uid: JHZh0W3D_
   id: 12578
@@ -15357,8 +16015,8 @@ yXBTPjfOT:
 dpoX6c0Pl:
   uid: dpoX6c0Pl
   id: 11861
-  string: '[0.1] [[Acknowledgments]]'
-  order: 2
+  string: '[0.3] [[Acknowledgments]]'
+  order: 4
   heading: 2
   children:
   - id: 11862
@@ -15574,23 +16232,6 @@ TbcQ8_-Pp:
   title: null
   attrs: null
   blocks: null
-sDUbCET-K:
-  uid: sDUbCET-K
-  id: 11901
-  string: ''
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4338
-  children_view_type: null
-  parents:
-  - id: 4338
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 JRKK4tzAV:
   uid: JRKK4tzAV
   id: 12332
@@ -15789,6 +16430,7 @@ AgVhfYLCC:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -15890,21 +16532,61 @@ JQVKcYJKO:
   title: null
   attrs: null
   blocks: null
-JSrSVApJ_:
-  uid: JSrSVApJ_
-  id: 18204
-  string: 'tags:: #Publishing'
+sZSakvhFE:
+  uid: sZSakvhFE
+  id: 21219
+  string: The currencies, weights, and measures Polo records, by region.
   order: 1
+  heading: null
+  children:
+  - id: 12732
+  - id: 21218
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11903
+  - id: 12727
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - sZSakvhFE
+      value:
+      - uid
+      - sZSakvhFE
+    - source:
+      - uid
+      - LwI_ZAQov
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - LwI_ZAQov
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
+woowW3Deg:
+  uid: woowW3Deg
+  id: 21223
+  string: 'element-type:: list-of-tables'
+  order: 0
   heading: null
   children: null
   refs:
-  - id: 261
-  - id: 6535
+  - id: 11876
   page:
-    id: 4223
+    id: 11850
   children_view_type: null
   parents:
-  - id: 4223
+  - id: 11850
+  - id: 21224
+  - id: 21225
   props: null
   title: null
   attrs: null
@@ -16070,7 +16752,7 @@ Wvt7hoBdn:
     \ node_tree))\n        except (NotImplementedError, ValueError) as exc:\n    \
     \        logger.debug(\"skipping ref node uid=%r: %s\", ref_node.uid, exc)\n \
     \   return VertexTree(tree_vertices=vertices, ref_vertices=ref_vertices)```"
-  order: 1
+  order: 0
   heading: null
   children: null
   refs: null
@@ -16081,6 +16763,7 @@ Wvt7hoBdn:
   - id: 11850
   - id: 11902
   - id: 12039
+  - id: 21216
   props: null
   title: null
   attrs: null
@@ -16114,7 +16797,7 @@ tljWl5ZoV:
   children:
   - id: 11910
   - id: 11963
-  - id: 12135
+  - id: 21207
   refs: null
   page:
     id: 11850
@@ -16162,6 +16845,7 @@ fut-ebfVb:
   - id: 12727
   - id: 12732
   - id: 12777
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -16380,6 +17064,45 @@ G3pZzZ1Wa:
   title: null
   attrs: null
   blocks: null
+hIcIxeUtA:
+  uid: hIcIxeUtA
+  id: 21216
+  string: Guffin's transcribe function, which turns a node tree into a vertex tree.
+  order: 1
+  heading: null
+  children:
+  - id: 12061
+  - id: 21215
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 12039
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - hIcIxeUtA
+      value:
+      - uid
+      - hIcIxeUtA
+    - source:
+      - uid
+      - QeNIBjBCk
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - QeNIBjBCk
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 OvGR5WgKV:
   uid: OvGR5WgKV
   id: 12755
@@ -16399,6 +17122,7 @@ OvGR5WgKV:
   - id: 12732
   - id: 12753
   - id: 12754
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -16450,6 +17174,7 @@ lO0g-Xa8m:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -16471,6 +17196,7 @@ zXai0oMEW:
   - id: 11903
   - id: 12727
   - id: 12732
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -16501,23 +17227,24 @@ l77yyFKzC:
 g9CM7k81s:
   uid: g9CM7k81s
   id: 12282
-  string: Kerman is a kingdom which is also properly in Persia, and formerly it had
-    a hereditary prince. Since the Tartars conquered the country the rule is no longer
-    hereditary, but the Tartar sends to administer whatever lord he pleases.{1} In
-    this kingdom are produced the stones called turquoises in great abundance; they
-    are found in the mountains, where they are extracted from the rocks.{2} There
-    are also plenty of veins of steel and Ondanique.{3} The people are very skilful
-    in making harness of war; their saddles, bridles, spurs, swords, bows, quivers,
-    and arms of every kind, are very well made indeed according to the fashion of
-    those parts. The ladies of the country and their daughters also produce exquisite
-    needlework in the embroidery of silk stuffs in different colours, with figures
-    of beasts and birds, trees and flowers, and a variety of other patterns. They
-    work hangings for the use of noblemen so deftly that they are marvels to see,
-    as well as cushions, pillows quilts, and all sorts of things. {4}
+  string: '[(Kerman)](((ExR4qHuuC))) is a kingdom which is also properly in Persia,
+    and formerly it had a hereditary prince. Since the Tartars conquered the country
+    the rule is no longer hereditary, but the Tartar sends to administer whatever
+    lord he pleases.{1} In this kingdom are produced the stones called turquoises
+    in great abundance; they are found in the mountains, where they are extracted
+    from the rocks.{2} There are also plenty of veins of steel and Ondanique.{3} The
+    people are very skilful in making harness of war; their saddles, bridles, spurs,
+    swords, bows, quivers, and arms of every kind, are very well made indeed according
+    to the fashion of those parts. The ladies of the country and their daughters also
+    produce exquisite needlework in the embroidery of silk stuffs in different colours,
+    with figures of beasts and birds, trees and flowers, and a variety of other patterns.
+    They work hangings for the use of noblemen so deftly that they are marvels to
+    see, as well as cushions, pillows quilts, and all sorts of things. {4}'
   order: 1
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20642
   page:
     id: 11850
   children_view_type: null
@@ -16594,7 +17321,7 @@ LZJSmETBX:
   - id: 12093
   - id: 12094
   - id: 12095
-  - id: 12136
+  - id: 21210
   refs: null
   page:
     id: 11850
@@ -16903,6 +17630,7 @@ lLSoMElKq:
   - id: 12727
   - id: 12732
   - id: 12765
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -16968,6 +17696,7 @@ hwLhBpDja:
   - id: 12769
   - id: 12770
   - id: 12771
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -17523,46 +18252,8 @@ XEXppTHQE:
   - id: 12727
   - id: 12732
   - id: 12757
+  - id: 21219
   props: null
-  title: null
-  attrs: null
-  blocks: null
-eb6oOgGOt:
-  uid: eb6oOgGOt
-  id: 8662
-  string: '[[>]] [[!INFO]] Contextual Definition: Programming Language (Gemini)
-
-    A programming language is a **formal** system of rules, symbols, and syntax used
-    to provide instructions to a computer. It acts as a bridge between human thought
-    patterns and the binary operations of a processor, allowing developers to define
-    data structures, control flow, and algorithms.
-
-
-    Examples: [[Fortran]], [[ALGOL]], [[COBOL]], [[Pascal]], [[C]], [[C++]], [[Java]],
-    [[Visual Basic/VB.NET]], [[Python]], [[Rust]]'
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 4648
-  - id: 4649
-  - id: 4650
-  - id: 4654
-  - id: 4655
-  - id: 5450
-  - id: 5462
-  - id: 8723
-  - id: 8731
-  - id: 8732
-  - id: 8733
-  - id: 8931
-  page:
-    id: 8657
-  children_view_type: null
-  parents:
-  - id: 8657
-  props:
-    type: equal
   title: null
   attrs: null
   blocks: null
@@ -17608,7 +18299,7 @@ P9pd0pX4y:
   uid: P9pd0pX4y
   id: 12732
   string: '{{[[table]]}}'
-  order: 2
+  order: 0
   heading: null
   children:
   - id: 12733
@@ -17634,6 +18325,7 @@ P9pd0pX4y:
   - id: 11850
   - id: 11903
   - id: 12727
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -17729,36 +18421,6 @@ vf0E7bSFT:
   title: null
   attrs: null
   blocks: null
-XyG4ILJOo:
-  uid: XyG4ILJOo
-  id: 8670
-  string: '[[>]] [[!NOTE]] Contextual Core Components (Gemini)
-
-    **Syntax**: The specific set of rules that defines the combinations of symbols
-    that are considered to be correctly structured programs (the "grammar").
-
-
-    **Semantics:** The meaning or behavior of the code when executed.
-
-
-    **Abstraction:** The ability to hide complex hardware operations behind human-readable
-    commands (e.g., using `print()` instead of manually managing memory buffers and
-    CPU registers).'
-  order: 1
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5455
-  page:
-    id: 8657
-  children_view_type: null
-  parents:
-  - id: 8657
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 7jR4UgJfE:
   uid: 7jR4UgJfE
   id: 12618
@@ -17842,6 +18504,28 @@ FJ42n05XS:
   - id: 11850
   - id: 11902
   - id: 12150
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+_JH8OJUKv:
+  uid: _JH8OJUKv
+  id: 21205
+  string: 'float:: figure'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  - id: 11902
+  - id: 11906
+  - id: 21206
+  - id: 21207
   props: null
   title: null
   attrs: null
@@ -18097,27 +18781,7 @@ wC5qlnsBS:
   - id: 12757
   - id: 12758
   - id: 12759
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-TPRmrrxwE:
-  uid: TPRmrrxwE
-  id: 4389
-  string: '**In the preface** — this is the most common home for it in technical books,
-    since "who this is for" is meta-information __about__ the book rather than content
-    __of__ the book'
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4388
-  - id: 4427
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -18217,7 +18881,7 @@ lZKsMSgZX:
   uid: lZKsMSgZX
   id: 11903
   string: '[1.2] **Book II**: The Kaan, His Court and Capital'
-  order: 6
+  order: 8
   heading: 1
   children:
   - id: 11912
@@ -18386,24 +19050,6 @@ uVXLy10u8:
   title: null
   attrs: null
   blocks: null
-GuHqKi9Y_:
-  uid: GuHqKi9Y_
-  id: 4384
-  string: null
-  order: null
-  heading: null
-  children:
-  - id: 4427
-  - id: 4597
-  - id: 4600
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: Who Is This Book For?
-  attrs: []
-  blocks: null
 IioymiceP:
   uid: IioymiceP
   id: 12181
@@ -18442,7 +19088,7 @@ GJ-Y_OXdC:
   uid: GJ-Y_OXdC
   id: 12136
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FU73wJbltGF.jpeg.enc?alt=media&token=f7203ec3-c64d-4e35-a5d9-49f8fc4288ff)'
-  order: 1
+  order: 0
   heading: null
   children: null
   refs: null
@@ -18453,27 +19099,7 @@ GJ-Y_OXdC:
   - id: 11850
   - id: 11902
   - id: 11972
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-xLG8Ir4vl:
-  uid: xLG8Ir4vl
-  id: 4391
-  string: 'The O''Reilly pattern is worth knowing because it''s so widespread in technical
-    publishing: preface → who this book is for → (sometimes) conventions used in this
-    book → introduction. Readers have come to expect it in that genre, which is itself
-    a reason to follow it.'
-  order: 2
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4427
+  - id: 21210
   props: null
   title: null
   attrs: null
@@ -18709,6 +19335,7 @@ d66O3vRkn:
   - id: 12727
   - id: 12732
   - id: 12781
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -18783,29 +19410,6 @@ wVuAR5ZWY:
   - id: 11850
   - id: 11902
   - id: 12314
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-ABHkVeu8O:
-  uid: ABHkVeu8O
-  id: 8676
-  string: '[[>]] [[!NOTE]] The Translation Process
-
-    Because computers only understand machine code (1s and 0s), programming languages
-    rely on a **compiler** or an **interpreter** to translate the source code into
-    a format the hardware can execute.'
-  order: 2
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5455
-  page:
-    id: 8657
-  children_view_type: null
-  parents:
-  - id: 8657
   props: null
   title: null
   attrs: null
@@ -19260,25 +19864,27 @@ eFec2eq5P:
 PI66v7qPU:
   uid: PI66v7qPU
   id: 11963
-  string: There are two Hermenias, the Greater and the Less. The Lesser Hermenia is
-    governed by a certain King, who maintains a just rule in his dominions, but is
-    himself subject to the Tartar. {1} The country contains numerous towns and villages,{2}
-    and has everything in plenty; moreover, it is a great country for sport in the
-    chase of all manner of beasts and birds. It is, however, by no means a healthy
-    region, but grievously the reverse.{3} In days of old the nobles there were valiant
-    men, and did doughty deeds of arms; but nowadays they are poor creatures, and
-    good at nought, unless it be at boozing; they are great at that. Howbeit, they
-    have a city upon the sea, which is called Layas, at which there is a great trade.
-    For you must know that all the spicery, and the cloths of silk and gold, and the
-    other valuable wares that come from the interior, are brought to that city. And
-    the merchants of Venice and Genoa, and other countries, come thither to sell their
-    goods, and to buy what they lack. And whatsoever persons would travel to the interior
-    (of the East), merchants or others, they take their way by this city of Layas.{4}
-    Having now told you about the Lesser Hermenia, we shall next tell you about Turcomania.
+  string: There are two Hermenias, the Greater and the Less. The [(Lesser Hermenia)](((y0iOT5hmC)))
+    is governed by a certain King, who maintains a just rule in his dominions, but
+    is himself subject to the Tartar. {1} The country contains numerous towns and
+    villages,{2} and has everything in plenty; moreover, it is a great country for
+    sport in the chase of all manner of beasts and birds. It is, however, by no means
+    a healthy region, but grievously the reverse.{3} In days of old the nobles there
+    were valiant men, and did doughty deeds of arms; but nowadays they are poor creatures,
+    and good at nought, unless it be at boozing; they are great at that. Howbeit,
+    they have a city upon the sea, which is called Layas, at which there is a great
+    trade. For you must know that all the spicery, and the cloths of silk and gold,
+    and the other valuable wares that come from the interior, are brought to that
+    city. And the merchants of Venice and Genoa, and other countries, come thither
+    to sell their goods, and to buy what they lack. And whatsoever persons would travel
+    to the interior (of the East), merchants or others, they take their way by this
+    city of Layas.{4} Having now told you about the Lesser Hermenia, we shall next
+    tell you about Turcomania.
   order: 2
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 20637
   page:
     id: 11850
   children_view_type: null
@@ -19334,24 +19940,7 @@ FaN0uCYBo:
   - id: 12773
   - id: 12774
   - id: 12775
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-oaDIyA-Js:
-  uid: oaDIyA-Js
-  id: 4601
-  string: 'Software Engineering Managers (addressable audience: ~5 million worldwide)'
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 4384
-  children_view_type: null
-  parents:
-  - id: 4384
-  - id: 4600
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -19394,6 +19983,7 @@ yjegewveP:
   - id: 12732
   - id: 12745
   - id: 12746
+  - id: 21219
   props: null
   title: null
   attrs: null
@@ -19530,6 +20120,42 @@ kvnvvH3Zd:
   props: null
   title: null
   attrs: null
+  blocks: null
+HNou_PbKI:
+  uid: HNou_PbKI
+  id: 21225
+  string: '[0.2] Tables'
+  order: 3
+  heading: 2
+  children:
+  - id: 21224
+  refs: null
+  page:
+    id: 11850
+  children_view_type: null
+  parents:
+  - id: 11850
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - HNou_PbKI
+      value:
+      - uid
+      - HNou_PbKI
+    - source:
+      - uid
+      - YslnLujF9
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - YslnLujF9
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 TnIQ-fsxe:
   uid: TnIQ-fsxe
@@ -20007,26 +20633,6 @@ uMCb0ordG:
   - id: 11850
   - id: 11903
   - id: 12610
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-lXi4SgSvz:
-  uid: lXi4SgSvz
-  id: 18202
-  string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST
-    DATA – DO NOT REMOVE'
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
   props: null
   title: null
   attrs: null

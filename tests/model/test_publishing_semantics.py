@@ -208,6 +208,8 @@ class TestElementTypeOfArticle7Fixture:
             if (assignment := find_publishing_attribute(vertex, PublishingSemantics.ELEMENT_TYPE)) is not None
         }
         assert resolved == {
+            "mN76Wv85f": StructuralElement.LIST_OF_ILLUSTRATIONS,
+            "HNou_PbKI": StructuralElement.LIST_OF_TABLES,
             "dpoX6c0Pl": StructuralElement.ACKNOWLEDGMENTS,
             "Lo-2ftdb7": StructuralElement.INTRODUCTION,
             "lSrjeyDaT": StructuralElement.PART,
@@ -245,6 +247,7 @@ class TestElementTypeOfArticle7Fixture:
             "zXhYsKp5A": StructuralElement.CHAPTER,
             "09KMheZHg": StructuralElement.PART,
             "MGvH7SY4M": StructuralElement.PART,
+            "qd_rPQczj": StructuralElement.ENDNOTES,
         }
 
     def test_acknowledgments_heading_resolves(self) -> None:
