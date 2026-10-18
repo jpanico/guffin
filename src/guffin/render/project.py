@@ -119,6 +119,21 @@ class NoteStyle(enum.StrEnum):
     NUMBERED = "numbered"
 
 
+class FloatNumberingStyle(enum.StrEnum):
+    """How a work numbers its floats — its figures, tables, and listings.
+
+    Attributes:
+        BY_CHAPTER: Each kind's series restarts at every chapter, and a number carries the
+            chapter's number ahead of the ordinal (*figure 2.3*): Chicago's double numeration,
+            a book's convention.
+        SEQUENTIAL: Each kind's series runs straight through the work (*figure 3*): an article's
+            or a manuscript's convention.
+    """
+
+    BY_CHAPTER = "by-chapter"
+    SEQUENTIAL = "sequential"
+
+
 class StructuralPolicy(BaseModel):
     """Format-independent structural directives derived from a :class:`ProjectProfile`.
 
@@ -167,6 +182,7 @@ class StructuralPolicy(BaseModel):
     )
     honor_page_breaks: bool = Field(..., description="Honor authored page-break directives.")
     note_style: NoteStyle = Field(..., description="How the work presents its notes.")
+    float_numbering: FloatNumberingStyle = Field(..., description="How the work numbers its floats.")
 
 
 class ProjectProfile(BaseModel):
@@ -224,6 +240,7 @@ class ArticleProfile(ProjectProfile):
             epigraph_page=False,
             honor_page_breaks=True,
             note_style=NoteStyle.NUMBERED,
+            float_numbering=FloatNumberingStyle.SEQUENTIAL,
         )
 
 
@@ -263,6 +280,7 @@ class BookProfile(ProjectProfile):
             epigraph_page=True,
             honor_page_breaks=False,
             note_style=NoteStyle.INVISIBLE_ENDNOTES,
+            float_numbering=FloatNumberingStyle.BY_CHAPTER,
         )
 
 
@@ -297,6 +315,7 @@ class ManuscriptProfile(ProjectProfile):
             epigraph_page=False,
             honor_page_breaks=True,
             note_style=NoteStyle.NUMBERED,
+            float_numbering=FloatNumberingStyle.SEQUENTIAL,
         )
 
 

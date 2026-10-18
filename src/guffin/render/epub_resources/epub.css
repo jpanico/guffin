@@ -217,6 +217,30 @@ div.caption {
 }
 
 /*
+ * Floats: a figure or listing is a <figure> whose <figcaption> follows its content, a table float
+ * a <table> whose <caption> precedes it (Chicago sets a table's title above). The renderer writes
+ * the number into the caption as a bold label (Figure 2.3.), the same in every format; a reference
+ * in the running text is a link to the float's id.
+ */
+figure {
+  margin: 1em 0;
+}
+
+figcaption,
+table > caption {
+  font-size: 0.8em;
+  color: #555555;
+  text-align: left;
+  margin-top: 0.5em;
+}
+
+table > caption {
+  caption-side: top;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+/*
  * Callouts. guffin emits <div class="callout callout-TYPE"> with an inner
  * <div class="callout-title">, where TYPE is one of the twelve Roam callout keywords.
  * Mirroring the gentle-clues callout in the PDF output, the title is a tinted header

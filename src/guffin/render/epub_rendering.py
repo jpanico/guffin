@@ -79,6 +79,7 @@ from guffin.render.epub_post_processing import (
     stamp_titlepage_provenance,
     stamp_titlepage_revision,
 )
+from guffin.render.floats_rendering import PreparedFloats, prepare_floats
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -409,6 +410,9 @@ def render(
             notes_only=options.notes_only,
             title_header=False,
         )
+        # The floats are numbered in reading order and labelled before the links resolve, so a
+        # reference to one can be completed with its number.
+        floats: Final[PreparedFloats] = prepare_floats(doc, enriched_tree, profile.structural_policy)
         resolve_vertex_links(
             doc,
             enriched_tree,
@@ -418,6 +422,8 @@ def render(
                 options.daily_note_format,
                 heading_links=options.heading_links,
                 note_lead_in=note_lead_in,
+                floats=floats.floats,
+                float_numbers=floats.numbers,
             ),
         )
         # Appendix-placed PDFs are rasterised into the asset directory and reproduced at the

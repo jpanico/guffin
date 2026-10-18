@@ -75,6 +75,7 @@ from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enri
 from guffin.render.callout_theme import typst_callout_tokens
 from guffin.render.design_language import typst_table_tokens
 from guffin.render.epigraph_page import BOOK_EPIGRAPH_META_KEY, lift_leading_epigraphs
+from guffin.render.floats_rendering import PreparedFloats, prepare_floats
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, detached_copy, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -730,6 +731,9 @@ def render(
             notes_only=options.notes_only,
             title_header=not profile.structural_policy.emit_title_page,
         )
+        # The floats are numbered in reading order and labelled before the links resolve, so a
+        # reference to one can be completed with its number.
+        floats: Final[PreparedFloats] = prepare_floats(doc, enriched_tree, profile.structural_policy)
         resolve_vertex_links(
             doc,
             enriched_tree,
@@ -739,6 +743,8 @@ def render(
                 options.daily_note_format,
                 heading_links=options.heading_links,
                 note_lead_in=note_lead_in,
+                floats=floats.floats,
+                float_numbers=floats.numbers,
             ),
         )
         _style_heading_links(doc)

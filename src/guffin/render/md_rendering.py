@@ -33,6 +33,7 @@ _GFM_BULLET_FILTER: Final[str] = "gfm_bullet.lua"
 _GFM_CALLOUT_FILTER: Final[str] = "gfm_callout.lua"
 _GFM_CAPTION_FILTER: Final[str] = "gfm_caption.lua"
 _GFM_COLOR_SPAN_FILTER: Final[str] = "gfm_color_span.lua"
+_GFM_FLOAT_FILTER: Final[str] = "gfm_float.lua"
 _GFM_IMAGE_FILTER: Final[str] = "gfm_image.lua"
 _GFM_MARK_FILTER: Final[str] = "gfm_mark.lua"
 _GFM_QUOTE_FILTER: Final[str] = "gfm_quote.lua"
@@ -62,10 +63,12 @@ from guffin.model.publishing_semantics import (
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_alternatives, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
+from guffin.render.floats_rendering import PreparedFloats, prepare_floats
 from guffin.render.md_post_processing import indent_fenced_blank_lines, strip_list_separator_comments
 from guffin.render.notes_rendering import NOTES_GROUP_CLASS, prepare_notes
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
+    FLOAT_LINK_CLASS,
     HEADING_LINK_CLASS,
     NoteLeadInRenderer,
     colophon_html,
@@ -117,6 +120,24 @@ def _slug_targets(doc: pf.Doc) -> dict[str, str]:
 
     doc.walk(_collect)
     return {identifier: slug if slug and slug_counts[slug] == 1 else identifier for identifier, slug in slugs.items()}
+
+
+def _unclass_float_links(doc: pf.Doc) -> None:
+    """Shed the :data:`~guffin.render.pandoc_rendering.FLOAT_LINK_CLASS` from every float link in *doc*, in place.
+
+    GFM cannot express a classed link: the writer would emit a raw HTML ``<a>`` rather than a
+    Markdown link.  The link's ``#float-<uid>`` target stays, landing on the anchor
+    ``gfm_float.lua`` places above the float.
+
+    Args:
+        doc: The document whose float links are already resolved; modified in place.
+    """
+
+    def _unclass(elem: pf.Element, _doc: pf.Doc) -> None:
+        if isinstance(elem, pf.Link) and FLOAT_LINK_CLASS in elem.classes:
+            elem.classes.remove(FLOAT_LINK_CLASS)
+
+    doc.walk(_unclass)
 
 
 def _link_headings(doc: pf.Doc) -> None:
@@ -416,6 +437,7 @@ def render(
             notes_only=options.notes_only,
             title_header=True,
         )
+        floats: Final[PreparedFloats] = prepare_floats(doc, enriched_tree, profile.structural_policy)
         resolve_vertex_links(
             doc,
             enriched_tree,
@@ -425,9 +447,12 @@ def render(
                 options.daily_note_format,
                 heading_links=options.heading_links,
                 note_lead_in=note_lead_in,
+                floats=floats.floats,
+                float_numbers=floats.numbers,
             ),
         )
         _link_headings(doc)
+        _unclass_float_links(doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
         fully_stripped_urls: Final[frozenset[str]] = apply_reference_placements(
@@ -453,6 +478,7 @@ def render(
                     f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_FLOAT_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",
@@ -489,6 +515,7 @@ def render(
             notes_only=options.notes_only,
             title_header=True,
         )
+        no_bundle_floats: Final[PreparedFloats] = prepare_floats(no_bundle_doc, content, profile.structural_policy)
         resolve_vertex_links(
             no_bundle_doc,
             content,
@@ -498,9 +525,12 @@ def render(
                 options.daily_note_format,
                 heading_links=options.heading_links,
                 note_lead_in=no_bundle_note_lead_in,
+                floats=no_bundle_floats.floats,
+                float_numbers=no_bundle_floats.numbers,
             ),
         )
         _link_headings(no_bundle_doc)
+        _unclass_float_links(no_bundle_doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
         # writer (an attributed link falls back to a raw HTML anchor).
         apply_reference_placements(
@@ -525,6 +555,7 @@ def render(
                     f"--lua-filter={gfm_dir / _GFM_BULLET_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_CALLOUT_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_QUOTE_FILTER}",
+                    f"--lua-filter={gfm_dir / _GFM_FLOAT_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_CAPTION_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_COLOR_SPAN_FILTER}",
                     f"--lua-filter={gfm_dir / _GFM_ALTERNATIVES_FILTER}",

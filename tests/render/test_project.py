@@ -5,6 +5,7 @@ from typing import Final
 from guffin.render.project import (
     ArticleProfile,
     BookProfile,
+    FloatNumberingStyle,
     ManuscriptProfile,
     NoteStyle,
     ProjectProfile,
@@ -152,3 +153,14 @@ class TestProfileFor:
         result: Final[ProjectProfile] = accept(profile_for(ProjectType.BOOK))
         assert isinstance(result, BookProfile)
         assert result.structural_policy.top_level_division is TopLevelDivision.CHAPTER
+
+
+class TestFloatNumberingStyle:
+    """Each project type numbers its floats the way its kind of work does."""
+
+    def test_book_numbers_by_chapter_others_straight_through(self) -> None:
+        """A book uses Chicago's double numeration; an article or manuscript runs each series through."""
+        assert ArticleProfile().structural_policy.float_numbering is FloatNumberingStyle.SEQUENTIAL
+        assert ManuscriptProfile().structural_policy.float_numbering is FloatNumberingStyle.SEQUENTIAL
+        assert BookProfile().structural_policy.float_numbering is FloatNumberingStyle.BY_CHAPTER
+        assert BookProfile(with_parts=True).structural_policy.float_numbering is FloatNumberingStyle.BY_CHAPTER

@@ -3,8 +3,9 @@
 The design for numbered figures, tables, and code listings, the captions that make them, the
 references to them from the running text ("see figure 2.3"), and the lists of them in the front
 matter. Status: **designed, every question decided on 2026-10-17 but the deferred corner of Q3;
-the vocabulary, model, and validation are built (steps 1, 2, and 6 of the sketch); the policy
-directive, the rendering, and the lists are not.**
+the vocabulary, model, validation, policy directive, and the rendering of floats and references
+in all three formats are built (steps 1–4 and 6 of the sketch); the generated lists (step 5),
+the empty-list warning (rule 7), and the fixtures (step 7) are not.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest
@@ -365,9 +366,9 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
    in reading order with each float's governing chapter heading (the `placed_note_citations`
    walk, generalized, descending embeds at their site), and `float_numbers(tree, policy)`
    assigning `FloatNumber(kind, chapter, ordinal)` per display site.
-3. **Policy.** `StructuralPolicy.float_numbering`: `by-chapter` for book, `sequential` for
+3. **Policy** *(built 2026-10-17)*. `StructuralPolicy.float_numbering`: `by-chapter` for book, `sequential` for
    article and manuscript.
-4. **Render.** `pandoc_rendering`: a wrapper renders as a `Figure` whose `Caption` is the
+4. **Render** *(built 2026-10-17; `floats_rendering.py`, `gfm_float.lua`)*. `pandoc_rendering`: a wrapper renders as a `Figure` whose `Caption` is the
    wrapper's text led by the number (*Figure 2.3.*) and whose blocks are the wrapped content
    rendered as today (an image with its legend, a code block with its legend and attribution, a
    table), with the identifier `float-<wrapper-uid>`; a table float's `Caption` goes on the

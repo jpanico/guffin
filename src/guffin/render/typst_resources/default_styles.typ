@@ -250,6 +250,9 @@
 
 // set figure styles
 #show figure: set block(above: 2em, below: 2em)
+// A float's number is written into its caption by the renderer (one number in every format), so
+// Typst's own figure numbering, and the supplement it would prefix, are turned off.
+#show figure: set figure(numbering: none)
 
 #show figure.where(kind: table): set figure.caption(position: top)
 #show figure.where(kind: table): set figure(supplement: cfg.table-prefix)

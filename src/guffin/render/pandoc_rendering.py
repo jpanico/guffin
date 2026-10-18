@@ -136,6 +136,7 @@ from guffin.model.attribute import (
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.code_source import CodeSource
+from guffin.model.floats import Float, FloatNumber, float_of_wrapper, kind_word
 from guffin.model.publishing_semantics import (
     PageBreak,
     PdfRenderPlacement,
@@ -166,6 +167,7 @@ from guffin.model.vertex import (
     TodoVertex,
     Vertex,
     VertexChildren,
+    VertexType,
     is_bare_asset_vertex,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
@@ -538,6 +540,10 @@ def _block_ref_target(
         mixed with surrounding text, both of which are resolved inline instead.
     """
     dest: Final[Vertex | None] = standalone_link_target(vertex, vertex_tree)
+    if dest is not None and float_of_wrapper(dest, vertex_tree) is not None:
+        # A float is a block-level thing whatever its wrapper's type: a standalone reference to
+        # a wrapper displays the whole float there.
+        return dest
     return dest if isinstance(dest, _BLOCK_LEVEL_VERTEX_TYPES) else None
 
 
@@ -568,6 +574,10 @@ def _referenced_block_blocks(
     Returns:
         The referenced vertex's blocks.
     """
+    if float_of_wrapper(target, vertex_tree) is not None:
+        # A float is atomic: its wrapper's child is its content and its tag is its kind, so a
+        # reference displays the float whole rather than the wrapper's bare caption.
+        return _vertex_to_blocks(target, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth)
     stripped: Final[Vertex] = target.model_copy(update={"children": None, "attribute_assignments": None})
     return _vertex_to_blocks(stripped, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth)
 
@@ -1095,7 +1105,11 @@ def build_child_blocks(
                         vertex.attribute_assignments,
                     )
                 )
-        elif isinstance(vertex, (TextVertex, TodoVertex)) and layout is not ChildrenLayout.DOCUMENT:
+        elif (
+            isinstance(vertex, (TextVertex, TodoVertex))
+            and layout is not ChildrenLayout.DOCUMENT
+            and float_of_wrapper(vertex, vertex_tree) is None
+        ):
             pending_items.append(
                 _build_list_item(vertex, vertex_tree, asset_files, inline_map, view_map, layout, depth)
             )
@@ -1543,6 +1557,58 @@ The attribution is itself a caption Div, so it also carries :data:`_CAPTION_CLAS
 """
 
 
+def _float_blocks(
+    wrapped: Float,
+    wrapper: TextVertex,
+    vertex_tree: VertexTree,
+    asset_files: dict[Uid, Path],
+    inline_map: InlineMap,
+    view_map: ViewMap,
+    depth: int,
+) -> list[pf.Block]:
+    """Render a float — a wrapper and the content it wraps — as its captioned Pandoc element.
+
+    The wrapped content renders as it would on its own, in the ``DOCUMENT`` layout (an image with
+    its legend, a code block with its legend and attribution, a table), and the wrapper's text is
+    the caption.  A figure or a listing becomes a :class:`~panflute.Figure` holding those blocks,
+    its :class:`~panflute.Caption` the wrapper's inlines; a table float sets the caption on the
+    :class:`~panflute.Table` itself, since Pandoc's table carries one of its own and a table inside
+    a figure is rendered inconsistently by the writers.  Either carries the float's identifier
+    (:func:`float_identifier`) and the classes :data:`FLOAT_CLASS` and ``float-<kind>``.  The
+    caption carries no number here: the label is written in afterwards, from the model's
+    reading-order numbering, so that every format sets the same number.
+
+    Args:
+        wrapped: The float the wrapper declares.
+        wrapper: The wrapper vertex.
+        vertex_tree: The :class:`~guffin.vertex_tree.VertexTree` providing the UID-to-vertex lookup.
+        asset_files: Mapping from asset vertex UID (image or PDF) to local asset file path.
+        inline_map: Mapping from text string to parsed panflute inline elements.
+        view_map: Presentation view map keyed by vertex uid, governing child layout.
+        depth: Tree depth of the wrapper.
+
+    Returns:
+        A one-element list holding the :class:`~panflute.Figure` or the captioned
+        :class:`~panflute.Table`.
+    """
+    content: Final[Vertex] = vertex_tree.uid_map[wrapped.content_uid]
+    content_blocks: Final[list[pf.Block]] = _vertex_to_blocks(
+        content, vertex_tree, asset_files, inline_map, view_map, ChildrenLayout.DOCUMENT, depth + 1
+    )
+    caption: Final[pf.Caption] = pf.Caption(
+        pf.Plain(*detached_copy(inline_map.get(wrapper.text, [pf.Str(wrapper.text)])))
+    )
+    identifier: Final[str] = float_identifier(wrapper.uid)
+    classes: Final[list[str]] = [FLOAT_CLASS, f"{FLOAT_CLASS}-{wrapped.kind.value}"]
+    if wrapped.kind.content_type is VertexType.TABLE and content_blocks and isinstance(content_blocks[0], pf.Table):
+        table: Final[pf.Table] = content_blocks[0]
+        table.caption = caption
+        table.identifier = identifier
+        table.classes = classes
+        return content_blocks
+    return [pf.Figure(*content_blocks, caption=caption, identifier=identifier, classes=classes)]
+
+
 def _caption_blocks(
     vertex: ImageVertex | CodeBlockVertex,
     vertex_tree: VertexTree,
@@ -1968,6 +2034,9 @@ def _vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
         case TextVertex():
+            wrapped: Float | None = float_of_wrapper(vertex, vertex_tree)
+            if wrapped is not None:
+                return _float_blocks(wrapped, vertex, vertex_tree, asset_files, inline_map, view_map, depth)
             return _text_vertex_to_blocks(
                 vertex, vertex_tree, asset_files, inline_map, view_map, inherited_layout, depth
             )
@@ -2282,6 +2351,26 @@ _HEADING_ANCHOR_PREFIX: Final[str] = "vertex-"
 """The prefix of every :func:`heading_anchor`, keeping heading identifiers in their own namespace."""
 
 
+FLOAT_CLASS: Final[str] = "float"
+"""The class every rendered float carries, beside ``float-<kind>`` naming its kind."""
+
+FLOAT_LINK_CLASS: Final[str] = "float-link"
+"""The class stamped on an internal :class:`~panflute.Link` that references a float."""
+
+FLOAT_ID_PREFIX: Final[str] = "float-"
+"""The prefix of a rendered float's identifier, ahead of its wrapper's UID (see :func:`float_identifier`)."""
+
+
+@validate_call
+def float_identifier(uid: Uid) -> str:
+    """Return the identifier a float's rendered element carries: :data:`FLOAT_ID_PREFIX` + its wrapper's *uid*.
+
+    A different namespace from :func:`heading_anchor`'s, so a reference to a float and one to a
+    heading can never collide.
+    """
+    return f"{FLOAT_ID_PREFIX}{uid}"
+
+
 @validate_call
 def heading_anchor(uid: Uid) -> str:
     """Return the identifier the Header rendered from the heading vertex *uid* carries.
@@ -2342,6 +2431,16 @@ def _drop_repeated_heading_anchors(doc: pf.Doc) -> None:
     doc.walk(_dedupe)
 
 
+def _float_reference_link(target: Float, display: list[pf.Inline], numbers: Mapping[Uid, FloatNumber]) -> pf.Link:
+    """Return the link an inline reference to *target* renders as: its kind word completed, else its display."""
+    display_text: Final[str] = pf.stringify(pf.Span(*display))
+    number: Final[FloatNumber | None] = numbers.get(target.wrapper_uid)
+    url: Final[str] = f"#{float_identifier(target.wrapper_uid)}"
+    if kind_word(display_text) is target.kind and number is not None:
+        return pf.Link(pf.Str(f"{display_text.strip()} {number.text}"), url=url, classes=[FLOAT_LINK_CLASS])
+    return pf.Link(*detached_copy(display), url=url, classes=[FLOAT_LINK_CLASS])
+
+
 def make_resolver(
     inline_map: InlineMap,
     daily_note_format: DateFormat,
@@ -2349,6 +2448,8 @@ def make_resolver(
     *,
     italicize_heading_refs: bool = False,
     note_lead_in: NoteLeadInRenderer | None = None,
+    floats: Mapping[Uid, Float] | None = None,
+    float_numbers: Mapping[Uid, FloatNumber] | None = None,
 ) -> VertexLinkResolver:
     """Build a :data:`VertexLinkResolver` that renders each link as its destination's content.
 
@@ -2369,6 +2470,11 @@ def make_resolver(
       internal :class:`~panflute.Link` (class :data:`HEADING_LINK_CLASS`) to the heading when its
       :func:`heading_anchor` is among *heading_targets*; otherwise unlinked, since a link to an absent
       identifier would dangle — italicized when *italicize_heading_refs* is set, bare when not.
+    - :class:`~guffin.vertex.TextVertex` that is a **float wrapper** (among *floats*) — an internal
+      :class:`~panflute.Link` (class :data:`FLOAT_LINK_CLASS`) to the float: when the display text
+      is the float's kind word (:func:`~guffin.model.floats.kind_word`, in the author's case) and
+      the float has a number in *float_numbers*, the word completed with the number
+      (*figure 2.3*); otherwise the display text as written.
     - :class:`~guffin.vertex.TextVertex`, :class:`~guffin.vertex.QuoteBlockVertex` — the
       destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
@@ -2395,6 +2501,10 @@ def make_resolver(
             leaves it bare.
         note_lead_in: Renders a note link's lead-in in the running text; ``None`` (default) leaves
             the bare lead-in.
+        floats: The document's floats, keyed by wrapper UID, so a reference to a wrapper renders as a
+            link to its float; ``None`` (default) renders every text reference as the text.
+        float_numbers: Each displayed float's number, keyed by wrapper UID, completing a kind-word
+            reference; ``None`` (default) leaves every reference's display as written.
 
     Returns:
         A resolver callable suitable for :func:`resolve_vertex_links`.
@@ -2423,6 +2533,8 @@ def make_resolver(
                 if italicize_heading_refs:
                     return [pf.Emph(*detached_copy(heading_text))]
                 return heading_text
+            case TextVertex() if floats is not None and vertex.uid in floats:
+                return [_float_reference_link(floats[vertex.uid], display, float_numbers or {})]
             case TextVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TodoVertex():
@@ -2462,6 +2574,8 @@ def make_doc_resolver(
     *,
     heading_links: bool,
     note_lead_in: NoteLeadInRenderer | None = None,
+    floats: Mapping[Uid, Float] | None = None,
+    float_numbers: Mapping[Uid, FloatNumber] | None = None,
 ) -> VertexLinkResolver:
     """Build the :func:`make_resolver` resolver for *doc*, treating heading references per *heading_links*.
 
@@ -2475,6 +2589,8 @@ def make_doc_resolver(
         daily_note_format: How a reference to a daily-note page renders its date.
         heading_links: Whether a reference to a heading links to it.
         note_lead_in: Renders a note link's lead-in in the running text (see :func:`make_resolver`).
+        floats: The document's floats by wrapper UID, for references to them (see :func:`make_resolver`).
+        float_numbers: The displayed floats' numbers by wrapper UID (see :func:`make_resolver`).
 
     Returns:
         A resolver callable suitable for :func:`resolve_vertex_links`.
@@ -2486,6 +2602,8 @@ def make_doc_resolver(
         heading_targets,
         italicize_heading_refs=not heading_links,
         note_lead_in=note_lead_in,
+        floats=floats,
+        float_numbers=float_numbers,
     )
 
 
