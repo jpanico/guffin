@@ -21,6 +21,7 @@ from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
+    CodeBlockVertex,
     HeadingVertex,
     PageVertex,
     PdfVertex,
@@ -50,7 +51,7 @@ from guffin.render.pdf_rendering import (
     pdf_asset_paths,
     render,
 )
-from guffin.render.project import BookProfile, ProjectType, TopLevelDivision
+from guffin.render.project import ArticleProfile, BookProfile, ProjectType, TopLevelDivision
 from guffin.render.render_options import PdfRenderOptions
 from guffin.roam.local_api import ApiEndpoint
 from guffin.transcribe.roam_tree_to_guffin import transcribe
@@ -1069,3 +1070,58 @@ class TestAlternativesPdf:
         assert (
             text.index("Selected words.") < text.index("Dijkstra") < text.index("Other words.") < text.index("Perlis")
         )
+
+
+@pytest.mark.pandoc
+@pytest.mark.skipif(shutil.which("typst") is None, reason="requires typst on PATH")
+class TestLongListingFloatPdf:
+    """A listing float longer than a page breaks across pages, its caption after the last part.
+
+    A Typst figure is unbreakable unless the template says otherwise, so a long listing float would
+    overflow its page and pile its last lines onto its caption (seen 2026-10-18 on Test Article 7).
+    """
+
+    _LINES: Final[int] = 120
+
+    @pytest.fixture(scope="class")
+    def pdf(self, tmp_path_factory: pytest.TempPathFactory) -> PdfReader:
+        """An article whose only content is a listing float of 120 numbered lines."""
+        float_tag = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="float", domain=AttributeDomain.GUFFIN),
+                link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz"),
+            ),
+            values=(LiteralValue(value="listing"),),
+        )
+        code = "\n".join(f"line_{index:03d} = {index}" for index in range(1, self._LINES + 1))
+        tree = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["wrapl0001"]),
+                TextVertex(
+                    uid="wrapl0001", text="A long program.", children=["code00001"], attribute_assignments=[float_tag]
+                ),
+                CodeBlockVertex(uid="code00001", code=code, language="python"),
+            ]
+        )
+        out_dir = tmp_path_factory.mktemp("long-listing")
+        render(
+            RenderBundle(content=tree),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+            options=PdfRenderOptions(output_dir=out_dir),
+        )
+        return PdfReader(out_dir / "doc.pdf")
+
+    @staticmethod
+    def _page_of(reader: PdfReader, text: str) -> int:
+        return next(index for index, page in enumerate(reader.pages) if text in (page.extract_text() or ""))
+
+    def test_listing_breaks_and_caption_follows_its_last_line(self, pdf: PdfReader) -> None:
+        """The listing starts and ends on different pages, and the caption shares the last line's page."""
+        first: Final[int] = self._page_of(pdf, "line_001")
+        last: Final[int] = self._page_of(pdf, f"line_{self._LINES:03d}")
+        caption: Final[int] = self._page_of(pdf, "Listing 1.")
+        assert first < last == caption
+        text: Final[str] = pdf.pages[caption].extract_text() or ""
+        assert text.index(f"line_{self._LINES:03d}") < text.index("Listing 1. A long program.")

@@ -281,6 +281,10 @@
 #show figure.where(kind: raw): set figure.caption(position: bottom)
 #show figure.where(kind: raw): set figure(supplement: cfg.listing-prefix)
 #show figure.where(kind: raw): set align(left)
+// Let a listing longer than the page break across page boundaries, as a table may (above): a
+// figure is unbreakable by default, so a long listing float would otherwise overflow its page and
+// pile its last lines onto its caption.  The caption follows the listing's last part.
+#show figure.where(kind: raw): set block(breakable: true)
 
 // set captions to left
 #show figure.caption: set align(left)
