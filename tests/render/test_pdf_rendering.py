@@ -9,13 +9,18 @@
 
 import shutil
 from pathlib import Path
+from typing import Final
 
 import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
+import pypdfium2 as pdfium  # type: ignore[import-untyped]
+import pypdfium2.raw as pdfium_raw  # type: ignore[import-untyped]
 import pytest
-from conftest import FIXTURES_PDF_DIR, article3_node_tree, asset_storage
+from conftest import FIXTURES_IMAGES_DIR, FIXTURES_PDF_DIR, article3_node_tree, asset_storage
 from pypdf import PdfReader
 
+from guffin.common.geometry import ImageSize
+from guffin.common.media_type import MediaType
 from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
@@ -23,6 +28,7 @@ from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     CodeBlockVertex,
     HeadingVertex,
+    ImageVertex,
     PageVertex,
     PdfVertex,
     QuoteBlockVertex,
@@ -1125,3 +1131,72 @@ class TestLongListingFloatPdf:
         assert first < last == caption
         text: Final[str] = pdf.pages[caption].extract_text() or ""
         assert text.index(f"line_{self._LINES:03d}") < text.index("Listing 1. A long program.")
+
+
+@pytest.mark.pandoc
+class TestImageWidthCappedPdf:
+    """An image wider than the text column is scaled down to the column; a narrower one is left as it is.
+
+    An image keeps the width its source gave it, and Typst never shrinks an image of a set width, so
+    a wide one would run into the margins (seen 2026-10-18 on the SCFH draft-2 Figure 1.1).
+    """
+
+    _WIDE: Final[str] = "imgwide01"
+    _NARROW: Final[str] = "imgnarr01"
+
+    @pytest.fixture(scope="class")
+    def pdf(self, tmp_path_factory: pytest.TempPathFactory) -> pdfium.PdfDocument:
+        """An article showing a 2000px-wide image, a 100px-wide one, and a paragraph."""
+        png: Final[Path] = FIXTURES_IMAGES_DIR / "test_article_2.png"
+
+        def _image(uid: str, width: int) -> ImageVertex:
+            return ImageVertex(
+                uid=uid,
+                storage=asset_storage(f"https://firebasestorage.googleapis.com/v0/b/t/o/{uid}.png"),
+                media_type=MediaType.PNG,
+                scaled_image_size=ImageSize(width=width),
+            )
+
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["para00001", self._WIDE, self._NARROW]),
+                TextVertex(uid="para00001", text="A paragraph long enough to reach both margins. " * 3),
+                _image(self._WIDE, 2000),
+                _image(self._NARROW, 100),
+            ]
+        )
+        refs: Final[dict[str, AssetRef]] = {
+            uid: AssetRef(uid=uid, path=png, size=ImageSize(width=940, height=1154))
+            for uid in (self._WIDE, self._NARROW)
+        }
+        out_dir: Final[Path] = tmp_path_factory.mktemp("image-width")
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(
+                "guffin.render.pdf_rendering.fetch_and_enrich_assets", lambda content, *_args: (content, refs)
+            )
+            render(
+                RenderBundle(content=tree),
+                profile=ArticleProfile(),
+                filename_stem="doc",
+                api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+                options=PdfRenderOptions(output_dir=out_dir),
+            )
+        return pdfium.PdfDocument(out_dir / "doc.pdf")
+
+    @staticmethod
+    def _bounds(pdf: pdfium.PdfDocument, object_type: int) -> list[tuple[float, float, float, float]]:
+        return [obj.get_bounds() for page in pdf for obj in page.get_objects(filter=[object_type])]
+
+    def test_wide_image_fills_the_column(self, pdf: pdfium.PdfDocument) -> None:
+        """The wide image starts at the text's left margin and ends at the matching right one."""
+        text_left: Final[float] = min(left for left, _, _, _ in self._bounds(pdf, pdfium_raw.FPDF_PAGEOBJ_TEXT))
+        left, _, right, _ = max(self._bounds(pdf, pdfium_raw.FPDF_PAGEOBJ_IMAGE), key=lambda box: box[2] - box[0])
+        assert left == pytest.approx(text_left, abs=2)
+        assert right == pytest.approx(pdf[0].get_width() - left, abs=0.5)
+
+    def test_narrow_image_keeps_its_width(self, pdf: pdfium.PdfDocument) -> None:
+        """The 100px image is set at its own width, 75pt."""
+        widths: Final[list[float]] = [
+            right - left for left, _, right, _ in self._bounds(pdf, pdfium_raw.FPDF_PAGEOBJ_IMAGE)
+        ]
+        assert min(widths) == pytest.approx(75, abs=0.5)

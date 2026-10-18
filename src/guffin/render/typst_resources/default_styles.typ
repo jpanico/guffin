@@ -277,6 +277,29 @@
 #show figure.where(kind: image): set figure.caption(position: bottom)
 #show figure.where(kind: image): set figure(supplement: cfg.figure-prefix)
 
+// Cap every image at the width of its container.  An image keeps the width its source gave it (a
+// pixel width becomes inches at 96 px/in), which can exceed the text column, and Typst never
+// shrinks an image of a set width to fit, so it would run into the margins.  An image that fits is
+// left as it is; a wider one is scaled down to the container's width, its height following, and
+// the scaled image takes only the space it shows (reflow).  The set width is read off the element
+// rather than measured, since measure reports the width already clipped to the container; an image
+// of auto width is fitted by Typst itself.
+#show image: it => {
+  if it.width == auto {
+    return it
+  }
+  layout(size => {
+    let width = it.width + 0%
+    let natural = width.ratio * size.width + width.length.to-absolute()
+    if natural <= size.width {
+      it
+    } else {
+      let factor = size.width / natural * 100%
+      scale(x: factor, y: factor, reflow: true, it)
+    }
+  })
+}
+
 // listings
 #show figure.where(kind: raw): set figure.caption(position: bottom)
 #show figure.where(kind: raw): set figure(supplement: cfg.listing-prefix)

@@ -169,6 +169,16 @@ render its overflow rows on top of one another. `default_styles.typ` adds
 `#show figure.where(kind: table): set block(breakable: true)` so tall tables break across page
 boundaries instead (Typst repeats the `table.header` row on each continuation page).
 
+#### Images capped at their container's width (`default_styles.typ`)
+
+Pandoc writes an image's pixel width as inches at 96 px/in (`image("…", width: 6.98958in)`), and
+Typst never shrinks an image of a set width to fit, so an image wider than the text column — or than
+its table cell — would run into the margins or over its neighbours. A `#show image` rule compares the
+set width with its container's (`layout`) and scales a wider image down to the container with
+`scale(reflow: true)`, its height following; an image that fits, and an image of `auto` width (which
+Typst fits itself), is left as it is. The set width is read off the element rather than measured,
+because `measure` reports the width already clipped to the container.
+
 #### Full-bleed cover page (`bergfink.typst`)
 
 A new `cover-image` Pandoc variable (a local image path, passed by `pdf_rendering.py` from the
