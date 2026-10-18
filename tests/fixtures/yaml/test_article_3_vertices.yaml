@@ -526,19 +526,19 @@
   refs:
   - lF-qY0Xrs
   - NlwSKgjdJ
-  text: '[**inline FIGURE FLOAT ref ⟶**]{color="fuchsia"} see [figure](x-guffin:vertex/NlwSKgjdJ)'
+  text: '[**inline FIGURE FLOAT ref ⟶**]{color="fuchsia"} see [figure](x-guffin:vertex/NlwSKgjdJ){.vertex-alias}'
 - vertex_type: guffin/text
   uid: ukIa7RHql
   refs:
   - lF-qY0Xrs
   - VQjeoP4r_
-  text: '[**inline LISTING FLOAT ref ⟶**]{color="fuchsia"} see [listing](x-guffin:vertex/VQjeoP4r_)'
+  text: '[**inline LISTING FLOAT ref ⟶**]{color="fuchsia"} see [listing](x-guffin:vertex/VQjeoP4r_){.vertex-alias}'
 - vertex_type: guffin/text
   uid: ltHJLOxly
   refs:
   - lF-qY0Xrs
   - iuXlWiUAL
-  text: '[**inline TABLE FLOAT ref ⟶**]{color="fuchsia"} see [table](x-guffin:vertex/iuXlWiUAL)'
+  text: '[**inline TABLE FLOAT ref ⟶**]{color="fuchsia"} see [table](x-guffin:vertex/iuXlWiUAL){.vertex-alias}'
 - vertex_type: guffin/text
   uid: b8ob6GcbI
   children:
@@ -818,8 +818,8 @@
   text: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
     child): its text is the figure''s caption, and its one content child is a standalone
     block reference to the page''s image block, not the image itself; this sentence
-    refers to it by its kind word – see [figure](x-guffin:vertex/NlwSKgjdJ) – which
-    the export completes with the figure''s number'
+    refers to it by its kind word – see [figure](x-guffin:vertex/NlwSKgjdJ){.vertex-alias}
+    – which the export completes with the figure''s number'
 - vertex_type: guffin/text
   uid: NlwSKgjdJ
   children:
@@ -856,7 +856,7 @@
   text: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
     child): its text is the listing''s caption, and its one content child is a standalone
     block reference to the page''s fenced code block, not the code block itself; this
-    sentence refers to it by its kind word – see [listing](x-guffin:vertex/VQjeoP4r_)
+    sentence refers to it by its kind word – see [listing](x-guffin:vertex/VQjeoP4r_){.vertex-alias}
     – which the export completes with the listing''s number'
 - vertex_type: guffin/text
   uid: VQjeoP4r_
@@ -897,7 +897,7 @@
   text: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
     child): its text is the table''s caption, and its one content child is a standalone
     block reference to the page''s native `{{table}}` block, not the table itself;
-    this sentence refers to it by its kind word – see [table](x-guffin:vertex/iuXlWiUAL)
+    this sentence refers to it by its kind word – see [table](x-guffin:vertex/iuXlWiUAL){.vertex-alias}
     – which the export completes with the table''s number'
 - vertex_type: guffin/text
   uid: iuXlWiUAL

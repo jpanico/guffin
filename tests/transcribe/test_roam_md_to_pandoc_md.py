@@ -266,10 +266,10 @@ class TestConvertBlockLinkAliases:
     """Tests for convert_block_link_aliases — [display](((uid))) to a vertex link keeping the display."""
 
     def test_resolvable_alias_keeps_display(self) -> None:
-        """Test that an alias to a fetched block becomes a vertex link displaying the alias text."""
+        """Test that an alias to a fetched block becomes a vertex link displaying the alias text, marked as an alias."""
         tree: NodeTree = _block_tree("The flower, as a numbered figure.", "hJFB2787-")
         assert convert_block_link_aliases("see [figure](((hJFB2787-))) above", tree) == (
-            "see [figure](x-guffin:vertex/hJFB2787-) above"
+            "see [figure](x-guffin:vertex/hJFB2787-){.vertex-alias} above"
         )
 
     def test_unresolvable_alias_unchanged(self) -> None:
@@ -286,7 +286,7 @@ class TestConvertBlockLinkAliases:
         """Test that the full pipeline yields one vertex link with the alias display, never a nested link."""
         tree: NodeTree = _block_tree("The flower, as a numbered figure.", "hJFB2787-")
         assert to_pandoc_md("see [figure](((hJFB2787-))) above", tree) == (
-            "see [figure](x-guffin:vertex/hJFB2787-) above"
+            "see [figure](x-guffin:vertex/hJFB2787-){.vertex-alias} above"
         )
 
     def test_to_pandoc_md_marker_still_a_note_link(self) -> None:

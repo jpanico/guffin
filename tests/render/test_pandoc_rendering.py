@@ -86,19 +86,19 @@ class TestMakeResolverDailyNote:
 
     def test_iso_format_reformats_the_reference(self) -> None:
         """With ISO, a daily-note reference renders as the ISO date, not the Roam title."""
-        result = make_resolver({}, DateFormat.ISO)(self._LINK, self._DAILY, [pf.Str("January 1st, 2026")])
+        result = make_resolver({}, DateFormat.ISO)(self._LINK, self._DAILY, [pf.Str("January 1st, 2026")], False)
         assert pf.stringify(pf.Para(*result)).strip() == "2026-01-01"
 
     def test_roam_long_keeps_the_title(self) -> None:
         """ROAM_LONG (default) leaves the reference as the page's own title."""
-        result = make_resolver({}, DateFormat.ROAM_LONG)(self._LINK, self._DAILY, [pf.Str("January 1st, 2026")])
+        result = make_resolver({}, DateFormat.ROAM_LONG)(self._LINK, self._DAILY, [pf.Str("January 1st, 2026")], False)
         assert pf.stringify(pf.Para(*result)).strip() == "January 1st, 2026"
 
     def test_synthetic_page_unaffected_by_format(self) -> None:
         """A non-daily-note page reference is unaffected even under a date format."""
         page = PageVertex(uid="pageuid01", title="Some Page")
         link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="pageuid01")
-        result = make_resolver({}, DateFormat.ISO)(link, page, [pf.Str("Some Page")])
+        result = make_resolver({}, DateFormat.ISO)(link, page, [pf.Str("Some Page")], False)
         assert pf.stringify(pf.Para(*result)).strip() == "Some Page"
 
 
@@ -874,14 +874,14 @@ class TestVertexTreeToPandocTodoVertex:
         """A reference to a TODO item leads its display inlines with the state glyph, as Roam does."""
         item = TodoVertex(uid="todo0001a", todo_state=TodoState.DONE, text="a completed item")
         link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="todo0001a")
-        result = make_resolver({}, DateFormat.ROAM_LONG)(link, item, [pf.Str("a completed item")])
+        result = make_resolver({}, DateFormat.ROAM_LONG)(link, item, [pf.Str("a completed item")], False)
         assert pf.stringify(pf.Para(*result)).strip() == "☒ a completed item"
 
     def test_open_reference_display_carries_the_open_checkbox(self) -> None:
         """A reference to an open TODO item leads with the open glyph."""
         item = TodoVertex(uid="todo0001a", todo_state=TodoState.TODO, text="an open item")
         link = VertexLink(kind=VertexLinkKind.REFERENCE, uid="todo0001a")
-        result = make_resolver({}, DateFormat.ROAM_LONG)(link, item, [pf.Str("an open item")])
+        result = make_resolver({}, DateFormat.ROAM_LONG)(link, item, [pf.Str("an open item")], False)
         assert pf.stringify(pf.Para(*result)).strip() == "☐ an open item"
 
     def test_todo_children_nest_inside_the_item(self) -> None:
@@ -2347,6 +2347,80 @@ def _resolved_doc(tree: VertexTree) -> pf.Doc:
     doc, inline_map = vertex_tree_to_pandoc(tree, {}, {})
     resolve_vertex_links(doc, tree, make_resolver(inline_map, DateFormat.ROAM_LONG))
     return doc
+
+
+class TestInlineImageAndAliasReferences:
+    """An inline reference to an image names it; an alias keeps the author's words, through a chain too.
+
+    Seen 2026-10-18 on the SCFH draft: ``see [see figure](((block)))``, where the block was itself a
+    standalone reference to an encrypted SVG, rendered as a link wrapping the remote image, which
+    Pandoc fetched (ciphertext) and Typst could not read.
+    """
+
+    _ENC_URL: Final[str] = "https://firebasestorage.googleapis.com/v0/b/b/o/imgs%2Fdiagram.svg.enc?alt=media&token=t1"
+
+    def _tree(self, referring_text: str, *, alt_text: str | None = None) -> VertexTree:
+        image = ImageVertex(
+            uid="img00001a",
+            storage=asset_storage(self._ENC_URL),
+            alt_text=alt_text,
+            media_type=MediaType.SVG,
+            scaled_image_size=ImageSize(),
+        )
+        holder = TextVertex(
+            uid="hold00001", text=f"[![]({self._ENC_URL})]({vertex_link_url('img00001a', VertexLinkKind.REFERENCE)})"
+        )
+        prose = TextVertex(uid="prose0001", text="A long paragraph about the measured results.")
+        page = PageVertex(uid="page00001", title="P", children=["refer0001"])
+        return VertexTree(
+            tree_vertices=[page, TextVertex(uid="refer0001", text=referring_text)],
+            ref_vertices=[image, holder, prose],
+        )
+
+    @staticmethod
+    def _links_and_images(doc: pf.Doc) -> tuple[list[pf.Link], list[pf.Image]]:
+        links: list[pf.Link] = []
+        images: list[pf.Image] = []
+
+        def _collect(elem: pf.Element, _doc: pf.Doc) -> None:
+            if isinstance(elem, pf.Link):
+                links.append(elem)
+            if isinstance(elem, pf.Image):
+                images.append(elem)
+
+        doc.walk(_collect)
+        return links, images
+
+    def test_inline_image_reference_names_the_image(self) -> None:
+        """A plain inline reference to an image is a link naming it, never an image of the remote file."""
+        image_link = f"[![]({self._ENC_URL})]({vertex_link_url('img00001a', VertexLinkKind.REFERENCE)})"
+        doc = _resolved_doc(self._tree(f"see {image_link} here"))
+        links, images = self._links_and_images(doc)
+        assert images == []
+        assert [(pf.stringify(link), link.url) for link in links] == [("diagram.svg.enc", self._ENC_URL)]
+
+    def test_inline_image_reference_prefers_alt_text(self) -> None:
+        """The link reads as the image's alt text when it has one."""
+        image_link = f"[![]({self._ENC_URL})]({vertex_link_url('img00001a', VertexLinkKind.REFERENCE)})"
+        doc = _resolved_doc(self._tree(f"see {image_link}", alt_text="The ascent"))
+        links, _ = self._links_and_images(doc)
+        assert [pf.stringify(link) for link in links] == ["The ascent"]
+
+    def test_alias_to_a_text_block_keeps_its_words(self) -> None:
+        """An alias to a plain text block renders as the alias's words, not the block's content."""
+        alias = f"[the results]({vertex_link_url('prose0001', VertexLinkKind.REFERENCE)}){{.vertex-alias}}"
+        doc = _resolved_doc(self._tree(f"see {alias}"))
+        assert "see the results" in pf.stringify(doc)
+        assert "measured" not in pf.stringify(doc)
+
+    def test_alias_through_a_chain_keeps_its_words_and_shows_no_image(self) -> None:
+        """An alias to a block that references an image keeps its words and links to the image."""
+        alias = f"[see figure]({vertex_link_url('hold00001', VertexLinkKind.REFERENCE)}){{.vertex-alias}}"
+        doc = _resolved_doc(self._tree(f"this is a reference to {alias}"))
+        links, images = self._links_and_images(doc)
+        assert images == []
+        assert [(pf.stringify(link), link.url) for link in links] == [("see figure", self._ENC_URL)]
+        assert _surviving_x_guffin_urls(doc) == []
 
 
 class TestResolveVertexLinksNested:

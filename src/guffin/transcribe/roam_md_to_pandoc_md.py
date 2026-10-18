@@ -58,7 +58,7 @@ from pydantic import validate_call
 
 from guffin.common.markdown import CODE_BLOCK_RE
 from guffin.common.whitespace import normalize_spaces
-from guffin.model.vertex_link import VertexLinkKind, vertex_link_url
+from guffin.model.vertex_link import ALIAS_CLASS, VertexLinkKind, vertex_link_url
 from guffin.roam.markdown import (
     BG_COLOR_LINE_RE,
     BLOCK_LINK_ALIAS_RE,
@@ -475,9 +475,11 @@ def convert_block_link_aliases(roam_string: str, tree: NodeTree) -> str:
     Each aliased block reference ``[display](((uid)))`` (as matched by
     :data:`~guffin.roam.markdown.BLOCK_LINK_ALIAS_RE`) becomes an inline link whose display is
     the author's display text and whose destination is an ``x-guffin`` vertex-reference URL
-    (see :func:`~guffin.link.vertex_link_url`): ``[display](x-guffin:vertex/<uid>)``.  Unlike a
-    plain block reference (:func:`convert_block_link`), whose display is the referenced block's
-    own text, an alias displays the words the author chose for it.
+    (see :func:`~guffin.link.vertex_link_url`), marked with
+    :data:`~guffin.model.vertex_link.ALIAS_CLASS`:
+    ``[display](x-guffin:vertex/<uid>){.vertex-alias}``.  Unlike a plain block reference
+    (:func:`convert_block_link`), whose display is the referenced block's own text, an alias
+    displays the words the author chose for it, and the class says so.
 
     When the UID is absent from *tree*, the alias is left verbatim.
 
@@ -499,7 +501,7 @@ def convert_block_link_aliases(roam_string: str, tree: NodeTree) -> str:
         uid: Final[str] = match.group("uid")
         if uid not in tree.uid_map:
             return match.group(0)
-        return f"[{match.group('display')}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+        return f"[{match.group('display')}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)}){{.{ALIAS_CLASS}}}"
 
     return BLOCK_LINK_ALIAS_RE.sub(_replace, roam_string)
 

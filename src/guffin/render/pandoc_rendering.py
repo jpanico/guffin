@@ -170,7 +170,7 @@ from guffin.model.vertex import (
     VertexType,
     is_bare_asset_vertex,
 )
-from guffin.model.vertex_link import VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
+from guffin.model.vertex_link import ALIAS_CLASS, VertexLink, VertexLinkKind, parse_vertex_link, vertex_link_url
 from guffin.model.vertex_tree import (
     VertexTree,
     root_vertex,
@@ -212,8 +212,12 @@ def _effective_layout(uid: Uid, view_map: ViewMap, inherited_layout: ChildrenLay
     return entry.children_layout
 
 
-type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline]], list[pf.Inline]]
-"""Resolver: (parsed link, destination vertex, original display inlines) → replacement inlines."""
+type VertexLinkResolver = Callable[[VertexLink, Vertex, list[pf.Inline], bool], list[pf.Inline]]
+"""Resolver: (parsed link, destination vertex, original display inlines, aliased) → replacement inlines.
+
+*aliased* is whether the link is an alias (:data:`~guffin.model.vertex_link.ALIAS_CLASS`): its
+display is the author's own words, to be kept, rather than the destination's content.
+"""
 
 type NoteLeadInRenderer = Callable[[Uid, list[pf.Inline]], list[pf.Inline]]
 """Renders a note link in the running text: (note UID, lead-in inlines) → replacement inlines.
@@ -2478,13 +2482,20 @@ def make_resolver(
     - :class:`~guffin.vertex.TextVertex`, :class:`~guffin.vertex.QuoteBlockVertex` — the
       destination's converted text inlines.
     - :class:`~guffin.vertex.ImageVertex` — an inline :class:`~panflute.Image` for an
-      embed, otherwise a :class:`~panflute.Link` to the image source.
+      embed, otherwise a :class:`~panflute.Link` to the image source naming the image (its alt
+      text, file name, or stored file name) rather than showing it.
     - :class:`~guffin.vertex.PdfVertex`, :class:`~guffin.vertex.AssetVertex` — a
       :class:`~panflute.Link` to the asset's storage location.
     - :class:`~guffin.vertex.CodeBlockVertex` — inline :class:`~panflute.Code` (a
       block-level code reference is handled earlier, in :func:`build_child_blocks`).
     - :class:`~guffin.vertex.CalloutVertex`, :class:`~guffin.vertex.TableVertex` — the
       original display inlines (no inline-representable substitute).
+
+    An **aliased** link (the resolver's *aliased* argument, from
+    :data:`~guffin.model.vertex_link.ALIAS_CLASS`) keeps the author's display: when the
+    destination renders as a single link (a heading, an asset), the display becomes that link's
+    text; otherwise the display stands alone.  A reference to a float completes or keeps its
+    display either way.
 
     A :attr:`~guffin.model.vertex_link.VertexLinkKind.NOTE` link, whatever its destination,
     renders its own display text, the note's lead-in, which stays in the running text: through
@@ -2510,11 +2521,31 @@ def make_resolver(
         A resolver callable suitable for :func:`resolve_vertex_links`.
     """
 
-    def _resolve(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
+    def _resolve(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline], aliased: bool) -> list[pf.Inline]:
         if vertex_link.kind is VertexLinkKind.NOTE:
             # A note link's display is the note's lead-in, part of the running text; the note
             # itself is set apart, so only the lead-in renders here.
             return display if note_lead_in is None else note_lead_in(vertex_link.uid, display)
+        if floats is not None and vertex.uid in floats:
+            # A reference to a float keeps its display either way, completing a kind word.
+            return [_float_reference_link(floats[vertex.uid], display, float_numbers or {})]
+        rendered: Final[list[pf.Inline]] = _rendered(vertex_link, vertex, display)
+        if not aliased:
+            return rendered
+        # An alias keeps the author's words: they become the text of the link the destination
+        # renders as (to a heading, to an asset), or stand alone when it renders as no link.
+        if len(rendered) == 1 and isinstance(rendered[0], pf.Link):
+            link: Final[pf.Link] = rendered[0]
+            # A destination whose content is itself a vertex link (a block that references
+            # another) yields a link still to be resolved; it stays an alias, so a later pass
+            # keeps the author's words too.
+            still_vertex_link: Final[bool] = parse_vertex_link(link.url) is not None
+            classes: Final[list[str]] = [*link.classes, *([ALIAS_CLASS] if still_vertex_link else [])]
+            return [pf.Link(*detached_copy(display), url=link.url, title=link.title, classes=classes)]
+        return display
+
+    def _rendered(vertex_link: VertexLink, vertex: Vertex, display: list[pf.Inline]) -> list[pf.Inline]:
+        """The inlines a reference to *vertex* renders as when it displays the destination's content."""
         match vertex:
             case PageVertex():
                 # A daily-note page reference renders its date in the chosen format; ROAM_LONG is the
@@ -2533,8 +2564,6 @@ def make_resolver(
                 if italicize_heading_refs:
                     return [pf.Emph(*detached_copy(heading_text))]
                 return heading_text
-            case TextVertex() if floats is not None and vertex.uid in floats:
-                return [_float_reference_link(floats[vertex.uid], display, float_numbers or {})]
             case TextVertex():
                 return inline_map.get(vertex.text, [pf.Str(vertex.text)])
             case TodoVertex():
@@ -2548,7 +2577,16 @@ def make_resolver(
             case ImageVertex() if vertex_link.kind == VertexLinkKind.EMBED:
                 return [pf.Image(*display, url=str(vertex.storage.location), title="")]
             case ImageVertex():
-                return [pf.Link(*display, url=str(vertex.storage.location))]
+                # The link names the image rather than showing it: a referencing text's display is
+                # the image's own markup, and an image pointing at the remote file would be fetched
+                # from it by the writer — encrypted bytes, for an encrypted graph's asset.
+                label: Final[str] = (
+                    vertex.alt_text
+                    or vertex.file_name
+                    or url_file_name(vertex.storage.location)
+                    or str(vertex.storage.location)
+                )
+                return [pf.Link(pf.Str(label), url=str(vertex.storage.location))]
             case PdfVertex() | AssetVertex():
                 return [pf.Link(*display, url=str(vertex.storage.location))]
             case CodeBlockVertex():
@@ -2666,7 +2704,7 @@ def resolve_vertex_links(
                 logger.warning("x-guffin link uid=%r not found in vertex_tree; leaving display text", vertex_link.uid)
                 return display
             dest: Vertex = vertex_tree.uid_map[vertex_link.uid]
-            return resolver(vertex_link, dest, display)
+            return resolver(vertex_link, dest, display, ALIAS_CLASS in elem.classes)
 
         doc.walk(_action)
         return replaced

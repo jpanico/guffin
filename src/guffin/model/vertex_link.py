@@ -18,6 +18,8 @@ Three link kinds are distinguished by the URL path stem:
 Public symbols:
 
 - :data:`GUFFIN_SCHEME` — the ``x-guffin`` URL scheme literal.
+- :data:`ALIAS_CLASS` — the class marking a vertex link whose display is the author's own
+  words (an alias) rather than the destination's content.
 - :class:`VertexLinkKind` — the three link kinds and the URL path stems encoding
   them.
 - :class:`VertexLink` — a parsed ``x-guffin`` link: its kind and destination
@@ -46,6 +48,17 @@ from guffin.model.primitives import UID_PATTERN, Uid
 
 GUFFIN_SCHEME: Final[str] = "x-guffin"
 """The custom URL scheme identifying a link to a guffin vertex."""
+
+ALIAS_CLASS: Final[str] = "vertex-alias"
+"""The class marking a vertex link whose display is the author's own words — an alias.
+
+A reference ordinarily displays its destination's content; an alias displays words the author
+chose for it instead (``see figure``, ``the diagram above``), and keeps them.  The Pandoc-Markdown
+form carries the class after the link: ``[<display>](<x-guffin-url>){.vertex-alias}``.  The
+trailing class also keeps an alias from ever being a *standalone* vertex link
+(:func:`parse_standalone_vertex_link`): an alias is words in the running text, never a display of
+its destination, whereas :func:`vertex_links_in_text` still finds it.
+"""
 
 
 class VertexLinkKind(enum.StrEnum):
