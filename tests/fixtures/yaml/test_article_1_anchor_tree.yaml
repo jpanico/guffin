@@ -189,7 +189,8 @@ tree_network:
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
   order: 1
   heading: null
-  children: null
+  children:
+  - id: 21142
   refs: null
   page:
     id: 3327
@@ -204,6 +205,26 @@ tree_network:
       ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
       : width: 257
         height: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: mriY-0ei8
+  id: 21142
+  string: A caption authored as the image's child block.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  - id: 11163
+  - id: 11164
+  props: null
   title: null
   attrs: null
   blocks: null
@@ -680,6 +701,9 @@ tree_network:
     1.1)
 
     - a single JPEG `image` that **has** been resized through the Roam UI (illustration
+    2.1)
+
+    - a JPEG `image` whose child block renders as its caption, below the image (illustration
     2.1)
 
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block

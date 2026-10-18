@@ -626,7 +626,7 @@ class TestFetchRoamNodesFetchByNodeUid:
     def test_live_fetch_by_node_uid(self, live_api_endpoint: ApiEndpoint) -> None:
         """Live test: fetch the wdMgyBiP9 subtree and compare with the fixture hierarchy.
 
-        The ``wdMgyBiP9`` node (Section 2) has fifteen descendants in the
+        The ``wdMgyBiP9`` node (Section 2) has sixteen descendants in the
         ``test_article_1_nodes.yaml`` fixture: Section 2.1 (``drtANJYTg``),
         illustration 2.1 (``OaTXPl93p``), its caption (``tWkumkdUE``), its image
         (``zZG-BfWvs``), asset 2.1 (``oTrZWi_EL``), its explainer text (``it3wsZ7-H``),
@@ -647,6 +647,7 @@ class TestFetchRoamNodesFetchByNodeUid:
             "OaTXPl93p",
             "tWkumkdUE",
             "zZG-BfWvs",
+            "mriY-0ei8",
             "oTrZWi_EL",
             "it3wsZ7-H",
             "Wlzl_dhg_",
@@ -675,10 +676,11 @@ class TestFetchRoamNodesFetchByNodeUid:
         """Test that fetch_by_node_uid returns the root node and all its descendants.
 
         Uses the test_article_1_nodes.yaml fixture, fetching for node_uid ``'wdMgyBiP9'``
-        (Section 2).  Expects the root node plus its fifteen descendant blocks: Section 2.1
-        (``drtANJYTg``), illustration 2.1 (``OaTXPl93p``), its caption (``tWkumkdUE``),
-        its image (``zZG-BfWvs``), asset 2.1 (``oTrZWi_EL``), its explainer text
-        (``it3wsZ7-H``), its naked Firebase Storage asset URL (``Wlzl_dhg_``), Section 2.1.1
+        (Section 2).  Expects the root node plus its sixteen descendant blocks: Section 2.1
+        (``drtANJYTg``), illustration 2.1 (``OaTXPl93p``), its text (``tWkumkdUE``),
+        its image (``zZG-BfWvs``), the image's caption child (``mriY-0ei8``), asset 2.1
+        (``oTrZWi_EL``), its explainer text (``it3wsZ7-H``), its naked Firebase Storage asset
+        URL (``Wlzl_dhg_``), Section 2.1.1
         (``yFUau9Cpg``), Section 2.1.1.1 (``bxkcECGwN``), Section 2.2 (``5f1ahOFdp``), its
         ``{{table}}`` block (``nhX6sTxSE``), and the table's four image-referencing cells
         (``BeDkLXjgQ``, ``mfYCtWH-T``, ``8VPJRGOt4``, ``1NasQjcTQ``).
@@ -693,6 +695,7 @@ class TestFetchRoamNodesFetchByNodeUid:
             "OaTXPl93p",
             "tWkumkdUE",
             "zZG-BfWvs",
+            "mriY-0ei8",
             "oTrZWi_EL",
             "it3wsZ7-H",
             "Wlzl_dhg_",

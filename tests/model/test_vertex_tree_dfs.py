@@ -152,6 +152,7 @@ class TestVertexTreeDFSIterator:
           OaTXPl93p  — illustration 2.1     (children[0] of Section 2.1)
           tWkumkdUE  — text block           (children[0] of illustration 2.1)
           zZG-BfWvs  — image block          (children[1] of illustration 2.1)
+          mriY-0ei8  — caption text block   (children[0] of the image block)
           oTrZWi_EL  — asset 2.1            (children[1] of Section 2.1)
           it3wsZ7-H  — text block           (children[0] of asset 2.1)
           Wlzl_dhg_  — asset URL block      (children[1] of asset 2.1)
@@ -186,6 +187,7 @@ class TestVertexTreeDFSIterator:
             "OaTXPl93p",
             "tWkumkdUE",
             "zZG-BfWvs",
+            "mriY-0ei8",
             "oTrZWi_EL",
             "it3wsZ7-H",
             "Wlzl_dhg_",

@@ -52,85 +52,6 @@ CwYpKBCiQ:
   title: null
   attrs: null
   blocks: null
-InqcJLiuz:
-  uid: InqcJLiuz
-  id: 11810
-  string: Block 3.3
-  order: 2
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11807
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-5baESCL4s:
-  uid: 5baESCL4s
-  id: 11938
-  string: '**t’s an approximately** 600-year-old mystery that continues to stump scholars,
-    cryptographers, physicists, and computer scientists: a roughly 240-page medieval
-    codex written in an indecipherable language, brimming with bizarre drawings of
-    esoteric plants, naked women, and astrological symbols. Known as the Voynich manuscript,
-    it defies classification, much less comprehension.'
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11936
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-ivTC6d-rG:
-  uid: ivTC6d-rG
-  id: 11941
-  string: 'guffin-meta:: #.rm-g'
-  order: 0
-  heading: null
-  children:
-  - id: 11942
-  refs:
-  - id: 321
-  - id: 11839
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11936
-  props: null
-  title: null
-  attrs:
-  - - source:
-      - uid
-      - ivTC6d-rG
-      value:
-      - uid
-      - ivTC6d-rG
-    - source:
-      - uid
-      - 8zcad3VSa
-      value:
-      - uid
-      - Jv502NGK6
-    - source:
-      - uid
-      - 8zcad3VSa
-      value: ' false'
-  blocks: null
 oVvEsh7dx:
   uid: oVvEsh7dx
   id: 11737
@@ -372,28 +293,6 @@ Q-T5fKOEq:
   title: '!QUOTE'
   attrs: null
   blocks: null
-EWMNZcPZX:
-  uid: EWMNZcPZX
-  id: 11931
-  string: 'pdf-render:: inline-native'
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 11933
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11927
-  - id: 11930
-  - id: 11934
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 gWrTHfYIn:
   uid: gWrTHfYIn
   id: 20041
@@ -589,21 +488,6 @@ A7r0inxrX:
   title: null
   attrs: null
   blocks: null
-9ZtPB2yY3:
-  uid: 9ZtPB2yY3
-  id: 6535
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: Publishing
-  attrs: null
-  blocks: null
 r09kXvUg-:
   uid: r09kXvUg-
   id: 11193
@@ -701,26 +585,6 @@ uVAasvxug:
   title: null
   attrs: null
   blocks: null
-d_3REDRrO:
-  uid: d_3REDRrO
-  id: 11684
-  string: Block 2.2 (children_layout=bullet)
-  order: 1
-  heading: null
-  children:
-  - id: 11966
-  - id: 11967
-  refs: null
-  page:
-    id: 11674
-  children_view_type: bullet
-  parents:
-  - id: 11674
-  - id: 11682
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 PhA5dB4h0:
   uid: PhA5dB4h0
   id: 13482
@@ -757,53 +621,6 @@ cKCA_EwGZ:
   parents:
   - id: 4225
   - id: 4226
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-dR1TZ3P8J:
-  uid: dR1TZ3P8J
-  id: 11939
-  string: And yet, over the years a steady stream of researchers have stepped up with
-    new claims to have cracked its secrets. Just last summer, an anthropologist at
-    Foothill College in California declared that the text was a [“vulgar Latin dialect” ](https://www.academia.edu/39776000/A_Proposal_for_Reading_the_Voynich_Manuscript)written
-    in an obscure Roman shorthand. And earlier in the year, Gerard Cheshire, an academic
-    at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
-    the journal Romance Studies arguing the script is a mix of languages he called
-    “proto-Romance.”
-  order: 2
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11936
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-mfYCtWH-T:
-  uid: mfYCtWH-T
-  id: 14459
-  string: ((VxYhmVTG3))
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 12920
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3329
-  - id: 4026
-  - id: 14457
-  - id: 14458
   props: null
   title: null
   attrs: null
@@ -997,28 +814,6 @@ LKHCU5I3z:
   title: null
   attrs: null
   blocks: null
-8VPJRGOt4:
-  uid: 8VPJRGOt4
-  id: 14460
-  string: ((jN4ClkAEl))
-  order: 1
-  heading: null
-  children:
-  - id: 14461
-  refs:
-  - id: 12919
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3329
-  - id: 4026
-  - id: 14457
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 q3JUnfC1_:
   uid: q3JUnfC1_
   id: 246
@@ -1176,33 +971,14 @@ poU5xk1rO:
   title: null
   attrs: null
   blocks: null
-sD1C9ifkG:
-  uid: sD1C9ifkG
-  id: 11677
-  string: Block 1 (children_layout=bullet)
-  order: 1
-  heading: null
-  children:
-  - id: 11678
-  - id: 11679
-  - id: 11681
-  refs: null
-  page:
-    id: 11674
-  children_view_type: bullet
-  parents:
-  - id: 11674
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 zZG-BfWvs:
   uid: zZG-BfWvs
   id: 11164
   string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
   order: 1
   heading: null
-  children: null
+  children:
+  - id: 21142
   refs: null
   page:
     id: 3327
@@ -1259,21 +1035,6 @@ chSSa7hfQ:
   title: null
   attrs: null
   blocks: null
-Jv502NGK6:
-  uid: Jv502NGK6
-  id: 11943
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: publish
-  attrs: null
-  blocks: null
 xkmJLzW3G:
   uid: xkmJLzW3G
   id: 11804
@@ -1290,6 +1051,27 @@ xkmJLzW3G:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+mriY-0ei8:
+  uid: mriY-0ei8
+  id: 21142
+  string: A caption authored as the image's child block.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3329
+  - id: 3332
+  - id: 11163
+  - id: 11164
   props: null
   title: null
   attrs: null
@@ -1828,7 +1610,7 @@ OexZiLR_O:
   parents: null
   props: null
   title: '>'
-  attrs: null
+  attrs: []
   blocks: null
 0EgPyHSZi:
   uid: 0EgPyHSZi
@@ -1865,26 +1647,6 @@ T6cykqu88:
   - id: 11643
   - id: 11666
   - id: 15251
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-40bvW14UU:
-  uid: 40bvW14UU
-  id: 3330
-  string: Section 3
-  order: 3
-  heading: 1
-  children:
-  - id: 3333
-  - id: 11927
-  - id: 11936
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
   props: null
   title: null
   attrs: null
@@ -2157,46 +1919,6 @@ nYbnXviuu:
   title: null
   attrs: null
   blocks: null
-BeDkLXjgQ:
-  uid: BeDkLXjgQ
-  id: 14458
-  string: ((DaltU9ClP))
-  order: 0
-  heading: null
-  children:
-  - id: 14459
-  refs:
-  - id: 12916
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3329
-  - id: 4026
-  - id: 14457
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-fv5nh7u81:
-  uid: fv5nh7u81
-  id: 11809
-  string: Block 3.2
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11807
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 9uT8Z9xNJ:
   uid: 9uT8Z9xNJ
   id: 13467
@@ -2450,28 +2172,6 @@ ETesnk4Zi:
   title: null
   attrs: null
   blocks: null
-1NasQjcTQ:
-  uid: 1NasQjcTQ
-  id: 14461
-  string: ((DPW-zEDaU))
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 12925
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3329
-  - id: 4026
-  - id: 14457
-  - id: 14460
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 v8xVeZhTr:
   uid: v8xVeZhTr
   id: 20179
@@ -2489,29 +2189,6 @@ v8xVeZhTr:
   - id: 4226
   - id: 20053
   props: null
-  title: null
-  attrs: null
-  blocks: null
-VxYhmVTG3:
-  uid: VxYhmVTG3
-  id: 12920
-  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)'
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12904
-  children_view_type: null
-  parents:
-  - id: 12904
-  - id: 12905
-  - id: 12910
-  props:
-    image-size:
-      ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7
-      : width: 320
-        height: null
   title: null
   attrs: null
   blocks: null
@@ -2731,25 +2408,6 @@ WjcMV3hOE:
   - id: 4225
   - id: 4226
   - id: 20053
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-YyeRpjbFD:
-  uid: YyeRpjbFD
-  id: 11679
-  string: Block 1.2
-  order: 1
-  heading: null
-  children:
-  - id: 11680
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11677
   props: null
   title: null
   attrs: null
@@ -3204,23 +2862,6 @@ I9tU2C5U6:
   title: null
   attrs: null
   blocks: null
-jntuNAGBs:
-  uid: jntuNAGBs
-  id: 1348
-  string: ''
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 329
-  children_view_type: null
-  parents:
-  - id: 329
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 zAIxMFBIB:
   uid: zAIxMFBIB
   id: 11745
@@ -3253,7 +2894,7 @@ l2jkAMxGu:
   parents: null
   props: null
   title: '!EPIGRAPH'
-  attrs: null
+  attrs: []
   blocks: null
 zmb1Uac0S:
   uid: zmb1Uac0S
@@ -3535,25 +3176,6 @@ H3vh9eS_F:
   title: null
   attrs: null
   blocks: null
-wdMgyBiP9:
-  uid: wdMgyBiP9
-  id: 3329
-  string: Section 2
-  order: 2
-  heading: 1
-  children:
-  - id: 3332
-  - id: 4026
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 vLxyRJcr2:
   uid: vLxyRJcr2
   id: 11712
@@ -3570,26 +3192,6 @@ vLxyRJcr2:
   parents:
   - id: 4225
   - id: 4227
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-DsogfVzX9:
-  uid: DsogfVzX9
-  id: 11682
-  string: Block 2 (children_layout=document)
-  order: 2
-  heading: null
-  children:
-  - id: 11683
-  - id: 11684
-  - id: 11686
-  refs: null
-  page:
-    id: 11674
-  children_view_type: document
-  parents:
-  - id: 11674
   props: null
   title: null
   attrs: null
@@ -3693,25 +3295,6 @@ GK_iI79mV:
   title: null
   attrs: null
   blocks: null
-FVou-DBMP:
-  uid: FVou-DBMP
-  id: 11969
-  string: Block 2.3.2
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11686
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 8n19o7ito:
   uid: 8n19o7ito
   id: 11751
@@ -3728,26 +3311,6 @@ FVou-DBMP:
   parents:
   - id: 4225
   - id: 4227
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-sPZ2xmBBS:
-  uid: sPZ2xmBBS
-  id: 11807
-  string: Block 3 (children_layout=numbered)
-  order: 3
-  heading: null
-  children:
-  - id: 11808
-  - id: 11809
-  - id: 11810
-  refs: null
-  page:
-    id: 11674
-  children_view_type: numbered
-  parents:
-  - id: 11674
   props: null
   title: null
   attrs: null
@@ -4007,27 +3570,6 @@ Z2d9G4m4V:
   title: null
   attrs: null
   blocks: null
-8zcad3VSa:
-  uid: 8zcad3VSa
-  id: 11942
-  string: 'publish:: false'
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 11943
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11936
-  - id: 11941
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 1fBX-8o-F:
   uid: 1fBX-8o-F
   id: 20227
@@ -4068,27 +3610,6 @@ T5pku1yrU:
   title: null
   attrs: null
   blocks: null
-MmvJZhQNJ:
-  uid: MmvJZhQNJ
-  id: 11675
-  string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-    \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling\n - The Page has\
-    \ children_layout=document"
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 lDYWYqYSL:
   uid: lDYWYqYSL
   id: 11674
@@ -4125,26 +3646,6 @@ cCYHqUNs8:
   - id: 4225
   - id: 4226
   - id: 11735
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-Bb49MOLyE:
-  uid: Bb49MOLyE
-  id: 11686
-  string: Block 2.3 (children_layout=bullet)
-  order: 2
-  heading: null
-  children:
-  - id: 11968
-  - id: 11969
-  refs: null
-  page:
-    id: 11674
-  children_view_type: bullet
-  parents:
-  - id: 11674
-  - id: 11682
   props: null
   title: null
   attrs: null
@@ -4207,51 +3708,6 @@ kWNhvv437:
   - id: 11792
   - id: 11799
   - id: 11800
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-nhX6sTxSE:
-  uid: nhX6sTxSE
-  id: 14457
-  string: '{{table}}'
-  order: 0
-  heading: null
-  children:
-  - id: 14458
-  - id: 14460
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3329
-  - id: 4026
-  props:
-    table:
-      columns:
-        '0':
-          width: 336
-        '1':
-          width: 349
-  title: null
-  attrs: null
-  blocks: null
-gmLJbWZYp:
-  uid: gmLJbWZYp
-  id: 11681
-  string: Block 1.3
-  order: 2
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11677
   props: null
   title: null
   attrs: null
@@ -4607,26 +4063,6 @@ hWsG-ExLV:
   title: null
   attrs: null
   blocks: null
-YCexI8mL4:
-  uid: YCexI8mL4
-  id: 11928
-  string: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 11932
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11927
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 10pBwqT7Q:
   uid: 10pBwqT7Q
   id: 15111
@@ -4690,44 +4126,6 @@ drtANJYTg:
   title: null
   attrs: null
   blocks: null
-DaltU9ClP:
-  uid: DaltU9ClP
-  id: 12916
-  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1)'
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12904
-  children_view_type: null
-  parents:
-  - id: 12904
-  - id: 12905
-  - id: 12906
-  props:
-    image-size:
-      ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1
-      : width: 316
-        height: null
-  title: null
-  attrs: null
-  blocks: null
-RXwAqq0_T:
-  uid: RXwAqq0_T
-  id: 261
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: tags
-  attrs: null
-  blocks: null
 rrfGS1l0S:
   uid: rrfGS1l0S
   id: 20218
@@ -4755,45 +4153,6 @@ rrfGS1l0S:
   title: null
   attrs: null
   blocks: null
-J4TkjuhVB:
-  uid: J4TkjuhVB
-  id: 11934
-  string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407}}'
-  order: 1
-  heading: null
-  children:
-  - id: 11930
-  refs:
-  - id: 246
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11927
-  props: null
-  title: null
-  attrs:
-  - - source:
-      - uid
-      - J4TkjuhVB
-      value:
-      - uid
-      - J4TkjuhVB
-    - source:
-      - uid
-      - GvRO438Ze
-      value:
-      - uid
-      - 2xY4zCjId
-    - source:
-      - uid
-      - GvRO438Ze
-      value:
-      - uid
-      - BxGxeeGk1
-  blocks: null
 hxD1wSkTG:
   uid: hxD1wSkTG
   id: 20228
@@ -4810,55 +4169,6 @@ hxD1wSkTG:
   - id: 4225
   - id: 4227
   - id: 20224
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-cNW8lmXIM:
-  uid: cNW8lmXIM
-  id: 11113
-  string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
-    – DO NOT REMOVE
-
-    Features:
-
-    - Page is completely self-contained – there are `no Roam embeds` of any kind
-
-    - 3 top-level `headers`, all H1
-
-    - nested `headers` down to H4, via __Augmented Headings__ extension
-
-    - a node, (Ma5KGUH9O) "AI assistant (Claude Opus 4.6):" that has property: BLOCK_HEADING
-    = 0, which is not a valid Markdown level. It seems that this can happen when first
-    a valid level value (1-6) is assigned, and then the heading level is removed altogether
-    through the Roam UI.
-
-    - a pair of JPEG `image`s that **have not** been resized through the Roam UI (illustration
-    1.1)
-
-    - a single JPEG `image` that **has** been resized through the Roam UI (illustration
-    2.1)
-
-    - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
-    reference` to a JPEG `image` block, so each cell displays its referenced image
-
-    - an embedded PDF document that has no special PublishingSemantics Attributes
-    attached
-
-    - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
-
-    - this INFO `Callout box`, which contains Roam `page references` '
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
   props: null
   title: null
   attrs: null
@@ -4916,44 +4226,6 @@ lF-qY0Xrs:
   title: null
   attrs: null
   blocks: null
-4ahwZimtO:
-  uid: 4ahwZimtO
-  id: 11921
-  string: 'the following block contains the canonical w3.org "Dummy" PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 3333
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-5f1ahOFdp:
-  uid: 5f1ahOFdp
-  id: 4026
-  string: Section 2.2
-  order: 1
-  heading: 2
-  children:
-  - id: 14457
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3329
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 amzmDdIn3:
   uid: amzmDdIn3
   id: 11796
@@ -4971,61 +4243,6 @@ amzmDdIn3:
   - id: 11716
   - id: 11790
   - id: 11792
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-NEINf57lK:
-  uid: NEINf57lK
-  id: 11927
-  string: Section 3.2
-  order: 2
-  heading: 2
-  children:
-  - id: 11928
-  - id: 11934
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  props: null
-  title: null
-  attrs:
-  - - source:
-      - uid
-      - NEINf57lK
-      value:
-      - uid
-      - NEINf57lK
-    - source:
-      - uid
-      - YCexI8mL4
-      value:
-      - uid
-      - vuPFRAwZI
-    - source:
-      - uid
-      - YCexI8mL4
-      value: ' pdf-render: "inline"'
-  blocks: null
-KUi_6ooZj:
-  uid: KUi_6ooZj
-  id: 11680
-  string: Block 1.2.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11677
-  - id: 11679
   props: null
   title: null
   attrs: null
@@ -5112,25 +4329,6 @@ C6xVTMnsh:
   title: null
   attrs: null
   blocks: null
-JSrSVApJ_:
-  uid: JSrSVApJ_
-  id: 18204
-  string: 'tags:: #Publishing'
-  order: 1
-  heading: null
-  children: null
-  refs:
-  - id: 261
-  - id: 6535
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 GQSLJp92S:
   uid: GQSLJp92S
   id: 11764
@@ -5151,21 +4349,6 @@ GQSLJp92S:
   title: null
   attrs: null
   blocks: null
-vuPFRAwZI:
-  uid: vuPFRAwZI
-  id: 11932
-  string: null
-  order: null
-  heading: null
-  children: null
-  refs: null
-  page: null
-  children_view_type: null
-  parents: null
-  props: null
-  title: the following block embeds a PDF with guffin-meta
-  attrs: null
-  blocks: null
 _aXU5hZqQ:
   uid: _aXU5hZqQ
   id: 15793
@@ -5182,48 +4365,6 @@ _aXU5hZqQ:
   parents:
   - id: 4225
   - id: 11716
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-jN4ClkAEl:
-  uid: jN4ClkAEl
-  id: 12919
-  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)'
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12904
-  children_view_type: null
-  parents:
-  - id: 12904
-  - id: 12905
-  - id: 12909
-  props:
-    image-size:
-      ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4
-      : width: 300
-        height: null
-  title: null
-  attrs: null
-  blocks: null
-cxJA2xr-u:
-  uid: cxJA2xr-u
-  id: 11966
-  string: Block 2.2.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
   props: null
   title: null
   attrs: null
@@ -5389,29 +4530,6 @@ tyOSwiz6l:
   title: null
   attrs: null
   blocks: null
-DPW-zEDaU:
-  uid: DPW-zEDaU
-  id: 12925
-  string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)'
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 12904
-  children_view_type: null
-  parents:
-  - id: 12904
-  - id: 12905
-  - id: 12914
-  props:
-    image-size:
-      ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e
-      : width: 270
-        height: null
-  title: null
-  attrs: null
-  blocks: null
 MYwGv0l_h:
   uid: MYwGv0l_h
   id: 13487
@@ -5448,25 +4566,6 @@ MYwGv0l_h:
   parents:
   - id: 4225
   - id: 4226
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-D7gYVJoVj:
-  uid: D7gYVJoVj
-  id: 11967
-  string: Block 2.2.2
-  order: 1
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11684
   props: null
   title: null
   attrs: null
@@ -5579,26 +4678,6 @@ kyagWLAKA:
   title: null
   attrs: null
   blocks: null
-JW5PswS6v:
-  uid: JW5PswS6v
-  id: 3333
-  string: Section 3.1
-  order: 0
-  heading: 2
-  children:
-  - id: 11921
-  - id: 11922
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 8jkmASa1c:
   uid: 8jkmASa1c
   id: 4233
@@ -5617,24 +4696,6 @@ JW5PswS6v:
   parents:
   - id: 4225
   - id: 4227
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-99rZhIPZW:
-  uid: 99rZhIPZW
-  id: 11683
-  string: Block 2.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11682
   props: null
   title: null
   attrs: null
@@ -5714,25 +4775,6 @@ msKBuys0a:
   parents:
   - id: 4225
   - id: 11716
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-UQQwogj1M:
-  uid: UQQwogj1M
-  id: 11808
-  string: Block 3.1 (children_layout=document)
-  order: 0
-  heading: null
-  children:
-  - id: 11970
-  refs: null
-  page:
-    id: 11674
-  children_view_type: document
-  parents:
-  - id: 11674
-  - id: 11807
   props: null
   title: null
   attrs: null
@@ -5928,63 +4970,6 @@ JpKqqwnAJ:
   - id: 4225
   - id: 4226
   - id: 11707
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-zE0QjA3N9:
-  uid: zE0QjA3N9
-  id: 11936
-  string: Section 3.1_5
-  order: 1
-  heading: 2
-  children:
-  - id: 11938
-  - id: 11939
-  - id: 11941
-  refs: null
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  props: null
-  title: null
-  attrs:
-  - - source:
-      - uid
-      - zE0QjA3N9
-      value:
-      - uid
-      - zE0QjA3N9
-    - source:
-      - uid
-      - ivTC6d-rG
-      value:
-      - uid
-      - 2xY4zCjId
-    - source:
-      - uid
-      - ivTC6d-rG
-      value:
-      - uid
-      - BxGxeeGk1
-  blocks: null
-VH0mXM0rw:
-  uid: VH0mXM0rw
-  id: 11678
-  string: Block 1.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11677
   props: null
   title: null
   attrs: null
@@ -6198,64 +5183,6 @@ fZr8Ve9SS:
   title: null
   attrs: null
   blocks: null
-GvRO438Ze:
-  uid: GvRO438Ze
-  id: 11930
-  string: 'guffin-meta:: #.rm-g'
-  order: 0
-  heading: null
-  children:
-  - id: 11931
-  refs:
-  - id: 321
-  - id: 11839
-  page:
-    id: 3327
-  children_view_type: null
-  parents:
-  - id: 3327
-  - id: 3330
-  - id: 11927
-  - id: 11934
-  props: null
-  title: null
-  attrs:
-  - - source:
-      - uid
-      - GvRO438Ze
-      value:
-      - uid
-      - GvRO438Ze
-    - source:
-      - uid
-      - EWMNZcPZX
-      value:
-      - uid
-      - Jy_Ee6w8E
-    - source:
-      - uid
-      - EWMNZcPZX
-      value: ' inline-native'
-  blocks: null
-1O4yGV-Tq:
-  uid: 1O4yGV-Tq
-  id: 11968
-  string: Block 2.3.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11682
-  - id: 11686
-  props: null
-  title: null
-  attrs: null
-  blocks: null
 2xY4zCjId:
   uid: 2xY4zCjId
   id: 11839
@@ -6293,25 +5220,6 @@ tyiBN5ns6:
   - id: 11137
   - id: 11149
   - id: 20220
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-2jjY8-fQz:
-  uid: 2jjY8-fQz
-  id: 11970
-  string: Block 3.1.1
-  order: 0
-  heading: null
-  children: null
-  refs: null
-  page:
-    id: 11674
-  children_view_type: null
-  parents:
-  - id: 11674
-  - id: 11807
-  - id: 11808
   props: null
   title: null
   attrs: null
@@ -6412,26 +5320,6 @@ Wlzl_dhg_:
   - id: 3329
   - id: 3332
   - id: 15800
-  props: null
-  title: null
-  attrs: null
-  blocks: null
-lXi4SgSvz:
-  uid: lXi4SgSvz
-  id: 18202
-  string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin) TEST
-    DATA – DO NOT REMOVE'
-  order: 0
-  heading: null
-  children: null
-  refs:
-  - id: 5450
-  - id: 5462
-  page:
-    id: 4223
-  children_view_type: null
-  parents:
-  - id: 4223
   props: null
   title: null
   attrs: null

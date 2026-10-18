@@ -36,65 +36,6 @@
     order: 0
     page:
       id: 12803
-- - string: Block 3.3
-    id: 11810
-    uid: InqcJLiuz
-    parents:
-    - id: 11674
-    - id: 11807
-    order: 2
-    page:
-      id: 11674
-- - string: '**t’s an approximately** 600-year-old mystery that continues to stump
-      scholars, cryptographers, physicists, and computer scientists: a roughly 240-page
-      medieval codex written in an indecipherable language, brimming with bizarre
-      drawings of esoteric plants, naked women, and astrological symbols. Known as
-      the Voynich manuscript, it defies classification, much less comprehension.'
-    id: 11938
-    uid: 5baESCL4s
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11936
-    order: 1
-    page:
-      id: 3327
-- - attrs:
-    - - source:
-        - uid
-        - ivTC6d-rG
-        value:
-        - uid
-        - ivTC6d-rG
-      - source:
-        - uid
-        - 8zcad3VSa
-        value:
-        - uid
-        - Jv502NGK6
-      - source:
-        - uid
-        - 8zcad3VSa
-        value: ' false'
-    string: 'guffin-meta:: #.rm-g'
-    children:
-    - id: 11942
-    id: 11941
-    lookup:
-    - id: 11941
-    - id: 11942
-    - id: 11943
-    uid: ivTC6d-rG
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11936
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 321
-    - id: 11839
 - - string: section 3.2
     id: 11737
     uid: oVvEsh7dx
@@ -239,20 +180,6 @@
 - - id: 5456
     uid: Q-T5fKOEq
     title: '!QUOTE'
-- - string: 'pdf-render:: inline-native'
-    id: 11931
-    uid: EWMNZcPZX
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11927
-    - id: 11930
-    - id: 11934
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 11933
 - - string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
     children:
     - id: 20045
@@ -380,9 +307,6 @@
     order: 0
     page:
       id: 4225
-- - id: 6535
-    uid: 9ZtPB2yY3
-    title: Publishing
 - - string: '[[>]] This is a Roam standard multi-line Block Quote
 
       this is the __2nd line__
@@ -436,19 +360,6 @@
     refs:
     - id: 5844
     - id: 19389
-- - string: Block 2.2 (children_layout=bullet)
-    children:
-    - id: 11966
-    - id: 11967
-    id: 11684
-    uid: d_3REDRrO
-    children-view-type: bullet
-    parents:
-    - id: 11674
-    - id: 11682
-    order: 1
-    page:
-      id: 11674
 - - string: ((GeE5zPJOv))
     id: 13482
     uid: PhA5dB4h0
@@ -473,37 +384,6 @@
     refs:
     - id: 5844
     - id: 11720
-- - string: And yet, over the years a steady stream of researchers have stepped up
-      with new claims to have cracked its secrets. Just last summer, an anthropologist
-      at Foothill College in California declared that the text was a [“vulgar Latin
-      dialect” ](https://www.academia.edu/39776000/A_Proposal_for_Reading_the_Voynich_Manuscript)written
-      in an obscure Roman shorthand. And earlier in the year, Gerard Cheshire, an
-      academic at the University of Bristol, published a [peer-reviewed paper](https://www.tandfonline.com/doi/abs/10.1080/02639904.2019.1599566?journalCode=yros20) in
-      the journal Romance Studies arguing the script is a mix of languages he called
-      “proto-Romance.”
-    id: 11939
-    uid: dR1TZ3P8J
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11936
-    order: 2
-    page:
-      id: 3327
-- - string: ((VxYhmVTG3))
-    id: 14459
-    uid: mfYCtWH-T
-    parents:
-    - id: 3327
-    - id: 3329
-    - id: 4026
-    - id: 14457
-    - id: 14458
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 12920
 - - string: '[[>]] [[!EXAMPLE]] This is the callout title
 
       This is line 1 of the callout body
@@ -619,21 +499,6 @@
     refs:
     - id: 5844
     - id: 11664
-- - string: ((jN4ClkAEl))
-    children:
-    - id: 14461
-    id: 14460
-    uid: 8VPJRGOt4
-    parents:
-    - id: 3327
-    - id: 3329
-    - id: 4026
-    - id: 14457
-    order: 1
-    page:
-      id: 3327
-    refs:
-    - id: 12919
 - - id: 246
     uid: q3JUnfC1_
     title: pdf
@@ -722,20 +587,9 @@
       id: 4225
     refs:
     - id: 11922
-- - string: Block 1 (children_layout=bullet)
-    children:
-    - id: 11678
-    - id: 11679
-    - id: 11681
-    id: 11677
-    uid: sD1C9ifkG
-    children-view-type: bullet
-    parents:
-    - id: 11674
-    order: 1
-    page:
-      id: 11674
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
+    children:
+    - id: 21142
     id: 11164
     uid: zZG-BfWvs
     parents:
@@ -774,9 +628,6 @@
     refs:
     - id: 5844
     - id: 11648
-- - id: 11943
-    uid: Jv502NGK6
-    title: publish
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
     children:
     - id: 11805
@@ -790,6 +641,18 @@
       id: 4225
     refs:
     - id: 5844
+- - string: A caption authored as the image's child block.
+    id: 21142
+    uid: mriY-0ei8
+    parents:
+    - id: 3327
+    - id: 3329
+    - id: 3332
+    - id: 11163
+    - id: 11164
+    order: 0
+    page:
+      id: 3327
 - - string: This [para] features [__italics__]
     id: 11157
     uid: 2yQYaKIEV
@@ -1122,7 +985,8 @@
     order: 0
     page:
       id: 11137
-- - id: 5450
+- - attrs: []
+    id: 5450
     uid: OexZiLR_O
     title: '>'
 - - heading: 1
@@ -1149,19 +1013,6 @@
       id: 11643
     refs:
     - id: 11454
-- - heading: 1
-    string: Section 3
-    children:
-    - id: 3333
-    - id: 11927
-    - id: 11936
-    id: 3330
-    uid: 40bvW14UU
-    parents:
-    - id: 3327
-    order: 3
-    page:
-      id: 3327
 - - string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu-F9pv-nvn.pdf.enc?alt=media&token=4e0e9645-a0e1-4da4-b699-a03638a1fc03}}'
     id: 15248
     uid: v2l4ZwcCw
@@ -1322,30 +1173,6 @@
     refs:
     - id: 5844
     - id: 11743
-- - string: ((DaltU9ClP))
-    children:
-    - id: 14459
-    id: 14458
-    uid: BeDkLXjgQ
-    parents:
-    - id: 3327
-    - id: 3329
-    - id: 4026
-    - id: 14457
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 12916
-- - string: Block 3.2
-    id: 11809
-    uid: fv5nh7u81
-    parents:
-    - id: 11674
-    - id: 11807
-    order: 1
-    page:
-      id: 11674
 - - string: the child block contains a Roam native single line Pull Quote
     children:
     - id: 13469
@@ -1510,20 +1337,6 @@
     order: 4
     page:
       id: 11137
-- - string: ((DPW-zEDaU))
-    id: 14461
-    uid: 1NasQjcTQ
-    parents:
-    - id: 3327
-    - id: 3329
-    - id: 4026
-    - id: 14457
-    - id: 14460
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 12925
 - - string: ((WPG0VtvZe))
     id: 20179
     uid: v8xVeZhTr
@@ -1536,21 +1349,6 @@
       id: 4225
     refs:
     - id: 20051
-- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7)'
-    id: 12920
-    uid: VxYhmVTG3
-    parents:
-    - id: 12904
-    - id: 12905
-    - id: 12910
-    props:
-      image-size:
-        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FIHkqRJ_Wmb.jpeg.enc?alt=media&token=50b3450d-5b10-4a13-aa8d-25fa939994a7
-        : width: 320
-          height: null
-    order: 0
-    page:
-      id: 12904
 - - string: ((EOXU_iAwJ))
     id: 13495
     uid: j1_LH6NTQ
@@ -1693,17 +1491,6 @@
       id: 4225
     refs:
     - id: 20052
-- - string: Block 1.2
-    children:
-    - id: 11680
-    id: 11679
-    uid: YyeRpjbFD
-    parents:
-    - id: 11674
-    - id: 11677
-    order: 1
-    page:
-      id: 11674
 - - id: 867
     uid: o2hTH3dbf
     title: embed
@@ -1962,14 +1749,6 @@
     refs:
     - id: 1371
     - id: 11454
-- - string: ''
-    id: 1348
-    uid: jntuNAGBs
-    parents:
-    - id: 329
-    order: 0
-    page:
-      id: 329
 - - string: '#c:ORANGE ~~This span has box color orange.~~ This span does not.'
     id: 11745
     uid: zAIxMFBIB
@@ -1981,7 +1760,8 @@
       id: 4225
     refs:
     - id: 11454
-- - id: 20036
+- - attrs: []
+    id: 20036
     uid: l2jkAMxGu
     title: '!EPIGRAPH'
 - - string: '#c:ORANGE ^^This span is highlighted orange.^^ This span is not.'
@@ -2147,18 +1927,6 @@
     order: 2
     page:
       id: 4225
-- - heading: 1
-    string: Section 2
-    children:
-    - id: 3332
-    - id: 4026
-    id: 3329
-    uid: wdMgyBiP9
-    parents:
-    - id: 3327
-    order: 2
-    page:
-      id: 3327
 - - string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
     children:
     - id: 11713
@@ -2172,19 +1940,6 @@
       id: 4225
     refs:
     - id: 5844
-- - string: Block 2 (children_layout=document)
-    children:
-    - id: 11683
-    - id: 11684
-    - id: 11686
-    id: 11682
-    uid: DsogfVzX9
-    children-view-type: document
-    parents:
-    - id: 11674
-    order: 2
-    page:
-      id: 11674
 - - string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
     children:
     - id: 11777
@@ -2246,16 +2001,6 @@
       id: 4225
     refs:
     - id: 11454
-- - string: Block 2.3.2
-    id: 11969
-    uid: FVou-DBMP
-    parents:
-    - id: 11674
-    - id: 11682
-    - id: 11686
-    order: 1
-    page:
-      id: 11674
 - - string: '#c:FUCHSIA **inline INLINE-CODE ref ⟶** ((ETesnk4Zi))'
     id: 11751
     uid: 8n19o7ito
@@ -2268,19 +2013,6 @@
     refs:
     - id: 5844
     - id: 11172
-- - string: Block 3 (children_layout=numbered)
-    children:
-    - id: 11808
-    - id: 11809
-    - id: 11810
-    id: 11807
-    uid: sPZ2xmBBS
-    children-view-type: numbered
-    parents:
-    - id: 11674
-    order: 3
-    page:
-      id: 11674
 - - string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
     id: 11124
     uid: uj8YolCoE
@@ -2445,19 +2177,6 @@
     order: 0
     page:
       id: 4225
-- - string: 'publish:: false'
-    id: 11942
-    uid: 8zcad3VSa
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11936
-    - id: 11941
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 11943
 - - string: ((7dBusjzDA))
     id: 20227
     uid: 1fBX-8o-F
@@ -2482,19 +2201,6 @@
       id: 4225
     refs:
     - id: 11175
-- - string: "[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)\
-      \ – DO NOT REMOVE\nFeatures:\n\n - **View as** block styling\n - The Page has\
-      \ children_layout=document"
-    id: 11675
-    uid: MmvJZhQNJ
-    parents:
-    - id: 11674
-    order: 0
-    page:
-      id: 11674
-    refs:
-    - id: 5450
-    - id: 5462
 - - children:
     - id: 11675
     - id: 11677
@@ -2518,19 +2224,6 @@
       id: 4225
     refs:
     - id: 11725
-- - string: Block 2.3 (children_layout=bullet)
-    children:
-    - id: 11968
-    - id: 11969
-    id: 11686
-    uid: Bb49MOLyE
-    children-view-type: bullet
-    parents:
-    - id: 11674
-    - id: 11682
-    order: 2
-    page:
-      id: 11674
 - - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
     id: 11692
     uid: qj0DTMyzl
@@ -2569,35 +2262,6 @@
     order: 0
     page:
       id: 4225
-- - string: '{{table}}'
-    children:
-    - id: 14458
-    - id: 14460
-    id: 14457
-    uid: nhX6sTxSE
-    parents:
-    - id: 3327
-    - id: 3329
-    - id: 4026
-    props:
-      table:
-        columns:
-          '0':
-            width: 336
-          '1':
-            width: 349
-    order: 0
-    page:
-      id: 3327
-- - string: Block 1.3
-    id: 11681
-    uid: gmLJbWZYp
-    parents:
-    - id: 11674
-    - id: 11677
-    order: 2
-    page:
-      id: 11674
 - - string: ((kyagWLAKA))
     id: 13489
     uid: oQP-qdCN_
@@ -2795,18 +2459,6 @@
     refs:
     - id: 4226
     - id: 5844
-- - string: 'the following block embeds a PDF with guffin-meta:: pdf-render: "inline"'
-    id: 11928
-    uid: YCexI8mL4
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11927
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 11932
 - - string: 'pdf-render:: inline-native'
     id: 15111
     uid: 10pBwqT7Q
@@ -2848,24 +2500,6 @@
     order: 0
     page:
       id: 3327
-- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1)'
-    id: 12916
-    uid: DaltU9ClP
-    parents:
-    - id: 12904
-    - id: 12905
-    - id: 12906
-    props:
-      image-size:
-        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fj2QaOlGrbf.jpeg.enc?alt=media&token=0f8b5018-5acc-4fd1-8341-ad7611772ec1
-        : width: 316
-          height: null
-    order: 0
-    page:
-      id: 12904
-- - id: 261
-    uid: RXwAqq0_T
-    title: tags
 - - string: '[[>]] [[!EPIGRAPH]]
 
       A language that doesn''t affect the way you think about programming is not worth
@@ -2885,44 +2519,6 @@
     refs:
     - id: 5450
     - id: 20036
-- - attrs:
-    - - source:
-        - uid
-        - J4TkjuhVB
-        value:
-        - uid
-        - J4TkjuhVB
-      - source:
-        - uid
-        - GvRO438Ze
-        value:
-        - uid
-        - 2xY4zCjId
-      - source:
-        - uid
-        - GvRO438Ze
-        value:
-        - uid
-        - BxGxeeGk1
-    string: '{{[[pdf]]: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F3IX5aCGhi_.pdf.enc?alt=media&token=6b739638-efa5-4bde-895c-463a019ed407}}'
-    children:
-    - id: 11930
-    id: 11934
-    lookup:
-    - id: 321
-    - id: 11839
-    - id: 11930
-    - id: 11934
-    uid: J4TkjuhVB
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11927
-    order: 1
-    page:
-      id: 3327
-    refs:
-    - id: 246
 - - string: ((MFNKg5Uth))
     id: 20228
     uid: hxD1wSkTG
@@ -2935,48 +2531,6 @@
       id: 4225
     refs:
     - id: 20217
-- - string: '[[>]] [[!INFO]] THIS PAGE IS USED FOR TESTING [GUFFIN](https://github.com/jpanico/guffin)
-      – DO NOT REMOVE
-
-      Features:
-
-      - Page is completely self-contained – there are `no Roam embeds` of any kind
-
-      - 3 top-level `headers`, all H1
-
-      - nested `headers` down to H4, via __Augmented Headings__ extension
-
-      - a node, (Ma5KGUH9O) "AI assistant (Claude Opus 4.6):" that has property: BLOCK_HEADING
-      = 0, which is not a valid Markdown level. It seems that this can happen when
-      first a valid level value (1-6) is assigned, and then the heading level is removed
-      altogether through the Roam UI.
-
-      - a pair of JPEG `image`s that **have not** been resized through the Roam UI
-      (illustration 1.1)
-
-      - a single JPEG `image` that **has** been resized through the Roam UI (illustration
-      2.1)
-
-      - a native `{{table}}` (Section 2.2) whose four cells are each a standalone
-      `block reference` to a JPEG `image` block, so each cell displays its referenced
-      image
-
-      - an embedded PDF document that has no special PublishingSemantics Attributes
-      attached
-
-      - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
-
-      - this INFO `Callout box`, which contains Roam `page references` '
-    id: 11113
-    uid: cNW8lmXIM
-    parents:
-    - id: 3327
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 5450
-    - id: 5462
 - - uid: eSeTzM6Yl
     id: 20057
     blocks:
@@ -2998,28 +2552,6 @@
     refs:
     - id: 5844
     - id: 11739
-- - string: 'the following block contains the canonical w3.org "Dummy" PDF file: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
-    id: 11921
-    uid: 4ahwZimtO
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 3333
-    order: 0
-    page:
-      id: 3327
-- - heading: 2
-    string: Section 2.2
-    children:
-    - id: 14457
-    id: 4026
-    uid: 5f1ahOFdp
-    parents:
-    - id: 3327
-    - id: 3329
-    order: 1
-    page:
-      id: 3327
 - - string: r1.c1
     children:
     - id: 11797
@@ -3033,50 +2565,6 @@
     order: 1
     page:
       id: 4225
-- - attrs:
-    - - source:
-        - uid
-        - NEINf57lK
-        value:
-        - uid
-        - NEINf57lK
-      - source:
-        - uid
-        - YCexI8mL4
-        value:
-        - uid
-        - vuPFRAwZI
-      - source:
-        - uid
-        - YCexI8mL4
-        value: ' pdf-render: "inline"'
-    heading: 2
-    string: Section 3.2
-    children:
-    - id: 11928
-    - id: 11934
-    id: 11927
-    lookup:
-    - id: 11927
-    - id: 11928
-    - id: 11932
-    uid: NEINf57lK
-    parents:
-    - id: 3327
-    - id: 3330
-    order: 2
-    page:
-      id: 3327
-- - string: Block 1.2.1
-    id: 11680
-    uid: KUi_6ooZj
-    parents:
-    - id: 11674
-    - id: 11677
-    - id: 11679
-    order: 0
-    page:
-      id: 11674
 - - string: '#c:FUCHSIA **inline HIGHLIGHT ref ⟶** ((Q-nJAf9KK))'
     id: 11730
     uid: HbJZh5mTY
@@ -3125,17 +2613,6 @@
     order: 0
     page:
       id: 11137
-- - string: 'tags:: #Publishing'
-    id: 18204
-    uid: JSrSVApJ_
-    parents:
-    - id: 4223
-    order: 1
-    page:
-      id: 4223
-    refs:
-    - id: 261
-    - id: 6535
 - - string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
     children:
     - id: 11765
@@ -3149,9 +2626,6 @@
       id: 4225
     refs:
     - id: 5844
-- - id: 11932
-    uid: vuPFRAwZI
-    title: the following block embeds a PDF with guffin-meta
 - - string: '{{[[TODO]]}} a short #c:ORANGE __ ref open todo__'
     id: 15793
     uid: _aXU5hZqQ
@@ -3164,31 +2638,6 @@
     refs:
     - id: 329
     - id: 11454
-- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4)'
-    id: 12919
-    uid: jN4ClkAEl
-    parents:
-    - id: 12904
-    - id: 12905
-    - id: 12909
-    props:
-      image-size:
-        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2Fu2aukLge2y.jpeg.enc?alt=media&token=0e8dded5-e39f-40a6-8eec-e4132da1e3e4
-        : width: 300
-          height: null
-    order: 0
-    page:
-      id: 12904
-- - string: Block 2.2.1
-    id: 11966
-    uid: cxJA2xr-u
-    parents:
-    - id: 11674
-    - id: 11682
-    - id: 11684
-    order: 0
-    page:
-      id: 11674
 - - string: ((6bcyfVpL2))
     id: 13474
     uid: 8g2Zv1RjH
@@ -3287,21 +2736,6 @@
       id: 4225
     refs:
     - id: 11716
-- - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)'
-    id: 12925
-    uid: DPW-zEDaU
-    parents:
-    - id: 12904
-    - id: 12905
-    - id: 12914
-    props:
-      image-size:
-        ? https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e
-        : width: 270
-          height: null
-    order: 0
-    page:
-      id: 12904
 - - string: ((F9TXbzC0K))
     id: 13487
     uid: MYwGv0l_h
@@ -3326,16 +2760,6 @@
     refs:
     - id: 5844
     - id: 11745
-- - string: Block 2.2.2
-    id: 11967
-    uid: D7gYVJoVj
-    parents:
-    - id: 11674
-    - id: 11682
-    - id: 11684
-    order: 1
-    page:
-      id: 11674
 - - string: ((fUle3zmFp))
     id: 11772
     uid: Wq2dXafRn
@@ -3404,19 +2828,6 @@
       id: 4225
     refs:
     - id: 5450
-- - heading: 2
-    string: Section 3.1
-    children:
-    - id: 11921
-    - id: 11922
-    id: 3333
-    uid: JW5PswS6v
-    parents:
-    - id: 3327
-    - id: 3330
-    order: 0
-    page:
-      id: 3327
 - - string: '#c:FUCHSIA **standalone BLOCK EMBED (from [[[[Test Article]] 1]])  ↓**'
     children:
     - id: 4234
@@ -3432,15 +2843,6 @@
     - id: 3327
     - id: 4223
     - id: 5844
-- - string: Block 2.1
-    id: 11683
-    uid: 99rZhIPZW
-    parents:
-    - id: 11674
-    - id: 11682
-    order: 0
-    page:
-      id: 11674
 - - string: Header 2
     children:
     - id: 11795
@@ -3486,18 +2888,6 @@
     order: 1
     page:
       id: 4225
-- - string: Block 3.1 (children_layout=document)
-    children:
-    - id: 11970
-    id: 11808
-    uid: UQQwogj1M
-    children-view-type: document
-    parents:
-    - id: 11674
-    - id: 11807
-    order: 0
-    page:
-      id: 11674
 - - children:
     - id: 1348
     id: 329
@@ -3610,53 +3000,6 @@
       id: 4225
     refs:
     - id: 4226
-- - attrs:
-    - - source:
-        - uid
-        - zE0QjA3N9
-        value:
-        - uid
-        - zE0QjA3N9
-      - source:
-        - uid
-        - ivTC6d-rG
-        value:
-        - uid
-        - 2xY4zCjId
-      - source:
-        - uid
-        - ivTC6d-rG
-        value:
-        - uid
-        - BxGxeeGk1
-    heading: 2
-    string: Section 3.1_5
-    children:
-    - id: 11938
-    - id: 11939
-    - id: 11941
-    id: 11936
-    lookup:
-    - id: 321
-    - id: 11839
-    - id: 11936
-    - id: 11941
-    uid: zE0QjA3N9
-    parents:
-    - id: 3327
-    - id: 3330
-    order: 1
-    page:
-      id: 3327
-- - string: Block 1.1
-    id: 11678
-    uid: VH0mXM0rw
-    parents:
-    - id: 11674
-    - id: 11677
-    order: 0
-    page:
-      id: 11674
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
     children:
     - id: 13476
@@ -3798,53 +3141,6 @@
       id: 4225
     refs:
     - id: 5844
-- - attrs:
-    - - source:
-        - uid
-        - GvRO438Ze
-        value:
-        - uid
-        - GvRO438Ze
-      - source:
-        - uid
-        - EWMNZcPZX
-        value:
-        - uid
-        - Jy_Ee6w8E
-      - source:
-        - uid
-        - EWMNZcPZX
-        value: ' inline-native'
-    string: 'guffin-meta:: #.rm-g'
-    children:
-    - id: 11931
-    id: 11930
-    lookup:
-    - id: 11930
-    - id: 11931
-    - id: 11933
-    uid: GvRO438Ze
-    parents:
-    - id: 3327
-    - id: 3330
-    - id: 11927
-    - id: 11934
-    order: 0
-    page:
-      id: 3327
-    refs:
-    - id: 321
-    - id: 11839
-- - string: Block 2.3.1
-    id: 11968
-    uid: 1O4yGV-Tq
-    parents:
-    - id: 11674
-    - id: 11682
-    - id: 11686
-    order: 0
-    page:
-      id: 11674
 - - id: 11839
     uid: 2xY4zCjId
     title: guffin-meta
@@ -3866,16 +3162,6 @@
     refs:
     - id: 5450
     - id: 20036
-- - string: Block 3.1.1
-    id: 11970
-    uid: 2jjY8-fQz
-    parents:
-    - id: 11674
-    - id: 11807
-    - id: 11808
-    order: 0
-    page:
-      id: 11674
 - - string: this image **has been resized** through the Roam UI (width:257, height:None)
     id: 11167
     uid: tWkumkdUE
@@ -3936,15 +3222,3 @@
     order: 1
     page:
       id: 3327
-- - string: '[[>]] [[!INFO]] TOPIC FOR [GUFFIN](https://github.com/jpanico/guffin)
-      TEST DATA – DO NOT REMOVE'
-    id: 18202
-    uid: lXi4SgSvz
-    parents:
-    - id: 4223
-    order: 0
-    page:
-      id: 4223
-    refs:
-    - id: 5450
-    - id: 5462

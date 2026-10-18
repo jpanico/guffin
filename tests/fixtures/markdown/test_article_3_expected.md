@@ -230,6 +230,8 @@ def fizz_buzz(limit: int = 100):
 
   [aOC1FnrcwK.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)
 
+  A caption authored as the image’s child block.
+
   #### asset 2.1
 
   - an asset is a BLOB stored by Roam in Firebase Storage; usually a file dragged into the Roam UI. The Roam Markdown representation of the asset is just the Firebase Storage URL.

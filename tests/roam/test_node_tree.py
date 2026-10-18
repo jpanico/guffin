@@ -827,6 +827,7 @@ class TestNodeTreeDFSIterator:
           11163 — illustration 2.1     (order=0, child of 3332)
           11167 — text block           (order=0, child of 11163)
           11164 — image block          (order=1, child of 11163)
+          21142 — caption text block   (order=0, child of 11164)
           15800 — asset 2.1            (order=1, child of 3332)
           15801 — text block           (order=0, child of 15800)
           15802 — asset URL block      (order=1, child of 15800)
@@ -869,6 +870,7 @@ class TestNodeTreeDFSIterator:
             11163,
             11167,
             11164,
+            21142,
             15800,
             15801,
             15802,

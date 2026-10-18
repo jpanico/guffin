@@ -230,6 +230,8 @@ def fizz_buzz(limit: int = 100):
 
   <img src="flower-2.jpeg" width="257" style="margin: 0;">
 
+  A caption authored as the image’s child block.
+
   #### asset 2.1
 
   - an asset is a BLOB stored by Roam in Firebase Storage; usually a file dragged into the Roam UI. The Roam Markdown representation of the asset is just the Firebase Storage URL.

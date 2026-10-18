@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Final
 
 import pytest
+import regex
 from conftest import FIXTURES_MD_DIR, article1_node_tree
 
 from guffin.common.filenames import shell_safe_filename
@@ -68,6 +69,34 @@ class TestRenderArticleFixture:
         result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
         expected: Final[str] = (FIXTURES_MD_DIR / "test_article_1_expected.md").read_text()
         assert result == expected
+
+    def test_image_child_block_follows_the_image_as_its_caption(self, tmp_path: Path) -> None:
+        """Article 1's resized image (illustration 2.1) has one child block, which renders as a caption.
+
+        The child's text follows the image as the next paragraph — in a plain ``.md`` export the
+        image is the link to its hosted file, since nothing is fetched — and is the one caption in
+        the article, so a regression in the children-as-caption rendering shows here by name rather
+        than only as a byte difference against the recorded fixture.
+        """
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 1")
+        node_tree = article1_node_tree()
+        render_bundle: Final[RenderBundle] = RenderBundle(content=transcribe(node_tree), view=build_view_map(node_tree))
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            render_bundle,
+            profile=ArticleProfile(),
+            filename_stem=stem,
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
+        caption: Final[str] = "A caption authored as the image\u2019s child block."
+        assert result.count(caption) == 1
+        assert regex.search(
+            r"^\[aOC1FnrcwK\.jpeg\.enc\]\([^)]+\)\n\n" + regex.escape(caption) + r"\n", result, regex.MULTILINE
+        )
 
 
 class TestSemanticBullets:

@@ -39,6 +39,9 @@
     - a single JPEG `image` that **has** been resized through the Roam UI (illustration
     2.1)
 
+    - a JPEG `image` whose child block renders as its caption, below the image (illustration
+    2.1)
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -120,6 +123,8 @@
   text: this image **has been resized** through the Roam UI (width:257, height:None)
 - vertex_type: guffin/image
   uid: zZG-BfWvs
+  children:
+  - mriY-0ei8
   storage:
     location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a
     store_type: firebase-storage
@@ -127,6 +132,9 @@
   media_type: image/jpeg
   scaled_image_size:
     width: 257
+- vertex_type: guffin/text
+  uid: mriY-0ei8
+  text: A caption authored as the image's child block.
 - vertex_type: guffin/heading
   uid: oTrZWi_EL
   children:
