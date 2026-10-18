@@ -6,9 +6,9 @@ matter. Status: **designed, every question decided on 2026-10-17 but the deferre
 the vocabulary, model, validation, policy directive, and the rendering of floats and references
 in all three formats are built (steps 1–4 and 6 of the sketch), and Test Article 1 carries a
 figure float (Section 1.3: a `float:: figure` wrapper over an image block, numbered *Figure 1*
-in its PDF and mdbundle baselines); the generated lists (step 5), the empty-list warning
-(rule 7), and fixtures for references and for table and listing floats (the rest of step 7)
-are not.**
+in its PDF and mdbundle baselines) and a kind-word reference to it from the running text
+(rendered *figure 1*, linked); the generated lists (step 5), the empty-list warning (rule 7),
+and fixtures for table and listing floats (the rest of step 7) are not.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest
@@ -391,6 +391,13 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
 
 ## Decisions
 
+- **2026-10-17 — The aliased reference needed its own transcription.** Until the first live
+  reference was authored, `[figure](((uid)))` reached the model as a nested link: the
+  `((uid))` inside the alias's URL slot was itself converted to a vertex link, so no vertex
+  link existed for the model to see, validation had nothing to judge, and every format
+  rendered the bare word. `transcribe/roam_md_to_pandoc_md.convert_block_link_aliases` now
+  turns the alias into `[display](x-guffin:vertex/<uid>)` between the footnote-marker and
+  block-link passes (`roam/markdown.BLOCK_LINK_ALIAS_RE`), keeping the author's display.
 - **2026-10-17 — The aliased reference is the cross-reference (R1, Q6).** Joe pointed out that
   a plain `((uid))` inside a sentence transcludes the figure into the prose in Roam, so the
   author's page would be unreadable; the design had optimized the output and ignored authoring.

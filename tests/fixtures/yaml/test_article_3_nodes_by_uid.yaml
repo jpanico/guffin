@@ -1701,13 +1701,16 @@ WPG0VtvZe:
 lcqh-E9u4:
   uid: lcqh-E9u4
   id: 21159
-  string: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+  string: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
     child): its text is the figure''s caption, and its one content child is the image
-    block itself, not a reference to one'
+    block itself, not a reference to one; this sentence refers to it by its kind word
+    – see [figure](((hJFB2787-))) – which the export completes with the figure''s
+    number'
   order: 0
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 21164
   page:
     id: 3327
   children_view_type: null

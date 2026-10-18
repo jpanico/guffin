@@ -1072,9 +1072,11 @@
     refs:
     - id: 5450
     - id: 20036
-- - string: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+- - string: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
       child): its text is the figure''s caption, and its one content child is the
-      image block itself, not a reference to one'
+      image block itself, not a reference to one; this sentence refers to it by its
+      kind word – see [figure](((hJFB2787-))) – which the export completes with the
+      figure''s number'
     id: 21159
     uid: lcqh-E9u4
     parents:
@@ -1084,6 +1086,8 @@
     order: 0
     page:
       id: 3327
+    refs:
+    - id: 21164
 - - string: '> This is a __Markdown standard__ single line **Block Quote**'
     id: 11186
     uid: Yz0pqYfBh

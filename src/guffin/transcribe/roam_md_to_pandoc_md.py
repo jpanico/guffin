@@ -42,6 +42,10 @@ Public symbols:
 - :func:`convert_footnote_markers` — convert Footnotes extension markers
   ``[(<label>)](((uid)))`` to Pandoc Markdown note links
   ``[<label>](x-guffin:vertex-note/<uid>)``.
+- :func:`convert_block_link_aliases` — convert Roam aliased block references
+  ``[display](((uid)))`` to Pandoc Markdown vertex links ``[display](x-guffin:vertex/<uid>)``
+  keeping the author's display, falling back to the verbatim alias when the block is not
+  resolvable.
 - :func:`convert_block_link` — convert Roam block references ``((uid))`` to
   Pandoc Markdown vertex links ``[display](x-guffin:vertex/<uid>)``, falling
   back to the verbatim ``((uid))`` when the block is not resolvable.
@@ -57,6 +61,7 @@ from guffin.common.whitespace import normalize_spaces
 from guffin.model.vertex_link import VertexLinkKind, vertex_link_url
 from guffin.roam.markdown import (
     BG_COLOR_LINE_RE,
+    BLOCK_LINK_ALIAS_RE,
     BLOCK_REF_RE,
     COLOR_BOLD_RE,
     COLOR_BOX_RE,
@@ -115,6 +120,7 @@ def to_pandoc_md(roam_string: str, tree: NodeTree) -> str:
     result = convert_page_link_aliases(result)
     result = convert_page_link(result, tree)
     result = convert_footnote_markers(result)
+    result = convert_block_link_aliases(result, tree)
     result = convert_block_link(result, tree)
     result = convert_italics(result)
     result = convert_highlights(result)
@@ -460,6 +466,42 @@ def convert_footnote_markers(roam_string: str) -> str:
         return f"[{match.group('label')}]({vertex_link_url(match.group('uid'), VertexLinkKind.NOTE)})"
 
     return FOOTNOTE_MARKER_RE.sub(_replace, roam_string)
+
+
+@validate_call
+def convert_block_link_aliases(roam_string: str, tree: NodeTree) -> str:
+    """Convert Roam aliased block references to Pandoc Markdown links keeping the author's display.
+
+    Each aliased block reference ``[display](((uid)))`` (as matched by
+    :data:`~guffin.roam.markdown.BLOCK_LINK_ALIAS_RE`) becomes an inline link whose display is
+    the author's display text and whose destination is an ``x-guffin`` vertex-reference URL
+    (see :func:`~guffin.link.vertex_link_url`): ``[display](x-guffin:vertex/<uid>)``.  Unlike a
+    plain block reference (:func:`convert_block_link`), whose display is the referenced block's
+    own text, an alias displays the words the author chose for it.
+
+    When the UID is absent from *tree*, the alias is left verbatim.
+
+    Must be applied after :func:`convert_footnote_markers`, since a marker ``[(<label>)](((uid)))``
+    has the shape of an alias with a parenthesized display, and before
+    :func:`convert_block_link`, which would otherwise rewrite the alias's inner ``((uid))`` into
+    a nested link.
+
+    Args:
+        roam_string: A Roam block string, possibly containing aliased block references.
+        tree: The :class:`~guffin.roam.node_tree.NodeTree` used to resolve block UIDs.
+
+    Returns:
+        The string with every resolvable aliased block reference replaced by a Pandoc Markdown
+        vertex link, and every unresolvable one left verbatim.
+    """
+
+    def _replace(match: regex.Match[str]) -> str:
+        uid: Final[str] = match.group("uid")
+        if uid not in tree.uid_map:
+            return match.group(0)
+        return f"[{match.group('display')}]({vertex_link_url(uid, VertexLinkKind.REFERENCE)})"
+
+    return BLOCK_LINK_ALIAS_RE.sub(_replace, roam_string)
 
 
 @validate_call

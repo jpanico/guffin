@@ -430,6 +430,64 @@ def _version(uid: str, node_id: int, parent_id: int, page_id: int, ref_id: int) 
     )
 
 
+class TestNodeTreeRefsByIdExcludesTree:
+    """Tests that refs_by_id never holds a node of the tree itself, whichever way it is reached."""
+
+    @staticmethod
+    def _tree() -> NodeTree:
+        """A page whose first block references its second, a wrapper over a child, and an outside block."""
+        root = RoamNode(uid="page00001", id=1, title="stub", children=[IdObject(id=10), IdObject(id=20)])
+        referrer = RoamNode(
+            uid="block0010",
+            id=10,
+            string="see ((block0020)) and ((block0090))",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=20), IdObject(id=90)],
+        )
+        wrapper = RoamNode(
+            uid="block0020",
+            id=20,
+            string="A caption.",
+            parents=[IdObject(id=1)],
+            page=IdObject(id=1),
+            children=[IdObject(id=21)],
+        )
+        child = RoamNode(uid="block0021", id=21, string="content", parents=[IdObject(id=1)], page=IdObject(id=1))
+        outside = RoamNode(
+            uid="block0090",
+            id=90,
+            string="elsewhere, see ((block0021))",
+            parents=[IdObject(id=2)],
+            page=IdObject(id=2),
+            refs=[IdObject(id=21)],
+        )
+        return NodeTree.build(super_network=[root, referrer, wrapper, child, outside], root_node=root)
+
+    def test_in_tree_target_is_not_a_ref(self) -> None:
+        """A block referencing another block of the same tree does not put that block in refs_by_id."""
+        tree = self._tree()
+        assert 20 not in tree.refs_by_id
+        assert 21 not in tree.refs_by_id
+
+    def test_outside_target_is_a_ref(self) -> None:
+        """The reference that leaves the tree is gathered, and only that one."""
+        tree = self._tree()
+        assert set(tree.refs_by_id) == {90}
+
+    def test_second_hop_back_into_the_tree_is_not_a_ref(self) -> None:
+        """An outside ref node's own reference back to a tree node does not re-collect that node."""
+        tree = self._tree()
+        assert tree.external_refs_ids() == {90}
+        assert set(tree.refs_by_id) == {90}
+
+    def test_id_map_still_covers_every_node(self) -> None:
+        """The in-tree targets stay resolvable through id_map and uid_map, held by the tree."""
+        tree = self._tree()
+        assert {1, 10, 20, 21, 90} <= set(tree.id_map)
+        assert tree.uid_map["block0020"].id == 20
+
+
 class TestNodeTreeVersionRefs:
     """Tests that refs_by_id follows the refs of every version, not only the selected one.
 

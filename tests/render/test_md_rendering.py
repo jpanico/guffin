@@ -139,7 +139,9 @@ class TestRenderArticleFixture:
         The wrapper is a text block tagged ``float:: figure`` whose one content child is the image
         block itself; in a plain ``.md`` export the image is the link to its hosted file.  The
         article numbers its floats sequentially, so the caption is led by *Figure 1.* in bold, the
-        whole line emphasized, after the ``float-<uid>`` anchor a reference would land on.
+        whole line emphasized, after the ``float-<uid>`` anchor the reference lands on: the text block
+        before it refers to the float with the kind-word alias ``[figure](((uid)))``, which renders
+        as a Markdown link to that anchor, the word completed with the number.
         """
         stem: Final[str] = shell_safe_filename("[[Test Article]] 1")
         node_tree = article1_node_tree()
@@ -157,6 +159,7 @@ class TestRenderArticleFixture:
         result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
         section: Final[str] = result[result.index("### Section 1.3") : result.index("## Section 2")]
         assert "<figure" not in section
+        assert "see [figure 1](#float-hJFB2787-) \u2013 which" in section
         assert regex.search(
             r'^<a id="float-hJFB2787-"></a>\n\n\[A flower\]\([^)]+\)\n\n'
             r"\*\*\*Figure 1\.\*\* The flower, as a numbered figure\.\*\n",

@@ -13,7 +13,9 @@ Public symbols:
   — compiled regex matching a line-anchored Roam attribute assignment ``attribute:: value, …``;
   :data:`BLOCK_REF_RE` — compiled regex matching a
   Roam block reference ``((<uid>))``; :data:`FOOTNOTE_MARKER_RE` — compiled regex matching a
-  Footnotes extension marker ``[(<label>)](((<uid>)))``; :data:`BLOCK_EMBED_RE` — compiled regex matching a Roam
+  Footnotes extension marker ``[(<label>)](((<uid>)))``; :data:`BLOCK_LINK_ALIAS_RE` — compiled regex
+  matching a Roam aliased block reference ``[display](((<uid>)))``; :data:`BLOCK_EMBED_RE` — compiled
+  regex matching a Roam
   block embed ``{{embed: ((<uid>))}}`` (or ``{{[[embed]]: ((<uid>))}}``); :data:`PAGE_EMBED_RE` —
   compiled regex matching a Roam page embed ``{{embed: [[<page_name>]]}}`` (or
   ``{{[[embed]]: [[<page_name>]]}}``); :data:`PAGE_LINK_ALIAS_RE` — compiled regex matching a
@@ -401,6 +403,28 @@ FOOTNOTES_HEADER: Final[str] = "#footnotes"
 
 The extension collects a page's notes as the children of a header block whose string is this
 text, placed as the page's last top-level block.
+"""
+
+BLOCK_LINK_ALIAS_RE: Final[regex.Pattern[str]] = regex.compile(
+    rf"\[(?P<display>[^\[\]]+)\]\(\(\((?P<uid>{SYNTHETIC_UID_PATTERN})\)\)\)"
+)
+"""Compiled regex matching a Roam aliased block reference ``[display](((<uid>)))``.
+
+Roam lets an author reference a block under a label of their choosing: the graph records the
+reference, and the reader sees the display text in its place.  The display may not contain
+square brackets.  A Footnotes extension marker (:data:`FOOTNOTE_MARKER_RE`) has this same shape
+with a parenthesized display, so a text in which markers may occur is matched for markers
+first; what remains of the shape is an ordinary alias.
+
+Named groups:
+
+- ``display`` — the display text between the outer ``[`` and ``]``.
+- ``uid`` — the referenced block's synthetic UID.
+
+Example match on ``[figure](((hJFB2787-)))``:
+
+- ``match.group("display")`` — ``figure``.
+- ``match.group("uid")`` — ``hJFB2787-``.
 """
 
 BLOCK_EMBED_RE: Final[regex.Pattern[str]] = regex.compile(

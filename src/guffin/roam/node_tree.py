@@ -70,7 +70,10 @@ class NodeTree(BaseModel):
         refs_by_id: Map of id → :class:`~guffin.roam.node.RoamNode` for every node in
             the source *super_network* that is either directly referenced via ``:block/refs``
             by a member of :attr:`tree_network`, or is a transitive descendant of such a
-            node available in *super_network*; may be empty.
+            node available in *super_network*; may be empty.  Never a member of
+            :attr:`tree_network`: a reference from one of the tree's nodes to another is
+            resolved by the tree itself, so only references leaving the tree
+            (:meth:`external_refs_ids`) are gathered here.
         id_map: Map of :attr:`~guffin.roam.node.RoamNode.id` → :class:`~guffin.roam.node.RoamNode`
             for every node in :attr:`tree_network` or :attr:`refs_by_id`; excluded from
             serialization.
@@ -274,7 +277,10 @@ class NodeTree(BaseModel):
             )
             return list(pool.values())
 
-        tree_refs_ids: Final[set[Id]] = refs_ids(with_versions(tree_network))
+        # A reference to a node of the tree itself is resolved by the tree: only references leaving
+        # it are gathered, and the expansions below never re-collect a tree node either.
+        tree_ids: Final[set[Id]] = {n.id for n in tree_network}
+        tree_refs_ids: Final[set[Id]] = refs_ids(with_versions(tree_network)) - tree_ids
         direct_refs: Final[dict[Id, RoamNode]] = {n.id: n for n in super_network if n.id in tree_refs_ids}
         unresolvable_refs: Final[set[Id]] = tree_refs_ids - direct_refs.keys()
         if unresolvable_refs:
@@ -286,18 +292,18 @@ class NodeTree(BaseModel):
         refs_by_id: Final[dict[Id, RoamNode]] = dict(direct_refs)
         # Expand first-hop ref subtrees: every transitive descendant available in the pool, so a
         # referenced multi-block construct (e.g. a `{{table}}`) arrives with its row/cell descendants.
-        refs_by_id.update(cls._descendants_in_pool(direct_refs.values(), super_by_id, refs_by_id.keys()))
+        refs_by_id.update(cls._descendants_in_pool(direct_refs.values(), super_by_id, refs_by_id.keys() | tree_ids))
         # Second ref hop: the ref targets of everything gathered so far (the first-hop ref targets and
         # their descendants), each with its subtree, matching the two-hop reach of the with-refs fetch
         # query.  Pulling the subtrees (not just bare nodes) lets a multi-block construct referenced
         # from within a first-hop ref (e.g. a `{{table}}` referenced inside an embedded page) also
         # arrive complete, while a referenced node's own attributes still resolve their page references.
-        second_hop_ids: Final[set[Id]] = refs_ids(with_versions(refs_by_id.values())) - refs_by_id.keys()
+        second_hop_ids: Final[set[Id]] = refs_ids(with_versions(refs_by_id.values())) - refs_by_id.keys() - tree_ids
         second_hop_refs: Final[dict[Id, RoamNode]] = {
             ref_id: super_by_id[ref_id] for ref_id in second_hop_ids if ref_id in super_by_id
         }
         refs_by_id.update(second_hop_refs)
-        refs_by_id.update(cls._descendants_in_pool(second_hop_refs.values(), super_by_id, refs_by_id.keys()))
+        refs_by_id.update(cls._descendants_in_pool(second_hop_refs.values(), super_by_id, refs_by_id.keys() | tree_ids))
         return refs_by_id
 
     @staticmethod

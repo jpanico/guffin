@@ -1429,9 +1429,11 @@ class TestInTreeRefTranscription:
         )
         return _node_tree(root, heading, referrer)
 
-    def test_in_tree_ref_target_reaches_refs_by_id(self) -> None:
-        """Sanity: the fetch model records the in-tree target in refs_by_id."""
-        assert 2 in self._self_referencing_tree().refs_by_id
+    def test_in_tree_ref_target_is_held_by_the_tree_alone(self) -> None:
+        """Sanity: the fetch model resolves the in-tree target through the tree, never through refs_by_id."""
+        tree = self._self_referencing_tree()
+        assert 2 not in tree.refs_by_id
+        assert tree.uid_map["headng001"].id == 2
 
     def test_in_tree_ref_target_yields_no_ref_vertex(self) -> None:
         """An in-tree ref target is not transcribed again as a ref vertex."""

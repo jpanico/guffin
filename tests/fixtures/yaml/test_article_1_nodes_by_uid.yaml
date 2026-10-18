@@ -465,13 +465,16 @@ mriY-0ei8:
 lcqh-E9u4:
   uid: lcqh-E9u4
   id: 21159
-  string: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+  string: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
     child): its text is the figure''s caption, and its one content child is the image
-    block itself, not a reference to one'
+    block itself, not a reference to one; this sentence refers to it by its kind word
+    – see [figure](((hJFB2787-))) – which the export completes with the figure''s
+    number'
   order: 0
   heading: null
   children: null
-  refs: null
+  refs:
+  - id: 21164
   page:
     id: 3327
   children_view_type: null
@@ -1409,7 +1412,9 @@ cNW8lmXIM:
 
     - a `float:: figure` wrapper block (Section 1.3) whose text is the figure''s caption
     and whose one content child is a JPEG `image` block itself, not a reference to
-    one; it renders as the numbered Figure 1
+    one; it renders as the numbered Figure 1, and the text block before it refers
+    to it with a kind-word alias – an inline `block reference` aliased `figure` –
+    which the export completes with the number and links to the figure
 
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image

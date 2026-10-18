@@ -7,6 +7,7 @@ import pytest
 from guffin.roam.markdown import (
     ATTRIBUTE_ASSIGNMENT_RE,
     BLOCK_EMBED_RE,
+    BLOCK_LINK_ALIAS_RE,
     BLOCK_REF_RE,
     FIREBASE_STORAGE_URL_RE,
     PAGE_EMBED_RE,
@@ -311,6 +312,41 @@ class TestAttributeAssignmentRE:
 # ---------------------------------------------------------------------------
 # TestBlockRefRE
 # ---------------------------------------------------------------------------
+
+
+class TestBlockLinkAliasRE:
+    """Tests for BLOCK_LINK_ALIAS_RE — a Roam aliased block reference ``[display](((uid)))``."""
+
+    def test_matches_alias_with_groups(self) -> None:
+        """Test that an alias matches, yielding its display and uid."""
+        match = BLOCK_LINK_ALIAS_RE.search("see [figure](((hJFB2787-))) above")
+        assert match is not None
+        assert match.group("display") == "figure"
+        assert match.group("uid") == "hJFB2787-"
+
+    def test_multi_word_display(self) -> None:
+        """Test that a display of several words matches whole."""
+        match = BLOCK_LINK_ALIAS_RE.search("[the diagram above](((hJFB2787-)))")
+        assert match is not None
+        assert match.group("display") == "the diagram above"
+
+    def test_plain_block_reference_does_not_match(self) -> None:
+        """Test that a bare ((uid)) is not an alias."""
+        assert BLOCK_LINK_ALIAS_RE.search("see ((hJFB2787-))") is None
+
+    def test_page_alias_does_not_match(self) -> None:
+        """Test that an aliased page link [display]([[Page]]) is not a block alias."""
+        assert BLOCK_LINK_ALIAS_RE.search("[display]([[Page Name]])") is None
+
+    def test_display_with_square_bracket_does_not_match(self) -> None:
+        """Test that a display containing square brackets is not matched."""
+        assert BLOCK_LINK_ALIAS_RE.search("[see [[Page]]](((hJFB2787-)))") is None
+
+    def test_parenthesized_display_matches_as_the_shape_allows(self) -> None:
+        """Test that a Footnotes marker has the alias shape; the marker pattern is consumed first by its user."""
+        match = BLOCK_LINK_ALIAS_RE.search("[(1)](((hJFB2787-)))")
+        assert match is not None
+        assert match.group("display") == "(1)"
 
 
 class TestBlockRefRE:

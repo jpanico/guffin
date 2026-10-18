@@ -6,6 +6,7 @@ from guffin.roam.primitives import IdObject
 from guffin.transcribe.roam_md_to_pandoc_md import (
     convert_bg_color_line,
     convert_block_link,
+    convert_block_link_aliases,
     convert_code_blocks,
     convert_color_bold,
     convert_color_box,
@@ -258,6 +259,41 @@ class TestConvertFootnoteMarkers:
         tree: NodeTree = _block_tree("The note text.", "Tk7FpgzQa")
         assert to_pandoc_md("ran for [(a 52-minute run)](((Tk7FpgzQa))) and", tree) == (
             "ran for [a 52-minute run](x-guffin:vertex-note/Tk7FpgzQa) and"
+        )
+
+
+class TestConvertBlockLinkAliases:
+    """Tests for convert_block_link_aliases — [display](((uid))) to a vertex link keeping the display."""
+
+    def test_resolvable_alias_keeps_display(self) -> None:
+        """Test that an alias to a fetched block becomes a vertex link displaying the alias text."""
+        tree: NodeTree = _block_tree("The flower, as a numbered figure.", "hJFB2787-")
+        assert convert_block_link_aliases("see [figure](((hJFB2787-))) above", tree) == (
+            "see [figure](x-guffin:vertex/hJFB2787-) above"
+        )
+
+    def test_unresolvable_alias_unchanged(self) -> None:
+        """Test that an alias to an unfetched block is left verbatim."""
+        tree: NodeTree = _block_tree("Other.", "zzzzzzzzz")
+        assert convert_block_link_aliases("see [figure](((hJFB2787-)))", tree) == "see [figure](((hJFB2787-)))"
+
+    def test_plain_block_reference_untouched(self) -> None:
+        """Test that a bare ((uid)) is not an alias and is left for convert_block_link."""
+        tree: NodeTree = _block_tree("The flower.", "hJFB2787-")
+        assert convert_block_link_aliases("see ((hJFB2787-))", tree) == "see ((hJFB2787-))"
+
+    def test_to_pandoc_md_converts_alias_not_nested_link(self) -> None:
+        """Test that the full pipeline yields one vertex link with the alias display, never a nested link."""
+        tree: NodeTree = _block_tree("The flower, as a numbered figure.", "hJFB2787-")
+        assert to_pandoc_md("see [figure](((hJFB2787-))) above", tree) == (
+            "see [figure](x-guffin:vertex/hJFB2787-) above"
+        )
+
+    def test_to_pandoc_md_marker_still_a_note_link(self) -> None:
+        """Test that a Footnotes marker, an alias with a parenthesized display, still becomes a note link."""
+        tree: NodeTree = _block_tree("The note text.", "Tk7FpgzQa")
+        assert to_pandoc_md("ran [(a 52-minute run)](((Tk7FpgzQa))) far", tree) == (
+            "ran [a 52-minute run](x-guffin:vertex-note/Tk7FpgzQa) far"
         )
 
 

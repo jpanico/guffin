@@ -872,6 +872,8 @@ class TestRefsIds:
           grandchild of its code block), referencing the "code-source" page (14555).
         - Section 1.3's ``float:: figure`` block (the ``guffin-meta::`` grandchild of the float
           wrapper), referencing the "float" page (21162).
+        - Section 1.3's text block, whose aliased block reference ``[figure](((hJFB2787-)))``
+          references the float wrapper block (21164).
         - The Section 2.2 native table's four cells, each solely a ``((uid))`` block reference
           to an image block (12916, 12919, 12920, 12925).
         """
@@ -879,6 +881,7 @@ class TestRefsIds:
             246,
             14555,
             21162,
+            21164,
             321,
             4223,
             5450,
