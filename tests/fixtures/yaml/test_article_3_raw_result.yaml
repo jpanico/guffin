@@ -227,6 +227,43 @@
       id: 4225
     refs:
     - id: 11719
+- - attrs:
+    - - source:
+        - uid
+        - FxpYHx75w
+        value:
+        - uid
+        - FxpYHx75w
+      - source:
+        - uid
+        - _A2GH4RCx
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - _A2GH4RCx
+        value:
+        - uid
+        - BxGxeeGk1
+    string: A short function, as a numbered listing.
+    children:
+    - id: 21167
+    - id: 21169
+    id: 21170
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21169
+    - id: 21170
+    uid: FxpYHx75w
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21171
+    order: 1
+    page:
+      id: 3327
 - - id: 11454
     uid: iF2Ey_unj
     title: c:ORANGE
@@ -610,6 +647,55 @@
     refs:
     - id: 5844
     - id: 11664
+- - string: "```python\ndef area(width: float, height: float) -> float:\n    return\
+      \ width * height\n```"
+    id: 21167
+    uid: B_UX9HYKI
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21170
+    - id: 21171
+    order: 0
+    page:
+      id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - _A2GH4RCx
+        value:
+        - uid
+        - _A2GH4RCx
+      - source:
+        - uid
+        - tXmFLsfsC
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - tXmFLsfsC
+        value: ' listing'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21168
+    id: 21169
+    lookup:
+    - id: 21162
+    - id: 21168
+    - id: 21169
+    uid: _A2GH4RCx
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21170
+    - id: 21171
+    order: 1
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - id: 246
     uid: q3JUnfC1_
     title: pdf
@@ -1192,6 +1278,7 @@
     - id: 4758
     - id: 21158
     - id: 21165
+    - id: 21171
     id: 3328
     uid: 0EgPyHSZi
     parents:
@@ -1915,6 +2002,19 @@
     - id: 4223
     - id: 5844
     - id: 11674
+- - heading: 2
+    string: Section 1.4
+    children:
+    - id: 21166
+    - id: 21170
+    id: 21171
+    uid: u9We9JXWn
+    parents:
+    - id: 3327
+    - id: 3328
+    order: 4
+    page:
+      id: 3327
 - - id: 21162
     uid: -mwo6HoFt
     title: float
@@ -3280,6 +3380,22 @@
     order: 1
     page:
       id: 4225
+- - string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
+      child): its text is the listing''s caption, and its one content child is the
+      code block itself, not a reference to one; this sentence refers to it by its
+      kind word – see [listing](((FxpYHx75w))) – which the export completes with the
+      listing''s number'
+    id: 21166
+    uid: 5uUu5WFyE
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21171
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 21170
 - - children:
     - id: 1348
     id: 329
@@ -3670,6 +3786,20 @@
       id: 4225
     refs:
     - id: 11188
+- - string: 'float:: listing'
+    id: 21168
+    uid: tXmFLsfsC
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21169
+    - id: 21170
+    - id: 21171
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 21162
 - - string: '#c:FUCHSIA **standalone PAGE ref ↓** '
     children:
     - id: 11715

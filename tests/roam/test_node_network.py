@@ -874,6 +874,8 @@ class TestRefsIds:
           wrapper), referencing the "float" page (21162).
         - Section 1.3's text block, whose aliased block reference ``[figure](((hJFB2787-)))``
           references the float wrapper block (21164).
+        - Section 1.4's listing float: its ``float:: listing`` block references the "float" page
+          (21162) again, and its text block's ``[listing](((FxpYHx75w)))`` the wrapper (21170).
         - The Section 2.2 native table's four cells, each solely a ``((uid))`` block reference
           to an image block (12916, 12919, 12920, 12925).
         """
@@ -882,6 +884,7 @@ class TestRefsIds:
             14555,
             21162,
             21164,
+            21170,
             321,
             4223,
             5450,

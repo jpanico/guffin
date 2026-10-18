@@ -325,6 +325,45 @@ KyGcFtLZ6:
   title: null
   attrs: null
   blocks: null
+FxpYHx75w:
+  uid: FxpYHx75w
+  id: 21170
+  string: A short function, as a numbered listing.
+  order: 1
+  heading: null
+  children:
+  - id: 21167
+  - id: 21169
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21171
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - FxpYHx75w
+      value:
+      - uid
+      - FxpYHx75w
+    - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 iF2Ey_unj:
   uid: iF2Ey_unj
   id: 11454
@@ -955,6 +994,66 @@ LKHCU5I3z:
   props: null
   title: null
   attrs: null
+  blocks: null
+B_UX9HYKI:
+  uid: B_UX9HYKI
+  id: 21167
+  string: "```python\ndef area(width: float, height: float) -> float:\n    return\
+    \ width * height\n```"
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+_A2GH4RCx:
+  uid: _A2GH4RCx
+  id: 21169
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21168
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - _A2GH4RCx
+    - source:
+      - uid
+      - tXmFLsfsC
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - tXmFLsfsC
+      value: ' listing'
   blocks: null
 q3JUnfC1_:
   uid: q3JUnfC1_
@@ -1876,6 +1975,7 @@ OexZiLR_O:
   - id: 4758
   - id: 21158
   - id: 21165
+  - id: 21171
   refs: null
   page:
     id: 3327
@@ -3029,6 +3129,26 @@ ot5dpySxp:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+u9We9JXWn:
+  uid: u9We9JXWn
+  id: 21171
+  string: Section 1.4
+  order: 4
+  heading: 2
+  children:
+  - id: 21166
+  - id: 21170
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
   props: null
   title: null
   attrs: null
@@ -5317,6 +5437,30 @@ msKBuys0a:
   title: null
   attrs: null
   blocks: null
+5uUu5WFyE:
+  uid: 5uUu5WFyE
+  id: 21166
+  string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
+    child): its text is the listing''s caption, and its one content child is the code
+    block itself, not a reference to one; this sentence refers to it by its kind word
+    – see [listing](((FxpYHx75w))) – which the export completes with the listing''s
+    number'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21170
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21171
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 20E2gCz7h:
   uid: 20E2gCz7h
   id: 329
@@ -5916,6 +6060,28 @@ l4BV03n4W:
   - id: 4225
   - id: 4227
   - id: 13475
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+tXmFLsfsC:
+  uid: tXmFLsfsC
+  id: 21168
+  string: 'float:: listing'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21169
+  - id: 21170
+  - id: 21171
   props: null
   title: null
   attrs: null

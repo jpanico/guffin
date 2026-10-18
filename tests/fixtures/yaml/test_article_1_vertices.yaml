@@ -54,6 +54,11 @@
     to it with a kind-word alias – an inline `block reference` aliased `figure` –
     which the export completes with the number and links to the figure
 
+    - a `float:: listing` wrapper block (Section 1.4) whose text is the listing''s
+    caption and whose one content child is a Python `code block` itself, not a reference
+    to one; it renders as the numbered Listing 1, and the text block before it refers
+    to it with the kind-word alias `listing`, completed with the number and linked
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -70,6 +75,7 @@
   - Ma5KGUH9O
   - aRTvWsH2_
   - GAla4u5_u
+  - u9We9JXWn
   text: Section 1
   heading_level: 1
 - vertex_type: guffin/heading
@@ -267,6 +273,42 @@
   media_type: image/jpeg
   alt_text: A flower
   scaled_image_size: {}
+- vertex_type: guffin/heading
+  uid: u9We9JXWn
+  children:
+  - 5uUu5WFyE
+  - FxpYHx75w
+  text: Section 1.4
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: 5uUu5WFyE
+  refs:
+  - FxpYHx75w
+  text: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
+    child): its text is the listing''s caption, and its one content child is the code
+    block itself, not a reference to one; this sentence refers to it by its kind word
+    – see [listing](x-guffin:vertex/FxpYHx75w) – which the export completes with the
+    listing''s number'
+- vertex_type: guffin/text
+  uid: FxpYHx75w
+  children:
+  - B_UX9HYKI
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: listing
+  text: A short function, as a numbered listing.
+- vertex_type: guffin/code-block
+  uid: B_UX9HYKI
+  code: "def area(width: float, height: float) -> float:\n    return width * height"
+  language: python
 - vertex_type: guffin/heading
   uid: wdMgyBiP9
   children:

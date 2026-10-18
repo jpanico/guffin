@@ -138,6 +138,44 @@ tree_network:
       value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
         dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
   blocks: null
+- uid: FxpYHx75w
+  id: 21170
+  string: A short function, as a numbered listing.
+  order: 1
+  heading: null
+  children:
+  - id: 21167
+  - id: 21169
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21171
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - FxpYHx75w
+      value:
+      - uid
+      - FxpYHx75w
+    - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 - uid: EWMNZcPZX
   id: 11931
   string: 'pdf-render:: inline-native'
@@ -285,6 +323,64 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: B_UX9HYKI
+  id: 21167
+  string: "```python\ndef area(width: float, height: float) -> float:\n    return\
+    \ width * height\n```"
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: _A2GH4RCx
+  id: 21169
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21168
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - _A2GH4RCx
+    - source:
+      - uid
+      - tXmFLsfsC
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - tXmFLsfsC
+      value: ' listing'
   blocks: null
 - uid: 8VPJRGOt4
   id: 14460
@@ -468,6 +564,7 @@ tree_network:
   - id: 4758
   - id: 21158
   - id: 21165
+  - id: 21171
   refs: null
   page:
     id: 3327
@@ -753,6 +850,25 @@ tree_network:
   - id: 21156
   - id: 21157
   - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: u9We9JXWn
+  id: 21171
+  string: Section 1.4
+  order: 4
+  heading: 2
+  children:
+  - id: 21166
+  - id: 21170
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
   props: null
   title: null
   attrs: null
@@ -1187,6 +1303,11 @@ tree_network:
     to it with a kind-word alias – an inline `block reference` aliased `figure` –
     which the export completes with the number and links to the figure
 
+    - a `float:: listing` wrapper block (Section 1.4) whose text is the listing''s
+    caption and whose one content child is a Python `code block` itself, not a reference
+    to one; it renders as the numbered Listing 1, and the text block before it refers
+    to it with the kind-word alias `listing`, completed with the number and linked
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -1336,6 +1457,29 @@ tree_network:
   parents:
   - id: 3327
   - id: 3330
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: 5uUu5WFyE
+  id: 21166
+  string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
+    child): its text is the listing''s caption, and its one content child is the code
+    block itself, not a reference to one; this sentence refers to it by its kind word
+    – see [listing](((FxpYHx75w))) – which the export completes with the listing''s
+    number'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21170
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21171
   props: null
   title: null
   attrs: null
@@ -1530,6 +1674,27 @@ tree_network:
       - uid
       - BxGxeeGk1
   blocks: null
+- uid: tXmFLsfsC
+  id: 21168
+  string: 'float:: listing'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21169
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: Wlzl_dhg_
   id: 15802
   string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
@@ -1698,45 +1863,6 @@ refs_by_id:
     title: float
     attrs: null
     blocks: null
-  '21164':
-    uid: hJFB2787-
-    id: 21164
-    string: The flower, as a numbered figure.
-    order: 1
-    heading: null
-    children:
-    - id: 21160
-    - id: 21163
-    refs: null
-    page:
-      id: 3327
-    children_view_type: null
-    parents:
-    - id: 3327
-    - id: 3328
-    - id: 21165
-    props: null
-    title: null
-    attrs:
-    - - source:
-        - uid
-        - hJFB2787-
-        value:
-        - uid
-        - hJFB2787-
-      - source:
-        - uid
-        - CQvP3nmCc
-        value:
-        - uid
-        - 2xY4zCjId
-      - source:
-        - uid
-        - CQvP3nmCc
-        value:
-        - uid
-        - BxGxeeGk1
-    blocks: null
   '321':
     uid: BxGxeeGk1
     id: 321
@@ -1864,86 +1990,5 @@ refs_by_id:
     parents: null
     props: null
     title: guffin-meta
-    attrs: null
-    blocks: null
-  '21160':
-    uid: OaPVm-SUa
-    id: 21160
-    string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
-    order: 0
-    heading: null
-    children: null
-    refs: null
-    page:
-      id: 3327
-    children_view_type: null
-    parents:
-    - id: 3327
-    - id: 3328
-    - id: 21164
-    - id: 21165
-    props: null
-    title: null
-    attrs: null
-    blocks: null
-  '21163':
-    uid: CQvP3nmCc
-    id: 21163
-    string: 'guffin-meta:: #.rm-g'
-    order: 1
-    heading: null
-    children:
-    - id: 21161
-    refs:
-    - id: 321
-    - id: 11839
-    page:
-      id: 3327
-    children_view_type: null
-    parents:
-    - id: 3327
-    - id: 3328
-    - id: 21164
-    - id: 21165
-    props: null
-    title: null
-    attrs:
-    - - source:
-        - uid
-        - CQvP3nmCc
-        value:
-        - uid
-        - CQvP3nmCc
-      - source:
-        - uid
-        - 5TSft8ic4
-        value:
-        - uid
-        - -mwo6HoFt
-      - source:
-        - uid
-        - 5TSft8ic4
-        value: ' figure'
-    blocks: null
-  '21161':
-    uid: 5TSft8ic4
-    id: 21161
-    string: 'float:: figure'
-    order: 0
-    heading: null
-    children: null
-    refs:
-    - id: 21162
-    page:
-      id: 3327
-    children_view_type: null
-    parents:
-    - id: 3327
-    - id: 3328
-    - id: 21163
-    - id: 21164
-    - id: 21165
-    props: null
-    title: null
     attrs: null
     blocks: null

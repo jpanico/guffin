@@ -902,6 +902,12 @@ class TestNodeTreeDFSIterator:
           21160 — image block          (order=0, child of 21164)
           21163 — guffin-meta block    (order=1, child of 21164)
           21161 — float block          (order=0, child of 21163)
+          21171 — Section 1.4          (order=4, child of 3328)
+          21166 — text block           (order=0, child of 21171)
+          21170 — float wrapper        (order=1, child of 21171)
+          21167 — code block           (order=0, child of 21170)
+          21169 — guffin-meta block    (order=1, child of 21170)
+          21168 — float block          (order=0, child of 21169)
           3329  — Section 2            (order=2, child of root)
           3332  — Section 2.1          (order=0, child of 3329)
           11163 — illustration 2.1     (order=0, child of 3332)
@@ -967,6 +973,12 @@ class TestNodeTreeDFSIterator:
             21160,
             21163,
             21161,
+            21171,
+            21166,
+            21170,
+            21167,
+            21169,
+            21168,
             3329,
             3332,
             11163,

@@ -167,6 +167,40 @@ class TestRenderArticleFixture:
             regex.MULTILINE,
         )
 
+    def test_listing_float_renders_anchor_fence_and_labelled_caption(self, tmp_path: Path) -> None:
+        """Article 1's listing float (Section 1.4) renders unwrapped: anchor, fenced code, then the labelled caption.
+
+        The wrapper is a text block tagged ``float:: listing`` whose one content child is the code
+        block itself.  Listings are their own series, so beside Figure 1 it is *Listing 1*, and the
+        text block before it refers to it with the kind-word alias ``[listing](((uid)))``, rendered
+        as a Markdown link to the anchor with the word completed by the number.
+        """
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 1")
+        node_tree = article1_node_tree()
+        render_bundle: Final[RenderBundle] = RenderBundle(content=transcribe(node_tree), view=build_view_map(node_tree))
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            render_bundle,
+            profile=ArticleProfile(),
+            filename_stem=stem,
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
+        section: Final[str] = result[result.index("### Section 1.4") : result.index("## Section 2")]
+        assert "<figure" not in section
+        assert "see [listing 1](#float-FxpYHx75w) \u2013 which" in section
+        assert (
+            '<a id="float-FxpYHx75w"></a>\n\n'
+            "``` python\n"
+            "def area(width: float, height: float) -> float:\n"
+            "    return width * height\n"
+            "```\n\n"
+            "***Listing 1.** A short function, as a numbered listing.*\n"
+        ) in section
+
 
 class TestSemanticBullets:
     """Classified list items render dash + glyph in GFM (via gfm_bullet.lua and badge injection)."""

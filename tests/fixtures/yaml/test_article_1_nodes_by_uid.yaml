@@ -121,6 +121,45 @@ RpKOrMHZd:
       value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
         dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
   blocks: null
+FxpYHx75w:
+  uid: FxpYHx75w
+  id: 21170
+  string: A short function, as a numbered listing.
+  order: 1
+  heading: null
+  children:
+  - id: 21167
+  - id: 21169
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21171
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - FxpYHx75w
+      value:
+      - uid
+      - FxpYHx75w
+    - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 EWMNZcPZX:
   uid: EWMNZcPZX
   id: 11931
@@ -339,6 +378,66 @@ C8y7bMPpW:
   props: null
   title: code-source
   attrs: null
+  blocks: null
+B_UX9HYKI:
+  uid: B_UX9HYKI
+  id: 21167
+  string: "```python\ndef area(width: float, height: float) -> float:\n    return\
+    \ width * height\n```"
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+_A2GH4RCx:
+  uid: _A2GH4RCx
+  id: 21169
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21168
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - _A2GH4RCx
+      value:
+      - uid
+      - _A2GH4RCx
+    - source:
+      - uid
+      - tXmFLsfsC
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - tXmFLsfsC
+      value: ' listing'
   blocks: null
 8VPJRGOt4:
   uid: 8VPJRGOt4
@@ -575,6 +674,7 @@ OexZiLR_O:
   - id: 4758
   - id: 21158
   - id: 21165
+  - id: 21171
   refs: null
   page:
     id: 3327
@@ -895,6 +995,26 @@ xvBjd5MEr:
   - id: 21156
   - id: 21157
   - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+u9We9JXWn:
+  uid: u9We9JXWn
+  id: 21171
+  string: Section 1.4
+  order: 4
+  heading: 2
+  children:
+  - id: 21166
+  - id: 21170
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
   props: null
   title: null
   attrs: null
@@ -1416,6 +1536,11 @@ cNW8lmXIM:
     to it with a kind-word alias – an inline `block reference` aliased `figure` –
     which the export completes with the number and links to the figure
 
+    - a `float:: listing` wrapper block (Section 1.4) whose text is the listing''s
+    caption and whose one content child is a Python `code block` itself, not a reference
+    to one; it renders as the numbered Listing 1, and the text block before it refers
+    to it with the kind-word alias `listing`, completed with the number and linked
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -1636,6 +1761,30 @@ JW5PswS6v:
   title: null
   attrs: null
   blocks: null
+5uUu5WFyE:
+  uid: 5uUu5WFyE
+  id: 21166
+  string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
+    child): its text is the listing''s caption, and its one content child is the code
+    block itself, not a reference to one; this sentence refers to it by its kind word
+    – see [listing](((FxpYHx75w))) – which the export completes with the listing''s
+    number'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21170
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21171
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 zE0QjA3N9:
   uid: zE0QjA3N9
   id: 11936
@@ -1846,6 +1995,28 @@ eB34bPMcL:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
+tXmFLsfsC:
+  uid: tXmFLsfsC
+  id: 21168
+  string: 'float:: listing'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21169
+  - id: 21170
+  - id: 21171
+  props: null
+  title: null
+  attrs: null
   blocks: null
 Wlzl_dhg_:
   uid: Wlzl_dhg_
