@@ -452,6 +452,20 @@ class TestStructuralPolicyDirectives:
         assert _has_section_numbers(multi_level_epubs["book"])
         assert not _has_section_numbers(multi_level_epubs["article"])
 
+    def test_parts_book_numbers_chapters_straight_through(self, multi_level_epubs: dict[str, Path]) -> None:
+        """A parts book numbers its parts in roman and its chapters across the parts (Chicago): 1, then 2."""
+        with zipfile.ZipFile(multi_level_epubs["parts"]) as zf:
+            xhtml: Final[str] = "\n".join(
+                zf.read(name).decode("utf-8") for name in sorted(zf.namelist()) if name.endswith(".xhtml")
+            )
+        numbered: Final[dict[str, str]] = {
+            match.group("text"): match.group("number")
+            for match in regex.finditer(
+                r'<h[12][^>]*><span class="header-section-number">(?P<number>[^<]+)</span>\s*(?P<text>[^<]+)<', xhtml
+            )
+        }
+        assert numbered == {"Chapter One": "I", "Section A": "1", "Chapter Two": "II", "Section B": "2"}
+
     def test_number_sections_option_overrides_policy(self, multi_level_epubs: dict[str, Path]) -> None:
         """number_sections=False unnumbers a book; number_sections=True numbers an article."""
         assert not _has_section_numbers(multi_level_epubs["book_unnumbered"])

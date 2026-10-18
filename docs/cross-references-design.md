@@ -401,10 +401,18 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
   in the book's thirtieth chapter, came out as Table 5.1: `model/floats.float_numbers` gave a
   chapter its ordinal only when a float was met in it, so it counted the chapters holding
   floats. It now counts every body-matter heading at the chapter level in reading order, as the
-  rule above states. **Open:** in a parts book the count runs through the parts (Chicago's
-  consecutive chapter numbering), while a numbered PDF export labels a chapter by part and
-  chapter (Book II's thirteenth chapter is *2.13*), so the table's number and its chapter's
-  heading number disagree when headings are numbered.
+  rule above states. In a parts book that count runs through the parts (Chicago's consecutive
+  chapter numbering), while the numbered PDF and EPUB exports labelled a chapter by part and
+  chapter (Book II's thirteenth chapter was *2.13*), so the table's number and its chapter's
+  heading number disagreed.
+- **2026-10-18 — A parts book follows the Chicago convention for its heading numbers too (Joe).**
+  Chapters are numbered consecutively through the whole book, parts on their own in roman
+  numerals, sections under their chapter (*30.1*), so heading and float numbers agree: Table 30.1
+  sits in chapter 30. The writers cannot count that way, so Guffin numbers a parts book's
+  headings itself (`render/heading_numbering.py`): PDF headings get a constant Typst numbering
+  (`typst_heading_number.lua`), EPUB headings a leading `header-section-number` span in place of
+  Pandoc's `--number-sections`. A book without parts keeps the writers' numbering, which already
+  counts chapters straight through.
 - **2026-10-17 — A labelled inline reference is not a standalone one.** Test Article 3's
   reference lines open with a coloured label span, so `[label]{color=...} see [figure](...)`
   begins with a bracket and ends with a vertex link, and

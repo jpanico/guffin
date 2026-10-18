@@ -76,6 +76,7 @@ from guffin.render.callout_theme import typst_callout_tokens
 from guffin.render.design_language import typst_table_tokens
 from guffin.render.epigraph_page import BOOK_EPIGRAPH_META_KEY, lift_leading_epigraphs
 from guffin.render.floats_rendering import PreparedFloats, prepare_floats
+from guffin.render.heading_numbering import number_parts_book_headings
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, detached_copy, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -117,6 +118,7 @@ _TYPST_LIST_PARA_FILTER: Final[str] = "typst_list_para.lua"
 _TYPST_PAGE_BREAK_FILTER: Final[str] = "typst_page_break.lua"
 _TYPST_QUOTE_FILTER: Final[str] = "typst_quote.lua"
 _TYPST_TODO_FILTER: Final[str] = "typst_todo.lua"
+_TYPST_HEADING_NUMBER_FILTER: Final[str] = "typst_heading_number.lua"
 # Bundled .sublime-syntax grammars loaded into Typst's highlighter beyond its built-in
 # syntect set (via the Bergfink `code-syntaxes` variable, one entry per file).
 _SYNTAX_FILENAMES: Final[tuple[str, ...]] = (
@@ -149,9 +151,10 @@ def _typst_filter_args(bundled_dir: Path) -> list[str]:
     any transform serializes the container holding it), then the inline and structural transforms
     (the keep-with-next transform right after the list-paragraph one, so it sees a list item's
     promoted lead-in paragraph), the fancy-quote and code-source transforms after them (their
-    content is serialized once rewritten), and the semantic-bullet transform last — it serializes
+    content is serialized once rewritten), then the semantic-bullet transform — it serializes
     classified and alternatives-bearing list items' bodies to Typst, so every earlier transform
-    must already have rewritten them.
+    must already have rewritten them — and the heading-number transform last, after the page-break
+    transform has taken a heading's class and left the heading for it to write out.
 
     Args:
         bundled_dir: The bundled Typst resources directory holding the filter files.
@@ -170,6 +173,7 @@ def _typst_filter_args(bundled_dir: Path) -> list[str]:
         f"--lua-filter={bundled_dir / _TYPST_CAPTION_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_QUOTE_FILTER}",
         f"--lua-filter={bundled_dir / _TYPST_BULLET_FILTER}",
+        f"--lua-filter={bundled_dir / _TYPST_HEADING_NUMBER_FILTER}",
     ]
 
 
@@ -685,7 +689,8 @@ def render(
             bundled_dir,
             template_path,
             template_dir,
-            number_sections,
+            # A parts book's headings carry Guffin's own numbers (below), so the template numbers none.
+            number_sections and not parts_book,
             profile.structural_policy.top_level_division,
             profile.structural_policy.emit_title_page,
             emit_toc,
@@ -734,6 +739,11 @@ def render(
         # The floats are numbered in reading order and labelled before the links resolve, so a
         # reference to one can be completed with its number.
         floats: Final[PreparedFloats] = prepare_floats(doc, enriched_tree, profile.structural_policy)
+        # A parts book numbers its chapters straight through the parts (Chicago), which Typst's
+        # heading counter cannot do: Guffin stamps each heading's number, and typst_heading_number.lua
+        # sets it.
+        if number_sections and parts_book:
+            number_parts_book_headings(doc)
         resolve_vertex_links(
             doc,
             enriched_tree,

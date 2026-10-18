@@ -80,6 +80,7 @@ from guffin.render.epub_post_processing import (
     stamp_titlepage_revision,
 )
 from guffin.render.floats_rendering import PreparedFloats, prepare_floats
+from guffin.render.heading_numbering import insert_heading_number_spans, number_parts_book_headings
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -413,6 +414,11 @@ def render(
         # The floats are numbered in reading order and labelled before the links resolve, so a
         # reference to one can be completed with its number.
         floats: Final[PreparedFloats] = prepare_floats(doc, enriched_tree, profile.structural_policy)
+        # A parts book numbers its chapters straight through the parts (Chicago); Pandoc's section
+        # numbering restarts them in each part, so Guffin numbers the headings itself instead.
+        if number_sections and parts_book:
+            number_parts_book_headings(doc)
+            insert_heading_number_spans(doc)
         resolve_vertex_links(
             doc,
             enriched_tree,
@@ -476,7 +482,7 @@ def render(
         ]
         if cover_path is not None:
             extra_args.append(f"--epub-cover-image={cover_path}")
-        if number_sections:
+        if number_sections and not parts_book:
             extra_args.append("--number-sections")
         # The emit_toc directive is deliberately unmapped in this format: Pandoc always generates
         # the EPUB 3 nav document, which reading systems surface as their own ToC affordance —
