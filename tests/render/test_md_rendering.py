@@ -240,7 +240,8 @@ class TestRenderArticleFixture:
         The figure, listing, and table wrappers each have one child that is a standalone reference
         to the page's own image, fenced code block, or native table; each renders unwrapped with
         its anchor and labelled caption, the referenced content in between, and the three inline
-        kind-word aliases render as Markdown links to the anchors, the word completed by the number.
+        kind-word aliases render as Markdown links to the anchors, the word completed by the number —
+        each float cited twice, from an inline reference line and from the explainer block before it.
         """
         stem: Final[str] = shell_safe_filename("[[Test Article]] 3")
         node_tree = article3_node_tree()
@@ -256,9 +257,10 @@ class TestRenderArticleFixture:
             options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
         )
         result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
-        assert "see [figure 1](#float-NlwSKgjdJ)" in result
-        assert "see [listing 1](#float-VQjeoP4r_)" in result
-        assert "see [table 1](#float-iuXlWiUAL)" in result
+        # Each float is cited twice: from an inline reference line, and from the explainer before it.
+        assert result.count("see [figure 1](#float-NlwSKgjdJ)") == 2
+        assert result.count("see [listing 1](#float-VQjeoP4r_)") == 2
+        assert result.count("see [table 1](#float-iuXlWiUAL)") == 2
         for anchor in ("float-NlwSKgjdJ", "float-VQjeoP4r_", "float-iuXlWiUAL"):
             assert result.count(f'<a id="{anchor}"></a>') == 1
         figure: Final[str] = result[

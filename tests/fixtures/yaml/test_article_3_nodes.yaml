@@ -556,6 +556,7 @@
   heading: null
   children:
   - id: 21187
+  - id: 21202
   refs:
   - id: 5844
   page:
@@ -982,8 +983,10 @@
     child) – whose one content child is a standalone `block reference` to the in-page
     image, fenced code block, and native table, so each float displays a target that
     lives elsewhere on the page; they render as the numbered Figure 1, Listing 1,
-    and Table 1, and three inline kind-word aliases (`figure`, `listing`, `table`)
-    refer to them, completed with the number and linked
+    and Table 1. Each is referred to twice with a kind-word alias (`figure`, `listing`,
+    `table`), completed with the number and linked: from an inline ref line earlier
+    in the section, and, as in Test Article 1, from the text block directly before
+    the float
 
     - `External (out-of-page) links:` section: the same matrix against Test Article
     1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed,
@@ -2298,6 +2301,7 @@
   heading: null
   children:
   - id: 21192
+  - id: 21203
   refs:
   - id: 5844
   page:
@@ -2390,7 +2394,7 @@
 - uid: VQjeoP4r_
   id: 21192
   string: The page's fizz buzz code block, as a numbered listing through a block reference.
-  order: 0
+  order: 1
   heading: null
   children:
   - id: 21189
@@ -2525,7 +2529,7 @@
 - uid: iuXlWiUAL
   id: 21197
   string: The page's native table, as a numbered table through a block reference.
-  order: 0
+  order: 1
   heading: null
   children:
   - id: 21194
@@ -2996,6 +3000,7 @@
   heading: null
   children:
   - id: 21197
+  - id: 21204
   refs:
   - id: 5844
   page:
@@ -3240,7 +3245,7 @@
 - uid: NlwSKgjdJ
   id: 21187
   string: The page's standalone image, as a numbered figure through a block reference.
-  order: 0
+  order: 1
   heading: null
   children:
   - id: 21184
@@ -3413,6 +3418,29 @@
   title: null
   attrs: null
   blocks: null
+- uid: 0p_x3-HZO
+  id: 21203
+  string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
+    child): its text is the listing''s caption, and its one content child is a standalone
+    block reference to the page''s fenced code block, not the code block itself; this
+    sentence refers to it by its kind word – see [listing](((VQjeoP4r_))) – which
+    the export completes with the listing''s number'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21192
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21193
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: kyagWLAKA
   id: 13466
   string: '[[>]] This is a Roam standard multi-line Block Quote
@@ -3475,6 +3503,29 @@
   - id: 11790
   - id: 11792
   - id: 11793
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: 3WVy07vZR
+  id: 21204
+  string: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
+    child): its text is the table''s caption, and its one content child is a standalone
+    block reference to the page''s native `{{table}}` block, not the table itself;
+    this sentence refers to it by its kind word – see [table](((iuXlWiUAL))) – which
+    the export completes with the table''s number'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21197
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21198
   props: null
   title: null
   attrs: null
@@ -3644,6 +3695,29 @@
   - id: 4225
   - id: 4226
   - id: 11707
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: 87qCPx_8y
+  id: 21202
+  string: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+    child): its text is the figure''s caption, and its one content child is a standalone
+    block reference to the page''s image block, not the image itself; this sentence
+    refers to it by its kind word – see [figure](((NlwSKgjdJ))) – which the export
+    completes with the figure''s number'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21187
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21188
   props: null
   title: null
   attrs: null

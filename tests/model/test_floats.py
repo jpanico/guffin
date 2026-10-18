@@ -386,9 +386,10 @@ class TestArticle3FloatsByReference:
 
     The figure, listing, and table wrappers in its internal-links section each have one content
     child that is a standalone reference to the page's own image, fenced code block, or native
-    table, and three earlier lines refer to them inline with the kind-word aliases.  Each such
-    line opens with a coloured label span, ``[label]{color=...} see [figure](...)``, which once
-    parsed as a standalone reference and displayed every float a second time.
+    table.  Each float is referred to twice with its kind-word alias: from an inline reference
+    line earlier in the section, and from the explainer block directly before the float.  The
+    inline lines open with a coloured label span, ``[label]{color=...} see [figure](...)``, which
+    once parsed as a standalone reference and displayed every float a second time.
     """
 
     _WRAPPERS: Final[dict[str, tuple[FloatKind, str]]] = {
@@ -396,7 +397,14 @@ class TestArticle3FloatsByReference:
         "VQjeoP4r_": (FloatKind.LISTING, "yECzsUNPC"),
         "iuXlWiUAL": (FloatKind.TABLE, "yvlvNZwPC"),
     }
-    _CITERS: Final[dict[str, str]] = {"xvjVDltB4": "NlwSKgjdJ", "ukIa7RHql": "VQjeoP4r_", "ltHJLOxly": "iuXlWiUAL"}
+    _CITERS: Final[dict[str, str]] = {
+        "xvjVDltB4": "NlwSKgjdJ",
+        "ukIa7RHql": "VQjeoP4r_",
+        "ltHJLOxly": "iuXlWiUAL",
+        "87qCPx_8y": "NlwSKgjdJ",
+        "0p_x3-HZO": "VQjeoP4r_",
+        "3WVy07vZR": "iuXlWiUAL",
+    }
 
     @staticmethod
     def _tree() -> VertexTree:
@@ -414,7 +422,7 @@ class TestArticle3FloatsByReference:
         assert [placed.float.wrapper_uid for placed in placed_floats(self._tree())] == list(self._WRAPPERS)
 
     def test_inline_reference_lines_are_not_standalone(self) -> None:
-        """A label span followed by an inline kind-word reference leaves the reference inline."""
+        """A reference line, label span first or explainer prose, leaves its kind-word reference inline."""
         tree: Final[VertexTree] = self._tree()
         for citing_uid in self._CITERS:
             assert standalone_link_target(tree.uid_map[citing_uid], tree) is None
@@ -426,7 +434,7 @@ class TestArticle3FloatsByReference:
         assert numbering.repeated == ()
 
     def test_kind_word_references_point_at_their_wrappers(self) -> None:
-        """Each inline kind-word alias names its target's kind and cites it."""
+        """Each kind-word alias, inline line and explainer alike, names its target's kind and cites it."""
         references: Final[list[FloatReference]] = kind_word_references(self._tree())
         assert {reference.citing_uid: reference.wrapper_uid for reference in references} == self._CITERS
         assert all(reference.kind_word is self._WRAPPERS[reference.wrapper_uid][0] for reference in references)

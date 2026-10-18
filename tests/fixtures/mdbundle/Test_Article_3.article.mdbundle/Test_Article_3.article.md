@@ -15,7 +15,7 @@
 > – a heading whose text is a page link
 >
 > - `Internal (in-page) links:` section: inline refs to the styled/colored targets, plus standalone refs to page / block / parent block / header and to every block-level target above, plus a block embed
-> - three `float` wrappers in the `Internal (in-page) links:` section – `float:: figure`, `float:: listing`, `float:: table` (each through its `guffin-meta::` child) – whose one content child is a standalone `block reference` to the in-page image, fenced code block, and native table, so each float displays a target that lives elsewhere on the page; they render as the numbered Figure 1, Listing 1, and Table 1, and three inline kind-word aliases (`figure`, `listing`, `table`) refer to them, completed with the number and linked
+> - three `float` wrappers in the `Internal (in-page) links:` section – `float:: figure`, `float:: listing`, `float:: table` (each through its `guffin-meta::` child) – whose one content child is a standalone `block reference` to the in-page image, fenced code block, and native table, so each float displays a target that lives elsewhere on the page; they render as the numbered Figure 1, Listing 1, and Table 1. Each is referred to twice with a kind-word alias (`figure`, `listing`, `table`), completed with the number and linked: from an inline ref line earlier in the section, and, as in Test Article 1, from the text block directly before the float
 > - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed, and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render: "inline"` at the reference site (the site’s tag drives the PDF format’s inline placement)
 > - this INFO `Callout box`, which contains Roam `page references`
 
@@ -200,12 +200,16 @@ def fizz_buzz(limit: int = 100):
   >
   > —Edsger Dijkstra
 - <span style="color: fuchsia">**FIGURE FLOAT of standalone IMAGE BLOCK ref ↓**</span>
+  - the next block is a `float:: figure` wrapper (declared by its `guffin-meta::` child): its text is the figure’s caption, and its one content child is a standalone block reference to the page’s image block, not the image itself; this sentence refers to it by its kind word – see [figure 1](#float-NlwSKgjdJ) – which the export completes with the figure’s number
+
   <a id="float-NlwSKgjdJ"></a>
 
   <img src="flower.jpeg" style="margin: 0;">
 
   ***Figure 1.** The page’s standalone image, as a numbered figure through a block reference.*
 - <span style="color: fuchsia">**LISTING FLOAT of standalone FENCED-CODE ref ↓**</span>
+  - the next block is a `float:: listing` wrapper (declared by its `guffin-meta::` child): its text is the listing’s caption, and its one content child is a standalone block reference to the page’s fenced code block, not the code block itself; this sentence refers to it by its kind word – see [listing 1](#float-VQjeoP4r_) – which the export completes with the listing’s number
+
   <a id="float-VQjeoP4r_"></a>
 
   ``` python
@@ -223,6 +227,8 @@ def fizz_buzz(limit: int = 100):
 
   ***Listing 1.** The page’s fizz buzz code block, as a numbered listing through a block reference.*
 - <span style="color: fuchsia">**TABLE FLOAT of standalone ROAM NATIVE TABLE ref ↓**</span>
+  - the next block is a `float:: table` wrapper (declared by its `guffin-meta::` child): its text is the table’s caption, and its one content child is a standalone block reference to the page’s native `{{table}}` block, not the table itself; this sentence refers to it by its kind word – see [table 1](#float-iuXlWiUAL) – which the export completes with the table’s number
+
   <a id="float-iuXlWiUAL"></a>
 
   ***Table 1.** The page’s native table, as a numbered table through a block reference.*

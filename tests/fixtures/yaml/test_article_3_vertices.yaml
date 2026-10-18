@@ -49,8 +49,10 @@
     child) – whose one content child is a standalone `block reference` to the in-page
     image, fenced code block, and native table, so each float displays a target that
     lives elsewhere on the page; they render as the numbered Figure 1, Listing 1,
-    and Table 1, and three inline kind-word aliases (`figure`, `listing`, `table`)
-    refer to them, completed with the number and linked
+    and Table 1. Each is referred to twice with a kind-word alias (`figure`, `listing`,
+    `table`), completed with the number and linked: from an inline ref line earlier
+    in the section, and, as in Test Article 1, from the text block directly before
+    the float
 
     - `External (out-of-page) links:` section: the same matrix against Test Article
     1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed,
@@ -804,10 +806,20 @@
 - vertex_type: guffin/text
   uid: niK1id9xC
   children:
+  - 87qCPx_8y
   - NlwSKgjdJ
   refs:
   - lF-qY0Xrs
   text: '[**FIGURE FLOAT of standalone IMAGE BLOCK ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: 87qCPx_8y
+  refs:
+  - NlwSKgjdJ
+  text: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+    child): its text is the figure''s caption, and its one content child is a standalone
+    block reference to the page''s image block, not the image itself; this sentence
+    refers to it by its kind word – see [figure](x-guffin:vertex/NlwSKgjdJ) – which
+    the export completes with the figure''s number'
 - vertex_type: guffin/text
   uid: NlwSKgjdJ
   children:
@@ -832,10 +844,20 @@
 - vertex_type: guffin/text
   uid: AG9rpyUY_
   children:
+  - 0p_x3-HZO
   - VQjeoP4r_
   refs:
   - lF-qY0Xrs
   text: '[**LISTING FLOAT of standalone FENCED-CODE ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: 0p_x3-HZO
+  refs:
+  - VQjeoP4r_
+  text: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
+    child): its text is the listing''s caption, and its one content child is a standalone
+    block reference to the page''s fenced code block, not the code block itself; this
+    sentence refers to it by its kind word – see [listing](x-guffin:vertex/VQjeoP4r_)
+    – which the export completes with the listing''s number'
 - vertex_type: guffin/text
   uid: VQjeoP4r_
   children:
@@ -863,10 +885,20 @@
 - vertex_type: guffin/text
   uid: iDx5v0Su0
   children:
+  - 3WVy07vZR
   - iuXlWiUAL
   refs:
   - lF-qY0Xrs
   text: '[**TABLE FLOAT of standalone ROAM NATIVE TABLE ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: 3WVy07vZR
+  refs:
+  - iuXlWiUAL
+  text: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
+    child): its text is the table''s caption, and its one content child is a standalone
+    block reference to the page''s native `{{table}}` block, not the table itself;
+    this sentence refers to it by its kind word – see [table](x-guffin:vertex/iuXlWiUAL)
+    – which the export completes with the table''s number'
 - vertex_type: guffin/text
   uid: iuXlWiUAL
   children:
