@@ -256,9 +256,19 @@
 
 #show figure.where(kind: table): set figure.caption(position: top)
 #show figure.where(kind: table): set figure(supplement: cfg.table-prefix)
-// Left-align tables with the rest of the page; Pandoc emits tables inside a centered
-// figure (align(center)[#table(...)]), which this overrides.
+// Left-align tables with the rest of the page.  Pandoc emits every table inside a figure as
+// align(center)[#table(...)], and a set rule cannot override that explicit alignment, so two rules
+// share the work: the set rule places the figure at the left margin, and the show rule unwraps the
+// centering call around the table itself.  Without the unwrapping a captionless table still looks
+// left-aligned (its figure is only as wide as the table), but a caption widens the figure to the
+// caption's width and the table is centered beneath it.  Only an align whose body is the table is
+// unwrapped, so an alignment authored inside a cell is kept.  (Typst 0.14 cannot select the
+// centering call with align.where(alignment: center), hence the body test.)
 #show figure.where(kind: table): set align(left)
+#show figure.where(kind: table): it => {
+  show align: inner => if inner.body.func() == table { inner.body } else { inner }
+  it
+}
 // Let a table taller than the page break across page boundaries. Typst figures are
 // breakable: false by default, so an over-tall table would otherwise overflow the page
 // and render its overflow rows on top of one another.
