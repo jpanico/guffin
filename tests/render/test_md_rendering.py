@@ -98,6 +98,41 @@ class TestRenderArticleFixture:
             r"^\[aOC1FnrcwK\.jpeg\.enc\]\([^)]+\)\n\n" + regex.escape(caption) + r"\n", result, regex.MULTILINE
         )
 
+    def test_listing_caption_precedes_its_source_attribution(self, tmp_path: Path) -> None:
+        """Article 1's three listings (Section 1.2) render caption and attribution in the authored combinations.
+
+        Listing 1.2.1 has a caption child and no ``code-source::`` tag, 1.2.2 a tag and no caption,
+        1.2.3 both.  With code sources emitted, a caption follows its fence as the next paragraph
+        and precedes the attribution; a listing without a caption goes straight to its attribution;
+        a listing without a tag gets no attribution.
+        """
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 1")
+        node_tree = article1_node_tree()
+        render_bundle: Final[RenderBundle] = RenderBundle(content=transcribe(node_tree), view=build_view_map(node_tree))
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            render_bundle,
+            profile=ArticleProfile(),
+            filename_stem=stem,
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False, emit_code_sources=True),
+        )
+        result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
+        listing_1: Final[str] = result[result.index("#### listing 1.2.1") : result.index("#### listing 1.2.2")]
+        listing_2: Final[str] = result[result.index("#### listing 1.2.2") : result.index("#### listing 1.2.3")]
+        listing_3: Final[str] = result[result.index("#### listing 1.2.3") : result.index("## Section 2")]
+        caption: Final[str] = "A caption authored as the listing\u2019s child block"
+        assert "\n```\n\n" + caption + ".\n" in listing_1
+        assert "Source:" not in listing_1
+        assert "\n```\n\n*Source: [jpanico/guffin/src/guffin/common/json_value.py]" in listing_2
+        assert caption not in listing_2
+        assert (
+            "\n```\n\n" + caption + ", set above its source attribution.\n\n"
+            "*Source: [jpanico/guffin/src/guffin/common/geometry.py L1\u2013L8]"
+        ) in listing_3
+
 
 class TestSemanticBullets:
     """Classified list items render dash + glyph in GFM (via gfm_bullet.lua and badge injection)."""

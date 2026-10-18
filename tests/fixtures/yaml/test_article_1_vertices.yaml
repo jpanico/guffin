@@ -42,6 +42,12 @@
     - a JPEG `image` whose child block renders as its caption, below the image (illustration
     2.1)
 
+    - three Python `code block`s (Section 1.2): one with a caption – its child block
+    – and no `code-source::` tag (listing 1.2.1), one with a `code-source::` tag –
+    a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption
+    (listing 1.2.2), and one with both, the caption set above the source attribution
+    (listing 1.2.3)
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -56,6 +62,7 @@
   children:
   - 3BX-iWc-p
   - Ma5KGUH9O
+  - aRTvWsH2_
   text: Section 1
   heading_level: 1
 - vertex_type: guffin/heading
@@ -96,6 +103,122 @@
 - vertex_type: guffin/text
   uid: Ma5KGUH9O
   text: 'AI assistant (Claude Opus 4.6): '
+- vertex_type: guffin/heading
+  uid: aRTvWsH2_
+  children:
+  - kJNGUthgi
+  - RpKOrMHZd
+  - 5hYzRUsaS
+  text: Section 1.2
+  heading_level: 2
+- vertex_type: guffin/heading
+  uid: kJNGUthgi
+  children:
+  - 3PQaRTVhd
+  - PiaE2Lxir
+  text: listing 1.2.1
+  heading_level: 3
+- vertex_type: guffin/text
+  uid: 3PQaRTVhd
+  text: this code block has a caption – its child block – and no `code-source::` tag
+- vertex_type: guffin/code-block
+  uid: PiaE2Lxir
+  children:
+  - Xba2GQOBI
+  code: "def greet(name: str) -> str:\n    return f\"Hello, {name}!\""
+  language: python
+- vertex_type: guffin/text
+  uid: Xba2GQOBI
+  text: A caption authored as the listing's child block.
+- vertex_type: guffin/heading
+  uid: RpKOrMHZd
+  children:
+  - l6csePq30
+  - xz2mWXcWd
+  text: listing 1.2.2
+  heading_level: 3
+- vertex_type: guffin/text
+  uid: l6csePq30
+  text: this code block has a `code-source::` tag (through its `guffin-meta::` child)
+    and no caption
+- vertex_type: guffin/code-block
+  uid: xz2mWXcWd
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: code-source
+        domain: guffin
+      link:
+      - vertex
+      - C8y7bMPpW
+    values:
+    - kind: literal
+      value: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py
+    - kind: literal
+      value: dabde94073bbdb08077ec6c805f36825b68486e0
+    - kind: literal
+      value: '2026-10-17'
+  code: "\"\"\"JSON value typing.\n\nPublic symbols:\n\n- :type:`JsonValue` — a JSON-serializable\
+    \ value: a primitive, or lists/objects of nested JSON\n  values.\n\"\"\"\n\ntype\
+    \ JsonValue = None | bool | int | float | str | list[JsonValue] | dict[str, JsonValue]\n\
+    \"\"\"A JSON-serializable value: a primitive, or lists/objects of nested JSON\
+    \ values.\"\"\""
+  language: python
+  code_source:
+    url: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py
+    commit_sha: dabde94073bbdb08077ec6c805f36825b68486e0
+    fetched_date: '2026-10-17'
+- vertex_type: guffin/heading
+  uid: 5hYzRUsaS
+  children:
+  - 1bxKV_biO
+  - eB34bPMcL
+  text: listing 1.2.3
+  heading_level: 3
+- vertex_type: guffin/text
+  uid: 1bxKV_biO
+  text: this code block has both a caption and a `code-source::` tag; the caption
+    renders above the source attribution
+- vertex_type: guffin/code-block
+  uid: eB34bPMcL
+  children:
+  - xvBjd5MEr
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: code-source
+        domain: guffin
+      link:
+      - vertex
+      - C8y7bMPpW
+    values:
+    - kind: literal
+      value: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8
+    - kind: literal
+      value: dabde94073bbdb08077ec6c805f36825b68486e0
+    - kind: literal
+      value: '2026-10-17'
+  code: '"""Generic two-dimensional geometry types.
+
+
+    Public symbols:
+
+
+    - :class:`ImageSize` — pixel dimensions (width × height) of a two-dimensional
+    image.
+
+    """
+
+
+    from pydantic import BaseModel, ConfigDict'
+  language: python
+  code_source:
+    url: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8
+    commit_sha: dabde94073bbdb08077ec6c805f36825b68486e0
+    fetched_date: '2026-10-17'
+- vertex_type: guffin/text
+  uid: xvBjd5MEr
+  text: A caption authored as the listing's child block, set above its source attribution.
 - vertex_type: guffin/heading
   uid: wdMgyBiP9
   children:

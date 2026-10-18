@@ -3932,6 +3932,7 @@ refs_by_id:
     children:
     - id: 3331
     - id: 4758
+    - id: 21158
     refs: null
     page:
       id: 3327
@@ -6654,6 +6655,447 @@ refs_by_id:
     title: null
     attrs: null
     blocks: null
+  '21158':
+    uid: aRTvWsH2_
+    id: 21158
+    string: Section 1.2
+    order: 2
+    heading: 2
+    children:
+    - id: 21146
+    - id: 21151
+    - id: 21157
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21146':
+    uid: kJNGUthgi
+    id: 21146
+    string: listing 1.2.1
+    order: 0
+    heading: 3
+    children:
+    - id: 21143
+    - id: 21145
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21151':
+    uid: RpKOrMHZd
+    id: 21151
+    string: listing 1.2.2
+    order: 1
+    heading: 3
+    children:
+    - id: 21147
+    - id: 21150
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21157':
+    uid: 5hYzRUsaS
+    id: 21157
+    string: listing 1.2.3
+    order: 2
+    heading: 3
+    children:
+    - id: 21152
+    - id: 21156
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21152':
+    uid: 1bxKV_biO
+    id: 21152
+    string: this code block has both a caption and a `code-source::` tag; the caption
+      renders above the source attribution
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21157
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21156':
+    uid: eB34bPMcL
+    id: 21156
+    string: '```python
+
+      """Generic two-dimensional geometry types.
+
+
+      Public symbols:
+
+
+      - :class:`ImageSize` — pixel dimensions (width × height) of a two-dimensional
+      image.
+
+      """
+
+
+      from pydantic import BaseModel, ConfigDict
+
+      ```'
+    order: 1
+    heading: null
+    children:
+    - id: 21153
+    - id: 21155
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21157
+    - id: 21158
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - eB34bPMcL
+        value:
+        - uid
+        - eB34bPMcL
+      - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - BxGxeeGk1
+    blocks: null
+  '21153':
+    uid: xvBjd5MEr
+    id: 21153
+    string: A caption authored as the listing's child block, set above its source
+      attribution.
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21155':
+    uid: 1QiYLv5d_
+    id: 21155
+    string: 'guffin-meta:: #.rm-g'
+    order: 1
+    heading: null
+    children:
+    - id: 21154
+    refs:
+    - id: 321
+    - id: 11839
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - 1QiYLv5d_
+      - source:
+        - uid
+        - HVHejcou9
+        value:
+        - uid
+        - C8y7bMPpW
+      - source:
+        - uid
+        - HVHejcou9
+        value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+          dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    blocks: null
+  '21154':
+    uid: HVHejcou9
+    id: 21154
+    string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+      dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 14555
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21155
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21147':
+    uid: l6csePq30
+    id: 21147
+    string: this code block has a `code-source::` tag (through its `guffin-meta::`
+      child) and no caption
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21151
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21150':
+    uid: xz2mWXcWd
+    id: 21150
+    string: "```python\n\"\"\"JSON value typing.\n\nPublic symbols:\n\n- :type:`JsonValue`\
+      \ — a JSON-serializable value: a primitive, or lists/objects of nested JSON\n\
+      \  values.\n\"\"\"\n\ntype JsonValue = None | bool | int | float | str | list[JsonValue]\
+      \ | dict[str, JsonValue]\n\"\"\"A JSON-serializable value: a primitive, or lists/objects\
+      \ of nested JSON values.\"\"\"\n```"
+    order: 1
+    heading: null
+    children:
+    - id: 21149
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21151
+    - id: 21158
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - xz2mWXcWd
+        value:
+        - uid
+        - xz2mWXcWd
+      - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - BxGxeeGk1
+    blocks: null
+  '21149':
+    uid: I4WiloC7_
+    id: 21149
+    string: 'guffin-meta:: #.rm-g'
+    order: 0
+    heading: null
+    children:
+    - id: 21148
+    refs:
+    - id: 321
+    - id: 11839
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21150
+    - id: 21151
+    - id: 21158
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - I4WiloC7_
+      - source:
+        - uid
+        - 5PcZxf4Bw
+        value:
+        - uid
+        - C8y7bMPpW
+      - source:
+        - uid
+        - 5PcZxf4Bw
+        value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+          dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    blocks: null
+  '21148':
+    uid: 5PcZxf4Bw
+    id: 21148
+    string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+      dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 14555
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21149
+    - id: 21150
+    - id: 21151
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21143':
+    uid: 3PQaRTVhd
+    id: 21143
+    string: this code block has a caption – its child block – and no `code-source::`
+      tag
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21146
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21145':
+    uid: PiaE2Lxir
+    id: 21145
+    string: "```python\ndef greet(name: str) -> str:\n    return f\"Hello, {name}!\"\
+      \n```"
+    order: 1
+    heading: null
+    children:
+    - id: 21144
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21146
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21144':
+    uid: Xba2GQOBI
+    id: 21144
+    string: A caption authored as the listing's child block.
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21145
+    - id: 21146
+    - id: 21158
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '3334':
     uid: TaN67WqnA
     id: 3334
@@ -8560,5 +9002,20 @@ refs_by_id:
     - id: 11227
     props: null
     title: null
+    attrs: null
+    blocks: null
+  '14555':
+    uid: C8y7bMPpW
+    id: 14555
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: code-source
     attrs: null
     blocks: null

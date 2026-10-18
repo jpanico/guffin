@@ -73,6 +73,7 @@ follows (here, `**bold**` emphasis on one portion of the page name).
 - a pair of JPEG `image`s that **have not** been resized through the Roam UI (illustration 1.1)
 - a single JPEG `image` that **has** been resized through the Roam UI (illustration 2.1)
 - a JPEG `image` whose child block renders as its caption, below the image (illustration 2.1)
+- three Python `code block`s (Section 1.2): one with a caption – its child block – and no `code-source::` tag (listing 1.2.1), one with a `code-source::` tag – a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption (listing 1.2.2), and one with both, the caption set above the source attribution (listing 1.2.3)
 - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block reference` to a JPEG `image` block, so each cell displays its referenced image
 - an embedded PDF document that has no special PublishingSemantics Attributes attached
 - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`

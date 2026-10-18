@@ -12,6 +12,7 @@
 > - a pair of JPEG `image`s that **have not** been resized through the Roam UI (illustration 1.1)
 > - a single JPEG `image` that **has** been resized through the Roam UI (illustration 2.1)
 > - a JPEG `image` whose child block renders as its caption, below the image (illustration 2.1)
+> - three Python `code block`s (Section 1.2): one with a caption – its child block – and no `code-source::` tag (listing 1.2.1), one with a `code-source::` tag – a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption (listing 1.2.2), and one with both, the caption set above the source attribution (listing 1.2.3)
 > - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block reference` to a JPEG `image` block, so each cell displays its referenced image
 > - an embedded PDF document that has no special PublishingSemantics Attributes attached
 > - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
@@ -29,6 +30,53 @@
 <img src="flower-1.jpeg" alt="A flower" style="margin: 0;">
 
 - AI assistant (Claude Opus 4.6):
+
+### Section 1.2
+
+#### listing 1.2.1
+
+- this code block has a caption – its child block – and no `code-source::` tag
+
+``` python
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+```
+
+A caption authored as the listing’s child block.
+
+#### listing 1.2.2
+
+- this code block has a `code-source::` tag (through its `guffin-meta::` child) and no caption
+
+``` python
+"""JSON value typing.
+
+Public symbols:
+
+- :type:`JsonValue` — a JSON-serializable value: a primitive, or lists/objects of nested JSON
+  values.
+"""
+
+type JsonValue = None | bool | int | float | str | list[JsonValue] | dict[str, JsonValue]
+"""A JSON-serializable value: a primitive, or lists/objects of nested JSON values."""
+```
+
+#### listing 1.2.3
+
+- this code block has both a caption and a `code-source::` tag; the caption renders above the source attribution
+
+``` python
+"""Generic two-dimensional geometry types.
+
+Public symbols:
+
+- :class:`ImageSize` — pixel dimensions (width × height) of a two-dimensional image.
+"""
+
+from pydantic import BaseModel, ConfigDict
+```
+
+A caption authored as the listing’s child block, set above its source attribution.
 
 ## Section 2
 

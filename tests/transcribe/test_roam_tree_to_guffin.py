@@ -37,7 +37,7 @@ from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, Ve
 from guffin.roam.better_bullet import BetterBulletProvenance, BetterBulletType
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_RAW_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
-from guffin.roam.node_network import min_effective_heading_level
+from guffin.roam.node_network import all_descendants, min_effective_heading_level
 from guffin.roam.node_tree import NodeTree, NodeTreeDFSIterator
 from guffin.roam.primitives import ChildrenViewType, Id, IdObject
 from guffin.roam.todo import TodoState as RoamTodoState
@@ -1486,7 +1486,11 @@ class TestTranscribeArticleFixture:
         consumed: set[Id] = set()
         actual_vertices: list[Vertex] = []
         for node in NodeTreeDFSIterator(node_tree):
-            if node.id in consumed or node_type(node) is NodeType.ATTRIBUTE_BLOCK or _is_meta_block(node):
+            if _is_meta_block(node):
+                # A meta block folds with its whole subtree (the attribute blocks beneath it).
+                consumed.update(descendant.id for descendant in all_descendants(node, node_tree.tree_network))
+                continue
+            if node.id in consumed or node_type(node) is NodeType.ATTRIBUTE_BLOCK:
                 continue
             if node_type(node) is NodeType.NATIVE_TABLE:
                 table_vertex, nodes_consumed = to_table_vertex(node, node_tree)

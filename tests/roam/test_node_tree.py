@@ -822,6 +822,22 @@ class TestNodeTreeDFSIterator:
           11806 — image block          (order=0, child of 11165)
           11124 — image block          (order=1, child of 3334)
           4758  — AI assistant text    (order=1, child of 3328)
+          21158 — Section 1.2          (order=2, child of 3328)
+          21146 — listing 1.2.1        (order=0, child of 21158)
+          21143 — text block           (order=0, child of 21146)
+          21145 — code block           (order=1, child of 21146)
+          21144 — caption text block   (order=0, child of 21145)
+          21151 — listing 1.2.2        (order=1, child of 21158)
+          21147 — text block           (order=0, child of 21151)
+          21150 — code block           (order=1, child of 21151)
+          21149 — guffin-meta block    (order=0, child of 21150)
+          21148 — code-source block    (order=0, child of 21149)
+          21157 — listing 1.2.3        (order=2, child of 21158)
+          21152 — text block           (order=0, child of 21157)
+          21156 — code block           (order=1, child of 21157)
+          21153 — caption text block   (order=0, child of 21156)
+          21155 — guffin-meta block    (order=1, child of 21156)
+          21154 — code-source block    (order=0, child of 21155)
           3329  — Section 2            (order=2, child of root)
           3332  — Section 2.1          (order=0, child of 3329)
           11163 — illustration 2.1     (order=0, child of 3332)
@@ -865,6 +881,22 @@ class TestNodeTreeDFSIterator:
             11806,
             11124,
             4758,
+            21158,
+            21146,
+            21143,
+            21145,
+            21144,
+            21151,
+            21147,
+            21150,
+            21149,
+            21148,
+            21157,
+            21152,
+            21156,
+            21153,
+            21155,
+            21154,
             3329,
             3332,
             11163,

@@ -393,6 +393,56 @@ link`` — the last a heading whose text is itself a page link.
 _TA3_PAGE_LINK_HEADING_UID: Final[str] = "ys3bY2GZa"
 """The heading whose text is a page link, referenced inline by ``inline PAGE-LINK HEADER ref``."""
 
+
+@pytest.mark.live
+@pytest.mark.skipif(not os.getenv("GUFFIN_LIVE_TESTS"), reason="requires Roam Desktop app running locally")
+class TestExportRoamTreeCodeSourcesLive:
+    """Live PDF export of [[Test Article]] 1 with ``--code-sources``: captions and attributions in order.
+
+    Section 1.2 holds three listings — 1.2.1 with a caption child and no ``code-source::`` tag, 1.2.2
+    with a tag and no caption, 1.2.3 with both — whose tags pin a commit SHA in the blob URL, so the
+    export's default source verification fetches the immutable raw content and never drifts.  The
+    baseline PDF (``TestExportRoamTreePdfLive``) is exported without code sources, so the attribution's
+    rendering is pinned here, by the page text, rather than by bytes.
+    """
+
+    @pytest.fixture(scope="class")
+    def page_text(self, tmp_path_factory: pytest.TempPathFactory) -> str:
+        """The text of every page of [[Test Article]] 1 exported as an article PDF with code sources."""
+        out_dir: Final[pathlib.Path] = tmp_path_factory.mktemp("ta1-code-sources-pdf")
+        result: Final[Result] = _invoke_live_export(
+            ["[[Test Article]] 1", "--output-dir", str(out_dir), "--format", "pdf", "--code-sources"]
+        )
+        assert result.exit_code == 0, result.output
+        reader: Final[PdfReader] = PdfReader(out_dir / "Test_Article_1.article.pdf")
+        return "\n".join(page.extract_text() for page in reader.pages)
+
+    @staticmethod
+    def _listing(page_text: str, number: str, next_heading: str) -> str:
+        """The page text from the ``listing <number>`` heading up to *next_heading*."""
+        start: Final[int] = page_text.index(f"listing {number}\n")
+        return page_text[start : page_text.index(next_heading, start)]
+
+    def test_captioned_listing_without_a_source_has_no_attribution(self, page_text: str) -> None:
+        """Listing 1.2.1 sets its caption and no Source line."""
+        listing: Final[str] = self._listing(page_text, "1.2.1", "listing 1.2.2")
+        assert "A caption authored as the listing\u2019s child block." in listing
+        assert "Source:" not in listing
+
+    def test_sourced_listing_without_a_caption_sets_its_attribution(self, page_text: str) -> None:
+        """Listing 1.2.2 sets its Source line, naming the file, and no caption."""
+        listing: Final[str] = self._listing(page_text, "1.2.2", "listing 1.2.3")
+        assert "Source: jpanico/guffin/src/guffin/common/json_value.py" in listing
+        assert "A caption authored" not in listing
+
+    def test_caption_precedes_attribution(self, page_text: str) -> None:
+        """Listing 1.2.3 sets its caption, then its Source line with the line range."""
+        listing: Final[str] = self._listing(page_text, "1.2.3", "Section 2\n")
+        caption_at: Final[int] = listing.index("A caption authored as the listing\u2019s child block, set above")
+        source_at: Final[int] = listing.index("Source: jpanico/guffin/src/guffin/common/geometry.py L1\u2013L8")
+        assert caption_at < source_at
+
+
 _TA1_HEADING_UID: Final[str] = "0EgPyHSZi"
 """Test Article 1's ``Section 1`` heading — referenced from Test Article 3 but outside its export."""
 

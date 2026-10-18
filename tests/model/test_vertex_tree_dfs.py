@@ -147,6 +147,18 @@ class TestVertexTreeDFSIterator:
           pfkKREU_Y  — image block          (children[0] of 4_GrZ9su6)
           uj8YolCoE  — image block          (children[1] of illustration 1.1)
           Ma5KGUH9O  — AI assistant         (children[1] of Section 1)
+          aRTvWsH2_  — Section 1.2          (children[2] of Section 1)
+          kJNGUthgi  — listing 1.2.1        (children[0] of Section 1.2)
+          3PQaRTVhd  — text block           (children[0] of listing 1.2.1)
+          PiaE2Lxir  — code block           (children[1] of listing 1.2.1)
+          Xba2GQOBI  — caption text block   (children[0] of the code block)
+          RpKOrMHZd  — listing 1.2.2        (children[1] of Section 1.2)
+          l6csePq30  — text block           (children[0] of listing 1.2.2)
+          xz2mWXcWd  — code block           (children[1] of listing 1.2.2; its guffin-meta child is folded)
+          5hYzRUsaS  — listing 1.2.3        (children[2] of Section 1.2)
+          1bxKV_biO  — text block           (children[0] of listing 1.2.3)
+          eB34bPMcL  — code block           (children[1] of listing 1.2.3)
+          xvBjd5MEr  — caption text block   (children[0] of the code block; its guffin-meta sibling is folded)
           wdMgyBiP9  — Section 2            (children[2] of root)
           drtANJYTg  — Section 2.1          (children[0] of Section 2)
           OaTXPl93p  — illustration 2.1     (children[0] of Section 2.1)
@@ -182,6 +194,18 @@ class TestVertexTreeDFSIterator:
             "pfkKREU_Y",
             "uj8YolCoE",
             "Ma5KGUH9O",
+            "aRTvWsH2_",
+            "kJNGUthgi",
+            "3PQaRTVhd",
+            "PiaE2Lxir",
+            "Xba2GQOBI",
+            "RpKOrMHZd",
+            "l6csePq30",
+            "xz2mWXcWd",
+            "5hYzRUsaS",
+            "1bxKV_biO",
+            "eB34bPMcL",
+            "xvBjd5MEr",
             "wdMgyBiP9",
             "drtANJYTg",
             "OaTXPl93p",

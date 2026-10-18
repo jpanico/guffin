@@ -36,6 +36,20 @@
     order: 0
     page:
       id: 12803
+- - heading: 3
+    string: listing 1.2.2
+    children:
+    - id: 21147
+    - id: 21150
+    id: 21151
+    uid: RpKOrMHZd
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
 - - string: section 3.2
     id: 11737
     uid: oVvEsh7dx
@@ -149,6 +163,45 @@
     order: 1
     page:
       id: 4225
+- - attrs:
+    - - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - 1QiYLv5d_
+      - source:
+        - uid
+        - HVHejcou9
+        value:
+        - uid
+        - C8y7bMPpW
+      - source:
+        - uid
+        - HVHejcou9
+        value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+          dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21154
+    id: 21155
+    lookup:
+    - id: 14555
+    - id: 21154
+    - id: 21155
+    uid: 1QiYLv5d_
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
     children:
     - id: 11772
@@ -402,6 +455,47 @@
     refs:
     - id: 5450
     - id: 5458
+- - attrs:
+    - - source:
+        - uid
+        - xz2mWXcWd
+        value:
+        - uid
+        - xz2mWXcWd
+      - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - BxGxeeGk1
+    string: "```python\n\"\"\"JSON value typing.\n\nPublic symbols:\n\n- :type:`JsonValue`\
+      \ — a JSON-serializable value: a primitive, or lists/objects of nested JSON\n\
+      \  values.\n\"\"\"\n\ntype JsonValue = None | bool | int | float | str | list[JsonValue]\
+      \ | dict[str, JsonValue]\n\"\"\"A JSON-serializable value: a primitive, or lists/objects\
+      \ of nested JSON values.\"\"\"\n```"
+    children:
+    - id: 21149
+    id: 21150
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21149
+    - id: 21150
+    uid: xz2mWXcWd
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21151
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
 - - string: ((tyiBN5ns6))
     id: 20223
     uid: 3EkSTJBAu
@@ -478,6 +572,20 @@
     order: 14
     page:
       id: 4225
+- - string: "```python\ndef greet(name: str) -> str:\n    return f\"Hello, {name}!\"\
+      \n```"
+    children:
+    - id: 21144
+    id: 21145
+    uid: PiaE2Lxir
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21146
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
 - - string: The oriflamme of France was made of cendal. Chaucer couples taffetas and
       sendal. His “Doctor of Physic”
     id: 12807
@@ -487,6 +595,9 @@
     order: 2
     page:
       id: 12803
+- - id: 14555
+    uid: C8y7bMPpW
+    title: code-source
 - - string: '#c:FUCHSIA **inline UNDERLINED ORANGE ref ⟶**  ((_EtYSMJNn))'
     id: 11755
     uid: LKHCU5I3z
@@ -587,6 +698,22 @@
       id: 4225
     refs:
     - id: 11922
+- - string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+      dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    id: 21154
+    uid: HVHejcou9
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21155
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 14555
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
     children:
     - id: 21142
@@ -954,6 +1081,45 @@
     order: 8
     page:
       id: 11137
+- - attrs:
+    - - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - I4WiloC7_
+      - source:
+        - uid
+        - 5PcZxf4Bw
+        value:
+        - uid
+        - C8y7bMPpW
+      - source:
+        - uid
+        - 5PcZxf4Bw
+        value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+          dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21148
+    id: 21149
+    lookup:
+    - id: 14555
+    - id: 21148
+    - id: 21149
+    uid: I4WiloC7_
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21150
+    - id: 21151
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - string: '[[>]] [[!EPIGRAPH]]
 
       Within a computer natural language is unnatural.
@@ -994,6 +1160,7 @@
     children:
     - id: 3331
     - id: 4758
+    - id: 21158
     id: 3328
     uid: 0EgPyHSZi
     parents:
@@ -1025,6 +1192,18 @@
       id: 4225
     refs:
     - id: 246
+- - string: this code block has both a caption and a `code-source::` tag; the caption
+      renders above the source attribution
+    id: 21152
+    uid: 1bxKV_biO
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21157
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
 - - string: section 3.1
     children:
     - id: 4231
@@ -1361,6 +1540,34 @@
       id: 4225
     refs:
     - id: 13457
+- - string: A caption authored as the listing's child block.
+    id: 21144
+    uid: Xba2GQOBI
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21145
+    - id: 21146
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+- - string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+      dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    id: 21148
+    uid: 5PcZxf4Bw
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21149
+    - id: 21150
+    - id: 21151
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 14555
 - - string: an asset is a BLOB stored by Roam in Firebase Storage; usually a file
       dragged into the Roam UI. The Roam Markdown representation of the asset is just
       the Firebase Storage URL.
@@ -1491,6 +1698,18 @@
       id: 4225
     refs:
     - id: 20052
+- - string: this code block has a caption – its child block – and no `code-source::`
+      tag
+    id: 21143
+    uid: 3PQaRTVhd
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21146
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
 - - id: 867
     uid: o2hTH3dbf
     title: embed
@@ -1535,6 +1754,19 @@
       id: 4225
     refs:
     - id: 4228
+- - string: A caption authored as the listing's child block, set above its source
+      attribution.
+    id: 21153
+    uid: xvBjd5MEr
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
 - - string: r2.c3
     id: 11234
     uid: hD2qvZqjh
@@ -1688,6 +1920,20 @@
       id: 4225
     refs:
     - id: 4223
+- - heading: 3
+    string: listing 1.2.1
+    children:
+    - id: 21143
+    - id: 21145
+    id: 21146
+    uid: kJNGUthgi
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
 - - string: '#c:FUCHSIA **standalone PAGE ref ↓** '
     children:
     - id: 11702
@@ -2688,6 +2934,20 @@
       id: 4225
     refs:
     - id: 5844
+- - heading: 3
+    string: listing 1.2.3
+    children:
+    - id: 21152
+    - id: 21156
+    id: 21157
+    uid: 5hYzRUsaS
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    order: 2
+    page:
+      id: 3327
 - - string: '#c:FUCHSIA **inline BLOCK ref ⟶** ((tWkumkdUE))'
     id: 11710
     uid: n528kYv5_
@@ -3000,6 +3260,18 @@
       id: 4225
     refs:
     - id: 4226
+- - string: this code block has a `code-source::` tag (through its `guffin-meta::`
+      child) and no caption
+    id: 21147
+    uid: l6csePq30
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21151
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
 - - string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
     children:
     - id: 13476
@@ -3056,6 +3328,20 @@
     order: 3
     page:
       id: 4225
+- - heading: 2
+    string: Section 1.2
+    children:
+    - id: 21146
+    - id: 21151
+    - id: 21157
+    id: 21158
+    uid: aRTvWsH2_
+    parents:
+    - id: 3327
+    - id: 3328
+    order: 2
+    page:
+      id: 3327
 - - string: This para features ~~strikethrough~~
     id: 11170
     uid: 7dBusjzDA
@@ -3186,6 +3472,60 @@
       id: 4225
     refs:
     - id: 5844
+- - attrs:
+    - - source:
+        - uid
+        - eB34bPMcL
+        value:
+        - uid
+        - eB34bPMcL
+      - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - BxGxeeGk1
+    string: '```python
+
+      """Generic two-dimensional geometry types.
+
+
+      Public symbols:
+
+
+      - :class:`ImageSize` — pixel dimensions (width × height) of a two-dimensional
+      image.
+
+      """
+
+
+      from pydantic import BaseModel, ConfigDict
+
+      ```'
+    children:
+    - id: 21153
+    - id: 21155
+    id: 21156
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21155
+    - id: 21156
+    uid: eB34bPMcL
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21157
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
 - - string: ((gq_29_H-7))
     id: 13476
     uid: l4BV03n4W

@@ -59,6 +59,68 @@ ivTC6d-rG:
       - 8zcad3VSa
       value: ' false'
   blocks: null
+RpKOrMHZd:
+  uid: RpKOrMHZd
+  id: 21151
+  string: listing 1.2.2
+  order: 1
+  heading: 3
+  children:
+  - id: 21147
+  - id: 21150
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+1QiYLv5d_:
+  uid: 1QiYLv5d_
+  id: 21155
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21154
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21156
+  - id: 21157
+  - id: 21158
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - 1QiYLv5d_
+      value:
+      - uid
+      - 1QiYLv5d_
+    - source:
+      - uid
+      - HVHejcou9
+      value:
+      - uid
+      - C8y7bMPpW
+    - source:
+      - uid
+      - HVHejcou9
+      value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+        dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+  blocks: null
 EWMNZcPZX:
   uid: EWMNZcPZX
   id: 11931
@@ -198,6 +260,86 @@ mfYCtWH-T:
   title: null
   attrs: null
   blocks: null
+xz2mWXcWd:
+  uid: xz2mWXcWd
+  id: 21150
+  string: "```python\n\"\"\"JSON value typing.\n\nPublic symbols:\n\n- :type:`JsonValue`\
+    \ — a JSON-serializable value: a primitive, or lists/objects of nested JSON\n\
+    \  values.\n\"\"\"\n\ntype JsonValue = None | bool | int | float | str | list[JsonValue]\
+    \ | dict[str, JsonValue]\n\"\"\"A JSON-serializable value: a primitive, or lists/objects\
+    \ of nested JSON values.\"\"\"\n```"
+  order: 1
+  heading: null
+  children:
+  - id: 21149
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21151
+  - id: 21158
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - xz2mWXcWd
+      value:
+      - uid
+      - xz2mWXcWd
+    - source:
+      - uid
+      - I4WiloC7_
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - I4WiloC7_
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
+PiaE2Lxir:
+  uid: PiaE2Lxir
+  id: 21145
+  string: "```python\ndef greet(name: str) -> str:\n    return f\"Hello, {name}!\"\
+    \n```"
+  order: 1
+  heading: null
+  children:
+  - id: 21144
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21146
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+C8y7bMPpW:
+  uid: C8y7bMPpW
+  id: 14555
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: code-source
+  attrs: null
+  blocks: null
 8VPJRGOt4:
   uid: 8VPJRGOt4
   id: 14460
@@ -233,6 +375,30 @@ q3JUnfC1_:
   parents: null
   props: null
   title: pdf
+  attrs: null
+  blocks: null
+HVHejcou9:
+  uid: HVHejcou9
+  id: 21154
+  string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+    dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 14555
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21155
+  - id: 21156
+  - id: 21157
+  - id: 21158
+  props: null
+  title: null
   attrs: null
   blocks: null
 zZG-BfWvs:
@@ -296,6 +462,47 @@ mriY-0ei8:
   title: null
   attrs: null
   blocks: null
+I4WiloC7_:
+  uid: I4WiloC7_
+  id: 21149
+  string: 'guffin-meta:: #.rm-g'
+  order: 0
+  heading: null
+  children:
+  - id: 21148
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21150
+  - id: 21151
+  - id: 21158
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - I4WiloC7_
+      value:
+      - uid
+      - I4WiloC7_
+    - source:
+      - uid
+      - 5PcZxf4Bw
+      value:
+      - uid
+      - C8y7bMPpW
+    - source:
+      - uid
+      - 5PcZxf4Bw
+      value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+        dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+  blocks: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -320,6 +527,7 @@ OexZiLR_O:
   children:
   - id: 3331
   - id: 4758
+  - id: 21158
   refs: null
   page:
     id: 3327
@@ -346,6 +554,27 @@ OexZiLR_O:
   children_view_type: null
   parents:
   - id: 3327
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+1bxKV_biO:
+  uid: 1bxKV_biO
+  id: 21152
+  string: this code block has both a caption and a `code-source::` tag; the caption
+    renders above the source attribution
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21157
+  - id: 21158
   props: null
   title: null
   attrs: null
@@ -438,6 +667,51 @@ VxYhmVTG3:
   title: null
   attrs: null
   blocks: null
+Xba2GQOBI:
+  uid: Xba2GQOBI
+  id: 21144
+  string: A caption authored as the listing's child block.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21145
+  - id: 21146
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+5PcZxf4Bw:
+  uid: 5PcZxf4Bw
+  id: 21148
+  string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+    dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 14555
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21149
+  - id: 21150
+  - id: 21151
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 it3wsZ7-H:
   uid: it3wsZ7-H
   id: 15801
@@ -496,6 +770,69 @@ pTvGGeTlB:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
+3PQaRTVhd:
+  uid: 3PQaRTVhd
+  id: 21143
+  string: this code block has a caption – its child block – and no `code-source::`
+    tag
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21146
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+xvBjd5MEr:
+  uid: xvBjd5MEr
+  id: 21153
+  string: A caption authored as the listing's child block, set above its source attribution.
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21156
+  - id: 21157
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+kJNGUthgi:
+  uid: kJNGUthgi
+  id: 21146
+  string: listing 1.2.1
+  order: 0
+  heading: 3
+  children:
+  - id: 21143
+  - id: 21145
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
   blocks: null
 Ma5KGUH9O:
   uid: Ma5KGUH9O
@@ -887,6 +1224,12 @@ cNW8lmXIM:
     - a JPEG `image` whose child block renders as its caption, below the image (illustration
     2.1)
 
+    - three Python `code block`s (Section 1.2): one with a caption – its child block
+    – and no `code-source::` tag (listing 1.2.1), one with a `code-source::` tag –
+    a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption
+    (listing 1.2.2), and one with both, the caption set above the source attribution
+    (listing 1.2.3)
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -1043,6 +1386,27 @@ jN4ClkAEl:
   title: null
   attrs: null
   blocks: null
+5hYzRUsaS:
+  uid: 5hYzRUsaS
+  id: 21157
+  string: listing 1.2.3
+  order: 2
+  heading: 3
+  children:
+  - id: 21152
+  - id: 21156
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 DPW-zEDaU:
   uid: DPW-zEDaU
   id: 12925
@@ -1125,6 +1489,48 @@ zE0QjA3N9:
       - uid
       - BxGxeeGk1
   blocks: null
+l6csePq30:
+  uid: l6csePq30
+  id: 21147
+  string: this code block has a `code-source::` tag (through its `guffin-meta::` child)
+    and no caption
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21151
+  - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+aRTvWsH2_:
+  uid: aRTvWsH2_
+  id: 21158
+  string: Section 1.2
+  order: 2
+  heading: 2
+  children:
+  - id: 21146
+  - id: 21151
+  - id: 21157
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 GvRO438Ze:
   uid: GvRO438Ze
   id: 11930
@@ -1198,6 +1604,62 @@ tWkumkdUE:
   props: null
   title: null
   attrs: null
+  blocks: null
+eB34bPMcL:
+  uid: eB34bPMcL
+  id: 21156
+  string: '```python
+
+    """Generic two-dimensional geometry types.
+
+
+    Public symbols:
+
+
+    - :class:`ImageSize` — pixel dimensions (width × height) of a two-dimensional
+    image.
+
+    """
+
+
+    from pydantic import BaseModel, ConfigDict
+
+    ```'
+  order: 1
+  heading: null
+  children:
+  - id: 21153
+  - id: 21155
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21157
+  - id: 21158
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - eB34bPMcL
+      value:
+      - uid
+      - eB34bPMcL
+    - source:
+      - uid
+      - 1QiYLv5d_
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - 1QiYLv5d_
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 Wlzl_dhg_:
   uid: Wlzl_dhg_

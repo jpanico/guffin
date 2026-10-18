@@ -868,11 +868,14 @@ class TestRefsIds:
           (and reference) a page literally titled "the following block embeds a PDF with
           guffin-meta" (11932).
         - Section 3.1_5's ``publish:: false`` meta child, referencing the "publish" page (11943).
+        - The two ``code-source::`` blocks under listings 1.2.2 and 1.2.3 (each a ``guffin-meta::``
+          grandchild of its code block), referencing the "code-source" page (14555).
         - The Section 2.2 native table's four cells, each solely a ``((uid))`` block reference
           to an image block (12916, 12919, 12920, 12925).
         """
         assert refs_ids(article1_node_tree().tree_network) == {
             246,
+            14555,
             321,
             4223,
             5450,

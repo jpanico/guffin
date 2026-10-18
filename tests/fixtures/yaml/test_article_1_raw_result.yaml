@@ -48,6 +48,59 @@
     refs:
     - id: 321
     - id: 11839
+- - heading: 3
+    string: listing 1.2.2
+    children:
+    - id: 21147
+    - id: 21150
+    id: 21151
+    uid: RpKOrMHZd
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - 1QiYLv5d_
+      - source:
+        - uid
+        - HVHejcou9
+        value:
+        - uid
+        - C8y7bMPpW
+      - source:
+        - uid
+        - HVHejcou9
+        value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+          dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21154
+    id: 21155
+    lookup:
+    - id: 14555
+    - id: 21154
+    - id: 21155
+    uid: 1QiYLv5d_
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - string: 'pdf-render:: inline-native'
     id: 11931
     uid: EWMNZcPZX
@@ -139,6 +192,64 @@
       id: 3327
     refs:
     - id: 12920
+- - attrs:
+    - - source:
+        - uid
+        - xz2mWXcWd
+        value:
+        - uid
+        - xz2mWXcWd
+      - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - BxGxeeGk1
+    string: "```python\n\"\"\"JSON value typing.\n\nPublic symbols:\n\n- :type:`JsonValue`\
+      \ — a JSON-serializable value: a primitive, or lists/objects of nested JSON\n\
+      \  values.\n\"\"\"\n\ntype JsonValue = None | bool | int | float | str | list[JsonValue]\
+      \ | dict[str, JsonValue]\n\"\"\"A JSON-serializable value: a primitive, or lists/objects\
+      \ of nested JSON values.\"\"\"\n```"
+    children:
+    - id: 21149
+    id: 21150
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21149
+    - id: 21150
+    uid: xz2mWXcWd
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21151
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
+- - string: "```python\ndef greet(name: str) -> str:\n    return f\"Hello, {name}!\"\
+      \n```"
+    children:
+    - id: 21144
+    id: 21145
+    uid: PiaE2Lxir
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21146
+    - id: 21158
+    order: 1
+    page:
+      id: 3327
+- - id: 14555
+    uid: C8y7bMPpW
+    title: code-source
 - - string: ((jN4ClkAEl))
     children:
     - id: 14461
@@ -157,6 +268,22 @@
 - - id: 246
     uid: q3JUnfC1_
     title: pdf
+- - string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/geometry.py#L1-L8,
+      dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    id: 21154
+    uid: HVHejcou9
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21155
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 14555
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FaOC1FnrcwK.jpeg.enc?alt=media&token=c6e7a3c2-c682-4ae9-a3ee-8e6c388cd05a)'
     children:
     - id: 21142
@@ -190,6 +317,45 @@
     order: 0
     page:
       id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - I4WiloC7_
+        value:
+        - uid
+        - I4WiloC7_
+      - source:
+        - uid
+        - 5PcZxf4Bw
+        value:
+        - uid
+        - C8y7bMPpW
+      - source:
+        - uid
+        - 5PcZxf4Bw
+        value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+          dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21148
+    id: 21149
+    lookup:
+    - id: 14555
+    - id: 21148
+    - id: 21149
+    uid: I4WiloC7_
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21150
+    - id: 21151
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - attrs: []
     id: 5450
     uid: OexZiLR_O
@@ -199,6 +365,7 @@
     children:
     - id: 3331
     - id: 4758
+    - id: 21158
     id: 3328
     uid: 0EgPyHSZi
     parents:
@@ -217,6 +384,18 @@
     parents:
     - id: 3327
     order: 3
+    page:
+      id: 3327
+- - string: this code block has both a caption and a `code-source::` tag; the caption
+      renders above the source attribution
+    id: 21152
+    uid: 1bxKV_biO
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21157
+    - id: 21158
+    order: 0
     page:
       id: 3327
 - - string: ((DaltU9ClP))
@@ -277,6 +456,34 @@
     order: 0
     page:
       id: 12904
+- - string: A caption authored as the listing's child block.
+    id: 21144
+    uid: Xba2GQOBI
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21145
+    - id: 21146
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+- - string: 'code-source:: https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
+      dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+    id: 21148
+    uid: 5PcZxf4Bw
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21149
+    - id: 21150
+    - id: 21151
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 14555
 - - string: an asset is a BLOB stored by Roam in Firebase Storage; usually a file
       dragged into the Roam UI. The Roam Markdown representation of the asset is just
       the Firebase Storage URL.
@@ -323,6 +530,45 @@
     - id: 3330
     - id: 3333
     order: 1
+    page:
+      id: 3327
+- - string: this code block has a caption – its child block – and no `code-source::`
+      tag
+    id: 21143
+    uid: 3PQaRTVhd
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21146
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+- - string: A caption authored as the listing's child block, set above its source
+      attribution.
+    id: 21153
+    uid: xvBjd5MEr
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21156
+    - id: 21157
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+- - heading: 3
+    string: listing 1.2.1
+    children:
+    - id: 21143
+    - id: 21145
+    id: 21146
+    uid: kJNGUthgi
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    order: 0
     page:
       id: 3327
 - - heading: 0
@@ -580,6 +826,12 @@
       - a JPEG `image` whose child block renders as its caption, below the image (illustration
       2.1)
 
+      - three Python `code block`s (Section 1.2): one with a caption – its child block
+      – and no `code-source::` tag (listing 1.2.1), one with a `code-source::` tag
+      – a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption
+      (listing 1.2.2), and one with both, the caption set above the source attribution
+      (listing 1.2.3)
+
       - a native `{{table}}` (Section 2.2) whose four cells are each a standalone
       `block reference` to a JPEG `image` block, so each cell displays its referenced
       image
@@ -685,6 +937,20 @@
     order: 0
     page:
       id: 12904
+- - heading: 3
+    string: listing 1.2.3
+    children:
+    - id: 21152
+    - id: 21156
+    id: 21157
+    uid: 5hYzRUsaS
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21158
+    order: 2
+    page:
+      id: 3327
 - - string: '![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_asI3qPwPQ.jpeg.enc?alt=media&token=34e60f4b-62c9-43c1-b0f9-4ac542b70e7e)'
     id: 12925
     uid: DPW-zEDaU
@@ -751,6 +1017,32 @@
     order: 1
     page:
       id: 3327
+- - string: this code block has a `code-source::` tag (through its `guffin-meta::`
+      child) and no caption
+    id: 21147
+    uid: l6csePq30
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21151
+    - id: 21158
+    order: 0
+    page:
+      id: 3327
+- - heading: 2
+    string: Section 1.2
+    children:
+    - id: 21146
+    - id: 21151
+    - id: 21157
+    id: 21158
+    uid: aRTvWsH2_
+    parents:
+    - id: 3327
+    - id: 3328
+    order: 2
+    page:
+      id: 3327
 - - attrs:
     - - source:
         - uid
@@ -800,6 +1092,60 @@
     - id: 3332
     - id: 11163
     order: 0
+    page:
+      id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - eB34bPMcL
+        value:
+        - uid
+        - eB34bPMcL
+      - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - 1QiYLv5d_
+        value:
+        - uid
+        - BxGxeeGk1
+    string: '```python
+
+      """Generic two-dimensional geometry types.
+
+
+      Public symbols:
+
+
+      - :class:`ImageSize` — pixel dimensions (width × height) of a two-dimensional
+      image.
+
+      """
+
+
+      from pydantic import BaseModel, ConfigDict
+
+      ```'
+    children:
+    - id: 21153
+    - id: 21155
+    id: 21156
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21155
+    - id: 21156
+    uid: eB34bPMcL
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21157
+    - id: 21158
+    order: 1
     page:
       id: 3327
 - - string: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2FfJoSdh65Ry.pkpass.enc?alt=media&token=b756b61a-8d04-4f30-a887-3feac7bb9d6a
