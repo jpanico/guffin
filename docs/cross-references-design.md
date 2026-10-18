@@ -9,8 +9,9 @@ figure float (Section 1.3: a `float:: figure` wrapper over an image block, numbe
 in its PDF and mdbundle baselines), a listing float (Section 1.4, *Listing 1*) and a table
 float (Section 1.5, *Table 1*, its caption above the table), each its own series and each
 with a kind-word reference from the running text (rendered *figure 1*, *listing 1*, and
-*table 1*, linked); the generated lists (step 5), the empty-list warning (rule 7), and a
-fixture for a book's by-chapter numbering (the rest of step 7) are not.**
+*table 1*, linked); Test Article 3 carries the same three kinds with the content a standalone
+reference to a block elsewhere on the page; the generated lists (step 5), the empty-list
+warning (rule 7), and a fixture for a book's by-chapter numbering (the rest of step 7) are not.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest
@@ -393,6 +394,13 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
 
 ## Decisions
 
+- **2026-10-17 — A labelled inline reference is not a standalone one.** Test Article 3's
+  reference lines open with a coloured label span, so `[label]{color=...} see [figure](...)`
+  begins with a bracket and ends with a vertex link, and
+  `model/vertex_link.parse_standalone_vertex_link` took the whole text for the link: every
+  float was counted as displayed twice and the export aborted. The parser now also requires
+  the text's opening bracket to stay open until the link's own `](`; a backslash-escaped
+  bracket counts for nothing.
 - **2026-10-17 — The aliased reference needed its own transcription.** Until the first live
   reference was authored, `[figure](((uid)))` reached the model as a nested link: the
   `((uid))` inside the alias's URL slot was itself converted to a vertex link, so no vertex

@@ -44,6 +44,14 @@
     plus standalone refs to page / block / parent block / header and to every block-level
     target above, plus a block embed
 
+    - three `float` wrappers in the `Internal (in-page) links:` section – `float::
+    figure`, `float:: listing`, `float:: table` (each through its `guffin-meta::`
+    child) – whose one content child is a standalone `block reference` to the in-page
+    image, fenced code block, and native table, so each float displays a target that
+    lives elsewhere on the page; they render as the numbered Figure 1, Listing 1,
+    and Table 1, and three inline kind-word aliases (`figure`, `listing`, `table`)
+    refer to them, completed with the number and linked
+
     - `External (out-of-page) links:` section: the same matrix against Test Article
     1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed,
     and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render:
@@ -370,6 +378,9 @@
   - fR8I0SL7Z
   - KWFlp92fa
   - tU_piRCi2
+  - xvjVDltB4
+  - ukIa7RHql
+  - ltHJLOxly
   - b8ob6GcbI
   - ZT_EVUtHq
   - HftouGiTA
@@ -388,6 +399,9 @@
   - SivJQaD8x
   - gWrTHfYIn
   - HnL3GnkY1
+  - niK1id9xC
+  - AG9rpyUY_
+  - iDx5v0Su0
   text: 'Internal (in-page) links:'
   heading_level: 1
 - vertex_type: guffin/text
@@ -505,6 +519,24 @@
   - I9tU2C5U6
   text: '[**inline Closed TODO ref ⟶**]{color="fuchsia"}  [{{[[DONE]]}} a short #c:ORANGE
     *ref closed todo*](x-guffin:vertex/I9tU2C5U6)'
+- vertex_type: guffin/text
+  uid: xvjVDltB4
+  refs:
+  - lF-qY0Xrs
+  - NlwSKgjdJ
+  text: '[**inline FIGURE FLOAT ref ⟶**]{color="fuchsia"} see [figure](x-guffin:vertex/NlwSKgjdJ)'
+- vertex_type: guffin/text
+  uid: ukIa7RHql
+  refs:
+  - lF-qY0Xrs
+  - VQjeoP4r_
+  text: '[**inline LISTING FLOAT ref ⟶**]{color="fuchsia"} see [listing](x-guffin:vertex/VQjeoP4r_)'
+- vertex_type: guffin/text
+  uid: ltHJLOxly
+  refs:
+  - lF-qY0Xrs
+  - iuXlWiUAL
+  text: '[**inline TABLE FLOAT ref ⟶**]{color="fuchsia"} see [table](x-guffin:vertex/iuXlWiUAL)'
 - vertex_type: guffin/text
   uid: b8ob6GcbI
   children:
@@ -769,6 +801,93 @@
 
 
     —Edsger Dijkstra](x-guffin:vertex/0gIQWqXJ1)'
+- vertex_type: guffin/text
+  uid: niK1id9xC
+  children:
+  - NlwSKgjdJ
+  refs:
+  - lF-qY0Xrs
+  text: '[**FIGURE FLOAT of standalone IMAGE BLOCK ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: NlwSKgjdJ
+  children:
+  - Ia_wypdvQ
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: figure
+  text: The page's standalone image, as a numbered figure through a block reference.
+- vertex_type: guffin/text
+  uid: Ia_wypdvQ
+  refs:
+  - J_Vt5_C6p
+  text: '[![](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)](x-guffin:vertex/J_Vt5_C6p)'
+- vertex_type: guffin/text
+  uid: AG9rpyUY_
+  children:
+  - VQjeoP4r_
+  refs:
+  - lF-qY0Xrs
+  text: '[**LISTING FLOAT of standalone FENCED-CODE ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: VQjeoP4r_
+  children:
+  - cnovRH1M5
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: listing
+  text: The page's fizz buzz code block, as a numbered listing through a block reference.
+- vertex_type: guffin/text
+  uid: cnovRH1M5
+  refs:
+  - yECzsUNPC
+  text: "[```python\ndef fizz_buzz(limit: int = 100):\n    for i in range(1, limit\
+    \ + 1):\n        if i % 15 == 0:\n            print(\"FizzBuzz\")\n        elif\
+    \ i % 3 == 0:\n            print(\"Fizz\")\n        elif i % 5 == 0:\n       \
+    \     print(\"Buzz\")\n        else:\n            print(i)```](x-guffin:vertex/yECzsUNPC)"
+- vertex_type: guffin/text
+  uid: iDx5v0Su0
+  children:
+  - iuXlWiUAL
+  refs:
+  - lF-qY0Xrs
+  text: '[**TABLE FLOAT of standalone ROAM NATIVE TABLE ref ↓**]{color="fuchsia"}'
+- vertex_type: guffin/text
+  uid: iuXlWiUAL
+  children:
+  - 0adDKHWLd
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: table
+  text: The page's native table, as a numbered table through a block reference.
+- vertex_type: guffin/text
+  uid: 0adDKHWLd
+  refs:
+  - yvlvNZwPC
+  text: '[{{table}}](x-guffin:vertex/yvlvNZwPC)'
 - vertex_type: guffin/heading
   uid: d3T1YpYig
   children:

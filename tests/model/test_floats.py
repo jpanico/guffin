@@ -2,7 +2,7 @@
 
 from typing import Final
 
-from conftest import asset_storage
+from conftest import article3_node_tree, asset_storage
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
@@ -23,6 +23,7 @@ from guffin.model.floats import (
     placed_floats,
 )
 from guffin.model.publishing_semantics import FloatKind
+from guffin.model.publishing_validation import validate_semantics
 from guffin.model.vertex import (
     BlockEmbedVertex,
     CodeBlockVertex,
@@ -34,7 +35,8 @@ from guffin.model.vertex import (
     Vertex,
 )
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
-from guffin.model.vertex_tree import VertexTree
+from guffin.model.vertex_tree import VertexTree, standalone_link_target
+from guffin.transcribe.roam_tree_to_guffin import transcribe
 
 _LINK: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1")
 _IMAGE_URL: Final[str] = "https://firebasestorage.googleapis.com/v0/b/t/o/imgs%2Fdiagram.png?alt=media&token=d1"
@@ -377,3 +379,58 @@ class TestFloatReferences:
         )
         assert float_references(tree, floats_in(tree)) == []
         assert kind_word_references(tree) == []
+
+
+class TestArticle3FloatsByReference:
+    """Test Article 3's three floats, each displaying an in-page block through a standalone reference.
+
+    The figure, listing, and table wrappers in its internal-links section each have one content
+    child that is a standalone reference to the page's own image, fenced code block, or native
+    table, and three earlier lines refer to them inline with the kind-word aliases.  Each such
+    line opens with a coloured label span, ``[label]{color=...} see [figure](...)``, which once
+    parsed as a standalone reference and displayed every float a second time.
+    """
+
+    _WRAPPERS: Final[dict[str, tuple[FloatKind, str]]] = {
+        "NlwSKgjdJ": (FloatKind.FIGURE, "J_Vt5_C6p"),
+        "VQjeoP4r_": (FloatKind.LISTING, "yECzsUNPC"),
+        "iuXlWiUAL": (FloatKind.TABLE, "yvlvNZwPC"),
+    }
+    _CITERS: Final[dict[str, str]] = {"xvjVDltB4": "NlwSKgjdJ", "ukIa7RHql": "VQjeoP4r_", "ltHJLOxly": "iuXlWiUAL"}
+
+    @staticmethod
+    def _tree() -> VertexTree:
+        return transcribe(article3_node_tree())
+
+    def test_each_wrapper_floats_its_referenced_target(self) -> None:
+        """Each wrapper is a float of its kind whose content is the referenced block, not the reference."""
+        found: Final[dict[str, Float]] = floats_in(self._tree())
+        for wrapper_uid, (kind, content_uid) in self._WRAPPERS.items():
+            assert found[wrapper_uid].kind is kind
+            assert found[wrapper_uid].content_uid == content_uid
+
+    def test_each_float_is_displayed_once_in_reading_order(self) -> None:
+        """The walk meets each wrapper once: the inline references do not display their floats."""
+        assert [placed.float.wrapper_uid for placed in placed_floats(self._tree())] == list(self._WRAPPERS)
+
+    def test_inline_reference_lines_are_not_standalone(self) -> None:
+        """A label span followed by an inline kind-word reference leaves the reference inline."""
+        tree: Final[VertexTree] = self._tree()
+        for citing_uid in self._CITERS:
+            assert standalone_link_target(tree.uid_map[citing_uid], tree) is None
+
+    def test_each_series_numbers_its_float_one(self) -> None:
+        """An article numbers each kind straight through, so each of the three floats is number 1."""
+        numbering = float_numbers(self._tree(), None)
+        assert {uid: number.text for uid, number in numbering.numbers.items()} == dict.fromkeys(self._WRAPPERS, "1")
+        assert numbering.repeated == ()
+
+    def test_kind_word_references_point_at_their_wrappers(self) -> None:
+        """Each inline kind-word alias names its target's kind and cites it."""
+        references: Final[list[FloatReference]] = kind_word_references(self._tree())
+        assert {reference.citing_uid: reference.wrapper_uid for reference in references} == self._CITERS
+        assert all(reference.kind_word is self._WRAPPERS[reference.wrapper_uid][0] for reference in references)
+
+    def test_article_validates(self) -> None:
+        """The article passes every vocabulary rule, the float rules included."""
+        assert validate_semantics(self._tree()).errors == ()

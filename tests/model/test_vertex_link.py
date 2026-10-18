@@ -188,6 +188,26 @@ class TestRoundTrip:
 class TestParseStandaloneVertexLink:
     """Tests for parse_standalone_vertex_link()."""
 
+    def test_bracketed_span_before_an_inline_link_is_not_standalone(self) -> None:
+        """A leading bracketed span closed before the trailing link leaves the link inline."""
+        text = f'[**label**]{{color="fuchsia"}} see [figure](x-guffin:vertex/{_UID})'
+        assert parse_standalone_vertex_link(text) is None
+
+    def test_balanced_brackets_inside_the_display_still_parse(self) -> None:
+        """A display holding its own balanced brackets (a reproduced TODO marker) stays standalone."""
+        text = f"[{{{{[[DONE]]}}}} a short item](x-guffin:vertex/{_UID})"
+        assert parse_standalone_vertex_link(text) == VertexLink(VertexLinkKind.REFERENCE, _UID)
+
+    def test_unclosed_bracket_inside_the_display_still_parses(self) -> None:
+        """An opening bracket left open inside the display never closes the link early."""
+        text = f"[see [1 for details](x-guffin:vertex/{_UID})"
+        assert parse_standalone_vertex_link(text) == VertexLink(VertexLinkKind.REFERENCE, _UID)
+
+    def test_escaped_closing_bracket_inside_the_display_still_parses(self) -> None:
+        """A backslash-escaped closing bracket is literal text, not the link's end."""
+        text = f"[a \\] literal](x-guffin:vertex/{_UID})"
+        assert parse_standalone_vertex_link(text) == VertexLink(VertexLinkKind.REFERENCE, _UID)
+
     def test_sole_reference_parses(self) -> None:
         """A text that is exactly one reference-form link parses to its VertexLink."""
         text = f"[display text](x-guffin:vertex/{_UID})"

@@ -15,6 +15,7 @@
 > – a heading whose text is a page link
 >
 > - `Internal (in-page) links:` section: inline refs to the styled/colored targets, plus standalone refs to page / block / parent block / header and to every block-level target above, plus a block embed
+> - three `float` wrappers in the `Internal (in-page) links:` section – `float:: figure`, `float:: listing`, `float:: table` (each through its `guffin-meta::` child) – whose one content child is a standalone `block reference` to the in-page image, fenced code block, and native table, so each float displays a target that lives elsewhere on the page; they render as the numbered Figure 1, Listing 1, and Table 1, and three inline kind-word aliases (`figure`, `listing`, `table`) refer to them, completed with the number and linked
 > - `External (out-of-page) links:` section: the same matrix against Test Article 1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed, and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render: "inline"` at the reference site (the site’s tag drives the PDF format’s inline placement)
 > - this INFO `Callout box`, which contains Roam `page references`
 
@@ -127,6 +128,9 @@ def fizz_buzz(limit: int = 100):
 - [x] a short <span style="text-decoration: underline; color: orange">ref closed todo</span>
 - <span style="color: fuchsia">**inline Open TODO ref ⟶**</span> <span style="font-size: 1.2em; line-height: 1">☐</span> a short <span style="text-decoration: underline; color: orange">ref open todo</span>
 - <span style="color: fuchsia">**inline Closed TODO ref ⟶**</span> <span style="font-size: 1.2em; line-height: 1">☑</span> a short <span style="text-decoration: underline; color: orange">ref closed todo</span>
+- <span style="color: fuchsia">**inline FIGURE FLOAT ref ⟶**</span> see [figure 1](#float-NlwSKgjdJ)
+- <span style="color: fuchsia">**inline LISTING FLOAT ref ⟶**</span> see [listing 1](#float-VQjeoP4r_)
+- <span style="color: fuchsia">**inline TABLE FLOAT ref ⟶**</span> see [table 1](#float-iuXlWiUAL)
 - <span style="color: fuchsia">**standalone PAGE ref ↓**</span>
   - Test Article 3
 - <span style="color: fuchsia">**standalone BLOCK ref ↓**</span>
@@ -195,6 +199,38 @@ def fizz_buzz(limit: int = 100):
   > *The question of whether Machines Can Think … is about as relevant as the question of whether Submarines Can Swim.*
   >
   > —Edsger Dijkstra
+- <span style="color: fuchsia">**FIGURE FLOAT of standalone IMAGE BLOCK ref ↓**</span>
+  <a id="float-NlwSKgjdJ"></a>
+
+  [7rthRV4UHu.jpeg.enc](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F7rthRV4UHu.jpeg.enc?alt=media&token=0186f717-7b00-4ce8-af02-42bbf7e2cb89)
+
+  ***Figure 1.** The page’s standalone image, as a numbered figure through a block reference.*
+- <span style="color: fuchsia">**LISTING FLOAT of standalone FENCED-CODE ref ↓**</span>
+  <a id="float-VQjeoP4r_"></a>
+
+  ``` python
+  def fizz_buzz(limit: int = 100):
+      for i in range(1, limit + 1):
+          if i % 15 == 0:
+              print("FizzBuzz")
+          elif i % 3 == 0:
+              print("Fizz")
+          elif i % 5 == 0:
+              print("Buzz")
+          else:
+              print(i)
+  ```
+
+  ***Listing 1.** The page’s fizz buzz code block, as a numbered listing through a block reference.*
+- <span style="color: fuchsia">**TABLE FLOAT of standalone ROAM NATIVE TABLE ref ↓**</span>
+  <a id="float-iuXlWiUAL"></a>
+
+  ***Table 1.** The page’s native table, as a numbered table through a block reference.*
+
+  | Header 1 | Header 2 | Header 3 |
+  |----------|----------|----------|
+  | r1.c1    | r1.c2    | r1.c3    |
+  | r2.c1    | r2.c2    | r2.c3    |
 
 ## External (out-of-page) links:
 

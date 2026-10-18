@@ -6,7 +6,7 @@ from typing import Final
 
 import pytest
 import regex
-from conftest import FIXTURES_MD_DIR, article1_node_tree
+from conftest import FIXTURES_MD_DIR, article1_node_tree, article3_node_tree
 
 from guffin.common.filenames import shell_safe_filename
 from guffin.common.revision import Revision
@@ -233,6 +233,49 @@ class TestRenderArticleFixture:
             "| Triangle | 3     |\n"
             "| Square   | 4     |\n"
         ) in section
+
+    def test_floats_of_in_page_references_render_their_targets(self, tmp_path: Path) -> None:
+        """Article 3's three floats display in-page blocks through standalone references, each labelled 1.
+
+        The figure, listing, and table wrappers each have one child that is a standalone reference
+        to the page's own image, fenced code block, or native table; each renders unwrapped with
+        its anchor and labelled caption, the referenced content in between, and the three inline
+        kind-word aliases render as Markdown links to the anchors, the word completed by the number.
+        """
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 3")
+        node_tree = article3_node_tree()
+        render_bundle: Final[RenderBundle] = RenderBundle(content=transcribe(node_tree), view=build_view_map(node_tree))
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            render_bundle,
+            profile=ArticleProfile(),
+            filename_stem=stem,
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
+        assert "see [figure 1](#float-NlwSKgjdJ)" in result
+        assert "see [listing 1](#float-VQjeoP4r_)" in result
+        assert "see [table 1](#float-iuXlWiUAL)" in result
+        for anchor in ("float-NlwSKgjdJ", "float-VQjeoP4r_", "float-iuXlWiUAL"):
+            assert result.count(f'<a id="{anchor}"></a>') == 1
+        figure: Final[str] = result[
+            result.index('<a id="float-NlwSKgjdJ"></a>') : result.index('<a id="float-VQjeoP4r_"></a>')
+        ]
+        assert "[7rthRV4UHu.jpeg.enc](" in figure
+        assert (
+            "***Figure 1.** The page\u2019s standalone image, as a numbered figure through a block reference.*"
+            in figure
+        )
+        listing: Final[str] = result[
+            result.index('<a id="float-VQjeoP4r_"></a>') : result.index('<a id="float-iuXlWiUAL"></a>')
+        ]
+        assert "def fizz_buzz(limit: int = 100):" in listing
+        assert listing.index("```") < listing.index("***Listing 1.**")
+        table: Final[str] = result[result.index('<a id="float-iuXlWiUAL"></a>') : result.index("## External")]
+        assert table.index("***Table 1.**") < table.index("| Header 1 |")
 
 
 class TestSemanticBullets:

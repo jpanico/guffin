@@ -24,6 +24,27 @@
   title: null
   attrs: null
   blocks: null
+- uid: PgM3SsKB4
+  id: 21185
+  string: 'float:: figure'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21186
+  - id: 21187
+  - id: 21188
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: oVvEsh7dx
   id: 11737
   string: section 3.2
@@ -209,7 +230,7 @@
 - uid: gWrTHfYIn
   id: 20041
   string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (text)↓**'
-  order: 34
+  order: 37
   heading: null
   children:
   - id: 20045
@@ -285,7 +306,7 @@
 - uid: HnL3GnkY1
   id: 20053
   string: '#c:FUCHSIA **VERSION GROUP of standalone BLOCK ref (epigraph)↓**'
-  order: 35
+  order: 38
   heading: null
   children:
   - id: 20180
@@ -433,6 +454,26 @@
   title: null
   attrs: null
   blocks: null
+- uid: Ia_wypdvQ
+  id: 21184
+  string: ((J_Vt5_C6p))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11758
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21187
+  - id: 21188
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: 3EkSTJBAu
   id: 20223
   string: ((tyiBN5ns6))
@@ -504,6 +545,25 @@
   parents:
   - id: 4225
   - id: 11716
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: niK1id9xC
+  id: 21188
+  string: '#c:FUCHSIA **FIGURE FLOAT of standalone IMAGE BLOCK ref ↓**'
+  order: 39
+  heading: null
+  children:
+  - id: 21187
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
   props: null
   title: null
   attrs: null
@@ -761,7 +821,7 @@
 - uid: 6cWeACALe
   id: 13492
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE PULL QUOTE ref ↓**'
-  order: 31
+  order: 34
   heading: null
   children:
   - id: 13493
@@ -917,13 +977,21 @@
     plus standalone refs to page / block / parent block / header and to every block-level
     target above, plus a block embed
 
+    - three `float` wrappers in the `Internal (in-page) links:` section – `float::
+    figure`, `float:: listing`, `float:: table` (each through its `guffin-meta::`
+    child) – whose one content child is a standalone `block reference` to the in-page
+    image, fenced code block, and native table, so each float displays a target that
+    lives elsewhere on the page; they render as the numbered Figure 1, Listing 1,
+    and Table 1, and three inline kind-word aliases (`figure`, `listing`, `table`)
+    refer to them, completed with the number and linked
+
     - `External (out-of-page) links:` section: the same matrix against Test Article
     1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed,
     and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render:
     "inline"` at the reference site (the site''s tag drives the PDF format''s inline
     placement)
 
-    - this INFO `Callout box`, which contains Roam `page references`'
+    - this INFO `Callout box`, which contains Roam `page references` '
   order: 0
   heading: null
   children: null
@@ -1036,7 +1104,7 @@
 - uid: dYYKZExzI
   id: 4229
   string: '#c:FUCHSIA **standalone BLOCK EMBED ↓**'
-  order: 23
+  order: 26
   heading: null
   children:
   - id: 4232
@@ -1222,7 +1290,7 @@
 - uid: bwfQEnrOi
   id: 13488
   string: '#c:FUCHSIA **standalone ROAM NATIVE MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 29
+  order: 32
   heading: null
   children:
   - id: 13489
@@ -1352,7 +1420,7 @@
 - uid: -K5d4a_ew
   id: 13490
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE PULL QUOTE ref ↓**'
-  order: 30
+  order: 33
   heading: null
   children:
   - id: 13491
@@ -1445,7 +1513,7 @@
 - uid: SivJQaD8x
   id: 11802
   string: '#c:FUCHSIA **standalone ROAM NATIVE TABLE ref ↓**'
-  order: 33
+  order: 36
   heading: null
   children:
   - id: 11803
@@ -1633,6 +1701,26 @@
   title: null
   attrs: null
   blocks: null
+- uid: 0adDKHWLd
+  id: 21194
+  string: ((yvlvNZwPC))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11792
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21197
+  - id: 21198
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: ot5dpySxp
   id: 11709
   string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 2]]'
@@ -1656,7 +1744,7 @@
 - uid: HftouGiTA
   id: 11707
   string: '#c:FUCHSIA **standalone PARENT BLOCK ref ↓** '
-  order: 20
+  order: 23
   heading: null
   children:
   - id: 11708
@@ -1708,6 +1796,26 @@
   title: null
   attrs: null
   blocks: null
+- uid: cnovRH1M5
+  id: 21189
+  string: ((yECzsUNPC))
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 11725
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21192
+  - id: 21193
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: ys3bY2GZa
   id: 19389
   string: This header features a [[Test Article]] page link
@@ -1729,7 +1837,7 @@
 - uid: b8ob6GcbI
   id: 11701
   string: '#c:FUCHSIA **standalone PAGE ref ↓** '
-  order: 18
+  order: 21
   heading: null
   children:
   - id: 11702
@@ -2032,6 +2140,25 @@
   title: null
   attrs: null
   blocks: null
+- uid: ltHJLOxly
+  id: 21201
+  string: '#c:FUCHSIA **inline TABLE FLOAT ref ⟶** see [table](((iuXlWiUAL)))'
+  order: 20
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 21197
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: ipvsMyx77
   id: 11776
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
@@ -2148,10 +2275,29 @@
 - uid: ZT_EVUtHq
   id: 11704
   string: '#c:FUCHSIA **standalone BLOCK ref ↓** '
-  order: 19
+  order: 22
   heading: null
   children:
   - id: 11705
+  refs:
+  - id: 5844
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: AG9rpyUY_
+  id: 21193
+  string: '#c:FUCHSIA **LISTING FLOAT of standalone FENCED-CODE ref ↓**'
+  order: 40
+  heading: null
+  children:
+  - id: 21192
   refs:
   - id: 5844
   page:
@@ -2225,6 +2371,12 @@
   - id: 19390
   - id: 20041
   - id: 20053
+  - id: 21188
+  - id: 21193
+  - id: 21198
+  - id: 21199
+  - id: 21200
+  - id: 21201
   refs: null
   page:
     id: 4225
@@ -2234,6 +2386,44 @@
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: VQjeoP4r_
+  id: 21192
+  string: The page's fizz buzz code block, as a numbered listing through a block reference.
+  order: 0
+  heading: null
+  children:
+  - id: 21189
+  - id: 21191
+  refs: null
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21193
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - VQjeoP4r_
+      value:
+      - uid
+      - VQjeoP4r_
+    - source:
+      - uid
+      - sunowLl2z
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - sunowLl2z
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 - uid: vH2I8xRLZ
   id: 4231
@@ -2312,6 +2502,63 @@
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: xvjVDltB4
+  id: 21199
+  string: '#c:FUCHSIA **inline FIGURE FLOAT ref ⟶** see [figure](((NlwSKgjdJ)))'
+  order: 18
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 21187
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: iuXlWiUAL
+  id: 21197
+  string: The page's native table, as a numbered table through a block reference.
+  order: 0
+  heading: null
+  children:
+  - id: 21194
+  - id: 21196
+  refs: null
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21198
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - iuXlWiUAL
+      value:
+      - uid
+      - iuXlWiUAL
+    - source:
+      - uid
+      - J6r7N25in
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - J6r7N25in
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 - uid: T5pku1yrU
   id: 11777
@@ -2451,7 +2698,7 @@
 - uid: nVv4pq7Fd
   id: 13494
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 26
+  order: 29
   heading: null
   children:
   - id: 13495
@@ -2610,7 +2857,7 @@
 - uid: yTLZTltae
   id: 13486
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
-  order: 28
+  order: 31
   heading: null
   children:
   - id: 13487
@@ -2626,6 +2873,65 @@
   title: null
   attrs: null
   blocks: null
+- uid: MpeYJM60q
+  id: 21195
+  string: 'float:: table'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21196
+  - id: 21197
+  - id: 21198
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: sunowLl2z
+  id: 21191
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21190
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21192
+  - id: 21193
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - sunowLl2z
+      value:
+      - uid
+      - sunowLl2z
+    - source:
+      - uid
+      - RMItL8hV3
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - RMItL8hV3
+      value: ' listing'
+  blocks: null
 - uid: 48ZQ-2b7U
   id: 11740
   string: '#c:FUCHSIA **inline BOLD ORANGE ref ⟶**  ((vk7Up544K))'
@@ -2635,6 +2941,63 @@
   refs:
   - id: 5844
   - id: 11739
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: WNkKPiZeu
+  id: 21186
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21185
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21187
+  - id: 21188
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - WNkKPiZeu
+      value:
+      - uid
+      - WNkKPiZeu
+    - source:
+      - uid
+      - PgM3SsKB4
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - PgM3SsKB4
+      value: ' figure'
+  blocks: null
+- uid: iDx5v0Su0
+  id: 21198
+  string: '#c:FUCHSIA **TABLE FLOAT of standalone ROAM NATIVE TABLE ref ↓**'
+  order: 41
+  heading: null
+  children:
+  - id: 21197
+  refs:
+  - id: 5844
   page:
     id: 4225
   children_view_type: null
@@ -2763,7 +3126,7 @@
 - uid: Y0xFlk7y6
   id: 11733
   string: '#c:FUCHSIA **standalone HEADER ref ↓**'
-  order: 24
+  order: 27
   heading: null
   children:
   - id: 11734
@@ -2779,10 +3142,29 @@
   title: null
   attrs: null
   blocks: null
+- uid: ukIa7RHql
+  id: 21200
+  string: '#c:FUCHSIA **inline LISTING FLOAT ref ⟶** see [listing](((VQjeoP4r_)))'
+  order: 19
+  heading: null
+  children: null
+  refs:
+  - id: 5844
+  - id: 21192
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: OYxDubiuN
   id: 15242
   string: '#c:FUCHSIA **standalone PDF BLOCK ref↓**'
-  order: 22
+  order: 25
   heading: null
   children:
   - id: 15243
@@ -2855,6 +3237,44 @@
   title: null
   attrs: null
   blocks: null
+- uid: NlwSKgjdJ
+  id: 21187
+  string: The page's standalone image, as a numbered figure through a block reference.
+  order: 0
+  heading: null
+  children:
+  - id: 21184
+  - id: 21186
+  refs: null
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21188
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - NlwSKgjdJ
+      value:
+      - uid
+      - NlwSKgjdJ
+    - source:
+      - uid
+      - WNkKPiZeu
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - WNkKPiZeu
+      value:
+      - uid
+      - BxGxeeGk1
+  blocks: null
 - uid: MYwGv0l_h
   id: 13487
   string: ((F9TXbzC0K))
@@ -2870,6 +3290,27 @@
   - id: 4225
   - id: 4226
   - id: 13486
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: RMItL8hV3
+  id: 21190
+  string: 'float:: listing'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21191
+  - id: 21192
+  - id: 21193
   props: null
   title: null
   attrs: null
@@ -3207,6 +3648,44 @@
   title: null
   attrs: null
   blocks: null
+- uid: J6r7N25in
+  id: 21196
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21195
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 4225
+  children_view_type: null
+  parents:
+  - id: 4225
+  - id: 4226
+  - id: 21197
+  - id: 21198
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - J6r7N25in
+      value:
+      - uid
+      - J6r7N25in
+    - source:
+      - uid
+      - MpeYJM60q
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - MpeYJM60q
+      value: ' table'
+  blocks: null
 - uid: 9ixJaPK7A
   id: 13475
   string: '#c:FUCHSIA **standalone ROAM NATIVE SINGLE-LINE BLOCK QUOTE ref ↓**'
@@ -3317,7 +3796,7 @@
 - uid: _kTRqm3O-
   id: 11769
   string: '#c:FUCHSIA **standalone CALLOUT ref ↓**'
-  order: 32
+  order: 35
   heading: null
   children:
   - id: 11770
@@ -3336,7 +3815,7 @@
 - uid: J1jloW5z0
   id: 13484
   string: '#c:FUCHSIA **standalone STANDARD MARKDOWN MULTI-LINE BLOCK QUOTE ref ↓**'
-  order: 27
+  order: 30
   heading: null
   children:
   - id: 13485
@@ -3374,7 +3853,7 @@
 - uid: fZr8Ve9SS
   id: 11735
   string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
-  order: 25
+  order: 28
   heading: null
   children:
   - id: 11736
@@ -3393,7 +3872,7 @@
 - uid: AQqf7TbPh
   id: 11759
   string: '#c:FUCHSIA **standalone IMAGE BLOCK ref ↓** '
-  order: 21
+  order: 24
   heading: null
   children:
   - id: 11761

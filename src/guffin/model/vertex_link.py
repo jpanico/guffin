@@ -206,21 +206,54 @@ def parse_standalone_vertex_link(text: str) -> VertexLink | None:
     part of the *standalone* definition, but as an ambiguity guard: a display reproduces its
     destination's raw text, so one carrying a vertex-link URL is structurally
     indistinguishable from a mis-bracketed match whose greedy display swallowed the real
-    link, and the parse cannot be trusted.
+    link, and the parse cannot be trusted.  So is a text whose opening ``[`` closes before the
+    link's own ``](`` — a bracketed span followed by more text and a link at the end, such as
+    ``[label]{color="red"} see [figure](<x-guffin-url>)``: the link is inline there, not the
+    text's entire content.
 
     Args:
         text: The text to parse.
 
     Returns:
         The :class:`VertexLink` when *text* is a standalone well-formed vertex link — nothing
-        before or after it, a valid ``x-guffin`` URL (per :func:`parse_vertex_link`), and no
-        further ``x-guffin`` URL inside the display text; ``None`` in every other case,
-        including a link mixed with surrounding text.
+        before or after it, a valid ``x-guffin`` URL (per :func:`parse_vertex_link`), no
+        further ``x-guffin`` URL inside the display text, and an opening bracket that stays
+        open to the link's end; ``None`` in every other case, including a link mixed with
+        surrounding text.
     """
     match: Final[regex.Match[str] | None] = _STANDALONE_VERTEX_LINK_MD_RE.fullmatch(text)
     if match is None or f"{GUFFIN_SCHEME}:" in match.group("display"):
         return None
+    if not _display_stays_open(match.group("display")):
+        return None
     return parse_vertex_link(match.group("url"))
+
+
+def _display_stays_open(display: str) -> bool:
+    """Return whether the text's opening ``[`` is still open everywhere in *display*.
+
+    The standalone pattern takes the text's first ``[`` as the link's opening bracket and its
+    last ``](`` as the closing one.  That holds only when no ``]`` inside *display* closes the
+    opening bracket early: a text such as ``[styled label]{attrs} see [word](url)`` has a
+    bracketed span first and a link at its end, and its greedy display swallows the span's
+    closing bracket.  A bracket escaped with a backslash is literal text and counts for nothing.
+    """
+    depth: int = 0
+    escaped: bool = False
+    for char in display:
+        if escaped:
+            escaped = False
+            continue
+        if char == "\\":
+            escaped = True
+            continue
+        if char == "[":
+            depth += 1
+        elif char == "]":
+            depth -= 1
+            if depth < 0:
+                return False
+    return True
 
 
 @validate_call

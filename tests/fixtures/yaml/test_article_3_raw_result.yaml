@@ -36,6 +36,20 @@
     order: 0
     page:
       id: 12803
+- - string: 'float:: figure'
+    id: 21185
+    uid: PgM3SsKB4
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21186
+    - id: 21187
+    - id: 21188
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 21162
 - - heading: 3
     string: listing 1.2.2
     children:
@@ -278,7 +292,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 34
+    order: 37
     page:
       id: 4225
     refs:
@@ -369,7 +383,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 35
+    order: 38
     page:
       id: 4225
     refs:
@@ -474,6 +488,19 @@
     refs:
     - id: 5844
     - id: 11720
+- - string: ((J_Vt5_C6p))
+    id: 21184
+    uid: Ia_wypdvQ
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21187
+    - id: 21188
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11758
 - - string: '[[>]] [[!EXAMPLE]] This is the callout title
 
       This is line 1 of the callout body
@@ -609,6 +636,19 @@
     order: 14
     page:
       id: 4225
+- - string: '#c:FUCHSIA **FIGURE FLOAT of standalone IMAGE BLOCK ref ↓**'
+    children:
+    - id: 21187
+    id: 21188
+    uid: niK1id9xC
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 39
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: "```python\ndef greet(name: str) -> str:\n    return f\"Hello, {name}!\"\
       \n```"
     children:
@@ -920,7 +960,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 31
+    order: 34
     page:
       id: 4225
     refs:
@@ -1049,13 +1089,21 @@
       plus standalone refs to page / block / parent block / header and to every block-level
       target above, plus a block embed
 
+      - three `float` wrappers in the `Internal (in-page) links:` section – `float::
+      figure`, `float:: listing`, `float:: table` (each through its `guffin-meta::`
+      child) – whose one content child is a standalone `block reference` to the in-page
+      image, fenced code block, and native table, so each float displays a target
+      that lives elsewhere on the page; they render as the numbered Figure 1, Listing
+      1, and Table 1, and three inline kind-word aliases (`figure`, `listing`, `table`)
+      refer to them, completed with the number and linked
+
       - `External (out-of-page) links:` section: the same matrix against Test Article
       1 and Test Article 2, plus a Daily Notes Page ref, a page embed, a callout embed,
       and a standalone ref to a Test Article 1 PDF block tagged `guffin-meta:: pdf-render:
       "inline"` at the reference site (the site''s tag drives the PDF format''s inline
       placement)
 
-      - this INFO `Callout box`, which contains Roam `page references`'
+      - this INFO `Callout box`, which contains Roam `page references` '
     id: 11133
     uid: I1QOMCtdJ
     parents:
@@ -1136,7 +1184,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 23
+    order: 26
     page:
       id: 4225
     refs:
@@ -1460,7 +1508,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 29
+    order: 32
     page:
       id: 4225
     refs:
@@ -1588,7 +1636,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 30
+    order: 33
     page:
       id: 4225
     refs:
@@ -1685,7 +1733,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 33
+    order: 36
     page:
       id: 4225
     refs:
@@ -2012,6 +2060,19 @@
       id: 4225
     refs:
     - id: 5844
+- - string: ((yvlvNZwPC))
+    id: 21194
+    uid: 0adDKHWLd
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21197
+    - id: 21198
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11792
 - - string: r1.c2
     children:
     - id: 11231
@@ -2091,7 +2152,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 20
+    order: 23
     page:
       id: 4225
     refs:
@@ -2121,6 +2182,19 @@
       id: 4225
     refs:
     - id: 5844
+- - string: ((yECzsUNPC))
+    id: 21189
+    uid: cnovRH1M5
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21192
+    - id: 21193
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 11725
 - - string: ((2_nzS4DSZ))
     id: 20054
     uid: jR6oLEa8r
@@ -2178,7 +2252,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 18
+    order: 21
     page:
       id: 4225
     refs:
@@ -2451,6 +2525,18 @@
       id: 4225
     refs:
     - id: 5844
+- - string: '#c:FUCHSIA **inline TABLE FLOAT ref ⟶** see [table](((iuXlWiUAL)))'
+    id: 21201
+    uid: ltHJLOxly
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 20
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 21197
 - - string: '#c:FUCHSIA **standalone FENCED-CODE ref ↓**'
     children:
     - id: 11777
@@ -2568,7 +2654,20 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 19
+    order: 22
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+- - string: '#c:FUCHSIA **LISTING FLOAT of standalone FENCED-CODE ref ↓**'
+    children:
+    - id: 21192
+    id: 21193
+    uid: AG9rpyUY_
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 40
     page:
       id: 4225
     refs:
@@ -2637,11 +2736,55 @@
     - id: 19390
     - id: 20041
     - id: 20053
+    - id: 21188
+    - id: 21193
+    - id: 21198
+    - id: 21199
+    - id: 21200
+    - id: 21201
     id: 4226
     uid: LfaVt18Iw
     parents:
     - id: 4225
     order: 2
+    page:
+      id: 4225
+- - attrs:
+    - - source:
+        - uid
+        - VQjeoP4r_
+        value:
+        - uid
+        - VQjeoP4r_
+      - source:
+        - uid
+        - sunowLl2z
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - sunowLl2z
+        value:
+        - uid
+        - BxGxeeGk1
+    string: The page's fizz buzz code block, as a numbered listing through a block
+      reference.
+    children:
+    - id: 21189
+    - id: 21191
+    id: 21192
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21191
+    - id: 21192
+    uid: VQjeoP4r_
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21193
+    order: 0
     page:
       id: 4225
 - - string: section 3.1.1
@@ -2710,6 +2853,55 @@
     - id: 11790
     - id: 11792
     - id: 11799
+    order: 0
+    page:
+      id: 4225
+- - string: '#c:FUCHSIA **inline FIGURE FLOAT ref ⟶** see [figure](((NlwSKgjdJ)))'
+    id: 21199
+    uid: xvjVDltB4
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 18
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 21187
+- - attrs:
+    - - source:
+        - uid
+        - iuXlWiUAL
+        value:
+        - uid
+        - iuXlWiUAL
+      - source:
+        - uid
+        - J6r7N25in
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - J6r7N25in
+        value:
+        - uid
+        - BxGxeeGk1
+    string: The page's native table, as a numbered table through a block reference.
+    children:
+    - id: 21194
+    - id: 21196
+    id: 21197
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21196
+    - id: 21197
+    uid: iuXlWiUAL
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21198
     order: 0
     page:
       id: 4225
@@ -2906,7 +3098,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 26
+    order: 29
     page:
       id: 4225
     refs:
@@ -3067,7 +3259,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 28
+    order: 31
     page:
       id: 4225
     refs:
@@ -3086,6 +3278,57 @@
     order: 0
     page:
       id: 3327
+- - string: 'float:: table'
+    id: 21195
+    uid: MpeYJM60q
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21196
+    - id: 21197
+    - id: 21198
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 21162
+- - attrs:
+    - - source:
+        - uid
+        - sunowLl2z
+        value:
+        - uid
+        - sunowLl2z
+      - source:
+        - uid
+        - RMItL8hV3
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - RMItL8hV3
+        value: ' listing'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21190
+    id: 21191
+    lookup:
+    - id: 21162
+    - id: 21190
+    - id: 21191
+    uid: sunowLl2z
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21192
+    - id: 21193
+    order: 1
+    page:
+      id: 4225
+    refs:
+    - id: 321
+    - id: 11839
 - - string: '[[>]] [[!EPIGRAPH]]
 
       A language that doesn''t affect the way you think about programming is not worth
@@ -3138,6 +3381,56 @@
     refs:
     - id: 5844
     - id: 11739
+- - attrs:
+    - - source:
+        - uid
+        - WNkKPiZeu
+        value:
+        - uid
+        - WNkKPiZeu
+      - source:
+        - uid
+        - PgM3SsKB4
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - PgM3SsKB4
+        value: ' figure'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21185
+    id: 21186
+    lookup:
+    - id: 21162
+    - id: 21185
+    - id: 21186
+    uid: WNkKPiZeu
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21187
+    - id: 21188
+    order: 1
+    page:
+      id: 4225
+    refs:
+    - id: 321
+    - id: 11839
+- - string: '#c:FUCHSIA **TABLE FLOAT of standalone ROAM NATIVE TABLE ref ↓**'
+    children:
+    - id: 21197
+    id: 21198
+    uid: iDx5v0Su0
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 41
+    page:
+      id: 4225
+    refs:
+    - id: 5844
 - - string: r1.c1
     children:
     - id: 11797
@@ -3256,11 +3549,23 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 24
+    order: 27
     page:
       id: 4225
     refs:
     - id: 5844
+- - string: '#c:FUCHSIA **inline LISTING FLOAT ref ⟶** see [listing](((VQjeoP4r_)))'
+    id: 21200
+    uid: ukIa7RHql
+    parents:
+    - id: 4225
+    - id: 4226
+    order: 19
+    page:
+      id: 4225
+    refs:
+    - id: 5844
+    - id: 21192
 - - string: '#c:FUCHSIA **standalone PDF BLOCK ref↓**'
     children:
     - id: 15243
@@ -3269,7 +3574,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 22
+    order: 25
     page:
       id: 4225
     refs:
@@ -3336,6 +3641,43 @@
       id: 4225
     refs:
     - id: 11716
+- - attrs:
+    - - source:
+        - uid
+        - NlwSKgjdJ
+        value:
+        - uid
+        - NlwSKgjdJ
+      - source:
+        - uid
+        - WNkKPiZeu
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - WNkKPiZeu
+        value:
+        - uid
+        - BxGxeeGk1
+    string: The page's standalone image, as a numbered figure through a block reference.
+    children:
+    - id: 21184
+    - id: 21186
+    id: 21187
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21186
+    - id: 21187
+    uid: NlwSKgjdJ
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21188
+    order: 0
+    page:
+      id: 4225
 - - string: ((F9TXbzC0K))
     id: 13487
     uid: MYwGv0l_h
@@ -3348,6 +3690,20 @@
       id: 4225
     refs:
     - id: 13465
+- - string: 'float:: listing'
+    id: 21190
+    uid: RMItL8hV3
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21191
+    - id: 21192
+    - id: 21193
+    order: 0
+    page:
+      id: 4225
+    refs:
+    - id: 21162
 - - string: '#c:FUCHSIA **inline BOXED ORANGE ref ⟶**  ((zAIxMFBIB))'
     id: 11746
     uid: 2IaJFXDZT
@@ -3708,6 +4064,43 @@
       id: 4225
     refs:
     - id: 4226
+- - attrs:
+    - - source:
+        - uid
+        - J6r7N25in
+        value:
+        - uid
+        - J6r7N25in
+      - source:
+        - uid
+        - MpeYJM60q
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - MpeYJM60q
+        value: ' table'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21195
+    id: 21196
+    lookup:
+    - id: 21162
+    - id: 21195
+    - id: 21196
+    uid: J6r7N25in
+    parents:
+    - id: 4225
+    - id: 4226
+    - id: 21197
+    - id: 21198
+    order: 1
+    page:
+      id: 4225
+    refs:
+    - id: 321
+    - id: 11839
 - - string: this code block has a `code-source::` tag (through its `guffin-meta::`
       child) and no caption
     id: 21147
@@ -3845,7 +4238,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 32
+    order: 35
     page:
       id: 4225
     refs:
@@ -3859,7 +4252,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 27
+    order: 30
     page:
       id: 4225
     refs:
@@ -3884,7 +4277,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 25
+    order: 28
     page:
       id: 4225
     refs:
@@ -3929,7 +4322,7 @@
     parents:
     - id: 4225
     - id: 4226
-    order: 21
+    order: 24
     page:
       id: 4225
     refs:
