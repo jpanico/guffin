@@ -338,6 +338,29 @@
   block(sticky: together <= size.height, lead)
 }
 
+// Fit an image figure, caption and all, within the text block.  A figure cannot break across
+// pages, so one taller than the text block overflows its page, its caption running into the
+// footer.  The images in such a figure are scaled down by the overflow, their width following, so
+// the figure fits; the caption keeps its size.  The figure itself is returned, so its label, and
+// every reference and list entry pointing at it, stay with it.  Each image is measured at its
+// natural size (a measure with no height bound, the width cap applied) and laid out in a box of
+// exactly that size before it is scaled: scaled bare, an image of auto size would fit itself to
+// the region the scale enlarges for it and come out no smaller.
+#show figure.where(kind: image): it => context {
+  let size = text-block-size()
+  let overflow = measure(block(width: size.width, it)).height - size.height
+  if overflow <= 0pt {
+    return it
+  }
+  let body = measure(block(width: size.width, it.body)).height
+  let factor = calc.max(0.0, (body - overflow) / body) * 100%
+  show image: inner => {
+    let natural = measure(inner, width: size.width)
+    scale(x: factor, y: factor, reflow: true, box(width: natural.width, height: natural.height, inner))
+  }
+  it
+}
+
 // listings
 #show figure.where(kind: raw): set figure.caption(position: bottom)
 #show figure.where(kind: raw): set figure(supplement: cfg.listing-prefix)

@@ -179,6 +179,17 @@ set width with its container's (`layout`) and scales a wider image down to the c
 Typst fits itself), is left as it is. The set width is read off the element rather than measured,
 because `measure` reports the width already clipped to the container.
 
+#### Image figures fitted to the text block (`default_styles.typ`)
+
+A figure cannot break across pages, so an image figure taller than the text block overflows its
+page, its caption running into the footer. A `#show figure.where(kind: image)` rule measures the
+figure, caption included, against the text block (`text-block-size()`, the page less its margins)
+and, when it overflows, scales its images down by the overflow — their width following, the caption
+keeping its size — returning the figure itself so its label, references, and list entries stay with
+it. Each image is measured at its natural size and laid out in a box of exactly that size before it
+is scaled, since an image of auto size scaled bare would fit itself to the region the scale enlarges
+for it and come out no smaller.
+
 #### Full-bleed cover page (`bergfink.typst`)
 
 A new `cover-image` Pandoc variable (a local image path, passed by `pdf_rendering.py` from the

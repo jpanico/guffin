@@ -17,6 +17,7 @@ import pypdfium2 as pdfium  # type: ignore[import-untyped]
 import pypdfium2.raw as pdfium_raw  # type: ignore[import-untyped]
 import pytest
 from conftest import FIXTURES_IMAGES_DIR, FIXTURES_PDF_DIR, article3_node_tree, asset_storage
+from PIL import Image
 from pypdf import PdfReader
 
 from guffin.common.geometry import ImageSize
@@ -1302,3 +1303,82 @@ class TestKeepWithNextPdf:
         pdf: Final[pdfium.PdfDocument] = self._render(tmp_path, 5, ImageSize(width=400, height=853))
         assert self._text_page(pdf, "FILLER") == self._text_page(pdf, "LEADIN") == 0
         assert self._image_page(pdf) == 1
+
+
+@pytest.mark.pandoc
+class TestTallImageFigurePdf:
+    """An image figure taller than the text block is scaled down so its caption stays on the page.
+
+    A figure cannot break across pages, so a page-tall image pushed its caption into the footer
+    (seen 2026-10-18 on the SCFH draft-2 Figure 2.1).  The template's text block ends at the
+    bottom margin, 3.5cm (99.21pt) above the page's foot (base_cfg.typ).
+    """
+
+    _BOTTOM_MARGIN: Final[float] = 99.21
+    _WRAPPER: Final[str] = "wraptall1"
+    _IMAGE: Final[str] = "imgtall01"
+
+    @classmethod
+    def _render(cls, out_dir: Path, png: Path, image_size: ImageSize) -> pdfium.PdfDocument:
+        """An article holding one figure float of *png*, captioned with two lines ending ENDCAPTION."""
+        float_tag: Final[AttributeAssignment] = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="float", domain=AttributeDomain.GUFFIN),
+                link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz"),
+            ),
+            values=(LiteralValue(value="figure"),),
+        )
+        caption: Final[str] = "A caption long enough to wrap onto a second line beneath the picture. " * 2
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=[cls._WRAPPER]),
+                TextVertex(
+                    uid=cls._WRAPPER,
+                    text=caption + "ENDCAPTION",
+                    children=[cls._IMAGE],
+                    attribute_assignments=[float_tag],
+                ),
+                ImageVertex(
+                    uid=cls._IMAGE,
+                    storage=asset_storage(f"https://firebasestorage.googleapis.com/v0/b/t/o/{cls._IMAGE}.png"),
+                    media_type=MediaType.PNG,
+                    scaled_image_size=image_size,
+                ),
+            ]
+        )
+        refs: Final[dict[str, AssetRef]] = {cls._IMAGE: AssetRef(uid=cls._IMAGE, path=png, size=ImageSize())}
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(
+                "guffin.render.pdf_rendering.fetch_and_enrich_assets", lambda content, *_args: (content, refs)
+            )
+            render(
+                RenderBundle(content=tree),
+                profile=ArticleProfile(),
+                filename_stem="doc",
+                api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+                options=PdfRenderOptions(output_dir=out_dir),
+            )
+        return pdfium.PdfDocument(out_dir / "doc.pdf")
+
+    @classmethod
+    def _assert_caption_on_the_image_page_above_the_margin(cls, pdf: pdfium.PdfDocument) -> None:
+        image_page: Final[int] = next(
+            index for index, page in enumerate(pdf) if list(page.get_objects(filter=[pdfium_raw.FPDF_PAGEOBJ_IMAGE]))
+        )
+        textpage = pdf[image_page].get_textpage()
+        end: Final[int] = textpage.get_text_range().find("ENDCAPTION")
+        assert end >= 0
+        _, bottom, _, _ = textpage.get_charbox(end + len("ENDCAPTION") - 1)
+        assert bottom >= cls._BOTTOM_MARGIN - 4
+
+    def test_auto_sized_tall_image_shrinks(self, tmp_path: Path) -> None:
+        """An image of no set size, taller than the text block at the column's width."""
+        png: Final[Path] = tmp_path / "tall.png"
+        Image.new("RGB", (400, 700), "gray").save(png)
+        self._assert_caption_on_the_image_page_above_the_margin(self._render(tmp_path, png, ImageSize()))
+
+    def test_sized_tall_image_shrinks(self, tmp_path: Path) -> None:
+        """An image whose source sets both its width and its height, taller than the text block."""
+        png: Final[Path] = FIXTURES_IMAGES_DIR / "test_article_2.png"
+        pdf: Final[pdfium.PdfDocument] = self._render(tmp_path, png, ImageSize(width=600, height=1000))
+        self._assert_caption_on_the_image_page_above_the_margin(pdf)
