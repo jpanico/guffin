@@ -838,9 +838,16 @@ class TestTypstPageBreakFilter:
 
 @pytest.mark.pandoc
 class TestTypstKeepWithNextFilter:
-    """typst_keep_with_next.lua keeps a lead-in paragraph on the page of the image or table it introduces."""
+    """typst_keep_with_next.lua keeps a lead-in paragraph on the page of the image or table it introduces.
+
+    A lead-in ahead of a table or other breakable block is a sticky block.  A lead-in ahead of an
+    image goes to the template's keep-with-next helper instead, carrying an unlabelled copy of the
+    image to measure, so the lead-in is sticky only when the two fit on a page together.
+    """
 
     _STICKY_OPEN = "#block(sticky: true)["
+    _KEEP_OPEN = "#keep-with-next(next: ["
+    _LEAD_OPEN = "])["
 
     @staticmethod
     def _typst_for(*blocks: pf.Block) -> str:
@@ -860,54 +867,79 @@ class TestTypstKeepWithNextFilter:
         cell = pf.TableCell(pf.Plain(pf.Str("x")))
         return pf.Table(pf.TableBody(pf.TableRow(cell)), head=pf.TableHead(), foot=pf.TableFoot())
 
-    def test_lead_in_before_image_is_wrapped_in_sticky_block(self) -> None:
-        """The paragraph ahead of an image paragraph is wrapped; the image follows the wrapper."""
-        lead_in = pf.Para(pf.Str("See"), pf.Space(), pf.Str("the"), pf.Space(), pf.Str("face:"))
-        typst = self._typst_for(lead_in, self._image_para())
-        assert typst.count(self._STICKY_OPEN) == 1
+    def _assert_kept_with_image(self, typst: str, lead: str) -> None:
+        """One helper call: the image's measured copy, then the lead-in, then the image itself."""
+        assert typst.count(self._KEEP_OPEN) == 1
+        assert self._STICKY_OPEN not in typst
+        assert typst.count("faces.png") == 2
         assert (
-            typst.index(self._STICKY_OPEN) < typst.index("See the face:") < typst.index("]") < typst.index("faces.png")
+            typst.index(self._KEEP_OPEN)
+            < typst.index("faces.png")
+            < typst.index(self._LEAD_OPEN)
+            < typst.index(lead)
+            < typst.rindex("faces.png")
         )
 
+    def test_lead_in_before_image_goes_to_keep_with_next(self) -> None:
+        """The paragraph ahead of an image paragraph is handed to the helper; the image follows."""
+        lead_in = pf.Para(pf.Str("See"), pf.Space(), pf.Str("the"), pf.Space(), pf.Str("face:"))
+        self._assert_kept_with_image(self._typst_for(lead_in, self._image_para()), "See the face:")
+
     def test_lead_in_before_table_is_wrapped_in_sticky_block(self) -> None:
-        """A table counts as a figure-like block too."""
+        """A table breaks across pages, so its lead-in is simply sticky."""
         typst = self._typst_for(pf.Para(pf.Str("Compare:")), self._table())
         assert typst.count(self._STICKY_OPEN) == 1
+        assert self._KEEP_OPEN not in typst
         assert typst.index(self._STICKY_OPEN) < typst.index("Compare:") < typst.index("#table(")
 
-    def test_lead_in_inside_list_item_is_wrapped(self) -> None:
-        """A list item's leading text ahead of its image is wrapped inside the item."""
-        typst = self._typst_for(pf.BulletList(pf.ListItem(pf.Plain(pf.Str("APL")), self._image_para())))
+    def test_lead_in_before_image_figure_goes_to_keep_with_next(self) -> None:
+        """A figure holding an image cannot break either; its measured copy carries no label."""
+        figure = pf.Figure(
+            pf.Plain(pf.Image(url="faces.png", title="")),
+            caption=pf.Caption(pf.Plain(pf.Str("Faces."))),
+            identifier="float-abc123xyz",
+        )
+        typst = self._typst_for(pf.Para(pf.Str("Look:")), figure)
+        self._assert_kept_with_image(typst, "Look:")
+        assert typst.count("<float-abc123xyz>") == 1
+        assert typst.index(self._LEAD_OPEN) < typst.index("<float-abc123xyz>")
+
+    def test_lead_in_before_listing_figure_is_wrapped_in_sticky_block(self) -> None:
+        """A listing float breaks across pages, so its lead-in is simply sticky."""
+        figure = pf.Figure(pf.CodeBlock("x = 1"), caption=pf.Caption(pf.Plain(pf.Str("Code."))))
+        typst = self._typst_for(pf.Para(pf.Str("Run:")), figure)
         assert typst.count(self._STICKY_OPEN) == 1
-        assert typst.index("- ") < typst.index(self._STICKY_OPEN) < typst.index("APL") < typst.index("faces.png")
+        assert self._KEEP_OPEN not in typst
+
+    def test_lead_in_inside_list_item_goes_to_keep_with_next(self) -> None:
+        """A list item's leading text ahead of its image is handed to the helper inside the item."""
+        typst = self._typst_for(pf.BulletList(pf.ListItem(pf.Plain(pf.Str("APL")), self._image_para())))
+        self._assert_kept_with_image(typst, "APL")
+        assert typst.index("- ") < typst.index(self._KEEP_OPEN)
 
     def test_text_followed_by_text_is_untouched(self) -> None:
         """Two text paragraphs in a row gain no wrapper."""
         typst = self._typst_for(pf.Para(pf.Str("One.")), pf.Para(pf.Str("Two.")))
         assert self._STICKY_OPEN not in typst
+        assert self._KEEP_OPEN not in typst
 
     def test_image_followed_by_image_is_untouched(self) -> None:
         """An image is never a lead-in, so a run of images is left free to break."""
         typst = self._typst_for(self._image_para(), self._image_para())
         assert self._STICKY_OPEN not in typst
+        assert self._KEEP_OPEN not in typst
 
-    def test_trailing_lead_in_item_of_a_list_is_split_off_and_wrapped(self) -> None:
-        """A list ending in a text-only item ahead of an image: that item alone goes in the sticky block."""
+    def test_trailing_lead_in_item_of_a_list_is_split_off_and_kept(self) -> None:
+        """A list ending in a text-only item ahead of an image: that item alone goes to the helper."""
         items = [pf.ListItem(pf.Plain(pf.Str("Hieroglyphs"))), pf.ListItem(pf.Plain(pf.Str("APL")))]
         typst = self._typst_for(pf.BulletList(*items), self._image_para())
-        assert typst.count(self._STICKY_OPEN) == 1
-        assert (
-            typst.index("- Hieroglyphs")
-            < typst.index(self._STICKY_OPEN)
-            < typst.index("- APL")
-            < typst.index("faces.png")
-        )
+        self._assert_kept_with_image(typst, "- APL")
+        assert typst.index("- Hieroglyphs") < typst.index(self._KEEP_OPEN)
 
-    def test_single_item_list_before_image_is_wrapped_whole(self) -> None:
-        """A one-item list ahead of an image is wrapped as it is."""
+    def test_single_item_list_before_image_is_kept_whole(self) -> None:
+        """A one-item list ahead of an image is handed to the helper as it is."""
         typst = self._typst_for(pf.BulletList(pf.ListItem(pf.Plain(pf.Str("APL")))), self._image_para())
-        assert typst.count(self._STICKY_OPEN) == 1
-        assert typst.index(self._STICKY_OPEN) < typst.index("- APL") < typst.index("faces.png")
+        self._assert_kept_with_image(typst, "- APL")
 
     def test_split_off_ordered_item_keeps_its_number(self) -> None:
         """An ordered list's split-off last item continues the numbering."""
@@ -917,21 +949,21 @@ class TestTypstKeepWithNextFilter:
             pf.ListItem(pf.Plain(pf.Str("three"))),
         ]
         typst = self._typst_for(pf.OrderedList(*items, start=4), self._image_para())
-        assert typst.count(self._STICKY_OPEN) == 1
-        assert "start: 6" in typst
-        assert typst.index("+ two") < typst.index(self._STICKY_OPEN) < typst.index("start: 6") < typst.index("+ three")
+        self._assert_kept_with_image(typst, "+ three")
+        assert typst.index("+ two") < typst.index(self._KEEP_OPEN) < typst.index("start: 6") < typst.index("+ three")
 
     def test_list_whose_last_item_has_nested_content_is_untouched(self) -> None:
         """A last item carrying more than its text (a sublist) is not a lead-in to what follows the list."""
         last = pf.ListItem(pf.Plain(pf.Str("APL")), pf.BulletList(pf.ListItem(pf.Plain(pf.Str("sub")))))
         typst = self._typst_for(pf.BulletList(last), self._image_para())
         assert self._STICKY_OPEN not in typst
+        assert self._KEEP_OPEN not in typst
 
-    def test_only_the_paragraph_adjacent_to_the_image_is_wrapped(self) -> None:
-        """Of two paragraphs ahead of an image, only the one touching it is wrapped."""
+    def test_only_the_paragraph_adjacent_to_the_image_is_kept(self) -> None:
+        """Of two paragraphs ahead of an image, only the one touching it is handed to the helper."""
         typst = self._typst_for(pf.Para(pf.Str("First.")), pf.Para(pf.Str("Second.")), self._image_para())
-        assert typst.count(self._STICKY_OPEN) == 1
-        assert typst.index("First.") < typst.index(self._STICKY_OPEN) < typst.index("Second.")
+        self._assert_kept_with_image(typst, "Second.")
+        assert typst.index("First.") < typst.index(self._KEEP_OPEN)
 
 
 @pytest.mark.pandoc
@@ -1200,3 +1232,73 @@ class TestImageWidthCappedPdf:
             right - left for left, _, right, _ in self._bounds(pdf, pdfium_raw.FPDF_PAGEOBJ_IMAGE)
         ]
         assert min(widths) == pytest.approx(75, abs=0.5)
+
+
+@pytest.mark.pandoc
+class TestKeepWithNextPdf:
+    """A lead-in moves to the next page with its image only when the two fit on a page together.
+
+    A sticky lead-in ahead of an image too tall to share a page with it was moved to a page of its
+    own, leaving the page it was on short (seen 2026-10-18 under a chapter's epigraph in the SCFH
+    draft-2).
+    """
+
+    _IMAGE: Final[str] = "imgkeep01"
+
+    @classmethod
+    def _render(cls, out_dir: Path, filler_sentences: int, image_size: ImageSize) -> pdfium.PdfDocument:
+        """An article: a filler paragraph, a lead-in paragraph, then an image of the given size."""
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["fill00001", "lead00001", cls._IMAGE]),
+                TextVertex(
+                    uid="fill00001", text="FILLER " + "A sentence of filler text to take up room. " * filler_sentences
+                ),
+                TextVertex(uid="lead00001", text="LEADIN introduces the picture below:"),
+                ImageVertex(
+                    uid=cls._IMAGE,
+                    storage=asset_storage(f"https://firebasestorage.googleapis.com/v0/b/t/o/{cls._IMAGE}.png"),
+                    media_type=MediaType.PNG,
+                    scaled_image_size=image_size,
+                ),
+            ]
+        )
+        refs: Final[dict[str, AssetRef]] = {
+            cls._IMAGE: AssetRef(
+                uid=cls._IMAGE, path=FIXTURES_IMAGES_DIR / "test_article_2.png", size=ImageSize(width=940, height=1154)
+            )
+        }
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(
+                "guffin.render.pdf_rendering.fetch_and_enrich_assets", lambda content, *_args: (content, refs)
+            )
+            render(
+                RenderBundle(content=tree),
+                profile=ArticleProfile(),
+                filename_stem="doc",
+                api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+                options=PdfRenderOptions(output_dir=out_dir),
+            )
+        return pdfium.PdfDocument(out_dir / "doc.pdf")
+
+    @staticmethod
+    def _text_page(pdf: pdfium.PdfDocument, text: str) -> int:
+        return next(index for index, page in enumerate(pdf) if text in page.get_textpage().get_text_range())
+
+    @staticmethod
+    def _image_page(pdf: pdfium.PdfDocument) -> int:
+        return next(
+            index for index, page in enumerate(pdf) if list(page.get_objects(filter=[pdfium_raw.FPDF_PAGEOBJ_IMAGE]))
+        )
+
+    def test_lead_in_moves_with_an_image_it_fits_beside(self, tmp_path: Path) -> None:
+        """A 400pt image under half a page of filler: the lead-in follows the image to the next page."""
+        pdf: Final[pdfium.PdfDocument] = self._render(tmp_path, 40, ImageSize(width=400, height=533))
+        assert self._text_page(pdf, "FILLER") == 0
+        assert self._text_page(pdf, "LEADIN") == self._image_page(pdf) == 1
+
+    def test_lead_in_stays_put_ahead_of_an_image_too_tall_to_share_a_page(self, tmp_path: Path) -> None:
+        """A 640pt image, nearly the whole text block: the lead-in stays under the filler."""
+        pdf: Final[pdfium.PdfDocument] = self._render(tmp_path, 5, ImageSize(width=400, height=853))
+        assert self._text_page(pdf, "FILLER") == self._text_page(pdf, "LEADIN") == 0
+        assert self._image_page(pdf) == 1

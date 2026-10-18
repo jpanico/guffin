@@ -9,6 +9,13 @@
 -- (the template makes tables breakable, images are not).  Headings need no such treatment:
 -- Typst's heading block is sticky by default.
 --
+-- An image cannot break, so a lead-in kept with one must share a page with the whole image.  When
+-- the two are taller than the text block no page can hold both, and a sticky lead-in would only
+-- be moved to a page of its own ahead of the image, leaving the page it was on short (a chapter's
+-- opening page cut off under its epigraph).  So the lead-in of an image paragraph, or of a figure
+-- holding an image, goes to the template's keep-with-next helper instead, with an unlabelled copy
+-- of the image to measure: the helper makes the lead-in sticky only when the pair fits on a page.
+--
 -- Two shapes of lead-in are recognized, in every block list the document holds (the body,
 -- each list item, each cell) through the Blocks handler:
 --
@@ -68,9 +75,58 @@ local function list_like(list, items, start)
   return pandoc.BulletList(items)
 end
 
-local function sticky(block)
+-- Does the block show an image that cannot break across pages: an image paragraph, or a figure
+-- holding an image?
+local function is_unbreakable_image(block)
+  if is_image_paragraph(block) then
+    return true
+  end
+  if block.t ~= "Figure" then
+    return false
+  end
+  local found = false
+  block:walk({
+    Image = function(image)
+      found = true
+      return image
+    end,
+  })
+  return found
+end
+
+local function without_identifier(element)
+  element.identifier = ""
+  return element
+end
+
+-- A copy of the block with every identifier removed, so measuring it labels nothing twice.
+local function unlabelled(block)
+  local copy = block:clone():walk({
+    Div = without_identifier,
+    Span = without_identifier,
+    Header = without_identifier,
+    Image = without_identifier,
+    Link = without_identifier,
+    Table = without_identifier,
+    CodeBlock = without_identifier,
+    Figure = without_identifier,
+  })
+  if copy.identifier ~= nil then
+    copy.identifier = ""
+  end
+  return copy
+end
+
+-- The lead-in kept with the block that follows it: through the template's keep-with-next helper
+-- when that block is an image, else as a sticky block.
+local function sticky(block, following)
+  local open = "#block(sticky: true)["
+  if is_unbreakable_image(following) then
+    local copy = pandoc.write(pandoc.Pandoc({ unlabelled(following) }), "typst"):gsub("%s+$", "")
+    open = "#keep-with-next(next: [\n" .. copy .. "\n])["
+  end
   return {
-    pandoc.RawBlock("typst", "#block(sticky: true)["),
+    pandoc.RawBlock("typst", open),
     block,
     pandoc.RawBlock("typst", "]"),
   }
@@ -82,7 +138,7 @@ function Blocks(blocks)
   for i, block in ipairs(blocks) do
     local following = blocks[i + 1]
     if following ~= nil and is_figure_like(following) and is_lead_in(block) then
-      out:extend(sticky(block))
+      out:extend(sticky(block, following))
       changed = true
     elseif following ~= nil and is_figure_like(following) and is_list(block) and ends_in_lead_in(block) then
       local items = block.content
@@ -95,7 +151,7 @@ function Blocks(blocks)
         end
         out:insert(list_like(block, leading, start))
       end
-      out:extend(sticky(list_like(block, { items[count] }, start + count - 1)))
+      out:extend(sticky(list_like(block, { items[count] }, start + count - 1), following))
       changed = true
     else
       out:insert(block)

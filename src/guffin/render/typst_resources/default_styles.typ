@@ -300,6 +300,44 @@
   })
 }
 
+// The size of the text block on the current page: the page less its margins.  Call it in context.
+#let text-block-size() = {
+  let margin = page.margin
+  let side(value, extent) = {
+    let length = value + 0%
+    length.ratio * extent + length.length.to-absolute()
+  }
+  let sides = if margin == auto {
+    let default = 2.5 / 21 * calc.min(page.width, page.height)
+    (top: default, bottom: default, left: default, right: default)
+  } else if type(margin) == dictionary {
+    (
+      top: side(margin.at("top", default: 0pt), page.height),
+      bottom: side(margin.at("bottom", default: 0pt), page.height),
+      left: side(margin.at("left", default: margin.at("inside", default: 0pt)), page.width),
+      right: side(margin.at("right", default: margin.at("outside", default: 0pt)), page.width),
+    )
+  } else {
+    let vertical = side(margin, page.height)
+    let horizontal = side(margin, page.width)
+    (top: vertical, bottom: vertical, left: horizontal, right: horizontal)
+  }
+  (width: page.width - sides.left - sides.right, height: page.height - sides.top - sides.bottom)
+}
+
+// Keep a lead-in on the page of the image it introduces, when the two fit on a page together.
+// The lead-in is set as a sticky block, so Typst never breaks the page between it and the image,
+// unless the pair is taller than the text block: then no page could hold both, and a sticky
+// lead-in would only be moved to a page of its own ahead of the image, leaving the page it was on
+// short.  It is set as an ordinary block instead, staying where it falls.  `next` is a copy of the
+// block that follows, measured and never placed.  (The context, unlike a layout call, leaves the
+// sticky block in the flow, where its stickiness takes effect.)
+#let keep-with-next(next: none, lead) = context {
+  let size = text-block-size()
+  let together = measure(block(width: size.width, lead + parbreak() + next)).height
+  block(sticky: together <= size.height, lead)
+}
+
 // listings
 #show figure.where(kind: raw): set figure.caption(position: bottom)
 #show figure.where(kind: raw): set figure(supplement: cfg.listing-prefix)
