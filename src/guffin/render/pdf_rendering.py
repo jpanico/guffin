@@ -75,7 +75,7 @@ from guffin.render.asset_fetch import AssetRef, cover_image_path, fetch_and_enri
 from guffin.render.callout_theme import typst_callout_tokens
 from guffin.render.design_language import typst_table_tokens
 from guffin.render.epigraph_page import BOOK_EPIGRAPH_META_KEY, lift_leading_epigraphs
-from guffin.render.floats_rendering import PreparedFloats, prepare_floats
+from guffin.render.floats_rendering import PreparedFloats, insert_float_lists, prepare_floats
 from guffin.render.heading_numbering import number_parts_book_headings
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, detached_copy, pandoc_to_json
@@ -757,6 +757,9 @@ def render(
                 float_numbers=floats.numbers,
             ),
         )
+        # The lists of figures and tables copy the labelled, resolved captions into their authored
+        # headings; here each list is a Typst outline with page numbers.
+        insert_float_lists(doc, enriched_tree, floats.numbers, OutputFormat.PDF)
         _style_heading_links(doc)
         _apply_pdf_embeds(doc, pdf_paths, profile.project_type, default_override=options.default_pdf_render)
         # A book sets a leading epigraph on a page of its own ahead of the contents (Chicago 1.36),

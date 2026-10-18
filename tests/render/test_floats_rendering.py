@@ -27,7 +27,13 @@ from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, VertexView
 from guffin.render.date_format import DateFormat
-from guffin.render.floats_rendering import float_chapter_level, label_floats, prepare_floats
+from guffin.render.floats_rendering import (
+    FLOAT_LIST_CLASS,
+    float_chapter_level,
+    insert_float_lists,
+    label_floats,
+    prepare_floats,
+)
 from guffin.render.md_rendering import _unclass_float_links
 from guffin.render.pandoc_ast import pandoc_to_json
 from guffin.render.pandoc_rendering import (
@@ -39,6 +45,7 @@ from guffin.render.pandoc_rendering import (
     vertex_tree_to_pandoc,
 )
 from guffin.render.project import ArticleProfile, BookProfile, ManuscriptProfile
+from guffin.render.render_options import OutputFormat
 
 _LINK: Final[VertexLink] = VertexLink(kind=VertexLinkKind.REFERENCE, uid="attrpage1")
 _IMAGE_URL: Final[str] = "https://firebasestorage.googleapis.com/v0/b/t/o/imgs%2Fdiagram.png?alt=media&token=d1"
@@ -326,3 +333,113 @@ class TestWriters:
         pipe = gfm.index("| a")
         assert anchor < caption < pipe
         assert "{#" not in gfm
+
+
+def _tagged_heading(uid: str, text: str, element_type: str, children: list[str]) -> HeadingVertex:
+    """A level-1 heading tagged ``element-type:: <element_type>``."""
+    return HeadingVertex(
+        uid=uid,
+        text=text,
+        heading_level=1,
+        children=children,
+        attribute_assignments=[
+            AttributeAssignment(
+                attribute=AttributeInstance(
+                    definition=Attribute(name="element-type", domain=AttributeDomain.GUFFIN), link=_LINK
+                ),
+                values=(LiteralValue(value=element_type),),
+            )
+        ],
+    )
+
+
+def _listed_doc(output_format: OutputFormat) -> pf.Doc:
+    """A book with a list of illustrations (with an intro line), a list of tables, and one figure chapter.
+
+    Built, labelled, and run through :func:`insert_float_lists`; the book has no table float, so
+    its list of tables has nothing to list.
+    """
+    page = PageVertex(uid="page00001", title="Doc", children=["loih00001", "loth00001", "chap00001"])
+    tree = VertexTree(
+        tree_vertices=[
+            page,
+            _tagged_heading("loih00001", "Illustrations", "list-of-illustrations", ["intro0001"]),
+            TextVertex(uid="intro0001", text="Maps drawn for this edition."),
+            _tagged_heading("loth00001", "Tables", "list-of-tables", ["tabint001"]),
+            TextVertex(uid="tabint001", text="An intro to an empty list."),
+            HeadingVertex(uid="chap00001", text="One", heading_level=1, children=["wrap00001"]),
+            _wrapper("wrap00001", "figure", "A diagram of the machine", "imag00001"),
+            _image("imag00001"),
+        ]
+    )
+    doc, _ = vertex_tree_to_pandoc(tree, _assets(), {})
+    prepared = prepare_floats(doc, tree, BookProfile().structural_policy)
+    insert_float_lists(doc, tree, prepared.numbers, output_format)
+    return doc
+
+
+def _blocks_after(doc: pf.Doc, header_text: str) -> list[pf.Block]:
+    """The blocks of the section under the top-level Header reading *header_text*."""
+    blocks: list[pf.Block] = list(doc.content)
+    start = next(
+        index
+        for index, block in enumerate(blocks)
+        if isinstance(block, pf.Header) and pf.stringify(block) == header_text
+    )
+    end = next((index for index in range(start + 1, len(blocks)) if isinstance(blocks[index], pf.Header)), len(blocks))
+    return blocks[start + 1 : end]
+
+
+class TestInsertFloatLists:
+    """insert_float_lists generates each list into its authored heading, or drops a heading with nothing to list."""
+
+    def test_pdf_list_is_an_outline_of_the_float_labels(self) -> None:
+        """The PDF list is a Typst outline targeting exactly the listed floats' labels, after the intro."""
+        section = _blocks_after(_listed_doc(OutputFormat.PDF), "Illustrations")
+        assert pf.stringify(section[0]) == "Maps drawn for this edition."
+        outline = section[-1]
+        assert isinstance(outline, pf.RawBlock)
+        assert outline.format == "typst"
+        assert outline.text == f"#outline(title: none, target: selector(<{float_identifier('wrap00001')}>))"
+
+    def test_epub_list_is_a_classed_list_of_links(self) -> None:
+        """The EPUB list is a classed block holding one link per float, its labelled caption."""
+        section = _blocks_after(_listed_doc(OutputFormat.EPUB), "Illustrations")
+        block = section[-1]
+        assert isinstance(block, pf.Div)
+        assert block.classes == [FLOAT_LIST_CLASS]
+        links: list[pf.Link] = []
+        block.walk(lambda elem, _doc: links.append(elem) if isinstance(elem, pf.Link) else None)
+        assert [(link.url, pf.stringify(link)) for link in links] == [
+            (f"#{float_identifier('wrap00001')}", "Figure 1.1. A diagram of the machine")
+        ]
+
+    def test_markdown_list_is_a_bare_bullet_list(self) -> None:
+        """The Markdown list is a bullet list of links with no wrapping block (GFM would write it as HTML)."""
+        section = _blocks_after(_listed_doc(OutputFormat.MARKDOWN), "Illustrations")
+        assert isinstance(section[-1], pf.BulletList)
+
+    def test_heading_with_nothing_to_list_is_dropped_with_a_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """The list of tables has no table to list, so its heading and intro leave the document."""
+        with caplog.at_level("WARNING"):
+            doc = _listed_doc(OutputFormat.EPUB)
+        headers = [pf.stringify(block) for block in doc.content if isinstance(block, pf.Header)]
+        assert "Tables" not in headers
+        assert "An intro to an empty list." not in pf.stringify(doc)
+        assert "list-of-tables heading" in caplog.text
+
+    def test_each_list_lands_under_its_own_heading(self) -> None:
+        """Generating the first list does not shift where the second heading's section is found."""
+        doc = _listed_doc(OutputFormat.EPUB)
+        headers = [pf.stringify(block) for block in doc.content if isinstance(block, pf.Header)]
+        assert headers == ["Illustrations", "One"]
+        assert len(_blocks_after(doc, "One")) == 1
+
+    def test_no_list_heading_no_list(self) -> None:
+        """Without an authored list heading, nothing is generated."""
+        tree = _figure_tree(chapters=True)
+        doc, _ = vertex_tree_to_pandoc(tree, _assets(), {})
+        prepared = prepare_floats(doc, tree, BookProfile().structural_policy)
+        before = pandoc_to_json(doc)
+        insert_float_lists(doc, tree, prepared.numbers, OutputFormat.EPUB)
+        assert pandoc_to_json(doc) == before

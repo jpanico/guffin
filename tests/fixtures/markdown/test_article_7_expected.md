@@ -17,7 +17,13 @@
 
 ### Illustrations
 
+- [**Figure 1.** The brothers’ first voyage, A.D. 1260: from Constantinople across the Greater Sea to Soldaia.](#float-6PuUG4pVE)
+- [**Figure 2.** The second leg, A.D. 1261–1262: from Soldaia into the Tartar lands, to Sara and Bolgara, the residences of Barca Kaan.](#float-Wx3tPA-fI)
+- [**Figure 3.** The third leg, A.D. 1262–1265: across the great desert to Bocara, where the brothers met the envoys of the Levant.](#float-S5r_5tiRB)
+
 ### Tables
+
+- [**Table 1.** The currencies, weights, and measures Polo records, by region.](#float-sZSakvhFE)
 
 ### Acknowledgments
 

@@ -63,7 +63,7 @@ from guffin.model.publishing_semantics import (
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex_tree import VertexTree, drop_alternatives, drop_attribute_assignments, drop_code_sources
 from guffin.render.asset_fetch import AssetRef, fetch_and_enrich_assets
-from guffin.render.floats_rendering import PreparedFloats, prepare_floats
+from guffin.render.floats_rendering import PreparedFloats, insert_float_lists, prepare_floats
 from guffin.render.md_post_processing import indent_fenced_blank_lines, strip_list_separator_comments
 from guffin.render.notes_rendering import NOTES_GROUP_CLASS, prepare_notes
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
@@ -451,6 +451,7 @@ def render(
                 float_numbers=floats.numbers,
             ),
         )
+        insert_float_lists(doc, enriched_tree, floats.numbers, OutputFormat.MARKDOWN)
         _link_headings(doc)
         _unclass_float_links(doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM
@@ -529,6 +530,7 @@ def render(
                 float_numbers=no_bundle_floats.numbers,
             ),
         )
+        insert_float_lists(no_bundle_doc, content, no_bundle_floats.numbers, OutputFormat.MARKDOWN)
         _link_headings(no_bundle_doc)
         _unclass_float_links(no_bundle_doc)
         # This conversion places no PDF pages, so the placement scaffold must not reach the GFM

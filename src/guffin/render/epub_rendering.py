@@ -79,11 +79,12 @@ from guffin.render.epub_post_processing import (
     stamp_titlepage_provenance,
     stamp_titlepage_revision,
 )
-from guffin.render.floats_rendering import PreparedFloats, prepare_floats
+from guffin.render.floats_rendering import PreparedFloats, insert_float_lists, prepare_floats
 from guffin.render.heading_numbering import insert_heading_number_spans, number_parts_book_headings
 from guffin.render.notes_rendering import prepare_notes
 from guffin.render.pandoc_ast import InlineMap, pandoc_to_json
 from guffin.render.pandoc_rendering import (
+    FLOAT_ID_PREFIX,
     PDF_PLACEMENT_ATTRIBUTE,
     NoteLeadInRenderer,
     colophon_html,
@@ -179,6 +180,26 @@ def _page_images(source: Path, image_dir: Path) -> list[pf.Block]:
         pf.Para(pf.Image(pf.Str(f"page {number}"), url=str(image), title=f"page {number}", classes=[PDF_PAGE_CLASS]))
         for number, image in enumerate(rasterize_pages(source, image_dir), start=1)
     ]
+
+
+def _anchor_float_figures(doc: pf.Doc) -> None:
+    """Move each float Figure's identifier onto a Div wrapped around it, in place.
+
+    Pandoc's EPUB writer splits the book into content documents and rewrites a link to an
+    identifier in another document as ``chNNN.xhtml#id`` — but only for the identifiers it
+    registers, which include a Div's and a Table's and not a Figure's (Pandoc 3.8.3).  A link to a
+    figure or listing in another chapter, from a list of figures or a running-text reference,
+    would otherwise point at nothing.  The Div carries the identifier; the Figure keeps its classes.
+    """
+
+    def _anchor(elem: pf.Element, _doc: pf.Doc) -> pf.Element | None:
+        if not isinstance(elem, pf.Figure) or not elem.identifier.startswith(FLOAT_ID_PREFIX):
+            return None
+        identifier: Final[str] = elem.identifier
+        elem.identifier = ""
+        return pf.Div(elem, identifier=identifier)
+
+    doc.walk(_anchor)
 
 
 def _apply_pdf_appendix(
@@ -432,6 +453,9 @@ def render(
                 float_numbers=floats.numbers,
             ),
         )
+        # The lists of figures and tables copy the labelled, resolved captions into their authored
+        # headings, as linked entries.
+        insert_float_lists(doc, enriched_tree, floats.numbers, OutputFormat.EPUB)
         # Appendix-placed PDFs are rasterised into the asset directory and reproduced at the
         # back; every other placement is a reference.  Either way the scaffold must not reach the
         # XHTML output as a stray attribute.
@@ -455,6 +479,7 @@ def render(
         # title of its own; dc:title lives in the package metadata).
         if not emit_title_page and render_bundle.revision is not None and render_bundle.revision.revision is not None:
             doc.content.insert(0, revision_line(render_bundle.revision.revision))
+        _anchor_float_figures(doc)
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)
 

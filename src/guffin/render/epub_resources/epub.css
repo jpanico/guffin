@@ -241,6 +241,22 @@ table > caption {
 }
 
 /*
+ * A generated list of figures or tables (floats_rendering.insert_float_lists): one linked entry
+ * per float, its labelled caption, without bullets, each entry's later lines hanging under its
+ * first.
+ */
+div.float-list ul {
+  list-style: none;
+  margin: 0.5em 0;
+  padding-left: 0;
+}
+
+div.float-list li {
+  margin: 0 0 0.4em 1.5em;
+  text-indent: -1.5em;
+}
+
+/*
  * Callouts. guffin emits <div class="callout callout-TYPE"> with an inner
  * <div class="callout-title">, where TYPE is one of the twelve Roam callout keywords.
  * Mirroring the gentle-clues callout in the PDF output, the title is a tinted header

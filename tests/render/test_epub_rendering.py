@@ -481,6 +481,51 @@ class TestStructuralPolicyDirectives:
         assert not _nav_in_spine(multi_level_epubs["article"])
 
 
+class TestFloatLinksAcrossChapters:
+    """A link to a float in another chapter's content document resolves to that document."""
+
+    @pytest.fixture(scope="class")
+    def epub(self, tmp_path_factory: pytest.TempPathFactory) -> Path:
+        """A two-chapter book whose first chapter refers to a listing float in the second."""
+        float_tag: Final[AttributeAssignment] = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="float", domain=AttributeDomain.GUFFIN),
+                link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz"),
+            ),
+            values=(LiteralValue(value="listing"),),
+        )
+        bundle: Final[RenderBundle] = RenderBundle(
+            content=VertexTree(
+                tree_vertices=[
+                    PageVertex(uid="page00001", title="Book", children=["chap00001", "chap00002"]),
+                    HeadingVertex(uid="chap00001", text="One", heading_level=1, children=["refer0001"]),
+                    TextVertex(
+                        uid="refer0001",
+                        text=f"See [listing]({vertex_link_url('wrapl0001', VertexLinkKind.REFERENCE)}).",
+                    ),
+                    HeadingVertex(uid="chap00002", text="Two", heading_level=1, children=["wrapl0001"]),
+                    TextVertex(
+                        uid="wrapl0001",
+                        text="A short program.",
+                        children=["code00001"],
+                        attribute_assignments=[float_tag],
+                    ),
+                    CodeBlockVertex(uid="code00001", code="print(1)", language="python"),
+                ]
+            )
+        )
+        return _render_epub(tmp_path_factory.mktemp("float_links"), bundle, BookProfile(), "float_links")
+
+    def test_listing_reference_points_into_the_other_document(self, epub: Path) -> None:
+        """The figure-like float's identifier rides a Div, which the writer resolves across documents."""
+        with zipfile.ZipFile(epub) as zf:
+            xhtml: Final[str] = "\n".join(
+                zf.read(name).decode("utf-8") for name in sorted(zf.namelist()) if name.endswith(".xhtml")
+            )
+        assert regex.search(r'href="ch\d+\.xhtml#float-wrapl0001"', xhtml)
+        assert regex.search(r'<div id="float-wrapl0001">\s*<figure class="float float-listing"', xhtml)
+
+
 class TestTitlePage:
     """The EPUB title page follows the profile's ``emit_title_page`` (Pandoc ``--epub-title-page``)."""
 

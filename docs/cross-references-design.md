@@ -2,19 +2,14 @@
 
 The design for numbered figures, tables, and code listings, the captions that make them, the
 references to them from the running text ("see figure 2.3"), and the lists of them in the front
-matter. Status: **designed, every question decided on 2026-10-17 but the deferred corner of Q3;
-the vocabulary, model, validation, policy directive, and the rendering of floats and references
-in all three formats are built (steps 1–4 and 6 of the sketch), and Test Article 1 carries a
-figure float (Section 1.3: a `float:: figure` wrapper over an image block, numbered *Figure 1*
-in its PDF and mdbundle baselines), a listing float (Section 1.4, *Listing 1*) and a table
-float (Section 1.5, *Table 1*, its caption above the table), each its own series and each
-with a kind-word reference from the running text (rendered *figure 1*, *listing 1*, and
-*table 1*, linked); Test Article 3 carries the same three kinds with the content a standalone
-reference to a block elsewhere on the page; Test Article 7, a parts book, floats every image,
-table, and listing (numbered by chapter: Figure 1.1–3.1, Listing 4.1, Table 30.1) and carries
-authored `list-of-illustrations` and `list-of-tables` headings in its front matter; the
-generated lists (step 5) and the empty-list warning (rule 7) are not built, so those headings
-render empty.**
+matter. Status: **built in full on 2026-10-17/18 (the deferred corner of Q3 aside): the
+vocabulary, model, validation, policy directive, the rendering of floats and references in all
+three formats, the lists of figures and tables, and the empty-list warning (every step of the
+sketch). Test Article 1 carries a figure, a listing, and a table float, each over its content
+block and cited with a kind-word reference; Test Article 3 carries the same three kinds whose
+content is a standalone reference to a block elsewhere on the page; Test Article 7, a parts
+book, floats every image, table, and listing (Figure 1.1–3.1, Listing 4.1, Table 30.1) and
+fills its authored `list-of-illustrations` and `list-of-tables` headings.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest
@@ -386,8 +381,9 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
    wrapper as the linked label (Q6). The Typst template: `#show figure: set figure(numbering:
    none)`. EPUB CSS for `figure`/`figcaption`/`caption`. Markdown: the unwrapped form of Q8, with `<a id>` anchors as for
    headings.
-5. **Lists.** `render/floats_rendering.py`: `insert_float_lists()` after `insert_notes_section()`
-   in each renderer's prepare phase.
+5. **Lists** *(built 2026-10-18)*. `render/floats_rendering.py`: `insert_float_lists()`, run after link
+   resolution (so each caption is copied labelled and resolved, its links flattened) rather than
+   beside `insert_notes_section()`.
 6. **Validation** *(the six fatal rules built 2026-10-17)*. The seven rules of Q10: the per-vertex ones in `publishing_validation`, the
    two display-walk ones beside the note rules that need the walk, the list warning in the
    renderer.
@@ -397,6 +393,15 @@ rather than with the per-vertex tag checks; rule 7 is a renderer-time warning, n
 
 ## Decisions
 
+- **2026-10-18 — The lists, as built.** The PDF list is a Typst outline targeting the listed
+  floats' own labels (`selector(<float-a>).or(…)`), not `figure.where(kind: …)`: Pandoc writes
+  every table as a `kind: table` figure, captioned or not, so a kind outline would list the
+  uncaptioned non-float tables too. The EPUB and Markdown lists are links whose text is the
+  float's labelled caption. Building the EPUB list showed that Pandoc 3.8.3 resolves a link
+  across its split content documents for a Div's, Span's, or Table's identifier but not a
+  Figure's, so the EPUB renderer moves each float Figure's identifier onto a wrapping Div; this
+  also mends running-text references to a figure or listing in another chapter. An authored
+  list heading with nothing to list is removed with its section and a warning (rule 7).
 - **2026-10-18 — Every chapter counts toward a float's chapter number.** Test Article 7's table,
   in the book's thirtieth chapter, came out as Table 5.1: `model/floats.float_numbers` gave a
   chapter its ordinal only when a float was met in it, so it counted the chapters holding
