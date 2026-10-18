@@ -13,6 +13,7 @@
 > - a single JPEG `image` that **has** been resized through the Roam UI (illustration 2.1)
 > - a JPEG `image` whose child block renders as its caption, below the image (illustration 2.1)
 > - three Python `code block`s (Section 1.2): one with a caption – its child block – and no `code-source::` tag (listing 1.2.1), one with a `code-source::` tag – a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption (listing 1.2.2), and one with both, the caption set above the source attribution (listing 1.2.3)
+> - a `float:: figure` wrapper block (Section 1.3) whose text is the figure’s caption and whose one content child is a JPEG `image` block itself, not a reference to one; it renders as the numbered Figure 1
 > - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block reference` to a JPEG `image` block, so each cell displays its referenced image
 > - an embedded PDF document that has no special PublishingSemantics Attributes attached
 > - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
@@ -77,6 +78,16 @@ from pydantic import BaseModel, ConfigDict
 ```
 
 A caption authored as the listing’s child block, set above its source attribution.
+
+### Section 1.3
+
+- this block is a `float:: figure` wrapper (declared by its `guffin-meta::` child): its text is the figure’s caption, and its one content child is the image block itself, not a reference to one
+
+<a id="float-hJFB2787-"></a>
+
+[A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)
+
+***Figure 1.** The flower, as a numbered figure.*
 
 ## Section 2
 

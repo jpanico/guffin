@@ -1698,6 +1698,27 @@ WPG0VtvZe:
   title: null
   attrs: null
   blocks: null
+lcqh-E9u4:
+  uid: lcqh-E9u4
+  id: 21159
+  string: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+    child): its text is the figure''s caption, and its one content child is the image
+    block itself, not a reference to one'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21165
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 Yz0pqYfBh:
   uid: Yz0pqYfBh
   id: 11186
@@ -1756,6 +1777,28 @@ I4WiloC7_:
       - 5PcZxf4Bw
       value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
         dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
+  blocks: null
+5TSft8ic4:
+  uid: 5TSft8ic4
+  id: 21161
+  string: 'float:: figure'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21163
+  - id: 21164
+  - id: 21165
+  props: null
+  title: null
+  attrs: null
   blocks: null
 2_nzS4DSZ:
   uid: 2_nzS4DSZ
@@ -1829,6 +1872,7 @@ OexZiLR_O:
   - id: 3331
   - id: 4758
   - id: 21158
+  - id: 21165
   refs: null
   page:
     id: 3327
@@ -2686,6 +2730,45 @@ WjcMV3hOE:
   title: null
   attrs: null
   blocks: null
+CQvP3nmCc:
+  uid: CQvP3nmCc
+  id: 21163
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21161
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21164
+  - id: 21165
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - CQvP3nmCc
+      value:
+      - uid
+      - CQvP3nmCc
+    - source:
+      - uid
+      - 5TSft8ic4
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - 5TSft8ic4
+      value: ' figure'
+  blocks: null
 3PQaRTVhd:
   uid: 3PQaRTVhd
   id: 21143
@@ -2947,6 +3030,21 @@ ot5dpySxp:
   title: null
   attrs: null
   blocks: null
+-mwo6HoFt:
+  uid: -mwo6HoFt
+  id: 21162
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: float
+  attrs: null
+  blocks: null
 HftouGiTA:
   uid: HftouGiTA
   id: 11707
@@ -3135,6 +3233,26 @@ DZsnC1-jM:
   parents:
   - id: 4225
   - id: 4227
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+GAla4u5_u:
+  uid: GAla4u5_u
+  id: 21165
+  string: Section 1.3
+  order: 3
+  heading: 2
+  children:
+  - id: 21159
+  - id: 21164
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
   props: null
   title: null
   attrs: null
@@ -3613,6 +3731,26 @@ F9TXbzC0K:
   title: null
   attrs: null
   blocks: null
+OaPVm-SUa:
+  uid: OaPVm-SUa
+  id: 21160
+  string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21164
+  - id: 21165
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 GK_iI79mV:
   uid: GK_iI79mV
   id: 11743
@@ -3986,6 +4124,45 @@ cCYHqUNs8:
   props: null
   title: null
   attrs: null
+  blocks: null
+hJFB2787-:
+  uid: hJFB2787-
+  id: 21164
+  string: The flower, as a numbered figure.
+  order: 1
+  heading: null
+  children:
+  - id: 21160
+  - id: 21163
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21165
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - hJFB2787-
+      value:
+      - uid
+      - hJFB2787-
+    - source:
+      - uid
+      - CQvP3nmCc
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - CQvP3nmCc
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 qj0DTMyzl:
   uid: qj0DTMyzl

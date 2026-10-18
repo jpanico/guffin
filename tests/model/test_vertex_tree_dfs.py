@@ -159,6 +159,10 @@ class TestVertexTreeDFSIterator:
           1bxKV_biO  — text block           (children[0] of listing 1.2.3)
           eB34bPMcL  — code block           (children[1] of listing 1.2.3)
           xvBjd5MEr  — caption text block   (children[0] of the code block; its guffin-meta sibling is folded)
+          GAla4u5_u  — Section 1.3          (children[3] of Section 1)
+          lcqh-E9u4  — text block           (children[0] of Section 1.3)
+          hJFB2787-  — float wrapper        (children[1] of Section 1.3; its guffin-meta child is folded)
+          OaPVm-SUa  — image block          (children[0] of the float wrapper)
           wdMgyBiP9  — Section 2            (children[2] of root)
           drtANJYTg  — Section 2.1          (children[0] of Section 2)
           OaTXPl93p  — illustration 2.1     (children[0] of Section 2.1)
@@ -206,6 +210,10 @@ class TestVertexTreeDFSIterator:
             "1bxKV_biO",
             "eB34bPMcL",
             "xvBjd5MEr",
+            "GAla4u5_u",
+            "lcqh-E9u4",
+            "hJFB2787-",
+            "OaPVm-SUa",
             "wdMgyBiP9",
             "drtANJYTg",
             "OaTXPl93p",

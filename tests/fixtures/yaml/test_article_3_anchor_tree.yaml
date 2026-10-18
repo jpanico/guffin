@@ -3933,6 +3933,7 @@ refs_by_id:
     - id: 3331
     - id: 4758
     - id: 21158
+    - id: 21165
     refs: null
     page:
       id: 3327
@@ -6676,6 +6677,167 @@ refs_by_id:
     title: null
     attrs: null
     blocks: null
+  '21165':
+    uid: GAla4u5_u
+    id: 21165
+    string: Section 1.3
+    order: 3
+    heading: 2
+    children:
+    - id: 21159
+    - id: 21164
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21159':
+    uid: lcqh-E9u4
+    id: 21159
+    string: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+      child): its text is the figure''s caption, and its one content child is the
+      image block itself, not a reference to one'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21165
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21164':
+    uid: hJFB2787-
+    id: 21164
+    string: The flower, as a numbered figure.
+    order: 1
+    heading: null
+    children:
+    - id: 21160
+    - id: 21163
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21165
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - hJFB2787-
+        value:
+        - uid
+        - hJFB2787-
+      - source:
+        - uid
+        - CQvP3nmCc
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - CQvP3nmCc
+        value:
+        - uid
+        - BxGxeeGk1
+    blocks: null
+  '21160':
+    uid: OaPVm-SUa
+    id: 21160
+    string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21164
+    - id: 21165
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21163':
+    uid: CQvP3nmCc
+    id: 21163
+    string: 'guffin-meta:: #.rm-g'
+    order: 1
+    heading: null
+    children:
+    - id: 21161
+    refs:
+    - id: 321
+    - id: 11839
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21164
+    - id: 21165
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - CQvP3nmCc
+        value:
+        - uid
+        - CQvP3nmCc
+      - source:
+        - uid
+        - 5TSft8ic4
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - 5TSft8ic4
+        value: ' figure'
+    blocks: null
+  '21161':
+    uid: 5TSft8ic4
+    id: 21161
+    string: 'float:: figure'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 21162
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21163
+    - id: 21164
+    - id: 21165
+    props: null
+    title: null
+    attrs: null
+    blocks: null
   '21146':
     uid: kJNGUthgi
     id: 21146
@@ -9002,6 +9164,21 @@ refs_by_id:
     - id: 11227
     props: null
     title: null
+    attrs: null
+    blocks: null
+  '21162':
+    uid: -mwo6HoFt
+    id: 21162
+    string: null
+    order: null
+    heading: null
+    children: null
+    refs: null
+    page: null
+    children_view_type: null
+    parents: null
+    props: null
+    title: float
     attrs: null
     blocks: null
   '14555':

@@ -4,8 +4,11 @@ The design for numbered figures, tables, and code listings, the captions that ma
 references to them from the running text ("see figure 2.3"), and the lists of them in the front
 matter. Status: **designed, every question decided on 2026-10-17 but the deferred corner of Q3;
 the vocabulary, model, validation, policy directive, and the rendering of floats and references
-in all three formats are built (steps 1–4 and 6 of the sketch); the generated lists (step 5),
-the empty-list warning (rule 7), and the fixtures (step 7) are not.**
+in all three formats are built (steps 1–4 and 6 of the sketch), and Test Article 1 carries a
+figure float (Section 1.3: a `float:: figure` wrapper over an image block, numbered *Figure 1*
+in its PDF and mdbundle baselines); the generated lists (step 5), the empty-list warning
+(rule 7), and fixtures for references and for table and listing floats (the rest of step 7)
+are not.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest

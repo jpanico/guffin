@@ -462,6 +462,27 @@ mriY-0ei8:
   title: null
   attrs: null
   blocks: null
+lcqh-E9u4:
+  uid: lcqh-E9u4
+  id: 21159
+  string: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+    child): its text is the figure''s caption, and its one content child is the image
+    block itself, not a reference to one'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21165
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 I4WiloC7_:
   uid: I4WiloC7_
   id: 21149
@@ -503,6 +524,28 @@ I4WiloC7_:
       value: ' https://github.com/jpanico/guffin/blob/dabde94073bbdb08077ec6c805f36825b68486e0/src/guffin/common/json_value.py,
         dabde94073bbdb08077ec6c805f36825b68486e0, 2026-10-17'
   blocks: null
+5TSft8ic4:
+  uid: 5TSft8ic4
+  id: 21161
+  string: 'float:: figure'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21163
+  - id: 21164
+  - id: 21165
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 OexZiLR_O:
   uid: OexZiLR_O
   id: 5450
@@ -528,6 +571,7 @@ OexZiLR_O:
   - id: 3331
   - id: 4758
   - id: 21158
+  - id: 21165
   refs: null
   page:
     id: 3327
@@ -771,6 +815,45 @@ pTvGGeTlB:
       - uid
       - BxGxeeGk1
   blocks: null
+CQvP3nmCc:
+  uid: CQvP3nmCc
+  id: 21163
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21161
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21164
+  - id: 21165
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - CQvP3nmCc
+      value:
+      - uid
+      - CQvP3nmCc
+    - source:
+      - uid
+      - 5TSft8ic4
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - 5TSft8ic4
+      value: ' figure'
+  blocks: null
 3PQaRTVhd:
   uid: 3PQaRTVhd
   id: 21143
@@ -813,6 +896,21 @@ xvBjd5MEr:
   title: null
   attrs: null
   blocks: null
+-mwo6HoFt:
+  uid: -mwo6HoFt
+  id: 21162
+  string: null
+  order: null
+  heading: null
+  children: null
+  refs: null
+  page: null
+  children_view_type: null
+  parents: null
+  props: null
+  title: float
+  attrs: null
+  blocks: null
 kJNGUthgi:
   uid: kJNGUthgi
   id: 21146
@@ -830,6 +928,26 @@ kJNGUthgi:
   - id: 3327
   - id: 3328
   - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+GAla4u5_u:
+  uid: GAla4u5_u
+  id: 21165
+  string: Section 1.3
+  order: 3
+  heading: 2
+  children:
+  - id: 21159
+  - id: 21164
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
   props: null
   title: null
   attrs: null
@@ -867,6 +985,26 @@ wdMgyBiP9:
   children_view_type: null
   parents:
   - id: 3327
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+OaPVm-SUa:
+  uid: OaPVm-SUa
+  id: 21160
+  string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21164
+  - id: 21165
   props: null
   title: null
   attrs: null
@@ -953,6 +1091,45 @@ OaTXPl93p:
   props: null
   title: null
   attrs: null
+  blocks: null
+hJFB2787-:
+  uid: hJFB2787-
+  id: 21164
+  string: The flower, as a numbered figure.
+  order: 1
+  heading: null
+  children:
+  - id: 21160
+  - id: 21163
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21165
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - hJFB2787-
+      value:
+      - uid
+      - hJFB2787-
+    - source:
+      - uid
+      - CQvP3nmCc
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - CQvP3nmCc
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 3BX-iWc-p:
   uid: 3BX-iWc-p
@@ -1229,6 +1406,10 @@ cNW8lmXIM:
     a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption
     (listing 1.2.2), and one with both, the caption set above the source attribution
     (listing 1.2.3)
+
+    - a `float:: figure` wrapper block (Section 1.3) whose text is the figure''s caption
+    and whose one content child is a JPEG `image` block itself, not a reference to
+    one; it renders as the numbered Figure 1
 
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image

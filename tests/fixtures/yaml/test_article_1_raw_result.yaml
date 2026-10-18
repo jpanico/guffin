@@ -317,6 +317,18 @@
     order: 0
     page:
       id: 3327
+- - string: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+      child): its text is the figure''s caption, and its one content child is the
+      image block itself, not a reference to one'
+    id: 21159
+    uid: lcqh-E9u4
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21165
+    order: 0
+    page:
+      id: 3327
 - - attrs:
     - - source:
         - uid
@@ -356,6 +368,20 @@
     refs:
     - id: 321
     - id: 11839
+- - string: 'float:: figure'
+    id: 21161
+    uid: 5TSft8ic4
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21163
+    - id: 21164
+    - id: 21165
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 21162
 - - attrs: []
     id: 5450
     uid: OexZiLR_O
@@ -366,6 +392,7 @@
     - id: 3331
     - id: 4758
     - id: 21158
+    - id: 21165
     id: 3328
     uid: 0EgPyHSZi
     parents:
@@ -532,6 +559,43 @@
     order: 1
     page:
       id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - CQvP3nmCc
+        value:
+        - uid
+        - CQvP3nmCc
+      - source:
+        - uid
+        - 5TSft8ic4
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - 5TSft8ic4
+        value: ' figure'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21161
+    id: 21163
+    lookup:
+    - id: 21161
+    - id: 21162
+    - id: 21163
+    uid: CQvP3nmCc
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21164
+    - id: 21165
+    order: 1
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - string: this code block has a caption – its child block – and no `code-source::`
       tag
     id: 21143
@@ -557,6 +621,9 @@
     order: 0
     page:
       id: 3327
+- - id: 21162
+    uid: -mwo6HoFt
+    title: float
 - - heading: 3
     string: listing 1.2.1
     children:
@@ -569,6 +636,19 @@
     - id: 3328
     - id: 21158
     order: 0
+    page:
+      id: 3327
+- - heading: 2
+    string: Section 1.3
+    children:
+    - id: 21159
+    - id: 21164
+    id: 21165
+    uid: GAla4u5_u
+    parents:
+    - id: 3327
+    - id: 3328
+    order: 3
     page:
       id: 3327
 - - heading: 0
@@ -592,6 +672,17 @@
     parents:
     - id: 3327
     order: 2
+    page:
+      id: 3327
+- - string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
+    id: 21160
+    uid: OaPVm-SUa
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21164
+    - id: 21165
+    order: 0
     page:
       id: 3327
 - - string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
@@ -645,6 +736,43 @@
       id: 3327
     refs:
     - id: 11943
+- - attrs:
+    - - source:
+        - uid
+        - hJFB2787-
+        value:
+        - uid
+        - hJFB2787-
+      - source:
+        - uid
+        - CQvP3nmCc
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - CQvP3nmCc
+        value:
+        - uid
+        - BxGxeeGk1
+    string: The flower, as a numbered figure.
+    children:
+    - id: 21160
+    - id: 21163
+    id: 21164
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21163
+    - id: 21164
+    uid: hJFB2787-
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21165
+    order: 1
+    page:
+      id: 3327
 - - heading: 2
     string: Section 1.1
     children:
@@ -831,6 +959,10 @@
       – a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption
       (listing 1.2.2), and one with both, the caption set above the source attribution
       (listing 1.2.3)
+
+      - a `float:: figure` wrapper block (Section 1.3) whose text is the figure''s
+      caption and whose one content child is a JPEG `image` block itself, not a reference
+      to one; it renders as the numbered Figure 1
 
       - a native `{{table}}` (Section 2.2) whose four cells are each a standalone
       `block reference` to a JPEG `image` block, so each cell displays its referenced

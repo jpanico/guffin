@@ -48,6 +48,10 @@
     (listing 1.2.2), and one with both, the caption set above the source attribution
     (listing 1.2.3)
 
+    - a `float:: figure` wrapper block (Section 1.3) whose text is the figure''s caption
+    and whose one content child is a JPEG `image` block itself, not a reference to
+    one; it renders as the numbered Figure 1
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -63,6 +67,7 @@
   - 3BX-iWc-p
   - Ma5KGUH9O
   - aRTvWsH2_
+  - GAla4u5_u
   text: Section 1
   heading_level: 1
 - vertex_type: guffin/heading
@@ -219,6 +224,43 @@
 - vertex_type: guffin/text
   uid: xvBjd5MEr
   text: A caption authored as the listing's child block, set above its source attribution.
+- vertex_type: guffin/heading
+  uid: GAla4u5_u
+  children:
+  - lcqh-E9u4
+  - hJFB2787-
+  text: Section 1.3
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: lcqh-E9u4
+  text: 'this block is a `float:: figure` wrapper (declared by its `guffin-meta::`
+    child): its text is the figure''s caption, and its one content child is the image
+    block itself, not a reference to one'
+- vertex_type: guffin/text
+  uid: hJFB2787-
+  children:
+  - OaPVm-SUa
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: figure
+  text: The flower, as a numbered figure.
+- vertex_type: guffin/image
+  uid: OaPVm-SUa
+  storage:
+    location: https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0
+    store_type: firebase-storage
+    is_encrypted: true
+  media_type: image/jpeg
+  alt_text: A flower
+  scaled_image_size: {}
 - vertex_type: guffin/heading
   uid: wdMgyBiP9
   children:

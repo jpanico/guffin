@@ -133,6 +133,37 @@ class TestRenderArticleFixture:
             "*Source: [jpanico/guffin/src/guffin/common/geometry.py L1\u2013L8]"
         ) in listing_3
 
+    def test_figure_float_renders_anchor_image_and_labelled_caption(self, tmp_path: Path) -> None:
+        """Article 1's figure float (Section 1.3) renders unwrapped: anchor, image, then the labelled caption.
+
+        The wrapper is a text block tagged ``float:: figure`` whose one content child is the image
+        block itself; in a plain ``.md`` export the image is the link to its hosted file.  The
+        article numbers its floats sequentially, so the caption is led by *Figure 1.* in bold, the
+        whole line emphasized, after the ``float-<uid>`` anchor a reference would land on.
+        """
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 1")
+        node_tree = article1_node_tree()
+        render_bundle: Final[RenderBundle] = RenderBundle(content=transcribe(node_tree), view=build_view_map(node_tree))
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            render_bundle,
+            profile=ArticleProfile(),
+            filename_stem=stem,
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
+        section: Final[str] = result[result.index("### Section 1.3") : result.index("## Section 2")]
+        assert "<figure" not in section
+        assert regex.search(
+            r'^<a id="float-hJFB2787-"></a>\n\n\[A flower\]\([^)]+\)\n\n'
+            r"\*\*\*Figure 1\.\*\* The flower, as a numbered figure\.\*\n",
+            section,
+            regex.MULTILINE,
+        )
+
 
 class TestSemanticBullets:
     """Classified list items render dash + glyph in GFM (via gfm_bullet.lua and badge injection)."""
