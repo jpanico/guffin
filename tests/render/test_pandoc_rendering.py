@@ -1734,7 +1734,7 @@ class TestVertexTreeToPandocArticleFixture:
 
     def test_block_count(self, doc: pf.Doc) -> None:
         """The fixture produces the expected number of top-level blocks."""
-        # 1 Div(callout) + 3 H1s + 9 H2s + 7 H3s + 1 H4 + 3 Para(Link) + 12 BulletList + 1 Table + 2 Figure = 39
+        # 1 Div(callout) + 3 H1s + 10 H2s + 7 H3s + 1 H4 + 3 Para(Link) + 13 BulletList + 2 Table + 2 Figure = 42
         # (the link-placed Section 3.1 PDF embed lists with its text sibling; the inline-placed
         # Section 3.2 embed stays a standalone Para.  The unpublished Section 3.1_5 is included:
         # this builds straight from the vertex tree; drop_unpublished is a renderer prepare step)
@@ -1742,8 +1742,9 @@ class TestVertexTreeToPandocArticleFixture:
         # and Section 1.2's three listings each add a CodeBlock, two of them a caption Div as well;
         # the code-source attribution Div of listings 1.2.2 and 1.2.3 is built here too, since
         # drop_code_sources is a renderer prepare step (+3 CodeBlock +2 caption +2 attribution).
-        # Section 1.3's and Section 1.4's float wrappers each render as one Figure holding their content.
-        assert len(list(doc.content)) == 47
+        # Section 1.3's and Section 1.4's float wrappers each render as one Figure holding their content,
+        # and Section 1.5's as its captioned Table itself.
+        assert len(list(doc.content)) == 50
 
     def test_first_block_is_section_1_header(self, doc: pf.Doc) -> None:
         """The second block is an H1 Header for 'Section 1' (first block is the callout Para)."""
@@ -1764,7 +1765,7 @@ class TestVertexTreeToPandocArticleFixture:
         """Each TextVertex renders as a top-level BulletList."""
         blocks = list(doc.content)
         bullet_lists = [b for b in blocks if isinstance(b, pf.BulletList)]
-        assert len(bullet_lists) == 12
+        assert len(bullet_lists) == 13
         items = list(bullet_lists[1].content)
         assert len(items) == 1
         assert _collect_text(list(items[0].content)[0]) == "AI assistant (Claude Opus 4.6):"

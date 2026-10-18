@@ -6,10 +6,11 @@ matter. Status: **designed, every question decided on 2026-10-17 but the deferre
 the vocabulary, model, validation, policy directive, and the rendering of floats and references
 in all three formats are built (steps 1–4 and 6 of the sketch), and Test Article 1 carries a
 figure float (Section 1.3: a `float:: figure` wrapper over an image block, numbered *Figure 1*
-in its PDF and mdbundle baselines) and a listing float (Section 1.4, *Listing 1*, its own
-series), each with a kind-word reference from the running text (rendered *figure 1* and
-*listing 1*, linked); the generated lists (step 5), the empty-list warning (rule 7), and
-fixtures for a table float and for a book's by-chapter numbering (the rest of step 7) are not.**
+in its PDF and mdbundle baselines), a listing float (Section 1.4, *Listing 1*) and a table
+float (Section 1.5, *Table 1*, its caption above the table), each its own series and each
+with a kind-word reference from the running text (rendered *figure 1*, *listing 1*, and
+*table 1*, linked); the generated lists (step 5), the empty-list warning (rule 7), and a
+fixture for a book's by-chapter numbering (the rest of step 7) are not.**
 
 This is the "typed cross-references" thread of
 [quarto-borrowing-analysis.md](quarto-borrowing-analysis.md), named there as Guffin's biggest

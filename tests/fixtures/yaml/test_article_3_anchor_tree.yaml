@@ -3713,6 +3713,7 @@ refs_by_id:
     - id: 21158
     - id: 21165
     - id: 21171
+    - id: 21183
     refs: null
     page:
       id: 3327
@@ -4755,6 +4756,305 @@ refs_by_id:
     parents:
     - id: 3327
     - id: 3328
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21183':
+    uid: ZiXuJGDlT
+    id: 21183
+    string: Section 1.5
+    order: 5
+    heading: 2
+    children:
+    - id: 21172
+    - id: 21182
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21172':
+    uid: FvpPCO8Nl
+    id: 21172
+    string: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
+      child): its text is the table''s caption, and its one content child is the native
+      `{{table}}` block itself, not a reference to one; this sentence refers to it
+      by its kind word – see [table](((SHonLC9nH))) – which the export completes with
+      the table''s number'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 21182
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21182':
+    uid: SHonLC9nH
+    id: 21182
+    string: Polygons and their sides, as a numbered table.
+    order: 1
+    heading: null
+    children:
+    - id: 21179
+    - id: 21181
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21183
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - SHonLC9nH
+        value:
+        - uid
+        - SHonLC9nH
+      - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - BxGxeeGk1
+    blocks: null
+  '21179':
+    uid: Wq4pgl4qk
+    id: 21179
+    string: '{{table}}'
+    order: 0
+    heading: null
+    children:
+    - id: 21174
+    - id: 21176
+    - id: 21178
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21181':
+    uid: -yIG4h9hR
+    id: 21181
+    string: 'guffin-meta:: #.rm-g'
+    order: 1
+    heading: null
+    children:
+    - id: 21180
+    refs:
+    - id: 321
+    - id: 11839
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs:
+    - - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - -yIG4h9hR
+      - source:
+        - uid
+        - 2FDOsyl1J
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - 2FDOsyl1J
+        value: ' table'
+    blocks: null
+  '21180':
+    uid: 2FDOsyl1J
+    id: 21180
+    string: 'float:: table'
+    order: 0
+    heading: null
+    children: null
+    refs:
+    - id: 21162
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21181
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21174':
+    uid: IfhXh4mF3
+    id: 21174
+    string: Polygon
+    order: 0
+    heading: null
+    children:
+    - id: 21173
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21176':
+    uid: rtKWrcj3W
+    id: 21176
+    string: Triangle
+    order: 1
+    heading: null
+    children:
+    - id: 21175
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21178':
+    uid: I9-d5AXw1
+    id: 21178
+    string: Square
+    order: 2
+    heading: null
+    children:
+    - id: 21177
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21177':
+    uid: xZAG_mW7K
+    id: 21177
+    string: '4'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21178
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21175':
+    uid: OhKIVvKLS
+    id: 21175
+    string: '3'
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21176
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    props: null
+    title: null
+    attrs: null
+    blocks: null
+  '21173':
+    uid: m7Qa1_0au
+    id: 21173
+    string: Sides
+    order: 0
+    heading: null
+    children: null
+    refs: null
+    page:
+      id: 3327
+    children_view_type: null
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21174
+    - id: 21179
+    - id: 21182
+    - id: 21183
     props: null
     title: null
     attrs: null

@@ -167,6 +167,10 @@ class TestVertexTreeDFSIterator:
           5uUu5WFyE  — text block           (children[0] of Section 1.4)
           FxpYHx75w  — float wrapper        (children[1] of Section 1.4; its guffin-meta child is folded)
           B_UX9HYKI  — code block           (children[0] of the float wrapper)
+          ZiXuJGDlT  — Section 1.5          (children[5] of Section 1)
+          FvpPCO8Nl  — text block           (children[0] of Section 1.5)
+          SHonLC9nH  — float wrapper        (children[1] of Section 1.5; its guffin-meta child is folded)
+          Wq4pgl4qk  — table block          (children[0] of the float wrapper; its rows and cells are folded)
           wdMgyBiP9  — Section 2            (children[2] of root)
           drtANJYTg  — Section 2.1          (children[0] of Section 2)
           OaTXPl93p  — illustration 2.1     (children[0] of Section 2.1)
@@ -222,6 +226,10 @@ class TestVertexTreeDFSIterator:
             "5uUu5WFyE",
             "FxpYHx75w",
             "B_UX9HYKI",
+            "ZiXuJGDlT",
+            "FvpPCO8Nl",
+            "SHonLC9nH",
+            "Wq4pgl4qk",
             "wdMgyBiP9",
             "drtANJYTg",
             "OaTXPl93p",

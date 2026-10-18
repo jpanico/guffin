@@ -59,6 +59,12 @@
     to one; it renders as the numbered Listing 1, and the text block before it refers
     to it with the kind-word alias `listing`, completed with the number and linked
 
+    - a `float:: table` wrapper block (Section 1.5) whose text is the table''s caption
+    and whose one content child is a native `{{table}}` (2x3) itself, not a reference
+    to one; it renders as the numbered Table 1, its caption carried by the table itself,
+    and the text block before it refers to it with the kind-word alias `table`, completed
+    with the number and linked
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -76,6 +82,7 @@
   - aRTvWsH2_
   - GAla4u5_u
   - u9We9JXWn
+  - ZiXuJGDlT
   text: Section 1
   heading_level: 1
 - vertex_type: guffin/heading
@@ -309,6 +316,53 @@
   uid: B_UX9HYKI
   code: "def area(width: float, height: float) -> float:\n    return width * height"
   language: python
+- vertex_type: guffin/heading
+  uid: ZiXuJGDlT
+  children:
+  - FvpPCO8Nl
+  - SHonLC9nH
+  text: Section 1.5
+  heading_level: 2
+- vertex_type: guffin/text
+  uid: FvpPCO8Nl
+  refs:
+  - SHonLC9nH
+  text: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
+    child): its text is the table''s caption, and its one content child is the native
+    `{{table}}` block itself, not a reference to one; this sentence refers to it by
+    its kind word – see [table](x-guffin:vertex/SHonLC9nH) – which the export completes
+    with the table''s number'
+- vertex_type: guffin/text
+  uid: SHonLC9nH
+  children:
+  - Wq4pgl4qk
+  attribute_assignments:
+  - attribute:
+      definition:
+        name: float
+        domain: guffin
+      link:
+      - vertex
+      - -mwo6HoFt
+    values:
+    - kind: literal
+      value: table
+  text: Polygons and their sides, as a numbered table.
+- vertex_type: guffin/table
+  uid: Wq4pgl4qk
+  table:
+    rows:
+    - - Polygon
+      - Sides
+    - - Triangle
+      - '3'
+    - - Square
+      - '4'
+    has_row_header: true
+    has_col_header: false
+  table_style:
+    cell_styles: {}
+    column_widths: []
 - vertex_type: guffin/heading
   uid: wdMgyBiP9
   children:

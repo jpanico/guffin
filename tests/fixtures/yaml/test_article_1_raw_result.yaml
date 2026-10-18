@@ -403,6 +403,20 @@
     order: 0
     page:
       id: 3327
+- - string: Square
+    children:
+    - id: 21177
+    id: 21178
+    uid: I9-d5AXw1
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 2
+    page:
+      id: 3327
 - - string: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
       child): its text is the figure''s caption, and its one content child is the
       image block itself, not a reference to one; this sentence refers to it by its
@@ -484,6 +498,7 @@
     - id: 21158
     - id: 21165
     - id: 21171
+    - id: 21183
     id: 3328
     uid: 0EgPyHSZi
     parents:
@@ -513,6 +528,56 @@
     - id: 3328
     - id: 21157
     - id: 21158
+    order: 0
+    page:
+      id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - -yIG4h9hR
+      - source:
+        - uid
+        - 2FDOsyl1J
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - 2FDOsyl1J
+        value: ' table'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21180
+    id: 21181
+    lookup:
+    - id: 21162
+    - id: 21180
+    - id: 21181
+    uid: -yIG4h9hR
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21182
+    - id: 21183
+    order: 1
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
+- - string: Sides
+    id: 21173
+    uid: m7Qa1_0au
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21174
+    - id: 21179
+    - id: 21182
+    - id: 21183
     order: 0
     page:
       id: 3327
@@ -755,6 +820,22 @@
     order: 3
     page:
       id: 3327
+- - string: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
+      child): its text is the table''s caption, and its one content child is the native
+      `{{table}}` block itself, not a reference to one; this sentence refers to it
+      by its kind word – see [table](((SHonLC9nH))) – which the export completes with
+      the table''s number'
+    id: 21172
+    uid: FvpPCO8Nl
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 21182
 - - heading: 0
     string: 'AI assistant (Claude Opus 4.6): '
     id: 4758
@@ -776,6 +857,20 @@
     parents:
     - id: 3327
     order: 2
+    page:
+      id: 3327
+- - string: Triangle
+    children:
+    - id: 21175
+    id: 21176
+    uid: rtKWrcj3W
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 1
     page:
       id: 3327
 - - string: '![A flower](https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FSCFH%2F_otAwc2B9g.jpeg.enc?alt=media&token=25c3ac2a-f62e-462e-99b4-99b337a476c0)'
@@ -875,6 +970,19 @@
     - id: 3328
     - id: 21165
     order: 1
+    page:
+      id: 3327
+- - string: '4'
+    id: 21177
+    uid: xZAG_mW7K
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21178
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 0
     page:
       id: 3327
 - - heading: 2
@@ -1075,6 +1183,12 @@
       to one; it renders as the numbered Listing 1, and the text block before it refers
       to it with the kind-word alias `listing`, completed with the number and linked
 
+      - a `float:: table` wrapper block (Section 1.5) whose text is the table''s caption
+      and whose one content child is a native `{{table}}` (2x3) itself, not a reference
+      to one; it renders as the numbered Table 1, its caption carried by the table
+      itself, and the text block before it refers to it with the kind-word alias `table`,
+      completed with the number and linked
+
       - a native `{{table}}` (Section 2.2) whose four cells are each a standalone
       `block reference` to a JPEG `image` block, so each cell displays its referenced
       image
@@ -1222,6 +1336,47 @@
     order: 0
     page:
       id: 3327
+- - heading: 2
+    string: Section 1.5
+    children:
+    - id: 21172
+    - id: 21182
+    id: 21183
+    uid: ZiXuJGDlT
+    parents:
+    - id: 3327
+    - id: 3328
+    order: 5
+    page:
+      id: 3327
+- - string: '3'
+    id: 21175
+    uid: OhKIVvKLS
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21176
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
+- - string: '{{table}}'
+    children:
+    - id: 21174
+    - id: 21176
+    - id: 21178
+    id: 21179
+    uid: Wq4pgl4qk
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
 - - string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
       child): its text is the listing''s caption, and its one content child is the
       code block itself, not a reference to one; this sentence refers to it by its
@@ -1238,6 +1393,57 @@
       id: 3327
     refs:
     - id: 21170
+- - string: Polygon
+    children:
+    - id: 21173
+    id: 21174
+    uid: IfhXh4mF3
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
+- - attrs:
+    - - source:
+        - uid
+        - SHonLC9nH
+        value:
+        - uid
+        - SHonLC9nH
+      - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - BxGxeeGk1
+    string: Polygons and their sides, as a numbered table.
+    children:
+    - id: 21179
+    - id: 21181
+    id: 21182
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21181
+    - id: 21182
+    uid: SHonLC9nH
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21183
+    order: 1
+    page:
+      id: 3327
 - - attrs:
     - - source:
         - uid
@@ -1288,6 +1494,20 @@
     order: 0
     page:
       id: 3327
+- - string: 'float:: table'
+    id: 21180
+    uid: 2FDOsyl1J
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21181
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 21162
 - - heading: 2
     string: Section 1.2
     children:

@@ -985,6 +985,20 @@
       id: 4225
     refs:
     - id: 4228
+- - string: Square
+    children:
+    - id: 21177
+    id: 21178
+    uid: I9-d5AXw1
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 2
+    page:
+      id: 3327
 - - string: the child block contains a Roam native multiline Pull Quote
     children:
     - id: 13470
@@ -1279,6 +1293,7 @@
     - id: 21158
     - id: 21165
     - id: 21171
+    - id: 21183
     id: 3328
     uid: 0EgPyHSZi
     parents:
@@ -1364,6 +1379,43 @@
     order: 0
     page:
       id: 4225
+- - attrs:
+    - - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - -yIG4h9hR
+      - source:
+        - uid
+        - 2FDOsyl1J
+        value:
+        - uid
+        - -mwo6HoFt
+      - source:
+        - uid
+        - 2FDOsyl1J
+        value: ' table'
+    string: 'guffin-meta:: #.rm-g'
+    children:
+    - id: 21180
+    id: 21181
+    lookup:
+    - id: 21162
+    - id: 21180
+    - id: 21181
+    uid: -yIG4h9hR
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21182
+    - id: 21183
+    order: 1
+    page:
+      id: 3327
+    refs:
+    - id: 321
+    - id: 11839
 - - string: ((2yQYaKIEV))
     id: 20225
     uid: mH5nlHuSj
@@ -1428,6 +1480,19 @@
     order: 5
     page:
       id: 12803
+- - string: Sides
+    id: 21173
+    uid: m7Qa1_0au
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21174
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
 - - string: '[[>]] [[!EPIGRAPH]]
 
       Simplicity is prerequisite for reliability.
@@ -2205,6 +2270,22 @@
       id: 4225
     refs:
     - id: 11454
+- - string: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
+      child): its text is the table''s caption, and its one content child is the native
+      `{{table}}` block itself, not a reference to one; this sentence refers to it
+      by its kind word – see [table](((SHonLC9nH))) – which the export completes with
+      the table''s number'
+    id: 21172
+    uid: FvpPCO8Nl
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 21182
 - - string: This para features **bold**
     id: 11719
     uid: iiSioG0Ut
@@ -2406,6 +2487,20 @@
     refs:
     - id: 5844
     - id: 11171
+- - string: Triangle
+    children:
+    - id: 21175
+    id: 21176
+    uid: rtKWrcj3W
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 1
+    page:
+      id: 3327
 - - string: '[[>]] This is a __Roam standard__ single line **Block Quote**'
     children:
     - id: 13498
@@ -2700,6 +2795,19 @@
     - id: 3328
     - id: 21165
     order: 1
+    page:
+      id: 3327
+- - string: '4'
+    id: 21177
+    uid: xZAG_mW7K
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21178
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 0
     page:
       id: 3327
 - - string: '#c:FUCHSIA **inline PAGE ref ⟶** [[[[Test Article]] 3]]'
@@ -3362,6 +3470,32 @@
     refs:
     - id: 4223
     - id: 4225
+- - heading: 2
+    string: Section 1.5
+    children:
+    - id: 21172
+    - id: 21182
+    id: 21183
+    uid: ZiXuJGDlT
+    parents:
+    - id: 3327
+    - id: 3328
+    order: 5
+    page:
+      id: 3327
+- - string: '3'
+    id: 21175
+    uid: OhKIVvKLS
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21176
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
 - - string: This para features plain text
     id: 11717
     uid: riLVzfX-6
@@ -3380,6 +3514,21 @@
     order: 1
     page:
       id: 4225
+- - string: '{{table}}'
+    children:
+    - id: 21174
+    - id: 21176
+    - id: 21178
+    id: 21179
+    uid: Wq4pgl4qk
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
 - - string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
       child): its text is the listing''s caption, and its one content child is the
       code block itself, not a reference to one; this sentence refers to it by its
@@ -3401,6 +3550,20 @@
     id: 329
     uid: 20E2gCz7h
     title: TODO
+- - string: Polygon
+    children:
+    - id: 21173
+    id: 21174
+    uid: IfhXh4mF3
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21179
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
 - - string: r1.c1
     children:
     - id: 11230
@@ -3413,6 +3576,43 @@
     order: 1
     page:
       id: 11137
+- - attrs:
+    - - source:
+        - uid
+        - SHonLC9nH
+        value:
+        - uid
+        - SHonLC9nH
+      - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - 2xY4zCjId
+      - source:
+        - uid
+        - -yIG4h9hR
+        value:
+        - uid
+        - BxGxeeGk1
+    string: Polygons and their sides, as a numbered table.
+    children:
+    - id: 21179
+    - id: 21181
+    id: 21182
+    lookup:
+    - id: 321
+    - id: 11839
+    - id: 21181
+    - id: 21182
+    uid: SHonLC9nH
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21183
+    order: 1
+    page:
+      id: 3327
 - - string: ((uj8YolCoE))
     id: 11765
     uid: eUpKQiTiM
@@ -3533,6 +3733,20 @@
       id: 4225
     refs:
     - id: 5844
+- - string: 'float:: table'
+    id: 21180
+    uid: 2FDOsyl1J
+    parents:
+    - id: 3327
+    - id: 3328
+    - id: 21181
+    - id: 21182
+    - id: 21183
+    order: 0
+    page:
+      id: 3327
+    refs:
+    - id: 21162
 - - heading: 2
     string: 'External (out-of-page) links:'
     children:

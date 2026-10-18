@@ -470,6 +470,27 @@ tree_network:
   title: null
   attrs: null
   blocks: null
+- uid: I9-d5AXw1
+  id: 21178
+  string: Square
+  order: 2
+  heading: null
+  children:
+  - id: 21177
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21179
+  - id: 21182
+  - id: 21183
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: lcqh-E9u4
   id: 21159
   string: 'the next block is a `float:: figure` wrapper (declared by its `guffin-meta::`
@@ -565,6 +586,7 @@ tree_network:
   - id: 21158
   - id: 21165
   - id: 21171
+  - id: 21183
   refs: null
   page:
     id: 3327
@@ -610,6 +632,65 @@ tree_network:
   - id: 3328
   - id: 21157
   - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: -yIG4h9hR
+  id: 21181
+  string: 'guffin-meta:: #.rm-g'
+  order: 1
+  heading: null
+  children:
+  - id: 21180
+  refs:
+  - id: 321
+  - id: 11839
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21182
+  - id: 21183
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - -yIG4h9hR
+      value:
+      - uid
+      - -yIG4h9hR
+    - source:
+      - uid
+      - 2FDOsyl1J
+      value:
+      - uid
+      - -mwo6HoFt
+    - source:
+      - uid
+      - 2FDOsyl1J
+      value: ' table'
+  blocks: null
+- uid: m7Qa1_0au
+  id: 21173
+  string: Sides
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21174
+  - id: 21179
+  - id: 21182
+  - id: 21183
   props: null
   title: null
   attrs: null
@@ -912,6 +993,29 @@ tree_network:
   title: null
   attrs: null
   blocks: null
+- uid: FvpPCO8Nl
+  id: 21172
+  string: 'the next block is a `float:: table` wrapper (declared by its `guffin-meta::`
+    child): its text is the table''s caption, and its one content child is the native
+    `{{table}}` block itself, not a reference to one; this sentence refers to it by
+    its kind word – see [table](((SHonLC9nH))) – which the export completes with the
+    table''s number'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21182
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21183
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: Ma5KGUH9O
   id: 4758
   string: 'AI assistant (Claude Opus 4.6): '
@@ -943,6 +1047,27 @@ tree_network:
   children_view_type: null
   parents:
   - id: 3327
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: rtKWrcj3W
+  id: 21176
+  string: Triangle
+  order: 1
+  heading: null
+  children:
+  - id: 21175
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21179
+  - id: 21182
+  - id: 21183
   props: null
   title: null
   attrs: null
@@ -1082,6 +1207,27 @@ tree_network:
       value:
       - uid
       - BxGxeeGk1
+  blocks: null
+- uid: xZAG_mW7K
+  id: 21177
+  string: '4'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21178
+  - id: 21179
+  - id: 21182
+  - id: 21183
+  props: null
+  title: null
+  attrs: null
   blocks: null
 - uid: 3BX-iWc-p
   id: 3331
@@ -1308,6 +1454,12 @@ tree_network:
     to one; it renders as the numbered Listing 1, and the text block before it refers
     to it with the kind-word alias `listing`, completed with the number and linked
 
+    - a `float:: table` wrapper block (Section 1.5) whose text is the table''s caption
+    and whose one content child is a native `{{table}}` (2x3) itself, not a reference
+    to one; it renders as the numbered Table 1, its caption carried by the table itself,
+    and the text block before it refers to it with the kind-word alias `table`, completed
+    with the number and linked
+
     - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block
     reference` to a JPEG `image` block, so each cell displays its referenced image
 
@@ -1461,6 +1613,68 @@ tree_network:
   title: null
   attrs: null
   blocks: null
+- uid: ZiXuJGDlT
+  id: 21183
+  string: Section 1.5
+  order: 5
+  heading: 2
+  children:
+  - id: 21172
+  - id: 21182
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: OhKIVvKLS
+  id: 21175
+  string: '3'
+  order: 0
+  heading: null
+  children: null
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21176
+  - id: 21179
+  - id: 21182
+  - id: 21183
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: Wq4pgl4qk
+  id: 21179
+  string: '{{table}}'
+  order: 0
+  heading: null
+  children:
+  - id: 21174
+  - id: 21176
+  - id: 21178
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21182
+  - id: 21183
+  props: null
+  title: null
+  attrs: null
+  blocks: null
 - uid: 5uUu5WFyE
   id: 21166
   string: 'the next block is a `float:: listing` wrapper (declared by its `guffin-meta::`
@@ -1483,6 +1697,65 @@ tree_network:
   props: null
   title: null
   attrs: null
+  blocks: null
+- uid: IfhXh4mF3
+  id: 21174
+  string: Polygon
+  order: 0
+  heading: null
+  children:
+  - id: 21173
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21179
+  - id: 21182
+  - id: 21183
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: SHonLC9nH
+  id: 21182
+  string: Polygons and their sides, as a numbered table.
+  order: 1
+  heading: null
+  children:
+  - id: 21179
+  - id: 21181
+  refs: null
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21183
+  props: null
+  title: null
+  attrs:
+  - - source:
+      - uid
+      - SHonLC9nH
+      value:
+      - uid
+      - SHonLC9nH
+    - source:
+      - uid
+      - -yIG4h9hR
+      value:
+      - uid
+      - 2xY4zCjId
+    - source:
+      - uid
+      - -yIG4h9hR
+      value:
+      - uid
+      - BxGxeeGk1
   blocks: null
 - uid: zE0QjA3N9
   id: 11936
@@ -1538,6 +1811,27 @@ tree_network:
   - id: 3328
   - id: 21151
   - id: 21158
+  props: null
+  title: null
+  attrs: null
+  blocks: null
+- uid: 2FDOsyl1J
+  id: 21180
+  string: 'float:: table'
+  order: 0
+  heading: null
+  children: null
+  refs:
+  - id: 21162
+  page:
+    id: 3327
+  children_view_type: null
+  parents:
+  - id: 3327
+  - id: 3328
+  - id: 21181
+  - id: 21182
+  - id: 21183
   props: null
   title: null
   attrs: null

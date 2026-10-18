@@ -201,6 +201,39 @@ class TestRenderArticleFixture:
             "***Listing 1.** A short function, as a numbered listing.*\n"
         ) in section
 
+    def test_table_float_renders_anchor_caption_above_and_table(self, tmp_path: Path) -> None:
+        """Article 1's table float (Section 1.5) renders unwrapped: anchor, labelled caption, then the pipe table.
+
+        The wrapper is a text block tagged ``float:: table`` whose one content child is the native
+        table block itself.  A table's caption is set above it, as the table convention has it, and
+        tables are their own series, so it is *Table 1*; the text block before it refers to it with
+        the kind-word alias ``[table](((uid)))``, rendered as a Markdown link to the anchor.
+        """
+        stem: Final[str] = shell_safe_filename("[[Test Article]] 1")
+        node_tree = article1_node_tree()
+        render_bundle: Final[RenderBundle] = RenderBundle(content=transcribe(node_tree), view=build_view_map(node_tree))
+        endpoint: Final[ApiEndpoint] = ApiEndpoint.from_parts(
+            local_api_port=3333, graph_name="test", bearer_token="test"
+        )
+        render(
+            render_bundle,
+            profile=ArticleProfile(),
+            filename_stem=stem,
+            api_endpoint=endpoint,
+            options=MarkdownRenderOptions(output_dir=tmp_path, should_bundle=False),
+        )
+        result: Final[str] = (tmp_path / f"{stem}.md").read_text(encoding="utf-8")
+        section: Final[str] = result[result.index("### Section 1.5") : result.index("## Section 2")]
+        assert "see [table 1](#float-SHonLC9nH) \u2013 which" in section
+        assert (
+            '<a id="float-SHonLC9nH"></a>\n\n'
+            "***Table 1.** Polygons and their sides, as a numbered table.*\n\n"
+            "| Polygon  | Sides |\n"
+            "|----------|-------|\n"
+            "| Triangle | 3     |\n"
+            "| Square   | 4     |\n"
+        ) in section
+
 
 class TestSemanticBullets:
     """Classified list items render dash + glyph in GFM (via gfm_bullet.lua and badge injection)."""

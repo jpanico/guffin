@@ -15,6 +15,7 @@
 > - three Python `code block`s (Section 1.2): one with a caption – its child block – and no `code-source::` tag (listing 1.2.1), one with a `code-source::` tag – a SHA-pinned GitHub blob URL, through its `guffin-meta::` child – and no caption (listing 1.2.2), and one with both, the caption set above the source attribution (listing 1.2.3)
 > - a `float:: figure` wrapper block (Section 1.3) whose text is the figure’s caption and whose one content child is a JPEG `image` block itself, not a reference to one; it renders as the numbered Figure 1, and the text block before it refers to it with a kind-word alias – an inline `block reference` aliased `figure` – which the export completes with the number and links to the figure
 > - a `float:: listing` wrapper block (Section 1.4) whose text is the listing’s caption and whose one content child is a Python `code block` itself, not a reference to one; it renders as the numbered Listing 1, and the text block before it refers to it with the kind-word alias `listing`, completed with the number and linked
+> - a `float:: table` wrapper block (Section 1.5) whose text is the table’s caption and whose one content child is a native `{{table}}` (2x3) itself, not a reference to one; it renders as the numbered Table 1, its caption carried by the table itself, and the text block before it refers to it with the kind-word alias `table`, completed with the number and linked
 > - a native `{{table}}` (Section 2.2) whose four cells are each a standalone `block reference` to a JPEG `image` block, so each cell displays its referenced image
 > - an embedded PDF document that has no special PublishingSemantics Attributes attached
 > - an embedded PDF document that has `guffin-meta:: pdf-render: "inline"`
@@ -102,6 +103,19 @@ def area(width: float, height: float) -> float:
 ```
 
 ***Listing 1.** A short function, as a numbered listing.*
+
+### Section 1.5
+
+- the next block is a `float:: table` wrapper (declared by its `guffin-meta::` child): its text is the table’s caption, and its one content child is the native `{{table}}` block itself, not a reference to one; this sentence refers to it by its kind word – see [table 1](#float-SHonLC9nH) – which the export completes with the table’s number
+
+<a id="float-SHonLC9nH"></a>
+
+***Table 1.** Polygons and their sides, as a numbered table.*
+
+| Polygon  | Sides |
+|----------|-------|
+| Triangle | 3     |
+| Square   | 4     |
 
 ## Section 2
 
