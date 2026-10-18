@@ -52,6 +52,39 @@ FIXTURES_MDBUNDLE_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures"
 FIXTURES_EPUB_DIR: pathlib.Path = pathlib.Path(__file__).parent / "fixtures" / "epub"
 """Absolute path to the ``tests/fixtures/epub/`` directory."""
 
+LIVE_MARKER_TEXT: Final[str] = "mark.live"
+"""The text a test module must contain to declare a live test (``@pytest.mark.live`` / ``pytestmark``)."""
+
+
+def pytest_ignore_collect(collection_path: pathlib.Path, config: pytest.Config) -> bool | None:
+    """Skip collecting test modules that declare no live test when only live tests are selected.
+
+    ``-m live`` deselects the offline tests only *after* every module has been imported and
+    collected, and under xdist every worker pays that import for the whole suite (about four
+    seconds here) to run its handful of live tests.  When the marker expression is exactly
+    ``live``, a ``test_*.py`` file whose source never mentions :data:`LIVE_MARKER_TEXT` cannot
+    contribute a selected test, so it is not collected at all.  Any other marker expression,
+    and every non-test path (directories, ``conftest.py``), is left to pytest's own rules.
+
+    Args:
+        collection_path: The file or directory pytest is about to collect.
+        config: The pytest configuration, carrying the ``-m`` marker expression.
+
+    Returns:
+        ``True`` to skip the path; ``None`` to defer to pytest.
+    """
+    # A pytest hook: pluggy matches its arguments by name off the plain signature, so it is not
+    # wrapped in @validate_call.
+    markexpr: Final[str] = str(config.getoption("markexpr", default="") or "").strip()
+    if markexpr != "live":
+        return None
+    if not collection_path.is_file() or not collection_path.name.startswith("test_"):
+        return None
+    if collection_path.suffix != ".py":
+        return None
+    return LIVE_MARKER_TEXT not in collection_path.read_text(encoding="utf-8")
+
+
 PDF_CREATION_TIMESTAMP: int = 1704067200
 """Fixed UNIX timestamp (2024-01-01T00:00:00Z) pinned via ``GUFFIN_PDF_CREATION_TIMESTAMP`` so PDF.
 

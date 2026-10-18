@@ -96,8 +96,12 @@ hatch run test-medium             # run tests (excludes live tests) — see the 
 hatch run test-light   # skips pandoc-subprocess-bound integration tests (marked `pandoc`); the fast inner loop (~4s)
 hatch run test-medium  # the full offline suite (~7s)
 hatch run test-heavy   # everything, live tests included; requires Roam Desktop running locally; the tier `check` runs
+hatch run test-live    # the live tests alone (~13s; requires Roam Desktop running locally) — `-m live` makes
+                       # tests/conftest.py's pytest_ignore_collect skip every module that declares no live test,
+                       # so only the eight live modules are imported; the floor is the notes-export class, whose
+                       # tests each run their own PDF export, not collection (whole-suite collection is ~1s)
 
-# Live tests only, directly (requires Roam Desktop running locally):
+# Live tests only, directly, serially (requires Roam Desktop running locally):
 GUFFIN_LIVE_TESTS=1 pytest -m live -v
 ```
 

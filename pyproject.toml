@@ -74,6 +74,11 @@ check = [
 test-light = "pytest -n 4 --dist loadscope -m 'not pandoc'"
 test-medium = "pytest -n 4 --dist loadscope"
 test-heavy = "GUFFIN_LIVE_TESTS=1 pytest -n 4 --dist loadscope"
+# The live tests alone (requires Roam Desktop).  With the marker expression exactly `live`,
+# tests/conftest.py's pytest_ignore_collect skips every test module that declares no live test, so
+# the workers import a handful of modules instead of the whole suite (measured 2026-10-17: 21 live
+# tests in ~14 s when the whole suite is collected, the floor being that per-worker collection).
+test-live = "GUFFIN_LIVE_TESTS=1 pytest -n 4 --dist loadscope -m live"
 
 [tool.black]
 line-length = 120
