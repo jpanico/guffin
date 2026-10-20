@@ -37,6 +37,7 @@ import importlib.resources
 import logging
 import os
 import tempfile
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Final
 
@@ -44,6 +45,7 @@ import panflute as pf  # type: ignore[import-untyped]
 import pypandoc  # type: ignore[import-untyped]
 from pydantic import validate_call
 
+from guffin.common.geometry import ImageSize
 from guffin.common.provenance import Provenance
 from guffin.common.revision import Revision
 from guffin.model.publishing_semantics import (
@@ -180,6 +182,35 @@ def _page_images(source: Path, image_dir: Path) -> list[pf.Block]:
         pf.Para(pf.Image(pf.Str(f"page {number}"), url=str(image), title=f"page {number}", classes=[PDF_PAGE_CLASS]))
         for number, image in enumerate(rasterize_pages(source, image_dir), start=1)
     ]
+
+
+PORTRAIT_IMAGE_CLASS: Final[str] = "portrait"
+"""Class on an image taller than it is wide, so ``epub.css`` can bound its height in the Kindle app.
+
+At the column's full width such an image is taller than the column is wide, so a figure holding one
+fills a Kindle page by itself and its caption falls overleaf.  The Kindle conversion drops every
+``max-height`` and the Kindle app ignores ``vh``, so the stylesheet's general bound never reaches it.
+A percentage ``height``, which Kindle takes as a share of the page's text area, does; but on a wide image it would
+make the image wider than the page, so the class confines it to the images it suits.
+"""
+
+
+def _mark_portrait_images(doc: pf.Doc, sizes: Mapping[str, ImageSize]) -> None:
+    """Add :data:`PORTRAIT_IMAGE_CLASS` to every Image whose file is taller than it is wide, in place.
+
+    *sizes* maps an image's local path, as its ``url`` carries it, to the file's native pixel size; an
+    image absent from it, or with a dimension unrecorded, is left unmarked.
+    """
+
+    def _mark(elem: pf.Element, _doc: pf.Doc) -> None:
+        if not isinstance(elem, pf.Image):
+            return None
+        size: Final[ImageSize | None] = sizes.get(elem.url)
+        if size is not None and size.width is not None and size.height is not None and size.height > size.width:
+            elem.classes.append(PORTRAIT_IMAGE_CLASS)
+        return None
+
+    doc.walk(_mark)
 
 
 def _anchor_float_figures(doc: pf.Doc) -> None:
@@ -479,6 +510,9 @@ def render(
         # title of its own; dc:title lives in the package metadata).
         if not emit_title_page and render_bundle.revision is not None and render_bundle.revision.revision is not None:
             doc.content.insert(0, revision_line(render_bundle.revision.revision))
+        # epub.css bounds a tall image's height in the Kindle app by a rule of its own; the class
+        # names the images taller than they are wide, from the fetched files' native sizes.
+        _mark_portrait_images(doc, {str(ref.path): ref.size for ref in asset_refs.values() if ref.size is not None})
         _anchor_float_figures(doc)
         json_str: Final[str] = pandoc_to_json(doc, dump_pandoc_ast, output_dir, filename_stem)
         logger.debug("pandoc JSON length=%d bytes, output_path=%s", len(json_str), output_path)

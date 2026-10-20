@@ -38,7 +38,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
-from guffin.render.epub_rendering import render
+from guffin.render.epub_rendering import PORTRAIT_IMAGE_CLASS, render
 from guffin.render.pandoc_rendering import heading_anchor
 from guffin.render.project import ArticleProfile, BookProfile, ProjectProfile
 from guffin.render.render_options import EpubRenderOptions
@@ -782,6 +782,107 @@ class TestCoverImage:
     def test_no_cover_no_manifest_entry(self, article5_book_epub: Path) -> None:
         """A coverless book manifests no cover-image entry."""
         assert 'properties="cover-image"' not in _opf(article5_book_epub)
+
+
+_TALL_URL: Final[str] = (
+    "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Ftall.png?alt=media&token=tal1"
+)
+_WIDE_URL: Final[str] = (
+    "https://firebasestorage.googleapis.com/v0/b/test.appspot.com/o/imgs%2Fwide.jpeg?alt=media&token=wid1"
+)
+
+
+class TestPortraitFigureImage:
+    """An image taller than it is wide carries the class the stylesheet's Kindle-only height bound selects."""
+
+    @pytest.fixture(scope="class")
+    def epub(self, tmp_path_factory: pytest.TempPathFactory) -> Path:
+        """A book holding two image figures, a tall PNG and a wide JPEG, fetched from a seeded cache."""
+        out_dir: Final[Path] = tmp_path_factory.mktemp("portrait")
+        cache_dir: Final[Path] = out_dir / "cache"
+        cache_dir.mkdir()
+        images: Final[Path] = Path(__file__).parent.parent / "fixtures" / "images"
+        # test_article_1.png is 791 x 1280; flower.jpeg is 500 x 477.
+        for url, source, extension in ((_TALL_URL, "test_article_1.png", ".png"), (_WIDE_URL, "flower.jpeg", ".jpg")):
+            cache_key: str = hashlib.sha256(str(HttpUrl(url)).encode()).hexdigest()
+            (cache_dir / f"{cache_key}{extension}").write_bytes((images / source).read_bytes())
+            (cache_dir / f"{cache_key}.meta.json").write_text(
+                json.dumps({"original_file_name": source}), encoding="utf-8"
+            )
+        figure_tag: Final[AttributeAssignment] = AttributeAssignment(
+            attribute=AttributeInstance(
+                definition=Attribute(name="float", domain=AttributeDomain.GUFFIN),
+                link=VertexLink(kind=VertexLinkKind.REFERENCE, uid="abc123xyz"),
+            ),
+            values=(LiteralValue(value="figure"),),
+        )
+        bundle: Final[RenderBundle] = RenderBundle(
+            content=VertexTree(
+                tree_vertices=[
+                    PageVertex(uid="page00001", title="Book", children=["chap00001"]),
+                    HeadingVertex(uid="chap00001", text="One", heading_level=1, children=["wrapt0001", "wrapw0001"]),
+                    TextVertex(
+                        uid="wrapt0001",
+                        text="A tall picture.",
+                        children=["imgtall01"],
+                        attribute_assignments=[figure_tag],
+                    ),
+                    ImageVertex(
+                        uid="imgtall01",
+                        storage=asset_storage(HttpUrl(_TALL_URL)),
+                        media_type=MediaType.PNG,
+                        scaled_image_size=ImageSize(),
+                    ),
+                    TextVertex(
+                        uid="wrapw0001",
+                        text="A wide picture.",
+                        children=["imgwide01"],
+                        attribute_assignments=[figure_tag],
+                    ),
+                    ImageVertex(
+                        uid="imgwide01",
+                        storage=asset_storage(HttpUrl(_WIDE_URL)),
+                        media_type=MediaType.JPEG,
+                        scaled_image_size=ImageSize(),
+                    ),
+                ]
+            )
+        )
+        render(
+            bundle,
+            profile=BookProfile(),
+            filename_stem="portrait",
+            api_endpoint=_ENDPOINT,
+            options=EpubRenderOptions(output_dir=out_dir, cache_dir=cache_dir),
+        )
+        return out_dir / "portrait.epub"
+
+    @staticmethod
+    def _figure(epub: Path, wrapper_uid: str) -> str:
+        """Return the XHTML of the float figure *wrapper_uid* declares."""
+        xhtml: Final[str] = _all_text(epub)
+        found: Final[regex.Match[str] | None] = regex.search(
+            rf'<div id="float-{wrapper_uid}">.*?</figure>', xhtml, flags=regex.DOTALL
+        )
+        assert found is not None
+        return found.group(0)
+
+    def test_tall_image_is_classed_portrait(self, epub: Path) -> None:
+        """The PNG, taller than it is wide, carries the class."""
+        assert regex.search(rf'<img [^>]*class="{PORTRAIT_IMAGE_CLASS}"', self._figure(epub, "wrapt0001"))
+
+    def test_wide_image_is_not_classed(self, epub: Path) -> None:
+        """The JPEG, wider than it is tall, carries no class."""
+        img: Final[regex.Match[str] | None] = regex.search(r"<img [^>]*>", self._figure(epub, "wrapw0001"))
+        assert img is not None
+        assert "class=" not in img.group(0)
+
+    def test_stylesheet_bounds_the_class_for_kindle(self, epub: Path) -> None:
+        """The packaged stylesheet sets the classed image's height, as a share of the page, for Kindle only."""
+        assert regex.search(
+            rf"@media amzn-kf8 \{{\s*figure\.float-figure img\.{PORTRAIT_IMAGE_CLASS} \{{\s*height: \d+%;",
+            _all_text(epub),
+        )
 
 
 class TestHeadingLinkEpub:

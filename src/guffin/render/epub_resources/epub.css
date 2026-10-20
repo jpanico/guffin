@@ -241,6 +241,56 @@ table > caption {
 }
 
 /*
+ * An image figure keeps its caption on its own page. Paginating reading systems (Apple Books,
+ * Calibre, the Kindle app) otherwise break between the image and the caption wherever the figure
+ * straddles a page boundary, and a full-width image taller than it is wide fills a page by itself,
+ * pushing its caption overleaf every time. Two requests together:
+ *
+ * 1. Keep the figure whole, so a reader carries it to the next page when it does not fit where it
+ *    falls. Kindle's publishing help names images with captions as the use for this property. Both
+ *    the modern and legacy spellings are given, with WebKit's column alias, as for callouts.
+ * 2. Bound the image's height so the image and a caption of a few lines fit on one page; 1 can only
+ *    succeed for a figure no taller than a page. width/height auto with both maxima is the
+ *    fit-inside-a-box idiom, which scales the image down preserving its aspect ratio.
+ *
+ * A listing is not held together: a long one must break across pages.
+ */
+figure.float-figure {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
+figure.float-figure img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 75vh;
+}
+
+/*
+ * Kindle-only bound for a tall figure image. The Kindle conversion pipeline drops every max-height
+ * and max-width, and the Kindle app ignores vh, so the bound above never reaches it and a tall
+ * figure still pushes its caption overleaf. There a percentage height on an image is a share of the
+ * page's text area, so an image taller than it is wide (classed portrait by the renderer) is set at
+ * 85% of it instead. It is a fixed height, not a maximum, so it enlarges a small image too; a wide
+ * image is left alone, since that height would make it wider than the page.
+ *
+ * The form was chosen from a probe of candidate rules read in the Kindle app (2026-10-19): the vh
+ * bounds all split, while a percentage height and a percentage width kept image and caption
+ * together. The share is a judgment, not a standard: the probe's 75% left about a fifth of the text
+ * area blank under a two-line caption, and 85% still leaves room for a caption of about four lines
+ * at the default type size. A caption that does not fit below the image falls overleaf. Other reading
+ * systems ignore the amzn-kf8 media query.
+ */
+@media amzn-kf8 {
+  figure.float-figure img.portrait {
+    height: 85%;
+    width: auto;
+  }
+}
+
+/*
  * A generated list of figures or tables (floats_rendering.insert_float_lists): one linked entry
  * per float, its labelled caption, without bullets, each entry's later lines hanging under its
  * first.
