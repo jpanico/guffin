@@ -169,6 +169,20 @@ render its overflow rows on top of one another. `default_styles.typ` adds
 `#show figure.where(kind: table): set block(breakable: true)` so tall tables break across page
 boundaries instead (Typst repeats the `table.header` row on each continuation page).
 
+#### Tables without a header row (`default_styles.typ`)
+
+Upstream keys the header's fill, the rule beneath it, and the header's type on row 0, so a table
+with no header row (Pandoc emits no `table.header` for an empty `TableHead`, as for a table tagged
+`table-header:: none`) had its first row styled as a header all the same. The fill and the rule are
+the table's own fields, which a set rule inside the table's show rule cannot reach, so a
+`#show table` rule rebuilds such a table from its fields with `fill: none`, the ordinary
+`table-stroke-horizontal` rule between rows 0 and 1, and row 0 in the surrounding text's colour and
+weight. To let that last part override the header's type, the header-ink rule became a show-set
+rule (`set text(fill: …) if cfg.table-header-ink != auto`) instead of a show-transform. Only a table
+on the default `table-fill` is rebuilt, so one that sets its own fill (a YAML table) keeps it and
+the rebuilt table is not rebuilt again; a labelled table is left as it is, since a label cannot be
+passed back to `table()`.
+
 #### Images capped at their container's width (`default_styles.typ`)
 
 Pandoc writes an image's pixel width as inches at 96 px/in (`image("…", width: 6.98958in)`), and

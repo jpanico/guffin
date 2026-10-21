@@ -9,6 +9,7 @@ from pydantic import HttpUrl, ValidationError
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import (
     Attribute,
     AttributeDomain,
@@ -21,6 +22,7 @@ from guffin.model.chicago_structure import Matter, StructuralElement
 from guffin.model.code_source import CodeSource
 from guffin.model.publishing_semantics import (
     DEFAULT_PUBLISH,
+    DEFAULT_TABLE_HEADER,
     PDF_RENDER_FALLBACK,
     FloatKind,
     NoteForm,
@@ -28,6 +30,7 @@ from guffin.model.publishing_semantics import (
     PdfRenderPlacement,
     PublishingAttribute,
     PublishingSemantics,
+    TableHeader,
     code_language_of,
     code_language_of_vertex,
     code_source_of,
@@ -63,6 +66,8 @@ from guffin.model.publishing_semantics import (
     revision_of,
     revision_of_vertex,
     strip_element_numbers,
+    table_header_of,
+    table_header_of_vertex,
 )
 from guffin.model.vertex import (
     BlockEmbedVertex,
@@ -73,6 +78,7 @@ from guffin.model.vertex import (
     PageEmbedVertex,
     PageVertex,
     PdfVertex,
+    TableVertex,
     TextVertex,
     vertex_adapter,
 )
@@ -147,6 +153,11 @@ class TestPublishingSemanticsMembers:
         """The PDF-tag members are pdf-anchored."""
         pdf_members = {m.value.name for m in PublishingSemantics if m.value.anchor is AttributeAnchor.PDF}
         assert pdf_members == {"pdf-render"}
+
+    def test_table_anchored_tag_members(self) -> None:
+        """The table-tag members are table-anchored."""
+        table_members = {m.value.name for m in PublishingSemantics if m.value.anchor is AttributeAnchor.TABLE}
+        assert table_members == {"table-header"}
 
 
 class TestElementTypeOf:
@@ -558,6 +569,62 @@ class TestCodeSourceOfVertex:
         with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
             assert code_source_of_vertex(_code_block_with([_code_source_assignment(sha="junk")])) is None
         assert "ignoring code-source" in caplog.text
+
+
+def _table_with(assignments: list[AttributeAssignment] | None) -> TableVertex:
+    """A one-cell table vertex carrying *assignments*."""
+    return TableVertex(
+        uid="tableuid1",
+        table=Table(rows=(("cell",),), has_row_header=True),
+        table_style=TableStyle(),
+        attribute_assignments=assignments,
+    )
+
+
+class TestTableHeaderOf:
+    """table_header_of validates the attribute identity and coerces the value to a TableHeader."""
+
+    def test_returns_named_table_header(self) -> None:
+        """A valid table-header assignment yields the named TableHeader."""
+        assert table_header_of(_assignment("table-header", "none")) is TableHeader.NONE
+        assert table_header_of(_assignment("table-header", "row")) is TableHeader.ROW
+
+    def test_rejects_other_attribute(self) -> None:
+        """An assignment for a different attribute raises."""
+        with pytest.raises(ValueError, match="table-header"):
+            table_header_of(_assignment("page-break", "none"))
+
+    def test_rejects_unrecognised_value(self) -> None:
+        """A value that names no TableHeader member raises."""
+        with pytest.raises(ValueError, match="column"):
+            table_header_of(_assignment("table-header", "column"))
+
+    def test_default_is_a_header_row(self) -> None:
+        """An untagged table's first row is its header row."""
+        assert DEFAULT_TABLE_HEADER is TableHeader.ROW
+
+
+class TestTableHeaderOfVertex:
+    """table_header_of_vertex() resolves a table's table-header tag, tolerating absence and junk."""
+
+    def test_tagged_table_resolves(self) -> None:
+        """A table tagged with a legal table-header resolves to its TableHeader."""
+        assert table_header_of_vertex(_table_with([_assignment("table-header", "none")])) is TableHeader.NONE
+
+    def test_untagged_table_is_none(self) -> None:
+        """A table with no table-header assignment resolves to None."""
+        assert table_header_of_vertex(_table_with(None)) is None
+
+    def test_end_user_attribute_of_the_same_name_is_ignored(self) -> None:
+        """A table-header attribute outside the guffin domain is not the tag."""
+        tagged = _table_with([_assignment("table-header", "none", domain=AttributeDomain.DEFAULT)])
+        assert table_header_of_vertex(tagged) is None
+
+    def test_illegal_value_is_none_with_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """An illegal table-header value resolves to None and logs a warning."""
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            assert table_header_of_vertex(_table_with([_assignment("table-header", "column")])) is None
+        assert "ignoring table-header" in caplog.text
 
 
 class TestPromoteNonBodySections:

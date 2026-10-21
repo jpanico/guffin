@@ -6,6 +6,7 @@ from pydantic import HttpUrl
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.common.table import Table, TableStyle
 from guffin.model.attribute import (
     Attribute,
     AttributeDomain,
@@ -51,6 +52,7 @@ from guffin.model.publishing_validation import (
     all_page_break_values_legal,
     all_pdf_render_values_legal,
     all_publish_values_legal,
+    all_table_header_values_legal,
     lead_ins_unique_within_sections,
     validate_semantics,
 )
@@ -62,6 +64,7 @@ from guffin.model.vertex import (
     NotesVertex,
     PageVertex,
     PdfVertex,
+    TableVertex,
     TextVertex,
     vertex_adapter,
 )
@@ -314,6 +317,54 @@ class TestAllPageBreakValuesLegal:
         result = validate_semantics(tree)
         assert not result.is_valid
         assert any("page-break" in error.message for error in result.errors)
+
+
+def _table_with(assignments: list[AttributeAssignment] | None) -> TableVertex:
+    """A one-cell table vertex carrying *assignments*."""
+    return TableVertex(
+        uid="table0001",
+        table=Table(rows=(("cell",),), has_row_header=True),
+        table_style=TableStyle(),
+        attribute_assignments=assignments,
+    )
+
+
+class TestAllTableHeaderValuesLegal:
+    """all_table_header_values_legal() rejects unrecognised table-header values across a tree."""
+
+    def test_legal_value_passes(self) -> None:
+        """A tree whose table-header values are all recognised produces no error."""
+        tree = VertexTree(tree_vertices=[_table_with([_assignment("table-header", "none")])])
+        assert all_table_header_values_legal(tree) is None
+
+    def test_illegal_value_reported(self) -> None:
+        """An unrecognised table-header value is reported with the vertex uid."""
+        tree = VertexTree(tree_vertices=[_table_with([_assignment("table-header", "column")])])
+        error = all_table_header_values_legal(tree)
+        assert error is not None
+        assert "table0001" in error.message
+
+    def test_table_header_on_text_reported_by_anchor_validator(self) -> None:
+        """A table-header tag on a text block is a misanchoring, caught by all_attributes_anchored."""
+        text = TextVertex(
+            uid="text00001", text="loose block", attribute_assignments=[_assignment("table-header", "none")]
+        )
+        error = all_attributes_anchored(VertexTree(tree_vertices=[text]))
+        assert error is not None
+        assert "table-header" in error.message
+
+    def test_table_header_on_table_is_anchored(self) -> None:
+        """A table-header tag on a table satisfies its anchor."""
+        assert (
+            all_attributes_anchored(VertexTree(tree_vertices=[_table_with([_assignment("table-header", "none")])]))
+            is None
+        )
+
+    def test_surfaces_through_validate_semantics(self) -> None:
+        """An illegal table-header value fails validate_semantics."""
+        result = validate_semantics(VertexTree(tree_vertices=[_table_with([_assignment("table-header", "column")])]))
+        assert not result.is_valid
+        assert any("table-header" in error.message for error in result.errors)
 
 
 class TestAllPdfRenderValuesLegal:

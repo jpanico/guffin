@@ -979,6 +979,41 @@ class TestVertexTreeToPandocImageVertex:
 
 
 # ---------------------------------------------------------------------------
+# TestVertexTreeToPandocTableHeader
+# ---------------------------------------------------------------------------
+
+
+class TestVertexTreeToPandocTableHeader:
+    """Tests for vertex_tree_to_pandoc() — a table's first row goes in the head only when it is a header row."""
+
+    @staticmethod
+    def _table(has_row_header: bool) -> pf.Table:
+        """Render a page holding a three-row table; return the Table block."""
+        table = TableVertex(
+            uid="table0001",
+            table=Table(rows=[["first"], ["second"], ["third"]], has_row_header=has_row_header),
+            table_style=TableStyle(),
+        )
+        page = PageVertex(uid="page00001", title="P", children=["table0001"])
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, table]), {}, {})
+        block = list(doc.content)[0]
+        assert isinstance(block, pf.Table)
+        return block
+
+    def test_header_row_is_the_head(self) -> None:
+        """A table with a header row puts its first row in the head and the rest in the body."""
+        table = self._table(has_row_header=True)
+        assert len(table.head.content) == 1
+        assert len(table.content[0].content) == 2
+
+    def test_headless_table_has_an_empty_head(self) -> None:
+        """A table without a header row has an empty head and every row in the body."""
+        table = self._table(has_row_header=False)
+        assert len(table.head.content) == 0
+        assert len(table.content[0].content) == 3
+
+
+# ---------------------------------------------------------------------------
 # TestVertexTreeToPandocTableCellImage
 # ---------------------------------------------------------------------------
 

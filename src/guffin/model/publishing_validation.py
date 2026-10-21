@@ -15,7 +15,9 @@ Public symbols:
   :class:`~guffin.model.publishing_semantics.PdfRenderPlacement`), :func:`all_code_language_values_legal`
   (every ``code-language`` value names a language in the canonical vocabulary),
   :func:`all_code_source_values_legal` (every ``code-source`` value is a legal URL/SHA/date
-  triple), :func:`all_publish_values_legal` (every ``publish`` value is a boolean literal),
+  triple), :func:`all_table_header_values_legal` (every ``table-header`` value is a
+  :class:`~guffin.model.publishing_semantics.TableHeader`), :func:`all_publish_values_legal` (every
+  ``publish`` value is a boolean literal),
   :func:`all_date_values_legal` (every ``date`` value is a W3CDTF reduced-precision date),
   :func:`all_cover_image_values_legal` (every ``cover-image`` value is a block reference
   resolving to an image vertex in the tree), and :func:`all_matter_tags_at_section_level`
@@ -101,6 +103,7 @@ from guffin.model.publishing_semantics import (
     pdf_render_of,
     publish_of,
     resolved_matter,
+    table_header_of,
 )
 from guffin.model.vertex import HeadingVertex, ImageVertex, TextVertex, Vertex, is_embed_vertex
 from guffin.model.vertex_tree import (
@@ -443,6 +446,30 @@ def all_code_source_values_legal(tree: VertexTree) -> ValidationError | None:
     return ValidationError(
         message="illegal code-source values: " + "; ".join(violations),
         validator=all_code_source_values_legal,
+    )
+
+
+@validate_call
+def all_table_header_values_legal(tree: VertexTree) -> ValidationError | None:
+    """:data:`~guffin.common.validation.Validator` requiring legal ``table-header`` values.
+
+    Every :attr:`PublishingSemantics.TABLE_HEADER` assignment in *tree* must carry exactly one
+    value, and that value must name a :class:`~guffin.model.publishing_semantics.TableHeader`
+    member — the authoritative set of legal ``table-header`` values.
+
+    Args:
+        tree: The :class:`~guffin.model.vertex_tree.VertexTree` to validate.
+
+    Returns:
+        ``None`` when every ``table-header`` value is legal; a
+        :class:`~guffin.common.validation.ValidationError` listing every violation otherwise.
+    """
+    violations: Final[list[str]] = _illegal_value_violations(tree, PublishingSemantics.TABLE_HEADER, table_header_of)
+    if not violations:
+        return None
+    return ValidationError(
+        message="illegal table-header values: " + "; ".join(violations),
+        validator=all_table_header_values_legal,
     )
 
 
@@ -1173,7 +1200,7 @@ def validate_semantics(tree: VertexTree, *, check_notes: bool = True) -> Validat
     :func:`all_element_type_values_legal`, :func:`all_matter_values_legal`,
     :func:`all_note_form_values_legal`, :func:`all_page_break_values_legal`,
     :func:`all_pdf_render_values_legal`, :func:`all_code_source_values_legal`,
-    :func:`all_publish_values_legal`,
+    :func:`all_table_header_values_legal`, :func:`all_publish_values_legal`,
     :func:`all_date_values_legal`, :func:`all_cover_image_values_legal`, and
     :func:`all_matter_tags_at_section_level` — and every internal-element-numbering validator —
     :func:`all_element_numbers_well_formed`, :func:`all_element_numbers_in_headings_only`,
@@ -1217,6 +1244,7 @@ def validate_semantics(tree: VertexTree, *, check_notes: bool = True) -> Validat
             all_pdf_render_values_legal,
             all_code_language_values_legal,
             all_code_source_values_legal,
+            all_table_header_values_legal,
             all_publish_values_legal,
             all_date_values_legal,
             all_cover_image_values_legal,

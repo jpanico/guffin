@@ -1665,6 +1665,81 @@ class TestToTableVertex:
         with pytest.raises(ValueError, match="no children"):
             to_table_vertex(root, _node_tree(root))
 
+    def test_untagged_table_has_a_header_row(self) -> None:
+        """An untagged table's first row is its header row."""
+        root, imap = self._make_2x2_inputs()
+        vertex, _ = to_table_vertex(root, imap)
+        assert vertex.table.has_row_header is True
+
+    @staticmethod
+    def _make_tagged_inputs(header: str) -> tuple[RoamNode, NodeTree]:
+        """Return (root, tree) for a table: rows A and B, then a guffin-meta child tagging it with *header*."""
+        root = _make_table_root("tabluid01", 10, [11, 12, 13])
+        row1 = _make_cell_node("cel11uid1", 11, 10, "A", order=0)
+        row2 = _make_cell_node("cel12uid1", 12, 10, "B", order=1)
+        meta = _make_cell_node("metauid01", 13, 10, "guffin-meta:: #.rm-g", order=2, child_id=14)
+        tag = RoamNode(
+            uid="taguid001",
+            id=14,
+            string=f"table-header:: {header}",
+            order=0,
+            parents=[IdObject(id=13)],
+            page=IdObject(id=1),
+            refs=[IdObject(id=30)],
+        )
+        tag_page = RoamNode(uid="tblhdrpg1", id=30, title="table-header")
+        return root, _node_tree(root, row1, row2, meta, tag, tag_page)
+
+    def test_meta_child_is_not_a_row(self) -> None:
+        """A guffin-meta child declares the table's attributes, so it is left out of the grid."""
+        root, imap = self._make_tagged_inputs("none")
+        vertex, _ = to_table_vertex(root, imap)
+        assert vertex.table.rows == (("A",), ("B",))
+
+    def test_meta_child_folds_onto_the_vertex(self) -> None:
+        """The guffin-meta child's tag becomes a guffin-domain attribute assignment of the table."""
+        root, imap = self._make_tagged_inputs("none")
+        vertex, _ = to_table_vertex(root, imap)
+        assert vertex.attribute_assignments is not None
+        (assignment,) = vertex.attribute_assignments
+        assert assignment.attribute.definition.name == "table-header"
+        assert assignment.attribute.definition.domain is AttributeDomain.GUFFIN
+
+    def test_meta_child_is_consumed(self) -> None:
+        """The guffin-meta child and its tag are consumed with the table, never vertices of their own."""
+        root, imap = self._make_tagged_inputs("none")
+        _, consumed = to_table_vertex(root, imap)
+        assert consumed == frozenset({10, 11, 12, 13, 14})
+
+    def test_table_header_none_makes_the_first_row_ordinary(self) -> None:
+        """A table tagged table-header:: none has no header row."""
+        root, imap = self._make_tagged_inputs("none")
+        vertex, _ = to_table_vertex(root, imap)
+        assert vertex.table.has_row_header is False
+
+    def test_table_header_row_keeps_the_header_row(self) -> None:
+        """A table tagged table-header:: row keeps its header row."""
+        root, imap = self._make_tagged_inputs("row")
+        vertex, _ = to_table_vertex(root, imap)
+        assert vertex.table.has_row_header is True
+
+    def test_illegal_table_header_keeps_the_header_row(self, caplog: pytest.LogCaptureFixture) -> None:
+        """An illegal table-header value is ignored with a warning, and the table keeps its header row."""
+        root, imap = self._make_tagged_inputs("column")
+        with caplog.at_level(logging.WARNING, logger="guffin.model.publishing_semantics"):
+            vertex, _ = to_table_vertex(root, imap)
+        assert vertex.table.has_row_header is True
+        assert "ignoring table-header" in caplog.text
+
+    def test_attribute_block_child_is_not_a_row(self) -> None:
+        """A Roam attribute-block child declares an attribute of the table, so it is left out of the grid."""
+        root = _make_table_root("tabluid01", 10, [11, 12])
+        row = _make_cell_node("cel11uid1", 11, 10, "A", order=0)
+        attribute = _make_cell_node("attruid01", 12, 10, "status:: draft", order=1)
+        vertex, consumed = to_table_vertex(root, _node_tree(root, row, attribute))
+        assert vertex.table.rows == (("A",),)
+        assert 12 in consumed
+
 
 # ---------------------------------------------------------------------------
 # TestToPageEmbedVertex

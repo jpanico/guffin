@@ -418,12 +418,10 @@
 // header's bottom stroke, so it never draws over the configured strokes in Typst's default black.
 #set table.hline(stroke: cfg.table-stroke-header-b)
 
-// The header row's text (row 0, the row the header fill also keys on).
+// The header row's text (row 0, the row the header fill also keys on).  Both are show-set rules,
+// so a table with no header can set row 0 back in the surrounding type (below).
 #show table.cell.where(y: 0): set text(weight: cfg.table-header-weight)
-#show table.cell.where(y: 0): it => if cfg.table-header-ink == auto { it } else {
-  set text(fill: cfg.table-header-ink)
-  it
-}
+#show table.cell.where(y: 0): set text(fill: cfg.table-header-ink) if cfg.table-header-ink != auto
 
 // A callout box: a card — white, framed on a rounded outline — whose title band carries the
 // icon and the title in the kind's ink, with the body beneath, parted from the band by the
@@ -483,6 +481,32 @@
   breakable: true,
   it,
 )
+
+// A table with no header row (no table.header among its children) sets row 0 as an ordinary row.
+// The rules above key the header's fill, the rule beneath it, and its type on row 0, and a set rule
+// inside a table's own show rule no longer reaches that table, so the table is rebuilt: no fill,
+// the ordinary rule between rows 0 and 1, and row 0 in the surrounding type.  Only a table on the
+// default fill is rebuilt, so one that sets its own fill keeps it (the rebuilt table, on no fill,
+// is left alone in turn); a labelled table is left as it is, since the rebuilt one could not carry
+// the label.
+#let headless-table-stroke = (x, y) => {
+  let stroke = table-stroke(x, y)
+  if y == 1 { stroke + (top: cfg.table-stroke-horizontal) } else { stroke }
+}
+#show table: it => {
+  if it.fill != table-fill or it.has("label") or it.children.any(child => child.func() == table.header) {
+    return it
+  }
+  let fields = it.fields()
+  let children = fields.remove("children")
+  let stroke = if it.stroke == table-stroke { headless-table-stroke } else { it.stroke }
+  context {
+    let ink = text.fill
+    let weight = text.weight
+    show table.cell.where(y: 0): set text(fill: ink, weight: weight)
+    table(..fields, fill: none, stroke: stroke, ..children)
+  }
+}
 
 // Row splitting across pages is governed per cell in Typst (a cell in an auto-height row is
 // breakable unless told otherwise), so the table-level policy is applied to every cell.

@@ -1159,6 +1159,25 @@ class TestToTable:
         with pytest.raises(ValueError, match="no children"):
             to_table(tree)
 
+    def test_non_row_children_are_left_out(self) -> None:
+        """A root child named as a non-row is left out of the grid, with the cells chained beneath it."""
+        root = _make_table_root("tabluid01", 10, [11, 12, 13])
+        meta = _make_cell_node("metauid01", 11, 10, "guffin-meta:: #.rm-g", order=0, child_id=14)
+        row1 = _make_cell_node("cel11uid1", 12, 10, "A", order=1)
+        row2 = _make_cell_node("cel12uid1", 13, 10, "B", order=2)
+        tag = _make_cell_node("taguid001", 14, 11, "table-header:: none", order=0)
+        tree = NodeTree.build(root, [root, meta, row1, row2, tag])
+        table = to_table(tree, non_row_ids=frozenset({11}))
+        assert table.rows == (("A",), ("B",))
+
+    def test_no_rows_raises(self) -> None:
+        """A table whose every child is a non-row raises ValueError."""
+        root = _make_table_root("tabluid01", 10, [11])
+        meta = _make_cell_node("metauid01", 11, 10, "guffin-meta:: #.rm-g", order=0)
+        tree = NodeTree.build(root, [root, meta])
+        with pytest.raises(ValueError, match="no rows"):
+            to_table(tree, non_row_ids=frozenset({11}))
+
     def test_non_native_table_root_raises(self) -> None:
         """A root that is not a native-table node raises ValueError (checked before children)."""
         root = RoamNode(

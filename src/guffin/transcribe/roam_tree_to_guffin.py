@@ -44,7 +44,8 @@ Public symbols:
 - :func:`to_notes_vertex` — build a :class:`~guffin.vertex.NotesVertex` from a Footnotes
   extension notes header node.
 - :func:`to_table_vertex` — build a :class:`~guffin.vertex.TableVertex` from a native table node
-  (via :func:`~guffin.roam.node_tree.to_table` + Markdown normalization), returning it together
+  (via :func:`~guffin.roam.node_tree.to_table` + Markdown normalization, its attribute children
+  folded rather than read as rows, and a ``table-header`` tag applied), returning it together
   with the IDs of all consumed descendant nodes.
 - :func:`transcribe_standalone_node` — transcribe a :class:`~guffin.roam.node.RoamNode` into
   the appropriate :data:`~guffin.vertex.Vertex` subtype.
@@ -82,7 +83,13 @@ from guffin.model.attribute import (
 )
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.code_source import CodeSource
-from guffin.model.publishing_semantics import code_language_of_vertex, code_source_of_vertex
+from guffin.model.publishing_semantics import (
+    DEFAULT_TABLE_HEADER,
+    TableHeader,
+    code_language_of_vertex,
+    code_source_of_vertex,
+    table_header_of_vertex,
+)
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
     AssetVertex,
@@ -168,10 +175,10 @@ def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChild
     """Return an ordered list of child UIDs for *node*, or ``None`` if childless.
 
     Children are sorted by :attr:`~guffin.roam.node.RoamNode.order`.  Stubs
-    whose id is absent from *id_map* are silently dropped.  Attribute-block children and
-    ``<domain>-meta::`` container children (:func:`_is_meta_block`) are excluded — they are folded
-    into the parent vertex's :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` (see
-    :func:`_resolve_attribute_assignments`) rather than transcribed as separate vertices.
+    whose id is absent from *id_map* are silently dropped.  Folded children
+    (:func:`_is_folded_child`) are excluded — they become the parent vertex's
+    :attr:`~guffin.model.vertex._BaseVertex.attribute_assignments` (see
+    :func:`_resolve_attribute_assignments`) rather than separate vertices.
 
     Args:
         node: The node whose children are to be resolved.
@@ -184,17 +191,20 @@ def _resolve_children(node: RoamNode, id_map: dict[Id, RoamNode]) -> VertexChild
     if not node.children:
         return None
     resolved: Final[list[RoamNode]] = sorted(
-        [
-            id_map[c.id]
-            for c in node.children
-            if c.id in id_map
-            and node_type(id_map[c.id]) is not NodeType.ATTRIBUTE_BLOCK
-            and not _is_meta_block(id_map[c.id])
-        ],
+        [id_map[c.id] for c in node.children if c.id in id_map and not _is_folded_child(id_map[c.id])],
         key=lambda n: n.order if n.order is not None else 0,
     )
     uids: Final[VertexChildren] = [n.uid for n in resolved]
     return uids if uids else None
+
+
+def _is_folded_child(node: RoamNode) -> bool:
+    """Return whether *node*, as a child, is folded into its parent's attribute assignments.
+
+    An attribute block, or a ``<domain>-meta::`` container (:func:`_is_meta_block`), declares
+    attributes of its parent rather than content of its own.
+    """
+    return node_type(node) is NodeType.ATTRIBUTE_BLOCK or _is_meta_block(node)
 
 
 def _parse_attribute_assignment(node: RoamNode, tree: NodeTree) -> AttributeAssignment | None:
@@ -1083,8 +1093,13 @@ def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozen
     """Build a :class:`~guffin.vertex.TableVertex` from a native table *node*.
 
     Delegates raw-grid reconstruction to :func:`~guffin.roam.node_tree.to_table`, then normalizes
-    each cell string with :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md`.
-    All descendant nodes (rows and cells) are consumed into the returned
+    each cell string with :func:`~guffin.transcribe.roam_md_to_pandoc_md.to_pandoc_md`.  A folded
+    child (:func:`_is_folded_child`) declares attributes of the table, so it is not a row: it is
+    left out of the grid and folded into the vertex's attribute assignments, as for any other
+    block.  The table's first row is its header row unless a ``table-header`` tag says otherwise
+    (:func:`~guffin.model.publishing_semantics.table_header_of_vertex`; untagged,
+    :data:`~guffin.model.publishing_semantics.DEFAULT_TABLE_HEADER` applies).
+    All descendant nodes (rows, cells, and folded children) are consumed into the returned
     :class:`~guffin.vertex.TableVertex`; consequently
     :attr:`~guffin.vertex.TableVertex.children` is always ``None`` — the descendants
     do not appear as separate vertices in the :class:`~guffin.vertex_tree.VertexTree`.
@@ -1101,31 +1116,40 @@ def to_table_vertex(node: RoamNode, tree: NodeTree) -> tuple[TableVertex, frozen
     Returns:
         A ``(TableVertex, frozenset[Id])`` pair: the built vertex with an all-default
         :class:`~guffin.common.table.TableStyle`, and the set of descendant node IDs
-        consumed by this vertex (row and cell node IDs).
+        consumed by this vertex (row, cell, and folded-child node IDs).
 
     Raises:
         ValidationError: If *node* or *tree* is ``None`` or invalid.
-        ValueError: If *node* has no children (empty table).
+        ValueError: If *node* has no children (empty table), or none of them is a row.
     """
     logger.debug("node=%r, id_map keys=%r", node, list(tree.id_map.keys()))
     if not node.children:
         raise ValueError(f"RoamNode uid={node.uid!r} has no children (empty table)")
     table_tree: Final[NodeTree] = NodeTree.build(node, list(tree.id_map.values()))
     consumed_ids: Final[frozenset[Id]] = frozenset(n.id for n in table_tree.tree_network)
-    raw_table: Final[Table] = to_table(table_tree)
+    folded_ids: Final[frozenset[Id]] = frozenset(
+        c.id for c in node.children if c.id in tree.id_map and _is_folded_child(tree.id_map[c.id])
+    )
+    raw_table: Final[Table] = to_table(table_tree, folded_ids)
     # Normalize each raw Roam cell string to Pandoc Markdown (the roam-layer to_table leaves it raw).
     normalized: Final[Table] = raw_table.model_copy(
         update={"rows": tuple(tuple(to_pandoc_md(cell, table_tree) for cell in row) for row in raw_table.rows)}
     )
+    vertex: Final[TableVertex] = TableVertex(
+        uid=node.uid,
+        children=None,
+        refs=_resolve_refs(node, tree.id_map),
+        attribute_assignments=_resolve_attribute_assignments(node, tree),
+        table=normalized,
+        table_style=TableStyle(),
+    )
+    tagged_header: Final[TableHeader | None] = table_header_of_vertex(vertex)
+    header: Final[TableHeader] = DEFAULT_TABLE_HEADER if tagged_header is None else tagged_header
+    has_row_header: Final[bool] = header is TableHeader.ROW
+    if has_row_header == normalized.has_row_header:
+        return vertex, consumed_ids
     return (
-        TableVertex(
-            uid=node.uid,
-            children=None,
-            refs=_resolve_refs(node, tree.id_map),
-            attribute_assignments=_resolve_attribute_assignments(node, tree),
-            table=normalized,
-            table_style=TableStyle(),
-        ),
+        vertex.model_copy(update={"table": normalized.model_copy(update={"has_row_header": has_row_header})}),
         consumed_ids,
     )
 

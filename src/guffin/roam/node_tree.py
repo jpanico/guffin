@@ -563,12 +563,13 @@ def is_tree(root_node: RoamNode, network: NodeNetwork) -> ValidationResult:
 
 
 @validate_call
-def to_table(table_tree: NodeTree) -> Table:
+def to_table(table_tree: NodeTree, non_row_ids: Set[Id] = frozenset()) -> Table:
     """Reconstruct a :class:`~guffin.common.table.Table` from a Roam native-table :class:`NodeTree`.
 
     Rebuilds the 2-D cell grid from the Roam native table's chain structure.  The root's direct
     children are the first-column cells, sorted by :attr:`~guffin.roam.node.RoamNode.order` to
-    establish row sequence.  For each first-column cell, the algorithm follows the single-child
+    establish row sequence; a child named in *non_row_ids* is not a row, and is left out together
+    with the cells chained beneath it.  For each first-column cell, the algorithm follows the single-child
     chain — each cell's sole child is the next-column cell in the same row — collecting cell
     strings until the chain ends.  Roam does not force the chains to equal length (a row simply
     stops when its author stops filling cells, and the Roam UI shows the missing cells blank), so
@@ -582,6 +583,8 @@ def to_table(table_tree: NodeTree) -> Table:
     Args:
         table_tree: A :class:`NodeTree` whose root is a
             :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE` node.
+        non_row_ids: The :attr:`~guffin.roam.node.RoamNode.id` of each root child that is not a row
+            (default: none — every child is a row).
 
     Returns:
         A :class:`~guffin.common.table.Table` of raw cell strings, with a row header.
@@ -589,7 +592,7 @@ def to_table(table_tree: NodeTree) -> Table:
     Raises:
         ValidationError: If *table_tree* is ``None`` or invalid.
         ValueError: If the root node is not a :attr:`~guffin.roam.node.NodeType.NATIVE_TABLE` node,
-            or if it has no children (empty table).
+            or if it has no children (empty table), or if none of its children is a row.
     """
     logger.debug("table_tree root uid=%r", table_tree.root_node.uid)
     root: Final[RoamNode] = table_tree.root_node
@@ -598,9 +601,11 @@ def to_table(table_tree: NodeTree) -> Table:
     if not root.children:
         raise ValueError(f"RoamNode uid={root.uid!r} has no children (empty table)")
     col1_cells: Final[list[RoamNode]] = sorted(
-        [table_tree.id_map[c.id] for c in root.children if c.id in table_tree.id_map],
+        [table_tree.id_map[c.id] for c in root.children if c.id in table_tree.id_map and c.id not in non_row_ids],
         key=lambda n: n.order if n.order is not None else 0,
     )
+    if not col1_cells:
+        raise ValueError(f"RoamNode uid={root.uid!r} has no rows")
     rows: Final[list[tuple[str, ...]]] = []
     for col1_cell in col1_cells:
         row: list[str] = []

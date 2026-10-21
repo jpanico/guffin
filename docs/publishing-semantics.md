@@ -16,7 +16,7 @@ pure taxonomy with no other `guffin` dependencies.
 - **`PublishingAttribute`** — an `Attribute` pinned to the `guffin` domain, carrying an **`AttributeAnchor`**: the
   kind of vertex it attaches to, and where in the tree. The anchoring affordances themselves live
   in `model/attribute_anchor.py` — what the model *can express* is independent of how this vocabulary uses
-  it. `AttributeAnchor` has `PAGE`, `HEADING`, `PDF`, `CODE_BLOCK`,
+  it. `AttributeAnchor` has `PAGE`, `HEADING`, `TEXT`, `PDF`, `CODE_BLOCK`, `TABLE`,
   `BLOCK`, `ANY`, and `ROOT`; each member carries three constraint axes a host vertex must satisfy:
   the `frozenset[VertexType]` it corresponds to (the AttributeAnchor↔VertexType correspondence is a single
   source of truth on the enum; `VertexType` is defined in `model/vertex.py`), its `TreePosition`
@@ -65,6 +65,14 @@ pure taxonomy with no other `guffin` dependencies.
     canonical language vocabulary (`common/programming_language.py`); `CODE_SOURCE` (`code-source::`)
     records the GitHub provenance of a snapshotted listing — three ordered values (blob URL, commit
     SHA, fetch date) parsed to a `CodeSource`.
+  - *Table-anchored tags* (`AttributeAnchor.TABLE`): `TABLE_HEADER` (`table-header::`) declares which
+    of a table's cells head it, as a `TableHeader`: `row` (the first row is the header row) or
+    `none` (no header; the first row is an ordinary row, as in a grid of images). Untagged,
+    `DEFAULT_TABLE_HEADER` (`row`) applies. The transcriber applies the tag to the table's
+    `has_row_header`, so every renderer sees it the same way. In Roam the tag is a `guffin-meta::`
+    child of the `{{table}}` block; Roam reads every child of a table as a row, so the transcriber
+    leaves attribute-block and `guffin-meta::` children out of the grid (Roam itself still shows
+    them as a row).
   - *Block-anchored tags* (`AttributeAnchor.BLOCK`): `PUBLISH` (`publish::`) declares a block's publication
     state; `publish:: false` omits the block and its entire subtree from every rendered output
     (untagged, `DEFAULT_PUBLISH` — published — applies).
@@ -100,7 +108,8 @@ The invariants it enforces fall into four groups:
 - **Value legality** — each tag's value is drawn from that tag's legal set: `element-type` names a
   `StructuralElement`, `matter` a `Matter`, `page-break` a `PageBreak`, `pdf-render` a `PdfRenderPlacement`,
   `code-language` a canonical
-  language, `code-source` a well-formed URL/commit-SHA/date triple, `publish` a boolean, `date` a
+  language, `code-source` a well-formed URL/commit-SHA/date triple, `table-header` a `TableHeader`,
+  `publish` a boolean, `date` a
   W3CDTF reduced-precision date, and `cover-image` a block reference resolving to an image in the tree.
 - **Placement** — a `matter` tag sits at the book's section level (level 1, or level 2 in a parts book).
 - **Internal element numbering** — the author's bracketed element numbers (see
@@ -195,6 +204,15 @@ ToC faithful to the matter division the tag declares.
   format maps the class itself: `typst_page_break.lua` prepends a weak Typst `#pagebreak` (a heading
   already at a page top gains no blank page), and `epub.css` applies `break-before: page`
   (best-effort — reading-system support varies). GFM drops the class, having no pages.
+- **Table header (all formats).** A table's `has_row_header`, set at transcription from its
+  `table-header::` tag, decides whether the shared Doc build puts the first row in the Pandoc
+  `TableHead` or in the body. Each format follows the head: the PDF sets it in a Typst
+  `table.header`, which is filled and repeated at the top of every page the table runs onto; the
+  EPUB sets it in a `<thead>`, the only place `epub.css` styles as a header; GFM, whose pipe
+  tables cannot lack a header, writes an empty header row above a headless table. The PDF template
+  keys the header's fill, the rule beneath it, and its type on row 0, so `default_styles.typ`
+  rebuilds a table with no `table.header` on no fill, with the ordinary rule between rows 0 and 1
+  and row 0 in the surrounding type.
 - **Code-source attribution (all formats).** A `code-source::` tag (three ordered values:
   GitHub blob URL, snapshot commit SHA, fetch date) lands on `CodeBlockVertex.code_source` at
   transcription. The shared Doc build follows a sourced code block with a `code-source`-classed

@@ -22,6 +22,7 @@ from pypdf import PdfReader
 
 from guffin.common.geometry import ImageSize
 from guffin.common.media_type import MediaType
+from guffin.common.table import Table, TableStyle
 from guffin.model.alternative import Alternative
 from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance, LiteralValue
 from guffin.model.attribute_assignment import AttributeAssignment
@@ -34,6 +35,7 @@ from guffin.model.vertex import (
     PdfVertex,
     QuoteBlockVertex,
     QuoteType,
+    TableVertex,
     TextVertex,
     TodoState,
     TodoVertex,
@@ -1382,3 +1384,70 @@ class TestTallImageFigurePdf:
         png: Final[Path] = FIXTURES_IMAGES_DIR / "test_article_2.png"
         pdf: Final[pdfium.PdfDocument] = self._render(tmp_path, png, ImageSize(width=600, height=1000))
         self._assert_caption_on_the_image_page_above_the_margin(pdf)
+
+
+@pytest.mark.pandoc
+@pytest.mark.skipif(shutil.which("typst") is None, reason="requires typst on PATH")
+class TestTableHeaderPdf:
+    """A header row is filled and repeats on every page its table runs onto; a headless table's first row does neither.
+
+    The template keyed the header's fill and type on a table's first row, and every table had a
+    header row, so a gallery of images that ran onto a second page showed its first row shaded and
+    then again at the top of the next page (seen 2026-10-21 on the SCFH Tarot Fool page).
+    """
+
+    _ROWS: Final[int] = 80
+    _FIRST: Final[str] = "first-row"
+
+    @classmethod
+    def _render(cls, out_dir: Path, has_row_header: bool) -> pdfium.PdfDocument:
+        """An article whose only content is an 80-row table, with or without a header row."""
+        rows: Final[list[list[str]]] = [[cls._FIRST]] + [[f"row_{index:03d}"] for index in range(1, cls._ROWS)]
+        tree: Final[VertexTree] = VertexTree(
+            tree_vertices=[
+                PageVertex(uid="page00001", title="Doc", children=["table0001"]),
+                TableVertex(
+                    uid="table0001", table=Table(rows=rows, has_row_header=has_row_header), table_style=TableStyle()
+                ),
+            ]
+        )
+        render(
+            RenderBundle(content=tree),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+            options=PdfRenderOptions(output_dir=out_dir),
+        )
+        return pdfium.PdfDocument(out_dir / "doc.pdf")
+
+    @classmethod
+    def _first_row_pages(cls, pdf: pdfium.PdfDocument) -> int:
+        return sum(cls._FIRST in page.get_textpage().get_text_range() for page in pdf)
+
+    @classmethod
+    def _first_row_fill(cls, pdf: pdfium.PdfDocument) -> tuple[int, int, int]:
+        """The colour of the first row's cell just left of its text, on the first page."""
+        page = pdf[0]
+        textpage = page.get_textpage()
+        start: Final[int] = textpage.get_text_range().find(cls._FIRST)
+        left, bottom, _, top = textpage.get_charbox(start)
+        scale: Final[int] = 2
+        image = page.render(scale=scale).to_pil().convert("RGB")
+        x: Final[int] = round((left - 2) * scale)
+        y: Final[int] = round((page.get_height() - (bottom + top) / 2) * scale)
+        red, green, blue = image.getpixel((x, y))  # type: ignore[misc]
+        return red, green, blue
+
+    def test_header_row_repeats_and_is_filled(self, tmp_path: Path) -> None:
+        """A header row is set at the top of every page the table runs onto, on the header fill."""
+        pdf: Final[pdfium.PdfDocument] = self._render(tmp_path, has_row_header=True)
+        assert len(pdf) > 1
+        assert self._first_row_pages(pdf) == len(pdf)
+        assert self._first_row_fill(pdf) != (255, 255, 255)
+
+    def test_headless_first_row_prints_once_unfilled(self, tmp_path: Path) -> None:
+        """A headless table's first row is printed once, on no fill, like any other row."""
+        pdf: Final[pdfium.PdfDocument] = self._render(tmp_path, has_row_header=False)
+        assert len(pdf) > 1
+        assert self._first_row_pages(pdf) == 1
+        assert self._first_row_fill(pdf) == (255, 255, 255)

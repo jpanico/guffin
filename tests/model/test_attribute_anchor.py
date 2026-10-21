@@ -8,11 +8,12 @@ class TestAnchorVertexTypes:
     """AttributeAnchor members carry the vertex-type sets they attach to."""
 
     def test_single_type_anchors(self) -> None:
-        """The page, heading, and pdf anchors each cover exactly their one vertex type."""
+        """The page, heading, text, pdf, and table anchors each cover exactly their one vertex type."""
         assert AttributeAnchor.PAGE.vertex_types == frozenset({VertexType.PAGE})
         assert AttributeAnchor.HEADING.vertex_types == frozenset({VertexType.HEADING})
         assert AttributeAnchor.TEXT.vertex_types == frozenset({VertexType.TEXT})
         assert AttributeAnchor.PDF.vertex_types == frozenset({VertexType.PDF})
+        assert AttributeAnchor.TABLE.vertex_types == frozenset({VertexType.TABLE})
 
     def test_block_anchor_covers_every_type_except_page(self) -> None:
         """The block anchor covers every vertex type but PAGE."""

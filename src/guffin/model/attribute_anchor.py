@@ -64,6 +64,7 @@ class AttributeAnchor(enum.StrEnum):
         PDF: The attribute attaches to a PDF vertex (an embedded PDF asset), directly or at a
             standalone-link reference site.
         CODE_BLOCK: The attribute attaches to a code-block vertex (a fenced code listing).
+        TABLE: The attribute attaches to a table vertex.
         BLOCK: The attribute attaches to any block vertex — every vertex type except a page.
         ANY: The attribute attaches to any vertex, of every type, anywhere.
         ROOT: The attribute attaches to the tree's root vertex, whatever its type — a page for a
@@ -94,6 +95,7 @@ class AttributeAnchor(enum.StrEnum):
     TEXT = ("text", frozenset({VertexType.TEXT}), TreePosition.ANYWHERE, False)
     PDF = ("pdf", frozenset({VertexType.PDF}), TreePosition.ANYWHERE, True)
     CODE_BLOCK = ("code-block", frozenset({VertexType.CODE_BLOCK}), TreePosition.ANYWHERE, False)
+    TABLE = ("table", frozenset({VertexType.TABLE}), TreePosition.ANYWHERE, False)
     BLOCK = ("block", frozenset(VertexType) - {VertexType.PAGE}, TreePosition.ANYWHERE, False)
     ANY = ("any", frozenset(VertexType), TreePosition.ANYWHERE, False)
     ROOT = ("root", frozenset(VertexType), TreePosition.ROOT, False)

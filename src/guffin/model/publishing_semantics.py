@@ -4,15 +4,16 @@ Public symbols:
 
 - **Constants**: :data:`PDF_RENDER_FALLBACK` — the :class:`PdfRenderPlacement` placement a format falls
   back to when it cannot honour the requested one; :data:`DEFAULT_PUBLISH` — the publication
-  state of an untagged vertex.
+  state of an untagged vertex; :data:`DEFAULT_TABLE_HEADER` — the header of an untagged table.
 - **Enumerations**: :class:`PublishingSemantics` — the attributes Guffin recognizes (document metadata +
   the ``element-type``/``matter``/``page-break`` heading tags + the ``pdf-render`` PDF tag + the
-  ``publish`` block tag), each member a
+  ``table-header`` table tag + the ``publish`` block tag), each member a
   :class:`PublishingAttribute` in the :attr:`~guffin.model.attribute.AttributeDomain.GUFFIN`
   domain; :class:`PdfRenderPlacement` — how an embedded PDF asset is placed in output (reproduced at the
   embed or in an appendix, natively or as images; linked as a contained copy or an external URL;
   or named only); :class:`PageBreak` — where a page break is forced relative to the tagged heading
-  (``before``); :class:`FloatKind` — the kinds of float a ``float`` tag declares (``figure`` /
+  (``before``); :class:`TableHeader` — which of a table's cells head it (``row`` / ``none``), the
+  value a ``table-header`` tag takes; :class:`FloatKind` — the kinds of float a ``float`` tag declares (``figure`` /
   ``table`` / ``listing``), each with its ``label`` and the vertex type it wraps
   (``content_type``); :class:`NoteForm` — the form of the notes an export renders (``full`` /
   ``short``), the value a ``note-form`` block tag takes.  The anchoring affordances an attribute declares
@@ -33,7 +34,8 @@ Public symbols:
   :data:`~guffin.common.programming_language.CodeLanguageId` (any vocabulary name or alias,
   case-insensitively); :func:`code_source_of` — read a ``code-source`` assignment's three
   ordered values (GitHub blob URL, commit SHA, fetch date) as a
-  :class:`~guffin.model.code_source.CodeSource`; :func:`publish_of` — read a ``publish``
+  :class:`~guffin.model.code_source.CodeSource`; :func:`table_header_of` — read a
+  ``table-header`` assignment's value as a :class:`TableHeader`; :func:`publish_of` — read a ``publish``
   assignment's value as a boolean; :func:`note_form_of` — read a ``note-form`` assignment's value
   as a :class:`NoteForm`, and :func:`note_form_of_vertex` — resolve a block's ``note-form`` tag,
   tolerating absent or illegal assignments (``None``, warning); :func:`float_of` — read a
@@ -55,10 +57,11 @@ Public symbols:
   assignment for a :class:`PublishingSemantics` attribute (the Guffin domain supplied automatically);
   :func:`element_type_of_vertex` / :func:`matter_of_vertex` / :func:`page_break_of_vertex` /
   :func:`pdf_render_of_vertex` /
-  :func:`code_language_of_vertex` / :func:`code_source_of_vertex` / :func:`publish_of_vertex` —
+  :func:`code_language_of_vertex` / :func:`code_source_of_vertex` / :func:`table_header_of_vertex` /
+  :func:`publish_of_vertex` —
   resolve a heading's ``element-type`` / bare ``matter`` / ``page-break`` tag, a PDF embed's
   ``pdf-render`` tag (declared on the embed itself or on a standalone-link reference to it), a
-  code block's ``code-language`` or ``code-source`` tag,
+  code block's ``code-language`` or ``code-source`` tag, a table's ``table-header`` tag,
   or any block's ``publish`` tag, to its value, tolerating absent or illegal assignments (``None``,
   warning); :func:`resolved_matter` — a heading's resolved :class:`Matter` division (a bare
   ``matter`` tag overrides the element's conventional placement, logging any disagreement);
@@ -204,6 +207,27 @@ class PageBreak(enum.StrEnum):
     BEFORE = "before"
 
 
+class TableHeader(enum.StrEnum):
+    """Which of a table's cells head it — the values a ``table-header`` tag takes.
+
+    A header row names the columns, so it is set apart from the rows beneath it, and a format that
+    breaks a table across pages repeats it at the top of each page.  A table whose first row is
+    data like any other, such as a grid of images, has no header.  An untagged table takes
+    :data:`DEFAULT_TABLE_HEADER`.
+
+    Attributes:
+        ROW: The first row is the table's header row.
+        NONE: The table has no header; its first row is an ordinary row.
+    """
+
+    ROW = "row"
+    NONE = "none"
+
+
+DEFAULT_TABLE_HEADER: Final[TableHeader] = TableHeader.ROW
+"""The header of a table carrying no ``table-header`` tag."""
+
+
 class NoteForm(enum.StrEnum):
     """The form of a work's notes an export renders — the values a ``note-form`` tag takes.
 
@@ -311,6 +335,8 @@ class PublishingSemantics(enum.Enum):
     - **Code-block tags** (:attr:`AttributeAnchor.CODE_BLOCK`) — applied to an individual fenced
       code listing: :attr:`CODE_LANGUAGE` declares the listing's language, overriding whatever
       language the source's fence records.
+    - **Table tags** (:attr:`AttributeAnchor.TABLE`) — applied to an individual table:
+      :attr:`TABLE_HEADER` declares which of its cells head it.
     - **Block tags** (:attr:`AttributeAnchor.BLOCK`) — applied to any block vertex: :attr:`PUBLISH`
       declares whether the block, with its entire subtree, appears in rendered output;
       :attr:`NOTE_FORM` limits the block, with its subtree, to exports of one :class:`NoteForm`.
@@ -346,6 +372,8 @@ class PublishingSemantics(enum.Enum):
             ordered values: the GitHub blob URL naming its source, the full commit SHA
             actually fetched, and the fetch date (see
             :class:`~guffin.model.code_source.CodeSource`).
+        TABLE_HEADER: Tags a table with its :class:`TableHeader` (``none`` makes its first row an
+            ordinary row; absent, :data:`DEFAULT_TABLE_HEADER` applies).
         PUBLISH: Tags a block with its publication state; ``false`` omits the block and every
             descendant from all rendered output (absent, :data:`DEFAULT_PUBLISH` applies).
         NOTE_FORM: Tags a block with a :class:`NoteForm`; the block and every descendant appear only
@@ -373,6 +401,7 @@ class PublishingSemantics(enum.Enum):
     PDF_RENDER = PublishingAttribute(name="pdf-render", anchor=AttributeAnchor.PDF)
     CODE_LANGUAGE = PublishingAttribute(name="code-language", anchor=AttributeAnchor.CODE_BLOCK)
     CODE_SOURCE = PublishingAttribute(name="code-source", anchor=AttributeAnchor.CODE_BLOCK)
+    TABLE_HEADER = PublishingAttribute(name="table-header", anchor=AttributeAnchor.TABLE)
     PUBLISH = PublishingAttribute(name="publish", anchor=AttributeAnchor.BLOCK)
     NOTE_FORM = PublishingAttribute(name="note-form", anchor=AttributeAnchor.BLOCK)
     FLOAT = PublishingAttribute(name="float", anchor=AttributeAnchor.TEXT)
@@ -512,6 +541,26 @@ def code_source_of(assignment: AttributeAssignment) -> CodeSource:
         raise ValueError(f"code-source expects 3 values (url, commit sha, fetched date); got {len(assignment.values)}")
     url_text, sha_text, date_text = (attribute_value_text(value) for value in assignment.values)
     return CodeSource.model_validate({"url": url_text, "commit_sha": sha_text, "fetched_date": date_text})
+
+
+@validate_call
+def table_header_of(assignment: AttributeAssignment) -> TableHeader:
+    """Return the :class:`TableHeader` that a ``table-header`` assignment names.
+
+    Verifies *assignment* is for the :attr:`PublishingSemantics.TABLE_HEADER` attribute, then
+    coerces its sole value to a :class:`TableHeader` (``row`` / ``none``).
+
+    Args:
+        assignment: A :attr:`PublishingSemantics.TABLE_HEADER` attribute assignment (one value expected).
+
+    Returns:
+        The named :class:`TableHeader`.
+
+    Raises:
+        ValueError: If *assignment* is not for the ``table-header`` attribute, does not carry
+            exactly one value, or its value is not a recognised :class:`TableHeader`.
+    """
+    return TableHeader(verified_sole_value_text(assignment, PublishingSemantics.TABLE_HEADER.value))
 
 
 @validate_call
@@ -761,6 +810,30 @@ def code_source_of_vertex(vertex: CodeBlockVertex) -> CodeSource | None:
         return code_source_of(assignment)
     except ValueError as exc:
         logger.warning("ignoring code-source on vertex uid=%r: %s", vertex.uid, exc)
+        return None
+
+
+@validate_call
+def table_header_of_vertex(vertex: TableVertex) -> TableHeader | None:
+    """Resolve *vertex*'s ``table-header`` tag to a :class:`TableHeader`, or ``None``.
+
+    ``None`` when *vertex* carries no ``table-header`` assignment, or when the assignment does
+    not coerce to a :class:`TableHeader` (ignored with a warning).  An untagged table takes
+    :data:`DEFAULT_TABLE_HEADER`.
+
+    Args:
+        vertex: The table vertex whose tag to resolve.
+
+    Returns:
+        The named :class:`TableHeader`, or ``None``.
+    """
+    assignment: Final[AttributeAssignment | None] = find_publishing_attribute(vertex, PublishingSemantics.TABLE_HEADER)
+    if assignment is None:
+        return None
+    try:
+        return table_header_of(assignment)
+    except ValueError as exc:
+        logger.warning("ignoring table-header on vertex uid=%r: %s", vertex.uid, exc)
         return None
 
 

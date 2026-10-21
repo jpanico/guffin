@@ -39,7 +39,8 @@ onto `cfg` after `base_cfg.typ` and before `user_cfg.typ`, so a user config, bun
 as a `template_dir`, still overrides any key.  `default_styles.typ` applies them: the table
 frame is a block clipped to `table-radius` and stroked with `table-frame-stroke`, the header
 row's text takes `table-header-ink` and `table-header-weight`, and Pandoc's rule under the header
-takes `table-stroke-header-b`; the template's own `callout` helper draws a callout from the
+takes `table-stroke-header-b`; a table with no header row (no `table.header`, as for a table
+tagged `table-header:: none`) is rebuilt so its row 0 takes none of them; the template's own `callout` helper draws a callout from the
 `callout-*` keys and `callout-colors` (per kind: `fill`, `frame`, `ink`), replacing
 `currentColor` in the icon's SVG with the ink, since Typst gives an image no text colour.
 
@@ -73,9 +74,6 @@ GitHub owns.
 
 ## Known gaps
 
-- **Headerless tables.**  The PDF tints row 0 whether or not it is a header (Bergfink's fill
-  keys on the row, as it always did); the EPUB tints only a real `<thead>`.  The EPUB's is the
-  truer reading, and the PDF could be brought to it.
 - **Vertical rules.**  Tables draw none.  A wide table with many short columns may want them
   back: `table-stroke-vertical` is the one key to set, in a `user_cfg.typ`.
 - **Reading systems.**  The EPUB's rounded corners rely on `border-radius` and `:last-child`;
