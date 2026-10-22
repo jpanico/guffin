@@ -1,10 +1,12 @@
 -- epub_callout.lua
 -- Lua filter for the EPUB output path.
 -- Prepends the shared SVG callout icon to the title of each Div.callout produced
--- by pandoc_rendering.py, mirroring the gentle-clues header (icon + title) in the
--- PDF output. The SVG comes from pipeline/callout_icons/ (the same files the PDF
--- path uses), so both formats render an identical icon set. A callout without a
--- title gets an icon-only header.
+-- by pandoc_rendering.py, mirroring the title band (icon + title) of the template's
+-- callout helper in the PDF output. The SVG comes from render/callout_icons/ (the same
+-- files the PDF path uses), so both formats render an identical icon set. A callout
+-- without a title gets an icon-only header. A label leading the title (the
+-- Span.callout-label the shared build writes, e.g. "Definition") stays where it is,
+-- after the icon; the generated stylesheet sets it on a line of its own.
 
 -- Guffin CalloutType class -> shared icon SVG basename (matches callout_icons/<name>.svg).
 local ICON = {
@@ -19,6 +21,7 @@ local ICON = {
   ["callout-danger"]    = "danger",
   ["callout-failure"]   = "error",
   ["callout-bug"]       = "error",
+  ["callout-definition"] = "book",
 }
 
 -- Absolute path to the bundled callout_icons directory, supplied by epub_rendering.py

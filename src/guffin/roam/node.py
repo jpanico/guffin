@@ -88,9 +88,9 @@ class NodeType(enum.StrEnum):
     - **IMAGE_BLOCK**: ``string`` is a standalone Markdown image link to a Firebase Storage URL
       (the link is the string's entire content).
       Produced by drag-and-drop into the Roam UI; supports image-resize properties via ``props``.
-    - **CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the eleven
+    - **CALLOUT_BLOCK**: ``string`` starts with ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of the twelve
       recognised callout type keywords (``INFO``, ``EXAMPLE``, ``NOTE``, ``WARNING``, ``DANGER``,
-      ``TIP``, ``SUMMARY``, ``SUCCESS``, ``QUESTION``, ``FAILURE``, ``BUG``).
+      ``TIP``, ``SUMMARY``, ``SUCCESS``, ``QUESTION``, ``FAILURE``, ``BUG``, ``DEFINITION``).
     - **CODE_BLOCK**: ``string``, with surrounding whitespace trimmed, is a CommonMark fenced code
       block (opened by a ```` ``` ```` or ``~~~`` fence).
     - **QUOTE_BLOCK**: any quote block — ``string`` starts with ``>`` or ``[[>]]`` but does *not* match

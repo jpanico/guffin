@@ -25,6 +25,7 @@ from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
+    CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
@@ -38,6 +39,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLink, VertexLinkKind, vertex_link_url
 from guffin.model.vertex_tree import VertexTree
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
+from guffin.render.design_language import FAMILY_PALETTE, DesignFamily
 from guffin.render.epub_rendering import PORTRAIT_IMAGE_CLASS, render
 from guffin.render.pandoc_rendering import heading_anchor
 from guffin.render.project import ArticleProfile, BookProfile, ProjectProfile
@@ -347,6 +349,37 @@ class TestTodoRendering:
         # displayed with the checkmark form (☑), matching the native checkbox inputs above.
         assert 'see <span style="font-size: 1.2em; line-height: 1">☑</span> a completed item inline' in xhtml
         assert "☒" not in xhtml
+
+
+class TestDefinitionCallout:
+    """A definition box carries its label as text in the band, beside the open-book icon, in gold."""
+
+    @pytest.fixture(scope="class")
+    def definition_epub(self, tmp_path_factory: pytest.TempPathFactory) -> Path:
+        """A page holding one definition callout, rendered once for the class."""
+        page = PageVertex(uid="page00001", title="Terms", children=["defn00001"])
+        callout = CalloutVertex(
+            uid="defn00001",
+            callout_type=CalloutVertex.CalloutType.DEFINITION,
+            title="Lookup Table",
+            body="a precomputed array read by index",
+        )
+        bundle: Final[RenderBundle] = RenderBundle(content=VertexTree(tree_vertices=[page, callout]))
+        return _render_epub(tmp_path_factory.mktemp("definition"), bundle, ArticleProfile(), "terms")
+
+    def test_band_reads_icon_label_then_term(self, definition_epub: Path) -> None:
+        """The band's paragraph holds the book icon, then the label span, then the term."""
+        chapter: Final[str] = _chapter_xhtml(definition_epub)
+        band: Final[str] = chapter.split('<div class="callout-title">', 1)[1].split("</div>", 1)[0]
+        assert band.index("<svg") < band.index('<span class="callout-label">Definition</span> Lookup Table')
+        assert 'd="M5.6 8.1' in band  # the open book's left page
+
+    def test_stylesheet_sets_the_label_and_the_gold_card(self, definition_epub: Path) -> None:
+        """The generated rules set the label line and give the definition box the gold family's colours."""
+        css: Final[str] = _all_text(definition_epub)
+        assert "span.callout-label {" in css
+        assert f"div.callout-definition {{ border-color: {FAMILY_PALETTE[DesignFamily.GOLD].emphasis}; }}" in css
+        assert "div.callout-definition > div.callout-title svg { float: left;" in css
 
 
 class TestRenderEpub:

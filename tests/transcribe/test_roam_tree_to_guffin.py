@@ -35,6 +35,7 @@ from guffin.model.vertex import (
 from guffin.model.vertex_link import VertexLinkKind
 from guffin.model.vertex_view import ChildrenLayout, Semantic, SourceChannel, VertexView
 from guffin.roam.better_bullet import BetterBulletProvenance, BetterBulletType
+from guffin.roam.blockquote import CalloutType as RoamCalloutType
 from guffin.roam.markdown import ROAM_NATIVE_TABLE_RAW_MARKER
 from guffin.roam.node import NodeType, RoamNode, node_type
 from guffin.roam.node_network import all_descendants, min_effective_heading_level
@@ -780,6 +781,19 @@ class TestToCalloutVertex:
         """Test that the callout type is extracted from the marker keyword."""
         node = _make_callout(string="[[>]] [[!WARNING]] Watch out")
         assert to_callout_vertex(node, _node_tree(node)).callout_type is CalloutVertex.CalloutType.WARNING
+
+    @pytest.mark.parametrize("roam_type", list(RoamCalloutType))
+    def test_every_source_type_has_a_model_type(self, roam_type: RoamCalloutType) -> None:
+        """Each source callout keyword transcribes to the model type of the same name."""
+        node = _make_callout(string=f"[[>]] [[!{roam_type.value}]] Title")
+        assert to_callout_vertex(node, _node_tree(node)).callout_type.name == roam_type.name
+
+    def test_definition_is_a_callout_titled_by_its_term(self) -> None:
+        """A definition marker transcribes to a definition callout whose title is the term."""
+        node = _make_callout(string="[[>]] [[!DEFINITION]] Lookup Table")
+        vertex = to_callout_vertex(node, _node_tree(node))
+        assert vertex.callout_type is CalloutVertex.CalloutType.DEFINITION
+        assert vertex.title == "Lookup Table"
 
     def test_title_extracted(self) -> None:
         """Test that the title is the text following the callout marker."""

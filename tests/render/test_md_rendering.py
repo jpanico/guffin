@@ -799,6 +799,17 @@ class TestCalloutTitleRendering:
         result = self._render(tmp_path, CalloutVertex.CalloutType.EXAMPLE, "note")
         assert "> [!NOTE]\n>\n> Body line." in result
 
+    def test_definition_label_opens_the_bold_line(self, tmp_path: Path) -> None:
+        """A definition is a note alert whose bold line names the box in words before the term."""
+        result = self._render(tmp_path, CalloutVertex.CalloutType.DEFINITION, "Lookup Table")
+        assert "> [!NOTE]\n> **Definition: Lookup Table**\n>\n> Body line." in result
+        assert "callout-label" not in result
+
+    def test_untitled_definition_bold_line_is_the_label(self, tmp_path: Path) -> None:
+        """A definition with no title still names its box."""
+        result = self._render(tmp_path, CalloutVertex.CalloutType.DEFINITION, "")
+        assert "> [!NOTE]\n> **Definition**\n>\n> Body line." in result
+
 
 def _sourced_bundle() -> RenderBundle:
     """A page with one sourced Python code block."""

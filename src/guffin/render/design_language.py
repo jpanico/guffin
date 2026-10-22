@@ -14,7 +14,7 @@ Public symbols:
 - **Enums**: :class:`DesignFamily` — the colour families, each carrying the meaning it stands for.
 - **Models**: :class:`ColorFamily` — a family's fill, stroke, emphasis, and ink; :class:`TableTheme`
   — a table's tokens, as a card of one family; :class:`CalloutTheme` — a callout box's tokens, a
-  card whose family each callout type chooses.
+  card whose family each callout type chooses, with the measures of the label a type may print.
 - **Constants**: :data:`FAMILY_PALETTE` — the ``DesignFamily`` → ``ColorFamily`` map (covers every
   member); :data:`TEXT_INK` / :data:`LABEL_INK` / :data:`MUTED_INK` — the neutral inks for titles,
   labels, and descriptions; :data:`TABLE_THEME` / :data:`CALLOUT_THEME` — the tokens in force.
@@ -58,6 +58,7 @@ class DesignFamily(enum.StrEnum):
     GREEN = "green"
     RED = "red"
     VIOLET = "violet"
+    GOLD = "gold"
 
     @property
     def meaning(self) -> str:
@@ -73,6 +74,7 @@ _MEANING_BY_FAMILY: Final[dict[DesignFamily, str]] = {
     DesignFamily.GREEN: "success and advice: what went right, what to do",
     DesignFamily.RED: "danger and failure: what went wrong, what must not be done",
     DesignFamily.VIOLET: "the example: a case shown",
+    DesignFamily.GOLD: "the term: a word given a fixed meaning",
 }
 
 
@@ -101,6 +103,7 @@ FAMILY_PALETTE: Final[dict[DesignFamily, ColorFamily]] = {
     DesignFamily.GREEN: ColorFamily(fill="#E9F3E6", stroke="#C6E0BF", emphasis="#7DB873", ink="#2F6B2A"),
     DesignFamily.RED: ColorFamily(fill="#FBEBE9", stroke="#F0C9C4", emphasis="#D4675B", ink="#8E2A20"),
     DesignFamily.VIOLET: ColorFamily(fill="#F1EDFA", stroke="#D6CCEF", emphasis="#A896D9", ink="#4B3A8C"),
+    DesignFamily.GOLD: ColorFamily(fill="#FBF5E5", stroke="#EDE0BB", emphasis="#CCB05C", ink="#654C10"),
 }
 """The colours of every ``DesignFamily``."""
 
@@ -153,7 +156,10 @@ class CalloutTheme(BaseModel, frozen=True):
     A callout is white, framed by its family's emphasis stroke on a rounded outline, with its title
     a band of the family's fill carrying the icon and the title text in the family's ink at a
     semibold weight, and its body beneath, parted from the band by the frame stroke.  A callout
-    with no body is the band alone.  Every length is in ems of the callout's text.
+    with no body is the band alone.  A callout whose type names its box in words carries that
+    *label* in the band too, on a line of its own above the title: smaller, tracked capitals in the
+    family's ink at the title's weight, the language's style for a panel's name; the icon then
+    grows to span both lines.  Every length is in ems of the callout's text.
 
     Attributes:
         frame_width_em: The thickness of the frame and of the rule under the title band: the
@@ -163,8 +169,12 @@ class CalloutTheme(BaseModel, frozen=True):
         header_inset_y_em: The padding above and below the title band's content.
         body_inset_x_em: The padding at either side of the body.
         body_inset_y_em: The padding above and below the body.
-        title_weight: The font weight of the title, as a CSS weight number.
+        title_weight: The font weight of the title and of the label, as a CSS weight number.
         icon_size_em: The height of the icon beside the title.
+        label_size_em: The size of the label's text.
+        label_tracking_em: The extra space between the label's letters, in ems of the label's text.
+        label_gap_em: The space between the label's line and the title's.
+        labelled_icon_size_em: The height of the icon beside a label and title.
     """
 
     frame_width_em: float = 0.1
@@ -175,6 +185,10 @@ class CalloutTheme(BaseModel, frozen=True):
     body_inset_y_em: float = 0.7
     title_weight: int = 600
     icon_size_em: float = 1.15
+    label_size_em: float = 0.72
+    label_tracking_em: float = 0.1
+    label_gap_em: float = 0.35
+    labelled_icon_size_em: float = 1.6
 
 
 CALLOUT_THEME: Final[CalloutTheme] = CalloutTheme()

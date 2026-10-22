@@ -1,7 +1,7 @@
 """Roam Research quote-block constructs: the ``[[>]]`` marker, its callout, pull-quote, and epigraph subtypes.
 
 In Roam's Markdown model ``[[>]]`` is the block-quote marker.  A **callout** is a styled subtype
-whose marker is ``[[>]] [[!<TYPE>]]`` (``<TYPE>`` one of the eleven callout keywords).  Two further
+whose marker is ``[[>]] [[!<TYPE>]]`` (``<TYPE>`` one of the :class:`CalloutType` keywords).  Two further
 markers of that shape are treated separately, as quotations rather than callouts: ``[[>]] [[!QUOTE]]``
 is a **pull quote** — a passage of the work's own text promoted for display — and
 ``[[>]] [[!EPIGRAPH]]`` is an **epigraph** — a quotation set at the opening of a work or one of its
@@ -24,7 +24,7 @@ Public symbols:
   content; :data:`ATTRIBUTION_DASHES` — the dashes that may lead a quotation's attribution;
   :data:`BLOCK_QUOTE_ATTRIBUTION_RE` — compiled regex splitting a quotation's content into its
   quotation and attribution.
-- **Enumerations**: :class:`CalloutType` — the eleven Roam callout type keywords.
+- **Enumerations**: :class:`CalloutType` — the twelve Roam callout type keywords.
 - **Models**: :class:`RoamCallout` — parsed decomposition of a callout block string;
   :class:`RoamBlockQuote` — parsed decomposition of an attributable quotation string (a plain block
   quote or an epigraph).
@@ -58,13 +58,17 @@ a fast pre-filter before applying :data:`CALLOUT_RE` and by
 
 
 class CalloutType(enum.StrEnum):
-    """The eleven Roam callout type keywords as they appear in the raw block string marker.
+    """The twelve Roam callout type keywords as they appear in the raw block string marker.
 
     The marker format is ``[[>]] [[!<TYPE>]]`` where ``<TYPE>`` is one of these values
     (always uppercase in the Roam source).
 
     These map one-to-one to the lowercase :class:`~guffin.vertex.CalloutVertex.CalloutType`
     values in the export model; convert with ``CalloutVertex.CalloutType(member.lower())``.
+
+    ``DEFINITION`` — a box setting out what a term means, the term its title — is not among the
+    types Roam's own callout menu offers, but Roam draws a box for any ``[[!<TYPE>]]`` keyword, so
+    it displays as a callout there too.
 
     Note ``QUOTE`` and ``EPIGRAPH`` are deliberately absent: ``[[>]] [[!QUOTE]]`` is a pull quote
     (see :data:`PULL_QUOTE_RE`) and ``[[>]] [[!EPIGRAPH]]`` an epigraph (see :data:`EPIGRAPH_RE`),
@@ -82,6 +86,7 @@ class CalloutType(enum.StrEnum):
     QUESTION = "QUESTION"
     FAILURE = "FAILURE"
     BUG = "BUG"
+    DEFINITION = "DEFINITION"
 
 
 CALLOUT_RE: Final[regex.Pattern[str]] = regex.compile(
@@ -95,9 +100,9 @@ CALLOUT_RE: Final[regex.Pattern[str]] = regex.compile(
 Named groups:
 
 - ``prefix`` — the literal ``[[>]]`` opener.
-- ``callout_type`` — one of the eleven recognised type keywords (``INFO``, ``EXAMPLE``,
+- ``callout_type`` — one of the twelve recognised type keywords (``INFO``, ``EXAMPLE``,
   ``NOTE``, ``WARNING``, ``DANGER``, ``TIP``, ``SUMMARY``, ``SUCCESS``, ``QUESTION``,
-  ``FAILURE``, ``BUG``).
+  ``FAILURE``, ``BUG``, ``DEFINITION``).
 - ``title`` — the remainder of the first line after the marker and any intervening
   whitespace; may be an empty string when no title text is present.
 - ``body`` — everything after the first newline; ``None`` when the string contains no

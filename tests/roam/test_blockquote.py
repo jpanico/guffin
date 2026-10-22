@@ -49,8 +49,8 @@ class TestCalloutRE:
         assert CALLOUT_RE.match("[[>]] [[!INFO]] Title\nLine 1\nLine 2\nLine 3") is not None
 
     @pytest.mark.parametrize("callout_type", list(CalloutType))
-    def test_matches_all_eleven_types(self, callout_type: CalloutType) -> None:
-        """Test that each of the eleven recognised callout type keywords matches."""
+    def test_matches_every_type(self, callout_type: CalloutType) -> None:
+        """Test that each recognised callout type keyword matches."""
         assert CALLOUT_RE.match(f"[[>]] [[!{callout_type}]] Title") is not None
 
     def test_no_match_plain_string(self) -> None:
@@ -92,8 +92,8 @@ class TestCalloutRE:
         assert m.group("callout_type") == "WARNING"
 
     @pytest.mark.parametrize("callout_type", list(CalloutType))
-    def test_callout_type_group_all_eleven(self, callout_type: CalloutType) -> None:
-        """Test that callout_type captures each of the eleven recognised type keywords."""
+    def test_callout_type_group_every_type(self, callout_type: CalloutType) -> None:
+        """Test that callout_type captures each recognised type keyword."""
         m = CALLOUT_RE.match(f"[[>]] [[!{callout_type}]] Title")
         assert m is not None
         assert m.group("callout_type") == callout_type
@@ -183,11 +183,23 @@ class TestCallout:
         assert result.callout_type is CalloutType.WARNING
 
     @pytest.mark.parametrize("callout_type", list(CalloutType))
-    def test_all_eleven_callout_types(self, callout_type: CalloutType) -> None:
-        """All eleven callout type keywords are parsed to the correct CalloutType member."""
+    def test_every_callout_type(self, callout_type: CalloutType) -> None:
+        """Every callout type keyword is parsed to the correct CalloutType member."""
         result = parse_callout(f"[[>]] [[!{callout_type}]]")
         assert result is not None
         assert result.callout_type is CalloutType(callout_type)
+
+    def test_definition_title_is_the_term_and_body_the_meaning(self) -> None:
+        """A definition parses as a callout: the title is the term, the body its meaning."""
+        result = parse_callout("[[>]] [[!DEFINITION]] Lookup Table\na precomputed array read by index")
+        assert result == RoamCallout(
+            callout_type=CalloutType.DEFINITION, title="Lookup Table", body="a precomputed array read by index"
+        )
+
+    def test_definition_is_not_a_quote_block(self) -> None:
+        """A definition is a callout, so it is none of the quote-block forms."""
+        assert not is_quote_block("[[>]] [[!DEFINITION]] Lookup Table")
+        assert parse_block_quote("[[>]] [[!DEFINITION]] Lookup Table") is None
 
     def test_title_with_text(self) -> None:
         """Title captures the text on the first line after the marker."""

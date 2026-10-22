@@ -2109,6 +2109,57 @@ class TestCalloutNoBodyMarker:
         assert "callout-no-body" not in div.classes
 
 
+class TestCalloutLabel:
+    """A type whose box is named in words leads its title with that label, generated from the type."""
+
+    @staticmethod
+    def _title_inlines(callout_type: CalloutVertex.CalloutType, title: str) -> list[pf.Inline] | None:
+        """Render a one-callout tree; return its title Para's inlines, or None when it has no title Div."""
+        callout = CalloutVertex(uid="cal000001", callout_type=callout_type, title=title, body="the meaning")
+        div = TestCalloutNoBodyMarker._callout_div(callout)
+        titles: Final[list[pf.Div]] = [
+            block for block in div.content if isinstance(block, pf.Div) and "callout-title" in block.classes
+        ]
+        return list(titles[0].content[0].content) if titles else None
+
+    @staticmethod
+    def _is_label(inline: pf.Inline) -> bool:
+        """Whether *inline* is a callout label span."""
+        return isinstance(inline, pf.Span) and inline.classes == ["callout-label"]
+
+    def test_definition_title_leads_with_its_label(self) -> None:
+        """A definition's title reads label, space, term: the label is text before any format styles it."""
+        inlines = self._title_inlines(CalloutVertex.CalloutType.DEFINITION, "Lookup Table")
+        assert inlines is not None
+        assert self._is_label(inlines[0])
+        assert pf.stringify(inlines[0]) == "Definition"
+        assert isinstance(inlines[1], pf.Space)
+        assert "".join(pf.stringify(inline) for inline in inlines[2:]) == "Lookup Table"
+
+    def test_untitled_definition_carries_its_label_alone(self) -> None:
+        """A definition with no title still has a title Div, holding the label alone."""
+        inlines = self._title_inlines(CalloutVertex.CalloutType.DEFINITION, "")
+        assert inlines is not None
+        assert len(inlines) == 1
+        assert self._is_label(inlines[0])
+
+    def test_title_repeating_the_label_is_dropped_with_a_warning(self, caplog: pytest.LogCaptureFixture) -> None:
+        """A title that is only the label would name the box twice, so the label stands alone."""
+        with caplog.at_level(logging.WARNING):
+            inlines = self._title_inlines(CalloutVertex.CalloutType.DEFINITION, "definition")
+        assert inlines is not None
+        assert len(inlines) == 1
+        assert self._is_label(inlines[0])
+        assert any("repeats the label" in record.getMessage() for record in caplog.records)
+
+    def test_unlabelled_type_has_no_label(self) -> None:
+        """A note prints its title alone."""
+        inlines = self._title_inlines(CalloutVertex.CalloutType.NOTE, "A Note")
+        assert inlines is not None
+        assert not any(self._is_label(inline) for inline in inlines)
+        assert "".join(pf.stringify(inline) for inline in inlines) == "A Note"
+
+
 class TestBlockRefToBlockLevelVertex:
     """A text vertex that is solely a reference to a block-level vertex renders as that block.
 

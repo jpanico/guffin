@@ -28,6 +28,7 @@ from guffin.model.attribute import Attribute, AttributeDomain, AttributeInstance
 from guffin.model.attribute_assignment import AttributeAssignment
 from guffin.model.render_bundle import RenderBundle
 from guffin.model.vertex import (
+    CalloutVertex,
     CodeBlockVertex,
     HeadingVertex,
     ImageVertex,
@@ -53,6 +54,7 @@ from guffin.render.pandoc_rendering import (
 )
 from guffin.render.pdf_rendering import (
     _apply_pdf_embeds,
+    _callout_icons_dir,
     _prepare_title_metadata,
     _typst_resources_dir,
     _typst_str,
@@ -736,6 +738,75 @@ class TestTypstQuoteFilter:
         typst = self._typst_for(QuoteBlockVertex(uid="epigr0001", quote_type=QuoteType.EPIGRAPH, quote="Words."))
         assert "#epigraph(quote: [Words." in typst
         assert "attribution" not in typst
+
+
+@pytest.mark.pandoc
+class TestTypstCalloutFilter:
+    """typst_callout.lua: a callout calls the template's helper, a labelled type passing its label apart."""
+
+    @staticmethod
+    def _typst_for(callout: CalloutVertex, monkeypatch: pytest.MonkeyPatch) -> str:
+        """Render a one-callout page to Typst through the callout filter, the icons directory set."""
+        monkeypatch.setenv("GUFFIN_CALLOUT_ICONS_DIR", str(_callout_icons_dir()))
+        page = PageVertex(uid="page00001", title="Doc", children=[callout.uid])
+        doc, _ = vertex_tree_to_pandoc(VertexTree(tree_vertices=[page, callout]), {}, {})
+        return pypandoc.convert_text(  # type: ignore[no-untyped-call]
+            pandoc_to_json(doc),
+            "typst",
+            format="json",
+            extra_args=[f"--lua-filter={_typst_resources_dir() / 'typst_callout.lua'}"],
+        )
+
+    def test_definition_passes_label_title_and_book_icon(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """The label leaves the title for its own argument; the icon is the open book."""
+        typst = self._typst_for(
+            CalloutVertex(
+                uid="defn00001",
+                callout_type=CalloutVertex.CalloutType.DEFINITION,
+                title="Lookup Table",
+                body="a precomputed array",
+            ),
+            monkeypatch,
+        )
+        book: Final[str] = (_callout_icons_dir() / "book.svg").read_text().strip().replace('"', '\\"')
+        assert typst.startswith('#callout(kind: "definition", label: "Definition", title: "Lookup Table", icon: "')
+        assert book in typst
+
+    def test_unlabelled_callout_passes_no_label(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A note's helper call carries its title alone."""
+        typst = self._typst_for(
+            CalloutVertex(uid="note00001", callout_type=CalloutVertex.CalloutType.NOTE, title="A Note", body="Text."),
+            monkeypatch,
+        )
+        assert typst.startswith('#callout(kind: "note", title: "A Note", icon: "')
+        assert "label:" not in typst
+
+
+@pytest.mark.pandoc
+@pytest.mark.skipif(shutil.which("typst") is None, reason="requires typst on PATH")
+class TestDefinitionCalloutPdf:
+    """A definition box compiles, its label printed in capitals above the term."""
+
+    def test_label_precedes_the_term(self, tmp_path: Path) -> None:
+        """The PDF's text reads the label, then the term, then the meaning."""
+        page = PageVertex(uid="page00001", title="Doc", children=["defn00001"])
+        callout = CalloutVertex(
+            uid="defn00001",
+            callout_type=CalloutVertex.CalloutType.DEFINITION,
+            title="Lookup Table",
+            body="a precomputed array read by index",
+        )
+        render(
+            RenderBundle(content=VertexTree(tree_vertices=[page, callout])),
+            profile=ArticleProfile(),
+            filename_stem="doc",
+            api_endpoint=ApiEndpoint.from_parts(local_api_port=3333, graph_name="test", bearer_token="test"),
+            options=PdfRenderOptions(output_dir=tmp_path),
+        )
+        text: Final[str] = "\n".join(
+            pdf_page.extract_text() or "" for pdf_page in PdfReader(tmp_path / "doc.pdf").pages
+        )
+        assert text.index("DEFINITION") < text.index("Lookup Table") < text.index("a precomputed array read by index")
 
 
 @pytest.mark.pandoc

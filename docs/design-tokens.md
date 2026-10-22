@@ -22,10 +22,17 @@ EPUB each derive their styling from them.
   ink in a semibold weight.  `TableTheme` / `TABLE_THEME` (a table: the header row is the band,
   body rows are parted by hairlines in the family's stroke, columns by padding alone) and
   `CalloutTheme` / `CALLOUT_THEME` (a callout box: the title band carries the icon and title,
-  the body sits beneath, parted by the frame stroke; without a body the band stands alone).
+  the body sits beneath, parted by the frame stroke; without a body the band stands alone; a
+  type whose box is named in words prints that label on a line of its own above the title, in
+  smaller tracked capitals, the icon grown to span both lines).
   Every length is in ems of the element's text, so the look scales with the type.
 - **The callout's family** is chosen by its type, declared once in
-  `src/guffin/render/callout_theme.py` (`CALLOUT_FAMILY`, covering every `CalloutType`).
+  `src/guffin/render/callout_theme.py` (`CALLOUT_FAMILY`, covering every `CalloutType`), and so
+  is its **label** (`CALLOUT_LABEL`, only the types named in words: a definition box prints
+  *Definition* above its term, in the gold family).  The label is generated from the type,
+  never authored, and the shared document build writes it into the title as a
+  `span.callout-label`, so it is text before any format styles it; Markdown, whose alerts carry
+  fixed labels, opens the alert's bold first line with it (`**Definition: <term>**`).
 
 No bundled resource carries a family colour of its own: `tests/render/test_design_language.py`
 checks `base_cfg.typ`, `user_cfg.typ`, and `epub.css` for any palette member.
@@ -71,13 +78,17 @@ GitHub owns.
 | Title band | family fill, family ink, `title_weight` | `callout-colors.<kind>.fill` / `.ink`, `callout-title-weight` | `div.callout-title { background-color; color; font-weight }` |
 | Band and body insets | `header_inset_*_em`, `body_inset_*_em` | `callout-header-inset`, `callout-body-inset` | `div.callout-title { padding }`, `div.callout { padding }` |
 | Icon | `icon_size_em`; drawn in `currentColor` | `callout-icon-size` | `div.callout-title svg { width; height }` |
+| Label (a type named in words) | `label_size_em`, `label_tracking_em`, `label_gap_em`, `title_weight`; family ink | `callout-label-size`, `callout-label-tracking`, `callout-label-gap`, `callout-title-weight` | `span.callout-label { font-size; letter-spacing; text-transform; margin-bottom }` |
+| Icon beside a label and a title | `labelled_icon_size_em` | `callout-labelled-icon-size` | `div.callout-<type> > div.callout-title svg { float; width; height }`, one rule per labelled type |
 
 ## Known gaps
 
 - **Vertical rules.**  Tables draw none.  A wide table with many short columns may want them
   back: `table-stroke-vertical` is the one key to set, in a `user_cfg.typ`.
 - **Reading systems.**  The EPUB's rounded corners rely on `border-radius` and `:last-child`;
-  a system without them (the Kindle app is the doubtful one) shows squarer boxes.
+  a system without them (the Kindle app is the doubtful one) shows squarer boxes.  A callout
+  label's capitals rely on `text-transform`, and its icon's place beside both lines on `float`;
+  a system without them shows the label in its own case, or the icon on the label's line.
 - **One project's values.**  The tokens are the SCFH book's, hard-coded here.  A theme file a
   project supplies beside its `user_cfg.typ` is the intended home once a second project needs
   different values.

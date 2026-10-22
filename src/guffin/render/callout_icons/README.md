@@ -17,6 +17,7 @@ One file per callout kind:
 | `warning.svg` | warning |
 | `danger.svg` | danger |
 | `error.svg` | failure, bug |
+| `book.svg` | definition (an open book: the dictionary) |
 
 Each icon is a filled badge with a white symbol, and the badge is drawn in `currentColor`: the icon
 carries no colour of its own, and takes the ink of the callout it sits in — the family colour the

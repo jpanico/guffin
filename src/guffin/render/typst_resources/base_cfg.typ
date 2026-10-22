@@ -166,15 +166,21 @@
   table-header-weight: "regular",
   // Callout boxes (the `callout` helper in default_styles.typ): the frame's corner radius and
   // thickness, the insets of the title band and of the body, the title's weight, the icon's
-  // height, and the colours per callout kind — a dictionary keyed by kind (info, note, …) of
-  // `fill` (the title band), `frame` (the outline and the rule under the band), and `ink` (the
-  // title text and the icon).  A kind with no entry gets the neutral grey below.
+  // height, the label a kind may print above its title (its size, letter tracking, the gap
+  // below it, and the icon's height beside a label and a title), and the colours per callout
+  // kind — a dictionary keyed by kind (info, note, …) of `fill` (the title band), `frame` (the
+  // outline and the rule under the band), and `ink` (the title text and the icon).  A kind with
+  // no entry gets the neutral grey below.
   callout-radius: 2pt,
   callout-frame-width: 0.5pt,
   callout-header-inset: (x: 0.5em, y: 0.5em),
   callout-body-inset: (x: 1em, y: 1em),
   callout-title-weight: "bold",
   callout-icon-size: 1em,
+  callout-label-size: 0.75em,
+  callout-label-tracking: 0.08em,
+  callout-label-gap: 0.3em,
+  callout-labelled-icon-size: 1.5em,
   callout-colors: (:),
   callout-default-colors: (fill: luma(235), frame: luma(170), ink: luma(60)),
   // Whether one row may be split across a page boundary.  Typst breaks any auto-height row by

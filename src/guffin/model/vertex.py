@@ -466,7 +466,9 @@ class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
     """
 
     class CalloutType(StrEnum):
-        """Callout category keyword — the eleven recognised callout categories.
+        """Callout category keyword — the twelve recognised callout categories.
+
+        ``definition`` sets out what a term means: its title is the term, its body the meaning.
 
         Note ``quote`` and ``epigraph`` are deliberately absent: a quote-marked block is a pull
         quote and an epigraph-marked one an epigraph, each transcribed to a :class:`QuoteBlockVertex`
@@ -484,6 +486,7 @@ class CalloutVertex(_BaseVertex[Literal[VertexType.CALLOUT]]):
         QUESTION = "question"
         FAILURE = "failure"
         BUG = "bug"
+        DEFINITION = "definition"
 
     vertex_type: Literal[VertexType.CALLOUT] = Field(
         default=VertexType.CALLOUT,

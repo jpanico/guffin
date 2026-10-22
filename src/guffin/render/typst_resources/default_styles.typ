@@ -427,16 +427,35 @@
 // icon and the title in the kind's ink, with the body beneath, parted from the band by the
 // frame stroke; a callout without a body is the band alone.  `kind` picks the colours from
 // cfg.callout-colors; `icon` is the SVG source as a string, drawn in currentColor, which is
-// replaced by the ink here since an image inherits no text colour.  The band is sticky, so a
-// box that breaks across pages never leaves its band stranded at a page foot.
-#let callout(kind: "note", title: none, icon: none, with-body: true, body) = {
+// replaced by the ink here since an image inherits no text colour.  A `label` (the word a kind
+// names its box by, e.g. "Definition") is set on its own line above the title in smaller,
+// tracked capitals, and the icon beside a label and a title grows to span both lines.  The band
+// is sticky, so a box that breaks across pages never leaves its band stranded at a page foot.
+#let callout(kind: "note", title: none, label: none, icon: none, with-body: true, body) = {
   let colors = cfg.callout-colors.at(kind, default: cfg.callout-default-colors)
   let frame = cfg.callout-frame-width + colors.frame
   let title-content = if title == none { none } else {
     text(fill: colors.ink, weight: cfg.callout-title-weight, title)
   }
+  let label-content = if label == none { none } else {
+    text(
+      fill: colors.ink,
+      weight: cfg.callout-title-weight,
+      size: cfg.callout-label-size,
+      tracking: cfg.callout-label-tracking,
+      upper(label),
+    )
+  }
+  let heading-content = if label-content == none { title-content } else if title-content == none {
+    label-content
+  } else {
+    stack(spacing: cfg.callout-label-gap, label-content, title-content)
+  }
+  let icon-size = if label-content != none and title-content != none {
+    cfg.callout-labelled-icon-size
+  } else { cfg.callout-icon-size }
   let icon-content = if icon == none { none } else {
-    box(height: cfg.callout-icon-size, image(bytes(icon.replace("currentColor", colors.ink.to-hex())), format: "svg"))
+    box(height: icon-size, image(bytes(icon.replace("currentColor", colors.ink.to-hex())), format: "svg"))
   }
   let band = block(
     sticky: true,
@@ -445,8 +464,8 @@
     inset: cfg.callout-header-inset,
     below: 0pt,
     stroke: if with-body { (bottom: frame) } else { none },
-    if icon-content == none { title-content } else if title-content == none { icon-content } else {
-      grid(columns: (auto, auto), align: (horizon, left + horizon), gutter: 0.6em, icon-content, title-content)
+    if icon-content == none { heading-content } else if heading-content == none { icon-content } else {
+      grid(columns: (auto, auto), align: (horizon, left + horizon), gutter: 0.6em, icon-content, heading-content)
     },
   )
   block(

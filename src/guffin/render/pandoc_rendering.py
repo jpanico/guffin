@@ -178,11 +178,13 @@ from guffin.model.vertex_tree import (
     standalone_link_target_of_text,
 )
 from guffin.model.vertex_view import DEFAULT_CHILDREN_LAYOUT, ChildrenLayout, Semantic, VertexView, ViewMap
+from guffin.render.callout_theme import CALLOUT_LABEL_CLASS, callout_label
 from guffin.render.code_language_token import code_language_token
 from guffin.render.date_format import DateFormat, format_date
 from guffin.render.epub_semantics import MATTER_DATA_ATTRIBUTE, EpubType, epub_division_for_matter, epub_type_for
 from guffin.render.pandoc_ast import InlineMap, detached_copy, parse_block_md, parse_inline_md, strip_links
 from guffin.render.semantic_theme import BADGE_GLYPH_BY_SOURCE_CHANNEL, BULLET_GLYPH_BY_SEMANTIC
+from guffin.roam.blockquote import CalloutType as RoamCalloutType
 from guffin.roam.primitives import Uid
 
 logger = logging.getLogger(__name__)
@@ -1488,19 +1490,24 @@ def _callout_vertex_to_blocks(
 
     Produces a :class:`~panflute.Div` with classes ``["callout",
     "callout-{type}"]`` where *type* is the lowercased
-    :class:`~guffin.vertex.CalloutVertex.CalloutType` value (one of the
-    twelve recognised keywords: ``info``, ``note``, ``quote``, ``example``,
-    ``summary``, ``question``, ``tip``, ``success``, ``warning``,
-    ``danger``, ``failure``, ``bug``).  When a title is present, the first
+    :class:`~guffin.vertex.CalloutVertex.CalloutType` value (``info``,
+    ``note``, ``example``, …).  When a title is present, the first
     child is a ``callout-title`` :class:`~panflute.Div` whose content is a
     :class:`~panflute.Para` with the parsed inline elements.  The body
     (if any) is re-parsed as block-level Markdown and appended as sibling
     blocks inside the outer :class:`~panflute.Div`.  Child vertex blocks
     follow at the end.
 
+    A type whose box is named in words (:func:`~guffin.render.callout_theme.callout_label`, e.g. a
+    definition) leads the title's inlines with its label, a :class:`~panflute.Span` of class
+    :data:`~guffin.render.callout_theme.CALLOUT_LABEL_CLASS` followed by a space, so the label is
+    text in every format before any format styles it; such a callout always has a title Div, the
+    label alone when the vertex has no title.  A title that only repeats the label is dropped,
+    with a warning, since the box would otherwise name itself twice.
+
     Output-format-specific transformation is applied by a Lua filter in
-    the respective rendering module (GFM blockquote alert syntax or Typst
-    ``gentle-clues`` callout boxes).
+    the respective rendering module (GFM blockquote alert syntax, or a call
+    of the Typst template's ``callout`` helper).
 
     Args:
         vertex: The callout vertex to render.
@@ -1516,10 +1523,24 @@ def _callout_vertex_to_blocks(
         A single-element list containing the :class:`~panflute.Div`.
     """
     callout_type: Final[str] = vertex.callout_type.value.lower()
+    label: Final[str | None] = callout_label(RoamCalloutType(vertex.callout_type.value.upper()))
+    title_repeats_label: Final[bool] = label is not None and vertex.title.strip().lower() == label.lower()
+    if title_repeats_label:
+        logger.warning(
+            "callout uid=%s: title %r only repeats the label its type prints; dropping the title",
+            vertex.uid,
+            vertex.title,
+        )
+    title_inlines: Final[list[pf.Inline]] = (
+        list(inline_map.get(vertex.title, [pf.Str(vertex.title)])) if vertex.title and not title_repeats_label else []
+    )
+    label_inlines: Final[list[pf.Inline]] = (
+        [] if label is None else [pf.Span(pf.Str(label), classes=[CALLOUT_LABEL_CLASS])]
+    )
+    label_gap: Final[list[pf.Inline]] = [pf.Space()] if label_inlines and title_inlines else []
+    heading_inlines: Final[list[pf.Inline]] = label_inlines + label_gap + title_inlines
     title_blocks: Final[list[pf.Block]] = (
-        [pf.Div(pf.Para(*inline_map.get(vertex.title, [pf.Str(vertex.title)])), classes=["callout-title"])]
-        if vertex.title
-        else []
+        [pf.Div(pf.Para(*heading_inlines), classes=["callout-title"])] if heading_inlines else []
     )
     body_blocks: list[pf.Block] = []
     if vertex.body:

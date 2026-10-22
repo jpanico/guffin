@@ -360,7 +360,7 @@ class TestNodeTypeFunction:
         assert node_type(_make_callout(suffix=" some callout body")) is NodeType.CALLOUT_BLOCK
 
     def test_all_callout_types_return_callout(self) -> None:
-        """Test that each of the eleven valid callout types returns NodeType.CALLOUT_BLOCK."""
+        """Test that each of the twelve valid callout types returns NodeType.CALLOUT_BLOCK."""
         valid_types = [
             "INFO",
             "EXAMPLE",
@@ -373,6 +373,7 @@ class TestNodeTypeFunction:
             "QUESTION",
             "FAILURE",
             "BUG",
+            "DEFINITION",
         ]
         for callout_type in valid_types:
             assert node_type(_make_callout(callout_type=callout_type)) is NodeType.CALLOUT_BLOCK
@@ -380,6 +381,10 @@ class TestNodeTypeFunction:
     def test_quote_callout_marker_is_a_quote_block(self) -> None:
         """[[>]] [[!QUOTE]] is a pull quote (QUOTE_BLOCK), not a callout."""
         assert node_type(_make_callout(callout_type="QUOTE")) is NodeType.QUOTE_BLOCK
+
+    def test_epigraph_callout_marker_is_a_quote_block(self) -> None:
+        """[[>]] [[!EPIGRAPH]] is an epigraph (QUOTE_BLOCK), not a callout."""
+        assert node_type(_make_callout(callout_type="EPIGRAPH")) is NodeType.QUOTE_BLOCK
 
     def test_fenced_code_block_returns_code_block(self) -> None:
         """Test that a string fenced with ``` at both ends returns NodeType.CODE_BLOCK."""

@@ -4,7 +4,15 @@ from typing import Final
 
 import regex
 
-from guffin.render.callout_theme import CALLOUT_FAMILY, callout_colors, callout_css, typst_callout_tokens
+from guffin.render.callout_theme import (
+    CALLOUT_FAMILY,
+    CALLOUT_LABEL,
+    CALLOUT_LABEL_CLASS,
+    callout_colors,
+    callout_css,
+    callout_label,
+    typst_callout_tokens,
+)
 from guffin.render.design_language import CALLOUT_THEME, FAMILY_PALETTE, DesignFamily
 from guffin.roam.blockquote import CalloutType
 
@@ -31,6 +39,24 @@ class TestCalloutFamily:
         """A type's colours are its family's entry in the palette, not a copy."""
         for callout_type, family in CALLOUT_FAMILY.items():
             assert callout_colors(callout_type) == FAMILY_PALETTE[family]
+
+    def test_definition_alone_is_gold(self) -> None:
+        """Gold is the term's family: a definition is a card of it, and nothing else is."""
+        gold: Final[set[CalloutType]] = {t for t, family in CALLOUT_FAMILY.items() if family is DesignFamily.GOLD}
+        assert gold == {CalloutType.DEFINITION}
+
+
+class TestCalloutLabel:
+    """CALLOUT_LABEL names the boxes whose type is printed in words, and only those."""
+
+    def test_definition_prints_definition(self) -> None:
+        """A definition box is named "Definition", generated from its type."""
+        assert callout_label(CalloutType.DEFINITION) == "Definition"
+
+    def test_other_types_print_no_label(self) -> None:
+        """Every other type prints its title alone."""
+        assert set(CALLOUT_LABEL) == {CalloutType.DEFINITION}
+        assert callout_label(CalloutType.NOTE) is None
 
 
 class TestCalloutCss:
@@ -60,6 +86,22 @@ class TestCalloutCss:
         }
         assert {m.lower() for m in HEX_RE.findall(callout_css())} <= palette
 
+    def test_label_is_a_line_of_small_tracked_capitals(self) -> None:
+        """The label span sits on its own line, smaller, tracked, and in capitals."""
+        css: Final[str] = callout_css()
+        rule: Final[str] = css.split(f"span.{CALLOUT_LABEL_CLASS} {{", 1)[1].split("}", 1)[0]
+        assert "display: block;" in rule
+        assert f"font-size: {CALLOUT_THEME.label_size_em}em;" in rule
+        assert f"letter-spacing: {CALLOUT_THEME.label_tracking_em}em;" in rule
+        assert "text-transform: uppercase;" in rule
+
+    def test_icon_spans_label_and_title_only_in_labelled_boxes(self) -> None:
+        """A labelled type's icon floats at the larger size; an unlabelled type's keeps the inline one."""
+        css: Final[str] = callout_css()
+        size: Final[str] = f"width: {CALLOUT_THEME.labelled_icon_size_em}em"
+        assert f"div.callout-definition > div.callout-title svg {{ float: left; {size};" in css
+        assert "div.callout-note > div.callout-title svg" not in css
+
 
 class TestTypstCalloutTokens:
     """typst_callout_tokens expresses the callout theme as the template's cfg entries."""
@@ -73,6 +115,14 @@ class TestTypstCalloutTokens:
         assert "callout-body-inset: (x: " in tokens
         assert f"callout-title-weight: {CALLOUT_THEME.title_weight}" in tokens
         assert f"callout-icon-size: {CALLOUT_THEME.icon_size_em}em" in tokens
+
+    def test_sets_the_label_measures(self) -> None:
+        """The label's size, tracking, and gap, and the icon size beside a label, are all set."""
+        tokens: Final[str] = typst_callout_tokens()
+        assert f"callout-label-size: {CALLOUT_THEME.label_size_em}em" in tokens
+        assert f"callout-label-tracking: {CALLOUT_THEME.label_tracking_em}em" in tokens
+        assert f"callout-label-gap: {CALLOUT_THEME.label_gap_em}em" in tokens
+        assert f"callout-labelled-icon-size: {CALLOUT_THEME.labelled_icon_size_em}em" in tokens
 
     def test_colours_per_kind(self) -> None:
         """callout-colors holds every kind's fill, frame, and ink from its family."""

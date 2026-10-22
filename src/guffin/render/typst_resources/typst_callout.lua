@@ -4,7 +4,9 @@
 -- template's `callout` helper (default_styles.typ), which draws the box as a card of
 -- the visual design language in the colours cfg.callout-colors holds for the kind.
 -- The icon is the shared SVG from render/callout_icons/ (so PDF and EPUB render an
--- identical icon set), passed as its source text for the helper to colour.
+-- identical icon set), passed as its source text for the helper to colour.  A label the
+-- shared build leads the title with (a Span.callout-label, e.g. "Definition") is passed to
+-- the helper separately, which sets it on its own line above the title.
 
 -- Mapping from Guffin CalloutType class to the icon SVG basename (e.g. "info" -> info.svg).
 local ICON = {
@@ -19,6 +21,7 @@ local ICON = {
   ["callout-danger"]    = "danger",
   ["callout-failure"]   = "error",
   ["callout-bug"]       = "error",
+  ["callout-definition"] = "book",
 }
 
 -- Absolute path to the bundled callout_icons directory, supplied by pdf_rendering.py
@@ -43,6 +46,21 @@ local function icon_literal(icon_name)
   fh:close()
   -- Collapse newlines: Typst string literals are single-line.
   return typst_string((svg:gsub("[\r\n]", " ")))
+end
+
+-- Split a title's inlines into its label (the text of a leading Span.callout-label, or nil)
+-- and the title proper (the inlines after it, less the space that parts them).
+local function split_label(inlines)
+  if #inlines == 0 or inlines[1].t ~= "Span" or not inlines[1].classes:includes("callout-label") then
+    return nil, inlines
+  end
+  local rest = pandoc.Inlines({})
+  for i = 2, #inlines do
+    if not (#rest == 0 and inlines[i].t == "Space") then
+      rest:insert(inlines[i])
+    end
+  end
+  return pandoc.utils.stringify(inlines[1]), rest
 end
 
 function Div(el)
@@ -71,6 +89,13 @@ function Div(el)
   end
 
   local args = { "kind: " .. typst_string(kind) }
+  local label = nil
+  if title_inlines then
+    label, title_inlines = split_label(title_inlines)
+  end
+  if label then
+    args[#args + 1] = "label: " .. typst_string(label)
+  end
   if title_inlines and #title_inlines > 0 then
     args[#args + 1] = "title: " .. typst_string(pandoc.utils.stringify(title_inlines))
   end
